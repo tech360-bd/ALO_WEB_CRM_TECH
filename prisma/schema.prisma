@@ -1,0 +1,5190 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "rhel-openssl-3.0.x", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                         String              @id @default(cuid())
+  email                      String              @unique
+  name                       String?
+  role                       String              @default("student")
+  permissions                String              @default("[]")
+  actingAsRole               String?
+  actingAsUserId             String?
+  createdAt                  DateTime            @default(now())
+  updatedAt                  DateTime            @updatedAt
+  marketingApprovals         MarketingApproval[]
+  marketingReviewedApprovals MarketingApproval[] @relation("ApprovalReviewer")
+  marketingAuditLogs         MarketingAuditLog[]
+  marketingCreatedLeads      MarketingLead[]     @relation("LeadCreator")
+}
+
+model DeploymentSequence {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+model MarketingCampaign {
+  id                  String    @id @default(cuid())
+  name                String
+  goal                String
+  platform            String    @default("facebook")
+  strategy            String    @default("")
+  status              String    @default("draft")
+  banglaCaption       String    @default("")
+  englishCaption      String    @default("")
+  mixedCaption        String    @default("")
+  whatsappMessage     String    @default("")
+  messengerReply      String    @default("")
+  emailCopy           String    @default("")
+  smsCopy             String    @default("")
+  posterPrompt        String    @default("")
+  videoScript         String    @default("")
+  voiceScript         String    @default("")
+  subtitle            String    @default("")
+  thumbnailConcept    String    @default("")
+  hashtags            String    @default("[]")
+  cta                 String    @default("")
+  landingPage         String    @default("")
+  followUpSequence    String    @default("[]")
+  commentReplies      String    @default("[]")
+  dmQualification     String    @default("")
+  brandCheck          Boolean   @default(false)
+  metaPolicyCheck     Boolean   @default(false)
+  safetyCheck         Boolean   @default(false)
+  visaClaimCheck      Boolean   @default(false)
+  leadsGenerated      Int       @default(0)
+  hotLeads            Int       @default(0)
+  conversionRate      Float     @default(0)
+  costPerLead         Float     @default(0)
+  roi                 Float     @default(0)
+  topContent          String    @default("[]")
+  weakContent         String    @default("[]")
+  countryInterest     String    @default("{}")
+  courseInterest      String    @default("{}")
+  counselorConversion String    @default("{}")
+  targetCountry       String    @default("")
+  targetCourse        String    @default("")
+  budget              Float     @default(0)
+  startDate           DateTime?
+  endDate             DateTime?
+  publishedAt         DateTime?
+  approvedById        String?
+  approvedAt          DateTime?
+  createdById         String
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model MarketingContentIdea {
+  id           String   @id @default(cuid())
+  keyword      String   @default("")
+  country      String   @default("")
+  course       String   @default("")
+  intake       String   @default("")
+  scholarship  String   @default("")
+  language     String   @default("english")
+  platform     String   @default("facebook")
+  audienceType String   @default("")
+  funnelStage  String   @default("awareness")
+  ideaType     String   @default("")
+  title        String   @default("")
+  description  String   @default("")
+  trending     Boolean  @default(false)
+  status       String   @default("new")
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model MarketingGeneratedContent {
+  id                String    @id @default(cuid())
+  contentType       String    @default("social_post")
+  topic             String    @default("")
+  keywords          String    @default("[]")
+  language          String    @default("english")
+  platform          String    @default("facebook")
+  tone              String    @default("professional")
+  cta               String    @default("")
+  includeImage      Boolean   @default(false)
+  includeVideo      Boolean   @default(false)
+  variations        Int       @default(1)
+  approvalRequired  Boolean   @default(true)
+  targetCountry     String    @default("")
+  targetCourse      String    @default("")
+  targetStudentType String    @default("")
+  campaignId        String?
+  title             String    @default("")
+  body              String    @default("")
+  status            String    @default("draft")
+  publishedAt       DateTime?
+  approvedById      String?
+  approvedAt        DateTime?
+  rejectedById      String?
+  rejectedAt        DateTime?
+  rejectionReason   String    @default("")
+  createdById       String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model MarketingAsset {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("image")
+  url         String   @default("")
+  thumbnail   String   @default("")
+  platform    String   @default("")
+  campaignId  String?
+  category    String   @default("generated")
+  tags        String   @default("[]")
+  status      String   @default("active")
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MarketingTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("social")
+  platform    String   @default("facebook")
+  content     String   @default("")
+  variables   String   @default("[]")
+  category    String   @default("general")
+  status      String   @default("active")
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MarketingVideo {
+  id           String    @id @default(cuid())
+  title        String    @default("")
+  script       String    @default("")
+  banglaVoice  String    @default("")
+  englishVoice String    @default("")
+  mixedVoice   String    @default("")
+  scenePlan    String    @default("")
+  subtitle     String    @default("")
+  thumbnail    String    @default("")
+  brandOverlay Boolean   @default(true)
+  aspectRatio  String    @default("16:9")
+  platform     String    @default("facebook")
+  status       String    @default("draft")
+  approvedById String?
+  approvedAt   DateTime?
+  publishedAt  DateTime?
+  createdById  String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model MarketingCalendar {
+  id           String    @id @default(cuid())
+  title        String
+  description  String    @default("")
+  platform     String    @default("facebook")
+  campaignId   String?
+  contentId    String?
+  status       String    @default("scheduled")
+  scheduledAt  DateTime
+  publishedAt  DateTime?
+  failedAt     DateTime?
+  failReason   String    @default("")
+  reminderSent Boolean   @default(false)
+  autoReminder Boolean   @default(true)
+  createdById  String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model MarketingApproval {
+  id            String    @id @default(cuid())
+  itemType      String
+  itemId        String
+  title         String    @default("")
+  description   String    @default("")
+  status        String    @default("pending")
+  requestedById String
+  reviewedById  String?
+  reviewedAt    DateTime?
+  rejectionNote String    @default("")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  requestedBy   User      @relation(fields: [requestedById], references: [id])
+  reviewedBy    User?     @relation("ApprovalReviewer", fields: [reviewedById], references: [id])
+
+  @@index([requestedById], map: "MarketingApproval_requestedById_fkey")
+  @@index([reviewedById], map: "MarketingApproval_reviewedById_fkey")
+}
+
+model MarketingSocialMessage {
+  id              String    @id @default(cuid())
+  platform        String    @default("facebook")
+  channel         String    @default("comment")
+  threadId        String    @default("")
+  externalId      String    @default("")
+  senderName      String    @default("")
+  senderId        String    @default("")
+  senderAvatar    String    @default("")
+  message         String    @default("")
+  messageRaw      String    @default("")
+  intent          String    @default("")
+  isResolved      Boolean   @default(false)
+  contactId       String?
+  leadId          String?
+  suggestedReply  String    @default("")
+  replySent       String    @default("")
+  repliedAt       DateTime?
+  convertedToLead Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model MarketingDMThread {
+  id                  String   @id @default(cuid())
+  platform            String   @default("messenger")
+  externalThreadId    String   @default("")
+  contactName         String   @default("")
+  contactPhone        String   @default("")
+  contactId           String?
+  leadId              String?
+  status              String   @default("active")
+  qualifyingQuestions String   @default("[]")
+  responses           String   @default("{}")
+  qualified           Boolean  @default(false)
+  sentPortalLink      Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model MarketingComment {
+  id                String    @id @default(cuid())
+  platform          String    @default("facebook")
+  postId            String    @default("")
+  externalCommentId String    @default("")
+  authorName        String    @default("")
+  authorId          String    @default("")
+  text              String    @default("")
+  intent            String    @default("")
+  isLead            Boolean   @default(false)
+  convertedToLead   String    @default("")
+  leadId            String?
+  contactId         String?
+  status            String    @default("new")
+  replyText         String    @default("")
+  repliedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([platform, status])
+  @@index([leadId])
+}
+
+model MarketingLead {
+  id              String    @id @default(cuid())
+  name            String    @default("")
+  phone           String    @default("")
+  email           String    @default("")
+  destination     String    @default("")
+  level           String    @default("")
+  intake          String    @default("")
+  ieltsScore      Float     @default(0)
+  pteScore        Float     @default(0)
+  budget          String    @default("")
+  consent         Boolean   @default(false)
+  source          String    @default("")
+  sourceDetail    String    @default("")
+  campaignId      String?
+  score           Float     @default(0)
+  status          String    @default("new")
+  hotLead         Boolean   @default(false)
+  counselorId     String?
+  counselorName   String    @default("")
+  assignedAt      DateTime?
+  followUpDueAt   DateTime?
+  followUpDone    Boolean   @default(false)
+  convertedAt     DateTime?
+  createdById     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  createdByIdUser User?     @relation("LeadCreator", fields: [createdById], references: [id])
+
+  @@index([createdById], map: "MarketingLead_createdById_fkey")
+}
+
+model MarketingLeadScore {
+  id           String   @id @default(cuid())
+  leadId       String
+  score        Float    @default(0)
+  factors      String   @default("{}")
+  calculatedAt DateTime @default(now())
+}
+
+model MarketingCampaignSource {
+  id          String   @id @default(cuid())
+  campaignId  String
+  platform    String
+  source      String   @default("")
+  leads       Int      @default(0)
+  clicks      Int      @default(0)
+  impressions Int      @default(0)
+  cost        Float    @default(0)
+  date        DateTime @default(now())
+}
+
+model MarketingReport {
+  id          String   @id @default(cuid())
+  type        String   @default("daily")
+  periodStart DateTime
+  periodEnd   DateTime
+  data        String   @default("{}")
+  createdById String
+  createdAt   DateTime @default(now())
+}
+
+model MarketingAgentJob {
+  id                 String   @id @default(cuid())
+  agentName          String
+  agentType          String
+  status             String   @default("idle")
+  input              String   @default("{}")
+  output             String   @default("")
+  error              String   @default("")
+  duration           Int      @default(0)
+  ragEnabled         Boolean  @default(true)
+  memoryUsed         Boolean  @default(true)
+  protectedMode      Boolean  @default(true)
+  permissionRequired Boolean  @default(false)
+  approvalId         String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model MarketingAgentMemory {
+  id        String   @id @default(cuid())
+  agentName String
+  category  String
+  key       String
+  value     String   @default("")
+  metadata  String   @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MarketingAuditLog {
+  id           String   @id @default(cuid())
+  userId       String
+  userName     String   @default("")
+  role         String   @default("")
+  actingAsRole String   @default("")
+  action       String
+  resource     String   @default("")
+  resourceId   String   @default("")
+  details      String   @default("{}")
+  ipAddress    String   @default("")
+  userAgent    String   @default("")
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "MarketingAuditLog_userId_fkey")
+}
+
+model MarketingRagSource {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("document")
+  description String   @default("")
+  filePath    String   @default("")
+  content     String   @default("")
+  status      String   @default("active")
+  chunkCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MarketingRagChunk {
+  id        String   @id @default(cuid())
+  sourceId  String
+  content   String
+  embedding String   @default("")
+  metadata  String   @default("{}")
+  createdAt DateTime @default(now())
+}
+
+model MarketingImprovementProposal {
+  id            String    @id @default(cuid())
+  agentName     String
+  category      String
+  title         String
+  description   String    @default("")
+  impact        String    @default("medium")
+  status        String    @default("proposed")
+  implementedAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model SocialConnectedAccount {
+  id          String    @id @default(cuid())
+  platform    String
+  accountName String
+  accountId   String    @default("")
+  avatar      String    @default("")
+  status      String    @default("connected")
+  lastSyncAt  DateTime?
+  tokenRef    String    @default("")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SocialWebhookEvent {
+  id          String    @id @default(cuid())
+  platform    String
+  eventType   String
+  payload     String    @default("{}")
+  status      String    @default("success")
+  error       String    @default("")
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model Student {
+  id              String    @id @default(cuid())
+  studentId       String    @unique
+  userId          String?
+  name            String    @default("")
+  email           String    @default("")
+  phone           String    @default("")
+  password        String    @default("")
+  userType        String    @default("ALO_FULL_STUDENT")
+  status          String    @default("active")
+  profileComplete Int       @default(0)
+  journeyStage    String    @default("lead_created")
+  currentCountry  String    @default("")
+  currentCity     String    @default("")
+  counselorId     String?
+  counselorName   String    @default("")
+  otpCode         String    @default("")
+  otpExpiresAt    DateTime?
+  lastLoginAt     DateTime?
+  suspended       Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model StudentProfileSection {
+  id          String    @id @default(cuid())
+  studentId   String
+  section     String
+  status      String    @default("incomplete")
+  data        String    @default("{}")
+  completedAt DateTime?
+  updatedAt   DateTime  @updatedAt
+}
+
+model StudentEducation {
+  id             String   @id @default(cuid())
+  studentId      String
+  level          String
+  institution    String   @default("")
+  degree         String   @default("")
+  field          String   @default("")
+  gpa            String   @default("")
+  startYear      String   @default("")
+  endYear        String   @default("")
+  transcriptUrl  String   @default("")
+  certificateUrl String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model StudentPassport {
+  id             String   @id @default(cuid())
+  studentId      String
+  passportNumber String   @default("")
+  fullName       String   @default("")
+  nationality    String   @default("")
+  dateOfBirth    String   @default("")
+  expiryDate     String   @default("")
+  issueDate      String   @default("")
+  passportUrl    String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model StudentEnglishTest {
+  id             String   @id @default(cuid())
+  studentId      String
+  testType       String
+  overallScore   Float    @default(0)
+  readingScore   Float    @default(0)
+  writingScore   Float    @default(0)
+  listeningScore Float    @default(0)
+  speakingScore  Float    @default(0)
+  testDate       String   @default("")
+  certificateUrl String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model StudentWorkExperience {
+  id          String   @id @default(cuid())
+  studentId   String
+  company     String   @default("")
+  position    String   @default("")
+  startDate   String   @default("")
+  endDate     String   @default("")
+  description String   @default("")
+  letterUrl   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StudentRecommendation {
+  id              String   @id @default(cuid())
+  studentId       String
+  refereeName     String   @default("")
+  refereePosition String   @default("")
+  refereeEmail    String   @default("")
+  refereeOrg      String   @default("")
+  letterUrl       String   @default("")
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model StudentVisaHistory {
+  id            String   @id @default(cuid())
+  studentId     String
+  country       String   @default("")
+  visaType      String   @default("")
+  status        String   @default("")
+  refusalReason String   @default("")
+  appliedDate   String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model StudentFunding {
+  id               String   @id @default(cuid())
+  studentId        String
+  fundingType      String   @default("self")
+  sponsorName      String   @default("")
+  sponsorRelation  String   @default("")
+  sponsorIncome    String   @default("")
+  sponsorBank      String   @default("")
+  bankStatementUrl String   @default("")
+  sponsorDocUrl    String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model StudentAdmissionPreference {
+  id               String   @id @default(cuid())
+  studentId        String
+  preferredCountry String   @default("")
+  preferredCourse  String   @default("")
+  preferredLevel   String   @default("")
+  preferredIntake  String   @default("")
+  budgetRange      String   @default("")
+  scholarshipNeed  Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Application {
+  id                  String   @id @default(cuid())
+  applicationCode     String   @default("")
+  studentId           String
+  universityName      String   @default("")
+  courseName          String   @default("")
+  country             String   @default("")
+  campus              String   @default("")
+  intake              String   @default("")
+  level               String   @default("")
+  applicationId       String   @default("")
+  applicationSource   String   @default("DIRECT_ALO_APPLICATION")
+  sourceVisibility    String   @default("internal")
+  isB2b               Boolean  @default(false)
+  b2bType             String   @default("")
+  b2bProviderId       String   @default("")
+  partnerId           String   @default("")
+  stage               String   @default("counseling")
+  status              String   @default("active")
+  safeStatus          String   @default("under_review")
+  reviewStatus        String   @default("pending")
+  documentStatus      String   @default("pending")
+  paymentStatus       String   @default("pending")
+  offerStatus         String   @default("none")
+  casI20CoeStatus     String   @default("none")
+  visaHandoverStatus  String   @default("not_started")
+  counselorId         String   @default("")
+  counselorName       String   @default("")
+  applicationOfficer  String   @default("")
+  applicationOfficerId String  @default("")
+  visaOfficerId       String   @default("")
+  deadline            String   @default("")
+  notes               String   @default("")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([counselorId])
+  @@index([applicationOfficerId])
+  @@index([b2bProviderId])
+  @@index([stage])
+  @@index([status])
+}
+
+model ApplicationStageHistory {
+  id            String   @id @default(cuid())
+  applicationId String
+  stage         String
+  status        String   @default("completed")
+  note          String   @default("")
+  actor         String   @default("")
+  createdAt     DateTime @default(now())
+}
+
+model StudentDocument {
+  id              String    @id @default(cuid())
+  studentId       String
+  category        String
+  fileName        String    @default("")
+  fileUrl         String    @default("")
+  status          String    @default("not_uploaded")
+  rejectionReason String    @default("")
+  reviewerNote    String    @default("")
+  reviewedBy      String    @default("")
+  reviewedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model StudentMessage {
+  id         String   @id @default(cuid())
+  studentId  String
+  senderType String   @default("student")
+  senderName String   @default("")
+  message    String   @default("")
+  channel    String   @default("portal")
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  studentId   String
+  stage       String
+  title       String
+  description String   @default("")
+  actor       String   @default("system")
+  actionUrl   String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  studentId   String
+  title       String
+  type        String   @default("counseling")
+  status      String   @default("scheduled")
+  scheduledAt DateTime
+  meetLink    String   @default("")
+  notes       String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SavedCourse {
+  id             String   @id @default(cuid())
+  studentId      String
+  courseName     String
+  universityName String
+  country        String
+  level          String   @default("")
+  department     String   @default("")
+  tuitionFee     String   @default("")
+  intake         String   @default("")
+  notes          String   @default("")
+  createdAt      DateTime @default(now())
+}
+
+model CourseComparison {
+  id             String   @id @default(cuid())
+  studentId      String
+  courseIds      String   @default("[]")
+  comparisonData String   @default("{}")
+  createdAt      DateTime @default(now())
+}
+
+model ScholarshipMatch {
+  id              String   @id @default(cuid())
+  studentId       String
+  universityName  String   @default("")
+  scholarshipName String   @default("")
+  coverage        String   @default("")
+  eligibility     String   @default("")
+  status          String   @default("available")
+  createdAt       DateTime @default(now())
+}
+
+model SopDraft {
+  id              String   @id @default(cuid())
+  studentId       String
+  applicationId   String   @default("")
+  country         String   @default("")
+  universityName  String   @default("")
+  courseName      String   @default("")
+  content         String   @default("")
+  version         Int      @default(1)
+  status          String   @default("draft")
+  reviewRequested Boolean  @default(false)
+  reviewerNote    String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model CvReview {
+  id        String   @id @default(cuid())
+  studentId String
+  cvUrl     String   @default("")
+  content   String   @default("")
+  feedback  String   @default("")
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EnglishTest {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  description String   @default("")
+  duration    Int      @default(120)
+  sections    String   @default("[]")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MockTest {
+  id        String   @id @default(cuid())
+  name      String
+  testType  String
+  isFree    Boolean  @default(false)
+  price     Float    @default(0)
+  duration  Int      @default(120)
+  sections  String   @default("[]")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TestSession {
+  id          String    @id @default(cuid())
+  studentId   String
+  testId      String
+  mockTestId  String?
+  testType    String
+  status      String    @default("in_progress")
+  startedAt   DateTime  @default(now())
+  submittedAt DateTime?
+  duration    Int       @default(0)
+  createdAt   DateTime  @default(now())
+}
+
+model TestAnswer {
+  id          String   @id @default(cuid())
+  sessionId   String
+  section     String
+  questionNum Int
+  answer      String   @default("")
+  isCorrect   Boolean  @default(false)
+  score       Float    @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model TestResult {
+  id             String   @id @default(cuid())
+  sessionId      String   @unique
+  listeningScore Float    @default(0)
+  readingScore   Float    @default(0)
+  writingScore   Float    @default(0)
+  speakingScore  Float    @default(0)
+  overallScore   Float    @default(0)
+  bandEstimate   String   @default("")
+  weakAreas      String   @default("[]")
+  strengths      String   @default("[]")
+  aiFeedback     String   @default("")
+  createdAt      DateTime @default(now())
+}
+
+model AiExamFeedback {
+  id              String   @id @default(cuid())
+  sessionId       String   @unique
+  taskAchievement String   @default("")
+  coherence       String   @default("")
+  lexicalResource String   @default("")
+  grammar         String   @default("")
+  improvementPlan String   @default("")
+  createdAt       DateTime @default(now())
+}
+
+model AiInterviewSession {
+  id             String    @id @default(cuid())
+  studentId      String
+  interviewType  String
+  status         String    @default("in_progress")
+  readinessScore Float     @default(0)
+  riskLevel      String    @default("needs_practice")
+  transcript     String    @default("[]")
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model AiInterviewAnswer {
+  id        String   @id @default(cuid())
+  sessionId String
+  question  String
+  answer    String   @default("")
+  followUp  String   @default("")
+  score     Float    @default(0)
+  feedback  String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model AiInterviewResult {
+  id                   String   @id @default(cuid())
+  sessionId            String   @unique
+  communicationClarity Float    @default(0)
+  confidence           Float    @default(0)
+  courseKnowledge      Float    @default(0)
+  universityKnowledge  Float    @default(0)
+  countryKnowledge     Float    @default(0)
+  financialExplanation Float    @default(0)
+  sponsorExplanation   Float    @default(0)
+  studyGapExplanation  Float    @default(0)
+  futurePlanClarity    Float    @default(0)
+  visaRisk             Float    @default(0)
+  overallReadiness     Float    @default(0)
+  verdict              String   @default("needs_practice")
+  finalFeedback        String   @default("")
+  createdAt            DateTime @default(now())
+}
+
+model MockTestCredit {
+  id           String   @id @default(cuid())
+  studentId    String
+  totalCredits Int      @default(3)
+  usedCredits  Int      @default(0)
+  source       String   @default("free")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model MockTestPayment {
+  id            String   @id @default(cuid())
+  studentId     String
+  packageId     String   @default("")
+  packageName   String   @default("")
+  amount        Float
+  currency      String   @default("BDT")
+  status        String   @default("pending")
+  creditsAdded  Int      @default(0)
+  transactionId String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model MockTestPackage {
+  id        String   @id @default(cuid())
+  name      String
+  credits   Int
+  price     Float
+  currency  String   @default("BDT")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VisaChecklistItem {
+  id            String    @id @default(cuid())
+  studentId     String
+  applicationId String    @default("")
+  item          String
+  category      String    @default("general")
+  isRequired    Boolean   @default(true)
+  status        String    @default("pending")
+  note          String    @default("")
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model VisaReadinessReport {
+  id             String   @id @default(cuid())
+  studentId      String
+  visaCaseId     String   @default("")
+  applicationId  String   @default("")
+  overallScore   Float    @default(0)
+  documentsReady Int      @default(0)
+  documentsTotal Int      @default(0)
+  interviewReady Boolean  @default(false)
+  riskFactors    String   @default("[]")
+  recommendation String   @default("")
+  generatedAt    DateTime @default(now())
+}
+
+model ImportBatch {
+  id             String                 @id @default(cuid())
+  sourceCrmName  String                 @default("Old CRM")
+  fileName       String                 @default("")
+  totalRows      Int                    @default(0)
+  newCount       Int                    @default(0)
+  matchedCount   Int                    @default(0)
+  duplicateCount Int                    @default(0)
+  errorCount     Int                    @default(0)
+  status         String                 @default("pending_review")
+  createdBy      String
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  students       ImportStagingStudent[]
+}
+
+model ImportStagingStudent {
+  id                 String      @id @default(cuid())
+  batchId            String
+  oldCrmId           String      @default("")
+  studentName        String
+  phone              String      @default("")
+  whatsapp           String      @default("")
+  email              String      @default("")
+  passportNumber     String      @default("")
+  dateOfBirth        String      @default("")
+  countryInterest    String      @default("")
+  courseInterest     String      @default("")
+  universityInterest String      @default("")
+  applicationStatus  String      @default("new")
+  counselorName      String      @default("")
+  documentsJson      String      @default("[]")
+  notesJson          String      @default("[]")
+  communicationJson  String      @default("[]")
+  paymentStatus      String      @default("none")
+  visaStatus         String      @default("none")
+  createdDate        String      @default("")
+  updatedDate        String      @default("")
+  matchedStudentId   String      @default("")
+  duplicateRiskLevel String      @default("none")
+  status             String      @default("staging")
+  errorDetails       String      @default("")
+  createdAt          DateTime    @default(now())
+  batch              ImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId], map: "ImportStagingStudent_batchId_fkey")
+}
+
+model UniversityUpdateRequest {
+  id           String   @id @default(cuid())
+  universityId String   @default("")
+  courseId     String   @default("")
+  entityType   String   @default("course")
+  entityName   String
+  country      String   @default("")
+  fieldName    String
+  oldValue     String   @default("")
+  newValue     String   @default("")
+  evidenceUrl  String   @default("")
+  aiConfidence Float    @default(0.9)
+  status       String   @default("pending_approval")
+  reviewedBy   String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VisaCase {
+  id                   String   @id @default(cuid())
+  caseCode             String   @default("")
+  studentId            String
+  studentName          String   @default("")
+  applicationId        String   @default("")
+  destinationCountry   String   @default("UK")
+  university           String   @default("")
+  course               String   @default("")
+  intake               String   @default("")
+  currentStage         String   @default("not_started")
+  readinessScore       Float    @default(0)
+  riskLevel            String   @default("low")
+  counselorId          String   @default("")
+  counselorName        String   @default("")
+  applicationOfficerId String   @default("")
+  visaOfficerId        String   @default("")
+  visaOfficerName      String   @default("")
+  isUrgent             Boolean  @default(false)
+  nextAction           String   @default("")
+  lastUpdated          DateTime @default(now())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([visaOfficerId])
+  @@index([counselorId])
+  @@index([currentStage])
+}
+
+model VisaInterview {
+  id              String                @id @default(cuid())
+  caseId          String
+  studentId       String
+  interviewType   String                @default("embassy_mock")
+  difficulty      String                @default("standard")
+  language        String                @default("english")
+  status          String                @default("scheduled")
+  scheduledAt     DateTime              @default(now())
+  overallScore    Float                 @default(0)
+  verdict         String                @default("needs_practice")
+  officerNotes    String                @default("")
+  studentFeedback String                @default("")
+  officerId       String                @default("")
+  completedAt     DateTime?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  answers         VisaInterviewAnswer[]
+}
+
+model VisaInterviewQuestion {
+  id         String   @id @default(cuid())
+  category   String
+  question   String
+  difficulty String   @default("standard")
+  language   String   @default("english")
+  followUps  String   @default("[]")
+  createdAt  DateTime @default(now())
+}
+
+model VisaInterviewAnswer {
+  id          String        @id @default(cuid())
+  interviewId String
+  questionId  String        @default("")
+  question    String
+  answer      String        @default("")
+  followUp    String        @default("")
+  score       Float         @default(0)
+  feedback    String        @default("")
+  createdAt   DateTime      @default(now())
+  interview   VisaInterview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  @@index([interviewId], map: "VisaInterviewAnswer_interviewId_fkey")
+}
+
+model VisaMockResult {
+  id          String   @id @default(cuid())
+  interviewId String   @unique
+  caseId      String
+  studentId   String
+  country     String   @default("UK")
+  difficulty  String   @default("standard")
+  language    String   @default("english")
+  score       Float    @default(0)
+  verdict     String   @default("needs_practice")
+  feedback    String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+model VisaOfficerNote {
+  id          String   @id @default(cuid())
+  caseId      String
+  studentId   String
+  officerId   String
+  officerName String   @default("")
+  content     String
+  visibility  String   @default("internal_only")
+  riskFlag    String   @default("none")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model VisaRiskAssessment {
+  id                  String   @id @default(cuid())
+  caseId              String   @unique
+  studentId           String
+  fundingRisk         String   @default("low")
+  studyGapRisk        String   @default("low")
+  refusalRisk         String   @default("low")
+  sensitiveRisk       String   @default("low")
+  overallRiskLevel    String   @default("low")
+  officerVerdict      String   @default("review_pending")
+  humanReviewRequired Boolean  @default(false)
+  updatedAt           DateTime @updatedAt
+}
+
+model VisaFundingReview {
+  id                      String   @id @default(cuid())
+  caseId                  String   @unique
+  studentId               String
+  fundingStatus           String   @default("pending")
+  sponsor                 String   @default("")
+  sponsorRelation         String   @default("")
+  sponsorOccupation       String   @default("")
+  sponsorIncome           String   @default("")
+  sourceOfFund            String   @default("")
+  hasBankStatement        Boolean  @default(false)
+  hasSolvencyCert         Boolean  @default(false)
+  sourceOfFundExplanation String   @default("")
+  riskWarning             String   @default("none")
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+model VisaStudyGapReview {
+  id                 String   @id @default(cuid())
+  caseId             String   @unique
+  studentId          String
+  hasStudyGap        Boolean  @default(false)
+  gapDurationMonths  Int      @default(0)
+  gapPurpose         String   @default("")
+  workExpDuringGap   String   @default("")
+  explanationClarity String   @default("clear")
+  riskFlag           String   @default("low")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model VisaRefusalReview {
+  id                String   @id @default(cuid())
+  caseId            String   @unique
+  studentId         String
+  hasVisaRefusal    Boolean  @default(false)
+  refusalCountry    String   @default("")
+  refusalReason     String   @default("")
+  refusalLetterUrl  String   @default("")
+  improvementPlan   String   @default("")
+  humanReviewStatus String   @default("pending")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model VisaSensitiveReview {
+  id                      String   @id @default(cuid())
+  caseId                  String   @unique
+  studentId               String
+  seriousMedicalCondition Boolean  @default(false)
+  medicalExplanation      String   @default("")
+  criminalOffense         Boolean  @default(false)
+  criminalExplanation     String   @default("")
+  officerInternalNote     String   @default("")
+  studentSafeNote         String   @default("")
+  humanReviewRequired     Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+model VisaStudentFeedback {
+  id              String    @id @default(cuid())
+  caseId          String
+  studentId       String
+  supportiveText  String
+  nextSteps       String    @default("")
+  missingDocs     String    @default("[]")
+  practiceTips    String    @default("")
+  approvedBy      String    @default("")
+  isSentToStudent Boolean   @default(false)
+  sentAt          DateTime?
+  createdAt       DateTime  @default(now())
+}
+
+model VisaTask {
+  id          String    @id @default(cuid())
+  caseId      String
+  studentId   String
+  taskType    String    @default("document_request")
+  title       String
+  description String    @default("")
+  assignedTo  String    @default("")
+  dueDate     DateTime?
+  status      String    @default("pending")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model VisaReport {
+  id          String   @id @default(cuid())
+  reportType  String   @default("daily_interview")
+  generatedBy String
+  filters     String   @default("{}")
+  fileUrl     String   @default("")
+  status      String   @default("ready")
+  createdAt   DateTime @default(now())
+}
+
+model AiStudentMemory {
+  id        String   @id @default(cuid())
+  studentId String
+  category  String
+  key       String
+  value     String   @default("")
+  metadata  String   @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model InboundMessage {
+  id          String   @id @default(cuid())
+  channel     String
+  senderPhone String   @default("")
+  senderEmail String   @default("")
+  message     String
+  studentId   String   @default("")
+  intent      String   @default("")
+  aiResponse  String   @default("")
+  status      String   @default("processed")
+  createdAt   DateTime @default(now())
+}
+
+model AloAuditLog {
+  id         String   @id @default(cuid())
+  studentId  String   @default("")
+  actorType  String   @default("student")
+  actorName  String   @default("")
+  action     String
+  resource   String   @default("")
+  resourceId String   @default("")
+  details    String   @default("{}")
+  ipAddress  String   @default("")
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  studentId String
+  title     String
+  message   String   @default("")
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  actionUrl String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model AloStudent {
+  id                 String   @id @default(cuid())
+  studentId          String   @unique
+  studentType        String   @default("alo_full")
+  name               String   @default("")
+  email              String   @default("")
+  phone              String   @default("")
+  password           String   @default("")
+  dateOfBirth        String   @default("")
+  gender             String   @default("")
+  nationality        String   @default("Bangladeshi")
+  city               String   @default("")
+  address            String   @default("")
+  profileCompletion  Int      @default(0)
+  passportNumber     String   @default("")
+  passportExpiry     String   @default("")
+  englishTestType    String   @default("IELTS")
+  englishTestScore   String   @default("")
+  englishTestDate    String   @default("")
+  highestEducation   String   @default("")
+  institution        String   @default("")
+  gpa                String   @default("")
+  graduationYear     String   @default("")
+  workExperience     String   @default("")
+  fundingSource      String   @default("")
+  preferredCountry   String   @default("")
+  preferredCourse    String   @default("")
+  preferredIntake    String   @default("")
+  englishCredits     Int      @default(3)
+  englishCreditsUsed Int      @default(1)
+  aiInterviewScore   String   @default("")
+  visaReadinessScore Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model AloDocument {
+  id         String    @id @default(cuid())
+  studentId  String
+  category   String
+  fileName   String    @default("")
+  fileUrl    String    @default("")
+  status     String    @default("not_uploaded")
+  uploadedAt DateTime?
+  reviewedAt DateTime?
+  reviewNote String    @default("")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model AloApplication {
+  id             String    @id @default(cuid())
+  studentId      String
+  universityName String    @default("")
+  courseName     String    @default("")
+  country        String    @default("")
+  level          String    @default("")
+  intake         String    @default("")
+  stage          String    @default("research")
+  stageProgress  Int       @default(0)
+  status         String    @default("active")
+  appliedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model AloMessage {
+  id         String   @id @default(cuid())
+  studentId  String
+  senderType String   @default("student")
+  senderName String   @default("")
+  content    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model AloAppointment {
+  id        String   @id @default(cuid())
+  studentId String
+  title     String   @default("")
+  type      String   @default("counseling")
+  date      String   @default("")
+  time      String   @default("")
+  duration  String   @default("30 minutes")
+  status    String   @default("upcoming")
+  counselor String   @default("")
+  notes     String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AloPayment {
+  id          String    @id @default(cuid())
+  studentId   String
+  description String    @default("")
+  amount      Float     @default(0)
+  currency    String    @default("BDT")
+  status      String    @default("pending")
+  dueDate     String    @default("")
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model AloSop {
+  id            String   @id @default(cuid())
+  studentId     String
+  applicationId String   @default("")
+  country       String   @default("")
+  university    String   @default("")
+  course        String   @default("")
+  content       String   @default("")
+  version       Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AloEnglishTest {
+  id             String   @id @default(cuid())
+  studentId      String
+  testType       String   @default("mock")
+  listeningScore String   @default("")
+  readingScore   String   @default("")
+  writingScore   String   @default("")
+  speakingScore  String   @default("")
+  overallScore   String   @default("")
+  bandScore      String   @default("")
+  takenAt        DateTime @default(now())
+  duration       Int      @default(0)
+  answers        String   @default("{}")
+}
+
+model CrmUniversity {
+  id                                 String                 @id @default(cuid())
+  universityId                       String                 @unique
+  name                               String
+  country                            String                 @default("")
+  city                               String                 @default("")
+  campusName                         String                 @default("")
+  ranking                            Int                    @default(0)
+  worldRanking                       Int                    @default(0)
+  type                               String                 @default("Public")
+  founded                            Int                    @default(0)
+  students                           String                 @default("")
+  intlStudents                       String                 @default("")
+  ieltsMin                           Float                  @default(0)
+  tuitionRange                       String                 @default("")
+  scholarships                       Boolean                @default(false)
+  description                        String?                @db.Text
+  featured                           Boolean                @default(false)
+  website                            String                 @default("")
+  officialUrl                        String                 @default("")
+  sourceUrl                          String                 @default("")
+  lastVerifiedAt                     String                 @default("")
+  status                             String                 @default("needs_official_source")
+  createdAt                          DateTime               @default(now())
+  updatedAt                          DateTime               @updatedAt
+  aliases                            String                 @default("[]")
+  campuses                           String                 @default("[]")
+  heroImageSourceUrl                 String                 @default("")
+  internationalStudentSupportSummary String?                @db.Text
+  logoSourceUrl                      String                 @default("")
+  mediaUsagePermissionStatus         String                 @default("not_requested")
+  officialCourseSearchUrl            String                 @default("")
+  officialInternationalAdmissionsUrl String                 @default("")
+  officialScholarshipUrl             String                 @default("")
+  officialTuitionFeeUrl              String                 @default("")
+  publicationStatus                  String                 @default("draft")
+  rankingBand                        String                 @default("")
+  rankingProvider                    String                 @default("")
+  rankingValue                       String                 @default("")
+  rankingYear                        Int                    @default(0)
+  slug                               String                 @default("")
+  sourceUrls                         String                 @default("[]")
+  verificationStatus                 String                 @default("NEEDS_REVIEW")
+  commissions                        CrmCommission[]
+  courses                            CrmCourse[]
+  intakeFees                         CrmCourseIntakeFee[]
+  requirements                       CrmCourseRequirement[]
+  rankingRecords                     CrmRanking[]
+  scholarshipRecords                 CrmScholarship[]
+}
+
+model CrmCourse {
+  id                       String                 @id @default(cuid())
+  universityId             String
+  courseId                 String                 @unique
+  courseTitle              String
+  studyLevel               String                 @default("")
+  programLevel             String                 @default("")
+  subjectArea              String                 @default("")
+  disciplineArea           String                 @default("")
+  officialUrl              String                 @default("")
+  durationMonths           Int                    @default(0)
+  publicTags               String                 @default("")
+  sourceUrl                String                 @default("")
+  lastVerifiedAt           String                 @default("")
+  status                   String                 @default("needs_official_source")
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+  attendanceMode           String                 @default("")
+  campus                   String                 @default("")
+  city                     String                 @default("")
+  country                  String                 @default("")
+  deliveryMode             String                 @default("")
+  internationalEligibility String                 @default("not_verified")
+  officialApplicationUrl   String                 @default("")
+  onlineOption             Boolean                @default(false)
+  partTimeOption           Boolean                @default(false)
+  pathwayStatus            String                 @default("")
+  placementOption          Boolean                @default(false)
+  publicationStatus        String                 @default("draft")
+  qualification            String                 @default("")
+  sandwichYearOption       Boolean                @default(false)
+  slug                     String                 @default("")
+  verificationStatus       String                 @default("NEEDS_REVIEW")
+  commissions              CrmCommission[]
+  university               CrmUniversity          @relation(fields: [universityId], references: [universityId])
+  intakeFees               CrmCourseIntakeFee[]
+  requirements             CrmCourseRequirement[]
+  scholarshipRecords       CrmScholarship[]
+
+  @@index([universityId])
+  @@index([courseTitle])
+  @@index([subjectArea])
+  @@index([studyLevel])
+}
+
+model CrmCourseIntakeFee {
+  id                  String        @id @default(cuid())
+  universityId        String
+  courseId            String
+  intakeYear          Int
+  intakeMonth         String
+  intakeName          String        @default("")
+  applicationDeadline String        @default("")
+  appFeeCurrency      String        @default("")
+  appFeeAmount        Float         @default(0)
+  tuitionCurrency     String        @default("")
+  yearlyTuition       Float         @default(0)
+  totalTuition        Float         @default(0)
+  depositCurrency     String        @default("")
+  depositAmount       Float         @default(0)
+  batchId             String        @default("")
+  status              String        @default("active")
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  feeSourceUrl        String        @default("")
+  intakeSourceUrl     String        @default("")
+  lastCheckedAt       String        @default("")
+  tuitionPeriod       String        @default("")
+  verificationStatus  String        @default("NEEDS_REVIEW")
+  course              CrmCourse     @relation(fields: [courseId], references: [courseId])
+  university          CrmUniversity @relation(fields: [universityId], references: [universityId])
+
+  @@index([courseId])
+  @@index([universityId])
+  @@index([intakeYear, intakeMonth])
+  @@index([status])
+}
+
+model CrmCourseRequirement {
+  id                         String        @id @default(cuid())
+  universityId               String
+  courseId                   String
+  academicReq                String        @default("")
+  gradingSystem              String        @default("")
+  minScore                   String        @default("")
+  ieltsOverall               Float         @default(0)
+  ieltsMinBand               Float         @default(0)
+  pteOverall                 Float         @default(0)
+  pteMinBand                 Float         @default(0)
+  toeflOverall               Float         @default(0)
+  detOverall                 Float         @default(0)
+  moiAccepted                Boolean       @default(false)
+  ownEnglishTest             Boolean       @default(false)
+  portfolioRequired          Boolean       @default(false)
+  interviewRequired          Boolean       @default(false)
+  batchId                    String        @default("")
+  createdAt                  DateTime      @default(now())
+  updatedAt                  DateTime      @updatedAt
+  acceptedQualifications     String        @default("")
+  componentScores            String        @default("{}")
+  countrySpecificRequirement String        @default("")
+  englishTest                String        @default("")
+  lastCheckedAt              String        @default("")
+  officialRequirementUrl     String        @default("")
+  prerequisiteSubjects       String        @default("")
+  verificationStatus         String        @default("NEEDS_REVIEW")
+  workExperience             String        @default("")
+  course                     CrmCourse     @relation(fields: [courseId], references: [courseId])
+  university                 CrmUniversity @relation(fields: [universityId], references: [universityId])
+
+  @@index([courseId])
+  @@index([universityId])
+}
+
+model CrmScholarship {
+  id                     String        @id @default(cuid())
+  universityId           String
+  courseId               String        @default("")
+  scholarshipName        String        @default("")
+  scholarshipAmount      Float         @default(0)
+  scholarshipCurrency    String        @default("")
+  batchId                String        @default("")
+  status                 String        @default("active")
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  academicYear           String        @default("")
+  applicationMethod      String        @default("")
+  awardPercentage        Float         @default(0)
+  coverageType           String        @default("")
+  deadline               String        @default("")
+  eligibleCountries      String        @default("[]")
+  eligibleLevels         String        @default("[]")
+  expiryStatus           String        @default("unknown")
+  lastCheckedAt          String        @default("")
+  officialScholarshipUrl String        @default("")
+  provider               String        @default("")
+  verificationStatus     String        @default("NEEDS_REVIEW")
+  course                 CrmCourse     @relation(fields: [courseId], references: [courseId])
+  university             CrmUniversity @relation(fields: [universityId], references: [universityId])
+
+  @@index([courseId])
+  @@index([universityId])
+  @@index([status])
+}
+
+model CrmRanking {
+  id                       String        @id @default(cuid())
+  universityId             String
+  provider                 String
+  rankingTitle             String
+  rankingYear              Int
+  rank                     Int           @default(0)
+  rankBand                 String        @default("")
+  officialRankingSourceUrl String        @default("")
+  retrievedDate            String        @default("")
+  verificationStatus       String        @default("NEEDS_REVIEW")
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+  university               CrmUniversity @relation(fields: [universityId], references: [universityId])
+
+  @@unique([universityId, provider, rankingTitle, rankingYear])
+  @@index([universityId])
+  @@index([provider, rankingYear])
+}
+
+model CrmDiscoverySource {
+  id            String               @id @default(cuid())
+  name          String               @unique
+  baseUrl       String
+  allowedUse    String               @default("discovery_only")
+  robotsUrl     String               @default("")
+  robotsStatus  String               @default("not_checked")
+  termsStatus   String               @default("not_reviewed")
+  notes         String               @default("")
+  lastCheckedAt String               @default("")
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  records       CrmDiscoveryRecord[]
+}
+
+model CrmDiscoveryRecord {
+  id                       String             @id @default(cuid())
+  discoverySourceId        String
+  discoveryUrl             String
+  discoveredUniversityName String             @default("")
+  discoveredCourseTitle    String             @default("")
+  country                  String             @default("")
+  officialUniversityName   String             @default("")
+  officialUniversityUrl    String             @default("")
+  officialCourseUrl        String             @default("")
+  sourceOrganization       String             @default("")
+  sourceUrl                String             @default("")
+  matchingStatus           String             @default("DISCOVERED_ONLY")
+  pipelineStatus           String             @default("DISCOVERED")
+  verificationStatus       String             @default("DISCOVERED_ONLY")
+  publicationStatus        String             @default("not_published")
+  rejectionReason          String             @default("")
+  unresolvedReason         String             @default("")
+  lastCheckedAt            String             @default("")
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+  discoverySource          CrmDiscoverySource @relation(fields: [discoverySourceId], references: [id])
+
+  @@index([discoverySourceId])
+  @@index([verificationStatus])
+  @@index([pipelineStatus])
+}
+
+model CrmSourceVerificationEvent {
+  id                 String   @id @default(cuid())
+  targetType         String
+  targetId           String   @default("")
+  sourceUrl          String
+  sourcePriority     Int      @default(8)
+  httpStatus         Int      @default(0)
+  finalUrl           String   @default("")
+  soft404            Boolean  @default(false)
+  title              String   @default("")
+  entityMatchStatus  String   @default("not_checked")
+  verificationStatus String   @default("NEEDS_REVIEW")
+  checkedAt          String   @default("")
+  checkedBy          String   @default("system")
+  notes              String   @default("")
+  createdAt          DateTime @default(now())
+
+  @@index([targetType, targetId])
+  @@index([verificationStatus])
+}
+
+model CrmOfficialSourceCheck {
+  id                 String   @id @default(cuid())
+  targetType         String
+  targetId           String   @default("")
+  universityId       String   @default("")
+  courseId           String   @default("")
+  sourceType         String
+  requestedUrl       String
+  finalUrl           String   @default("")
+  httpStatus         Int      @default(0)
+  redirectStatus     String   @default("")
+  pageTitle          String   @default("")
+  expectedEntity     String   @default("")
+  entityMatchStatus  String   @default("NOT_CHECKED")
+  soft404            Boolean  @default(false)
+  contentHash        String   @default("")
+  checkedAt          String   @default("")
+  verificationStatus String   @default("NEEDS_REVIEW")
+  failureReason      String   @default("")
+  parserVersion      String   @default("")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([targetType, targetId])
+  @@index([universityId])
+  @@index([courseId])
+  @@index([sourceType])
+  @@index([verificationStatus])
+  @@index([contentHash])
+}
+
+model CrmCommission {
+  id                String        @id @default(cuid())
+  universityId      String
+  courseId          String
+  intakeYear        Int           @default(0)
+  intakeMonth       String        @default("")
+  internalExpected  Float         @default(0)
+  internalIncreased Float         @default(0)
+  partnerCommission Float         @default(0)
+  internalNotes     String        @default("")
+  batchId           String        @default("")
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  course            CrmCourse     @relation(fields: [courseId], references: [courseId])
+  university        CrmUniversity @relation(fields: [universityId], references: [universityId])
+
+  @@index([courseId])
+  @@index([universityId])
+  @@index([intakeYear, intakeMonth])
+}
+
+model CrmImportBatch {
+  id                String           @id @default(cuid())
+  importType        String           @default("course_combined")
+  fileName          String           @default("")
+  uploadedBy        String           @default("")
+  rowsReceived      Int              @default(0)
+  rowsImported      Int              @default(0)
+  rowsFailed        Int              @default(0)
+  rowsDuplicate     Int              @default(0)
+  rowsWarning       Int              @default(0)
+  rowsBlocked       Int              @default(0)
+  rollbackAvailable Boolean          @default(true)
+  status            String           @default("completed")
+  errorCsvPath      String           @default("")
+  createdAt         DateTime         @default(now())
+  errors            CrmImportError[]
+}
+
+model CrmImportError {
+  id           String         @id @default(cuid())
+  batchId      String
+  rowNumber    Int
+  universityId String         @default("")
+  courseId     String         @default("")
+  field        String         @default("")
+  errorMessage String         @default("")
+  severity     String         @default("error")
+  rowData      String         @default("{}")
+  createdAt    DateTime       @default(now())
+  batch        CrmImportBatch @relation(fields: [batchId], references: [id])
+
+  @@index([batchId])
+}
+
+model CrmSourceLog {
+  id           String   @id @default(cuid())
+  universityId String   @default("")
+  courseId     String   @default("")
+  sourceUrl    String   @default("")
+  verifiedAt   String   @default("")
+  verifiedBy   String   @default("")
+  status       String   @default("unverified")
+  createdAt    DateTime @default(now())
+}
+
+model CrmAuditLog {
+  id               String   @id @default(cuid())
+  actorUserId      String   @default("")
+  actorRole        String   @default("")
+  action           String
+  targetCollection String   @default("")
+  targetId         String   @default("")
+  batchId          String   @default("")
+  beforeData       String   @default("{}")
+  afterData        String   @default("{}")
+  ipAddress        String   @default("")
+  createdAt        DateTime @default(now())
+}
+
+model Employee {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  employeeId       String    @unique
+  name             String    @default("")
+  email            String    @default("")
+  phone            String    @default("")
+  whatsapp         String    @default("")
+  branch           String    @default("")
+  department       String    @default("")
+  designation      String    @default("")
+  role             String    @default("counselor")
+  status           String    @default("active")
+  destinationFocus String    @default("[]")
+  partnerGroups    String    @default("[]")
+  joinedAt         DateTime  @default(now())
+  lastLoginAt      DateTime?
+  isOnline         Boolean   @default(false)
+  privacyModeOn    Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model EmployeeHRProfile {
+  id               String   @id @default(cuid())
+  employeeId       String   @unique
+  officialEmail    String   @default("")
+  officialPhone    String   @default("")
+  branch           String   @default("")
+  designation      String   @default("")
+  department       String   @default("")
+  joiningDate      String   @default("")
+  managerId        String   @default("")
+  managerName      String   @default("")
+  bloodGroup       String   @default("")
+  emergencyContact String   @default("")
+  presentAddress   String   @default("")
+  permanentAddress String   @default("")
+  nidNumber        String   @default("")
+  bankName         String   @default("")
+  bankAccount      String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model EmployeeAttendance {
+  id          String   @id @default(cuid())
+  employeeId  String
+  date        String
+  checkIn     String   @default("")
+  checkOut    String   @default("")
+  status      String   @default("present")
+  hoursWorked Float    @default(0)
+  note        String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+model EmployeeSalary {
+  id             String   @id @default(cuid())
+  employeeId     String
+  basicSalary    Float    @default(0)
+  housingAllow   Float    @default(0)
+  transportAllow Float    @default(0)
+  medicalAllow   Float    @default(0)
+  otherAllow     Float    @default(0)
+  grossSalary    Float    @default(0)
+  taxDeduction   Float    @default(0)
+  pfDeduction    Float    @default(0)
+  netSalary      Float    @default(0)
+  currency       String   @default("BDT")
+  effectiveFrom  String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model EmployeeCommission {
+  id            String    @id @default(cuid())
+  employeeId    String
+  studentId     String    @default("")
+  applicationId String    @default("")
+  amount        Float     @default(0)
+  currency      String    @default("BDT")
+  status        String    @default("pending")
+  period        String    @default("")
+  paidAt        DateTime?
+  note          String    @default("")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model EmployeeBonus {
+  id         String    @id @default(cuid())
+  employeeId String
+  amount     Float     @default(0)
+  currency   String    @default("BDT")
+  reason     String    @default("")
+  period     String    @default("")
+  status     String    @default("approved")
+  paidAt     DateTime?
+  approvedBy String    @default("")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model EmployeeIncrement {
+  id             String   @id @default(cuid())
+  employeeId     String
+  previousAmount Float    @default(0)
+  newAmount      Float    @default(0)
+  incrementType  String   @default("")
+  effectiveFrom  String   @default("")
+  reason         String   @default("")
+  approvedBy     String   @default("")
+  createdAt      DateTime @default(now())
+}
+
+model EmployeePerformance {
+  id                 String   @id @default(cuid())
+  employeeId         String
+  period             String   @default("")
+  targetLeads        Int      @default(0)
+  achievedLeads      Int      @default(0)
+  targetConversion   Float    @default(0)
+  achievedConversion Float    @default(0)
+  targetRevenue      Float    @default(0)
+  achievedRevenue    Float    @default(0)
+  score              Float    @default(0)
+  feedback           String   @default("")
+  managerRating      Float    @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  module      String
+  feature     String
+  action      String   @default("view")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  label       String   @default("")
+  description String   @default("")
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RolePermission {
+  id           String   @id @default(cuid())
+  roleId       String
+  permissionId String
+  granted      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  grantedAt DateTime @default(now())
+}
+
+model PartnerLead {
+  id                    String   @id @default(cuid())
+  studentId             String   @default("")
+  studentName           String   @default("")
+  studentEmail          String   @default("")
+  studentPhone          String   @default("")
+  destinationCountry    String   @default("")
+  studyLevel            String   @default("")
+  intake                String   @default("")
+  partnerId             String   @default("")
+  partnerName           String   @default("")
+  partnerRef            String   @default("")
+  source                String   @default("partner")
+  status                String   @default("new")
+  assignedCounselorId   String   @default("")
+  assignedCounselorName String   @default("")
+  commissionExpected    Float    @default(0)
+  commissionReceived    Float    @default(0)
+  commissionStatus      String   @default("")
+  notes                 String   @default("")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([status])
+  @@index([studentEmail])
+  @@index([studentPhone])
+}
+
+model CommunicationThread {
+  id                 String                           @id @default(cuid())
+  threadCode         String                           @default("")
+  studentId          String                           @default("")
+  leadId             String                           @default("")
+  partnerId          String                           @default("")
+  applicationId      String                           @default("")
+  documentId         String                           @default("")
+  visaFileId         String                           @default("")
+  campaignId         String                           @default("")
+  taskId             String                           @default("")
+  b2bProviderId      String                           @default("")
+  channel            String                           @default("whatsapp")
+  subject            String                           @default("")
+  visibility         String                           @default("public_safe")
+  intent             String                           @default("general")
+  priority           String                           @default("normal")
+  assignedToId       String                           @default("")
+  assignedToName     String                           @default("")
+  status             String                           @default("open")
+  lastMessageAt      DateTime                         @default(now())
+  lastMessagePreview String                           @default("")
+  unreadCount        Int                              @default(0)
+  isAiHandled        Boolean                          @default(false)
+  needsHumanTakeover Boolean                          @default(false)
+  slaStatus          String                           @default("none")
+  slaDueAt           DateTime?
+  slaTriggeredAt     DateTime?
+  escalatedToId      String                           @default("")
+  escalatedToName    String                           @default("")
+  createdAt          DateTime                         @default(now())
+  updatedAt          DateTime                         @updatedAt
+  messages           CommunicationMessage[]
+  participants       CommunicationThreadParticipant[]
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([partnerId])
+  @@index([applicationId])
+  @@index([assignedToId])
+  @@index([status])
+}
+
+model CommunicationThreadParticipant {
+  id              String              @id @default(cuid())
+  threadId        String
+  participantId   String
+  participantType String              @default("user")
+  joinedAt        DateTime            @default(now())
+  thread          CommunicationThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, participantId])
+  @@index([threadId])
+  @@index([participantId])
+}
+
+model CommunicationMessage {
+  id                String              @id @default(cuid())
+  threadId          String
+  communicationCode String              @default("")
+  channel           String              @default("whatsapp")
+  direction         String              @default("inbound")
+  source            String              @default("portal")
+  senderUserId      String              @default("")
+  senderName        String              @default("")
+  senderContact     String              @default("")
+  recipientUserId   String              @default("")
+  recipientName     String              @default("")
+  recipientContact  String              @default("")
+  leadId            String              @default("")
+  studentId         String              @default("")
+  partnerId         String              @default("")
+  applicationId     String              @default("")
+  documentId        String              @default("")
+  visaFileId        String              @default("")
+  campaignId        String              @default("")
+  taskId            String              @default("")
+  b2bProviderId     String              @default("")
+  messageSubject    String              @default("")
+  messageBody       String              @default("")
+  messageHtml       String              @default("")
+  attachmentPath    String              @default("")
+  visibility        String              @default("public_safe")
+  intent            String              @default("general")
+  priority          String              @default("normal")
+  status            String              @default("unread")
+  deliveryStatus    String              @default("sent")
+  slaDueAt          DateTime?
+  readAt            DateTime?
+  repliedAt         DateTime?
+  createdBy         String              @default("")
+  assignedTo        String              @default("")
+  senderType        String              @default("student")
+  senderId          String              @default("")
+  content           String              @default("")
+  type              String              @default("text")
+  messageType       String              @default("text")
+  fileUrl           String              @default("")
+  fileName          String              @default("")
+  isAiGenerated     Boolean             @default(false)
+  aiApprovedBy      String              @default("")
+  isRead            Boolean             @default(false)
+  isInternal        Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+  thread            CommunicationThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@index([studentId])
+  @@index([leadId])
+  @@index([partnerId])
+  @@index([applicationId])
+  @@index([senderId])
+}
+
+model CommunicationTemplate {
+  id               String   @id @default(cuid())
+  templateCode     String   @default("")
+  templateName     String
+  channel          String   @default("whatsapp")
+  category         String   @default("general")
+  language         String   @default("english")
+  body             String   @default("")
+  variables        String   @default("[]")
+  visibility       String   @default("public_safe")
+  requiresApproval Boolean  @default(false)
+  status           String   @default("active")
+  createdBy        String   @default("")
+  approvedBy       String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model CommunicationLog {
+  id              String   @id @default(cuid())
+  communicationId String
+  eventType       String
+  oldStatus       String   @default("")
+  newStatus       String   @default("")
+  details         String   @default("{}")
+  createdBy       String   @default("")
+  createdAt       DateTime @default(now())
+}
+
+model CommunicationPreference {
+  id                   String    @id @default(cuid())
+  ownerType            String    @default("student")
+  ownerId              String
+  whatsappAllowed      Boolean   @default(true)
+  smsAllowed           Boolean   @default(true)
+  emailAllowed         Boolean   @default(true)
+  phoneAllowed         Boolean   @default(true)
+  marketingAllowed     Boolean   @default(true)
+  transactionalAllowed Boolean   @default(true)
+  optOutAt             DateTime?
+  consentSource        String    @default("web_form")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+model CommunicationSlaRule {
+  id                   String   @id @default(cuid())
+  ruleName             String
+  channel              String   @default("whatsapp")
+  intent               String   @default("general")
+  roleId               String   @default("")
+  firstResponseMinutes Int      @default(30)
+  escalation1Minutes   Int      @default(20)
+  escalation2Minutes   Int      @default(10)
+  officeHoursOnly      Boolean  @default(true)
+  status               String   @default("active")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model CommunicationEscalation {
+  id              String   @id @default(cuid())
+  communicationId String
+  fromUserId      String
+  toUserId        String
+  escalationLevel Int      @default(1)
+  reason          String   @default("")
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model OtpLog {
+  id           String    @id @default(cuid())
+  ownerType    String    @default("student")
+  ownerId      String
+  phone        String    @default("")
+  otpHash      String    @default("")
+  purpose      String    @default("verification")
+  status       String    @default("pending")
+  attemptCount Int       @default(0)
+  expiresAt    DateTime
+  verifiedAt   DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+model CallLog {
+  id              String    @id @default(cuid())
+  callCode        String    @default("")
+  leadId          String    @default("")
+  studentId       String    @default("")
+  partnerId       String    @default("")
+  applicationId   String    @default("")
+  phone           String    @default("")
+  callType        String    @default("inbound")
+  callOutcome     String    @default("connected")
+  durationSeconds Int       @default(0)
+  recordingUrl    String    @default("")
+  nextFollowupAt  DateTime?
+  note            String    @default("")
+  createdBy       String    @default("")
+  createdAt       DateTime  @default(now())
+}
+
+model Broadcast {
+  id                 String    @id @default(cuid())
+  broadcastCode      String    @default("")
+  title              String
+  channel            String    @default("whatsapp")
+  audienceType       String    @default("leads")
+  audienceFilterJson String    @default("{}")
+  messageBody        String    @default("")
+  approvalStatus     String    @default("pending")
+  scheduledAt        DateTime?
+  sentAt             DateTime?
+  createdBy          String    @default("")
+  approvedBy         String    @default("")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model BroadcastRecipient {
+  id               String    @id @default(cuid())
+  broadcastId      String
+  ownerType        String    @default("lead")
+  ownerId          String
+  recipientContact String    @default("")
+  status           String    @default("queued")
+  sentAt           DateTime?
+  failedReason     String    @default("")
+  createdAt        DateTime  @default(now())
+}
+
+model SocialInbox {
+  id                String   @id @default(cuid())
+  platform          String   @default("facebook")
+  externalMessageId String   @default("")
+  externalCommentId String   @default("")
+  pageId            String   @default("")
+  senderName        String   @default("")
+  senderProfileUrl  String   @default("")
+  messageText       String   @default("")
+  attachmentUrl     String   @default("")
+  intent            String   @default("course_inquiry")
+  leadId            String   @default("")
+  studentId         String   @default("")
+  assignedTo        String   @default("")
+  status            String   @default("new")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model AiReplyDraft {
+  id              String   @id @default(cuid())
+  communicationId String
+  promptContext   String   @default("")
+  draftBody       String   @default("")
+  riskFlags       String   @default("[]")
+  approvalStatus  String   @default("pending")
+  createdBy       String   @default("")
+  approvedBy      String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AiReplyLog {
+  id               String   @id @default(cuid())
+  threadId         String   @default("")
+  studentId        String   @default("")
+  originalMessage  String   @default("")
+  aiSuggestedReply String   @default("")
+  approved         Boolean  @default(false)
+  approvedById     String   @default("")
+  sentAsIs         Boolean  @default(false)
+  editedBeforeSend Boolean  @default(false)
+  finalContent     String   @default("")
+  createdAt        DateTime @default(now())
+}
+
+model InternalComment {
+  id            String   @id @default(cuid())
+  studentId     String
+  applicationId String   @default("")
+  documentId    String   @default("")
+  authorId      String   @default("")
+  authorName    String   @default("")
+  authorRole    String   @default("counselor")
+  commentType   String   @default("counselor_note")
+  content       String   @default("")
+  visibility    String   @default("internal_only")
+  editHistory   String   @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model StudentVisibleComment {
+  id            String   @id @default(cuid())
+  studentId     String
+  applicationId String   @default("")
+  documentId    String   @default("")
+  authorId      String   @default("")
+  authorName    String   @default("")
+  authorRole    String   @default("counselor")
+  content       String   @default("")
+  isAiGenerated Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model PartnerEmailUpdate {
+  id                   String   @id @default(cuid())
+  studentId            String   @default("")
+  applicationId        String   @default("")
+  partnerId            String   @default("")
+  partnerName          String   @default("")
+  subject              String   @default("")
+  body                 String   @default("")
+  parsedStatus         String   @default("")
+  studentFacingMessage String   @default("")
+  isStudentFacing      Boolean  @default(false)
+  internalNote         String   @default("")
+  matchedByEmail       String   @default("")
+  matchedByPassport    String   @default("")
+  matchedByAppId       String   @default("")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model CvDraft {
+  id                     String   @id @default(cuid())
+  studentId              String
+  applicationId          String   @default("")
+  content                String   @default("")
+  version                Int      @default(1)
+  status                 String   @default("draft")
+  reviewRequested        Boolean  @default(false)
+  reviewerId             String   @default("")
+  reviewerNote           String   @default("")
+  studentReviewRequested Boolean  @default(false)
+  studentReviewCompleted Boolean  @default(false)
+  exportedPdfUrl         String   @default("")
+  exportedDocxUrl        String   @default("")
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model AiGeneratedDocument {
+  id                String   @id @default(cuid())
+  studentId         String
+  documentType      String   @default("sop")
+  applicationId     String   @default("")
+  title             String   @default("")
+  content           String   @default("")
+  aiModel           String   @default("")
+  originalityScore  Float    @default(0)
+  plagiarismWarning String   @default("")
+  reviewChecklist   String   @default("[]")
+  status            String   @default("draft")
+  version           Int      @default(1)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model CounselorTask {
+  id          String    @id @default(cuid())
+  employeeId  String
+  studentId   String    @default("")
+  leadId      String    @default("")
+  title       String
+  description String    @default("")
+  type        String    @default("follow_up")
+  priority    String    @default("medium")
+  status      String    @default("pending")
+  dueDate     String    @default("")
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SlaEvent {
+  id              String    @id @default(cuid())
+  threadId        String    @default("")
+  studentId       String    @default("")
+  counselorId     String    @default("")
+  counselorName   String    @default("")
+  eventType       String    @default("warning")
+  channel         String    @default("whatsapp")
+  firstMessageAt  DateTime  @default(now())
+  responseAt      DateTime?
+  escalatedAt     DateTime?
+  escalatedToId   String    @default("")
+  escalatedToRole String    @default("")
+  resolvedAt      DateTime?
+  resolution      String    @default("")
+  createdAt       DateTime  @default(now())
+}
+
+model DocumentAudit {
+  id             String   @id @default(cuid())
+  documentId     String
+  studentId      String   @default("")
+  actorId        String   @default("")
+  actorName      String   @default("")
+  actorRole      String   @default("")
+  action         String
+  previousStatus String   @default("")
+  newStatus      String   @default("")
+  note           String   @default("")
+  createdAt      DateTime @default(now())
+}
+
+model WeeklyReport {
+  id          String   @id @default(cuid())
+  employeeId  String
+  reportType  String   @default("counselor")
+  periodStart String   @default("")
+  periodEnd   String   @default("")
+  data        String   @default("{}")
+  generatedAt DateTime @default(now())
+}
+
+model SensitiveDataRevealLog {
+  id           String   @id @default(cuid())
+  employeeId   String
+  dataType     String   @default("salary")
+  studentId    String   @default("")
+  revealMethod String   @default("pin")
+  ipAddress    String   @default("")
+  createdAt    DateTime @default(now())
+}
+
+model PortalRole {
+  id          String                 @id @default(cuid())
+  name        String                 @unique
+  label       String
+  description String                 @default("")
+  isSystem    Boolean                @default(false)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  permissions PortalRolePermission[]
+  userRoles   PortalUserRole[]
+}
+
+model PortalPermission {
+  id              String                 @id @default(cuid())
+  module          String
+  feature         String
+  action          String
+  description     String                 @default("")
+  createdAt       DateTime               @default(now())
+  rolePermissions PortalRolePermission[]
+
+  @@unique([module, feature, action])
+}
+
+model PortalRolePermission {
+  id           String           @id @default(cuid())
+  roleId       String
+  permissionId String
+  granted      Boolean          @default(true)
+  assignedAt   DateTime         @default(now())
+  assignedBy   String           @default("")
+  permission   PortalPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         PortalRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+model PortalUserRole {
+  id         String     @id @default(cuid())
+  userId     String
+  roleId     String
+  assignedAt DateTime   @default(now())
+  assignedBy String     @default("")
+  role       PortalRole @relation(fields: [roleId], references: [id])
+  user       PortalUser @relation(fields: [userId], references: [id])
+
+  @@unique([userId, roleId])
+  @@index([roleId], map: "PortalUserRole_roleId_fkey")
+}
+
+model PortalUser {
+  id                 String                @id @default(cuid())
+  email              String                @unique
+  phone              String                @default("")
+  passwordHash       String                @default("")
+  name               String                @default("")
+  avatar             String                @default("")
+  userType           String                @default("STUDENT")
+  status             String                @default("active")
+  firstLoginRequired Boolean               @default(false)
+  emailVerified      Boolean               @default(false)
+  phoneVerified      Boolean               @default(false)
+  lastLoginAt        DateTime?
+  lastLoginIp        String                @default("")
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  employeeProfile    EmployeeProfile?
+  loginAttempts      LoginAttempt[]
+  partnerProfile     PartnerProfile?
+  sessions           PortalSession[]
+  studentProfile     PortalStudentProfile?
+  roles              PortalUserRole[]
+}
+
+model PortalSession {
+  id         String     @id @default(cuid())
+  userId     String
+  token      String     @unique
+  deviceName String     @default("")
+  ipAddress  String     @default("")
+  userAgent  String     @default("")
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime   @default(now())
+  user       PortalUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "PortalSession_userId_fkey")
+}
+
+model LoginAttempt {
+  id            String      @id @default(cuid())
+  userId        String?
+  email         String      @default("")
+  ipAddress     String      @default("")
+  userAgent     String      @default("")
+  success       Boolean     @default(false)
+  failureReason String      @default("")
+  createdAt     DateTime    @default(now())
+  user          PortalUser? @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "LoginAttempt_userId_fkey")
+}
+
+model OtpCode {
+  id         String    @id @default(cuid())
+  userId     String?
+  phone      String    @default("")
+  email      String    @default("")
+  code       String    @default("")
+  codeHash   String    @default("")
+  used       Boolean   @default(false)
+  type       String    @default("login")
+  purpose    String    @default("login")
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  attempts   Int       @default(0)
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@index([email])
+  @@index([phone])
+  @@index([code])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @default("")
+  tokenHash String    @unique
+  used      Boolean   @default(false)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+model PortalAuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String   @default("")
+  action      String
+  entityType  String   @default("")
+  entityId    String   @default("")
+  ipAddress   String   @default("")
+  userAgent   String   @default("")
+  metadata    String   @default("{}")
+  createdAt   DateTime @default(now())
+
+  @@index([actorUserId])
+  @@index([action])
+  @@index([entityType, entityId])
+}
+
+model PortalStudentProfile {
+  id                   String                     @id @default(cuid())
+  userId               String                     @unique
+  studentId            String                     @unique
+  fullName             String                     @default("")
+  guardianName         String                     @default("")
+  guardianPhone        String                     @default("")
+  dateOfBirth          String                     @default("")
+  gender               String                     @default("")
+  city                 String                     @default("")
+  address              String                     @default("")
+  passportStatus       String                     @default("not_uploaded")
+  passportNumber       String                     @default("")
+  passportExpiry       String                     @default("")
+  preferredCountry     String                     @default("")
+  preferredIntake      String                     @default("")
+  preferredSubject     String                     @default("")
+  preferredLevel       String                     @default("")
+  budget               String                     @default("")
+  englishTestType      String                     @default("")
+  englishScore         Float                      @default(0)
+  studyGap             String                     @default("")
+  sponsorRelation      String                     @default("")
+  currentEducation     String                     @default("")
+  sscResult            String                     @default("")
+  hscResult            String                     @default("")
+  bachelorResult       String                     @default("")
+  masterResult         String                     @default("")
+  workExperience       String                     @default("")
+  profileCompletion    Int                        @default(0)
+  journeyStage         String                     @default("lead_created")
+  counselorId          String                     @default("")
+  counselorName        String                     @default("")
+  partnerId            String                     @default("")
+  partnerName          String                     @default("")
+  whatsappVerified     Boolean                    @default(false)
+  givenName            String                     @default("")
+  familyName           String                     @default("")
+  nationality          String                     @default("Bangladeshi")
+  maritalStatus        String                     @default("")
+  presentAddress       String                     @default("")
+  permanentAddress     String                     @default("")
+  altEmail             String                     @default("")
+  altPhone             String                     @default("")
+  emergencyName        String                     @default("")
+  emergencyEmail       String                     @default("")
+  emergencyPhone       String                     @default("")
+  emergencyRelation    String                     @default("")
+  fundingStatus        String                     @default("")
+  sponsorType          String                     @default("")
+  fundSource           String                     @default("")
+  applicantStatus      String                     @default("")
+  noOfDependents       Int                        @default(0)
+  passportIssuePlace   String                     @default("")
+  passportIssueDate    String                     @default("")
+  passportIssueCountry String                     @default("")
+  cityOfBirth          String                     @default("")
+  countryOfBirth       String                     @default("")
+  hasPassport          String                     @default("no")
+  englishTestStatus    String                     @default("no")
+  englishTestDate      String                     @default("")
+  englishExpDate       String                     @default("")
+  englishCertId        String                     @default("")
+  englishListening     Float                      @default(0)
+  englishSpeaking      Float                      @default(0)
+  englishWriting       Float                      @default(0)
+  englishReading       Float                      @default(0)
+  hasWorkExp           String                     @default("no")
+  hasReferral          String                     @default("no")
+  hasVisa              String                     @default("no")
+  hasVisaRefusal       String                     @default("no")
+  hasMedical           String                     @default("no")
+  hasCriminal          String                     @default("no")
+  instituteType        String                     @default("")
+  instituteName        String                     @default("")
+  programTitle         String                     @default("")
+  enrollmentChoice     String                     @default("")
+  applicationPathway   String                     @default("")
+  pathwayProvider      String                     @default("")
+  visaType             String                     @default("")
+  leadReference        String                     @default("")
+  welcomeEmailSent     Boolean                    @default(false)
+  eligibilityScore     Int                        @default(0)
+  visaReadiness        Int                        @default(0)
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+  applications         PortalStudentApplication[]
+  documents            PortalStudentDocument[]
+  user                 PortalUser                 @relation(fields: [userId], references: [id])
+  timeline             PortalTimelineEvent[]
+  educations           StudentEducationRecord[]
+  englishTests         StudentEnglishTestRecord[]
+  referrals            StudentReferral[]
+  visaRefusals         StudentVisaRefusal[]
+  workExperiences      StudentWorkExpRecord[]
+}
+
+model EmployeeProfile {
+  id               String                    @id @default(cuid())
+  userId           String                    @unique
+  employeeId       String                    @unique
+  department       String                    @default("")
+  designation      String                    @default("")
+  branch           String                    @default("")
+  joinDate         String                    @default("")
+  emergencyContact String                    @default("")
+  salary           String                    @default("")
+  bankName         String                    @default("")
+  bankAccount      String                    @default("")
+  bankRouting      String                    @default("")
+  bloodGroup       String                    @default("")
+  nidNumber        String                    @default("")
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  activationTokens EmployeeActivationToken[]
+  user             PortalUser                @relation(fields: [userId], references: [id])
+}
+
+model EmployeeActivationToken {
+  id         String          @id @default(cuid())
+  employeeId String
+  tokenHash  String
+  expiresAt  DateTime
+  status     String          @default("active")
+  usedAt     DateTime?
+  createdAt  DateTime        @default(now())
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [userId])
+
+  @@index([tokenHash])
+  @@index([employeeId])
+}
+
+model PartnerProfile {
+  id                String     @id @default(cuid())
+  userId            String     @unique
+  partnerId         String     @unique
+  companyName       String     @default("")
+  contactPerson     String     @default("")
+  businessType      String     @default("")
+  city              String     @default("")
+  address           String     @default("")
+  approvalStatus    String     @default("pending")
+  totalLeads        Int        @default(0)
+  activeStudents    Int        @default(0)
+  commissionPending Float      @default(0)
+  commissionPaid    Float      @default(0)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  user              PortalUser @relation(fields: [userId], references: [id])
+}
+
+model PortalStudentApplication {
+  id               String               @id @default(cuid())
+  studentProfileId String
+  university       String               @default("")
+  course           String               @default("")
+  intake           String               @default("")
+  country          String               @default("")
+  stage            String               @default("research")
+  nextAction       String               @default("")
+  deadline         String               @default("")
+  counselorNote    String               @default("")
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  studentProfile   PortalStudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId], map: "PortalStudentApplication_studentProfileId_fkey")
+}
+
+model PortalStudentDocument {
+  id               String               @id @default(cuid())
+  studentProfileId String
+  name             String
+  category         String               @default("other")
+  fileName         String               @default("")
+  fileSize         Int                  @default(0)
+  status           String               @default("pending")
+  rejectionReason  String               @default("")
+  uploadedAt       String               @default("")
+  reviewedBy       String               @default("")
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  studentProfile   PortalStudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId], map: "PortalStudentDocument_studentProfileId_fkey")
+}
+
+model PortalTimelineEvent {
+  id               String               @id @default(cuid())
+  studentProfileId String
+  channel          String               @default("portal")
+  messageType      String               @default("info")
+  content          String               @default("")
+  senderName       String               @default("")
+  senderType       String               @default("system")
+  visibility       String               @default("student_visible")
+  aiGenerated      Boolean              @default(false)
+  createdAt        DateTime             @default(now())
+  studentProfile   PortalStudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId], map: "PortalTimelineEvent_studentProfileId_fkey")
+}
+
+model StudentEducationRecord {
+  id               String               @id @default(cuid())
+  studentProfileId String
+  academicLevel    String               @default("")
+  groupSubject     String               @default("")
+  institution      String               @default("")
+  resultType       String               @default("")
+  resultScore      String               @default("")
+  duration         String               @default("")
+  startYear        String               @default("")
+  startMonth       String               @default("")
+  endYear          String               @default("")
+  endMonth         String               @default("")
+  countryOfStudy   String               @default("")
+  cityOfStudy      String               @default("")
+  boardName        String               @default("")
+  primaryLanguage  String               @default("")
+  studyGap         String               @default("no")
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  studentProfile   PortalStudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId], map: "StudentEducationRecord_studentProfileId_fkey")
+}
+
+model StudentWorkExpRecord {
+  id               String               @id @default(cuid())
+  studentProfileId String
+  companyName      String               @default("")
+  designation      String               @default("")
+  startDate        String               @default("")
+  endDate          String               @default("")
+  currentlyWorking Boolean              @default(false)
+  salaryMode       String               @default("")
+  jobRole          String               @default("")
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  studentProfile   PortalStudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId], map: "StudentWorkExpRecord_studentProfileId_fkey")
+}
+
+model StudentEnglishTestRecord {
+  id               String               @id @default(cuid())
+  studentProfileId String
+  testName         String               @default("")
+  testDate         String               @default("")
+  expirationDate   String               @default("")
+  certId           String               @default("")
+  overallScore     Float                @default(0)
+  listening        Float                @default(0)
+  speaking         Float                @default(0)
+  writing          Float                @default(0)
+  reading          Float                @default(0)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  studentProfile   PortalStudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId], map: "StudentEnglishTestRecord_studentProfileId_fkey")
+}
+
+model StudentVisaRefusal {
+  id               String               @id @default(cuid())
+  studentProfileId String
+  appliedCountry   String               @default("")
+  visaType         String               @default("")
+  rejectionDate    String               @default("")
+  reason           String               @default("")
+  createdAt        DateTime             @default(now())
+  studentProfile   PortalStudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId], map: "StudentVisaRefusal_studentProfileId_fkey")
+}
+
+model StudentReferral {
+  id                 String                @id @default(cuid())
+  studentProfileId   String?
+  referrerId         String                @default("")
+  referralCode       String                @default("")
+  referredName       String                @default("")
+  referredEmail      String                @default("")
+  referredPhone      String                @default("")
+  destinationCountry String                @default("")
+  studyLevel         String                @default("")
+  intake             String                @default("")
+  reward             Float                 @default(0)
+  status             String                @default("pending")
+  rewardAmount       Float                 @default(0)
+  rewardStatus       String                @default("")
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  studentProfile     PortalStudentProfile? @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId])
+  @@index([referrerId])
+  @@index([referredEmail])
+}
+
+model PortalNotification {
+  id               String   @id @default(cuid())
+  userId           String   @default("")
+  studentProfileId String   @default("")
+  title            String
+  message          String   @default("")
+  type             String   @default("info")
+  isRead           Boolean  @default(false)
+  actionUrl        String   @default("")
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([studentProfileId])
+  @@index([isRead])
+}
+
+model Country {
+  id               String                    @id @default(cuid())
+  name             String
+  slug             String                    @unique
+  code             String                    @default("")
+  countryCode      String                    @default("")
+  capital          String                    @default("")
+  currency         String                    @default("")
+  flag             String                    @default("")
+  heroTitle        String                    @default("")
+  heroSubtitle     String                    @default("")
+  overview         String                    @default("")
+  whyStudySummary  String                    @default("")
+  visaType         String                    @default("")
+  popularIntakes   String                    @default("[]")
+  studyLevels      String                    @default("[]")
+  status           String                    @default("active")
+  sortOrder        Int                       @default(0)
+  accentColor      String                    @default("#0057B8")
+  popularCities    String                    @default("[]")
+  universityCount  Int                       @default(0)
+  courseCount      Int                       @default(0)
+  scholarshipCount Int                       @default(0)
+  tuitionRange     String                    @default("")
+  livingCost       String                    @default("")
+  workRights       String                    @default("")
+  description      String                    @default("")
+  heroImage        String                    @default("")
+  heroCity         String                    @default("")
+  heroIntake       String                    @default("")
+  seoTitle         String                    @default("")
+  seoDescription   String                    @default("")
+  canonicalUrl     String                    @default("")
+  ogTitle          String                    @default("")
+  ogDescription    String                    @default("")
+  lastVerifiedAt   DateTime?
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  cities           CountryCity[]
+  pathways         CountryEducationPathway[]
+  englishTests     CountryEnglishTest[]
+  entryReqs        CountryEntryRequirement[]
+  faqs             CountryFaq[]
+  quickFacts       CountryQuickFact[]
+  sources          CountrySource[]
+  reasons          CountryStudyReason[]
+  visaSteps        CountryVisaStep[]
+  workRightRules   CountryWorkRight[]
+}
+
+model CountryQuickFact {
+  id             String    @id @default(cuid())
+  countryId      String
+  factKey        String
+  factLabel      String
+  factValue      String
+  sourceUrl      String    @default("")
+  lastVerifiedAt DateTime?
+  status         String    @default("active")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  country        Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryQuickFact_countryId_fkey")
+}
+
+model CountryCity {
+  id                    String    @id @default(cuid())
+  countryId             String
+  cityName              String
+  slug                  String    @default("")
+  costLevel             String    @default("Medium")
+  studentVibe           String    @default("")
+  popularUniversities   String    @default("[]")
+  transportSummary      String    @default("")
+  jobOpportunitySummary String    @default("")
+  livingCostEstimate    String    @default("")
+  sourceUrl             String    @default("")
+  lastVerifiedAt        DateTime?
+  status                String    @default("active")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  country               Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryCity_countryId_fkey")
+}
+
+model CountryEducationPathway {
+  id          String   @id @default(cuid())
+  countryId   String
+  fromLevel   String
+  toPathway   String
+  description String   @default("")
+  sortOrder   Int      @default(0)
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryEducationPathway_countryId_fkey")
+}
+
+model CountryStudyReason {
+  id          String   @id @default(cuid())
+  countryId   String
+  icon        String   @default("")
+  heading     String
+  description String
+  ctaLabel    String   @default("Explore Courses")
+  ctaUrl      String   @default("")
+  sortOrder   Int      @default(0)
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryStudyReason_countryId_fkey")
+}
+
+model CountryEntryRequirement {
+  id                  String    @id @default(cuid())
+  countryId           String
+  studyLevel          String
+  academicRequirement String
+  englishRequirement  String
+  documentsRequired   String    @default("[]")
+  remarks             String    @default("")
+  sourceUrl           String    @default("")
+  lastVerifiedAt      DateTime?
+  status              String    @default("active")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  country             Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryEntryRequirement_countryId_fkey")
+}
+
+model CountryEnglishTest {
+  id              String    @id @default(cuid())
+  countryId       String
+  testName        String
+  acceptedSummary String
+  minimumNote     String    @default("")
+  sourceUrl       String    @default("")
+  lastVerifiedAt  DateTime?
+  status          String    @default("active")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  country         Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryEnglishTest_countryId_fkey")
+}
+
+model CountryVisaStep {
+  id              String    @id @default(cuid())
+  countryId       String
+  stepNumber      Int
+  stepTitle       String
+  stepDescription String
+  sourceUrl       String    @default("")
+  lastVerifiedAt  DateTime?
+  status          String    @default("active")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  country         Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryVisaStep_countryId_fkey")
+}
+
+model CountryWorkRight {
+  id                    String    @id @default(cuid())
+  countryId             String
+  termTimeRule          String
+  vacationRule          String
+  courseLevelCondition  String
+  postStudyRouteSummary String
+  sourceUrl             String    @default("")
+  lastVerifiedAt        DateTime?
+  status                String    @default("active")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  country               Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryWorkRight_countryId_fkey")
+}
+
+model CountryFaq {
+  id        String   @id @default(cuid())
+  countryId String
+  question  String
+  answer    String
+  sortOrder Int      @default(0)
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountryFaq_countryId_fkey")
+}
+
+model CountrySource {
+  id             String    @id @default(cuid())
+  countryId      String
+  dataSection    String
+  sourceName     String
+  sourceUrl      String
+  verifiedBy     String    @default("ALO Compliance Team")
+  lastVerifiedAt DateTime?
+  notes          String    @default("")
+  status         String    @default("active")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  country        Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([countryId], map: "CountrySource_countryId_fkey")
+}
+
+model WebsiteEnglishTest {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  shortDescription String   @default("")
+  bestFor          String   @default("")
+  acceptedDest     String   @default("")
+  resultTime       String   @default("")
+  scoreRange       String   @default("")
+  format           String   @default("")
+  status           String   @default("active")
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model HomeService {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  icon        String   @default("")
+  description String   @default("")
+  ctaLabel    String   @default("")
+  ctaUrl      String   @default("")
+  sortOrder   Int      @default(0)
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SuccessStory {
+  id            String   @id @default(cuid())
+  studentName   String
+  homeDistrict  String   @default("")
+  countryId     String   @default("")
+  university    String   @default("")
+  course        String   @default("")
+  outcome       String   @default("")
+  testimonial   String?  @db.Text
+  photo         String   @default("")
+  consentStatus String   @default("not_verified")
+  status        String   @default("draft")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  specialty String   @default("")
+  bio       String?  @db.Text
+  photo     String   @default("")
+  sortOrder Int      @default(0)
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HomepageFaq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String?  @db.Text
+  sortOrder Int      @default(0)
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LeadForm {
+  id                  String   @id @default(cuid())
+  name                String   @default("")
+  phone               String   @default("")
+  email               String   @default("")
+  preferredCountry    String   @default("")
+  preferredLevel      String   @default("")
+  preferredSubject    String   @default("")
+  intake              String   @default("")
+  budget              String   @default("")
+  englishTest         String   @default("")
+  englishScore        String   @default("")
+  message             String   @default("")
+  source              String   @default("homepage")
+  sourceSection       String   @default("")
+  status              String   @default("new")
+  assignedCounselorId String   @default("")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model SearchLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  sessionId  String?
+  countryId  String?
+  studyLevel String   @default("")
+  subject    String   @default("")
+  intake     String   @default("")
+  budget     String   @default("")
+  source     String   @default("homepage")
+  createdAt  DateTime @default(now())
+}
+
+model PartnerPackage {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  slug           String   @unique
+  description    String   @default("")
+  price          Float    @default(0)
+  billingCycle   String   @default("monthly")
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  maxUsers       Int      @default(1)
+  maxImages      Int      @default(0)
+  maxVideos      Int      @default(0)
+  videoMaxLength Int      @default(0)
+  maxLeads       Int      @default(0)
+  features       String   @default("[]")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model PartnerQuota {
+  id             String   @id @default(cuid())
+  partnerId      String   @unique
+  packageId      String   @default("")
+  maxUsers       Int      @default(1)
+  maxImages      Int      @default(0)
+  maxVideos      Int      @default(0)
+  videoMaxLength Int      @default(0)
+  maxLeads       Int      @default(0)
+  usedUsers      Int      @default(0)
+  usedImages     Int      @default(0)
+  usedVideos     Int      @default(0)
+  usedLeads      Int      @default(0)
+  resetAt        DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model EmployeeEducation {
+  id              String   @id @default(cuid())
+  employeeId      String
+  degree          String   @default("")
+  institution     String   @default("")
+  passingYear     String   @default("")
+  result          String   @default("")
+  certificatePath String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model EmployeeEmergencyContact {
+  id         String   @id @default(cuid())
+  employeeId String
+  name       String   @default("")
+  relation   String   @default("")
+  phone      String   @default("")
+  address    String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model EmployeeDocument {
+  id           String   @id @default(cuid())
+  employeeId   String
+  documentType String   @default("")
+  filePath     String   @default("")
+  fileName     String   @default("")
+  status       String   @default("pending")
+  reviewerId   String   @default("")
+  reviewNote   String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model PartnerPackageAssignment {
+  id         String    @id @default(cuid())
+  partnerId  String
+  packageId  String
+  assignedBy String    @default("")
+  startsAt   DateTime  @default(now())
+  expiresAt  DateTime?
+  status     String    @default("active")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model FeatureAccessRule {
+  id               String   @id @default(cuid())
+  ownerType        String   @default("partner")
+  ownerId          String
+  featureKey       String
+  isEnabled        Boolean  @default(false)
+  limitValue       Int      @default(0)
+  requiresApproval Boolean  @default(false)
+  createdBy        String   @default("")
+  updatedBy        String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ExtraQuotaRequest {
+  id             String   @id @default(cuid())
+  partnerId      String
+  requestType    String   @default("user_seats")
+  currentLimit   Int      @default(0)
+  requestedLimit Int      @default(0)
+  reason         String   @default("")
+  status         String   @default("pending")
+  reviewedBy     String   @default("")
+  reviewNote     String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model PartnerUserSeatRequest {
+  id                  String   @id @default(cuid())
+  partnerId           String
+  requestedBy         String   @default("")
+  currentLimit        Int      @default(3)
+  requestedExtraSeats Int      @default(1)
+  reason              String   @default("")
+  status              String   @default("pending")
+  reviewedBy          String   @default("")
+  reviewNote          String   @default("")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model PartnerMarketingQuota {
+  id                        String   @id @default(cuid())
+  partnerId                 String   @unique
+  monthlyImageLimit         Int      @default(15)
+  monthlyVideoLimit         Int      @default(10)
+  videoDurationLimitSeconds Int      @default(30)
+  autoPublishAllowed        Boolean  @default(false)
+  requiresAloApproval       Boolean  @default(true)
+  status                    String   @default("active")
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}
+
+model PartnerMarketingUsage {
+  id             String   @id @default(cuid())
+  partnerId      String
+  monthYear      String   @default("")
+  imagesUsed     Int      @default(0)
+  videosUsed     Int      @default(0)
+  ideasSubmitted Int      @default(0)
+  postsScheduled Int      @default(0)
+  postsPublished Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model PartnerMarketingRequest {
+  id                  String    @id @default(cuid())
+  partnerId           String
+  requestedBy         String    @default("")
+  idea                String    @default("")
+  countryId           String    @default("")
+  universityId        String    @default("")
+  courseId            String    @default("")
+  intake              String    @default("")
+  platform            String    @default("facebook")
+  language            String    @default("english")
+  targetAudience      String    @default("")
+  ctaText             String    @default("")
+  preferredStyle      String    @default("professional")
+  caption             String    @default("")
+  hashtags            String    @default("")
+  imagePrompt         String    @default("")
+  videoPrompt         String    @default("")
+  videoScript         String    @default("")
+  assetId             String    @default("")
+  generatedContent    String    @default("")
+  generatedImageUrl   String    @default("")
+  generatedVideoUrl   String    @default("")
+  videoDuration       Int       @default(0)
+  status              String    @default("idea_submitted")
+  approvalStatus      String    @default("pending")
+  requiresAloApproval Boolean   @default(true)
+  autoPublishAllowed  Boolean   @default(false)
+  publishedUrl        String    @default("")
+  publishedAt         DateTime?
+  scheduledAt         DateTime?
+  approvedById        String    @default("")
+  approvedAt          DateTime?
+  rejectionReason     String    @default("")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model StudentBenefitEntitlement {
+  id            String   @id @default(cuid())
+  studentId     String
+  partnerId     String   @default("")
+  applicationId String   @default("")
+  benefitType   String   @default("")
+  limitCount    Int      @default(1)
+  usedCount     Int      @default(0)
+  status        String   @default("active")
+  createdBy     String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model StudentMockTestVoucher {
+  id            String    @id @default(cuid())
+  voucherCode   String    @unique
+  studentId     String
+  partnerId     String    @default("")
+  applicationId String    @default("")
+  testType      String    @default("ENGLISH_MOCK_TEST")
+  usageLimit    Int       @default(1)
+  usedCount     Int       @default(0)
+  expiresAt     DateTime?
+  status        String    @default("available")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model HomeHeroSlide {
+  id                   String    @id @default(cuid())
+  countryId            String    @default("")
+  countryCode          String    @default("")
+  headline             String    @default("")
+  subtitle             String    @default("")
+  imageUrl             String    @default("")
+  imageAlt             String    @default("")
+  accentColor          String    @default("#0057B8")
+  popularCity          String    @default("")
+  popularIntake        String    @default("")
+  universityCountLabel String    @default("")
+  courseCountLabel     String    @default("")
+  scholarshipLabel     String    @default("")
+  ctaPrimaryLabel      String    @default("")
+  ctaPrimaryUrl        String    @default("")
+  ctaSecondaryLabel    String    @default("")
+  ctaSecondaryUrl      String    @default("")
+  sourceUrl            String    @default("")
+  licenseNote          String    @default("")
+  sortOrder            Int       @default(0)
+  status               String    @default("active")
+  lastVerifiedAt       DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+model HomeSection {
+  id         String   @id @default(cuid())
+  sectionKey String   @unique
+  title      String   @default("")
+  subtitle   String   @default("")
+  content    String   @default("")
+  sortOrder  Int      @default(0)
+  status     String   @default("active")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model PermissionPackage {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String   @default("")
+  permissions String   @default("[]")
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SocialIntegration {
+  id                String          @id @default(cuid())
+  provider          String
+  name              String
+  status            String          @default("disconnected")
+  connectedAccount  String?
+  businessAccountId String?
+  accessToken       String?
+  refreshToken      String?
+  tokenExpiresAt    DateTime?
+  webhookStatus     String          @default("inactive")
+  webhookSecret     String?
+  apiVersion        String          @default("v19.0")
+  healthStatus      String          @default("healthy")
+  lastSyncAt        DateTime?
+  metadata          String          @default("{}")
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  accounts          SocialAccount[]
+}
+
+model SocialAccount {
+  id            String            @id @default(cuid())
+  integrationId String
+  provider      String
+  assetId       String
+  assetName     String
+  assetType     String
+  phoneNumber   String?
+  isPrimary     Boolean           @default(false)
+  status        String            @default("active")
+  metadata      String            @default("{}")
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  integration   SocialIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([integrationId], map: "SocialAccount_integrationId_fkey")
+}
+
+model UccConversation {
+  id                 String          @id @default(cuid())
+  channel            String
+  channelAccountId   String?
+  externalId         String?
+  participantName    String
+  participantPhone   String?
+  participantEmail   String?
+  studentId          String?
+  leadId             String?
+  assignedToUserId   String?
+  assignedRole       String?
+  destinationCountry String?
+  status             String          @default("open")
+  priority           String          @default("normal")
+  lastMessageText    String?
+  lastMessageAt      DateTime        @default(now())
+  unreadCount        Int             @default(0)
+  tags               String          @default("[]")
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  attachments        UccAttachment[]
+  messages           UccMessage[]
+}
+
+model UccMessage {
+  id             String          @id @default(cuid())
+  conversationId String
+  direction      String
+  senderId       String?
+  senderName     String
+  senderRole     String          @default("user")
+  channel        String
+  content        String
+  messageType    String          @default("text")
+  status         String          @default("sent")
+  aiGenerated    Boolean         @default(false)
+  aiApproved     Boolean         @default(true)
+  metadata       String          @default("{}")
+  createdAt      DateTime        @default(now())
+  attachments    UccAttachment[]
+  conversation   UccConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId], map: "UccMessage_conversationId_fkey")
+}
+
+model UccAttachment {
+  id               String          @id @default(cuid())
+  conversationId   String
+  messageId        String?
+  fileName         String
+  fileType         String
+  mimeType         String
+  fileSize         Int
+  fileUrl          String
+  detectedDocType  String?
+  studentId        String?
+  applicationId    String?
+  ocrExtractedData String          @default("{}")
+  createdAt        DateTime        @default(now())
+  conversation     UccConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  message          UccMessage?     @relation(fields: [messageId], references: [id])
+
+  @@index([conversationId], map: "UccAttachment_conversationId_fkey")
+  @@index([messageId], map: "UccAttachment_messageId_fkey")
+}
+
+model UccRoutingRule {
+  id                 String   @id @default(cuid())
+  name               String
+  channel            String?
+  destinationCountry String?
+  officeId           String?
+  assignedUserId     String?
+  assignedRole       String?
+  priority           Int      @default(0)
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model UccOfficeHours {
+  id               String   @id @default(cuid())
+  dayOfWeek        Int
+  startTime        String   @default("09:00")
+  endTime          String   @default("18:00")
+  isWorkDay        Boolean  @default(true)
+  afterHoursAiAuto Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model UccWebhookEvent {
+  id           String   @id @default(cuid())
+  provider     String
+  eventId      String?
+  eventType    String
+  payload      String
+  status       String   @default("processed")
+  errorMessage String?
+  createdAt    DateTime @default(now())
+}
+
+model EmployeeCommunicationProfile {
+  id                    String    @id @default(cuid())
+  employeeId            String    @unique
+  employeeName          String
+  officialEmail         String    @default("")
+  officialPhone         String    @default("")
+  whatsappAccess        Boolean   @default(false)
+  whatsappNumberId      String    @default("")
+  facebookAccess        Boolean   @default(false)
+  instagramAccess       Boolean   @default(false)
+  emailAccess           Boolean   @default(false)
+  assignedPages         String    @default("[]")
+  assignedDepartments   String    @default("[]")
+  assignedBranch        String    @default("")
+  communicationSig      String    @default("")
+  channelPermissions    String    @default("{}")
+  workingHoursStart     String    @default("10:00")
+  workingHoursEnd       String    @default("18:00")
+  onLeave               Boolean   @default(false)
+  supervisorId          String    @default("")
+  languageCapability    String    @default("[\"en\",\"bn\"]")
+  countrySpecialization String    @default("[]")
+  escalationLevel       Int       @default(1)
+  status                String    @default("active")
+  offboardedAt          DateTime?
+  offboardedById        String    @default("")
+  offboardingNote       String    @default("")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model OcrJob {
+  id              String               @id @default(cuid())
+  documentId      String
+  documentType    String               @default("unknown")
+  fileUrl         String
+  fileName        String
+  mimeType        String
+  fileHash        String               @default("")
+  ocrEngine       String               @default("tesseract")
+  modelVersion    String               @default("v1")
+  status          String               @default("queued")
+  confidenceScore Float                @default(0)
+  rawText         String               @default("")
+  errorMessage    String               @default("")
+  humanReviewedBy String?
+  humanReviewedAt DateTime?
+  studentId       String?
+  conversationId  String?
+  attachmentId    String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  suggestions     FormFillSuggestion[]
+  fields          OcrFieldExtraction[]
+}
+
+model OcrFieldExtraction {
+  id             String    @id @default(cuid())
+  ocrJobId       String
+  fieldKey       String
+  fieldLabel     String
+  extractedValue String
+  confidence     Float     @default(0)
+  pageNumber     Int       @default(1)
+  sourceText     String    @default("")
+  verified       Boolean   @default(false)
+  verifiedBy     String    @default("")
+  verifiedAt     DateTime?
+  correctedValue String    @default("")
+  createdAt      DateTime  @default(now())
+  ocrJob         OcrJob    @relation(fields: [ocrJobId], references: [id], onDelete: Cascade)
+
+  @@index([ocrJobId], map: "OcrFieldExtraction_ocrJobId_fkey")
+}
+
+model FormFillSuggestion {
+  id              String    @id @default(cuid())
+  ocrJobId        String
+  targetEntity    String
+  targetEntityId  String
+  formField       String
+  formFieldLabel  String
+  suggestedValue  String
+  currentValue    String    @default("")
+  confidence      Float     @default(0)
+  sourceDocument  String    @default("")
+  sourceField     String    @default("")
+  status          String    @default("pending")
+  approvedBy      String?
+  approvedAt      DateTime?
+  rejectedBy      String?
+  rejectedAt      DateTime?
+  rejectionReason String    @default("")
+  isHighRisk      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  ocrJob          OcrJob    @relation(fields: [ocrJobId], references: [id], onDelete: Cascade)
+
+  @@index([ocrJobId], map: "FormFillSuggestion_ocrJobId_fkey")
+}
+
+model ApprovalRequest {
+  id              String    @id @default(cuid())
+  type            String
+  title           String
+  description     String    @default("")
+  requestedById   String
+  requestedByName String
+  assignedToId    String?
+  assignedToName  String    @default("")
+  entityType      String    @default("")
+  entityId        String    @default("")
+  payload         String    @default("{}")
+  status          String    @default("pending")
+  priority        String    @default("normal")
+  deadline        DateTime?
+  approvedById    String?
+  approvedByName  String    @default("")
+  approvedAt      DateTime?
+  rejectedById    String?
+  rejectedByName  String    @default("")
+  rejectedAt      DateTime?
+  rejectionReason String    @default("")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model IntegrationAuditLog {
+  id            String   @id @default(cuid())
+  actorId       String
+  actorName     String
+  actorRole     String   @default("")
+  action        String
+  resourceType  String   @default("")
+  resourceId    String   @default("")
+  provider      String   @default("")
+  channel       String   @default("")
+  previousState String   @default("{}")
+  newState      String   @default("{}")
+  metadata      String   @default("{}")
+  ipAddress     String   @default("")
+  userAgent     String   @default("")
+  requestId     String   @default("")
+  approvalRef   String   @default("")
+  result        String   @default("success")
+  errorMessage  String   @default("")
+  createdAt     DateTime @default(now())
+}
+
+model CommunicationConsent {
+  id             String    @id @default(cuid())
+  contactId      String
+  contactType    String
+  channel        String
+  consentGiven   Boolean   @default(false)
+  consentGivenAt DateTime?
+  consentText    String    @default("")
+  optedOutAt     DateTime?
+  optOutReason   String    @default("")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model ProviderErrorLog {
+  id             String    @id @default(cuid())
+  provider       String
+  integrationId  String    @default("")
+  errorCode      String
+  errorMessage   String
+  requestPath    String    @default("")
+  responseStatus Int       @default(0)
+  retryCount     Int       @default(0)
+  resolved       Boolean   @default(false)
+  resolvedAt     DateTime?
+  createdAt      DateTime  @default(now())
+}
+
+model ContentApproval {
+  id              String    @id @default(cuid())
+  contentType     String
+  title           String
+  content         String
+  platform        String    @default("")
+  campaignId      String    @default("")
+  mediaUrls       String    @default("[]")
+  scheduledFor    DateTime?
+  submittedById   String
+  submittedByName String
+  reviewedById    String?
+  reviewedByName  String    @default("")
+  status          String    @default("pending")
+  reviewNotes     String    @default("")
+  publishedAt     DateTime?
+  failureReason   String    @default("")
+  providerPostId  String    @default("")
+  auditHistory    String    @default("[]")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AgentDepartment {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  name        String
+  category    String            @default("")
+  description String            @db.Text
+  icon        String            @default("")
+  color       String            @default("#0057B8")
+  sortOrder   Int               @default(0)
+  isActive    Boolean           @default(true)
+  agentCount  Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  agents      AgentDefinition[]
+
+  @@index([slug])
+  @@index([category])
+}
+
+model AgentEngineType {
+  id                String            @id @default(cuid())
+  slug              String            @unique
+  name              String
+  provider          String            @default("zai")
+  modelId           String            @default("glm-4-flash")
+  fallbackModelId   String            @default("glm-4-flash")
+  description       String            @db.Text
+  capabilities      String            @default("[]")
+  maxTokens         Int               @default(4096)
+  supportsTools     Boolean           @default(false)
+  supportsStreaming Boolean           @default(false)
+  costPerCall       Float             @default(0)
+  isActive          Boolean           @default(true)
+  sortOrder         Int               @default(0)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  agents            AgentDefinition[]
+
+  @@index([slug])
+  @@index([provider])
+}
+
+model AgentDefinition {
+  id                String               @id @default(cuid())
+  agentCode         String               @unique
+  name              String
+  departmentId      String
+  engineTypeId      String
+  description       String               @db.Text
+  systemPrompt      String               @db.Text
+  capabilities      String               @default("[]")
+  toolsAllowed      String               @default("[]")
+  permissionScope   String               @default("read_only")
+  requiresApproval  Boolean              @default(false)
+  approvalThreshold String               @default("always")
+  maxRetries        Int                  @default(3)
+  timeoutSeconds    Int                  @default(60)
+  rateLimit         Int                  @default(100)
+  rateLimitWindow   String               @default("hour")
+  status            String               @default("active")
+  version           String               @default("1.0.0")
+  tags              String               @default("[]")
+  metadata          String               @db.Text
+  isSystem          Boolean              @default(false)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  approvalItems     AgentApprovalQueue[]
+  auditLogs         AgentAuditLog[]
+  department        AgentDepartment      @relation(fields: [departmentId], references: [id])
+  engineType        AgentEngineType      @relation(fields: [engineTypeId], references: [id])
+  memory            AgentMemory[]
+  runtimeState      AgentRuntime?
+  schedules         AgentSchedule[]
+  tasks             AgentTask[]
+
+  @@index([departmentId])
+  @@index([engineTypeId])
+  @@index([status])
+  @@index([agentCode])
+}
+
+model AgentTask {
+  id           String          @id @default(cuid())
+  taskCode     String          @unique @default("")
+  agentId      String
+  triggeredBy  String          @default("system")
+  triggerType  String          @default("manual")
+  input        String          @db.Text
+  output       String          @db.Text
+  status       String          @default("queued")
+  priority     String          @default("normal")
+  errorMessage String          @db.Text
+  retryCount   Int             @default(0)
+  startedAt    DateTime?
+  completedAt  DateTime?
+  durationMs   Int             @default(0)
+  tokenUsage   Int             @default(0)
+  approvalId   String          @default("")
+  scheduledFor DateTime?
+  parentTaskId String          @default("")
+  entityType   String          @default("")
+  entityId     String          @default("")
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  agent        AgentDefinition @relation(fields: [agentId], references: [id])
+  logs         AgentTaskLog[]
+
+  @@index([agentId])
+  @@index([status])
+  @@index([triggeredBy])
+  @@index([taskCode])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model AgentTaskLog {
+  id        String    @id @default(cuid())
+  taskId    String
+  step      Int       @default(0)
+  level     String    @default("info")
+  message   String    @db.Text
+  data      String    @db.Text
+  createdAt DateTime  @default(now())
+  task      AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([level])
+}
+
+model AgentRuntime {
+  id              String          @id @default(cuid())
+  agentId         String          @unique
+  status          String          @default("idle")
+  health          String          @default("healthy")
+  lastHeartbeatAt DateTime        @default(now())
+  tasksToday      Int             @default(0)
+  tasksTotal      Int             @default(0)
+  errorCount24h   Int             @default(0)
+  successRate     Float           @default(1)
+  avgResponseMs   Int             @default(0)
+  latencyMs       Int             @default(0)
+  queueDepth      Int             @default(0)
+  uptimeHours     Float           @default(0)
+  currentTaskId   String          @default("")
+  paused          Boolean         @default(false)
+  pausedReason    String          @default("")
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  agent           AgentDefinition @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([health])
+}
+
+model AgentMemory {
+  id        String          @id @default(cuid())
+  agentId   String
+  key       String
+  value     String          @db.Text
+  ttl       Int             @default(0)
+  expiresAt DateTime?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  agent     AgentDefinition @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, key])
+  @@index([agentId])
+  @@index([expiresAt])
+}
+
+model AgentApprovalQueue {
+  id              String          @id @default(cuid())
+  agentId         String
+  taskId          String          @default("")
+  requestedById   String          @default("system")
+  requestedByName String          @default("System")
+  type            String          @default("task_approval")
+  title           String
+  description     String          @db.Text
+  payload         String          @db.Text
+  priority        String          @default("normal")
+  status          String          @default("pending")
+  deadline        DateTime?
+  assignedToId    String          @default("")
+  assignedToName  String          @default("")
+  approvedById    String          @default("")
+  approvedByName  String          @default("")
+  approvedAt      DateTime?
+  rejectedById    String          @default("")
+  rejectedByName  String          @default("")
+  rejectedAt      DateTime?
+  rejectionReason String          @default("")
+  entityType      String          @default("")
+  entityId        String          @default("")
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  agent           AgentDefinition @relation(fields: [agentId], references: [id])
+
+  @@index([agentId])
+  @@index([status])
+  @@index([priority])
+  @@index([deadline])
+  @@index([assignedToId])
+}
+
+model AgentAuditLog {
+  id         String          @id @default(cuid())
+  agentId    String
+  taskId     String          @default("")
+  actorId    String          @default("system")
+  actorName  String          @default("System")
+  actorRole  String          @default("system")
+  action     String
+  entityType String          @default("")
+  entityId   String          @default("")
+  before     String          @db.Text
+  after      String          @db.Text
+  metadata   String          @db.Text
+  ipAddress  String          @default("")
+  result     String          @default("success")
+  errorMsg   String          @default("")
+  createdAt  DateTime        @default(now())
+  agent      AgentDefinition @relation(fields: [agentId], references: [id])
+
+  @@index([agentId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([result])
+}
+
+model AgentSchedule {
+  id             String          @id @default(cuid())
+  agentId        String
+  name           String
+  cronExpression String
+  timezone       String          @default("Asia/Dhaka")
+  inputPayload   String          @db.Text
+  isActive       Boolean         @default(true)
+  lastRunAt      DateTime?
+  nextRunAt      DateTime?
+  lastStatus     String          @default("")
+  runCount       Int             @default(0)
+  failCount      Int             @default(0)
+  createdBy      String          @default("system")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  agent          AgentDefinition @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+  @@index([isActive])
+  @@index([nextRunAt])
+}
+
+// ============================================================
+// ALO_EMPLOYEE_ACCESS_SYSTEM — ENTERPRISE HR & RBAC EXTENSIONS
+// ============================================================
+
+model EmployeeDocumentVersion {
+  id             String   @id @default(cuid())
+  documentId     String
+  versionNumber  Int      @default(1)
+  filePath       String   @default("")
+  fileName       String   @default("")
+  fileHash       String   @default("")
+  status         String   @default("pending")
+  uploadedBy     String   @default("")
+  reviewerId     String   @default("")
+  reviewNote     String   @default("")
+  effectiveDate  String   @default("")
+  supersededDate String   @default("")
+  createdAt      DateTime @default(now())
+
+  @@index([documentId])
+}
+
+model EmployeeAgreementAcceptance {
+  id               String   @id @default(cuid())
+  employeeId       String
+  agreementTitle   String   @default("")
+  policyVersion    String   @default("1.0")
+  acceptedAt       DateTime @default(now())
+  acceptanceIp     String   @default("")
+  acceptanceDevice String   @default("")
+  tokenHash        String   @default("")
+
+  @@index([employeeId])
+}
+
+model EmployeeLeaveRequest {
+  id          String   @id @default(cuid())
+  employeeId  String
+  leaveType   String   @default("casual")
+  startDate   String   @default("")
+  endDate     String   @default("")
+  daysCount   Float    @default(1.0)
+  reason      String   @default("")
+  documentUrl String   @default("")
+  status      String   @default("pending")
+  approvedBy  String   @default("")
+  reviewNote  String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+model EmployeePayroll {
+  id             String    @id @default(cuid())
+  monthYear      String    @default("")
+  status         String    @default("draft")
+  totalGross     Float     @default(0)
+  totalDeduction Float     @default(0)
+  totalNet       Float     @default(0)
+  employeeCount  Int       @default(0)
+  preparedBy     String    @default("AI_ASSISTANT")
+  hrCheckedBy    String    @default("")
+  approvedBy     String    @default("")
+  paidAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([monthYear])
+  @@index([status])
+}
+
+model EmployeePayrollItem {
+  id           String   @id @default(cuid())
+  payrollId    String
+  employeeId   String
+  employeeName String   @default("")
+  basicSalary  Float    @default(0)
+  allowances   Float    @default(0)
+  bonuses      Float    @default(0)
+  overtime     Float    @default(0)
+  deductions   Float    @default(0)
+  tax          Float    @default(0)
+  netSalary    Float    @default(0)
+  status       String   @default("draft")
+  createdAt    DateTime @default(now())
+
+  @@index([payrollId])
+  @@index([employeeId])
+}
+
+model EmployeeDevice {
+  id           String   @id @default(cuid())
+  employeeId   String
+  deviceName   String   @default("")
+  assetTag     String   @default("")
+  serialNumber String   @default("")
+  deviceType   String   @default("laptop")
+  assignedDate String   @default("")
+  returnedDate String   @default("")
+  condition    String   @default("good")
+  status       String   @default("assigned")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([employeeId])
+}
+
+model EmployeeTemporaryPermission {
+  id         String   @id @default(cuid())
+  employeeId String
+  featureKey String   @default("")
+  action     String   @default("view")
+  scope      String   @default("assigned")
+  reason     String   @default("")
+  grantedBy  String   @default("")
+  startsAt   DateTime @default(now())
+  expiresAt  DateTime
+  status     String   @default("active")
+  createdAt  DateTime @default(now())
+
+  @@index([employeeId])
+  @@index([expiresAt])
+}
+
+model EmployeePermissionRequest {
+  id         String   @id @default(cuid())
+  employeeId String
+  featureKey String   @default("")
+  action     String   @default("view")
+  scope      String   @default("assigned")
+  reason     String   @default("")
+  status     String   @default("pending")
+  reviewedBy String   @default("")
+  reviewNote String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+model EmployeeReassignment {
+  id                String   @id @default(cuid())
+  exitingEmployeeId String
+  targetEmployeeId  String
+  reassignedBy      String   @default("")
+  studentsCount     Int      @default(0)
+  applicationsCount Int      @default(0)
+  tasksCount        Int      @default(0)
+  whatsappCount     Int      @default(0)
+  status            String   @default("completed")
+  createdAt         DateTime @default(now())
+
+  @@index([exitingEmployeeId])
+}
+
+model EmployeeDepartment {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @default("")
+  headId      String   @default("")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+model EmployeeBranch {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  country   String   @default("Bangladesh")
+  city      String   @default("Dhaka")
+  code      String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model EmployeeOffice {
+  id        String   @id @default(cuid())
+  name      String   @default("")
+  branchId  String   @default("")
+  address   String   @default("")
+  phone     String   @default("")
+  createdAt DateTime @default(now())
+}
+
+
+// ============================================================
+
+// ============================================================
+// ALO UNIFIED COMMUNICATION & SOCIAL COMMAND CENTER — NEW MODELS
+// Requirements 121-177 (only models not already defined above)
+// ============================================================
+
+model CommunicationSlaEvent {
+  id                  String    @id @default(cuid())
+  threadId            String
+  counselorId         String    @default("")
+  counselorName       String    @default("")
+  channel             String    @default("whatsapp")
+  priority            String    @default("normal")
+  slaRuleId           String    @default("")
+  slaMinutes          Int       @default(30)
+  receivedAt          DateTime  @default(now())
+  assignedAt          DateTime?
+  firstViewedAt       DateTime?
+  firstResponseAt     DateTime?
+  responseTimeMinutes Int?
+  slaDueAt            DateTime?
+  slaStatus           String    @default("normal")
+  overdueMins         Int       @default(0)
+  resolvedAt          DateTime?
+  escalatedAt         DateTime?
+  escalatedToId       String    @default("")
+  exclusionReason     String    @default("")
+  isExcluded          Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([threadId])
+  @@index([counselorId])
+  @@index([slaStatus])
+}
+
+model CommunicationSlaIncident {
+  id              String    @id @default(cuid())
+  counselorId     String
+  counselorName   String    @default("")
+  periodStart     DateTime
+  periodEnd       DateTime
+  totalAssigned   Int       @default(0)
+  totalRequired   Int       @default(0)
+  slaBreaches     Int       @default(0)
+  validExclusions Int       @default(0)
+  avgResponseMin  Int       @default(0)
+  worstDelayMin   Int       @default(0)
+  status          String    @default("open")
+  warningIssuedAt DateTime?
+  relatedEventIds String    @default("[]")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  justification   CommunicationSlaJustification?
+
+  @@index([counselorId])
+  @@index([status])
+}
+
+model CommunicationSlaJustification {
+  id             String    @id @default(cuid())
+  incidentId     String    @unique
+  counselorId    String
+  reason         String    @default("")
+  explanation    String    @default("")
+  evidence       String    @default("")
+  submittedAt    DateTime  @default(now())
+  reviewedBy     String    @default("")
+  reviewedAt     DateTime?
+  reviewDecision String    @default("")
+  reviewNote     String    @default("")
+  coachingTask   Boolean   @default(false)
+  incident       CommunicationSlaIncident @relation(fields: [incidentId], references: [id])
+
+  @@index([counselorId])
+}
+
+model CounselorResponseMetric {
+  id                  String   @id @default(cuid())
+  counselorId         String
+  counselorName       String   @default("")
+  periodMonth         String   @default("")
+  totalAssigned       Int      @default(0)
+  totalResponded      Int      @default(0)
+  totalPending        Int      @default(0)
+  totalOverdue        Int      @default(0)
+  slaCompliancePct    Float    @default(0)
+  avgFirstResponseMin Int      @default(0)
+  avgResolutionMin    Int      @default(0)
+  warningCount        Int      @default(0)
+  escalationCount     Int      @default(0)
+  justificationCount  Int      @default(0)
+  acceptedExceptions  Int      @default(0)
+  managerReviews      Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([counselorId, periodMonth])
+  @@index([counselorId])
+}
+
+model CommunicationAttachment {
+  id                  String   @id @default(cuid())
+  messageId           String   @default("")
+  threadId            String   @default("")
+  studentId           String   @default("")
+  applicationId       String   @default("")
+  documentId          String   @default("")
+  senderId            String   @default("")
+  senderName          String   @default("")
+  recipientId         String   @default("")
+  recipientContact    String   @default("")
+  channel             String   @default("whatsapp")
+  direction           String   @default("inbound")
+  providerFileId      String   @default("")
+  fileUrl             String   @default("")
+  fileName            String   @default("")
+  fileType            String   @default("")
+  fileSizeBytes       Int      @default(0)
+  deliveryStatus      String   @default("sent")
+  isDocumentMatch     Boolean  @default(false)
+  matchReviewRequired Boolean  @default(false)
+  matchedDocSlot      String   @default("")
+  whatsappMsgRef      String   @default("")
+  createdAt           DateTime @default(now())
+
+  @@index([messageId])
+  @@index([threadId])
+  @@index([studentId])
+  @@index([applicationId])
+}
+
+model PhoneCallRecord {
+  id                 String    @id @default(cuid())
+  callCode           String    @default("")
+  direction          String    @default("outbound")
+  counselorId        String    @default("")
+  counselorName      String    @default("")
+  studentId          String    @default("")
+  studentName        String    @default("")
+  leadId             String    @default("")
+  partnerId          String    @default("")
+  applicationId      String    @default("")
+  callerNumber       String    @default("")
+  recipientNumber    String    @default("")
+  outcome            String    @default("")
+  startedAt          DateTime?
+  answeredAt         DateTime?
+  endedAt            DateTime?
+  durationSeconds    Int       @default(0)
+  recordingRef       String    @default("")
+  recordingConsent   Boolean   @default(false)
+  studentVisibleNote String    @default("")
+  internalNote       String    @default("")
+  threadId           String    @default("")
+  providerCallId     String    @default("")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([counselorId])
+  @@index([studentId])
+  @@index([direction])
+}
+
+model ConnectedSocialAccount {
+  id               String    @id @default(cuid())
+  platform         String    @default("")
+  accountId        String    @default("")
+  accountName      String    @default("")
+  accountType      String    @default("official")
+  ownerId          String    @default("")
+  ownerName        String    @default("")
+  organization     String    @default("ALO Education")
+  connectionStatus String    @default("disconnected")
+  permissions      String    @default("[]")
+  tokenStatus      String    @default("none")
+  tokenExpiresAt   DateTime?
+  lastSync         DateTime?
+  webhookStatus    String    @default("none")
+  webhookVerified  Boolean   @default(false)
+  isOfficialAccount Boolean  @default(true)
+  configuredBy     String    @default("")
+  configuredAt     DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([platform])
+  @@index([ownerId])
+}
+
+
+// ============================================================
+// ALO AI-NATIVE STUDENT JOURNEY OS — SCHEMA EXTENSION
+// Added: 2026-08-09 — DO NOT duplicate existing models
+// ============================================================
+
+// --- Application Intelligence ---
+
+model ApplicationSerial {
+  id              String   @id @default(cuid())
+  applicationId   String   @unique
+  studentId       String
+  studentCode     String   @default("")
+  serialIndex     Int      @default(1)
+  serialCode      String   @default("")  // e.g. AE-2026000123-01
+  createdAt       DateTime @default(now())
+
+  @@index([studentId])
+  @@index([serialCode])
+}
+
+model ApplicationOffer {
+  id                 String   @id @default(cuid())
+  applicationId      String   @unique
+  studentId          String   @default("")
+  currentVersion     Int      @default(1)
+  offerStatus        String   @default("pending")    // pending | received | verified | expired | rejected
+  offerType          String   @default("")           // conditional | unconditional
+  universityName     String   @default("")
+  courseName         String   @default("")
+  campusName         String   @default("")
+  intake             String   @default("")
+  tuitionFee         Float    @default(0)
+  depositAmount      Float    @default(0)
+  currency           String   @default("GBP")
+  scholarshipAmount  Float    @default(0)
+  depositDeadline    String   @default("")
+  conditions         String   @default("[]")         // JSON array of condition strings
+  interviewRequired  Boolean  @default(false)
+  casRequired        Boolean  @default(false)
+  sourceType         String   @default("")           // UNIVERSITY_EMAIL | PARTNER_PORTAL | COUNSELOR_UPLOAD | etc
+  sourceEmail        String   @default("")
+  sourceReference    String   @default("")
+  originalFileName   String   @default("")
+  receivedAt         DateTime?
+  receivedFrom       String   @default("")
+  verifiedBy         String   @default("")
+  verifiedAt         DateTime?
+  aiExtracted        Boolean  @default(false)
+  aiExtractionData   String   @default("{}")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  versions           ApplicationOfferVersion[]
+
+  @@index([applicationId])
+  @@index([studentId])
+}
+
+model ApplicationOfferVersion {
+  id             String   @id @default(cuid())
+  offerId        String
+  versionNumber  Int      @default(1)
+  fileUrl        String   @default("")
+  extractedData  String   @default("{}")
+  changes        String   @default("[]")   // JSON: what changed vs previous version
+  uploadedBy     String   @default("")
+  uploadedAt     DateTime @default(now())
+  notes          String   @default("")
+
+  offer          ApplicationOffer @relation(fields: [offerId], references: [id])
+
+  @@index([offerId])
+}
+
+model ApplicationOfferCondition {
+  id             String   @id @default(cuid())
+  applicationId  String
+  offerId        String   @default("")
+  conditionText  String
+  conditionType  String   @default("general")  // financial | academic | document | interview | other
+  status         String   @default("pending")  // pending | met | waived
+  metAt          DateTime?
+  metBy          String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([applicationId])
+}
+
+model ApplicationPaymentInstruction {
+  id                    String    @id @default(cuid())
+  applicationId         String
+  studentId             String    @default("")
+  paymentType           String    @default("deposit")  // deposit | tuition | other
+  amount                Float     @default(0)
+  currency              String    @default("GBP")
+  deadline              String    @default("")
+  bankName              String    @default("")
+  accountName           String    @default("")
+  accountNumber         String    @default("")
+  iban                  String    @default("")
+  swiftBic              String    @default("")
+  sortCode              String    @default("")
+  paymentReference      String    @default("")
+  paymentPortalUrl      String    @default("")
+  additionalInstructions String   @default("")
+  sourceDocumentUrl     String    @default("")
+  preparedBy            String    @default("")
+  verifiedBy            String    @default("")
+  verifiedAt            DateTime?
+  status                String    @default("draft")  // draft | verified | sent | cancelled
+  emailSentAt           DateTime?
+  emailSentTo           String    @default("")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  proofs                ApplicationPaymentProof[]
+
+  @@index([applicationId])
+  @@index([studentId])
+}
+
+model ApplicationPaymentProof {
+  id                    String    @id @default(cuid())
+  paymentInstructionId  String
+  applicationId         String    @default("")
+  studentId             String    @default("")
+  fileUrl               String    @default("")
+  fileName              String    @default("")
+  studentComment        String    @default("")
+  transactionDate       String    @default("")
+  transactionAmount     Float     @default(0)
+  transactionCurrency   String    @default("")
+  transactionReference  String    @default("")
+  bankName              String    @default("")
+  senderName            String    @default("")
+  aiExtractedData       String    @default("{}")
+  status                String    @default("uploaded")  // uploaded | under_review | verified | rejected
+  rejectionReason       String    @default("")
+  verifiedBy            String    @default("")
+  verifiedAt            DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  instruction           ApplicationPaymentInstruction @relation(fields: [paymentInstructionId], references: [id])
+
+  @@index([paymentInstructionId])
+  @@index([applicationId])
+}
+
+// --- Document Intelligence ---
+
+model DocumentChecklist {
+  id              String   @id @default(cuid())
+  applicationId   String   @unique
+  studentId       String   @default("")
+  universityName  String   @default("")
+  country         String   @default("")
+  level           String   @default("")
+  generatedAt     DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  items           DocumentChecklistItem[]
+
+  @@index([applicationId])
+  @@index([studentId])
+}
+
+model DocumentChecklistItem {
+  id              String    @id @default(cuid())
+  checklistId     String
+  documentType    String                   // passport | transcript | ielts | bank_statement | etc
+  label           String    @default("")
+  description     String    @default("")
+  mandatory       Boolean   @default(true)
+  status          String    @default("missing")  // missing | requested | uploaded | under_review | verified | rejected | expired | superseded
+  documentId      String?                  // links to StudentDocument when uploaded
+  requestedAt     DateTime?
+  uploadedAt      DateTime?
+  verifiedAt      DateTime?
+  expiryDate      String    @default("")
+  sourceReason    String    @default("")   // why this document is required
+  deadlineDate    String    @default("")
+  sortOrder       Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  checklist       DocumentChecklist @relation(fields: [checklistId], references: [id])
+
+  @@index([checklistId])
+  @@index([documentType])
+}
+
+model DocumentRequest {
+  id                    String   @id @default(cuid())
+  applicationId         String
+  studentId             String   @default("")
+  documentTypes         String   @default("[]")    // JSON array of document types requested
+  requestedBy           String   @default("")      // counselor user id
+  requestedByName       String   @default("")
+  channels              String   @default("[]")    // ["email","whatsapp"]
+  emailContent          String   @default("")
+  whatsappContent       String   @default("")
+  personalMessage       String   @default("")
+  templateId            String   @default("")
+  status                String   @default("sent")  // draft | sent | partially_received | complete
+  sentAt                DateTime?
+  emailSentAt           DateTime?
+  whatsappSentAt        DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([applicationId])
+  @@index([studentId])
+}
+
+model DocumentVersion {
+  id              String    @id @default(cuid())
+  documentId      String                    // links to StudentDocument
+  studentId       String    @default("")
+  applicationId   String    @default("")
+  versionNumber   Int       @default(1)
+  fileUrl         String    @default("")
+  fileName        String    @default("")
+  fileSize        Int       @default(0)
+  fileHash        String    @default("")
+  status          String    @default("uploaded")  // uploaded | under_review | verified | rejected | superseded
+  rejectionReason String    @default("")
+  uploadedAt      DateTime  @default(now())
+  reviewedBy      String    @default("")
+  reviewedAt      DateTime?
+  studentComment  String    @default("")
+  internalNote    String    @default("")
+
+  @@index([documentId])
+  @@index([studentId])
+}
+
+model ApplicationComment {
+  id              String   @id @default(cuid())
+  applicationId   String
+  studentId       String   @default("")
+  commentType     String   @default("student_visible")  // student_visible | internal_only
+  authorId        String   @default("")
+  authorName      String   @default("")
+  authorType      String   @default("counselor")   // student | counselor | admin | system
+  content         String
+  attachmentUrl   String   @default("")
+  attachmentName  String   @default("")
+  notifyStudent   Boolean  @default(false)
+  emailSent       Boolean  @default(false)
+  whatsappSent    Boolean  @default(false)
+  readByStudent   Boolean  @default(false)
+  readAt          DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([applicationId])
+  @@index([studentId])
+  @@index([commentType])
+}
+
+// --- Interview Intelligence ---
+
+model InterviewProgram {
+  id               String   @id @default(cuid())
+  applicationId    String   @unique
+  studentId        String   @default("")
+  universityName   String   @default("")
+  courseName       String   @default("")
+  country          String   @default("")
+  researchStatus   String   @default("pending")   // pending | researching | ready
+  researchData     String   @default("{}")         // RAG + agent research results
+  researchSourceCount Int   @default(0)
+  researchLastUpdated DateTime?
+  questionsGenerated Boolean @default(false)
+  questionCount    Int      @default(0)
+  answersGenerated Boolean  @default(false)
+  pdfGenerated     Boolean  @default(false)
+  pdfVersion       Int      @default(0)
+  practiceWindowStart DateTime?
+  practiceWindowEnd   DateTime?
+  practiceWindowHours Int   @default(72)
+  sessionCount     Int      @default(0)
+  aiReadiness      String   @default("not_assessed")  // not_assessed | needs_practice | ready_with_improvement | ready
+  humanReadiness   String   @default("not_reviewed")  // not_reviewed | needs_practice | ready | not_ready
+  humanReviewerId  String   @default("")
+  humanReviewedAt  DateTime?
+  humanReviewNote  String   @default("")
+  status           String   @default("active")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  questions        InterviewQuestion[]
+  answers          InterviewStudentAnswer[]
+  sessions         InterviewPracticeSession[]
+  pdfRecords       InterviewPdfRecord[]
+
+  @@index([applicationId])
+  @@index([studentId])
+}
+
+model InterviewQuestion {
+  id               String   @id @default(cuid())
+  programId        String
+  category         String   @default("general")  // university | course | country | visa | financial | future_plan | academic | english | credibility | personal
+  question         String
+  purpose          String   @default("")    // what the interviewer wants to understand
+  difficulty       String   @default("medium")  // easy | medium | hard
+  frequency        String   @default("common")  // rare | occasional | common | very_common
+  sourceType       String   @default("ai_generated")  // ai_generated | historical | official | counselor
+  sourceDetail     String   @default("")
+  lastVerified     DateTime?
+  confidenceLevel  String   @default("medium")  // low | medium | high
+  followUpQuestions String  @default("[]")  // JSON array
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+
+  program          InterviewProgram @relation(fields: [programId], references: [id])
+
+  @@index([programId])
+  @@index([category])
+}
+
+model InterviewStudentAnswer {
+  id               String   @id @default(cuid())
+  programId        String
+  studentId        String   @default("")
+  questionId       String   @default("")
+  questionText     String
+  category         String   @default("")
+  studentFactsProvided String @default("{}")   // raw student inputs
+  naturalAnswer    String   @default("")       // AI-drafted natural answer
+  shortAnswer      String   @default("")
+  expandedAnswer   String   @default("")
+  keyPoints        String   @default("[]")
+  thingsToAvoid    String   @default("[]")
+  followUpAnswers  String   @default("{}")
+  aiGenerated      Boolean  @default(true)
+  studentReviewed  Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  program          InterviewProgram @relation(fields: [programId], references: [id])
+
+  @@index([programId])
+  @@index([studentId])
+}
+
+model InterviewPracticeSession {
+  id               String   @id @default(cuid())
+  programId        String
+  studentId        String   @default("")
+  applicationId    String   @default("")
+  sessionType      String   @default("text")   // text | voice | video
+  status           String   @default("active")  // active | completed | expired
+  questionsAsked   String   @default("[]")
+  answers          String   @default("[]")
+  transcript       String   @default("[]")
+  videoUrl         String   @default("")
+  audioUrl         String   @default("")
+  aiScores         String   @default("{}")
+  weakAreas        String   @default("[]")
+  improvementTips  String   @default("[]")
+  sessionDuration  Int      @default(0)   // seconds
+  startedAt        DateTime @default(now())
+  completedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  program          InterviewProgram @relation(fields: [programId], references: [id])
+
+  @@index([programId])
+  @@index([studentId])
+}
+
+model InterviewPdfRecord {
+  id               String   @id @default(cuid())
+  programId        String
+  studentId        String   @default("")
+  applicationId    String   @default("")
+  pdfType          String   @default("full_pack")  // full_pack | questions_only | answers_only | financial | future_plan | checklist
+  versionNumber    Int      @default(1)
+  fileUrl          String   @default("")
+  fileName         String   @default("")
+  generatedBy      String   @default("system")
+  downloadedBy     String   @default("")
+  downloadedAt     DateTime?
+  downloadCount    Int      @default(0)
+  practiceWindowStartedAt DateTime?
+  createdAt        DateTime @default(now())
+
+  program          InterviewProgram @relation(fields: [programId], references: [id])
+
+  @@index([programId])
+  @@index([studentId])
+}
+
+// --- Student World State + Next Best Action ---
+
+model StudentWorldState {
+  id               String   @id @default(cuid())
+  studentId        String   @unique
+  goal             String   @default("")
+  targetCountries  String   @default("[]")
+  targetCourses    String   @default("[]")
+  targetIntakes    String   @default("[]")
+  academicState    String   @default("incomplete")
+  englishState     String   @default("unknown")
+  financialState   String   @default("unknown")
+  applicationState String   @default("none")
+  documentState    String   @default("none")
+  interviewState   String   @default("none")
+  visaState        String   @default("none")
+  riskLevel        String   @default("low")
+  engagementScore  Int      @default(50)
+  lastLoginAt      DateTime?
+  lastActionAt     DateTime?
+  nextBestActions  String   @default("[]")
+  updatedAt        DateTime @updatedAt
+
+  @@index([studentId])
+}
+
+model StudentNextBestAction {
+  id               String   @id @default(cuid())
+  studentId        String
+  applicationId    String   @default("")
+  priority         String   @default("medium")   // urgent | high | medium | low
+  category         String   @default("document") // document | application | payment | interview | visa | general
+  title            String
+  description      String   @default("")
+  actionType       String   @default("manual")   // manual | auto | ai_assisted
+  actionUrl        String   @default("")
+  dueDate          DateTime?
+  isCompleted      Boolean  @default(false)
+  completedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([priority])
+}
+
+model StudentEvent {
+  id               String   @id @default(cuid())
+  studentId        String
+  applicationId    String   @default("")
+  eventType        String                       // DOCUMENT_UPLOADED | OFFER_RECEIVED | PAYMENT_VERIFIED | etc
+  eventData        String   @default("{}")
+  actorId          String   @default("")
+  actorType        String   @default("system")  // student | counselor | system | ai
+  actorName        String   @default("")
+  ipAddress        String   @default("")
+  channel          String   @default("")
+  createdAt        DateTime @default(now())
+
+  @@index([studentId])
+  @@index([eventType])
+  @@index([applicationId])
+}
+
+// --- Success + Alumni ---
+
+model SuccessRecord {
+  id               String   @id @default(cuid())
+  studentId        String
+  applicationId    String   @default("")
+  studentCode      String   @default("")
+  studentName      String   @default("")
+  universityName   String   @default("")
+  courseName       String   @default("")
+  country          String   @default("")
+  intake           String   @default("")
+  visaApprovedAt   DateTime?
+  successDate      DateTime @default(now())
+  reviewRequestSent Boolean @default(false)
+  reviewRequestSentAt DateTime?
+  googleReviewLink String   @default("")
+  facebookReviewLink String  @default("")
+  testimonialConsent Boolean @default(false)
+  testimonialText  String   @default("")
+  publishedOnWebsite Boolean @default(false)
+  publishApprovedBy String  @default("")
+  publishApprovedAt DateTime?
+  alumniId         String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  reviewRequests   ReviewRequest[]
+
+  @@index([studentId])
+}
+
+model ReviewRequest {
+  id               String   @id @default(cuid())
+  successId        String
+  studentId        String   @default("")
+  requestType      String   @default("google")  // google | facebook | alo_testimonial
+  requestSentAt    DateTime?
+  reviewLink       String   @default("")
+  qrCodeUrl        String   @default("")
+  reviewSubmitted  Boolean  @default(false)
+  reviewText       String   @default("")
+  reviewRating     Int?
+  reviewSubmittedAt DateTime?
+  consentGiven     Boolean  @default(false)
+  consentGivenAt   DateTime?
+  status           String   @default("sent")  // sent | submitted | declined
+  createdAt        DateTime @default(now())
+
+  success          SuccessRecord @relation(fields: [successId], references: [id])
+
+  @@index([successId])
+  @@index([studentId])
+}
+
+model AlumniRecord {
+  id               String   @id @default(cuid())
+  studentId        String   @unique
+  studentCode      String   @default("")
+  studentName      String   @default("")
+  universityName   String   @default("")
+  country          String   @default("")
+  courseName       String   @default("")
+  intake           String   @default("")
+  graduationYear   String   @default("")
+  currentLocation  String   @default("")
+  currentOccupation String  @default("")
+  referralPreference Boolean @default(false)
+  communicationPreference String @default("email")
+  linkedinUrl      String   @default("")
+  testimonialId    String   @default("")
+  status           String   @default("active")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([studentId])
+}
+
+// --- No-Service-Charge Declaration ---
+
+model ServiceChargeDeclaration {
+  id               String   @id @default(cuid())
+  studentId        String
+  applicationId    String
+  studentName      String   @default("")
+  studentCode      String   @default("")
+  universityName   String   @default("")
+  declarationText  String                    // locked at signing time
+  templateVersion  String   @default("v1")
+  signedAt         DateTime @default(now())
+  signedByStudentId String  @default("")
+  ipAddress        String   @default("")
+  sessionId        String   @default("")
+  deviceInfo       String   @default("")
+  isValid          Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  @@index([studentId])
+  @@index([applicationId])
+}
+
+// --- Student Auth (portal-specific) ---
+
+model StudentSession {
+  id               String   @id @default(cuid())
+  studentId        String
+  token            String   @unique
+  ipAddress        String   @default("")
+  userAgent        String   @default("")
+  deviceInfo       String   @default("")
+  expiresAt        DateTime
+  lastActiveAt     DateTime @default(now())
+  revokedAt        DateTime?
+  revokedReason    String   @default("")
+  createdAt        DateTime @default(now())
+
+  @@index([studentId])
+  @@index([token])
+}
+
+model StudentLoginAttempt {
+  id               String   @id @default(cuid())
+  email            String   @default("")
+  phone            String   @default("")
+  studentId        String   @default("")
+  success          Boolean  @default(false)
+  failureReason    String   @default("")
+  ipAddress        String   @default("")
+  userAgent        String   @default("")
+  createdAt        DateTime @default(now())
+
+  @@index([email])
+  @@index([studentId])
+}
+
+// --- B2B Provider & Application Management ---
+
+model B2bProvider {
+  id                 String           @id @default(cuid())
+  providerCode       String           @unique
+  name               String
+  providerType       String           @default("GLOBAL_B2B")
+  countryCoverage    String           @default("[]")
+  universityCoverage String           @default("[]")
+  contactPerson      String           @default("")
+  email              String           @default("")
+  phone              String           @default("")
+  portalUrl          String           @default("")
+  loginNote          String           @default("")
+  agreementFile      String           @default("")
+  commissionRule     String           @default("")
+  paymentCondition   String           @default("")
+  claimStage         String           @default("ENROLLMENT")
+  status             String           @default("ACTIVE")
+  createdBy          String           @default("")
+  approvedBy         String           @default("")
+  lastReviewedAt     DateTime?
+  internalNote       String           @default("")
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  applications       B2bApplication[]
+
+  @@index([providerCode])
+  @@index([status])
+}
+
+model B2bApplication {
+  id                    String       @id @default(cuid())
+  applicationId         String       @unique
+  b2bProviderId         String
+  b2bType               String       @default("B2B_OUTBOUND")
+  b2bReference          String       @default("")
+  submissionRoute       String       @default("PORTAL")
+  submittedDate         DateTime?
+  acknowledgementNumber String       @default("")
+  b2bStatus             String       @default("SUBMITTED")
+  b2bCommissionType     String       @default("PERCENTAGE")
+  b2bCommissionAmount   Float        @default(0)
+  b2bPaymentCondition   String       @default("")
+  b2bClaimStage         String       @default("ENROLLMENT")
+  b2bInternalNote       String       @default("")
+  lastFollowupAt        DateTime?
+  nextFollowupAt        DateTime?
+  createdBy             String       @default("")
+  updatedBy             String       @default("")
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  provider              B2bProvider  @relation(fields: [b2bProviderId], references: [id], onDelete: Cascade)
+
+  @@index([b2bProviderId])
+  @@index([b2bStatus])
+}
+
+model ApplicationDeadline {
+  id           String    @id @default(cuid())
+  applicationId String
+  deadlineType String
+  deadlineDate DateTime
+  status       String    @default("PENDING")
+  assignedTo   String    @default("")
+  reminderSent Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([applicationId])
+  @@index([deadlineDate])
+}
+
+model ApplicationTask {
+  id              String    @id @default(cuid())
+  applicationId   String
+  taskTitle       String
+  taskDescription String    @default("")
+  assignedTo      String    @default("")
+  priority        String    @default("NORMAL")
+  status          String    @default("PENDING")
+  dueDate         DateTime?
+  createdBy       String    @default("")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([applicationId])
+  @@index([assignedTo])
+}
+
+model ApplicationSubmissionReceipt {
+  id                    String    @id @default(cuid())
+  applicationId         String
+  submissionMethod      String    @default("DIRECT_UNIVERSITY_PORTAL")
+  submittedBy           String    @default("")
+  submittedTo           String    @default("")
+  submissionDate        DateTime  @default(now())
+  acknowledgementNumber String    @default("")
+  portalReference       String    @default("")
+  universityAppId       String    @default("")
+  appFeeStatus          String    @default("PAID")
+  receiptFileUrl        String    @default("")
+  expectedResponseDate  DateTime?
+  followupDate          DateTime?
+  submissionNote        String    @default("")
+  createdAt             DateTime  @default(now())
+
+  @@index([applicationId])
+}
+
+

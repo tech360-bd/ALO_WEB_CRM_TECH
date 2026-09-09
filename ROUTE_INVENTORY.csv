@@ -1,0 +1,10 @@
+Path,Type,Access Level,Component / Target,Module,Status
+/employee/inbox,Page,COUNSELOR | STAFF,EmployeeOmnichannelInbox,Employee Portal,VERIFIED_READY
+/crm/inbox,Page,COUNSELOR | MANAGER,EmployeeOmnichannelInbox,CRM Core,VERIFIED_READY
+/crm/morning-summary,Page,COUNSELOR | SUPERVISOR,MorningSummaryView,CRM Briefing,VERIFIED_READY
+/admin/integration-wizard,Page,SUPER_ADMIN | ADMIN,OAuthIntegrationWizard,Admin Integration,VERIFIED_READY
+/admin/ai-command-center,Page,SUPER_ADMIN,AiCommandCenterView,Governance,VERIFIED_READY
+/destinations,Page,Public,DestinationsGrid,Public Website,VERIFIED_READY
+/d/[country],Page,Public,CountryDetailView,Public Website,VERIFIED_READY
+/student/dashboard,Page,STUDENT,StudentDashboardView,Student Portal,VERIFIED_READY
+/partner/dashboard,Page,PARTNER,PartnerDashboardView,Partner Portal,VERIFIED_READY

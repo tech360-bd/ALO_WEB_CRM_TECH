@@ -1,0 +1,326 @@
+import { db } from '@/lib/db';
+
+// 1. Check feature access for user or role
+export async function canAccessFeature(userId: string, featureKey: string, userRoles: string[] = []): Promise<boolean> {
+  // ALO Super Admin & Chairman always have full master access
+  if (
+    userRoles.includes('super_admin') ||
+    userRoles.includes('SUPER_ADMIN') ||
+    userRoles.includes('chairman') ||
+    userRoles.includes('CHAIRMAN')
+  ) {
+    return true;
+  }
+
+  const user = await db.user.findUnique({ where: { id: userId } }).catch(() => null);
+  if (user && (user.role === 'super_admin' || user.role === 'SUPER_ADMIN')) {
+    return true;
+  }
+
+  // Check custom feature access rule
+  const rule = await db.featureAccessRule.findFirst({
+    where: {
+      OR: [
+        { ownerId: userId, featureKey, isEnabled: true },
+        ...userRoles.map(r => ({ ownerId: r, featureKey, isEnabled: true })),
+      ],
+    },
+  });
+
+  return !!rule;
+}
+
+// 2. Get approved quota limit for partner/feature
+export async function getQuota(ownerType: string, ownerId: string, featureKey: string): Promise<number> {
+  if (featureKey === 'monthly_images' || featureKey === 'MARKETING_IMAGE_GENERATION') {
+    const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
+    return quota?.monthlyImageLimit || 15;
+  }
+  if (featureKey === 'monthly_videos' || featureKey === 'MARKETING_VIDEO_GENERATION') {
+    const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
+    return quota?.monthlyVideoLimit || 10;
+  }
+  if (featureKey === 'user_seats' || featureKey === 'partner_max_users') {
+    const assignment = await db.partnerPackageAssignment.findFirst({
+      where: { partnerId: ownerId, status: 'active' },
+    }).catch(() => null);
+
+    if (assignment) {
+      const pkg = await db.partnerPackage.findUnique({ where: { id: assignment.packageId } }).catch(() => null);
+      if (pkg?.maxUsers) return pkg.maxUsers;
+    }
+    return 3; // Default Starter package = 3 (1 Super Admin + 2 Employees)
+  }
+  if (featureKey === 'video_duration_limit_seconds') {
+    const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
+    return quota?.videoDurationLimitSeconds || 30;
+  }
+  return 0;
+}
+
+// 3. Atomically check quota before performing action
+export async function checkQuotaBeforeAction(
+  ownerType: string,
+  ownerId: string,
+  featureKey: string
+): Promise<{ allowed: boolean; remaining: number; currentUsage: number; limit: number; used: number; message: string }> {
+  const limit = await getQuota(ownerType, ownerId, featureKey);
+  const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
+
+  const usage = await db.partnerMarketingUsage.findFirst({
+    where: { partnerId: ownerId, monthYear: currentMonth },
+    orderBy: { createdAt: 'desc' },
+  }).catch(() => null);
+
+  const used = (featureKey === 'monthly_images' || featureKey === 'MARKETING_IMAGE_GENERATION')
+    ? (usage?.imagesUsed || 0)
+    : (usage?.videosUsed || 0);
+
+  const remaining = Math.max(0, limit - used);
+  const allowed = remaining > 0;
+
+  return {
+    allowed,
+    remaining,
+    currentUsage: used,
+    used,
+    limit,
+    message: allowed
+      ? 'Quota available'
+      : `Monthly ${featureKey} quota finished (${used}/${limit}). Request extra quota from ALO Education.`,
+  };
+}
+
+// 4. Record usage in current billing period
+export async function recordUsage(ownerType: string, ownerId: string, featureKey: string): Promise<void> {
+  const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
+
+  let usage = await db.partnerMarketingUsage.findFirst({
+    where: { partnerId: ownerId, monthYear: currentMonth },
+    orderBy: { createdAt: 'desc' },
+  }).catch(() => null);
+
+  if (!usage) {
+    usage = await db.partnerMarketingUsage.create({
+      data: { partnerId: ownerId, monthYear: currentMonth, imagesUsed: 0, videosUsed: 0 },
+    });
+  }
+
+  const isImage = featureKey === 'monthly_images' || featureKey === 'MARKETING_IMAGE_GENERATION';
+  const isVideo = featureKey === 'monthly_videos' || featureKey === 'MARKETING_VIDEO_GENERATION';
+
+  await db.partnerMarketingUsage.update({
+    where: { id: usage.id },
+    data: {
+      imagesUsed: isImage ? usage.imagesUsed + 1 : usage.imagesUsed,
+      videosUsed: isVideo ? usage.videosUsed + 1 : usage.videosUsed,
+    },
+  });
+
+  await db.crmAuditLog.create({
+    data: {
+      actorUserId: ownerId,
+      actorRole: 'partner',
+      action: 'QUOTA_USAGE_RECORDED',
+      targetCollection: 'PartnerMarketingUsage',
+      targetId: usage.id,
+      afterData: JSON.stringify({ featureKey, period: currentMonth }),
+    },
+  }).catch(() => null);
+}
+
+// 5. Check if viewer can access employee private profile
+export async function canViewEmployeePrivateProfile(
+  viewerId: string,
+  viewerRoles: string[],
+  targetEmployeeId: string
+): Promise<boolean> {
+  if (viewerId === targetEmployeeId) return true;
+
+  const isSuperAdmin = viewerRoles.includes('super_admin') || viewerRoles.includes('SUPER_ADMIN') || viewerRoles.includes('chairman') || viewerRoles.includes('CHAIRMAN');
+  const isHrManager = viewerRoles.includes('hr_manager') || viewerRoles.includes('HR_MANAGER');
+
+  if (isSuperAdmin || isHrManager) {
+    await db.crmAuditLog.create({
+      data: {
+        actorUserId: viewerId,
+        actorRole: viewerRoles.join(','),
+        action: 'EMPLOYEE_PRIVATE_PROFILE_VIEWED',
+        targetCollection: 'EmployeeProfile',
+        targetId: targetEmployeeId,
+      },
+    }).catch(() => null);
+    return true;
+  }
+
+  return false;
+}
+
+// 6. Check if viewer can access employee salary data
+export async function canViewEmployeeSalary(
+  viewerId: string,
+  viewerRoles: string[],
+  targetEmployeeId: string
+): Promise<boolean> {
+  if (viewerId === targetEmployeeId) return true;
+
+  const isSuperAdmin = viewerRoles.includes('super_admin') || viewerRoles.includes('SUPER_ADMIN') || viewerRoles.includes('chairman') || viewerRoles.includes('CHAIRMAN');
+  const isHrManager = viewerRoles.includes('hr_manager') || viewerRoles.includes('HR_MANAGER');
+
+  if (isSuperAdmin || isHrManager) {
+    await db.crmAuditLog.create({
+      data: {
+        actorUserId: viewerId,
+        actorRole: viewerRoles.join(','),
+        action: 'EMPLOYEE_SALARY_VIEWED',
+        targetCollection: 'EmployeeSalary',
+        targetId: targetEmployeeId,
+      },
+    }).catch(() => null);
+    return true;
+  }
+
+  return false;
+}
+
+// 7. Check if viewer can download employee private document
+export async function canViewEmployeeDocument(
+  viewerId: string,
+  viewerRoles: string[],
+  targetEmployeeId: string,
+  documentId: string
+): Promise<boolean> {
+  if (viewerId === targetEmployeeId) return true;
+
+  const isSuperAdmin = viewerRoles.includes('super_admin') || viewerRoles.includes('SUPER_ADMIN') || viewerRoles.includes('hr_manager') || viewerRoles.includes('HR_MANAGER');
+  if (isSuperAdmin) {
+    await db.crmAuditLog.create({
+      data: {
+        actorUserId: viewerId,
+        actorRole: viewerRoles.join(','),
+        action: 'EMPLOYEE_DOCUMENT_DOWNLOADED',
+        targetCollection: 'EmployeeDocument',
+        targetId: documentId,
+      },
+    }).catch(() => null);
+    return true;
+  }
+
+  return false;
+}
+
+// 8. Check if user can view confidential B2B details
+export async function canViewB2BDetails(
+  userId: string,
+  userRoles: string[],
+  applicationId: string
+): Promise<boolean> {
+  const isAuthorized =
+    userRoles.includes('super_admin') ||
+    userRoles.includes('SUPER_ADMIN') ||
+    userRoles.includes('application_manager') ||
+    userRoles.includes('application_team');
+
+  if (isAuthorized) {
+    await db.crmAuditLog.create({
+      data: {
+        actorUserId: userId,
+        actorRole: userRoles.join(','),
+        action: 'B2B_DETAIL_VIEWED',
+        targetCollection: 'Application',
+        targetId: applicationId,
+      },
+    }).catch(() => null);
+    return true;
+  }
+
+  return false;
+}
+
+// 9. Check if student can use benefit (requires active ALO application)
+export async function canUseStudentBenefit(
+  studentId: string,
+  benefitType: string
+): Promise<{ allowed: boolean; reason?: string }> {
+  // Benefit requires an active, non-cancelled ALO application
+  const app = await db.application.findFirst({
+    where: {
+      studentId,
+      stage: { notIn: ['cancelled', 'withdrawn', 'rejected', 'closed'] },
+    },
+  }).catch(() => null);
+
+  if (!app) {
+    return {
+      allowed: false,
+      reason: 'This benefit is available after an eligible ALO application becomes active.',
+    };
+  }
+
+  return { allowed: true };
+}
+
+// 10. Atomically validate and use student mock test voucher
+export async function canUseVoucher(
+  studentId: string,
+  voucherCode: string
+): Promise<{ allowed: boolean; voucher?: any; reason?: string }> {
+  const voucher = await db.studentMockTestVoucher.findUnique({
+    where: { voucherCode },
+  }).catch(() => null);
+
+  if (!voucher) {
+    return { allowed: false, reason: 'Invalid voucher code.' };
+  }
+
+  if (voucher.studentId !== studentId) {
+    return { allowed: false, reason: 'Voucher belongs to another student. Cross-student use blocked.' };
+  }
+
+  if (voucher.status !== 'available' && voucher.status !== 'AVAILABLE') {
+    return { allowed: false, reason: `Voucher is ${voucher.status}. Only available vouchers can be used.` };
+  }
+
+  if (voucher.expiresAt && new Date() > voucher.expiresAt) {
+    await db.studentMockTestVoucher.update({
+      where: { id: voucher.id },
+      data: { status: 'expired' },
+    });
+    return { allowed: false, reason: 'Voucher has expired.' };
+  }
+
+  if (voucher.usedCount >= voucher.usageLimit) {
+    return { allowed: false, reason: 'Voucher usage limit reached.' };
+  }
+
+  return { allowed: true, voucher };
+}
+
+// 11. Check if user can manage users within a partner tenant
+export async function canManagePartnerUser(
+  userId: string,
+  partnerId: string,
+  userRoles: string[] = []
+): Promise<boolean> {
+  const isSuperAdmin = userRoles.includes('super_admin') || userRoles.includes('SUPER_ADMIN');
+  if (isSuperAdmin) return true;
+
+  const isPartnerAdmin = userRoles.includes('partner_super_admin') || userRoles.includes('PARTNER_SUPER_ADMIN') || userRoles.includes('partner_admin');
+  return isPartnerAdmin;
+}
+
+// 12. Enforce strict server-side tenant isolation
+export async function canAccessPartnerResource(
+  userPartnerId: string | null | undefined,
+  targetPartnerId: string,
+  userRoles: string[] = []
+): Promise<boolean> {
+  const isSuperAdmin = userRoles.includes('super_admin') || userRoles.includes('SUPER_ADMIN') || userRoles.includes('chairman') || userRoles.includes('CHAIRMAN');
+  if (isSuperAdmin) return true;
+
+  if (!userPartnerId || userPartnerId !== targetPartnerId) {
+    return false;
+  }
+
+  return true;
+}

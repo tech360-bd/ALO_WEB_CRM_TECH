@@ -1,0 +1,358 @@
+'use client';
+
+import { useState } from 'react';
+import {
+  GraduationCap,
+  Users,
+  Briefcase,
+  Shield,
+  Lock,
+  ShieldCheck,
+  EyeOff,
+  Server,
+  ChevronDown,
+  ChevronUp,
+  Crown,
+  Eye,
+  Rocket,
+  Zap,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { usePortalStore, type SelectedPortal, type CrmRole } from '@/lib/stores/portal-store';
+
+// ============================================================
+// Portal definitions
+// ============================================================
+interface PortalCard {
+  id: SelectedPortal;
+  name: string;
+  icon: React.ElementType;
+  description: string;
+  audience: string;
+  showRegister: boolean;
+  loginView: 'login' | 'employee-login';
+  registerView: 'register' | 'employee-login';
+}
+
+const PORTALS: PortalCard[] = [
+  {
+    id: 'student',
+    name: 'Student Portal',
+    icon: GraduationCap,
+    description:
+      'For ALO Education students to track applications, upload documents, message counselors, find courses, and manage their study abroad journey.',
+    audience: 'Current & prospective students',
+    showRegister: true,
+    loginView: 'login',
+    registerView: 'register',
+  },
+  {
+    id: 'partner',
+    name: 'Partner Portal',
+    icon: Users,
+    description:
+      'For approved ALO partners to submit leads, track applications, upload documents, and monitor commission status.',
+    audience: 'Approved recruitment partners',
+    showRegister: true,
+    loginView: 'login',
+    registerView: 'register',
+  },
+  {
+    id: 'employee',
+    name: 'ALO Employee Portal',
+    icon: Briefcase,
+    description:
+      'For ALO Education employees to manage assigned students, tasks, communication, attendance, and performance.',
+    audience: 'ALO Education staff only',
+    showRegister: false,
+    loginView: 'employee-login',
+    registerView: 'employee-login',
+  },
+  {
+    id: 'admin',
+    name: 'CRM Admin',
+    icon: Shield,
+    description:
+      'For authorized admin users to manage CRM, users, applications, reports, settings, and system operations.',
+    audience: 'Authorized administrators only',
+    showRegister: false,
+    loginView: 'employee-login',
+    registerView: 'employee-login',
+  },
+];
+
+// ============================================================
+// Demo role definitions for quick access
+// ============================================================
+interface DemoRole {
+  id: CrmRole | 'student' | 'partner' | 'employee';
+  name: string;
+  icon: React.ElementType;
+  color: string;
+  group: 'portal' | 'dashboard';
+}
+
+const DEMO_ROLES: DemoRole[] = [
+  // Portals
+  { id: 'student', name: 'Student Portal', icon: GraduationCap, color: 'bg-blue-500', group: 'portal' },
+  { id: 'partner', name: 'Partner Portal', icon: Users, color: 'bg-emerald-500', group: 'portal' },
+  { id: 'employee', name: 'Employee Portal', icon: Briefcase, color: 'bg-purple-500', group: 'portal' },
+  // Dashboards
+  { id: 'super_admin', name: 'Super Admin', icon: Shield, color: 'bg-red-500', group: 'dashboard' },
+  { id: 'ceo', name: 'CEO', icon: Crown, color: 'bg-amber-500', group: 'dashboard' },
+  { id: 'branch_manager', name: 'Branch Manager', icon: Building2, color: 'bg-teal-500', group: 'dashboard' },
+  { id: 'counselor', name: 'Counselor', icon: Users, color: 'bg-sky-500', group: 'dashboard' },
+  { id: 'visa_officer', name: 'Visa Officer', icon: Eye, color: 'bg-indigo-500', group: 'dashboard' },
+  { id: 'finance', name: 'Finance', icon: DollarSign, color: 'bg-green-500', group: 'dashboard' },
+  { id: 'marketing_manager', name: 'Marketing', icon: Rocket, color: 'bg-pink-500', group: 'dashboard' },
+  { id: 'hr', name: 'HR', icon: Briefcase, color: 'bg-orange-500', group: 'dashboard' },
+  { id: 'application_team', name: 'Application Team', icon: FileText, color: 'bg-cyan-500', group: 'dashboard' },
+  { id: 'front_desk', name: 'Front Desk', icon: Monitor, color: 'bg-lime-600', group: 'dashboard' },
+  { id: 'partner_manager', name: 'Partner Mgr', icon: Handshake, color: 'bg-violet-500', group: 'dashboard' },
+  { id: 'document_officer', name: 'Document Officer', icon: FileCheck, color: 'bg-fuchsia-500', group: 'dashboard' },
+  { id: 'data_manager', name: 'Data Manager', icon: Database, color: 'bg-slate-500', group: 'dashboard' },
+  { id: 'support_agent', name: 'Support', icon: Headphones, color: 'bg-rose-500', group: 'dashboard' },
+  { id: 'ai_manager', name: 'AI Command', icon: Zap, color: 'bg-yellow-500', group: 'dashboard' },
+];
+
+// ============================================================
+// Trust / Security items
+// ============================================================
+const TRUST_ITEMS = [
+  { icon: Lock, label: '256-bit Encrypted' },
+  { icon: ShieldCheck, label: 'RBAC Protected' },
+  { icon: EyeOff, label: 'Privacy Mode' },
+  { icon: Server, label: 'Audit Logged' },
+] as const;
+
+// ============================================================
+// Single portal card
+// ============================================================
+function PortalCardItem({ portal }: { portal: PortalCard }) {
+  const { setSelectedPortal, setView } = usePortalStore();
+  const Icon = portal.icon;
+
+  const handleLogin = () => {
+    setSelectedPortal(portal.id);
+    setView(portal.loginView);
+  };
+
+  const handleRegister = () => {
+    setSelectedPortal(portal.id);
+    setView(portal.registerView);
+  };
+
+  return (
+    <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 transition-shadow duration-200 hover:shadow-lg">
+      {/* Icon */}
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50">
+        <Icon className="h-5 w-5 text-orange-600" />
+      </div>
+
+      {/* Name */}
+      <h3 className="mt-4 text-lg font-semibold text-gray-900">
+        {portal.name}
+      </h3>
+
+      {/* Description */}
+      <p className="mt-1 text-sm leading-relaxed text-gray-500">
+        {portal.description}
+      </p>
+
+      {/* Audience */}
+      <p className="mt-2 text-xs text-gray-400">{portal.audience}</p>
+
+      {/* Actions */}
+      <div className="mt-4 flex flex-col gap-2">
+        <Button
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold"
+          onClick={handleLogin}
+        >
+          Login
+        </Button>
+
+        {portal.showRegister && (
+          <Button
+            variant="outline"
+            className="w-full border-orange-300 text-orange-600 hover:bg-orange-50"
+            onClick={handleRegister}
+          >
+            Register
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Demo Role Button
+// ============================================================
+function DemoRoleButton({ role }: { role: DemoRole }) {
+  const { demoLogin } = usePortalStore();
+  const Icon = role.icon;
+
+  return (
+    <button
+      onClick={() => demoLogin(role.id)}
+      className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:border-orange-300 hover:bg-orange-50 hover:shadow-sm active:scale-95"
+    >
+      <div className={`flex h-7 w-7 items-center justify-center rounded-md ${role.color} text-white`}>
+        <Icon className="h-3.5 w-3.5" />
+      </div>
+      <span className="truncate">{role.name}</span>
+    </button>
+  );
+}
+
+// ============================================================
+// PortalSelector — main export
+// ============================================================
+export default function PortalSelector() {
+  const [showDemo, setShowDemo] = useState(false);
+
+  const portalRoles = DEMO_ROLES.filter((r) => r.group === 'portal');
+  const dashboardRoles = DEMO_ROLES.filter((r) => r.group === 'dashboard');
+
+  return (
+    <main className="flex min-h-screen flex-col bg-white">
+      {/* ---- Header with logo ---- */}
+      <header className="flex justify-center pt-8 pb-2 md:pt-12 md:pb-4">
+        <div className="flex items-center gap-3">
+          <img
+            src="/images/landing/Copy of logo.webp"
+            alt="ALO Education"
+            className="h-10 w-10 rounded-full object-cover"
+          />
+          <div className="flex flex-col">
+            <span className="text-xl font-bold tracking-tight text-gray-900">
+              ALO Education
+            </span>
+            <span className="text-xs italic text-orange-500" style={{ fontFamily: 'Georgia, serif' }}>
+              Your Dream – Our Commitment
+            </span>
+          </div>
+        </div>
+      </header>
+
+      {/* ---- Content area ---- */}
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center px-4 pb-12 sm:px-6 lg:px-8">
+        {/* Title */}
+        <h1 className="mt-6 text-center text-3xl font-bold text-gray-900 md:mt-10 md:text-4xl">
+          Welcome to ALO Education
+        </h1>
+
+        {/* Subtitle */}
+        <p className="mt-2 text-center text-gray-500">
+          Choose your portal to continue
+        </p>
+
+        {/* Portal grid */}
+        <div className="mt-8 grid w-full grid-cols-1 gap-4 md:mt-10 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
+          {PORTALS.map((portal) => (
+            <PortalCardItem key={portal.id} portal={portal} />
+          ))}
+        </div>
+
+        {/* ---- Demo Access Panel ---- */}
+        <div className="mt-10 w-full rounded-2xl border-2 border-dashed border-orange-300 bg-orange-50/50 p-6 md:mt-12">
+          <button
+            onClick={() => setShowDemo(!showDemo)}
+            className="flex w-full items-center justify-between"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500">
+                <Zap className="h-5 w-5 text-white" />
+              </div>
+              <div className="text-left">
+                <h2 className="text-lg font-bold text-gray-900">
+                  Demo Access — Instant Preview All Dashboards
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Click any role below to instantly view that dashboard (15 role-based dashboards, 33 CRM pages, 4 portals)
+                </p>
+              </div>
+            </div>
+            {showDemo ? (
+              <ChevronUp className="h-5 w-5 text-gray-400" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-gray-400" />
+            )}
+          </button>
+
+          {showDemo && (
+            <div className="mt-6 space-y-6">
+              {/* Portals */}
+              <div>
+                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+                  Student & Partner Portals
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {portalRoles.map((role) => (
+                    <DemoRoleButton key={role.id} role={role} />
+                  ))}
+                </div>
+              </div>
+
+              {/* CRM Dashboards */}
+              <div>
+                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+                  15 Role-Based CRM Dashboards
+                </h3>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                  {dashboardRoles.map((role) => (
+                    <DemoRoleButton key={role.id} role={role} />
+                  ))}
+                </div>
+              </div>
+
+              {/* CRM Pages Quick Access */}
+              <div>
+                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+                  33 CRM Pages — Available in any dashboard via sidebar
+                </h3>
+                <div className="flex flex-wrap gap-1.5 text-xs text-gray-500">
+                  {[
+                    'Leads', 'Students', 'Applications', 'Documents', 'Scholarships',
+                    'Course Finder', 'Universities', 'Inbox', 'WhatsApp', 'Social',
+                    'Communications', 'Tasks', 'Appointments', 'Support', 'Visa',
+                    'Finance', 'Commissions', 'Partners', 'Marketing', 'HRM',
+                    'Reports', 'Audit Logs', 'Settings', 'Users', 'Roles',
+                    'Permissions', 'AI Command', 'SEO Dashboard', 'SEO Keywords',
+                    'SEO Content', 'SEO Competitors', 'SEO Technical', 'SEO Policy',
+                  ].map((page) => (
+                    <span
+                      key={page}
+                      className="rounded-full bg-gray-100 px-2.5 py-1 text-gray-600"
+                    >
+                      {page}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Trust / Security section */}
+        <section className="mt-8 flex flex-wrap items-center justify-center gap-4 md:mt-12 md:gap-8">
+          {TRUST_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.label}
+                className="flex items-center gap-1.5 text-xs text-gray-400"
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{item.label}</span>
+              </div>
+            );
+          })}
+        </section>
+      </div>
+    </main>
+  );
+}
+
+// Extra icon imports for demo buttons
+import { Building2, DollarSign, FileText, Monitor, Handshake, FileCheck, Database, Headphones } from 'lucide-react';

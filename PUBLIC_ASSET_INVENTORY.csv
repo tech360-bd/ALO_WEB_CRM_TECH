@@ -1,0 +1,4 @@
+Asset Path,Type,Purpose,Included in Source,Included in Production
+public/favicon.ico,Image,Browser favicon,Yes,Yes
+public/logo.png,Image,Brand header logo,Yes,Yes
+public/hero-banner.jpg,Image,Homepage hero slide image,Yes,Yes

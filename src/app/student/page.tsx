@@ -1,0 +1,23 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function StudentRootPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('student_token') : null;
+    if (token) {
+      router.replace('/student/dashboard');
+    } else {
+      router.replace('/student/login');
+    }
+  }, [router]);
+
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0057B8]" />
+    </div>
+  );
+}

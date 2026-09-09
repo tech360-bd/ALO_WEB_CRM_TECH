@@ -1,0 +1,369 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   ALO EDUCATION DESIGN SYSTEM — Design Tokens
+   Brand: #0057B8 / #2563EB / #C2410C
+   ============================================================ */
+
+@theme inline {
+  /* --- Core semantic tokens --- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+
+  /* --- Sidebar tokens --- */
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+
+  /* --- Chart tokens --- */
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+
+  /* --- Standard shadcn tokens --- */
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* --- ALO Brand Tokens --- */
+  --color-alo-brand: var(--alo-brand);
+  --color-alo-brand-light: var(--alo-brand-light);
+  --color-alo-cta: var(--alo-cta);
+  --color-alo-cta-hover: var(--alo-cta-hover);
+  --color-alo-cta-accent: var(--alo-cta-accent);
+
+  /* --- CRM Semantic Tokens --- */
+  --color-crm-success: var(--crm-success);
+  --color-crm-success-bg: var(--crm-success-bg);
+  --color-crm-success-text: var(--crm-success-text);
+  --color-crm-warning: var(--crm-warning);
+  --color-crm-warning-bg: var(--crm-warning-bg);
+  --color-crm-warning-text: var(--crm-warning-text);
+  --color-crm-danger: var(--crm-danger);
+  --color-crm-danger-bg: var(--crm-danger-bg);
+  --color-crm-danger-text: var(--crm-danger-text);
+
+  /* --- Neutral Tokens --- */
+  --color-alo-page: var(--alo-page);
+  --color-alo-text: var(--alo-text);
+  --color-alo-text-secondary: var(--alo-text-secondary);
+  --color-alo-text-muted: var(--alo-text-muted);
+  --color-alo-border: var(--alo-border);
+
+  /* --- Radius tokens --- */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ============================================================
+   LIGHT MODE — ALO Brand Colors
+   ============================================================ */
+:root {
+  --radius: 0.5rem;
+
+  /* Page & Surface */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+
+  /* Primary — SaaS Blue #2563EB */
+  --primary: #2563EB;
+  --primary-foreground: #FFFFFF;
+
+  /* Secondary */
+  --secondary: #F1F5F9;
+  --secondary-foreground: #0F172A;
+
+  /* Muted */
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+
+  /* Accent */
+  --accent: #EFF6FF;
+  --accent-foreground: #1E40AF;
+
+  /* Destructive */
+  --destructive: #DC2626;
+
+  /* Border & Input */
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #2563EB;
+
+  /* ALO Official Brand Tokens */
+  --alo-brand: #0066CC;
+  --alo-brand-light: #EFF6FF;
+  --alo-cta: #F37021;
+  --alo-cta-hover: #D95C0E;
+  --alo-cta-accent: #FFB347;
+
+  /* CRM Semantic */
+  --crm-success: #22C55E;
+  --crm-success-bg: #DCFCE7;
+  --crm-success-text: #15803D;
+  --crm-warning: #F59E0B;
+  --crm-warning-bg: #FEF3C7;
+  --crm-warning-text: #B45309;
+  --crm-danger: #EF4444;
+  --crm-danger-bg: #FEE2E2;
+  --crm-danger-text: #B91C1C;
+
+  /* Neutral */
+  --alo-page: #F8FAFC;
+  --alo-text: #000000;
+  --alo-text-secondary: #555555;
+  --alo-text-muted: #64748B;
+  --alo-border: #E5E7EB;
+
+  /* Charts */
+  --chart-1: #0066CC;
+  --chart-2: #F37021;
+  --chart-3: #FFB347;
+  --chart-4: #22C55E;
+  --chart-5: #EF4444;
+
+  /* Sidebar */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #0066CC;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EFF6FF;
+  --sidebar-accent-foreground: #0066CC;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #0066CC;
+}
+
+/* ============================================================
+   DARK MODE — ALO Dark Tokens
+   ============================================================ */
+.dark {
+  --background: #0F172A;
+  --foreground: #F1F5F9;
+  --card: #1E293B;
+  --card-foreground: #F1F5F9;
+  --popover: #1E293B;
+  --popover-foreground: #F1F5F9;
+
+  --primary: #60A5FA;
+  --primary-foreground: #0F172A;
+
+  --secondary: #334155;
+  --secondary-foreground: #F1F5F9;
+
+  --muted: #334155;
+  --muted-foreground: #94A3B8;
+
+  --accent: #1E3A5F;
+  --accent-foreground: #93C5FD;
+
+  --destructive: #F87171;
+
+  --border: #334155;
+  --input: #334155;
+  --ring: #60A5FA;
+
+  /* ALO Brand Dark */
+  --alo-brand: #60A5FA;
+  --alo-brand-light: #1E3A5F;
+  --alo-cta: #FB923C;
+  --alo-cta-hover: #F97316;
+  --alo-cta-accent: #FB923C;
+
+  /* CRM Semantic Dark */
+  --crm-success: #4ADE80;
+  --crm-success-bg: #14532D;
+  --crm-success-text: #86EFAC;
+  --crm-warning: #FDE047;
+  --crm-warning-bg: #713F12;
+  --crm-warning-text: #FDE68A;
+  --crm-danger: #F87171;
+  --crm-danger-bg: #7F1D1D;
+  --crm-danger-text: #FCA5A5;
+
+  /* Neutral Dark */
+  --alo-page: #0F172A;
+  --alo-text: #F1F5F9;
+  --alo-text-secondary: #CBD5E1;
+  --alo-text-muted: #94A3B8;
+  --alo-border: #334155;
+
+  /* Charts Dark */
+  --chart-1: #60A5FA;
+  --chart-2: #93C5FD;
+  --chart-3: #38BDF8;
+  --chart-4: #4ADE80;
+  --chart-5: #FB923C;
+
+  /* Sidebar Dark */
+  --sidebar: #1E293B;
+  --sidebar-foreground: #F1F5F9;
+  --sidebar-primary: #60A5FA;
+  --sidebar-primary-foreground: #0F172A;
+  --sidebar-accent: #1E3A5F;
+  --sidebar-accent-foreground: #93C5FD;
+  --sidebar-border: #334155;
+  --sidebar-ring: #60A5FA;
+}
+
+/* ============================================================
+   BASE LAYER
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* ============================================================
+   ALO CUSTOM SCROLLBAR
+   ============================================================ */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #64748B;
+}
+
+/* ============================================================
+   ALO TYPOGRAPHY UTILITY CLASSES
+   ============================================================ */
+
+/* Website Hero H1 */
+.text-hero-h1 {
+  font-size: 56px;
+  line-height: 64px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+@media (max-width: 767px) {
+  .text-hero-h1 {
+    font-size: 36px;
+    line-height: 44px;
+  }
+}
+
+/* Website Section Title */
+.text-section-title {
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+@media (max-width: 767px) {
+  .text-section-title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+}
+
+/* CRM Page Title */
+.text-crm-page {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* CRM Section Title */
+.text-crm-section {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+/* Card Title */
+.text-card-title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+/* Body Text */
+.text-body-sm {
+  font-size: 14px;
+  line-height: 22px;
+}
+.text-body-md {
+  font-size: 16px;
+  line-height: 26px;
+}
+
+/* Badge Text */
+.text-badge {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+/* ============================================================
+   CIRCULAR PROGRESS ANIMATION
+   ============================================================ */
+@keyframes circular-progress {
+  from { stroke-dashoffset: var(--circumference); }
+  to { stroke-dashoffset: var(--offset); }
+}
+
+/* ============================================================
+   SKELETON SHIMMER
+   ============================================================ */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+.dark .skeleton-shimmer {
+  background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+  background-size: 200% 100%;
+}

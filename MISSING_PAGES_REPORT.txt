@@ -1,0 +1,1692 @@
+======================================================
+  ALO EDUCATION - MISSING/EMPTY PAGES FULL REPORT
+  Generated: Wed Aug 19 02:07:57 +06 2026
+======================================================
+
+## SUMMARY
+Total pages:      216
+Empty pages (<500 bytes):      125
+Small pages (500-1500 bytes):       23
+Complete pages (>1500 bytes):       68
+
+======================================================
+## EMPTY PAGES (Under 500 bytes) - NEED CONTENT
+======================================================
+
+FILE: src/app/privacy-policy/page.tsx
+SIZE:      324 bytes
+LINES:       12
+--- CONTENT ---
+'use client';
+
+import { PublicLegalPage } from '@/components/website/public-pages/PublicPages';
+
+export default function PrivacyPolicyPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-white pt-20">
+      <main className="flex-1">
+        <PublicLegalPage type="privacy" />
+      </main>
+    </div>
+  );
+}--- END ---
+
+FILE: src/app/resources/[slug]/page.tsx
+SIZE:      434 bytes
+LINES:       17
+--- CONTENT ---
+'use client';
+
+import { useParams } from 'next/navigation';
+import { PublicResourcesPage } from '@/components/website/public-pages/PublicPages';
+
+export default function ResourceDetailPage() {
+  const params = useParams();
+  const slug = params?.slug as string;
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white pt-20">
+      <main className="flex-1">
+        <PublicResourcesPage />
+      </main>
+    </div>
+  );
+}
+--- END ---
+
+FILE: src/app/crm/ucc/page.tsx
+SIZE:      425 bytes
+LINES:       10
+--- CONTENT ---
+import EnterpriseUnifiedCommunicationCenter from '@/components/communication/EnterpriseUnifiedCommunicationCenter';
+
+export const metadata = {
+  title: 'Unified Communication Center (UCC) | ALO Education CRM',
+  description: 'Enterprise omni-channel inbox for WhatsApp, Facebook, Instagram, Email, Live Chat & Portal Messages.',
+};
+
+export default function CrmUccPage() {
+  return <EnterpriseUnifiedCommunicationCenter />;
+}
+--- END ---
+
+FILE: src/app/crm/visa/page.tsx
+SIZE:      154 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function CrmVisaRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/crm/dashboard/page.tsx
+SIZE:      175 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function CrmDashboardRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/crm/visa-interviews/[caseId]/page.tsx
+SIZE:      300 bytes
+LINES:        6
+--- CONTENT ---
+import VisaInterviewWorkspace from '@/components/visa/VisaInterviewWorkspace';
+
+export default async function CrmVisaInterviewCaseRoute({ params }: { params: Promise<{ caseId: string }> }) {
+  const resolvedParams = await params;
+  return <VisaInterviewWorkspace caseId={resolvedParams.caseId} />;
+}
+--- END ---
+
+FILE: src/app/crm/visa-interviews/page.tsx
+SIZE:      170 bytes
+LINES:        5
+--- CONTENT ---
+import VisaInterviewWorkspace from '@/components/visa/VisaInterviewWorkspace';
+
+export default function CrmVisaInterviewsRoute() {
+  return <VisaInterviewWorkspace />;
+}
+--- END ---
+
+FILE: src/app/crm/integration-center/page.tsx
+SIZE:      379 bytes
+LINES:       10
+--- CONTENT ---
+import SocialIntegrationCenterPage from '@/components/admin/SocialIntegrationCenterPage';
+
+export const metadata = {
+  title: 'Integration Center | ALO Education CRM',
+  description: 'Manage official Meta, WhatsApp Business, Google, YouTube, and Mailer OAuth 2.0 connections.',
+};
+
+export default function CrmIntegrationCenterPage() {
+  return <SocialIntegrationCenterPage />;
+}
+--- END ---
+
+FILE: src/app/crm/super-admin/page.tsx
+SIZE:      175 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function CrmSuperAdminPage() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/crm/morning-summary/page.tsx
+SIZE:      375 bytes
+LINES:       10
+--- CONTENT ---
+import MorningSummaryView from '@/components/communication/MorningSummaryView';
+
+export const metadata = {
+  title: 'Morning Briefing | ALO Education CRM',
+  description: 'Daily AI-powered counselor briefing with overnight conversation summaries, urgent cases, and pending action items.',
+};
+
+export default function MorningSummaryPage() {
+  return <MorningSummaryView />;
+}
+--- END ---
+
+FILE: src/app/crm/visa-cases/page.tsx
+SIZE:      159 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function CrmVisaCasesRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/crm/country-data-review/page.tsx
+SIZE:      349 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Country Data Review | ALO Education Staff',
+  description: 'Staff verification and compliance review for country destination data.',
+};
+
+export default function CrmCountryDataReviewPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/crm/visa-reports/page.tsx
+SIZE:      161 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function CrmVisaReportsRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/crm/visa-readiness/page.tsx
+SIZE:      163 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function CrmVisaReadinessRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/crm/countries/page.tsx
+SIZE:      370 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'CRM Country Directory | ALO Education Staff',
+  description: 'Staff CRM Destination Directory with verified visa rules, tuition ranges, and entry requirements.',
+};
+
+export default function CrmCountriesPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/crm/visa-dashboard/page.tsx
+SIZE:      163 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function CrmVisaDashboardRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/crm/country/[id]/page.tsx
+SIZE:      308 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'CRM Country Detail | ALO Education Staff',
+  description: 'Staff CRM Destination Detail view.',
+};
+
+export default function CrmCountryDetailPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/terms/page.tsx
+SIZE:      314 bytes
+LINES:       12
+--- CONTENT ---
+'use client';
+
+import { PublicLegalPage } from '@/components/website/public-pages/PublicPages';
+
+export default function TermsPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-white pt-20">
+      <main className="flex-1">
+        <PublicLegalPage type="terms" />
+      </main>
+    </div>
+  );
+}--- END ---
+
+FILE: src/app/student/visa-interview-practice/page.tsx
+SIZE:      176 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentAiInterviewPage from '../ai-interview/page';
+
+export default function StudentVisaInterviewPracticeRoute() {
+  return <StudentAiInterviewPage />;
+}
+--- END ---
+
+FILE: src/app/student/offers/page.tsx
+SIZE:      174 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentApplications from '@/components/student/StudentApplications';
+
+export default function StudentOffersPage() {
+  return <StudentApplications />;
+}
+--- END ---
+
+FILE: src/app/student/messages/page.tsx
+SIZE:      164 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentMessages from '@/components/student/StudentMessages';
+
+export default function StudentMessagesPage() {
+  return <StudentMessages />;
+}
+--- END ---
+
+FILE: src/app/student/journey/page.tsx
+SIZE:      169 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentVisaCenter from '@/components/student/StudentVisaCenter';
+
+export default function StudentJourneyPage() {
+  return <StudentVisaCenter />;
+}
+--- END ---
+
+FILE: src/app/student/dashboard/page.tsx
+SIZE:      168 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentDashboard from '@/components/student/StudentDashboard';
+
+export default function StudentDashboardPage() {
+  return <StudentDashboard />;
+}
+--- END ---
+
+FILE: src/app/student/profile/page.tsx
+SIZE:      177 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentProfilePage from '@/components/student/StudentProfilePage';
+
+export default function StudentProfilePageRoute() {
+  return <StudentProfilePage />;
+}
+--- END ---
+
+FILE: src/app/student/interview/page.tsx
+SIZE:      174 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentSopCvStudio from '@/components/student/StudentSopCvStudio';
+
+export default function StudentInterviewPage() {
+  return <StudentSopCvStudio />;
+}
+--- END ---
+
+FILE: src/app/student/applications/page.tsx
+SIZE:      180 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentApplications from '@/components/student/StudentApplications';
+
+export default function StudentApplicationsPage() {
+  return <StudentApplications />;
+}
+--- END ---
+
+FILE: src/app/student/documents/page.tsx
+SIZE:      168 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import StudentDocuments from '@/components/student/StudentDocuments';
+
+export default function StudentDocumentsPage() {
+  return <StudentDocuments />;
+}
+--- END ---
+
+FILE: src/app/admin/system-builder/page.tsx
+SIZE:      176 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function SystemBuilderRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/audit-logs/page.tsx
+SIZE:      154 bytes
+LINES:        5
+--- CONTENT ---
+import CrmAuditLogsPage from '@/components/crm/pages/CrmAuditLogsPage';
+
+export default function AdminAuditLogsRoute() {
+  return <CrmAuditLogsPage />;
+}
+--- END ---
+
+FILE: src/app/admin/settings/page.tsx
+SIZE:      150 bytes
+LINES:        5
+--- CONTENT ---
+import CrmSettingsPage from '@/components/crm/pages/CrmSettingsPage';
+
+export default function AdminSettingsRoute() {
+  return <CrmSettingsPage />;
+}
+--- END ---
+
+FILE: src/app/admin/import-center/country-facts/page.tsx
+SIZE:      353 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Import Center - Country Facts | ALO Education Admin',
+  description: 'CSV Import Center for country quick facts and key statistics.',
+};
+
+export default function AdminImportCountryFactsPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/admin/import-center/country-pages/page.tsx
+SIZE:      339 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Import Center - Country Pages | ALO Education Admin',
+  description: 'CSV Import Center for 21-section country pages.',
+};
+
+export default function AdminImportCountryPagesPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/admin/import-center/visa-rules/page.tsx
+SIZE:      375 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Import Center - Visa Rules | ALO Education Admin',
+  description: 'CSV Import Center for official visa steps, financial solvency, and post-study work rules.',
+};
+
+export default function AdminImportVisaRulesPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/admin/import-center/countries/page.tsx
+SIZE:      330 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Import Center - Countries | ALO Education Admin',
+  description: 'CSV Import Center for country master records.',
+};
+
+export default function AdminImportCountriesPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/admin/import-center/city-living-costs/page.tsx
+SIZE:      368 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Import Center - City Living Costs | ALO Education Admin',
+  description: 'CSV Import Center for city living costs and transportation estimates.',
+};
+
+export default function AdminImportCityLivingCostsPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/admin/employee-control/page.tsx
+SIZE:      172 bytes
+LINES:        5
+--- CONTENT ---
+import AccessControlCenterPage from '@/components/admin/AccessControlCenterPage';
+
+export default function EmployeeControlRoute() {
+  return <AccessControlCenterPage />;
+}
+--- END ---
+
+FILE: src/app/admin/security/page.tsx
+SIZE:      176 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function AdminSecurityRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/country-control/page.tsx
+SIZE:      177 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function CountryControlRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/destinations/page.tsx
+SIZE:      180 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function AdminDestinationsRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/role-permissions/page.tsx
+SIZE:      161 bytes
+LINES:        5
+--- CONTENT ---
+import CrmPermissionsPage from '@/components/crm/pages/CrmPermissionsPage';
+
+export default function RolePermissionsRoute() {
+  return <CrmPermissionsPage />;
+}
+--- END ---
+
+FILE: src/app/admin/dashboard/page.tsx
+SIZE:      177 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function AdminDashboardRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/integration-center/page.tsx
+SIZE:      396 bytes
+LINES:       10
+--- CONTENT ---
+import SocialIntegrationCenterPage from '@/components/admin/SocialIntegrationCenterPage';
+
+export const metadata = {
+  title: 'Social Integration Center | ALO Education Super Admin',
+  description: 'Manage official Meta, WhatsApp Business, Google, YouTube, and Mailer OAuth 2.0 connections.',
+};
+
+export default function AdminIntegrationCenterPage() {
+  return <SocialIntegrationCenterPage />;
+}
+--- END ---
+
+FILE: src/app/admin/integration-wizard/page.tsx
+SIZE:      389 bytes
+LINES:       10
+--- CONTENT ---
+import OAuthIntegrationWizard from '@/components/communication/OAuthIntegrationWizard';
+
+export const metadata = {
+  title: 'Integration Wizard | ALO Education Admin',
+  description: 'Connect official social media, WhatsApp, email, and analytics providers using secure OAuth 2.0 authorization.',
+};
+
+export default function IntegrationWizardPage() {
+  return <OAuthIntegrationWizard />;
+}
+--- END ---
+
+FILE: src/app/admin/permission-matrix/page.tsx
+SIZE:      178 bytes
+LINES:        5
+--- CONTENT ---
+import AccessControlCenterPage from '@/components/admin/AccessControlCenterPage';
+
+export default function AdminPermissionMatrixRoute() {
+  return <AccessControlCenterPage />;
+}
+--- END ---
+
+FILE: src/app/admin/branches/page.tsx
+SIZE:      176 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function AdminBranchesRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/agent-center/page.tsx
+SIZE:      174 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function AgentCenterRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/countries/edit/[id]/page.tsx
+SIZE:      335 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Edit Country Destination | ALO Education Admin',
+  description: 'Edit 21-section study abroad destination guide details.',
+};
+
+export default function AdminCountryEditPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/admin/countries/page.tsx
+SIZE:      372 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Country Destination Builder | ALO Education Admin',
+  description: 'Manage 21-section destination guides, CSV facts import, entry requirements, and visa rules.',
+};
+
+export default function AdminCountriesPage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/admin/countries/create/page.tsx
+SIZE:      339 bytes
+LINES:       10
+--- CONTENT ---
+import AdminCountryBuilderView from '@/components/admin/AdminCountryBuilderView';
+
+export const metadata = {
+  title: 'Create Country Destination | ALO Education Admin',
+  description: 'Create a new 21-section study abroad destination guide.',
+};
+
+export default function AdminCountryCreatePage() {
+  return <AdminCountryBuilderView />;
+}
+--- END ---
+
+FILE: src/app/admin/approvals/page.tsx
+SIZE:      177 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function AdminApprovalsRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/login/page.tsx
+SIZE:      332 bytes
+LINES:       12
+--- CONTENT ---
+'use client';
+
+import { Suspense } from 'react';
+import LoginPage from '@/components/auth/LoginPage';
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-slate-500">Loading Admin Portal...</div>}>
+      <LoginPage initialPortal="admin-login" />
+    </Suspense>
+  );
+}
+--- END ---
+
+FILE: src/app/admin/branch-control/page.tsx
+SIZE:      176 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function BranchControlRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/admin/reports/page.tsx
+SIZE:      146 bytes
+LINES:        5
+--- CONTENT ---
+import CrmReportsPage from '@/components/crm/pages/CrmReportsPage';
+
+export default function AdminReportsRoute() {
+  return <CrmReportsPage />;
+}
+--- END ---
+
+FILE: src/app/admin/employees/page.tsx
+SIZE:      177 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function AdminEmployeesRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/settings/page.tsx
+SIZE:      213 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminsettingsPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/settings" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/voucher-codes/page.tsx
+SIZE:      223 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminvoucher_codesPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/voucher-codes" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/company-profile/page.tsx
+SIZE:      227 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdmincompany_profilePage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/company-profile" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/video-generator/page.tsx
+SIZE:      227 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminvideo_generatorPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/video-generator" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/marketing-studio/page.tsx
+SIZE:      229 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminmarketing_studioPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/marketing-studio" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/leads/page.tsx
+SIZE:      207 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminleadsPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/leads" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/support-request/page.tsx
+SIZE:      227 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminsupport_requestPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/support-request" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/social-scheduler/page.tsx
+SIZE:      229 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminsocial_schedulerPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/social-scheduler" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/course-finder/page.tsx
+SIZE:      223 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdmincourse_finderPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/course-finder" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/roles/page.tsx
+SIZE:      207 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminrolesPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/roles" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/mock-tests/page.tsx
+SIZE:      217 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminmock_testsPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/mock-tests" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/usage-quota/page.tsx
+SIZE:      219 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminusage_quotaPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/usage-quota" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/dashboard/page.tsx
+SIZE:      215 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminDashboardPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/dashboard" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/students/page.tsx
+SIZE:      213 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminstudentsPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/students" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/interview-prep/page.tsx
+SIZE:      225 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdmininterview_prepPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/interview-prep" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/image-generator/page.tsx
+SIZE:      227 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminimage_generatorPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/image-generator" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/users/page.tsx
+SIZE:      207 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminusersPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/users" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/users/create/page.tsx
+SIZE:      221 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminusers_createPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/users/create" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/applications/page.tsx
+SIZE:      221 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminapplicationsPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/applications" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/content-generator/page.tsx
+SIZE:      231 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdmincontent_generatorPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/content-generator" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/documents/page.tsx
+SIZE:      215 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdmindocumentsPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/documents" />;
+}
+--- END ---
+
+FILE: src/app/partner-admin/reports/page.tsx
+SIZE:      211 bytes
+LINES:        5
+--- CONTENT ---
+import MasterPartnerAdminView from '@/components/partner/MasterPartnerAdminView';
+
+export default function PartnerAdminreportsPage() {
+  return <MasterPartnerAdminView currentPath="/partner-admin/reports" />;
+}
+--- END ---
+
+FILE: src/app/course-finder/page.tsx
+SIZE:      495 bytes
+LINES:       16
+--- CONTENT ---
+'use client';
+
+import React, { Suspense } from 'react';
+import { CourseFinderPublic } from '@/components/course-finder/course-finder-public';
+
+export default function CourseFinderPageRoute() {
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <main className="pt-20 pb-16">
+        <Suspense fallback={<div className="p-12 text-center text-slate-500 font-medium">Loading Course Finder...</div>}>
+          <CourseFinderPublic />
+        </Suspense>
+      </main>
+    </div>
+  );
+}
+--- END ---
+
+FILE: src/app/visa/readiness/page.tsx
+SIZE:      325 bytes
+LINES:       12
+--- CONTENT ---
+'use client';
+
+import { PublicVisaReadinessPage } from '@/components/website/public-pages/PublicPages';
+
+export default function VisaReadinessPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-white pt-20">
+      <main className="flex-1">
+        <PublicVisaReadinessPage />
+      </main>
+    </div>
+  );
+}--- END ---
+
+FILE: src/app/partner/settings/page.tsx
+SIZE:      177 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerSettingsPage from '@/components/partner/PartnerSettingsPage';
+
+export default function PartnerSettingsRoute() {
+  return <PartnerSettingsPage />;
+}
+--- END ---
+
+FILE: src/app/partner/commission/page.tsx
+SIZE:      185 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerCommissionPage from '@/components/partner/PartnerCommissionPage';
+
+export default function PartnerCommissionRoute() {
+  return <PartnerCommissionPage />;
+}
+--- END ---
+
+FILE: src/app/partner/referrals/page.tsx
+SIZE:      181 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerReferralsPage from '@/components/partner/PartnerReferralsPage';
+
+export default function PartnerReferralsRoute() {
+  return <PartnerReferralsPage />;
+}
+--- END ---
+
+FILE: src/app/partner/leads/page.tsx
+SIZE:      165 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerLeadsPage from '@/components/partner/PartnerLeadsPage';
+
+export default function PartnerLeadsRoute() {
+  return <PartnerLeadsPage />;
+}
+--- END ---
+
+FILE: src/app/partner/dashboard/page.tsx
+SIZE:      168 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerDashboard from '@/components/partner/PartnerDashboard';
+
+export default function PartnerDashboardPage() {
+  return <PartnerDashboard />;
+}
+--- END ---
+
+FILE: src/app/partner/students/page.tsx
+SIZE:      177 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerStudentsPage from '@/components/partner/PartnerStudentsPage';
+
+export default function PartnerStudentsRoute() {
+  return <PartnerStudentsPage />;
+}
+--- END ---
+
+FILE: src/app/partner/applications/page.tsx
+SIZE:      193 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerApplicationsPage from '@/components/partner/PartnerApplicationsPage';
+
+export default function PartnerApplicationsRoute() {
+  return <PartnerApplicationsPage />;
+}
+--- END ---
+
+FILE: src/app/partner/documents/page.tsx
+SIZE:      181 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerDocumentsPage from '@/components/partner/PartnerDocumentsPage';
+
+export default function PartnerDocumentsRoute() {
+  return <PartnerDocumentsPage />;
+}
+--- END ---
+
+FILE: src/app/partner/reports/page.tsx
+SIZE:      173 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import PartnerReportsPage from '@/components/partner/PartnerReportsPage';
+
+export default function PartnerReportsRoute() {
+  return <PartnerReportsPage />;
+}
+--- END ---
+
+FILE: src/app/super-admin/dashboard/page.tsx
+SIZE:      182 bytes
+LINES:        5
+--- CONTENT ---
+import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+
+export default function SuperAdminDashboardRoute() {
+  return <MasterSuperAdminDashboard />;
+}
+--- END ---
+
+FILE: src/app/eligibility-checker/page.tsx
+SIZE:      347 bytes
+LINES:       13
+--- CONTENT ---
+'use client';
+
+import { EligibilityCheckerEnhanced } from '@/components/course-finder/eligibility-checker-enhanced';
+
+export default function EligibilityCheckerPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
+      <main className="flex-1 pt-16">
+        <EligibilityCheckerEnhanced />
+      </main>
+    </div>
+  );
+}
+--- END ---
+
+FILE: src/app/language-prep/[slug]/page.tsx
+SIZE:      449 bytes
+LINES:       17
+--- CONTENT ---
+'use client';
+
+import { useParams } from 'next/navigation';
+import { PublicLanguagePrepPage } from '@/components/website/public-pages/PublicPages';
+
+export default function LanguagePrepPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
+      <main className="flex-1 pt-20">
+        <PublicLanguagePrepPage slug={slug} />
+      </main>
+    </div>
+  );
+}
+--- END ---
+
+FILE: src/app/english-tests/[slug]/page.tsx
+SIZE:      448 bytes
+LINES:       17
+--- CONTENT ---
+'use client';
+
+import { useParams } from 'next/navigation';
+import { PublicLanguagePrepPage } from '@/components/website/public-pages/PublicPages';
+
+export default function EnglishTestPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
+      <main className="flex-1 pt-20">
+        <PublicLanguagePrepPage slug={slug} />
+      </main>
+    </div>
+  );
+}
+--- END ---
+
+FILE: src/app/employee/attendance/page.tsx
+SIZE:      190 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import EmployeeAttendancePage from '@/components/employee/EmployeeAttendancePage';
+
+export default function EmployeeAttendanceRoute() {
+  return <EmployeeAttendancePage />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-interview-dashboard/page.tsx
+SIZE:      259 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function VisaInterviewDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="VISA_INTERVIEW_OFFICER" pageTitle="Visa Interview Officer Hub" />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-interview-officer/page.tsx
+SIZE:      175 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function EmployeeVisaInterviewOfficerRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/employee/application-dashboard/page.tsx
+SIZE:      251 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function ApplicationDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="APPLICATION_TEAM" pageTitle="Application Team Workspace" />;
+}
+--- END ---
+
+FILE: src/app/employee/tasks/page.tsx
+SIZE:      170 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import EmployeeTasksPage from '@/components/employee/EmployeeTasksPage';
+
+export default function EmployeeTasksRoute() {
+  return <EmployeeTasksPage />;
+}
+--- END ---
+
+FILE: src/app/employee/partner-manager-dashboard/page.tsx
+SIZE:      256 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function PartnerManagerDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="PARTNER_MANAGER" pageTitle="B2B Partner Manager Workspace" />;
+}
+--- END ---
+
+FILE: src/app/employee/inbox/page.tsx
+SIZE:      398 bytes
+LINES:       10
+--- CONTENT ---
+import EmployeeOmnichannelInbox from '@/components/communication/EmployeeOmnichannelInbox';
+
+export const metadata = {
+  title: 'Unified Inbox | ALO Education Employee Portal',
+  description: 'Manage all customer conversations across WhatsApp, Facebook, Instagram, Email, and more from one unified inbox.',
+};
+
+export default function EmployeeInboxPage() {
+  return <EmployeeOmnichannelInbox />;
+}
+--- END ---
+
+FILE: src/app/employee/marketing-dashboard/page.tsx
+SIZE:      237 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function MarketingDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="MARKETING" pageTitle="Marketing Officer Hub" />;
+}
+--- END ---
+
+FILE: src/app/employee/ucc/page.tsx
+SIZE:      421 bytes
+LINES:       10
+--- CONTENT ---
+import EnterpriseUnifiedCommunicationCenter from '@/components/communication/EnterpriseUnifiedCommunicationCenter';
+
+export const metadata = {
+  title: 'Employee Communication Center | ALO Education',
+  description: 'Enterprise omni-channel inbox for WhatsApp, Facebook, Instagram, Email, Live Chat & Portal Messages.',
+};
+
+export default function EmployeeUccPage() {
+  return <EnterpriseUnifiedCommunicationCenter />;
+}
+--- END ---
+
+FILE: src/app/employee/application-manager-dashboard/page.tsx
+SIZE:      269 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function ApplicationManagerDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="APPLICATION_MANAGER" pageTitle="Application Manager Control Center" />;
+}
+--- END ---
+
+FILE: src/app/employee/marketing-manager-dashboard/page.tsx
+SIZE:      255 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function MarketingManagerDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="MARKETING_MANAGER" pageTitle="Marketing Manager Studio" />;
+}
+--- END ---
+
+FILE: src/app/employee/leads/page.tsx
+SIZE:      170 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import EmployeeLeadsPage from '@/components/employee/EmployeeLeadsPage';
+
+export default function EmployeeLeadsRoute() {
+  return <EmployeeLeadsPage />;
+}
+--- END ---
+
+FILE: src/app/employee/branch-manager-dashboard/page.tsx
+SIZE:      254 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function BranchManagerDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="BRANCH_MANAGER" pageTitle="Branch Manager Control Center" />;
+}
+--- END ---
+
+FILE: src/app/employee/hr-dashboard/page.tsx
+SIZE:      236 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function HrDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="HR_MANAGER" pageTitle="HR & People Operations Hub" />;
+}
+--- END ---
+
+FILE: src/app/employee/finance-dashboard/page.tsx
+SIZE:      240 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function FinanceDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="FINANCE" pageTitle="Finance & Payments Workspace" />;
+}
+--- END ---
+
+FILE: src/app/employee/dashboard/page.tsx
+SIZE:      194 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function EmployeeDashboardPage() {
+  return <UnifiedEmployeeDashboard />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-interviews/[caseId]/page.tsx
+SIZE:      305 bytes
+LINES:        6
+--- CONTENT ---
+import VisaInterviewWorkspace from '@/components/visa/VisaInterviewWorkspace';
+
+export default async function EmployeeVisaInterviewCaseRoute({ params }: { params: Promise<{ caseId: string }> }) {
+  const resolvedParams = await params;
+  return <VisaInterviewWorkspace caseId={resolvedParams.caseId} />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-interviews/page.tsx
+SIZE:      175 bytes
+LINES:        5
+--- CONTENT ---
+import VisaInterviewWorkspace from '@/components/visa/VisaInterviewWorkspace';
+
+export default function EmployeeVisaInterviewsRoute() {
+  return <VisaInterviewWorkspace />;
+}
+--- END ---
+
+FILE: src/app/employee/students/page.tsx
+SIZE:      182 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import EmployeeStudentsPage from '@/components/employee/EmployeeStudentsPage';
+
+export default function EmployeeStudentsRoute() {
+  return <EmployeeStudentsPage />;
+}
+--- END ---
+
+FILE: src/app/employee/senior-counselor-dashboard/page.tsx
+SIZE:      261 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function SeniorCounselorDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="SENIOR_COUNSELOR" pageTitle="Senior Counselor & Team Lead Hub" />;
+}
+--- END ---
+
+FILE: src/app/employee/profile/page.tsx
+SIZE:      305 bytes
+LINES:       10
+--- CONTENT ---
+import EmployeeProfilePage from '@/components/employee/EmployeeProfilePage';
+import EmployeePortalShell from '@/components/employee/EmployeePortalShell';
+
+export default function EmployeeProfileRoute() {
+  return (
+    <EmployeePortalShell>
+      <EmployeeProfilePage />
+    </EmployeePortalShell>
+  );
+}
+--- END ---
+
+FILE: src/app/employee/visa-documents/page.tsx
+SIZE:      168 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function EmployeeVisaDocumentsRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/employee/country-manager-dashboard/page.tsx
+SIZE:      257 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function CountryManagerDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="COUNTRY_MANAGER" pageTitle="Country Manager Operations Hub" />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-cases/page.tsx
+SIZE:      164 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function EmployeeVisaCasesRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-reports/page.tsx
+SIZE:      166 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function EmployeeVisaReportsRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/employee/applications/page.tsx
+SIZE:      198 bytes
+LINES:        7
+--- CONTENT ---
+'use client';
+
+import EmployeeApplicationsPage from '@/components/employee/EmployeeApplicationsPage';
+
+export default function EmployeeApplicationsRoute() {
+  return <EmployeeApplicationsPage />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-readiness/page.tsx
+SIZE:      168 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function EmployeeVisaReadinessRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/employee/counselor-dashboard/page.tsx
+SIZE:      235 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function CounselorDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="COUNSELOR" pageTitle="Counselor Workspace" />;
+}
+--- END ---
+
+FILE: src/app/employee/office-manager-dashboard/page.tsx
+SIZE:      259 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function OfficeManagerDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="OFFICE_MANAGER" pageTitle="Office Operations & Facilities Hub" />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-dashboard/page.tsx
+SIZE:      168 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function EmployeeVisaDashboardRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/employee/visa-officer/page.tsx
+SIZE:      166 bytes
+LINES:        5
+--- CONTENT ---
+import VisaOfficerDashboard from '@/components/visa/VisaOfficerDashboard';
+
+export default function EmployeeVisaOfficerRoute() {
+  return <VisaOfficerDashboard />;
+}
+--- END ---
+
+FILE: src/app/employee/support-dashboard/page.tsx
+SIZE:      247 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function SupportDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="SUPPORT_STAFF" pageTitle="Student & Partner Support Hub" />;
+}
+--- END ---
+
+FILE: src/app/employee/front-desk-dashboard/page.tsx
+SIZE:      244 bytes
+LINES:        5
+--- CONTENT ---
+import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
+
+export default function FrontDeskDashboardPage() {
+  return <UnifiedEmployeeDashboard forcedRole="FRONT_DESK" pageTitle="Front Desk & Reception Desk" />;
+}
+--- END ---
+
+FILE: src/app/cookies/page.tsx
+SIZE:      431 bytes
+LINES:       10
+--- CONTENT ---
+import { PublicLegalPage } from '@/components/website/public-pages/PublicPages';
+
+export const metadata = {
+  title: 'Cookie Policy | ALO Education',
+  description: 'ALO Education cookie policy — how we use cookies to improve your experience on our study abroad platform.',
+  alternates: { canonical: 'https://aloeducation.com/cookies' },
+};
+
+export default function CookiesPage() {
+  return <PublicLegalPage type="cookies" />;
+}--- END ---
+
+======================================================
+## PUBLIC ASSETS
+======================================================
+Total files in public/:       53
+
+Images:
+public/images/landing/Copy of 20250902_1557_Smiling Study Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp
+public/images/landing/Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp
+public/images/landing/Copy of pexels-george-pak-7972967.webp
+public/images/landing/Copy of pexels-yankrukov-8199166.webp
+public/images/landing/Copy of pexels-jaksonmartins-3101504.webp
+public/images/landing/Copy of 167794.webp
+public/images/landing/Copy of pexels-otherme-583475.webp
+public/images/landing/Copy of pexels-rdne-7683897.webp
+public/images/landing/Copy of 20250902_1604_Team Celebrating Success_remix_01k44y1phqff4adx4kcap3cdyw.webp
+public/images/landing/Copy of pexels-rdne-7092573.webp
+public/images/landing/Copy of pexels-yankrukov-8199562.webp
+public/images/landing/Copy of logo.webp
+public/images/landing/Copy of 20250902_1607_Joyful Park Conversation_remix_01k44y8qqzf1fak3kphqyhmj6w.webp
+public/images/landing/Hero Image.webp
+public/images/landing/Copy of pexels-rdne-7092364.webp
+public/images/landing/Copy of 2148431342.webp
+public/images/landing/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp
+public/images/universities/lsbu university.webp
+public/images/universities/university of dundee.webp
+public/images/universities/cardiff metropolitan university.webp
+public/images/universities/university of hertfordshire.webp
+public/images/universities/aston university.webp
+public/images/universities/abertay university.webp
+public/images/universities/birmingham city university .webp
+public/images/universities/university of the west of scotland.webp
+public/images/universities/university of wales trinity saint david.webp
+public/images/universities/university of central lancashire.webp
+public/images/universities/university of bolton.webp
+public/images/universities/london metropolitan university.webp
+public/images/universities/wrexham glyndwr university .webp
+public/images/universities/university of roehampton.webp
+public/images/universities/uister university.webp
+public/images/universities/university of greenwich.webp
+public/images/universities/university of lincoln.webp
+public/images/universities/university of wolverhampton.webp
+public/images/universities/university of aberdeen.webp
+public/images/universities/university of portsmouth.webp
+public/images/universities/university of south wales.webp
+public/images/universities/university of derby.webp
+public/images/universities/ravensbourne university.webp
+public/images/universities/university of hull.webp
+public/images/universities/university of kent.webp
+public/images/testimonials/Tushar Imran Nahid.png
+public/images/brand/alo-edu-pad.jpg
+public/images/hero-banners/Europe slide Banner.webp
+public/images/hero-banners/UK slide Banner.webp
+public/images/hero-banners/Australia slide Banner.webp
+public/images/hero-banners/USA slide Banner.webp
+public/images/hero-banners/Canada slide Banner.webp
+public/images/hero-banners/New Zealand slide Banner.webp
+public/logo.svg
+
+======================================================
+## DATABASE DATA COUNT
+======================================================
+total 4672
+drwxr-xr-x@   7 alaminn  staff      224 Aug 13 12:24 .
+drwx------@ 212 alaminn  staff     6784 Aug 19 02:07 ..
+-rw-r--r--@   1 alaminn  staff    88870 Aug 13 12:27 ALO_COURSE_MASTER_DATA.zip
+-rw-r--r--@   1 alaminn  staff   336141 Aug 13 12:27 ALO_UNIVERSITY_COURSE_MASTER.csv
+-rw-r--r--@   1 alaminn  staff  1878348 Aug 13 12:27 ALO_UNIVERSITY_COURSE_MASTER.json
+-rw-r--r--@   1 alaminn  staff    80465 Aug 13 12:27 ALO_UNIVERSITY_MASTER_DATA.zip
+drwxr-xr-x@  25 alaminn  staff      800 Aug  1 02:51 official-source-audit

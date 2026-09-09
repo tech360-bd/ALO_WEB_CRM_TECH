@@ -1,0 +1,4 @@
+Migration,File,Status
+20260731000000_init_mysql,prisma/migrations/20260731000000_init_mysql/migration.sql,FOUND
+20260801000000_course_data_provenance,prisma/migrations/20260801000000_course_data_provenance/migration.sql,FOUND
+20260801024630_official_source_checks,prisma/migrations/20260801024630_official_source_checks/migration.sql,FOUND
