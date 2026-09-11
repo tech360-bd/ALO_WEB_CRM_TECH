@@ -78,3 +78,4 @@ delivery-evidence-*/
 agents/
 workflows/
 *.tsbuildinfo
+_reference_repos/
