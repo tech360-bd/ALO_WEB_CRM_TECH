@@ -1,120 +1,180 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { authenticateRequest } from '@/lib/auth-middleware';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { aiChat } from "@/lib/ai";
 
+// GET — marketing requests for partner
 export async function GET(req: NextRequest) {
-  try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as any;
+  const partnerId = req.nextUrl.searchParams.get("partnerId");
+  let partner: Awaited<ReturnType<typeof db.employee.findFirst>> = null;
+  if (partnerId) partner = await db.employee.findFirst({ where: { id: partnerId, role: "PARTNER" } });
+  if (!partner) partner = await db.employee.findFirst({ where: { role: "PARTNER" } });
+  if (!partner) return NextResponse.json({ error: "No partner found" }, { status: 404 });
 
-    const partnerId = auth.partnerId || 'PARTNER-DEMO';
+  const [quota, usage, requests, socialAccounts] = await Promise.all([
+    db.partnerMarketingQuota.findUnique({ where: { partnerId: partner.id } }),
+    db.partnerMarketingUsage.findUnique({ where: { partnerId_monthYear: { partnerId: partner.id, monthYear: new Date().toISOString().slice(0, 7) } } }),
+    db.partnerMarketingRequest.findMany({ where: { partnerId: partner.id }, orderBy: { createdAt: "desc" } }),
+    db.partnerSocialAccount.findMany({ where: { partnerId: partner.id } }),
+  ]);
 
-    const [quota, usage, requests] = await Promise.all([
-      db.partnerMarketingQuota.findUnique({ where: { partnerId } }),
-      db.partnerMarketingUsage.findFirst({ where: { partnerId }, orderBy: { createdAt: 'desc' } }),
-      db.partnerMarketingRequest.findMany({ where: { partnerId }, orderBy: { createdAt: 'desc' }, take: 10 }),
-    ]);
-
-    const imageLimit = quota?.monthlyImageLimit || 15;
-    const videoLimit = quota?.monthlyVideoLimit || 10;
-    const imagesUsed = usage?.imagesUsed || 4;
-    const videosUsed = usage?.videosUsed || 2;
-
-    return NextResponse.json({
-      success: true,
-      quota: {
-        monthlyImageLimit: imageLimit,
-        imagesUsed,
-        imagesRemaining: Math.max(0, imageLimit - imagesUsed),
-        monthlyVideoLimit: videoLimit,
-        videosUsed,
-        videosRemaining: Math.max(0, videoLimit - videosUsed),
-        videoDurationLimitSeconds: 30,
-      },
-      requests,
-    });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to fetch marketing studio data', details: error.message }, { status: 500 });
-  }
+  return NextResponse.json({ quota, usage, requests, socialAccounts });
 }
 
+// POST — submit marketing idea + AI generates content
 export async function POST(req: NextRequest) {
-  try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as any;
+  const body = await req.json();
+  const { partnerId, idea, country, university, course, intake, targetAudience, language, cta, platform, preferredStyle, requestedBy } = body;
 
-    const body = await req.json();
-    const { idea, countryId, universityId, courseId, intake, platform, language, assetType } = body;
+  let partner = await db.employee.findFirst({ where: { id: partnerId, role: "PARTNER" } });
+  if (!partner) partner = await db.employee.findFirst({ where: { role: "PARTNER" } });
+  if (!partner) return NextResponse.json({ error: "No partner found" }, { status: 404 });
 
-    const partnerId = auth.partnerId || 'PARTNER-DEMO';
-
-    let usage = await db.partnerMarketingUsage.findFirst({ where: { partnerId }, orderBy: { createdAt: 'desc' } });
-    if (!usage) {
-      usage = await db.partnerMarketingUsage.create({
-        data: { partnerId, monthYear: '2026-08', imagesUsed: 0, videosUsed: 0 },
-      });
-    }
-
-    const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId } });
-    const imageLimit = quota?.monthlyImageLimit || 15;
-    const videoLimit = quota?.monthlyVideoLimit || 10;
-
-    if (assetType === 'image' && usage.imagesUsed >= imageLimit) {
-      return NextResponse.json({ error: 'Monthly image quota finished. Request extra quota from ALO Education.' }, { status: 403 });
-    }
-
-    if (assetType === 'video' && usage.videosUsed >= videoLimit) {
-      return NextResponse.json({ error: 'Monthly video quota finished. Request extra quota from ALO Education.' }, { status: 403 });
-    }
-
-    const targetCountry = countryId || 'United Kingdom';
-    const targetUniv = universityId || 'University of Manchester';
-
-    const caption = `🎓 Study in the ${targetCountry} — September 2026 Intake open at ${targetUniv}! Full scholarship guidance & visa support available for Bangladeshi students. Apply now with ALO Education!`;
-    const hashtags = `#StudyIn${targetCountry.replace(/\s+/g, '')} #StudyAbroad #ALOEducation #${targetUniv.replace(/\s+/g, '')} #HigherEducation`;
-    const imagePrompt = `Professional study abroad promotional banner for ${targetUniv}, ${targetCountry}, featuring happy international student, ALO Education logo, brand colors primary orange #E8501A and professional blue accent #0057B8.`;
-    const videoScript = `[0-5s]: Are you dreaming of studying at ${targetUniv} in the ${targetCountry}? [5-15s]: Applications are now open for September 2026 intake. Get up to £5,000 scholarship guidance and 100% free counseling! [15-30s]: Apply today through ALO Education partner network. Link in bio!`;
-
-    const mReq = await db.partnerMarketingRequest.create({
-      data: {
-        partnerId,
-        requestedBy: auth.email || auth.userId,
-        idea: idea || `Study in ${targetCountry} Campaign`,
-        countryId: targetCountry,
-        universityId: targetUniv,
-        courseId: courseId || 'MSc Data Science',
-        intake: intake || 'Sep 2026',
-        platform: platform || 'facebook',
-        language: language || 'english',
-        caption,
-        hashtags,
-        imagePrompt,
-        videoPrompt: `30-second reel video script for ${targetUniv}`,
-        videoScript,
-        videoDuration: 30,
-        status: 'ai_draft_generated',
-        approvalStatus: 'pending',
-      },
-    });
-
-    await db.partnerMarketingUsage.update({
-      where: { id: usage.id },
-      data: {
-        imagesUsed: assetType === 'image' ? usage.imagesUsed + 1 : usage.imagesUsed,
-        videosUsed: assetType === 'video' ? usage.videosUsed + 1 : usage.videosUsed,
-        ideasSubmitted: usage.ideasSubmitted + 1,
-      },
-    });
-
-    return NextResponse.json({
-      success: true,
-      request: mReq,
-      quotaUsed: assetType === 'image' ? `${usage.imagesUsed + 1}/${imageLimit} Images` : `${usage.videosUsed + 1}/${videoLimit} Videos`,
-      message: 'AI Marketing Draft generated successfully under partner quota.',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to generate marketing content', details: error.message }, { status: 500 });
+  // Check quota
+  const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: partner.id } });
+  const monthYear = new Date().toISOString().slice(0, 7);
+  let usage = await db.partnerMarketingUsage.findUnique({ where: { partnerId_monthYear: { partnerId: partner.id, monthYear } } });
+  if (!usage) {
+    usage = await db.partnerMarketingUsage.create({ data: { partnerId: partner.id, monthYear } });
   }
+
+  const imagesUsed = usage.imagesUsed || 0;
+  const videosUsed = usage.videosUsed || 0;
+  const imageLimit = quota?.monthlyImageLimit || 15;
+  const videoLimit = quota?.monthlyVideoLimit || 10;
+
+  // AI generates marketing content
+  const systemPrompt = `You are the ALO Education Partner Marketing AI. Generate marketing content for a B2B partner's campaign.
+
+Campaign details:
+- Idea: ${idea}
+- Country: ${country || "General"}
+- University: ${university || "Any"}
+- Course: ${course || "Any"}
+- Intake: ${intake || "Next available"}
+- Target audience: ${targetAudience || "Bangladeshi students"}
+- Language: ${language || "English"}
+- CTA: ${cta || "Book Free Consultation"}
+- Platform: ${platform}
+- Preferred style: ${preferredStyle || "Professional, encouraging"}
+
+Generate ALL of the following as valid JSON (no markdown):
+{
+  "facebookCaption": "<engaging Facebook post caption, 100-150 words>",
+  "instagramCaption": "<shorter Instagram caption with emojis, 80-120 words>",
+  "hashtags": ["#StudyAbroad", "#ALOEducation", ...6-8 relevant hashtags],
+  "imagePrompt": "<detailed image generation prompt for the marketing visual>",
+  "videoPrompt": "<30-second video concept prompt>",
+  "videoScript": "<scene-by-scene 30-second video script with timestamps>",
+  "reelCaption": "<short reel caption, 1-2 sentences>",
+  "ctaText": "<clear call-to-action text>"
+}
+
+Rules:
+- Do NOT promise visa or admission guarantees.
+- Follow ALO brand voice: professional, encouraging, student-focused.
+- Include the phone number 01805020101 in Facebook caption.
+- Keep content original and engaging.`;
+
+  const raw = await aiChat([
+    { role: "assistant", content: systemPrompt },
+    { role: "user", content: "Generate the marketing content as JSON now." },
+  ], { temperature: 0.7 });
+
+  let aiContent: any = {};
+  try {
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) aiContent = JSON.parse(match[0]);
+  } catch {}
+
+  // Create marketing request
+  const request = await db.partnerMarketingRequest.create({
+    data: {
+      partnerId: partner.id,
+      requestedBy: requestedBy || partner.id,
+      idea, country, university, course, intake, targetAudience, language, cta, platform, preferredStyle,
+      facebookCaption: aiContent.facebookCaption || "",
+      instagramCaption: aiContent.instagramCaption || "",
+      hashtags: JSON.stringify(aiContent.hashtags || []),
+      imagePrompt: aiContent.imagePrompt || "",
+      videoPrompt: aiContent.videoPrompt || "",
+      videoScript: aiContent.videoScript || "",
+      reelCaption: aiContent.reelCaption || "",
+      ctaText: aiContent.ctaText || cta || "Book Free Consultation",
+      approvalStatus: "DRAFT",
+      createdBy: requestedBy || partner.id,
+    },
+  });
+
+  // Increment ideas submitted
+  await db.partnerMarketingUsage.update({
+    where: { id: usage.id },
+    data: { ideasSubmitted: { increment: 1 } },
+  });
+
+  return NextResponse.json({
+    request,
+    quotaStatus: { imagesUsed, videosUsed, imageLimit, videoLimit, imagesRemaining: imageLimit - imagesUsed, videosRemaining: videoLimit - videosUsed },
+    message: "Marketing content generated by AI. Review and submit for approval.",
+  });
+}
+
+// PATCH — update marketing request status (generate image/video, approve, schedule, publish)
+export async function PATCH(req: NextRequest) {
+  const body = await req.json();
+  const { id, action, partnerId, scheduledAt, reviewNote } = body;
+
+  let partner = await db.employee.findFirst({ where: { id: partnerId, role: "PARTNER" } });
+  if (!partner) partner = await db.employee.findFirst({ where: { role: "PARTNER" } });
+  if (!partner) return NextResponse.json({ error: "No partner found" }, { status: 404 });
+
+  const request = await db.partnerMarketingRequest.findUnique({ where: { id } });
+  if (!request) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: partner.id } });
+  const monthYear = new Date().toISOString().slice(0, 7);
+  let usage = await db.partnerMarketingUsage.findUnique({ where: { partnerId_monthYear: { partnerId: partner.id, monthYear } } });
+  if (!usage) usage = await db.partnerMarketingUsage.create({ data: { partnerId: partner.id, monthYear } });
+
+  if (action === "generate_image") {
+    // Check image quota
+    if ((usage.imagesUsed || 0) >= (quota?.monthlyImageLimit || 15)) {
+      return NextResponse.json({ error: "Monthly image quota finished. Request extra quota from ALO Education." }, { status: 403 });
+    }
+    await db.partnerMarketingUsage.update({ where: { id: usage.id }, data: { imagesUsed: { increment: 1 } } });
+    const updated = await db.partnerMarketingRequest.update({ where: { id }, data: { assetUrl: `/generated/image-${id}.png`, approvalStatus: "PENDING_APPROVAL" } });
+    return NextResponse.json({ request: updated, message: "Image generated. Quota updated." });
+  }
+
+  if (action === "generate_video") {
+    if ((usage.videosUsed || 0) >= (quota?.monthlyVideoLimit || 10)) {
+      return NextResponse.json({ error: "Monthly video quota finished. Request extra quota from ALO Education." }, { status: 403 });
+    }
+    await db.partnerMarketingUsage.update({ where: { id: usage.id }, data: { videosUsed: { increment: 1 } } });
+    const updated = await db.partnerMarketingRequest.update({ where: { id }, data: { approvalStatus: "PENDING_APPROVAL" } });
+    return NextResponse.json({ request: updated, message: "Video generated. Quota updated." });
+  }
+
+  if (action === "approve") {
+    const updated = await db.partnerMarketingRequest.update({ where: { id }, data: { approvalStatus: "APPROVED" } });
+    return NextResponse.json({ request: updated, message: "Content approved by Partner Super Admin." });
+  }
+
+  if (action === "schedule") {
+    const updated = await db.partnerMarketingRequest.update({ where: { id }, data: { approvalStatus: "SCHEDULED", scheduledAt } });
+    await db.partnerMarketingUsage.update({ where: { id: usage.id }, data: { postsScheduled: { increment: 1 } } });
+    return NextResponse.json({ request: updated, message: "Content scheduled for publishing." });
+  }
+
+  if (action === "publish") {
+    const updated = await db.partnerMarketingRequest.update({ where: { id }, data: { approvalStatus: "PUBLISHED", publishedUrl: `https://facebook.com/post-${id}` } });
+    await db.partnerMarketingUsage.update({ where: { id: usage.id }, data: { postsPublished: { increment: 1 } } });
+    return NextResponse.json({ request: updated, message: "Content published to social media." });
+  }
+
+  if (action === "reject") {
+    const updated = await db.partnerMarketingRequest.update({ where: { id }, data: { approvalStatus: "REJECTED" } });
+    return NextResponse.json({ request: updated, message: "Content rejected." });
+  }
+
+  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
 }

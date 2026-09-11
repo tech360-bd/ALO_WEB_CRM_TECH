@@ -1,38 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getTasks, createTask } from "@/lib/agentos/agent-service";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getTasks, getTaskStats, createTask } from "@/lib/agentos";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
-  try {
-    const agentId = req.nextUrl.searchParams.get("agentId") || undefined;
-    const limit = parseInt(req.nextUrl.searchParams.get("limit") || "50", 10);
-    const tasks = await getTasks(agentId, limit);
-    return NextResponse.json(tasks);
-  } catch (error) {
-    console.error("Error fetching tasks:", error);
-    return NextResponse.json({ error: "Failed to fetch tasks" }, { status: 500 });
-  }
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const sp = req.nextUrl.searchParams;
+  if (sp.get("stats") === "true") return NextResponse.json(await getTaskStats());
+  const tasks = await getTasks({ status: sp.get("status") || undefined, limit: sp.get("limit") ? parseInt(sp.get("limit")!) : 50 });
+  return NextResponse.json({ tasks });
 }
-
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { agentId, triggeredBy, triggerType, input, metadata } = body;
-
-    if (!agentId || !input) {
-      return NextResponse.json({ error: "agentId and input are required" }, { status: 400 });
-    }
-
-    const task = await createTask({
-      agentId,
-      triggeredBy: triggeredBy || "system",
-      triggerType: triggerType || "manual",
-      input,
-      metadata,
-    });
-
-    return NextResponse.json(task, { status: 201 });
-  } catch (error) {
-    console.error("Error creating task:", error);
-    return NextResponse.json({ error: "Failed to create task" }, { status: 500 });
-  }
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const body = await req.json();
+  const task = await createTask(body);
+  return NextResponse.json({ task }, { status: 201 });
 }

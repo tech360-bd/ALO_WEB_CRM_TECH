@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import { getDashboardStats } from "@/lib/agentos/agent-service";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getAgentOSDashboard } from "@/lib/agentos";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export async function GET() {
-  try {
-    const stats = await getDashboardStats();
-    return NextResponse.json(stats);
-  } catch (error) {
-    console.error("Error fetching agentos dashboard stats:", error);
-    return NextResponse.json({ error: "Failed to fetch dashboard stats" }, { status: 500 });
-  }
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const role = (session.user as any)?.role;
+  if (role !== "SUPER_ADMIN" && role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  return NextResponse.json(await getAgentOSDashboard());
 }

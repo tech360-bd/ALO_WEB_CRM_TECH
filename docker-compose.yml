@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: alo-education
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./db:/app/db
+      - ./upload:/app/upload
+      - ./download:/app/download
+    depends_on:
+      - db
+    networks:
+      - alo-network
+
+  db:
+    image: postgres:16-alpine
+    container_name: alo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: alo_user
+      POSTGRES_PASSWORD: strong_password
+      POSTGRES_DB: alo_education
+    ports:
+      - "5432:5432"
+    volumes:
+      - alo-pgdata:/var/lib/postgresql/data
+    networks:
+      - alo-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: alo-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - app
+    networks:
+      - alo-network
+
+volumes:
+  alo-pgdata:
+
+networks:
+  alo-network:
+    driver: bridge

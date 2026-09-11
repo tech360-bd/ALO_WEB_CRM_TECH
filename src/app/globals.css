@@ -1,369 +1,1012 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-/* ============================================================
-   ALO EDUCATION DESIGN SYSTEM — Design Tokens
-   Brand: #0057B8 / #2563EB / #C2410C
-   ============================================================ */
+/* ════════════════════════════════════════════════════════════════════════
+   ALO EDUCATION — DESIGN LANGUAGE v2.0
+   Brand-led, enterprise-ready design system.
+
+   Brand:
+     • ALO Orange      #F37021  — identity & primary CTA accent
+     • Education Blue  #0066CC  — trust, navigation, education
+     • Sunshine Accent  #FFB347  — warm highlight, celebration
+
+   Design references (principles, not clones):
+     Linear (clarity), Stripe (color hierarchy), Notion (flexible cards),
+     HubSpot (status badges), Salesforce (density), Asana (warmth),
+     Monday.com (organization), Intercom (AI surfaces), Slack (channels),
+     Zoho (forms), Microsoft Dynamics (workspaces).
+   ════════════════════════════════════════════════════════════════════════ */
 
 @theme inline {
-  /* --- Core semantic tokens --- */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-geist-mono);
-
-  /* --- Sidebar tokens --- */
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-
-  /* --- Chart tokens --- */
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-
-  /* --- Standard shadcn tokens --- */
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-
-  /* --- ALO Brand Tokens --- */
-  --color-alo-brand: var(--alo-brand);
-  --color-alo-brand-light: var(--alo-brand-light);
-  --color-alo-cta: var(--alo-cta);
-  --color-alo-cta-hover: var(--alo-cta-hover);
-  --color-alo-cta-accent: var(--alo-cta-accent);
-
-  /* --- CRM Semantic Tokens --- */
-  --color-crm-success: var(--crm-success);
-  --color-crm-success-bg: var(--crm-success-bg);
-  --color-crm-success-text: var(--crm-success-text);
-  --color-crm-warning: var(--crm-warning);
-  --color-crm-warning-bg: var(--crm-warning-bg);
-  --color-crm-warning-text: var(--crm-warning-text);
-  --color-crm-danger: var(--crm-danger);
-  --color-crm-danger-bg: var(--crm-danger-bg);
-  --color-crm-danger-text: var(--crm-danger-text);
-
-  /* --- Neutral Tokens --- */
-  --color-alo-page: var(--alo-page);
-  --color-alo-text: var(--alo-text);
-  --color-alo-text-secondary: var(--alo-text-secondary);
-  --color-alo-text-muted: var(--alo-text-muted);
-  --color-alo-border: var(--alo-border);
-
-  /* --- Radius tokens --- */
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-
-/* ============================================================
-   LIGHT MODE — ALO Brand Colors
-   ============================================================ */
-:root {
-  --radius: 0.5rem;
-
-  /* Page & Surface */
-  --background: #F8FAFC;
-  --foreground: #0F172A;
-  --card: #FFFFFF;
-  --card-foreground: #0F172A;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-
-  /* Primary — SaaS Blue #2563EB */
-  --primary: #2563EB;
-  --primary-foreground: #FFFFFF;
-
-  /* Secondary */
-  --secondary: #F1F5F9;
-  --secondary-foreground: #0F172A;
-
-  /* Muted */
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;
-
-  /* Accent */
-  --accent: #EFF6FF;
-  --accent-foreground: #1E40AF;
-
-  /* Destructive */
-  --destructive: #DC2626;
-
-  /* Border & Input */
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #2563EB;
-
-  /* ALO Official Brand Tokens */
-  --alo-brand: #0066CC;
-  --alo-brand-light: #EFF6FF;
-  --alo-cta: #F37021;
-  --alo-cta-hover: #D95C0E;
-  --alo-cta-accent: #FFB347;
-
-  /* CRM Semantic */
-  --crm-success: #22C55E;
-  --crm-success-bg: #DCFCE7;
-  --crm-success-text: #15803D;
-  --crm-warning: #F59E0B;
-  --crm-warning-bg: #FEF3C7;
-  --crm-warning-text: #B45309;
-  --crm-danger: #EF4444;
-  --crm-danger-bg: #FEE2E2;
-  --crm-danger-text: #B91C1C;
-
-  /* Neutral */
-  --alo-page: #F8FAFC;
-  --alo-text: #000000;
-  --alo-text-secondary: #555555;
-  --alo-text-muted: #64748B;
-  --alo-border: #E5E7EB;
-
-  /* Charts */
-  --chart-1: #0066CC;
-  --chart-2: #F37021;
-  --chart-3: #FFB347;
-  --chart-4: #22C55E;
-  --chart-5: #EF4444;
+  /* ─── Map design tokens to Tailwind color utilities ─── */
+  --color-background: var(--alo-bg);
+  --color-foreground: var(--alo-text);
+  --font-sans: var(--font-inter), var(--font-bangla), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-bangla: var(--font-bangla), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   /* Sidebar */
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #0066CC;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #EFF6FF;
-  --sidebar-accent-foreground: #0066CC;
-  --sidebar-border: #E5E7EB;
-  --sidebar-ring: #0066CC;
+  --color-sidebar-ring: var(--alo-border-strong);
+  --color-sidebar-border: var(--alo-border);
+  --color-sidebar-accent-foreground: var(--alo-blue-strong);
+  --color-sidebar-accent: var(--alo-blue-soft);
+  --color-sidebar-primary-foreground: #FFFFFF;
+  --color-sidebar-primary: var(--alo-blue);
+  --color-sidebar-foreground: var(--alo-text);
+  --color-sidebar: var(--alo-surface);
+
+  /* Chart palette */
+  --color-chart-5: var(--alo-danger);
+  --color-chart-4: var(--alo-warning);
+  --color-chart-3: var(--alo-success);
+  --color-chart-2: var(--alo-blue);
+  --color-chart-1: var(--alo-orange);
+
+  /* System aliases (kept for shadcn compatibility) */
+  --color-ring: var(--alo-blue);
+  --color-input: var(--alo-border);
+  --color-border: var(--alo-border);
+  --color-destructive: var(--alo-danger);
+  --color-accent-foreground: var(--alo-blue-strong);
+  --color-accent: var(--alo-blue-soft);
+  --color-muted-foreground: var(--alo-muted);
+  --color-muted: var(--alo-surface-muted);
+  --color-secondary-foreground: var(--alo-text);
+  --color-secondary: var(--alo-surface-muted);
+  --color-primary-foreground: #FFFFFF;
+  --color-primary: var(--alo-primary);
+  --color-popover-foreground: var(--alo-text);
+  --color-popover: var(--alo-surface);
+  --color-card-foreground: var(--alo-text);
+  --color-card: var(--alo-surface);
+
+  /* ALO brand utilities */
+  --color-alo: var(--alo-blue);
+  --color-alo-blue: var(--alo-blue);
+  --color-alo-orange: var(--alo-orange);
+  --color-alo-cta: var(--alo-orange-strong);
+  --color-alo-blue-light: var(--alo-blue-soft);
+  --color-alo-orange-light: var(--alo-orange-soft);
+  --color-alo-sunshine: var(--alo-sunshine);
+  --color-success: var(--alo-success);
+  --color-success-bg: var(--alo-success-soft);
+  --color-success-text: var(--alo-success-strong);
+  --color-warning: var(--alo-warning);
+  --color-warning-bg: var(--alo-warning-soft);
+  --color-warning-text: var(--alo-warning-strong);
+  --color-danger: var(--alo-danger);
+  --color-danger-bg: var(--alo-danger-soft);
+  --color-danger-text: var(--alo-danger-strong);
+  --color-info: var(--alo-info);
+  --color-info-bg: var(--alo-info-soft);
+  --color-info-text: var(--alo-info-strong);
+
+  /* Radii scale */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
 }
 
-/* ============================================================
-   DARK MODE — ALO Dark Tokens
-   ============================================================ */
+/* ════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — LIGHT MODE
+   ════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* ─── Radii ─── */
+  --radius: 0.75rem;
+
+  /* ─── Brand Identity ─── */
+  --alo-orange: #F37021;            /* ALO Orange — brand identity */
+  --alo-orange-strong: #D85F15;    /* Accessible orange (white text, 4.6:1) */
+  --alo-orange-soft: #FFF1E8;      /* Light orange tint background */
+  --alo-orange-hover: #E0651A;     /* Hover state for orange buttons */
+
+  --alo-blue: #0066CC;              /* Education Blue — trust & navigation */
+  --alo-blue-strong: #0052A3;       /* Accessible blue (white text, 5.4:1) */
+  --alo-blue-soft: #E6F0FF;         /* Light blue tint background */
+  --alo-blue-hover: #0058B0;        /* Hover state for blue buttons */
+
+  --alo-sunshine: #FFB347;          /* Sunshine accent — celebration */
+  --alo-sunshine-soft: #FFF4E0;     /* Light sunshine tint */
+
+  /* ─── Core Neutral Tokens (per master brief §32) ─── */
+  --alo-black: #000000;             /* Primary text */
+  --alo-gray: #555555;              /* Secondary text */
+  --alo-white: #FFFFFF;             /* Main surface */
+  --alo-gray-light: #F1F5F9;        /* Light gray surface */
+  --alo-gray-soft: #F8FAFC;         /* Soft gray background */
+
+  /* ─── Primary = Education Blue (workhorse) ─── */
+  --alo-primary: var(--alo-blue);
+  --alo-primary-hover: var(--alo-blue-hover);
+  --alo-primary-soft: var(--alo-blue-soft);
+  --alo-primary-foreground: #FFFFFF;
+
+  /* ─── Secondary = ALO Orange (identity) ─── */
+  --alo-secondary: var(--alo-orange);
+  --alo-secondary-hover: var(--alo-orange-hover);
+  --alo-secondary-soft: var(--alo-orange-soft);
+  --alo-secondary-foreground: #FFFFFF;
+
+  /* ─── Semantic Status ─── */
+  --alo-success: #16A34A;
+  --alo-success-strong: #15803D;
+  --alo-success-soft: #DCFCE7;
+
+  --alo-warning: #F59E0B;
+  --alo-warning-strong: #B45309;
+  --alo-warning-soft: #FEF3C7;
+
+  --alo-danger: #DC2626;
+  --alo-danger-strong: #B91C1C;
+  --alo-danger-soft: #FEE2E2;
+
+  --alo-info: #0EA5E9;
+  --alo-info-strong: #0369A1;
+  --alo-info-soft: #E0F2FE;
+
+  /* ─── Neutral System (Slate) ─── */
+  --alo-bg: #F8FAFC;               /* Page background */
+  --alo-bg-elevated: #FFFFFF;       /* Elevated page bg (modals) */
+  --alo-surface: #FFFFFF;           /* Card surface */
+  --alo-surface-muted: #F1F5F9;     /* Muted surface (inputs, hovers) */
+  --alo-surface-sunken: #F8FAFC;    /* Sunken surface */
+
+  --alo-border: #E2E8F0;            /* Default border */
+  --alo-border-strong: #CBD5E1;     /* Stronger border (hover, focus) */
+  --alo-border-subtle: #F1F5F9;     /* Subtle divider */
+
+  --alo-text: #0F172A;              /* Primary text */
+  --alo-text-secondary: #334155;    /* Secondary text */
+  --alo-muted: #64748B;             /* Muted text */
+  --alo-muted-strong: #475569;      /* Stronger muted */
+  --alo-disabled: #94A3B8;           /* Disabled text */
+  --alo-on-brand: #FFFFFF;          /* Text on brand colors */
+
+  /* ─── Legacy aliases (backward compat — map to new tokens) ─── */
+  --background: var(--alo-bg);
+  --foreground: var(--alo-text);
+  --card: var(--alo-surface);
+  --card-foreground: var(--alo-text);
+  --popover: var(--alo-surface);
+  --popover-foreground: var(--alo-text);
+  --primary: var(--alo-blue);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--alo-surface-muted);
+  --secondary-foreground: var(--alo-text);
+  --muted: var(--alo-surface-muted);
+  --muted-foreground: var(--alo-muted);
+  --accent: var(--alo-blue-soft);
+  --accent-foreground: var(--alo-blue-strong);
+  --success: var(--alo-success);
+  --success-bg: var(--alo-success-soft);
+  --success-text: var(--alo-success-strong);
+  --warning: var(--alo-warning);
+  --warning-bg: var(--alo-warning-soft);
+  --warning-text: var(--alo-warning-strong);
+  --danger: var(--alo-danger);
+  --danger-bg: var(--alo-danger-soft);
+  --danger-text: var(--alo-danger-strong);
+  --destructive: var(--alo-danger);
+  --border: var(--alo-border);
+  --input: var(--alo-border);
+  --ring: var(--alo-blue);
+  --chart-1: var(--alo-orange);
+  --chart-2: var(--alo-blue);
+  --chart-3: var(--alo-success);
+  --chart-4: var(--alo-warning);
+  --chart-5: var(--alo-danger);
+  --sidebar: var(--alo-surface);
+  --sidebar-foreground: var(--alo-text);
+  --sidebar-primary: var(--alo-blue);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: var(--alo-blue-soft);
+  --sidebar-accent-foreground: var(--alo-blue-strong);
+  --sidebar-border: var(--alo-border);
+  --sidebar-ring: var(--alo-blue);
+  --alo-saas: var(--alo-blue);
+  --alo-cta: var(--alo-orange-strong);
+  --alo-blue-light: var(--alo-blue-soft);
+  --alo-orange-light: var(--alo-orange-soft);
+
+  /* ─── Shadows (Layered, subtle, enterprise-grade) ─── */
+  --alo-shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --alo-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  --alo-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --alo-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+  --alo-shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.10), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  --alo-shadow-blue: 0 10px 30px -12px rgba(0, 102, 204, 0.25);
+  --alo-shadow-orange: 0 10px 30px -12px rgba(243, 112, 33, 0.30);
+  --alo-shadow-focus: 0 0 0 3px rgba(0, 102, 204, 0.18);
+  --alo-shadow-focus-orange: 0 0 0 3px rgba(243, 112, 33, 0.22);
+
+  /* ─── Typography Tokens ─── */
+  --alo-font-sans: var(--font-inter), var(--font-bangla), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --alo-font-bangla: var(--font-bangla), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --alo-font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Type scale */
+  --alo-text-2xs: 0.6875rem;   /* 11px */
+  --alo-text-xs: 0.75rem;      /* 12px */
+  --alo-text-sm: 0.875rem;     /* 14px */
+  --alo-text-base: 1rem;       /* 16px */
+  --alo-text-lg: 1.125rem;     /* 18px */
+  --alo-text-xl: 1.25rem;      /* 20px */
+  --alo-text-2xl: 1.5rem;      /* 24px */
+  --alo-text-3xl: 1.875rem;    /* 30px */
+  --alo-text-4xl: 2.25rem;     /* 36px */
+  --alo-text-5xl: 3rem;        /* 48px */
+
+  /* Line heights */
+  --alo-leading-tight: 1.2;
+  --alo-leading-snug: 1.375;
+  --alo-leading-normal: 1.5;
+  --alo-leading-relaxed: 1.625;
+  --alo-leading-loose: 2;
+
+  /* Font weights */
+  --alo-weight-normal: 400;
+  --alo-weight-medium: 500;
+  --alo-weight-semibold: 600;
+  --alo-weight-bold: 700;
+  --alo-weight-extrabold: 800;
+
+  /* Letter spacing */
+  --alo-tracking-tight: -0.02em;
+  --alo-tracking-snug: -0.01em;
+  --alo-tracking-normal: 0;
+  --alo-tracking-wide: 0.025em;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — DARK MODE
+   ════════════════════════════════════════════════════════════════════════ */
 .dark {
-  --background: #0F172A;
-  --foreground: #F1F5F9;
-  --card: #1E293B;
-  --card-foreground: #F1F5F9;
-  --popover: #1E293B;
-  --popover-foreground: #F1F5F9;
+  /* ─── Brand Identity (Dark) ─── */
+  --alo-orange: #FF7A3D;
+  --alo-orange-strong: #F37021;
+  --alo-orange-soft: rgba(243, 112, 33, 0.14);
+  --alo-orange-hover: #FF8A50;
 
-  --primary: #60A5FA;
-  --primary-foreground: #0F172A;
+  --alo-blue: #4DA3FF;
+  --alo-blue-strong: #7FB8FF;
+  --alo-blue-soft: rgba(0, 102, 204, 0.18);
+  --alo-blue-hover: #66B0FF;
 
-  --secondary: #334155;
-  --secondary-foreground: #F1F5F9;
+  --alo-sunshine: #FFC56E;
+  --alo-sunshine-soft: rgba(255, 179, 71, 0.14);
 
-  --muted: #334155;
-  --muted-foreground: #94A3B8;
+  --alo-primary: var(--alo-blue);
+  --alo-primary-hover: var(--alo-blue-hover);
+  --alo-primary-soft: var(--alo-blue-soft);
+  --alo-secondary: var(--alo-orange);
+  --alo-secondary-hover: var(--alo-orange-hover);
+  --alo-secondary-soft: var(--alo-orange-soft);
 
-  --accent: #1E3A5F;
-  --accent-foreground: #93C5FD;
+  /* ─── Semantic Status (Dark) ─── */
+  --alo-success: #4ADE80;
+  --alo-success-strong: #86EFAC;
+  --alo-success-soft: rgba(22, 163, 74, 0.18);
 
-  --destructive: #F87171;
+  --alo-warning: #FBBF24;
+  --alo-warning-strong: #FDE68A;
+  --alo-warning-soft: rgba(245, 158, 11, 0.18);
 
-  --border: #334155;
-  --input: #334155;
-  --ring: #60A5FA;
+  --alo-danger: #F87171;
+  --alo-danger-strong: #FCA5A5;
+  --alo-danger-soft: rgba(220, 38, 38, 0.18);
 
-  /* ALO Brand Dark */
-  --alo-brand: #60A5FA;
-  --alo-brand-light: #1E3A5F;
-  --alo-cta: #FB923C;
-  --alo-cta-hover: #F97316;
-  --alo-cta-accent: #FB923C;
+  --alo-info: #38BDF8;
+  --alo-info-strong: #7DD3FC;
+  --alo-info-soft: rgba(14, 165, 233, 0.18);
 
-  /* CRM Semantic Dark */
-  --crm-success: #4ADE80;
-  --crm-success-bg: #14532D;
-  --crm-success-text: #86EFAC;
-  --crm-warning: #FDE047;
-  --crm-warning-bg: #713F12;
-  --crm-warning-text: #FDE68A;
-  --crm-danger: #F87171;
-  --crm-danger-bg: #7F1D1D;
-  --crm-danger-text: #FCA5A5;
+  /* ─── Neutral System (Dark — Slate 950/900) ─── */
+  --alo-bg: #0B1220;
+  --alo-bg-elevated: #0F172A;
+  --alo-surface: #131C2E;
+  --alo-surface-muted: #1E293B;
+  --alo-surface-sunken: #0B1220;
 
-  /* Neutral Dark */
-  --alo-page: #0F172A;
+  --alo-border: rgba(255, 255, 255, 0.08);
+  --alo-border-strong: rgba(255, 255, 255, 0.16);
+  --alo-border-subtle: rgba(255, 255, 255, 0.04);
+
   --alo-text: #F1F5F9;
   --alo-text-secondary: #CBD5E1;
-  --alo-text-muted: #94A3B8;
-  --alo-border: #334155;
+  --alo-muted: #94A3B8;
+  --alo-muted-strong: #CBD5E1;
+  --alo-disabled: #64748B;
+  --alo-on-brand: #FFFFFF;
 
-  /* Charts Dark */
-  --chart-1: #60A5FA;
-  --chart-2: #93C5FD;
-  --chart-3: #38BDF8;
-  --chart-4: #4ADE80;
-  --chart-5: #FB923C;
+  /* Legacy aliases */
+  --background: var(--alo-bg);
+  --foreground: var(--alo-text);
+  --card: var(--alo-surface);
+  --card-foreground: var(--alo-text);
+  --popover: var(--alo-surface);
+  --popover-foreground: var(--alo-text);
+  --primary: var(--alo-blue);
+  --primary-foreground: #0B1220;
+  --secondary: var(--alo-surface-muted);
+  --secondary-foreground: var(--alo-text);
+  --muted: var(--alo-surface-muted);
+  --muted-foreground: var(--alo-muted);
+  --accent: var(--alo-blue-soft);
+  --accent-foreground: var(--alo-blue-strong);
+  --success: var(--alo-success);
+  --success-bg: var(--alo-success-soft);
+  --success-text: var(--alo-success-strong);
+  --warning: var(--alo-warning);
+  --warning-bg: var(--alo-warning-soft);
+  --warning-text: var(--alo-warning-strong);
+  --danger: var(--alo-danger);
+  --danger-bg: var(--alo-danger-soft);
+  --danger-text: var(--alo-danger-strong);
+  --destructive: var(--alo-danger);
+  --border: var(--alo-border);
+  --input: var(--alo-border);
+  --ring: var(--alo-blue);
+  --chart-1: var(--alo-orange);
+  --chart-2: var(--alo-blue);
+  --chart-3: var(--alo-success);
+  --chart-4: var(--alo-warning);
+  --chart-5: var(--alo-danger);
+  --sidebar: var(--alo-surface);
+  --sidebar-foreground: var(--alo-text);
+  --sidebar-primary: var(--alo-blue);
+  --sidebar-primary-foreground: #0B1220;
+  --sidebar-accent: var(--alo-surface-muted);
+  --sidebar-accent-foreground: var(--alo-blue-strong);
+  --sidebar-border: var(--alo-border);
+  --sidebar-ring: var(--alo-blue);
+  --alo-saas: var(--alo-blue);
+  --alo-cta: var(--alo-orange);
+  --alo-blue-light: var(--alo-blue-soft);
+  --alo-orange-light: var(--alo-orange-soft);
 
-  /* Sidebar Dark */
-  --sidebar: #1E293B;
-  --sidebar-foreground: #F1F5F9;
-  --sidebar-primary: #60A5FA;
-  --sidebar-primary-foreground: #0F172A;
-  --sidebar-accent: #1E3A5F;
-  --sidebar-accent-foreground: #93C5FD;
-  --sidebar-border: #334155;
-  --sidebar-ring: #60A5FA;
+  /* Shadows (dark) */
+  --alo-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.30);
+  --alo-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.40), 0 1px 2px -1px rgba(0, 0, 0, 0.30);
+  --alo-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.30);
+  --alo-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.50), 0 4px 6px -4px rgba(0, 0, 0, 0.30);
+  --alo-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.55), 0 8px 10px -6px rgba(0, 0, 0, 0.35);
+  --alo-shadow-blue: 0 10px 30px -12px rgba(77, 163, 255, 0.35);
+  --alo-shadow-orange: 0 10px 30px -12px rgba(255, 122, 61, 0.40);
+  --alo-shadow-focus: 0 0 0 3px rgba(77, 163, 255, 0.28);
+  --alo-shadow-focus-orange: 0 0 0 3px rgba(255, 122, 61, 0.30);
 }
 
-/* ============================================================
-   BASE LAYER
-   ============================================================ */
+/* ════════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY BASE
+   ════════════════════════════════════════════════════════════════════════ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    border-color: var(--alo-border);
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
   }
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: var(--alo-bg);
+    color: var(--alo-text);
+    font-family: var(--alo-font-sans);
+    font-size: var(--alo-text-sm);
+    line-height: var(--alo-leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    text-wrap: optimizeLegibility;
+  }
+
+  /* Bangla text — use Hind Siliguri for proper rendering */
+  :lang(bn), [lang="bn"], .lang-bn {
+    font-family: var(--alo-font-bangla);
+  }
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--alo-font-sans);
+    font-weight: var(--alo-weight-bold);
+    letter-spacing: var(--alo-tracking-snug);
+    color: var(--alo-text);
+    text-wrap: balance;
+  }
+
+  /* Numeric alignment for dashboards */
+  .tabular-nums, table, [data-tabular] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Focus visible — accessible ring */
+  :focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: var(--alo-shadow-focus);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--alo-blue-soft);
+    color: var(--alo-blue-strong);
+  }
+
+  /* Links */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--alo-blue);
   }
 }
 
-/* ============================================================
-   ALO CUSTOM SCROLLBAR
-   ============================================================ */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ════════════════════════════════════════════════════════════════════════
+   COMPONENT UTILITIES
+   ════════════════════════════════════════════════════════════════════════ */
+@layer utilities {
+  /* ─── Brand Gradients ─── */
+  .bg-alo-gradient {
+    background-image: linear-gradient(135deg, #0066CC 0%, #0052A3 100%);
+  }
+  .bg-alo-gradient-orange {
+    background-image: linear-gradient(135deg, #F37021 0%, #D85F15 100%);
+  }
+  .bg-alo-gradient-mixed {
+    background-image: linear-gradient(120deg, #0066CC 0%, #0066CC 45%, #F37021 100%);
+  }
+  .bg-alo-hero {
+    background-image:
+      radial-gradient(circle at 18% 22%, #E6F0FF 0%, transparent 48%),
+      radial-gradient(circle at 82% 28%, #FFF1E8 0%, transparent 42%),
+      radial-gradient(circle at 50% 100%, rgba(255, 179, 71, 0.08) 0%, transparent 50%),
+      linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  }
+  .bg-alo-hero-dark {
+    background-image:
+      radial-gradient(circle at 18% 22%, rgba(0, 102, 204, 0.22) 0%, transparent 48%),
+      radial-gradient(circle at 82% 28%, rgba(243, 112, 33, 0.18) 0%, transparent 42%),
+      linear-gradient(180deg, #0B1220 0%, #0F172A 100%);
+  }
+
+  /* ─── Brand Color Helpers ─── */
+  .text-alo-blue { color: var(--alo-blue); }
+  .text-alo-orange { color: var(--alo-orange); }
+  .text-alo-cta { color: var(--alo-orange-strong); }
+  .text-alo-saas { color: var(--alo-blue); }
+  .text-alo-sunshine { color: var(--alo-sunshine); }
+  .text-alo-primary { color: var(--alo-primary); }
+  .text-alo-secondary { color: var(--alo-secondary); }
+  .text-alo-success { color: var(--alo-success); }
+  .text-alo-warning { color: var(--alo-warning); }
+  .text-alo-danger { color: var(--alo-danger); }
+  .text-alo-info { color: var(--alo-info); }
+  .text-alo-muted { color: var(--alo-muted); }
+  .text-alo-text { color: var(--alo-text); }
+  .text-alo-text-secondary { color: var(--alo-text-secondary); }
+
+  .bg-alo-blue { background-color: var(--alo-blue); }
+  .bg-alo-orange { background-color: var(--alo-orange); }
+  .bg-alo-cta { background-color: var(--alo-orange-strong); }
+  .bg-alo-saas { background-color: var(--alo-blue); }
+  .bg-alo-sunshine { background-color: var(--alo-sunshine); }
+  .bg-alo-blue-light { background-color: var(--alo-blue-soft); }
+  .bg-alo-orange-light { background-color: var(--alo-orange-soft); }
+  .bg-alo-primary { background-color: var(--alo-primary); }
+  .bg-alo-primary-soft { background-color: var(--alo-primary-soft); }
+  .bg-alo-secondary { background-color: var(--alo-secondary); }
+  .bg-alo-secondary-soft { background-color: var(--alo-secondary-soft); }
+  .bg-alo-surface { background-color: var(--alo-surface); }
+  .bg-alo-surface-muted { background-color: var(--alo-surface-muted); }
+  .bg-alo-surface-sunken { background-color: var(--alo-surface-sunken); }
+
+  .border-alo-blue { border-color: var(--alo-blue); }
+  .border-alo-cta { border-color: var(--alo-orange-strong); }
+  .border-alo-orange { border-color: var(--alo-orange); }
+  .border-alo-border { border-color: var(--alo-border); }
+  .border-alo-border-strong { border-color: var(--alo-border-strong); }
+  .ring-alo-blue { --tw-ring-color: var(--alo-blue); }
+  .ring-alo-orange { --tw-ring-color: var(--alo-orange); }
+
+  /* ─── Shadows ─── */
+  .alo-shadow { box-shadow: var(--alo-shadow-sm); }
+  .alo-shadow-xs { box-shadow: var(--alo-shadow-xs); }
+  .alo-shadow-sm { box-shadow: var(--alo-shadow-sm); }
+  .alo-shadow-md { box-shadow: var(--alo-shadow-md); }
+  .alo-shadow-lg { box-shadow: var(--alo-shadow-lg); }
+  .alo-shadow-xl { box-shadow: var(--alo-shadow-xl); }
+  .alo-shadow-blue { box-shadow: var(--alo-shadow-blue); }
+  .alo-shadow-orange { box-shadow: var(--alo-shadow-orange); }
+  .alo-shadow-focus { box-shadow: var(--alo-shadow-focus); }
+
+  /* ─── CTA Buttons (accessible orange) ─── */
+  .btn-cta {
+    background-color: var(--alo-orange-strong);
+    color: #FFFFFF;
+  }
+  .btn-cta:hover {
+    background-color: #B84F0F;
+  }
+  .btn-blue {
+    background-color: var(--alo-blue);
+    color: #FFFFFF;
+  }
+  .btn-blue:hover {
+    background-color: var(--alo-blue-hover);
+  }
+
+  /* ─── Semantic Badges ─── */
+  .badge-success {
+    background-color: var(--alo-success-soft);
+    color: var(--alo-success-strong);
+    border: 1px solid var(--alo-success);
+  }
+  .badge-warning {
+    background-color: var(--alo-warning-soft);
+    color: var(--alo-warning-strong);
+    border: 1px solid var(--alo-warning);
+  }
+  .badge-danger {
+    background-color: var(--alo-danger-soft);
+    color: var(--alo-danger-strong);
+    border: 1px solid var(--alo-danger);
+  }
+  .badge-info {
+    background-color: var(--alo-info-soft);
+    color: var(--alo-info-strong);
+    border: 1px solid var(--alo-info);
+  }
+  .badge-blue {
+    background-color: var(--alo-blue-soft);
+    color: var(--alo-blue-strong);
+    border: 1px solid var(--alo-blue);
+  }
+  .badge-orange {
+    background-color: var(--alo-orange-soft);
+    color: var(--alo-orange-strong);
+    border: 1px solid var(--alo-orange);
+  }
+  .badge-neutral {
+    background-color: var(--alo-surface-muted);
+    color: var(--alo-text-secondary);
+    border: 1px solid var(--alo-border);
+  }
+
+  /* ─── Semantic text colors ─── */
+  .text-success { color: var(--alo-success); }
+  .text-warning { color: var(--alo-warning); }
+  .text-danger { color: var(--alo-danger); }
+  .text-info { color: var(--alo-info); }
+  .bg-success { background-color: var(--alo-success-soft); }
+  .bg-warning { background-color: var(--alo-warning-soft); }
+  .bg-danger { background-color: var(--alo-danger-soft); }
+  .bg-info { background-color: var(--alo-info-soft); }
+
+  /* ─── Neutral text helpers (kept for back-compat) ─── */
+  .text-main { color: var(--alo-text); }
+  .text-secondary-c { color: var(--alo-text-secondary); }
+  .text-muted-c { color: var(--alo-muted); }
+
+  /* ─── Cards ─── */
+  .alo-card {
+    border: 1px solid var(--alo-border);
+    background: var(--alo-surface);
+    box-shadow: var(--alo-shadow-sm);
+  }
+  .alo-card-elevated {
+    border: 1px solid var(--alo-border);
+    background: var(--alo-surface);
+    box-shadow: var(--alo-shadow-md);
+  }
+  .alo-card-hover {
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+  .alo-card-hover:hover {
+    box-shadow: var(--alo-shadow-lg);
+    transform: translateY(-2px);
+    border-color: var(--alo-border-strong);
+  }
+
+  /* ─── Surface helpers ─── */
+  .surface-sunken {
+    background-color: var(--alo-surface-sunken);
+  }
+  .surface-muted {
+    background-color: var(--alo-surface-muted);
+  }
+
+  /* ─── Typography Scale ─── */
+  .text-2xs { font-size: var(--alo-text-2xs); line-height: 1rem; }
+  .text-display { font-size: var(--alo-text-5xl); line-height: var(--alo-leading-tight); font-weight: var(--alo-weight-extrabold); letter-spacing: var(--alo-tracking-tight); }
+  .hero-h1 {
+    font-size: var(--alo-text-5xl);
+    line-height: var(--alo-leading-tight);
+    font-weight: var(--alo-weight-bold);
+    letter-spacing: var(--alo-tracking-tight);
+  }
+  @media (max-width: 768px) {
+    .hero-h1 { font-size: 2.25rem; line-height: 2.75rem; }
+  }
+  .section-title {
+    font-size: var(--alo-text-4xl);
+    line-height: 2.75rem;
+    font-weight: var(--alo-weight-bold);
+    letter-spacing: var(--alo-tracking-snug);
+  }
+  @media (max-width: 768px) {
+    .section-title { font-size: 1.75rem; line-height: 2.25rem; }
+  }
+  .crm-page-title {
+    font-size: var(--alo-text-2xl);
+    line-height: 2rem;
+    font-weight: var(--alo-weight-bold);
+    letter-spacing: var(--alo-tracking-snug);
+  }
+  .crm-section-title {
+    font-size: var(--alo-text-xl);
+    line-height: 1.75rem;
+    font-weight: var(--alo-weight-semibold);
+  }
+  .card-title {
+    font-size: var(--alo-text-base);
+    line-height: 1.5rem;
+    font-weight: var(--alo-weight-semibold);
+  }
+  .body-text {
+    font-size: var(--alo-text-sm);
+    line-height: var(--alo-leading-snug);
+  }
+  .body-text-lg {
+    font-size: var(--alo-text-base);
+    line-height: var(--alo-leading-relaxed);
+  }
+  .badge-text {
+    font-size: var(--alo-text-xs);
+    line-height: 1rem;
+    font-weight: var(--alo-weight-semibold);
+  }
+  .label-text {
+    font-size: var(--alo-text-sm);
+    font-weight: var(--alo-weight-medium);
+    color: var(--alo-text-secondary);
+  }
+  .caption-text {
+    font-size: var(--alo-text-2xs);
+    line-height: 1rem;
+    color: var(--alo-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--alo-tracking-wide);
+    font-weight: var(--alo-weight-semibold);
+  }
+
+  /* ─── Truncation ─── */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ─── Glass effect (for sticky bars) ─── */
+  .alo-glass {
+    background-color: rgba(255, 255, 255, 0.80);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+  }
+  .dark .alo-glass {
+    background-color: rgba(11, 18, 32, 0.80);
+  }
+
+  /* ─── Divider ─── */
+  .alo-divider {
+    border-top: 1px solid var(--alo-border);
+  }
+  .alo-divider-subtle {
+    border-top: 1px solid var(--alo-border-subtle);
+  }
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+
+/* ════════════════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ════════════════════════════════════════════════════════════════════════ */
+.alo-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.alo-scroll::-webkit-scrollbar-track { background: transparent; }
+.alo-scroll::-webkit-scrollbar-thumb {
+  background: var(--alo-border-strong);
   border-radius: 3px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+.alo-scroll::-webkit-scrollbar-thumb:hover { background: var(--alo-muted); }
+
+/* Global thin scrollbar for dense tables */
+.alo-scroll-thin::-webkit-scrollbar { width: 4px; height: 4px; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   ANIMATED FOOTER — Floating Graduation Caps
+   ════════════════════════════════════════════════════════════════════════ */
+@keyframes floatCapX {
+  from { transform: translateX(-100px); }
+  to { transform: translateX(calc(100vw + 100px)); }
 }
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #475569;
+@keyframes floatCapY {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
-.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #64748B;
+@keyframes capRotate {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+.cap-layer-1 { animation: floatCapX 25s linear infinite, floatCapY 3s ease-in-out infinite, capRotate 4s ease-in-out infinite; }
+.cap-layer-2 { animation: floatCapX 18s linear infinite, floatCapY 2.5s ease-in-out infinite, capRotate 3.5s ease-in-out infinite; }
+.cap-layer-3 { animation: floatCapX 22s linear infinite, floatCapY 3.5s ease-in-out infinite, capRotate 4.5s ease-in-out infinite; }
+.cap-delay-1 { animation-delay: 0s, 0s, 0s; }
+.cap-delay-2 { animation-delay: -5s, -0.5s, -1s; }
+.cap-delay-3 { animation-delay: -10s, -1s, -2s; }
+.cap-delay-4 { animation-delay: -15s, -1.5s, -3s; }
+.cap-delay-5 { animation-delay: -3s, -2s, -1.5s; }
+.cap-delay-6 { animation-delay: -8s, -2.5s, -2.5s; }
+.cap-delay-7 { animation-delay: -12s, -0.8s, -3.5s; }
+.cap-delay-8 { animation-delay: -18s, -1.2s, -0.5s; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   SKELETON LOADING
+   ════════════════════════════════════════════════════════════════════════ */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.skeleton {
+  animation: skeleton-pulse 2s ease-in-out infinite;
+  background: var(--alo-surface-muted);
+  border-radius: 0.5rem;
 }
 
-/* ============================================================
-   ALO TYPOGRAPHY UTILITY CLASSES
-   ============================================================ */
-
-/* Website Hero H1 */
-.text-hero-h1 {
-  font-size: 56px;
-  line-height: 64px;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-}
-@media (max-width: 767px) {
-  .text-hero-h1 {
-    font-size: 36px;
-    line-height: 44px;
-  }
-}
-
-/* Website Section Title */
-.text-section-title {
-  font-size: 40px;
-  line-height: 48px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-@media (max-width: 767px) {
-  .text-section-title {
-    font-size: 28px;
-    line-height: 36px;
-  }
-}
-
-/* CRM Page Title */
-.text-crm-page {
-  font-size: 32px;
-  line-height: 40px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-/* CRM Section Title */
-.text-crm-section {
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 600;
-}
-
-/* Card Title */
-.text-card-title {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 600;
-}
-
-/* Body Text */
-.text-body-sm {
-  font-size: 14px;
-  line-height: 22px;
-}
-.text-body-md {
-  font-size: 16px;
-  line-height: 26px;
-}
-
-/* Badge Text */
-.text-badge {
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 600;
-}
-
-/* ============================================================
-   CIRCULAR PROGRESS ANIMATION
-   ============================================================ */
-@keyframes circular-progress {
-  from { stroke-dashoffset: var(--circumference); }
-  to { stroke-dashoffset: var(--offset); }
-}
-
-/* ============================================================
-   SKELETON SHIMMER
-   ============================================================ */
+/* Shimmer variant (Linear/Stripe-style sweep) */
 @keyframes skeleton-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-
 .skeleton-shimmer {
-  background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--alo-surface-muted) 0%,
+    var(--alo-border) 50%,
+    var(--alo-surface-muted) 100%
+  );
   background-size: 200% 100%;
-  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  border-radius: 0.5rem;
 }
-.dark .skeleton-shimmer {
-  background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+
+/* ════════════════════════════════════════════════════════════════════════
+   ENTRANCE ANIMATIONS
+   ════════════════════════════════════════════════════════════════════════ */
+@keyframes alo-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes alo-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes alo-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes alo-slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-fade-in { animation: alo-fade-in 0.3s ease-out both; }
+.animate-fade-up { animation: alo-fade-up 0.4s ease-out both; }
+.animate-scale-in { animation: alo-scale-in 0.2s ease-out both; }
+.animate-slide-in-right { animation: alo-slide-in-right 0.3s ease-out both; }
+
+/* Stagger helpers */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.30s; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   PULSE INDICATORS (status dots)
+   ════════════════════════════════════════════════════════════════════════ */
+@keyframes alo-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+.pulse-dot {
+  animation: alo-pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.pulse-dot-orange {
+  animation: alo-pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  box-shadow: 0 0 0 0 rgba(243, 112, 33, 0.5);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   FOCUS RING (consistent accessible focus)
+   ════════════════════════════════════════════════════════════════════════ */
+.focus-ring {
+  outline: none;
+  transition: box-shadow 0.15s ease;
+}
+.focus-ring:focus-visible {
+  box-shadow: var(--alo-shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   PRINT
+   ════════════════════════════════════════════════════════════════════════ */
+@media print {
+  .alo-no-print { display: none !important; }
+  body { background: #FFFFFF !important; color: #000000 !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   NEXABROAD AI — Next-Generation EdTech Design System
+   Deep Space Blue + Royal Blue + Vivid Orange
+   Bento Grid 2.0 + Glassmorphism
+   ════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── NexAbroad Brand Tokens ─── */
+  --nx-space: #0A0E1A;        /* Deep Space — primary background */
+  --nx-surface: #0F172A;      /* Slate 900 — card surface */
+  --nx-royal: #1E40AF;        /* Royal Blue — trust/education */
+  --nx-orange: #F97316;       /* Vivid Orange — primary action */
+  --nx-orange-hot: #EA580C;   /* Hot Orange — CTA hover */
+  --nx-blue-light: #3B82F6;   /* Bright Blue — links/info */
+  --nx-glow-blue: rgba(59, 130, 246, 0.15);
+  --nx-glow-orange: rgba(249, 115, 22, 0.2);
+  --nx-border-glass: rgba(255, 255, 255, 0.08);
+  --nx-border-glass-hover: rgba(255, 255, 255, 0.15);
+  --nx-text-primary: #F8FAFC;
+  --nx-text-secondary: #94A3B8;
+  --nx-text-muted: #64748B;
+  --nx-success: #22C55E;
+  --nx-warning: #FBBF24;
+  --nx-danger: #EF4444;
+}
+
+/* ─── Glassmorphism Cards ─── */
+.nx-glass {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--nx-border-glass);
+  border-radius: 24px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.nx-glass:hover {
+  border-color: var(--nx-border-glass-hover);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+.nx-glass-glow-blue {
+  box-shadow: 0 0 24px var(--nx-glow-blue), 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+.nx-glass-glow-orange {
+  box-shadow: 0 0 24px var(--nx-glow-orange), 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* ─── Gradient Borders ─── */
+.nx-gradient-border {
+  position: relative;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+}
+.nx-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--nx-orange), var(--nx-royal));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ─── Glow Effects ─── */
+.nx-glow-text-orange {
+  text-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+}
+.nx-glow-text-blue {
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+/* ─── Bento Grid ─── */
+.nx-bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+.nx-bento-sm { grid-column: span 12; }
+.nx-bento-md { grid-column: span 6; }
+.nx-bento-lg { grid-column: span 8; }
+.nx-bento-xl { grid-column: span 12; }
+@media (min-width: 768px) {
+  .nx-bento-sm { grid-column: span 4; }
+  .nx-bento-md { grid-column: span 6; }
+}
+@media (min-width: 1024px) {
+  .nx-bento-sm { grid-column: span 3; }
+  .nx-bento-md { grid-column: span 6; }
+  .nx-bento-lg { grid-column: span 8; }
+}
+
+/* ─── Animated Progress Bars ─── */
+.nx-progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+.nx-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nx-progress-gradient {
+  background: linear-gradient(90deg, var(--nx-royal), var(--nx-orange));
+}
+
+/* ─── Pulse Animation for AI Badge ─── */
+@keyframes nx-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(249, 115, 22, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+}
+.nx-pulse {
+  animation: nx-pulse-ring 2s infinite;
+}
+
+/* ─── AI Engine Shimmer ─── */
+@keyframes nx-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.nx-ai-active {
+  background: linear-gradient(
+    90deg,
+    rgba(249, 115, 22, 0.1) 0%,
+    rgba(249, 115, 22, 0.2) 50%,
+    rgba(249, 115, 22, 0.1) 100%
+  );
   background-size: 200% 100%;
+  animation: nx-shimmer 3s linear infinite;
+}
+
+/* ─── Hover Glow Button ─── */
+.nx-btn-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.nx-btn-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.3), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.nx-btn-glow:hover::after {
+  opacity: 1;
 }

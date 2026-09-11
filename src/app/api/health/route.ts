@@ -1,42 +1,59 @@
-// Health check endpoint.
-// Public — no authentication required.
-// Used by:
-//   - Load balancers (Caddy/Nginx) to verify the app is responding
-//   - Systemd watchdog to detect hangs
-//   - Monitoring tools (Uptime Kuma, Prometheus, etc.)
-//   - The mandatory clean-install gate: `curl -fsS http://127.0.0.1:3000/api/health`
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const startedAt = Date.now();
-  let dbOk = false;
-  let dbError: string | undefined;
-
-  try {
-    // Run a trivial query to verify the DB connection is alive
-    await db.$queryRaw`SELECT 1`;
-    dbOk = true;
-  } catch (e) {
-    dbError = e instanceof Error ? e.message : String(e);
-  }
-
-  const response = {
-    status: dbOk ? 'ok' : 'degraded',
+  const health = {
+    status: "healthy",
     timestamp: new Date().toISOString(),
-    uptime_ms: process.uptime() * 1000,
-    node: process.version,
-    platform: process.platform,
-    database: {
-      connected: dbOk,
-      ...(dbError ? { error: dbError } : {}),
+    service: "alo-education",
+    version: "2.0.0",
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || "development",
+    checks: {
+      database: "unknown",
+      redis: "unknown",
+      storage: "unknown",
     },
-    responseTime_ms: Date.now() - startedAt,
   };
 
-  // Return 200 even if DB is degraded — the app is running, just unhealthy.
-  // Load balancers can use the `status` field to decide whether to drain traffic.
-  // Use 503 only if the app process itself is failing (rare).
-  return NextResponse.json(response, { status: 200 });
+  // Check database
+  try {
+    await db.$queryRaw`SELECT 1`;
+    health.checks.database = "connected";
+  } catch {
+    health.checks.database = "disconnected";
+    health.status = "degraded";
+  }
+
+  // Check storage pools
+  try {
+    const fs = await import("fs");
+    const poolA = process.env.STORAGE_POOL_A || "/mnt/ssd1";
+    const poolB = process.env.STORAGE_POOL_B || "/mnt/ssd2";
+    const poolC = process.env.STORAGE_POOL_C || "/home/aloedu/storage";
+    const pools = { poolA: fs.existsSync(poolA), poolB: fs.existsSync(poolB), poolC: fs.existsSync(poolC) };
+    health.checks.storage = Object.values(pools).some(v => v) ? "accessible" : "fallback";
+  } catch {
+    health.checks.storage = "fallback";
+  }
+
+  // Check Redis (if configured)
+  if (process.env.REDIS_URL) {
+    try {
+      const { redis } = await import("@/lib/redis");
+      await redis.ping();
+      health.checks.redis = "connected";
+    } catch {
+      health.checks.redis = "disconnected";
+      health.status = "degraded";
+    }
+  } else {
+    health.checks.redis = "not_configured";
+  }
+
+  const statusCode = health.status === "healthy" ? 200 : 503;
+  return NextResponse.json(health, { status: statusCode });
 }

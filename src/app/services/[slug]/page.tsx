@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import React from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';

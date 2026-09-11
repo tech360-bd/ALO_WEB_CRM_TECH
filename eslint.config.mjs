@@ -23,8 +23,6 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "react/display-name": "off",
     "react/prop-types": "off",
     "react-compiler/react-compiler": "off",
-    "react-hooks/preserve-manual-memoization": "off",
-    "react-hooks/set-state-in-effect": "off",
     
     // Next.js rules
     "@next/next/no-img-element": "off",
@@ -46,38 +44,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "no-useless-escape": "off",
   },
 }, {
-  files: ["server.js"],
-  rules: {
-    // cPanel Node.js applications require a CommonJS startup file named server.js.
-    "@typescript-eslint/no-require-imports": "off",
-  },
-}, {
-  ignores: [
-    "node_modules/**",
-    ".next/**",
-    ".claude/**",
-    "**/.claude/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-    "examples/**",
-    "skills/**",
-    "remediation-baseline-2026-07-27/**",
-    "remediation-work/**",
-    "download/**",
-    "upload/**",
-    "scripts/**",
-    "prisma/migrations/**",
-    "mini-services/**",
-    "agent-ctx/**",
-    ".zscripts/**",
-    "db/**",
-    "evidence/**",
-    "backups/**",
-    "data/**",
-    "packages/**",
-  ]
+  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills", "upload/**", "tool-results/**", "download/**", "mini-services/**", "prisma/**", "scripts/**"]
 }];
-
 
 export default eslintConfig;
