@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Shared functions
+    function isAuthenticated() { return request.auth != null; }
+    function isRole(role) { return request.auth.token.role == role; }
+
+    // Student CRUD
+    match /students/{studentId} {
+      allow read, write: if isAuthenticated() && (request.auth.uid == studentId || isRole('admin') || isRole('employee'));
+    }
+    
+    // CRM Workflow & Audit (Admin/Employee Only)
+    match /crm_leads/{leadId} {
+      allow read, write: if isAuthenticated() && (isRole('admin') || isRole('employee'));
+    }
+    
+    // Default lockdown for external integrations
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
