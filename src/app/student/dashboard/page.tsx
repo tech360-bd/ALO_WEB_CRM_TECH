@@ -1,7 +1,7 @@
 'use client';
 
-import StudentDashboard from '@/components/student/StudentDashboard';
+import PremiumStudentDashboard from '@/components/student/PremiumStudentDashboard';
 
 export default function StudentDashboardPage() {
-  return <StudentDashboard />;
+  return <PremiumStudentDashboard />;
 }
