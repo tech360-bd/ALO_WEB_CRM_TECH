@@ -1,0 +1,5 @@
+Agent Identifier,Agent Name,Target Area,Permission Scope,Default Execution Mode
+alo_cmd_orchestrator,Super Admin AI Command Center,Platform Governance,COMPANY,READ_ONLY / APPROVAL_REQUIRED
+alo_reply_assistant,UCC AI Reply Assistant,Omnichannel Messaging,ASSIGNED,SAFE_ACTION (Human Review)
+alo_ocr_agent,Document Intelligence Agent,OCR & Autofill,ASSIGNED,APPROVAL_REQUIRED (High-Risk)
+alo_office_hours_agent,After-Hours Qualification Agent,Lead Qualification,ALL,SAFE_ACTION

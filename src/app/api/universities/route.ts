@@ -46,8 +46,6 @@ export async function GET(req: Request) {
           featured: true,
           website: true,
           status: true,
-          logoSourceUrl: true,
-          heroImageSourceUrl: true,
         },
         skip,
         take: limit,

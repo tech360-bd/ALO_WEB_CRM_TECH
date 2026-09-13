@@ -1,0 +1,17 @@
+{
+  "status": 404,
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/success-stories/layout,_N_T_/success-stories/[slug]/layout,_N_T_/success-stories/[slug]/page,_N_T_/success-stories/tushar-imran-nahid"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/success-stories/$d$slug/__PAGE__",
+    "/success-stories/$d$slug",
+    "/success-stories",
+    "/_index",
+    "/_head"
+  ]
+}

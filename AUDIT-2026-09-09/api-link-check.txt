@@ -1,0 +1,6 @@
+MISSING	/api/auth/login	(first seen: src/app/employee/login/page.tsx)
+MISSING	/api/crm/documents/verification-queue	(first seen: src/app/application-manager/document-review/page.tsx)
+MISSING	/api/employee/password	(first seen: src/components/employee/EmployeeSettingsPage.tsx)
+MISSING	/api/employee/support-ticket	(first seen: src/components/employee/EmployeeHelpPage.tsx)
+TOTAL_API_PATHS:135
+MISSING:4

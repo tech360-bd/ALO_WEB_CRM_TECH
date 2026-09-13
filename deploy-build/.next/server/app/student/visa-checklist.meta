@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/student/layout,_N_T_/student/visa-checklist/layout,_N_T_/student/visa-checklist/page,_N_T_/student/visa-checklist"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/student/visa-checklist/__PAGE__",
+    "/student/visa-checklist",
+    "/student",
+    "/_index",
+    "/_head"
+  ]
+}

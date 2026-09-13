@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/crm/frontdesk/dashboard/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"/Users/alaminn/Downloads/ALO-FULL-SOURCE/src/app/api/crm/frontdesk/dashboard/route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/partner-admin/layout,_N_T_/partner-admin/video-generator/layout,_N_T_/partner-admin/video-generator/page,_N_T_/partner-admin/video-generator"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/partner-admin/video-generator/__PAGE__",
+    "/partner-admin/video-generator",
+    "/partner-admin",
+    "/_index",
+    "/_head"
+  ]
+}

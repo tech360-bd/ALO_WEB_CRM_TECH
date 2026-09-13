@@ -1,0 +1,28 @@
+# Checksum Verification Report
+
+Generated: 2026-07-30T22:54:48Z
+
+Each archive checksum was calculated twice. All duplicate calculations matched.
+
+```text
+## delivery-evidence-20260731-043211/ALO_EDUCATION_COMPLETE_SOURCE.zip
+unzip_exit=0
+extract_exit=0
+ALO_EDUCATION_COMPLETE_SOURCE.zip bytes=53771614 files=1743 uncompressed=78917632 sha1=fd1d56055c19ef716148673553a08d0c14c317d52e25f994daa734ccb6664036 sha2=fd1d56055c19ef716148673553a08d0c14c317d52e25f994daa734ccb6664036 match=YES
+## delivery-evidence-20260731-043211/ALO_EDUCATION_PRODUCTION_DEPLOYMENT.zip
+unzip_exit=0
+extract_exit=0
+ALO_EDUCATION_PRODUCTION_DEPLOYMENT.zip bytes=32536319 files=3491 uncompressed=94441472 sha1=70532a2f4fce0fe217be36a32cf8d1864cea432a0439ad652ad66c1e8f1d8c90 sha2=70532a2f4fce0fe217be36a32cf8d1864cea432a0439ad652ad66c1e8f1d8c90 match=YES
+## delivery-evidence-20260731-043211/ALO_EDUCATION_DOCUMENTATION.zip
+unzip_exit=0
+extract_exit=0
+ALO_EDUCATION_DOCUMENTATION.zip bytes=205067 files=66 uncompressed=1667072 sha1=ce42a923e4731205df6317398a33ec9a028524ec4dd47ebe08440dbfc02815d3 sha2=ce42a923e4731205df6317398a33ec9a028524ec4dd47ebe08440dbfc02815d3 match=YES
+## delivery-evidence-20260731-043211/ALO_EDUCATION_DATABASE_PACKAGE.zip
+unzip_exit=0
+extract_exit=0
+ALO_EDUCATION_DATABASE_PACKAGE.zip bytes=57188 files=14 uncompressed=360448 sha1=b82d2faf7a53c5fc5229847eb8769c9eaa9d0bdaa4c006502e0457a740f3b9b0 sha2=b82d2faf7a53c5fc5229847eb8769c9eaa9d0bdaa4c006502e0457a740f3b9b0 match=YES
+## delivery-evidence-20260731-043211/ALO_EDUCATION_TEST_AND_AUDIT_REPORTS.zip
+unzip_exit=0
+extract_exit=0
+ALO_EDUCATION_TEST_AND_AUDIT_REPORTS.zip bytes=131803 files=187 uncompressed=962560 sha1=17d78dcf75bdee8424d3ad06414f4d8f57bf1d11253584f62b3aaf136e78f0dd sha2=17d78dcf75bdee8424d3ad06414f4d8f57bf1d11253584f62b3aaf136e78f0dd match=YES
+```

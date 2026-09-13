@@ -1,0 +1,3 @@
+duplicate_id,original_id,type,similarity_score,resolution_action,merged_at
+UNI-DUPL-001,UNI-UK-0001,university,0.95,merged,2026-08-13
+UNI-DUPL-002,UNI-UK-0002,university,0.92,merged,2026-08-13

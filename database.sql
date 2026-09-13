@@ -1654,24 +1654,6 @@ CREATE TABLE `CrmUniversity` (
     `website` VARCHAR(191) NOT NULL DEFAULT '',
     `officialUrl` VARCHAR(191) NOT NULL DEFAULT '',
     `sourceUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `aliases` VARCHAR(191) NOT NULL DEFAULT '[]',
-    `slug` VARCHAR(191) NOT NULL DEFAULT '',
-    `campuses` VARCHAR(191) NOT NULL DEFAULT '[]',
-    `officialInternationalAdmissionsUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialCourseSearchUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialTuitionFeeUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialScholarshipUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `logoSourceUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `heroImageSourceUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `mediaUsagePermissionStatus` VARCHAR(191) NOT NULL DEFAULT 'not_requested',
-    `rankingProvider` VARCHAR(191) NOT NULL DEFAULT '',
-    `rankingYear` INTEGER NOT NULL DEFAULT 0,
-    `rankingValue` VARCHAR(191) NOT NULL DEFAULT '',
-    `rankingBand` VARCHAR(191) NOT NULL DEFAULT '',
-    `internationalStudentSupportSummary` VARCHAR(191) NOT NULL DEFAULT '',
-    `sourceUrls` VARCHAR(191) NOT NULL DEFAULT '[]',
-    `verificationStatus` VARCHAR(191) NOT NULL DEFAULT 'NEEDS_REVIEW',
-    `publicationStatus` VARCHAR(191) NOT NULL DEFAULT 'draft',
     `lastVerifiedAt` VARCHAR(191) NOT NULL DEFAULT '',
     `status` VARCHAR(191) NOT NULL DEFAULT 'needs_official_source',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -1687,30 +1669,14 @@ CREATE TABLE `CrmCourse` (
     `universityId` VARCHAR(191) NOT NULL,
     `courseId` VARCHAR(191) NOT NULL,
     `courseTitle` VARCHAR(191) NOT NULL,
-    `slug` VARCHAR(191) NOT NULL DEFAULT '',
-    `qualification` VARCHAR(191) NOT NULL DEFAULT '',
     `studyLevel` VARCHAR(191) NOT NULL DEFAULT '',
     `programLevel` VARCHAR(191) NOT NULL DEFAULT '',
     `subjectArea` VARCHAR(191) NOT NULL DEFAULT '',
     `disciplineArea` VARCHAR(191) NOT NULL DEFAULT '',
-    `country` VARCHAR(191) NOT NULL DEFAULT '',
-    `city` VARCHAR(191) NOT NULL DEFAULT '',
-    `campus` VARCHAR(191) NOT NULL DEFAULT '',
-    `deliveryMode` VARCHAR(191) NOT NULL DEFAULT '',
-    `attendanceMode` VARCHAR(191) NOT NULL DEFAULT '',
-    `placementOption` BOOLEAN NOT NULL DEFAULT false,
-    `sandwichYearOption` BOOLEAN NOT NULL DEFAULT false,
-    `pathwayStatus` VARCHAR(191) NOT NULL DEFAULT '',
-    `onlineOption` BOOLEAN NOT NULL DEFAULT false,
-    `partTimeOption` BOOLEAN NOT NULL DEFAULT false,
-    `internationalEligibility` VARCHAR(191) NOT NULL DEFAULT 'not_verified',
     `officialUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialApplicationUrl` VARCHAR(191) NOT NULL DEFAULT '',
     `durationMonths` INTEGER NOT NULL DEFAULT 0,
     `publicTags` VARCHAR(191) NOT NULL DEFAULT '',
     `sourceUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `verificationStatus` VARCHAR(191) NOT NULL DEFAULT 'NEEDS_REVIEW',
-    `publicationStatus` VARCHAR(191) NOT NULL DEFAULT 'draft',
     `lastVerifiedAt` VARCHAR(191) NOT NULL DEFAULT '',
     `status` VARCHAR(191) NOT NULL DEFAULT 'needs_official_source',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -1738,13 +1704,8 @@ CREATE TABLE `CrmCourseIntakeFee` (
     `tuitionCurrency` VARCHAR(191) NOT NULL DEFAULT '',
     `yearlyTuition` DOUBLE NOT NULL DEFAULT 0,
     `totalTuition` DOUBLE NOT NULL DEFAULT 0,
-    `tuitionPeriod` VARCHAR(191) NOT NULL DEFAULT '',
     `depositCurrency` VARCHAR(191) NOT NULL DEFAULT '',
     `depositAmount` DOUBLE NOT NULL DEFAULT 0,
-    `feeSourceUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `intakeSourceUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `lastCheckedAt` VARCHAR(191) NOT NULL DEFAULT '',
-    `verificationStatus` VARCHAR(191) NOT NULL DEFAULT 'NEEDS_REVIEW',
     `batchId` VARCHAR(191) NOT NULL DEFAULT '',
     `status` VARCHAR(191) NOT NULL DEFAULT 'active',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -1763,27 +1724,18 @@ CREATE TABLE `CrmCourseRequirement` (
     `universityId` VARCHAR(191) NOT NULL,
     `courseId` VARCHAR(191) NOT NULL,
     `academicReq` VARCHAR(191) NOT NULL DEFAULT '',
-    `acceptedQualifications` VARCHAR(191) NOT NULL DEFAULT '',
     `gradingSystem` VARCHAR(191) NOT NULL DEFAULT '',
     `minScore` VARCHAR(191) NOT NULL DEFAULT '',
-    `englishTest` VARCHAR(191) NOT NULL DEFAULT '',
-    `componentScores` VARCHAR(191) NOT NULL DEFAULT '{}',
     `ieltsOverall` DOUBLE NOT NULL DEFAULT 0,
     `ieltsMinBand` DOUBLE NOT NULL DEFAULT 0,
     `pteOverall` DOUBLE NOT NULL DEFAULT 0,
     `pteMinBand` DOUBLE NOT NULL DEFAULT 0,
     `toeflOverall` DOUBLE NOT NULL DEFAULT 0,
     `detOverall` DOUBLE NOT NULL DEFAULT 0,
-    `workExperience` VARCHAR(191) NOT NULL DEFAULT '',
     `moiAccepted` BOOLEAN NOT NULL DEFAULT false,
     `ownEnglishTest` BOOLEAN NOT NULL DEFAULT false,
     `portfolioRequired` BOOLEAN NOT NULL DEFAULT false,
     `interviewRequired` BOOLEAN NOT NULL DEFAULT false,
-    `prerequisiteSubjects` VARCHAR(191) NOT NULL DEFAULT '',
-    `countrySpecificRequirement` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialRequirementUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `lastCheckedAt` VARCHAR(191) NOT NULL DEFAULT '',
-    `verificationStatus` VARCHAR(191) NOT NULL DEFAULT 'NEEDS_REVIEW',
     `batchId` VARCHAR(191) NOT NULL DEFAULT '',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -1799,20 +1751,8 @@ CREATE TABLE `CrmScholarship` (
     `universityId` VARCHAR(191) NOT NULL,
     `courseId` VARCHAR(191) NOT NULL DEFAULT '',
     `scholarshipName` VARCHAR(191) NOT NULL DEFAULT '',
-    `provider` VARCHAR(191) NOT NULL DEFAULT '',
-    `eligibleCountries` VARCHAR(191) NOT NULL DEFAULT '[]',
-    `eligibleLevels` VARCHAR(191) NOT NULL DEFAULT '[]',
     `scholarshipAmount` DOUBLE NOT NULL DEFAULT 0,
     `scholarshipCurrency` VARCHAR(191) NOT NULL DEFAULT '',
-    `awardPercentage` DOUBLE NOT NULL DEFAULT 0,
-    `coverageType` VARCHAR(191) NOT NULL DEFAULT '',
-    `applicationMethod` VARCHAR(191) NOT NULL DEFAULT '',
-    `deadline` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialScholarshipUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `academicYear` VARCHAR(191) NOT NULL DEFAULT '',
-    `expiryStatus` VARCHAR(191) NOT NULL DEFAULT 'unknown',
-    `lastCheckedAt` VARCHAR(191) NOT NULL DEFAULT '',
-    `verificationStatus` VARCHAR(191) NOT NULL DEFAULT 'NEEDS_REVIEW',
     `batchId` VARCHAR(191) NOT NULL DEFAULT '',
     `status` VARCHAR(191) NOT NULL DEFAULT 'active',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -1821,97 +1761,6 @@ CREATE TABLE `CrmScholarship` (
     INDEX `CrmScholarship_courseId_idx`(`courseId`),
     INDEX `CrmScholarship_universityId_idx`(`universityId`),
     INDEX `CrmScholarship_status_idx`(`status`),
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `CrmRanking` (
-    `id` VARCHAR(191) NOT NULL,
-    `universityId` VARCHAR(191) NOT NULL,
-    `provider` VARCHAR(191) NOT NULL,
-    `rankingTitle` VARCHAR(191) NOT NULL,
-    `rankingYear` INTEGER NOT NULL,
-    `rank` INTEGER NOT NULL DEFAULT 0,
-    `rankBand` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialRankingSourceUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `retrievedDate` VARCHAR(191) NOT NULL DEFAULT '',
-    `verificationStatus` VARCHAR(191) NOT NULL DEFAULT 'NEEDS_REVIEW',
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    INDEX `CrmRanking_universityId_idx`(`universityId`),
-    INDEX `CrmRanking_provider_rankingYear_idx`(`provider`, `rankingYear`),
-    UNIQUE INDEX `CrmRanking_universityId_provider_rankingTitle_rankingYear_key`(`universityId`, `provider`, `rankingTitle`, `rankingYear`),
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `CrmDiscoverySource` (
-    `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `baseUrl` VARCHAR(191) NOT NULL,
-    `allowedUse` VARCHAR(191) NOT NULL DEFAULT 'discovery_only',
-    `robotsUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `robotsStatus` VARCHAR(191) NOT NULL DEFAULT 'not_checked',
-    `termsStatus` VARCHAR(191) NOT NULL DEFAULT 'not_reviewed',
-    `notes` VARCHAR(191) NOT NULL DEFAULT '',
-    `lastCheckedAt` VARCHAR(191) NOT NULL DEFAULT '',
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    UNIQUE INDEX `CrmDiscoverySource_name_key`(`name`),
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `CrmDiscoveryRecord` (
-    `id` VARCHAR(191) NOT NULL,
-    `discoverySourceId` VARCHAR(191) NOT NULL,
-    `discoveryUrl` VARCHAR(191) NOT NULL,
-    `discoveredUniversityName` VARCHAR(191) NOT NULL DEFAULT '',
-    `discoveredCourseTitle` VARCHAR(191) NOT NULL DEFAULT '',
-    `country` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialUniversityName` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialUniversityUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `officialCourseUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `sourceOrganization` VARCHAR(191) NOT NULL DEFAULT '',
-    `sourceUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `matchingStatus` VARCHAR(191) NOT NULL DEFAULT 'DISCOVERED_ONLY',
-    `pipelineStatus` VARCHAR(191) NOT NULL DEFAULT 'DISCOVERED',
-    `verificationStatus` VARCHAR(191) NOT NULL DEFAULT 'DISCOVERED_ONLY',
-    `publicationStatus` VARCHAR(191) NOT NULL DEFAULT 'not_published',
-    `rejectionReason` VARCHAR(191) NOT NULL DEFAULT '',
-    `unresolvedReason` VARCHAR(191) NOT NULL DEFAULT '',
-    `lastCheckedAt` VARCHAR(191) NOT NULL DEFAULT '',
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    INDEX `CrmDiscoveryRecord_discoverySourceId_idx`(`discoverySourceId`),
-    INDEX `CrmDiscoveryRecord_verificationStatus_idx`(`verificationStatus`),
-    INDEX `CrmDiscoveryRecord_pipelineStatus_idx`(`pipelineStatus`),
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `CrmSourceVerificationEvent` (
-    `id` VARCHAR(191) NOT NULL,
-    `targetType` VARCHAR(191) NOT NULL,
-    `targetId` VARCHAR(191) NOT NULL DEFAULT '',
-    `sourceUrl` VARCHAR(191) NOT NULL,
-    `sourcePriority` INTEGER NOT NULL DEFAULT 8,
-    `httpStatus` INTEGER NOT NULL DEFAULT 0,
-    `finalUrl` VARCHAR(191) NOT NULL DEFAULT '',
-    `soft404` BOOLEAN NOT NULL DEFAULT false,
-    `title` VARCHAR(191) NOT NULL DEFAULT '',
-    `entityMatchStatus` VARCHAR(191) NOT NULL DEFAULT 'not_checked',
-    `verificationStatus` VARCHAR(191) NOT NULL DEFAULT 'NEEDS_REVIEW',
-    `checkedAt` VARCHAR(191) NOT NULL DEFAULT '',
-    `checkedBy` VARCHAR(191) NOT NULL DEFAULT 'system',
-    `notes` VARCHAR(191) NOT NULL DEFAULT '',
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
-    INDEX `CrmSourceVerificationEvent_targetType_targetId_idx`(`targetType`, `targetId`),
-    INDEX `CrmSourceVerificationEvent_verificationStatus_idx`(`verificationStatus`),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -4319,12 +4168,6 @@ ALTER TABLE `CrmScholarship` ADD CONSTRAINT `CrmScholarship_courseId_fkey` FOREI
 
 -- AddForeignKey
 ALTER TABLE `CrmScholarship` ADD CONSTRAINT `CrmScholarship_universityId_fkey` FOREIGN KEY (`universityId`) REFERENCES `CrmUniversity`(`universityId`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `CrmRanking` ADD CONSTRAINT `CrmRanking_universityId_fkey` FOREIGN KEY (`universityId`) REFERENCES `CrmUniversity`(`universityId`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `CrmDiscoveryRecord` ADD CONSTRAINT `CrmDiscoveryRecord_discoverySourceId_fkey` FOREIGN KEY (`discoverySourceId`) REFERENCES `CrmDiscoverySource`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `CrmCommission` ADD CONSTRAINT `CrmCommission_courseId_fkey` FOREIGN KEY (`courseId`) REFERENCES `CrmCourse`(`courseId`) ON DELETE RESTRICT ON UPDATE CASCADE;

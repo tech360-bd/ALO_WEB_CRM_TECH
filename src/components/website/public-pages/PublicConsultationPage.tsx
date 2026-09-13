@@ -67,6 +67,7 @@ export default function PublicConsultationPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <PublicNavbar />
       <main className="pt-8 pb-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <motion.div

@@ -15,7 +15,6 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 const C = { blue: '#0057B8', orange: '#E8501A', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
@@ -84,205 +83,129 @@ function HeroSection() {
   const [paused, setPaused] = useState(false);
   const [imgErrors, setImgErrors] = useState<Set<string>>(new Set());
   const timer = useRef<ReturnType<typeof setInterval>>(null);
-  const router = useRouter();
-
-  // Search panel states
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchCountry, setSearchCountry] = useState('');
-  const [searchLevel, setSearchLevel] = useState('');
 
   const startTimer = useCallback(() => {
     if (timer.current) clearInterval(timer.current);
-    timer.current = setInterval(() => setCurrent(p => (p + 1) % slides.length), 6000);
+    timer.current = setInterval(() => setCurrent(p => (p + 1) % slides.length), 5000);
   }, [slides.length]);
 
   useEffect(() => { startTimer(); return () => { if (timer.current) clearInterval(timer.current); }; }, [startTimer]);
   useEffect(() => { if (paused && timer.current) clearInterval(timer.current); if (!paused) startTimer(); }, [paused, startTimer]);
 
   const slide = slides[current];
-  const go = (i: number) => {
-    setCurrent(i);
-    setSearchCountry(slides[i].slug);
-  };
-
-  const handleHeroSearch = () => {
-    const params = new URLSearchParams();
-    if (searchQuery) params.set('search', searchQuery);
-    if (searchCountry) params.set('country', searchCountry);
-    if (searchLevel) params.set('level', searchLevel);
-    router.push(`/course-finder?${params.toString()}`);
-  };
+  const go = (i: number) => setCurrent(i);
 
   return (
-    <section 
-      className="relative w-full min-h-[720px] lg:h-[88vh] overflow-hidden flex flex-col justify-center py-12 lg:py-0 transition-colors duration-1000 bg-white"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {/* Background radial accent glow that adapts to the active slide's accent color */}
-      <div 
-        className="absolute inset-0 transition-all duration-1000 opacity-20 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at 80% 20%, ${slide.accentColor || '#0057B8'} 0%, transparent 60%)`
-        }}
-      />
-      
-      {/* Background grid patterns */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
+    <section className="relative w-full h-[90vh] min-h-[600px] max-h-[950px] overflow-hidden bg-white" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <AnimatePresence mode="wait">
+        <motion.div key={slide.name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} className="absolute inset-0">
+          {slide.heroImage && !imgErrors.has(slide.name) ? (
+            <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:block">
+              <Image src={slide.heroImage} alt={slide.name} fill className="object-cover object-center" onError={() => setImgErrors(prev => new Set([...prev, slide.name]))} />
+            </div>
+          ) : (
+            <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${slide.accentColor}15, ${slide.accentColor}08)` }}>
+              <div className="text-center">
+                <span className="text-8xl block mb-4">{slide.flag}</span>
+                <span className="text-3xl font-bold" style={{ color: slide.accentColor }}>{slide.name}</span>
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* Left Text Column */}
-          <div className="lg:col-span-6 space-y-6 text-left">
-            <AnimatePresence mode="wait">
-              <motion.div key={slide.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.4 }}>
-                <span className="inline-flex items-center gap-2 bg-slate-50 text-xs font-bold px-4 py-1.5 rounded-full shadow-sm border border-slate-100 tracking-wide" style={{ color: slide.accentColor }}>
-                  <span>{slide.flag}</span>
-                  <span>Study in {slide.name}</span>
-                </span>
+      <div className="relative z-10 h-full flex items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            <div className="space-y-6 max-w-xl">
+              <AnimatePresence mode="wait">
+                <motion.div key={slide.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }}>
+                  <Badge className="bg-white text-sm font-medium px-4 py-1.5 rounded-full shadow-sm border border-[#E2E8F0]" style={{ color: slide.accentColor }}>
+                    {slide.flag} {slide.name}
+                  </Badge>
+                </motion.div>
+              </AnimatePresence>
+              <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-tight" style={{ color: C.text, fontFamily: 'system-ui, sans-serif' }}>
+                Study Abroad in the World
+              </motion.h1>
+              <AnimatePresence mode="wait">
+                <motion.h2 key={slide.name} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.4 }} className="text-2xl sm:text-3xl lg:text-4xl font-bold" style={{ color: slide.accentColor }}>
+                  Study Abroad in {slide.name} & More
+                </motion.h2>
+              </AnimatePresence>
+              <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-base text-[#64748B] leading-relaxed max-w-lg">
+                Honest, verified guidance for Bangladeshi students — from course match to visa decision.
+              </motion.p>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-wrap gap-3">
+                <a href="/book-consultation"><Button className="min-h-[48px] h-12 rounded-xl px-6 font-semibold text-white" style={{ backgroundColor: C.orange }}>Book Free Consultation <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
+                <a href={`/course-finder?country=${slide.slug}`}><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold border-2" style={{ borderColor: C.blue, color: C.blue }}>Find Courses</Button></a>
+                <a href="/eligibility-check"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: C.border, color: C.text }}>Check Eligibility</Button></a>
+                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: '#25D366', color: '#25D366' }}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button></a>
               </motion.div>
-            </AnimatePresence>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.8rem] font-black leading-tight tracking-tight text-slate-900">
-              Your Global Education <br className="hidden sm:inline" />
-              <span className="text-[#0066CC]">Journey Starts Here</span>
-            </h1>
-            
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
-              Discover the right university, course, and study destination with expert, transparent guidance from ALO Education.
-            </p>
-
-            {/* Clickable Destination Selector Pills */}
-            <div className="space-y-2">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Explore Destinations</p>
-              <div className="flex flex-wrap gap-2">
-                {slides.map((s, idx) => (
-                  <button 
-                    key={s.id}
-                    onClick={() => go(idx)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-300 shadow-2xs hover:shadow-xs"
-                    style={{
-                      backgroundColor: idx === current ? `${s.accentColor}12` : '#FFFFFF',
-                      borderColor: idx === current ? s.accentColor : '#E2E8F0',
-                      color: idx === current ? s.accentColor : '#475569',
-                    }}
-                  >
-                    <span>{s.flag}</span>
-                    <span>{s.name}</span>
-                  </button>
-                ))}
-              </div>
             </div>
 
-            {/* Floating Search Bar */}
-            <div className="backdrop-blur-md bg-white/90 border border-slate-200/80 shadow-xl rounded-2xl p-4 sm:p-5 max-w-2xl mt-8">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="relative flex items-center">
-                  <Search className="absolute left-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search subject..."
-                    className="h-12 rounded-xl bg-white border-slate-200 pl-10 text-sm focus-visible:ring-[#0066CC]"
-                  />
-                </div>
-                
-                <Select value={searchCountry} onValueChange={(val) => {
-                  setSearchCountry(val);
-                  const idx = slides.findIndex(s => s.slug === val);
-                  if (idx !== -1) setCurrent(idx);
-                }}>
-                  <SelectTrigger className="h-12 rounded-xl bg-white border-slate-200 text-sm">
-                    <SelectValue placeholder="Destination" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {slides.map(c => (
-                      <SelectItem key={c.id} value={c.slug}>{c.flag} {c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={searchLevel} onValueChange={setSearchLevel}>
-                  <SelectTrigger className="h-12 rounded-xl bg-white border-slate-200 text-sm">
-                    <SelectValue placeholder="Degree Level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Undergraduate">Bachelor's Degree</SelectItem>
-                    <SelectItem value="Postgraduate">Master's Degree</SelectItem>
-                    <SelectItem value="PhD">Doctorate / PhD</SelectItem>
-                    <SelectItem value="Foundation">Foundation / Pathway</SelectItem>
-                    <SelectItem value="Diploma">Diploma Programs</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button onClick={handleHeroSearch} className="w-full mt-3.5 h-12 rounded-xl bg-[#0066CC] hover:bg-blue-700 text-white font-bold tracking-wide shadow-md transition-all flex items-center justify-center gap-2">
-                <Search className="h-4 w-4" /> SEARCH VERIFIED COURSE DATABASE
-              </Button>
-            </div>
-
-            {/* Premium Trust Badges */}
-            <div className="pt-4 grid grid-cols-3 gap-4 border-t border-slate-100 max-w-2xl text-[11px] text-slate-500 font-semibold">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-[#F37021]" />
-                <span>11,500+ Active Courses</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-[#0066CC]" />
-                <span>100% Verified Sources</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-[#FFB347]" />
-                <span>Direct Partner System</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Image/Stats Column */}
-          <div className="lg:col-span-6 relative hidden lg:block">
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={slide.name} 
-                initial={{ opacity: 0, scale: 0.96 }} 
-                animate={{ opacity: 1, scale: 1 }} 
-                exit={{ opacity: 0, scale: 0.96 }} 
-                transition={{ duration: 0.6 }} 
-                className="relative h-[480px] w-full rounded-3xl overflow-hidden border border-slate-200/80 shadow-2xl bg-slate-50"
-              >
-                {slide.heroImage && !imgErrors.has(slide.name) ? (
-                  <Image 
-                    src={slide.heroImage} 
-                    alt={slide.name} 
-                    fill 
-                    className="object-cover object-center transition-all duration-700 hover:scale-103" 
-                    priority 
-                    onError={() => setImgErrors(prev => new Set([...prev, slide.name]))} 
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
-                    <span className="text-9xl">{slide.flag}</span>
-                  </div>
-                )}
-                
-                {/* Visual Glassmorphism Stats Cards overlay */}
-                <div className="absolute bottom-5 left-5 right-5 bg-white/90 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-lg flex justify-around text-center">
-                  {[
-                    { icon: GraduationCap, label: 'Universities', value: slide.universityCount || 42 },
-                    { icon: BookOpen, label: 'Courses', value: slide.courseCount || 1200 },
-                    { icon: Award, label: 'Scholarships', value: slide.scholarshipCount || 35 },
-                  ].map(s => (
-                    <div key={s.label}>
-                      <s.icon className="h-5 w-5 mx-auto mb-1 text-[#0066CC]" />
-                      <div className="text-lg font-bold text-slate-800"><AnimatedCounter target={s.value} />+</div>
-                      <div className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider">{s.label}</div>
+            <div className="hidden lg:block">
+              <AnimatePresence mode="wait">
+                <motion.div key={slide.name} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.5 }} className="space-y-4">
+                  <div className="bg-white rounded-2xl shadow-xl border border-[#E2E8F0] p-5 space-y-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: slide.accentColor }} />
+                      <h3 className="text-lg font-bold" style={{ color: slide.accentColor }}>{slide.heroSubtitle}</h3>
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        { icon: GraduationCap, label: 'Universities', value: slide.universityCount || 42 },
+                        { icon: BookOpen, label: 'Courses', value: slide.courseCount || 1200 },
+                        { icon: Award, label: 'Scholarships', value: slide.scholarshipCount || 35 },
+                      ].map(s => (
+                        <div key={s.label} className="text-center p-3 rounded-xl" style={{ backgroundColor: `${slide.accentColor}08` }}>
+                          <s.icon className="h-5 w-5 mx-auto mb-1" style={{ color: slide.accentColor }} />
+                          <div className="text-xl font-bold" style={{ color: slide.accentColor }}><AnimatedCounter target={s.value} />+</div>
+                          <div className="text-xs text-[#64748B]">{s.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-[#64748B]">
+                      <MapPin className="h-4 w-4" style={{ color: slide.accentColor }} />
+                      <span>Popular city: <strong style={{ color: C.text }}>{slide.heroCity}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-[#64748B]">
+                      <Calendar className="h-4 w-4" style={{ color: slide.accentColor }} />
+                      <span>Next intake: <strong style={{ color: C.text }}>{slide.heroIntake}</strong></span>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-2xl shadow-lg border border-[#E2E8F0] p-4 flex items-center gap-4">
+                    {[
+                      { icon: MessageCircle, label: 'Counseling' },
+                      { icon: FileTextIcon, label: 'Apply' },
+                      { icon: Shield, label: 'Visa' },
+                    ].map((s, i) => {
+                      const Icon: React.ElementType = s.icon;
+                      return (
+                      <div key={s.label} className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: i === 2 ? `${C.orange}15` : `${C.blue}15` }}>
+                          <Icon className="h-4 w-4" style={{ color: i === 2 ? C.orange : C.blue }} />
+                        </div>
+                        <span className="text-xs font-medium text-[#64748B]">{s.label}</span>
+                        {i < 2 && <ChevronRight className="h-3 w-3 text-[#CBD5E1]" />}
+                      </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
-
         </div>
+      </div>
+
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 flex-wrap justify-center px-4">
+        {slides.map((s, i) => (
+          <button key={s.id} onClick={() => go(i)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style={{ backgroundColor: i === current ? s.accentColor : '#F1F5F9', color: i === current ? '#FFFFFF' : '#64748B' }}>
+            <span>{s.flag}</span>
+            <span className="hidden sm:inline">{s.name}</span>
+          </button>
+        ))}
       </div>
     </section>
   );

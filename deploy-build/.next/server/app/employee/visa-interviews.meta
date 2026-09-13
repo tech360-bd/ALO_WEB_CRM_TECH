@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/employee/layout,_N_T_/employee/visa-interviews/layout,_N_T_/employee/visa-interviews/page,_N_T_/employee/visa-interviews"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/employee/visa-interviews/__PAGE__",
+    "/employee/visa-interviews",
+    "/employee",
+    "/_index",
+    "/_head"
+  ]
+}

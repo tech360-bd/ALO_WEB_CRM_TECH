@@ -1,0 +1,3 @@
+Migration,File,Status
+20260726191824_init,prisma/migrations/20260726191824_init/migration.sql,FOUND
+20260726193613_add_rbac_junctions_and_scope,prisma/migrations/20260726193613_add_rbac_junctions_and_scope/migration.sql,FOUND

@@ -110,7 +110,6 @@ export async function GET(req: Request) {
         ieltsMin: uni?.ieltsMin || 0,
         scholarships: uni?.scholarships || false,
         courseId: c.courseId,
-        slug: c.slug || c.courseId.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         courseTitle: c.courseTitle,
         qualification: c.qualification || '',
         studyLevel: c.studyLevel,

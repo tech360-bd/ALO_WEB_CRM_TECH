@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { getDestinationImage } from './ImageMapping';
 import { motion } from 'framer-motion';
 import {
   fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
@@ -178,18 +176,8 @@ function ScholarshipsSection() {
         >
           {DEFAULT_SCHOLARSHIPS.map((sch, i) => (
             <motion.div key={i} variants={staggerItemScale}>
-              <Card className="h-full rounded-2xl border shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col bg-white" style={{ borderColor: C.border }}>
-                {/* Scholarship Card Top Image */}
-                <div className="relative h-40 w-full overflow-hidden bg-slate-100 shrink-0">
-                  <Image
-                    src={getDestinationImage(sch.country)}
-                    alt={`${sch.name} Scholarship`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 30vw"
-                    className="object-cover"
-                  />
-                </div>
-                <CardContent className="p-5 flex flex-col flex-grow">
+              <Card className="h-full rounded-2xl border shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden" style={{ borderColor: C.border }}>
+                <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0057B8]">
@@ -258,16 +246,6 @@ function ScholarshipsSection() {
       </div>
     </section>
   );
-}
-
-function getEnglishTestImage(name: string): string {
-  const n = name.toLowerCase();
-  if (n.includes('ielts')) return '/images/landing/Copy of pexels-jaksonmartins-3101504.webp';
-  if (n.includes('pte')) return '/images/landing/Copy of 2148431342.webp';
-  if (n.includes('toefl')) return '/images/landing/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp';
-  if (n.includes('duolingo')) return '/images/landing/Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp';
-  if (n.includes('gre') || n.includes('gmat') || n.includes('sat')) return '/images/landing/Copy of pexels-rdne-7683897.webp';
-  return '/images/landing/Copy of 20250902_1557_Smiling Study Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp';
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -342,18 +320,8 @@ function EnglishTestsSection() {
               ))
             : displayedTests.map((test, i) => (
                 <motion.div key={test.name + i} variants={staggerItemScale}>
-                  <Card className="h-full rounded-2xl border shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col bg-white" style={{ borderColor: C.border }}>
-                    {/* Test Card Top Image */}
-                    <div className="relative h-36 w-full overflow-hidden bg-slate-100 shrink-0">
-                      <Image
-                        src={getEnglishTestImage(test.name)}
-                        alt={`${test.name} English Test`}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 20vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <CardContent className="p-5 flex flex-col flex-grow">
+                  <Card className="h-full rounded-2xl border shadow-sm hover:shadow-lg transition-shadow duration-300" style={{ borderColor: C.border }}>
+                    <CardContent className="p-5 flex flex-col h-full">
                       {/* Test name + Best for badge */}
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="text-base font-bold" style={{ color: C.text }}>

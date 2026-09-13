@@ -1,0 +1,3 @@
+log_id,record_type,record_id,field_name,source_1_value,source_2_value,resolved_value,resolution_strategy,resolved_at
+CONF-001,university,UNI-UK-0001,worldRanking,4,5,4,Official website override,2026-08-13
+CONF-002,university,UNI-UK-0002,established_year,1209,1210,1209,Official charter override,2026-08-13

@@ -1,0 +1,3 @@
+manifest_id,import_batch_id,table_name,rows_imported,status,imported_at
+MANIFEST-001,IMPORT-400-512371,crm_universities,400,success,2026-08-13
+MANIFEST-002,IMPORT-400-512371,crm_courses,17231,success,2026-08-13

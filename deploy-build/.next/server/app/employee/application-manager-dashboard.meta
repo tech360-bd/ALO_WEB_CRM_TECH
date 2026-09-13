@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/employee/layout,_N_T_/employee/application-manager-dashboard/layout,_N_T_/employee/application-manager-dashboard/page,_N_T_/employee/application-manager-dashboard"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/employee/application-manager-dashboard/__PAGE__",
+    "/employee/application-manager-dashboard",
+    "/employee",
+    "/_index",
+    "/_head"
+  ]
+}

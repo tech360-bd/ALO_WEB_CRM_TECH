@@ -1,482 +1,168 @@
-Method,Route,File,Authentication,Permission,Scope,Validation,Database models,Audit event,Test file,Status
-GET,/api/admin/access-control,src/app/api/admin/access-control/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/access-control,src/app/api/admin/access-control/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/admin/access-control,src/app/api/admin/access-control/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-DELETE,/api/admin/access-control,src/app/api/admin/access-control/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/access-control-center,src/app/api/admin/access-control-center/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/access-control-center,src/app/api/admin/access-control-center/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/ai-command-center,src/app/api/admin/ai-command-center/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/admin/ai-command-center,src/app/api/admin/ai-command-center/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/admin/audit,src/app/api/admin/audit/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/countries,src/app/api/admin/countries/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/countries,src/app/api/admin/countries/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/courses/{param},src/app/api/admin/courses/[id]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/admin/courses/{param},src/app/api/admin/courses/[id]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-DELETE,/api/admin/courses/{param},src/app/api/admin/courses/[id]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/courses,src/app/api/admin/courses/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/courses,src/app/api/admin/courses/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/data-import,src/app/api/admin/data-import/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,tests/unit/data-import.test.ts,INSPECTED
-GET,/api/admin/employees/{param},src/app/api/admin/employees/[id]/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/admin/employees/{param},src/app/api/admin/employees/[id]/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/employees/activate,src/app/api/admin/employees/activate/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/employees/create,src/app/api/admin/employees/create/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/employees/resend-activation,src/app/api/admin/employees/resend-activation/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/employees,src/app/api/admin/employees/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/employees,src/app/api/admin/employees/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/import/batches/{param}/approve,src/app/api/admin/import/batches/[id]/approve/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/import/batches/{param}/execute,src/app/api/admin/import/batches/[id]/execute/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/import/batches/{param}/preview,src/app/api/admin/import/batches/[id]/preview/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/admin/import/batches/{param}/rollback,src/app/api/admin/import/batches/[id]/rollback/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/import/batches/{param},src/app/api/admin/import/batches/[id]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/admin/import/batches,src/app/api/admin/import/batches/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/admin/import/courses,src/app/api/admin/import/courses/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/import/duplicates,src/app/api/admin/import/duplicates/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/admin/import/merge,src/app/api/admin/import/merge/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/import/student-batch,src/app/api/admin/import/student-batch/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/import/universities,src/app/api/admin/import/universities/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/import-center,src/app/api/admin/import-center/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/import-center,src/app/api/admin/import-center/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/admin/import-center,src/app/api/admin/import-center/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/packages,src/app/api/admin/packages/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/packages,src/app/api/admin/packages/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/admin/packages,src/app/api/admin/packages/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-DELETE,/api/admin/packages,src/app/api/admin/packages/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/partner-assignments,src/app/api/admin/partner-assignments/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/partner-assignments,src/app/api/admin/partner-assignments/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/payroll,src/app/api/admin/payroll/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/quota-requests,src/app/api/admin/quota-requests/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/quota-requests,src/app/api/admin/quota-requests/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/admin/quota-requests,src/app/api/admin/quota-requests/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/quotas,src/app/api/admin/quotas/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/quotas,src/app/api/admin/quotas/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/reassignment,src/app/api/admin/reassignment/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/student-benefits,src/app/api/admin/student-benefits/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/student-benefits,src/app/api/admin/student-benefits/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/universities/{param},src/app/api/admin/universities/[id]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/admin/universities/{param},src/app/api/admin/universities/[id]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-DELETE,/api/admin/universities/{param},src/app/api/admin/universities/[id]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/universities,src/app/api/admin/universities/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/universities,src/app/api/admin/universities/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/university-data/duplicates/merge,src/app/api/admin/university-data/duplicates/merge/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/admin/university-data/duplicates,src/app/api/admin/university-data/duplicates/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/admin/university-data/run-scan,src/app/api/admin/university-data/run-scan/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/admin/university-data/source-logs,src/app/api/admin/university-data/source-logs/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/admin/university-data/updates/{param}/approve,src/app/api/admin/university-data/updates/[id]/approve/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/university-data/updates/{param}/edit,src/app/api/admin/university-data/updates/[id]/edit/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/admin/university-data/updates/{param}/publish,src/app/api/admin/university-data/updates/[id]/publish/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/university-data/updates/{param}/reject,src/app/api/admin/university-data/updates/[id]/reject/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/university-data/updates/{param}/rollback,src/app/api/admin/university-data/updates/[id]/rollback/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/admin/university-data/updates,src/app/api/admin/university-data/updates/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/admin/university-data/updates,src/app/api/admin/university-data/updates/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/admin/university-data-updates,src/app/api/admin/university-data-updates/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/university-data-updates,src/app/api/admin/university-data-updates/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/university-updates,src/app/api/admin/university-updates/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/admin/university-updates,src/app/api/admin/university-updates/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/admin/users,src/app/api/admin/users/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/admin/users,src/app/api/admin/users/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/admin/users,src/app/api/admin/users/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/agentos/agents,src/app/api/agentos/agents/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/agentos/approvals,src/app/api/agentos/approvals/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/agentos/approvals,src/app/api/agentos/approvals/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/agentos/dashboard,src/app/api/agentos/dashboard/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/agentos/departments,src/app/api/agentos/departments/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/agentos/engines,src/app/api/agentos/engines/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/agentos/schedules,src/app/api/agentos/schedules/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/agentos/schedules,src/app/api/agentos/schedules/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/agentos/tasks,src/app/api/agentos/tasks/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/agentos/tasks,src/app/api/agentos/tasks/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/applications/{param}/assign,src/app/api/applications/[id]/assign/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/applications/{param}/b2b,src/app/api/applications/[id]/b2b/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/{param}/cas-i20-coe,src/app/api/applications/[id]/cas-i20-coe/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/applications/{param}/cas-i20-coe,src/app/api/applications/[id]/cas-i20-coe/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/{param}/comments,src/app/api/applications/[id]/comments/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/applications/{param}/comments,src/app/api/applications/[id]/comments/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/{param}/offer,src/app/api/applications/[id]/offer/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/applications/{param}/offer,src/app/api/applications/[id]/offer/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/{param},src/app/api/applications/[id]/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/applications/{param},src/app/api/applications/[id]/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/applications/{param}/status,src/app/api/applications/[id]/status/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/applications/{param}/submit,src/app/api/applications/[id]/submit/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/applications/{param}/timeline,src/app/api/applications/[id]/timeline/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/applications/{param}/timeline,src/app/api/applications/[id]/timeline/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/applications/{param}/visa-handover,src/app/api/applications/[id]/visa-handover/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/applications/b2b,src/app/api/applications/b2b/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/applications/b2b,src/app/api/applications/b2b/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/dashboard,src/app/api/applications/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/deadlines,src/app/api/applications/deadlines/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/applications/deadlines,src/app/api/applications/deadlines/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/metrics,src/app/api/applications/metrics/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/reports/generate,src/app/api/applications/reports/generate/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/reports,src/app/api/applications/reports/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications,src/app/api/applications/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/applications,src/app/api/applications/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/applications/tasks/{param},src/app/api/applications/tasks/[id]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/applications/tasks,src/app/api/applications/tasks/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/applications/tasks,src/app/api/applications/tasks/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/b2b/providers/{param},src/app/api/b2b/providers/[id]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/b2b/providers,src/app/api/b2b/providers/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/b2b/providers,src/app/api/b2b/providers/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/chat,src/app/api/chat/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/counselor/dashboard,src/app/api/counselor/dashboard/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/counselor/inbox,src/app/api/counselor/inbox/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/counselor/students/{param},src/app/api/counselor/students/[studentId]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/course-finder/{param},src/app/api/course-finder/[slug]/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/course-finder/compare,src/app/api/course-finder/compare/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/course-finder/eligibility,src/app/api/course-finder/eligibility/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,tests/unit/eligibility-engine.test.ts,INSPECTED
-POST,/api/course-finder/eligibility-engine,src/app/api/course-finder/eligibility-engine/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,tests/unit/eligibility-engine.test.ts,INSPECTED
-GET,/api/course-finder/pro,src/app/api/course-finder/pro/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/course-finder,src/app/api/course-finder/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/course-finder/universities/{param},src/app/api/course-finder/universities/[slug]/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/course-finder/universities,src/app/api/course-finder/universities/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/courses/{param},src/app/api/courses/[slug]/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/courses,src/app/api/courses/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/courses/search,src/app/api/courses/search/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ai/dashboard,src/app/api/crm/ai/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/analytics,src/app/api/crm/analytics/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/applications/dashboard,src/app/api/crm/applications/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/applications,src/app/api/crm/applications/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/applications,src/app/api/crm/applications/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/appointments,src/app/api/crm/appointments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/appointments,src/app/api/crm/appointments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/appointments,src/app/api/crm/appointments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-DELETE,/api/crm/appointments,src/app/api/crm/appointments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/audit-logs,src/app/api/crm/audit-logs/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/branch/dashboard,src/app/api/crm/branch/dashboard/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ceo/dashboard,src/app/api/crm/ceo/dashboard/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/communications/inbox,src/app/api/crm/communications/inbox/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/communications/inbox,src/app/api/crm/communications/inbox/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/communications,src/app/api/crm/communications/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/communications/timeline,src/app/api/crm/communications/timeline/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/course-import/confirm,src/app/api/crm/course-import/confirm/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/course-import/download-errors,src/app/api/crm/course-import/download-errors/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/course-import/errors,src/app/api/crm/course-import/errors/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/course-import/history,src/app/api/crm/course-import/history/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/course-import/map-university,src/app/api/crm/course-import/map-university/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/course-import/rollback,src/app/api/crm/course-import/rollback/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/course-import/stats,src/app/api/crm/course-import/stats/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/course-import/template/course,src/app/api/crm/course-import/template/course/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/course-import/template/university,src/app/api/crm/course-import/template/university/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/course-import/validate,src/app/api/crm/course-import/validate/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/courses,src/app/api/crm/courses/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/dashboard/counselor,src/app/api/crm/dashboard/counselor/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/dashboard,src/app/api/crm/dashboard/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/data/dashboard,src/app/api/crm/data/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/documents/dashboard,src/app/api/crm/documents/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/documents,src/app/api/crm/documents/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/documents,src/app/api/crm/documents/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/finance,src/app/api/crm/finance/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/finance,src/app/api/crm/finance/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/frontdesk/dashboard,src/app/api/crm/frontdesk/dashboard/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/hr/dashboard,src/app/api/crm/hr/dashboard/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/hrm,src/app/api/crm/hrm/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/hrm,src/app/api/crm/hrm/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/hrm,src/app/api/crm/hrm/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/inbox,src/app/api/crm/inbox/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/inbox,src/app/api/crm/inbox/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/inbox,src/app/api/crm/inbox/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/leads/public,src/app/api/crm/leads/public/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,tests/e2e/public-and-auth.spec.ts,INSPECTED
-GET,/api/crm/leads,src/app/api/crm/leads/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/leads,src/app/api/crm/leads/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/marketing/dashboard,src/app/api/crm/marketing/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/partners/dashboard,src/app/api/crm/partners/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/partners,src/app/api/crm/partners/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/partners,src/app/api/crm/partners/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/partners,src/app/api/crm/partners/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/reports,src/app/api/crm/reports/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/roles,src/app/api/crm/roles/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/roles,src/app/api/crm/roles/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/roles,src/app/api/crm/roles/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/scholarships,src/app/api/crm/scholarships/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/scholarships,src/app/api/crm/scholarships/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/scholarships,src/app/api/crm/scholarships/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/seed,src/app/api/crm/seed/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/seed-universities,src/app/api/crm/seed-universities/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/settings,src/app/api/crm/settings/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/settings,src/app/api/crm/settings/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/social,src/app/api/crm/social/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/social,src/app/api/crm/social/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/source-verification,src/app/api/crm/source-verification/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,tests/unit/source-verification.test.ts,INSPECTED
-POST,/api/crm/source-verification,src/app/api/crm/source-verification/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,tests/unit/source-verification.test.ts,INSPECTED
-GET,/api/crm/students,src/app/api/crm/students/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/support/dashboard,src/app/api/crm/support/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/support,src/app/api/crm/support/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/support,src/app/api/crm/support/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/support,src/app/api/crm/support/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/tasks,src/app/api/crm/tasks/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/tasks,src/app/api/crm/tasks/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/tasks,src/app/api/crm/tasks/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-DELETE,/api/crm/tasks,src/app/api/crm/tasks/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/ucc/ai-assistant,src/app/api/crm/ucc/ai-assistant/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ucc/analytics,src/app/api/crm/ucc/analytics/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/conversations/{param}/assign,src/app/api/crm/ucc/conversations/[id]/assign/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/ucc/conversations/{param}/lead,src/app/api/crm/ucc/conversations/[id]/lead/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/conversations/{param}/lead,src/app/api/crm/ucc/conversations/[id]/lead/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/conversations/{param}/notes,src/app/api/crm/ucc/conversations/[id]/notes/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/conversations/{param}/notes,src/app/api/crm/ucc/conversations/[id]/notes/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/conversations/{param}/reply,src/app/api/crm/ucc/conversations/[id]/reply/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/conversations/{param},src/app/api/crm/ucc/conversations/[id]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ucc/conversations,src/app/api/crm/ucc/conversations/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/conversations,src/app/api/crm/ucc/conversations/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/employee-profiles/offboard,src/app/api/crm/ucc/employee-profiles/offboard/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/employee-profiles,src/app/api/crm/ucc/employee-profiles/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/ucc/employee-profiles,src/app/api/crm/ucc/employee-profiles/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/ucc/form-fill/approve,src/app/api/crm/ucc/form-fill/approve/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/form-fill/approve,src/app/api/crm/ucc/form-fill/approve/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/integrations,src/app/api/crm/ucc/integrations/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/ucc/integrations,src/app/api/crm/ucc/integrations/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-DELETE,/api/crm/ucc/integrations,src/app/api/crm/ucc/integrations/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/morning-summary,src/app/api/crm/ucc/morning-summary/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ucc/oauth/callback,src/app/api/crm/ucc/oauth/callback/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/ucc/oauth/start,src/app/api/crm/ucc/oauth/start/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/ucc/ocr/process,src/app/api/crm/ucc/ocr/process/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/ocr/process,src/app/api/crm/ucc/ocr/process/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/office-hours,src/app/api/crm/ucc/office-hours/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/ucc/office-hours,src/app/api/crm/ucc/office-hours/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/ucc/phone,src/app/api/crm/ucc/phone/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/phone,src/app/api/crm/ucc/phone/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ucc/sla,src/app/api/crm/ucc/sla/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/sla,src/app/api/crm/ucc/sla/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ucc/webhooks/{param},src/app/api/crm/ucc/webhooks/[provider]/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/webhooks/{param},src/app/api/crm/ucc/webhooks/[provider]/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ucc/webhooks/whatsapp,src/app/api/crm/ucc/webhooks/whatsapp/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/webhooks/whatsapp,src/app/api/crm/ucc/webhooks/whatsapp/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/ucc/whatsapp/command,src/app/api/crm/ucc/whatsapp/command/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/crm/ucc/whatsapp/command,src/app/api/crm/ucc/whatsapp/command/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/universities,src/app/api/crm/universities/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/crm/users,src/app/api/crm/users/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/users,src/app/api/crm/users/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/crm/users,src/app/api/crm/users/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/crm/whatsapp,src/app/api/crm/whatsapp/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/crm/whatsapp,src/app/api/crm/whatsapp/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/cron/weekly-ai-agent,src/app/api/cron/weekly-ai-agent/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/cron/weekly-university-update,src/app/api/cron/weekly-university-update/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/destinations/{param},src/app/api/destinations/[slug]/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/employee/activate,src/app/api/employee/activate/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/applications,src/app/api/employee/applications/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/employee/appointments,src/app/api/employee/appointments/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/employee/appointments,src/app/api/employee/appointments/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/employee/attendance,src/app/api/employee/attendance/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/employee/attendance,src/app/api/employee/attendance/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/dashboard,src/app/api/employee/dashboard/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/employee/documents,src/app/api/employee/documents/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/employee/documents,src/app/api/employee/documents/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/followups,src/app/api/employee/followups/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/employee/followups,src/app/api/employee/followups/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/employee/leads,src/app/api/employee/leads/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/employee/leads,src/app/api/employee/leads/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/leave,src/app/api/employee/leave/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/employee/leave,src/app/api/employee/leave/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/employee/leave,src/app/api/employee/leave/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/messages,src/app/api/employee/messages/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/employee/messages,src/app/api/employee/messages/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/employee/messages,src/app/api/employee/messages/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/notifications,src/app/api/employee/notifications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/employee/notifications,src/app/api/employee/notifications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/employee/performance,src/app/api/employee/performance/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/employee/performance,src/app/api/employee/performance/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/employee/performance,src/app/api/employee/performance/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/profile,src/app/api/employee/profile/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/employee/profile,src/app/api/employee/profile/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/reports,src/app/api/employee/reports/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/employee/salary,src/app/api/employee/salary/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/employee/settings,src/app/api/employee/settings/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/employee/settings,src/app/api/employee/settings/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/employee/students,src/app/api/employee/students/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/employee/tasks,src/app/api/employee/tasks/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/employee/tasks,src/app/api/employee/tasks/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/employee/tasks,src/app/api/employee/tasks/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/health,src/app/api/health/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/marketing/agentos,src/app/api/marketing/agentos/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/agentos,src/app/api/marketing/agentos/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/marketing/approvals,src/app/api/marketing/approvals/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/approvals,src/app/api/marketing/approvals/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/marketing/automation,src/app/api/marketing/automation/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/automation,src/app/api/marketing/automation/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/marketing/calendar,src/app/api/marketing/calendar/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/calendar,src/app/api/marketing/calendar/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/marketing/campaigns,src/app/api/marketing/campaigns/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/campaigns,src/app/api/marketing/campaigns/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/comments/convert-lead,src/app/api/marketing/comments/convert-lead/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/content,src/app/api/marketing/content/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/marketing/dashboard,src/app/api/marketing/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/marketing/dm/convert-lead,src/app/api/marketing/dm/convert-lead/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/seo,src/app/api/marketing/seo/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/marketing/social,src/app/api/marketing/social/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/social,src/app/api/marketing/social/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/video,src/app/api/marketing/video/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/marketing/webhooks,src/app/api/marketing/webhooks/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/marketing/whatsapp-doc-upload,src/app/api/marketing/whatsapp-doc-upload/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/marketing/whatsapp-sla,src/app/api/marketing/whatsapp-sla/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/marketing/whatsapp-sla,src/app/api/marketing/whatsapp-sla/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/partner/applications,src/app/api/partner/applications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/applications,src/app/api/partner/applications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-PUT,/api/partner/applications,src/app/api/partner/applications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/commission,src/app/api/partner/commission/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/commission,src/app/api/partner/commission/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/documents,src/app/api/partner/documents/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/documents,src/app/api/partner/documents/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-PUT,/api/partner/documents,src/app/api/partner/documents/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/help,src/app/api/partner/help/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/help,src/app/api/partner/help/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/leads,src/app/api/partner/leads/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/leads,src/app/api/partner/leads/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/marketing/approve,src/app/api/partner/marketing/approve/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/partner/marketing/generate,src/app/api/partner/marketing/generate/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/partner/marketing/requests,src/app/api/partner/marketing/requests/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/partner/marketing/requests,src/app/api/partner/marketing/requests/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/partner/marketing,src/app/api/partner/marketing/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/partner/marketing,src/app/api/partner/marketing/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/partner/marketing/usage,src/app/api/partner/marketing/usage/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/messages,src/app/api/partner/messages/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/messages,src/app/api/partner/messages/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/notifications,src/app/api/partner/notifications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/notifications,src/app/api/partner/notifications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PUT,/api/partner/notifications,src/app/api/partner/notifications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/profile,src/app/api/partner/profile/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PUT,/api/partner/profile,src/app/api/partner/profile/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/programs,src/app/api/partner/programs/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/referrals,src/app/api/partner/referrals/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/referrals,src/app/api/partner/referrals/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PUT,/api/partner/referrals,src/app/api/partner/referrals/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/reports,src/app/api/partner/reports/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/resources,src/app/api/partner/resources/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/resources,src/app/api/partner/resources/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/settings,src/app/api/partner/settings/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/settings,src/app/api/partner/settings/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PUT,/api/partner/settings,src/app/api/partner/settings/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner/student-benefits,src/app/api/partner/student-benefits/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/partner/student-benefits,src/app/api/partner/student-benefits/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/partner/students,src/app/api/partner/students/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner/students,src/app/api/partner/students/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner-admin/dashboard,src/app/api/partner-admin/dashboard/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner-admin/marketing,src/app/api/partner-admin/marketing/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner-admin/marketing,src/app/api/partner-admin/marketing/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/partner-admin/seat-request,src/app/api/partner-admin/seat-request/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/partner-admin/seat-request,src/app/api/partner-admin/seat-request/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/partner-admin/users,src/app/api/partner-admin/users/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/partner-admin/users,src/app/api/partner-admin/users/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/partner-admin/vouchers,src/app/api/partner-admin/vouchers/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/partner-admin/vouchers,src/app/api/partner-admin/vouchers/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/permissions,src/app/api/permissions/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,tests/unit/permissions.test.ts,INSPECTED
-PATCH,/api/permissions,src/app/api/permissions/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,tests/unit/permissions.test.ts,INSPECTED
-POST,/api/portal-auth/forgot-password,src/app/api/portal-auth/forgot-password/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/portal-auth/login,src/app/api/portal-auth/login/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/portal-auth/logout,src/app/api/portal-auth/logout/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/portal-auth/register,src/app/api/portal-auth/register/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/portal-auth/reset-password,src/app/api/portal-auth/reset-password/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/portal-auth/session,src/app/api/portal-auth/session/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/portal-auth/verify-otp,src/app/api/portal-auth/verify-otp/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api,src/app/api/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/scholarships,src/app/api/scholarships/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/applications/{param},src/app/api/student/applications/[id]/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/student/applications/{param},src/app/api/student/applications/[id]/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/applications/create-draft,src/app/api/student/applications/create-draft/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/applications,src/app/api/student/applications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/applications,src/app/api/student/applications/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/auth/login,src/app/api/student/auth/login/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/auth/logout,src/app/api/student/auth/logout/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/auth/me,src/app/api/student/auth/me/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/auth/otp,src/app/api/student/auth/otp/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/benefits,src/app/api/student/benefits/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/dashboard,src/app/api/student/dashboard/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/documents,src/app/api/student/documents/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/documents,src/app/api/student/documents/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/messages,src/app/api/student/messages/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/messages,src/app/api/student/messages/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/student/next-best-action/{param}/complete,src/app/api/student/next-best-action/[id]/complete/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/next-best-action,src/app/api/student/next-best-action/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student/shortlist,src/app/api/student/shortlist/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/shortlist,src/app/api/student/shortlist/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/student/vouchers/redeem,src/app/api/student/vouchers/redeem/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/applications,src/app/api/student-portal/applications/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/applications,src/app/api/student-portal/applications/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/student-portal/applications,src/app/api/student-portal/applications/route.ts,YES,NOT_FOUND,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/appointments,src/app/api/student-portal/appointments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/appointments,src/app/api/student-portal/appointments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/student-portal/appointments,src/app/api/student-portal/appointments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/course-finder,src/app/api/student-portal/course-finder/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student-portal/cv,src/app/api/student-portal/cv/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/cv,src/app/api/student-portal/cv/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/student-portal/cv,src/app/api/student-portal/cv/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/documents,src/app/api/student-portal/documents/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/documents,src/app/api/student-portal/documents/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/student-portal/documents,src/app/api/student-portal/documents/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/messages,src/app/api/student-portal/messages/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/messages,src/app/api/student-portal/messages/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/student-portal/messages,src/app/api/student-portal/messages/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/mock-tests,src/app/api/student-portal/mock-tests/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/mock-tests,src/app/api/student-portal/mock-tests/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/notifications,src/app/api/student-portal/notifications/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/student-portal/notifications,src/app/api/student-portal/notifications/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/payments,src/app/api/student-portal/payments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/payments,src/app/api/student-portal/payments/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/profile,src/app/api/student-portal/profile/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/student-portal/profile,src/app/api/student-portal/profile/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/student-portal/profile,src/app/api/student-portal/profile/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/referrals,src/app/api/student-portal/referrals/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/referrals,src/app/api/student-portal/referrals/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/scholarships,src/app/api/student-portal/scholarships/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student-portal/sop,src/app/api/student-portal/sop/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/sop,src/app/api/student-portal/sop/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/student-portal/sop,src/app/api/student-portal/sop/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/student-portal/timeline,src/app/api/student-portal/timeline/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/student-portal/visa,src/app/api/student-portal/visa/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/student-portal/visa,src/app/api/student-portal/visa/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/super-admin/dashboard,src/app/api/super-admin/dashboard/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/super-admin/global-search,src/app/api/super-admin/global-search/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/universities/{param},src/app/api/universities/[slug]/route.ts,UNKNOWN_OR_PUBLIC,REFERENCED,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/universities,src/app/api/universities/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/ai-interview/{param}/answer,src/app/api/visa/ai-interview/[sessionId]/answer/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/ai-interview/{param}/finish,src/app/api/visa/ai-interview/[sessionId]/finish/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/ai-interview/{param}/result,src/app/api/visa/ai-interview/[sessionId]/result/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/ai-interview/start,src/app/api/visa/ai-interview/start/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/cases/{param}/assign,src/app/api/visa/cases/[id]/assign/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,REFERENCED,Not found,INSPECTED
-PATCH,/api/visa/cases/{param}/risk-level,src/app/api/visa/cases/[id]/risk-level/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/cases/{param},src/app/api/visa/cases/[id]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/cases/{param},src/app/api/visa/cases/[id]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/cases/{param}/stage,src/app/api/visa/cases/[id]/stage/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/cases,src/app/api/visa/cases/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/checklist/{param}/items,src/app/api/visa/checklist/[caseId]/items/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/checklist/{param},src/app/api/visa/checklist/[caseId]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/checklist/items/{param},src/app/api/visa/checklist/items/[id]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/dashboard,src/app/api/visa/dashboard/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/documents/{param}/approve,src/app/api/visa/documents/[id]/approve/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/documents/{param}/reject,src/app/api/visa/documents/[id]/reject/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/documents/request,src/app/api/visa/documents/request/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/documents,src/app/api/visa/documents/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/funding-review/{param},src/app/api/visa/funding-review/[caseId]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/funding-review/{param},src/app/api/visa/funding-review/[caseId]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/interviews/{param}/answer,src/app/api/visa/interviews/[id]/answer/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/interviews/{param}/finish,src/app/api/visa/interviews/[id]/finish/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/interviews/{param}/question,src/app/api/visa/interviews/[id]/question/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/interviews/{param},src/app/api/visa/interviews/[id]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/interviews/{param},src/app/api/visa/interviews/[id]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/interviews/{param}/student-feedback,src/app/api/visa/interviews/[id]/student-feedback/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/interviews,src/app/api/visa/interviews/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/interviews,src/app/api/visa/interviews/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/notes/{param},src/app/api/visa/notes/[caseId]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/notes,src/app/api/visa/notes/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/readiness/{param}/calculate,src/app/api/visa/readiness/[caseId]/calculate/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/readiness/{param},src/app/api/visa/readiness/[caseId]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/refusal-review/{param},src/app/api/visa/refusal-review/[caseId]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/refusal-review/{param},src/app/api/visa/refusal-review/[caseId]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/reports/generate,src/app/api/visa/reports/generate/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/reports,src/app/api/visa/reports/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/sensitive-review/{param},src/app/api/visa/sensitive-review/[caseId]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/sensitive-review/{param},src/app/api/visa/sensitive-review/[caseId]/route.ts,YES,REFERENCED,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/study-gap-review/{param},src/app/api/visa/study-gap-review/[caseId]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/study-gap-review/{param},src/app/api/visa/study-gap-review/[caseId]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-PATCH,/api/visa/tasks/{param},src/app/api/visa/tasks/[id]/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/visa/tasks,src/app/api/visa/tasks/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/visa/tasks,src/app/api/visa/tasks/route.ts,YES,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/website/english-tests,src/app/api/website/english-tests/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/website/faqs,src/app/api/website/faqs/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/website/homepage,src/app/api/website/homepage/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,REFERENCED,Not found,NOT_FOUND,Not found,INSPECTED
-POST,/api/website/lead,src/app/api/website/lead/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-GET,/api/website/lead,src/app/api/website/lead/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-PUT,/api/website/lead,src/app/api/website/lead/route.ts,YES,REFERENCED,See route implementation,REFERENCED,Not found,REFERENCED,Not found,INSPECTED
-POST,/api/website/search-log,src/app/api/website/search-log/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/website/services,src/app/api/website/services/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/website/stats,src/app/api/website/stats/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/website/success-stories,src/app/api/website/success-stories/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
-GET,/api/website/team-members,src/app/api/website/team-members/route.ts,UNKNOWN_OR_PUBLIC,NOT_FOUND,See route implementation,NOT_FOUND,Not found,NOT_FOUND,Not found,INSPECTED
+Route_Path,HTTP_Methods,File_Path
+"/api/admin/access-control","ALL","src/app/api/admin/access-control/route.ts"
+"/api/admin/access-control-center","ALL","src/app/api/admin/access-control-center/route.ts"
+"/api/admin/audit","ALL","src/app/api/admin/audit/route.ts"
+"/api/admin/countries","GET|POST","src/app/api/admin/countries/route.ts"
+"/api/admin/employees/[id]","GET|PUT|DELETE","src/app/api/admin/employees/[id]/route.ts"
+"/api/admin/employees/activate","POST","src/app/api/admin/employees/activate/route.ts"
+"/api/admin/employees/create","ALL","src/app/api/admin/employees/create/route.ts"
+"/api/admin/employees/resend-activation","ALL","src/app/api/admin/employees/resend-activation/route.ts"
+"/api/admin/employees","ALL","src/app/api/admin/employees/route.ts"
+"/api/admin/import-center","ALL","src/app/api/admin/import-center/route.ts"
+"/api/admin/packages","ALL","src/app/api/admin/packages/route.ts"
+"/api/admin/partner-assignments","ALL","src/app/api/admin/partner-assignments/route.ts"
+"/api/admin/quota-requests","ALL","src/app/api/admin/quota-requests/route.ts"
+"/api/admin/quotas","ALL","src/app/api/admin/quotas/route.ts"
+"/api/admin/student-benefits","GET|POST","src/app/api/admin/student-benefits/route.ts"
+"/api/admin/university-updates","ALL","src/app/api/admin/university-updates/route.ts"
+"/api/admin/users","ALL","src/app/api/admin/users/route.ts"
+"/api/agentos/agents","GET","src/app/api/agentos/agents/route.ts"
+"/api/chat","ALL","src/app/api/chat/route.ts"
+"/api/counselor/dashboard","GET","src/app/api/counselor/dashboard/route.ts"
+"/api/counselor/inbox","ALL","src/app/api/counselor/inbox/route.ts"
+"/api/counselor/students/[studentId]","ALL","src/app/api/counselor/students/[studentId]/route.ts"
+"/api/course-finder/compare","POST","src/app/api/course-finder/compare/route.ts"
+"/api/course-finder/pro","GET","src/app/api/course-finder/pro/route.ts"
+"/api/course-finder","GET","src/app/api/course-finder/route.ts"
+"/api/crm/analytics","GET","src/app/api/crm/analytics/route.ts"
+"/api/crm/applications","GET|PUT","src/app/api/crm/applications/route.ts"
+"/api/crm/appointments","GET|POST|PUT|DELETE","src/app/api/crm/appointments/route.ts"
+"/api/crm/audit-logs","GET","src/app/api/crm/audit-logs/route.ts"
+"/api/crm/communications/inbox","ALL","src/app/api/crm/communications/inbox/route.ts"
+"/api/crm/communications","GET","src/app/api/crm/communications/route.ts"
+"/api/crm/communications/timeline","ALL","src/app/api/crm/communications/timeline/route.ts"
+"/api/crm/course-import/confirm","POST","src/app/api/crm/course-import/confirm/route.ts"
+"/api/crm/course-import/download-errors","GET","src/app/api/crm/course-import/download-errors/route.ts"
+"/api/crm/course-import/errors","GET","src/app/api/crm/course-import/errors/route.ts"
+"/api/crm/course-import/history","GET","src/app/api/crm/course-import/history/route.ts"
+"/api/crm/course-import/map-university","POST","src/app/api/crm/course-import/map-university/route.ts"
+"/api/crm/course-import/rollback","POST","src/app/api/crm/course-import/rollback/route.ts"
+"/api/crm/course-import/stats","GET","src/app/api/crm/course-import/stats/route.ts"
+"/api/crm/course-import/template/course","GET","src/app/api/crm/course-import/template/course/route.ts"
+"/api/crm/course-import/template/university","GET","src/app/api/crm/course-import/template/university/route.ts"
+"/api/crm/course-import/validate","POST","src/app/api/crm/course-import/validate/route.ts"
+"/api/crm/courses","GET","src/app/api/crm/courses/route.ts"
+"/api/crm/dashboard","GET","src/app/api/crm/dashboard/route.ts"
+"/api/crm/documents","GET|PUT","src/app/api/crm/documents/route.ts"
+"/api/crm/finance","GET|POST","src/app/api/crm/finance/route.ts"
+"/api/crm/hrm","GET|POST|PUT","src/app/api/crm/hrm/route.ts"
+"/api/crm/inbox","GET|POST|PUT","src/app/api/crm/inbox/route.ts"
+"/api/crm/leads","GET|POST","src/app/api/crm/leads/route.ts"
+"/api/crm/partners","GET|POST|PUT","src/app/api/crm/partners/route.ts"
+"/api/crm/reports","GET","src/app/api/crm/reports/route.ts"
+"/api/crm/roles","GET|POST|PUT","src/app/api/crm/roles/route.ts"
+"/api/crm/scholarships","GET|POST|PUT","src/app/api/crm/scholarships/route.ts"
+"/api/crm/seed","POST","src/app/api/crm/seed/route.ts"
+"/api/crm/seed-universities","POST","src/app/api/crm/seed-universities/route.ts"
+"/api/crm/settings","GET|PUT","src/app/api/crm/settings/route.ts"
+"/api/crm/social","GET|POST","src/app/api/crm/social/route.ts"
+"/api/crm/students","GET","src/app/api/crm/students/route.ts"
+"/api/crm/support","GET|POST|PUT","src/app/api/crm/support/route.ts"
+"/api/crm/tasks","GET|POST|PUT|DELETE","src/app/api/crm/tasks/route.ts"
+"/api/crm/ucc/ai-assistant","POST","src/app/api/crm/ucc/ai-assistant/route.ts"
+"/api/crm/ucc/analytics","GET","src/app/api/crm/ucc/analytics/route.ts"
+"/api/crm/ucc/conversations/[id]/assign","POST","src/app/api/crm/ucc/conversations/[id]/assign/route.ts"
+"/api/crm/ucc/conversations/[id]/lead","GET|POST","src/app/api/crm/ucc/conversations/[id]/lead/route.ts"
+"/api/crm/ucc/conversations/[id]/notes","GET|POST","src/app/api/crm/ucc/conversations/[id]/notes/route.ts"
+"/api/crm/ucc/conversations/[id]/reply","POST","src/app/api/crm/ucc/conversations/[id]/reply/route.ts"
+"/api/crm/ucc/conversations","GET|POST","src/app/api/crm/ucc/conversations/route.ts"
+"/api/crm/ucc/documents/upload","GET|POST","src/app/api/crm/ucc/documents/upload/route.ts"
+"/api/crm/ucc/employee-profiles/offboard","POST","src/app/api/crm/ucc/employee-profiles/offboard/route.ts"
+"/api/crm/ucc/employee-profiles","GET|POST","src/app/api/crm/ucc/employee-profiles/route.ts"
+"/api/crm/ucc/form-fill/approve","GET|POST","src/app/api/crm/ucc/form-fill/approve/route.ts"
+"/api/crm/ucc/integrations","GET|POST|DELETE","src/app/api/crm/ucc/integrations/route.ts"
+"/api/crm/ucc/morning-summary","GET","src/app/api/crm/ucc/morning-summary/route.ts"
+"/api/crm/ucc/oauth/callback","GET","src/app/api/crm/ucc/oauth/callback/route.ts"
+"/api/crm/ucc/oauth/start","POST","src/app/api/crm/ucc/oauth/start/route.ts"
+"/api/crm/ucc/ocr/process","GET|POST","src/app/api/crm/ucc/ocr/process/route.ts"
+"/api/crm/ucc/office-hours","GET|POST","src/app/api/crm/ucc/office-hours/route.ts"
+"/api/crm/ucc/webhooks/[provider]","GET|POST","src/app/api/crm/ucc/webhooks/[provider]/route.ts"
+"/api/crm/universities","GET","src/app/api/crm/universities/route.ts"
+"/api/crm/users","GET|POST|PUT","src/app/api/crm/users/route.ts"
+"/api/crm/whatsapp","GET|POST","src/app/api/crm/whatsapp/route.ts"
+"/api/cron/weekly-ai-agent","POST","src/app/api/cron/weekly-ai-agent/route.ts"
+"/api/destinations/[slug]","GET","src/app/api/destinations/[slug]/route.ts"
+"/api/employee/applications","GET","src/app/api/employee/applications/route.ts"
+"/api/employee/attendance","GET|POST","src/app/api/employee/attendance/route.ts"
+"/api/employee/documents","GET","src/app/api/employee/documents/route.ts"
+"/api/employee/leave","GET|POST|PUT","src/app/api/employee/leave/route.ts"
+"/api/employee/messages","GET|POST|PUT","src/app/api/employee/messages/route.ts"
+"/api/employee/performance","GET|POST|PUT","src/app/api/employee/performance/route.ts"
+"/api/employee/profile","GET|PUT","src/app/api/employee/profile/route.ts"
+"/api/employee/reports","GET","src/app/api/employee/reports/route.ts"
+"/api/employee/salary","GET","src/app/api/employee/salary/route.ts"
+"/api/employee/settings","GET|PUT","src/app/api/employee/settings/route.ts"
+"/api/employee/students","GET","src/app/api/employee/students/route.ts"
+"/api/employee/tasks","GET|POST|PUT","src/app/api/employee/tasks/route.ts"
+"/api/health","GET","src/app/api/health/route.ts"
+"/api/marketing/agentos","ALL","src/app/api/marketing/agentos/route.ts"
+"/api/marketing/approvals","ALL","src/app/api/marketing/approvals/route.ts"
+"/api/marketing/calendar","ALL","src/app/api/marketing/calendar/route.ts"
+"/api/marketing/campaigns","ALL","src/app/api/marketing/campaigns/route.ts"
+"/api/marketing/comments/convert-lead","ALL","src/app/api/marketing/comments/convert-lead/route.ts"
+"/api/marketing/content","ALL","src/app/api/marketing/content/route.ts"
+"/api/marketing/dashboard","ALL","src/app/api/marketing/dashboard/route.ts"
+"/api/marketing/dm/convert-lead","ALL","src/app/api/marketing/dm/convert-lead/route.ts"
+"/api/marketing/seo","ALL","src/app/api/marketing/seo/route.ts"
+"/api/marketing/social","ALL","src/app/api/marketing/social/route.ts"
+"/api/marketing/video","ALL","src/app/api/marketing/video/route.ts"
+"/api/marketing/webhooks","GET","src/app/api/marketing/webhooks/route.ts"
+"/api/partner/applications","GET|POST|PUT","src/app/api/partner/applications/route.ts"
+"/api/partner/commission","GET|POST","src/app/api/partner/commission/route.ts"
+"/api/partner/documents","GET|POST|PUT","src/app/api/partner/documents/route.ts"
+"/api/partner/help","GET|POST","src/app/api/partner/help/route.ts"
+"/api/partner/leads","GET|POST","src/app/api/partner/leads/route.ts"
+"/api/partner/marketing/approve","POST","src/app/api/partner/marketing/approve/route.ts"
+"/api/partner/marketing/generate","POST","src/app/api/partner/marketing/generate/route.ts"
+"/api/partner/marketing/requests","GET|PUT","src/app/api/partner/marketing/requests/route.ts"
+"/api/partner/marketing","GET|POST","src/app/api/partner/marketing/route.ts"
+"/api/partner/marketing/usage","GET","src/app/api/partner/marketing/usage/route.ts"
+"/api/partner/messages","GET|POST","src/app/api/partner/messages/route.ts"
+"/api/partner/notifications","GET|POST|PUT","src/app/api/partner/notifications/route.ts"
+"/api/partner/profile","GET|PUT","src/app/api/partner/profile/route.ts"
+"/api/partner/referrals","GET|POST|PUT","src/app/api/partner/referrals/route.ts"
+"/api/partner/reports","GET","src/app/api/partner/reports/route.ts"
+"/api/partner/resources","GET|POST","src/app/api/partner/resources/route.ts"
+"/api/partner/settings","GET|POST|PUT","src/app/api/partner/settings/route.ts"
+"/api/partner/student-benefits","GET|POST","src/app/api/partner/student-benefits/route.ts"
+"/api/partner/students","GET|POST","src/app/api/partner/students/route.ts"
+"/api/permissions","GET","src/app/api/permissions/route.ts"
+"/api/portal-auth/forgot-password","POST","src/app/api/portal-auth/forgot-password/route.ts"
+"/api/portal-auth/login","POST","src/app/api/portal-auth/login/route.ts"
+"/api/portal-auth/logout","POST","src/app/api/portal-auth/logout/route.ts"
+"/api/portal-auth/register","POST","src/app/api/portal-auth/register/route.ts"
+"/api/portal-auth/reset-password","POST","src/app/api/portal-auth/reset-password/route.ts"
+"/api/portal-auth/session","GET","src/app/api/portal-auth/session/route.ts"
+"/api/portal-auth/verify-otp","POST","src/app/api/portal-auth/verify-otp/route.ts"
+"/api","GET","src/app/api/route.ts"
+"/api/scholarships","GET","src/app/api/scholarships/route.ts"
+"/api/student/benefits","GET","src/app/api/student/benefits/route.ts"
+"/api/student/vouchers/redeem","POST","src/app/api/student/vouchers/redeem/route.ts"
+"/api/student-portal/applications","GET|POST|PUT","src/app/api/student-portal/applications/route.ts"
+"/api/student-portal/appointments","GET|POST|PUT","src/app/api/student-portal/appointments/route.ts"
+"/api/student-portal/course-finder","GET","src/app/api/student-portal/course-finder/route.ts"
+"/api/student-portal/cv","GET|POST|PUT","src/app/api/student-portal/cv/route.ts"
+"/api/student-portal/documents","GET|POST|PUT","src/app/api/student-portal/documents/route.ts"
+"/api/student-portal/messages","GET|POST|PUT","src/app/api/student-portal/messages/route.ts"
+"/api/student-portal/mock-tests","GET|POST","src/app/api/student-portal/mock-tests/route.ts"
+"/api/student-portal/notifications","GET|PUT","src/app/api/student-portal/notifications/route.ts"
+"/api/student-portal/payments","GET|POST","src/app/api/student-portal/payments/route.ts"
+"/api/student-portal/profile","GET|PUT","src/app/api/student-portal/profile/route.ts"
+"/api/student-portal/referrals","GET|POST","src/app/api/student-portal/referrals/route.ts"
+"/api/student-portal/scholarships","GET","src/app/api/student-portal/scholarships/route.ts"
+"/api/student-portal/sop","GET|POST|PUT","src/app/api/student-portal/sop/route.ts"
+"/api/student-portal/timeline","GET","src/app/api/student-portal/timeline/route.ts"
+"/api/student-portal/visa","GET|POST","src/app/api/student-portal/visa/route.ts"
+"/api/super-admin/dashboard","ALL","src/app/api/super-admin/dashboard/route.ts"
+"/api/universities","GET","src/app/api/universities/route.ts"
+"/api/visa/cases","ALL","src/app/api/visa/cases/route.ts"
+"/api/visa/dashboard","ALL","src/app/api/visa/dashboard/route.ts"
+"/api/website/english-tests","GET","src/app/api/website/english-tests/route.ts"
+"/api/website/faqs","GET","src/app/api/website/faqs/route.ts"
+"/api/website/homepage","GET","src/app/api/website/homepage/route.ts"
+"/api/website/lead","GET|POST|PUT","src/app/api/website/lead/route.ts"
+"/api/website/search-log","POST","src/app/api/website/search-log/route.ts"
+"/api/website/services","GET","src/app/api/website/services/route.ts"
+"/api/website/stats","GET","src/app/api/website/stats/route.ts"
+"/api/website/success-stories","GET","src/app/api/website/success-stories/route.ts"
+"/api/website/team-members","GET","src/app/api/website/team-members/route.ts"

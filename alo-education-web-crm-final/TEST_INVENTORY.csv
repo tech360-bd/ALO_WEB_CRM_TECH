@@ -1,0 +1,6 @@
+Test file,Suite,Module,Test count,Passed,Failed,Skipped,Last run,Status
+tests/e2e/public-and-auth.spec.ts,e2e,tests,4,Not run in inventory,Not run in inventory,Not run in inventory,Not run in inventory,DISCOVERED
+tests/integration/consultation-workflow.test.ts,integration,tests,7,Not run in inventory,Not run in inventory,Not run in inventory,Not run in inventory,DISCOVERED
+tests/unit/data-scope.test.ts,unit,tests,18,Not run in inventory,Not run in inventory,Not run in inventory,Not run in inventory,DISCOVERED
+tests/unit/password-hashing.test.ts,unit,tests,3,Not run in inventory,Not run in inventory,Not run in inventory,Not run in inventory,DISCOVERED
+tests/unit/permissions.test.ts,unit,tests,8,Not run in inventory,Not run in inventory,Not run in inventory,Not run in inventory,DISCOVERED

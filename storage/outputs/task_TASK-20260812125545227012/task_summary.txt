@@ -1,0 +1,5 @@
+TASK SUMMARY — ID: TASK-20260812125545227012
+Workflow: hr_recruitment_workflow
+Status: COMPLETED
+Local First: TRUE
+Zero Payment Guard: ACTIVE

@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/student/messages/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"/Users/alaminn/Downloads/ALO-FULL-SOURCE/src/app/api/student/messages/route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

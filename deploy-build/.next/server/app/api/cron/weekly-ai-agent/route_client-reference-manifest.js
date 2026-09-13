@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/cron/weekly-ai-agent/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"/Users/alaminn/Downloads/ALO-FULL-SOURCE/src/app/api/cron/weekly-ai-agent/route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

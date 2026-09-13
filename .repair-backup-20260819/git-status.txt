@@ -1,0 +1,1582 @@
+ D --timeout
+D  .env
+ M CHANGELOG.md
+ M CLEAN-INSTALL-REPORT.md
+ M Caddyfile
+ M DEPLOYMENT-GUIDE.md
+ M DEVELOPMENT-GUIDE.md
+ M MISSING-FEATURE-STATUS.md
+ M REPAIR-REPORT.md
+ M SECURITY-AUDIT.md
+ M SHA256SUMS.txt
+ M TEST-REPORT.md
+ D agent-ctx/task-seed-api-homepage.md
+ M db/custom.db
+ M deploy/ubuntu/backup.sh
+ M deploy/ubuntu/restore.sh
+ D download/ALO-Education-ERP-FINAL.zip
+ D download/ALO-Education-ERP-Full-Project.zip
+ D download/ALO-Education-ERP-Remediated-Final.zip
+ D download/ALO-Education-ERP-Remediated.zip
+ D download/API-INVENTORY.csv
+ D download/DATABASE-INVENTORY.csv
+ D download/ENVIRONMENT-VARIABLE-INVENTORY.csv
+ D download/EVIDENCE-REPORT.md
+ D download/MIGRATION-INVENTORY.csv
+ D download/README.md
+ D download/ROUTE-INVENTORY.csv
+ D download/all_data_summary.csv
+ D download/alo-deploy-ubuntu.zip
+ D download/alo-home-01-hero.png
+ D download/alo-home-02-course-finder-destinations.png
+ D download/alo-home-03-about-mission-whychoose.png
+ D download/alo-home-04-services-timeline.png
+ D download/alo-home-05-countries-courses.png
+ D download/alo-home-06-universities-scholarships.png
+ D download/alo-home-07-english-tests-visa.png
+ D download/alo-home-08-portals-ai-resources.png
+ D download/alo-home-09-stories-team-faq.png
+ D download/alo-home-10-cta-footer.png
+ D download/alo-home-11-mobile-hero.png
+ D download/alo-homepage-ai.png
+ D download/alo-homepage-courses.png
+ D download/alo-homepage-cta-footer.png
+ D download/alo-homepage-destinations.png
+ D download/alo-homepage-full.png
+ D download/alo-homepage-hero.png
+ D download/alo-homepage-services.png
+ D download/api-route-inventory.csv
+ D download/build-log.txt
+ D download/combined_course_upload.csv
+ D download/counselor-portal-dashboard.png
+ D download/courses_all.csv
+ D download/crm-course-finder-real-data.png
+ D download/crm-dashboard.png
+ D download/crm-finance-dashboard.png
+ D download/crm-leads.png
+ D download/crm-universities-real-data.png
+ D download/design-system-dark.png
+ D download/design-system-light.png
+ D download/extracted_all.json
+ D download/extracted_gostudyin.json
+ D download/extracted_tcl.json
+ D download/extracted_tclglobal.json
+ D download/gostudyin.json
+ D download/lint-results.txt
+ D download/page-route-inventory.csv
+ D download/runtime-log.txt
+ D download/security_audit_checklist.md
+ D download/seo-01-portal-selector.png
+ D download/seo-02-crm-dashboard.png
+ D download/seo-03-seo-dashboard.png
+ D download/seo-04-keyword-tracker.png
+ D download/seo-05-content-workflow.png
+ D download/seo-06-competitor-analysis.png
+ D download/seo-07-technical-audit.png
+ D download/seo-08-policy-watcher.png
+ D download/seo-09-universities.png
+ D download/seo-10-course-finder.png
+ D download/seo-11-sidebar-seo-section.png
+ D download/seo-12-leads.png
+ D download/so_uk.json
+ D download/so_unis.json
+ D download/studies_overseas.json
+ D download/tclglobal.json
+ D download/test-results.txt
+ D download/tsc-results.txt
+ D download/universities_all.csv
+ D download/url1.json
+ D download/url2.json
+ D download/url3.json
+ D download/url4.json
+ D download/url5.json
+ M eslint.config.mjs
+ M next.config.ts
+ M package-lock.json
+ M package.json
+ D prisma/migrations/20260726191824_init/migration.sql
+ D prisma/migrations/20260726193613_add_rbac_junctions_and_scope/migration.sql
+ M prisma/migrations/migration_lock.toml
+ M prisma/schema.prisma
+ M prisma/seed-complete.ts
+ M prisma/seed.ts
+ D remediation-baseline-2026-07-27/SHA256-MANIFEST.txt
+ D remediation-baseline-2026-07-27/audited-zip/ALO-Education-ERP-Full-Project.zip
+ D remediation-baseline-2026-07-27/baseline-docs/REMEDIATION_BASELINE.md
+ D remediation-baseline-2026-07-27/evidence/EVIDENCE-REPORT.md
+ D remediation-baseline-2026-07-27/evidence/api-route-inventory.csv
+ D remediation-baseline-2026-07-27/evidence/page-route-inventory.csv
+ D remediation-baseline-2026-07-27/source-snapshot/.gitignore
+ D remediation-baseline-2026-07-27/source-snapshot/components.json
+ D remediation-baseline-2026-07-27/source-snapshot/eslint.config.mjs
+ D remediation-baseline-2026-07-27/source-snapshot/next.config.ts
+ D remediation-baseline-2026-07-27/source-snapshot/package-lock.json
+ D remediation-baseline-2026-07-27/source-snapshot/package.json
+ D remediation-baseline-2026-07-27/source-snapshot/postcss.config.mjs
+ D remediation-baseline-2026-07-27/source-snapshot/prisma/schema.prisma
+ D remediation-baseline-2026-07-27/source-snapshot/prisma/seed-complete.ts
+ D remediation-baseline-2026-07-27/source-snapshot/prisma/seed-universities.ts
+ D remediation-baseline-2026-07-27/source-snapshot/prisma/seed.ts
+ D remediation-baseline-2026-07-27/source-snapshot/public/images/brand/alo-edu-pad.jpg
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/hero-banners/Australia slide Banner.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/hero-banners/Canada slide Banner.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/hero-banners/Europe slide Banner.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/hero-banners/New Zealand slide Banner.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/hero-banners/UK slide Banner.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/hero-banners/USA slide Banner.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of 167794.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of 20250902_1557_Smiling Study Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of 20250902_1604_Team Celebrating Success_remix_01k44y1phqff4adx4kcap3cdyw.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of 20250902_1607_Joyful Park Conversation_remix_01k44y8qqzf1fak3kphqyhmj6w.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of 2148431342.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of logo.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of pexels-george-pak-7972967.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of pexels-jaksonmartins-3101504.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of pexels-otherme-583475.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of pexels-rdne-7092364.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of pexels-rdne-7092573.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of pexels-rdne-7683897.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of pexels-yankrukov-8199166.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Copy of pexels-yankrukov-8199562.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/landing/Hero Image.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/testimonials/Tushar Imran Nahid.png"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/testimonials/Ummaye Mayesha Manna.PNG"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/abertay university.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/aston university.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/birmingham city university .webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/cardiff metropolitan university.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/london metropolitan university.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/lsbu university.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/ravensbourne university.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/uister university.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of aberdeen.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of bolton.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of central lancashire.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of derby.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of dundee.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of greenwich.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of hertfordshire.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of hull.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of kent.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of lincoln.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of portsmouth.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of roehampton.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of south wales.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of the west of scotland.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of wales trinity saint david.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/university of wolverhampton.webp"
+ D "remediation-baseline-2026-07-27/source-snapshot/public/images/universities/wrexham glyndwr university .webp"
+ D remediation-baseline-2026-07-27/source-snapshot/public/logo.svg
+ D remediation-baseline-2026-07-27/source-snapshot/public/robots.txt
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/add_courses.py
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/add_universities.py
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/check-lead.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/check-seed.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/check-uni.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/fix-crm-mock-pages.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/generate_csv.py
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/ref_bottom.png
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/ref_home_full.png
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/ref_mid1.png
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/ref_mid2.png
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/ref_mid3.png
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/ref_top.png
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/reference_home.json
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/seed-alo.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/seed-homepage.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/seed-other-universities.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/seed-uk-universities.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/seed-universities.ts
+ D remediation-baseline-2026-07-27/source-snapshot/scripts/seed-website.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/access-control-center/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/access-control/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/audit/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/employees/[id]/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/employees/activate/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/employees/create/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/employees/resend-activation/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/employees/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/packages/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/partner-assignments/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/quota-requests/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/quotas/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/student-benefits/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/admin/users/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/agentos/agents/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/chat/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/counselor/dashboard/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/counselor/inbox/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/counselor/students/[studentId]/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/course-finder/compare/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/course-finder/pro/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/course-finder/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/analytics/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/applications/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/appointments/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/audit-logs/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/communications/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/confirm/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/download-errors/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/errors/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/history/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/map-university/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/rollback/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/stats/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/template/course/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/template/university/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/course-import/validate/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/courses/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/dashboard/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/documents/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/finance/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/hrm/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/inbox/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/leads/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/partners/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/reports/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/roles/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/scholarships/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/seed-universities/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/seed/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/settings/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/social/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/students/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/support/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/tasks/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/universities/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/users/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/crm/whatsapp/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/applications/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/attendance/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/documents/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/leave/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/messages/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/performance/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/profile/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/reports/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/salary/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/settings/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/students/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/employee/tasks/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/agentos/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/approvals/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/calendar/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/campaigns/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/comments/convert-lead/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/content/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/dashboard/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/dm/convert-lead/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/seo/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/social/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/video/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/marketing/webhooks/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/applications/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/commission/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/documents/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/help/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/leads/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/marketing/approve/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/marketing/generate/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/marketing/requests/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/marketing/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/marketing/usage/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/messages/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/notifications/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/profile/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/referrals/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/reports/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/resources/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/settings/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/student-benefits/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/partner/students/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/permissions/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/portal-auth/forgot-password/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/portal-auth/login/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/portal-auth/logout/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/portal-auth/register/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/portal-auth/reset-password/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/portal-auth/session/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/portal-auth/verify-otp/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/scholarships/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/applications/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/appointments/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/course-finder/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/cv/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/documents/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/messages/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/mock-tests/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/notifications/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/payments/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/profile/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/referrals/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/scholarships/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/sop/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/timeline/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student-portal/visa/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student/benefits/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/student/vouchers/redeem/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/universities/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/english-tests/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/faqs/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/homepage/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/lead/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/search-log/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/services/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/stats/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/success-stories/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/api/website/team-members/route.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/globals.css
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/layout.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/app/page.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/auth/AuthStatusPages.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/auth/ForgotPasswordPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/auth/LoginPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/auth/RegisterPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/auth/ResetPasswordPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/course-compare.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/course-finder-pro.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/course-finder-public.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/csv-download-buttons.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/import-history.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/import-workflow.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/index.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/scholarship-list.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/types.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/course-finder/university-directory.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/CrmAdminDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/CrmAdminShell.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/agentos/AgentRegistry.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/AiCommandDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/ApplicationTeamDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/BranchManagerDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/CeoDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/CounselorDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/CrmDashboardRouter.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/DataManagerDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/DocumentReviewDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/FinanceDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/FrontDeskDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/HrDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/MarketingDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/PartnerManagerDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/SupportDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/dashboards/VisaOfficerDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmAgentOperationsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmAnalyticsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmApplicationsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmAppointmentsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmAuditLogsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmCommissionsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmCommunicationsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmCourseFinderPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmDocumentsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmFinancePage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmHRMPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmInboxPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmLeadsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmMarketingPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmPartnersPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmPermissionsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmReportsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmRolesPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmScholarshipsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmSettingsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmSocialPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmStudentsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmSupportPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmTasksPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmUniversitiesPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmUsersPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmVisaPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/pages/CrmWhatsAppPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/seo/CrmSeoCompetitorAnalysis.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/seo/CrmSeoContentWorkflow.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/seo/CrmSeoGrowthDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/seo/CrmSeoKeywordTracker.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/seo/CrmSeoPolicyWatcher.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/crm/seo/CrmSeoTechnicalAudit.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeApplicationsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeAttendancePage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeCalendarPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeDocumentsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeHelpPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeLeadsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeLeavePage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeMessagesPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeNotificationsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeePerformancePage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeePortalShell.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeProfilePage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeReportsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeSalaryPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeSettingsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeStudentsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeTasksPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/employee/EmployeeWhatsAppPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/AiReplyManagerView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/ApprovalQueueView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/BrandAssetsPostCreatorView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/CampaignBuilderCalendarView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/ConversationAssignmentView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/HumanHandoffView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/KeywordTriggersView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/LeadPipelineView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/MarketingAnalyticsView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/MarketingAuditAccessView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/MarketingDashboardView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/MarketingHubShell.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/N8nWorkflowsView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/SocialMediaAutomationView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/UnifiedInboxView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/marketing/hub/WhatsAppAutomationView.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerApplicationsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerCommissionPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerDocumentsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerHelpPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerLeadsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerMessagesPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerNotificationsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerPortalShell.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerProfilePage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerReferralsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerReportsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerResourcesPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerSettingsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/partner/PartnerStudentsPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/portals/PortalSelector.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentAiMatch.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentApplications.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentAppointments.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentCompare.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentCourseFinder.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentDashboard.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentDocuments.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentMessages.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentMorePages.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentNotifications.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentPayments.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentPortalShell.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentProfilePage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentScholarships.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentSopCvStudio.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/student/StudentVisaCenter.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/accordion.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/alert-dialog.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/alert.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/avatar.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/badge.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/button.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/calendar.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/card.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/carousel.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/chart.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/checkbox.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/collapsible.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/command.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/dialog.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/form.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/input.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/label.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/pagination.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/popover.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/progress.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/radio-group.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/scroll-area.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/select.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/separator.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/sheet.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/sidebar.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/skeleton.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/slider.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/sonner.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/switch.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/table.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/tabs.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/textarea.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/toast.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/toaster.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/toggle.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/ui/tooltip.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/HomepagePart1.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/HomepagePart2.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/HomepagePart3.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/HomepagePart4.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/PublicNavbar.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/animations.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/public-pages/PublicConsultationPage.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/public-pages/PublicPages.tsx
+ D remediation-baseline-2026-07-27/source-snapshot/src/components/website/public-pages/index.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/hooks/use-mobile.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/hooks/use-toast.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/access-check-engine.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/auth-middleware.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/crm/import-constants.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/db.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/marketing/audit.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/marketing/permissions.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/marketing/types.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/permissions.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/stores/portal-store.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/university-data-intl.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/university-data-uk.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/university-data-uk2.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/lib/utils.ts
+ D remediation-baseline-2026-07-27/source-snapshot/src/middleware.ts
+ D remediation-baseline-2026-07-27/source-snapshot/tailwind.config.ts
+ D remediation-baseline-2026-07-27/source-snapshot/tsconfig.json
+ D remediation-work/.gitignore
+ D remediation-work/PHASE0-REPORT.md
+ D remediation-work/PHASE1-REPORT.md
+ D remediation-work/PHASE2-REPORT.md
+ D remediation-work/PHASE2_DEPENDENCY_CHANGE_REPORT.md
+ D remediation-work/PHASE3-REPORT.md
+ D remediation-work/PHASE3_TYPESCRIPT_REPORT.md
+ D remediation-work/REMEDIATION_BASELINE.md
+ D remediation-work/backups/phase-0/20260726-202905/auth-middleware.ts
+ D remediation-work/backups/phase-0/20260726-202905/eslint.config.mjs
+ D remediation-work/backups/phase-0/20260726-202905/next.config.ts
+ D remediation-work/backups/phase-0/20260726-202905/package-lock.json
+ D remediation-work/backups/phase-0/20260726-202905/package.json
+ D remediation-work/backups/phase-0/20260726-202905/schema.prisma
+ D remediation-work/backups/phase-0/20260726-202905/seed-complete.ts
+ D remediation-work/backups/phase-0/20260726-202905/seed.ts
+ D remediation-work/backups/phase-0/20260726-202905/tsconfig.json
+ D remediation-work/components.json
+ D remediation-work/eslint.config.mjs
+ D remediation-work/inventories/API-INVENTORY.csv
+ D remediation-work/inventories/DATABASE-INVENTORY.csv
+ D remediation-work/inventories/ENVIRONMENT-VARIABLE-INVENTORY.csv
+ D remediation-work/inventories/MIGRATION-INVENTORY.csv
+ D remediation-work/inventories/ROUTE-INVENTORY.csv
+ D remediation-work/inventory/build-log.txt
+ D remediation-work/inventory/git-status.txt
+ D remediation-work/inventory/lint-baseline.txt
+ D remediation-work/inventory/pages-and-routes.txt
+ D remediation-work/inventory/prisma-models.txt
+ D remediation-work/inventory/test-results.txt
+ D remediation-work/inventory/tsc-errors-baseline.txt
+ D remediation-work/inventory/tsc-errors-fresh.txt
+ D remediation-work/next.config.ts
+ D remediation-work/package-lock.json
+ D remediation-work/package.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/.gitignore
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/Caddyfile
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/GIT_STATUS.txt
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/components.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/eslint.config.mjs
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/next.config.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/package-lock.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/package.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/postcss.config.mjs
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/prisma/schema.prisma
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/prisma/seed-complete.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/prisma/seed-universities.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/prisma/seed.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/src/lib/auth-middleware.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/src/lib/db.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/src/lib/permissions.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/tailwind.config.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-14/tsconfig.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/.gitignore
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/BACKUP-MANIFEST.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/Caddyfile
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/GIT_STATUS.txt
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/components.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/eslint.config.mjs
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/next.config.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/package-lock.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/package.json
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/postcss.config.mjs
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/prisma/schema.prisma
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/prisma/seed-complete.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/prisma/seed-universities.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/prisma/seed.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/src/lib/auth-middleware.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/src/lib/db.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/src/lib/permissions.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/tailwind.config.ts
+ D remediation-work/phase0-backups/2026-07-26T18-32-35/tsconfig.json
+ D remediation-work/phase0-inventory/API-INVENTORY.csv
+ D remediation-work/phase0-inventory/ENV-VARIABLE-INVENTORY.csv
+ D remediation-work/phase0-inventory/PAGE-INVENTORY.csv
+ D remediation-work/phase0-inventory/PHASE0-SUMMARY.json
+ D remediation-work/phase0-inventory/PRISMA-MODEL-INVENTORY.csv
+ D remediation-work/phase0-inventory/SCRIPT-INVENTORY.csv
+ D remediation-work/phase0-inventory/TEST-INVENTORY.csv
+ D remediation-work/phase0-inventory/TYPESCRIPT-ERROR-BY-FILE.csv
+ D remediation-work/phase0-inventory/TYPESCRIPT-ERROR-INVENTORY.csv
+ D remediation-work/phase0-inventory/TYPESCRIPT-ERROR-SUMMARY.csv
+ D remediation-work/phase0-inventory/npm-audit-after-fix.json
+ D remediation-work/phase0-inventory/npm-audit.json
+ D remediation-work/phase2-auth-narrow-fixes.json
+ D remediation-work/phase2-withauth-fixes-v2.json
+ D remediation-work/phase2-withauth-fixes.json
+ D remediation-work/postcss.config.mjs
+ D remediation-work/prisma/schema.prisma
+ D remediation-work/prisma/seed-complete.ts
+ D remediation-work/prisma/seed-universities.ts
+ D remediation-work/prisma/seed.ts
+ D remediation-work/public/images/brand/alo-edu-pad.jpg
+ D "remediation-work/public/images/hero-banners/Australia slide Banner.webp"
+ D "remediation-work/public/images/hero-banners/Canada slide Banner.webp"
+ D "remediation-work/public/images/hero-banners/Europe slide Banner.webp"
+ D "remediation-work/public/images/hero-banners/New Zealand slide Banner.webp"
+ D "remediation-work/public/images/hero-banners/UK slide Banner.webp"
+ D "remediation-work/public/images/hero-banners/USA slide Banner.webp"
+ D "remediation-work/public/images/landing/Copy of 167794.webp"
+ D "remediation-work/public/images/landing/Copy of 20250902_1557_Smiling Study Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp"
+ D "remediation-work/public/images/landing/Copy of 20250902_1604_Team Celebrating Success_remix_01k44y1phqff4adx4kcap3cdyw.webp"
+ D "remediation-work/public/images/landing/Copy of 20250902_1607_Joyful Park Conversation_remix_01k44y8qqzf1fak3kphqyhmj6w.webp"
+ D "remediation-work/public/images/landing/Copy of 2148431342.webp"
+ D "remediation-work/public/images/landing/Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp"
+ D "remediation-work/public/images/landing/Copy of logo.webp"
+ D "remediation-work/public/images/landing/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp"
+ D "remediation-work/public/images/landing/Copy of pexels-george-pak-7972967.webp"
+ D "remediation-work/public/images/landing/Copy of pexels-jaksonmartins-3101504.webp"
+ D "remediation-work/public/images/landing/Copy of pexels-otherme-583475.webp"
+ D "remediation-work/public/images/landing/Copy of pexels-rdne-7092364.webp"
+ D "remediation-work/public/images/landing/Copy of pexels-rdne-7092573.webp"
+ D "remediation-work/public/images/landing/Copy of pexels-rdne-7683897.webp"
+ D "remediation-work/public/images/landing/Copy of pexels-yankrukov-8199166.webp"
+ D "remediation-work/public/images/landing/Copy of pexels-yankrukov-8199562.webp"
+ D "remediation-work/public/images/landing/Hero Image.webp"
+ D "remediation-work/public/images/testimonials/Tushar Imran Nahid.png"
+ D "remediation-work/public/images/testimonials/Ummaye Mayesha Manna.PNG"
+ D "remediation-work/public/images/universities/abertay university.webp"
+ D "remediation-work/public/images/universities/aston university.webp"
+ D "remediation-work/public/images/universities/birmingham city university .webp"
+ D "remediation-work/public/images/universities/cardiff metropolitan university.webp"
+ D "remediation-work/public/images/universities/london metropolitan university.webp"
+ D "remediation-work/public/images/universities/lsbu university.webp"
+ D "remediation-work/public/images/universities/ravensbourne university.webp"
+ D "remediation-work/public/images/universities/uister university.webp"
+ D "remediation-work/public/images/universities/university of aberdeen.webp"
+ D "remediation-work/public/images/universities/university of bolton.webp"
+ D "remediation-work/public/images/universities/university of central lancashire.webp"
+ D "remediation-work/public/images/universities/university of derby.webp"
+ D "remediation-work/public/images/universities/university of dundee.webp"
+ D "remediation-work/public/images/universities/university of greenwich.webp"
+ D "remediation-work/public/images/universities/university of hertfordshire.webp"
+ D "remediation-work/public/images/universities/university of hull.webp"
+ D "remediation-work/public/images/universities/university of kent.webp"
+ D "remediation-work/public/images/universities/university of lincoln.webp"
+ D "remediation-work/public/images/universities/university of portsmouth.webp"
+ D "remediation-work/public/images/universities/university of roehampton.webp"
+ D "remediation-work/public/images/universities/university of south wales.webp"
+ D "remediation-work/public/images/universities/university of the west of scotland.webp"
+ D "remediation-work/public/images/universities/university of wales trinity saint david.webp"
+ D "remediation-work/public/images/universities/university of wolverhampton.webp"
+ D "remediation-work/public/images/universities/wrexham glyndwr university .webp"
+ D remediation-work/public/logo.svg
+ D remediation-work/public/robots.txt
+ D remediation-work/scripts/add_courses.py
+ D remediation-work/scripts/add_universities.py
+ D remediation-work/scripts/check-lead.ts
+ D remediation-work/scripts/check-seed.ts
+ D remediation-work/scripts/check-uni.ts
+ D remediation-work/scripts/fix-crm-mock-pages.ts
+ D remediation-work/scripts/generate_csv.py
+ D remediation-work/scripts/ref_bottom.png
+ D remediation-work/scripts/ref_home_full.png
+ D remediation-work/scripts/ref_mid1.png
+ D remediation-work/scripts/ref_mid2.png
+ D remediation-work/scripts/ref_mid3.png
+ D remediation-work/scripts/ref_top.png
+ D remediation-work/scripts/reference_home.json
+ D remediation-work/scripts/seed-alo.ts
+ D remediation-work/scripts/seed-homepage.ts
+ D remediation-work/scripts/seed-other-universities.ts
+ D remediation-work/scripts/seed-uk-universities.ts
+ D remediation-work/scripts/seed-universities.ts
+ D remediation-work/scripts/seed-website.ts
+ D remediation-work/src/app/api/admin/access-control-center/route.ts
+ D remediation-work/src/app/api/admin/access-control/route.ts
+ D remediation-work/src/app/api/admin/audit/route.ts
+ D remediation-work/src/app/api/admin/employees/[id]/route.ts
+ D remediation-work/src/app/api/admin/employees/activate/route.ts
+ D remediation-work/src/app/api/admin/employees/create/route.ts
+ D remediation-work/src/app/api/admin/employees/resend-activation/route.ts
+ D remediation-work/src/app/api/admin/employees/route.ts
+ D remediation-work/src/app/api/admin/packages/route.ts
+ D remediation-work/src/app/api/admin/partner-assignments/route.ts
+ D remediation-work/src/app/api/admin/quota-requests/route.ts
+ D remediation-work/src/app/api/admin/quotas/route.ts
+ D remediation-work/src/app/api/admin/student-benefits/route.ts
+ D remediation-work/src/app/api/admin/users/route.ts
+ D remediation-work/src/app/api/agentos/agents/route.ts
+ D remediation-work/src/app/api/chat/route.ts
+ D remediation-work/src/app/api/counselor/dashboard/route.ts
+ D remediation-work/src/app/api/counselor/inbox/route.ts
+ D remediation-work/src/app/api/counselor/students/[studentId]/route.ts
+ D remediation-work/src/app/api/course-finder/compare/route.ts
+ D remediation-work/src/app/api/course-finder/pro/route.ts
+ D remediation-work/src/app/api/course-finder/route.ts
+ D remediation-work/src/app/api/crm/analytics/route.ts
+ D remediation-work/src/app/api/crm/applications/route.ts
+ D remediation-work/src/app/api/crm/appointments/route.ts
+ D remediation-work/src/app/api/crm/audit-logs/route.ts
+ D remediation-work/src/app/api/crm/communications/route.ts
+ D remediation-work/src/app/api/crm/course-import/confirm/route.ts
+ D remediation-work/src/app/api/crm/course-import/download-errors/route.ts
+ D remediation-work/src/app/api/crm/course-import/errors/route.ts
+ D remediation-work/src/app/api/crm/course-import/history/route.ts
+ D remediation-work/src/app/api/crm/course-import/map-university/route.ts
+ D remediation-work/src/app/api/crm/course-import/rollback/route.ts
+ D remediation-work/src/app/api/crm/course-import/stats/route.ts
+ D remediation-work/src/app/api/crm/course-import/template/course/route.ts
+ D remediation-work/src/app/api/crm/course-import/template/university/route.ts
+ D remediation-work/src/app/api/crm/course-import/validate/route.ts
+ D remediation-work/src/app/api/crm/courses/route.ts
+ D remediation-work/src/app/api/crm/dashboard/route.ts
+ D remediation-work/src/app/api/crm/documents/route.ts
+ D remediation-work/src/app/api/crm/finance/route.ts
+ D remediation-work/src/app/api/crm/hrm/route.ts
+ D remediation-work/src/app/api/crm/inbox/route.ts
+ D remediation-work/src/app/api/crm/leads/route.ts
+ D remediation-work/src/app/api/crm/partners/route.ts
+ D remediation-work/src/app/api/crm/reports/route.ts
+ D remediation-work/src/app/api/crm/roles/route.ts
+ D remediation-work/src/app/api/crm/scholarships/route.ts
+ D remediation-work/src/app/api/crm/seed-universities/route.ts
+ D remediation-work/src/app/api/crm/seed/route.ts
+ D remediation-work/src/app/api/crm/settings/route.ts
+ D remediation-work/src/app/api/crm/social/route.ts
+ D remediation-work/src/app/api/crm/students/route.ts
+ D remediation-work/src/app/api/crm/support/route.ts
+ D remediation-work/src/app/api/crm/tasks/route.ts
+ D remediation-work/src/app/api/crm/universities/route.ts
+ D remediation-work/src/app/api/crm/users/route.ts
+ D remediation-work/src/app/api/crm/whatsapp/route.ts
+ D remediation-work/src/app/api/employee/applications/route.ts
+ D remediation-work/src/app/api/employee/attendance/route.ts
+ D remediation-work/src/app/api/employee/documents/route.ts
+ D remediation-work/src/app/api/employee/leave/route.ts
+ D remediation-work/src/app/api/employee/messages/route.ts
+ D remediation-work/src/app/api/employee/performance/route.ts
+ D remediation-work/src/app/api/employee/profile/route.ts
+ D remediation-work/src/app/api/employee/reports/route.ts
+ D remediation-work/src/app/api/employee/salary/route.ts
+ D remediation-work/src/app/api/employee/settings/route.ts
+ D remediation-work/src/app/api/employee/students/route.ts
+ D remediation-work/src/app/api/employee/tasks/route.ts
+ D remediation-work/src/app/api/marketing/agentos/route.ts
+ D remediation-work/src/app/api/marketing/approvals/route.ts
+ D remediation-work/src/app/api/marketing/calendar/route.ts
+ D remediation-work/src/app/api/marketing/campaigns/route.ts
+ D remediation-work/src/app/api/marketing/comments/convert-lead/route.ts
+ D remediation-work/src/app/api/marketing/content/route.ts
+ D remediation-work/src/app/api/marketing/dashboard/route.ts
+ D remediation-work/src/app/api/marketing/dm/convert-lead/route.ts
+ D remediation-work/src/app/api/marketing/seo/route.ts
+ D remediation-work/src/app/api/marketing/social/route.ts
+ D remediation-work/src/app/api/marketing/video/route.ts
+ D remediation-work/src/app/api/marketing/webhooks/route.ts
+ D remediation-work/src/app/api/partner/applications/route.ts
+ D remediation-work/src/app/api/partner/commission/route.ts
+ D remediation-work/src/app/api/partner/documents/route.ts
+ D remediation-work/src/app/api/partner/help/route.ts
+ D remediation-work/src/app/api/partner/leads/route.ts
+ D remediation-work/src/app/api/partner/marketing/approve/route.ts
+ D remediation-work/src/app/api/partner/marketing/generate/route.ts
+ D remediation-work/src/app/api/partner/marketing/requests/route.ts
+ D remediation-work/src/app/api/partner/marketing/route.ts
+ D remediation-work/src/app/api/partner/marketing/usage/route.ts
+ D remediation-work/src/app/api/partner/messages/route.ts
+ D remediation-work/src/app/api/partner/notifications/route.ts
+ D remediation-work/src/app/api/partner/profile/route.ts
+ D remediation-work/src/app/api/partner/referrals/route.ts
+ D remediation-work/src/app/api/partner/reports/route.ts
+ D remediation-work/src/app/api/partner/resources/route.ts
+ D remediation-work/src/app/api/partner/settings/route.ts
+ D remediation-work/src/app/api/partner/student-benefits/route.ts
+ D remediation-work/src/app/api/partner/students/route.ts
+ D remediation-work/src/app/api/permissions/route.ts
+ D remediation-work/src/app/api/portal-auth/forgot-password/route.ts
+ D remediation-work/src/app/api/portal-auth/login/route.ts
+ D remediation-work/src/app/api/portal-auth/logout/route.ts
+ D remediation-work/src/app/api/portal-auth/register/route.ts
+ D remediation-work/src/app/api/portal-auth/reset-password/route.ts
+ D remediation-work/src/app/api/portal-auth/session/route.ts
+ D remediation-work/src/app/api/portal-auth/verify-otp/route.ts
+ D remediation-work/src/app/api/route.ts
+ D remediation-work/src/app/api/scholarships/route.ts
+ D remediation-work/src/app/api/student-portal/applications/route.ts
+ D remediation-work/src/app/api/student-portal/appointments/route.ts
+ D remediation-work/src/app/api/student-portal/course-finder/route.ts
+ D remediation-work/src/app/api/student-portal/cv/route.ts
+ D remediation-work/src/app/api/student-portal/documents/route.ts
+ D remediation-work/src/app/api/student-portal/messages/route.ts
+ D remediation-work/src/app/api/student-portal/mock-tests/route.ts
+ D remediation-work/src/app/api/student-portal/notifications/route.ts
+ D remediation-work/src/app/api/student-portal/payments/route.ts
+ D remediation-work/src/app/api/student-portal/profile/route.ts
+ D remediation-work/src/app/api/student-portal/referrals/route.ts
+ D remediation-work/src/app/api/student-portal/scholarships/route.ts
+ D remediation-work/src/app/api/student-portal/sop/route.ts
+ D remediation-work/src/app/api/student-portal/timeline/route.ts
+ D remediation-work/src/app/api/student-portal/visa/route.ts
+ D remediation-work/src/app/api/student/benefits/route.ts
+ D remediation-work/src/app/api/student/vouchers/redeem/route.ts
+ D remediation-work/src/app/api/universities/route.ts
+ D remediation-work/src/app/api/website/english-tests/route.ts
+ D remediation-work/src/app/api/website/faqs/route.ts
+ D remediation-work/src/app/api/website/homepage/route.ts
+ D remediation-work/src/app/api/website/lead/route.ts
+ D remediation-work/src/app/api/website/search-log/route.ts
+ D remediation-work/src/app/api/website/services/route.ts
+ D remediation-work/src/app/api/website/stats/route.ts
+ D remediation-work/src/app/api/website/success-stories/route.ts
+ D remediation-work/src/app/api/website/team-members/route.ts
+ D remediation-work/src/app/globals.css
+ D remediation-work/src/app/layout.tsx
+ D remediation-work/src/app/page.tsx
+ D remediation-work/src/components/auth/AuthStatusPages.tsx
+ D remediation-work/src/components/auth/ForgotPasswordPage.tsx
+ D remediation-work/src/components/auth/LoginPage.tsx
+ D remediation-work/src/components/auth/RegisterPage.tsx
+ D remediation-work/src/components/auth/ResetPasswordPage.tsx
+ D remediation-work/src/components/course-finder/course-compare.tsx
+ D remediation-work/src/components/course-finder/course-finder-pro.tsx
+ D remediation-work/src/components/course-finder/course-finder-public.tsx
+ D remediation-work/src/components/course-finder/csv-download-buttons.tsx
+ D remediation-work/src/components/course-finder/import-history.tsx
+ D remediation-work/src/components/course-finder/import-workflow.tsx
+ D remediation-work/src/components/course-finder/index.ts
+ D remediation-work/src/components/course-finder/scholarship-list.tsx
+ D remediation-work/src/components/course-finder/types.ts
+ D remediation-work/src/components/course-finder/university-directory.tsx
+ D remediation-work/src/components/crm/CrmAdminDashboard.tsx
+ D remediation-work/src/components/crm/CrmAdminShell.tsx
+ D remediation-work/src/components/crm/agentos/AgentRegistry.tsx
+ D remediation-work/src/components/crm/dashboards/AiCommandDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/ApplicationTeamDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/BranchManagerDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/CeoDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/CounselorDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/CrmDashboardRouter.tsx
+ D remediation-work/src/components/crm/dashboards/DataManagerDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/DocumentReviewDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/FinanceDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/FrontDeskDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/HrDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/MarketingDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/PartnerManagerDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/SupportDashboard.tsx
+ D remediation-work/src/components/crm/dashboards/VisaOfficerDashboard.tsx
+ D remediation-work/src/components/crm/pages/CrmAgentOperationsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmAnalyticsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmApplicationsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmAppointmentsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmAuditLogsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmCommissionsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmCommunicationsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmCourseFinderPage.tsx
+ D remediation-work/src/components/crm/pages/CrmDocumentsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmFinancePage.tsx
+ D remediation-work/src/components/crm/pages/CrmHRMPage.tsx
+ D remediation-work/src/components/crm/pages/CrmInboxPage.tsx
+ D remediation-work/src/components/crm/pages/CrmLeadsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmMarketingPage.tsx
+ D remediation-work/src/components/crm/pages/CrmPartnersPage.tsx
+ D remediation-work/src/components/crm/pages/CrmPermissionsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmReportsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmRolesPage.tsx
+ D remediation-work/src/components/crm/pages/CrmScholarshipsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmSettingsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmSocialPage.tsx
+ D remediation-work/src/components/crm/pages/CrmStudentsPage.tsx
+ D remediation-work/src/components/crm/pages/CrmSupportPage.tsx
+ D remediation-work/src/components/crm/pages/CrmTasksPage.tsx
+ D remediation-work/src/components/crm/pages/CrmUniversitiesPage.tsx
+ D remediation-work/src/components/crm/pages/CrmUsersPage.tsx
+ D remediation-work/src/components/crm/pages/CrmVisaPage.tsx
+ D remediation-work/src/components/crm/pages/CrmWhatsAppPage.tsx
+ D remediation-work/src/components/crm/seo/CrmSeoCompetitorAnalysis.tsx
+ D remediation-work/src/components/crm/seo/CrmSeoContentWorkflow.tsx
+ D remediation-work/src/components/crm/seo/CrmSeoGrowthDashboard.tsx
+ D remediation-work/src/components/crm/seo/CrmSeoKeywordTracker.tsx
+ D remediation-work/src/components/crm/seo/CrmSeoPolicyWatcher.tsx
+ D remediation-work/src/components/crm/seo/CrmSeoTechnicalAudit.tsx
+ D remediation-work/src/components/employee/EmployeeApplicationsPage.tsx
+ D remediation-work/src/components/employee/EmployeeAttendancePage.tsx
+ D remediation-work/src/components/employee/EmployeeCalendarPage.tsx
+ D remediation-work/src/components/employee/EmployeeDashboard.tsx
+ D remediation-work/src/components/employee/EmployeeDocumentsPage.tsx
+ D remediation-work/src/components/employee/EmployeeHelpPage.tsx
+ D remediation-work/src/components/employee/EmployeeLeadsPage.tsx
+ D remediation-work/src/components/employee/EmployeeLeavePage.tsx
+ D remediation-work/src/components/employee/EmployeeMessagesPage.tsx
+ D remediation-work/src/components/employee/EmployeeNotificationsPage.tsx
+ D remediation-work/src/components/employee/EmployeePerformancePage.tsx
+ D remediation-work/src/components/employee/EmployeePortalShell.tsx
+ D remediation-work/src/components/employee/EmployeeProfilePage.tsx
+ D remediation-work/src/components/employee/EmployeeReportsPage.tsx
+ D remediation-work/src/components/employee/EmployeeSalaryPage.tsx
+ D remediation-work/src/components/employee/EmployeeSettingsPage.tsx
+ D remediation-work/src/components/employee/EmployeeStudentsPage.tsx
+ D remediation-work/src/components/employee/EmployeeTasksPage.tsx
+ D remediation-work/src/components/employee/EmployeeWhatsAppPage.tsx
+ D remediation-work/src/components/marketing/hub/AiReplyManagerView.tsx
+ D remediation-work/src/components/marketing/hub/ApprovalQueueView.tsx
+ D remediation-work/src/components/marketing/hub/BrandAssetsPostCreatorView.tsx
+ D remediation-work/src/components/marketing/hub/CampaignBuilderCalendarView.tsx
+ D remediation-work/src/components/marketing/hub/ConversationAssignmentView.tsx
+ D remediation-work/src/components/marketing/hub/HumanHandoffView.tsx
+ D remediation-work/src/components/marketing/hub/KeywordTriggersView.tsx
+ D remediation-work/src/components/marketing/hub/LeadPipelineView.tsx
+ D remediation-work/src/components/marketing/hub/MarketingAnalyticsView.tsx
+ D remediation-work/src/components/marketing/hub/MarketingAuditAccessView.tsx
+ D remediation-work/src/components/marketing/hub/MarketingDashboardView.tsx
+ D remediation-work/src/components/marketing/hub/MarketingHubShell.tsx
+ D remediation-work/src/components/marketing/hub/N8nWorkflowsView.tsx
+ D remediation-work/src/components/marketing/hub/SocialMediaAutomationView.tsx
+ D remediation-work/src/components/marketing/hub/UnifiedInboxView.tsx
+ D remediation-work/src/components/marketing/hub/WhatsAppAutomationView.tsx
+ D remediation-work/src/components/partner/PartnerApplicationsPage.tsx
+ D remediation-work/src/components/partner/PartnerCommissionPage.tsx
+ D remediation-work/src/components/partner/PartnerDashboard.tsx
+ D remediation-work/src/components/partner/PartnerDocumentsPage.tsx
+ D remediation-work/src/components/partner/PartnerHelpPage.tsx
+ D remediation-work/src/components/partner/PartnerLeadsPage.tsx
+ D remediation-work/src/components/partner/PartnerMessagesPage.tsx
+ D remediation-work/src/components/partner/PartnerNotificationsPage.tsx
+ D remediation-work/src/components/partner/PartnerPortalShell.tsx
+ D remediation-work/src/components/partner/PartnerProfilePage.tsx
+ D remediation-work/src/components/partner/PartnerReferralsPage.tsx
+ D remediation-work/src/components/partner/PartnerReportsPage.tsx
+ D remediation-work/src/components/partner/PartnerResourcesPage.tsx
+ D remediation-work/src/components/partner/PartnerSettingsPage.tsx
+ D remediation-work/src/components/partner/PartnerStudentsPage.tsx
+ D remediation-work/src/components/portals/PortalSelector.tsx
+ D remediation-work/src/components/student/StudentAiMatch.tsx
+ D remediation-work/src/components/student/StudentApplications.tsx
+ D remediation-work/src/components/student/StudentAppointments.tsx
+ D remediation-work/src/components/student/StudentCompare.tsx
+ D remediation-work/src/components/student/StudentCourseFinder.tsx
+ D remediation-work/src/components/student/StudentDashboard.tsx
+ D remediation-work/src/components/student/StudentDocuments.tsx
+ D remediation-work/src/components/student/StudentMessages.tsx
+ D remediation-work/src/components/student/StudentMorePages.tsx
+ D remediation-work/src/components/student/StudentNotifications.tsx
+ D remediation-work/src/components/student/StudentPayments.tsx
+ D remediation-work/src/components/student/StudentPortalShell.tsx
+ D remediation-work/src/components/student/StudentProfilePage.tsx
+ D remediation-work/src/components/student/StudentScholarships.tsx
+ D remediation-work/src/components/student/StudentSopCvStudio.tsx
+ D remediation-work/src/components/student/StudentVisaCenter.tsx
+ D remediation-work/src/components/ui/accordion.tsx
+ D remediation-work/src/components/ui/alert-dialog.tsx
+ D remediation-work/src/components/ui/alert.tsx
+ D remediation-work/src/components/ui/avatar.tsx
+ D remediation-work/src/components/ui/badge.tsx
+ D remediation-work/src/components/ui/button.tsx
+ D remediation-work/src/components/ui/calendar.tsx
+ D remediation-work/src/components/ui/card.tsx
+ D remediation-work/src/components/ui/carousel.tsx
+ D remediation-work/src/components/ui/chart.tsx
+ D remediation-work/src/components/ui/checkbox.tsx
+ D remediation-work/src/components/ui/collapsible.tsx
+ D remediation-work/src/components/ui/command.tsx
+ D remediation-work/src/components/ui/dialog.tsx
+ D remediation-work/src/components/ui/form.tsx
+ D remediation-work/src/components/ui/input.tsx
+ D remediation-work/src/components/ui/label.tsx
+ D remediation-work/src/components/ui/pagination.tsx
+ D remediation-work/src/components/ui/popover.tsx
+ D remediation-work/src/components/ui/progress.tsx
+ D remediation-work/src/components/ui/radio-group.tsx
+ D remediation-work/src/components/ui/scroll-area.tsx
+ D remediation-work/src/components/ui/select.tsx
+ D remediation-work/src/components/ui/separator.tsx
+ D remediation-work/src/components/ui/sheet.tsx
+ D remediation-work/src/components/ui/sidebar.tsx
+ D remediation-work/src/components/ui/skeleton.tsx
+ D remediation-work/src/components/ui/slider.tsx
+ D remediation-work/src/components/ui/sonner.tsx
+ D remediation-work/src/components/ui/switch.tsx
+ D remediation-work/src/components/ui/table.tsx
+ D remediation-work/src/components/ui/tabs.tsx
+ D remediation-work/src/components/ui/textarea.tsx
+ D remediation-work/src/components/ui/toast.tsx
+ D remediation-work/src/components/ui/toaster.tsx
+ D remediation-work/src/components/ui/toggle.tsx
+ D remediation-work/src/components/ui/tooltip.tsx
+ D remediation-work/src/components/website/HomepagePart1.tsx
+ D remediation-work/src/components/website/HomepagePart2.tsx
+ D remediation-work/src/components/website/HomepagePart3.tsx
+ D remediation-work/src/components/website/HomepagePart4.tsx
+ D remediation-work/src/components/website/PublicNavbar.tsx
+ D remediation-work/src/components/website/animations.ts
+ D remediation-work/src/components/website/public-pages/PublicConsultationPage.tsx
+ D remediation-work/src/components/website/public-pages/PublicPages.tsx
+ D remediation-work/src/components/website/public-pages/index.ts
+ D remediation-work/src/hooks/use-mobile.ts
+ D remediation-work/src/hooks/use-toast.ts
+ D remediation-work/src/lib/access-check-engine.ts
+ D remediation-work/src/lib/ai.ts
+ D remediation-work/src/lib/auth-middleware.ts
+ D remediation-work/src/lib/crm/import-constants.ts
+ D remediation-work/src/lib/db.ts
+ D remediation-work/src/lib/marketing/audit.ts
+ D remediation-work/src/lib/marketing/permissions.ts
+ D remediation-work/src/lib/marketing/types.ts
+ D remediation-work/src/lib/permissions.ts
+ D remediation-work/src/lib/stores/portal-store.ts
+ D remediation-work/src/lib/university-data-intl.ts
+ D remediation-work/src/lib/university-data-uk.ts
+ D remediation-work/src/lib/university-data-uk2.ts
+ D remediation-work/src/lib/utils.ts
+ D remediation-work/src/middleware.ts
+ D remediation-work/tailwind.config.ts
+ D remediation-work/tsconfig.json
+ M scripts/auth-flow-test.mjs
+ M scripts/phase0-backup-and-inventory.mjs
+ M scripts/prepare-standalone.mjs
+ M scripts/seed-alo.ts
+ M scripts/seed-homepage.ts
+ M src/app/api/admin/access-control-center/route.ts
+ M src/app/api/admin/employees/[id]/route.ts
+ M src/app/api/admin/employees/activate/route.ts
+ M src/app/api/admin/employees/create/route.ts
+ M src/app/api/admin/employees/resend-activation/route.ts
+ M src/app/api/admin/employees/route.ts
+ M src/app/api/agentos/agents/route.ts
+ M src/app/api/course-finder/route.ts
+ M src/app/api/crm/finance/route.ts
+ M src/app/api/employee/documents/route.ts
+ M src/app/api/partner/student-benefits/route.ts
+ M src/app/api/permissions/route.ts
+ M src/app/api/portal-auth/forgot-password/route.ts
+ M src/app/api/portal-auth/register/route.ts
+ M src/app/api/universities/route.ts
+ M src/app/api/website/homepage/route.ts
+ M src/app/globals.css
+ M src/app/layout.tsx
+ M src/app/page.tsx
+ M src/components/auth/LoginPage.tsx
+ M src/components/course-finder/course-finder-public.tsx
+ M src/components/crm/dashboards/AiCommandDashboard.tsx
+ M src/components/crm/dashboards/ApplicationTeamDashboard.tsx
+ M src/components/crm/dashboards/BranchManagerDashboard.tsx
+ M src/components/crm/dashboards/CeoDashboard.tsx
+ M src/components/crm/dashboards/CounselorDashboard.tsx
+ M src/components/crm/dashboards/DataManagerDashboard.tsx
+ M src/components/crm/dashboards/DocumentReviewDashboard.tsx
+ M src/components/crm/dashboards/FrontDeskDashboard.tsx
+ M src/components/crm/dashboards/HrDashboard.tsx
+ M src/components/crm/dashboards/MarketingDashboard.tsx
+ M src/components/crm/dashboards/PartnerManagerDashboard.tsx
+ M src/components/crm/dashboards/SupportDashboard.tsx
+ M src/components/crm/dashboards/VisaOfficerDashboard.tsx
+ M src/components/crm/pages/CrmHRMPage.tsx
+ M src/components/crm/pages/CrmVisaPage.tsx
+ M src/components/marketing/hub/ApprovalQueueView.tsx
+ M src/components/partner/PartnerDashboard.tsx
+ M src/components/partner/PartnerResourcesPage.tsx
+ M src/components/student/StudentDashboard.tsx
+ M src/components/website/HomepagePart1.tsx
+ M src/components/website/HomepagePart2.tsx
+ M src/components/website/HomepagePart3.tsx
+ M src/components/website/HomepagePart4.tsx
+ M src/components/website/PublicNavbar.tsx
+ M src/components/website/public-pages/PublicConsultationPage.tsx
+ M src/components/website/public-pages/PublicPages.tsx
+ M src/lib/access-check-engine.ts
+ M src/lib/ai.ts
+ M src/lib/auth-middleware.ts
+ M src/lib/stores/portal-store.ts
+ M src/lib/university-data-intl.ts
+ M src/lib/university-data-uk.ts
+ M src/lib/university-data-uk2.ts
+ D src/middleware.ts
+ M tests/integration/consultation-workflow.test.ts
+ M tsconfig.json
+ D "upload/AI agent-10000.zip"
+ D upload/ALO-EDUCATION-AA-PANEL-PRODUCTION-FINAL.zip
+ D upload/ALO-EDUCATION-PRODUCTION.zip
+ D "upload/Brand Assets-20260723T135224Z-1-001.zip"
+ D "upload/Data for Student Profile_CRM - Student Profile.pdf"
+ D upload/Images-20260723T135224Z-1-001.zip
+ D "upload/Pasted Content_1783240759684.txt"
+ D "upload/Pasted Content_1784799802690.txt"
+ D "upload/Pasted Content_1784799843355.txt"
+ D "upload/Pasted Content_1784803307890.txt"
+ D "upload/Pasted Content_1784803351803.txt"
+ D "upload/Pasted Content_1784817821775.txt"
+ D "upload/Pasted Content_1784828491897.txt"
+ D "upload/Pasted Content_1784841090403.txt"
+ D "upload/Pasted Content_1784841145258.txt"
+ D "upload/Pasted Content_1784912265547.txt"
+ D "upload/Pasted Content_1784912352837.txt"
+ D "upload/Pasted Content_1784920639459.txt"
+ D "upload/Pasted Content_1784920678831.txt"
+ D "upload/Pasted Content_1784923088423.txt"
+ D "upload/Pasted Content_1784923150754.txt"
+ D "upload/Pasted Content_1784925461729.txt"
+ D "upload/Pasted Content_1784925519580.txt"
+ D "upload/Pasted Content_1784929915656.txt"
+ D "upload/Pasted Content_1784929964328.txt"
+ D "upload/Pasted Content_1784930031511.txt"
+ D "upload/Student Dashboard _ ALO formate.pdf"
+ D "upload/Student Dashboard _ ALO second page.pdf"
+ D "upload/WEB_CRM_BUILD GUIDLINE.pdf"
+ D "upload/alo edu pad-01.jpg"
+ D "upload/alo-education (15).zip"
+ D "upload/brand-assets/Brand Assets/ALO Education_Brand Guidelines.pdf"
+ D "upload/brand-assets/Brand Assets/Logo/ALO Education Logo.ai"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/abertay university.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/aston university.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/birmingham city university .webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/cardiff metropolitan university.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/london metropolitan university.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/lsbu university.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/ravensbourne university.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/uister university.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of aberdeen.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of bolton.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of central lancashire.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of derby.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of dundee.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of greenwich.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of hertfordshire.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of hull.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of kent.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of lincoln.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of portsmouth.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of roehampton.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of south wales.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of the west of scotland.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of wales trinity saint david.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/university of wolverhampton.webp"
+ D "upload/website-images/Images/Global Partners Logo/Global Partner university Logo/wrexham glyndwr university .webp"
+ D "upload/website-images/Images/Hero Image.webp"
+ D "upload/website-images/Images/Hero image for homepage sliding banner/Australia slide Banner.webp"
+ D "upload/website-images/Images/Hero image for homepage sliding banner/Canada slide Banner.webp"
+ D "upload/website-images/Images/Hero image for homepage sliding banner/Europe slide Banner.webp"
+ D "upload/website-images/Images/Hero image for homepage sliding banner/New Zealand slide Banner.webp"
+ D "upload/website-images/Images/Hero image for homepage sliding banner/UK slide Banner.webp"
+ D "upload/website-images/Images/Hero image for homepage sliding banner/USA slide Banner.webp"
+ D "upload/website-images/Images/Landing page image/Copy of 167794.webp"
+ D "upload/website-images/Images/Landing page image/Copy of 20250902_1557_Smiling Study Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp"
+ D "upload/website-images/Images/Landing page image/Copy of 20250902_1604_Team Celebrating Success_remix_01k44y1phqff4adx4kcap3cdyw.webp"
+ D "upload/website-images/Images/Landing page image/Copy of 20250902_1607_Joyful Park Conversation_remix_01k44y8qqzf1fak3kphqyhmj6w.webp"
+ D "upload/website-images/Images/Landing page image/Copy of 2148431342.webp"
+ D "upload/website-images/Images/Landing page image/Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp"
+ D "upload/website-images/Images/Landing page image/Copy of logo.webp"
+ D "upload/website-images/Images/Landing page image/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp"
+ D "upload/website-images/Images/Landing page image/Copy of pexels-george-pak-7972967.webp"
+ D "upload/website-images/Images/Landing page image/Copy of pexels-jaksonmartins-3101504.webp"
+ D "upload/website-images/Images/Landing page image/Copy of pexels-otherme-583475.webp"
+ D "upload/website-images/Images/Landing page image/Copy of pexels-rdne-7092364.webp"
+ D "upload/website-images/Images/Landing page image/Copy of pexels-rdne-7092573.webp"
+ D "upload/website-images/Images/Landing page image/Copy of pexels-rdne-7683897.webp"
+ D "upload/website-images/Images/Landing page image/Copy of pexels-yankrukov-8199166.webp"
+ D "upload/website-images/Images/Landing page image/Copy of pexels-yankrukov-8199562.webp"
+ D "upload/website-images/Images/Tushar Imran Nahid.png"
+ D "upload/website-images/Images/Ummaye Mayesha Manna.PNG"
+ D "upload/workspace-e221969d-0ee9-4c07-ae5c-0eaccdfea8db (2).tar"
+ M worklog.md
+?? .course-data-evidence-dir
+?? .current-evidence-dir
+?? .final-delivery-dir
+?? .live-cpanel-evidence-dir
+?? .mysql-release-evidence-dir
+?? .npmrc
+?? .official-aston-evidence-dir
+?? .repair-backup-20260819/
+?? ADMIN_USER_GUIDE.md
+?? AI_AGENT_ARCHITECTURE.md
+?? AI_AGENT_INVENTORY.csv
+?? AI_COMMAND_CENTER_USER_GUIDE.md
+?? AI_COMMAND_CENTER_VERIFICATION.md
+?? ALO_2027_INTAKE_COVERAGE.csv
+?? ALO_2027_INTAKE_VERIFICATION.csv
+?? ALO_CONFLICT_REPORT.csv
+?? ALO_COURSE_COMPLETENESS_AUDIT.csv
+?? ALO_COURSE_COVERAGE_REPORT.csv
+?? ALO_COURSE_INTAKES_2027.csv
+?? ALO_COURSE_MASTER.csv
+?? ALO_COURSE_MASTER_DATA.zip
+?? ALO_DATA_COLLECTION_REPORT.md
+?? ALO_DATA_DICTIONARY.md
+?? ALO_DATA_INTEGRITY_AUDIT.csv
+?? ALO_DUPLICATE_REPORT.csv
+?? ALO_EDUCATION_ASTON_OFFICIAL_VERIFICATION_UPDATE_20260801-030204.zip
+?? ALO_EDUCATION_CANONICAL_DATASET.zip
+?? ALO_EDUCATION_COMPLETE_SOURCE.zip
+?? ALO_EDUCATION_COURSE_DATA_PROVENANCE_UPDATE_20260801-021213.zip
+?? ALO_EDUCATION_DATABASE_PACKAGE.zip
+?? ALO_EDUCATION_DOCUMENTATION.zip
+?? ALO_EDUCATION_FULL_PROJECT_FINAL.zip
+?? ALO_EDUCATION_OPERATION_GUIDEBOOK.md
+?? ALO_EDUCATION_PRODUCTION_DEPLOYMENT.zip
+?? ALO_EDUCATION_VERIFICATION_EVIDENCE.zip
+?? ALO_FINAL_DATA_AUDIT.md
+?? ALO_FINAL_MASTER_DATA_REPORT.md
+?? ALO_IMPORT_MANIFEST.csv
+?? ALO_IMPORT_REPORT.md
+?? ALO_INTAKE_COVERAGE_REPORT.csv
+?? ALO_JANUARY_2027_INTAKE_REPORT.csv
+?? ALO_MASTER_COURSE_DATABASE.csv
+?? ALO_MASTER_COURSE_DATABASE.zip
+?? ALO_MISSING_COURSES.csv
+?? ALO_MISSING_UNIVERSITIES.csv
+?? ALO_MISSING_UNIVERSITY_INFO.csv
+?? ALO_SYNTHETIC_DATA_REJECTED.csv
+?? ALO_UNIVERSITY_COURSE_DATA_PACKAGE.zip
+?? ALO_UNIVERSITY_COURSE_DATA_PACKAGE_REAL.zip
+?? ALO_UNIVERSITY_COURSE_DATA_PACKAGE_VERIFIED.zip
+?? ALO_UNIVERSITY_COURSE_MASTER.csv
+?? ALO_UNIVERSITY_COURSE_MASTER.json
+?? ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json
+?? ALO_UNIVERSITY_MASTER.csv
+?? ALO_UNIVERSITY_MASTER_DATA.zip
+?? ALO_URL_VERIFICATION_REPORT.csv
+?? ALO_VERIFICATION_REPORT.csv
+?? API_DOCUMENTATION.md
+?? API_INVENTORY.csv
+?? APPLICATION_TEAM_USER_GUIDE.md
+?? BACKUP_RESTORE_GUIDE.md
+?? BACKUP_RESTORE_TEST_REPORT.md
+?? BRANCH_MANAGER_USER_GUIDE.md
+?? BUILD_LOCK.txt
+?? CHECKSUM_VERIFICATION_REPORT.md
+?? CLAUDE.md
+?? CLEAN_EXTRACT_VERIFICATION.md
+?? COMPLETE_PROJECT_MANIFEST.txt
+?? CONTENT-ORIGINALITY-AND-SOURCE-COMPLIANCE.md
+?? COUNSELOR_USER_GUIDE.md
+?? COUNTRY-UNIVERSITY-COURSE-COVERAGE-REPORT.md
+?? CPANEL_DEPLOYMENT_GUIDE.md
+?? CPANEL_DEPLOY_COMMANDS.txt
+?? CSV-IMPORT-GUIDE.md
+?? DATA-FRESHNESS-POLICY.md
+?? DATA-NORMALIZATION-RULES.md
+?? DATA-PROVENANCE-POLICY.md
+?? DATABASE_DOCUMENTATION.md
+?? DATABASE_MIGRATION_INVENTORY.csv
+?? DATABASE_MIGRATION_VERIFICATION.md
+?? DATABASE_MODEL_INVENTORY.csv
+?? DATABASE_RUNTIME_VERIFICATION.md
+?? DELIVERY_PACKAGE_VERIFICATION.md
+?? DEPLOYMENT_FILE_INVENTORY.csv
+?? DOCUMENTATION_INVENTORY.csv
+?? DUPLICATE-DETECTION-RULES.md
+?? EMAIL_CONFIGURATION_GUIDE.md
+?? EMPLOYEE_USER_GUIDE.md
+?? ENVIRONMENT_VARIABLE_INVENTORY.csv
+?? FIELD-DICTIONARY.md
+?? FILE_MANIFEST.csv
+?? FINAL-AUDIT-REPORT.md
+?? FINAL_DELIVERY_FREEZE_RECORD.md
+?? FINANCE_USER_GUIDE.md
+?? FRONT_DESK_USER_GUIDE.md
+?? FULL_PROJECT_AUDIT.txt
+?? FULL_PROJECT_MASTER_REPORT.txt
+?? HR_MANAGER_USER_GUIDE.md
+?? IMPLEMENTATION_REPORT.md
+?? IMPORT-TEST-REPORT.md
+?? INCIDENT_RESPONSE_GUIDE.md
+?? INITIAL-LAUNCH-DATA-REPORT.md
+?? MARKETING_MANAGER_USER_GUIDE.md
+?? MYSQL_MARIADB_VERIFICATION.md
+?? MYSQL_ONLY_SEARCH_RESULTS.txt
+?? PAGE_ROUTE_INVENTORY.csv
+?? PARTNER_PORTAL_USER_GUIDE.md
+?? PERMISSION_INVENTORY.csv
+?? PRE_VERIFICATION_SNAPSHOT.md
+?? PRODUCTION_BUILD_REPORT.md
+?? PRODUCTION_PACKAGE_RUNTIME_VERIFICATION.md
+?? PRODUCTION_STARTUP_AND_HEALTH_REPORT.md
+?? PROVIDER_INTEGRATION_GUIDE.md
+?? PROVIDER_INTEGRATION_MATRIX.csv
+?? PUBLIC_ASSET_INVENTORY.csv
+?? README.md
+?? README_DEPLOYMENT.md
+?? REFERENCE-FUNCTION-AUDIT.md
+?? RELEASE_MANAGEMENT_GUIDE.md
+?? ROLE_INVENTORY.csv
+?? ROUTE_INVENTORY.csv
+?? SECRET_SCAN_REPORT.md
+?? SECURITY_GUIDE.md
+?? STUDENT_PORTAL_USER_GUIDE.md
+?? SUPER-ADMIN-APPROVAL-GUIDE.md
+?? SUPER_ADMIN_USER_GUIDE.md
+?? SUPPORT_STAFF_USER_GUIDE.md
+?? TEST_INVENTORY.csv
+?? TEST_REPORT.md
+?? TROUBLESHOOTING_GUIDE.md
+?? UNIVERSITY-COURSE-DATA-QUALITY-REPORT.md
+?? VISA_OFFICER_USER_GUIDE.md
+?? WEEKLY-AGENT-TEST-REPORT.md
+?? WEEKLY-AI-VERIFICATION-AGENT.md
+?? agents/
+?? alo-education-web-crm-final.zip
+?? alo-education-web-crm-final/
+?? alo-education-web-crm.zip
+?? audit-and-create-alo-clean.sh
+?? backend/
+?? create_apis.js
+?? data/
+?? database.sql
+?? delivery-evidence-20260731-043211/
+?? deploy.sh
+?? deploy/alo_education_production.sql
+?? docs/
+?? ecosystem.config.cjs
+?? fix_all.ts
+?? fix_routes.ts
+?? fix_visa_and_import.ts
+?? gen_api_1.js
+?? generate_api.ts
+?? playwright.config.ts
+?? prisma/agentos-seed-extra.ts
+?? prisma/agentos-seed.ts
+?? prisma/migrations/20260731000000_init_mysql/
+?? prisma/migrations/20260801000000_course_data_provenance/
+?? prisma/migrations/20260801024630_official_source_checks/
+?? scripts/audit-database-counts.ts
+?? scripts/auto_domain_agent.sh
+?? scripts/backup-mysql.sh
+?? scripts/backup_agentos.sh
+?? scripts/build-complete-canonical-csvs.ts
+?? scripts/build-delivery-packages.sh
+?? scripts/compile-full-canonical-dataset.mjs
+?? scripts/compile-full-canonical-dataset.ts
+?? scripts/count-arrays.ts
+?? scripts/count-files.mjs
+?? scripts/final-delivery-audit.mjs
+?? scripts/generate-canonical-templates.mjs
+?? scripts/generate-clean-inventories.mjs
+?? scripts/generate-final-packages.ts
+?? scripts/generate-full-inventories.mjs
+?? scripts/generate-master-reports.ts
+?? scripts/generate-partner-admin-pages.mjs
+?? scripts/generate_1020_skills.py
+?? scripts/inspect-client.mjs
+?? scripts/inspect-course.mjs
+?? scripts/inspect-db.ts
+?? scripts/install_agentos.sh
+?? scripts/reconcile-all.mjs
+?? scripts/reconcile-countries.mjs
+?? scripts/reconcile-course-countries-raw.ts
+?? scripts/reconcile-courses.mjs
+?? scripts/reconcile-universities.mjs
+?? scripts/restore-mysql.sh
+?? scripts/run-2027-intake-discovery.ts
+?? scripts/run-official-data-audit.mjs
+?? scripts/run-official-university-crawler.mjs
+?? scripts/run-production-real-collection.ts
+?? scripts/run-real-data-audit.ts
+?? scripts/search-keywords.mjs
+?? scripts/seed-400-universities.ts
+?? scripts/seed-all-portal-users.ts
+?? scripts/seed-core.sql
+?? scripts/seed-direct-mysql.js
+?? scripts/seed-portal-admin.ts
+?? scripts/seed_agents.py
+?? scripts/smoke_test.py
+?? scripts/test-canonical-import-validation.mjs
+?? scripts/test-import-pipeline.mjs
+?? scripts/validate_skills.py
+?? scripts/write-final-docs-and-reports.mjs
+?? server.js
+?? src/app/about/
+?? src/app/admin/
+?? src/app/admission-requirements/
+?? src/app/api/admin/ai-command-center/
+?? src/app/api/admin/countries/
+?? src/app/api/admin/courses/
+?? src/app/api/admin/data-import/
+?? src/app/api/admin/import-center/
+?? src/app/api/admin/import/
+?? src/app/api/admin/payroll/
+?? src/app/api/admin/reassignment/
+?? src/app/api/admin/universities/
+?? src/app/api/admin/university-data-updates/
+?? src/app/api/admin/university-data/
+?? src/app/api/admin/university-updates/
+?? src/app/api/agentos/approvals/
+?? src/app/api/agentos/dashboard/
+?? src/app/api/agentos/departments/
+?? src/app/api/agentos/engines/
+?? src/app/api/agentos/schedules/
+?? src/app/api/agentos/tasks/
+?? src/app/api/applications/
+?? src/app/api/b2b/
+?? src/app/api/course-finder/[slug]/
+?? src/app/api/course-finder/eligibility-engine/
+?? src/app/api/course-finder/eligibility/
+?? src/app/api/course-finder/universities/
+?? src/app/api/courses/
+?? src/app/api/crm/ai/
+?? src/app/api/crm/applications/dashboard/
+?? src/app/api/crm/branch/
+?? src/app/api/crm/ceo/
+?? src/app/api/crm/communications/inbox/
+?? src/app/api/crm/communications/timeline/
+?? src/app/api/crm/dashboard/counselor/
+?? src/app/api/crm/data/
+?? src/app/api/crm/documents/dashboard/
+?? src/app/api/crm/frontdesk/
+?? src/app/api/crm/hr/
+?? src/app/api/crm/leads/public/
+?? src/app/api/crm/marketing/
+?? src/app/api/crm/partners/dashboard/
+?? src/app/api/crm/source-verification/
+?? src/app/api/crm/support/dashboard/
+?? src/app/api/crm/ucc/
+?? src/app/api/cron/
+?? src/app/api/destinations/
+?? src/app/api/employee/activate/
+?? src/app/api/employee/appointments/
+?? src/app/api/employee/dashboard/
+?? src/app/api/employee/documents/[id]/
+?? src/app/api/employee/followups/
+?? src/app/api/employee/leads/
+?? src/app/api/employee/notifications/
+?? src/app/api/marketing/automation/
+?? src/app/api/marketing/whatsapp-doc-upload/
+?? src/app/api/marketing/whatsapp-sla/
+?? src/app/api/partner-admin/
+?? src/app/api/partner/programs/
+?? src/app/api/student/applications/
+?? src/app/api/student/auth/
+?? src/app/api/student/dashboard/
+?? src/app/api/student/documents/
+?? src/app/api/student/messages/
+?? src/app/api/student/next-best-action/
+?? src/app/api/student/shortlist/
+?? src/app/api/super-admin/
+?? src/app/api/universities/[slug]/
+?? src/app/api/visa/
+?? src/app/application-guide/
+?? src/app/application-manager/
+?? src/app/application-process/
+?? src/app/blog/
+?? src/app/book-consultation/
+?? src/app/compare/
+?? src/app/contact/
+?? src/app/cookies/
+?? src/app/course-finder/
+?? src/app/course/
+?? src/app/courses/
+?? src/app/crm/
+?? src/app/dashboard/
+?? src/app/destinations/
+?? src/app/eligibility-check/
+?? src/app/eligibility-checker/
+?? src/app/employee/
+?? src/app/english-test-prep/
+?? src/app/english-tests/
+?? src/app/events/
+?? src/app/faqs/
+?? src/app/forgot-password/
+?? src/app/language-prep/
+?? src/app/login/
+?? src/app/news/
+?? src/app/partner-admin/
+?? src/app/partner/
+?? src/app/privacy-policy/
+?? src/app/register/
+?? src/app/research-opportunities/
+?? src/app/reset-password/
+?? src/app/resources/
+?? src/app/robots.ts
+?? src/app/scholarships/
+?? src/app/services/
+?? src/app/sitemap.ts
+?? src/app/student-journey/
+?? src/app/student/
+?? src/app/success-stories/
+?? src/app/super-admin/
+?? src/app/team/
+?? src/app/terms/
+?? src/app/universities/
+?? src/app/visa-support/
+?? src/app/visa/
+?? src/components/admin/
+?? src/components/communication/
+?? src/components/counselor/
+?? src/components/course-finder/course-compare-enhanced.tsx
+?? src/components/course-finder/course-detail-enhanced.tsx
+?? src/components/course-finder/course-finder-enhanced.tsx
+?? src/components/course-finder/eligibility-checker-enhanced.tsx
+?? src/components/course-finder/eligibility-checker.tsx
+?? src/components/course-finder/university-detail-enhanced.tsx
+?? src/components/course-finder/university-directory-enhanced.tsx
+?? src/components/crm/CrmViewRouter.tsx
+?? src/components/crm/pages/OldCrmImportCenterPage.tsx
+?? src/components/crm/pages/UniversityDataUpdateCenterPage.tsx
+?? src/components/employee/EmployeeViewRouter.tsx
+?? src/components/employee/UnifiedEmployeeDashboard.tsx
+?? src/components/partner/MasterPartnerAdminView.tsx
+?? src/components/partner/PartnerMarketingStudioPage.tsx
+?? src/components/partner/PartnerSuperAdminDashboard.tsx
+?? src/components/partner/PartnerViewRouter.tsx
+?? src/components/student/StudentViewRouter.tsx
+?? src/components/visa/
+?? src/components/website/FloatingActionWidget.tsx
+?? src/components/website/ImageMapping.ts
+?? src/components/website/MasterCountryDestinationView.tsx
+?? src/components/website/MasterLanguagePrepLandingView.tsx
+?? src/components/website/MasterTestPrepView.tsx
+?? src/components/website/PublicCommunicationBar.tsx
+?? src/components/website/PublicFooter.tsx
+?? src/components/website/PublicLayoutWrapper.tsx
+?? src/components/website/TestPreparationMiniCard.tsx
+?? src/cron/
+?? src/lib/access-control/
+?? src/lib/agentos/
+?? src/lib/all-universities.ts
+?? src/lib/approval-queue.ts
+?? src/lib/blogs-data.ts
+?? src/lib/communication/
+?? src/lib/comprehensive-evidence-audit.ts
+?? src/lib/country-destinations-data.ts
+?? src/lib/crm/source-verification.ts
+?? src/lib/data-normalizer.ts
+?? src/lib/deep-repo-health-check.ts
+?? src/lib/diagnose-system-status.ts
+?? src/lib/duplicate-detector.ts
+?? src/lib/eligibility-engine.ts
+?? src/lib/email-service.ts
+?? src/lib/file-validator.ts
+?? src/lib/find-missing-pages.ts
+?? src/lib/news-data.ts
+?? src/lib/official-crawlers/
+?? src/lib/populate-slugs.ts
+?? src/lib/rbac/
+?? src/lib/scholarships-data.ts
+?? src/lib/services-data.ts
+?? src/lib/student-auth.ts
+?? src/lib/test-all-api-endpoints.ts
+?? src/lib/test-b2b-partner-access-control.ts
+?? src/lib/test-employee-dashboard-system.ts
+?? src/lib/test-homepage-destinations-system.ts
+?? src/lib/test-language-prep-system.ts
+?? src/lib/test-prep-data.ts
+?? src/lib/test-super-admin-master-system.ts
+?? src/lib/test-visa-system.ts
+?? src/lib/token-encryption.ts
+?? src/lib/unified-auth.ts
+?? src/lib/university-courses-uk.ts
+?? src/lib/university-data-extended.ts
+?? src/lib/verification-agent.ts
+?? src/lib/webhook-validator.ts
+?? src/proxy.ts
+?? start-dev.sh
+?? storage/
+?? test-results/
+?? tests/e2e/
+?? tests/unit/aston-adapter.test.ts
+?? tests/unit/data-import.test.ts
+?? tests/unit/eligibility-engine.test.ts
+?? tests/unit/source-verification.test.ts
+?? tests/unit/verification-agent.test.ts
+?? tsc-errors-fresh.txt

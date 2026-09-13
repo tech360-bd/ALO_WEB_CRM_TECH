@@ -1,0 +1,401 @@
+university_id,university_name,discoverable_courses_count,imported_courses_count,missing_courses_count,coverage_status
+UNI-UN-0001,University of Oxford,104,104,0,COMPLETE
+UNI-UN-0002,University of Cambridge,112,112,0,COMPLETE
+UNI-UN-0003,Imperial College London,117,117,0,COMPLETE
+UNI-UN-0004,University College London (UCL),120,120,0,COMPLETE
+UNI-UN-0005,London School of Economics (LSE),65,65,0,COMPLETE
+UNI-UN-0006,University of Edinburgh,108,108,0,COMPLETE
+UNI-UN-0007,University of Manchester,118,118,0,COMPLETE
+UNI-UN-0008,King's College London,102,102,0,COMPLETE
+UNI-UN-0009,University of Bristol,67,67,0,COMPLETE
+UNI-UN-0010,University of Warwick,72,72,0,COMPLETE
+UNI-UN-0011,University of Glasgow,62,62,0,COMPLETE
+UNI-UN-0012,University of Birmingham,70,70,0,COMPLETE
+UNI-UN-0013,University of Leeds,74,74,0,COMPLETE
+UNI-UN-0014,University of Sheffield,75,75,0,COMPLETE
+UNI-UN-0015,University of Nottingham,73,73,0,COMPLETE
+UNI-UN-0016,University of Southampton,74,74,0,COMPLETE
+UNI-UN-0017,University of Liverpool,72,72,0,COMPLETE
+UNI-UN-0018,University of Newcastle,67,67,0,COMPLETE
+UNI-UN-0019,Durham University,65,65,0,COMPLETE
+UNI-UN-0020,University of Exeter,62,62,0,COMPLETE
+UNI-UN-0021,Queen Mary University of London,60,60,0,COMPLETE
+UNI-UN-0022,University of York,70,70,0,COMPLETE
+UNI-UN-0023,University of St Andrews,66,66,0,COMPLETE
+UNI-UN-0024,University of Bath,73,73,0,COMPLETE
+UNI-UN-0025,Lancaster University,71,71,0,COMPLETE
+UNI-UN-0026,University of Surrey,49,49,0,COMPLETE
+UNI-UN-0027,Loughborough University,40,40,0,COMPLETE
+UNI-UN-0028,University of Reading,39,39,0,COMPLETE
+UNI-UN-0029,University of Sussex,44,44,0,COMPLETE
+UNI-UN-0030,University of Aberdeen,42,42,0,COMPLETE
+UNI-UN-0031,University of Dundee,50,50,0,PARTIAL
+UNI-UN-0032,University of Kent,48,48,0,PARTIAL
+UNI-UN-0033,University of East Anglia (UEA),46,46,0,PARTIAL
+UNI-UN-0034,University of Essex,47,47,0,PARTIAL
+UNI-UN-0035,University of Leicester,36,36,0,COMPLETE
+UNI-UN-0036,University of Strathclyde,39,39,0,COMPLETE
+UNI-UN-0037,Heriot-Watt University,48,48,0,COMPLETE
+UNI-UN-0038,University of Stirling,50,50,0,PARTIAL
+UNI-UN-0039,Aston University,49,49,0,PARTIAL
+UNI-UN-0040,University of Hull,17,17,0,PARTIAL
+UNI-UN-0041,Brunel University London,49,49,0,PARTIAL
+UNI-UN-0042,City University of London,41,41,0,PARTIAL
+UNI-UN-0043,University of Westminster,16,16,0,PARTIAL
+UNI-UN-0044,Nottingham Trent University,16,16,0,PARTIAL
+UNI-UN-0045,Sheffield Hallam University,21,21,0,PARTIAL
+UNI-UN-0046,University of Huddersfield,25,25,0,PARTIAL
+UNI-UN-0047,Leeds Beckett University,24,24,0,PARTIAL
+UNI-UN-0048,Manchester Metropolitan University,24,24,0,PARTIAL
+UNI-UN-0049,University of Salford,19,19,0,PARTIAL
+UNI-UN-0050,University of Central Lancashire (UCLan),17,17,0,PARTIAL
+UNI-UN-0051,University of Portsmouth,16,16,0,PARTIAL
+UNI-UN-0052,University of Brighton,15,15,0,PARTIAL
+UNI-UN-0053,Bournemouth University,16,16,0,PARTIAL
+UNI-UN-0054,Coventry University,21,21,0,PARTIAL
+UNI-UN-0055,De Montfort University,15,15,0,PARTIAL
+UNI-UN-0056,Northumbria University,16,16,0,PARTIAL
+UNI-UN-0057,University of Greenwich,24,24,0,PARTIAL
+UNI-UN-0058,Kingston University London,22,22,0,PARTIAL
+UNI-UN-0059,Teesside University,20,20,0,PARTIAL
+UNI-UN-0060,University of Lincoln,16,16,0,PARTIAL
+UNI-UN-0061,University of Plymouth,16,16,0,PARTIAL
+UNI-UN-0062,Keele University,48,48,0,PARTIAL
+UNI-UN-0063,University of the West of England (UWE Bristol),16,16,0,PARTIAL
+UNI-UN-0064,Middlesex University London,23,23,0,PARTIAL
+UNI-UN-0065,University of Gloucestershire,25,25,0,PARTIAL
+UNI-UN-0066,University of Hertfordshire,20,20,0,PARTIAL
+UNI-UN-0067,Oxford Brookes University,21,21,0,PARTIAL
+UNI-UN-0068,Anglia Ruskin University,25,25,0,PARTIAL
+UNI-UN-0069,University of Bedfordshire,16,16,0,PARTIAL
+UNI-UN-0070,University of East London,21,21,0,PARTIAL
+UNI-UN-0071,London Metropolitan University,15,15,0,PARTIAL
+UNI-UN-0072,University of West London,16,16,0,PARTIAL
+UNI-UN-0073,Birmingham City University,16,16,0,PARTIAL
+UNI-UN-0074,University of Wolverhampton,16,16,0,PARTIAL
+UNI-UN-0075,Staffordshire University,15,15,0,PARTIAL
+UNI-UN-0076,Canterbury Christ Church University,19,19,0,PARTIAL
+UNI-UN-0077,University for the Creative Arts,22,22,0,PARTIAL
+UNI-UN-0078,Ravensbourne University London,19,19,0,PARTIAL
+UNI-UN-0079,Goldsmiths University of London,38,38,0,PARTIAL
+UNI-UN-0080,University of Suffolk,18,18,0,PARTIAL
+UNI-UN-0081,Cardiff University,74,74,0,COMPLETE
+UNI-UN-0082,Cardiff Metropolitan University,21,21,0,PARTIAL
+UNI-UN-0083,Swansea University,35,35,0,COMPLETE
+UNI-UN-0084,University of South Wales,15,15,0,PARTIAL
+UNI-UN-0085,Bangor University,18,18,0,PARTIAL
+UNI-UN-0086,Aberystwyth University,17,17,0,PARTIAL
+UNI-UN-0087,Wrexham Glyndŵr University,21,21,0,PARTIAL
+UNI-UN-0088,University of the West of Scotland,20,20,0,PARTIAL
+UNI-UN-0089,Edinburgh Napier University,21,21,0,PARTIAL
+UNI-UN-0090,Glasgow Caledonian University,20,20,0,PARTIAL
+UNI-UN-0091,University of the Highlands and Islands,24,24,0,PARTIAL
+UNI-UN-0092,Queen's University Belfast,78,78,0,COMPLETE
+UNI-UN-0093,Ulster University,25,25,0,PARTIAL
+UNI-UN-0094,Birkbeck University of London,23,23,0,PARTIAL
+UNI-UN-0095,University College Birmingham,25,25,0,PARTIAL
+UNI-UN-0096,Royal Academy of Music,22,22,0,PARTIAL
+UNI-UN-0097,Royal College of Music,16,16,0,PARTIAL
+UNI-UN-0098,Royal Central School of Speech and Drama,18,18,0,PARTIAL
+UNI-UN-0099,Courtauld Institute of Art,22,22,0,PARTIAL
+UNI-UN-0100,St George's University of London,21,21,0,PARTIAL
+UNI-UN-0101,University of the Arts London,21,21,0,PARTIAL
+UNI-UN-0102,London School of Hygiene & Tropical Medicine,22,22,0,PARTIAL
+UNI-UN-0103,Royal Veterinary College,24,24,0,PARTIAL
+UNI-UN-0104,Cranfield University,45,45,0,PARTIAL
+UNI-UN-0105,University of Buckingham,22,22,0,PARTIAL
+UNI-UN-0106,St Mary's University Twickenham,17,17,0,PARTIAL
+UNI-UN-0107,Bishop Grosseteste University,18,18,0,PARTIAL
+UNI-UN-0108,University of Cumbria,20,20,0,PARTIAL
+UNI-UN-0109,University of Bolton,17,17,0,PARTIAL
+UNI-UN-0110,University of Bradford,23,23,0,PARTIAL
+UNI-UN-0111,Leeds Trinity University,23,23,0,PARTIAL
+UNI-UN-0112,York St John University,19,19,0,PARTIAL
+UNI-UN-0113,Liverpool John Moores University,23,23,0,PARTIAL
+UNI-UN-0114,Liverpool Hope University,22,22,0,PARTIAL
+UNI-UN-0115,Edge Hill University,19,19,0,PARTIAL
+UNI-UN-0116,Newman University,25,25,0,PARTIAL
+UNI-UN-0117,University Academy 92,19,19,0,PARTIAL
+UNI-UN-0118,Arden University,17,17,0,PARTIAL
+UNI-UN-0119,BPP University,22,22,0,PARTIAL
+UNI-UN-0120,London South Bank University,15,15,0,PARTIAL
+UNI-UN-0121,Richmond University,18,18,0,PARTIAL
+UNI-UN-0122,Hult International Business School,21,21,0,PARTIAL
+UNI-UN-0123,London School of Business and Finance,16,16,0,PARTIAL
+UNI-UN-0124,London School of Commerce,23,23,0,PARTIAL
+UNI-UN-0125,University of Sunderland,24,24,0,PARTIAL
+UNI-UN-0126,Institute of Cancer Research,21,21,0,PARTIAL
+UNI-UN-0127,University of Chichester,17,17,0,PARTIAL
+UNI-UN-0128,Plymouth Marjon University,18,18,0,PARTIAL
+UNI-UN-0129,Falmouth University,25,25,0,PARTIAL
+UNI-UN-0130,University of Wales Trinity Saint David,22,22,0,PARTIAL
+UNI-UN-0131,University of Law – Birmingham,20,20,0,PARTIAL
+UNI-UN-0132,University of Law – Manchester,21,21,0,PARTIAL
+UNI-UN-0133,University of Law – Bristol,22,22,0,PARTIAL
+UNI-UN-0134,University of Law – Leeds,23,23,0,PARTIAL
+UNI-UN-0135,University of Law – Liverpool,24,24,0,PARTIAL
+UNI-UN-0136,University of Law – Guildford,21,21,0,PARTIAL
+UNI-UN-0137,Arden University – Birmingham,21,21,0,PARTIAL
+UNI-UN-0138,Arden University – Manchester,21,21,0,PARTIAL
+UNI-UN-0139,Arden University – Leeds,22,22,0,PARTIAL
+UNI-UN-0140,Arden University – Bristol,23,23,0,PARTIAL
+UNI-UN-0141,Massachusetts Institute of Technology,113,113,0,COMPLETE
+UNI-UN-0142,Stanford University,116,116,0,COMPLETE
+UNI-UN-0143,Harvard University,119,119,0,COMPLETE
+UNI-UN-0144,California Institute of Technology,101,101,0,COMPLETE
+UNI-UN-0145,"University of California, Berkeley",120,120,0,COMPLETE
+UNI-UN-0146,"University of California, Los Angeles",108,108,0,COMPLETE
+UNI-UN-0147,University of Chicago,100,100,0,COMPLETE
+UNI-UN-0148,Columbia University,111,111,0,COMPLETE
+UNI-UN-0149,Yale University,100,100,0,COMPLETE
+UNI-UN-0150,Princeton University,103,103,0,COMPLETE
+UNI-UN-0151,University of Michigan,111,111,0,COMPLETE
+UNI-UN-0152,Carnegie Mellon University,70,70,0,COMPLETE
+UNI-UN-0153,Georgia Institute of Technology,76,76,0,COMPLETE
+UNI-UN-0154,University of Washington,73,73,0,COMPLETE
+UNI-UN-0155,Cornell University,117,117,0,COMPLETE
+UNI-UN-0156,University of Pennsylvania,118,118,0,COMPLETE
+UNI-UN-0157,Johns Hopkins University,107,107,0,COMPLETE
+UNI-UN-0158,Duke University,111,111,0,COMPLETE
+UNI-UN-0159,Northwestern University,103,103,0,COMPLETE
+UNI-UN-0160,"University of California, San Diego",67,67,0,COMPLETE
+UNI-CA-0161,University of Toronto,100,100,0,COMPLETE
+UNI-CA-0162,University of British Columbia,118,118,0,COMPLETE
+UNI-CA-0163,McGill University,115,115,0,COMPLETE
+UNI-CA-0164,University of Alberta,78,78,0,COMPLETE
+UNI-CA-0165,University of Waterloo,64,64,0,COMPLETE
+UNI-CA-0166,University of Montreal,69,69,0,COMPLETE
+UNI-CA-0167,McMaster University,78,78,0,COMPLETE
+UNI-CA-0168,Western University,41,41,0,COMPLETE
+UNI-CA-0169,Queen's University,74,74,0,COMPLETE
+UNI-CA-0170,University of Calgary,73,73,0,COMPLETE
+UNI-CA-0171,Dalhousie University,45,45,0,COMPLETE
+UNI-CA-0172,University of Ottawa,43,43,0,COMPLETE
+UNI-CA-0173,Simon Fraser University,48,48,0,PARTIAL
+UNI-CA-0174,University of Victoria,46,46,0,PARTIAL
+UNI-CA-0175,York University,42,42,0,PARTIAL
+UNI-CA-0176,Carleton University,21,21,0,PARTIAL
+UNI-CA-0177,University of Saskatchewan,38,38,0,PARTIAL
+UNI-CA-0178,University of Manitoba,40,40,0,PARTIAL
+UNI-CA-0179,Toronto Metropolitan University,16,16,0,PARTIAL
+UNI-CA-0180,University of Guelph,47,47,0,PARTIAL
+UNI-AU-0181,University of Melbourne,105,105,0,COMPLETE
+UNI-AU-0182,University of Sydney,102,102,0,COMPLETE
+UNI-AU-0183,Australian National University,114,114,0,COMPLETE
+UNI-AU-0184,University of New South Wales,117,117,0,COMPLETE
+UNI-AU-0185,University of Queensland,119,119,0,COMPLETE
+UNI-AU-0186,Monash University,105,105,0,COMPLETE
+UNI-AU-0187,University of Adelaide,65,65,0,COMPLETE
+UNI-AU-0188,University of Western Australia,60,60,0,COMPLETE
+UNI-AU-0189,University of Technology Sydney,74,74,0,COMPLETE
+UNI-AU-0190,RMIT University,78,78,0,COMPLETE
+UNI-AU-0191,Macquarie University,71,71,0,COMPLETE
+UNI-AU-0192,University of Newcastle,72,72,0,COMPLETE
+UNI-AU-0193,University of Wollongong,61,61,0,COMPLETE
+UNI-AU-0194,Deakin University,41,41,0,COMPLETE
+UNI-AU-0195,Flinders University,49,49,0,COMPLETE
+UNI-AU-0196,La Trobe University,47,47,0,COMPLETE
+UNI-AU-0197,Griffith University,38,38,0,COMPLETE
+UNI-AU-0198,Swinburne University of Technology,39,39,0,COMPLETE
+UNI-AU-0199,Curtin University,72,72,0,COMPLETE
+UNI-AU-0200,Queensland University of Technology,75,75,0,COMPLETE
+UNI-IR-0201,Trinity College Dublin,77,77,0,COMPLETE
+UNI-IR-0202,University College Dublin,66,66,0,COMPLETE
+UNI-IR-0203,University of Galway,40,40,0,COMPLETE
+UNI-IR-0204,University College Cork,40,40,0,COMPLETE
+UNI-IR-0205,Dublin City University,42,42,0,PARTIAL
+UNI-IR-0206,University of Limerick,39,39,0,PARTIAL
+UNI-IR-0207,Maynooth University,21,21,0,PARTIAL
+UNI-IR-0208,Technological University Dublin,21,21,0,PARTIAL
+UNI-IR-0209,Waterford Institute of Technology,16,16,0,PARTIAL
+UNI-IR-0210,Institute of Technology Carlow,16,16,0,PARTIAL
+UNI-IR-0211,Atlantic Technological University (formerly IT Sligo),16,16,0,PARTIAL
+UNI-IR-0212,Letterkenny Institute of Technology,17,17,0,PARTIAL
+UNI-IR-0213,Munster Technological University (formerly Cork IT),20,20,0,PARTIAL
+UNI-IR-0214,Limerick Institute of Technology,21,21,0,PARTIAL
+UNI-IR-0215,"Dún Laoghaire Institute of Art, Design & Technology",21,21,0,PARTIAL
+UNI-IR-0216,Munster Technological University – Tralee,23,23,0,PARTIAL
+UNI-IR-0217,National College of Ireland,19,19,0,PARTIAL
+UNI-IR-0218,Griffith College Dublin,20,20,0,PARTIAL
+UNI-IR-0219,Dublin Business School,21,21,0,PARTIAL
+UNI-IR-0220,American College Dublin,17,17,0,PARTIAL
+UNI-NE-0221,University of Auckland,74,74,0,COMPLETE
+UNI-NE-0222,University of Otago,48,48,0,COMPLETE
+UNI-NE-0223,University of Canterbury,36,36,0,COMPLETE
+UNI-NE-0224,Victoria University of Wellington,44,44,0,COMPLETE
+UNI-NE-0225,University of Waikato,47,47,0,COMPLETE
+UNI-NE-0226,Massey University,42,42,0,PARTIAL
+UNI-NE-0227,Lincoln University,41,41,0,PARTIAL
+UNI-NE-0228,Auckland University of Technology,35,35,0,PARTIAL
+UNI-NE-0229,Unitec Institute of Technology,22,22,0,PARTIAL
+UNI-NE-0230,Otago Polytechnic,15,15,0,PARTIAL
+UNI-NE-0231,Ara Institute of Canterbury,18,18,0,PARTIAL
+UNI-NE-0232,Whitireia New Zealand,21,21,0,PARTIAL
+UNI-NE-0233,Wellington Institute of Technology,16,16,0,PARTIAL
+UNI-NE-0234,Manukau Institute of Technology,16,16,0,PARTIAL
+UNI-NE-0235,Eastern Institute of Technology,21,21,0,PARTIAL
+UNI-NE-0236,Toi Ohomai Institute of Technology,18,18,0,PARTIAL
+UNI-NE-0237,UCOL Universal College of Learning,18,18,0,PARTIAL
+UNI-NE-0238,Nelson Marlborough Institute of Technology,17,17,0,PARTIAL
+UNI-NE-0239,Southern Institute of Technology,17,17,0,PARTIAL
+UNI-NE-0240,Wintec,25,25,0,PARTIAL
+UNI-GE-0241,Technical University of Munich,120,120,0,COMPLETE
+UNI-GE-0242,LMU Munich,62,62,0,COMPLETE
+UNI-GE-0243,Heidelberg University,60,60,0,COMPLETE
+UNI-GE-0244,Humboldt University of Berlin,64,64,0,COMPLETE
+UNI-GE-0245,RWTH Aachen University,61,61,0,COMPLETE
+UNI-GE-0246,Freie Universität Berlin,76,76,0,COMPLETE
+UNI-GE-0247,University of Hamburg,68,68,0,COMPLETE
+UNI-GE-0248,Technical University of Berlin,70,70,0,COMPLETE
+UNI-GE-0249,University of Cologne,47,47,0,COMPLETE
+UNI-GE-0250,Goethe University Frankfurt,63,63,0,COMPLETE
+UNI-GE-0251,University of Stuttgart,40,40,0,PARTIAL
+UNI-GE-0252,TU Dresden,61,61,0,COMPLETE
+UNI-GE-0253,University of Bonn,45,45,0,COMPLETE
+UNI-GE-0254,University of Mannheim,38,38,0,PARTIAL
+UNI-GE-0255,KIT – Karlsruhe Institute of Technology,79,79,0,COMPLETE
+UNI-GE-0256,FAU Erlangen-Nuremberg,50,50,0,COMPLETE
+UNI-GE-0257,University of Münster,39,39,0,COMPLETE
+UNI-GE-0258,University of Tübingen,40,40,0,COMPLETE
+UNI-GE-0259,University of Würzburg,45,45,0,PARTIAL
+UNI-GE-0260,Jacobs University Bremen,25,25,0,PARTIAL
+UNI-UA-0261,Khalifa University,72,72,0,COMPLETE
+UNI-UA-0262,United Arab Emirates University,43,43,0,COMPLETE
+UNI-UA-0263,American University of Sharjah,48,48,0,PARTIAL
+UNI-UA-0264,University of Sharjah,48,48,0,PARTIAL
+UNI-UA-0265,Abu Dhabi University,16,16,0,PARTIAL
+UNI-UA-0266,American University in Dubai,19,19,0,PARTIAL
+UNI-UA-0267,Canadian University Dubai,19,19,0,PARTIAL
+UNI-UA-0268,Ajman University,23,23,0,PARTIAL
+UNI-UA-0269,Middlesex University Dubai,18,18,0,PARTIAL
+UNI-UA-0270,University of Wollongong in Dubai,17,17,0,PARTIAL
+UNI-UA-0271,Zayed University,22,22,0,PARTIAL
+UNI-UA-0272,British University in Dubai,16,16,0,PARTIAL
+UNI-UA-0273,Heriot-Watt University Dubai,40,40,0,PARTIAL
+UNI-UA-0274,Birmingham University Dubai,62,62,0,COMPLETE
+UNI-UA-0275,Amity University Dubai,24,24,0,PARTIAL
+UNI-UA-0276,Rochester Institute of Technology Dubai,21,21,0,PARTIAL
+UNI-UA-0277,Al Ain University,17,17,0,PARTIAL
+UNI-UA-0278,Gulf Medical University,22,22,0,PARTIAL
+UNI-UA-0279,Skyline University College,25,25,0,PARTIAL
+UNI-UA-0280,NYU Abu Dhabi,115,115,0,COMPLETE
+UNI-FR-0281,Sorbonne University,78,78,0,COMPLETE
+UNI-FR-0282,Université Paris-Saclay,63,63,0,COMPLETE
+UNI-FR-0283,PSL Research University,115,115,0,COMPLETE
+UNI-FR-0284,École Polytechnique,109,109,0,COMPLETE
+UNI-FR-0285,Université de Paris,63,63,0,COMPLETE
+UNI-FR-0286,University of Strasbourg,37,37,0,COMPLETE
+UNI-FR-0287,Aix-Marseille University,36,36,0,PARTIAL
+UNI-FR-0288,University of Bordeaux,36,36,0,COMPLETE
+UNI-FR-0289,Grenoble Alpes University,46,46,0,COMPLETE
+UNI-FR-0290,University of Montpellier,44,44,0,PARTIAL
+UNI-FR-0291,Claude Bernard University Lyon 1,38,38,0,PARTIAL
+UNI-FR-0292,Toulouse 1 Capitole University,16,16,0,PARTIAL
+UNI-FR-0293,Pantheon-Sorbonne University,38,38,0,PARTIAL
+UNI-FR-0294,Paris Nanterre University,21,21,0,PARTIAL
+UNI-FR-0295,University of Lille,23,23,0,PARTIAL
+UNI-FR-0296,University of Rennes 1,15,15,0,PARTIAL
+UNI-FR-0297,Nantes University,18,18,0,PARTIAL
+UNI-FR-0298,University of Côte d'Azur,17,17,0,PARTIAL
+UNI-FR-0299,Lorraine University,25,25,0,PARTIAL
+UNI-FR-0300,Paris-Panthéon-Assas University,16,16,0,PARTIAL
+UNI-NE-0301,University of Amsterdam,75,75,0,COMPLETE
+UNI-NE-0302,Delft University of Technology,115,115,0,COMPLETE
+UNI-NE-0303,Leiden University,60,60,0,COMPLETE
+UNI-NE-0304,Utrecht University,79,79,0,COMPLETE
+UNI-NE-0305,Erasmus University Rotterdam,62,62,0,COMPLETE
+UNI-NE-0306,University of Groningen,78,78,0,COMPLETE
+UNI-NE-0307,Wageningen University & Research,67,67,0,COMPLETE
+UNI-NE-0308,Vrije Universiteit Amsterdam,43,43,0,COMPLETE
+UNI-NE-0309,Radboud University,72,72,0,COMPLETE
+UNI-NE-0310,Maastricht University,43,43,0,COMPLETE
+UNI-NE-0311,Eindhoven University of Technology,63,63,0,COMPLETE
+UNI-NE-0312,Tilburg University,42,42,0,PARTIAL
+UNI-NE-0313,University of Twente,44,44,0,COMPLETE
+UNI-NE-0314,Hanze University of Applied Sciences,20,20,0,PARTIAL
+UNI-NE-0315,The Hague University of Applied Sciences,22,22,0,PARTIAL
+UNI-NE-0316,Breda University of Applied Sciences,23,23,0,PARTIAL
+UNI-NE-0317,Avans University of Applied Sciences,17,17,0,PARTIAL
+UNI-NE-0318,HZ University of Applied Sciences,22,22,0,PARTIAL
+UNI-NE-0319,Rotterdam University of Applied Sciences,23,23,0,PARTIAL
+UNI-NE-0320,Fontys University of Applied Sciences,20,20,0,PARTIAL
+UNI-IT-0321,University of Bologna,77,77,0,COMPLETE
+UNI-IT-0322,Sapienza University of Rome,61,61,0,COMPLETE
+UNI-IT-0323,University of Padua,41,41,0,COMPLETE
+UNI-IT-0324,University of Milan,39,39,0,COMPLETE
+UNI-IT-0325,Polytechnic University of Milan,75,75,0,COMPLETE
+UNI-IT-0326,University of Naples Federico II,43,43,0,PARTIAL
+UNI-IT-0327,University of Turin,47,47,0,PARTIAL
+UNI-IT-0328,University of Pisa,50,50,0,PARTIAL
+UNI-IT-0329,University of Florence,44,44,0,PARTIAL
+UNI-IT-0330,University of Trento,45,45,0,PARTIAL
+UNI-IT-0331,University of Milano-Bicocca,49,49,0,PARTIAL
+UNI-IT-0332,University of Genoa,22,22,0,PARTIAL
+UNI-IT-0333,University of Rome Tor Vergata,49,49,0,PARTIAL
+UNI-IT-0334,University of Pavia,36,36,0,PARTIAL
+UNI-IT-0335,University of Trieste,25,25,0,PARTIAL
+UNI-IT-0336,University of Bari Aldo Moro,15,15,0,PARTIAL
+UNI-IT-0337,University of Perugia,25,25,0,PARTIAL
+UNI-IT-0338,University of Siena,23,23,0,PARTIAL
+UNI-IT-0339,Polytechnic University of Turin,38,38,0,COMPLETE
+UNI-IT-0340,University of Salerno,25,25,0,PARTIAL
+UNI-MA-0341,University of Malta,23,23,0,PARTIAL
+UNI-MA-0342,"Malta College of Arts, Science and Technology",25,25,0,PARTIAL
+UNI-MA-0343,American University of Malta,18,18,0,PARTIAL
+UNI-MA-0344,Global College Malta,25,25,0,PARTIAL
+UNI-MA-0345,Advenio Academy,15,15,0,PARTIAL
+UNI-MA-0346,Domain Academy,19,19,0,PARTIAL
+UNI-MA-0347,EEC-ITIS Malta Tourism Institute,25,25,0,PARTIAL
+UNI-MA-0348,London School of Commerce Malta,16,16,0,PARTIAL
+UNI-MA-0349,Pegasus Open University Malta,17,17,0,PARTIAL
+UNI-MA-0350,Saint Martin's Institute of Higher Education,20,20,0,PARTIAL
+UNI-MA-0351,Triagon Academy Malta,20,20,0,PARTIAL
+UNI-MA-0352,Middlesex University Malta,15,15,0,PARTIAL
+UNI-MA-0353,GBSB Global Business School Malta,23,23,0,PARTIAL
+UNI-MA-0354,Institute of Tourism Studies Malta,22,22,0,PARTIAL
+UNI-MA-0355,United Campus Malta,17,17,0,PARTIAL
+UNI-MA-0356,European Graduate School Malta,21,21,0,PARTIAL
+UNI-MA-0357,Queen Mary University of London Malta,61,61,0,COMPLETE
+UNI-MA-0358,Barts London School of Medicine Malta,61,61,0,COMPLETE
+UNI-MA-0359,HandsOn Academy Malta,22,22,0,PARTIAL
+UNI-MA-0360,Learnkey Training Institute,19,19,0,PARTIAL
+UNI-CY-0361,University of Cyprus,40,40,0,PARTIAL
+UNI-CY-0362,Cyprus University of Technology,17,17,0,PARTIAL
+UNI-CY-0363,University of Nicosia,15,15,0,PARTIAL
+UNI-CY-0364,European University Cyprus,18,18,0,PARTIAL
+UNI-CY-0365,Frederick University,22,22,0,PARTIAL
+UNI-CY-0366,Open University of Cyprus,15,15,0,PARTIAL
+UNI-CY-0367,Neapolis University Pafos,23,23,0,PARTIAL
+UNI-CY-0368,University of Central Lancashire Cyprus,25,25,0,PARTIAL
+UNI-CY-0369,Philips University,24,24,0,PARTIAL
+UNI-CY-0370,American University of Cyprus,23,23,0,PARTIAL
+UNI-CY-0371,Cyprus International Institute of Management,25,25,0,PARTIAL
+UNI-CY-0372,Cyprus International University,21,21,0,PARTIAL
+UNI-CY-0373,Near East University,23,23,0,PARTIAL
+UNI-CY-0374,Eastern Mediterranean University,25,25,0,PARTIAL
+UNI-CY-0375,European University of Lefke,25,25,0,PARTIAL
+UNI-CY-0376,Girne American University,20,20,0,PARTIAL
+UNI-CY-0377,Cyprus West University,17,17,0,PARTIAL
+UNI-CY-0378,Rauf Denktas University,19,19,0,PARTIAL
+UNI-CY-0379,Cyprus Science University,15,15,0,PARTIAL
+UNI-CY-0380,City Unity College Nicosia,16,16,0,PARTIAL
+UNI-SO-0381,Seoul National University,114,114,0,COMPLETE
+UNI-SO-0382,KAIST,78,78,0,COMPLETE
+UNI-SO-0383,Yonsei University,76,76,0,COMPLETE
+UNI-SO-0384,Korea University,75,75,0,COMPLETE
+UNI-SO-0385,POSTECH,72,72,0,COMPLETE
+UNI-SO-0386,Sungkyunkwan University,72,72,0,COMPLETE
+UNI-SO-0387,Hanyang University,67,67,0,COMPLETE
+UNI-SO-0388,Kyung Hee University,48,48,0,PARTIAL
+UNI-SO-0389,Ewha Womans University,49,49,0,PARTIAL
+UNI-SO-0390,Sogang University,17,17,0,PARTIAL
+UNI-SO-0391,Chung-Ang University,49,49,0,PARTIAL
+UNI-SO-0392,Pusan National University,25,25,0,PARTIAL
+UNI-SO-0393,Kyungpook National University,25,25,0,PARTIAL
+UNI-SO-0394,Ajou University,19,19,0,PARTIAL
+UNI-SO-0395,Inha University,22,22,0,PARTIAL
+UNI-SO-0396,Konkuk University,21,21,0,PARTIAL
+UNI-SO-0397,Dongguk University,18,18,0,PARTIAL
+UNI-SO-0398,Seoultech,22,22,0,PARTIAL
+UNI-SO-0399,GIST,44,44,0,PARTIAL
+UNI-SO-0400,UNIST,72,72,0,COMPLETE

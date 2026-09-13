@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/data-review/layout,_N_T_/admin/data-review/page,_N_T_/admin/data-review"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/admin/data-review/__PAGE__",
+    "/admin/data-review",
+    "/admin",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -1,0 +1,8 @@
+url,source_name,http_status,final_url,soft_404,checked_at,status
+https://gostudyin.com/robots.txt,GoStudyIn,200,https://gostudyin.com/robots.txt,NO,2026-07-31T20:29:48.700Z,SOURCE_FOUND
+https://www.tclglobal.co.uk/robots.txt,TCL Global,200,https://www.tclglobal.co.uk/robots.txt,NO,2026-07-31T20:29:48.700Z,SOURCE_FOUND
+https://www.studies-overseas.com/robots.txt,Studies Overseas,200,https://www.studies-overseas.com/robots.txt,NO,2026-07-31T20:29:48.700Z,SOURCE_FOUND
+https://www.topuniversities.com/robots.txt,TopUniversities,200,https://www.topuniversities.com/robots.txt,NO,2026-07-31T20:29:48.700Z,SOURCE_FOUND
+https://www.gradding.com/robots.txt,Gradding,200,https://www.gradding.com/robots.txt,NO,2026-07-31T20:29:48.700Z,SOURCE_FOUND
+https://coursefind.app/robots.txt,Coursefind,200,https://coursefind.app/robots.txt,NO,2026-07-31T20:29:48.700Z,SOURCE_FOUND
+https://search.coursefind.app/robots.txt,Coursefind Search,200,https://search.coursefind.app/robots.txt,NO,2026-07-31T20:29:48.700Z,SOURCE_FOUND

@@ -3,24 +3,18 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
   ArrowLeft, Search, MapPin, GraduationCap, Award, Users, Building2,
   Phone, Mail, Clock, FileText, Shield, Globe, BookOpen, Star,
-  DollarSign, Heart, GitCompare, ChevronRight, CheckCircle2, Briefcase, Calendar, Info, AlertTriangle, ArrowRight, Loader2, Scale
 } from 'lucide-react';
-import Image from 'next/image';
-import { toast } from 'sonner';
-import { getCourseImage, getUniversityCampusImage, getDestinationImage } from '@/components/website/ImageMapping';
-import { CourseCompareEnhanced } from '@/components/course-finder/course-compare-enhanced';
 
 import FloatingActionWidget from '@/components/website/FloatingActionWidget';
 import { usePortalStore } from '@/lib/stores/portal-store';
@@ -155,49 +149,35 @@ export function PublicCourseFinderPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
                   >
-                    <Link href={`/courses/${c.slug || c.courseId}`}>
-                      <Card className="hover:shadow-md transition-shadow h-full overflow-hidden flex flex-col bg-white border">
-                        {/* Course Card Top Image */}
-                        <div className="relative h-32 w-full overflow-hidden bg-slate-100 shrink-0">
-                          <Image
-                            src={getCourseImage(c.subjectArea || c.courseTitle)}
-                            alt={c.courseTitle || 'Course'}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 20vw"
-                            className="object-cover"
-                          />
-                        </div>
-                        <div className="p-4 flex flex-col flex-grow gap-2">
-                          <div className="flex items-start justify-between">
-                            <Badge variant="secondary" className="bg-blue-50 text-[#0057B8] text-[10px]">
-                              {c.studyLevel || c.level || 'Course'}
-                            </Badge>
-                            {c.yearlyTuition && (
-                              <span className="text-xs font-semibold text-slate-700">
-                                {c.tuitionCurrency || '$'}{c.yearlyTuition.toLocaleString()}/yr
-                              </span>
-                            )}
-                          </div>
-                          <h3 className="font-bold text-xs text-slate-800 line-clamp-2 min-h-[32px] leading-snug">
-                            {c.courseTitle || c.name || c.title}
-                          </h3>
-                          <p className="text-xs text-slate-600 flex items-center gap-1.5">
-                            <Building2 className="h-3 w-3 shrink-0" />
-                            <span className="truncate">{c.universityName || c.university || 'University'}</span>
-                          </p>
-                          <div className="flex items-center gap-3 text-[10px] text-slate-400 mt-auto pt-2 border-t border-slate-100">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="h-3 w-3" /> {c.country || '—'}
-                            </span>
-                            {c.durationMonths && (
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" /> {c.durationMonths} months
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </Card>
-                    </Link>
+                    <Card className="p-5 hover:shadow-md transition-shadow h-full">
+                      <div className="flex items-start justify-between mb-2">
+                        <Badge variant="secondary" className="bg-blue-50 text-[#0057B8]">
+                          {c.studyLevel || c.level || 'Course'}
+                        </Badge>
+                        {c.tuitionFee && (
+                          <span className="text-xs font-semibold text-slate-700">
+                            ${(c.tuitionFee / 1000).toFixed(0)}k/yr
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-2">
+                        {c.courseTitle || c.name || c.title}
+                      </h3>
+                      <p className="text-sm text-slate-600 mb-3 flex items-center gap-1">
+                        <Building2 className="h-3.5 w-3.5" />
+                        {c.universityName || c.university || 'University'}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3" /> {c.country || '—'}
+                        </span>
+                        {c.duration && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {c.duration}
+                          </span>
+                        )}
+                      </div>
+                    </Card>
                   </motion.div>
                 ))}
               </div>
@@ -277,43 +257,20 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
 
   if (!data) {
     return (
-      <PublicShell 
-        title="Study Destinations" 
-        badge="GLOBAL OPPORTUNITIES"
-        subtitle="Explore key facts, entry criteria, visa checklists, tuition budgets, and stay-back work rights for major study destinations."
-      >
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Object.entries(DESTINATION_DATA).map(([s, d]) => {
-            const countryImage = getDestinationImage(s);
-            return (
-              <Link href={`/destinations/${s}`} key={s} className="group">
-                <Card className="overflow-hidden bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col h-full rounded-2xl">
-                  <div className="h-44 w-full overflow-hidden relative">
-                    <img 
-                      src={countryImage} 
-                      alt={d.name} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                    />
-                    <div className="absolute top-3 left-3 bg-black/60 text-white text-3xl h-10 w-10 flex items-center justify-center rounded-xl backdrop-blur-md">
-                      {d.flag}
-                    </div>
-                  </div>
-
-                  <div className="p-5 flex flex-col justify-between flex-1">
-                    <div>
-                      <h3 className="text-lg font-bold text-[#0F172A] mb-2 group-hover:text-[#0057B8] transition-colors">{d.name}</h3>
-                      <p className="text-xs text-slate-600 mb-4 line-clamp-2 leading-relaxed">{d.desc}</p>
-                    </div>
-                    
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold">
-                      <span className="text-slate-500">{d.topUnis.length} Top Universities</span>
-                      <span className="text-[#E8501A] flex items-center gap-0.5">Explore Guide <ArrowRight className="h-3 w-3" /></span>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            );
-          })}
+      <PublicShell title="Destinations" subtitle="Choose your study destination">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Object.entries(DESTINATION_DATA).map(([s, d]) => (
+            <Card
+              key={s}
+              className="p-6 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => setPublicPage('public-destination', s)}
+            >
+              <div className="text-4xl mb-3">{d.flag}</div>
+              <h3 className="text-xl font-bold text-[#0F172A] mb-1">{d.name}</h3>
+              <p className="text-sm text-slate-600 mb-3 line-clamp-2">{d.desc}</p>
+              <div className="text-xs text-[#0057B8] font-semibold">{d.topUnis.length}+ top universities</div>
+            </Card>
+          ))}
         </div>
       </PublicShell>
     );
@@ -447,59 +404,39 @@ export function PublicUniversitiesPage() {
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {universities.map((u: any, i) => {
-            const campusImage = getUniversityCampusImage(u.id || u.universityId || '', u.name);
-            const uniSlug = u.slug || u.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            return (
-              <motion.div key={u.id || u.universityId || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}>
-                <Link href={`/universities/${uniSlug}`} className="group block h-full">
-                  <Card className="hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between overflow-hidden rounded-2xl h-full bg-white">
-                    <div>
-                      <div className="h-40 w-full overflow-hidden relative">
-                        <img 
-                          src={campusImage} 
-                          alt={u.name} 
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                        />
-                        <div className="absolute top-3 left-3 bg-[#0057B8] text-white text-xs font-bold px-2.5 py-1 rounded-lg">
-                          {u.country || 'Partner'}
-                        </div>
-                        {u.worldRanking && (
-                          <div className="absolute top-3 right-3 bg-white/90 text-[#E8501A] text-xs font-bold px-2 py-1 rounded-lg shadow-sm border border-slate-200">
-                            QS Rank #{u.worldRanking}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="p-5">
-                        <h3 className="font-bold text-[#0F172A] text-base mb-1.5 line-clamp-2 group-hover:text-[#0057B8] transition-colors">{u.name}</h3>
-                        <p className="text-xs text-slate-600 mb-3 flex items-center gap-1">
-                          <MapPin className="h-3.5 w-3.5 text-[#E8501A]" /> {u.city || 'Campus'}, {u.country}
-                        </p>
-                        
-                        <div className="flex items-center gap-3 text-xs text-slate-500 pt-2 border-t border-slate-100">
-                          {u.founded && <span>Est. {u.founded}</span>}
-                          {u.students && <span>{u.students} Students</span>}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-5 pt-0 flex justify-between items-center text-xs">
-                      {u.ieltsMin ? (
-                        <div>
-                          <span className="text-slate-500">IELTS overall: </span>
-                          <span className="font-bold text-[#0057B8]">{u.ieltsMin}</span>
-                        </div>
-                      ) : (
-                        <div />
-                      )}
-                      <span className="text-[#E8501A] font-bold flex items-center gap-0.5">Profile Guide <ArrowRight className="h-3.5 w-3.5" /></span>
-                    </div>
-                  </Card>
-                </Link>
-              </motion.div>
-            );
-          })}
+          {universities.map((u: any, i) => (
+            <motion.div key={u.id || u.universityId || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}>
+              <Card className="p-5 hover:shadow-md transition-shadow h-full">
+                <div className="flex items-start justify-between mb-3">
+                  <div
+                    className="h-12 w-12 rounded-xl flex items-center justify-center text-white font-bold"
+                    style={{ backgroundColor: '#0057B8' }}
+                  >
+                    {u.name?.[0] || 'U'}
+                  </div>
+                  {u.worldRanking && (
+                    <Badge variant="secondary" className="bg-orange-50 text-[#E8501A]">
+                      Rank #{u.worldRanking}
+                    </Badge>
+                  )}
+                </div>
+                <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-2">{u.name}</h3>
+                <p className="text-sm text-slate-600 mb-3 flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5" /> {u.city}, {u.country}
+                </p>
+                <div className="flex items-center gap-3 text-xs text-slate-500 mb-3">
+                  {u.founded && <span>Est. {u.founded}</span>}
+                  {u.students && <span>{u.students} students</span>}
+                </div>
+                {u.ieltsMin && (
+                  <div className="text-xs">
+                    <span className="text-slate-500">IELTS min: </span>
+                    <span className="font-semibold text-[#0057B8]">{u.ieltsMin}</span>
+                  </div>
+                )}
+              </Card>
+            </motion.div>
+          ))}
         </div>
       )}
     </PublicShell>
@@ -1005,176 +942,6 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
   );
 }
 
-export function EnglishTestComparisonPage() {
-  const [ieltsInput, setIeltsInput] = useState<number>(6.5);
-
-  const getEquivalents = (score: number) => {
-    if (score >= 8.5) return { pte: "85+", toefl: "115-120", det: "155+", oet: "Grade A", oietc: "Level 10+" };
-    if (score >= 8.0) return { pte: "79-84", toefl: "110-114", det: "145-150", oet: "Grade A", oietc: "Level 9-10" };
-    if (score >= 7.5) return { pte: "73-78", toefl: "102-109", det: "135-140", oet: "Grade B (390+)", oietc: "Level 9" };
-    if (score >= 7.0) return { pte: "65-72", toefl: "94-101", det: "125-130", oet: "Grade B (350+)", oietc: "Level 8" };
-    if (score >= 6.5) return { pte: "58-64", toefl: "79-93", det: "115-120", oet: "Grade B (350)", oietc: "Level 7" };
-    if (score >= 6.0) return { pte: "50-57", toefl: "60-78", det: "105-110", oet: "Grade C+", oietc: "Level 6" };
-    if (score >= 5.5) return { pte: "42-49", toefl: "46-59", det: "95-100", oet: "Grade C", oietc: "Level 5" };
-    return { pte: "Under 42", toefl: "Under 46", det: "Under 95", oet: "Grade D/E", oietc: "Level 4" };
-  };
-
-  const equiv = getEquivalents(ieltsInput);
-
-  const testMatrix = [
-    { name: "IELTS Academic", slug: "ielts", format: "Center (Paper/Computer)", duration: "2h 45m", scale: "0 - 9.0", cost: "BDT 23,000", results: "3-13 Days", validity: "2 Years", accepted: "UK, USA, Australia, Canada, NZ, Ireland", bestFor: "Standard Global Admission" },
-    { name: "IELTS for UKVI", slug: "ielts-ukvi", format: "Center (Paper/Computer)", duration: "2h 45m", scale: "0 - 9.0", cost: "BDT 24,850", results: "13 Days", validity: "2 Years", accepted: "United Kingdom (SELT)", bestFor: "UK Student Visa (SELT)" },
-    { name: "PTE Academic", slug: "pte", format: "Center (Computer)", duration: "2h", scale: "10 - 90", cost: "BDT 21,000", results: "48 Hours", validity: "2 Years", accepted: "Australia, UK, NZ, Ireland, Canada", bestFor: "Fast results & Australian migration" },
-    { name: "TOEFL iBT", slug: "toefl", format: "Center or Home Online", duration: "2h", scale: "0 - 120", cost: "BDT 22,000", results: "4-8 Days", validity: "2 Years", accepted: "USA, Canada, UK, Australia, NZ", bestFor: "US & Canadian Ivy Leagues" },
-    { name: "Duolingo English", slug: "duolingo", format: "Home-based Online", duration: "1h", scale: "10 - 160", cost: "USD $59 (~BDT 7,500)", results: "48 Hours", validity: "2 Years", accepted: "USA, UK, Canada, Ireland (selected)", bestFor: "Budget-friendly home testing" },
-    { name: "OET (Healthcare)", slug: "oet", format: "Center (Paper/Computer)", duration: "3h", scale: "0 - 500 (A-E)", cost: "AUD $587 (~BDT 46,000)", results: "16 Days", validity: "2 Years", accepted: "UK, USA, Australia, Ireland, Canada", bestFor: "Doctors, Nurses & Healthcare roles" },
-    { name: "LanguageCert", slug: "languagecert", format: "Online or Center", duration: "2.5h", scale: "0 - 50/module", cost: "£180 (~BDT 27,000)", results: "3 Days", validity: "Lifetime", accepted: "UK, Europe, Selected Universities", bestFor: "Last-minute admissions & UKVI" },
-    { name: "OIETC / ELLT", slug: "oietc", format: "Online Portal + Video", duration: "2.5h", scale: "Level 1 - 12", cost: "£120 (~BDT 18,500)", results: "48 Hours", validity: "2 Years", accepted: "UK & European Partners", bestFor: "Flexible partner admission" }
-  ];
-
-  return (
-    <div className="min-h-screen bg-slate-50">
-      <main className="pt-24 pb-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
-            <a href="/" className="hover:text-[#0057B8]">Home</a>
-            <span>›</span>
-            <a href="/language-prep" className="hover:text-[#0057B8]">Language Prep</a>
-            <span>›</span>
-            <span className="text-[#0057B8] font-bold">English Test Comparison</span>
-          </nav>
-
-          {/* Hero */}
-          <div className="bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl p-8 md:p-10 text-white mb-10 shadow-xl">
-            <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1 mb-4 uppercase">
-              SELT & Academic Comparison
-            </Badge>
-            <h1 className="text-3xl md:text-5xl font-black mb-3">English Test Comparison Matrix</h1>
-            <p className="text-base text-blue-100 max-w-2xl">
-              Compare duration, fees, results release turnaround, and country acceptances side-by-side to choose the right exam for your study abroad applications.
-            </p>
-          </div>
-
-          {/* Converter Widget */}
-          <Card className="p-6 md:p-8 mb-10 border-slate-200 shadow-sm bg-gradient-to-br from-blue-50/40 to-white">
-            <h2 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
-              <Scale className="h-6 w-6 text-[#E8501A]" /> Interactive Score Equivalencies Converter
-            </h2>
-            <p className="text-xs text-slate-500 mb-6">Drag the slider to match your IELTS Academic score with other proficiency exams.</p>
-            
-            <div className="max-w-xl mb-8">
-              <div className="flex justify-between text-sm font-bold text-slate-700 mb-2">
-                <span>Target IELTS Band:</span>
-                <span className="text-2xl font-black text-[#0057B8]">{ieltsInput}</span>
-              </div>
-              <input
-                type="range"
-                min="4.5"
-                max="9.0"
-                step="0.5"
-                value={ieltsInput}
-                onChange={(e) => setIeltsInput(parseFloat(e.target.value))}
-                className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#E8501A]"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              <div className="p-4 bg-white rounded-xl border border-slate-200 text-center">
-                <p className="text-[10px] uppercase font-bold text-slate-400">PTE Academic</p>
-                <p className="text-lg font-extrabold text-slate-800 mt-1">{equiv.pte}</p>
-              </div>
-              <div className="p-4 bg-white rounded-xl border border-slate-200 text-center">
-                <p className="text-[10px] uppercase font-bold text-slate-400">TOEFL iBT</p>
-                <p className="text-lg font-extrabold text-slate-800 mt-1">{equiv.toefl}</p>
-              </div>
-              <div className="p-4 bg-white rounded-xl border border-slate-200 text-center">
-                <p className="text-[10px] uppercase font-bold text-slate-400">Duolingo (DET)</p>
-                <p className="text-lg font-extrabold text-slate-800 mt-1">{equiv.det}</p>
-              </div>
-              <div className="p-4 bg-white rounded-xl border border-slate-200 text-center">
-                <p className="text-[10px] uppercase font-bold text-slate-400">OET Grade</p>
-                <p className="text-lg font-extrabold text-slate-800 mt-1">{equiv.oet}</p>
-              </div>
-              <div className="p-4 bg-white rounded-xl border border-slate-200 text-center">
-                <p className="text-[10px] uppercase font-bold text-slate-400">OIETC Level</p>
-                <p className="text-lg font-extrabold text-slate-800 mt-1">{equiv.oietc}</p>
-              </div>
-            </div>
-          </Card>
-
-          {/* Matrix Table */}
-          <Card className="shadow-sm border-slate-200 overflow-hidden mb-10 bg-white">
-            <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/70">
-              <h2 className="text-lg font-bold text-slate-900">Side-by-Side Comparison Matrix</h2>
-              <p className="text-xs text-slate-500">Official fees, scoring scales, and validity parameters last verified for 2026/27 intakes.</p>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
-                    <th className="p-4 font-bold">Exam</th>
-                    <th className="p-4 font-bold">Format / Delivery</th>
-                    <th className="p-4 font-bold">Duration</th>
-                    <th className="p-4 font-bold">Score Range</th>
-                    <th className="p-4 font-bold">Approx. Cost (BDT)</th>
-                    <th className="p-4 font-bold">Results Released</th>
-                    <th className="p-4 font-bold">Accepted Countries</th>
-                    <th className="p-4 font-bold">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700">
-                  {testMatrix.map((t, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/50 transition">
-                      <td className="p-4 font-bold text-slate-900">{t.name}</td>
-                      <td className="p-4">{t.format}</td>
-                      <td className="p-4">{t.duration}</td>
-                      <td className="p-4 font-semibold text-[#0057B8]">{t.scale}</td>
-                      <td className="p-4 font-semibold text-emerald-700">{t.cost}</td>
-                      <td className="p-4">{t.results}</td>
-                      <td className="p-4 font-medium">{t.accepted}</td>
-                      <td className="p-4">
-                        <a href={`/english-tests/${t.slug}`}>
-                          <Button size="sm" className="bg-[#0057B8] hover:bg-blue-700 text-white font-bold text-[10px]">
-                            View Details
-                          </Button>
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-
-          {/* CTA Box */}
-          <Card className="p-8 bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white text-center rounded-3xl">
-            <h3 className="text-2xl font-bold mb-2">Still Unsure Which English Test to Book?</h3>
-            <p className="text-slate-300 text-sm max-w-xl mx-auto mb-6">
-              Our academic counselors will evaluate your target universities, study level, and timelines to recommend the easiest test for your admissions.
-            </p>
-            <div className="flex justify-center gap-3">
-              <a href="/book-consultation">
-                <Button className="bg-[#E8501A] hover:bg-[#c73e10] text-white font-bold px-6 py-3 rounded-xl shadow-lg">
-                  Talk to Test Expert
-                </Button>
-              </a>
-              <a href="/language-prep">
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold px-6 py-3 rounded-xl">
-                  Back to Directory
-                </Button>
-              </a>
-            </div>
-          </Card>
-
-        </div>
-      </main>
-    </div>
-  );
-}
-
 // ============================================================
 // LANGUAGE PREP / ENGLISH TEST PAGE
 // ============================================================
@@ -1183,11 +950,7 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
   const MasterTestPrepView = require('@/components/website/MasterTestPrepView').default;
 
   if (slug) {
-    const cleanSlug = slug.toLowerCase().trim();
-    if (cleanSlug === 'comparison') {
-      return <EnglishTestComparisonPage />;
-    }
-    const testData = getTestPrepBySlug(cleanSlug);
+    const testData = getTestPrepBySlug(slug);
     if (testData) {
       return <MasterTestPrepView test={testData} />;
     }
@@ -1887,659 +1650,233 @@ export function PublicUniversityDetail({ slug }: { slug: string | null }) {
 }
 
 export function PublicCourseDetail({ slug }: { slug: string | null }) {
-  const [course, setCourse] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isSaved, setIsSaved] = useState(false);
-  const [isCompared, setIsCompared] = useState(false);
-
-  const isAuthenticated = usePortalStore((s) => s.isAuthenticated);
-
-  useEffect(() => {
-    if (!slug) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    fetch(`/api/courses/${slug}`)
-      .then((r) => r.json())
-      .then((res) => {
-        if (res.success && res.data) {
-          setCourse(res.data);
-          setError(null);
-        } else {
-          setError(res.error || 'Course not found');
-        }
-      })
-      .catch(() => {
-        setError('Failed to load course details. Please try again.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [slug]);
-
-  useEffect(() => {
-    if (course) {
-      // Check compare status
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('alo_compare_courses');
-        if (stored) {
-          try {
-            const list = JSON.parse(stored);
-            setIsCompared(list.includes(course.courseId));
-          } catch {
-            setIsCompared(false);
-          }
-        }
-      }
-      // Check shortlist status
-      if (isAuthenticated) {
-        fetch('/api/student/shortlist')
-          .then((r) => r.json())
-          .then((res) => {
-            if (res.success && res.data) {
-              const matches = res.data.some(
-                (item: any) => item.notes === course.courseId || item.courseName === course.courseTitle
-              );
-              setIsSaved(matches);
-            }
-          })
-          .catch(() => {});
-      }
-    }
-  }, [course, isAuthenticated]);
-
-  const handleSaveCourse = async () => {
-    if (!isAuthenticated) {
-      toast.error('Please log in to save courses to your profile.');
-      return;
-    }
-    try {
-      const action = isSaved ? 'remove' : 'add';
-      const res = await fetch('/api/student/shortlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          courseId: course.courseId,
-          courseName: course.courseTitle,
-          universityName: course.university?.name || 'University',
-          country: course.country,
-          level: course.studyLevel,
-          tuitionFee: course.tuitionFee ? `${course.currency} ${course.tuitionFee.toLocaleString()}` : 'Contact us',
-          intake: course.intakes?.[0] ? `${course.intakes[0].intakeMonth} ${course.intakes[0].intakeYear}` : 'Upcoming',
-          action,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setIsSaved(!isSaved);
-        toast.success(action === 'add' ? 'Course added to shortlist!' : 'Course removed from shortlist!');
-      } else {
-        toast.error(data.error || 'Failed to save course');
-      }
-    } catch {
-      toast.error('Connection failed');
-    }
-  };
-
-  const handleCompareCourse = () => {
-    if (typeof window === 'undefined') return;
-    const stored = localStorage.getItem('alo_compare_courses');
-    let list: string[] = [];
-    if (stored) {
-      try {
-        list = JSON.parse(stored);
-      } catch {
-        list = [];
-      }
-    }
-    if (isCompared) {
-      list = list.filter((id) => id !== course.courseId);
-      setIsCompared(false);
-      localStorage.setItem('alo_compare_courses', JSON.stringify(list));
-      toast.success('Removed from comparison list');
-    } else {
-      if (list.length >= 5) {
-        toast.error('You can compare up to 5 courses at a time.');
-        return;
-      }
-      list.push(course.courseId);
-      setIsCompared(true);
-      localStorage.setItem('alo_compare_courses', JSON.stringify(list));
-      toast.success('Added to comparison list!');
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <Loader2 className="h-10 w-10 animate-spin text-[#0057B8] mx-auto mb-4" />
-        <p className="text-slate-500 font-medium">Loading official course details...</p>
-      </div>
-    );
-  }
-
-  if (error || !course) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Course Not Found</h2>
-        <p className="text-slate-500 mb-6">{error || 'We could not find the requested course details.'}</p>
-        <Link href="/course-finder">
-          <Button style={{ backgroundColor: '#0057B8', color: 'white' }}>
-            Back to Course Finder
-          </Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const university = course.university || {};
-  const campusImg = university.heroImageSourceUrl || getUniversityCampusImage(university.universityId, university.name);
-  const courseImg = getCourseImage(course.subjectArea || course.courseTitle);
-  const primaryReq = course.requirements || {};
-
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-      
-      {/* 1. Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-6 bg-slate-50 p-2.5 rounded-lg border border-slate-100 w-fit shrink-0">
-        <Link href="/" className="hover:text-[#0057B8] font-medium">Home</Link>
-        <ChevronRight size={10} className="text-slate-400" />
-        <Link href="/course-finder" className="hover:text-[#0057B8] font-medium">Course Finder</Link>
-        <ChevronRight size={10} className="text-slate-400" />
-        <span className="font-semibold text-slate-700 truncate max-w-[250px]">{course.courseTitle}</span>
-      </nav>
-
-      {/* 2. Course Detail Hero */}
-      <div className="relative w-full rounded-2xl border border-slate-100 overflow-hidden mb-8 shadow-sm">
-        
-        {/* Cover Campus Image */}
-        <div className="relative h-64 md:h-80 w-full bg-slate-100">
-          <Image
-            src={campusImg}
-            alt={`${university.name || 'University'} Campus`}
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/40 to-slate-900/10" />
-        </div>
-
-        {/* Hero Overlay Details */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex flex-col md:flex-row md:items-end gap-6 z-10">
-          
-          {/* Overlapping University Logo */}
-          <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl p-2.5 shadow-lg border border-slate-100 flex items-center justify-center shrink-0">
-            {university.logoSourceUrl ? (
-              <img
-                src={university.logoSourceUrl}
-                alt={university.name || 'Logo'}
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-            ) : (
-              <GraduationCap className="h-8 w-8 text-[#0057B8]" />
-            )}
-          </div>
-
-          {/* Texts */}
-          <div className="flex-1 min-w-0 text-white space-y-1.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge className="bg-[#0057B8] text-white hover:bg-[#0057B8] border-0 text-[10px] font-bold tracking-wide uppercase px-2.5 py-0.5">
-                {course.studyLevel}
-              </Badge>
-              {university.ranking > 0 && (
-                <Badge className="bg-amber-500 text-white hover:bg-amber-500 border-0 text-[10px] font-bold px-2.5 py-0.5 flex items-center gap-1 shadow-sm">
-                  <Star size={10} className="fill-current" /> Rank #{university.ranking}
-                </Badge>
-              )}
-            </div>
-            <h1 className="text-xl md:text-3xl font-extrabold tracking-tight leading-tight line-clamp-2 drop-shadow-sm">
-              {course.courseTitle}
-            </h1>
-            <p className="text-xs md:text-sm font-semibold text-slate-200 flex items-center gap-1.5">
-              <Building2 size={14} className="shrink-0" />
-              <span className="truncate">{university.name}</span>
-              <span className="text-slate-400 font-normal">|</span>
-              <MapPin size={14} className="shrink-0" />
-              <span>{course.city || university.city}, {course.country || university.country}</span>
+    <PublicShell
+      title={`Course Details: ${slug ? slug.replace(/-/g, ' ').toUpperCase() : 'Overview'}`}
+      badge="COURSE CATALOGUE"
+      subtitle="Full entry criteria, IELTS score requirements, tuition fees, and application guidance."
+    >
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="p-6">
+            <h3 className="text-xl font-bold text-slate-900 mb-3">Program Overview</h3>
+            <p className="text-slate-700 text-sm leading-relaxed mb-4">
+              Detailed entry requirements, academic prerequisites, English language waivers, deposit requirements, and post-study career opportunities for international students.
             </p>
-          </div>
+            <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+              <div>
+                <p className="text-xs text-slate-500 font-medium">Study Level</p>
+                <p className="text-sm font-semibold text-slate-900">Undergraduate / Postgraduate Taught</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 font-medium">Duration</p>
+                <p className="text-sm font-semibold text-slate-900">1 to 3 Years (Full-Time)</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 font-medium">English Language Requirement</p>
+                <p className="text-sm font-semibold text-[#0057B8]">IELTS 6.5 (Min 6.0 components)</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 font-medium">Application Deadline</p>
+                <p className="text-sm font-semibold text-[#E8501A]">Open for Upcoming Intake</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-6">
+            <h3 className="text-lg font-bold text-slate-900 mb-3">Academic Entry Requirements</h3>
+            <ul className="space-y-2 text-sm text-slate-700 list-disc list-inside">
+              <li>High School Certificate (HSC) / A-Levels or Bachelor's Degree from a recognized institution.</li>
+              <li>Minimum GPA equivalent: 3.0 / 4.0 or 60% overall score.</li>
+              <li>Proof of English Proficiency (IELTS Academic, PTE, Duolingo, or MOI letter where accepted).</li>
+              <li>Valid Passport & Statement of Purpose (SOP).</li>
+            </ul>
+          </Card>
         </div>
 
-      </div>
-
-      {/* 3. Main Two-Column Structure */}
-      <div className="grid lg:grid-cols-12 gap-8">
-        
-        {/* Left Column: Details (approx. 65-70% width) */}
-        <div className="lg:col-span-8 space-y-8">
-          
-          {/* Quick Facts Section */}
-          <Card className="border border-slate-100 shadow-sm bg-white overflow-hidden">
-            <div className="p-4 md:p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
-              <Info size={16} className="text-[#0057B8]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">Quick Summary</h3>
-            </div>
-            <CardContent className="p-6 grid grid-cols-2 md:grid-cols-3 gap-6">
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Degree / Qualification</span>
-                <span className="text-sm font-bold text-slate-800">{course.qualification || 'Not available'}</span>
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Study Level</span>
-                <span className="text-sm font-bold text-slate-800">{course.studyLevel || 'Not available'}</span>
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Duration</span>
-                <span className="text-sm font-bold text-slate-800">{course.durationMonths ? `${course.durationMonths} months` : 'Not available'}</span>
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Subject Area</span>
-                <span className="text-sm font-bold text-slate-800">{course.subjectArea || 'Not available'}</span>
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Study Mode</span>
-                <span className="text-sm font-bold text-slate-800">{course.deliveryMode || 'Full-time On Campus'}</span>
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider mb-0.5">Location / Campus</span>
-                <span className="text-sm font-bold text-slate-800">{course.campus || 'Main Campus'}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Academic Entry Criteria */}
-          <Card className="border border-slate-100 shadow-sm bg-white overflow-hidden">
-            <div className="p-4 md:p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
-              <GraduationCap size={16} className="text-[#0057B8]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">Academic Entry Requirements</h3>
-            </div>
-            <CardContent className="p-6 space-y-5">
-              <div className="flex gap-3 items-start">
-                <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs font-bold text-slate-700 uppercase mb-1">Academic Prerequisites</h4>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {primaryReq.academicReq || 'Not currently available. Please contact ALO Education counselors for specific qualifications review.'}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider block mb-1">Minimum Scores / GPA</span>
-                  <p className="text-xs text-slate-800 font-semibold leading-relaxed">
-                    {primaryReq.minScore ? `Minimum score: ${primaryReq.minScore} (${primaryReq.gradingSystem || 'Scale'})` : 'Not currently available'}
-                  </p>
-                </div>
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider block mb-1">Prerequisite Subjects</span>
-                  <p className="text-xs text-slate-800 font-semibold leading-relaxed">
-                    {primaryReq.prerequisiteSubjects || 'None specified'}
-                  </p>
-                </div>
-              </div>
-
-              {primaryReq.acceptedQualifications && (
-                <div className="pt-4 border-t border-slate-100">
-                  <h4 className="text-xs font-bold text-slate-700 uppercase mb-1.5">Accepted Qualifications</h4>
-                  <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100">
-                    {primaryReq.acceptedQualifications}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* English Requirements */}
-          <Card className="border border-slate-100 shadow-sm bg-white overflow-hidden">
-            <div className="p-4 md:p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
-              <Award size={16} className="text-[#0057B8]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">English Language Requirements</h3>
-            </div>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="text-center p-3 rounded-xl border bg-slate-50/50">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">IELTS Overall</span>
-                  <span className="text-lg font-extrabold text-slate-800">{primaryReq.ieltsOverall > 0 ? primaryReq.ieltsOverall : 'N/A'}</span>
-                  <span className="text-[9px] text-slate-400 block mt-0.5">Min band: {primaryReq.ieltsMinBand > 0 ? primaryReq.ieltsMinBand : 'N/A'}</span>
-                </div>
-                <div className="text-center p-3 rounded-xl border bg-slate-50/50">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">PTE Academic</span>
-                  <span className="text-lg font-extrabold text-slate-800">{primaryReq.pteOverall > 0 ? primaryReq.pteOverall : 'N/A'}</span>
-                  <span className="text-[9px] text-slate-400 block mt-0.5">Min band: {primaryReq.pteMinBand > 0 ? primaryReq.pteMinBand : 'N/A'}</span>
-                </div>
-                <div className="text-center p-3 rounded-xl border bg-slate-50/50">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">TOEFL iBT</span>
-                  <span className="text-lg font-extrabold text-slate-800">{primaryReq.toeflOverall > 0 ? primaryReq.toeflOverall : 'N/A'}</span>
-                </div>
-                <div className="text-center p-3 rounded-xl border bg-slate-50/50">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Duolingo (DET)</span>
-                  <span className="text-lg font-extrabold text-slate-800">{primaryReq.detOverall > 0 ? primaryReq.detOverall : 'N/A'}</span>
-                </div>
-              </div>
-
-              <div className="space-y-3 pt-4 border-t border-slate-100 text-xs">
-                <div className="flex justify-between py-1">
-                  <span className="text-slate-500 font-medium">Medium of Instruction (MOI) Waiver:</span>
-                  <span className="font-semibold text-slate-800">{primaryReq.moiAccepted ? 'Accepted (subject to check)' : 'Not Accepted'}</span>
-                </div>
-                <div className="flex justify-between py-1">
-                  <span className="text-slate-500 font-medium">University Placement English Test:</span>
-                  <span className="font-semibold text-slate-800">{primaryReq.ownEnglishTest ? 'Available' : 'Not Available'}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Description & Overview */}
-          <Card className="border border-slate-100 shadow-sm bg-white overflow-hidden">
-            <div className="p-4 md:p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
-              <FileText size={16} className="text-[#0057B8]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">Course Overview & Description</h3>
-            </div>
-            <CardContent className="p-6 space-y-4 text-xs text-slate-600 leading-relaxed">
-              <p>
-                This dynamic program provides international students with industry-relevant skills, cutting-edge theoretical frameworks, and hands-on laboratory or project exposure. Candidates will work alongside leading researchers and business professionals to establish robust careers globally.
-              </p>
-              
-              <div className="pt-2">
-                <h4 className="font-bold text-slate-800 text-xs mb-1.5 uppercase tracking-wide">What You Will Study</h4>
-                <p>
-                  Curriculum pathways focus on advanced principles within {course.subjectArea || 'the core discipline'}, combining mandatory foundation units with specialist optional modules designed to match your professional aspirations.
-                </p>
-              </div>
-
-              <div className="pt-2">
-                <h4 className="font-bold text-slate-800 text-xs mb-1.5 uppercase tracking-wide">Practical Experience & Assessment</h4>
-                <p>
-                  Evaluation is completed through research dissertations, formal exams, group presentations, and live case-study projects. Placement options ({course.placementOption ? 'Available' : 'Not Offered'}) permit direct industry internships.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Connected University Card */}
-          <Card className="border border-slate-100 shadow-sm bg-white overflow-hidden">
-            <div className="p-4 md:p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
-              <Building2 size={16} className="text-[#0057B8]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">University Profile</h3>
-            </div>
-            <CardContent className="p-6 flex flex-col md:flex-row gap-6 items-center">
-              <div className="relative w-20 h-20 overflow-hidden bg-slate-50 rounded-xl border border-slate-100 p-2 flex items-center justify-center shrink-0">
-                {university.logoSourceUrl ? (
-                  <img
-                    src={university.logoSourceUrl}
-                    alt={university.name}
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <GraduationCap className="h-10 w-10 text-[#0057B8]" />
-                )}
-              </div>
-              <div className="flex-grow text-center md:text-left min-w-0 space-y-2">
-                <h4 className="font-bold text-slate-800 text-sm">{university.name}</h4>
-                <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
-                  {university.description || `Explore entry guidelines, campus services, and full programs listings for ${university.name}.`}
-                </p>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-slate-400 font-medium">
-                  <span>Type: {university.type || 'Public Institution'}</span>
-                  <span>Founded: {university.founded || 'N/A'}</span>
-                  <span>QS Ranking: {university.ranking > 0 ? `#${university.ranking}` : 'Top Tier'}</span>
-                </div>
-              </div>
-              <Link href={`/universities/${university.slug || university.universityId}`}>
-                <Button className="shrink-0 text-xs h-10 border border-slate-200 hover:bg-slate-50 bg-white text-slate-800 shadow-sm rounded-xl font-semibold px-5">
-                  View University
+        <div className="space-y-6">
+          <Card className="p-6 border-2 border-[#0057B8]/20 bg-gradient-to-br from-blue-50/30 to-white">
+            <h3 className="font-bold text-[#0F172A] mb-2 text-lg">Apply for this Course</h3>
+            <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+              Start your application with ALO Education for full application support and visa counseling.
+            </p>
+            <div className="space-y-2.5">
+              <a href="/eligibility-check" className="block w-full">
+                <Button className="w-full bg-[#E8501A] text-white hover:brightness-110 text-xs py-2.5">
+                  Check Your Eligibility
                 </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          {/* Scholarships */}
-          <Card className="border border-slate-100 shadow-sm bg-white overflow-hidden">
-            <div className="p-4 md:p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
-              <Award size={16} className="text-[#0057B8]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">Scholarships & Funding</h3>
+              </a>
+              <a href="/book-consultation" className="block w-full">
+                <Button variant="outline" className="w-full text-xs py-2.5 border-[#0057B8] text-[#0057B8] hover:bg-blue-50">
+                  Talk to ALO Counselor
+                </Button>
+              </a>
             </div>
-            <CardContent className="p-6">
-              {course.scholarships && course.scholarships.length > 0 ? (
-                <div className="space-y-4">
-                  {course.scholarships.map((sch: any) => (
-                    <div key={sch.id} className="p-4 rounded-xl border bg-slate-50/50 flex flex-col md:flex-row justify-between gap-4">
-                      <div className="space-y-1">
-                        <h4 className="font-bold text-slate-800 text-xs">{sch.scholarshipName}</h4>
-                        <p className="text-[11px] text-slate-500">Method: {sch.applicationMethod || 'Automatic evaluation'}</p>
-                      </div>
-                      <div className="text-right flex flex-col justify-center">
-                        <span className="text-sm font-extrabold text-[#E8501A]">
-                          {sch.scholarshipAmount > 0 ? `${sch.scholarshipCurrency || ''} ${sch.scholarshipAmount.toLocaleString()}` : ''}
-                          {sch.awardPercentage > 0 ? `${sch.awardPercentage}% Waiver` : ''}
-                        </span>
-                        <span className="text-[9px] text-slate-400">Deadline: {sch.deadline || 'intake deadline'}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-6 text-slate-400 text-xs">
-                  No specific scholarship records are directly linked to this program. You can search our global scholarships finder.
-                </div>
-              )}
-            </CardContent>
           </Card>
 
-          {/* Checklist */}
-          <Card className="border border-slate-100 shadow-sm bg-white overflow-hidden">
-            <div className="p-4 md:p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
-              <FileText size={16} className="text-[#0057B8]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">Required Application Documents</h3>
-            </div>
-            <CardContent className="p-6">
-              <div className="grid sm:grid-cols-2 gap-4 text-xs text-slate-600">
-                <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> Passport (Bio page)</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> Academic Certificates</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> Academic Transcripts</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> English Test Certificate (IELTS/PTE)</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> Statement of Purpose (SOP)</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> Two Reference Letters</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> Updated CV / Resume</div>
-                {primaryReq.portfolioRequired && (
-                  <div className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> Portfolio (Required)</div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
+          <TestPreparationMiniCard
+            contextTitle="Need English Preparation for this Course?"
+            recommendedTest="IELTS 6.5 / PTE 58+"
+            targetScore="Minimum Band 6.0 in each skill"
+          />
         </div>
-
-        {/* Right Column: Fees, Intakes & CTA Sidebar (approx. 30-35% width) */}
-        <div className="lg:col-span-4 space-y-6">
-          
-          {/* Primary Action Button Box */}
-          <Card className="border-2 border-[#0057B8]/20 shadow-md bg-gradient-to-br from-blue-50/10 to-white overflow-hidden sticky top-24">
-            <div className="p-5 space-y-4">
-              
-              {/* Financial Box */}
-              <div className="border-b pb-4">
-                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider block mb-0.5">International Tuition Fee</span>
-                <span className="text-2xl font-black text-slate-800 flex items-baseline gap-1">
-                  {course.tuitionFee > 0 ? (
-                    <>
-                      {course.currency} {course.tuitionFee.toLocaleString()}
-                      <span className="text-xs font-semibold text-slate-400">/ yr</span>
-                    </>
-                  ) : (
-                    'Not Available'
-                  )}
-                </span>
-                
-                <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-slate-100 text-xs">
-                  <div>
-                    <span className="text-slate-400 block text-[9px] uppercase font-bold">App Fee</span>
-                    <span className="font-semibold text-slate-800">
-                      {course.appFeeAmount > 0 ? `${course.currency} ${course.appFeeAmount}` : 'Free'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[9px] uppercase font-bold">Initial Deposit</span>
-                    <span className="font-semibold text-slate-800">
-                      {course.depositAmount > 0 ? `${course.currency} ${course.depositAmount.toLocaleString()}` : 'Check offer'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Intakes List */}
-              <div>
-                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide mb-2.5">Available Intakes</h4>
-                {course.intakes && course.intakes.length > 0 ? (
-                  <div className="space-y-2">
-                    {course.intakes.map((int: any) => (
-                      <div key={int.id} className="p-3 rounded-xl border border-slate-100 bg-white shadow-sm flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <Calendar size={14} className="text-[#0057B8] shrink-0" />
-                          <span className="font-bold text-slate-800 uppercase">{int.intakeMonth} {int.intakeYear}</span>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-[10px] font-bold text-amber-600 block">Deadline</span>
-                          <span className="text-[10px] text-slate-500 font-medium">{int.applicationDeadline || 'intake deadline'}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-4 text-slate-400 text-xs bg-slate-50 rounded-xl border border-slate-100">
-                    Not currently available
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="space-y-2.5 pt-2">
-                <Link href={`/eligibility-check?courseId=${course.courseId}`} className="block w-full">
-                  <Button className="w-full h-12 text-sm font-semibold bg-[#E8501A] hover:bg-[#E8501A]/90 text-white rounded-xl shadow transition-all">
-                    Start Application
-                  </Button>
-                </Link>
-                <Link href="/book-consultation" className="block w-full">
-                  <Button variant="outline" className="w-full h-12 text-xs font-semibold text-[#0057B8] border-[#0057B8] hover:bg-blue-50/50 rounded-xl">
-                    Book Free Consultation
-                  </Button>
-                </Link>
-                <div className="grid grid-cols-2 gap-2 pt-1.5">
-                  <Button
-                    onClick={handleSaveCourse}
-                    variant="ghost"
-                    className="h-10 text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-100 hover:bg-slate-50 text-slate-700 rounded-xl"
-                  >
-                    <Heart size={14} className={isSaved ? 'fill-rose-500 text-rose-500' : 'text-slate-400'} />
-                    {isSaved ? 'Shortlisted' : 'Save'}
-                  </Button>
-                  <Button
-                    onClick={handleCompareCourse}
-                    variant="ghost"
-                    className="h-10 text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-100 hover:bg-slate-50 text-slate-700 rounded-xl"
-                  >
-                    <GitCompare size={14} className={isCompared ? 'text-[#0057B8]' : 'text-slate-400'} />
-                    {isCompared ? 'Compared' : 'Compare'}
-                  </Button>
-                </div>
-              </div>
-
-            </div>
-          </Card>
-
-        </div>
-
       </div>
-
-      {/* 4. Similar Courses Section */}
-      {course.similarCourses && course.similarCourses.length > 0 && (
-        <div className="mt-16 pt-12 border-t border-slate-100">
-          <h3 className="text-xl font-extrabold text-slate-800 mb-6 flex items-center gap-2">
-            <GraduationCap size={20} className="text-[#0057B8]" /> Similar Courses
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {course.similarCourses.slice(0, 4).map((sim: any) => {
-              const simImg = getCourseImage(sim.subjectArea || sim.courseTitle);
-              return (
-                <Card key={sim.id} className="h-full flex flex-col border border-slate-100 hover:shadow-lg transition-all duration-300 overflow-hidden bg-white">
-                  <div className="relative h-36 w-full bg-slate-50 shrink-0">
-                    <Image
-                      src={simImg}
-                      alt={sim.courseTitle}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 20vw"
-                      className="object-cover"
-                    />
-                  </div>
-                  <CardContent className="p-4 flex flex-col flex-grow gap-2.5">
-                    <Badge variant="secondary" className="bg-blue-50 text-[#0057B8] w-fit text-[10px]">
-                      {sim.studyLevel}
-                    </Badge>
-                    <h4 className="font-bold text-xs text-slate-800 leading-snug line-clamp-2 min-h-[32px]">
-                      {sim.courseTitle}
-                    </h4>
-                    <p className="text-[11px] text-slate-500 truncate flex items-center gap-1">
-                      <Building2 size={12} className="shrink-0" />
-                      {sim.university?.name || 'University'}
-                    </p>
-                    <div className="mt-auto pt-2 flex justify-between items-center text-[10px] text-slate-400 font-medium border-t border-slate-100">
-                      <span>{sim.durationMonths ? `${sim.durationMonths}m` : '1 Year'}</span>
-                      <span className="font-bold text-slate-800">
-                        {sim.tuitionFee > 0 ? `${sim.currency} ${sim.tuitionFee.toLocaleString()}` : 'Contact Us'}
-                      </span>
-                    </div>
-                    <Link href={`/courses/${sim.slug || sim.courseId}`} className="block w-full pt-1">
-                      <Button className="w-full h-8 text-[11px] font-semibold bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 rounded-lg">
-                        View Course
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-    </div>
+    </PublicShell>
   );
 }
 
 export function PublicComparePage() {
-  const [courseIds, setCourseIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('alo_compare_courses');
-      if (stored) {
-        try {
-          setCourseIds(JSON.parse(stored));
-        } catch {
-          setCourseIds([]);
-        }
-      }
-    }
-  }, []);
-
   return (
     <PublicShell
       title="Course & University Comparison Matrix"
       badge="SHORTLIST COMPARISON"
       subtitle="Compare up to 4 courses side-by-side on tuition, IELTS scores, duration, and post-study work rights."
     >
-      <div className="space-y-6">
-        <CourseCompareEnhanced courseIds={courseIds} />
-      </div>
+      <Card className="p-8 space-y-4">
+        <h3 className="text-xl font-bold text-slate-900">Side-by-Side Comparison</h3>
+        <p className="text-slate-600 text-sm">
+          Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
+        </p>
+        <div className="pt-4 flex gap-3">
+          <a href="/course-finder"><Button className="bg-[#E8501A] text-white text-xs">Add Courses to Compare</Button></a>
+        </div>
+      </Card>
     </PublicShell>
   );
 }
 
+export function PublicFooter() {
+  return (
+    <footer className="w-full bg-[#0F172A] text-slate-300 pt-16 border-t border-slate-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-xs">
+        
+        {/* COL 1: ALO BRAND & SOCIAL */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[#0057B8] text-white flex items-center justify-center font-black text-sm">
+              ALO
+            </div>
+            <span className="text-white font-black text-lg tracking-tight">ALO Education</span>
+          </div>
+          <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
+            From your ambition to admission, we’re with you all the way.
+          </p>
+          <div className="flex items-center gap-3 pt-2">
+            <a
+              href="https://facebook.com/aloeducation"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#0057B8] hover:text-white transition"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a
+              href="https://instagram.com/aloeducation"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#E8501A] hover:text-white transition"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a
+              href="https://linkedin.com/company/aloeducation"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#0057B8] hover:text-white transition"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            </a>
+            <a
+              href="https://youtube.com/@aloeducation"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="YouTube"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-red-600 hover:text-white transition"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        {/* COL 2: DESTINATIONS */}
+        <div className="space-y-3">
+          <h4 className="text-white font-bold text-sm tracking-wider uppercase">Destinations</h4>
+          <ul className="space-y-2 text-slate-400">
+            <li><a href="/destinations/uk" className="hover:text-white transition">United Kingdom</a></li>
+            <li><a href="/destinations/usa" className="hover:text-white transition">United States</a></li>
+            <li><a href="/destinations/australia" className="hover:text-white transition">Australia</a></li>
+            <li><a href="/destinations/canada" className="hover:text-white transition">Canada</a></li>
+            <li><a href="/destinations/new-zealand" className="hover:text-white transition">New Zealand</a></li>
+            <li><a href="/destinations/ireland" className="hover:text-white transition">Europe & Ireland</a></li>
+          </ul>
+        </div>
+
+        {/* COL 3: QUICK LINKS */}
+        <div className="space-y-3">
+          <h4 className="text-white font-bold text-sm tracking-wider uppercase">Quick Links</h4>
+          <ul className="space-y-2 text-slate-400">
+            <li><a href="/course-finder" className="hover:text-white transition">Course Finder</a></li>
+            <li><a href="/services" className="hover:text-white transition">Services</a></li>
+            <li><a href="/language-prep" className="hover:text-white transition">English Test Prep</a></li>
+            <li><a href="/blog" className="hover:text-white transition">Blogs & Insights</a></li>
+            <li><a href="/scholarships" className="hover:text-white transition">Scholarships</a></li>
+          </ul>
+        </div>
+
+        {/* COL 4: COMPANY */}
+        <div className="space-y-3">
+          <h4 className="text-white font-bold text-sm tracking-wider uppercase">Company</h4>
+          <ul className="space-y-2 text-slate-400">
+            <li><a href="/about" className="hover:text-white transition">About Us</a></li>
+            <li><a href="/team" className="hover:text-white transition">Expert Team</a></li>
+            <li><a href="/contact" className="hover:text-white transition">Find Us</a></li>
+            <li><a href="/contact" className="hover:text-white transition">Contact Us</a></li>
+            <li><a href="/privacy-policy" className="hover:text-white transition">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      {/* GRADUATION CAP ANIMATION STRIP */}
+      <div className="w-full overflow-hidden py-6 mt-12 border-t border-slate-800 bg-[#0a101d] relative">
+        <div className="flex gap-12 whitespace-nowrap animate-[marquee_25s_linear_infinite] motion-reduce:animate-none">
+          {[...Array(16)].map((_, i) => (
+            <div key={i} className="flex items-center gap-8 text-xs font-semibold text-slate-500">
+              <span className="flex items-center gap-2 text-[#E8501A] opacity-100 rotate-[-5deg]">
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                Admission Success
+              </span>
+              <span className="flex items-center gap-2 text-[#0057B8] opacity-70 rotate-[4deg]">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                Scholarship Granted
+              </span>
+              <span className="flex items-center gap-2 text-slate-400 opacity-40 rotate-[-2deg]">
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                Visa Decision Approved
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* BOTTOM FOOTER BAR (#F5F5F5) */}
+      <div className="w-full bg-[#F5F5F5] text-slate-700 py-4 px-4 text-xs border-t border-slate-200">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div>
+            © {new Date().getFullYear()} ALO Education. All Rights Reserved.
+          </div>
+          <div className="flex items-center gap-6 text-[11px] font-semibold text-slate-600">
+            <a href="/terms" className="hover:text-slate-900 transition">Terms of Service</a>
+            <a href="/privacy-policy" className="hover:text-slate-900 transition">Privacy Policy</a>
+            <a href="/cookies" className="hover:text-slate-900 transition">Cookie Policy</a>
+          </div>
+        </div>
+      </div>
+
+      <FloatingActionWidget />
+    </footer>
+  );
+}

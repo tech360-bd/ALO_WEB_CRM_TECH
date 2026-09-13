@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import {
   Search, SlidersHorizontal, X, ChevronDown, ChevronUp,
   GraduationCap, Clock, DollarSign, Award, Globe, ExternalLink,
@@ -30,7 +29,6 @@ import {
 import { toast } from 'sonner';
 import { COUNTRIES, STUDY_LEVELS, COUNTRY_FLAGS } from './types';
 import type { Course } from './types';
-import { getCourseImage } from '@/components/website/ImageMapping';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -314,90 +312,86 @@ function CourseCard({
   onEnquire: (c: Course) => void;
 }) {
   const levelColors: Record<string, string> = {
-    Undergraduate: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    Postgraduate: 'bg-amber-50 text-amber-700 border-amber-100',
-    Foundation: 'bg-sky-50 text-sky-700 border-sky-100',
-    Diploma: 'bg-violet-50 text-violet-700 border-violet-100',
-    PhD: 'bg-rose-50 text-rose-700 border-rose-100',
+    Undergraduate: 'bg-emerald-100 text-emerald-800',
+    Postgraduate: 'bg-amber-100 text-amber-800',
+    Foundation: 'bg-sky-100 text-sky-800',
+    Diploma: 'bg-violet-100 text-violet-800',
+    PhD: 'bg-rose-100 text-rose-800',
   };
 
-  const courseImage = getCourseImage(course.subjectArea || '');
-
   return (
-    <Card className="overflow-hidden bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between rounded-2xl group">
-      <div>
-        {/* Cover Image */}
-        <div className="h-36 w-full overflow-hidden relative">
-          <img 
-            src={courseImage} 
-            alt={course.courseTitle} 
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-          />
-          <div className="absolute top-3 left-3 bg-black/60 text-white text-xs font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-            {COUNTRY_FLAGS[course.country] || '📍'} {course.country}
+    <Card className="overflow-hidden hover:shadow-md transition-shadow border-slate-200">
+      <CardContent className="p-4 flex flex-col gap-3">
+        {/* University & Country */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-emerald-600 truncate">
+              {COUNTRY_FLAGS[course.country]} {course.universityName}
+            </p>
           </div>
-          <div className="absolute top-3 right-3">
-            <Badge className={`border text-[10px] font-bold ${levelColors[course.studyLevel] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>
-              {course.studyLevel}
+          <Badge
+            variant="secondary"
+            className={levelColors[course.studyLevel] || 'bg-slate-100 text-slate-700'}
+          >
+            {course.studyLevel}
+          </Badge>
+        </div>
+
+        {/* Course Title */}
+        <h3 className="font-semibold text-slate-900 leading-snug line-clamp-2 text-sm min-h-[2.5rem]">
+          {course.courseTitle}
+        </h3>
+
+        {/* Details */}
+        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+          <div className="flex items-center gap-1.5">
+            <Clock className="size-3.5 text-slate-400" />
+            <span>{course.duration}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <DollarSign className="size-3.5 text-slate-400" />
+            <span>{course.tuitionCurrency} {course.tuitionFee.toLocaleString()}/yr</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Globe className="size-3.5 text-slate-400" />
+            <span>{course.country}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <GraduationCap className="size-3.5 text-slate-400" />
+            <span>Intake: {course.intake}</span>
+          </div>
+        </div>
+
+        {/* Scholarship Badge */}
+        {course.hasScholarship && (
+          <div className="flex items-center gap-1.5">
+            <Badge className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs">
+              <Award className="size-3" />
+              Scholarship Available
             </Badge>
           </div>
-        </div>
+        )}
 
-        <div className="p-4 space-y-3">
-          {/* University Name */}
-          <p className="text-xs font-bold text-[#0057B8] uppercase tracking-wider line-clamp-1">
-            {course.universityName}
-          </p>
-
-          {/* Course Title Link */}
-          <Link href={`/courses/${course.id}`} className="block">
-            <h3 className="font-extrabold text-slate-900 leading-snug line-clamp-2 text-sm group-hover:text-[#0057B8] transition-colors min-h-[2.5rem]">
-              {course.courseTitle}
-            </h3>
-          </Link>
-
-          {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 pt-2 border-t border-slate-100 text-xs text-slate-600">
-            <div className="flex items-center gap-1.5">
-              <Clock className="size-3.5 text-slate-400" />
-              <span>{course.duration || '1 Year'}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <DollarSign className="size-3.5 text-slate-400" />
-              <span className="font-semibold text-slate-950">
-                {course.tuitionCurrency} {course.tuitionFee?.toLocaleString()}/yr
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <GraduationCap className="size-3.5 text-slate-400" />
-              <span className="line-clamp-1">Intake: {course.intake}</span>
-            </div>
-            {course.ieltsMin && (
-              <div className="flex items-center gap-1.5">
-                <Award className="size-3.5 text-slate-400" />
-                <span>IELTS: {course.ieltsMin}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Scholarship Badge */}
-          {course.hasScholarship && (
-            <div className="pt-1">
-              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-50 text-[10px] font-semibold py-0.5 flex items-center w-fit gap-1">
-                <Award className="size-3" /> Scholarship Available
-              </Badge>
-            </div>
+        {/* Requirements */}
+        <div className="flex gap-3 text-xs text-slate-500">
+          {course.ieltsMin && (
+            <span className="flex items-center gap-1">
+              <span className="font-medium text-slate-700">IELTS:</span> {course.ieltsMin}
+            </span>
+          )}
+          {course.pteMin && (
+            <span className="flex items-center gap-1">
+              <span className="font-medium text-slate-700">PTE:</span> {course.pteMin}
+            </span>
           )}
         </div>
-      </div>
 
-      <div className="p-4 pt-0 space-y-2">
-        {/* Actions Row */}
-        <div className="flex gap-2">
+        {/* Actions */}
+        <div className="flex gap-2 pt-1">
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 h-8 text-xs border-slate-200 hover:text-[#0057B8] hover:border-[#0057B8]"
+            className="flex-1 h-8 text-xs"
             onClick={() => onCompare(course)}
           >
             <GitCompare className="size-3 mr-1" />
@@ -406,21 +400,21 @@ function CourseCard({
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 h-8 text-xs border-slate-200 hover:text-[#0057B8] hover:border-[#0057B8]"
+            className="flex-1 h-8 text-xs"
             onClick={() => onSave(course)}
           >
             <BookmarkPlus className="size-3 mr-1" />
             Save
           </Button>
-          <Link href={`/courses/${course.id}`} className="flex-1">
-            <Button
-              variant="default"
-              size="sm"
-              className="w-full h-8 text-xs bg-[#0057B8] hover:bg-blue-700 text-white font-bold"
-            >
-              Details →
-            </Button>
-          </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 h-8 text-xs"
+            onClick={() => onEnquire(course)}
+          >
+            <Send className="size-3 mr-1" />
+            Enquire
+          </Button>
         </div>
 
         {/* Source Link */}
@@ -429,13 +423,13 @@ function CourseCard({
             href={course.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-[#E8501A] transition-colors"
+            className="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 hover:underline"
           >
             <ExternalLink className="size-3" />
-            Verify on official university website
+            View on university website
           </a>
         )}
-      </div>
+      </CardContent>
     </Card>
   );
 }

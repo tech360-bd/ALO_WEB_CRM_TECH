@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/eligibility-checker/layout,_N_T_/eligibility-checker/page,_N_T_/eligibility-checker"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/eligibility-checker/__PAGE__",
+    "/eligibility-checker",
+    "/_index",
+    "/_head"
+  ]
+}

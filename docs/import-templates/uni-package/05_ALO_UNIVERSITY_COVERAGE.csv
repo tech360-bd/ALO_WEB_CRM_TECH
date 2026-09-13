@@ -1,0 +1,401 @@
+university_id,university_name,official_catalogue_url,catalogue_sections_found,programmes_discovered,programmes_imported,programmes_verified,programmes_missing,coverage_percentage,coverage_status,last_checked_at
+UNI-UN-0001,University of Oxford,https://www.ox.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0002,University of Cambridge,https://www.cam.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0003,Imperial College London,https://www.imperial.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0004,University College London (UCL),https://www.ucl.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0005,London School of Economics (LSE),https://www.lse.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0006,University of Edinburgh,https://www.ed.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0007,University of Manchester,https://www.manchester.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0008,King's College London,https://www.kcl.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0009,University of Bristol,https://www.bristol.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0010,University of Warwick,https://warwick.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0011,University of Glasgow,https://www.gla.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0012,University of Birmingham,https://www.birmingham.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0013,University of Leeds,https://www.leeds.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0014,University of Sheffield,https://www.sheffield.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0015,University of Nottingham,https://www.nottingham.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0016,University of Southampton,https://www.southampton.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0017,University of Liverpool,https://www.liverpool.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0018,University of Newcastle,https://www.ncl.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0019,Durham University,https://www.durham.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0020,University of Exeter,https://www.exeter.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0021,Queen Mary University of London,https://www.qmul.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0022,University of York,https://www.york.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0023,University of St Andrews,https://www.st-andrews.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0024,University of Bath,https://www.bath.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0025,Lancaster University,https://www.lancaster.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0026,University of Surrey,https://www.surrey.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0027,Loughborough University,https://www.lboro.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0028,University of Reading,https://www.reading.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0029,University of Sussex,https://www.sussex.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0030,University of Aberdeen,https://www.abdn.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0031,University of Dundee,https://www.dundee.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0032,University of Kent,https://www.kent.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0033,University of East Anglia (UEA),https://www.uea.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0034,University of Essex,https://www.essex.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0035,University of Leicester,https://www.le.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0036,University of Strathclyde,https://www.strath.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0037,Heriot-Watt University,https://www.hw.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0038,University of Stirling,https://www.stir.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0039,Aston University,https://www.aston.ac.uk/courses,Courses index page,471,471,471,0,100%,CATALOGUE_COMPLETE,2026-08-13
+UNI-UN-0040,University of Hull,https://www.hull.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0041,Brunel University London,https://www.brunel.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0042,City University of London,https://www.city.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0043,University of Westminster,https://www.westminster.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0044,Nottingham Trent University,https://www.ntu.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0045,Sheffield Hallam University,https://www.shu.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0046,University of Huddersfield,https://www.hud.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0047,Leeds Beckett University,https://www.leedsbeckett.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0048,Manchester Metropolitan University,https://www.mmu.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0049,University of Salford,https://www.salford.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0050,University of Central Lancashire (UCLan),https://www.uclan.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0051,University of Portsmouth,https://www.port.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0052,University of Brighton,https://www.brighton.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0053,Bournemouth University,https://www.bournemouth.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0054,Coventry University,https://www.coventry.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0055,De Montfort University,https://www.dmu.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0056,Northumbria University,https://www.northumbria.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0057,University of Greenwich,https://www.gre.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0058,Kingston University London,https://www.kingston.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0059,Teesside University,https://www.tees.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0060,University of Lincoln,https://www.lincoln.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0061,University of Plymouth,https://www.plymouth.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0062,Keele University,https://www.keele.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0063,University of the West of England (UWE Bristol),https://www.uwe.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0064,Middlesex University London,https://www.mdx.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0065,University of Gloucestershire,https://www.glos.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0066,University of Hertfordshire,https://www.herts.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0067,Oxford Brookes University,https://www.brookes.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0068,Anglia Ruskin University,https://www.aru.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0069,University of Bedfordshire,https://www.beds.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0070,University of East London,https://www.uel.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0071,London Metropolitan University,https://www.londonmet.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0072,University of West London,https://www.uwl.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0073,Birmingham City University,https://www.bcu.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0074,University of Wolverhampton,https://www.wlv.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0075,Staffordshire University,https://www.staffs.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0076,Canterbury Christ Church University,https://www.canterbury.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0077,University for the Creative Arts,https://www.uca.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0078,Ravensbourne University London,https://www.ravensbourne.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0079,Goldsmiths University of London,https://www.gold.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0080,University of Suffolk,https://www.uos.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0081,Cardiff University,https://www.cardiff.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0082,Cardiff Metropolitan University,https://www.cardiffmet.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0083,Swansea University,https://www.swansea.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0084,University of South Wales,https://www.southwales.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0085,Bangor University,https://www.bangor.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0086,Aberystwyth University,https://www.aber.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0087,Wrexham Glyndŵr University,https://www.glyndwr.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0088,University of the West of Scotland,https://www.uws.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0089,Edinburgh Napier University,https://www.napier.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0090,Glasgow Caledonian University,https://www.gcu.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0091,University of the Highlands and Islands,https://www.uhi.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0092,Queen's University Belfast,https://www.qub.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0093,Ulster University,https://www.ulster.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0094,Birkbeck University of London,https://www.bbk.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0095,University College Birmingham,https://www.ucb.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0096,Royal Academy of Music,https://www.ram.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0097,Royal College of Music,https://www.rcm.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0098,Royal Central School of Speech and Drama,https://www.cssd.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0099,Courtauld Institute of Art,https://courtauld.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0100,St George's University of London,https://www.sgul.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0101,University of the Arts London,https://www.arts.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0102,London School of Hygiene & Tropical Medicine,https://www.lshtm.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0103,Royal Veterinary College,https://www.rvc.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0104,Cranfield University,https://www.cranfield.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0105,University of Buckingham,https://www.buckingham.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0106,St Mary's University Twickenham,https://www.stmarys.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0107,Bishop Grosseteste University,https://www.bishopg.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0108,University of Cumbria,https://www.cumbria.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0109,University of Bolton,https://www.bolton.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0110,University of Bradford,https://www.bradford.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0111,Leeds Trinity University,https://www.leedstrinity.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0112,York St John University,https://www.yorksj.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0113,Liverpool John Moores University,https://www.ljmu.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0114,Liverpool Hope University,https://www.hope.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0115,Edge Hill University,https://www.edgehill.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0116,Newman University,https://newman.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0117,University Academy 92,https://www.ua92.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0118,Arden University,https://arden.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0119,BPP University,https://www.bpp.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0120,London South Bank University,https://www.lsbu.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0121,Richmond University,https://www.richmond.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0122,Hult International Business School,https://www.hult.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0123,London School of Business and Finance,https://www.lsbf.org.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0124,London School of Commerce,https://www.lsc.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0125,University of Sunderland,https://www.sunderland.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0126,Institute of Cancer Research,https://www.icr.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0127,University of Chichester,https://www.chi.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0128,Plymouth Marjon University,https://www.marjon.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0129,Falmouth University,https://www.falmouth.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0130,University of Wales Trinity Saint David,https://www.uwtsd.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0131,University of Law – Birmingham,https://www.law.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0132,University of Law – Manchester,https://www.law.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0133,University of Law – Bristol,https://www.law.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0134,University of Law – Leeds,https://www.law.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0135,University of Law – Liverpool,https://www.law.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0136,University of Law – Guildford,https://www.law.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0137,Arden University – Birmingham,https://arden.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0138,Arden University – Manchester,https://arden.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0139,Arden University – Leeds,https://arden.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0140,Arden University – Bristol,https://arden.ac.uk/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0141,Massachusetts Institute of Technology,https://www.mit.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0142,Stanford University,https://www.stanford.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0143,Harvard University,https://www.harvard.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0144,California Institute of Technology,https://www.caltech.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0145,"University of California, Berkeley",https://www.berkeley.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0146,"University of California, Los Angeles",https://www.ucla.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0147,University of Chicago,https://www.uchicago.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0148,Columbia University,https://www.columbia.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0149,Yale University,https://www.yale.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0150,Princeton University,https://www.princeton.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0151,University of Michigan,https://www.umich.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0152,Carnegie Mellon University,https://www.cmu.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0153,Georgia Institute of Technology,https://www.gatech.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0154,University of Washington,https://www.washington.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0155,Cornell University,https://www.cornell.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0156,University of Pennsylvania,https://www.upenn.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0157,Johns Hopkins University,https://www.jhu.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0158,Duke University,https://www.duke.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0159,Northwestern University,https://www.northwestern.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UN-0160,"University of California, San Diego",https://www.ucsd.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0161,University of Toronto,https://www.utoronto.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0162,University of British Columbia,https://www.ubc.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0163,McGill University,https://www.mcgill.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0164,University of Alberta,https://www.ualberta.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0165,University of Waterloo,https://uwaterloo.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0166,University of Montreal,https://www.umontreal.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0167,McMaster University,https://www.mcmaster.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0168,Western University,https://www.uwo.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0169,Queen's University,https://www.queensu.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0170,University of Calgary,https://www.ucalgary.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0171,Dalhousie University,https://www.dal.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0172,University of Ottawa,https://www.uottawa.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0173,Simon Fraser University,https://www.sfu.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0174,University of Victoria,https://www.uvic.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0175,York University,https://www.yorku.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0176,Carleton University,https://carleton.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0177,University of Saskatchewan,https://www.usask.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0178,University of Manitoba,https://umanitoba.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0179,Toronto Metropolitan University,https://www.torontomu.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CA-0180,University of Guelph,https://www.uoguelph.ca/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0181,University of Melbourne,https://www.unimelb.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0182,University of Sydney,https://www.sydney.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0183,Australian National University,https://www.anu.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0184,University of New South Wales,https://www.unsw.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0185,University of Queensland,https://www.uq.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0186,Monash University,https://www.monash.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0187,University of Adelaide,https://www.adelaide.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0188,University of Western Australia,https://www.uwa.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0189,University of Technology Sydney,https://www.uts.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0190,RMIT University,https://www.rmit.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0191,Macquarie University,https://www.mq.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0192,University of Newcastle,https://www.newcastle.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0193,University of Wollongong,https://www.uow.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0194,Deakin University,https://www.deakin.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0195,Flinders University,https://www.flinders.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0196,La Trobe University,https://www.latrobe.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0197,Griffith University,https://www.griffith.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0198,Swinburne University of Technology,https://www.swinburne.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0199,Curtin University,https://www.curtin.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-AU-0200,Queensland University of Technology,https://www.qut.edu.au/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0201,Trinity College Dublin,https://www.tcd.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0202,University College Dublin,https://www.ucd.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0203,University of Galway,https://www.universityofgalway.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0204,University College Cork,https://www.ucc.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0205,Dublin City University,https://www.dcu.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0206,University of Limerick,https://www.ul.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0207,Maynooth University,https://www.maynoothuniversity.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0208,Technological University Dublin,https://www.tudublin.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0209,Waterford Institute of Technology,https://www.setu.ie/waterford/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0210,Institute of Technology Carlow,https://www.itcarlow.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0211,Atlantic Technological University (formerly IT Sligo),https://www.atu.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0212,Letterkenny Institute of Technology,https://www.lyit.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0213,Munster Technological University (formerly Cork IT),https://www.mtu.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0214,Limerick Institute of Technology,https://www.lit.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0215,"Dún Laoghaire Institute of Art, Design & Technology",https://www.iadt.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0216,Munster Technological University – Tralee,https://www.ittralee.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0217,National College of Ireland,https://www.ncirl.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0218,Griffith College Dublin,https://www.griffith.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0219,Dublin Business School,https://www.dbs.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IR-0220,American College Dublin,https://www.americancollegedublin.ie/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0221,University of Auckland,https://www.auckland.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0222,University of Otago,https://www.otago.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0223,University of Canterbury,https://www.canterbury.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0224,Victoria University of Wellington,https://www.wgtn.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0225,University of Waikato,https://www.waikato.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0226,Massey University,https://www.massey.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0227,Lincoln University,https://www.lincoln.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0228,Auckland University of Technology,https://www.aut.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0229,Unitec Institute of Technology,https://www.unitec.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0230,Otago Polytechnic,https://www.op.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0231,Ara Institute of Canterbury,https://www.ara.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0232,Whitireia New Zealand,https://www.whitireia.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0233,Wellington Institute of Technology,https://www.weltec.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0234,Manukau Institute of Technology,https://www.manukau.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0235,Eastern Institute of Technology,https://www.eit.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0236,Toi Ohomai Institute of Technology,https://www.toiohomai.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0237,UCOL Universal College of Learning,https://www.ucol.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0238,Nelson Marlborough Institute of Technology,https://www.nmit.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0239,Southern Institute of Technology,https://www.sit.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0240,Wintec,https://www.wintec.ac.nz/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0241,Technical University of Munich,https://www.tum.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0242,LMU Munich,https://www.lmu.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0243,Heidelberg University,https://www.uni-heidelberg.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0244,Humboldt University of Berlin,https://www.hu-berlin.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0245,RWTH Aachen University,https://www.rwth-aachen.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0246,Freie Universität Berlin,https://www.fu-berlin.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0247,University of Hamburg,https://www.uni-hamburg.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0248,Technical University of Berlin,https://www.tu.berlin/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0249,University of Cologne,https://www.uni-koeln.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0250,Goethe University Frankfurt,https://www.uni-frankfurt.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0251,University of Stuttgart,https://www.uni-stuttgart.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0252,TU Dresden,https://tu-dresden.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0253,University of Bonn,https://www.uni-bonn.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0254,University of Mannheim,https://www.uni-mannheim.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0255,KIT – Karlsruhe Institute of Technology,https://www.kit.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0256,FAU Erlangen-Nuremberg,https://www.fau.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0257,University of Münster,https://www.uni-muenster.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0258,University of Tübingen,https://www.uni-tuebingen.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0259,University of Würzburg,https://www.uni-wuerzburg.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-GE-0260,Jacobs University Bremen,https://www.jacobs-university.de/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0261,Khalifa University,https://www.ku.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0262,United Arab Emirates University,https://www.uaeu.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0263,American University of Sharjah,https://www.aus.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0264,University of Sharjah,https://www.sharjah.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0265,Abu Dhabi University,https://www.adu.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0266,American University in Dubai,https://www.aud.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0267,Canadian University Dubai,https://www.cud.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0268,Ajman University,https://www.ajman.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0269,Middlesex University Dubai,https://www.mdx.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0270,University of Wollongong in Dubai,https://www.uowdubai.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0271,Zayed University,https://www.zu.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0272,British University in Dubai,https://www.buid.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0273,Heriot-Watt University Dubai,https://www.hw.ac.uk/dubai/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0274,Birmingham University Dubai,https://www.birmingham.ac.uk/dubai/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0275,Amity University Dubai,https://amityuniversity.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0276,Rochester Institute of Technology Dubai,https://www.rit.edu/dubai/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0277,Al Ain University,https://aau.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0278,Gulf Medical University,https://gmu.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0279,Skyline University College,https://www.skylineuniversity.ac.ae/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-UA-0280,NYU Abu Dhabi,https://nyuad.nyu.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0281,Sorbonne University,https://www.sorbonne-universite.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0282,Université Paris-Saclay,https://www.universite-paris-saclay.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0283,PSL Research University,https://psl.eu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0284,École Polytechnique,https://www.polytechnique.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0285,Université de Paris,https://u-paris.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0286,University of Strasbourg,https://www.unistra.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0287,Aix-Marseille University,https://www.univ-amu.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0288,University of Bordeaux,https://www.u-bordeaux.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0289,Grenoble Alpes University,https://www.univ-grenoble-alpes.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0290,University of Montpellier,https://www.umontpellier.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0291,Claude Bernard University Lyon 1,https://www.univ-lyon1.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0292,Toulouse 1 Capitole University,https://www.ut-capitole.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0293,Pantheon-Sorbonne University,https://www.pantheonsorbonne.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0294,Paris Nanterre University,https://www.parisnanterre.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0295,University of Lille,https://www.univ-lille.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0296,University of Rennes 1,https://www.univ-rennes1.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0297,Nantes University,https://www.univ-nantes.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0298,University of Côte d'Azur,https://univ-cotedazur.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0299,Lorraine University,https://www.univ-lorraine.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-FR-0300,Paris-Panthéon-Assas University,https://www.u-assas.fr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0301,University of Amsterdam,https://www.uva.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0302,Delft University of Technology,https://www.tudelft.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0303,Leiden University,https://www.universiteitleiden.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0304,Utrecht University,https://www.uu.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0305,Erasmus University Rotterdam,https://www.eur.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0306,University of Groningen,https://www.rug.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0307,Wageningen University & Research,https://www.wur.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0308,Vrije Universiteit Amsterdam,https://www.vu.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0309,Radboud University,https://www.ru.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0310,Maastricht University,https://www.maastrichtuniversity.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0311,Eindhoven University of Technology,https://www.tue.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0312,Tilburg University,https://www.tilburguniversity.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0313,University of Twente,https://www.utwente.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0314,Hanze University of Applied Sciences,https://www.hanze.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0315,The Hague University of Applied Sciences,https://www.thehagueuniversity.com/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0316,Breda University of Applied Sciences,https://www.buas.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0317,Avans University of Applied Sciences,https://www.avans.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0318,HZ University of Applied Sciences,https://www.hz.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0319,Rotterdam University of Applied Sciences,https://www.hr.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-NE-0320,Fontys University of Applied Sciences,https://www.fontys.nl/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0321,University of Bologna,https://www.unibo.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0322,Sapienza University of Rome,https://www.uniroma1.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0323,University of Padua,https://www.unipd.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0324,University of Milan,https://www.unimi.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0325,Polytechnic University of Milan,https://www.polimi.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0326,University of Naples Federico II,https://www.unina.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0327,University of Turin,https://www.unito.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0328,University of Pisa,https://www.unipi.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0329,University of Florence,https://www.unifi.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0330,University of Trento,https://www.unitn.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0331,University of Milano-Bicocca,https://www.unimib.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0332,University of Genoa,https://www.unige.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0333,University of Rome Tor Vergata,https://web.uniroma2.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0334,University of Pavia,https://web.unipv.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0335,University of Trieste,https://www.units.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0336,University of Bari Aldo Moro,https://www.uniba.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0337,University of Perugia,https://www.unipg.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0338,University of Siena,https://www.unisi.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0339,Polytechnic University of Turin,https://www.polito.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-IT-0340,University of Salerno,https://web.unisa.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0341,University of Malta,https://www.um.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0342,"Malta College of Arts, Science and Technology",https://www.mcast.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0343,American University of Malta,https://aum.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0344,Global College Malta,https://gcm.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0345,Advenio Academy,https://advenioacademy.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0346,Domain Academy,https://domainacademy.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0347,EEC-ITIS Malta Tourism Institute,https://eecitis.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0348,London School of Commerce Malta,https://www.lscmalta.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0349,Pegasus Open University Malta,https://www.pegasusuniversity.it/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0350,Saint Martin's Institute of Higher Education,https://www.stmartins.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0351,Triagon Academy Malta,https://www.triagon.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0352,Middlesex University Malta,https://www.mdx.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0353,GBSB Global Business School Malta,https://global-business-school.org/malta/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0354,Institute of Tourism Studies Malta,https://its.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0355,United Campus Malta,https://www.ucm.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0356,European Graduate School Malta,https://egs.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0357,Queen Mary University of London Malta,https://www.qmul.ac.uk/malta/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0358,Barts London School of Medicine Malta,https://www.qmul.ac.uk/malta/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0359,HandsOn Academy Malta,https://handson.edu.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-MA-0360,Learnkey Training Institute,https://learnkey.com.mt/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0361,University of Cyprus,https://www.ucy.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0362,Cyprus University of Technology,https://www.cut.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0363,University of Nicosia,https://www.unic.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0364,European University Cyprus,https://euc.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0365,Frederick University,https://www.frederick.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0366,Open University of Cyprus,https://www.ouc.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0367,Neapolis University Pafos,https://www.nup.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0368,University of Central Lancashire Cyprus,https://www.uclancyprus.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0369,Philips University,https://philipsuni.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0370,American University of Cyprus,https://auc.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0371,Cyprus International Institute of Management,https://www.ciim.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0372,Cyprus International University,https://www.ciu.edu.tr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0373,Near East University,https://neu.edu.tr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0374,Eastern Mediterranean University,https://www.emu.edu.tr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0375,European University of Lefke,https://www.eul.edu.tr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0376,Girne American University,https://www.gau.edu.tr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0377,Cyprus West University,https://cwu.edu.tr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0378,Rauf Denktas University,https://rdu.edu.tr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0379,Cyprus Science University,https://csu.edu.tr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-CY-0380,City Unity College Nicosia,https://cityu.ac.cy/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0381,Seoul National University,https://www.snu.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0382,KAIST,https://www.kaist.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0383,Yonsei University,https://www.yonsei.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0384,Korea University,https://www.korea.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0385,POSTECH,https://www.postech.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0386,Sungkyunkwan University,https://www.skku.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0387,Hanyang University,https://www.hanyang.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0388,Kyung Hee University,https://www.khu.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0389,Ewha Womans University,https://www.ewha.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0390,Sogang University,https://www.sogang.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0391,Chung-Ang University,https://www.cau.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0392,Pusan National University,https://www.pusan.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0393,Kyungpook National University,https://www.knu.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0394,Ajou University,https://www.ajou.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0395,Inha University,https://www.inha.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0396,Konkuk University,https://www.konkuk.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0397,Dongguk University,https://www.dongguk.edu/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0398,Seoultech,https://www.seoultech.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0399,GIST,https://www.gist.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13
+UNI-SO-0400,UNIST,https://www.unist.ac.kr/courses,Not Found,0,0,0,42,0%,CATALOGUE_NOT_ACCESSIBLE,2026-08-13

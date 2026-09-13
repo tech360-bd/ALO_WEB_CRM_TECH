@@ -40,40 +40,32 @@ const DEFAULT_DESTINATIONS = [
   { label: 'Ireland', href: '/destinations/ireland' },
   { label: 'New Zealand', href: '/destinations/new-zealand' },
   { label: 'Dubai / UAE', href: '/destinations/dubai' },
-  { label: 'All Destinations', href: '/destinations' },
-];
-
-const studyItems = [
-  { label: 'Course Finder', href: '/course-finder' },
-  { label: 'Universities', href: '/universities' },
-  { label: 'Compare Courses', href: '/compare' },
-  { label: 'Scholarships', href: '/scholarships' },
+  { label: 'More Countries', href: '/destinations' },
 ];
 
 const languagePrepItems = [
-  { label: 'IELTS Academic', href: '/english-tests/ielts' },
-  { label: 'IELTS UKVI', href: '/english-tests/ielts-ukvi' },
-  { label: 'PTE Academic', href: '/english-tests/pte' },
-  { label: 'TOEFL iBT', href: '/english-tests/toefl' },
-  { label: 'Duolingo English Test', href: '/english-tests/duolingo' },
-  { label: 'OET (Healthcare)', href: '/english-tests/oet' },
-  { label: 'LanguageCert', href: '/english-tests/languagecert' },
-  { label: 'OIETC / ELLT', href: '/english-tests/oietc' },
+  { label: 'IELTS', href: '/language-prep/ielts' },
+  { label: 'IELTS UKVI', href: '/language-prep/ielts-ukvi' },
+  { label: 'PTE Academic', href: '/language-prep/pte-academic' },
+  { label: 'TOEFL iBT', href: '/language-prep/toefl-ibt' },
+  { label: 'Duolingo English Test', href: '/language-prep/duolingo' },
+  { label: 'OIETC / ELLT', href: '/language-prep/oietc' },
+  { label: 'Oxford ELLT', href: '/language-prep/oxford-ellt' },
+  { label: 'LanguageCert', href: '/language-prep/languagecert' },
+  { label: 'Kaplan', href: '/language-prep/kaplan' },
+  { label: 'OET', href: '/language-prep/oet' },
+  { label: 'MOI Guidance', href: '/language-prep/moi-guidance' },
   { label: 'English Test Comparison', href: '/language-prep/comparison' },
 ];
 
-const serviceItems = [
-  { label: 'Application Assistance', href: '/services' },
-  { label: 'Visa Guidance', href: '/visa-support' },
-  { label: 'Scholarship Guidance', href: '/services' },
-  { label: 'Career Guidance', href: '/services' },
-  { label: 'Consultation', href: '/book-consultation' },
-];
-
 const resourceItems = [
-  { label: 'Study Guides', href: '/resources' },
-  { label: 'Student Life', href: '/resources' },
-  { label: 'Blog / Resources', href: '/blog' },
+  { label: 'Blogs', href: '/blog' },
+  { label: 'Articles', href: '/resources/articles' },
+  { label: 'Scholarships', href: '/scholarships' },
+  { label: 'Visa Guides', href: '/visa-support' },
+  { label: 'Success Stories', href: '/success-stories' },
+  { label: 'Application Tips', href: '/application-process' },
+  { label: 'Pre-Departure', href: '/resources/pre-departure' },
   { label: 'FAQs', href: '/faqs' },
 ];
 
@@ -235,7 +227,7 @@ export default function PublicNavbar() {
         {/* DESKTOP NAV */}
         <div className="hidden lg:flex items-center gap-1">
           <DropdownTrigger
-            label="Study Destinations"
+            label="Destinations"
             isOpen={openDropdown === 'destinations'}
             onToggle={() => handleToggle('destinations')}
             onMouseEnter={() => handleDesktopEnter('destinations')}
@@ -249,21 +241,7 @@ export default function PublicNavbar() {
           </DropdownTrigger>
 
           <DropdownTrigger
-            label="Study"
-            isOpen={openDropdown === 'study'}
-            onToggle={() => handleToggle('study')}
-            onMouseEnter={() => handleDesktopEnter('study')}
-            onMouseLeave={handleDesktopLeave}
-          >
-            <div className="flex flex-col gap-1">
-              {studyItems.map((item) => (
-                <DropdownLink key={item.href} href={item.href} label={item.label} />
-              ))}
-            </div>
-          </DropdownTrigger>
-
-          <DropdownTrigger
-            label="English Tests"
+            label="Language Prep"
             isOpen={openDropdown === 'language-prep'}
             onToggle={() => handleToggle('language-prep')}
             onMouseEnter={() => handleDesktopEnter('language-prep')}
@@ -277,27 +255,13 @@ export default function PublicNavbar() {
           </DropdownTrigger>
 
           <DropdownTrigger
-            label="Services"
-            isOpen={openDropdown === 'services'}
-            onToggle={() => handleToggle('services')}
-            onMouseEnter={() => handleDesktopEnter('services')}
-            onMouseLeave={handleDesktopLeave}
-          >
-            <div className="flex flex-col gap-1">
-              {serviceItems.map((item) => (
-                <DropdownLink key={item.href} href={item.href} label={item.label} />
-              ))}
-            </div>
-          </DropdownTrigger>
-
-          <DropdownTrigger
             label="Resources"
             isOpen={openDropdown === 'resources'}
             onToggle={() => handleToggle('resources')}
             onMouseEnter={() => handleDesktopEnter('resources')}
             onMouseLeave={handleDesktopLeave}
           >
-            <div className="flex flex-col gap-1">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1 w-[420px]">
               {resourceItems.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
@@ -323,6 +287,15 @@ export default function PublicNavbar() {
               })}
             </div>
           </DropdownTrigger>
+
+          <Link href="/course-finder" className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
+            <Search className="h-4 w-4" />
+            Course Finder
+          </Link>
+
+          <Link href="/services" className="px-3 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
+            Services
+          </Link>
         </div>
 
         {/* RIGHT SIDE */}
@@ -359,10 +332,13 @@ export default function PublicNavbar() {
                   </div>
 
                   <div className="px-4 py-4 flex flex-col gap-2">
+                    <MobileLink href="/course-finder" label="Course Finder" icon={Search} onClick={closeMobile} />
+                    <MobileLink href="/services" label="Services" onClick={closeMobile} />
+
                     <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value="destinations" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Study Destinations
+                          Destinations
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="flex flex-col gap-0.5 pl-4">
@@ -373,39 +349,13 @@ export default function PublicNavbar() {
                         </AccordionContent>
                       </AccordionItem>
 
-                      <AccordionItem value="study" className="border-b-0">
-                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Study
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1">
-                          <div className="flex flex-col gap-0.5 pl-4">
-                            {studyItems.map((item) => (
-                              <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-
                       <AccordionItem value="language-prep" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          English Tests
+                          Language Prep
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="grid grid-cols-1 gap-0.5 pl-4">
                             {languagePrepItems.map((item) => (
-                              <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-
-                      <AccordionItem value="services" className="border-b-0">
-                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Services
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1">
-                          <div className="flex flex-col gap-0.5 pl-4">
-                            {serviceItems.map((item) => (
                               <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
                             ))}
                           </div>

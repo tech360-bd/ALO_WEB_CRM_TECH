@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/employee/layout,_N_T_/employee/visa-officer/layout,_N_T_/employee/visa-officer/page,_N_T_/employee/visa-officer"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/employee/visa-officer/__PAGE__",
+    "/employee/visa-officer",
+    "/employee",
+    "/_index",
+    "/_head"
+  ]
+}

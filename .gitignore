@@ -60,22 +60,3 @@ examples/
 # Database files
 *.db
 db/*.db
-# Heavy artifacts & alternate source copies (never commit)
-*.zip
-ALO_*.csv
-ALO_*.json
-AUDIT-2026-09-09/
-.repair-backup-*/
-alo-education-web-crm-final/
-deploy-build/
-deploy/
-backend/
-memory/
-storage/
-test-results/
-docs/
-delivery-evidence-*/
-agents/
-workflows/
-*.tsbuildinfo
-_reference_repos/

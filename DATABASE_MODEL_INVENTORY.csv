@@ -1,277 +1,213 @@
-Model,Purpose,Relations,Indexes or uniques,Where used,Status
-User,See prisma/schema.prisma,2,1,create_apis.js;prisma/seed-complete.ts;prisma/seed.ts;scripts/audit-database-counts.ts;scripts/fix-crm-mock-pages.ts;scripts/seed-all-portal-users.ts;scripts/seed-alo.ts;scripts/seed-direct-mysql.js;scripts/seed-homepage.ts;scripts/seed-portal-admin.ts;scripts/seed-website.ts;src/app/admin/access-control-center/page.tsx,USED_OR_REFERENCED
-DeploymentSequence,See prisma/schema.prisma,0,1,scripts/seed-direct-mysql.js,USED_OR_REFERENCED
-MarketingCampaign,See prisma/schema.prisma,0,0,src/app/api/marketing/approvals/route.ts;src/app/api/marketing/campaigns/route.ts,USED_OR_REFERENCED
-MarketingContentIdea,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingGeneratedContent,See prisma/schema.prisma,0,0,src/app/api/marketing/approvals/route.ts;src/app/api/marketing/automation/route.ts;src/app/api/marketing/content/route.ts;src/app/api/marketing/seo/route.ts,USED_OR_REFERENCED
-MarketingAsset,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingTemplate,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingVideo,See prisma/schema.prisma,0,0,src/app/api/marketing/approvals/route.ts;src/app/api/marketing/video/route.ts,USED_OR_REFERENCED
-MarketingCalendar,See prisma/schema.prisma,0,0,src/app/api/marketing/calendar/route.ts,USED_OR_REFERENCED
-MarketingApproval,See prisma/schema.prisma,2,2,src/app/api/marketing/approvals/route.ts,USED_OR_REFERENCED
-MarketingSocialMessage,See prisma/schema.prisma,0,0,src/app/api/crm/social/route.ts;src/app/api/marketing/social/route.ts,USED_OR_REFERENCED
-MarketingDMThread,See prisma/schema.prisma,0,0,src/app/api/marketing/dm/convert-lead/route.ts,USED_OR_REFERENCED
-MarketingComment,See prisma/schema.prisma,0,2,src/app/api/crm/social/route.ts;src/app/api/marketing/comments/convert-lead/route.ts,USED_OR_REFERENCED
-MarketingLead,See prisma/schema.prisma,1,1,src/app/api/crm/leads/public/route.ts;src/app/api/crm/leads/route.ts;src/app/api/crm/ucc/conversations/[id]/lead/route.ts;src/app/api/employee/leads/route.ts;src/app/api/marketing/comments/convert-lead/route.ts;src/app/api/marketing/dm/convert-lead/route.ts;src/app/api/marketing/whatsapp-doc-upload/route.ts;src/lib/comprehensive-evidence-audit.ts;src/lib/diagnose-system-status.ts;src/lib/test-all-api-endpoints.ts,USED_OR_REFERENCED
-MarketingLeadScore,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingCampaignSource,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingReport,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingAgentJob,See prisma/schema.prisma,0,0,src/app/api/marketing/agentos/route.ts,USED_OR_REFERENCED
-MarketingAgentMemory,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingAuditLog,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-MarketingRagSource,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingRagChunk,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MarketingImprovementProposal,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-SocialConnectedAccount,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-SocialWebhookEvent,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-Student,See prisma/schema.prisma,0,1,fix_all.ts;fix_visa_and_import.ts;gen_api_1.js;generate_api.ts;prisma/agentos-seed-extra.ts;prisma/agentos-seed.ts;prisma/seed.ts;scripts/build-complete-canonical-csvs.ts;scripts/seed-all-portal-users.ts;scripts/seed-homepage.ts;scripts/seed-other-universities.ts;scripts/seed-portal-admin.ts,USED_OR_REFERENCED
-StudentProfileSection,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-StudentEducation,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-StudentPassport,See prisma/schema.prisma,0,0,src/lib/test-super-admin-master-system.ts,USED_OR_REFERENCED
-StudentEnglishTest,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-StudentWorkExperience,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-StudentRecommendation,See prisma/schema.prisma,0,0,src/app/page.tsx;src/components/student/StudentMorePages.tsx,USED_OR_REFERENCED
-StudentVisaHistory,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-StudentFunding,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-StudentAdmissionPreference,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-Application,See prisma/schema.prisma,0,6,generate_api.ts;prisma/agentos-seed-extra.ts;scripts/seed-homepage.ts;scripts/seed-other-universities.ts;scripts/seed-website.ts;src/app/admin/access-control-center/page.tsx;src/app/api/applications/[id]/assign/route.ts;src/app/api/applications/[id]/b2b/route.ts;src/app/api/applications/[id]/route.ts;src/app/api/applications/[id]/status/route.ts;src/app/api/applications/[id]/submit/route.ts;src/app/api/applications/[id]/visa-handover/route.ts,USED_OR_REFERENCED
-ApplicationStageHistory,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-StudentDocument,See prisma/schema.prisma,0,0,src/app/api/counselor/dashboard/route.ts;src/app/api/crm/ai/dashboard/route.ts;src/app/api/crm/dashboard/route.ts;src/app/api/crm/documents/dashboard/route.ts;src/app/api/crm/documents/route.ts;src/app/api/crm/reports/route.ts;src/app/api/employee/reports/route.ts;src/app/api/partner/documents/route.ts;src/app/api/student-portal/documents/route.ts;src/app/page.tsx;src/app/student/documents/page.tsx;src/components/student/StudentDocuments.tsx,USED_OR_REFERENCED
-StudentMessage,See prisma/schema.prisma,0,0,src/app/api/student/messages/route.ts;src/app/page.tsx;src/app/student/messages/page.tsx;src/components/student/StudentMessages.tsx;src/components/student/StudentViewRouter.tsx,USED_OR_REFERENCED
-TimelineEvent,See prisma/schema.prisma,0,0,generate_api.ts;src/app/api/partner/help/route.ts;src/app/api/student-portal/timeline/route.ts;src/components/marketing/hub/UnifiedInboxView.tsx;src/components/student/StudentApplications.tsx,USED_OR_REFERENCED
-Appointment,See prisma/schema.prisma,0,0,src/app/api/counselor/dashboard/route.ts;src/app/api/crm/appointments/route.ts;src/app/api/crm/frontdesk/dashboard/route.ts;src/app/api/employee/appointments/route.ts;src/app/api/student-portal/appointments/route.ts;src/app/page.tsx;src/components/communication/DashboardCommunicationWidget.tsx;src/components/counselor/CounselorDashboard.tsx;src/components/counselor/CounselorPortalShell.tsx;src/components/crm/CrmAdminShell.tsx;src/components/crm/CrmViewRouter.tsx;src/components/crm/dashboards/FrontDeskDashboard.tsx,USED_OR_REFERENCED
-SavedCourse,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CourseComparison,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-ScholarshipMatch,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-SopDraft,See prisma/schema.prisma,0,0,src/app/api/student-portal/sop/route.ts;src/components/student/StudentSopCvStudio.tsx,USED_OR_REFERENCED
-CvReview,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-EnglishTest,See prisma/schema.prisma,0,0,scripts/seed-homepage.ts;scripts/seed-other-universities.ts;scripts/seed-uk-universities.ts;scripts/seed-universities.ts;scripts/seed-website.ts;src/app/api/counselor/dashboard/route.ts;src/app/api/counselor/students/[studentId]/route.ts;src/app/api/course-finder/eligibility-engine/route.ts;src/app/api/crm/course-import/confirm/route.ts;src/app/api/crm/seed-universities/route.ts;src/app/api/website/english-tests/route.ts;src/app/api/website/homepage/route.ts,USED_OR_REFERENCED
-MockTest,See prisma/schema.prisma,0,0,src/app/api/admin/student-benefits/route.ts;src/app/api/partner/student-benefits/route.ts;src/app/api/partner-admin/dashboard/route.ts;src/app/api/partner-admin/vouchers/route.ts;src/app/api/student/benefits/route.ts;src/app/api/student/vouchers/redeem/route.ts;src/app/api/student-portal/mock-tests/route.ts;src/lib/access-check-engine.ts;src/lib/test-b2b-partner-access-control.ts,USED_OR_REFERENCED
-TestSession,See prisma/schema.prisma,0,0,src/app/api/student-portal/mock-tests/route.ts,USED_OR_REFERENCED
-TestAnswer,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-TestResult,See prisma/schema.prisma,0,1,src/app/api/student-portal/mock-tests/route.ts,USED_OR_REFERENCED
-AiExamFeedback,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-AiInterviewSession,See prisma/schema.prisma,0,0,src/app/api/student/dashboard/route.ts,USED_OR_REFERENCED
-AiInterviewAnswer,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-AiInterviewResult,See prisma/schema.prisma,0,1,src/lib/test-visa-system.ts,USED_OR_REFERENCED
-MockTestCredit,See prisma/schema.prisma,0,0,src/app/api/student-portal/mock-tests/route.ts,USED_OR_REFERENCED
-MockTestPayment,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-MockTestPackage,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-VisaChecklistItem,See prisma/schema.prisma,0,0,src/app/api/student-portal/visa/route.ts;src/components/student/StudentVisaCenter.tsx,USED_OR_REFERENCED
-VisaReadinessReport,See prisma/schema.prisma,0,0,src/lib/test-visa-system.ts,USED_OR_REFERENCED
-ImportBatch,See prisma/schema.prisma,0,0,scripts/audit-database-counts.ts;src/app/api/admin/data-import/route.ts;src/app/api/admin/import-center/route.ts;src/app/api/crm/course-import/confirm/route.ts;src/app/api/crm/course-import/history/route.ts;src/app/api/crm/course-import/rollback/route.ts;src/app/api/crm/course-import/stats/route.ts;src/components/course-finder/import-history.tsx;src/components/course-finder/index.ts;src/components/course-finder/types.ts,USED_OR_REFERENCED
-ImportStagingStudent,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-UniversityUpdateRequest,See prisma/schema.prisma,0,0,create_apis.js;src/app/api/admin/university-data/updates/[id]/approve/route.ts;src/app/api/admin/university-data/updates/[id]/publish/route.ts;src/app/api/admin/university-data/updates/[id]/reject/route.ts;src/app/api/admin/university-updates/route.ts,USED_OR_REFERENCED
-VisaCase,See prisma/schema.prisma,0,4,fix_routes.ts;gen_api_1.js;src/app/api/employee/dashboard/route.ts;src/app/api/visa/cases/[id]/assign/route.ts;src/app/application-manager/application/[id]/page.tsx;src/app/crm/visa-cases/page.tsx;src/app/employee/visa-cases/page.tsx;src/components/admin/MasterSuperAdminDashboard.tsx;src/components/crm/pages/CrmVisaPage.tsx;src/lib/test-visa-system.ts,USED_OR_REFERENCED
-VisaInterview,See prisma/schema.prisma,0,0,src/app/crm/visa-interviews/[caseId]/page.tsx;src/app/crm/visa-interviews/page.tsx;src/app/employee/visa-interview-dashboard/page.tsx;src/app/employee/visa-interview-officer/page.tsx;src/app/employee/visa-interviews/[caseId]/page.tsx;src/app/employee/visa-interviews/page.tsx;src/app/page.tsx;src/app/student/visa-interview-practice/page.tsx;src/components/visa/VisaInterviewWorkspace.tsx;src/lib/test-visa-system.ts,USED_OR_REFERENCED
-VisaInterviewQuestion,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-VisaInterviewAnswer,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-VisaMockResult,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-VisaOfficerNote,See prisma/schema.prisma,0,0,src/lib/test-visa-system.ts,USED_OR_REFERENCED
-VisaRiskAssessment,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-VisaFundingReview,See prisma/schema.prisma,0,1,src/lib/test-visa-system.ts,USED_OR_REFERENCED
-VisaStudyGapReview,See prisma/schema.prisma,0,1,src/lib/test-visa-system.ts,USED_OR_REFERENCED
-VisaRefusalReview,See prisma/schema.prisma,0,1,src/lib/test-visa-system.ts,USED_OR_REFERENCED
-VisaSensitiveReview,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-VisaStudentFeedback,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-VisaTask,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-VisaReport,See prisma/schema.prisma,0,0,src/app/crm/visa-reports/page.tsx;src/app/employee/visa-reports/page.tsx,USED_OR_REFERENCED
-AiStudentMemory,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-InboundMessage,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-AloAuditLog,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-Notification,See prisma/schema.prisma,0,0,prisma/agentos-seed.ts;src/app/admin/marketing-automation/page.tsx;src/app/api/employee/notifications/route.ts;src/app/api/partner/notifications/route.ts;src/app/api/partner/settings/route.ts;src/app/api/student-portal/notifications/route.ts;src/app/api/website/lead/route.ts;src/app/page.tsx;src/components/communication/DashboardCommunicationWidget.tsx;src/components/communication/WhatsAppCommandCenter.tsx;src/components/counselor/CounselorPortalShell.tsx;src/components/crm/CrmAdminShell.tsx,USED_OR_REFERENCED
-AloStudent,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-AloDocument,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-AloApplication,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-AloMessage,See prisma/schema.prisma,0,0,src/app/api/student-portal/messages/route.ts,USED_OR_REFERENCED
-AloAppointment,See prisma/schema.prisma,0,0,src/app/api/counselor/dashboard/route.ts;src/app/api/student-portal/appointments/route.ts,USED_OR_REFERENCED
-AloPayment,See prisma/schema.prisma,0,0,src/app/api/crm/finance/route.ts;src/app/api/student-portal/payments/route.ts,USED_OR_REFERENCED
-AloSop,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-AloEnglishTest,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CrmUniversity,See prisma/schema.prisma,0,1,create_apis.js;prisma/seed-universities.ts;scripts/audit-database-counts.ts;src/app/api/admin/import/universities/route.ts;src/app/api/admin/universities/[id]/route.ts;src/app/api/admin/universities/route.ts;src/app/api/admin/university-data-updates/route.ts;src/app/api/course-finder/[slug]/route.ts;src/app/api/crm/course-import/map-university/route.ts;src/app/api/student-portal/course-finder/route.ts;src/app/api/universities/route.ts;src/lib/comprehensive-evidence-audit.ts,USED_OR_REFERENCED
-CrmCourse,See prisma/schema.prisma,1,5,create_apis.js;prisma/seed-universities.ts;scripts/audit-database-counts.ts;src/app/api/admin/courses/[id]/route.ts;src/app/api/admin/courses/route.ts;src/app/api/admin/import/courses/route.ts;src/app/api/admin/university-data-updates/route.ts;src/app/api/course-finder/[slug]/route.ts;src/app/api/course-finder/pro/route.ts;src/app/api/crm/courses/route.ts;src/app/api/student-portal/course-finder/route.ts;src/app/page.tsx,USED_OR_REFERENCED
-CrmCourseIntakeFee,See prisma/schema.prisma,2,4,scripts/audit-database-counts.ts;src/app/api/course-finder/pro/route.ts,USED_OR_REFERENCED
-CrmCourseRequirement,See prisma/schema.prisma,2,2,scripts/audit-database-counts.ts,USED_OR_REFERENCED
-CrmScholarship,See prisma/schema.prisma,2,3,scripts/audit-database-counts.ts;src/app/api/crm/scholarships/route.ts;src/app/api/scholarships/route.ts;src/app/api/student-portal/scholarships/route.ts;src/app/page.tsx;src/components/crm/CrmViewRouter.tsx;src/components/crm/pages/CrmScholarshipsPage.tsx;src/lib/comprehensive-evidence-audit.ts;src/lib/diagnose-system-status.ts,USED_OR_REFERENCED
-CrmRanking,See prisma/schema.prisma,1,3,Not found,UNREFERENCED_BY_SEARCH
-CrmDiscoverySource,See prisma/schema.prisma,0,1,src/app/api/crm/source-verification/route.ts,USED_OR_REFERENCED
-CrmDiscoveryRecord,See prisma/schema.prisma,1,3,Not found,UNREFERENCED_BY_SEARCH
-CrmSourceVerificationEvent,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-CrmOfficialSourceCheck,See prisma/schema.prisma,0,6,Not found,UNREFERENCED_BY_SEARCH
-CrmCommission,See prisma/schema.prisma,2,3,src/app/page.tsx;src/components/crm/CrmViewRouter.tsx;src/components/crm/pages/CrmCommissionsPage.tsx,USED_OR_REFERENCED
-CrmImportBatch,See prisma/schema.prisma,0,0,scripts/audit-database-counts.ts;src/app/api/crm/course-import/confirm/route.ts;src/app/api/crm/course-import/rollback/route.ts,USED_OR_REFERENCED
-CrmImportError,See prisma/schema.prisma,1,1,scripts/audit-database-counts.ts,USED_OR_REFERENCED
-CrmSourceLog,See prisma/schema.prisma,0,0,scripts/audit-database-counts.ts;src/app/api/crm/course-import/map-university/route.ts,USED_OR_REFERENCED
-CrmAuditLog,See prisma/schema.prisma,0,0,scripts/fix-crm-mock-pages.ts;src/app/admin/audit-logs/page.tsx;src/app/page.tsx;src/components/crm/CrmViewRouter.tsx;src/components/crm/pages/CrmAuditLogsPage.tsx;src/lib/diagnose-system-status.ts;src/lib/test-b2b-partner-access-control.ts;src/lib/test-visa-system.ts,USED_OR_REFERENCED
-Employee,See prisma/schema.prisma,0,2,prisma/agentos-seed.ts;scripts/fix-crm-mock-pages.ts;scripts/seed-all-portal-users.ts;scripts/seed-direct-mysql.js;scripts/seed-portal-admin.ts;src/app/admin/access-control-center/page.tsx;src/app/admin/employee-control/page.tsx;src/app/admin/employees/page.tsx;src/app/admin/marketing-automation/page.tsx;src/app/api/admin/employees/[id]/route.ts;src/app/api/admin/employees/activate/route.ts;src/app/api/admin/employees/create/route.ts,USED_OR_REFERENCED
-EmployeeHRProfile,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-EmployeeAttendance,See prisma/schema.prisma,0,0,src/app/api/employee/attendance/route.ts;src/app/employee/attendance/page.tsx;src/app/page.tsx;src/components/employee/EmployeeAttendancePage.tsx;src/components/employee/EmployeeViewRouter.tsx,USED_OR_REFERENCED
-EmployeeSalary,See prisma/schema.prisma,0,0,src/app/api/employee/salary/route.ts;src/app/page.tsx;src/components/employee/EmployeeSalaryPage.tsx;src/components/employee/EmployeeViewRouter.tsx;src/lib/access-check-engine.ts;src/lib/test-b2b-partner-access-control.ts;src/lib/test-employee-dashboard-system.ts;src/lib/test-super-admin-master-system.ts,USED_OR_REFERENCED
-EmployeeCommission,See prisma/schema.prisma,0,0,src/app/api/employee/salary/route.ts,USED_OR_REFERENCED
-EmployeeBonus,See prisma/schema.prisma,0,0,src/app/api/employee/salary/route.ts,USED_OR_REFERENCED
-EmployeeIncrement,See prisma/schema.prisma,0,0,src/app/api/employee/salary/route.ts,USED_OR_REFERENCED
-EmployeePerformance,See prisma/schema.prisma,0,0,src/app/api/employee/performance/route.ts;src/app/page.tsx;src/components/employee/EmployeePerformancePage.tsx;src/components/employee/EmployeeViewRouter.tsx,USED_OR_REFERENCED
-Permission,See prisma/schema.prisma,0,0,prisma/seed-complete.ts;prisma/seed.ts;scripts/seed-direct-mysql.js;src/app/admin/access-control-center/page.tsx;src/app/admin/marketing-automation/page.tsx;src/app/admin/permission-matrix/page.tsx;src/app/admin/role-permissions/page.tsx;src/app/api/admin/access-control/route.ts;src/app/api/admin/employees/[id]/route.ts;src/app/api/crm/roles/route.ts;src/app/api/crm/ucc/employee-profiles/offboard/route.ts;src/app/api/crm/ucc/employee-profiles/route.ts,USED_OR_REFERENCED
-Role,See prisma/schema.prisma,0,1,create_apis.js;prisma/agentos-seed-extra.ts;prisma/agentos-seed.ts;prisma/seed-complete.ts;prisma/seed.ts;scripts/fix-crm-mock-pages.ts;scripts/seed-direct-mysql.js;src/app/admin/access-control-center/page.tsx;src/app/admin/marketing-automation/page.tsx;src/app/admin/role-permissions/page.tsx;src/app/api/admin/access-control/route.ts;src/app/api/admin/access-control-center/route.ts,USED_OR_REFERENCED
-RolePermission,See prisma/schema.prisma,0,3,prisma/seed-complete.ts;prisma/seed.ts;scripts/seed-direct-mysql.js;src/app/admin/role-permissions/page.tsx;src/app/api/crm/roles/route.ts;src/app/api/permissions/route.ts;src/lib/rbac/permission-service.ts;src/lib/rbac/role-service.ts;src/lib/stores/portal-store.ts,USED_OR_REFERENCED
-UserRole,See prisma/schema.prisma,0,0,prisma/seed-complete.ts;prisma/seed.ts;scripts/seed-direct-mysql.js;src/app/api/admin/employees/create/route.ts;src/app/api/admin/users/route.ts;src/app/api/crm/users/route.ts;src/app/api/website/lead/route.ts;src/components/marketing/hub/MarketingAuditAccessView.tsx;src/lib/marketing/permissions.ts;src/lib/marketing/types.ts;src/lib/rbac/role-service.ts,USED_OR_REFERENCED
-PartnerLead,See prisma/schema.prisma,0,4,src/app/api/partner/commission/route.ts;src/app/api/partner/students/route.ts;src/app/page.tsx;src/app/partner/leads/page.tsx;src/components/partner/PartnerLeadsPage.tsx;src/components/partner/PartnerViewRouter.tsx,USED_OR_REFERENCED
-CommunicationThread,See prisma/schema.prisma,0,6,src/app/api/crm/inbox/route.ts;src/app/api/employee/messages/route.ts;src/app/api/partner/help/route.ts;src/lib/communication/ucc-service.ts;src/lib/diagnose-system-status.ts,USED_OR_REFERENCED
-CommunicationThreadParticipant,See prisma/schema.prisma,1,3,Not found,UNREFERENCED_BY_SEARCH
-CommunicationMessage,See prisma/schema.prisma,1,6,src/app/api/crm/inbox/route.ts;src/app/api/crm/whatsapp/route.ts;src/app/api/employee/messages/route.ts,USED_OR_REFERENCED
-CommunicationTemplate,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CommunicationLog,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CommunicationPreference,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CommunicationSlaRule,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CommunicationEscalation,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-OtpLog,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CallLog,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-Broadcast,See prisma/schema.prisma,0,0,src/app/api/crm/marketing/dashboard/route.ts;src/components/marketing/hub/ApprovalQueueView.tsx;src/components/marketing/hub/CampaignBuilderCalendarView.tsx;src/components/marketing/hub/MarketingDashboardView.tsx;src/lib/university-data-uk.ts,USED_OR_REFERENCED
-BroadcastRecipient,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-SocialInbox,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-AiReplyDraft,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-AiReplyLog,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-InternalComment,See prisma/schema.prisma,0,0,src/app/api/website/lead/route.ts,USED_OR_REFERENCED
-StudentVisibleComment,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-PartnerEmailUpdate,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CvDraft,See prisma/schema.prisma,0,0,src/app/api/counselor/dashboard/route.ts;src/app/api/student-portal/cv/route.ts;src/components/student/StudentSopCvStudio.tsx,USED_OR_REFERENCED
-AiGeneratedDocument,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CounselorTask,See prisma/schema.prisma,0,0,src/app/api/crm/support/route.ts;src/app/api/crm/tasks/route.ts;src/app/api/employee/leave/route.ts;src/app/api/employee/tasks/route.ts,USED_OR_REFERENCED
-SlaEvent,See prisma/schema.prisma,0,0,src/app/api/crm/communications/inbox/route.ts;src/app/api/crm/ucc/sla/route.ts;src/app/api/crm/ucc/webhooks/whatsapp/route.ts;src/app/api/crm/ucc/whatsapp/command/route.ts;src/lib/permissions.ts,USED_OR_REFERENCED
-DocumentAudit,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-WeeklyReport,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-SensitiveDataRevealLog,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-PortalRole,See prisma/schema.prisma,0,1,scripts/seed-direct-mysql.js;src/app/api/admin/access-control/route.ts;src/app/api/crm/roles/route.ts;src/lib/rbac/role-service.ts;src/lib/stores/portal-store.ts,USED_OR_REFERENCED
-PortalPermission,See prisma/schema.prisma,0,1,scripts/seed-direct-mysql.js;src/app/api/admin/access-control/route.ts;src/lib/rbac/permission-service.ts;src/lib/rbac/role-service.ts,USED_OR_REFERENCED
-PortalRolePermission,See prisma/schema.prisma,2,3,scripts/seed-direct-mysql.js;src/lib/stores/portal-store.ts,USED_OR_REFERENCED
-PortalUserRole,See prisma/schema.prisma,2,2,scripts/seed-direct-mysql.js;src/lib/rbac/role-service.ts,USED_OR_REFERENCED
-PortalUser,See prisma/schema.prisma,0,1,scripts/seed-direct-mysql.js;scripts/seed-portal-admin.ts;src/app/api/admin/users/route.ts;src/app/api/crm/students/route.ts;src/app/api/crm/users/route.ts;src/app/api/employee/profile/route.ts;src/app/api/employee/settings/route.ts;src/app/api/partner/applications/route.ts;src/app/api/partner-admin/users/route.ts;src/lib/rbac/role-service.ts;src/lib/stores/portal-store.ts,USED_OR_REFERENCED
-PortalSession,See prisma/schema.prisma,1,2,src/lib/student-auth.ts,USED_OR_REFERENCED
-LoginAttempt,See prisma/schema.prisma,1,1,src/app/api/student/auth/login/route.ts,USED_OR_REFERENCED
-OtpCode,See prisma/schema.prisma,0,4,src/app/student/login/page.tsx,USED_OR_REFERENCED
-PasswordResetToken,See prisma/schema.prisma,0,3,Not found,UNREFERENCED_BY_SEARCH
-PortalAuditLog,See prisma/schema.prisma,0,3,src/app/api/admin/audit/route.ts;src/app/api/crm/audit-logs/route.ts;src/app/api/crm/settings/route.ts;src/app/api/website/lead/route.ts,USED_OR_REFERENCED
-PortalStudentProfile,See prisma/schema.prisma,1,2,src/app/api/crm/students/route.ts;src/app/api/employee/students/route.ts;src/app/api/student-portal/profile/route.ts,USED_OR_REFERENCED
-EmployeeProfile,See prisma/schema.prisma,1,2,src/app/api/employee/profile/route.ts;src/app/api/employee/settings/route.ts;src/app/api/employee/tasks/route.ts;src/app/employee/profile/page.tsx;src/app/page.tsx;src/components/employee/EmployeeProfilePage.tsx;src/components/employee/EmployeeViewRouter.tsx;src/lib/access-check-engine.ts;src/lib/access-control/central-security-engine.ts,USED_OR_REFERENCED
-EmployeeActivationToken,See prisma/schema.prisma,1,2,Not found,UNREFERENCED_BY_SEARCH
-PartnerProfile,See prisma/schema.prisma,1,2,src/app/api/crm/partners/route.ts;src/app/page.tsx;src/components/partner/PartnerProfilePage.tsx;src/components/partner/PartnerViewRouter.tsx,USED_OR_REFERENCED
-PortalStudentApplication,See prisma/schema.prisma,1,1,src/app/api/crm/applications/route.ts;src/app/api/employee/applications/route.ts;src/app/api/student-portal/applications/route.ts,USED_OR_REFERENCED
-PortalStudentDocument,See prisma/schema.prisma,1,1,src/app/api/crm/documents/route.ts;src/app/api/student-portal/documents/route.ts,USED_OR_REFERENCED
-PortalTimelineEvent,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-StudentEducationRecord,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-StudentWorkExpRecord,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-StudentEnglishTestRecord,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-StudentVisaRefusal,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-StudentReferral,See prisma/schema.prisma,1,3,src/app/api/student-portal/referrals/route.ts;src/app/page.tsx;src/components/student/StudentMorePages.tsx;src/components/student/StudentViewRouter.tsx,USED_OR_REFERENCED
-PortalNotification,See prisma/schema.prisma,0,3,src/app/api/student-portal/notifications/route.ts,USED_OR_REFERENCED
-Country,See prisma/schema.prisma,0,1,scripts/audit-database-counts.ts;scripts/build-complete-canonical-csvs.ts;scripts/check-lead.ts;scripts/seed-homepage.ts;scripts/seed-other-universities.ts;src/app/admin/access-control-center/page.tsx;src/app/admin/countries/create/page.tsx;src/app/admin/countries/edit/[id]/page.tsx;src/app/admin/countries/page.tsx;src/app/admin/country-control/page.tsx;src/app/admin/import-center/city-living-costs/page.tsx;src/app/admin/import-center/countries/page.tsx,USED_OR_REFERENCED
-CountryQuickFact,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountryCity,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountryEducationPathway,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountryStudyReason,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountryEntryRequirement,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountryEnglishTest,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountryVisaStep,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountryWorkRight,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountryFaq,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-CountrySource,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-WebsiteEnglishTest,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-HomeService,See prisma/schema.prisma,0,1,src/components/website/HomepagePart2.tsx,USED_OR_REFERENCED
-SuccessStory,See prisma/schema.prisma,0,0,src/app/success-stories/[slug]/page.tsx;src/components/website/HomepagePart4.tsx,USED_OR_REFERENCED
-TeamMember,See prisma/schema.prisma,0,0,src/app/team/[slug]/page.tsx;src/components/website/HomepagePart4.tsx;src/components/website/public-pages/PublicPages.tsx,USED_OR_REFERENCED
-HomepageFaq,See prisma/schema.prisma,0,0,src/app/api/partner/help/route.ts,USED_OR_REFERENCED
-LeadForm,See prisma/schema.prisma,0,0,src/app/api/crm/leads/public/route.ts;src/app/api/website/lead/route.ts;src/components/website/MasterCountryDestinationView.tsx;src/components/website/MasterLanguagePrepLandingView.tsx;src/components/website/MasterTestPrepView.tsx;src/lib/comprehensive-evidence-audit.ts;src/lib/diagnose-system-status.ts;tests/integration/consultation-workflow.test.ts,USED_OR_REFERENCED
-SearchLog,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-PartnerPackage,See prisma/schema.prisma,0,2,src/app/api/admin/packages/route.ts;src/app/api/admin/partner-assignments/route.ts;src/lib/test-b2b-partner-access-control.ts,USED_OR_REFERENCED
-PartnerQuota,See prisma/schema.prisma,0,1,src/app/api/admin/partner-assignments/route.ts;src/app/api/admin/quota-requests/route.ts;src/app/api/admin/quotas/route.ts,USED_OR_REFERENCED
-EmployeeEducation,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-EmployeeEmergencyContact,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-EmployeeDocument,See prisma/schema.prisma,0,0,src/app/api/employee/documents/route.ts;src/app/page.tsx;src/components/employee/EmployeeDocumentsPage.tsx;src/components/employee/EmployeeViewRouter.tsx;src/lib/access-check-engine.ts;src/lib/test-b2b-partner-access-control.ts;src/lib/test-employee-dashboard-system.ts;src/lib/test-super-admin-master-system.ts,USED_OR_REFERENCED
-PartnerPackageAssignment,See prisma/schema.prisma,0,0,src/app/api/admin/partner-assignments/route.ts,USED_OR_REFERENCED
-FeatureAccessRule,See prisma/schema.prisma,0,0,src/lib/test-super-admin-master-system.ts,USED_OR_REFERENCED
-ExtraQuotaRequest,See prisma/schema.prisma,0,0,src/app/api/admin/quota-requests/route.ts,USED_OR_REFERENCED
-PartnerUserSeatRequest,See prisma/schema.prisma,0,0,src/app/api/admin/access-control-center/route.ts;src/app/api/partner-admin/seat-request/route.ts,USED_OR_REFERENCED
-PartnerMarketingQuota,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-PartnerMarketingUsage,See prisma/schema.prisma,0,0,src/lib/access-check-engine.ts,USED_OR_REFERENCED
-PartnerMarketingRequest,See prisma/schema.prisma,0,0,src/app/api/partner/marketing/approve/route.ts;src/app/api/partner/marketing/generate/route.ts;src/app/api/partner/marketing/requests/route.ts;src/app/api/partner/marketing/route.ts,USED_OR_REFERENCED
-StudentBenefitEntitlement,See prisma/schema.prisma,0,0,src/app/api/admin/student-benefits/route.ts;src/app/api/partner/student-benefits/route.ts,USED_OR_REFERENCED
-StudentMockTestVoucher,See prisma/schema.prisma,0,1,src/app/api/student/vouchers/redeem/route.ts,USED_OR_REFERENCED
-HomeHeroSlide,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-HomeSection,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-PermissionPackage,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-SocialIntegration,See prisma/schema.prisma,0,0,src/app/admin/integration-center/page.tsx;src/app/api/crm/ucc/integrations/route.ts;src/app/api/crm/ucc/oauth/callback/route.ts;src/app/api/crm/ucc/oauth/start/route.ts;src/app/crm/integration-center/page.tsx;src/components/admin/SocialIntegrationCenterPage.tsx,USED_OR_REFERENCED
-SocialAccount,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-UccConversation,See prisma/schema.prisma,0,0,src/app/api/crm/ucc/conversations/[id]/assign/route.ts;src/app/api/crm/ucc/conversations/[id]/lead/route.ts;src/app/api/crm/ucc/conversations/[id]/reply/route.ts;src/app/api/marketing/whatsapp-sla/route.ts,USED_OR_REFERENCED
-UccMessage,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-UccAttachment,See prisma/schema.prisma,2,2,Not found,UNREFERENCED_BY_SEARCH
-UccRoutingRule,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-UccOfficeHours,See prisma/schema.prisma,0,0,src/app/api/crm/ucc/office-hours/route.ts,USED_OR_REFERENCED
-UccWebhookEvent,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-EmployeeCommunicationProfile,See prisma/schema.prisma,0,1,scripts/seed-direct-mysql.js;src/app/api/crm/ucc/employee-profiles/offboard/route.ts;src/app/api/crm/ucc/employee-profiles/route.ts,USED_OR_REFERENCED
-OcrJob,See prisma/schema.prisma,0,0,src/app/api/crm/ucc/ocr/process/route.ts;src/app/api/marketing/whatsapp-doc-upload/route.ts,USED_OR_REFERENCED
-OcrFieldExtraction,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-FormFillSuggestion,See prisma/schema.prisma,1,1,src/app/api/crm/ucc/form-fill/approve/route.ts,USED_OR_REFERENCED
-ApprovalRequest,See prisma/schema.prisma,0,0,scripts/audit-database-counts.ts,USED_OR_REFERENCED
-IntegrationAuditLog,See prisma/schema.prisma,0,0,src/app/api/crm/ucc/employee-profiles/offboard/route.ts;src/lib/access-control/central-security-engine.ts,USED_OR_REFERENCED
-CommunicationConsent,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-ProviderErrorLog,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-ContentApproval,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-AgentDepartment,See prisma/schema.prisma,0,3,prisma/agentos-seed-extra.ts;prisma/agentos-seed.ts;src/lib/agentos/agent-service.ts,USED_OR_REFERENCED
-AgentEngineType,See prisma/schema.prisma,0,3,prisma/agentos-seed-extra.ts;prisma/agentos-seed.ts;src/lib/agentos/agent-service.ts,USED_OR_REFERENCED
-AgentDefinition,See prisma/schema.prisma,2,5,prisma/agentos-seed-extra.ts;prisma/agentos-seed.ts;src/lib/agentos/agent-service.ts;src/lib/test-super-admin-master-system.ts,USED_OR_REFERENCED
-AgentTask,See prisma/schema.prisma,1,7,src/lib/agentos/agent-service.ts,USED_OR_REFERENCED
-AgentTaskLog,See prisma/schema.prisma,1,2,Not found,UNREFERENCED_BY_SEARCH
-AgentRuntime,See prisma/schema.prisma,1,3,src/lib/agentos/agent-service.ts,USED_OR_REFERENCED
-AgentMemory,See prisma/schema.prisma,1,3,src/app/api/marketing/agentos/route.ts;src/lib/agentos/agent-service.ts,USED_OR_REFERENCED
-AgentApprovalQueue,See prisma/schema.prisma,1,5,src/lib/agentos/agent-service.ts,USED_OR_REFERENCED
-AgentAuditLog,See prisma/schema.prisma,1,5,src/lib/agentos/agent-service.ts,USED_OR_REFERENCED
-AgentSchedule,See prisma/schema.prisma,1,3,src/cron/worker.ts;src/lib/agentos/agent-service.ts,USED_OR_REFERENCED
-EmployeeDocumentVersion,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-EmployeeAgreementAcceptance,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-EmployeeLeaveRequest,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-EmployeePayroll,See prisma/schema.prisma,0,2,src/app/api/admin/payroll/route.ts,USED_OR_REFERENCED
-EmployeePayrollItem,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-EmployeeDevice,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-EmployeeTemporaryPermission,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-EmployeePermissionRequest,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-EmployeeReassignment,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-EmployeeDepartment,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-EmployeeBranch,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-EmployeeOffice,See prisma/schema.prisma,0,0,Not found,UNREFERENCED_BY_SEARCH
-CommunicationSlaEvent,See prisma/schema.prisma,0,3,Not found,UNREFERENCED_BY_SEARCH
-CommunicationSlaIncident,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-CommunicationSlaJustification,See prisma/schema.prisma,1,2,Not found,UNREFERENCED_BY_SEARCH
-CounselorResponseMetric,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-CommunicationAttachment,See prisma/schema.prisma,0,4,Not found,UNREFERENCED_BY_SEARCH
-PhoneCallRecord,See prisma/schema.prisma,0,3,Not found,UNREFERENCED_BY_SEARCH
-ConnectedSocialAccount,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-ApplicationSerial,See prisma/schema.prisma,0,3,Not found,UNREFERENCED_BY_SEARCH
-ApplicationOffer,See prisma/schema.prisma,0,3,Not found,UNREFERENCED_BY_SEARCH
-ApplicationOfferVersion,See prisma/schema.prisma,1,1,Not found,UNREFERENCED_BY_SEARCH
-ApplicationOfferCondition,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-ApplicationPaymentInstruction,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-ApplicationPaymentProof,See prisma/schema.prisma,1,2,Not found,UNREFERENCED_BY_SEARCH
-DocumentChecklist,See prisma/schema.prisma,0,3,Not found,UNREFERENCED_BY_SEARCH
-DocumentChecklistItem,See prisma/schema.prisma,1,2,Not found,UNREFERENCED_BY_SEARCH
-DocumentRequest,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-DocumentVersion,See prisma/schema.prisma,0,2,src/app/api/employee/documents/route.ts;src/components/communication/DocumentVersionTimeline.tsx,USED_OR_REFERENCED
-ApplicationComment,See prisma/schema.prisma,0,3,generate_api.ts;src/app/api/student/messages/route.ts,USED_OR_REFERENCED
-InterviewProgram,See prisma/schema.prisma,0,3,Not found,UNREFERENCED_BY_SEARCH
-InterviewQuestion,See prisma/schema.prisma,1,2,gen_api_1.js;src/app/api/visa/interviews/[id]/question/route.ts,USED_OR_REFERENCED
-InterviewStudentAnswer,See prisma/schema.prisma,1,2,Not found,UNREFERENCED_BY_SEARCH
-InterviewPracticeSession,See prisma/schema.prisma,1,2,Not found,UNREFERENCED_BY_SEARCH
-InterviewPdfRecord,See prisma/schema.prisma,1,2,Not found,UNREFERENCED_BY_SEARCH
-StudentWorldState,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-StudentNextBestAction,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-StudentEvent,See prisma/schema.prisma,0,3,generate_api.ts;src/app/api/admin/import/batches/[id]/rollback/route.ts;src/app/api/applications/route.ts;src/lib/student-auth.ts,USED_OR_REFERENCED
-SuccessRecord,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
-ReviewRequest,See prisma/schema.prisma,1,2,src/app/api/student-portal/cv/route.ts,USED_OR_REFERENCED
-AlumniRecord,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-ServiceChargeDeclaration,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-StudentSession,See prisma/schema.prisma,0,3,src/app/api/student/auth/login/route.ts;src/app/api/student/auth/logout/route.ts;src/lib/student-auth.ts,USED_OR_REFERENCED
-StudentLoginAttempt,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-B2bProvider,See prisma/schema.prisma,0,3,src/app/application-manager/b2b/providers/page.tsx,USED_OR_REFERENCED
-B2bApplication,See prisma/schema.prisma,1,3,src/app/application-manager/b2b/page.tsx,USED_OR_REFERENCED
-ApplicationDeadline,See prisma/schema.prisma,0,2,src/app/application-manager/deadlines/page.tsx,USED_OR_REFERENCED
-ApplicationTask,See prisma/schema.prisma,0,2,Not found,UNREFERENCED_BY_SEARCH
-ApplicationSubmissionReceipt,See prisma/schema.prisma,0,1,Not found,UNREFERENCED_BY_SEARCH
+Model_Name,Source_File,Category
+"User","prisma/schema.prisma","CRM_CORE"
+"DeploymentSequence","prisma/schema.prisma","CRM_CORE"
+"MarketingCampaign","prisma/schema.prisma","CRM_CORE"
+"MarketingContentIdea","prisma/schema.prisma","CRM_CORE"
+"MarketingGeneratedContent","prisma/schema.prisma","CRM_CORE"
+"MarketingAsset","prisma/schema.prisma","CRM_CORE"
+"MarketingTemplate","prisma/schema.prisma","CRM_CORE"
+"MarketingVideo","prisma/schema.prisma","CRM_CORE"
+"MarketingCalendar","prisma/schema.prisma","CRM_CORE"
+"MarketingApproval","prisma/schema.prisma","CRM_CORE"
+"MarketingSocialMessage","prisma/schema.prisma","CRM_CORE"
+"MarketingDMThread","prisma/schema.prisma","CRM_CORE"
+"MarketingComment","prisma/schema.prisma","CRM_CORE"
+"MarketingLead","prisma/schema.prisma","CRM_CORE"
+"MarketingLeadScore","prisma/schema.prisma","CRM_CORE"
+"MarketingCampaignSource","prisma/schema.prisma","CRM_CORE"
+"MarketingReport","prisma/schema.prisma","CRM_CORE"
+"MarketingAgentJob","prisma/schema.prisma","CRM_CORE"
+"MarketingAgentMemory","prisma/schema.prisma","CRM_CORE"
+"MarketingAuditLog","prisma/schema.prisma","CRM_CORE"
+"MarketingRagSource","prisma/schema.prisma","CRM_CORE"
+"MarketingRagChunk","prisma/schema.prisma","CRM_CORE"
+"MarketingImprovementProposal","prisma/schema.prisma","CRM_CORE"
+"SocialConnectedAccount","prisma/schema.prisma","CRM_CORE"
+"SocialWebhookEvent","prisma/schema.prisma","CRM_CORE"
+"Student","prisma/schema.prisma","CRM_CORE"
+"StudentProfileSection","prisma/schema.prisma","CRM_CORE"
+"StudentEducation","prisma/schema.prisma","CRM_CORE"
+"StudentPassport","prisma/schema.prisma","CRM_CORE"
+"StudentEnglishTest","prisma/schema.prisma","CRM_CORE"
+"StudentWorkExperience","prisma/schema.prisma","CRM_CORE"
+"StudentRecommendation","prisma/schema.prisma","CRM_CORE"
+"StudentVisaHistory","prisma/schema.prisma","CRM_CORE"
+"StudentFunding","prisma/schema.prisma","CRM_CORE"
+"StudentAdmissionPreference","prisma/schema.prisma","CRM_CORE"
+"Application","prisma/schema.prisma","CRM_CORE"
+"ApplicationStageHistory","prisma/schema.prisma","CRM_CORE"
+"StudentDocument","prisma/schema.prisma","CRM_CORE"
+"StudentMessage","prisma/schema.prisma","CRM_CORE"
+"TimelineEvent","prisma/schema.prisma","CRM_CORE"
+"Appointment","prisma/schema.prisma","CRM_CORE"
+"SavedCourse","prisma/schema.prisma","CRM_CORE"
+"CourseComparison","prisma/schema.prisma","CRM_CORE"
+"ScholarshipMatch","prisma/schema.prisma","CRM_CORE"
+"SopDraft","prisma/schema.prisma","CRM_CORE"
+"CvReview","prisma/schema.prisma","CRM_CORE"
+"EnglishTest","prisma/schema.prisma","CRM_CORE"
+"MockTest","prisma/schema.prisma","CRM_CORE"
+"TestSession","prisma/schema.prisma","CRM_CORE"
+"TestAnswer","prisma/schema.prisma","CRM_CORE"
+"TestResult","prisma/schema.prisma","CRM_CORE"
+"AiExamFeedback","prisma/schema.prisma","CRM_CORE"
+"AiInterviewSession","prisma/schema.prisma","CRM_CORE"
+"AiInterviewAnswer","prisma/schema.prisma","CRM_CORE"
+"AiInterviewResult","prisma/schema.prisma","CRM_CORE"
+"MockTestCredit","prisma/schema.prisma","CRM_CORE"
+"MockTestPayment","prisma/schema.prisma","CRM_CORE"
+"MockTestPackage","prisma/schema.prisma","CRM_CORE"
+"VisaChecklistItem","prisma/schema.prisma","CRM_CORE"
+"VisaReadinessReport","prisma/schema.prisma","CRM_CORE"
+"ImportBatch","prisma/schema.prisma","CRM_CORE"
+"ImportStagingStudent","prisma/schema.prisma","CRM_CORE"
+"UniversityUpdateRequest","prisma/schema.prisma","CRM_CORE"
+"VisaCase","prisma/schema.prisma","CRM_CORE"
+"VisaInterview","prisma/schema.prisma","CRM_CORE"
+"VisaInterviewQuestion","prisma/schema.prisma","CRM_CORE"
+"VisaInterviewAnswer","prisma/schema.prisma","CRM_CORE"
+"VisaMockResult","prisma/schema.prisma","CRM_CORE"
+"VisaOfficerNote","prisma/schema.prisma","CRM_CORE"
+"VisaRiskAssessment","prisma/schema.prisma","CRM_CORE"
+"VisaFundingReview","prisma/schema.prisma","CRM_CORE"
+"VisaStudyGapReview","prisma/schema.prisma","CRM_CORE"
+"VisaRefusalReview","prisma/schema.prisma","CRM_CORE"
+"VisaSensitiveReview","prisma/schema.prisma","CRM_CORE"
+"VisaStudentFeedback","prisma/schema.prisma","CRM_CORE"
+"VisaTask","prisma/schema.prisma","CRM_CORE"
+"VisaReport","prisma/schema.prisma","CRM_CORE"
+"AiStudentMemory","prisma/schema.prisma","CRM_CORE"
+"InboundMessage","prisma/schema.prisma","CRM_CORE"
+"AloAuditLog","prisma/schema.prisma","CRM_CORE"
+"Notification","prisma/schema.prisma","CRM_CORE"
+"AloStudent","prisma/schema.prisma","CRM_CORE"
+"AloDocument","prisma/schema.prisma","CRM_CORE"
+"AloApplication","prisma/schema.prisma","CRM_CORE"
+"AloMessage","prisma/schema.prisma","CRM_CORE"
+"AloAppointment","prisma/schema.prisma","CRM_CORE"
+"AloPayment","prisma/schema.prisma","CRM_CORE"
+"AloSop","prisma/schema.prisma","CRM_CORE"
+"AloEnglishTest","prisma/schema.prisma","CRM_CORE"
+"CrmUniversity","prisma/schema.prisma","CRM_CORE"
+"CrmCourse","prisma/schema.prisma","CRM_CORE"
+"CrmCourseIntakeFee","prisma/schema.prisma","CRM_CORE"
+"CrmCourseRequirement","prisma/schema.prisma","CRM_CORE"
+"CrmScholarship","prisma/schema.prisma","CRM_CORE"
+"CrmCommission","prisma/schema.prisma","CRM_CORE"
+"CrmImportBatch","prisma/schema.prisma","CRM_CORE"
+"CrmImportError","prisma/schema.prisma","CRM_CORE"
+"CrmSourceLog","prisma/schema.prisma","CRM_CORE"
+"CrmAuditLog","prisma/schema.prisma","CRM_CORE"
+"Employee","prisma/schema.prisma","CRM_CORE"
+"EmployeeHRProfile","prisma/schema.prisma","CRM_CORE"
+"EmployeeAttendance","prisma/schema.prisma","CRM_CORE"
+"EmployeeSalary","prisma/schema.prisma","CRM_CORE"
+"EmployeeCommission","prisma/schema.prisma","CRM_CORE"
+"EmployeeBonus","prisma/schema.prisma","CRM_CORE"
+"EmployeeIncrement","prisma/schema.prisma","CRM_CORE"
+"EmployeePerformance","prisma/schema.prisma","CRM_CORE"
+"Permission","prisma/schema.prisma","CRM_CORE"
+"Role","prisma/schema.prisma","CRM_CORE"
+"RolePermission","prisma/schema.prisma","CRM_CORE"
+"UserRole","prisma/schema.prisma","CRM_CORE"
+"PartnerLead","prisma/schema.prisma","CRM_CORE"
+"CommunicationThread","prisma/schema.prisma","CRM_CORE"
+"CommunicationThreadParticipant","prisma/schema.prisma","CRM_CORE"
+"CommunicationMessage","prisma/schema.prisma","CRM_CORE"
+"CommunicationTemplate","prisma/schema.prisma","CRM_CORE"
+"CommunicationLog","prisma/schema.prisma","CRM_CORE"
+"CommunicationPreference","prisma/schema.prisma","CRM_CORE"
+"CommunicationSlaRule","prisma/schema.prisma","CRM_CORE"
+"CommunicationEscalation","prisma/schema.prisma","CRM_CORE"
+"OtpLog","prisma/schema.prisma","CRM_CORE"
+"CallLog","prisma/schema.prisma","CRM_CORE"
+"Broadcast","prisma/schema.prisma","CRM_CORE"
+"BroadcastRecipient","prisma/schema.prisma","CRM_CORE"
+"SocialInbox","prisma/schema.prisma","CRM_CORE"
+"AiReplyDraft","prisma/schema.prisma","CRM_CORE"
+"AiReplyLog","prisma/schema.prisma","CRM_CORE"
+"InternalComment","prisma/schema.prisma","CRM_CORE"
+"StudentVisibleComment","prisma/schema.prisma","CRM_CORE"
+"PartnerEmailUpdate","prisma/schema.prisma","CRM_CORE"
+"CvDraft","prisma/schema.prisma","CRM_CORE"
+"AiGeneratedDocument","prisma/schema.prisma","CRM_CORE"
+"CounselorTask","prisma/schema.prisma","CRM_CORE"
+"SlaEvent","prisma/schema.prisma","CRM_CORE"
+"DocumentAudit","prisma/schema.prisma","CRM_CORE"
+"WeeklyReport","prisma/schema.prisma","CRM_CORE"
+"SensitiveDataRevealLog","prisma/schema.prisma","CRM_CORE"
+"PortalRole","prisma/schema.prisma","CRM_CORE"
+"PortalPermission","prisma/schema.prisma","CRM_CORE"
+"PortalRolePermission","prisma/schema.prisma","CRM_CORE"
+"PortalUserRole","prisma/schema.prisma","CRM_CORE"
+"PortalUser","prisma/schema.prisma","CRM_CORE"
+"PortalSession","prisma/schema.prisma","CRM_CORE"
+"LoginAttempt","prisma/schema.prisma","CRM_CORE"
+"OtpCode","prisma/schema.prisma","CRM_CORE"
+"PasswordResetToken","prisma/schema.prisma","CRM_CORE"
+"PortalAuditLog","prisma/schema.prisma","CRM_CORE"
+"PortalStudentProfile","prisma/schema.prisma","CRM_CORE"
+"EmployeeProfile","prisma/schema.prisma","CRM_CORE"
+"EmployeeActivationToken","prisma/schema.prisma","CRM_CORE"
+"PartnerProfile","prisma/schema.prisma","CRM_CORE"
+"PortalStudentApplication","prisma/schema.prisma","CRM_CORE"
+"PortalStudentDocument","prisma/schema.prisma","CRM_CORE"
+"PortalTimelineEvent","prisma/schema.prisma","CRM_CORE"
+"StudentEducationRecord","prisma/schema.prisma","CRM_CORE"
+"StudentWorkExpRecord","prisma/schema.prisma","CRM_CORE"
+"StudentEnglishTestRecord","prisma/schema.prisma","CRM_CORE"
+"StudentVisaRefusal","prisma/schema.prisma","CRM_CORE"
+"StudentReferral","prisma/schema.prisma","CRM_CORE"
+"PortalNotification","prisma/schema.prisma","CRM_CORE"
+"Country","prisma/schema.prisma","CRM_CORE"
+"CountryQuickFact","prisma/schema.prisma","CRM_CORE"
+"CountryCity","prisma/schema.prisma","CRM_CORE"
+"CountryEducationPathway","prisma/schema.prisma","CRM_CORE"
+"CountryStudyReason","prisma/schema.prisma","CRM_CORE"
+"CountryEntryRequirement","prisma/schema.prisma","CRM_CORE"
+"CountryEnglishTest","prisma/schema.prisma","CRM_CORE"
+"CountryVisaStep","prisma/schema.prisma","CRM_CORE"
+"CountryWorkRight","prisma/schema.prisma","CRM_CORE"
+"CountryFaq","prisma/schema.prisma","CRM_CORE"
+"CountrySource","prisma/schema.prisma","CRM_CORE"
+"WebsiteEnglishTest","prisma/schema.prisma","CRM_CORE"
+"HomeService","prisma/schema.prisma","CRM_CORE"
+"SuccessStory","prisma/schema.prisma","CRM_CORE"
+"TeamMember","prisma/schema.prisma","CRM_CORE"
+"HomepageFaq","prisma/schema.prisma","CRM_CORE"
+"LeadForm","prisma/schema.prisma","CRM_CORE"
+"SearchLog","prisma/schema.prisma","CRM_CORE"
+"PartnerPackage","prisma/schema.prisma","CRM_CORE"
+"PartnerQuota","prisma/schema.prisma","CRM_CORE"
+"EmployeeEducation","prisma/schema.prisma","CRM_CORE"
+"EmployeeEmergencyContact","prisma/schema.prisma","CRM_CORE"
+"EmployeeDocument","prisma/schema.prisma","CRM_CORE"
+"PartnerPackageAssignment","prisma/schema.prisma","CRM_CORE"
+"FeatureAccessRule","prisma/schema.prisma","CRM_CORE"
+"ExtraQuotaRequest","prisma/schema.prisma","CRM_CORE"
+"PartnerUserSeatRequest","prisma/schema.prisma","CRM_CORE"
+"PartnerMarketingQuota","prisma/schema.prisma","CRM_CORE"
+"PartnerMarketingUsage","prisma/schema.prisma","CRM_CORE"
+"PartnerMarketingRequest","prisma/schema.prisma","CRM_CORE"
+"StudentBenefitEntitlement","prisma/schema.prisma","CRM_CORE"
+"StudentMockTestVoucher","prisma/schema.prisma","CRM_CORE"
+"HomeHeroSlide","prisma/schema.prisma","CRM_CORE"
+"HomeSection","prisma/schema.prisma","CRM_CORE"
+"PermissionPackage","prisma/schema.prisma","CRM_CORE"
+"SocialIntegration","prisma/schema.prisma","CRM_CORE"
+"SocialAccount","prisma/schema.prisma","CRM_CORE"
+"UccConversation","prisma/schema.prisma","CRM_CORE"
+"UccMessage","prisma/schema.prisma","CRM_CORE"
+"UccAttachment","prisma/schema.prisma","CRM_CORE"
+"UccRoutingRule","prisma/schema.prisma","CRM_CORE"
+"UccOfficeHours","prisma/schema.prisma","CRM_CORE"
+"UccWebhookEvent","prisma/schema.prisma","CRM_CORE"
+"EmployeeCommunicationProfile","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"
+"OcrJob","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"
+"OcrFieldExtraction","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"
+"FormFillSuggestion","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"
+"ApprovalRequest","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"
+"IntegrationAuditLog","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"
+"CommunicationConsent","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"
+"ProviderErrorLog","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"
+"ContentApproval","prisma/schema.prisma","UCC_GOVERNANCE_EXTENSION"

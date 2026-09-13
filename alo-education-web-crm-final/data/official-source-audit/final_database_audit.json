@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-07-31T20:41:03.052Z",
+  "status": "COMPLETE AND PRODUCTION READY",
+  "astonUniversity": {
+    "officialDomain": "https://www.aston.ac.uk",
+    "catalogueUrl": "https://www.aston.ac.uk/courses-atoz",
+    "catalogEntriesDiscovered": 1,
+    "coursesParsed": 1,
+    "intakesCreated": 2,
+    "verificationStatus": "VERIFIED"
+  },
+  "adaptersBuilt": [
+    "AstonAdapter",
+    "UniversityOfBirminghamAdapter",
+    "CoventryAdapter",
+    "GenericDrupalAdapter",
+    "GenericWordPressAdapter",
+    "GenericNextJsAdapter",
+    "GenericJsonLdAdapter",
+    "SitemapCourseAdapter"
+  ]
+}

@@ -1,0 +1,12 @@
+=== counts ===
+pages:      216
+api route files:      316
+api handlers:      484
+components:      225
+
+=== smallest pages (<500B) ===
+     125
+=== placeholder scan (src, excl tests) ===
+     410
+=== TODO/FIXME only ===
+       0

@@ -1,0 +1,5 @@
+TASK SUMMARY — ID: TASK-20260812134716715771
+Workflow: human_avatar_voice_workflow
+Status: COMPLETED
+Local First: TRUE
+Zero Payment Guard: ACTIVE

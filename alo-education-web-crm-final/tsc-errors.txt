@@ -1,0 +1,416 @@
+prisma/seed-complete.ts(729,30): error TS2339: Property 'isAiGenerated' does not exist on type '{ senderType: string; senderName: string; content: string; messageType: string; isInternal: boolean; } | { senderType: string; senderName: string; content: string; messageType: string; isInternal?: undefined; } | { ...; } | { ...; }'.
+  Property 'isAiGenerated' does not exist on type '{ senderType: string; senderName: string; content: string; messageType: string; isInternal: boolean; }'.
+prisma/seed-complete.ts(731,27): error TS2339: Property 'isInternal' does not exist on type '{ senderType: string; senderName: string; content: string; messageType: string; isInternal: boolean; } | { senderType: string; senderName: string; content: string; messageType: string; isInternal?: undefined; } | { ...; } | { ...; }'.
+  Property 'isInternal' does not exist on type '{ senderType: string; senderName: string; content: string; messageType: string; isAiGenerated?: undefined; }'.
+src/app/api/admin/student-benefits/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/admin/student-benefits/route.ts(50,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/counselor/dashboard/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/course-finder/compare/route.ts(23,22): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/app/api/course-finder/compare/route.ts(38,9): error TS2322: Type '{ course: { include: { university: true; }; }; }' is not assignable to type 'never'.
+src/app/api/course-finder/compare/route.ts(48,22): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/app/api/course-finder/compare/route.ts(67,33): error TS2339: Property 'university' does not exist on type 'never'.
+src/app/api/course-finder/compare/route.ts(68,20): error TS2345: Argument of type '{ universityId: any; universityName: any; country: any; city: any; universityRanking: any; universityWorldRanking: any; universityType: any; universityWebsite: any; universityFeatured: any; ... 20 more ...; scholarships: { ...; }[]; }' is not assignable to parameter of type 'never'.
+src/app/api/course-finder/compare/route.ts(79,36): error TS2339: Property 'courseTitle' does not exist on type 'never'.
+src/app/api/course-finder/compare/route.ts(80,35): error TS2339: Property 'studyLevel' does not exist on type 'never'.
+src/app/api/course-finder/compare/route.ts(81,37): error TS2339: Property 'programLevel' does not exist on type 'never'.
+src/app/api/course-finder/compare/route.ts(82,36): error TS2339: Property 'subjectArea' does not exist on type 'never'.
+src/app/api/course-finder/compare/route.ts(83,39): error TS2339: Property 'disciplineArea' does not exist on type 'never'.
+src/app/api/course-finder/compare/route.ts(84,39): error TS2339: Property 'durationMonths' does not exist on type 'never'.
+src/app/api/course-finder/compare/route.ts(85,35): error TS2339: Property 'publicTags' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(31,13): error TS2551: Property 'course' does not exist on type 'CrmCourseIntakeFeeWhereInput'. Did you mean 'courseId'?
+src/app/api/course-finder/pro/route.ts(32,20): error TS2551: Property 'course' does not exist on type 'CrmCourseIntakeFeeWhereInput'. Did you mean 'courseId'?
+src/app/api/course-finder/pro/route.ts(48,22): error TS2322: Type 'CrmCourseIntakeFeeWhereInput | { OR: ({ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { ...; } | { ...; })[]; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+  Type '{ OR: ({ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; })[]; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+    Types of property 'OR' are incompatible.
+      Type '({ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; })[]' is not assignable to type 'CrmCourseIntakeFeeWhereInput[]'.
+        Type '{ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+          Type '{ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(48,79): error TS2322: Type '{ OR: ({ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; })[]; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+  Types of property 'OR' are incompatible.
+    Type '({ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; })[]' is not assignable to type 'CrmCourseIntakeFeeWhereInput[]'.
+      Type '{ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+        Type '{ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(50,22): error TS2322: Type '{ OR: ({ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; })[]; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+  Types of property 'OR' are incompatible.
+    Type '({ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; })[]' is not assignable to type 'CrmCourseIntakeFeeWhereInput[]'.
+      Type '{ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; } | { course: { university: { name: { contains: string; mode: string; }; }; courseTitle?: undefined; subjectArea?: undefined; }; } | { ...; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+        Type '{ course: { courseTitle: { contains: string; mode: string; }; university?: undefined; subjectArea?: undefined; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(57,22): error TS2322: Type 'CrmCourseIntakeFeeWhereInput | { course: { studyLevel: { contains: string; mode: string; }; }; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+  Type '{ course: { studyLevel: { contains: string; mode: string; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(57,79): error TS2559: Type '{ course: { studyLevel: { contains: string; mode: string; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(59,22): error TS2559: Type '{ course: { studyLevel: { contains: string; mode: string; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(66,22): error TS2322: Type 'CrmCourseIntakeFeeWhereInput | { course: { subjectArea: { contains: string; mode: string; }; }; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+  Type '{ course: { subjectArea: { contains: string; mode: string; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(66,79): error TS2559: Type '{ course: { subjectArea: { contains: string; mode: string; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(68,22): error TS2559: Type '{ course: { subjectArea: { contains: string; mode: string; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(77,52): error TS2353: Object literal may only specify known properties, and 'mode' does not exist in type 'StringFilter<"CrmCourseIntakeFee">'.
+src/app/api/course-finder/pro/route.ts(91,22): error TS2322: Type 'CrmCourseIntakeFeeWhereInput | { course: { university: { ieltsMin: { lte: number; }; }; }; }' is not assignable to type 'CrmCourseIntakeFeeWhereInput'.
+  Type '{ course: { university: { ieltsMin: { lte: number; }; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(91,79): error TS2559: Type '{ course: { university: { ieltsMin: { lte: number; }; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(93,22): error TS2559: Type '{ course: { university: { ieltsMin: { lte: number; }; }; }; }' has no properties in common with type 'CrmCourseIntakeFeeWhereInput'.
+src/app/api/course-finder/pro/route.ts(101,9): error TS2322: Type '{ course: { include: { university: true; }; }; }' is not assignable to type 'never'.
+src/app/api/course-finder/pro/route.ts(148,35): error TS2339: Property 'university' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(150,46): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}|${string}|${number}|${string}`'.
+src/app/api/course-finder/pro/route.ts(162,38): error TS2339: Property 'courseTitle' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(163,37): error TS2339: Property 'studyLevel' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(164,39): error TS2339: Property 'programLevel' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(165,38): error TS2339: Property 'subjectArea' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(166,41): error TS2339: Property 'disciplineArea' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(167,41): error TS2339: Property 'durationMonths' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(168,37): error TS2339: Property 'publicTags' does not exist on type 'never'.
+src/app/api/course-finder/pro/route.ts(169,39): error TS2339: Property 'status' does not exist on type 'never'.
+src/app/api/crm/analytics/route.ts(6,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/applications/route.ts(16,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/applications/route.ts(130,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/appointments/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/appointments/route.ts(88,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/appointments/route.ts(125,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/appointments/route.ts(163,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/audit-logs/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/communications/route.ts(6,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/communications/route.ts(34,11): error TS2322: Type '{ thread: { select: { channel: true; status: true; assignedToName: true; }; }; }' is not assignable to type 'never'.
+src/app/api/crm/course-import/stats/route.ts(30,45): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'CrmImportErrorSumAggregateInputType'.
+src/app/api/crm/course-import/stats/route.ts(53,19): error TS18048: 'failedRowsAgg._sum' is possibly 'undefined'.
+src/app/api/crm/course-import/stats/route.ts(53,38): error TS2339: Property 'id' does not exist on type '{ rowNumber?: number | null | undefined; }'.
+src/app/api/crm/dashboard/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/dashboard/route.ts(152,30): error TS2345: Argument of type '{ label: string; value: number; }' is not assignable to parameter of type 'never'.
+src/app/api/crm/documents/route.ts(14,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/documents/route.ts(125,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/finance/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/finance/route.ts(142,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/hrm/route.ts(6,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/hrm/route.ts(43,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/hrm/route.ts(63,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/inbox/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/inbox/route.ts(69,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/inbox/route.ts(117,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/leads/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/leads/route.ts(100,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/partners/route.ts(6,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/partners/route.ts(56,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/partners/route.ts(81,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/reports/route.ts(6,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/roles/route.ts(6,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/roles/route.ts(10,37): error TS2353: Object literal may only specify known properties, and 'permission' does not exist in type 'PortalPermissionInclude<DefaultArgs>'.
+src/app/api/crm/roles/route.ts(27,26): error TS2339: Property '_count' does not exist on type '{ name: string; id: string; createdAt: Date; updatedAt: Date; description: string; label: string; isSystem: boolean; }'.
+src/app/api/crm/roles/route.ts(28,28): error TS2339: Property 'permissions' does not exist on type '{ name: string; id: string; createdAt: Date; updatedAt: Date; description: string; label: string; isSystem: boolean; }'.
+src/app/api/crm/roles/route.ts(44,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/roles/route.ts(80,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/roles/route.ts(95,57): error TS2353: Object literal may only specify known properties, and 'roleId' does not exist in type 'PortalPermissionWhereInput'.
+src/app/api/crm/roles/route.ts(97,54): error TS2353: Object literal may only specify known properties, and 'roleId' does not exist in type '(Without<PortalPermissionCreateInput, PortalPermissionUncheckedCreateInput> & PortalPermissionUncheckedCreateInput) | (Without<...> & PortalPermissionCreateInput)'.
+src/app/api/crm/scholarships/route.ts(6,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/scholarships/route.ts(41,23): error TS2345: Argument of type '{ universityName: string; id: string; createdAt: Date; updatedAt: Date; status: string; scholarshipName: string; universityId: string; courseId: string; batchId: string; scholarshipAmount: number; scholarshipCurrency: string; }' is not assignable to parameter of type 'never'.
+src/app/api/crm/scholarships/route.ts(65,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/scholarships/route.ts(89,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/seed-universities/route.ts(561,79): error TS2322: Type 'false' is not assignable to type 'never'.
+src/app/api/crm/seed-universities/route.ts(566,78): error TS2322: Type 'false' is not assignable to type 'never'.
+src/app/api/crm/seed-universities/route.ts(571,87): error TS2322: Type 'false' is not assignable to type 'never'.
+src/app/api/crm/seed-universities/route.ts(576,86): error TS2322: Type 'false' is not assignable to type 'never'.
+src/app/api/crm/seed-universities/route.ts(581,88): error TS2322: Type 'false' is not assignable to type 'never'.
+src/app/api/crm/seed/route.ts(221,25): error TS2345: Argument of type '{ id: string; email: string; name: string; userType: string; crmRole: string; }' is not assignable to parameter of type 'never'.
+src/app/api/crm/seed/route.ts(246,23): error TS2345: Argument of type '{ id: string; email: string; name: string; userType: string; crmRole: string; }' is not assignable to parameter of type 'never'.
+src/app/api/crm/settings/route.ts(9,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/settings/route.ts(48,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/social/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/social/route.ts(77,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/students/route.ts(11,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/support/route.ts(6,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/support/route.ts(52,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/support/route.ts(75,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/tasks/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/tasks/route.ts(77,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/tasks/route.ts(111,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/tasks/route.ts(157,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/users/route.ts(7,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/users/route.ts(64,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/users/route.ts(100,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/whatsapp/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/crm/whatsapp/route.ts(53,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/applications/route.ts(11,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/attendance/route.ts(12,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/attendance/route.ts(104,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/documents/route.ts(11,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/leave/route.ts(13,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/leave/route.ts(87,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/leave/route.ts(142,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/messages/route.ts(13,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/messages/route.ts(84,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/messages/route.ts(163,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/performance/route.ts(13,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/performance/route.ts(106,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/performance/route.ts(181,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/profile/route.ts(12,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/profile/route.ts(41,9): error TS2322: Type '{ name: string; id: string; email: string; role: string; createdAt: Date; updatedAt: Date; userId: string; status: string; phone: string; lastLoginAt: Date | null; department: string; ... 8 more ...; privacyModeOn: boolean; } | null' is not assignable to type 'null'.
+  Type '{ name: string; id: string; email: string; role: string; createdAt: Date; updatedAt: Date; userId: string; status: string; phone: string; lastLoginAt: Date | null; department: string; ... 8 more ...; privacyModeOn: boolean; }' is not assignable to type 'null'.
+src/app/api/employee/profile/route.ts(69,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/reports/route.ts(12,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/reports/route.ts(95,68): error TS2345: Argument of type '{ by: "status"[]; where: { studentProfileId: { in: string[]; }; }; _count: { id: true; }; }' is not assignable to parameter of type '{ by: "status"[]; where: { studentProfileId: { in: string[]; }; }; _count: { id: true; }; } & { orderBy?: PortalStudentDocumentOrderByWithAggregationInput | PortalStudentDocumentOrderByWithAggregationInput[] | undefined; } & { ...; }[]'.
+  Type '{ by: "status"[]; where: { studentProfileId: { in: string[]; }; }; _count: { id: true; }; }' is missing the following properties from type '{ status: string; _count: { id: number; }; }[]': length, pop, push, concat, and 35 more.
+src/app/api/employee/reports/route.ts(132,9): error TS2322: Type '{ id: string; createdAt: Date; updatedAt: Date; score: number; feedback: string; employeeId: string; period: string; targetLeads: number; achievedLeads: number; targetConversion: number; achievedConversion: number; targetRevenue: number; achievedRevenue: number; managerRating: number; } | null' is not assignable to type 'null'.
+  Type '{ id: string; createdAt: Date; updatedAt: Date; score: number; feedback: string; employeeId: string; period: string; targetLeads: number; achievedLeads: number; targetConversion: number; achievedConversion: number; targetRevenue: number; achievedRevenue: number; managerRating: number; }' is not assignable to type 'null'.
+src/app/api/employee/reports/route.ts(168,42): error TS2339: Property 'score' does not exist on type 'never'.
+src/app/api/employee/reports/route.ts(169,50): error TS2339: Property 'managerRating' does not exist on type 'never'.
+src/app/api/employee/reports/route.ts(170,43): error TS2339: Property 'period' does not exist on type 'never'.
+src/app/api/employee/reports/route.ts(171,50): error TS2339: Property 'achievedLeads' does not exist on type 'never'.
+src/app/api/employee/reports/route.ts(172,48): error TS2339: Property 'targetLeads' does not exist on type 'never'.
+src/app/api/employee/reports/route.ts(173,52): error TS2339: Property 'achievedRevenue' does not exist on type 'never'.
+src/app/api/employee/reports/route.ts(174,50): error TS2339: Property 'targetRevenue' does not exist on type 'never'.
+src/app/api/employee/salary/route.ts(12,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/settings/route.ts(13,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/settings/route.ts(47,9): error TS2322: Type '{ name: string; id: string; email: string; role: string; createdAt: Date; updatedAt: Date; userId: string; status: string; phone: string; lastLoginAt: Date | null; department: string; ... 8 more ...; privacyModeOn: boolean; } | null' is not assignable to type 'null'.
+  Type '{ name: string; id: string; email: string; role: string; createdAt: Date; updatedAt: Date; userId: string; status: string; phone: string; lastLoginAt: Date | null; department: string; ... 8 more ...; privacyModeOn: boolean; }' is not assignable to type 'null'.
+src/app/api/employee/settings/route.ts(59,36): error TS2339: Property 'privacyModeOn' does not exist on type 'never'.
+src/app/api/employee/settings/route.ts(60,31): error TS2339: Property 'isOnline' does not exist on type 'never'.
+src/app/api/employee/settings/route.ts(74,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/students/route.ts(11,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/tasks/route.ts(13,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/tasks/route.ts(81,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/employee/tasks/route.ts(135,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/marketing/campaigns/route.ts(219,24): error TS2348: Value of type 'typeof ZAI' is not callable. Did you mean to include 'new'?
+src/app/api/marketing/comments/convert-lead/route.ts(36,17): error TS2339: Property 'convertedToLead' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; status: string; platform: string; intent: string; contactId: string | null; leadId: string | null; repliedAt: Date | null; ... 6 more ...; replyText: string; }'.
+src/app/api/marketing/comments/convert-lead/route.ts(61,9): error TS2353: Object literal may only specify known properties, and 'convertedToLead' does not exist in type '(Without<MarketingCommentUpdateInput, MarketingCommentUncheckedUpdateInput> & MarketingCommentUncheckedUpdateInput) | (Without<...> & MarketingCommentUpdateInput)'.
+src/app/api/marketing/content/route.ts(91,24): error TS2348: Value of type 'typeof ZAI' is not callable. Did you mean to include 'new'?
+src/app/api/marketing/content/route.ts(207,24): error TS2348: Value of type 'typeof ZAI' is not callable. Did you mean to include 'new'?
+src/app/api/marketing/seo/route.ts(112,24): error TS2348: Value of type 'typeof ZAI' is not callable. Did you mean to include 'new'?
+src/app/api/marketing/social/route.ts(150,24): error TS2348: Value of type 'typeof ZAI' is not callable. Did you mean to include 'new'?
+src/app/api/marketing/video/route.ts(88,24): error TS2348: Value of type 'typeof ZAI' is not callable. Did you mean to include 'new'?
+src/app/api/marketing/video/route.ts(183,24): error TS2348: Value of type 'typeof ZAI' is not callable. Did you mean to include 'new'?
+src/app/api/partner/leads/route.ts(70,9): error TS2353: Object literal may only specify known properties, and 'studentName' does not exist in type '(Without<PartnerLeadCreateInput, PartnerLeadUncheckedCreateInput> & PartnerLeadUncheckedCreateInput) | (Without<...> & PartnerLeadCreateInput)'.
+src/app/api/partner/marketing/generate/route.ts(86,47): error TS2339: Property 'message' does not exist on type 'QuotaCheckResult'.
+src/app/api/partner/marketing/route.ts(72,34): error TS2339: Property 'used' does not exist on type 'QuotaCheckResult'.
+src/app/api/partner/marketing/route.ts(74,34): error TS2339: Property 'used' does not exist on type 'QuotaCheckResult'.
+src/app/api/partner/marketing/usage/route.ts(80,32): error TS2339: Property 'used' does not exist on type 'QuotaCheckResult'.
+src/app/api/partner/marketing/usage/route.ts(82,37): error TS2339: Property 'remaining' does not exist on type 'QuotaCheckResult'.
+src/app/api/partner/marketing/usage/route.ts(83,32): error TS2339: Property 'used' does not exist on type 'QuotaCheckResult'.
+src/app/api/partner/marketing/usage/route.ts(85,37): error TS2339: Property 'remaining' does not exist on type 'QuotaCheckResult'.
+src/app/api/partner/messages/route.ts(11,79): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/messages/route.ts(29,9): error TS2322: Type '{ messages: { orderBy: { createdAt: string; }; take: number; }; }' is not assignable to type 'never'.
+src/app/api/partner/messages/route.ts(64,79): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/messages/route.ts(83,19): error TS2339: Property 'participants' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; status: string; channel: string; leadId: string; studentId: string; assignedToId: string; assignedToName: string; lastMessageAt: Date; ... 7 more ...; escalatedToName: string; }'.
+src/app/api/partner/messages/route.ts(90,26): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/messages/route.ts(92,11): error TS2353: Object literal may only specify known properties, and 'type' does not exist in type '(Without<CommunicationMessageCreateInput, CommunicationMessageUncheckedCreateInput> & CommunicationMessageUncheckedCreateInput) | (Without<...> & CommunicationMessageCreateInput)'.
+src/app/api/partner/messages/route.ts(108,11): error TS2353: Object literal may only specify known properties, and 'participants' does not exist in type '(Without<CommunicationThreadCreateInput, CommunicationThreadUncheckedCreateInput> & CommunicationThreadUncheckedCreateInput) | (Without<...> & CommunicationThreadCreateInput)'.
+src/app/api/partner/messages/route.ts(115,30): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/notifications/route.ts(16,39): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/notifications/route.ts(31,46): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'PortalNotificationWhereInput'.
+src/app/api/partner/notifications/route.ts(31,59): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/notifications/route.ts(69,9): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type '(Without<PortalNotificationCreateInput, PortalNotificationUncheckedCreateInput> & PortalNotificationUncheckedCreateInput) | (Without<...> & PortalNotificationCreateInput)'.
+src/app/api/partner/notifications/route.ts(69,32): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/notifications/route.ts(95,18): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'PortalNotificationWhereInput'.
+src/app/api/partner/notifications/route.ts(95,31): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/notifications/route.ts(113,39): error TS2339: Property 'userId' does not exist on type '{ id: string; createdAt: Date; title: string; type: string; message: string; isRead: boolean; actionUrl: string; studentProfileId: string; }'.
+src/app/api/partner/notifications/route.ts(113,55): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/referrals/route.ts(11,79): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/referrals/route.ts(19,43): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/referrals/route.ts(56,79): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/referrals/route.ts(72,9): error TS2353: Object literal may only specify known properties, and 'referrerId' does not exist in type 'StudentReferralWhereInput'.
+src/app/api/partner/referrals/route.ts(72,26): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/referrals/route.ts(86,9): error TS2353: Object literal may only specify known properties, and 'referrerId' does not exist in type '(Without<StudentReferralCreateInput, StudentReferralUncheckedCreateInput> & StudentReferralUncheckedCreateInput) | (Without<...> & StudentReferralCreateInput)'.
+src/app/api/partner/referrals/route.ts(86,26): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/student-benefits/route.ts(34,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/partner/student-benefits/route.ts(127,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/partner/student-benefits/route.ts(192,32): error TS2345: Argument of type '{ id: string; createdAt: Date; updatedAt: Date; status: string; studentId: string; applicationId: string; partnerId: string; createdBy: string; benefitType: string; limitCount: number; usedCount: number; }' is not assignable to parameter of type 'never'.
+src/app/api/partner/student-benefits/route.ts(234,26): error TS2345: Argument of type '{ id: string; createdAt: Date; updatedAt: Date; status: string; studentId: string; testType: string; applicationId: string; partnerId: string; expiresAt: Date | null; usedCount: number; voucherCode: string; usageLimit: number; }' is not assignable to parameter of type 'never'.
+src/app/api/partner/students/route.ts(11,79): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/students/route.ts(39,16): error TS2339: Property 'studentEmail' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; status: string; source: string; studentId: string; notes: string; partnerId: string; partnerName: string; partnerRef: string; assignedCounselorId: string; assignedCounselorName: string; commissionExpected: number; commissionReceived: number; commissionStatus: string; }'.
+src/app/api/partner/students/route.ts(39,47): error TS2339: Property 'studentEmail' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; status: string; source: string; studentId: string; notes: string; partnerId: string; partnerName: string; partnerRef: string; assignedCounselorId: string; assignedCounselorName: string; commissionExpected: number; commissionReceived: number; commissionStatus: string; }'.
+src/app/api/partner/students/route.ts(40,23): error TS2339: Property 'studentEmail' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; status: string; source: string; studentId: string; notes: string; partnerId: string; partnerName: string; partnerRef: string; assignedCounselorId: string; assignedCounselorName: string; commissionExpected: number; commissionReceived: number; commissionStatus: string; }'.
+src/app/api/partner/students/route.ts(62,79): error TS2339: Property 'userId' does not exist on type 'NextResponse<unknown> | AuthContext'.
+  Property 'userId' does not exist on type 'NextResponse<unknown>'.
+src/app/api/partner/students/route.ts(78,9): error TS2353: Object literal may only specify known properties, and 'studentName' does not exist in type '(Without<PartnerLeadCreateInput, PartnerLeadUncheckedCreateInput> & PartnerLeadUncheckedCreateInput) | (Without<...> & PartnerLeadCreateInput)'.
+src/app/api/permissions/route.ts(11,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/permissions/route.ts(18,15): error TS2353: Object literal may only specify known properties, and 'permission' does not exist in type 'PortalPermissionInclude<DefaultArgs>'.
+src/app/api/permissions/route.ts(30,29): error TS2339: Property 'permissions' does not exist on type '{ name: string; id: string; createdAt: Date; updatedAt: Date; description: string; label: string; isSystem: boolean; }'.
+src/app/api/permissions/route.ts(60,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/permissions/route.ts(78,11): error TS2353: Object literal may only specify known properties, and 'roleId_permissionId' does not exist in type 'RolePermissionWhereUniqueInput'.
+src/app/api/portal-auth/forgot-password/route.ts(56,11): error TS2353: Object literal may only specify known properties, and 'code' does not exist in type '(Without<OtpCodeCreateInput, OtpCodeUncheckedCreateInput> & OtpCodeUncheckedCreateInput) | (Without<...> & OtpCodeCreateInput)'.
+src/app/api/portal-auth/forgot-password/route.ts(75,11): error TS2353: Object literal may only specify known properties, and 'token' does not exist in type '(Without<PasswordResetTokenCreateInput, PasswordResetTokenUncheckedCreateInput> & PasswordResetTokenUncheckedCreateInput) | (Without<...> & PasswordResetTokenCreateInput)'.
+src/app/api/portal-auth/reset-password/route.ts(38,9): error TS2353: Object literal may only specify known properties, and 'code' does not exist in type 'OtpCodeWhereInput'.
+src/app/api/portal-auth/reset-password/route.ts(56,15): error TS2353: Object literal may only specify known properties, and 'used' does not exist in type '(Without<OtpCodeUpdateInput, OtpCodeUncheckedUpdateInput> & OtpCodeUncheckedUpdateInput) | (Without<...> & OtpCodeUpdateInput)'.
+src/app/api/portal-auth/verify-otp/route.ts(29,9): error TS2353: Object literal may only specify known properties, and 'code' does not exist in type 'OtpCodeWhereInput'.
+src/app/api/portal-auth/verify-otp/route.ts(47,15): error TS2353: Object literal may only specify known properties, and 'used' does not exist in type '(Without<OtpCodeUpdateInput, OtpCodeUncheckedUpdateInput> & OtpCodeUncheckedUpdateInput) | (Without<...> & OtpCodeUpdateInput)'.
+src/app/api/scholarships/route.ts(14,13): error TS2551: Property 'university' does not exist on type 'CrmScholarshipWhereInput'. Did you mean 'universityId'?
+src/app/api/scholarships/route.ts(25,7): error TS2322: Type '{ university: { select: { universityId: true; name: true; country: true; city: true; }; }; }' is not assignable to type 'never'.
+src/app/api/student-portal/applications/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/applications/route.ts(67,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/applications/route.ts(123,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/appointments/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/appointments/route.ts(67,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/appointments/route.ts(124,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/course-finder/route.ts(12,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/cv/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/cv/route.ts(68,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/cv/route.ts(144,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/documents/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/documents/route.ts(67,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/documents/route.ts(122,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/messages/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/messages/route.ts(71,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/messages/route.ts(123,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/mock-tests/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/mock-tests/route.ts(33,11): error TS2322: Type '{ studentId: string; }' is not assignable to type 'MockTestCreditWhereUniqueInput'.
+  Type '{ studentId: string; }' is not assignable to type '{ id: string; } & { id?: string | undefined; AND?: MockTestCreditWhereInput | MockTestCreditWhereInput[] | undefined; OR?: MockTestCreditWhereInput[] | undefined; ... 6 more ...; updatedAt?: string | ... 2 more ... | undefined; }'.
+    Property 'id' is missing in type '{ studentId: string; }' but required in type '{ id: string; }'.
+src/app/api/student-portal/mock-tests/route.ts(91,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/mock-tests/route.ts(117,11): error TS2322: Type '{ studentId: string; }' is not assignable to type 'MockTestCreditWhereUniqueInput'.
+  Type '{ studentId: string; }' is not assignable to type '{ id: string; } & { id?: string | undefined; AND?: MockTestCreditWhereInput | MockTestCreditWhereInput[] | undefined; OR?: MockTestCreditWhereInput[] | undefined; ... 6 more ...; updatedAt?: string | ... 2 more ... | undefined; }'.
+    Property 'id' is missing in type '{ studentId: string; }' but required in type '{ id: string; }'.
+src/app/api/student-portal/mock-tests/route.ts(131,13): error TS2322: Type '{ studentId: string; }' is not assignable to type 'MockTestCreditWhereUniqueInput'.
+  Type '{ studentId: string; }' is not assignable to type '{ id: string; } & { id?: string | undefined; AND?: MockTestCreditWhereInput | MockTestCreditWhereInput[] | undefined; OR?: MockTestCreditWhereInput[] | undefined; ... 6 more ...; updatedAt?: string | ... 2 more ... | undefined; }'.
+    Property 'id' is missing in type '{ studentId: string; }' but required in type '{ id: string; }'.
+src/app/api/student-portal/notifications/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/notifications/route.ts(75,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/payments/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/payments/route.ts(65,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/profile/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/profile/route.ts(42,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/profile/route.ts(127,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/referrals/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/referrals/route.ts(76,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/scholarships/route.ts(12,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/sop/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/sop/route.ts(68,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/sop/route.ts(152,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/timeline/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/visa/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student-portal/visa/route.ts(93,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student/benefits/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/student/vouchers/redeem/route.ts(10,10): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/website/lead/route.ts(77,10): error TS2304: Cannot find name 'withAuth'.
+src/app/page.tsx(310,29): error TS2322: Type 'string | number | bigint | true | Element | Iterable<ReactNode> | Promise<AwaitedReactNode>' is not assignable to type '((activeView: MarketingSubView, setActiveView: (v: MarketingSubView) => void) => ReactNode) | undefined'.
+  Type 'string' is not assignable to type '(activeView: MarketingSubView, setActiveView: (v: MarketingSubView) => void) => ReactNode'.
+src/components/course-finder/course-compare.tsx(63,15): error TS2352: Conversion of type 'Course' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Index signature for type 'string' is missing in type 'Course'.
+src/components/crm/agentos/AgentRegistry.tsx(210,78): error TS2322: Type 'string' is not assignable to type 'number'.
+src/components/crm/pages/CrmSocialPage.tsx(133,27): error TS2367: This comparison appears to be unintentional because the types 'Platform' and '"all"' have no overlap.
+src/components/crm/pages/CrmStudentsPage.tsx(113,61): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/crm/seo/CrmSeoGrowthDashboard.tsx(231,9): error TS2339: Property 'icon' does not exist on type 'JSX.IntrinsicElements'.
+src/components/crm/seo/CrmSeoTechnicalAudit.tsx(246,69): error TS2367: This comparison appears to be unintentional because the types '"poor" | "needs-improvement"' and '"good"' have no overlap.
+src/components/crm/seo/CrmSeoTechnicalAudit.tsx(250,61): error TS2367: This comparison appears to be unintentional because the types '"poor" | "needs-improvement"' and '"good"' have no overlap.
+src/components/employee/EmployeeStudentsPage.tsx(51,45): error TS2322: Type '"outline"' is not assignable to type '"secondary" | "muted" | "success" | "warning" | "brand" | "danger"'.
+src/components/employee/EmployeeTasksPage.tsx(79,49): error TS2339: Property 'token' does not exist on type 'PortalUserData'.
+src/components/employee/EmployeeTasksPage.tsx(96,51): error TS2339: Property 'token' does not exist on type 'PortalUserData'.
+src/components/marketing/hub/ConversationAssignmentView.tsx(451,34): error TS2322: Type '"muted"' is not assignable to type '"secondary" | "destructive" | "default" | "success" | "warning" | "outline"'.
+src/components/marketing/hub/HumanHandoffView.tsx(95,220): error TS2322: Type '"sms"' is not assignable to type 'Channel'.
+src/components/marketing/hub/MarketingAuditAccessView.tsx(571,118): error TS2322: Type '{ className: string; title: string; }' is not assignable to type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+src/components/marketing/hub/MarketingAuditAccessView.tsx(572,109): error TS2322: Type '{ className: string; title: string; }' is not assignable to type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+src/components/marketing/hub/MarketingAuditAccessView.tsx(573,115): error TS2322: Type '{ className: string; title: string; }' is not assignable to type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+src/components/marketing/hub/WhatsAppAutomationView.tsx(641,34): error TS2345: Argument of type '(prev: Record<string, boolean>) => { [x: string]: boolean; }' is not assignable to parameter of type 'Record<string, boolean>'.
+  Index signature for type 'string' is missing in type '(prev: Record<string, boolean>) => { [x: string]: boolean; }'.
+src/components/marketing/hub/WhatsAppAutomationView.tsx(728,34): error TS2345: Argument of type '(prev: Record<string, boolean>) => { [x: string]: boolean; }' is not assignable to parameter of type 'Record<string, boolean>'.
+  Index signature for type 'string' is missing in type '(prev: Record<string, boolean>) => { [x: string]: boolean; }'.
+src/components/portals/PortalSelector.tsx(21,31): error TS2305: Module '"@/lib/stores/portal-store"' has no exported member 'PortalType'.
+src/components/portals/PortalSelector.tsx(192,11): error TS2339: Property 'demoLogin' does not exist on type 'PortalState'.
+src/components/student/StudentPayments.tsx(112,38): error TS2339: Property 'length' does not exist on type 'never'.
+src/components/student/StudentSopCvStudio.tsx(214,39): error TS2339: Property 'length' does not exist on type 'never'.
+src/components/student/StudentSopCvStudio.tsx(215,36): error TS2339: Property 'length' does not exist on type 'never'.
+src/components/student/StudentVisaCenter.tsx(328,40): error TS2339: Property 'length' does not exist on type 'never'.
+src/components/website/HomepagePart1.tsx(37,7): error TS2322: Type '{ popularCities: string[]; popularIntakes: string[]; studyLevels: string[]; visaType: string; id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity: string; ... 4 more ...; scholarshipCount?: number | undefined; }[]' is not assignable to type 'CountryData[]'.
+  Type '{ popularCities: string[]; popularIntakes: string[]; studyLevels: string[]; visaType: string; id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity: string; ... 4 more ...; scholarshipCount?: number; }' is not assignable to type 'CountryData'.
+    Types of property 'universityCount' are incompatible.
+      Type 'number | undefined' is not assignable to type 'number'.
+        Type 'undefined' is not assignable to type 'number'.
+src/components/website/HomepagePart1.tsx(177,28): error TS2322: Type '{ className: string; style: { color: string; }; }' is not assignable to type 'IntrinsicAttributes & (Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement> & (ComponentType<SVGProps<SVGSVGElement>> & { ...; } & Record<...>))'.
+  Type '{ className: string; style: { color: string; }; }' is not assignable to type 'FunctionComponent<SVGProps<SVGSVGElement>>'.
+    Type '{ className: string; style: { color: string; }; }' provides no match for the signature '(props: SVGProps<SVGSVGElement>): ReactNode | Promise<ReactNode>'.
+src/components/website/HomepagePart3.tsx(132,172): error TS2353: Object literal may only specify known properties, and 'isAdmissionsTest' does not exist in type 'EnglishTest'.
+src/components/website/HomepagePart3.tsx(133,154): error TS2353: Object literal may only specify known properties, and 'isAdmissionsTest' does not exist in type 'EnglishTest'.
+src/components/website/HomepagePart3.tsx(134,144): error TS2353: Object literal may only specify known properties, and 'isAdmissionsTest' does not exist in type 'EnglishTest'.
+src/components/website/PublicNavbar.tsx(145,13): error TS2322: Type '{ hidden: { opacity: number; y: number; scale: number; }; visible: { opacity: number; y: number; scale: number; transition: { duration: number; ease: string; }; }; exit: { opacity: number; y: number; scale: number; transition: { ...; }; }; }' is not assignable to type 'Variants'.
+  Property 'visible' is incompatible with index signature.
+    Type '{ opacity: number; y: number; scale: number; transition: { duration: number; ease: string; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; scale: number; transition: { duration: number; ease: string; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; scale: number; transition: { duration: number; ease: string; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ duration: number; ease: string; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ duration: number; ease: string; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ duration: number; ease: string; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'ease' are incompatible.
+                    Type 'string' is not assignable to type 'Easing | Easing[] | undefined'.
+src/lib/access-check-engine.ts(398,9): error TS2353: Object literal may only specify known properties, and 'status' does not exist in type 'PortalStudentApplicationWhereInput'.
+src/lib/access-check-engine.ts(473,26): error TS2353: Object literal may only specify known properties, and 'permission' does not exist in type 'PortalPermissionInclude<DefaultArgs>'.
+src/lib/access-check-engine.ts(480,10): error TS2339: Property 'role' does not exist on type '{ id: string; userId: string; assignedAt: Date; roleId: string; assignedBy: string; }'.
+src/lib/auth-middleware.ts(45,23): error TS2353: Object literal may only specify known properties, and 'permission' does not exist in type 'PortalPermissionInclude<DefaultArgs>'.
+src/lib/auth-middleware.ts(81,15): error TS2339: Property 'user' does not exist on type '{ id: string; createdAt: Date; userId: string; ipAddress: string; userAgent: string; token: string; deviceName: string; expiresAt: Date; revokedAt: Date | null; }'.
+src/lib/auth-middleware.ts(83,89): error TS2339: Property 'user' does not exist on type '{ id: string; createdAt: Date; userId: string; ipAddress: string; userAgent: string; token: string; deviceName: string; expiresAt: Date; revokedAt: Date | null; }'.
+src/lib/auth-middleware.ts(89,25): error TS2339: Property 'user' does not exist on type '{ id: string; createdAt: Date; userId: string; ipAddress: string; userAgent: string; token: string; deviceName: string; expiresAt: Date; revokedAt: Date | null; }'.
+src/lib/auth-middleware.ts(90,31): error TS2339: Property 'user' does not exist on type '{ id: string; createdAt: Date; userId: string; ipAddress: string; userAgent: string; token: string; deviceName: string; expiresAt: Date; revokedAt: Date | null; }'.
+src/lib/auth-middleware.ts(97,21): error TS2339: Property 'user' does not exist on type '{ id: string; createdAt: Date; userId: string; ipAddress: string; userAgent: string; token: string; deviceName: string; expiresAt: Date; revokedAt: Date | null; }'.
+src/lib/auth-middleware.ts(98,20): error TS2339: Property 'user' does not exist on type '{ id: string; createdAt: Date; userId: string; ipAddress: string; userAgent: string; token: string; deviceName: string; expiresAt: Date; revokedAt: Date | null; }'.
+src/lib/auth-middleware.ts(99,19): error TS2339: Property 'user' does not exist on type '{ id: string; createdAt: Date; userId: string; ipAddress: string; userAgent: string; token: string; deviceName: string; expiresAt: Date; revokedAt: Date | null; }'.
+src/lib/auth-middleware.ts(100,23): error TS2339: Property 'user' does not exist on type '{ id: string; createdAt: Date; userId: string; ipAddress: string; userAgent: string; token: string; deviceName: string; expiresAt: Date; revokedAt: Date | null; }'.
+src/lib/permissions.ts(101,55): error TS2322: Type '"view_assigned"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(102,55): error TS2322: Type '"view_all"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(103,55): error TS2322: Type '"view_partner_referred"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(104,55): error TS2322: Type '"update_assigned"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(106,55): error TS2322: Type '"view_private_notes"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(107,55): error TS2322: Type '"view_internal_comments"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(108,52): error TS2322: Type '"view_assigned"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(123,66): error TS2322: Type '"view_assigned"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(124,66): error TS2322: Type '"send_whatsapp"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(125,66): error TS2322: Type '"send_email"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(126,66): error TS2322: Type '"send_sms"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(127,66): error TS2322: Type '"use_ai_reply"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(128,66): error TS2322: Type '"approve_ai_reply"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(129,66): error TS2322: Type '"internal_comment"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(130,66): error TS2322: Type '"student_visible_comment"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(131,66): error TS2322: Type '"view_partner_email_updates"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(134,64): error TS2322: Type '"view_assigned"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(135,64): error TS2322: Type '"create_draft"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(136,64): error TS2322: Type '"update_stage"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(137,64): error TS2322: Type '"submit_to_university"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(138,64): error TS2322: Type '"view_partner_submission_channel"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(139,64): error TS2322: Type '"view_commission_amount"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(143,48): error TS2322: Type '"comment_internal"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(144,48): error TS2322: Type '"request_documents"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(145,48): error TS2322: Type '"interview_schedule"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(146,48): error TS2322: Type '"readiness_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(147,48): error TS2322: Type '"status_update"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(150,58): error TS2322: Type '"dashboard_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(151,58): error TS2322: Type '"content_generate"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(152,58): error TS2322: Type '"image_generate"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(153,58): error TS2322: Type '"video_generate"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(154,58): error TS2322: Type '"social_reply"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(155,58): error TS2322: Type '"auto_post"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(156,58): error TS2322: Type '"comment_to_lead"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(157,58): error TS2322: Type '"approve_ai_content"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(158,58): error TS2322: Type '"reports_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(161,55): error TS2322: Type '"self_profile_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(162,55): error TS2322: Type '"self_attendance_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(163,55): error TS2322: Type '"self_commission_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(164,55): error TS2322: Type '"self_bonus_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(165,55): error TS2322: Type '"self_increment_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(166,55): error TS2322: Type '"self_salary_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(167,55): error TS2322: Type '"self_documents_view"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(170,53): error TS2322: Type '"salary_manage"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(171,53): error TS2322: Type '"increment_manage"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(172,53): error TS2322: Type '"bonus_manage"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(173,53): error TS2322: Type '"attendance_manage"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(174,53): error TS2322: Type '"performance_manage"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(177,54): error TS2322: Type '"view_payments"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(178,54): error TS2322: Type '"view_commission"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(179,54): error TS2322: Type '"manage_commission"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(180,54): error TS2322: Type '"approve_commission"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(183,51): error TS2322: Type '"manage_permissions"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(184,51): error TS2322: Type '"view_all_data"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(185,51): error TS2322: Type '"manage_employees"' is not assignable to type 'PermissionAction'.
+src/lib/permissions.ts(186,51): error TS2322: Type '"manage_branches"' is not assignable to type 'PermissionAction'.

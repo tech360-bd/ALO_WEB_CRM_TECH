@@ -8,8 +8,6 @@ import {
   staggerContainer, staggerItem, staggerItemScale,
   sectionTitle, sectionSubtitle, viewportOnce, gradients,
 } from './animations';
-import Image from 'next/image';
-import { IMAGES, getCourseImage, getServiceImage, getUniversityCampusImage, getDestinationImage } from './ImageMapping';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -79,8 +77,6 @@ interface UniItem {
   ranking: number;
   website: string;
   courseCount: number;
-  logoSourceUrl?: string;
-  heroImageSourceUrl?: string;
 }
 
 const iconMap: Record<string, LucideIcon> = {
@@ -264,34 +260,21 @@ function WhyChooseSection() {
         />
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={viewportOnce}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {WHY_CHOOSE.map((item, idx) => {
-            const imgUrl = IMAGES.whyChoose[idx] || IMAGES.whyChoose[0];
-            return (
-              <motion.div key={item.title} variants={staggerItemScale} className="h-full">
-                <Card className="h-full border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white" style={{ borderColor: C.border }}>
-                  {/* Top card image */}
-                  <div className="relative h-40 w-full overflow-hidden bg-slate-100 shrink-0">
-                    <Image
-                      src={imgUrl}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 30vw"
-                      className="object-cover transition-transform duration-300 hover:scale-105"
-                    />
+          {WHY_CHOOSE.map((item) => (
+            <motion.div key={item.title} variants={staggerItemScale} className="h-full">
+              <Card className="h-full border hover:shadow-lg transition-all duration-300" style={{ borderColor: C.border }}>
+                <CardContent className="p-6 flex flex-col gap-4 h-full">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(0,87,184,0.08)' }}>
+                    <item.Icon size={22} style={{ color: C.blue }} />
                   </div>
-                  <CardContent className="p-5 flex flex-col gap-3 flex-grow">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(0,87,184,0.08)' }}>
-                      <item.Icon size={20} style={{ color: C.blue }} />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <h3 className="font-bold text-sm text-slate-800">{item.title}</h3>
-                      <p className="text-xs leading-relaxed text-[#64748B]">{item.desc}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <h3 className="font-semibold text-sm" style={{ color: C.text }}>{item.title}</h3>
+                    <p className="text-xs leading-relaxed" style={{ color: C.textSoft }}>{item.desc}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>
@@ -320,30 +303,20 @@ function ServicesSection({ services }: { services: HomeService[] }) {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
             {services.slice(0, 16).map((svc) => {
               const Icon = getIcon(svc.icon);
-              const imgUrl = getServiceImage(svc.slug, svc.title);
               return (
                 <motion.div key={svc.id} variants={staggerItemScale} className="h-full">
-                  <Card className="h-full border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white" style={{ borderColor: C.border }}>
-                    {/* Top card image */}
-                    <div className="relative h-32 w-full overflow-hidden bg-slate-100 shrink-0">
-                      <Image
-                        src={imgUrl}
-                        alt={svc.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 20vw"
-                        className="object-cover transition-transform duration-300 hover:scale-105"
-                      />
-                    </div>
-                    <CardContent className="p-4 flex flex-col gap-2.5 flex-grow">
-                      <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(0,87,184,0.08)' }}>
-                        <Icon size={18} style={{ color: C.blue }} />
+                  <Card className="h-full border hover:shadow-lg transition-all duration-300 overflow-hidden" style={{ borderColor: C.border }}>
+                    <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${C.blue}, ${C.orange})` }} />
+                    <CardContent className="p-5 flex flex-col gap-3 h-full">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,87,184,0.08)' }}>
+                        <Icon size={20} style={{ color: C.blue }} />
                       </div>
-                      <h3 className="font-bold text-xs text-slate-800 leading-tight">{svc.title}</h3>
-                      <p className="text-[11px] leading-relaxed text-[#64748B] flex-1">{svc.description}</p>
+                      <h3 className="font-semibold text-sm" style={{ color: C.text }}>{svc.title}</h3>
+                      <p className="text-xs leading-relaxed flex-1" style={{ color: C.textSoft }}>{svc.description}</p>
                       {svc.ctaLabel && (
-                        <Link href={svc.ctaUrl || '#'} className="text-[11px] font-semibold flex items-center gap-1 group/link mt-auto pt-2" style={{ color: C.blue }}>
+                        <Link href={svc.ctaUrl || '#'} className="text-xs font-medium flex items-center gap-1 group/link" style={{ color: C.blue }}>
                           {svc.ctaLabel}
-                          <ArrowRight size={11} className="transition-transform group-hover/link:translate-x-1" />
+                          <ArrowRight size={12} className="transition-transform group-hover/link:translate-x-1" />
                         </Link>
                       )}
                     </CardContent>
@@ -389,21 +362,10 @@ function StudentJourneyTimeline() {
                   {i + 1}
                 </div>
                 <div className={`ml-16 md:ml-0 md:w-[calc(50%-2rem)] ${isLeft ? 'md:mr-auto md:pr-0' : 'md:ml-auto md:pl-0'}`}>
-                  <Card className="border hover:shadow-md transition-shadow duration-300 overflow-hidden bg-white" style={{ borderColor: C.border }}>
-                    <CardContent className="p-4 flex gap-4 items-center">
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-slate-100">
-                        <Image
-                          src={IMAGES.journeySteps[i] || IMAGES.journeySteps[0]}
-                          alt={step.label}
-                          fill
-                          sizes="80px"
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-sm text-slate-800 mb-1 leading-snug">{step.label}</h3>
-                        <p className="text-xs leading-relaxed text-[#64748B]">{step.desc}</p>
-                      </div>
+                  <Card className="border hover:shadow-md transition-shadow duration-300" style={{ borderColor: C.border }}>
+                    <CardContent className="p-5">
+                      <h3 className="font-semibold text-sm mb-1" style={{ color: C.text }}>{step.label}</h3>
+                      <p className="text-xs leading-relaxed" style={{ color: C.textSoft }}>{step.desc}</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -476,37 +438,15 @@ function CountryIntelligenceSection({ countries }: { countries: ParsedCountry[] 
               </button>
             ))}
           </div>
-          <Card className="border overflow-hidden bg-white" style={{ borderColor: C.border }}>
-            <CardContent className="p-0">
-              <div className="grid grid-cols-1 lg:grid-cols-12">
-                
-                {/* Left side: Country cover image */}
-                <div className="relative h-64 lg:h-auto lg:col-span-5 min-h-[250px] bg-slate-100">
-                  <Image
-                    src={getDestinationImage(active)}
-                    alt={`Study in ${data.name}`}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 40vw"
-                    className="object-cover"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-slate-900/10" />
-                  <div className="absolute bottom-6 left-6 text-white z-10">
-                    <span className="text-4xl block mb-2">{active === 'UK' ? '🇬🇧' : active === 'Canada' ? '🇨🇦' : active === 'Australia' ? '🇦🇺' : active === 'USA' ? '🇺🇸' : active === 'Ireland' ? '🇮🇪' : active === 'New Zealand' ? '🇳🇿' : '🇦🇪'}</span>
-                    <h3 className="text-2xl font-bold tracking-tight">{data.name}</h3>
+          <Card className="border" style={{ borderColor: C.border }}>
+            <CardContent className="p-6 md:p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
+                {rows.map((row) => (
+                  <div key={row.label} className="flex flex-col gap-1">
+                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: C.blue }}>{row.label}</span>
+                    <span className="text-sm leading-relaxed" style={{ color: C.text }}>{row.value}</span>
                   </div>
-                </div>
-
-                {/* Right side: Country facts */}
-                <div className="p-6 md:p-8 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {rows.map((row) => (
-                    <div key={row.label} className="flex flex-col gap-1">
-                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: C.blue }}>{row.label}</span>
-                      <span className="text-sm leading-relaxed" style={{ color: C.text }}>{row.value}</span>
-                    </div>
-                  ))}
-                </div>
-
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -564,19 +504,7 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filtered.slice(0, 12).map((course) => (
                 <motion.div key={course.id} variants={staggerItemScale} className="h-full">
-                  <Card className="h-full flex flex-col border hover:shadow-lg transition-shadow duration-300 overflow-hidden bg-white" style={{ borderColor: C.border }}>
-                    
-                    {/* Course Card Top Image */}
-                    <div className="relative h-40 w-full overflow-hidden bg-slate-100 shrink-0">
-                      <Image
-                        src={getCourseImage(course.subjectArea || course.courseTitle)}
-                        alt={course.courseTitle}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 30vw"
-                        className="object-cover transition-transform duration-300 hover:scale-105"
-                      />
-                    </div>
-
+                  <Card className="h-full flex flex-col border hover:shadow-lg transition-shadow duration-300" style={{ borderColor: C.border }}>
                     <CardContent className="flex flex-col p-5 gap-3 flex-1">
                       <Badge variant="secondary" className={`text-xs font-medium rounded-full px-3 py-0.5 border-0 w-fit ${levelColor(course.studyLevel)}`}>
                         {course.studyLevel || 'N/A'}
@@ -600,11 +528,11 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
                         </span>
                       </div>
                       <div className="flex gap-2 pt-2">
-                        <Link href={`/courses/${(course as any).slug || course.id}`}>
-                          <Button variant="outline" className="flex-1 h-12 text-xs rounded-lg" style={{ borderColor: C.border, color: C.text }}>
-                            View Details
-                          </Button>
-                        </Link>
+                        <Link href={`/course-finder?search=${encodeURIComponent(course.courseTitle || '')}`}>
+                        <Button variant="outline" className="flex-1 h-12 text-xs rounded-lg" style={{ borderColor: C.border, color: C.text }}>
+                          View Details
+                        </Button>
+                      </Link>
                         <Link href="/book-consultation">
                         <Button className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}>
                           Apply
@@ -650,8 +578,8 @@ function TrustedUniversitiesSection({ universities }: { universities: UniItem[] 
           </div>
         ) : (
           <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={viewportOnce}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {universities.slice(0, 12).map((uni) => {
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {universities.slice(0, 24).map((uni) => {
               const initials = uni.name
                 .split(/\s+(?:of|the|and|for|at|in)\s+/i)
                 .join(' ')
@@ -661,80 +589,18 @@ function TrustedUniversitiesSection({ universities }: { universities: UniItem[] 
                 .map((w) => w[0])
                 .join('')
                 .toUpperCase();
-              
-              const campusImg = uni.heroImageSourceUrl || getUniversityCampusImage(uni.universityId, uni.name);
-
               return (
-                <motion.div key={uni.universityId} variants={staggerItemScale} className="h-full">
-                  <Card className="h-full flex flex-col border hover:shadow-lg transition-all duration-300 overflow-hidden bg-white" style={{ borderColor: C.border }}>
-                    
-                    {/* Campus Image */}
-                    <div className="relative h-44 w-full overflow-hidden bg-slate-100 shrink-0">
-                      <Image
-                        src={campusImg}
-                        alt={`${uni.name} Campus`}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 25vw"
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                      
-                      {/* Floating Ranking Badge */}
-                      {uni.ranking > 0 && (
-                        <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[10px] font-bold px-2 py-1 rounded-md text-slate-800 shadow-sm border border-slate-200">
-                          Rank #{uni.ranking}
-                        </span>
-                      )}
-                    </div>
-
-                    <CardContent className="p-5 flex flex-col gap-4 flex-grow relative pt-8">
-                      {/* Overlapping Logo Container */}
-                      <div className="absolute -top-6 left-5 w-12 h-12 flex items-center justify-center overflow-hidden bg-white rounded-xl p-1.5 shadow-md border border-slate-100 z-10">
-                        {uni.logoSourceUrl ? (
-                          <img
-                            src={uni.logoSourceUrl}
-                            alt={uni.name}
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                              const sib = (e.target as HTMLImageElement).nextElementSibling;
-                              if (sib) {
-                                (sib as HTMLElement).classList.remove('hidden');
-                                (sib as HTMLElement).classList.add('flex');
-                              }
-                            }}
-                          />
-                        ) : null}
-                        <div className={`${uni.logoSourceUrl ? 'hidden' : 'flex'} absolute inset-0 items-center justify-center text-white text-xs font-bold rounded-xl`} style={{ background: C.blue }}>
+                <motion.div key={uni.universityId} variants={staggerItemScale}>
+                  <Link href={`/universities/${uni.universityId || uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+                    <Card className="h-24 flex items-center justify-center border hover:shadow-md hover:border-[#0057B8] transition-all duration-300 cursor-pointer" style={{ borderColor: C.border }}>
+                      <CardContent className="p-3 flex flex-col items-center justify-center gap-1.5 w-full h-full">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background: C.blue }}>
                           {initials}
                         </div>
-                      </div>
-
-                      {/* University Info */}
-                      <div className="space-y-1">
-                        <h3 className="font-bold text-sm text-slate-800 line-clamp-2 leading-snug">{uni.name}</h3>
-                        <div className="flex items-center gap-1 text-[11px] text-[#64748B]">
-                          <MapPin size={12} className="shrink-0" />
-                          <span className="truncate">{uni.city}{uni.city && uni.country ? ', ' : ''}{uni.country}</span>
-                        </div>
-                      </div>
-
-                      {/* Highlight stats */}
-                      <div className="mt-auto pt-2 flex flex-col gap-3">
-                        <div className="flex justify-between items-center text-[11px] text-[#64748B] border-t border-slate-100 pt-3">
-                          <span>Programs:</span>
-                          <span className="font-semibold text-slate-700">{uni.courseCount > 0 ? `${uni.courseCount}+` : 'Explore'}</span>
-                        </div>
-                        
-                        <Link href={`/universities/${uni.universityId || uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="block w-full">
-                          <Button className="w-full h-10 text-xs rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 font-semibold transition-all">
-                            View University
-                          </Button>
-                        </Link>
-                      </div>
-
-                    </CardContent>
-                  </Card>
+                        <span className="text-[11px] font-medium text-center leading-tight line-clamp-2" style={{ color: C.text }}>{uni.name}</span>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 </motion.div>
               );
             })}
@@ -810,8 +676,6 @@ export default function HomepagePart2() {
                 ranking: typeof u.ranking === 'number' ? u.ranking : 0,
                 website: String(u.website || ''),
                 courseCount: typeof u.courseCount === 'number' ? u.courseCount : 0,
-                logoSourceUrl: u.logoSourceUrl ? String(u.logoSourceUrl) : undefined,
-                heroImageSourceUrl: u.heroImageSourceUrl ? String(u.heroImageSourceUrl) : undefined,
               }))
             );
           }

@@ -1,0 +1,5 @@
+TASK SUMMARY — ID: TASK-20260812132010967882
+Workflow: finance_hr_admin_workflow
+Status: COMPLETED
+Local First: TRUE
+Zero Payment Guard: ACTIVE

@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-07-31T20:52:33.406Z",
+  "startedAt": "2026-07-31T20:52:20.487Z",
+  "adapter": "AstonAdapter",
+  "status": "PARTIAL_ASTON_OFFICIAL_SMOKE",
+  "writeDb": true,
+  "catalogUrl": "https://www.aston.ac.uk/courses-atoz",
+  "catalogHttpStatus": 200,
+  "catalogPageTitle": "Courses - A to Z | Aston University",
+  "catalogEntriesDiscovered": 471,
+  "uniqueCoursePagesSelectedForSmoke": 3,
+  "individualCoursePagesChecked": 3,
+  "coursesParsed": 3,
+  "intakeRecordsParsed": 2,
+  "parsingFailures": 0,
+  "verifiedCourses": 0,
+  "needsReviewCourses": 3,
+  "note": "This is an Aston official-source smoke crawl. It does not publish course rows and does not complete full Aston verification."
+}

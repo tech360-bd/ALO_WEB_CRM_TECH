@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/partner-admin/layout,_N_T_/partner-admin/interview-prep/layout,_N_T_/partner-admin/interview-prep/page,_N_T_/partner-admin/interview-prep"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/partner-admin/interview-prep/__PAGE__",
+    "/partner-admin/interview-prep",
+    "/partner-admin",
+    "/_index",
+    "/_head"
+  ]
+}

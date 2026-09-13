@@ -1,0 +1,5 @@
+TASK SUMMARY — ID: TASK-20260812132011027587
+Workflow: auto_domain_project_deploy_workflow
+Status: COMPLETED
+Local First: TRUE
+Zero Payment Guard: ACTIVE

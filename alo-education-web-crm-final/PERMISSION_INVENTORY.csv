@@ -1,0 +1,15 @@
+Permission or role,Source,Status
+SUPER_ADMIN,schema_or_code,REFERENCED
+ADMIN,schema_or_code,REFERENCED
+HR_MANAGER,schema_or_code,REFERENCED
+BRANCH_MANAGER,schema_or_code,REFERENCED
+COUNSELOR,schema_or_code,REFERENCED
+APPLICATION_TEAM,schema_or_code,REFERENCED
+VISA_OFFICER,schema_or_code,REFERENCED
+FINANCE,schema_or_code,REFERENCED
+MARKETING,schema_or_code,REFERENCED
+FRONT_DESK,schema_or_code,REFERENCED
+SUPPORT_STAFF,schema_or_code,REFERENCED
+PARTNER,schema_or_code,REFERENCED
+STUDENT,schema_or_code,REFERENCED
+UNIVERSITY_PARTNER,schema_or_code,REFERENCED

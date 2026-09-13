@@ -1,0 +1,3 @@
+manifest_id,import_batch_id,table_name,rows_imported,status,imported_at
+MANIFEST-UNI-001,BATCH-REAL,01_ALO_UNIVERSITY_MASTER,400,success,2026-08-13
+MANIFEST-UNI-002,BATCH-REAL,02_ALO_CAMPUS_MASTER,400,success,2026-08-13

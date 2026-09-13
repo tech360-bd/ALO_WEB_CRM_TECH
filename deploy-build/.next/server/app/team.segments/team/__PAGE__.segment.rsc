@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[64956,["18409","static/chunks/18409-009df9efad2cf6f8.js","15882","static/chunks/15882-666a0da330edaa08.js","98500","static/chunks/98500-1494f211297c269f.js","77823","static/chunks/77823-09454a0b61b01921.js","37618","static/chunks/37618-5fc39e3599830c40.js","20951","static/chunks/20951-c427ffb9f309a9e7.js","81728","static/chunks/81728-39266497f9c356f4.js","38437","static/chunks/38437-61cd47da8306ea34.js","24410","static/chunks/24410-f8068068067d7e25.js","13686","static/chunks/13686-5770dcf9c8eb3bca.js","90588","static/chunks/90588-0cc6291b9aab1ad8.js","91208","static/chunks/91208-4ae779e4421f4d16.js","19808","static/chunks/19808-8c665770bfd4402e.js","64956","static/chunks/64956-e845367beaf1f5f1.js","58898","static/chunks/app/team/page-4b009d01ecf5bbd7.js"],"PublicTeamPage"]
+3:I[90484,[],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"-vqd6LRgMzstdVGtzj8DZ"}
+5:null

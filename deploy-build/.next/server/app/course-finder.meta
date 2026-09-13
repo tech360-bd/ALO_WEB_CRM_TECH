@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/course-finder/layout,_N_T_/course-finder/page,_N_T_/course-finder"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/course-finder/__PAGE__",
+    "/course-finder",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -5,45 +5,39 @@ import { Facebook, Instagram, Linkedin, Youtube, GraduationCap, MapPin, Phone, M
 import React from 'react';
 
 const destinations = [
-  { label: 'United Kingdom', href: '/destinations/uk' },
+  { label: 'United Kingdom', href: '/destinations/united-kingdom' },
   { label: 'United States', href: '/destinations/usa' },
   { label: 'Australia', href: '/destinations/australia' },
   { label: 'Canada', href: '/destinations/canada' },
   { label: 'Ireland', href: '/destinations/ireland' },
   { label: 'New Zealand', href: '/destinations/new-zealand' },
-  { label: 'Dubai / UAE', href: '/destinations/dubai' },
+  { label: 'Germany', href: '/destinations/germany' },
+  { label: 'Dubai / UAE', href: '/destinations/dubai-uae' },
+  { label: 'Malaysia', href: '/destinations/malaysia' },
+  { label: 'Denmark', href: '/destinations/denmark' },
+  { label: 'Japan', href: '/destinations/japan' },
+  { label: 'South Korea', href: '/destinations/south-korea' },
+  { label: 'Europe', href: '/destinations/europe' },
 ];
 
-const aloLinks = [
-  { label: 'About Us', href: '/about' },
-  { label: 'Why ALO Education', href: '/about#why' },
-  { label: 'Contact Us', href: '/contact' },
-  { label: 'Careers', href: '/careers' },
-];
-
-const studyLinks = [
+const quickLinks = [
   { label: 'Course Finder', href: '/course-finder' },
-  { label: 'Universities', href: '/universities' },
-  { label: 'Compare Courses', href: '/compare' },
+  { label: 'Our Services', href: '/services' },
+  { label: 'English Test Prep', href: '/english-test-prep' },
   { label: 'Scholarships', href: '/scholarships' },
+  { label: 'Application Process', href: '/application-process' },
+  { label: 'Visa Support', href: '/visa-support' },
+  { label: 'Admission Requirements', href: '/admission-requirements' },
 ];
 
-const englishTests = [
-  { label: 'IELTS Academic', href: '/english-tests/ielts' },
-  { label: 'IELTS UKVI', href: '/english-tests/ielts-ukvi' },
-  { label: 'PTE Academic', href: '/english-tests/pte' },
-  { label: 'TOEFL iBT', href: '/english-tests/toefl' },
-  { label: 'Duolingo English Test', href: '/english-tests/duolingo' },
-  { label: 'OET (Healthcare)', href: '/english-tests/oet' },
-  { label: 'LanguageCert', href: '/english-tests/languagecert' },
-  { label: 'OIETC / ELLT', href: '/english-tests/oietc' },
-];
-
-const servicesResources = [
-  { label: 'Application Assistance', href: '/services' },
-  { label: 'Visa Guidance', href: '/visa-support' },
-  { label: 'Blog & Articles', href: '/blog' },
-  { label: 'FAQs', href: '/faqs' },
+const companyLinks = [
+  { label: 'About Us', href: '/about' },
+  { label: 'Success Stories', href: '/success-stories' },
+  { label: 'Events & Webinars', href: '/events' },
+  { label: 'Blog & Articles', href: '/resources' },
+  { label: 'News', href: '/news' },
+  { label: 'FAQ', href: '/faqs' },
+  { label: 'Contact Us', href: '/contact' },
 ];
 
 const GraduationCapStrip = () => {
@@ -96,7 +90,7 @@ export default function PublicFooter() {
   return (
     <footer className="w-full bg-white pt-16 mt-auto border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-10 lg:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-6">
           
           {/* Column 1: Brand, Contact & Socials */}
           <div className="flex flex-col gap-6 lg:col-span-2">
@@ -147,21 +141,7 @@ export default function PublicFooter() {
             </div>
           </div>
 
-          {/* Column 2: ALO Education */}
-          <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">ALO Education</h3>
-            <ul className="flex flex-col gap-2">
-              {aloLinks.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#E8501A] transition-colors text-sm font-medium">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 3: Study Destinations */}
+          {/* Column 2: Destinations */}
           <div className="flex flex-col gap-4">
             <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">Destinations</h3>
             <ul className="flex flex-col gap-2">
@@ -175,11 +155,11 @@ export default function PublicFooter() {
             </ul>
           </div>
 
-          {/* Column 4: Study / Courses */}
+          {/* Column 3: Quick Links */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">Study</h3>
+            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">Study Abroad</h3>
             <ul className="flex flex-col gap-2">
-              {studyLinks.map((link) => (
+              {quickLinks.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-slate-600 hover:text-[#E8501A] transition-colors text-sm font-medium">
                     {link.label}
@@ -189,25 +169,11 @@ export default function PublicFooter() {
             </ul>
           </div>
 
-          {/* Column 5: English Tests */}
+          {/* Column 4: Company */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">English Tests</h3>
+            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">Company</h3>
             <ul className="flex flex-col gap-2">
-              {englishTests.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#E8501A] transition-colors text-sm font-medium">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 6: Services & Resources */}
-          <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">Services</h3>
-            <ul className="flex flex-col gap-2">
-              {servicesResources.map((link) => (
+              {companyLinks.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-slate-600 hover:text-[#E8501A] transition-colors text-sm font-medium">
                     {link.label}
@@ -220,7 +186,7 @@ export default function PublicFooter() {
             <div className="mt-4">
               <Link
                 href="/book-consultation"
-                className="inline-flex items-center gap-2 bg-[#E8501A] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-[#c73e10] transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-2 bg-[#E8501A] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-[#c73e10] transition-colors"
               >
                 Book Free Consultation →
               </Link>

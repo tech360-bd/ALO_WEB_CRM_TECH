@@ -1,0 +1,3 @@
+manifest_id,import_batch_id,table_name,rows_imported,status,imported_at
+MANIFEST-CRS-001,BATCH-REAL,01_ALO_COURSE_MASTER,471,success,2026-08-13
+MANIFEST-CRS-002,BATCH-REAL,02_ALO_COURSE_INTAKES_2027,942,success,2026-08-13

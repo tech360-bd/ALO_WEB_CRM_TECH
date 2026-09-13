@@ -1,0 +1,401 @@
+university_id,university_name,discoverable_courses_count,imported_courses_count,missing_courses_count,coverage_status
+UNI-UN-0001,University of Oxford,42,0,42,REQUIRES_REVIEW
+UNI-UN-0002,University of Cambridge,42,0,42,REQUIRES_REVIEW
+UNI-UN-0003,Imperial College London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0004,University College London (UCL),42,0,42,REQUIRES_REVIEW
+UNI-UN-0005,London School of Economics (LSE),42,0,42,REQUIRES_REVIEW
+UNI-UN-0006,University of Edinburgh,42,0,42,REQUIRES_REVIEW
+UNI-UN-0007,University of Manchester,42,0,42,REQUIRES_REVIEW
+UNI-UN-0008,King's College London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0009,University of Bristol,42,0,42,REQUIRES_REVIEW
+UNI-UN-0010,University of Warwick,42,0,42,REQUIRES_REVIEW
+UNI-UN-0011,University of Glasgow,42,0,42,REQUIRES_REVIEW
+UNI-UN-0012,University of Birmingham,42,0,42,REQUIRES_REVIEW
+UNI-UN-0013,University of Leeds,42,0,42,REQUIRES_REVIEW
+UNI-UN-0014,University of Sheffield,42,0,42,REQUIRES_REVIEW
+UNI-UN-0015,University of Nottingham,42,0,42,REQUIRES_REVIEW
+UNI-UN-0016,University of Southampton,42,0,42,REQUIRES_REVIEW
+UNI-UN-0017,University of Liverpool,42,0,42,REQUIRES_REVIEW
+UNI-UN-0018,University of Newcastle,42,0,42,REQUIRES_REVIEW
+UNI-UN-0019,Durham University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0020,University of Exeter,42,0,42,REQUIRES_REVIEW
+UNI-UN-0021,Queen Mary University of London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0022,University of York,42,0,42,REQUIRES_REVIEW
+UNI-UN-0023,University of St Andrews,42,0,42,REQUIRES_REVIEW
+UNI-UN-0024,University of Bath,42,0,42,REQUIRES_REVIEW
+UNI-UN-0025,Lancaster University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0026,University of Surrey,42,0,42,REQUIRES_REVIEW
+UNI-UN-0027,Loughborough University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0028,University of Reading,42,0,42,REQUIRES_REVIEW
+UNI-UN-0029,University of Sussex,42,0,42,REQUIRES_REVIEW
+UNI-UN-0030,University of Aberdeen,42,0,42,REQUIRES_REVIEW
+UNI-UN-0031,University of Dundee,42,0,42,REQUIRES_REVIEW
+UNI-UN-0032,University of Kent,42,0,42,REQUIRES_REVIEW
+UNI-UN-0033,University of East Anglia (UEA),42,0,42,REQUIRES_REVIEW
+UNI-UN-0034,University of Essex,42,0,42,REQUIRES_REVIEW
+UNI-UN-0035,University of Leicester,42,0,42,REQUIRES_REVIEW
+UNI-UN-0036,University of Strathclyde,42,0,42,REQUIRES_REVIEW
+UNI-UN-0037,Heriot-Watt University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0038,University of Stirling,42,0,42,REQUIRES_REVIEW
+UNI-UN-0039,Aston University,472,472,0,COMPLETE
+UNI-UN-0040,University of Hull,42,0,42,REQUIRES_REVIEW
+UNI-UN-0041,Brunel University London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0042,City University of London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0043,University of Westminster,42,0,42,REQUIRES_REVIEW
+UNI-UN-0044,Nottingham Trent University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0045,Sheffield Hallam University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0046,University of Huddersfield,42,0,42,REQUIRES_REVIEW
+UNI-UN-0047,Leeds Beckett University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0048,Manchester Metropolitan University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0049,University of Salford,42,0,42,REQUIRES_REVIEW
+UNI-UN-0050,University of Central Lancashire (UCLan),42,0,42,REQUIRES_REVIEW
+UNI-UN-0051,University of Portsmouth,42,0,42,REQUIRES_REVIEW
+UNI-UN-0052,University of Brighton,42,0,42,REQUIRES_REVIEW
+UNI-UN-0053,Bournemouth University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0054,Coventry University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0055,De Montfort University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0056,Northumbria University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0057,University of Greenwich,42,0,42,REQUIRES_REVIEW
+UNI-UN-0058,Kingston University London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0059,Teesside University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0060,University of Lincoln,42,0,42,REQUIRES_REVIEW
+UNI-UN-0061,University of Plymouth,42,0,42,REQUIRES_REVIEW
+UNI-UN-0062,Keele University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0063,University of the West of England (UWE Bristol),42,0,42,REQUIRES_REVIEW
+UNI-UN-0064,Middlesex University London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0065,University of Gloucestershire,42,0,42,REQUIRES_REVIEW
+UNI-UN-0066,University of Hertfordshire,42,0,42,REQUIRES_REVIEW
+UNI-UN-0067,Oxford Brookes University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0068,Anglia Ruskin University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0069,University of Bedfordshire,42,0,42,REQUIRES_REVIEW
+UNI-UN-0070,University of East London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0071,London Metropolitan University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0072,University of West London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0073,Birmingham City University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0074,University of Wolverhampton,42,0,42,REQUIRES_REVIEW
+UNI-UN-0075,Staffordshire University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0076,Canterbury Christ Church University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0077,University for the Creative Arts,42,0,42,REQUIRES_REVIEW
+UNI-UN-0078,Ravensbourne University London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0079,Goldsmiths University of London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0080,University of Suffolk,42,0,42,REQUIRES_REVIEW
+UNI-UN-0081,Cardiff University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0082,Cardiff Metropolitan University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0083,Swansea University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0084,University of South Wales,42,0,42,REQUIRES_REVIEW
+UNI-UN-0085,Bangor University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0086,Aberystwyth University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0087,Wrexham Glyndŵr University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0088,University of the West of Scotland,42,0,42,REQUIRES_REVIEW
+UNI-UN-0089,Edinburgh Napier University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0090,Glasgow Caledonian University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0091,University of the Highlands and Islands,42,0,42,REQUIRES_REVIEW
+UNI-UN-0092,Queen's University Belfast,42,0,42,REQUIRES_REVIEW
+UNI-UN-0093,Ulster University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0094,Birkbeck University of London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0095,University College Birmingham,42,0,42,REQUIRES_REVIEW
+UNI-UN-0096,Royal Academy of Music,42,0,42,REQUIRES_REVIEW
+UNI-UN-0097,Royal College of Music,42,0,42,REQUIRES_REVIEW
+UNI-UN-0098,Royal Central School of Speech and Drama,42,0,42,REQUIRES_REVIEW
+UNI-UN-0099,Courtauld Institute of Art,42,0,42,REQUIRES_REVIEW
+UNI-UN-0100,St George's University of London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0101,University of the Arts London,42,0,42,REQUIRES_REVIEW
+UNI-UN-0102,London School of Hygiene & Tropical Medicine,42,0,42,REQUIRES_REVIEW
+UNI-UN-0103,Royal Veterinary College,42,0,42,REQUIRES_REVIEW
+UNI-UN-0104,Cranfield University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0105,University of Buckingham,42,0,42,REQUIRES_REVIEW
+UNI-UN-0106,St Mary's University Twickenham,42,0,42,REQUIRES_REVIEW
+UNI-UN-0107,Bishop Grosseteste University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0108,University of Cumbria,42,0,42,REQUIRES_REVIEW
+UNI-UN-0109,University of Bolton,42,0,42,REQUIRES_REVIEW
+UNI-UN-0110,University of Bradford,42,0,42,REQUIRES_REVIEW
+UNI-UN-0111,Leeds Trinity University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0112,York St John University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0113,Liverpool John Moores University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0114,Liverpool Hope University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0115,Edge Hill University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0116,Newman University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0117,University Academy 92,42,0,42,REQUIRES_REVIEW
+UNI-UN-0118,Arden University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0119,BPP University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0120,London South Bank University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0121,Richmond University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0122,Hult International Business School,42,0,42,REQUIRES_REVIEW
+UNI-UN-0123,London School of Business and Finance,42,0,42,REQUIRES_REVIEW
+UNI-UN-0124,London School of Commerce,42,0,42,REQUIRES_REVIEW
+UNI-UN-0125,University of Sunderland,42,0,42,REQUIRES_REVIEW
+UNI-UN-0126,Institute of Cancer Research,42,0,42,REQUIRES_REVIEW
+UNI-UN-0127,University of Chichester,42,0,42,REQUIRES_REVIEW
+UNI-UN-0128,Plymouth Marjon University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0129,Falmouth University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0130,University of Wales Trinity Saint David,42,0,42,REQUIRES_REVIEW
+UNI-UN-0131,University of Law – Birmingham,42,0,42,REQUIRES_REVIEW
+UNI-UN-0132,University of Law – Manchester,42,0,42,REQUIRES_REVIEW
+UNI-UN-0133,University of Law – Bristol,42,0,42,REQUIRES_REVIEW
+UNI-UN-0134,University of Law – Leeds,42,0,42,REQUIRES_REVIEW
+UNI-UN-0135,University of Law – Liverpool,42,0,42,REQUIRES_REVIEW
+UNI-UN-0136,University of Law – Guildford,42,0,42,REQUIRES_REVIEW
+UNI-UN-0137,Arden University – Birmingham,42,0,42,REQUIRES_REVIEW
+UNI-UN-0138,Arden University – Manchester,42,0,42,REQUIRES_REVIEW
+UNI-UN-0139,Arden University – Leeds,42,0,42,REQUIRES_REVIEW
+UNI-UN-0140,Arden University – Bristol,42,0,42,REQUIRES_REVIEW
+UNI-UN-0141,Massachusetts Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-UN-0142,Stanford University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0143,Harvard University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0144,California Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-UN-0145,"University of California, Berkeley",42,0,42,REQUIRES_REVIEW
+UNI-UN-0146,"University of California, Los Angeles",42,0,42,REQUIRES_REVIEW
+UNI-UN-0147,University of Chicago,42,0,42,REQUIRES_REVIEW
+UNI-UN-0148,Columbia University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0149,Yale University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0150,Princeton University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0151,University of Michigan,42,0,42,REQUIRES_REVIEW
+UNI-UN-0152,Carnegie Mellon University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0153,Georgia Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-UN-0154,University of Washington,42,0,42,REQUIRES_REVIEW
+UNI-UN-0155,Cornell University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0156,University of Pennsylvania,42,0,42,REQUIRES_REVIEW
+UNI-UN-0157,Johns Hopkins University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0158,Duke University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0159,Northwestern University,42,0,42,REQUIRES_REVIEW
+UNI-UN-0160,"University of California, San Diego",42,0,42,REQUIRES_REVIEW
+UNI-CA-0161,University of Toronto,42,0,42,REQUIRES_REVIEW
+UNI-CA-0162,University of British Columbia,42,0,42,REQUIRES_REVIEW
+UNI-CA-0163,McGill University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0164,University of Alberta,42,0,42,REQUIRES_REVIEW
+UNI-CA-0165,University of Waterloo,42,0,42,REQUIRES_REVIEW
+UNI-CA-0166,University of Montreal,42,0,42,REQUIRES_REVIEW
+UNI-CA-0167,McMaster University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0168,Western University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0169,Queen's University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0170,University of Calgary,42,0,42,REQUIRES_REVIEW
+UNI-CA-0171,Dalhousie University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0172,University of Ottawa,42,0,42,REQUIRES_REVIEW
+UNI-CA-0173,Simon Fraser University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0174,University of Victoria,42,0,42,REQUIRES_REVIEW
+UNI-CA-0175,York University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0176,Carleton University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0177,University of Saskatchewan,42,0,42,REQUIRES_REVIEW
+UNI-CA-0178,University of Manitoba,42,0,42,REQUIRES_REVIEW
+UNI-CA-0179,Toronto Metropolitan University,42,0,42,REQUIRES_REVIEW
+UNI-CA-0180,University of Guelph,42,0,42,REQUIRES_REVIEW
+UNI-AU-0181,University of Melbourne,42,0,42,REQUIRES_REVIEW
+UNI-AU-0182,University of Sydney,42,0,42,REQUIRES_REVIEW
+UNI-AU-0183,Australian National University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0184,University of New South Wales,42,0,42,REQUIRES_REVIEW
+UNI-AU-0185,University of Queensland,42,0,42,REQUIRES_REVIEW
+UNI-AU-0186,Monash University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0187,University of Adelaide,42,0,42,REQUIRES_REVIEW
+UNI-AU-0188,University of Western Australia,42,0,42,REQUIRES_REVIEW
+UNI-AU-0189,University of Technology Sydney,42,0,42,REQUIRES_REVIEW
+UNI-AU-0190,RMIT University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0191,Macquarie University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0192,University of Newcastle,42,0,42,REQUIRES_REVIEW
+UNI-AU-0193,University of Wollongong,42,0,42,REQUIRES_REVIEW
+UNI-AU-0194,Deakin University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0195,Flinders University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0196,La Trobe University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0197,Griffith University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0198,Swinburne University of Technology,42,0,42,REQUIRES_REVIEW
+UNI-AU-0199,Curtin University,42,0,42,REQUIRES_REVIEW
+UNI-AU-0200,Queensland University of Technology,42,0,42,REQUIRES_REVIEW
+UNI-IR-0201,Trinity College Dublin,42,0,42,REQUIRES_REVIEW
+UNI-IR-0202,University College Dublin,42,0,42,REQUIRES_REVIEW
+UNI-IR-0203,University of Galway,42,0,42,REQUIRES_REVIEW
+UNI-IR-0204,University College Cork,42,0,42,REQUIRES_REVIEW
+UNI-IR-0205,Dublin City University,42,0,42,REQUIRES_REVIEW
+UNI-IR-0206,University of Limerick,42,0,42,REQUIRES_REVIEW
+UNI-IR-0207,Maynooth University,42,0,42,REQUIRES_REVIEW
+UNI-IR-0208,Technological University Dublin,42,0,42,REQUIRES_REVIEW
+UNI-IR-0209,Waterford Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-IR-0210,Institute of Technology Carlow,42,0,42,REQUIRES_REVIEW
+UNI-IR-0211,Atlantic Technological University (formerly IT Sligo),42,0,42,REQUIRES_REVIEW
+UNI-IR-0212,Letterkenny Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-IR-0213,Munster Technological University (formerly Cork IT),42,0,42,REQUIRES_REVIEW
+UNI-IR-0214,Limerick Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-IR-0215,"Dún Laoghaire Institute of Art, Design & Technology",42,0,42,REQUIRES_REVIEW
+UNI-IR-0216,Munster Technological University – Tralee,42,0,42,REQUIRES_REVIEW
+UNI-IR-0217,National College of Ireland,42,0,42,REQUIRES_REVIEW
+UNI-IR-0218,Griffith College Dublin,42,0,42,REQUIRES_REVIEW
+UNI-IR-0219,Dublin Business School,42,0,42,REQUIRES_REVIEW
+UNI-IR-0220,American College Dublin,42,0,42,REQUIRES_REVIEW
+UNI-NE-0221,University of Auckland,42,0,42,REQUIRES_REVIEW
+UNI-NE-0222,University of Otago,42,0,42,REQUIRES_REVIEW
+UNI-NE-0223,University of Canterbury,42,0,42,REQUIRES_REVIEW
+UNI-NE-0224,Victoria University of Wellington,42,0,42,REQUIRES_REVIEW
+UNI-NE-0225,University of Waikato,42,0,42,REQUIRES_REVIEW
+UNI-NE-0226,Massey University,42,0,42,REQUIRES_REVIEW
+UNI-NE-0227,Lincoln University,42,0,42,REQUIRES_REVIEW
+UNI-NE-0228,Auckland University of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0229,Unitec Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0230,Otago Polytechnic,42,0,42,REQUIRES_REVIEW
+UNI-NE-0231,Ara Institute of Canterbury,42,0,42,REQUIRES_REVIEW
+UNI-NE-0232,Whitireia New Zealand,42,0,42,REQUIRES_REVIEW
+UNI-NE-0233,Wellington Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0234,Manukau Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0235,Eastern Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0236,Toi Ohomai Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0237,UCOL Universal College of Learning,42,0,42,REQUIRES_REVIEW
+UNI-NE-0238,Nelson Marlborough Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0239,Southern Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0240,Wintec,42,0,42,REQUIRES_REVIEW
+UNI-GE-0241,Technical University of Munich,42,0,42,REQUIRES_REVIEW
+UNI-GE-0242,LMU Munich,42,0,42,REQUIRES_REVIEW
+UNI-GE-0243,Heidelberg University,42,0,42,REQUIRES_REVIEW
+UNI-GE-0244,Humboldt University of Berlin,42,0,42,REQUIRES_REVIEW
+UNI-GE-0245,RWTH Aachen University,42,0,42,REQUIRES_REVIEW
+UNI-GE-0246,Freie Universität Berlin,42,0,42,REQUIRES_REVIEW
+UNI-GE-0247,University of Hamburg,42,0,42,REQUIRES_REVIEW
+UNI-GE-0248,Technical University of Berlin,42,0,42,REQUIRES_REVIEW
+UNI-GE-0249,University of Cologne,42,0,42,REQUIRES_REVIEW
+UNI-GE-0250,Goethe University Frankfurt,42,0,42,REQUIRES_REVIEW
+UNI-GE-0251,University of Stuttgart,42,0,42,REQUIRES_REVIEW
+UNI-GE-0252,TU Dresden,42,0,42,REQUIRES_REVIEW
+UNI-GE-0253,University of Bonn,42,0,42,REQUIRES_REVIEW
+UNI-GE-0254,University of Mannheim,42,0,42,REQUIRES_REVIEW
+UNI-GE-0255,KIT – Karlsruhe Institute of Technology,42,0,42,REQUIRES_REVIEW
+UNI-GE-0256,FAU Erlangen-Nuremberg,42,0,42,REQUIRES_REVIEW
+UNI-GE-0257,University of Münster,42,0,42,REQUIRES_REVIEW
+UNI-GE-0258,University of Tübingen,42,0,42,REQUIRES_REVIEW
+UNI-GE-0259,University of Würzburg,42,0,42,REQUIRES_REVIEW
+UNI-GE-0260,Jacobs University Bremen,42,0,42,REQUIRES_REVIEW
+UNI-UA-0261,Khalifa University,42,0,42,REQUIRES_REVIEW
+UNI-UA-0262,United Arab Emirates University,42,0,42,REQUIRES_REVIEW
+UNI-UA-0263,American University of Sharjah,42,0,42,REQUIRES_REVIEW
+UNI-UA-0264,University of Sharjah,42,0,42,REQUIRES_REVIEW
+UNI-UA-0265,Abu Dhabi University,42,0,42,REQUIRES_REVIEW
+UNI-UA-0266,American University in Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0267,Canadian University Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0268,Ajman University,42,0,42,REQUIRES_REVIEW
+UNI-UA-0269,Middlesex University Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0270,University of Wollongong in Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0271,Zayed University,42,0,42,REQUIRES_REVIEW
+UNI-UA-0272,British University in Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0273,Heriot-Watt University Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0274,Birmingham University Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0275,Amity University Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0276,Rochester Institute of Technology Dubai,42,0,42,REQUIRES_REVIEW
+UNI-UA-0277,Al Ain University,42,0,42,REQUIRES_REVIEW
+UNI-UA-0278,Gulf Medical University,42,0,42,REQUIRES_REVIEW
+UNI-UA-0279,Skyline University College,42,0,42,REQUIRES_REVIEW
+UNI-UA-0280,NYU Abu Dhabi,42,0,42,REQUIRES_REVIEW
+UNI-FR-0281,Sorbonne University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0282,Université Paris-Saclay,42,0,42,REQUIRES_REVIEW
+UNI-FR-0283,PSL Research University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0284,École Polytechnique,42,0,42,REQUIRES_REVIEW
+UNI-FR-0285,Université de Paris,42,0,42,REQUIRES_REVIEW
+UNI-FR-0286,University of Strasbourg,42,0,42,REQUIRES_REVIEW
+UNI-FR-0287,Aix-Marseille University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0288,University of Bordeaux,42,0,42,REQUIRES_REVIEW
+UNI-FR-0289,Grenoble Alpes University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0290,University of Montpellier,42,0,42,REQUIRES_REVIEW
+UNI-FR-0291,Claude Bernard University Lyon 1,42,0,42,REQUIRES_REVIEW
+UNI-FR-0292,Toulouse 1 Capitole University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0293,Pantheon-Sorbonne University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0294,Paris Nanterre University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0295,University of Lille,42,0,42,REQUIRES_REVIEW
+UNI-FR-0296,University of Rennes 1,42,0,42,REQUIRES_REVIEW
+UNI-FR-0297,Nantes University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0298,University of Côte d'Azur,42,0,42,REQUIRES_REVIEW
+UNI-FR-0299,Lorraine University,42,0,42,REQUIRES_REVIEW
+UNI-FR-0300,Paris-Panthéon-Assas University,42,0,42,REQUIRES_REVIEW
+UNI-NE-0301,University of Amsterdam,42,0,42,REQUIRES_REVIEW
+UNI-NE-0302,Delft University of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0303,Leiden University,42,0,42,REQUIRES_REVIEW
+UNI-NE-0304,Utrecht University,42,0,42,REQUIRES_REVIEW
+UNI-NE-0305,Erasmus University Rotterdam,42,0,42,REQUIRES_REVIEW
+UNI-NE-0306,University of Groningen,42,0,42,REQUIRES_REVIEW
+UNI-NE-0307,Wageningen University & Research,42,0,42,REQUIRES_REVIEW
+UNI-NE-0308,Vrije Universiteit Amsterdam,42,0,42,REQUIRES_REVIEW
+UNI-NE-0309,Radboud University,42,0,42,REQUIRES_REVIEW
+UNI-NE-0310,Maastricht University,42,0,42,REQUIRES_REVIEW
+UNI-NE-0311,Eindhoven University of Technology,42,0,42,REQUIRES_REVIEW
+UNI-NE-0312,Tilburg University,42,0,42,REQUIRES_REVIEW
+UNI-NE-0313,University of Twente,42,0,42,REQUIRES_REVIEW
+UNI-NE-0314,Hanze University of Applied Sciences,42,0,42,REQUIRES_REVIEW
+UNI-NE-0315,The Hague University of Applied Sciences,42,0,42,REQUIRES_REVIEW
+UNI-NE-0316,Breda University of Applied Sciences,42,0,42,REQUIRES_REVIEW
+UNI-NE-0317,Avans University of Applied Sciences,42,0,42,REQUIRES_REVIEW
+UNI-NE-0318,HZ University of Applied Sciences,42,0,42,REQUIRES_REVIEW
+UNI-NE-0319,Rotterdam University of Applied Sciences,42,0,42,REQUIRES_REVIEW
+UNI-NE-0320,Fontys University of Applied Sciences,42,0,42,REQUIRES_REVIEW
+UNI-IT-0321,University of Bologna,42,0,42,REQUIRES_REVIEW
+UNI-IT-0322,Sapienza University of Rome,42,0,42,REQUIRES_REVIEW
+UNI-IT-0323,University of Padua,42,0,42,REQUIRES_REVIEW
+UNI-IT-0324,University of Milan,42,0,42,REQUIRES_REVIEW
+UNI-IT-0325,Polytechnic University of Milan,42,0,42,REQUIRES_REVIEW
+UNI-IT-0326,University of Naples Federico II,42,0,42,REQUIRES_REVIEW
+UNI-IT-0327,University of Turin,42,0,42,REQUIRES_REVIEW
+UNI-IT-0328,University of Pisa,42,0,42,REQUIRES_REVIEW
+UNI-IT-0329,University of Florence,42,0,42,REQUIRES_REVIEW
+UNI-IT-0330,University of Trento,42,0,42,REQUIRES_REVIEW
+UNI-IT-0331,University of Milano-Bicocca,42,0,42,REQUIRES_REVIEW
+UNI-IT-0332,University of Genoa,42,0,42,REQUIRES_REVIEW
+UNI-IT-0333,University of Rome Tor Vergata,42,0,42,REQUIRES_REVIEW
+UNI-IT-0334,University of Pavia,42,0,42,REQUIRES_REVIEW
+UNI-IT-0335,University of Trieste,42,0,42,REQUIRES_REVIEW
+UNI-IT-0336,University of Bari Aldo Moro,42,0,42,REQUIRES_REVIEW
+UNI-IT-0337,University of Perugia,42,0,42,REQUIRES_REVIEW
+UNI-IT-0338,University of Siena,42,0,42,REQUIRES_REVIEW
+UNI-IT-0339,Polytechnic University of Turin,42,0,42,REQUIRES_REVIEW
+UNI-IT-0340,University of Salerno,42,0,42,REQUIRES_REVIEW
+UNI-MA-0341,University of Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0342,"Malta College of Arts, Science and Technology",42,0,42,REQUIRES_REVIEW
+UNI-MA-0343,American University of Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0344,Global College Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0345,Advenio Academy,42,0,42,REQUIRES_REVIEW
+UNI-MA-0346,Domain Academy,42,0,42,REQUIRES_REVIEW
+UNI-MA-0347,EEC-ITIS Malta Tourism Institute,42,0,42,REQUIRES_REVIEW
+UNI-MA-0348,London School of Commerce Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0349,Pegasus Open University Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0350,Saint Martin's Institute of Higher Education,42,0,42,REQUIRES_REVIEW
+UNI-MA-0351,Triagon Academy Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0352,Middlesex University Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0353,GBSB Global Business School Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0354,Institute of Tourism Studies Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0355,United Campus Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0356,European Graduate School Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0357,Queen Mary University of London Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0358,Barts London School of Medicine Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0359,HandsOn Academy Malta,42,0,42,REQUIRES_REVIEW
+UNI-MA-0360,Learnkey Training Institute,42,0,42,REQUIRES_REVIEW
+UNI-CY-0361,University of Cyprus,42,0,42,REQUIRES_REVIEW
+UNI-CY-0362,Cyprus University of Technology,42,0,42,REQUIRES_REVIEW
+UNI-CY-0363,University of Nicosia,42,0,42,REQUIRES_REVIEW
+UNI-CY-0364,European University Cyprus,42,0,42,REQUIRES_REVIEW
+UNI-CY-0365,Frederick University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0366,Open University of Cyprus,42,0,42,REQUIRES_REVIEW
+UNI-CY-0367,Neapolis University Pafos,42,0,42,REQUIRES_REVIEW
+UNI-CY-0368,University of Central Lancashire Cyprus,42,0,42,REQUIRES_REVIEW
+UNI-CY-0369,Philips University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0370,American University of Cyprus,42,0,42,REQUIRES_REVIEW
+UNI-CY-0371,Cyprus International Institute of Management,42,0,42,REQUIRES_REVIEW
+UNI-CY-0372,Cyprus International University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0373,Near East University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0374,Eastern Mediterranean University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0375,European University of Lefke,42,0,42,REQUIRES_REVIEW
+UNI-CY-0376,Girne American University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0377,Cyprus West University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0378,Rauf Denktas University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0379,Cyprus Science University,42,0,42,REQUIRES_REVIEW
+UNI-CY-0380,City Unity College Nicosia,42,0,42,REQUIRES_REVIEW
+UNI-SO-0381,Seoul National University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0382,KAIST,42,0,42,REQUIRES_REVIEW
+UNI-SO-0383,Yonsei University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0384,Korea University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0385,POSTECH,42,0,42,REQUIRES_REVIEW
+UNI-SO-0386,Sungkyunkwan University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0387,Hanyang University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0388,Kyung Hee University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0389,Ewha Womans University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0390,Sogang University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0391,Chung-Ang University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0392,Pusan National University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0393,Kyungpook National University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0394,Ajou University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0395,Inha University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0396,Konkuk University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0397,Dongguk University,42,0,42,REQUIRES_REVIEW
+UNI-SO-0398,Seoultech,42,0,42,REQUIRES_REVIEW
+UNI-SO-0399,GIST,42,0,42,REQUIRES_REVIEW
+UNI-SO-0400,UNIST,42,0,42,REQUIRES_REVIEW

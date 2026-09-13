@@ -1,0 +1,6 @@
+Deployment File,Purpose,Runtime Target,Verification Status
+package.json,Dependency & script specifications,Node.js,VERIFIED_READY
+tsconfig.json,TypeScript compiler configuration,TypeScript,VERIFIED_READY
+prisma/schema.prisma,Database schema & ORM client config,MySQL,VERIFIED_READY
+DEPLOYMENT-GUIDE.md,Production deployment guide,DevOps,VERIFIED_READY
+BACKUP_RESTORE_GUIDE.md,Backup & restore script specification,SysAdmin,VERIFIED_READY

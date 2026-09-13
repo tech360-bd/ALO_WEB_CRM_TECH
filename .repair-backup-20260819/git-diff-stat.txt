@@ -1,0 +1,1183 @@
+ --timeout                                          |   Bin 1488061 -> 0 bytes
+ CHANGELOG.md                                       |     8 +-
+ CLEAN-INSTALL-REPORT.md                            |    18 +-
+ Caddyfile                                          |    28 +-
+ DEPLOYMENT-GUIDE.md                                |    18 +-
+ DEVELOPMENT-GUIDE.md                               |    18 +-
+ MISSING-FEATURE-STATUS.md                          |   285 +-
+ REPAIR-REPORT.md                                   |     6 +-
+ SECURITY-AUDIT.md                                  |     2 +-
+ SHA256SUMS.txt                                     |   874 +-
+ TEST-REPORT.md                                     |   255 +-
+ agent-ctx/task-seed-api-homepage.md                |    38 -
+ db/custom.db                                       |   Bin 1941504 -> 2260992 bytes
+ deploy/ubuntu/backup.sh                            |    30 +-
+ deploy/ubuntu/restore.sh                           |    11 +-
+ download/ALO-Education-ERP-FINAL.zip               |   Bin 16282637 -> 0 bytes
+ download/ALO-Education-ERP-Full-Project.zip        |   Bin 7984811 -> 0 bytes
+ download/ALO-Education-ERP-Remediated-Final.zip    |   Bin 15172556 -> 0 bytes
+ download/ALO-Education-ERP-Remediated.zip          |   Bin 7999815 -> 0 bytes
+ download/API-INVENTORY.csv                         |   140 -
+ download/DATABASE-INVENTORY.csv                    |   157 -
+ download/ENVIRONMENT-VARIABLE-INVENTORY.csv        |    51 -
+ download/EVIDENCE-REPORT.md                        |   561 -
+ download/MIGRATION-INVENTORY.csv                   |     3 -
+ download/README.md                                 |     1 -
+ download/ROUTE-INVENTORY.csv                       |     2 -
+ download/all_data_summary.csv                      |   645 -
+ download/alo-deploy-ubuntu.zip                     |   Bin 7633 -> 0 bytes
+ download/alo-home-01-hero.png                      |   Bin 87643 -> 0 bytes
+ .../alo-home-02-course-finder-destinations.png     |   Bin 104008 -> 0 bytes
+ download/alo-home-03-about-mission-whychoose.png   |   Bin 126656 -> 0 bytes
+ download/alo-home-04-services-timeline.png         |   Bin 114678 -> 0 bytes
+ download/alo-home-05-countries-courses.png         |   Bin 106901 -> 0 bytes
+ download/alo-home-06-universities-scholarships.png |   Bin 86824 -> 0 bytes
+ download/alo-home-07-english-tests-visa.png        |   Bin 94534 -> 0 bytes
+ download/alo-home-08-portals-ai-resources.png      |   Bin 94534 -> 0 bytes
+ download/alo-home-09-stories-team-faq.png          |   Bin 94534 -> 0 bytes
+ download/alo-home-10-cta-footer.png                |   Bin 94534 -> 0 bytes
+ download/alo-home-11-mobile-hero.png               |   Bin 50724 -> 0 bytes
+ download/alo-homepage-ai.png                       |   Bin 47019 -> 0 bytes
+ download/alo-homepage-courses.png                  |   Bin 29542 -> 0 bytes
+ download/alo-homepage-cta-footer.png               |   Bin 90985 -> 0 bytes
+ download/alo-homepage-destinations.png             |   Bin 19305 -> 0 bytes
+ download/alo-homepage-full.png                     |   Bin 597375 -> 0 bytes
+ download/alo-homepage-hero.png                     |   Bin 169248 -> 0 bytes
+ download/alo-homepage-services.png                 |   Bin 19305 -> 0 bytes
+ download/api-route-inventory.csv                   |   138 -
+ download/build-log.txt                             |   192 -
+ download/combined_course_upload.csv                |    64 -
+ download/counselor-portal-dashboard.png            |   Bin 89033 -> 0 bytes
+ download/courses_all.csv                           |   161 -
+ download/crm-course-finder-real-data.png           |   Bin 78018 -> 0 bytes
+ download/crm-dashboard.png                         |   Bin 88871 -> 0 bytes
+ download/crm-finance-dashboard.png                 |   Bin 88601 -> 0 bytes
+ download/crm-leads.png                             |   Bin 108020 -> 0 bytes
+ download/crm-universities-real-data.png            |   Bin 103335 -> 0 bytes
+ download/design-system-dark.png                    |   Bin 711935 -> 0 bytes
+ download/design-system-light.png                   |   Bin 726998 -> 0 bytes
+ download/extracted_all.json                        |  2490 ----
+ download/extracted_gostudyin.json                  |  2132 ---
+ download/extracted_tcl.json                        |   107 -
+ download/extracted_tclglobal.json                  |   109 -
+ download/gostudyin.json                            |   109 -
+ download/lint-results.txt                          |    13 -
+ download/page-route-inventory.csv                  |   139 -
+ download/runtime-log.txt                           |     9 -
+ download/security_audit_checklist.md               |   335 -
+ download/seo-01-portal-selector.png                |   Bin 85610 -> 0 bytes
+ download/seo-02-crm-dashboard.png                  |   Bin 146168 -> 0 bytes
+ download/seo-03-seo-dashboard.png                  |   Bin 145628 -> 0 bytes
+ download/seo-04-keyword-tracker.png                |   Bin 145985 -> 0 bytes
+ download/seo-05-content-workflow.png               |   Bin 163309 -> 0 bytes
+ download/seo-06-competitor-analysis.png            |   Bin 130093 -> 0 bytes
+ download/seo-07-technical-audit.png                |   Bin 129521 -> 0 bytes
+ download/seo-08-policy-watcher.png                 |   Bin 163450 -> 0 bytes
+ download/seo-09-universities.png                   |   Bin 161361 -> 0 bytes
+ download/seo-10-course-finder.png                  |   Bin 76917 -> 0 bytes
+ download/seo-11-sidebar-seo-section.png            |   Bin 68599 -> 0 bytes
+ download/seo-12-leads.png                          |   Bin 76917 -> 0 bytes
+ download/so_uk.json                                |   121 -
+ download/so_unis.json                              |   119 -
+ download/studies_overseas.json                     |   168 -
+ download/tclglobal.json                            |    66 -
+ download/test-results.txt                          |    13 -
+ download/tsc-results.txt                           |     0
+ download/universities_all.csv                      |   485 -
+ download/url1.json                                 |    57 -
+ download/url2.json                                 |    25 -
+ download/url3.json                                 |    64 -
+ download/url4.json                                 |    61 -
+ download/url5.json                                 |    53 -
+ eslint.config.mjs                                  |    13 +
+ next.config.ts                                     |    35 +-
+ package-lock.json                                  |  6344 ++++----
+ package.json                                       |    39 +-
+ .../migrations/20260726191824_init/migration.sql   |  2885 ----
+ .../migration.sql                                  |    39 -
+ prisma/migrations/migration_lock.toml              |     2 +-
+ prisma/schema.prisma                               |  3872 ++++-
+ prisma/seed-complete.ts                            |   914 +-
+ prisma/seed.ts                                     |   352 +-
+ .../SHA256-MANIFEST.txt                            |   429 -
+ .../audited-zip/ALO-Education-ERP-Full-Project.zip |   Bin 7984811 -> 0 bytes
+ .../baseline-docs/REMEDIATION_BASELINE.md          |   307 -
+ .../evidence/EVIDENCE-REPORT.md                    |   561 -
+ .../evidence/api-route-inventory.csv               |   138 -
+ .../evidence/page-route-inventory.csv              |   139 -
+ .../source-snapshot/.gitignore                     |    62 -
+ .../source-snapshot/components.json                |    21 -
+ .../source-snapshot/eslint.config.mjs              |    50 -
+ .../source-snapshot/next.config.ts                 |    57 -
+ .../source-snapshot/package-lock.json              | 12376 ----------------
+ .../source-snapshot/package.json                   |    97 -
+ .../source-snapshot/postcss.config.mjs             |     5 -
+ .../source-snapshot/prisma/schema.prisma           |  2617 ----
+ .../source-snapshot/prisma/seed-complete.ts        |   937 --
+ .../source-snapshot/prisma/seed-universities.ts    |   245 -
+ .../source-snapshot/prisma/seed.ts                 |   263 -
+ .../public/images/brand/alo-edu-pad.jpg            |   Bin 544488 -> 0 bytes
+ .../hero-banners/Australia slide Banner.webp       |   Bin 81472 -> 0 bytes
+ .../images/hero-banners/Canada slide Banner.webp   |   Bin 45870 -> 0 bytes
+ .../images/hero-banners/Europe slide Banner.webp   |   Bin 47432 -> 0 bytes
+ .../hero-banners/New Zealand slide Banner.webp     |   Bin 99782 -> 0 bytes
+ .../images/hero-banners/UK slide Banner.webp       |   Bin 55884 -> 0 bytes
+ .../images/hero-banners/USA slide Banner.webp      |   Bin 58024 -> 0 bytes
+ .../public/images/landing/Copy of 167794.webp      |   Bin 45980 -> 0 bytes
+ ... Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp |   Bin 100628 -> 0 bytes
+ ...g Success_remix_01k44y1phqff4adx4kcap3cdyw.webp |   Bin 78562 -> 0 bytes
+ ...versation_remix_01k44y8qqzf1fak3kphqyhmj6w.webp |   Bin 112166 -> 0 bytes
+ .../public/images/landing/Copy of 2148431342.webp  |   Bin 65782 -> 0 bytes
+ .../Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp |   Bin 121796 -> 0 bytes
+ .../public/images/landing/Copy of logo.webp        |   Bin 44828 -> 0 bytes
+ .../Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp |   Bin 163050 -> 0 bytes
+ .../landing/Copy of pexels-george-pak-7972967.webp |     0
+ .../Copy of pexels-jaksonmartins-3101504.webp      |   Bin 94664 -> 0 bytes
+ .../landing/Copy of pexels-otherme-583475.webp     |   Bin 134694 -> 0 bytes
+ .../landing/Copy of pexels-rdne-7092364.webp       |   Bin 177960 -> 0 bytes
+ .../landing/Copy of pexels-rdne-7092573.webp       |   Bin 82746 -> 0 bytes
+ .../landing/Copy of pexels-rdne-7683897.webp       |   Bin 133230 -> 0 bytes
+ .../landing/Copy of pexels-yankrukov-8199166.webp  |   Bin 96656 -> 0 bytes
+ .../landing/Copy of pexels-yankrukov-8199562.webp  |   Bin 127894 -> 0 bytes
+ .../public/images/landing/Hero Image.webp          |   Bin 47432 -> 0 bytes
+ .../images/testimonials/Tushar Imran Nahid.png     |   Bin 58077 -> 0 bytes
+ .../images/testimonials/Ummaye Mayesha Manna.PNG   |   Bin 519261 -> 0 bytes
+ .../images/universities/abertay university.webp    |   Bin 29726 -> 0 bytes
+ .../images/universities/aston university.webp      |   Bin 31516 -> 0 bytes
+ .../universities/birmingham city university .webp  |   Bin 36082 -> 0 bytes
+ .../cardiff metropolitan university.webp           |   Bin 86240 -> 0 bytes
+ .../london metropolitan university.webp            |   Bin 47514 -> 0 bytes
+ .../images/universities/lsbu university.webp       |   Bin 30876 -> 0 bytes
+ .../universities/ravensbourne university.webp      |   Bin 19150 -> 0 bytes
+ .../images/universities/uister university.webp     |   Bin 30728 -> 0 bytes
+ .../universities/university of aberdeen.webp       |   Bin 46846 -> 0 bytes
+ .../images/universities/university of bolton.webp  |   Bin 19718 -> 0 bytes
+ .../university of central lancashire.webp          |   Bin 20082 -> 0 bytes
+ .../images/universities/university of derby.webp   |   Bin 40738 -> 0 bytes
+ .../images/universities/university of dundee.webp  |   Bin 40370 -> 0 bytes
+ .../universities/university of greenwich.webp      |   Bin 54220 -> 0 bytes
+ .../universities/university of hertfordshire.webp  |   Bin 23524 -> 0 bytes
+ .../images/universities/university of hull.webp    |   Bin 43252 -> 0 bytes
+ .../images/universities/university of kent.webp    |   Bin 35872 -> 0 bytes
+ .../images/universities/university of lincoln.webp |   Bin 101326 -> 0 bytes
+ .../universities/university of portsmouth.webp     |   Bin 45180 -> 0 bytes
+ .../universities/university of roehampton.webp     |   Bin 44738 -> 0 bytes
+ .../universities/university of south wales.webp    |   Bin 18662 -> 0 bytes
+ .../university of the west of scotland.webp        |   Bin 69298 -> 0 bytes
+ .../university of wales trinity saint david.webp   |   Bin 20938 -> 0 bytes
+ .../universities/university of wolverhampton.webp  |   Bin 23668 -> 0 bytes
+ .../universities/wrexham glyndwr university .webp  |   Bin 54744 -> 0 bytes
+ .../source-snapshot/public/logo.svg                |    29 -
+ .../source-snapshot/public/robots.txt              |    14 -
+ .../source-snapshot/scripts/add_courses.py         |   327 -
+ .../source-snapshot/scripts/add_universities.py    |   255 -
+ .../source-snapshot/scripts/check-lead.ts          |    18 -
+ .../source-snapshot/scripts/check-seed.ts          |    13 -
+ .../source-snapshot/scripts/check-uni.ts           |    22 -
+ .../source-snapshot/scripts/fix-crm-mock-pages.ts  |    86 -
+ .../source-snapshot/scripts/generate_csv.py        |   254 -
+ .../source-snapshot/scripts/ref_bottom.png         |   Bin 103264 -> 0 bytes
+ .../source-snapshot/scripts/ref_home_full.png      |   Bin 1503608 -> 0 bytes
+ .../source-snapshot/scripts/ref_mid1.png           |   Bin 629655 -> 0 bytes
+ .../source-snapshot/scripts/ref_mid2.png           |   Bin 84037 -> 0 bytes
+ .../source-snapshot/scripts/ref_mid3.png           |   Bin 81597 -> 0 bytes
+ .../source-snapshot/scripts/ref_top.png            |   Bin 464062 -> 0 bytes
+ .../source-snapshot/scripts/reference_home.json    |    52 -
+ .../source-snapshot/scripts/seed-alo.ts            |   401 -
+ .../source-snapshot/scripts/seed-homepage.ts       |   906 --
+ .../scripts/seed-other-universities.ts             |  1129 --
+ .../scripts/seed-uk-universities.ts                |  1801 ---
+ .../source-snapshot/scripts/seed-universities.ts   |   443 -
+ .../source-snapshot/scripts/seed-website.ts        |   870 --
+ .../app/api/admin/access-control-center/route.ts   |   134 -
+ .../src/app/api/admin/access-control/route.ts      |   304 -
+ .../src/app/api/admin/audit/route.ts               |   123 -
+ .../src/app/api/admin/employees/[id]/route.ts      |   501 -
+ .../src/app/api/admin/employees/activate/route.ts  |   179 -
+ .../src/app/api/admin/employees/create/route.ts    |   177 -
+ .../api/admin/employees/resend-activation/route.ts |   133 -
+ .../src/app/api/admin/employees/route.ts           |   418 -
+ .../src/app/api/admin/packages/route.ts            |   335 -
+ .../src/app/api/admin/partner-assignments/route.ts |   221 -
+ .../src/app/api/admin/quota-requests/route.ts      |   283 -
+ .../src/app/api/admin/quotas/route.ts              |   220 -
+ .../src/app/api/admin/student-benefits/route.ts    |   134 -
+ .../src/app/api/admin/users/route.ts               |   368 -
+ .../src/app/api/agentos/agents/route.ts            |   285 -
+ .../source-snapshot/src/app/api/chat/route.ts      |    96 -
+ .../src/app/api/counselor/dashboard/route.ts       |   196 -
+ .../src/app/api/counselor/inbox/route.ts           |   126 -
+ .../api/counselor/students/[studentId]/route.ts    |   189 -
+ .../src/app/api/course-finder/compare/route.ts     |   124 -
+ .../src/app/api/course-finder/pro/route.ts         |   203 -
+ .../src/app/api/course-finder/route.ts             |   144 -
+ .../src/app/api/crm/analytics/route.ts             |    72 -
+ .../src/app/api/crm/applications/route.ts          |   202 -
+ .../src/app/api/crm/appointments/route.ts          |   186 -
+ .../src/app/api/crm/audit-logs/route.ts            |   141 -
+ .../src/app/api/crm/communications/route.ts        |    55 -
+ .../src/app/api/crm/course-import/confirm/route.ts |   346 -
+ .../api/crm/course-import/download-errors/route.ts |    58 -
+ .../src/app/api/crm/course-import/errors/route.ts  |    39 -
+ .../src/app/api/crm/course-import/history/route.ts |    42 -
+ .../api/crm/course-import/map-university/route.ts  |   156 -
+ .../app/api/crm/course-import/rollback/route.ts    |   100 -
+ .../src/app/api/crm/course-import/stats/route.ts   |    62 -
+ .../api/crm/course-import/template/course/route.ts |   126 -
+ .../crm/course-import/template/university/route.ts |    60 -
+ .../app/api/crm/course-import/validate/route.ts    |   235 -
+ .../src/app/api/crm/courses/route.ts               |   111 -
+ .../src/app/api/crm/dashboard/route.ts             |   176 -
+ .../src/app/api/crm/documents/route.ts             |   217 -
+ .../src/app/api/crm/finance/route.ts               |   200 -
+ .../source-snapshot/src/app/api/crm/hrm/route.ts   |    87 -
+ .../source-snapshot/src/app/api/crm/inbox/route.ts |   163 -
+ .../source-snapshot/src/app/api/crm/leads/route.ts |   180 -
+ .../src/app/api/crm/partners/route.ts              |   102 -
+ .../src/app/api/crm/reports/route.ts               |    70 -
+ .../source-snapshot/src/app/api/crm/roles/route.ts |   109 -
+ .../src/app/api/crm/scholarships/route.ts          |   117 -
+ .../src/app/api/crm/seed-universities/route.ts     |   614 -
+ .../source-snapshot/src/app/api/crm/seed/route.ts  |   285 -
+ .../src/app/api/crm/settings/route.ts              |    65 -
+ .../src/app/api/crm/social/route.ts                |   118 -
+ .../src/app/api/crm/students/route.ts              |   147 -
+ .../src/app/api/crm/support/route.ts               |   101 -
+ .../source-snapshot/src/app/api/crm/tasks/route.ts |   180 -
+ .../src/app/api/crm/universities/route.ts          |    48 -
+ .../source-snapshot/src/app/api/crm/users/route.ts |   128 -
+ .../src/app/api/crm/whatsapp/route.ts              |    96 -
+ .../src/app/api/employee/applications/route.ts     |   104 -
+ .../src/app/api/employee/attendance/route.ts       |   222 -
+ .../src/app/api/employee/documents/route.ts        |   102 -
+ .../src/app/api/employee/leave/route.ts            |   218 -
+ .../src/app/api/employee/messages/route.ts         |   218 -
+ .../src/app/api/employee/performance/route.ts      |   246 -
+ .../src/app/api/employee/profile/route.ts          |   138 -
+ .../src/app/api/employee/reports/route.ts          |   200 -
+ .../src/app/api/employee/salary/route.ts           |   128 -
+ .../src/app/api/employee/settings/route.ts         |   198 -
+ .../src/app/api/employee/students/route.ts         |    88 -
+ .../src/app/api/employee/tasks/route.ts            |   206 -
+ .../src/app/api/marketing/agentos/route.ts         |   182 -
+ .../src/app/api/marketing/approvals/route.ts       |   243 -
+ .../src/app/api/marketing/calendar/route.ts        |   157 -
+ .../src/app/api/marketing/campaigns/route.ts       |   271 -
+ .../api/marketing/comments/convert-lead/route.ts   |    90 -
+ .../src/app/api/marketing/content/route.ts         |   274 -
+ .../src/app/api/marketing/dashboard/route.ts       |   135 -
+ .../src/app/api/marketing/dm/convert-lead/route.ts |   103 -
+ .../src/app/api/marketing/seo/route.ts             |   234 -
+ .../src/app/api/marketing/social/route.ts          |   208 -
+ .../src/app/api/marketing/video/route.ts           |   218 -
+ .../src/app/api/marketing/webhooks/route.ts        |    47 -
+ .../src/app/api/partner/applications/route.ts      |   236 -
+ .../src/app/api/partner/commission/route.ts        |   189 -
+ .../src/app/api/partner/documents/route.ts         |   250 -
+ .../src/app/api/partner/help/route.ts              |   200 -
+ .../src/app/api/partner/leads/route.ts             |    93 -
+ .../src/app/api/partner/marketing/approve/route.ts |   116 -
+ .../app/api/partner/marketing/generate/route.ts    |   150 -
+ .../app/api/partner/marketing/requests/route.ts    |   191 -
+ .../src/app/api/partner/marketing/route.ts         |   172 -
+ .../src/app/api/partner/marketing/usage/route.ts   |    99 -
+ .../src/app/api/partner/messages/route.ts          |   130 -
+ .../src/app/api/partner/notifications/route.ts     |   127 -
+ .../src/app/api/partner/profile/route.ts           |    96 -
+ .../src/app/api/partner/referrals/route.ts         |   144 -
+ .../src/app/api/partner/reports/route.ts           |   108 -
+ .../src/app/api/partner/resources/route.ts         |   201 -
+ .../src/app/api/partner/settings/route.ts          |   153 -
+ .../src/app/api/partner/student-benefits/route.ts  |   259 -
+ .../src/app/api/partner/students/route.ts          |    95 -
+ .../src/app/api/permissions/route.ts               |   103 -
+ .../app/api/portal-auth/forgot-password/route.ts   |    93 -
+ .../src/app/api/portal-auth/login/route.ts         |   244 -
+ .../src/app/api/portal-auth/logout/route.ts        |    74 -
+ .../src/app/api/portal-auth/register/route.ts      |   195 -
+ .../app/api/portal-auth/reset-password/route.ts    |    85 -
+ .../src/app/api/portal-auth/session/route.ts       |   153 -
+ .../src/app/api/portal-auth/verify-otp/route.ts    |    70 -
+ .../source-snapshot/src/app/api/route.ts           |     5 -
+ .../src/app/api/scholarships/route.ts              |    56 -
+ .../app/api/student-portal/applications/route.ts   |   182 -
+ .../app/api/student-portal/appointments/route.ts   |   184 -
+ .../app/api/student-portal/course-finder/route.ts  |   103 -
+ .../src/app/api/student-portal/cv/route.ts         |   199 -
+ .../src/app/api/student-portal/documents/route.ts  |   178 -
+ .../src/app/api/student-portal/messages/route.ts   |   182 -
+ .../src/app/api/student-portal/mock-tests/route.ts |   162 -
+ .../app/api/student-portal/notifications/route.ts  |   135 -
+ .../src/app/api/student-portal/payments/route.ts   |   113 -
+ .../src/app/api/student-portal/profile/route.ts    |   182 -
+ .../src/app/api/student-portal/referrals/route.ts  |   130 -
+ .../app/api/student-portal/scholarships/route.ts   |   108 -
+ .../src/app/api/student-portal/sop/route.ts        |   204 -
+ .../src/app/api/student-portal/timeline/route.ts   |    64 -
+ .../src/app/api/student-portal/visa/route.ts       |   140 -
+ .../src/app/api/student/benefits/route.ts          |    86 -
+ .../src/app/api/student/vouchers/redeem/route.ts   |   118 -
+ .../src/app/api/universities/route.ts              |    78 -
+ .../src/app/api/website/english-tests/route.ts     |    19 -
+ .../src/app/api/website/faqs/route.ts              |    18 -
+ .../src/app/api/website/homepage/route.ts          |   117 -
+ .../src/app/api/website/lead/route.ts              |    88 -
+ .../src/app/api/website/search-log/route.ts        |    31 -
+ .../src/app/api/website/services/route.ts          |    19 -
+ .../src/app/api/website/stats/route.ts             |    32 -
+ .../src/app/api/website/success-stories/route.ts   |    19 -
+ .../src/app/api/website/team-members/route.ts      |    18 -
+ .../source-snapshot/src/app/globals.css            |   370 -
+ .../source-snapshot/src/app/layout.tsx             |    40 -
+ .../source-snapshot/src/app/page.tsx               |   449 -
+ .../src/components/auth/AuthStatusPages.tsx        |   150 -
+ .../src/components/auth/ForgotPasswordPage.tsx     |    91 -
+ .../src/components/auth/LoginPage.tsx              |   283 -
+ .../src/components/auth/RegisterPage.tsx           |   565 -
+ .../src/components/auth/ResetPasswordPage.tsx      |   100 -
+ .../components/course-finder/course-compare.tsx    |   228 -
+ .../components/course-finder/course-finder-pro.tsx |   713 -
+ .../course-finder/course-finder-public.tsx         |   701 -
+ .../course-finder/csv-download-buttons.tsx         |    78 -
+ .../components/course-finder/import-history.tsx    |   507 -
+ .../components/course-finder/import-workflow.tsx   |   892 --
+ .../src/components/course-finder/index.ts          |    21 -
+ .../components/course-finder/scholarship-list.tsx  |   256 -
+ .../src/components/course-finder/types.ts          |   101 -
+ .../course-finder/university-directory.tsx         |   321 -
+ .../src/components/crm/CrmAdminDashboard.tsx       |   362 -
+ .../src/components/crm/CrmAdminShell.tsx           |   467 -
+ .../src/components/crm/agentos/AgentRegistry.tsx   |   535 -
+ .../crm/dashboards/AiCommandDashboard.tsx          |   248 -
+ .../crm/dashboards/ApplicationTeamDashboard.tsx    |   225 -
+ .../crm/dashboards/BranchManagerDashboard.tsx      |   228 -
+ .../src/components/crm/dashboards/CeoDashboard.tsx |   238 -
+ .../crm/dashboards/CounselorDashboard.tsx          |   246 -
+ .../crm/dashboards/CrmDashboardRouter.tsx          |    45 -
+ .../crm/dashboards/DataManagerDashboard.tsx        |   225 -
+ .../crm/dashboards/DocumentReviewDashboard.tsx     |   232 -
+ .../components/crm/dashboards/FinanceDashboard.tsx |   216 -
+ .../crm/dashboards/FrontDeskDashboard.tsx          |   240 -
+ .../src/components/crm/dashboards/HrDashboard.tsx  |   234 -
+ .../crm/dashboards/MarketingDashboard.tsx          |   230 -
+ .../crm/dashboards/PartnerManagerDashboard.tsx     |   224 -
+ .../components/crm/dashboards/SupportDashboard.tsx |   246 -
+ .../crm/dashboards/VisaOfficerDashboard.tsx        |   234 -
+ .../crm/pages/CrmAgentOperationsPage.tsx           |   449 -
+ .../src/components/crm/pages/CrmAnalyticsPage.tsx  |   538 -
+ .../components/crm/pages/CrmApplicationsPage.tsx   |   127 -
+ .../components/crm/pages/CrmAppointmentsPage.tsx   |   163 -
+ .../src/components/crm/pages/CrmAuditLogsPage.tsx  |   147 -
+ .../components/crm/pages/CrmCommissionsPage.tsx    |    92 -
+ .../components/crm/pages/CrmCommunicationsPage.tsx |   472 -
+ .../components/crm/pages/CrmCourseFinderPage.tsx   |   258 -
+ .../src/components/crm/pages/CrmDocumentsPage.tsx  |   146 -
+ .../src/components/crm/pages/CrmFinancePage.tsx    |   140 -
+ .../src/components/crm/pages/CrmHRMPage.tsx        |   201 -
+ .../src/components/crm/pages/CrmInboxPage.tsx      |   472 -
+ .../src/components/crm/pages/CrmLeadsPage.tsx      |   243 -
+ .../src/components/crm/pages/CrmMarketingPage.tsx  |     7 -
+ .../src/components/crm/pages/CrmPartnersPage.tsx   |   166 -
+ .../components/crm/pages/CrmPermissionsPage.tsx    |   146 -
+ .../src/components/crm/pages/CrmReportsPage.tsx    |    88 -
+ .../src/components/crm/pages/CrmRolesPage.tsx      |   140 -
+ .../components/crm/pages/CrmScholarshipsPage.tsx   |   123 -
+ .../src/components/crm/pages/CrmSettingsPage.tsx   |   172 -
+ .../src/components/crm/pages/CrmSocialPage.tsx     |   478 -
+ .../src/components/crm/pages/CrmStudentsPage.tsx   |   162 -
+ .../src/components/crm/pages/CrmSupportPage.tsx    |   215 -
+ .../src/components/crm/pages/CrmTasksPage.tsx      |   267 -
+ .../components/crm/pages/CrmUniversitiesPage.tsx   |   224 -
+ .../src/components/crm/pages/CrmUsersPage.tsx      |   122 -
+ .../src/components/crm/pages/CrmVisaPage.tsx       |    99 -
+ .../src/components/crm/pages/CrmWhatsAppPage.tsx   |   427 -
+ .../crm/seo/CrmSeoCompetitorAnalysis.tsx           |   344 -
+ .../components/crm/seo/CrmSeoContentWorkflow.tsx   |   407 -
+ .../components/crm/seo/CrmSeoGrowthDashboard.tsx   |   804 --
+ .../components/crm/seo/CrmSeoKeywordTracker.tsx    |   612 -
+ .../src/components/crm/seo/CrmSeoPolicyWatcher.tsx |   449 -
+ .../components/crm/seo/CrmSeoTechnicalAudit.tsx    |   367 -
+ .../employee/EmployeeApplicationsPage.tsx          |   274 -
+ .../components/employee/EmployeeAttendancePage.tsx |   349 -
+ .../components/employee/EmployeeCalendarPage.tsx   |   471 -
+ .../src/components/employee/EmployeeDashboard.tsx  |   288 -
+ .../components/employee/EmployeeDocumentsPage.tsx  |   262 -
+ .../src/components/employee/EmployeeHelpPage.tsx   |   137 -
+ .../src/components/employee/EmployeeLeadsPage.tsx  |   281 -
+ .../src/components/employee/EmployeeLeavePage.tsx  |   258 -
+ .../components/employee/EmployeeMessagesPage.tsx   |   260 -
+ .../employee/EmployeeNotificationsPage.tsx         |   284 -
+ .../employee/EmployeePerformancePage.tsx           |   160 -
+ .../components/employee/EmployeePortalShell.tsx    |   246 -
+ .../components/employee/EmployeeProfilePage.tsx    |   229 -
+ .../components/employee/EmployeeReportsPage.tsx    |   129 -
+ .../src/components/employee/EmployeeSalaryPage.tsx |   180 -
+ .../components/employee/EmployeeSettingsPage.tsx   |   179 -
+ .../components/employee/EmployeeStudentsPage.tsx   |   231 -
+ .../src/components/employee/EmployeeTasksPage.tsx  |   367 -
+ .../components/employee/EmployeeWhatsAppPage.tsx   |   517 -
+ .../marketing/hub/AiReplyManagerView.tsx           |   767 -
+ .../components/marketing/hub/ApprovalQueueView.tsx |   800 --
+ .../marketing/hub/BrandAssetsPostCreatorView.tsx   |  1078 --
+ .../marketing/hub/CampaignBuilderCalendarView.tsx  |   985 --
+ .../marketing/hub/ConversationAssignmentView.tsx   |  1268 --
+ .../components/marketing/hub/HumanHandoffView.tsx  |   451 -
+ .../marketing/hub/KeywordTriggersView.tsx          |   289 -
+ .../components/marketing/hub/LeadPipelineView.tsx  |  1507 --
+ .../marketing/hub/MarketingAnalyticsView.tsx       |   901 --
+ .../marketing/hub/MarketingAuditAccessView.tsx     |   689 -
+ .../marketing/hub/MarketingDashboardView.tsx       |   771 -
+ .../components/marketing/hub/MarketingHubShell.tsx |   361 -
+ .../components/marketing/hub/N8nWorkflowsView.tsx  |  1153 --
+ .../marketing/hub/SocialMediaAutomationView.tsx    |   569 -
+ .../components/marketing/hub/UnifiedInboxView.tsx  |  1654 ---
+ .../marketing/hub/WhatsAppAutomationView.tsx       |  1395 --
+ .../components/partner/PartnerApplicationsPage.tsx |   279 -
+ .../components/partner/PartnerCommissionPage.tsx   |   375 -
+ .../src/components/partner/PartnerDashboard.tsx    |   472 -
+ .../components/partner/PartnerDocumentsPage.tsx    |   393 -
+ .../src/components/partner/PartnerHelpPage.tsx     |    85 -
+ .../src/components/partner/PartnerLeadsPage.tsx    |   423 -
+ .../src/components/partner/PartnerMessagesPage.tsx |   302 -
+ .../partner/PartnerNotificationsPage.tsx           |   202 -
+ .../src/components/partner/PartnerPortalShell.tsx  |   242 -
+ .../src/components/partner/PartnerProfilePage.tsx  |   364 -
+ .../components/partner/PartnerReferralsPage.tsx    |   148 -
+ .../src/components/partner/PartnerReportsPage.tsx  |   376 -
+ .../components/partner/PartnerResourcesPage.tsx    |   143 -
+ .../src/components/partner/PartnerSettingsPage.tsx |   113 -
+ .../src/components/partner/PartnerStudentsPage.tsx |   367 -
+ .../src/components/portals/PortalSelector.tsx      |   358 -
+ .../src/components/student/StudentAiMatch.tsx      |   737 -
+ .../src/components/student/StudentApplications.tsx |  1307 --
+ .../src/components/student/StudentAppointments.tsx |   389 -
+ .../src/components/student/StudentCompare.tsx      |   566 -
+ .../src/components/student/StudentCourseFinder.tsx |  1067 --
+ .../src/components/student/StudentDashboard.tsx    |   844 --
+ .../src/components/student/StudentDocuments.tsx    |   995 --
+ .../src/components/student/StudentMessages.tsx     |   774 -
+ .../src/components/student/StudentMorePages.tsx    |  1152 --
+ .../components/student/StudentNotifications.tsx    |   464 -
+ .../src/components/student/StudentPayments.tsx     |   442 -
+ .../src/components/student/StudentPortalShell.tsx  |   363 -
+ .../src/components/student/StudentProfilePage.tsx  |  2658 ----
+ .../src/components/student/StudentScholarships.tsx |   793 -
+ .../src/components/student/StudentSopCvStudio.tsx  |   734 -
+ .../src/components/student/StudentVisaCenter.tsx   |   755 -
+ .../src/components/ui/accordion.tsx                |    66 -
+ .../src/components/ui/alert-dialog.tsx             |   157 -
+ .../source-snapshot/src/components/ui/alert.tsx    |    66 -
+ .../source-snapshot/src/components/ui/avatar.tsx   |    53 -
+ .../source-snapshot/src/components/ui/badge.tsx    |    61 -
+ .../source-snapshot/src/components/ui/button.tsx   |    87 -
+ .../source-snapshot/src/components/ui/calendar.tsx |   213 -
+ .../source-snapshot/src/components/ui/card.tsx     |    92 -
+ .../source-snapshot/src/components/ui/carousel.tsx |   241 -
+ .../source-snapshot/src/components/ui/chart.tsx    |   353 -
+ .../source-snapshot/src/components/ui/checkbox.tsx |    32 -
+ .../src/components/ui/collapsible.tsx              |    33 -
+ .../source-snapshot/src/components/ui/command.tsx  |   184 -
+ .../source-snapshot/src/components/ui/dialog.tsx   |   143 -
+ .../source-snapshot/src/components/ui/form.tsx     |   167 -
+ .../source-snapshot/src/components/ui/input.tsx    |    24 -
+ .../source-snapshot/src/components/ui/label.tsx    |    24 -
+ .../src/components/ui/pagination.tsx               |   127 -
+ .../source-snapshot/src/components/ui/popover.tsx  |    48 -
+ .../source-snapshot/src/components/ui/progress.tsx |    31 -
+ .../src/components/ui/radio-group.tsx              |    45 -
+ .../src/components/ui/scroll-area.tsx              |    58 -
+ .../source-snapshot/src/components/ui/select.tsx   |   185 -
+ .../src/components/ui/separator.tsx                |    28 -
+ .../source-snapshot/src/components/ui/sheet.tsx    |   139 -
+ .../source-snapshot/src/components/ui/sidebar.tsx  |   726 -
+ .../source-snapshot/src/components/ui/skeleton.tsx |    13 -
+ .../source-snapshot/src/components/ui/slider.tsx   |    63 -
+ .../source-snapshot/src/components/ui/sonner.tsx   |    25 -
+ .../source-snapshot/src/components/ui/switch.tsx   |    31 -
+ .../source-snapshot/src/components/ui/table.tsx    |   116 -
+ .../source-snapshot/src/components/ui/tabs.tsx     |    66 -
+ .../source-snapshot/src/components/ui/textarea.tsx |    18 -
+ .../source-snapshot/src/components/ui/toast.tsx    |   129 -
+ .../source-snapshot/src/components/ui/toaster.tsx  |    35 -
+ .../source-snapshot/src/components/ui/toggle.tsx   |    47 -
+ .../source-snapshot/src/components/ui/tooltip.tsx  |    61 -
+ .../src/components/website/HomepagePart1.tsx       |   452 -
+ .../src/components/website/HomepagePart2.tsx       |   696 -
+ .../src/components/website/HomepagePart3.tsx       |  1050 --
+ .../src/components/website/HomepagePart4.tsx       |  1297 --
+ .../src/components/website/PublicNavbar.tsx        |   414 -
+ .../src/components/website/animations.ts           |   224 -
+ .../public-pages/PublicConsultationPage.tsx        |   332 -
+ .../website/public-pages/PublicPages.tsx           |  1039 --
+ .../src/components/website/public-pages/index.ts   |     0
+ .../source-snapshot/src/hooks/use-mobile.ts        |    19 -
+ .../source-snapshot/src/hooks/use-toast.ts         |   194 -
+ .../source-snapshot/src/lib/access-check-engine.ts |   528 -
+ .../source-snapshot/src/lib/auth-middleware.ts     |   221 -
+ .../src/lib/crm/import-constants.ts                |   164 -
+ .../source-snapshot/src/lib/db.ts                  |    13 -
+ .../source-snapshot/src/lib/marketing/audit.ts     |    38 -
+ .../src/lib/marketing/permissions.ts               |   103 -
+ .../source-snapshot/src/lib/marketing/types.ts     |   257 -
+ .../source-snapshot/src/lib/permissions.ts         |   336 -
+ .../source-snapshot/src/lib/stores/portal-store.ts |   366 -
+ .../src/lib/university-data-intl.ts                |  3077 ----
+ .../source-snapshot/src/lib/university-data-uk.ts  |  1218 --
+ .../source-snapshot/src/lib/university-data-uk2.ts |  1415 --
+ .../source-snapshot/src/lib/utils.ts               |     6 -
+ .../source-snapshot/src/middleware.ts              |   103 -
+ .../source-snapshot/tailwind.config.ts             |    64 -
+ .../source-snapshot/tsconfig.json                  |    42 -
+ remediation-work/.gitignore                        |    62 -
+ remediation-work/PHASE0-REPORT.md                  |   242 -
+ remediation-work/PHASE1-REPORT.md                  |   240 -
+ remediation-work/PHASE2-REPORT.md                  |   357 -
+ .../PHASE2_DEPENDENCY_CHANGE_REPORT.md             |   252 -
+ remediation-work/PHASE3-REPORT.md                  |   173 -
+ remediation-work/PHASE3_TYPESCRIPT_REPORT.md       |   337 -
+ remediation-work/REMEDIATION_BASELINE.md           |   307 -
+ .../phase-0/20260726-202905/auth-middleware.ts     |   222 -
+ .../phase-0/20260726-202905/eslint.config.mjs      |    70 -
+ .../backups/phase-0/20260726-202905/next.config.ts |    53 -
+ .../phase-0/20260726-202905/package-lock.json      | 14305 -------------------
+ .../backups/phase-0/20260726-202905/package.json   |   116 -
+ .../backups/phase-0/20260726-202905/schema.prisma  |  2776 ----
+ .../phase-0/20260726-202905/seed-complete.ts       |   821 --
+ .../backups/phase-0/20260726-202905/seed.ts        |   263 -
+ .../backups/phase-0/20260726-202905/tsconfig.json  |    49 -
+ remediation-work/components.json                   |    21 -
+ remediation-work/eslint.config.mjs                 |    50 -
+ remediation-work/inventories/API-INVENTORY.csv     |   140 -
+ .../inventories/DATABASE-INVENTORY.csv             |   157 -
+ .../inventories/ENVIRONMENT-VARIABLE-INVENTORY.csv |    51 -
+ .../inventories/MIGRATION-INVENTORY.csv            |     3 -
+ remediation-work/inventories/ROUTE-INVENTORY.csv   |     2 -
+ remediation-work/inventory/build-log.txt           |   192 -
+ remediation-work/inventory/git-status.txt          |    28 -
+ remediation-work/inventory/lint-baseline.txt       |    13 -
+ remediation-work/inventory/pages-and-routes.txt    |   140 -
+ remediation-work/inventory/prisma-models.txt       |   156 -
+ remediation-work/inventory/test-results.txt        |    13 -
+ remediation-work/inventory/tsc-errors-baseline.txt |     0
+ remediation-work/inventory/tsc-errors-fresh.txt    |     0
+ remediation-work/next.config.ts                    |    54 -
+ remediation-work/package-lock.json                 |  8716 -----------
+ remediation-work/package.json                      |    83 -
+ .../phase0-backups/2026-07-26T18-32-14/.gitignore  |    62 -
+ .../phase0-backups/2026-07-26T18-32-14/Caddyfile   |    23 -
+ .../2026-07-26T18-32-14/GIT_STATUS.txt             |    58 -
+ .../2026-07-26T18-32-14/components.json            |    21 -
+ .../2026-07-26T18-32-14/eslint.config.mjs          |    50 -
+ .../2026-07-26T18-32-14/next.config.ts             |    57 -
+ .../2026-07-26T18-32-14/package-lock.json          | 12376 ----------------
+ .../2026-07-26T18-32-14/package.json               |    97 -
+ .../2026-07-26T18-32-14/postcss.config.mjs         |     5 -
+ .../2026-07-26T18-32-14/prisma/schema.prisma       |  2617 ----
+ .../2026-07-26T18-32-14/prisma/seed-complete.ts    |   937 --
+ .../prisma/seed-universities.ts                    |   245 -
+ .../2026-07-26T18-32-14/prisma/seed.ts             |   263 -
+ .../2026-07-26T18-32-14/src/lib/auth-middleware.ts |   221 -
+ .../2026-07-26T18-32-14/src/lib/db.ts              |    13 -
+ .../2026-07-26T18-32-14/src/lib/permissions.ts     |   336 -
+ .../2026-07-26T18-32-14/tailwind.config.ts         |    64 -
+ .../2026-07-26T18-32-14/tsconfig.json              |    42 -
+ .../phase0-backups/2026-07-26T18-32-35/.gitignore  |    62 -
+ .../2026-07-26T18-32-35/BACKUP-MANIFEST.json       |   111 -
+ .../phase0-backups/2026-07-26T18-32-35/Caddyfile   |    23 -
+ .../2026-07-26T18-32-35/GIT_STATUS.txt             |    59 -
+ .../2026-07-26T18-32-35/components.json            |    21 -
+ .../2026-07-26T18-32-35/eslint.config.mjs          |    50 -
+ .../2026-07-26T18-32-35/next.config.ts             |    57 -
+ .../2026-07-26T18-32-35/package-lock.json          | 12376 ----------------
+ .../2026-07-26T18-32-35/package.json               |    97 -
+ .../2026-07-26T18-32-35/postcss.config.mjs         |     5 -
+ .../2026-07-26T18-32-35/prisma/schema.prisma       |  2617 ----
+ .../2026-07-26T18-32-35/prisma/seed-complete.ts    |   937 --
+ .../prisma/seed-universities.ts                    |   245 -
+ .../2026-07-26T18-32-35/prisma/seed.ts             |   263 -
+ .../2026-07-26T18-32-35/src/lib/auth-middleware.ts |   221 -
+ .../2026-07-26T18-32-35/src/lib/db.ts              |    13 -
+ .../2026-07-26T18-32-35/src/lib/permissions.ts     |   336 -
+ .../2026-07-26T18-32-35/tailwind.config.ts         |    64 -
+ .../2026-07-26T18-32-35/tsconfig.json              |    42 -
+ .../phase0-inventory/API-INVENTORY.csv             |   139 -
+ .../phase0-inventory/ENV-VARIABLE-INVENTORY.csv    |     4 -
+ .../phase0-inventory/PAGE-INVENTORY.csv            |     3 -
+ .../phase0-inventory/PHASE0-SUMMARY.json           |    16 -
+ .../phase0-inventory/PRISMA-MODEL-INVENTORY.csv    |   157 -
+ .../phase0-inventory/SCRIPT-INVENTORY.csv          |    18 -
+ .../phase0-inventory/TEST-INVENTORY.csv            |     1 -
+ .../phase0-inventory/TYPESCRIPT-ERROR-BY-FILE.csv  |   232 -
+ .../TYPESCRIPT-ERROR-INVENTORY.csv                 |   502 -
+ .../phase0-inventory/TYPESCRIPT-ERROR-SUMMARY.csv  |    15 -
+ .../phase0-inventory/npm-audit-after-fix.json      |   600 -
+ remediation-work/phase0-inventory/npm-audit.json   |  1585 --
+ remediation-work/phase2-auth-narrow-fixes.json     |    21 -
+ remediation-work/phase2-withauth-fixes-v2.json     |   226 -
+ remediation-work/phase2-withauth-fixes.json        |   226 -
+ remediation-work/postcss.config.mjs                |     5 -
+ remediation-work/prisma/schema.prisma              |  2637 ----
+ remediation-work/prisma/seed-complete.ts           |   957 --
+ remediation-work/prisma/seed-universities.ts       |   245 -
+ remediation-work/prisma/seed.ts                    |   263 -
+ .../public/images/brand/alo-edu-pad.jpg            |   Bin 544488 -> 0 bytes
+ .../hero-banners/Australia slide Banner.webp       |   Bin 81472 -> 0 bytes
+ .../images/hero-banners/Canada slide Banner.webp   |   Bin 45870 -> 0 bytes
+ .../images/hero-banners/Europe slide Banner.webp   |   Bin 47432 -> 0 bytes
+ .../hero-banners/New Zealand slide Banner.webp     |   Bin 99782 -> 0 bytes
+ .../images/hero-banners/UK slide Banner.webp       |   Bin 55884 -> 0 bytes
+ .../images/hero-banners/USA slide Banner.webp      |   Bin 58024 -> 0 bytes
+ .../public/images/landing/Copy of 167794.webp      |   Bin 45980 -> 0 bytes
+ ... Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp |   Bin 100628 -> 0 bytes
+ ...g Success_remix_01k44y1phqff4adx4kcap3cdyw.webp |   Bin 78562 -> 0 bytes
+ ...versation_remix_01k44y8qqzf1fak3kphqyhmj6w.webp |   Bin 112166 -> 0 bytes
+ .../public/images/landing/Copy of 2148431342.webp  |   Bin 65782 -> 0 bytes
+ .../Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp |   Bin 121796 -> 0 bytes
+ .../public/images/landing/Copy of logo.webp        |   Bin 44828 -> 0 bytes
+ .../Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp |   Bin 163050 -> 0 bytes
+ .../landing/Copy of pexels-george-pak-7972967.webp |     0
+ .../Copy of pexels-jaksonmartins-3101504.webp      |   Bin 94664 -> 0 bytes
+ .../landing/Copy of pexels-otherme-583475.webp     |   Bin 134694 -> 0 bytes
+ .../landing/Copy of pexels-rdne-7092364.webp       |   Bin 177960 -> 0 bytes
+ .../landing/Copy of pexels-rdne-7092573.webp       |   Bin 82746 -> 0 bytes
+ .../landing/Copy of pexels-rdne-7683897.webp       |   Bin 133230 -> 0 bytes
+ .../landing/Copy of pexels-yankrukov-8199166.webp  |   Bin 96656 -> 0 bytes
+ .../landing/Copy of pexels-yankrukov-8199562.webp  |   Bin 127894 -> 0 bytes
+ .../public/images/landing/Hero Image.webp          |   Bin 47432 -> 0 bytes
+ .../images/testimonials/Tushar Imran Nahid.png     |   Bin 58077 -> 0 bytes
+ .../images/testimonials/Ummaye Mayesha Manna.PNG   |   Bin 519261 -> 0 bytes
+ .../images/universities/abertay university.webp    |   Bin 29726 -> 0 bytes
+ .../images/universities/aston university.webp      |   Bin 31516 -> 0 bytes
+ .../universities/birmingham city university .webp  |   Bin 36082 -> 0 bytes
+ .../cardiff metropolitan university.webp           |   Bin 86240 -> 0 bytes
+ .../london metropolitan university.webp            |   Bin 47514 -> 0 bytes
+ .../images/universities/lsbu university.webp       |   Bin 30876 -> 0 bytes
+ .../universities/ravensbourne university.webp      |   Bin 19150 -> 0 bytes
+ .../images/universities/uister university.webp     |   Bin 30728 -> 0 bytes
+ .../universities/university of aberdeen.webp       |   Bin 46846 -> 0 bytes
+ .../images/universities/university of bolton.webp  |   Bin 19718 -> 0 bytes
+ .../university of central lancashire.webp          |   Bin 20082 -> 0 bytes
+ .../images/universities/university of derby.webp   |   Bin 40738 -> 0 bytes
+ .../images/universities/university of dundee.webp  |   Bin 40370 -> 0 bytes
+ .../universities/university of greenwich.webp      |   Bin 54220 -> 0 bytes
+ .../universities/university of hertfordshire.webp  |   Bin 23524 -> 0 bytes
+ .../images/universities/university of hull.webp    |   Bin 43252 -> 0 bytes
+ .../images/universities/university of kent.webp    |   Bin 35872 -> 0 bytes
+ .../images/universities/university of lincoln.webp |   Bin 101326 -> 0 bytes
+ .../universities/university of portsmouth.webp     |   Bin 45180 -> 0 bytes
+ .../universities/university of roehampton.webp     |   Bin 44738 -> 0 bytes
+ .../universities/university of south wales.webp    |   Bin 18662 -> 0 bytes
+ .../university of the west of scotland.webp        |   Bin 69298 -> 0 bytes
+ .../university of wales trinity saint david.webp   |   Bin 20938 -> 0 bytes
+ .../universities/university of wolverhampton.webp  |   Bin 23668 -> 0 bytes
+ .../universities/wrexham glyndwr university .webp  |   Bin 54744 -> 0 bytes
+ remediation-work/public/logo.svg                   |    29 -
+ remediation-work/public/robots.txt                 |    14 -
+ remediation-work/scripts/add_courses.py            |   327 -
+ remediation-work/scripts/add_universities.py       |   255 -
+ remediation-work/scripts/check-lead.ts             |    18 -
+ remediation-work/scripts/check-seed.ts             |    13 -
+ remediation-work/scripts/check-uni.ts              |    22 -
+ remediation-work/scripts/fix-crm-mock-pages.ts     |    86 -
+ remediation-work/scripts/generate_csv.py           |   254 -
+ remediation-work/scripts/ref_bottom.png            |   Bin 103264 -> 0 bytes
+ remediation-work/scripts/ref_home_full.png         |   Bin 1503608 -> 0 bytes
+ remediation-work/scripts/ref_mid1.png              |   Bin 629655 -> 0 bytes
+ remediation-work/scripts/ref_mid2.png              |   Bin 84037 -> 0 bytes
+ remediation-work/scripts/ref_mid3.png              |   Bin 81597 -> 0 bytes
+ remediation-work/scripts/ref_top.png               |   Bin 464062 -> 0 bytes
+ remediation-work/scripts/reference_home.json       |    52 -
+ remediation-work/scripts/seed-alo.ts               |   401 -
+ remediation-work/scripts/seed-homepage.ts          |   906 --
+ .../scripts/seed-other-universities.ts             |  1129 --
+ remediation-work/scripts/seed-uk-universities.ts   |  1801 ---
+ remediation-work/scripts/seed-universities.ts      |   443 -
+ remediation-work/scripts/seed-website.ts           |   870 --
+ .../app/api/admin/access-control-center/route.ts   |   134 -
+ .../src/app/api/admin/access-control/route.ts      |   304 -
+ remediation-work/src/app/api/admin/audit/route.ts  |   123 -
+ .../src/app/api/admin/employees/[id]/route.ts      |   501 -
+ .../src/app/api/admin/employees/activate/route.ts  |   179 -
+ .../src/app/api/admin/employees/create/route.ts    |   177 -
+ .../api/admin/employees/resend-activation/route.ts |   133 -
+ .../src/app/api/admin/employees/route.ts           |   418 -
+ .../src/app/api/admin/packages/route.ts            |   335 -
+ .../src/app/api/admin/partner-assignments/route.ts |   221 -
+ .../src/app/api/admin/quota-requests/route.ts      |   283 -
+ remediation-work/src/app/api/admin/quotas/route.ts |   220 -
+ .../src/app/api/admin/student-benefits/route.ts    |   134 -
+ remediation-work/src/app/api/admin/users/route.ts  |   368 -
+ .../src/app/api/agentos/agents/route.ts            |   285 -
+ remediation-work/src/app/api/chat/route.ts         |    96 -
+ .../src/app/api/counselor/dashboard/route.ts       |   196 -
+ .../src/app/api/counselor/inbox/route.ts           |   126 -
+ .../api/counselor/students/[studentId]/route.ts    |   189 -
+ .../src/app/api/course-finder/compare/route.ts     |   303 -
+ .../src/app/api/course-finder/pro/route.ts         |   274 -
+ .../src/app/api/course-finder/route.ts             |   144 -
+ .../src/app/api/crm/analytics/route.ts             |    72 -
+ .../src/app/api/crm/applications/route.ts          |   202 -
+ .../src/app/api/crm/appointments/route.ts          |   186 -
+ .../src/app/api/crm/audit-logs/route.ts            |   141 -
+ .../src/app/api/crm/communications/route.ts        |    55 -
+ .../src/app/api/crm/course-import/confirm/route.ts |   346 -
+ .../api/crm/course-import/download-errors/route.ts |    58 -
+ .../src/app/api/crm/course-import/errors/route.ts  |    39 -
+ .../src/app/api/crm/course-import/history/route.ts |    42 -
+ .../api/crm/course-import/map-university/route.ts  |   156 -
+ .../app/api/crm/course-import/rollback/route.ts    |   100 -
+ .../src/app/api/crm/course-import/stats/route.ts   |    62 -
+ .../api/crm/course-import/template/course/route.ts |   126 -
+ .../crm/course-import/template/university/route.ts |    60 -
+ .../app/api/crm/course-import/validate/route.ts    |   235 -
+ remediation-work/src/app/api/crm/courses/route.ts  |   111 -
+ .../src/app/api/crm/dashboard/route.ts             |   176 -
+ .../src/app/api/crm/documents/route.ts             |   217 -
+ remediation-work/src/app/api/crm/finance/route.ts  |   200 -
+ remediation-work/src/app/api/crm/hrm/route.ts      |    87 -
+ remediation-work/src/app/api/crm/inbox/route.ts    |   163 -
+ remediation-work/src/app/api/crm/leads/route.ts    |   180 -
+ remediation-work/src/app/api/crm/partners/route.ts |   102 -
+ remediation-work/src/app/api/crm/reports/route.ts  |    70 -
+ remediation-work/src/app/api/crm/roles/route.ts    |   118 -
+ .../src/app/api/crm/scholarships/route.ts          |   117 -
+ .../src/app/api/crm/seed-universities/route.ts     |   614 -
+ remediation-work/src/app/api/crm/seed/route.ts     |   285 -
+ remediation-work/src/app/api/crm/settings/route.ts |    65 -
+ remediation-work/src/app/api/crm/social/route.ts   |   118 -
+ remediation-work/src/app/api/crm/students/route.ts |   147 -
+ remediation-work/src/app/api/crm/support/route.ts  |   101 -
+ remediation-work/src/app/api/crm/tasks/route.ts    |   180 -
+ .../src/app/api/crm/universities/route.ts          |    48 -
+ remediation-work/src/app/api/crm/users/route.ts    |   128 -
+ remediation-work/src/app/api/crm/whatsapp/route.ts |    96 -
+ .../src/app/api/employee/applications/route.ts     |   104 -
+ .../src/app/api/employee/attendance/route.ts       |   222 -
+ .../src/app/api/employee/documents/route.ts        |   102 -
+ .../src/app/api/employee/leave/route.ts            |   218 -
+ .../src/app/api/employee/messages/route.ts         |   218 -
+ .../src/app/api/employee/performance/route.ts      |   246 -
+ .../src/app/api/employee/profile/route.ts          |   138 -
+ .../src/app/api/employee/reports/route.ts          |   223 -
+ .../src/app/api/employee/salary/route.ts           |   128 -
+ .../src/app/api/employee/settings/route.ts         |   198 -
+ .../src/app/api/employee/students/route.ts         |    88 -
+ .../src/app/api/employee/tasks/route.ts            |   206 -
+ .../src/app/api/marketing/agentos/route.ts         |   182 -
+ .../src/app/api/marketing/approvals/route.ts       |   243 -
+ .../src/app/api/marketing/calendar/route.ts        |   157 -
+ .../src/app/api/marketing/campaigns/route.ts       |   271 -
+ .../api/marketing/comments/convert-lead/route.ts   |    89 -
+ .../src/app/api/marketing/content/route.ts         |   274 -
+ .../src/app/api/marketing/dashboard/route.ts       |   135 -
+ .../src/app/api/marketing/dm/convert-lead/route.ts |   103 -
+ .../src/app/api/marketing/seo/route.ts             |   234 -
+ .../src/app/api/marketing/social/route.ts          |   208 -
+ .../src/app/api/marketing/video/route.ts           |   218 -
+ .../src/app/api/marketing/webhooks/route.ts        |    47 -
+ .../src/app/api/partner/applications/route.ts      |   236 -
+ .../src/app/api/partner/commission/route.ts        |   189 -
+ .../src/app/api/partner/documents/route.ts         |   250 -
+ remediation-work/src/app/api/partner/help/route.ts |   200 -
+ .../src/app/api/partner/leads/route.ts             |    93 -
+ .../src/app/api/partner/marketing/approve/route.ts |   116 -
+ .../app/api/partner/marketing/generate/route.ts    |   150 -
+ .../app/api/partner/marketing/requests/route.ts    |   191 -
+ .../src/app/api/partner/marketing/route.ts         |   172 -
+ .../src/app/api/partner/marketing/usage/route.ts   |    99 -
+ .../src/app/api/partner/messages/route.ts          |   129 -
+ .../src/app/api/partner/notifications/route.ts     |   127 -
+ .../src/app/api/partner/profile/route.ts           |    96 -
+ .../src/app/api/partner/referrals/route.ts         |   144 -
+ .../src/app/api/partner/reports/route.ts           |   108 -
+ .../src/app/api/partner/resources/route.ts         |   201 -
+ .../src/app/api/partner/settings/route.ts          |   153 -
+ .../src/app/api/partner/student-benefits/route.ts  |   259 -
+ .../src/app/api/partner/students/route.ts          |    95 -
+ remediation-work/src/app/api/permissions/route.ts  |   105 -
+ .../app/api/portal-auth/forgot-password/route.ts   |    93 -
+ .../src/app/api/portal-auth/login/route.ts         |   244 -
+ .../src/app/api/portal-auth/logout/route.ts        |    74 -
+ .../src/app/api/portal-auth/register/route.ts      |   195 -
+ .../app/api/portal-auth/reset-password/route.ts    |    85 -
+ .../src/app/api/portal-auth/session/route.ts       |   153 -
+ .../src/app/api/portal-auth/verify-otp/route.ts    |    70 -
+ remediation-work/src/app/api/route.ts              |     5 -
+ remediation-work/src/app/api/scholarships/route.ts |    73 -
+ .../app/api/student-portal/applications/route.ts   |   182 -
+ .../app/api/student-portal/appointments/route.ts   |   184 -
+ .../app/api/student-portal/course-finder/route.ts  |   103 -
+ .../src/app/api/student-portal/cv/route.ts         |   199 -
+ .../src/app/api/student-portal/documents/route.ts  |   178 -
+ .../src/app/api/student-portal/messages/route.ts   |   182 -
+ .../src/app/api/student-portal/mock-tests/route.ts |   169 -
+ .../app/api/student-portal/notifications/route.ts  |   135 -
+ .../src/app/api/student-portal/payments/route.ts   |   113 -
+ .../src/app/api/student-portal/profile/route.ts    |   182 -
+ .../src/app/api/student-portal/referrals/route.ts  |   130 -
+ .../app/api/student-portal/scholarships/route.ts   |   108 -
+ .../src/app/api/student-portal/sop/route.ts        |   204 -
+ .../src/app/api/student-portal/timeline/route.ts   |    64 -
+ .../src/app/api/student-portal/visa/route.ts       |   140 -
+ .../src/app/api/student/benefits/route.ts          |    86 -
+ .../src/app/api/student/vouchers/redeem/route.ts   |   118 -
+ remediation-work/src/app/api/universities/route.ts |    78 -
+ .../src/app/api/website/english-tests/route.ts     |    19 -
+ remediation-work/src/app/api/website/faqs/route.ts |    18 -
+ .../src/app/api/website/homepage/route.ts          |   117 -
+ remediation-work/src/app/api/website/lead/route.ts |    89 -
+ .../src/app/api/website/search-log/route.ts        |    31 -
+ .../src/app/api/website/services/route.ts          |    19 -
+ .../src/app/api/website/stats/route.ts             |    32 -
+ .../src/app/api/website/success-stories/route.ts   |    19 -
+ .../src/app/api/website/team-members/route.ts      |    18 -
+ remediation-work/src/app/globals.css               |   370 -
+ remediation-work/src/app/layout.tsx                |    40 -
+ remediation-work/src/app/page.tsx                  |   449 -
+ .../src/components/auth/AuthStatusPages.tsx        |   150 -
+ .../src/components/auth/ForgotPasswordPage.tsx     |    91 -
+ remediation-work/src/components/auth/LoginPage.tsx |   283 -
+ .../src/components/auth/RegisterPage.tsx           |   565 -
+ .../src/components/auth/ResetPasswordPage.tsx      |   100 -
+ .../components/course-finder/course-compare.tsx    |   228 -
+ .../components/course-finder/course-finder-pro.tsx |   713 -
+ .../course-finder/course-finder-public.tsx         |   701 -
+ .../course-finder/csv-download-buttons.tsx         |    78 -
+ .../components/course-finder/import-history.tsx    |   507 -
+ .../components/course-finder/import-workflow.tsx   |   892 --
+ .../src/components/course-finder/index.ts          |    21 -
+ .../components/course-finder/scholarship-list.tsx  |   256 -
+ .../src/components/course-finder/types.ts          |   101 -
+ .../course-finder/university-directory.tsx         |   321 -
+ .../src/components/crm/CrmAdminDashboard.tsx       |   362 -
+ .../src/components/crm/CrmAdminShell.tsx           |   467 -
+ .../src/components/crm/agentos/AgentRegistry.tsx   |   535 -
+ .../crm/dashboards/AiCommandDashboard.tsx          |   248 -
+ .../crm/dashboards/ApplicationTeamDashboard.tsx    |   225 -
+ .../crm/dashboards/BranchManagerDashboard.tsx      |   228 -
+ .../src/components/crm/dashboards/CeoDashboard.tsx |   238 -
+ .../crm/dashboards/CounselorDashboard.tsx          |   246 -
+ .../crm/dashboards/CrmDashboardRouter.tsx          |    45 -
+ .../crm/dashboards/DataManagerDashboard.tsx        |   225 -
+ .../crm/dashboards/DocumentReviewDashboard.tsx     |   232 -
+ .../components/crm/dashboards/FinanceDashboard.tsx |   216 -
+ .../crm/dashboards/FrontDeskDashboard.tsx          |   240 -
+ .../src/components/crm/dashboards/HrDashboard.tsx  |   234 -
+ .../crm/dashboards/MarketingDashboard.tsx          |   230 -
+ .../crm/dashboards/PartnerManagerDashboard.tsx     |   224 -
+ .../components/crm/dashboards/SupportDashboard.tsx |   246 -
+ .../crm/dashboards/VisaOfficerDashboard.tsx        |   234 -
+ .../crm/pages/CrmAgentOperationsPage.tsx           |   449 -
+ .../src/components/crm/pages/CrmAnalyticsPage.tsx  |   538 -
+ .../components/crm/pages/CrmApplicationsPage.tsx   |   127 -
+ .../components/crm/pages/CrmAppointmentsPage.tsx   |   163 -
+ .../src/components/crm/pages/CrmAuditLogsPage.tsx  |   147 -
+ .../components/crm/pages/CrmCommissionsPage.tsx    |    92 -
+ .../components/crm/pages/CrmCommunicationsPage.tsx |   472 -
+ .../components/crm/pages/CrmCourseFinderPage.tsx   |   258 -
+ .../src/components/crm/pages/CrmDocumentsPage.tsx  |   146 -
+ .../src/components/crm/pages/CrmFinancePage.tsx    |   140 -
+ .../src/components/crm/pages/CrmHRMPage.tsx        |   201 -
+ .../src/components/crm/pages/CrmInboxPage.tsx      |   472 -
+ .../src/components/crm/pages/CrmLeadsPage.tsx      |   243 -
+ .../src/components/crm/pages/CrmMarketingPage.tsx  |     7 -
+ .../src/components/crm/pages/CrmPartnersPage.tsx   |   166 -
+ .../components/crm/pages/CrmPermissionsPage.tsx    |   146 -
+ .../src/components/crm/pages/CrmReportsPage.tsx    |    88 -
+ .../src/components/crm/pages/CrmRolesPage.tsx      |   140 -
+ .../components/crm/pages/CrmScholarshipsPage.tsx   |   123 -
+ .../src/components/crm/pages/CrmSettingsPage.tsx   |   172 -
+ .../src/components/crm/pages/CrmSocialPage.tsx     |   478 -
+ .../src/components/crm/pages/CrmStudentsPage.tsx   |   162 -
+ .../src/components/crm/pages/CrmSupportPage.tsx    |   215 -
+ .../src/components/crm/pages/CrmTasksPage.tsx      |   267 -
+ .../components/crm/pages/CrmUniversitiesPage.tsx   |   224 -
+ .../src/components/crm/pages/CrmUsersPage.tsx      |   122 -
+ .../src/components/crm/pages/CrmVisaPage.tsx       |    99 -
+ .../src/components/crm/pages/CrmWhatsAppPage.tsx   |   427 -
+ .../crm/seo/CrmSeoCompetitorAnalysis.tsx           |   344 -
+ .../components/crm/seo/CrmSeoContentWorkflow.tsx   |   407 -
+ .../components/crm/seo/CrmSeoGrowthDashboard.tsx   |   807 --
+ .../components/crm/seo/CrmSeoKeywordTracker.tsx    |   612 -
+ .../src/components/crm/seo/CrmSeoPolicyWatcher.tsx |   449 -
+ .../components/crm/seo/CrmSeoTechnicalAudit.tsx    |   367 -
+ .../employee/EmployeeApplicationsPage.tsx          |   274 -
+ .../components/employee/EmployeeAttendancePage.tsx |   349 -
+ .../components/employee/EmployeeCalendarPage.tsx   |   471 -
+ .../src/components/employee/EmployeeDashboard.tsx  |   288 -
+ .../components/employee/EmployeeDocumentsPage.tsx  |   262 -
+ .../src/components/employee/EmployeeHelpPage.tsx   |   137 -
+ .../src/components/employee/EmployeeLeadsPage.tsx  |   281 -
+ .../src/components/employee/EmployeeLeavePage.tsx  |   258 -
+ .../components/employee/EmployeeMessagesPage.tsx   |   260 -
+ .../employee/EmployeeNotificationsPage.tsx         |   284 -
+ .../employee/EmployeePerformancePage.tsx           |   160 -
+ .../components/employee/EmployeePortalShell.tsx    |   246 -
+ .../components/employee/EmployeeProfilePage.tsx    |   229 -
+ .../components/employee/EmployeeReportsPage.tsx    |   129 -
+ .../src/components/employee/EmployeeSalaryPage.tsx |   180 -
+ .../components/employee/EmployeeSettingsPage.tsx   |   179 -
+ .../components/employee/EmployeeStudentsPage.tsx   |   231 -
+ .../src/components/employee/EmployeeTasksPage.tsx  |   367 -
+ .../components/employee/EmployeeWhatsAppPage.tsx   |   517 -
+ .../marketing/hub/AiReplyManagerView.tsx           |   767 -
+ .../components/marketing/hub/ApprovalQueueView.tsx |   800 --
+ .../marketing/hub/BrandAssetsPostCreatorView.tsx   |  1078 --
+ .../marketing/hub/CampaignBuilderCalendarView.tsx  |   985 --
+ .../marketing/hub/ConversationAssignmentView.tsx   |  1268 --
+ .../components/marketing/hub/HumanHandoffView.tsx  |   451 -
+ .../marketing/hub/KeywordTriggersView.tsx          |   289 -
+ .../components/marketing/hub/LeadPipelineView.tsx  |  1507 --
+ .../marketing/hub/MarketingAnalyticsView.tsx       |   901 --
+ .../marketing/hub/MarketingAuditAccessView.tsx     |   689 -
+ .../marketing/hub/MarketingDashboardView.tsx       |   771 -
+ .../components/marketing/hub/MarketingHubShell.tsx |   361 -
+ .../components/marketing/hub/N8nWorkflowsView.tsx  |  1153 --
+ .../marketing/hub/SocialMediaAutomationView.tsx    |   569 -
+ .../components/marketing/hub/UnifiedInboxView.tsx  |  1654 ---
+ .../marketing/hub/WhatsAppAutomationView.tsx       |  1395 --
+ .../components/partner/PartnerApplicationsPage.tsx |   279 -
+ .../components/partner/PartnerCommissionPage.tsx   |   375 -
+ .../src/components/partner/PartnerDashboard.tsx    |   472 -
+ .../components/partner/PartnerDocumentsPage.tsx    |   393 -
+ .../src/components/partner/PartnerHelpPage.tsx     |    85 -
+ .../src/components/partner/PartnerLeadsPage.tsx    |   423 -
+ .../src/components/partner/PartnerMessagesPage.tsx |   302 -
+ .../partner/PartnerNotificationsPage.tsx           |   202 -
+ .../src/components/partner/PartnerPortalShell.tsx  |   242 -
+ .../src/components/partner/PartnerProfilePage.tsx  |   364 -
+ .../components/partner/PartnerReferralsPage.tsx    |   148 -
+ .../src/components/partner/PartnerReportsPage.tsx  |   376 -
+ .../components/partner/PartnerResourcesPage.tsx    |   143 -
+ .../src/components/partner/PartnerSettingsPage.tsx |   113 -
+ .../src/components/partner/PartnerStudentsPage.tsx |   367 -
+ .../src/components/portals/PortalSelector.tsx      |   358 -
+ .../src/components/student/StudentAiMatch.tsx      |   737 -
+ .../src/components/student/StudentApplications.tsx |  1307 --
+ .../src/components/student/StudentAppointments.tsx |   389 -
+ .../src/components/student/StudentCompare.tsx      |   566 -
+ .../src/components/student/StudentCourseFinder.tsx |  1067 --
+ .../src/components/student/StudentDashboard.tsx    |   844 --
+ .../src/components/student/StudentDocuments.tsx    |   995 --
+ .../src/components/student/StudentMessages.tsx     |   774 -
+ .../src/components/student/StudentMorePages.tsx    |  1152 --
+ .../components/student/StudentNotifications.tsx    |   464 -
+ .../src/components/student/StudentPayments.tsx     |   442 -
+ .../src/components/student/StudentPortalShell.tsx  |   363 -
+ .../src/components/student/StudentProfilePage.tsx  |  2658 ----
+ .../src/components/student/StudentScholarships.tsx |   793 -
+ .../src/components/student/StudentSopCvStudio.tsx  |   734 -
+ .../src/components/student/StudentVisaCenter.tsx   |   755 -
+ remediation-work/src/components/ui/accordion.tsx   |    66 -
+ .../src/components/ui/alert-dialog.tsx             |   157 -
+ remediation-work/src/components/ui/alert.tsx       |    66 -
+ remediation-work/src/components/ui/avatar.tsx      |    53 -
+ remediation-work/src/components/ui/badge.tsx       |    61 -
+ remediation-work/src/components/ui/button.tsx      |    87 -
+ remediation-work/src/components/ui/calendar.tsx    |   213 -
+ remediation-work/src/components/ui/card.tsx        |    92 -
+ remediation-work/src/components/ui/carousel.tsx    |   241 -
+ remediation-work/src/components/ui/chart.tsx       |   353 -
+ remediation-work/src/components/ui/checkbox.tsx    |    32 -
+ remediation-work/src/components/ui/collapsible.tsx |    33 -
+ remediation-work/src/components/ui/command.tsx     |   184 -
+ remediation-work/src/components/ui/dialog.tsx      |   143 -
+ remediation-work/src/components/ui/form.tsx        |   167 -
+ remediation-work/src/components/ui/input.tsx       |    24 -
+ remediation-work/src/components/ui/label.tsx       |    24 -
+ remediation-work/src/components/ui/pagination.tsx  |   127 -
+ remediation-work/src/components/ui/popover.tsx     |    48 -
+ remediation-work/src/components/ui/progress.tsx    |    31 -
+ remediation-work/src/components/ui/radio-group.tsx |    45 -
+ remediation-work/src/components/ui/scroll-area.tsx |    58 -
+ remediation-work/src/components/ui/select.tsx      |   185 -
+ remediation-work/src/components/ui/separator.tsx   |    28 -
+ remediation-work/src/components/ui/sheet.tsx       |   139 -
+ remediation-work/src/components/ui/sidebar.tsx     |   726 -
+ remediation-work/src/components/ui/skeleton.tsx    |    13 -
+ remediation-work/src/components/ui/slider.tsx      |    63 -
+ remediation-work/src/components/ui/sonner.tsx      |    25 -
+ remediation-work/src/components/ui/switch.tsx      |    31 -
+ remediation-work/src/components/ui/table.tsx       |   116 -
+ remediation-work/src/components/ui/tabs.tsx        |    66 -
+ remediation-work/src/components/ui/textarea.tsx    |    18 -
+ remediation-work/src/components/ui/toast.tsx       |   129 -
+ remediation-work/src/components/ui/toaster.tsx     |    35 -
+ remediation-work/src/components/ui/toggle.tsx      |    47 -
+ remediation-work/src/components/ui/tooltip.tsx     |    61 -
+ .../src/components/website/HomepagePart1.tsx       |   460 -
+ .../src/components/website/HomepagePart2.tsx       |   696 -
+ .../src/components/website/HomepagePart3.tsx       |  1050 --
+ .../src/components/website/HomepagePart4.tsx       |  1297 --
+ .../src/components/website/PublicNavbar.tsx        |   414 -
+ .../src/components/website/animations.ts           |   224 -
+ .../public-pages/PublicConsultationPage.tsx        |   332 -
+ .../website/public-pages/PublicPages.tsx           |  1039 --
+ .../src/components/website/public-pages/index.ts   |     0
+ remediation-work/src/hooks/use-mobile.ts           |    19 -
+ remediation-work/src/hooks/use-toast.ts            |   194 -
+ remediation-work/src/lib/access-check-engine.ts    |   541 -
+ remediation-work/src/lib/ai.ts                     |    85 -
+ remediation-work/src/lib/auth-middleware.ts        |   218 -
+ remediation-work/src/lib/crm/import-constants.ts   |   164 -
+ remediation-work/src/lib/db.ts                     |    13 -
+ remediation-work/src/lib/marketing/audit.ts        |    38 -
+ remediation-work/src/lib/marketing/permissions.ts  |   103 -
+ remediation-work/src/lib/marketing/types.ts        |   257 -
+ remediation-work/src/lib/permissions.ts            |   399 -
+ remediation-work/src/lib/stores/portal-store.ts    |   367 -
+ remediation-work/src/lib/university-data-intl.ts   |  3077 ----
+ remediation-work/src/lib/university-data-uk.ts     |  1218 --
+ remediation-work/src/lib/university-data-uk2.ts    |  1415 --
+ remediation-work/src/lib/utils.ts                  |     6 -
+ remediation-work/src/middleware.ts                 |   103 -
+ remediation-work/tailwind.config.ts                |    64 -
+ remediation-work/tsconfig.json                     |    42 -
+ scripts/auth-flow-test.mjs                         |     4 +-
+ scripts/phase0-backup-and-inventory.mjs            |     2 +-
+ scripts/prepare-standalone.mjs                     |   122 +-
+ scripts/seed-alo.ts                                |   444 +-
+ scripts/seed-homepage.ts                           |     4 +-
+ src/app/api/admin/access-control-center/route.ts   |   208 +-
+ src/app/api/admin/employees/[id]/route.ts          |   525 +-
+ src/app/api/admin/employees/activate/route.ts      |     2 +-
+ src/app/api/admin/employees/create/route.ts        |    10 +-
+ .../api/admin/employees/resend-activation/route.ts |    15 +-
+ src/app/api/admin/employees/route.ts               |   495 +-
+ src/app/api/agentos/agents/route.ts                |   300 +-
+ src/app/api/course-finder/route.ts                 |    23 +-
+ src/app/api/crm/finance/route.ts                   |    50 +-
+ src/app/api/employee/documents/route.ts            |   235 +-
+ src/app/api/partner/student-benefits/route.ts      |     4 +-
+ src/app/api/permissions/route.ts                   |     2 +-
+ src/app/api/portal-auth/forgot-password/route.ts   |     9 +-
+ src/app/api/portal-auth/register/route.ts          |    16 +-
+ src/app/api/universities/route.ts                  |     2 +
+ src/app/api/website/homepage/route.ts              |     9 +
+ src/app/globals.css                                |    49 +-
+ src/app/layout.tsx                                 |    22 +-
+ src/app/page.tsx                                   |   140 +-
+ src/components/auth/LoginPage.tsx                  |    14 +-
+ .../course-finder/course-finder-public.tsx         |   162 +-
+ .../crm/dashboards/AiCommandDashboard.tsx          |    82 +-
+ .../crm/dashboards/ApplicationTeamDashboard.tsx    |   114 +-
+ .../crm/dashboards/BranchManagerDashboard.tsx      |    74 +-
+ src/components/crm/dashboards/CeoDashboard.tsx     |    73 +-
+ .../crm/dashboards/CounselorDashboard.tsx          |   188 +-
+ .../crm/dashboards/DataManagerDashboard.tsx        |   108 +-
+ .../crm/dashboards/DocumentReviewDashboard.tsx     |    85 +-
+ .../crm/dashboards/FrontDeskDashboard.tsx          |    83 +-
+ src/components/crm/dashboards/HrDashboard.tsx      |   108 +-
+ .../crm/dashboards/MarketingDashboard.tsx          |    79 +-
+ .../crm/dashboards/PartnerManagerDashboard.tsx     |   102 +-
+ src/components/crm/dashboards/SupportDashboard.tsx |    75 +-
+ .../crm/dashboards/VisaOfficerDashboard.tsx        |   231 +-
+ src/components/crm/pages/CrmHRMPage.tsx            |   507 +-
+ src/components/crm/pages/CrmVisaPage.tsx           |    40 +-
+ src/components/marketing/hub/ApprovalQueueView.tsx |     6 +-
+ src/components/partner/PartnerDashboard.tsx        |     7 +
+ src/components/partner/PartnerResourcesPage.tsx    |     4 +-
+ src/components/student/StudentDashboard.tsx        |     8 +
+ src/components/website/HomepagePart1.tsx           |   291 +-
+ src/components/website/HomepagePart2.tsx           |   236 +-
+ src/components/website/HomepagePart3.tsx           |    82 +-
+ src/components/website/HomepagePart4.tsx           |    41 +-
+ src/components/website/PublicNavbar.tsx            |   134 +-
+ .../public-pages/PublicConsultationPage.tsx        |     1 -
+ .../website/public-pages/PublicPages.tsx           |  1865 ++-
+ src/lib/access-check-engine.ts                     |   743 +-
+ src/lib/ai.ts                                      |   172 +-
+ src/lib/auth-middleware.ts                         |   149 +-
+ src/lib/stores/portal-store.ts                     |    34 +-
+ src/lib/university-data-intl.ts                    |    17 +-
+ src/lib/university-data-uk.ts                      |  1258 +-
+ src/lib/university-data-uk2.ts                     |  1088 +-
+ src/middleware.ts                                  |   104 -
+ tests/integration/consultation-workflow.test.ts    |     2 +-
+ tsconfig.json                                      |    35 +-
+ upload/AI agent-10000.zip                          |   Bin 24789876 -> 0 bytes
+ upload/ALO-EDUCATION-AA-PANEL-PRODUCTION-FINAL.zip |   Bin 988719 -> 0 bytes
+ upload/ALO-EDUCATION-PRODUCTION.zip                |   Bin 11331869 -> 0 bytes
+ upload/Brand Assets-20260723T135224Z-1-001.zip     |   Bin 438595 -> 0 bytes
+ ...a for Student Profile_CRM - Student Profile.pdf |   Bin 505556 -> 0 bytes
+ upload/Images-20260723T135224Z-1-001.zip           |   Bin 5220942 -> 0 bytes
+ upload/Pasted Content_1783240759684.txt            |  4425 ------
+ upload/Pasted Content_1784799802690.txt            |  1254 --
+ upload/Pasted Content_1784799843355.txt            |  5345 -------
+ upload/Pasted Content_1784803307890.txt            |  2385 ----
+ upload/Pasted Content_1784803351803.txt            |  2385 ----
+ upload/Pasted Content_1784817821775.txt            |   871 --
+ upload/Pasted Content_1784828491897.txt            |  1512 --
+ upload/Pasted Content_1784841090403.txt            |  1121 --
+ upload/Pasted Content_1784841145258.txt            |  4227 ------
+ upload/Pasted Content_1784912265547.txt            |  1151 --
+ upload/Pasted Content_1784912352837.txt            |  1151 --
+ upload/Pasted Content_1784920639459.txt            |  2144 ---
+ upload/Pasted Content_1784920678831.txt            |  1794 ---
+ upload/Pasted Content_1784923088423.txt            |  2144 ---
+ upload/Pasted Content_1784923150754.txt            |  2144 ---
+ upload/Pasted Content_1784925461729.txt            |  2144 ---
+ upload/Pasted Content_1784925519580.txt            |  1794 ---
+ upload/Pasted Content_1784929915656.txt            |  1121 --
+ upload/Pasted Content_1784929964328.txt            |  4227 ------
+ upload/Pasted Content_1784930031511.txt            |   879 --
+ upload/Student Dashboard _ ALO formate.pdf         |   Bin 760174 -> 0 bytes
+ upload/Student Dashboard _ ALO second page.pdf     |   Bin 377379 -> 0 bytes
+ upload/WEB_CRM_BUILD GUIDLINE.pdf                  |   Bin 3754187 -> 0 bytes
+ upload/alo edu pad-01.jpg                          |   Bin 544488 -> 0 bytes
+ upload/alo-education (15).zip                      |   Bin 15289737 -> 0 bytes
+ .../ALO Education_Brand Guidelines.pdf             |   235 -
+ .../Brand Assets/Logo/ALO Education Logo.ai        |  2079 ---
+ .../abertay university.webp                        |   Bin 29726 -> 0 bytes
+ .../aston university.webp                          |   Bin 31516 -> 0 bytes
+ .../birmingham city university .webp               |   Bin 36082 -> 0 bytes
+ .../cardiff metropolitan university.webp           |   Bin 86240 -> 0 bytes
+ .../london metropolitan university.webp            |   Bin 47514 -> 0 bytes
+ .../lsbu university.webp                           |   Bin 30876 -> 0 bytes
+ .../ravensbourne university.webp                   |   Bin 19150 -> 0 bytes
+ .../uister university.webp                         |   Bin 30728 -> 0 bytes
+ .../university of aberdeen.webp                    |   Bin 46846 -> 0 bytes
+ .../university of bolton.webp                      |   Bin 19718 -> 0 bytes
+ .../university of central lancashire.webp          |   Bin 20082 -> 0 bytes
+ .../university of derby.webp                       |   Bin 40738 -> 0 bytes
+ .../university of dundee.webp                      |   Bin 40370 -> 0 bytes
+ .../university of greenwich.webp                   |   Bin 54220 -> 0 bytes
+ .../university of hertfordshire.webp               |   Bin 23524 -> 0 bytes
+ .../university of hull.webp                        |   Bin 43252 -> 0 bytes
+ .../university of kent.webp                        |   Bin 35872 -> 0 bytes
+ .../university of lincoln.webp                     |   Bin 101326 -> 0 bytes
+ .../university of portsmouth.webp                  |   Bin 45180 -> 0 bytes
+ .../university of roehampton.webp                  |   Bin 44738 -> 0 bytes
+ .../university of south wales.webp                 |   Bin 18662 -> 0 bytes
+ .../university of the west of scotland.webp        |   Bin 69298 -> 0 bytes
+ .../university of wales trinity saint david.webp   |   Bin 20938 -> 0 bytes
+ .../university of wolverhampton.webp               |   Bin 23668 -> 0 bytes
+ .../wrexham glyndwr university .webp               |   Bin 54744 -> 0 bytes
+ upload/website-images/Images/Hero Image.webp       |   Bin 47432 -> 0 bytes
+ .../Australia slide Banner.webp                    |   Bin 81472 -> 0 bytes
+ .../Canada slide Banner.webp                       |   Bin 45870 -> 0 bytes
+ .../Europe slide Banner.webp                       |   Bin 47432 -> 0 bytes
+ .../New Zealand slide Banner.webp                  |   Bin 99782 -> 0 bytes
+ .../UK slide Banner.webp                           |   Bin 55884 -> 0 bytes
+ .../USA slide Banner.webp                          |   Bin 58024 -> 0 bytes
+ .../Images/Landing page image/Copy of 167794.webp  |   Bin 45980 -> 0 bytes
+ ... Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp |   Bin 100628 -> 0 bytes
+ ...g Success_remix_01k44y1phqff4adx4kcap3cdyw.webp |   Bin 78562 -> 0 bytes
+ ...versation_remix_01k44y8qqzf1fak3kphqyhmj6w.webp |   Bin 112166 -> 0 bytes
+ .../Landing page image/Copy of 2148431342.webp     |   Bin 65782 -> 0 bytes
+ .../Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp |   Bin 121796 -> 0 bytes
+ .../Images/Landing page image/Copy of logo.webp    |   Bin 44828 -> 0 bytes
+ .../Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp |   Bin 163050 -> 0 bytes
+ .../Copy of pexels-george-pak-7972967.webp         |     0
+ .../Copy of pexels-jaksonmartins-3101504.webp      |   Bin 94664 -> 0 bytes
+ .../Copy of pexels-otherme-583475.webp             |   Bin 134694 -> 0 bytes
+ .../Copy of pexels-rdne-7092364.webp               |   Bin 177960 -> 0 bytes
+ .../Copy of pexels-rdne-7092573.webp               |   Bin 82746 -> 0 bytes
+ .../Copy of pexels-rdne-7683897.webp               |   Bin 133230 -> 0 bytes
+ .../Copy of pexels-yankrukov-8199166.webp          |   Bin 96656 -> 0 bytes
+ .../Copy of pexels-yankrukov-8199562.webp          |   Bin 127894 -> 0 bytes
+ .../website-images/Images/Tushar Imran Nahid.png   |   Bin 58077 -> 0 bytes
+ .../website-images/Images/Ummaye Mayesha Manna.PNG |   Bin 519261 -> 0 bytes
+ ...ce-e221969d-0ee9-4c07-ae5c-0eaccdfea8db (2).tar |   Bin 12525120 -> 0 bytes
+ worklog.md                                         |    20 +-
+ 1182 files changed, 13555 insertions(+), 368786 deletions(-)

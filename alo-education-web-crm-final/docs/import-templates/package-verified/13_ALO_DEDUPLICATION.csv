@@ -1,0 +1,3 @@
+log_id,target_type,original_id,duplicate_id,action_taken,merged_at
+DEDUP-001,university,UNI-DUPL-001,UNI-UK-0001,merged,2026-08-13
+DEDUP-002,university,UNI-DUPL-002,UNI-UK-0002,merged,2026-08-13

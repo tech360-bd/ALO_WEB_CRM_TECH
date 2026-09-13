@@ -1,0 +1,15 @@
+country,target_required,current_found,missing_count,resolved_status
+United Kingdom,140,140,0,Resolved - Sliced and normalized to exactly 140
+United States,20,20,0,Resolved - Sliced and normalized to exactly 20
+Canada,20,20,0,Resolved - Sliced and normalized to exactly 20
+Australia,20,20,0,Resolved - Sliced and normalized to exactly 20
+Ireland,20,20,0,Resolved - Sliced and normalized to exactly 20
+New Zealand,20,20,0,Resolved - Sliced and normalized to exactly 20
+Germany,20,20,0,Resolved - Sliced and normalized to exactly 20
+Netherlands,20,20,0,Resolved - Sliced and normalized to exactly 20
+UAE,20,20,0,Resolved - Added new UAE dataset containing exactly 20 universities
+France,20,20,0,Resolved - Added new France dataset containing exactly 20 universities
+Italy,20,20,0,Resolved - Added new Italy dataset containing exactly 20 universities
+Malta,20,20,0,Resolved - Added new Malta dataset containing exactly 20 universities
+Cyprus,20,20,0,Resolved - Added new Cyprus dataset containing exactly 20 universities
+South Korea,20,20,0,Resolved - Added new South Korea dataset containing exactly 20 universities

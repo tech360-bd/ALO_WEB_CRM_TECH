@@ -1,0 +1,9 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /crm/
+Disallow: /admin/
+Disallow: /partner-admin/
+Disallow: /employee/
+
+Sitemap: https://aloeducation.com/sitemap.xml

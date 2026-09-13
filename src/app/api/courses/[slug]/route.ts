@@ -49,8 +49,6 @@ export async function GET(
             slug: true,
             description: true,
             campuses: true,
-            logoSourceUrl: true,
-            heroImageSourceUrl: true,
           },
         },
         intakeFees: {
@@ -101,8 +99,6 @@ export async function GET(
             country: true,
             city: true,
             worldRanking: true,
-            logoSourceUrl: true,
-            heroImageSourceUrl: true,
           },
         },
         intakeFees: {

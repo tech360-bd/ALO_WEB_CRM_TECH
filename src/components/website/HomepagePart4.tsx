@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getServiceImage } from './ImageMapping';
 import { motion } from 'framer-motion';
 import {
   fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
@@ -295,30 +294,20 @@ function ResourcesSection() {
             return (
               <motion.div key={i} variants={staggerItemScale}>
                 <Link href={resource.href}>
-                  <Card className="h-full rounded-xl border shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer overflow-hidden flex flex-col bg-white" style={{ borderColor: C.border }}>
-                    {/* Resource Card Top Image */}
-                    <div className="relative h-28 w-full overflow-hidden bg-slate-100 shrink-0">
-                      <Image
-                        src={getServiceImage('', resource.title)}
-                        alt={resource.title}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 15vw"
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </div>
-                    <CardContent className="p-4 md:p-5 flex flex-col items-center text-center flex-grow">
+                  <Card className="h-full rounded-xl border shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer" style={{ borderColor: C.border, background: '#FFFFFF' }}>
+                    <CardContent className="p-4 md:p-5 flex flex-col items-center text-center h-full">
                       <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110"
+                        className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110"
                         style={{ backgroundColor: `${resource.color}12`, color: resource.color }}
                       >
-                        <Icon className="h-5 w-5" />
+                        <Icon className="h-6 w-6" />
                       </div>
-                      <h3 className="text-xs font-bold mb-2 text-slate-800 line-clamp-2 min-h-[32px]">
+                      <h3 className="text-sm font-semibold mb-2" style={{ color: C.text }}>
                         {resource.title}
                       </h3>
-                      <div className="mt-auto flex items-center gap-1 text-[11px] font-semibold transition-all duration-300 group-hover:gap-1.5" style={{ color: resource.color }}>
+                      <div className="mt-auto flex items-center gap-1 text-xs font-medium transition-all duration-300 group-hover:gap-2" style={{ color: resource.color }}>
                         Explore
-                        <ArrowRight className="h-3 w-3" />
+                        <ArrowRight className="h-3.5 w-3.5" />
                       </div>
                     </CardContent>
                   </Card>
