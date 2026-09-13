@@ -1587,12 +1587,27 @@ model AloEnglishTest {
 model CrmUniversity {
   id                                 String   @id @default(cuid())
   universityId                       String   @unique
+  universityCode                     String   @default("") // Alias for spec
+  countryId                          String   @default("") // FK to Country
   name                               String
-  country                            String   @default("")
-  city                               String   @default("")
-  campusName                         String   @default("")
+  slug                               String   @default("")
+  logo                               String   @default("") // Alias
+  logoSourceUrl                      String   @default("")
+  website                            String   @default("")
+  officialUrl                        String   @default("")
   ranking                            Int      @default(0)
   worldRanking                       Int      @default(0)
+  rankingSourceUrl                   String   @default("") // Alias
+  rankingProvider                    String   @default("")
+  rankingYear                        Int      @default(0)
+  rankingValue                       String   @default("")
+  rankingBand                        String   @default("")
+  city                               String   @default("")
+  state                              String   @default("")
+  address                            String   @default("")
+  country                            String   @default("")
+  campusName                         String   @default("")
+  campuses                           String   @default("[]")
   type                               String   @default("Public")
   founded                            Int      @default(0)
   students                           String   @default("")
@@ -1601,87 +1616,141 @@ model CrmUniversity {
   tuitionRange                       String   @default("")
   scholarships                       Boolean  @default(false)
   description                        String   @default("")
-  featured                           Boolean  @default(false)
-  website                            String   @default("")
-  officialUrl                        String   @default("")
-  sourceUrl                          String   @default("")
-  aliases                            String   @default("[]")
-  slug                               String   @default("")
-  campuses                           String   @default("[]")
+  overview                           String   @default("") @db.Text // Alias for spec
+  publicDescription                  String   @default("") @db.Text
+  partnerDescription                 String   @default("") @db.Text
+  internationalStudentUrl            String   @default("") // Alias
+  applicationUrl                     String   @default("") // Alias
+  scholarshipUrl                     String   @default("") // Alias
   officialInternationalAdmissionsUrl String   @default("")
   officialCourseSearchUrl            String   @default("")
   officialTuitionFeeUrl              String   @default("")
   officialScholarshipUrl             String   @default("")
-  logoSourceUrl                      String   @default("")
+  contactEmail                       String   @default("")
+  admissionNotes                     String   @default("") @db.Text
   heroImageSourceUrl                 String   @default("")
   mediaUsagePermissionStatus         String   @default("not_requested")
-  rankingProvider                    String   @default("")
-  rankingYear                        Int      @default(0)
-  rankingValue                       String   @default("")
-  rankingBand                        String   @default("")
   internationalStudentSupportSummary String?   @default("")
   sourceUrls                         String   @default("[]")
+  sourceUrl                          String   @default("")
   verificationStatus                 String   @default("NEEDS_REVIEW")
   publicationStatus                  String   @default("draft")
+  visibility                         String   @default("public") // Alias for spec
   lastVerifiedAt                     String   @default("")
+  lastApprovedUpdateAt               String   @default("")
+  createdBy                          String   @default("")
+  updatedBy                          String   @default("")
+  aliases                            String   @default("[]")
+  featured                           Boolean  @default(false)
   status                             String   @default("needs_official_source")
   createdAt                          DateTime @default(now())
   updatedAt                          DateTime @updatedAt
 
   // Relations
   courses            CrmCourse[]
+  campusRecords      Campus[]
   intakeFees         CrmCourseIntakeFee[]
   requirements       CrmCourseRequirement[]
   scholarshipRecords CrmScholarship[]
   rankingRecords     CrmRanking[]
   commissions        CrmCommission[]
+
+  @@index([countryId])
+  @@index([slug])
 }
 
 model CrmCourse {
-  id                       String   @id @default(cuid())
-  universityId             String
-  courseId                 String   @unique
-  courseTitle              String
-  slug                     String   @default("")
-  qualification            String   @default("")
-  studyLevel               String   @default("")
-  programLevel             String   @default("")
-  subjectArea              String   @default("")
-  disciplineArea           String   @default("")
-  country                  String   @default("")
-  city                     String   @default("")
-  campus                   String   @default("")
-  deliveryMode             String   @default("")
-  attendanceMode           String   @default("")
-  placementOption          Boolean  @default(false)
-  sandwichYearOption       Boolean  @default(false)
-  pathwayStatus            String   @default("")
-  onlineOption             Boolean  @default(false)
-  partTimeOption           Boolean  @default(false)
-  internationalEligibility String   @default("not_verified")
-  officialUrl              String   @default("")
-  officialApplicationUrl   String   @default("")
-  durationMonths           Int      @default(0)
-  publicTags               String   @default("")
-  sourceUrl                String   @default("")
-  verificationStatus       String   @default("NEEDS_REVIEW")
-  publicationStatus        String   @default("draft")
-  lastVerifiedAt           String   @default("")
-  status                   String   @default("needs_official_source")
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  id                        String   @id @default(cuid())
+  courseId                  String   @unique
+  courseCode                String   @default("") // Alias for spec
+  universityId              String
+  campusId                  String   @default("")
+  countryId                 String   @default("")
+  studyLevelId              String   @default("")
+  studyAreaId               String   @default("")
+  disciplineId              String   @default("")
+  courseTitle               String
+  name                      String   @default("") // Alias for spec
+  slug                      String   @default("")
+  description               String   @default("") @db.Text // Alias
+  qualification             String   @default("")
+  studyLevel                String   @default("")
+  programLevel              String   @default("")
+  subjectArea               String   @default("")
+  disciplineArea            String   @default("")
+  country                   String   @default("")
+  city                      String   @default("")
+  campus                    String   @default("")
+  deliveryMode              String   @default("")
+  degreeType                String   @default("") // Alias
+  attendanceMode            String   @default("")
+  placementOption           Boolean  @default(false)
+  workPlacementAvailable    Boolean  @default(false) // Alias
+  internshipAvailable       Boolean  @default(false) // Alias
+  coOpAvailable             Boolean  @default(false) // Alias
+  sandwichYearOption        Boolean  @default(false)
+  pathwayStatus             String   @default("")
+  onlineOption              Boolean  @default(false)
+  partTimeOption            Boolean  @default(false)
+  internationalEligibility  String   @default("not_verified")
+  officialUrl               String   @default("")
+  officialApplicationUrl    String   @default("")
+  durationMonths            Int      @default(0)
+  tuitionFee                Float    @default(0) // Alias
+  currency                  String   @default("GBP") // Alias
+  applicationFee            Float    @default(0) // Alias
+  depositAmount             Float    @default(0) // Alias
+  averageScholarship        Float    @default(0)
+  minScholarship            Float    @default(0)
+  maxScholarship            Float    @default(0)
+  deadline                  String   @default("")
+  rankingNote               String   @default("") @db.Text
+  careerOutcomes            String   @default("") @db.Text
+  highDemand                Boolean  @default(false)
+  fastOffer                 Boolean  @default(false)
+  highAcceptance            Boolean  @default(false)
+  lowDeposit                Boolean  @default(false)
+  noInterview               Boolean  @default(false)
+  moiAccepted               Boolean  @default(false)
+  universityOwnEnglishTest  Boolean  @default(false)
+  applicationFeeWaiver      Boolean  @default(false)
+  openProgram               Boolean  @default(false)
+  publicTags                String   @default("")
+  sourceUrl                 String   @default("")
+  verificationStatus        String   @default("NEEDS_REVIEW")
+  publicationStatus         String   @default("draft")
+  visibility                String   @default("public")
+  lastVerifiedAt            String   @default("")
+  lastApprovedUpdateAt      String   @default("")
+  createdBy                 String   @default("")
+  updatedBy                 String   @default("")
+  status                    String   @default("needs_official_source")
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
 
   // Relations
   university         CrmUniversity          @relation(fields: [universityId], references: [universityId])
   intakeFees         CrmCourseIntakeFee[]
+  courseIntakes      CourseIntake[]
+  entryRequirements  EntryRequirement[]
+  englishRequirements EnglishRequirement[]
   requirements       CrmCourseRequirement[]
   scholarshipRecords CrmScholarship[]
   commissions        CrmCommission[]
+  tags               CourseTag[]
 
   @@index([universityId])
+  @@index([campusId])
+  @@index([countryId])
+  @@index([studyLevelId])
+  @@index([studyAreaId])
+  @@index([disciplineId])
   @@index([courseTitle])
   @@index([subjectArea])
   @@index([studyLevel])
+  @@index([status])
+  @@index([visibility])
+  @@index([slug])
 }
 
 model CrmCourseIntakeFee {
@@ -3203,18 +3272,23 @@ model PortalNotification {
 
 model Country {
   id               String    @id @default(cuid())
+  countryCode      String    @default("") // Alias for spec country_code
+  code             String    @default("")
   name             String
   slug             String    @unique
-  code             String    @default("")
-  countryCode      String    @default("")
-  capital          String    @default("")
-  currency         String    @default("")
   flag             String    @default("")
+  currency         String    @default("")
+  capital          String    @default("")
   heroTitle        String    @default("")
   heroSubtitle     String    @default("")
-  overview         String    @default("")
-  whyStudySummary  String    @default("")
+  overview         String    @default("") @db.Text
+  description      String    @default("") @db.Text
+  visaOverview     String    @default("") @db.Text // Alias for spec visa_overview
   visaType         String    @default("")
+  workRights       String    @default("") @db.Text // Alias for spec work_rights
+  costOfLiving     String    @default("") @db.Text // Alias for spec cost_of_living
+  livingCost       String    @default("")
+  whyStudySummary  String    @default("") @db.Text
   popularIntakes   String    @default("[]")
   studyLevels      String    @default("[]")
   status           String    @default("active")
@@ -3225,17 +3299,14 @@ model Country {
   courseCount      Int       @default(0)
   scholarshipCount Int       @default(0)
   tuitionRange     String    @default("")
-  livingCost       String    @default("")
-  workRights       String    @default("")
-  description      String    @default("")
   heroImage        String    @default("")
   heroCity         String    @default("")
   heroIntake       String    @default("")
   seoTitle         String    @default("")
-  seoDescription   String    @default("")
+  seoDescription   String    @default("") @db.Text
   canonicalUrl     String    @default("")
   ogTitle          String    @default("")
-  ogDescription    String    @default("")
+  ogDescription    String    @default("") @db.Text
   lastVerifiedAt   DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
@@ -3250,6 +3321,10 @@ model Country {
   workRightRules CountryWorkRight[]
   faqs           CountryFaq[]
   sources        CountrySource[]
+
+  @@index([countryCode])
+  @@index([slug])
+  @@index([status])
 }
 
 model CountryQuickFact {
@@ -5961,4 +6036,245 @@ model ContentRelationship {
   @@index([relationshipType])
   @@index([status])
   @@map("content_relationships")
+}
+
+// ============================================================
+// UNIFIED UNIVERSITY + COURSE FINDER + COURSE INFO SYSTEM
+// Canonical models per spec — ONE unified DB powering all interfaces
+// ============================================================
+
+model Campus {
+  id          String   @id @default(cuid())
+  universityId String
+  countryId   String   @default("")
+  name        String
+  city        String   @default("")
+  state       String   @default("")
+  address     String   @default("")
+  campusType  String   @default("main") // main, satellite, international, partner
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  university  CrmUniversity @relation(fields: [universityId], references: [universityId])
+
+  @@index([universityId])
+  @@index([countryId])
+  @@index([city])
+  @@index([status])
+  @@map("campuses")
+}
+
+model StudyLevel {
+  id        String   @id @default(cuid())
+  name      String   @unique // Foundation, Bachelor, Masters, etc
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([status])
+  @@map("study_levels")
+}
+
+model StudyArea {
+  id        String   @id @default(cuid())
+  name      String   @unique // Business, Computer Science, etc
+  slug      String   @unique
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  disciplines Discipline[]
+
+  @@index([slug])
+  @@index([status])
+  @@map("study_areas")
+}
+
+model Discipline {
+  id          String   @id @default(cuid())
+  studyAreaId String
+  name        String
+  slug        String   @unique
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  studyArea   StudyArea @relation(fields: [studyAreaId], references: [id], onDelete: Cascade)
+
+  @@unique([studyAreaId, name])
+  @@index([studyAreaId])
+  @@index([slug])
+  @@index([status])
+  @@map("disciplines")
+}
+
+model CourseTag {
+  id        String   @id @default(cuid())
+  courseId  String
+  tagName   String   // Scholarship Available, Fast Offer, etc
+  tagType   String   @default("general") // scholarship, offer_speed, deposit, interview, moi, demand, placement, fee_waiver, open_program
+  createdAt DateTime @default(now())
+
+  course    CrmCourse @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([tagName])
+  @@index([tagType])
+  @@map("course_tags")
+}
+
+model CourseIntake {
+  id             String    @id @default(cuid())
+  courseId       String
+  intakeMonth    String    // January, May, September, etc
+  intakeYear     Int
+  status         String    @default("open") // open, closed, full, upcoming
+  deadline       String    @default("") // deadline date string or rolling
+  deadlineDate   DateTime?
+  seatsAvailable Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  course         CrmCourse @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([intakeYear, intakeMonth])
+  @@index([status])
+  @@map("course_intakes")
+}
+
+model EntryRequirement {
+  id                    String   @id @default(cuid())
+  courseId              String
+  qualificationLevel    String   @default("") // Foundation, Bachelor, Masters, MBA, PhD
+  academicRequirement   String   @default("") @db.Text
+  minGpa                Float    @default(0)
+  gpaScale              String   @default("4.0") // 4.0, 5.0, 100%, etc
+  backlogAllowed        Int      @default(0)
+  workExperienceRequired Boolean @default(false)
+  portfolioRequired     Boolean  @default(false)
+  interviewRequired     Boolean  @default(false)
+  remarks               String   @default("") @db.Text
+  sourceUrl             String   @default("")
+  lastVerifiedAt        DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  course                CrmCourse @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([qualificationLevel])
+  @@map("entry_requirements")
+}
+
+model EnglishRequirement {
+  id              String   @id @default(cuid())
+  courseId        String
+  testType        String   // IELTS, IELTS UKVI, PTE, TOEFL, Duolingo, OIETC, Oxford ELLT, LanguageCert, MOI, OET, University English Test, Other
+  overallScore    Float    @default(0)
+  listeningScore  Float    @default(0)
+  readingScore    Float    @default(0)
+  writingScore    Float    @default(0)
+  speakingScore   Float    @default(0)
+  noBandLessThan  Float    @default(0)
+  waiverAvailable Boolean  @default(false)
+  remarks         String   @default("") @db.Text
+  sourceUrl       String   @default("")
+  lastVerifiedAt  DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  course          CrmCourse @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([testType])
+  @@map("english_requirements")
+}
+
+model CourseShortlist {
+  id        String   @id @default(cuid())
+  studentId String
+  courseId  String
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, courseId])
+  @@index([studentId])
+  @@index([courseId])
+  @@map("course_shortlists")
+}
+
+model CourseComparisonList {
+  id        String   @id @default(cuid())
+  studentId String
+  courseIds String   @default("[]") // JSON array of courseIds max sensible number
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@map("course_comparison_lists")
+}
+
+model DataQualityScore {
+  id               String   @id @default(cuid())
+  entityType       String   // university, course
+  entityId         String
+  score            Int      @default(0) // 0-100
+  grade            String   @default("Incomplete") // Excellent 90-100, Good 70-89, Needs Review 50-69, Incomplete <50
+  factors          String   @default("{}") // JSON: university relationship, country relationship, official source, last verified, tuition, intake, entry requirement, english requirement, scholarship, deadline
+  lastCalculatedAt DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([entityType, entityId])
+  @@index([entityType])
+  @@index([score])
+  @@index([grade])
+  @@map("data_quality_scores")
+}
+
+model SourceLog {
+  id                 String   @id @default(cuid())
+  entityType         String   // university, course, scholarship, country
+  entityId           String
+  sourceName         String   @default("")
+  sourceUrl          String   @default("")
+  sourceType         String   @default("Official University") // Official University, Government, Official Visa Authority, Official Scholarship, Other Approved Source
+  checkedAt          DateTime @default(now())
+  checkedBy          String   @default("system")
+  verificationStatus String   @default("pending") // verified, needs_review, expired, unverified
+  notes              String   @default("") @db.Text
+  createdAt          DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([sourceType])
+  @@index([verificationStatus])
+  @@map("source_logs")
+}
+
+model UpdateRequest {
+  id           String    @id @default(cuid())
+  entityType   String    // university, course, scholarship, country
+  entityId     String
+  fieldName    String
+  oldValue     String    @default("") @db.Text
+  newValue     String    @default("") @db.Text
+  sourceUrl    String    @default("")
+  evidence     String    @default("") @db.Text
+  confidence   Float     @default(0.9)
+  status       String    @default("Pending") // Pending, Approved, Rejected, Edited, Needs Manual Review
+  detectedAt   DateTime  @default(now())
+  reviewedBy   String    @default("")
+  reviewedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([entityType, entityId])
+  @@index([fieldName])
+  @@index([status])
+  @@index([detectedAt])
+  @@map("update_requests")
 }
