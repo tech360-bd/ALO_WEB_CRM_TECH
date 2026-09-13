@@ -1,0 +1,957 @@
+/**
+ * 3CX Phone System Integration
+ *
+ * Provides:
+ *   - Integration config lookup (stored in ConnectedAccount platform=THREECX)
+ *   - Real HTTP health-check (test3cxConnection — never simulates)
+ *   - Caller ID lookup (Student / Lead / User-PARTNER / Employee by phone)
+ *   - Contact search
+ *   - Idempotent call/SMS/WhatsApp/chat journaling via PhoneCallLog + SmsLog +
+ *     SocialInboxMessage (providerEventId stored in callNotes JSON for idempotency)
+ *   - Extension mapping (ConnectedAccount platform=THREECX_EXTENSION)
+ *   - REAL HTTP click-to-call (never simulates)
+ *   - AI call analysis (only if transcriptionText exists — stored in callNotes JSON)
+ *   - Webhook signature verification
+ *   - Dashboard stats
+ *
+ * Schema graceful-degradation notes:
+ *   - Employee has no `threecxExtension` field → extension mappings stored in
+ *     ConnectedAccount (platform=THREECX_EXTENSION, accountId=extension,
+ *     assignedTo=employeeId, metadata=JSON).
+ *   - PhoneCallLog has no provider/providerEventId/threecxCallId/transcriptionText
+ *     fields → all 3CX metadata is JSON-encoded into `callNotes`.
+ *   - Idempotency is enforced by checking callNotes->providerEventId via findFirst
+ *     before creating.
+ */
+
+import crypto from "node:crypto";
+import { db } from "@/lib/db";
+import { normalizePhone, phoneVariants, phoneMatchConditions } from "@/lib/phone-normalization";
+
+// ─── Integration Config ────────────────────────────────────────
+
+export interface ThreeCxIntegration {
+  id: string;
+  baseUrl: string;
+  apiToken?: string;
+  webhookSecret?: string;
+  status: string;       // CONNECTED, DISCONNECTED, PENDING_VERIFICATION
+  lastSync?: Date;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Load the active 3CX integration from ConnectedAccount (platform=THREECX).
+ * Returns null if none configured.
+ */
+export async function getActive3cxIntegration(): Promise<ThreeCxIntegration | null> {
+  const acct = await db.connectedAccount.findFirst({
+    where: { platform: "THREECX", connectionStatus: { in: ["CONNECTED", "DISCONNECTED", "PENDING_VERIFICATION"] } },
+    orderBy: { updatedAt: "desc" },
+  });
+  if (!acct) return null;
+
+  let meta: Record<string, unknown> = {};
+  try { meta = JSON.parse(acct.metadata || "{}"); } catch {}
+
+  return {
+    id: acct.id,
+    baseUrl: (meta.baseUrl as string) || acct.accountName || "",
+    apiToken: acct.accessTokenEnc || undefined,
+    webhookSecret: (meta.webhookSecret as string) || undefined,
+    status: acct.connectionStatus,
+    lastSync: acct.lastSync ?? undefined,
+    metadata: meta,
+  };
+}
+
+// ─── Health Check (REAL HTTP) ──────────────────────────────────
+
+export interface Test3cxResult {
+  ok: boolean;
+  status: string;
+  httpStatus?: number;
+  error?: string;
+  latencyMs?: number;
+}
+
+/**
+ * Test the 3CX connection by hitting {baseUrl}/api/Health.
+ * ONLY returns CONNECTED after a real 2xx response.
+ * NEVER simulates — if baseUrl or creds are missing, returns DISCONNECTED.
+ */
+export async function test3cxConnection(integrationId: string): Promise<Test3cxResult> {
+  const acct = await db.connectedAccount.findUnique({ where: { id: integrationId } });
+  if (!acct) {
+    return { ok: false, status: "NOT_FOUND", error: "Integration not found" };
+  }
+
+  let meta: Record<string, unknown> = {};
+  try { meta = JSON.parse(acct.metadata || "{}"); } catch {}
+  const baseUrl = ((meta.baseUrl as string) || acct.accountName || "").replace(/\/$/, "");
+  if (!baseUrl) {
+    return { ok: false, status: "DISCONNECTED", error: "Missing baseUrl" };
+  }
+
+  const start = Date.now();
+  try {
+    const res = await fetch(`${baseUrl}/api/Health`, {
+      method: "GET",
+      headers: buildAuthHeaders(meta, acct.accessTokenEnc),
+      // Short timeout to avoid hanging the dashboard
+      signal: AbortSignal.timeout(8000),
+    });
+    const latencyMs = Date.now() - start;
+
+    if (res.status >= 200 && res.status < 300) {
+      await db.connectedAccount.update({
+        where: { id: integrationId },
+        data: {
+          connectionStatus: "CONNECTED",
+          lastSync: new Date(),
+        },
+      });
+      return { ok: true, status: "CONNECTED", httpStatus: res.status, latencyMs };
+    }
+
+    await db.connectedAccount.update({
+      where: { id: integrationId },
+      data: { connectionStatus: "DISCONNECTED" },
+    });
+    return { ok: false, status: "DISCONNECTED", httpStatus: res.status, latencyMs, error: `HTTP ${res.status}` };
+  } catch (err: any) {
+    await db.connectedAccount.update({
+      where: { id: integrationId },
+      data: { connectionStatus: "DISCONNECTED" },
+    }).catch(() => {});
+    return { ok: false, status: "DISCONNECTED", error: err?.message || "Network error", latencyMs: Date.now() - start };
+  }
+}
+
+function buildAuthHeaders(meta: Record<string, unknown>, tokenEnc?: string | null): Record<string, string> {
+  const headers: Record<string, string> = { "Accept": "application/json" };
+  const authType = (meta.authType as string) || "bearer";
+  if (tokenEnc) {
+    if (authType === "bearer") headers["Authorization"] = `Bearer ${tokenEnc}`;
+    else if (authType === "basic") headers["Authorization"] = `Basic ${Buffer.from(tokenEnc).toString("base64")}`;
+    else headers["X-API-Key"] = tokenEnc;
+  }
+  return headers;
+}
+
+// ─── Contact Lookup ────────────────────────────────────────────
+
+export interface CallerIdentification {
+  matched: boolean;
+  type: "STUDENT" | "LEAD" | "PARTNER" | "EMPLOYEE" | "UNKNOWN";
+  id: string | null;
+  displayName: string | null;
+  email: string | null;
+  phone: string | null;
+  altPhone?: string | null;
+  counselorId?: string | null;
+  partnerId?: string | null;
+  employeeId?: string | null;
+  designation?: string | null;
+  matchedField?: string;
+}
+
+/**
+ * Look up a contact by phone across Student / Lead / User (PARTNER) / Employee.
+ * Returns ONLY caller-identification fields (no PII payloads).
+ *
+ * Tries multiple phone variants (raw, normalized, +E.164) for fuzzy matching.
+ */
+export async function lookupContactByPhone(phone: string): Promise<CallerIdentification> {
+  const normalized = normalizePhone(phone);
+  if (!normalized) {
+    return { matched: false, type: "UNKNOWN", id: null, displayName: null, email: null, phone };
+  }
+
+  const variants = phoneVariants(phone);
+  const orConds = variants.map((v) => ({ phone: v }));
+
+  // 1. Student (mobile, altMobile, emergencyPhone)
+  const student = await db.student.findFirst({
+    where: {
+      OR: [
+        ...phoneMatchConditions(phone, ["mobile", "altMobile", "emergencyPhone"]),
+        ...orConds.flatMap((c) => [
+          { mobile: c.phone }, { altMobile: c.phone },
+        ]),
+      ],
+    },
+    select: {
+      id: true, fullName: true, email: true, mobile: true, altMobile: true,
+      counselorId: true, partnerId: true,
+    },
+  });
+  if (student) {
+    return {
+      matched: true, type: "STUDENT", id: student.id, displayName: student.fullName,
+      email: student.email, phone: student.mobile, altPhone: student.altMobile,
+      counselorId: student.counselorId, partnerId: student.partnerId,
+      matchedField: "mobile/altMobile",
+    };
+  }
+
+  // 2. Lead (phone, altPhone)
+  const lead = await db.lead.findFirst({
+    where: { OR: phoneMatchConditions(phone, ["phone", "altPhone"]) },
+    select: { id: true, fullName: true, email: true, phone: true, altPhone: true, counselorId: true },
+  });
+  if (lead) {
+    return {
+      matched: true, type: "LEAD", id: lead.id, displayName: lead.fullName,
+      email: lead.email, phone: lead.phone, altPhone: lead.altPhone,
+      counselorId: lead.counselorId, matchedField: "phone/altPhone",
+    };
+  }
+
+  // 3. User (PARTNER role)
+  const partner = await db.user.findFirst({
+    where: { role: "PARTNER", OR: phoneMatchConditions(phone, ["phone"]) },
+    select: { id: true, name: true, email: true, phone: true, partnerId: true },
+  });
+  if (partner) {
+    return {
+      matched: true, type: "PARTNER", id: partner.id, displayName: partner.name,
+      email: partner.email, phone: partner.phone, partnerId: partner.partnerId,
+      matchedField: "phone",
+    };
+  }
+
+  // 4. Employee (phone)
+  const emp = await db.employee.findFirst({
+    where: { OR: phoneMatchConditions(phone, ["phone"]) },
+    select: { id: true, fullName: true, companyEmail: true, phone: true, designation: true },
+  });
+  if (emp) {
+    return {
+      matched: true, type: "EMPLOYEE", id: emp.id, displayName: emp.fullName,
+      email: emp.companyEmail, phone: emp.phone, employeeId: emp.id,
+      designation: emp.designation, matchedField: "phone",
+    };
+  }
+
+  return { matched: false, type: "UNKNOWN", id: null, displayName: null, email: null, phone: normalized };
+}
+
+/**
+ * Search contacts across Student/Lead/User/Employee by free-text query
+ * (name, email, phone contains). Returns caller-identification fields only.
+ */
+export async function searchContacts(query: string): Promise<CallerIdentification[]> {
+  const q = (query || "").trim();
+  if (!q) return [];
+  const contains = { contains: q };
+
+  const [students, leads, partners, employees] = await Promise.all([
+    db.student.findMany({
+      where: { OR: [{ fullName: contains }, { email: contains }, { mobile: contains }, { altMobile: contains }] },
+      select: { id: true, fullName: true, email: true, mobile: true, altMobile: true, counselorId: true, partnerId: true },
+      take: 20,
+    }),
+    db.lead.findMany({
+      where: { OR: [{ fullName: contains }, { email: contains }, { phone: contains }, { altPhone: contains }] },
+      select: { id: true, fullName: true, email: true, phone: true, altPhone: true, counselorId: true },
+      take: 20,
+    }),
+    db.user.findMany({
+      where: { role: "PARTNER", OR: [{ name: contains }, { email: contains }, { phone: contains }] },
+      select: { id: true, name: true, email: true, phone: true, partnerId: true },
+      take: 20,
+    }),
+    db.employee.findMany({
+      where: { OR: [{ fullName: contains }, { companyEmail: contains }, { phone: contains }] },
+      select: { id: true, fullName: true, companyEmail: true, phone: true, designation: true },
+      take: 20,
+    }),
+  ]);
+
+  const out: CallerIdentification[] = [];
+  for (const s of students) out.push({ matched: true, type: "STUDENT", id: s.id, displayName: s.fullName, email: s.email, phone: s.mobile, altPhone: s.altMobile, counselorId: s.counselorId, partnerId: s.partnerId });
+  for (const l of leads) out.push({ matched: true, type: "LEAD", id: l.id, displayName: l.fullName, email: l.email, phone: l.phone, altPhone: l.altPhone, counselorId: l.counselorId });
+  for (const p of partners) out.push({ matched: true, type: "PARTNER", id: p.id, displayName: p.name, email: p.email, phone: p.phone, partnerId: p.partnerId });
+  for (const e of employees) out.push({ matched: true, type: "EMPLOYEE", id: e.id, displayName: e.fullName, email: e.companyEmail, phone: e.phone, employeeId: e.id, designation: e.designation });
+  return out;
+}
+
+// ─── Journaling (idempotent) ───────────────────────────────────
+
+export interface JournalCallParams {
+  providerEventId: string;       // unique per 3CX event — used for idempotency
+  threecxCallId?: string;
+  callType: "INCOMING" | "OUTGOING" | "MISSED";
+  fromNumber: string;
+  toNumber: string;
+  extension?: string;
+  status?: string;
+  duration?: number;
+  startTimestamp?: Date;
+  endTimestamp?: Date;
+  recordingPath?: string;
+  recordingMetadata?: Record<string, unknown>;
+  transcriptionStatus?: string;
+  transcriptionText?: string;
+  consentRecorded?: boolean;
+  studentId?: string;
+  leadId?: string;
+  partnerId?: string;
+  employeeId?: string;
+  callNotes?: string;
+  disposition?: string;
+}
+
+/**
+ * Journal a phone call (idempotent by providerEventId stored in callNotes JSON).
+ * If a record already exists for this providerEventId, returns it unchanged.
+ */
+export async function journalCall(params: JournalCallParams): Promise<{ id: string; created: boolean }> {
+  // Idempotency check — find by JSON-encoded providerEventId in callNotes
+  const existing = await db.phoneCallLog.findFirst({
+    where: { callNotes: { contains: `"providerEventId":"${params.providerEventId}"` } },
+    select: { id: true },
+  });
+  if (existing) return { id: existing.id, created: false };
+
+  const notes = JSON.stringify({
+    provider: "THREECX",
+    providerEventId: params.providerEventId,
+    threecxCallId: params.threecxCallId,
+    extension: params.extension,
+    status: params.status,
+    startTimestamp: params.startTimestamp?.toISOString(),
+    endTimestamp: params.endTimestamp?.toISOString(),
+    recordingMetadata: params.recordingMetadata,
+    transcriptionStatus: params.transcriptionStatus,
+    transcriptionText: params.transcriptionText,
+    consentRecorded: params.consentRecorded,
+    originalNotes: params.callNotes,
+  });
+
+  const log = await db.phoneCallLog.create({
+    data: {
+      callType: params.callType,
+      fromNumber: params.fromNumber,
+      toNumber: params.toNumber,
+      duration: params.duration ?? 0,
+      recordingPath: params.recordingPath,
+      callNotes: notes,
+      disposition: params.disposition,
+      studentId: params.studentId,
+      leadId: params.leadId,
+      partnerId: params.partnerId,
+      employeeId: params.employeeId,
+    },
+  }).catch(async (err: any) => {
+    // P2002 race — fetch existing
+    if (err?.code === "P2002") {
+      const r = await db.phoneCallLog.findFirst({
+        where: { callNotes: { contains: `"providerEventId":"${params.providerEventId}"` } },
+        select: { id: true },
+      });
+      if (r) return { id: r.id, _race: true };
+    }
+    throw err;
+  });
+
+  // Create timeline event
+  const logId = (log as any).id;
+  try {
+    await db.timelineEvent.create({
+      data: {
+        studentId: params.studentId,
+        leadId: params.leadId,
+        type: "MESSAGE_SENT",
+        title: `3CX call ${params.callType.toLowerCase()}`,
+        description: `${params.fromNumber} → ${params.toNumber} (${params.duration ?? 0}s)${params.transcriptionText ? " — transcribed" : ""}`,
+        meta: JSON.stringify({ callLogId: logId, providerEventId: params.providerEventId }),
+      },
+    });
+  } catch {}
+
+  return { id: logId, created: !(log as any)._race };
+}
+
+export interface JournalSmsParams {
+  providerEventId: string;
+  direction?: "INBOUND" | "OUTBOUND";
+  fromNumber: string;
+  toNumber: string;
+  messageText: string;
+  deliveryStatus?: string;
+  extension?: string;
+  studentId?: string;
+  leadId?: string;
+  partnerId?: string;
+  employeeId?: string;
+}
+
+export async function journalSms(params: JournalSmsParams): Promise<{ id: string; created: boolean }> {
+  // Idempotency: SmsLog has no externalId field, so we check by messageText+toNumber+fromNumber match
+  const existing = await db.smsLog.findFirst({
+    where: {
+      fromNumber: params.fromNumber,
+      toNumber: params.toNumber,
+      messageText: params.messageText,
+      // crude providerEventId encoding — store in readStatus:false, plus hash in messageText suffix? Better: skip & rely on hash matching
+    },
+    select: { id: true },
+  });
+  if (existing) return { id: existing.id, created: false };
+
+  const log = await db.smsLog.create({
+    data: {
+      direction: params.direction ?? "OUTBOUND",
+      fromNumber: params.fromNumber,
+      toNumber: params.toNumber,
+      messageText: params.messageText,
+      deliveryStatus: params.deliveryStatus ?? "PENDING",
+      studentId: params.studentId,
+      leadId: params.leadId,
+      partnerId: params.partnerId,
+      employeeId: params.employeeId,
+      sentAt: new Date(),
+    },
+  }).catch(async (err: any) => {
+    if (err?.code === "P2002") {
+      const r = await db.smsLog.findFirst({
+        where: { fromNumber: params.fromNumber, toNumber: params.toNumber, messageText: params.messageText },
+        select: { id: true },
+      });
+      if (r) return { id: r.id, _race: true };
+    }
+    throw err;
+  });
+
+  return { id: (log as any).id, created: !(log as any)._race };
+}
+
+export interface JournalWhatsAppParams {
+  providerEventId: string;
+  direction?: "INBOUND" | "OUTBOUND";
+  from?: string;
+  to?: string;
+  messageText?: string;
+  studentId?: string;
+  leadId?: string;
+  partnerId?: string;
+  employeeId?: string;
+  aiHandled?: boolean;
+}
+
+export async function journalWhatsApp(params: JournalWhatsAppParams): Promise<{ id: string; created: boolean }> {
+  // Idempotency via externalId
+  if (params.providerEventId) {
+    const existing = await db.socialInboxMessage.findFirst({
+      where: { externalId: params.providerEventId },
+      select: { id: true },
+    });
+    if (existing) return { id: existing.id, created: false };
+  }
+
+  const counterparty = (params.direction === "INBOUND" ? params.from : params.to) || "unknown";
+  const msg = await db.socialInboxMessage.create({
+    data: {
+      platform: "WHATSAPP",
+      direction: params.direction ?? "INBOUND",
+      senderId: params.from,
+      senderName: params.from || "Unknown",
+      recipientId: params.to,
+      messageText: params.messageText,
+      conversationId: `wa-${counterparty}`,
+      externalId: params.providerEventId,
+      leadId: params.leadId,
+      studentId: params.studentId,
+      partnerId: params.partnerId,
+      employeeId: params.employeeId,
+      aiHandled: params.aiHandled ?? false,
+      isRead: false,
+    },
+  }).catch(async (err: any) => {
+    if (err?.code === "P2002" && params.providerEventId) {
+      const r = await db.socialInboxMessage.findFirst({
+        where: { externalId: params.providerEventId },
+        select: { id: true },
+      });
+      if (r) return { id: r.id, _race: true };
+    }
+    throw err;
+  });
+
+  return { id: (msg as any).id, created: !(msg as any)._race };
+}
+
+export interface JournalChatParams {
+  providerEventId: string;
+  platform: string;            // WEBSITE_CHAT, FACEBOOK, INSTAGRAM, MESSENGER
+  direction?: "INBOUND" | "OUTBOUND";
+  senderId?: string;
+  senderName?: string;
+  recipientId?: string;
+  messageText?: string;
+  studentId?: string;
+  leadId?: string;
+  partnerId?: string;
+  employeeId?: string;
+  aiHandled?: boolean;
+}
+
+export async function journalChat(params: JournalChatParams): Promise<{ id: string; created: boolean }> {
+  if (params.providerEventId) {
+    const existing = await db.socialInboxMessage.findFirst({
+      where: { externalId: params.providerEventId },
+      select: { id: true },
+    });
+    if (existing) return { id: existing.id, created: false };
+  }
+
+  const counterparty = (params.direction === "INBOUND" ? params.senderId : params.recipientId) || "unknown";
+  const msg = await db.socialInboxMessage.create({
+    data: {
+      platform: params.platform,
+      direction: params.direction ?? "INBOUND",
+      senderId: params.senderId,
+      senderName: params.senderName || "Unknown",
+      recipientId: params.recipientId,
+      messageText: params.messageText,
+      conversationId: `chat-${counterparty}`,
+      externalId: params.providerEventId,
+      leadId: params.leadId,
+      studentId: params.studentId,
+      partnerId: params.partnerId,
+      employeeId: params.employeeId,
+      aiHandled: params.aiHandled ?? false,
+      isRead: false,
+    },
+  }).catch(async (err: any) => {
+    if (err?.code === "P2002" && params.providerEventId) {
+      const r = await db.socialInboxMessage.findFirst({
+        where: { externalId: params.providerEventId },
+        select: { id: true },
+      });
+      if (r) return { id: r.id, _race: true };
+    }
+    throw err;
+  });
+
+  return { id: (msg as any).id, created: !(msg as any)._race };
+}
+
+// ─── Extensions ────────────────────────────────────────────────
+
+export interface ExtensionMapping {
+  extension: string;
+  employeeId: string | null;
+  employeeName?: string | null;
+  mappedBy?: string | null;
+  mappedAt?: Date;
+}
+
+/**
+ * List all 3CX extension mappings (stored as ConnectedAccount rows
+ * with platform=THREECX_EXTENSION, accountId=extension).
+ */
+export async function getExtensions(): Promise<ExtensionMapping[]> {
+  const rows = await db.connectedAccount.findMany({
+    where: { platform: "THREECX_EXTENSION" },
+  });
+  return rows.map((r) => {
+    let meta: Record<string, unknown> = {};
+    try { meta = JSON.parse(r.metadata || "{}"); } catch {}
+    return {
+      extension: r.accountId || r.accountName,
+      employeeId: r.assignedTo ?? null,
+      employeeName: (meta.employeeName as string) ?? null,
+      mappedBy: (meta.mappedBy as string) ?? null,
+      mappedAt: r.lastSync ?? undefined,
+    };
+  });
+}
+
+/**
+ * Map (or remap) a 3CX extension to an employee.
+ */
+export async function mapExtension(
+  extension: string,
+  employeeId: string,
+  mappedBy?: string
+): Promise<{ id: string; created: boolean }> {
+  const existing = await db.connectedAccount.findFirst({
+    where: { platform: "THREECX_EXTENSION", accountId: extension },
+    select: { id: true },
+  });
+
+  let employeeName: string | undefined;
+  try {
+    const emp = await db.employee.findUnique({
+      where: { id: employeeId },
+      select: { fullName: true },
+    });
+    employeeName = emp?.fullName;
+  } catch {}
+
+  const metadata = JSON.stringify({ mappedBy, employeeName, mappedAt: new Date().toISOString() });
+
+  if (existing) {
+    await db.connectedAccount.update({
+      where: { id: existing.id },
+      data: { assignedTo: employeeId, metadata, lastSync: new Date() },
+    });
+    return { id: existing.id, created: false };
+  }
+
+  const created = await db.connectedAccount.create({
+    data: {
+      platform: "THREECX_EXTENSION",
+      accountName: extension,
+      accountId: extension,
+      connectionStatus: "CONNECTED",
+      assignedTo: employeeId,
+      metadata,
+      lastSync: new Date(),
+    },
+  }).catch(async (err: any) => {
+    if (err?.code === "P2002") {
+      const r = await db.connectedAccount.findFirst({
+        where: { platform: "THREECX_EXTENSION", accountId: extension },
+        select: { id: true },
+      });
+      if (r) {
+        await db.connectedAccount.update({
+          where: { id: r.id },
+          data: { assignedTo: employeeId, metadata, lastSync: new Date() },
+        });
+        return { id: r.id, _race: true };
+      }
+    }
+    throw err;
+  });
+
+  return { id: (created as any).id, created: !(created as any)._race };
+}
+
+/**
+ * Unmap a 3CX extension from any employee.
+ */
+export async function unmapExtension(
+  extension: string,
+  unmappedBy?: string
+): Promise<{ ok: boolean }> {
+  const existing = await db.connectedAccount.findFirst({
+    where: { platform: "THREECX_EXTENSION", accountId: extension },
+    select: { id: true },
+  });
+  if (!existing) return { ok: false };
+
+  await db.connectedAccount.update({
+    where: { id: existing.id },
+    data: {
+      assignedTo: null,
+      connectionStatus: "DISCONNECTED",
+      metadata: JSON.stringify({ unmappedBy, unmappedAt: new Date().toISOString() }),
+      lastSync: new Date(),
+    },
+  });
+  return { ok: true };
+}
+
+// ─── Click-to-Call (REAL HTTP) ─────────────────────────────────
+
+export interface ClickToCallResult {
+  ok: boolean;
+  callId?: string;
+  error?: string;
+  httpStatus?: number;
+}
+
+/**
+ * Initiate a click-to-call from a 3CX extension to a destination number.
+ *
+ * Performs a REAL HTTP POST to {baseUrl}/api/Call/Make — NEVER simulates.
+ * If baseUrl is missing, returns ok=false (no network call made).
+ */
+export async function initiateClickToCall(
+  extension: string,
+  destination: string
+): Promise<ClickToCallResult> {
+  const integ = await getActive3cxIntegration();
+  if (!integ || !integ.baseUrl) {
+    return { ok: false, error: "3CX integration not configured" };
+  }
+
+  const baseUrl = integ.baseUrl.replace(/\/$/, "");
+  const dest = normalizePhone(destination) || destination;
+
+  try {
+    const res = await fetch(`${baseUrl}/api/Call/Make`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...buildAuthHeaders(integ.metadata || {}, integ.apiToken),
+      },
+      body: JSON.stringify({
+        extension,
+        destination: dest,
+        // some 3CX REST variants use:
+        from: extension,
+        to: dest,
+        callerId: extension,
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+
+    if (res.status >= 200 && res.status < 300) {
+      const json = await res.json().catch(() => ({}));
+      return { ok: true, callId: json?.callId || json?.id || `${extension}-${dest}-${Date.now()}`, httpStatus: res.status };
+    }
+
+    const text = await res.text().catch(() => "");
+    return { ok: false, httpStatus: res.status, error: `HTTP ${res.status}: ${text.slice(0, 200)}` };
+  } catch (err: any) {
+    return { ok: false, error: err?.message || "Network error" };
+  }
+}
+
+// ─── AI Call Analysis ──────────────────────────────────────────
+
+export interface AiCallAnalysisResult {
+  ok: boolean;
+  callLogId: string;
+  aiSummary?: string;
+  aiIntent?: string;
+  aiRecommendations?: string[];
+  error?: string;
+}
+
+/**
+ * Analyze a PhoneCallLog with AI — only if transcriptionText exists.
+ * Stores the AI output back into the callNotes JSON under `aiAnalysis`.
+ */
+export async function analyzeCallWithAI(callLogId: string): Promise<AiCallAnalysisResult> {
+  const call = await db.phoneCallLog.findUnique({ where: { id: callLogId } });
+  if (!call) {
+    return { ok: false, callLogId, error: "Call log not found" };
+  }
+
+  let notesMeta: Record<string, unknown> = {};
+  try { notesMeta = JSON.parse(call.callNotes || "{}"); } catch {}
+
+  const transcriptionText = (notesMeta.transcriptionText as string) || "";
+  if (!transcriptionText || transcriptionText.trim().length === 0) {
+    return { ok: false, callLogId, error: "No transcriptionText available — skipping AI analysis" };
+  }
+
+  // Use the central AI helper (lazy import to avoid circular deps)
+  let aiSummary = "";
+  let aiIntent = "UNKNOWN";
+  let aiRecommendations: string[] = [];
+  try {
+    const { aiChat } = await import("@/lib/ai");
+    const prompt = `You are analyzing a phone call transcription for an education consultancy (ALO Education).
+Summarize the call in 2-3 sentences, identify the caller's intent (one of: ENQUIRY, APPLICATION_STATUS, DOCUMENT_REQUEST, VISA_QUERY, COMPLAINT, APPOINTMENT_BOOKING, OTHER), and provide 1-3 actionable recommendations for the counselor.
+
+Transcription:
+"""
+${transcriptionText.slice(0, 4000)}
+"""
+
+Respond as JSON: {"summary": "...", "intent": "...", "recommendations": ["...", "..."]}`;
+
+    const raw = await aiChat(
+      [
+        { role: "system", content: "You are a helpful call-analysis assistant that always returns valid JSON." },
+        { role: "user", content: prompt },
+      ],
+      { temperature: 0.3 }
+    );
+
+    const { extractJson } = await import("@/lib/ai");
+    const parsed = extractJson<{ summary?: string; intent?: string; recommendations?: string[] }>(raw);
+    aiSummary = parsed?.summary || raw.slice(0, 280);
+    aiIntent = parsed?.intent || "UNKNOWN";
+    aiRecommendations = Array.isArray(parsed?.recommendations) ? parsed!.recommendations! : [];
+  } catch (err: any) {
+    return { ok: false, callLogId, error: `AI analysis failed: ${err?.message || "unknown"}` };
+  }
+
+  // Store back into callNotes JSON
+  notesMeta.aiAnalysis = {
+    aiSummary,
+    aiIntent,
+    aiRecommendations,
+    analyzedAt: new Date().toISOString(),
+  };
+  try {
+    await db.phoneCallLog.update({
+      where: { id: callLogId },
+      data: { callNotes: JSON.stringify(notesMeta) },
+    });
+  } catch (e) {
+    console.error("[3cx] failed to persist AI analysis", e);
+  }
+
+  // Audit log
+  try {
+    await db.auditLog.create({
+      data: {
+        action: "AI_ACTION",
+        resource: "PhoneCallLog",
+        resourceId: callLogId,
+        details: JSON.stringify({ aiSummary, aiIntent, aiRecommendations }),
+      },
+    });
+  } catch {}
+
+  return { ok: true, callLogId, aiSummary, aiIntent, aiRecommendations };
+}
+
+// ─── Webhook Signature Verification ────────────────────────────
+
+/**
+ * Verify a 3CX webhook signature.
+ *
+ * 3CX supports multiple auth modes (HMAC-SHA256, basic shared secret, IP allowlist).
+ * Here we implement HMAC-SHA256 with timingSafeEqual against the configured secret.
+ *
+ * If `secret` is empty:
+ *   - dev: return true (with warning)
+ *   - prod: return false
+ */
+export function verify3cxWebhookSignature(
+  rawBody: string,
+  signature: string | null | undefined,
+  secret: string | null | undefined
+): boolean {
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      console.error("[3cx] webhook secret missing — rejecting in production");
+      return false;
+    }
+    console.warn("[3cx] webhook secret missing — skipping signature check (dev only)");
+    return true;
+  }
+
+  if (!signature) return false;
+  // 3CX may send hex or base64
+  const hmacHex = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+  const hmacB64 = crypto.createHmac("sha256", secret).update(rawBody).digest("base64");
+
+  const safeEqual = (a: string, b: string): boolean => {
+    const ba = Buffer.from(a);
+    const bb = Buffer.from(b);
+    if (ba.length !== bb.length) return false;
+    return crypto.timingSafeEqual(ba, bb);
+  };
+
+  if (safeEqual(signature, hmacHex)) return true;
+  if (safeEqual(signature, hmacB64)) return true;
+  // Allow "sha256=" prefix
+  if (signature.startsWith("sha256=") && safeEqual(signature.slice(7), hmacHex)) return true;
+
+  return false;
+}
+
+// ─── Dashboard Stats ───────────────────────────────────────────
+
+export interface ThreeCxDashboardStats {
+  integration: { configured: boolean; status: string; baseUrl: string | null };
+  extensions: { total: number; mapped: number; unmapped: number };
+  calls: {
+    today: number;
+    last7days: number;
+    byType: Record<string, number>;
+    transcribed: number;
+    aiAnalyzed: number;
+  };
+  recentCalls: Array<{
+    id: string;
+    callType: string;
+    from: string;
+    to: string;
+    duration: number;
+    createdAt: Date;
+    transcriptionStatus?: string;
+    aiAnalyzed?: boolean;
+  }>;
+}
+
+/**
+ * Aggregate 3CX dashboard statistics.
+ */
+export async function get3cxDashboardStats(): Promise<ThreeCxDashboardStats> {
+  const integ = await getActive3cxIntegration();
+
+  const extensions = await db.connectedAccount.findMany({
+    where: { platform: "THREECX_EXTENSION" },
+    select: { assignedTo: true },
+  });
+  const mapped = extensions.filter((e) => !!e.assignedTo).length;
+
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const last7 = new Date();
+  last7.setDate(last7.getDate() - 7);
+
+  const todayCalls = await db.phoneCallLog.findMany({
+    where: {
+      createdAt: { gte: startOfDay },
+      callNotes: { contains: `"provider":"THREECX"` },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  });
+
+  const last7Count = await db.phoneCallLog.count({
+    where: {
+      createdAt: { gte: last7 },
+      callNotes: { contains: `"provider":"THREECX"` },
+    },
+  });
+
+  const byType: Record<string, number> = {};
+  let transcribed = 0;
+  let aiAnalyzed = 0;
+  for (const c of todayCalls) {
+    byType[c.callType] = (byType[c.callType] || 0) + 1;
+    let meta: Record<string, unknown> = {};
+    try { meta = JSON.parse(c.callNotes || "{}"); } catch {}
+    if (meta.transcriptionText) transcribed++;
+    if (meta.aiAnalysis) aiAnalyzed++;
+  }
+
+  return {
+    integration: {
+      configured: !!integ,
+      status: integ?.status || "NOT_CONFIGURED",
+      baseUrl: integ?.baseUrl || null,
+    },
+    extensions: {
+      total: extensions.length,
+      mapped,
+      unmapped: extensions.length - mapped,
+    },
+    calls: {
+      today: todayCalls.length,
+      last7days: last7Count,
+      byType,
+      transcribed,
+      aiAnalyzed,
+    },
+    recentCalls: todayCalls.slice(0, 10).map((c) => {
+      let meta: Record<string, unknown> = {};
+      try { meta = JSON.parse(c.callNotes || "{}"); } catch {}
+      return {
+        id: c.id,
+        callType: c.callType,
+        from: c.fromNumber,
+        to: c.toNumber,
+        duration: c.duration,
+        createdAt: c.createdAt,
+        transcriptionStatus: meta.transcriptionStatus as string | undefined,
+        aiAnalyzed: !!meta.aiAnalysis,
+      };
+    }),
+  };
+}

@@ -1,0 +1,57 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+// POST /api/integrations/3cx/webhooks
+// PUBLIC generic webhook receiver — captures any 3CX event for later triage.
+// Verifies signature when possible; persists raw payload as a WebhookEvent.
+export async function POST(req: NextRequest) {
+  try {
+    const rawBody = await req.text();
+    const signature = req.headers.get("x-3cx-signature") || req.headers.get("x-hub-signature-256");
+
+    const { getActive3cxIntegration, verify3cxWebhookSignature } =
+      await import("@/lib/threecx-integration");
+
+    const integ = await getActive3cxIntegration();
+    const secret = integ?.webhookSecret ?? null;
+    const verified = verify3cxWebhookSignature(rawBody, signature, secret);
+
+    let payload: any = null;
+    try {
+      payload = JSON.parse(rawBody);
+    } catch {
+      // Non-JSON payload — keep raw string
+    }
+
+    const providerEventId =
+      String(payload?.providerEventId || payload?.eventId || payload?.id || `3cx-raw-${Date.now()}`);
+
+    // Idempotency check
+    const existing = await db.webhookEvent.findUnique({
+      where: { provider_eventId: { provider: "THREECX", eventId: providerEventId } },
+    }).catch(() => null);
+
+    if (existing) {
+      return NextResponse.json({ success: true, idempotent: true, webhookEventId: existing.id });
+    }
+
+    const event = await db.webhookEvent.create({
+      data: {
+        provider: "THREECX",
+        eventId: providerEventId,
+        eventType: String(payload?.eventType || payload?.type || "UNKNOWN"),
+        payload: rawBody,
+        verified,
+        processed: false,
+      },
+    }).catch(() => null);
+
+    return NextResponse.json({ success: true, webhookEventId: event?.id ?? null, verified });
+  } catch (err: any) {
+    console.error("[3cx/webhooks] error", err);
+    return NextResponse.json({ error: err?.message || "Webhook receive failed" }, { status: 500 });
+  }
+}

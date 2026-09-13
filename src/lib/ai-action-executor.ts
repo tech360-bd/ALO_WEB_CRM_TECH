@@ -1,0 +1,561 @@
+/**
+ * AI Action Executor — Risk-aware execution layer for AI-initiated mutations.
+ *
+ * Lifecycle:
+ *   1. Caller invokes executeAiAction({actionType, payload, requestedBy, ...}).
+ *   2. assessRisk() classifies the action LOW / MEDIUM / HIGH / CRITICAL.
+ *   3. computePayloadHash() → stable SHA-256 idempotency key.
+ *   4. Check isGlobalAiPaused() — if paused, return PAUSED.
+ *   5. Look up existing AiCommandAction by (actionType+targetId+payloadHash).
+ *      - If EXECUTED → return cached result (idempotent).
+ *      - If FAILED → retry (respecting maxRetries=3).
+ *   6. Decide execution path:
+ *      - LOW + autoApprove=true → execute immediately (status=EXECUTED).
+ *      - MEDIUM/HIGH/CRITICAL → status=PENDING (awaiting human approval).
+ *   7. On race (P2002) → fetch existing + return cached.
+ *   8. Every execution writes an AuditLog.
+ *
+ * Schema graceful-degradation:
+ *   AiCommandAction exists but lacks idempotencyKey / retryCount / lastError /
+ *   trigger / actor fields. We:
+ *     - Store idempotencyKey + retryCount + lastError + trigger + actor in
+ *       the `riskFlags` field as JSON.
+ *     - Use findFirst by (actionType, targetId, payload-hash-in-riskFlags)
+ *       for idempotency lookups (no unique constraint available).
+ */
+
+import crypto from "node:crypto";
+import { db } from "@/lib/db";
+import { isGlobalAiPaused } from "@/lib/ai-safety";
+
+// ─── Types ─────────────────────────────────────────────────────
+
+export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+
+export interface AiActionParams {
+  actionType: string;          // e.g. "send_whatsapp", "update_lead_status", "create_task"
+  targetType?: string;         // Lead, Student, Application, etc.
+  targetId?: string;
+  requestedBy: string;         // userId or "system"
+  aiAgentId?: string;
+  trigger?: string;            // what triggered this action
+  actor?: string;              // human or AI name
+  payload: Record<string, unknown>;
+  autoApprove?: boolean;       // if true, LOW risk auto-executes
+  riskLevel?: RiskLevel;       // override (else computed via assessRisk)
+  riskFlags?: string[];
+}
+
+export interface AiActionExecutionResult {
+  actionId: string;
+  status: "EXECUTED" | "PENDING" | "FAILED" | "PAUSED" | "SKIPPED";
+  result?: Record<string, unknown>;
+  error?: string;
+  cached: boolean;             // true if returned from prior execution
+  riskLevel: RiskLevel;
+}
+
+// ─── Risk Assessment ───────────────────────────────────────────
+
+const HIGH_RISK_ACTIONS = new Set([
+  "delete_lead", "delete_student", "delete_application", "delete_document",
+  "refund_payment", "void_invoice", "send_bulk_email", "send_bulk_sms",
+  "publish_content", "approve_application", "submit_visa_application",
+  "modify_role", "modify_permission", "reset_password", "impersonate_user",
+]);
+
+const CRITICAL_RISK_ACTIONS = new Set([
+  "delete_user", "delete_employee", "export_pii", "share_pii",
+  "disable_2fa", "change_billing", "transfer_ownership", "wipe_data",
+]);
+
+const MEDIUM_RISK_ACTIONS = new Set([
+  "update_lead_status", "update_student_profile", "send_whatsapp_template",
+  "send_email", "assign_counselor", "schedule_appointment",
+  "create_task", "update_application_stage", "upload_document",
+]);
+
+/**
+ * Assess risk for a given action type + payload.
+ *
+ * Decision matrix:
+ *   - Action in CRITICAL_RISK_ACTIONS → CRITICAL
+ *   - Action in HIGH_RISK_ACTIONS     → HIGH
+ *   - Action in MEDIUM_RISK_ACTIONS   → MEDIUM (or HIGH if payload has risky keys)
+ *   - Otherwise                       → LOW
+ *
+ * Payload risk amplifiers (any of these bumps the risk up one level):
+ *   - amount > 5000
+ *   - bulk: true / recipients.length > 50
+ *   - pii: true / contains passportNumber, nidNumber
+ *   - destructive: true
+ */
+export function assessRisk(actionType: string, payload: Record<string, unknown>): RiskLevel {
+  let level: RiskLevel = "LOW";
+
+  if (CRITICAL_RISK_ACTIONS.has(actionType)) level = "CRITICAL";
+  else if (HIGH_RISK_ACTIONS.has(actionType)) level = "HIGH";
+  else if (MEDIUM_RISK_ACTIONS.has(actionType)) level = "MEDIUM";
+
+  // Payload risk amplifiers
+  const p = payload || {};
+  const amplifiers: string[] = [];
+
+  const amount = Number(p.amount || 0);
+  if (amount > 5000) amplifiers.push("amount");
+
+  const bulk = p.bulk === true || (Array.isArray(p.recipients) && p.recipients.length > 50);
+  if (bulk) amplifiers.push("bulk");
+
+  const piiKeys = ["passportNumber", "nidNumber", "nationalId", "bankAccount", "cardNumber"];
+  if (piiKeys.some((k) => k in p) || p.pii === true) amplifiers.push("pii");
+
+  if (p.destructive === true) amplifiers.push("destructive");
+
+  // Each amplifier bumps risk by one level (capped at CRITICAL)
+  for (let i = 0; i < amplifiers.length; i++) {
+    if (level === "LOW") level = "MEDIUM";
+    else if (level === "MEDIUM") level = "HIGH";
+    else if (level === "HIGH") level = "CRITICAL";
+  }
+
+  return level;
+}
+
+// ─── Payload Hash ──────────────────────────────────────────────
+
+/**
+ * Compute a stable SHA-256 hash of the payload (sorted keys).
+ * Used for idempotency: two calls with the same actionType+targetId+hash
+ * are guaranteed to be the same logical action.
+ */
+export function computePayloadHash(payload: Record<string, unknown>): string {
+  const sorted = sortObject(payload || {});
+  const json = JSON.stringify(sorted);
+  return crypto.createHash("sha256").update(json).digest("hex");
+}
+
+function sortObject(o: any): any {
+  if (Array.isArray(o)) return o.map(sortObject);
+  if (o && typeof o === "object" && !(o instanceof Date)) {
+    return Object.keys(o).sort().reduce((acc, k) => {
+      acc[k] = sortObject(o[k]);
+      return acc;
+    }, {} as Record<string, unknown>);
+  }
+  return o;
+}
+
+// ─── Execution ─────────────────────────────────────────────────
+
+const ACTION_RESOURCE = "AiCommandAction";
+
+export interface ExecuteAiActionParams extends AiActionParams {
+  /** Optional executor function — receives the action row, returns the result.
+   *  If omitted, the action is recorded as PENDING (awaiting human approval). */
+  execute?: (action: {
+    id: string;
+    actionType: string;
+    targetType?: string;
+    targetId?: string;
+    payload: Record<string, unknown>;
+  }) => Promise<Record<string, unknown>>;
+}
+
+/**
+ * Execute (or queue for approval) an AI-initiated action.
+ *
+ * Idempotency:
+ *   - Compute idempotencyKey = `${actionType}:${targetId||"none"}:${payloadHash}`.
+ *   - findFirst by riskFlags containing that key.
+ *   - If existing status=EXECUTED → return cached result.
+ *   - If existing status=FAILED and retryCount < 3 → retry.
+ *   - On P2002 race (no unique constraint in schema, so this is defensive) →
+ *     re-fetch + return cached.
+ */
+export async function executeAiAction(
+  params: ExecuteAiActionParams
+): Promise<AiActionExecutionResult> {
+  // 1. Global pause check
+  const paused = await isGlobalAiPaused();
+  if (paused) {
+    return { actionId: "", status: "PAUSED", cached: false, riskLevel: params.riskLevel || assessRisk(params.actionType, params.payload), error: "Global AI pause is active" };
+  }
+
+  // 2. Risk assessment
+  const riskLevel = params.riskLevel || assessRisk(params.actionType, params.payload);
+  const payloadHash = computePayloadHash(params.payload);
+  const idempotencyKey = `${params.actionType}:${params.targetId || "none"}:${payloadHash}`;
+
+  // 3. Idempotency lookup
+  const existing = await findActionByIdempotencyKey(idempotencyKey);
+  if (existing) {
+    const meta = parseActionMeta(existing);
+
+    if (existing.status === "EXECUTED") {
+      return {
+        actionId: existing.id,
+        status: "EXECUTED",
+        result: parseJson(existing.result),
+        cached: true,
+        riskLevel: (existing.riskLevel as RiskLevel) || riskLevel,
+      };
+    }
+
+    if (existing.status === "FAILED" && meta.retryCount < 3) {
+      // Retry path
+      return await retryExecution(existing, meta, params, idempotencyKey, riskLevel);
+    }
+
+    // PENDING or otherwise — return current state
+    return {
+      actionId: existing.id,
+      status: existing.status as AiActionExecutionResult["status"],
+      cached: true,
+      riskLevel: (existing.riskLevel as RiskLevel) || riskLevel,
+      error: meta.lastError || undefined,
+    };
+  }
+
+  // 4. Create new action record
+  const shouldExecute =
+    riskLevel === "LOW" && params.autoApprove !== false && typeof params.execute === "function";
+
+  const initialStatus = shouldExecute ? "EXECUTED" : "PENDING";
+
+  const meta = {
+    idempotencyKey,
+    retryCount: 0,
+    lastError: null as string | null,
+    trigger: params.trigger || null,
+    actor: params.actor || params.requestedBy,
+    payloadHash,
+  };
+
+  let result: Record<string, unknown> = {};
+  let errorMsg: string | null = null;
+  let finalStatus = initialStatus;
+
+  if (shouldExecute) {
+    try {
+      result = await params.execute!({
+        id: "pending",  // not yet persisted
+        actionType: params.actionType,
+        targetType: params.targetType,
+        targetId: params.targetId,
+        payload: params.payload,
+      });
+    } catch (err: any) {
+      errorMsg = err?.message || "Execution failed";
+      finalStatus = "FAILED";
+      meta.lastError = errorMsg;
+    }
+  }
+
+  // 5. Persist (idempotent via findFirst on riskFlags contains)
+  let actionId = "";
+  try {
+    const created = await db.aiCommandAction.create({
+      data: {
+        actionType: params.actionType,
+        targetType: params.targetType || "UNKNOWN",
+        targetId: params.targetId || null,
+        requestedBy: params.requestedBy,
+        aiAgentId: params.aiAgentId || null,
+        payload: JSON.stringify(params.payload),
+        result: JSON.stringify(result || {}),
+        status: finalStatus,
+        approvedBy: shouldExecute ? params.requestedBy : null,
+        approvedAt: shouldExecute ? new Date() : null,
+        executedAt: shouldExecute && finalStatus === "EXECUTED" ? new Date() : null,
+        riskLevel,
+        riskFlags: JSON.stringify([...(params.riskFlags || []), meta]),
+      },
+    });
+    actionId = created.id;
+  } catch (err: any) {
+    if (err?.code === "P2002") {
+      // Defensive: schema has no unique constraint, but if one is added later,
+      // fetch + return cached
+      const race = await findActionByIdempotencyKey(idempotencyKey);
+      if (race) {
+        return {
+          actionId: race.id,
+          status: race.status as AiActionExecutionResult["status"],
+          result: parseJson(race.result),
+          cached: true,
+          riskLevel: (race.riskLevel as RiskLevel) || riskLevel,
+        };
+      }
+    }
+    throw err;
+  }
+
+  // 6. Audit log
+  await writeAudit({
+    actionId,
+    actionType: params.actionType,
+    targetType: params.targetType,
+    targetId: params.targetId,
+    requestedBy: params.requestedBy,
+    status: finalStatus,
+    riskLevel,
+    result,
+    error: errorMsg,
+  }).catch(() => {});
+
+  return {
+    actionId,
+    status: finalStatus as AiActionExecutionResult["status"],
+    result: result || undefined,
+    error: errorMsg || undefined,
+    cached: false,
+    riskLevel,
+  };
+}
+
+/**
+ * Retry a previously-failed action (up to 3 attempts).
+ */
+export async function retryFailedAction(actionId: string): Promise<AiActionExecutionResult> {
+  const action = await db.aiCommandAction.findUnique({ where: { id: actionId } });
+  if (!action) {
+    return { actionId, status: "FAILED", cached: false, riskLevel: "LOW", error: "Action not found" };
+  }
+  if (action.status !== "FAILED") {
+    return {
+      actionId,
+      status: action.status as AiActionExecutionResult["status"],
+      cached: true,
+      riskLevel: (action.riskLevel as RiskLevel) || "LOW",
+    };
+  }
+
+  const meta = parseActionMeta(action);
+  if (meta.retryCount >= 3) {
+    return { actionId, status: "FAILED", cached: true, riskLevel: (action.riskLevel as RiskLevel) || "LOW", error: "Max retries (3) exceeded" };
+  }
+
+  // Mark retrying
+  meta.retryCount += 1;
+  meta.lastError = null;
+
+  // We don't have the original `execute` function — retry requires the caller
+  // to re-supply it. Treat this as a status reset to PENDING for re-approval.
+  await db.aiCommandAction.update({
+    where: { id: actionId },
+    data: {
+      status: "PENDING",
+      riskFlags: JSON.stringify([...parseRiskFlagsList(action.riskFlags).filter((f) => typeof f === "string"), meta]),
+    },
+  });
+
+  await writeAudit({
+    actionId, actionType: action.actionType, targetType: action.targetType,
+    targetId: action.targetId || undefined, requestedBy: action.requestedBy,
+    status: "PENDING", riskLevel: (action.riskLevel as RiskLevel) || "LOW",
+    result: { retried: true, retryCount: meta.retryCount },
+  }).catch(() => {});
+
+  return {
+    actionId,
+    status: "PENDING",
+    cached: false,
+    riskLevel: (action.riskLevel as RiskLevel) || "LOW",
+    result: { retried: true, retryCount: meta.retryCount },
+  };
+}
+
+/**
+ * Approve a pending action and execute it.
+ *
+ * The `execute` function must be supplied by the caller — we don't persist
+ * closures to the DB.
+ */
+export async function approveAndExecute(
+  actionId: string,
+  approvedBy: string,
+  execute: (action: {
+    id: string;
+    actionType: string;
+    targetType?: string;
+    targetId?: string;
+    payload: Record<string, unknown>;
+  }) => Promise<Record<string, unknown>>
+): Promise<AiActionExecutionResult> {
+  const action = await db.aiCommandAction.findUnique({ where: { id: actionId } });
+  if (!action) {
+    return { actionId, status: "FAILED", cached: false, riskLevel: "LOW", error: "Action not found" };
+  }
+  if (action.status === "EXECUTED") {
+    return { actionId, status: "EXECUTED", result: parseJson(action.result), cached: true, riskLevel: (action.riskLevel as RiskLevel) || "LOW" };
+  }
+  if (action.status !== "PENDING") {
+    return { actionId, status: action.status as AiActionExecutionResult["status"], cached: true, riskLevel: (action.riskLevel as RiskLevel) || "LOW" };
+  }
+
+  const payload = parseJson(action.payload);
+  let result: Record<string, unknown> = {};
+  let errorMsg: string | null = null;
+  let finalStatus: "EXECUTED" | "FAILED" = "EXECUTED";
+
+  try {
+    result = await execute({
+      id: action.id,
+      actionType: action.actionType,
+      targetType: action.targetType || undefined,
+      targetId: action.targetId || undefined,
+      payload,
+    });
+  } catch (err: any) {
+    errorMsg = err?.message || "Execution failed";
+    finalStatus = "FAILED";
+  }
+
+  const meta = parseActionMeta(action);
+  if (finalStatus === "FAILED") {
+    meta.retryCount += 1;
+    meta.lastError = errorMsg;
+  } else {
+    meta.lastError = null;
+  }
+
+  await db.aiCommandAction.update({
+    where: { id: actionId },
+    data: {
+      status: finalStatus,
+      approvedBy,
+      approvedAt: new Date(),
+      executedAt: finalStatus === "EXECUTED" ? new Date() : null,
+      result: JSON.stringify(result),
+      riskFlags: JSON.stringify([...parseRiskFlagsList(action.riskFlags).filter((f) => typeof f === "string"), meta]),
+    },
+  });
+
+  await writeAudit({
+    actionId, actionType: action.actionType, targetType: action.targetType,
+    targetId: action.targetId || undefined, requestedBy: action.requestedBy,
+    status: finalStatus, riskLevel: (action.riskLevel as RiskLevel) || "LOW",
+    result, error: errorMsg, approvedBy,
+  }).catch(() => {});
+
+  return {
+    actionId,
+    status: finalStatus,
+    result: result || undefined,
+    error: errorMsg || undefined,
+    cached: false,
+    riskLevel: (action.riskLevel as RiskLevel) || "LOW",
+  };
+}
+
+// ─── Helpers ───────────────────────────────────────────────────
+
+interface ActionMeta {
+  idempotencyKey: string;
+  retryCount: number;
+  lastError: string | null;
+  trigger: string | null;
+  actor: string | null;
+  payloadHash: string;
+}
+
+function parseActionMeta(action: { riskFlags: string | null }): ActionMeta {
+  const list = parseRiskFlagsList(action.riskFlags);
+  const metaObj = list.find((x): x is ActionMeta =>
+    typeof x === "object" && x !== null && "idempotencyKey" in (x as any)
+  ) as ActionMeta | undefined;
+  return metaObj || {
+    idempotencyKey: "",
+    retryCount: 0,
+    lastError: null,
+    trigger: null,
+    actor: null,
+    payloadHash: "",
+  };
+}
+
+function parseRiskFlagsList(riskFlags: string | null): any[] {
+  if (!riskFlags) return [];
+  try {
+    const parsed = JSON.parse(riskFlags);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseJson(s: string | null | undefined): Record<string, unknown> {
+  if (!s) return {};
+  try {
+    const v = JSON.parse(s);
+    return (v && typeof v === "object" && !Array.isArray(v)) ? v : { value: v };
+  } catch {
+    return {};
+  }
+}
+
+async function findActionByIdempotencyKey(idempotencyKey: string) {
+  if (!idempotencyKey) return null;
+  return db.aiCommandAction.findFirst({
+    where: { riskFlags: { contains: `"idempotencyKey":"${idempotencyKey}"` } },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+async function retryExecution(
+  existing: { id: string; status: string; riskLevel: string | null; riskFlags: string | null; result: string | null; actionType: string; targetType: string | null; targetId: string | null; requestedBy: string },
+  meta: ActionMeta,
+  params: ExecuteAiActionParams,
+  idempotencyKey: string,
+  riskLevel: RiskLevel
+): Promise<AiActionExecutionResult> {
+  // We don't have the original execute fn — reset to PENDING for re-approval
+  meta.retryCount += 1;
+  await db.aiCommandAction.update({
+    where: { id: existing.id },
+    data: {
+      status: "PENDING",
+      riskFlags: JSON.stringify([...parseRiskFlagsList(existing.riskFlags).filter((f) => typeof f === "string"), meta]),
+    },
+  });
+  return {
+    actionId: existing.id,
+    status: "PENDING",
+    cached: false,
+    riskLevel: (existing.riskLevel as RiskLevel) || riskLevel,
+    result: { retried: true, retryCount: meta.retryCount },
+  };
+}
+
+async function writeAudit(p: {
+  actionId: string;
+  actionType: string;
+  targetType?: string | null;
+  targetId?: string;
+  requestedBy: string;
+  status: string;
+  riskLevel: RiskLevel;
+  result?: Record<string, unknown>;
+  error?: string | null;
+  approvedBy?: string;
+}) {
+  await db.auditLog.create({
+    data: {
+      action: "AI_ACTION",
+      resource: ACTION_RESOURCE,
+      resourceId: p.actionId,
+      userId: p.requestedBy && p.requestedBy !== "system" ? p.requestedBy : (p.approvedBy || null),
+      details: JSON.stringify({
+        actionType: p.actionType,
+        targetType: p.targetType,
+        targetId: p.targetId,
+        status: p.status,
+        riskLevel: p.riskLevel,
+        result: p.result || null,
+        error: p.error || null,
+        approvedBy: p.approvedBy || null,
+      }),
+    },
+  });
+}

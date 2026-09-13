@@ -1,0 +1,23 @@
+aloeducation.com, www.aloeducation.com {
+    encode gzip
+    reverse_proxy 127.0.0.1:3015
+    log {
+        output file /var/log/caddy/edu.log
+    }
+}
+
+english.aloeducation.com {
+    encode gzip
+    reverse_proxy 127.0.0.1:3016
+    log {
+        output file /var/log/caddy/english.log
+    }
+}
+
+learn.aloeducation.com {
+    encode gzip
+    reverse_proxy 127.0.0.1:3017
+    log {
+        output file /var/log/caddy/learn.log
+    }
+}
