@@ -54,8 +54,13 @@ const languagePrepItems = [
   { label: 'LanguageCert', href: '/language-prep/languagecert' },
   { label: 'Kaplan', href: '/language-prep/kaplan' },
   { label: 'OET', href: '/language-prep/oet' },
-  { label: 'MOI Guidance', href: '/language-prep/moi-guidance' },
+  { label: 'MOI Guidance', href: '/language-prep/moi' },
+  { label: 'GRE', href: '/language-prep/gre' },
+  { label: 'GMAT', href: '/language-prep/gmat' },
+  { label: 'SAT', href: '/language-prep/sat' },
+  { label: 'ACT', href: '/language-prep/act' },
   { label: 'English Test Comparison', href: '/language-prep/comparison' },
+  { label: 'View All Test Prep →', href: '/language-prep' },
 ];
 
 const resourceItems = [

@@ -11,9 +11,12 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') || '';
-    const country = searchParams.get('country') || '';
-    const studyLevel = searchParams.get('studyLevel') || '';
+    const country = searchParams.get('country') || searchParams.get('countries') || '';
+    const studyLevel = searchParams.get('studyLevel') || searchParams.get('studyLevels') || '';
     const subjectArea = searchParams.get('subjectArea') || '';
+    const englishTest = searchParams.get('englishTest') || searchParams.get('english_requirements')?.split(':')[0] || '';
+    const englishScore = searchParams.get('englishScore') || searchParams.get('english_requirements')?.split(':')[1] || '';
+    const ieltsMinParam = searchParams.get('ieltsMin') || '';
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
     const limit = Math.min(1000, Math.max(1, parseInt(searchParams.get('limit') || '20', 10) || 20));
     const skip = (page - 1) * limit;
@@ -28,17 +31,26 @@ export async function GET(req: Request) {
       ];
     }
     if (studyLevel) {
-      courseWhere.studyLevel = { contains: studyLevel };
+      // support comma separated list
+      const levels = studyLevel.split(',').map(s => s.trim()).filter(Boolean);
+      if (levels.length === 1) {
+        courseWhere.studyLevel = { contains: levels[0] };
+      } else if (levels.length > 1) {
+        courseWhere.OR = levels.map(l => ({ studyLevel: { contains: l } }));
+      }
     }
     if (subjectArea) {
       courseWhere.subjectArea = { contains: subjectArea };
     }
 
-    // If country filter, fetch matching university IDs first
+    // If country filter, fetch matching university IDs first — support comma list
     let universityIds: string[] | null = null;
     if (country) {
+      const countryList = country.split(',').map(c => c.trim()).filter(Boolean);
       const unis = await db.crmUniversity.findMany({
-        where: { country: { contains: country } },
+        where: {
+          OR: countryList.map(c => ({ country: { contains: c } })),
+        },
         select: { universityId: true },
       });
       universityIds = unis.map((u) => u.universityId);
@@ -53,6 +65,50 @@ export async function GET(req: Request) {
         });
       }
       courseWhere.universityId = { in: universityIds };
+    }
+
+    // English requirements filter — DB-driven via CrmCourseRequirement
+    if (englishTest) {
+      try {
+        const testLower = englishTest.toLowerCase();
+        // Map test slug to requirement field
+        let reqWhere: any = {};
+        if (testLower.includes('ielts')) {
+          reqWhere = { englishTest: { contains: 'IELTS' } };
+          if (ieltsMinParam || englishScore) {
+            const minScore = parseFloat(ieltsMinParam || englishScore) || 0;
+            if (minScore > 0) reqWhere.ieltsOverall = { lte: minScore + 1.5 }; // allow courses requiring <= user's target + margin
+          }
+        } else if (testLower.includes('pte')) {
+          reqWhere = { OR: [{ englishTest: { contains: 'PTE' } }, { pteOverall: { gt: 0 } }] };
+        } else if (testLower.includes('toefl')) {
+          reqWhere = { OR: [{ englishTest: { contains: 'TOEFL' } }, { toeflOverall: { gt: 0 } }] };
+        } else if (testLower.includes('duolingo') || testLower.includes('det')) {
+          reqWhere = { OR: [{ englishTest: { contains: 'Duolingo' } }, { englishTest: { contains: 'DET' } }, { detOverall: { gt: 0 } }] };
+        } else if (testLower.includes('oietc') || testLower.includes('oxford') || testLower.includes('languagecert') || testLower.includes('oet') || testLower.includes('moi')) {
+          reqWhere = { englishTest: { contains: testLower } };
+        } else {
+          reqWhere = { englishTest: { contains: englishTest } };
+        }
+
+        const matchingReqs = await (db as any).crmCourseRequirement.findMany({
+          where: reqWhere,
+          select: { courseId: true },
+          take: 5000,
+        });
+        const matchingCourseIds = [...new Set(matchingReqs.map((r: any) => r.courseId))];
+        if (matchingCourseIds.length > 0) {
+          // Intersect with existing courseWhere if university filter exists
+          const existingCourseIds = (courseWhere as any).universityId ? undefined : undefined;
+          // If we already have university filter, we need to filter further
+          if (matchingCourseIds.length > 0) {
+            (courseWhere as any).courseId = { in: matchingCourseIds };
+          }
+        }
+        // If no matching requirements found, we don't filter out all courses — we show note "Requirement not available in database. Check university course page." via frontend
+      } catch (e) {
+        console.log('English requirement filter fallback — CrmCourseRequirement table may not have data:', (e as any).message);
+      }
     }
 
     // Fetch courses

@@ -29,6 +29,7 @@ import {
 import { toast } from 'sonner';
 import { COUNTRIES, STUDY_LEVELS, COUNTRY_FLAGS } from './types';
 import type { Course } from './types';
+import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -52,6 +53,8 @@ interface Filters {
   tuitionRange: [number, number];
   scholarshipOnly: boolean;
   ieltsMin: number;
+  englishTest: string;
+  englishScore: string;
 }
 
 const DEFAULT_FILTERS: Filters = {
@@ -64,6 +67,8 @@ const DEFAULT_FILTERS: Filters = {
   tuitionRange: [0, 100000],
   scholarshipOnly: false,
   ieltsMin: 0,
+  englishTest: '',
+  englishScore: '',
 };
 
 function CourseCardSkeleton() {
@@ -123,7 +128,9 @@ function FilterSidebar({
     (filters.intakeMonth ? 1 : 0) +
     (filters.tuitionRange[0] > 0 || filters.tuitionRange[1] < 100000 ? 1 : 0) +
     (filters.scholarshipOnly ? 1 : 0) +
-    (filters.ieltsMin > 0 ? 1 : 0);
+    (filters.ieltsMin > 0 ? 1 : 0) +
+    (filters.englishTest ? 1 : 0) +
+    (filters.englishScore ? 1 : 0);
 
   return (
     <div className="space-y-6">
@@ -275,10 +282,49 @@ function FilterSidebar({
 
       <Separator />
 
-      {/* IELTS Min */}
+      {/* English Requirements — Enhanced per spec: english_requirements filter */}
+      <div className="space-y-3">
+        <h4 className="text-sm font-medium text-[#0F172A] flex items-center gap-1.5">
+          <span className="w-5 h-5 rounded bg-blue-50 text-[#0057B8] flex items-center justify-center text-[10px] font-bold">EN</span>
+          English Requirements
+        </h4>
+        <p className="text-[11px] text-slate-500 leading-relaxed">Filter courses by accepted English test and minimum score. Acceptance varies by university, course and visa route.</p>
+        <Select
+          value={filters.englishTest}
+          onValueChange={(v) => onFiltersChange({ ...filters, englishTest: v === 'all' ? '' : v })}
+        >
+          <SelectTrigger className="w-full h-9 rounded-xl border-[#E2E8F0] text-xs">
+            <SelectValue placeholder="Select English Test" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Tests</SelectItem>
+            <SelectItem value="ielts">IELTS Academic</SelectItem>
+            <SelectItem value="ielts-ukvi">IELTS UKVI</SelectItem>
+            <SelectItem value="pte-academic">PTE Academic</SelectItem>
+            <SelectItem value="toefl-ibt">TOEFL iBT</SelectItem>
+            <SelectItem value="duolingo">Duolingo English Test</SelectItem>
+            <SelectItem value="oietc">OIETC</SelectItem>
+            <SelectItem value="oxford-ellt">Oxford ELLT</SelectItem>
+            <SelectItem value="languagecert">LanguageCert</SelectItem>
+            <SelectItem value="oet">OET</SelectItem>
+            <SelectItem value="moi">MOI Guidance</SelectItem>
+          </SelectContent>
+        </Select>
+        <Input
+          placeholder="Target score e.g. 6.5, 58, 90"
+          value={filters.englishScore}
+          onChange={(e) => onFiltersChange({ ...filters, englishScore: e.target.value })}
+          className="h-9 rounded-xl border-[#E2E8F0] text-xs"
+        />
+        <p className="text-[10px] text-slate-400">If requirement not in database: "Requirement not available in database. Check university course page."</p>
+      </div>
+
+      <Separator />
+
+      {/* IELTS Min (legacy) */}
       <div className="space-y-3">
         <h4 className="text-sm font-medium text-slate-700">
-          Min IELTS Score
+          Min IELTS Score (legacy)
         </h4>
         <div className="px-1">
           <Slider
@@ -296,6 +342,12 @@ function FilterSidebar({
           </div>
         </div>
       </div>
+
+      <Separator />
+
+      {/* Test Preparation Mini Card — intelligently placed beside Course Finder */}
+      <TestPreparationMiniCard compact contextTitle="Prepare for English proficiency tests for this course" />
+
     </div>
   );
 }
@@ -457,6 +509,9 @@ export function CourseFinderPublic() {
       if (filters.tuitionRange[1] < 100000) params.set('tuitionMax', String(filters.tuitionRange[1]));
       if (filters.scholarshipOnly) params.set('scholarship', 'true');
       if (filters.ieltsMin > 0) params.set('ieltsMin', String(filters.ieltsMin));
+      if (filters.englishTest) params.set('englishTest', filters.englishTest);
+      if (filters.englishScore) params.set('englishScore', filters.englishScore);
+      if (filters.englishTest || filters.englishScore) params.set('english_requirements', `${filters.englishTest}:${filters.englishScore}`);
       params.set('page', String(currentPage));
       params.set('limit', String(pageSize));
 

@@ -36,6 +36,7 @@ import {
 import { CountryDestinationData } from '@/lib/country-destinations-data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 
 interface MasterCountryDestinationViewProps {
   countryData: CountryDestinationData;
@@ -613,50 +614,58 @@ export default function MasterCountryDestinationView({
               ))}
             </div>
 
-            {/* AI Eligibility Interactive Box */}
-            <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 text-xs">
-              <div className="flex items-center gap-2 font-bold text-sm text-[#0057B8]">
-                <Sparkles className="w-4 h-4 text-amber-500" /> Instant AI Eligibility Checker
-              </div>
+            {/* Test Preparation Mini Card — intelligently placed beside Country */}
+            <div className="lg:col-span-5 space-y-4">
+              <TestPreparationMiniCard
+                contextTitle={`English tests for ${countryData.name}`}
+                recommendedTest={countryData.name === 'UK' ? 'IELTS / PTE UKVI' : 'IELTS / PTE / Duolingo'}
+                targetScore="6.5+ Overall"
+              />
 
-              <div className="space-y-3">
-                <div>
-                  <label className="text-slate-600 font-medium">Academic Result (SSC/HSC/CGPA)</label>
-                  <input
-                    type="text"
-                    value={studentResult}
-                    onChange={(e) => setStudentResult(e.target.value)}
-                    className="w-full mt-1 p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
-                  />
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 text-xs">
+                <div className="flex items-center gap-2 font-bold text-sm text-[#0057B8]">
+                  <Sparkles className="w-4 h-4 text-amber-500" /> Instant AI Eligibility Checker
                 </div>
-                <div>
-                  <label className="text-slate-600 font-medium">English Score (IELTS / PTE / MOI)</label>
-                  <input
-                    type="text"
-                    value={studentEnglish}
-                    onChange={(e) => setStudentEnglish(e.target.value)}
-                    className="w-full mt-1 p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
-                  />
-                </div>
-                <button
-                  onClick={handleRunEligibilityCheck}
-                  className="w-full h-11 bg-[#0057B8] hover:bg-blue-700 text-white font-bold rounded-xl transition"
-                >
-                  Run AI Check
-                </button>
 
-                {eligibilityResult && (
-                  <div className={`p-4 rounded-xl border ${eligibilityResult.badgeColor} space-y-2`}>
-                    <span className="font-bold text-sm flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4" /> {eligibilityResult.label}
-                    </span>
-                    <ul className="list-disc pl-4 space-y-1 text-xs">
-                      {eligibilityResult.recommendations.map((rec: string, i: number) => (
-                        <li key={i}>{rec}</li>
-                      ))}
-                    </ul>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-slate-600 font-medium">Academic Result (SSC/HSC/CGPA)</label>
+                    <input
+                      type="text"
+                      value={studentResult}
+                      onChange={(e) => setStudentResult(e.target.value)}
+                      className="w-full mt-1 p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    />
                   </div>
-                )}
+                  <div>
+                    <label className="text-slate-600 font-medium">English Score (IELTS / PTE / MOI)</label>
+                    <input
+                      type="text"
+                      value={studentEnglish}
+                      onChange={(e) => setStudentEnglish(e.target.value)}
+                      className="w-full mt-1 p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    />
+                  </div>
+                  <button
+                    onClick={handleRunEligibilityCheck}
+                    className="w-full h-11 bg-[#0057B8] hover:bg-blue-700 text-white font-bold rounded-xl transition"
+                  >
+                    Run AI Check
+                  </button>
+
+                  {eligibilityResult && (
+                    <div className={`p-4 rounded-xl border ${eligibilityResult.badgeColor} space-y-2`}>
+                      <span className="font-bold text-sm flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4" /> {eligibilityResult.label}
+                      </span>
+                      <ul className="list-disc pl-4 space-y-1 text-xs">
+                        {eligibilityResult.recommendations.map((rec: string, i: number) => (
+                          <li key={i}>{rec}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

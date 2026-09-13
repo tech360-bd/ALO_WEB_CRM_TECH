@@ -28,6 +28,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { COUNTRY_FLAGS } from './types';
+import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
 const ALO_BLUE = '#0057B8';
