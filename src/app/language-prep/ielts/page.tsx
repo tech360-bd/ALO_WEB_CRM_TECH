@@ -1,7 +1,15 @@
+import { Metadata } from 'next';
+import TestDetailView from '@/components/language-prep/TestDetailView';
+import { getTestBySlug } from '@/lib/language-prep/data';
+
+const test = getTestBySlug('ielts');
+
+export const metadata: Metadata = {
+  title: test?.seoTitle || 'ielts Preparation | Requirements, Format & Study Abroad Guidance | ALO Education',
+  description: test?.seoDescription || 'Prepare for ielts with expert guidance from ALO Education.',
+  alternates: { canonical: 'https://aloeducation.com/language-prep/ielts' },
+};
+
 export default function Page() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0d1526] text-white">
-      <h1 className="text-2xl font-bold">Development in Progress</h1>
-    </div>
-  );
+  return <TestDetailView slug="ielts" />;
 }

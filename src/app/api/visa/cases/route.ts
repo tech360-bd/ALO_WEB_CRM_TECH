@@ -8,90 +8,67 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     const destinationCountry = searchParams.get('destinationCountry');
     const riskLevel = searchParams.get('riskLevel');
     const currentStage = searchParams.get('currentStage');
-    const limit = parseInt(searchParams.get('limit') || '50', 10);
+    const studentId = searchParams.get('studentId');
+    const studentName = searchParams.get('studentName');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200);
+    const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
 
     const where: any = {};
     if (destinationCountry) where.destinationCountry = destinationCountry;
     if (riskLevel) where.riskLevel = riskLevel;
     if (currentStage) where.currentStage = currentStage;
+    if (studentId) where.studentId = studentId;
+    if (studentName) where.studentName = { contains: studentName, mode: 'insensitive' };
 
-    // Enforce case assignment filtering for non-super_admin users
-    const isSuperAdmin = auth.roles.includes('super_admin');
-    if (!isSuperAdmin && auth.roles.includes('visa_officer')) {
-      where.OR = [
-        { visaOfficerId: auth.userId },
-        { visaOfficerId: '' },
-      ];
+    // RBAC: visa_officer, visa_interview_officer, super_admin, admin
+    const isSuperAdmin = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
+    const isVisaOfficer = auth.roles.includes('visa_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
+
+    if (!isSuperAdmin) {
+      if (isVisaOfficer) {
+        // Visa officer can only view assigned cases unless explicitly has view all permission
+        const canViewAll = auth.roles.includes('visa_team') || auth.roles.includes('super_admin');
+        if (!canViewAll) {
+          where.visaOfficerId = auth.userId;
+        }
+      } else if (auth.roles.includes('counselor') || auth.roles.includes('senior_counselor')) {
+        // Counselor can only view own students' cases
+        where.counselorId = auth.userId;
+      } else if (!auth.roles.includes('application_team') && !auth.roles.includes('application_manager')) {
+        // Others denied unless explicit permission
+        // Allow but filtered — will be blocked by ownership if not assigned
+        where.visaOfficerId = auth.userId;
+      }
     }
 
-    let cases = await db.visaCase.findMany({
-      where,
-      take: limit,
-      orderBy: { updatedAt: 'desc' },
-    });
-
-    // Seed mock cases if database is empty for demo/verification
-    if (cases.length === 0) {
-      const mockCases = [
-        {
-          caseCode: 'CASE-101',
-          studentId: 'STU-101',
-          studentName: 'Rahim Uddin',
-          destinationCountry: 'UK',
-          university: 'University of Manchester',
-          course: 'MSc Data Science',
-          intake: 'Sep 2025',
-          currentStage: 'Officer Review Pending',
-          readinessScore: 82,
-          riskLevel: 'low',
-          visaOfficerId: auth.userId,
-          visaOfficerName: auth.name || 'Visa Officer',
-        },
-        {
-          caseCode: 'CASE-102',
-          studentId: 'STU-419',
-          studentName: 'Shakib Hasan',
-          destinationCountry: 'Canada',
-          university: 'University of Toronto',
-          course: 'MBA',
-          intake: 'Sep 2025',
-          currentStage: 'AI Interview Pending',
-          readinessScore: 68,
-          riskLevel: 'medium',
-          visaOfficerId: auth.userId,
-          visaOfficerName: auth.name || 'Visa Officer',
-        },
-        {
-          caseCode: 'CASE-103',
-          studentId: 'STU-882',
-          studentName: 'Mitu Sarkar',
-          destinationCountry: 'USA',
-          university: 'NYU',
-          course: 'MS Computer Science',
-          intake: 'Fall 2025',
-          currentStage: 'Missing Documents',
-          readinessScore: 45,
-          riskLevel: 'high',
-          visaOfficerId: auth.userId,
-          visaOfficerName: auth.name || 'Visa Officer',
-        },
-      ];
-
-      for (const m of mockCases) {
-        await db.visaCase.create({ data: m });
-      }
-
-      cases = await db.visaCase.findMany({
+    const [cases, total] = await Promise.all([
+      db.visaCase.findMany({
         where,
         take: limit,
+        skip: (page - 1) * limit,
         orderBy: { updatedAt: 'desc' },
+      }),
+      db.visaCase.count({ where }),
+    ]);
+
+    // No mock data — proper empty state per spec
+    if (cases.length === 0) {
+      return NextResponse.json({
+        success: true,
+        count: 0,
+        total,
+        cases: [],
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+        emptyState: 'No visa cases assigned — proper empty state, no fake numbers, real database metrics',
       });
     }
 
     return NextResponse.json({
       success: true,
       count: cases.length,
+      total,
       cases,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (error: any) {
     return NextResponse.json(

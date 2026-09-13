@@ -1,0 +1,31 @@
+'use client';
+import { useState, useEffect, useCallback } from 'react';
+import { usePortalStore } from '@/lib/stores/portal-store';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Loader2, Eye, Clock } from 'lucide-react';
+import Link from 'next/link';
+
+export default function CrmDecisionPending() {
+  const token = usePortalStore(s => s.token);
+  const [apps, setApps] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const fetchApps = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/applications?status=DECISION_PENDING&limit=50', { headers:{ Authorization:`Bearer ${token}` } });
+      const json = await res.json();
+      setApps(json.applications || json.data || []);
+    } finally { setLoading(false); }
+  }, [token]);
+  useEffect(()=>{ fetchApps(); },[fetchApps]);
+  return (
+    <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
+      <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Clock className="w-5 h-5 text-amber-500" />CRM — Decision Pending (Alias)</h1>
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : (
+        <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl"><CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Decision Pending ({apps.length}) — Real DB</CardTitle></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-[#E2E8F0] bg-[#F8FAFC] text-xs text-gray-500"><th className="p-3">App Code</th><th className="p-3">University</th><th className="p-3">Course</th><th className="p-3">Stage</th><th className="p-3 text-right">Actions</th></tr></thead><tbody>{apps.length===0 ? <tr><td colSpan={5} className="p-8 text-center text-gray-500">No decision pending applications</td></tr> : apps.map((a:any)=><tr key={a.id} className="border-b border-[#E2E8F0]/60"><td className="p-3 font-mono text-xs text-[#0057B8]">{a.applicationCode}</td><td className="p-3">{a.universityName}</td><td className="p-3 text-xs">{a.courseName}</td><td className="p-3"><Badge className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]">{a.stage}</Badge></td><td className="p-3 text-right"><Link href={`/application-manager/application/${a.id}`}><Button size="sm" variant="ghost"><Eye className="w-4 h-4" /></Button></Link></td></tr>)}</tbody></table></div></CardContent></Card>
+      )}
+    </div>
+  );
+}

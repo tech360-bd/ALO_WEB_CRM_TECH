@@ -8,145 +8,184 @@
 | CPU | 2 cores | 4+ cores |
 | RAM | 4 GB (dev only) | 8+ GB (production) |
 | Storage | 50 GB SSD | 120+ GB SSD |
-| Node.js | 20+ | 22 LTS |
-| Bun | 1.1+ | 1.2+ |
+| Node.js | 22 LTS | 22 LTS |
+| npm | 10+ | 10+ |
 | MySQL | 8.0+ | 8.0+ |
-| Redis | 7.0+ | 7.0+ |
+| PM2 | latest | latest |
+| Caddy | 2.8+ | 2.8+ |
 
 ## Pre-Deployment Checklist
 
-- [ ] MySQL 8 database created (`db_education`)
-- [ ] MySQL user created (`user_edu`) with full privileges
-- [ ] Redis installed and running on port 6379
-- [ ] SSL certificate for `aloeducation.com`
-- [ ] Three storage mount points:
-  - `/mnt/ssd1` (Student & Partner documents — SSD)
-  - `/mnt/ssd2` (Official documents — SSD)
-  - `/home/aloedu/storage` (Operational files)
-- [ ] Caddy or Nginx reverse proxy configured
-- [ ] PM2 process manager installed (`npm i -g pm2`)
+- [ ] Ubuntu 22.04+ server with Node.js 22 LTS and npm 10+
+- [ ] MySQL 8 database created (`aloeduca_alo_education`)
+- [ ] MySQL user created (`aloeduca_ALO_final_web_crm`) with full privileges
+- [ ] Caddy installed and running (`sudo systemctl status caddy`)
+- [ ] PM2 installed globally (`npm install -g pm2`)
+- [ ] Ports 80 and 443 open for Let's Encrypt
+- [ ] Domain DNS pointing to server IP
+- [ ] Storage directory: `/home/aloeduca/alo-education/storage/uploads`
 
-## Deployment Steps
+## Environment Variables
 
-### Step 1: Upload & Extract
+All required variables are documented in `.env.example`. Copy and configure:
 
 ```bash
-scp ALO-EDUCATION-COMPLETE-PROJECT.zip root@your-server:/opt/
-cd /opt
-unzip ALO-EDUCATION-COMPLETE-PROJECT.zip -d alo-education
-cd alo-education
+cp .env.example .env
+nano .env
 ```
 
-### Step 2: Install Dependencies
+**Critical variables:**
+
+```env
+DATABASE_URL="mysql://USER:PASSWORD@localhost:3306/DATABASE"
+# Example: mysql://aloeduca_ALO_final_web_crm:StrongPass%40123@localhost:3306/aloeduca_alo_education
+# Password must be URL-encoded if it contains special characters
+
+NEXTAUTH_SECRET=generate-with-openssl-rand-base64-32
+AUTH_SECRET=same-or-different-random-secret
+JWT_SECRET=same-or-different-random-secret
+SESSION_SECRET=same-or-different-random-secret
+ENCRYPTION_KEY=64-char-hex-for-AES-256
+
+SEED_SUPER_ADMIN_EMAIL=admin@aloeducation.com
+SEED_SUPER_ADMIN_PASSWORD=UniqueOneTimePassword123!
+
+APP_URL=https://aloeducation.com
+NEXTAUTH_URL=https://aloeducation.com
+NEXT_PUBLIC_APP_URL=https://aloeducation.com
+
+# Optional integrations
+GROQ_API_KEY=
+OPENROUTER_API_KEY=
+ZAI_API_KEY=
+MAIL_HOST=mail.aloeducation.com
+MAIL_PORT=465
+MAIL_USERNAME=noreply@aloeducation.com
+MAIL_PASSWORD=
+```
+
+**Generate secrets:**
 
 ```bash
-curl -fsSL https://bun.sh/install | bash
-source ~/.bashrc
-bun install
+openssl rand -base64 32
+# For ENCRYPTION_KEY (32 bytes hex):
+openssl rand -hex 32
 ```
 
-### Step 3: Create Storage Directories
+## Deployment Steps (Ubuntu 22.04 LTS)
+
+### Step 1: Clone & Install
 
 ```bash
-mkdir -p /mnt/ssd1/student-partner
-mkdir -p /mnt/ssd2/official
-mkdir -p /home/aloedu/storage/operational
-mkdir -p /home/aloedu/storage/uploads
-mkdir -p /home/aloedu/storage/temp/quarantine
-
-chown -R www-data:www-data /mnt/ssd1 /mnt/ssd2 /home/aloedu/storage
-chmod -R 770 /mnt/ssd1 /mnt/ssd2 /home/aloedu/storage
+cd /root/alo-live
+git fetch origin main
+git reset --hard origin/main
+npm ci
 ```
 
-### Step 4: Push Database Schema
+### Step 2: Configure Environment
 
 ```bash
-bunx prisma generate
-bunx prisma db push
-bun run db:seed
+cp .env.example .env
+nano .env
+# Fill DATABASE_URL, secrets, mail, AI keys
 ```
 
-### Step 5: Import University Data (400 universities + 17,653 courses)
+### Step 3: Database Setup
 
 ```bash
-bun run prisma/seed-university-data.ts
+# Create database and user in MySQL:
+mysql -u root -p
+CREATE DATABASE IF NOT EXISTS aloeduca_alo_education CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'aloeduca_ALO_final_web_crm'@'localhost' IDENTIFIED BY 'YOUR_SECURE_PASSWORD';
+GRANT ALL PRIVILEGES ON aloeduca_alo_education.* TO 'aloeduca_ALO_final_web_crm'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+# Apply migrations and seed
+npx prisma generate
+npx prisma migrate deploy
+npx prisma db seed
 ```
 
-### Step 6: Build for Production
+### Step 4: Build
 
 ```bash
-bun run build
+npm run build
+# Output: .next/standalone/server.js
 ```
 
-### Step 7: Start with PM2
+### Step 5: Start with PM2 (Port 3025)
 
 ```bash
 pm2 start ecosystem.config.cjs --env production
+# Or directly:
+# pm2 start .next/standalone/server.js --name alo-education --env PORT=3025,NODE_ENV=production
 pm2 save
 pm2 startup
 ```
 
-### Step 8: Configure Caddy
+### Step 6: Configure Caddy (HTTPS)
 
 ```caddyfile
 aloeducation.com {
-    reverse_proxy localhost:3025
     encode gzip zstd
-    header {
-        X-Frame-Options DENY
-        X-Content-Type-Options nosniff
+    log {
+        output file /var/log/caddy/alo_education_access.log
+    }
+    reverse_proxy 127.0.0.1:3025 {
+        header_up Host {host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Real-IP {remote_host}
     }
 }
 ```
 
 ```bash
-caddy reload --config /etc/caddy/Caddyfile
+sudo cp Caddyfile /etc/caddy/Caddyfile
+sudo systemctl reload caddy
 ```
 
-### Step 9: Start Mini-Services
+### Step 7: Verify
 
 ```bash
-cd mini-services/university-monitor && bun install && pm2 start index.ts --name university-monitor --interpreter bun && cd ../..
-cd mini-services/sla-monitor && bun install && pm2 start index.ts --name sla-monitor --interpreter bun && cd ../..
-cd mini-services/follow-up-sender && bun install && pm2 start index.ts --name follow-up-sender --interpreter bun && cd ../..
+curl -fsS http://127.0.0.1:3025/api/health
+pm2 logs alo-education
+curl -fsS https://aloeducation.com/api/health
 ```
-
-### Step 10: Verify
-
-```bash
-curl https://aloeducation.com/api/health
-pm2 status
-```
-
-## Environment Variables
-
-See `.env.example` for all required variables.
 
 ## Production Memory Settings
 
 ```bash
 # Set in environment or PM2 config:
 PRISMA_CLIENT_ENGINE_TYPE=binary
-NODE_OPTIONS="--max-old-space-size=1536"
+NODE_OPTIONS="--max-old-space-size=4096"
+RAYON_NUM_THREADS=1
+UV_THREADPOOL_SIZE=1
+NEXT_PRIVATE_BUILD_WORKER=0
 ```
 
 ## Database Provider
 
 - **Production:** MySQL 8 (`provider = "mysql"` in schema.prisma)
-- **Development:** SQLite (switch temporarily for local dev)
+- **Connection:** via `DATABASE_URL` env var
+- **Migrations:** `npx prisma migrate deploy` (never `db push` in prod)
 
 ## Backup Strategy
 
 ```bash
 # Daily MySQL backup (cron)
-0 2 * * * mysqldump -u user_edu -p'Alo_Edu_2026!' db_education | gzip > /backup/db_$(date +\%Y\%m\%d).sql.gz
+0 2 * * * mysqldump -u aloeduca_ALO_final_web_crm -p'YOUR_PASSWORD' aloeduca_alo_education | gzip > /backup/db_$(date +\%Y\%m\%d).sql.gz
 
 # Weekly storage backup
-0 3 * * 0 rsync -av /mnt/ssd1/ /backup/ssd1/
-0 3 * * 0 rsync -av /mnt/ssd2/ /backup/ssd2/
+0 3 * * 0 rsync -av /home/aloeduca/alo-education/storage/ /backup/storage/
 
 # Keep 30 days
 0 4 * * * find /backup -name "*.sql.gz" -mtime +30 -delete
+
+# Restore:
+# gunzip < /backup/db_YYYYMMDD.sql.gz | mysql -u USER -p DATABASE
 ```
 
 ## Troubleshooting
@@ -154,26 +193,33 @@ NODE_OPTIONS="--max-old-space-size=1536"
 ### Server Won't Start
 ```bash
 lsof -i :3025
-pm2 logs alo-education
+ss -lntp | grep 3025
+pm2 logs alo-education --lines 100
+pm2 describe alo-education
 ```
 
 ### Database Connection Failed
 ```bash
-mysql -u user_edu -p'Alo_Edu_2026!' db_education -e "SELECT 1"
+mysql -u aloeduca_ALO_final_web_crm -p aloeduca_alo_education -e "SELECT 1"
+# Check DATABASE_URL encoding — special chars must be URL-encoded
 ```
 
 ### Prisma Client Error
 ```bash
-# For dev (SQLite):
-sed -i 's/provider = "mysql"/provider = "sqlite"/' prisma/schema.prisma
-DATABASE_URL="file:./db/custom.db" bunx prisma generate
-
-# For production (MySQL):
-sed -i 's/provider = "sqlite"/provider = "mysql"/' prisma/schema.prisma
-bunx prisma generate
+npx prisma generate
+npx prisma validate
+# Ensure DATABASE_URL is set
 ```
 
 ### OOM (Out of Memory)
 - Ensure 8GB+ RAM in production
 - Set `PRISMA_CLIENT_ENGINE_TYPE=binary`
-- Prisma logging: `['error']` only (not `['query']`)
+- Build uses `NODE_OPTIONS='--max-old-space-size=4096'` (already in package.json)
+- Runtime uses `['error']` log level only (fixed in src/lib/db.ts)
+
+### Caddy / SSL
+```bash
+sudo systemctl status caddy
+sudo journalctl -u caddy --since "5 minutes ago"
+sudo caddy fmt --overwrite /etc/caddy/Caddyfile
+```

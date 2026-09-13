@@ -5,7 +5,7 @@ yourdomain.com {
 		output file /var/log/caddy/alo_education_access.log
 	}
 
-	reverse_proxy 127.0.0.1:3000 {
+	reverse_proxy 127.0.0.1:3025 {
 		header_up Host {host}
 		header_up X-Forwarded-For {remote_host}
 		header_up X-Forwarded-Proto {scheme}

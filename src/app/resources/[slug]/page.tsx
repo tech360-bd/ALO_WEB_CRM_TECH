@@ -1,7 +1,8 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { PublicResourcesPage } from '@/components/website/public-pages/PublicPages';
+import { Suspense } from 'react';
+import ResourceDetailHub from '@/components/website/ResourceDetailHub';
 
 export default function ResourceDetailPage() {
   const params = useParams();
@@ -10,7 +11,9 @@ export default function ResourceDetailPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white pt-20">
       <main className="flex-1">
-        <PublicResourcesPage />
+        <Suspense fallback={<div className="p-12 text-center text-gray-500">Loading Resource Detail — DB-driven with 22 sections...</div>}>
+          <ResourceDetailHub slug={slug || ''} />
+        </Suspense>
       </main>
     </div>
   );

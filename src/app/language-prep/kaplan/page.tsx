@@ -1,0 +1,15 @@
+import { Metadata } from 'next';
+import TestDetailView from '@/components/language-prep/TestDetailView';
+import { getTestBySlug } from '@/lib/language-prep/data';
+
+const test = getTestBySlug('kaplan');
+
+export const metadata: Metadata = {
+  title: test?.seoTitle || 'kaplan Preparation | Requirements, Format & Study Abroad Guidance | ALO Education',
+  description: test?.seoDescription || 'Prepare for kaplan with expert guidance from ALO Education.',
+  alternates: { canonical: 'https://aloeducation.com/language-prep/kaplan' },
+};
+
+export default function Page() {
+  return <TestDetailView slug="kaplan" />;
+}

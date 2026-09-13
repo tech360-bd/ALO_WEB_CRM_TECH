@@ -1,159 +1,112 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { logSecurityAudit, validateRequestAccess } from '@/lib/access-control/central-security-engine';
-import { sendEmail } from '@/lib/email-service';
-import crypto from 'crypto';
+import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
 
-export async function POST(req: Request) {
+export async function GET(req: NextRequest) {
   try {
-    const body = await req.json();
-    const {
-      adminId,
-      fullName,
-      companyEmail,
-      personalEmail,
-      phone,
-      designation,
-      department,
-      branch,
-      office,
-      role,
-      reportingManagerId,
-      joiningDate,
-    } = body;
+    const authResult = await authenticateRequest(req);
+    if (authResult instanceof NextResponse) return authResult;
+    const auth = authResult as AuthContext;
 
-    if (!adminId || !fullName || !companyEmail) {
-      return NextResponse.json({ error: 'Missing required employee creation parameters.' }, { status: 400 });
+    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('hr_manager');
+    if (!isSuper) return NextResponse.json({ success: false, error: 'Admin/HR/Super Admin required' }, { status: 403 });
+
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get('search') || '';
+    const role = searchParams.get('role') || '';
+    const department = searchParams.get('department') || '';
+    const branch = searchParams.get('branch') || '';
+    const status = searchParams.get('status') || '';
+
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { name: { contains: search } },
+        { email: { contains: search } },
+        { employeeId: { contains: search } },
+      ];
     }
+    if (role) where.role = role;
+    if (department) where.department = department;
+    if (branch) where.branch = branch;
+    if (status) where.status = status;
 
-    // 1. Validate authorization
-    const access = await validateRequestAccess({ userId: adminId }, 'employees', 'create');
-    if (!access.allowed) {
-      return NextResponse.json({ error: access.reason || 'Unauthorized' }, { status: 403 });
-    }
+    const employees = await db.employee.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    }).catch(() => []);
 
-    // 2. Check existing user
-    const existingUser = await db.user.findFirst({
-      where: { OR: [{ email: companyEmail }, { email: personalEmail || companyEmail }] },
-    });
+    const portalUsers = await db.portalUser.findMany({
+      where: { userType: { not: 'STUDENT' } },
+      take: 100,
+      include: { roles: { include: { role: true } } },
+    }).catch(() => []);
 
-    if (existingUser) {
-      return NextResponse.json({ error: 'User with this company or personal email already exists.' }, { status: 400 });
-    }
-
-    // 3. Create User & Employee in Database
-    const newUser = await db.user.create({
-      data: {
-        name: fullName,
-        email: companyEmail,
-        role: role || 'employee',
-      },
-    });
-
-    const empCode = `ALO-EMP-${Math.floor(1000 + Math.random() * 9000)}`;
-
-    const newEmp = await db.employee.create({
-      data: {
-        userId: newUser.id,
-        employeeId: empCode,
-        name: fullName,
-        email: companyEmail,
-        phone: phone || '',
-        designation: designation || 'Counselor',
-        department: department || 'Counseling',
-        branch: branch || 'Dhaka Main',
-        role: role || 'employee',
-        status: 'invited',
-      },
-    });
-
-    await db.employeeHRProfile.create({
-      data: {
-        employeeId: newEmp.id,
-        officialEmail: companyEmail,
-        officialPhone: phone || '',
-        branch: branch || 'Dhaka Main',
-        designation: designation || 'Counselor',
-        department: department || 'Counseling',
-        joiningDate: joiningDate || new Date().toISOString().split('T')[0],
-        managerId: reportingManagerId || '',
-      },
-    });
-
-    // 4. Generate Cryptographically Secure One-Time Activation Token
-    const rawToken = crypto.randomBytes(32).toString('hex');
-    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 Days Expiry
-
-    await db.employeeActivationToken.create({
-      data: {
-        employeeId: newEmp.id,
-        tokenHash,
-        expiresAt,
-        status: 'active',
-      },
-    });
-
-    // 5. Send Activation Email
-    const activationLink = `https://aloeducation.com/employee/activate?token=${rawToken}&email=${encodeURIComponent(companyEmail)}`;
-    
-    await sendEmail({
-      to: companyEmail,
-      subject: 'Activate your ALO Education employee account',
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; rounded: 12px;">
-          <h2 style="color: #0057B8;">Welcome to ALO Education</h2>
-          <p>Dear ${fullName},</p>
-          <p>Your official employee account has been created with designation <strong>${designation || 'Counselor'}</strong>.</p>
-          <p>Please click the button below to set your password and activate your account:</p>
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${activationLink}" style="background-color: #E8501A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Activate My Account →</a>
-          </div>
-          <p style="font-size: 12px; color: #64748B;">This link is valid for 7 days and can only be used once.</p>
-        </div>
-      `,
-    });
-
-    // 6. Security Audit Log
-    await logSecurityAudit({
-      actorId: adminId,
-      actorRole: 'Admin',
-      action: 'EMPLOYEE_ACCOUNT_CREATED',
-      targetType: 'Employee',
-      targetId: newEmp.id,
-      newValue: JSON.stringify({ companyEmail, designation, empCode }),
-    });
+    // Launcher cards with active users, pending tasks, alerts
+    const launcherCards = employees.map((emp: any) => ({
+      id: emp.id,
+      userId: emp.userId,
+      employeeId: emp.employeeId,
+      name: emp.name,
+      email: emp.email,
+      role: emp.role,
+      designation: emp.designation,
+      department: emp.department,
+      branch: emp.branch,
+      status: emp.status,
+      isOnline: emp.isOnline,
+      dashboard: `/employee/${emp.role.toLowerCase().replace(/_/g, '-')}-dashboard`,
+      actions: ['OPEN DASHBOARD', 'ACTING-AS', 'PERMISSIONS', 'ACTIVITY', 'AUDIT'],
+    }));
 
     return NextResponse.json({
       success: true,
-      message: 'Employee account created and activation email dispatched.',
-      employee: newEmp,
+      employees,
+      portalUsers,
+      launcherCards,
+      count: employees.length,
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error?.message || 'Server error creating employee account.' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
-export async function GET(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const adminId = searchParams.get('adminId');
+    const authResult = await authenticateRequest(req);
+    if (authResult instanceof NextResponse) return authResult;
+    const auth = authResult as AuthContext;
 
-    if (!adminId) {
-      return NextResponse.json({ error: 'Missing adminId parameter' }, { status: 400 });
+    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
+    if (!isSuper) return NextResponse.json({ success: false, error: 'Super Admin required' }, { status: 403 });
+
+    const body = await req.json();
+    const { action, targetUserId, reason } = body;
+    if (!action || !targetUserId) return NextResponse.json({ success: false, error: 'action and targetUserId required' }, { status: 400 });
+
+    let result;
+    switch (action) {
+      case 'suspend':
+        result = await db.portalUser.update({ where: { id: targetUserId }, data: { status: 'suspended' } }).catch(() => null);
+        break;
+      case 'reactivate':
+        result = await db.portalUser.update({ where: { id: targetUserId }, data: { status: 'active' } }).catch(() => null);
+        break;
+      case 'revoke_sessions':
+        result = await db.portalSession.updateMany({ where: { userId: targetUserId }, data: { revokedAt: new Date() } }).catch(() => null);
+        break;
+      case 'force_password_change':
+        result = await db.portalUser.update({ where: { id: targetUserId }, data: { firstLoginRequired: true } }).catch(() => null);
+        break;
+      default:
+        return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
     }
 
-    const access = await validateRequestAccess({ userId: adminId }, 'employees', 'view');
-    if (!access.allowed) {
-      return NextResponse.json({ error: access.reason || 'Unauthorized' }, { status: 403 });
-    }
+    await logAuditAction(auth, `EMPLOYEE_${action.toUpperCase()}`, 'PortalUser', targetUserId, { reason, action });
 
-    const employees = await db.employee.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return NextResponse.json({ employees });
+    return NextResponse.json({ success: true, message: `Employee ${action} completed`, result });
   } catch (error: any) {
-    return NextResponse.json({ error: error?.message || 'Server error fetching employees' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

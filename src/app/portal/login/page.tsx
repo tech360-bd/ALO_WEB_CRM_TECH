@@ -1,7 +1,13 @@
-export default function Page() {
+'use client';
+
+import PortalSelector from '@/components/portals/PortalSelector';
+
+export default function PortalLoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0d1526] text-white">
-      <h1 className="text-2xl font-bold">Development in Progress</h1>
+    <div className="min-h-screen flex flex-col bg-white pt-20">
+      <main className="flex-1">
+        <PortalSelector />
+      </main>
     </div>
   );
 }
