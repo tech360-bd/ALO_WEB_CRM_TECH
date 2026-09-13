@@ -91,30 +91,32 @@ export async function checkQuotaBeforeAction(
   };
 }
 
-// 4. Record usage in current billing period
+// 4. Record usage atomically (prevents race on simultaneous generates)
 export async function recordUsage(ownerType: string, ownerId: string, featureKey: string): Promise<void> {
   const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
-
-  let usage = await db.partnerMarketingUsage.findFirst({
-    where: { partnerId: ownerId, monthYear: currentMonth },
-    orderBy: { createdAt: 'desc' },
-  }).catch(() => null);
-
-  if (!usage) {
-    usage = await db.partnerMarketingUsage.create({
-      data: { partnerId: ownerId, monthYear: currentMonth, imagesUsed: 0, videosUsed: 0 },
-    });
-  }
-
   const isImage = featureKey === 'monthly_images' || featureKey === 'MARKETING_IMAGE_GENERATION';
   const isVideo = featureKey === 'monthly_videos' || featureKey === 'MARKETING_VIDEO_GENERATION';
 
-  await db.partnerMarketingUsage.update({
-    where: { id: usage.id },
-    data: {
-      imagesUsed: isImage ? usage.imagesUsed + 1 : usage.imagesUsed,
-      videosUsed: isVideo ? usage.videosUsed + 1 : usage.videosUsed,
+  // Upsert ensures single row per partner+month (unique should be on [partnerId,monthYear]); then atomic increment
+  const usage = await db.partnerMarketingUsage.upsert({
+    where: { partnerId_monthYear: { partnerId: ownerId, monthYear: currentMonth } } as any,
+    update: {
+      imagesUsed: isImage ? { increment: 1 } : undefined,
+      videosUsed: isVideo ? { increment: 1 } : undefined,
+    } as any,
+    create: {
+      partnerId: ownerId,
+      monthYear: currentMonth,
+      imagesUsed: isImage ? 1 : 0,
+      videosUsed: isVideo ? 1 : 0,
     },
+  }).catch(async () => {
+    // Fallback if @@unique([partnerId,monthYear]) not yet migrated — use findFirst+update transaction
+    return await db.$transaction(async (tx: any) => {
+      let u = await tx.partnerMarketingUsage.findFirst({ where: { partnerId: ownerId, monthYear: currentMonth }, orderBy: { createdAt: 'desc' } });
+      if (!u) u = await tx.partnerMarketingUsage.create({ data: { partnerId: ownerId, monthYear: currentMonth, imagesUsed: 0, videosUsed: 0 } });
+      return await tx.partnerMarketingUsage.update({ where: { id: u.id }, data: { imagesUsed: isImage ? u.imagesUsed + 1 : u.imagesUsed, videosUsed: isVideo ? u.videosUsed + 1 : u.videosUsed } });
+    });
   });
 
   await db.crmAuditLog.create({
