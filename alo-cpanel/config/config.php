@@ -27,10 +27,43 @@ define('MAIL_PASSWORD', '');
 define('MAIL_FROM', 'noreply@aloeducation.com');
 define('MAIL_FROM_NAME', 'ALO Education');
 
-// ─── WhatsApp (optional — leave empty if not configured) ───
-define('WA_API_URL', '');
-define('WA_API_TOKEN', '');
-define('WA_PHONE_NUMBER', '');
+// ─── WhatsApp Cloud API (Meta Graph v20.0) — official 01805020100-019 pool ───
+define('WHATSAPP_VERIFY_TOKEN', getenv('WHATSAPP_VERIFY_TOKEN') ?: 'CHANGE_ME');
+define('WHATSAPP_ACCESS_TOKEN', getenv('WHATSAPP_ACCESS_TOKEN') ?: '');
+define('WHATSAPP_PHONE_NUMBER_ID', getenv('WHATSAPP_PHONE_NUMBER_ID') ?: '');
+define('WHATSAPP_BUSINESS_ACCOUNT_ID', getenv('WHATSAPP_BUSINESS_ACCOUNT_ID') ?: '');
+define('WHATSAPP_GRAPH_VERSION', getenv('WHATSAPP_GRAPH_VERSION') ?: 'v20.0');
+define('WHATSAPP_APP_SECRET', getenv('WHATSAPP_APP_SECRET') ?: '');
+define('WA_API_URL', 'https://graph.facebook.com/' . WHATSAPP_GRAPH_VERSION);
+define('WA_API_TOKEN', WHATSAPP_ACCESS_TOKEN);
+define('WA_PHONE_NUMBER', WHATSAPP_PHONE_NUMBER_ID);
+// Legacy fallback
+if (!defined('WHATSAPP_DEFAULT_PHONE_NUMBER_ID')) define('WHATSAPP_DEFAULT_PHONE_NUMBER_ID', WHATSAPP_PHONE_NUMBER_ID);
+if (!defined('WHATSAPP_DEFAULT_BUSINESS_ACCOUNT_ID')) define('WHATSAPP_DEFAULT_BUSINESS_ACCOUNT_ID', WHATSAPP_BUSINESS_ACCOUNT_ID);
+
+// ─── ALO Official Numbers (BD) ───
+define('ALO_MAIN_WHATSAPP_NUMBER', getenv('ALO_MAIN_WHATSAPP_NUMBER') ?: '01805020100');
+define('ALO_COMPLAINT_WHATSAPP_NUMBER', getenv('ALO_COMPLAINT_WHATSAPP_NUMBER') ?: '01805020100');
+define('ALO_FOLLOWUP_WHATSAPP_NUMBER', getenv('ALO_FOLLOWUP_WHATSAPP_NUMBER') ?: '01805020100');
+define('ALO_COO_WHATSAPP_NUMBER', getenv('ALO_COO_WHATSAPP_NUMBER') ?: '01805020101');
+define('ALO_24_7_SUPPORT_NUMBER', getenv('ALO_24_7_SUPPORT_NUMBER') ?: '01805020101');
+define('ALO_EMPLOYEE_WHATSAPP_START', getenv('ALO_EMPLOYEE_WHATSAPP_START') ?: '01805020102');
+define('ALO_EMPLOYEE_WHATSAPP_END', getenv('ALO_EMPLOYEE_WHATSAPP_END') ?: '01805020119');
+
+// ─── OpenRouter AI ───
+define('OPENROUTER_API_KEY', getenv('OPENROUTER_API_KEY') ?: '');
+define('OPENROUTER_MODEL', getenv('OPENROUTER_MODEL') ?: 'meta-llama/llama-3.1-8b-instruct:free');
+define('OPENROUTER_SITE_URL', getenv('OPENROUTER_SITE_URL') ?: 'https://crm.aloeducation.com');
+define('OPENROUTER_APP_NAME', getenv('OPENROUTER_APP_NAME') ?: 'ALO Education WhatsApp AI');
+
+// ─── Office hours (Asia/Dhaka) ───
+define('OFFICE_TIMEZONE', 'Asia/Dhaka');
+define('OFFICE_START_TIME', '09:00');
+define('OFFICE_END_TIME', '18:00');
+define('OFFICE_CLOSED_DAY', 'Friday');
+define('SLA_EMPLOYEE_MINUTES', 30);
+define('SLA_BRANCH_MANAGER_MINUTES', 20);
+define('SLA_CEO_MINUTES', 10);
 
 // ─── SMS (optional) ───
 define('SMS_API_URL', '');

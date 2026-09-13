@@ -141,4 +141,20 @@ return [
         'notifications.view'   => 'View Notifications',
         'notifications.manage' => 'Manage Notifications',
     ],
+
+    'whatsapp' => [
+        'whatsapp.view'       => 'View WhatsApp Conversations',
+        'whatsapp.send'       => 'Send WhatsApp Messages',
+        'whatsapp.numbers'    => 'Manage WhatsApp Numbers (01805020100-019)',
+        'whatsapp.assign'     => 'Assign WhatsApp Numbers to Employees',
+        'whatsapp.sla'        => 'View SLA & Alarms',
+        'whatsapp.escalate'   => 'Escalate / Handover Conversations',
+        'whatsapp.documents'  => 'View Private Documents',
+        'whatsapp.analytics'  => 'View WhatsApp Analytics',
+    ],
+
+    'sla' => [
+        'sla.view'    => 'View SLA Events',
+        'sla.manage'  => 'Manage SLA',
+    ],
 ];
