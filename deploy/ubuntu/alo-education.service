@@ -1,6 +1,6 @@
 [Unit]
 Description=ALO Education ERP (Next.js standalone)
-Documentation=https://alo-education.local/
+Documentation=https://aloeducation.com
 After=network-online.target
 Wants=network-online.target
 
@@ -8,12 +8,12 @@ Wants=network-online.target
 Type=simple
 User=alo
 Group=alo
-WorkingDirectory=/opt/alo-education
-EnvironmentFile=/opt/alo-education/.env
+WorkingDirectory=/root/alo-github-main-new
+EnvironmentFile=/root/alo-github-main-new/.env
 Environment=NODE_ENV=production
-Environment=HOSTNAME=127.0.0.1
-Environment=PORT=3000
-ExecStart=/usr/bin/node /opt/alo-education/.next/standalone/server.js
+Environment=HOSTNAME=0.0.0.0
+Environment=PORT=3044
+ExecStart=/usr/bin/node /root/alo-github-main-new/.next/standalone/server.js
 Restart=on-failure
 RestartSec=5
 StandardOutput=append:/var/log/alo-education/app.log
@@ -27,7 +27,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/alo-education /var/log/alo-education
+ReadWritePaths=/root/alo-github-main-new /root/alo-shared /root/alo-releases /var/log/alo-education
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true

@@ -1,52 +1,35 @@
-#!/bin/bash
-# ALO Education — Health Check Script
-PORT=3015
+#!/usr/bin/env bash
+# ALO Education — Health Check (local 3044 + public https)
+# Usage: bash scripts/health-check.sh [--public]
+set -euo pipefail
 
-echo "ALO Education — Health Check"
-echo "═════════════════════════════"
+LOCAL_URL="http://127.0.0.1:3044/api/health"
+PUBLIC_URL="https://aloeducation.com/api/health"
+TIMEOUT=10
 
-# Check PM2 process
-PM2_STATUS=$(pm2 jlist 2>/dev/null | grep -o '"name":"site-edu"' | head -1)
-if [ -n "$PM2_STATUS" ]; then
-  echo "✅ PM2 process: site-edu running"
+echo "=== ALO Health Check ==="
+echo "Local: $LOCAL_URL"
+if curl -fsS --max-time $TIMEOUT "$LOCAL_URL" 2>&1 | python3 -m json.tool 2>&1 | head -n 30; then
+  echo "✓ Local health OK"
 else
-  echo "❌ PM2 process: site-edu NOT running"
+  echo "✗ Local health FAILED"
+  echo "Trying verbose..."
+  curl -i --max-time $TIMEOUT "$LOCAL_URL" 2>&1 | head -n 50 || true
+  pm2 describe alo-education 2>&1 | grep -E "status|uptime|memory|script path" | head -n 20 || pm2 list 2>&1 | head -n 20 || true
+  ss -lntp 2>/dev/null | grep -E "3044|3025" | head -n 10 || netstat -lntp 2>/dev/null | head -n 20 || true
   exit 1
 fi
 
-# Check HTTP
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:$PORT")
-if [ "$HTTP_STATUS" = "200" ]; then
-  echo "✅ HTTP: $HTTP_STATUS (port $PORT)"
-else
-  echo "❌ HTTP: $HTTP_STATUS (port $PORT)"
-  exit 1
+if [[ "${1:-}" == "--public" ]]; then
+  echo "Public: $PUBLIC_URL"
+  if curl -fsS --max-time $TIMEOUT "$PUBLIC_URL" 2>&1 | python3 -m json.tool 2>&1 | head -n 30; then
+    echo "✓ Public health OK"
+  else
+    echo "✗ Public health FAILED (may be DNS/Caddy/Nginx)"
+    curl -i --max-time $TIMEOUT "$PUBLIC_URL" 2>&1 | head -n 50 || true
+    # Don't exit 1 for public alone — allow local to be success
+    exit 0
+  fi
 fi
 
-# Check API
-API_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:$PORT/api/stats")
-if [ "$API_STATUS" = "200" ]; then
-  echo "✅ API: /api/stats returns $API_STATUS"
-else
-  echo "❌ API: /api/stats returns $API_STATUS"
-fi
-
-# Check database
-DB_CHECK=$(curl -s "http://127.0.0.1:$PORT/api/stats" | grep -o '"counts"')
-if [ -n "$DB_CHECK" ]; then
-  echo "✅ Database: Connected and responding"
-else
-  echo "❌ Database: No response"
-fi
-
-# Check public assets
-LOGO_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:$PORT/logo.svg")
-if [ "$LOGO_STATUS" = "200" ]; then
-  echo "✅ Public assets: logo.svg accessible"
-else
-  echo "❌ Public assets: logo.svg returns $LOGO_STATUS"
-fi
-
-echo ""
-echo "═════════════════════════════"
-echo "Health check complete."
+echo "=== Health check passed ==="

@@ -1,4 +1,4 @@
-# Production Rollback — Safe Procedure (ALO Education)
+# Production Rollback — Safe Procedure (ALO Education — 3044 / /root/alo-github-main-new)
 
 This guide shows how to revert a failed production deployment without losing `.env`, uploads, or audit history.
 
@@ -9,8 +9,9 @@ This guide shows how to revert a failed production deployment without losing `.e
 Every run of `.github/workflows/deploy-production.yml` (the `Deploy to VPS` step) does before checkout:
 
 ```bash
-DEPLOY_DIR=/root/alo-live
-BACKUP_DIR=$DEPLOY_DIR/.deploy-backup-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)
+APP_DIR=/root/alo-github-main-new
+BACKUP_BASE=/root/alo-releases/backups
+BACKUP_DIR=$BACKUP_BASE/pre-$(git rev-parse --short HEAD)-$(date +%Y%m%d-%H%M%S)
 mkdir -p "$BACKUP_DIR"
 cp -a .env "$BACKUP_DIR/.env"                # production secrets
 cp -a storage "$BACKUP_DIR/storage"          # documents
@@ -21,9 +22,9 @@ cp -a public/uploads "$BACKUP_DIR/public_uploads"
 The previous commit SHA is recorded in the workflow logs as `Deployed: <SHA_before>` and `Target: <SHA_after>`. You can also find it via:
 
 ```bash
-cd /root/alo-live
+cd /root/alo-github-main-new
 git reflog | head -n 20
-ls -lt .deploy-backup* | head -n 20
+ls -lt /root/alo-releases/backups/pre-* | head -n 20
 ```
 
 ---
@@ -31,7 +32,7 @@ ls -lt .deploy-backup* | head -n 20
 ## 2. When to rollback
 
 * `pm2 describe alo-education` shows `errored` / `stopped` instead of `online`.
-* `curl http://127.0.0.1:3000/api/health` returns non-200 or `"status":"degraded"` with DB error, or connection refused.
+* `curl http://127.0.0.1:3044/api/health` returns non-200 or `"status":"degraded"` with DB error, or connection refused.
 * Logs show `Error: Cannot find module`, Prisma `P3009` migration drift, or `WHATSAPP_APP_SECRET` misconfiguration after deploy.
 * Any post-deploy check in `docs/VPS-GITHUB-DEPLOYMENT.md` step 11 fails.
 
@@ -39,21 +40,21 @@ ls -lt .deploy-backup* | head -n 20
 
 ## 3. Rollback steps (on VPS, as DEPLOY_USER)
 
-> Placeholders: `YOUR_DEPLOY_DIR` (e.g. `/root/alo-live`), `YOUR_PM2_NAME` (`alo-education`), `YOUR_HEALTH_PORT` (`3000` or `3025`), `PREVIOUS_SHA` (the commit you want to return to), `BACKUP_DIR` (the backup created by the failed deploy).
+> Placeholders: `/root/alo-github-main-new` (e.g. `/root/alo-github-main-new`), `alo-education` (`alo-education`), `3044` (`3000` or `3025`), `PREVIOUS_SHA` (the commit you want to return to), `BACKUP_DIR` (the backup created by the failed deploy).
 
 ### 3.1 Identify the previously working commit
 
 ```bash
-cd YOUR_DEPLOY_DIR
+cd /root/alo-github-main-new
 git log --oneline -10
 # or
 git reflog | head -n 20
 # The commit before the failed deploy is usually:
 PREVIOUS_SHA=$(git rev-parse HEAD~1)
 # Or pick explicitly: PREVIOUS_SHA=abc1234def...
-# The backup directory name contains the short SHA: .deploy-backup-20260913-123456-abc1234
-ls -lt .deploy-backup* | head -n 10
-BACKUP_DIR=$(ls -td .deploy-backup* | head -n 1)
+# The backup directory name contains the short SHA: /root/alo-releases/backups/pre-20260913-123456-abc1234
+ls -lt /root/alo-releases/backups/pre-* | head -n 10
+BACKUP_DIR=$(ls -td /root/alo-releases/backups/pre-* | head -n 1)
 echo "PREVIOUS_SHA=$PREVIOUS_SHA"
 echo "BACKUP_DIR=$BACKUP_DIR"
 ```
@@ -61,7 +62,7 @@ echo "BACKUP_DIR=$BACKUP_DIR"
 ### 3.2 Restore code (without losing .env / uploads)
 
 ```bash
-cd YOUR_DEPLOY_DIR
+cd /root/alo-github-main-new
 # Preserve current .env just in case
 cp .env /tmp/current-env-$(date +%Y%m%d-%H%M%S) 2>/dev/null || true
 
@@ -99,21 +100,21 @@ Do **not** run `prisma migrate reset` on production — it drops data.
 
 ```bash
 npm run build 2>&1 | tail -n 50
-pm2 describe YOUR_PM2_NAME 2>&1 | grep -E 'status|script path|cwd|uptime' || pm2 list
-pm2 reload YOUR_PM2_NAME --update-env || pm2 start ecosystem.config.cjs --env production
+pm2 describe alo-education 2>&1 | grep -E 'status|script path|cwd|uptime' || pm2 list
+pm2 reload alo-education --update-env || pm2 start ecosystem.config.cjs --env production
 pm2 save
 sleep 5
-curl -fsS http://127.0.0.1:YOUR_HEALTH_PORT/api/health | python3 -m json.tool
+curl -fsS http://127.0.0.1:3044/api/health | python3 -m json.tool
 # Expect {"status":"ok","database":{"connected":true}}
 ```
 
 ### 3.5 Verify via GitHub
 
 ```bash
-cd YOUR_DEPLOY_DIR
+cd /root/alo-github-main-new
 git rev-parse HEAD  # should equal PREVIOUS_SHA
-pm2 describe YOUR_PM2_NAME | grep -q "online" && echo "PM2 online"
-curl -fsS http://127.0.0.1:YOUR_HEALTH_PORT/api/health | grep -q '"status"' && echo "Health OK"
+pm2 describe alo-education | grep -q "online" && echo "PM2 online"
+curl -fsS http://127.0.0.1:3044/api/health | grep -q '"status"' && echo "Health OK"
 ```
 
 If you triggered the deploy via GitHub Actions, you can also roll back by re-running the workflow with `ref = PREVIOUS_SHA` — it will safely check out that exact SHA with the same backup/preserve logic.
@@ -124,7 +125,7 @@ If you triggered the deploy via GitHub Actions, you can also roll back by re-run
 
 | Preserved (never overwritten) | Reverted to previous commit |
 |---|---|
-| `YOUR_DEPLOY_DIR/.env` (production secrets) | `src/`, `prisma/schema.prisma`, `package.json`, `next.config.ts`, etc. |
+| `/root/alo-github-main-new/.env` (production secrets) | `src/`, `prisma/schema.prisma`, `package.json`, `next.config.ts`, etc. |
 | `storage/`, `uploads/`, `public/uploads` (documents) | ` .next/`, `node_modules/` (rebuilt) |
 | `WhatsAppOfficialNumber` rows, `AloAuditLog`, `ApplicationDocument` version history (DB) | Code and `ecosystem.config.cjs`, `Caddyfile` |
 | `WhatsAppNumberAssignmentAudit` history | Workflow file `.github/workflows/deploy-production.yml` |
@@ -151,4 +152,4 @@ Log the incident in `docs/audits/FINAL_SYSTEM_AUDIT.md` (or your incident tracke
 
 * Failed SHA, previous SHA, time, `pm2 logs --lines 200`, `curl /api/health` output, `git reflog`, `BACKUP_DIR` path, DB migration status, resolution.
 
-Never delete ` .deploy-backup*` until the incident is closed — they contain the `.env` at the time of failure.
+Never delete `/root/alo-releases/backups/pre-*` until the incident is closed — they contain the `.env` at the time of failure.
