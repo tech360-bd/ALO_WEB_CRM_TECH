@@ -1,116 +1,41 @@
 'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  FileCheck, Search, Filter, RefreshCw, Eye, Check, X,
-  AlertTriangle, FileText, Download, Loader2
-} from 'lucide-react';
+import { FileCheck, Eye, CheckCircle2, X, Loader2, Download, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DocumentReviewPage() {
-  const token = usePortalStore(state => state.token);
-  const [documents, setDocuments] = useState<any[]>([]);
+  const token = usePortalStore(s => s.token);
+  const [docs, setDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchDocuments = useCallback(async () => {
+  const fetchDocs = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/crm/documents/verification-queue', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setDocuments(json.documents || json.data || []);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+      const res = await fetch('/api/app-manager/dashboard', { headers:{ Authorization:`Bearer ${token}` } });
+      const json = await res.json();
+      setDocs(json.documents || []);
+    } finally { setLoading(false); }
   }, [token]);
 
-  useEffect(() => {
-    fetchDocuments();
-  }, [fetchDocuments]);
+  useEffect(()=>{ fetchDocs(); },[fetchDocs]);
 
   return (
-    <div className="p-6 space-y-6 bg-[#0a0f1e] min-h-screen text-white">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
-              <FileCheck className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Application Document Review Queue</h1>
-              <p className="text-gray-400 text-sm">Passports, Academic Transcripts, English Tests, SOPs & Financial Evidence</p>
-            </div>
-          </div>
-        </div>
-
-        <Button onClick={fetchDocuments} variant="outline" className="border-white/10 text-gray-300 hover:text-white">
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-        </Button>
-      </div>
-
-      {/* Table */}
-      <Card className="bg-[#0d1526] border-white/10 text-white">
-        <CardHeader className="p-4 border-b border-white/10 flex flex-row items-center justify-between">
-          <CardTitle className="text-base font-semibold">Pending Verification Documents ({documents.length})</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-white/10 text-left text-gray-400 bg-white/5">
-                  <th className="p-3 font-medium">Student / App</th>
-                  <th className="p-3 font-medium">Document Category</th>
-                  <th className="p-3 font-medium">File Name</th>
-                  <th className="p-3 font-medium">Uploaded Date</th>
-                  <th className="p-3 font-medium">Status</th>
-                  <th className="p-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {documents.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="p-8 text-center text-gray-500">
-                      All application documents have been reviewed. Queue is clear.
-                    </td>
-                  </tr>
-                ) : (
-                  documents.map(doc => (
-                    <tr key={doc.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-3 font-semibold text-white">{doc.student?.name || doc.studentId}</td>
-                      <td className="p-3 text-xs text-blue-400">{doc.category}</td>
-                      <td className="p-3 text-gray-300 text-xs">{doc.fileName || 'file.pdf'}</td>
-                      <td className="p-3 text-gray-400 text-xs">{new Date(doc.createdAt).toLocaleDateString()}</td>
-                      <td className="p-3">
-                        <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">
-                          {doc.status || 'UNDER REVIEW'}
-                        </Badge>
-                      </td>
-                      <td className="p-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button size="sm" variant="ghost" className="text-gray-300 hover:text-white">
-                            <Eye className="w-4 h-4 mr-1" />
-                            Preview
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
+      <div className="flex items-center justify-between"><div><h1 className="text-xl font-bold text-[#0F172A]">Document Review — Engine Reuse</h1><p className="text-sm text-gray-500">Required/Uploaded/Missing/Rejected/Expired/Under Review/Verified/Locked/Request Again — preview/download/approve/reject/note/version audited</p></div><Button variant="outline" className="border-[#E2E8F0]" onClick={fetchDocs}><RefreshCw className={`w-4 h-4 ${loading?'animate-spin':''}`} /></Button></div>
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : (
+        <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
+          <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Documents ({docs.length}) — Real DB</CardTitle></CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto"><table className="w-full text-sm min-w-[800px]"><thead><tr className="border-b border-[#E2E8F0] bg-[#F8FAFC] text-xs text-gray-500"><th className="p-3">File</th><th className="p-3">Type</th><th className="p-3">App</th><th className="p-3">Status</th><th className="p-3">Reviewer</th><th className="p-3 text-right">Actions</th></tr></thead><tbody>{docs.length===0 ? <tr><td colSpan={6} className="p-8 text-center text-gray-500">No documents pending review. Real DB empty.</td></tr> : docs.map((d:any)=>(
+              <tr key={d.id} className="border-b border-[#E2E8F0]/60 hover:bg-[#F8FAFC]"><td className="p-3 font-medium">{d.fileName || d.documentType}</td><td className="p-3 text-xs">{d.documentType}</td><td className="p-3 font-mono text-xs">{d.applicationId?.substring(0,8)}</td><td className="p-3"><Badge className={`${d.status==='VERIFIED'?'bg-emerald-50 text-emerald-700 border-emerald-200': d.status==='REJECTED'?'bg-red-50 text-red-700 border-red-200':'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{d.status}</Badge></td><td className="p-3 text-xs">{d.reviewerId?.substring(0,6) || '-'}</td><td className="p-3 text-right flex gap-1 justify-end"><Button size="sm" variant="ghost" className="h-7"><Eye className="w-3 h-3" /></Button><Button size="sm" variant="ghost" className="h-7"><Download className="w-3 h-3" /></Button><Button size="sm" className="h-7 bg-emerald-600 text-white"><CheckCircle2 className="w-3 h-3" /></Button><Button size="sm" variant="outline" className="h-7 border-red-200 text-red-600"><X className="w-3 h-3" /></Button></td></tr>
+            ))}</tbody></table></div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

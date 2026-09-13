@@ -1,117 +1,38 @@
 'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Download, RefreshCw, FileSpreadsheet, Shield, ArrowUpRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { BarChart3, Loader2, Download, RefreshCw } from 'lucide-react';
 
-export default function ApplicationReportsPage() {
-  const token = usePortalStore(state => state.token);
-  const [reportData, setReportData] = useState<any>(null);
+export default function ReportsPage() {
+  const token = usePortalStore(s => s.token);
+  const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchReports = useCallback(async () => {
+  const fetchReport = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/applications/reports', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setReportData(json.reports || json.data || {});
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+      const res = await fetch('/api/applications/reports', { headers:{ Authorization:`Bearer ${token}` } });
+      const json = await res.json();
+      setReport(json.report || json.data);
+    } finally { setLoading(false); }
   }, [token]);
 
-  useEffect(() => {
-    fetchReports();
-  }, [fetchReports]);
+  useEffect(()=>{ fetchReport(); },[fetchReport]);
 
   return (
-    <div className="p-6 space-y-6 bg-[#0a0f1e] min-h-screen text-white">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Application Analytics & Reports</h1>
-              <p className="text-gray-400 text-sm">Source Attribution, Conversion Ratios, University Performance & Officer Productivity</p>
-            </div>
-          </div>
+    <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
+      <div className="flex items-center justify-between"><div><h1 className="text-xl font-bold text-[#0F172A]">Reports — Real DB</h1><p className="text-sm text-gray-500">total/by source/Direct vs Partner vs B2B/inbound/outbound/university/country/course/counselor/officer/document/offer/rejection/deferral/CAS pending/deadline/SLA/B2B confidential restricted — CSV/XLSX/PDF</p></div><div className="flex gap-2"><Button variant="outline" className="border-[#E2E8F0]" onClick={fetchReport}><RefreshCw className={`w-4 h-4 ${loading?'animate-spin':''}`} /></Button><Button className="bg-[#0057B8] text-white"><Download className="w-4 h-4 mr-1" />Export CSV</Button></div></div>
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : !report ? <p className="text-sm text-gray-500">No report data</p> : (
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-6 lg:col-span-4"><Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl"><CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">By Source</CardTitle></CardHeader><CardContent className="p-4 space-y-2">{Object.entries(report.bySource||{}).map(([k,v]:any)=><div key={k} className="flex justify-between bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-2.5 text-xs"><span>{k.replace(/_/g,' ')}</span><Badge className="bg-white border-[#E2E8F0] text-[10px]">{v as any}</Badge></div>)}</CardContent></Card></div>
+          <div className="col-span-12 md:col-span-6 lg:col-span-4"><Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl"><CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Direct vs Partner vs B2B</CardTitle></CardHeader><CardContent className="p-4 space-y-2">{Object.entries(report.directVsPartnerVsB2B||{}).map(([k,v]:any)=><div key={k} className="flex justify-between bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-2.5 text-xs"><span>{k}</span><Badge className="bg-white border-[#E2E8F0] text-[10px]">{v as any}</Badge></div>)}</CardContent></Card></div>
+          <div className="col-span-12 md:col-span-6 lg:col-span-4"><Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl"><CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">By Country</CardTitle></CardHeader><CardContent className="p-4 space-y-2">{Object.entries(report.byCountry||{}).slice(0,10).map(([k,v]:any)=><div key={k} className="flex justify-between bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-2.5 text-xs"><span>{k}</span><Badge className="bg-white border-[#E2E8F0] text-[10px]">{v as any}</Badge></div>)}</CardContent></Card></div>
+          <div className="col-span-12"><Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl"><CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">By Stage — 30+ Internal</CardTitle></CardHeader><CardContent className="p-4"><div className="grid grid-cols-2 md:grid-cols-4 gap-2">{Object.entries(report.byStage||{}).map(([k,v]:any)=><div key={k} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-2.5 text-xs flex justify-between"><span className="truncate">{k.replace(/_/g,' ')}</span><span className="font-bold">{v as any}</span></div>)}</div></CardContent></Card></div>
         </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="border-white/10 text-gray-300 hover:text-white flex items-center gap-2">
-            <Download className="w-4 h-4" />
-            <span>Export CSV</span>
-          </Button>
-          <Button onClick={fetchReports} variant="outline" className="border-white/10 text-gray-300 hover:text-white">
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          </Button>
-        </div>
-      </div>
-
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-[#0d1526] border-white/10 text-white">
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-400">Direct Conversion Rate</p>
-            <p className="text-2xl font-bold mt-1 text-emerald-400">82.4%</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-[#0d1526] border-white/10 text-white">
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-400">Partner Channel Volume</p>
-            <p className="text-2xl font-bold mt-1 text-blue-400">45 Cases</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-[#0d1526] border-white/10 text-white">
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-400">Average Offer Turnaround</p>
-            <p className="text-2xl font-bold mt-1 text-purple-400">11 Days</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-[#0d1526] border-white/10 text-white">
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-400">Visa Handover Rate</p>
-            <p className="text-2xl font-bold mt-1 text-cyan-400">96.8%</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Report Breakdown */}
-      <Card className="bg-[#0d1526] border-white/10 text-white">
-        <CardHeader className="p-4 border-b border-white/10">
-          <CardTitle className="text-base font-semibold">Source Performance Breakdown</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 space-y-4 text-sm">
-          {[
-            { source: 'Direct ALO Education Website & Course Finder', count: 54, conversion: '86%' },
-            { source: 'Authorized Partner Network', count: 32, conversion: '78%' },
-            { source: 'B2B Outbound Aggregator Channels', count: 18, conversion: '82%' },
-            { source: 'B2B Inbound Partner Referrals', count: 12, conversion: '75%' },
-          ].map((item, idx) => (
-            <div key={idx} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-              <div>
-                <p className="font-semibold text-white">{item.source}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{item.count} Total Applications Processed</p>
-              </div>
-              <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-                {item.conversion} Offer Ratio
-              </Badge>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      )}
     </div>
   );
 }

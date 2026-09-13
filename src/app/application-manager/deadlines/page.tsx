@@ -1,111 +1,44 @@
 'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, AlertTriangle, RefreshCw, Eye } from 'lucide-react';
-import Link from 'next/link';
+import { Calendar, Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
 
-export default function ApplicationDeadlinesPage() {
-  const token = usePortalStore(state => state.token);
+export default function DeadlinesPage() {
+  const token = usePortalStore(s => s.token);
   const [deadlines, setDeadlines] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
 
   const fetchDeadlines = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/applications/deadlines', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setDeadlines(json.deadlines || []);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+      const params = new URLSearchParams();
+      if (filter!=='all') params.set('due', filter);
+      const res = await fetch(`/api/applications/deadlines?${params.toString()}`, { headers:{ Authorization:`Bearer ${token}` } });
+      const json = await res.json();
+      setDeadlines(json.deadlines || json.data || []);
+    } finally { setLoading(false); }
+  }, [filter, token]);
 
-  useEffect(() => {
-    fetchDeadlines();
-  }, [fetchDeadlines]);
+  useEffect(()=>{ fetchDeadlines(); },[fetchDeadlines]);
 
   return (
-    <div className="p-6 space-y-6 bg-[#0a0f1e] min-h-screen text-white">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-[#E8501A] flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Application Deadlines & Milestones</h1>
-              <p className="text-gray-400 text-sm">University Application Deadlines, Offer Conditions, Deposit Dates & CAS Cutoffs</p>
-            </div>
-          </div>
-        </div>
-
-        <Button onClick={fetchDeadlines} variant="outline" className="border-white/10 text-gray-300 hover:text-white">
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-        </Button>
-      </div>
-
-      {/* Table */}
-      <Card className="bg-[#0d1526] border-white/10 text-white">
-        <CardHeader className="p-4 border-b border-white/10 flex flex-row items-center justify-between">
-          <CardTitle className="text-base font-semibold">Active Tracked Deadlines ({deadlines.length})</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-white/10 text-left text-gray-400 bg-white/5">
-                  <th className="p-3 font-medium">Application</th>
-                  <th className="p-3 font-medium">Deadline Type</th>
-                  <th className="p-3 font-medium">Target Date</th>
-                  <th className="p-3 font-medium">Status</th>
-                  <th className="p-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {deadlines.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="p-8 text-center text-gray-500">
-                      No urgent deadline alerts at this time.
-                    </td>
-                  </tr>
-                ) : (
-                  deadlines.map(d => (
-                    <tr key={d.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-3 font-mono text-xs text-blue-400">{d.applicationId}</td>
-                      <td className="p-3 font-semibold text-white">{d.deadlineType}</td>
-                      <td className="p-3 text-amber-400 font-mono text-xs">{new Date(d.deadlineDate).toLocaleDateString()}</td>
-                      <td className="p-3">
-                        <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">
-                          {d.status}
-                        </Badge>
-                      </td>
-                      <td className="p-3 text-right">
-                        <Link href={`/application-manager/application/${d.applicationId}`}>
-                          <Button size="sm" variant="ghost" className="text-gray-300 hover:text-white">
-                            <Eye className="w-4 h-4 mr-1" />
-                            View
-                          </Button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
+      <div className="flex items-center justify-between"><div><h1 className="text-xl font-bold text-[#0F172A]">Deadline Engine — Real DB</h1><p className="text-sm text-gray-500">Application/Document/Offer Condition/Deposit/CAS/I20/COE/B2B follow-up/University follow-up — DUE_TODAY/3_DAYS/7_DAYS/OVERDUE alerts tasks/notifications</p></div><Button variant="outline" className="border-[#E2E8F0]" onClick={fetchDeadlines}><RefreshCw className={`w-4 h-4 ${loading?'animate-spin':''}`} /></Button></div>
+      <div className="flex gap-2"><select value={filter} onChange={e=>setFilter(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm"><option value="all">All Deadlines</option><option value="OVERDUE">OVERDUE</option><option value="DUE_TODAY">DUE_TODAY</option><option value="3_DAYS">3_DAYS</option><option value="7_DAYS">7_DAYS</option></select><Button className="bg-[#0057B8] text-white" onClick={fetchDeadlines}>Filter</Button></div>
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : (
+        <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
+          <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Deadlines ({deadlines.length})</CardTitle></CardHeader>
+          <CardContent className="p-4 space-y-2">
+            {deadlines.length===0 ? <p className="text-sm text-gray-500 py-6 text-center">No deadlines. Real DB empty — deadline engine will populate DUE_TODAY/3_DAYS/7_DAYS/OVERDUE.</p> : deadlines.map((d:any)=>(
+              <div key={d.id} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 flex items-center justify-between"><div><p className="text-sm font-medium">{d.deadlineType?.replace(/_/g,' ')} — {d.application?.applicationCode || d.applicationId?.substring(0,8)}</p><p className="text-xs text-gray-500">{new Date(d.deadlineDate).toLocaleString()} • {d.application?.universityName}</p></div><Badge className={`${d.status==='OVERDUE'?'bg-red-50 text-red-700 border-red-200': d.status==='DUE_TODAY'?'bg-amber-50 text-amber-700 border-amber-200':'bg-[#F8FAFC] border-[#E2E8F0]'} text-[10px]`}>{d.slaStatus || d.status}</Badge></div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

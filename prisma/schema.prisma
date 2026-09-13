@@ -603,23 +603,80 @@ model StudentAdmissionPreference {
 
 model Application {
   id                 String   @id @default(cuid())
+  applicationCode    String   @unique @default(cuid())
   studentId          String
-  universityName     String   @default("")
-  courseName         String   @default("")
-  country            String   @default("")
-  intake             String   @default("")
-  level              String   @default("")
-  applicationId      String   @default("")
-  stage              String   @default("counseling")
-  status             String   @default("active")
+  partnerId          String?  @default("")
   counselorId        String   @default("")
   counselorName      String   @default("")
   applicationOfficer String   @default("")
+  appTeamOfficerId   String?  @default("")
   visaOfficerId      String   @default("")
+  universityId       String?  @default("")
+  universityName     String   @default("")
+  courseId           String?  @default("")
+  courseName         String   @default("")
+  campusId           String?  @default("")
+  country            String   @default("")
+  intake             String   @default("")
+  intakeId           String?  @default("")
+  level              String   @default("")
+  applicationId      String   @default("")
+  // Source normalization
+  applicationSource  String   @default("DIRECT_ALO_APPLICATION") // DIRECT_ALO_APPLICATION, STUDENT_SELF_APPLICATION, PARTNER_APPLICATION, B2B_INBOUND_APPLICATION, B2B_OUTBOUND_APPLICATION, UNIVERSITY_DIRECT_PORTAL, MANUAL_IMPORT, REFERRAL, EVENT_SEMINAR_LEAD, WEBSITE_COURSE_FINDER_LEAD
+  sourceVisibility   String   @default("public_safe")
+  isB2b              Boolean  @default(false)
+  isB2bConfidential  Boolean  @default(false)
+  b2bType            String?  @default("") // B2B_INBOUND, B2B_OUTBOUND
+  b2bProviderId      String?  @default("")
+  // Pipeline
+  stage              String   @default("APPLICATION_DRAFT") // APPLICATION_DRAFT, PROFILE_REVIEW, DOCUMENT_REVIEW, READY_TO_SUBMIT, SUBMITTED_TO_ALO_APPLICATION_TEAM, SUBMITTED_TO_B2B, SUBMITTED_TO_UNIVERSITY, ACKNOWLEDGEMENT_RECEIVED, DECISION_PENDING, MORE_DOCUMENTS_REQUESTED, INTERVIEW_REQUIRED, CONDITIONAL_OFFER, UNCONDITIONAL_OFFER, REJECTED, DEFERRED, WITHDRAWN, DEPOSIT_PENDING, DEPOSIT_PAID, CAS_PENDING, CAS_RECEIVED, I20_PENDING, I20_RECEIVED, COE_PENDING, COE_RECEIVED, VISA_HANDOVER_READY, VISA_FILE_CREATED, CLOSED
+  safeStatus         String   @default("DRAFT") // DRAFT, UNDER_REVIEW, DOCUMENTS_REQUIRED, SUBMITTED, DECISION_PENDING, OFFER_RECEIVED, REJECTED, DEFERRED, VISA_PREPARATION
+  reviewStatus       String   @default("PENDING") // PENDING, APPROVED, REJECTED, NEEDS_MORE_INFO
+  documentStatus     String   @default("PENDING") // PENDING, COMPLETE, INCOMPLETE, UNDER_REVIEW, VERIFIED
+  paymentStatus      String   @default("PENDING") // PENDING, PAID, PARTIAL, OVERDUE
+  offerStatus        String   @default("PENDING") // PENDING, CONDITIONAL_OFFER, UNCONDITIONAL_OFFER, REJECTED, DEFERRED, WITHDRAWN
+  casI20CoeStatus    String   @default("NOT_STARTED") // NOT_STARTED, PENDING, RECEIVED, etc
+  visaHandoverStatus String   @default("NOT_READY") // NOT_READY, READY, HANDOVER_COMPLETE, VISA_FILE_CREATED
+  status             String   @default("active")
   deadline           String   @default("")
-  notes              String   @default("")
+  deadlineDate       DateTime?
+  // Finance
+  applicationFeeStatus String @default("PENDING")
+  depositStatus      String   @default("PENDING")
+  // SLA
+  slaStatus          String   @default("ON_TRACK") // ON_TRACK, DUE_TODAY, DUE_IN_3_DAYS, DUE_IN_7_DAYS, OVERDUE
+  // Audit
+  createdBy          String?  @default("")
+  updatedBy          String?  @default("")
+  notes              String   @default("") @db.Text
+  internalNotes      String   @default("") @db.Text
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+
+  // Relations
+  b2bApplications    B2bApplication[]
+  statusLogs         ApplicationStatusLog[]
+  comments           ApplicationComment[]
+  documents          ApplicationDocument[]
+  deadlines          ApplicationDeadline[]
+  tasks              ApplicationTask[]
+  notifications      ApplicationNotification[]
+  offer              ApplicationOffer?
+  casI20Coe          ApplicationCasI20Coe?
+  finance            ApplicationFinance?
+
+  @@index([studentId])
+  @@index([partnerId])
+  @@index([counselorId])
+  @@index([applicationOfficer])
+  @@index([universityId])
+  @@index([courseId])
+  @@index([applicationSource])
+  @@index([isB2b])
+  @@index([b2bProviderId])
+  @@index([stage])
+  @@index([safeStatus])
+  @@index([status])
 }
 
 model ApplicationStageHistory {
@@ -5179,4 +5236,298 @@ model EnglishTestComparison {
   updatedAt   DateTime @updatedAt
 
   @@map("english_test_comparisons")
+}
+
+// ============================================================
+// APPLICATION MANAGER PORTAL — B2B CONFIDENTIAL + DIRECT/PARTNER
+// ============================================================
+
+model B2bProvider {
+  id                String   @id @default(cuid())
+  providerCode      String   @unique
+  name              String
+  providerType      String   @default("GLOBAL_B2B") // GLOBAL_B2B, COUNTRY_SPECIFIC_B2B, UNIVERSITY_REPRESENTATIVE, PATHWAY_PROVIDER, AGGREGATOR, SUB_AGENT_NETWORK, DIRECT_UNIVERSITY_CHANNEL
+  countryCoverage   String   @default("[]") // JSON array
+  universityCoverage String  @default("[]") // JSON array
+  contactPerson     String   @default("")
+  email             String   @default("")
+  phone             String   @default("")
+  portalUrl         String   @default("")
+  loginNote         String   @default("") @db.Text // Encrypted / protected — never expose in normal API
+  agreementFile     String   @default("")
+  commissionRule    String   @default("") @db.Text
+  paymentCondition  String   @default("") @db.Text
+  claimStage        String   @default("") // e.g. NOT_CLAIMED, CLAIM_SUBMITTED, CLAIM_APPROVED, PAID
+  status            String   @default("ACTIVE")
+  createdBy         String   @default("")
+  approvedBy        String   @default("")
+  lastReviewedAt    DateTime?
+  internalNote      String   @default("") @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  b2bApplications   B2bApplication[]
+
+  @@index([providerType])
+  @@index([status])
+  @@map("b2b_providers")
+}
+
+model B2bApplication {
+  id                   String   @id @default(cuid())
+  applicationId        String
+  b2bProviderId        String
+  b2bType              String   @default("B2B_OUTBOUND") // B2B_INBOUND, B2B_OUTBOUND
+  b2bReference         String   @default("")
+  submissionRoute      String   @default("B2B_OUTBOUND") // DIRECT_UNIVERSITY_PORTAL, EMAIL, UNIVERSITY_REPRESENTATIVE, B2B_INBOUND, B2B_OUTBOUND, PARTNER_SUBMISSION, MANUAL
+  submittedDate        DateTime? @default(now())
+  acknowledgementNumber String  @default("")
+  portalReference      String   @default("")
+  universityApplicationId String @default("")
+  b2bStatus            String   @default("SUBMITTED") // SUBMITTED, ACKNOWLEDGED, DECISION_PENDING, OFFER_RECEIVED, REJECTED, etc
+  b2bCommissionType    String   @default("")
+  b2bCommissionAmount  Float    @default(0)
+  b2bPaymentCondition  String   @default("")
+  b2bClaimStage        String   @default("NOT_CLAIMED")
+  b2bInternalNote      String   @default("") @db.Text
+  b2bAttachments       String   @default("[]") // JSON
+  lastFollowupAt       DateTime?
+  nextFollowupAt       DateTime?
+  createdBy            String   @default("")
+  updatedBy            String   @default("")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  application          Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  b2bProvider          B2bProvider @relation(fields: [b2bProviderId], references: [id])
+
+  @@unique([applicationId, b2bProviderId, b2bReference])
+  @@index([applicationId])
+  @@index([b2bProviderId])
+  @@index([b2bType])
+  @@index([b2bStatus])
+  @@map("b2b_applications")
+}
+
+model ApplicationStatusLog {
+  id          String   @id @default(cuid())
+  applicationId String
+  oldStatus   String   @default("")
+  newStatus   String
+  safeStatus  String   @default("")
+  changedBy   String   @default("")
+  visibility  String   @default("public_safe") // public_safe, internal, b2b_confidential
+  note        String   @default("") @db.Text
+  createdAt   DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([newStatus])
+  @@index([visibility])
+  @@map("application_status_logs")
+}
+
+model ApplicationComment {
+  id                String   @id @default(cuid())
+  applicationId     String
+  userId            String   @default("")
+  role              String   @default("APPLICATION_TEAM") // STUDENT, PARTNER, COUNSELOR, APPLICATION_TEAM, APPLICATION_MANAGER, SUPER_ADMIN, FINANCE, VISA_OFFICER, etc
+  commentType       String   @default("GENERAL") // STUDENT_VISIBLE, PARTNER_VISIBLE, COUNSELOR_VISIBLE, APPLICATION_TEAM_INTERNAL, B2B_CONFIDENTIAL, UNIVERSITY, FINANCE, VISA_HANDOVER
+  visibility        String   @default("internal") // student_visible, partner_visible, counselor_visible, internal, b2b_confidential, finance, visa_handover
+  commentText       String   @default("") @db.Text
+  attachmentPath    String   @default("")
+  isB2bConfidential Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  application       Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([visibility])
+  @@index([isB2bConfidential])
+  @@map("application_comments")
+}
+
+model ApplicationDocument {
+  id            String   @id @default(cuid())
+  applicationId String
+  studentId     String   @default("")
+  documentId    String   @default("") // reference to StudentDocument or PortalStudentDocument
+  documentType  String   @default("") // passport, academic_certificate, transcript, english_test, cv, sop, etc
+  fileName      String   @default("")
+  fileUrl       String   @default("")
+  status        String   @default("PENDING") // REQUIRED, UPLOADED, MISSING, REJECTED, EXPIRED, UNDER_REVIEW, VERIFIED, LOCKED, REQUEST_AGAIN
+  reviewerId    String   @default("")
+  reviewerNote  String   @default("") @db.Text
+  visibility    String   @default("internal") // student_visible, partner_visible, internal, b2b_confidential
+  version       Int      @default(1)
+  isB2bConfidential Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([studentId])
+  @@index([documentType])
+  @@index([status])
+  @@map("application_documents")
+}
+
+model ApplicationDeadline {
+  id            String   @id @default(cuid())
+  applicationId String
+  deadlineType  String   @default("APPLICATION_DEADLINE") // APPLICATION_DEADLINE, DOCUMENT_DEADLINE, OFFER_CONDITION_DEADLINE, DEPOSIT_DEADLINE, CAS_DEADLINE, I20_DEADLINE, COE_DEADLINE, B2B_FOLLOWUP_DEADLINE, UNIVERSITY_FOLLOWUP_DEADLINE
+  deadlineDate  DateTime
+  status        String   @default("PENDING") // PENDING, DUE_TODAY, DUE_IN_3_DAYS, DUE_IN_7_DAYS, OVERDUE, COMPLETED
+  assignedTo    String   @default("")
+  reminderSent  Boolean  @default(false)
+  note          String   @default("") @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([deadlineType])
+  @@index([deadlineDate])
+  @@index([status])
+  @@map("application_deadlines")
+}
+
+model ApplicationTask {
+  id              String   @id @default(cuid())
+  applicationId   String
+  taskTitle       String
+  taskDescription String   @default("") @db.Text
+  assignedTo      String   @default("")
+  assignedToName  String   @default("")
+  priority        String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  status          String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, CANCELLED
+  dueDate         DateTime?
+  createdBy       String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  application     Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([assignedTo])
+  @@index([status])
+  @@index([priority])
+  @@index([dueDate])
+  @@map("application_tasks")
+}
+
+model ApplicationNotification {
+  id            String   @id @default(cuid())
+  applicationId String
+  recipientType String   @default("STUDENT") // STUDENT, PARTNER, COUNSELOR, APPLICATION_TEAM, APPLICATION_MANAGER, FINANCE, VISA_OFFICER, etc
+  recipientId   String   @default("")
+  channel       String   @default("portal") // portal, email, sms, whatsapp, push
+  templateName  String   @default("")
+  message       String   @default("") @db.Text
+  status        String   @default("PENDING") // PENDING, SENT, DELIVERED, READ, FAILED
+  sentAt        DateTime?
+  createdAt     DateTime @default(now())
+
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([recipientType])
+  @@index([recipientId])
+  @@index([status])
+  @@map("application_notifications")
+}
+
+model ApplicationOffer {
+  id               String   @id @default(cuid())
+  applicationId    String   @unique
+  offerStatus      String   @default("DECISION_PENDING") // DECISION_PENDING, CONDITIONAL_OFFER, UNCONDITIONAL_OFFER, REJECTED, DEFERRED, WITHDRAWN, MORE_DOCUMENTS_REQUESTED, INTERVIEW_REQUIRED, APPLICATION_FEE_PENDING, DEPOSIT_REQUIRED
+  offerLetterUrl   String   @default("")
+  offerConditions  String   @default("") @db.Text
+  conditionDeadline DateTime?
+  scholarship      String   @default("")
+  scholarshipAmount Float   @default(0)
+  depositAmount    Float    @default(0)
+  depositDeadline  DateTime?
+  decisionDate     DateTime?
+  decisionNote     String   @default("") @db.Text
+  studentNotified  Boolean  @default(false)
+  partnerNotified  Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("application_offers")
+}
+
+model ApplicationCasI20Coe {
+  id                String   @id @default(cuid())
+  applicationId     String   @unique
+  documentType      String   @default("CAS") // CAS, I20, COE, LOA, PAL, OFFER_VISA_LETTER
+  status            String   @default("NOT_STARTED") // NOT_STARTED, REQUESTED, PENDING, RECEIVED, etc
+  requestedDate     DateTime?
+  receivedDate      DateTime?
+  referenceNumber   String   @default("")
+  fileUrl           String   @default("")
+  conditionNote     String   @default("") @db.Text
+  nextStep          String   @default("")
+  visaHandoverStatus String  @default("NOT_READY")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  application       Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("application_cas_i20_coe")
+}
+
+model ApplicationFinance {
+  id                String   @id @default(cuid())
+  applicationId     String   @unique
+  applicationFee    Float    @default(0)
+  applicationFeeCurrency String @default("GBP")
+  applicationFeeStatus String @default("PENDING")
+  tuitionDeposit    Float    @default(0)
+  depositCurrency   String   @default("GBP")
+  depositStatus     String   @default("PENDING")
+  scholarshipAmount Float    @default(0)
+  invoiceUrl        String   @default("")
+  receiptUrl        String   @default("")
+  paymentStatus     String   @default("PENDING")
+  partnerCommission Float    @default(0)
+  b2bCommission     Float    @default(0)
+  b2bCommissionStatus String @default("NOT_CLAIMED")
+  financeNote       String   @default("") @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  application       Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("application_finances")
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  userId       String   @default("")
+  action       String
+  resource     String   @default("")
+  resourceId   String   @default("")
+  details      String   @default("{}") @db.Text
+  ipAddress    String   @default("")
+  userAgent    String   @default("")
+  actorRole    String   @default("")
+  studentId    String   @default("")
+  beforeValue  String   @default("{}") @db.Text
+  afterValue   String   @default("{}") @db.Text
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource, resourceId])
+  @@index([studentId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
