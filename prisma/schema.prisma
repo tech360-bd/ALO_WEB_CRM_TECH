@@ -4383,3 +4383,381 @@ model WhatsAppAnalyticsDaily {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
+
+// ==========================================
+// ALO_EMPLOYEE_ACCESS_SYSTEM — EXTENDED MODELS
+// ==========================================
+
+model EmployeeDepartment {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  label       String   @default("")
+  description String   @default("")
+  parentId    String   @default("")
+  managerId   String   @default("")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EmployeeBranch {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @default("")
+  label       String   @default("")
+  address     String   @default("")
+  city        String   @default("")
+  country     String   @default("Bangladesh")
+  managerId   String   @default("")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EmployeeOffice {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @default("")
+  branchId    String   @default("")
+  address     String   @default("")
+  managerId   String   @default("")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EmployeeLeave {
+  id              String    @id @default(cuid())
+  employeeId      String
+  leaveType       String    @default("casual") // casual, annual, medical, maternity, paternity, lwp, compensatory
+  startDate       String
+  endDate         String
+  totalDays       Float     @default(0)
+  reason          String    @default("")
+  status          String    @default("pending") // pending, approved, rejected, cancelled
+  approvedBy      String    @default("")
+  approvedAt      DateTime?
+  documentUrl     String    @default("")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+model EmployeeLeaveBalance {
+  id               String   @id @default(cuid())
+  employeeId       String   @unique
+  year             String   @default("")
+  casualTotal      Int      @default(10)
+  casualUsed       Int      @default(0)
+  casualRemaining  Int      @default(10)
+  annualTotal      Int      @default(15)
+  annualUsed       Int      @default(0)
+  annualRemaining  Int      @default(15)
+  medicalTotal     Int      @default(10)
+  medicalUsed      Int      @default(0)
+  medicalRemaining Int      @default(10)
+  lwpTotal         Int      @default(0)
+  lwpUsed          Int      @default(0)
+  compOffTotal     Int      @default(0)
+  compOffUsed      Int      @default(0)
+  updatedAt        DateTime @updatedAt
+}
+
+model EmployeePayroll {
+  id               String   @id @default(cuid())
+  employeeId       String
+  period           String   // YYYY-MM
+  basicSalary      Float    @default(0)
+  allowances       Float    @default(0)
+  bonus            Float    @default(0)
+  overtime         Float    @default(0)
+  loanDeduction    Float    @default(0)
+  advanceDeduction Float    @default(0)
+  taxDeduction     Float    @default(0)
+  pfDeduction      Float    @default(0)
+  grossSalary      Float    @default(0)
+  netSalary        Float    @default(0)
+  status           String   @default("draft") // draft, reviewed, approved, paid
+  preparedBy       String   @default("")
+  reviewedBy       String   @default("")
+  approvedBy       String   @default("")
+  paidAt           DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  items EmployeePayrollItem[]
+
+  @@index([employeeId])
+  @@index([period])
+  @@index([status])
+}
+
+model EmployeePayrollItem {
+  id         String   @id @default(cuid())
+  payrollId  String
+  itemType   String   // earning, deduction
+  label      String
+  amount     Float    @default(0)
+  createdAt  DateTime @default(now())
+
+  payroll EmployeePayroll @relation(fields: [payrollId], references: [id], onDelete: Cascade)
+
+  @@index([payrollId])
+}
+
+model EmployeeDevice {
+  id           String    @id @default(cuid())
+  employeeId   String
+  deviceName   String    @default("")
+  deviceType   String    @default("laptop") // laptop, desktop, tablet, phone
+  deviceId     String    @default("")
+  serialNumber String    @default("")
+  assetTag     String    @default("")
+  assignedDate String    @default("")
+  warranty     String    @default("")
+  status       String    @default("assigned") // assigned, returned, lost, damaged
+  returnedDate String    @default("")
+  condition    String    @default("good")
+  ipAddress    String    @default("")
+  browser      String    @default("")
+  os           String    @default("")
+  fingerprint  String    @default("")
+  isTrusted    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+model EmployeeLoginLog {
+  id            String   @id @default(cuid())
+  employeeId    String   @default("")
+  userId        String   @default("")
+  email         String   @default("")
+  ipAddress     String   @default("")
+  browser       String   @default("")
+  os            String   @default("")
+  device        String   @default("")
+  location      String   @default("")
+  status        String   @default("success") // success, failed
+  isSuccess     Boolean  @default(true)
+  loginAt       DateTime @default(now())
+  logoutAt      DateTime?
+  success       Boolean  @default(true)
+  failureReason String   @default("")
+  sessionId     String   @default("")
+  fingerprint   String   @default("")
+
+  @@index([employeeId])
+  @@index([userId])
+  @@index([loginAt])
+}
+
+model EmployeeAgreement {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   @default("appointment_letter") // appointment, nda, confidentiality, device, it_policy, data_privacy, international, bangladesh_employment, exit_clearance, etc.
+  content     String   @default("")
+  version     Int      @default(1)
+  fileUrl     String   @default("")
+  status      String   @default("active") // active, archived, superseded
+  createdBy   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  acceptances EmployeeAgreementAcceptance[]
+  versions    EmployeeDocumentVersion[]
+}
+
+model EmployeeAgreementAcceptance {
+  id            String   @id @default(cuid())
+  agreementId   String
+  employeeId    String
+  version       Int      @default(1)
+  acceptedAt    DateTime @default(now())
+  ipAddress     String   @default("")
+  device        String   @default("")
+  userAgent     String   @default("")
+  signatureType String   @default("digital_acceptance") // checkbox, digital_signature, etc.
+
+  agreement EmployeeAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+
+  @@unique([agreementId, employeeId, version])
+  @@index([employeeId])
+}
+
+model EmployeeDocumentVersion {
+  id           String   @id @default(cuid())
+  documentId   String   // EmployeeDocument.id
+  agreementId  String?  // Optional link to agreement
+  version      Int      @default(1)
+  filePath     String   @default("")
+  fileName     String   @default("")
+  fileHash     String   @default("")
+  uploadedBy   String   @default("")
+  status       String   @default("current") // current, historical, superseded, archived
+  reviewerId   String   @default("")
+  reviewNote   String   @default("")
+  effectiveDate String  @default("")
+  supersededDate String @default("")
+  createdAt    DateTime @default(now())
+
+  agreement EmployeeAgreement? @relation(fields: [agreementId], references: [id])
+
+  @@index([documentId])
+  @@index([agreementId])
+  @@index([status])
+}
+
+model EmployeePermissionRequest {
+  id          String    @id @default(cuid())
+  employeeId  String
+  featureKey  String
+  action      String    @default("view")
+  scopeType   String    @default("own") // global, country, branch, office, department, team, assigned, own
+  scopeId     String    @default("")
+  duration    String    @default("") // e.g. 7 days, 1 month
+  reason      String    @default("")
+  status      String    @default("requested") // requested, reviewing, approved, rejected, active, expired
+  requestedAt DateTime  @default(now())
+  reviewedBy  String    @default("")
+  reviewedAt  DateTime?
+  approvedBy  String    @default("")
+  approvedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+  @@index([featureKey])
+}
+
+model EmployeeTemporaryPermission {
+  id          String    @id @default(cuid())
+  employeeId  String
+  featureKey  String
+  action      String    @default("view")
+  scopeType   String    @default("own")
+  scopeId     String    @default("")
+  grantedBy   String    @default("")
+  approvedBy  String    @default("")
+  reason      String    @default("")
+  startDate   DateTime  @default(now())
+  endDate     DateTime
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([isActive])
+  @@index([endDate])
+}
+
+model EmployeeSecurityEvent {
+  id           String   @id @default(cuid())
+  employeeId   String   @default("")
+  eventType    String   // login_failed, suspicious_login, permission_denied, salary_access_denied, document_access_denied, quota_exceeded, etc.
+  severity     String   @default("medium") // low, medium, high, critical
+  description  String   @default("")
+  ipAddress    String   @default("")
+  userAgent    String   @default("")
+  metadata     String   @default("{}")
+  isResolved   Boolean  @default(false)
+  resolvedBy   String   @default("")
+  resolvedAt   DateTime?
+  createdAt    DateTime @default(now())
+
+  @@index([employeeId])
+  @@index([eventType])
+  @@index([severity])
+}
+
+model EmployeeReassignment {
+  id                 String    @id @default(cuid())
+  fromEmployeeId     String
+  toEmployeeId       String
+  entityType         String    @default("")
+  entityId           String    @default("")
+  reason             String    @default("")
+  assignedStudents   String    @default("[]") // JSON array of studentIds
+  assignedApplications String  @default("[]")
+  assignedTasks      String    @default("[]")
+  assignedLeads      String    @default("[]")
+  status             String    @default("pending") // pending, completed, failed
+  assignedBy         String    @default("")
+  approvedBy         String    @default("")
+  createdBy          String    @default("")
+  createdAt          DateTime  @default(now())
+  completedAt        DateTime?
+
+  @@index([fromEmployeeId])
+  @@index([toEmployeeId])
+}
+
+model EmployeeAuditLog {
+  id           String   @id @default(cuid())
+  employeeId   String   @default("")
+  actorId      String   @default("")
+  actorRole    String   @default("")
+  actingAsId   String   @default("")
+  actingAsRole String   @default("")
+  action       String
+  module       String   @default("")
+  entityType   String   @default("")
+  targetType   String   @default("")
+  entityId     String   @default("")
+  targetId     String   @default("")
+  oldValue     String   @default("{}")
+  newValue     String   @default("{}")
+  reason       String   @default("")
+  approvalId   String   @default("")
+  ipAddress    String   @default("")
+  userAgent    String   @default("")
+  sessionId    String   @default("")
+  createdAt    DateTime @default(now())
+
+  @@index([actorId])
+  @@index([employeeId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model EmployeePermissionPackageAssignment {
+  id         String    @id @default(cuid())
+  employeeId String
+  packageId  String
+  assignedBy String    @default("")
+  startsAt   DateTime  @default(now())
+  expiresAt  DateTime?
+  status     String    @default("active")
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([packageId])
+  @@index([status])
+}
+
+model EmployeeBreakGlassAccess {
+  id          String    @id @default(cuid())
+  employeeId  String
+  reason      String
+  approverId  String    @default("")
+  scopeType   String    @default("global")
+  scopeId     String    @default("")
+  startAt     DateTime  @default(now())
+  expiresAt   DateTime
+  status      String    @default("pending") // pending, approved, active, expired, revoked
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+}
+
