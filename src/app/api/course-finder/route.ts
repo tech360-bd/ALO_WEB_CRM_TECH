@@ -35,7 +35,7 @@ export async function GET(req: Request) {
     }
 
     // If country filter, fetch matching university IDs first
-    let universityIds: string[] | null = null;
+    let universityIds: string[] = [];
     if (country) {
       const unis = await db.crmUniversity.findMany({
         where: { country: { contains: country } },

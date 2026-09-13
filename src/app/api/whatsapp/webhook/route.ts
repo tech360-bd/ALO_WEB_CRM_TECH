@@ -36,7 +36,7 @@ function safeEqual(a: string, b: string): boolean {
 function verifySignature(rawBody: string, signature: string): boolean {
   const appSecret = process.env.WHATSAPP_APP_SECRET;
   if (!appSecret) {
-    console.warn("[whatsapp.webhook] WHATSAPP_APP_SECRET not set — skipping verification");
+    console.error("[whatsapp.webhook] WHATSAPP_APP_SECRET is required — rejecting webhook");
     return false;
   }
   const expected = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
 
   // ── Signature verification ──
   const signatureValid = verifySignature(rawBody, signature);
-  if (process.env.WHATSAPP_APP_SECRET && !signatureValid) {
+  if (!signatureValid) {
     return NextResponse.json(
       { error: "Invalid signature — webhook not verified" },
       { status: 401 }

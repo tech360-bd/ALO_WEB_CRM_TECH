@@ -156,7 +156,11 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
 // ============================================================
 // withAuth — Higher-order wrapper for protected API routes
 // ============================================================
-type AuthenticatedHandler = (request: Request, auth: AuthContext, context?: any) => Promise<NextResponse>;
+type AuthenticatedHandler = (
+  request: Request,
+  auth: AuthContext,
+  context?: any
+) => Promise<NextResponse<any>>;
 
 export function withAuth(
   handler: AuthenticatedHandler,

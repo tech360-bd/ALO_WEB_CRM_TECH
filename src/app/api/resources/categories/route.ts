@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,10 +35,10 @@ export async function GET() {
 }
 
 // POST /api/resources/categories — create category (admin)
-export async function POST(req: NextRequest) {
+async function createCategory(req: Request, auth: AuthContext) {
   try {
     const body = await req.json();
-    const { slug, name, description, icon, sortOrder = 0, status = "ACTIVE", performedBy } = body as any;
+    const { slug, name, description, icon, sortOrder = 0, status = "ACTIVE" } = body as any;
 
     if (!slug || !name) {
       return NextResponse.json({ error: "slug and name are required" }, { status: 400 });
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
       data: { slug, name, description: description || null, icon: icon || null, sortOrder, status },
     });
 
-    const userId = await resolveUserId(performedBy);
+    const userId = auth.userId;
     await db.auditLog.create({
       data: {
         userId,
@@ -68,11 +69,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function resolveUserId(performedBy?: string): Promise<string | null> {
-  if (!performedBy) return null;
-  if (performedBy.includes("@")) {
-    const u = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
-    return u?.id ?? null;
-  }
-  return performedBy;
-}
+
+export const POST = withAuth(createCategory, {
+  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
+});

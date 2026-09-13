@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -59,7 +60,7 @@ export async function GET(req: NextRequest) {
 }
 
 // POST /api/resources — create (admin)
-export async function POST(req: NextRequest) {
+async function createResource(req: Request, auth: AuthContext) {
   try {
     const body = await req.json();
     const {
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
       readingTime = 5, status = "PUBLISHED",
       publishedAt, sourceUrl, sourceName, verificationStatus = "VERIFIED",
       seoTitle, seoDescription, tags = [],
-      faqs = [], performedBy,
+      faqs = [],
     } = body as any;
 
     if (!slug || !categoryId || !title || !content) {
@@ -117,7 +118,7 @@ export async function POST(req: NextRequest) {
       include: { faqs: true, category: true },
     });
 
-    const userId = await resolveUserId(performedBy);
+    const userId = auth.userId;
     await db.auditLog.create({
       data: {
         userId,
@@ -135,11 +136,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function resolveUserId(performedBy?: string): Promise<string | null> {
-  if (!performedBy) return null;
-  if (performedBy.includes("@")) {
-    const u = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
-    return u?.id ?? null;
-  }
-  return performedBy;
-}
+export const POST = withAuth(createResource, {
+  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
+});

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,7 +14,8 @@ export async function GET(req: NextRequest) {
     const targetType = req.nextUrl.searchParams.get("targetType");
     const targetId = req.nextUrl.searchParams.get("targetId");
     const relationshipType = req.nextUrl.searchParams.get("relationshipType");
-    const status = req.nextUrl.searchParams.get("status") || "ACTIVE";
+    // Public callers may only see active relationships.
+    const status = "ACTIVE";
 
     const where: any = { status };
     if (sourceType) where.sourceType = sourceType;
@@ -35,6 +37,10 @@ export async function GET(req: NextRequest) {
         resolveEntity(r.sourceType, r.sourceId),
         resolveEntity(r.targetType, r.targetId),
       ]);
+      if ((r.sourceType === "SERVICE" || r.sourceType === "RESOURCE") && !sourceEntity) continue;
+      if (r.sourceType === "SCHOLARSHIP" && !sourceEntity) continue;
+      if ((r.targetType === "SERVICE" || r.targetType === "RESOURCE") && !targetEntity) continue;
+      if (r.targetType === "SCHOLARSHIP" && !targetEntity) continue;
       hydrated.push({
         ...r,
         source: sourceEntity,
@@ -51,13 +57,12 @@ export async function GET(req: NextRequest) {
 
 // POST /api/content-relationships — create relationship (admin)
 // Body: { sourceType, sourceId, targetType, targetId, relationshipType, sortOrder, status, performedBy }
-export async function POST(req: NextRequest) {
+async function createRelationship(req: Request, auth: AuthContext) {
   try {
     const body = await req.json();
     const {
       sourceType, sourceId, targetType, targetId,
       relationshipType = "RELATED", sortOrder = 0, status = "ACTIVE",
-      performedBy,
     } = body as any;
 
     if (!sourceType || !sourceId || !targetType || !targetId) {
@@ -89,7 +94,7 @@ export async function POST(req: NextRequest) {
       data: { sourceType, sourceId, targetType, targetId, relationshipType, sortOrder, status },
     });
 
-    const userId = await resolveUserId(performedBy);
+    const userId = auth.userId;
     await db.auditLog.create({
       data: {
         userId,
@@ -112,11 +117,11 @@ async function resolveEntity(type: string, id: string): Promise<any> {
   try {
     switch (type) {
       case "SERVICE":
-        return await db.service.findUnique({ where: { id }, select: { slug: true, title: true, icon: true } });
+        return await db.service.findUnique({ where: { id, status: "PUBLISHED" }, select: { slug: true, title: true, icon: true } });
       case "SCHOLARSHIP":
-        return await db.scholarship.findUnique({ where: { id }, select: { slug: true, name: true, fundingType: true } });
+        return await db.scholarship.findUnique({ where: { id, status: { not: "DRAFT" } }, select: { slug: true, name: true, fundingType: true } });
       case "RESOURCE":
-        return await db.resource.findUnique({ where: { id }, select: { slug: true, title: true, featuredImage: true } });
+        return await db.resource.findUnique({ where: { id, status: "PUBLISHED" }, select: { slug: true, title: true, featuredImage: true } });
       // COURSE / UNIVERSITY / COUNTRY / etc. are resolved by other systems (e.g. CountryPage) — return null here.
       default:
         return null;
@@ -145,11 +150,6 @@ async function checkEntityExists(type: string, id: string): Promise<boolean | nu
   }
 }
 
-async function resolveUserId(performedBy?: string): Promise<string | null> {
-  if (!performedBy) return null;
-  if (performedBy.includes("@")) {
-    const u = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
-    return u?.id ?? null;
-  }
-  return performedBy;
-}
+export const POST = withAuth(createRelationship, {
+  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
+});

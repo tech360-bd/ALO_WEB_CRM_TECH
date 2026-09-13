@@ -3981,3 +3981,178 @@ model ContentApproval {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 }
+
+// ============================================================
+// PUBLIC CONTENT MANAGEMENT
+// These models back the public service/resource/scholarship APIs
+// and the authenticated admin content-management APIs. Polymorphic
+// relationships intentionally keep source/target IDs as strings so
+// COURSE, UNIVERSITY, and COUNTRY references do not create invalid
+// cross-table foreign keys.
+// ============================================================
+
+model Service {
+  id                 String       @id @default(cuid())
+  slug               String       @unique
+  title              String
+  shortDescription   String       @db.Text
+  description        String       @db.Text
+  icon               String
+  heroImage          String?      @db.Text
+  content            String       @db.LongText
+  eligibility        String?      @db.Text
+  requirements       String?      @db.LongText
+  documents          String?      @db.LongText
+  faqEnabled         Boolean      @default(true)
+  ctaLabel           String?
+  ctaUrl             String?      @db.Text
+  status             String       @default("PUBLISHED")
+  sortOrder          Int          @default(0)
+  lastVerifiedAt     DateTime?
+  sourceUrl          String?           @db.Text
+  verificationStatus String      @default("NEEDS_REVIEW")
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  faqs               ServiceFaq[]
+
+  @@index([status])
+  @@index([sortOrder])
+}
+
+model ServiceFaq {
+  id        String   @id @default(cuid())
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  question  String   @db.Text
+  answer    String   @db.Text
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([serviceId])
+}
+
+model Scholarship {
+  id                  String            @id @default(cuid())
+  slug                String            @unique
+  scholarshipCode     String            @unique
+  name                String
+  countrySlug         String?
+  universitySlug      String?
+  courseSlug          String?
+  studyLevel          String?
+  subject             String?
+  fundingType         String
+  amount              String?
+  currency            String?
+  coverage            String?         @db.LongText
+  eligibility         String?         @db.LongText
+  minimumRequirements String?         @db.LongText
+  documentsRequired   String?         @db.LongText
+  applicationMethod   String?
+  applicationUrl      String?         @db.Text
+  openingDate         String?
+  deadline            String?
+  decisionDate        String?
+  status              String            @default("OPEN")
+  verificationStatus  String            @default("NEEDS_REVIEW")
+  sourceUrl           String?         @db.Text
+  sourceName          String?
+  lastVerifiedAt      DateTime?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  faqs                ScholarshipFaq[]
+
+  @@index([status])
+  @@index([countrySlug])
+  @@index([universitySlug])
+  @@index([studyLevel])
+}
+
+model ScholarshipFaq {
+  id           String       @id @default(cuid())
+  scholarshipId String
+  scholarship  Scholarship  @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+  question     String       @db.Text
+  answer       String       @db.Text
+  sortOrder    Int          @default(0)
+  createdAt    DateTime     @default(now())
+
+  @@index([scholarshipId])
+}
+
+model ResourceCategory {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  description String?    @db.Text
+  icon        String?
+  sortOrder   Int        @default(0)
+  status      String     @default("ACTIVE")
+  resources   Resource[]
+
+  @@index([status])
+}
+
+model Resource {
+  id                 String           @id @default(cuid())
+  slug               String           @unique
+  categoryId         String
+  category           ResourceCategory @relation(fields: [categoryId], references: [id])
+  title              String
+  excerpt            String?           @db.Text
+  content            String       @db.LongText
+  authorId           String?
+  featuredImage      String?           @db.Text
+  countrySlug        String?
+  studyLevel         String?
+  readingTime        Int              @default(5)
+  status             String           @default("PUBLISHED")
+  publishedAt        DateTime?
+  lastVerifiedAt     DateTime?
+  sourceUrl          String?           @db.Text
+  sourceName         String?
+  verificationStatus String           @default("NEEDS_REVIEW")
+  seoTitle           String?
+  seoDescription     String?           @db.Text
+  tags               String           @default("[]")
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  faqs               ResourceFaq[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([countrySlug])
+  @@index([publishedAt])
+}
+
+model ResourceFaq {
+  id         String   @id @default(cuid())
+  resourceId String
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  question   String   @db.Text
+  answer     String   @db.Text
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([resourceId])
+}
+
+model ContentRelationship {
+  id               String   @id @default(cuid())
+  sourceType       String
+  sourceId         String
+  targetType       String
+  targetId         String
+  relationshipType String   @default("RELATED")
+  sortOrder        Int      @default(0)
+  status           String   @default("ACTIVE")
+  createdAt        DateTime @default(now())
+
+  @@unique([sourceType, sourceId, targetType, targetId, relationshipType])
+  @@index([sourceType, sourceId])
+  @@index([targetType, targetId])
+  @@index([status])
+}

@@ -53,9 +53,9 @@ export function verifyFacebookSignature(
       return true;
     }
     console.error(
-      "[facebook-lead-sync] FACEBOOK_APP_SECRET not set in production — webhook verification bypassed!"
+      "[facebook-lead-sync] FACEBOOK_APP_SECRET is required in production — rejecting webhook."
     );
-    return true; // dev-friendly fail-open (same behaviour as WhatsApp helper)
+    return false;
   }
   if (!signature || !signature.startsWith("sha256=")) return false;
 
@@ -434,6 +434,20 @@ export async function processFacebookLead(
       facebookLeadRawId: fbLeadRawId,
       processingStatus: "FAILED",
       error: err instanceof Error ? err.message : String(err),
+    };
+  }
+
+  // The database transaction above must produce a lead before any automation
+  // can run. Keep the invariant explicit so nullable failure state never reaches
+  // downstream services.
+  if (!leadId) {
+    return {
+      leadId: null,
+      studentId,
+      counselorId: null,
+      facebookLeadRawId: fbLeadRawId,
+      processingStatus: "FAILED",
+      error: "Lead creation did not return an identifier",
     };
   }
 

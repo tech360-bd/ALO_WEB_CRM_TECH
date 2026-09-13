@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // DELETE /api/content-relationships/[id] — delete relationship (admin)
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+async function deleteRelationship(
+  req: Request,
+  auth: AuthContext,
+  context?: { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = await params;
-    const performedBy = req.nextUrl.searchParams.get("performedBy") || undefined;
-
+    const { id } = await context!.params;
     const existing = await db.contentRelationship.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Relationship not found" }, { status: 404 });
@@ -17,7 +20,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     await db.contentRelationship.delete({ where: { id } });
 
-    const userId = await resolveUserId(performedBy);
+    const userId = auth.userId;
     await db.auditLog.create({
       data: {
         userId,
@@ -41,11 +44,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   }
 }
 
-async function resolveUserId(performedBy?: string): Promise<string | null> {
-  if (!performedBy) return null;
-  if (performedBy.includes("@")) {
-    const u = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
-    return u?.id ?? null;
-  }
-  return performedBy;
-}
+
+export const DELETE = withAuth(deleteRelationship, {
+  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
+});

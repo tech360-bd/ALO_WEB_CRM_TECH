@@ -37,7 +37,7 @@ export interface VideoGenerationResult {
 
 let zaiInstance: ZAI | null = null;
 
-async function getZai(): Promise<ZAI | null> {
+async function getZaiClient(): Promise<ZAI | null> {
   if (!process.env.ZAI_API_KEY) return null;
   if (!zaiInstance) {
     try {
@@ -47,6 +47,15 @@ async function getZai(): Promise<ZAI | null> {
     }
   }
   return zaiInstance;
+}
+
+/** Return a configured ZAI client or fail explicitly; never return a fake client. */
+export async function getZai(): Promise<ZAI> {
+  const client = await getZaiClient();
+  if (!client) {
+    throw new Error('ZAI is not configured or could not be initialized. Set ZAI_API_KEY.');
+  }
+  return client;
 }
 
 export async function generateText(options: GenerateTextOptions): Promise<GenerateTextResult> {
@@ -153,10 +162,64 @@ export async function generateText(options: GenerateTextOptions): Promise<Genera
     }
   }
 
-  // Fallback response if no keys are configured
-  return {
-    text: `[ALO Education AI Engine]: Generated response for prompt "${options.prompt.substring(0, 60)}..."`,
-  };
+  // Never return a fabricated answer when no provider is configured. Callers can
+  // catch this explicit error and present a recoverable configuration message.
+  throw new Error(
+    'No AI provider is configured. Set GROQ_API_KEY, OPENROUTER_API_KEY, or ZAI_API_KEY.'
+  );
+}
+
+/**
+ * Compatibility helper used by chat-oriented routes. It delegates to the same
+ * provider fallback chain so every AI entry point has consistent behaviour.
+ */
+export async function aiChat(
+  messages: Array<{ role: string; content: string }>,
+  options?: { temperature?: number; model?: string; maxTokens?: number }
+): Promise<string> {
+  const systemMessage = messages.find((message) => message.role === 'system');
+  const prompt = messages
+    .filter((message) => message.role !== 'system')
+    .map((message) => `${message.role}: ${message.content}`)
+    .join('\\n');
+
+  const result = await generateText({
+    prompt,
+    systemPrompt: systemMessage?.content,
+    model: options?.model,
+    maxTokens: options?.maxTokens,
+    temperature: options?.temperature,
+  });
+  return result.text;
+}
+
+/** Safely extract a JSON object or array from a model response. */
+export function extractJson<T = any>(raw: string): T | null {
+  if (!raw) return null;
+  const candidates = [
+    raw.trim(),
+    ...(raw.match(/```(?:json)?\\s*([\\s\\S]*?)```/i)?.slice(1) ?? []),
+  ];
+
+  const firstObject = raw.indexOf('{');
+  const lastObject = raw.lastIndexOf('}');
+  if (firstObject !== -1 && lastObject > firstObject) {
+    candidates.push(raw.slice(firstObject, lastObject + 1));
+  }
+  const firstArray = raw.indexOf('[');
+  const lastArray = raw.lastIndexOf(']');
+  if (firstArray !== -1 && lastArray > firstArray) {
+    candidates.push(raw.slice(firstArray, lastArray + 1));
+  }
+
+  for (const candidate of candidates) {
+    try {
+      return JSON.parse(candidate) as T;
+    } catch {
+      // Try the next extraction strategy.
+    }
+  }
+  return null;
 }
 
 export async function generateImage(options: GenerateImageOptions): Promise<GenerateImageResult> {
@@ -170,7 +233,7 @@ export async function generateImage(options: GenerateImageOptions): Promise<Gene
       || ((result as { data?: Array<{ base64?: string }> }).data?.[0]?.base64 ? `data:image/png;base64,${(result as { data: Array<{ base64: string }> }).data[0].base64}` : '');
     return { url };
   }
-  return { url: '/placeholder-image.png' };
+  throw new Error('Image generation is not configured. Set ZAI_API_KEY.');
 }
 
 export async function generateVideo(options: VideoGenerationOptions): Promise<VideoGenerationResult> {
@@ -182,7 +245,7 @@ export async function generateVideo(options: VideoGenerationOptions): Promise<Vi
     const url = result.url || result.data?.[0]?.url || '';
     return { url };
   }
-  return { url: '' };
+  throw new Error('Video generation is not configured. Set ZAI_API_KEY.');
 }
 
 export default ZAI;

@@ -36,11 +36,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
   const [submitted, setSubmitted] = React.useState(false);
   const [moderationResult, setModerationResult] = React.useState<any>(null);
 
-  React.useEffect(() => {
-    fetchInvitation();
-  }, []);
-
-  const fetchInvitation = async () => {
+  const fetchInvitation = React.useCallback(async () => {
     try {
       const res = await fetch(`/api/reviews/submit/${token}`);
       const json = await res.json();
@@ -55,7 +51,11 @@ export function PublicReviewSubmit({ token }: { token: string }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  React.useEffect(() => {
+    void fetchInvitation();
+  }, [fetchInvitation]);
 
   const submit = async () => {
     if (rating === 0) {
