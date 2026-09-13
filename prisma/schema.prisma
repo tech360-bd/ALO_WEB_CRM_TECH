@@ -3981,3 +3981,405 @@ model ContentApproval {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 }
+
+// ==========================================
+// WHATSAPP OFFICIAL NUMBER POOL (20 numbers)
+// ==========================================
+
+model WhatsAppOfficialNumber {
+  id                    String   @id @default(cuid())
+  phoneNumber           String   @unique // 01805020100 through 01805020119
+  normalizedPhone       String   @unique // 8801805020100
+  displayName           String   @default("")
+  ownerType             String   @default("ALO_MAIN") // ALO_MAIN, COO, EMPLOYEE, BRANCH, DEPARTMENT
+  employeeOwnerId       String   @default("")
+  employeeOwnerName     String   @default("")
+  branch                String   @default("")
+  department            String   @default("")
+  metaPhoneNumberId     String   @default("") // official Meta phone_number_id
+  metaBusinessAccountId String   @default("")
+  connectionStatus      String   @default("disconnected") // disconnected, connected, expired, error
+  activeStatus          String   @default("active") // active, inactive, suspended
+  isDefaultSender       Boolean  @default(false)
+  isComplaintSender     Boolean  @default(false)
+  isFollowUpSender      Boolean  @default(false)
+  isSupport247          Boolean  @default(false)
+  purpose               String   @default("") // Main, COO 24/7, Employee pool
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  audits WhatsAppNumberAssignmentAudit[]
+
+  @@index([ownerType])
+  @@index([branch])
+  @@index([connectionStatus])
+  @@index([activeStatus])
+}
+
+model WhatsAppNumberAssignmentAudit {
+  id                String   @id @default(cuid())
+  numberId          String
+  phoneNumber       String
+  changedById       String   @default("")
+  changedByName     String   @default("")
+  changedByRole     String   @default("")
+  previousOwnerType String   @default("")
+  newOwnerType      String   @default("")
+  previousEmployee  String   @default("")
+  newEmployee       String   @default("")
+  previousBranch    String   @default("")
+  newBranch         String   @default("")
+  previousValue     String   @default("{}")
+  newValue          String   @default("{}")
+  reason            String   @default("")
+  ipAddress         String   @default("")
+  userAgent         String   @default("")
+  createdAt         DateTime @default(now())
+
+  number WhatsAppOfficialNumber @relation(fields: [numberId], references: [id], onDelete: Cascade)
+
+  @@index([numberId])
+  @@index([changedById])
+  @@index([createdAt])
+}
+
+model WhatsAppContact {
+  id              String    @id @default(cuid())
+  phone           String    @unique
+  normalizedPhone String    @unique
+  displayName     String    @default("")
+  profileName     String    @default("")
+  studentId       String    @default("")
+  leadId          String    @default("")
+  partnerId       String    @default("")
+  firstContactAt  DateTime  @default(now())
+  lastContactAt   DateTime  @default(now())
+  source          String    @default("WHATSAPP")
+  isBlocked       Boolean   @default(false)
+  isOptedOut      Boolean   @default(false)
+  optedOutAt     DateTime?
+  optOutReason    String    @default("")
+  tags            String    @default("[]")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([normalizedPhone])
+}
+
+model WhatsAppMessageArchive {
+  id               String    @id @default(cuid())
+  whatsappMessageId String   @unique // Meta message ID
+  conversationId   String    @default("")
+  threadId         String    @default("")
+  studentId        String    @default("")
+  leadId           String    @default("")
+  senderPhone      String    @default("")
+  receiverPhone    String    @default("")
+  senderNumber     String    @default("") // ALO official number
+  messageType      String    @default("text") // text, image, document, audio, video, location, contacts, interactive, button, template
+  messageBody      String    @default("")
+  mediaId          String    @default("")
+  mediaUrl         String    @default("")
+  timestamp        DateTime  @default(now())
+  direction        String    @default("inbound") // inbound, outbound
+  deliveryStatus   String    @default("sent") // sent, delivered, read, failed
+  readStatus       String    @default("unread")
+  aiGenerated      Boolean   @default(false)
+  aiReviewed       Boolean   @default(false)
+  employeeSenderId String    @default("")
+  isDeleted        Boolean   @default(false)
+  isHidden         Boolean   @default(false)
+  hiddenReason     String    @default("")
+  rawEventId       String    @default("")
+  createdAt        DateTime  @default(now())
+
+  @@index([conversationId])
+  @@index([studentId])
+  @@index([leadId])
+  @@index([senderPhone])
+  @@index([receiverPhone])
+  @@index([timestamp])
+  @@index([direction])
+}
+
+model WhatsAppFollowUpTemplate {
+  id              String   @id @default(cuid())
+  templateName    String   @unique
+  language        String   @default("english") // english, bangla, mixed
+  day             Int      @default(3) // 3,7,14,21,25,30
+  purpose         String   @default("follow_up")
+  messageBody     String   @default("")
+  variables       String   @default("[\"{{name}}\",\"{{student_code}}\",\"{{portal_link}}\",\"{{counselor_name}}\",\"{{branch_name}}\",\"{{country}}\",\"{{intake}}\"]")
+  metaTemplateName String  @default("")
+  approvalStatus  String   @default("pending") // pending, approved, rejected
+  activeStatus    String   @default("active")
+  createdBy       String   @default("")
+  approvedBy      String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([day])
+  @@index([language])
+  @@index([activeStatus])
+}
+
+model WhatsAppFollowUpSchedule {
+  id             String    @id @default(cuid())
+  studentId      String
+  leadId         String    @default("")
+  contactPhone   String
+  templateId     String    @default("")
+  scheduledDay   Int       @default(3)
+  scheduledAt    DateTime
+  sentAt         DateTime?
+  status         String    @default("scheduled") // scheduled, sent, failed, cancelled, paused
+  attemptCount   Int       @default(0)
+  maxAttempts    Int       @default(3)
+  lastError      String    @default("")
+  isOptedOut     Boolean   @default(false)
+  isPaused       Boolean   @default(false)
+  pauseReason    String    @default("")
+  messageId      String    @default("")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+model StudentPortalInvitation {
+  id             String    @id @default(cuid())
+  studentId      String
+  email          String    @default("")
+  phone          String    @default("")
+  tokenHash      String    @unique
+  expiresAt      DateTime
+  isUsed         Boolean   @default(false)
+  usedAt         DateTime?
+  createdBy      String    @default("")
+  invitationSent Boolean   @default(false)
+  sentAt         DateTime?
+  openedAt       DateTime?
+  activatedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([studentId])
+  @@index([expiresAt])
+}
+
+model DocumentSecurityIncident {
+  id               String   @id @default(cuid())
+  documentId       String   @default("")
+  studentId        String   @default("")
+  attemptedById    String   @default("")
+  attemptedByName  String   @default("")
+  attemptedByRole  String   @default("")
+  recipient        String   @default("")
+  recipientType    String   @default("") // student, university, partner, employee, external
+  action           String   @default("send") // send, download, share, view
+  severity         String   @default("medium") // low, medium, high, critical
+  status           String   @default("open") // open, under_review, resolved, blocked
+  reason           String   @default("")
+  blocked          Boolean  @default(false)
+  notifiedManager  Boolean  @default(false)
+  notifiedCeo      Boolean  @default(false)
+  resolvedBy       String   @default("")
+  resolvedAt       DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([documentId])
+  @@index([severity])
+  @@index([status])
+}
+
+model DashboardAlarm {
+  id               String    @id @default(cuid())
+  alarmType        String    @default("SLA_OVERDUE") // SLA_OVERDUE, URGENT_SUPPORT, COMPLAINT, DOCUMENT_SECURITY
+  threadId         String    @default("")
+  conversationId   String    @default("")
+  studentId        String    @default("")
+  studentName      String    @default("")
+  maskedPhone      String    @default("")
+  unmaskedPhone    String    @default("")
+  branch           String    @default("")
+  assignedEmployee String    @default("")
+  assignedRole     String    @default("")
+  slaElapsedMinutes Int      @default(0)
+  escalationLevel  Int       @default(1) // 1=counselor, 2=manager, 3=CEO
+  priority         String    @default("high")
+  status           String    @default("active") // active, acknowledged, resolved, muted
+  acknowledgedBy   String    @default("")
+  acknowledgedAt   DateTime?
+  resolvedBy       String    @default("")
+  resolvedAt       DateTime?
+  soundEnabled     Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([status])
+  @@index([escalationLevel])
+  @@index([assignedEmployee])
+  @@index([branch])
+}
+
+model AiIntentLog {
+  id           String   @id @default(cuid())
+  threadId     String   @default("")
+  messageId    String   @default("")
+  studentId    String   @default("")
+  intent       String   @default("general")
+  confidence   Float    @default(0)
+  model        String   @default("openrouter")
+  decisionSource String @default("ai")
+  language     String   @default("english")
+  createdAt    DateTime @default(now())
+
+  @@index([studentId])
+  @@index([intent])
+  @@index([createdAt])
+}
+
+model AiSentimentLog {
+  id          String   @id @default(cuid())
+  threadId    String   @default("")
+  messageId   String   @default("")
+  studentId   String   @default("")
+  sentiment   String   @default("neutral") // positive, neutral, confused, frustrated, angry, urgent, high-risk
+  confidence  Float    @default(0)
+  isHighRisk  Boolean  @default(false)
+  isUrgent    Boolean  @default(false)
+  model       String   @default("openrouter")
+  createdAt   DateTime @default(now())
+
+  @@index([studentId])
+  @@index([sentiment])
+  @@index([isHighRisk])
+}
+
+model AiLeadScore {
+  id           String   @id @default(cuid())
+  studentId    String   @unique
+  leadId       String   @default("")
+  score        Float    @default(0)
+  factors      String   @default("{}") // engagement, academic, intake, destination, budget, docs, response freq, app stage, urgency, intent
+  explanation  String   @default("")
+  calculatedAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([score])
+}
+
+model CommunicationRoutingLog {
+  id              String   @id @default(cuid())
+  threadId        String   @default("")
+  conversationId  String   @default("")
+  studentId       String   @default("")
+  fromNumber      String   @default("")
+  toNumber        String   @default("")
+  routingReason   String   @default("") // new_lead, existing_student, counselor_assignment, branch, complaint, follow_up, urgent, partner, etc.
+  priority        Int      @default(0)
+  assignedToId    String   @default("")
+  assignedToName  String   @default("")
+  branch          String   @default("")
+  department      String   @default("")
+  fallbackUsed    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([studentId])
+  @@index([threadId])
+  @@index([routingReason])
+}
+
+model WhatsAppRetryQueue {
+  id           String    @id @default(cuid())
+  messageId    String    @default("")
+  recipientPhone String
+  messageBody  String    @default("")
+  attemptCount Int       @default(0)
+  maxAttempts  Int       @default(3)
+  lastError    String    @default("")
+  nextRetryAt  DateTime?
+  status       String    @default("pending") // pending, retrying, sent, failed
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([status])
+  @@index([nextRetryAt])
+}
+
+model CronJobLog {
+  id          String    @id @default(cuid())
+  jobName     String
+  status      String    @default("running") // running, success, failed
+  startedAt   DateTime  @default(now())
+  finishedAt  DateTime?
+  durationMs  Int       @default(0)
+  errorMessage String   @default("")
+  metadata    String    @default("{}")
+  createdAt   DateTime  @default(now())
+
+  @@index([jobName])
+  @@index([status])
+  @@index([startedAt])
+}
+
+model CommunicationDeleteRequest {
+  id            String    @id @default(cuid())
+  messageId     String
+  threadId      String    @default("")
+  requestedById String
+  requestedByName String  @default("")
+  reason        String    @default("")
+  status        String    @default("pending") // pending, approved, rejected
+  reviewedById  String    @default("")
+  reviewedByName String   @default("")
+  reviewedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status])
+  @@index([messageId])
+}
+
+model CommunicationNoteVersion {
+  id            String   @id @default(cuid())
+  noteId        String
+  oldContent    String   @default("")
+  newContent    String   @default("")
+  changedById   String   @default("")
+  changedByName String   @default("")
+  reason        String   @default("")
+  createdAt     DateTime @default(now())
+
+  @@index([noteId])
+}
+
+model WhatsAppAnalyticsDaily {
+  id                  String   @id @default(cuid())
+  date                String   @unique // YYYY-MM-DD
+  totalConversations  Int      @default(0)
+  newLeads            Int      @default(0)
+  activeConversations Int      @default(0)
+  unreadConversations Int      @default(0)
+  aiHandled           Int      @default(0)
+  humanHandled        Int      @default(0)
+  aiHandovers         Int      @default(0)
+  avgResponseTime     Float    @default(0)
+  slaBreaches         Int      @default(0)
+  escalations         Int      @default(0)
+  urgentCases         Int      @default(0)
+  followUpSent        Int      @default(0)
+  followUpResponses   Int      @default(0)
+  conversionRate      Float    @default(0)
+  documentVolume      Int      @default(0)
+  complaintVolume     Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
