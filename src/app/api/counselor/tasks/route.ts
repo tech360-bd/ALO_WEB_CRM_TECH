@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   // Fetch student info for tasks with studentId
   const studentIds = Array.from(new Set(tasks.map((t) => t.studentId).filter(Boolean))) as string[];
-  const students = studentIds.length > 0 ? await db.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, studentId: true, fullName: true } }) : [];
+  const students = studentIds.length > 0 ? await db.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, studentId: true, name: true } }) : [];
   const smap: Record<string, any> = {};
   for (const s of students) smap[s.id] = s;
 

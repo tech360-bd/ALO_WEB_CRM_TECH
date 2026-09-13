@@ -49,17 +49,20 @@ export async function POST(req: NextRequest) {
     // ── Signature verification ──
     let signatureValid = false;
     const appSecret = process.env.FACEBOOK_APP_SECRET;
-    if (appSecret) {
-      const expected = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
-      signatureValid = safeEqual(expected, signature);
-      if (!signatureValid) {
-        return NextResponse.json(
-          { error: "Invalid signature — webhook not verified" },
-          { status: 401 }
-        );
-      }
-    } else {
-      console.warn("[facebook.webhook] FACEBOOK_APP_SECRET not set — skipping verification");
+    if (!appSecret) {
+      console.error("[facebook.webhook] FACEBOOK_APP_SECRET is required — rejecting webhook");
+      return NextResponse.json(
+        { error: "Webhook verification is not configured" },
+        { status: 503 }
+      );
+    }
+    const expected = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
+    signatureValid = safeEqual(expected, signature);
+    if (!signatureValid) {
+      return NextResponse.json(
+        { error: "Invalid signature — webhook not verified" },
+        { status: 401 }
+      );
     }
 
     let body: any;

@@ -55,9 +55,9 @@ export async function createReviewRequest(
   const student = await db.student.findUnique({ where: { id: params.studentId } });
   if (!student) throw new Error("Student not found");
 
-  const studentName = params.studentName || student.fullName;
+  const studentName = params.studentName || student.name;
   const studentEmail = params.studentEmail || student.email;
-  const studentPhone = params.studentPhone || student.mobile || undefined;
+  const studentPhone = params.studentPhone || student.phone || undefined;
 
   // CRITICAL: incentivized is ALWAYS false. We hardcode this to prevent any
   // caller from accidentally enabling an incentivized review (which would

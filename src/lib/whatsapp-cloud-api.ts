@@ -49,10 +49,13 @@ export function verifyWhatsAppSignature(
       );
     } else {
       console.error(
-        "[whatsapp-cloud-api] WHATSAPP_APP_SECRET not set in production — webhook verification bypassed!"
+        "[whatsapp-cloud-api] WHATSAPP_APP_SECRET is required in production — rejecting webhook."
       );
+      return false;
     }
-    return true;
+    // Development may explicitly opt into unsigned local webhook testing; a
+    // production process must never accept an unverifiable provider request.
+    return (process.env.NODE_ENV as string) !== "production";
   }
   if (!signature || !signature.startsWith("sha256=")) {
     return false;

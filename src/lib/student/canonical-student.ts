@@ -120,11 +120,9 @@ export async function createCanonicalStudent(
           studentId: studentCode,
           userId: params.userId,
           leadId: params.leadId,
-          firstName,
-          lastName,
-          fullName,
+          name: fullName,
           email,
-          mobile: params.phone || "",
+          phone: params.phone || "",
         },
       });
       return { success: true, studentId: created.studentId, studentDbId: created.id, mode: "CREATED" };
@@ -231,11 +229,9 @@ export async function registerStudentAtomically(
               studentId: code,
               userId: user.id,
               leadId: existingStudent?.leadId ?? null,
-              firstName,
-              lastName,
-              fullName,
+              name: fullName,
               email,
-              mobile: params.phone || "",
+              phone: params.phone || "",
             },
             select: { id: true, studentId: true },
           });

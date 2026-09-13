@@ -35,51 +35,15 @@ const statusIcon: Record<DayStatus, React.ElementType> = { P: CheckCircle2, A: X
 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-function generateMonthData(): DayRecord[] {
-  const records: DayRecord[] = [];
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dayOfWeek = new Date(currentYear, currentMonth, d).getDay();
-    if (dayOfWeek === 0) { records.push({ date: d, status: 'H' }); continue; }
-    if (d > todayDate) { records.push({ date: d, status: 'P' }); continue; }
-    if (d === todayDate) { records.push({ date: d, status: 'P', clockIn: '09:05 AM', hours: 4.5 }); continue; }
-    const rand = Math.random();
-    if (rand < 0.72) {
-      const late = Math.random() < 0.25;
-      const clockIn = late ? '09:' + String(Math.floor(Math.random() * 30 + 15)).padStart(2, '0') + ' AM' : '08:' + String(Math.floor(Math.random() * 55 + 30)).padStart(2, '0') + ' AM';
-      const clockOut = '06:' + String(Math.floor(Math.random() * 30)).padStart(2, '0') + ' PM';
-      records.push({ date: d, status: late ? 'L' : 'P', clockIn, clockOut, hours: late ? 7.5 + Math.random() * 1.5 : 8 + Math.random() * 1.5 });
-    } else if (rand < 0.88) {
-      records.push({ date: d, status: 'A' });
-    } else {
-      records.push({ date: d, status: 'H' });
-    }
-  }
-  return records;
-}
-
-const mockMonthData = generateMonthData();
-
-const mockWeeklyHours = [
-  { week: 'Week 1', hours: 42.5 }, { week: 'Week 2', hours: 39.0 },
-  { week: 'Week 3', hours: 44.0 }, { week: 'Week 4', hours: 18.5 },
-];
-
-function authHeaders(): Record<string, string> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  const token = usePortalStore.getState().token;
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-  return headers;
-}
-
 export default function EmployeeAttendancePage() {
   const { user } = usePortalStore();
   const [loading, setLoading] = useState(true);
-  const [clockedIn, setClockedIn] = useState(true);
-  const [clockInTime, setClockInTime] = useState('09:05 AM');
+  const [clockedIn, setClockedIn] = useState(false);
+  const [clockInTime, setClockInTime] = useState('');
   const [clockOutTime, setClockOutTime] = useState('');
   const [clocking, setClocking] = useState(false);
-  const [data, setData] = useState<DayRecord[]>(mockMonthData);
-  const [weeklyHours, setWeeklyHours] = useState(mockWeeklyHours);
+  const [data, setData] = useState<DayRecord[]>([]);
+  const [weeklyHours, setWeeklyHours] = useState<{ week: string; hours: number }[]>([]);
   const [apiLoaded, setApiLoaded] = useState(false);
 
   useEffect(() => {
@@ -129,20 +93,11 @@ export default function EmployeeAttendancePage() {
         setData((prev) => prev.map((d) => d.date === todayDate ? { ...d, status: 'P', clockIn: timeStr } : d));
         toast.success('Clocked in at ' + timeStr);
       } else {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-        setClockInTime(timeStr);
-        setClockedIn(true);
-        setData((prev) => prev.map((d) => d.date === todayDate ? { ...d, status: 'P', clockIn: timeStr } : d));
-        toast.success('Clocked in at ' + timeStr);
+        const error = await res.json().catch(() => ({}));
+        throw new Error(error.error || 'Clock-in failed');
       }
-    } catch {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      setClockInTime(timeStr);
-      setClockedIn(true);
-      setData((prev) => prev.map((d) => d.date === todayDate ? { ...d, status: 'P', clockIn: timeStr } : d));
-      toast.success('Clocked in at ' + timeStr);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Clock-in failed');
     }
     setClocking(false);
   }, []);
@@ -162,20 +117,11 @@ export default function EmployeeAttendancePage() {
         setData((prev) => prev.map((d) => d.date === todayDate ? { ...d, clockOut: timeStr, hours: 8.5 } : d));
         toast.success('Clocked out at ' + timeStr);
       } else {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-        setClockOutTime(timeStr);
-        setClockedIn(false);
-        setData((prev) => prev.map((d) => d.date === todayDate ? { ...d, clockOut: timeStr, hours: 8.5 } : d));
-        toast.success('Clocked out at ' + timeStr);
+        const error = await res.json().catch(() => ({}));
+        throw new Error(error.error || 'Clock-out failed');
       }
-    } catch {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      setClockOutTime(timeStr);
-      setClockedIn(false);
-      setData((prev) => prev.map((d) => d.date === todayDate ? { ...d, clockOut: timeStr, hours: 8.5 } : d));
-      toast.success('Clocked out at ' + timeStr);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Clock-out failed');
     }
     setClocking(false);
   }, []);

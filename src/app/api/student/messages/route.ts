@@ -11,7 +11,7 @@ export const GET = withStudentAuth(async (request, auth) => {
         take: 50,
       }),
       db.applicationComment.findMany({
-        where: { studentId: auth.studentId, commentType: 'student_visible' },
+        where: { applicationId: { in: (await db.application.findMany({ where: { studentId: auth.studentId }, select: { id: true } })).map((application) => application.id) }, commentType: 'student_visible' },
         orderBy: { createdAt: 'desc' },
         take: 50,
       })
@@ -32,10 +32,10 @@ export const GET = withStudentAuth(async (request, auth) => {
       ...applicationComments.map(c => ({
         id: c.id,
         type: 'application_comment',
-        senderType: c.authorType,
-        senderName: c.authorName,
-        content: c.content,
-        isRead: c.readByStudent,
+        senderType: c.role || "counselor",
+        senderName: c.role || "ALO Education",
+        content: c.commentText,
+        isRead: false,
         createdAt: c.createdAt,
         applicationId: c.applicationId,
       }))
@@ -46,21 +46,7 @@ export const GET = withStudentAuth(async (request, auth) => {
 
     // Mark unread messages as read
     const unreadStudentMessages = top50.filter(m => m.type === 'message' && !m.isRead).map(m => m.id);
-    const unreadApplicationComments = top50.filter(m => m.type === 'application_comment' && !m.isRead).map(m => m.id);
 
-    if (unreadStudentMessages.length > 0) {
-      await db.studentMessage.updateMany({
-        where: { id: { in: unreadStudentMessages } },
-        data: { isRead: true }
-      });
-    }
-
-    if (unreadApplicationComments.length > 0) {
-      await db.applicationComment.updateMany({
-        where: { id: { in: unreadApplicationComments } },
-        data: { readByStudent: true, readAt: new Date() }
-      });
-    }
 
     return NextResponse.json({ success: true, data: top50 });
   } catch (error) {

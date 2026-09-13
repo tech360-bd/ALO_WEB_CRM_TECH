@@ -48,7 +48,7 @@ async function main() {
     { keyword: "pte", autoReplyText: "PTE preparation? ALO Education offers free PTE mock tests with AI scoring: https://aloeducation.com/english-test/pte", autoDmText: "Hi! We offer free PTE mock tests. Want to try one?", autoCreateLead: true },
   ];
   for (const k of keywords) {
-    await db.keywordTrigger.create({ data: { ...k, keywordType: "CONTAINS", platform: "ALL", status: true, triggerCount: Math.floor(Math.random() * 50) } });
+    await db.keywordTrigger.create({ data: { ...k, keywordType: "CONTAINS", platform: "ALL", status: "ACTIVE", triggerCount: Math.floor(Math.random() * 50) } });
   }
 
   // ─── Social Inbox Messages ───

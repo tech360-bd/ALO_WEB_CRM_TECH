@@ -192,19 +192,21 @@ async function runIdempotentWorkflow<T>(
     console.error(`[automation-engine] failed to write audit log:`, err);
   }
 
-  try {
-    await db.timelineEvent.create({
-      data: {
-        leadId: opts?.leadId ?? null,
-        studentId: opts?.studentId ?? null,
-        type: "AI_ACTION",
-        title: `${workflow} ${success ? "succeeded" : "failed"}`,
-        description: errorMessage ?? action,
-        meta: JSON.stringify(details),
-      },
-    });
-  } catch (err) {
-    console.error(`[automation-engine] failed to write timeline event:`, err);
+  if (opts?.studentId) {
+    try {
+      await db.timelineEvent.create({
+        data: {
+          leadId: opts.leadId ?? null,
+          studentId: opts.studentId,
+          stage: "automation",
+          title: `${workflow} ${success ? "succeeded" : "failed"}`,
+          description: errorMessage ?? action,
+          actor: "system",
+        },
+      });
+    } catch (err) {
+      console.error(`[automation-engine] failed to write timeline event:`, err);
+    }
   }
 
   // 7) Increment metric (best-effort)
@@ -403,24 +405,23 @@ export async function runSlaTracking(): Promise<WorkflowResult<{ breached: numbe
           // so we use findFirst + create/update).
           try {
             const existing = await db.slaEvent.findFirst({
-              where: { communicationId: msg.id },
+              where: { threadId: msg.id },
               select: { id: true },
             });
             if (existing) {
               await db.slaEvent.update({
                 where: { id: existing.id },
-                data: { status: "ESCALATED_40", escalatedAt: new Date() },
+                data: { eventType: "ESCALATED_40", escalatedAt: new Date() },
               });
             } else {
               await db.slaEvent.create({
                 data: {
-                  communicationId: msg.id,
+                  threadId: msg.id,
                   channel: msg.platform,
-                  studentId: msg.studentId,
-                  counselorId: msg.employeeId,
-                  receivedAt: msg.receivedAt,
-                  status: "ESCALATED_40",
-                  slaMinutes: 40,
+                  studentId: msg.studentId ?? "",
+                  counselorId: msg.employeeId ?? "",
+                  firstMessageAt: msg.receivedAt,
+                  eventType: "ESCALATED_40",
                   escalatedAt: new Date(),
                 },
               });
@@ -458,17 +459,11 @@ export async function runMissingDataDetection(
         select: {
           id: true,
           studentId: true,
-          fullName: true,
+          name: true,
           counselorId: true,
           email: true,
-          mobile: true,
-          hasPassport: true,
-          passportNumber: true,
-          englishTestStatus: true,
-          bankStatementStatus: true,
-          profileCompletion: true,
-          studyDestination: true,
-          studyLevel: true,
+          phone: true,
+          profileComplete: true,
         },
       });
 
@@ -477,12 +472,8 @@ export async function runMissingDataDetection(
       for (const s of students) {
         const missing: string[] = [];
         if (!s.email) missing.push("email");
-        if (!s.mobile) missing.push("mobile");
-        if (!s.hasPassport || !s.passportNumber) missing.push("passport");
-        if (s.englishTestStatus === "YET_TO_RECEIVE") missing.push("english test");
-        if (s.bankStatementStatus === "NOT_STARTED") missing.push("bank statement");
-        if (!s.studyDestination) missing.push("study destination");
-        if (!s.studyLevel) missing.push("study level");
+        if (!s.phone) missing.push("phone");
+        if (s.profileComplete < 100) missing.push("profile");
 
         if (missing.length === 0) continue;
         incomplete++;
@@ -491,7 +482,7 @@ export async function runMissingDataDetection(
         try {
           await db.task.create({
             data: {
-              title: `Collect missing data: ${s.fullName} (${s.studentId})`,
+              title: `Collect missing data: ${s.name} (${s.studentId})`,
               description: `Missing fields: ${missing.join(", ")}`,
               assigneeId: s.counselorId,
               studentId: s.id,
@@ -531,8 +522,8 @@ export async function runDeadlineReminders(): Promise<WorkflowResult<{ within7: 
           id: true,
           applicationId: true,
           studentId: true,
-          university: true,
-          course: true,
+          universityName: true,
+          courseName: true,
           country: true,
           intake: true,
           deadline: true,
@@ -567,7 +558,7 @@ export async function runDeadlineReminders(): Promise<WorkflowResult<{ within7: 
               studentId: app.studentId,
               type: "DEADLINE",
               title: `Application deadline in ${diffDays} day(s)`,
-              message: `Your application to ${app.university} (${app.course}, ${app.country}) is due on ${due.toDateString()}.`,
+              message: `Your application to ${app.universityName} (${app.courseName}, ${app.country}) is due on ${due.toDateString()}.`,
               priority: bucket === 7 ? "URGENT" : bucket === 14 ? "HIGH" : "NORMAL",
               relatedId: app.id,
               actionUrl: `/student/applications`,
@@ -583,7 +574,7 @@ export async function runDeadlineReminders(): Promise<WorkflowResult<{ within7: 
             await db.task.create({
               data: {
                 title: `Deadline in ${diffDays}d: ${app.applicationId}`,
-                description: `Application to ${app.university} - ${app.course} (${app.country}) due ${due.toDateString()}.`,
+                description: `Application to ${app.universityName} - ${app.courseName} (${app.country}) due ${due.toDateString()}.`,
                 assigneeId: app.counselorId,
                 studentId: app.studentId,
                 type: "OTHER",
@@ -690,7 +681,7 @@ export async function runAutomatedNotifications(): Promise<WorkflowResult<{ sent
 
       // c) SLA breaches — already escalated at runSlaTracking, here we notify
       const breaches = await db.slaEvent.findMany({
-        where: { status: "ESCALATED_40", escalatedAt: { gte: since } },
+        where: { eventType: "ESCALATED_40", escalatedAt: { gte: since } },
         select: { id: true, counselorId: true, studentId: true, channel: true },
       });
       for (const b of breaches) {
@@ -840,6 +831,7 @@ export async function logHumanRequiredAction(
 
   const start = Date.now();
   let automationEventId: string | null = null;
+  let taskId: string | null = null;
 
   try {
     const ev = await db.automationEvent.create({
@@ -890,46 +882,23 @@ export async function logHumanRequiredAction(
     console.error("[automation-engine] human-required audit log failed:", err);
   }
 
-  // TimelineEvent
-  try {
-    await db.timelineEvent.create({
-      data: {
-        leadId: params.leadId ?? null,
-        studentId: params.studentId ?? null,
-        type: "AI_ACTION",
-        title: `Human required: ${params.action}`,
-        description: params.reason,
-        meta: JSON.stringify({ workflow: params.workflow, targetType: params.targetType, targetId: params.targetId }),
-      },
-    });
-  } catch (err) {
-    console.error("[automation-engine] human-required timeline event failed:", err);
-  }
-
-  // Optionally create a Task for the suggested assignee
-  let taskId: string | null = null;
-  if (params.suggestedAssigneeId) {
+  // TimelineEvent requires a student owner in Main's schema.
+  if (params.studentId) {
     try {
-      const task = await db.task.create({
+      await db.timelineEvent.create({
         data: {
-          title: `Human action required: ${params.action}`,
-          description: params.reason,
-          assigneeId: params.suggestedAssigneeId,
+          leadId: params.leadId ?? null,
           studentId: params.studentId,
-          type: "OTHER",
-          priority: params.riskLevel === "HIGH" || params.riskLevel === "CRITICAL" ? "URGENT" : "HIGH",
-          status: "PENDING",
-          dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          stage: "human_required",
+          title: `Human required: ${params.action}`,
+          description: params.reason,
+          actor: "system",
         },
       });
-      taskId = task.id;
     } catch (err) {
-      console.error("[automation-engine] human-required task creation failed:", err);
+      console.error("[automation-engine] human-required timeline failed:", err);
     }
   }
-
-  // Increment metric
-  await incrementMetric(params.workflow, "human").catch(() => {});
 
   return { automationEventId, taskId };
 }
@@ -997,6 +966,49 @@ export async function getUnifiedAutomationStats(): Promise<UnifiedAutomationStat
       byWorkflow: [],
     };
   }
+}
+
+// ─── Public workflow dispatch ──────────────────────────────────
+
+export async function runWorkflow(
+  workflow: string,
+  options: { targetId?: string; days?: number; actorId?: string; dryRun?: boolean } = {}
+): Promise<unknown> {
+  if (options.dryRun) {
+    return { workflow, targetId: options.targetId ?? null, skipped: true, reason: "DRY_RUN" };
+  }
+
+  const targetId = options.targetId;
+  if (["lead_welcome_flow", "lead_scoring", "counselor_assignment", "follow_up_task_creation", "lead_tagging"].includes(workflow) && !targetId) {
+    const leads = await db.lead.findMany({ where: { status: { not: "CONVERTED" } }, select: { id: true }, take: 100 });
+    const results: unknown[] = [];
+    for (const lead of leads) {
+      results.push(await runWorkflow(workflow, { ...options, targetId: lead.id }));
+    }
+    return { workflow, processed: results.length, results };
+  }
+
+  switch (workflow) {
+    case "lead_welcome_flow": return runLeadWelcomeFlow(targetId!);
+    case "lead_scoring": return runLeadScoring(targetId!);
+    case "counselor_assignment": return runCounselorAssignment(targetId!);
+    case "follow_up_task_creation": return runFollowUpTaskCreation(targetId!, options.days ?? 1);
+    case "lead_tagging": return runLeadTagging(targetId!);
+    case "sla_tracking": return runSlaTracking();
+    case "missing_data_detection": return runMissingDataDetection(targetId);
+    case "deadline_reminders": return runDeadlineReminders();
+    case "automated_notifications": return runAutomatedNotifications();
+    case "report_generation": return runReportGeneration();
+    default: throw new Error(`Unsupported automation workflow: ${workflow}`);
+  }
+}
+
+/** Compatibility entrypoint used by the admin scheduler API. */
+export async function runAllSchedulers(options: { actorId?: string; dryRun?: boolean } = {}) {
+  if (options.dryRun) {
+    return { dryRun: true, workflows: ["sla_tracking", "missing_data_detection", "deadline_reminders", "automated_notifications", "report_generation"] };
+  }
+  return runAllSchedulerWorkflows();
 }
 
 // ─── Scheduler entrypoint ───────────────────────────────────────

@@ -1093,7 +1093,6 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
           {/* Journey hero image */}
           <div className="mt-8 mb-2 overflow-hidden rounded-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://images.unsplash.com/photo-1523050854058-8df90fd10d9d?w=1280&q=80"
               alt="International students walking on university campus — study abroad journey"
@@ -1346,8 +1345,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   <Card key={u.slug} className="alo-card-anim group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-[#E2E8F0] bg-white transition-all hover:shadow-lg">
                     {/* University image header */}
                     <div className="relative h-32 overflow-hidden bg-[#F8FAFC]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                                <img
                         src={uniImage}
                         alt={`${u.name} campus — study abroad`}
                         className="alo-card-img size-full object-cover"

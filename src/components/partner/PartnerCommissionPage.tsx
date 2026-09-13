@@ -44,31 +44,6 @@ interface Payment {
   reference: string;
 }
 
-/* ── Mock Data ─────────────────────────────────────── */
-
-const mockSummary: CommissionSummary = {
-  totalEarned: 250000,
-  totalPaid: 140000,
-  totalPending: 45000,
-  totalExpected: 65000,
-  currency: 'BDT',
-};
-
-const mockPayments: Payment[] = [
-  { id: '1', studentName: 'Shakib Hasan', studentId: 'STU-003', university: 'University of Toronto', program: 'MBA', amount: 35000, currency: 'BDT', status: 'paid', date: '2025-01-15', reference: 'PAY-2025-001' },
-  { id: '2', studentName: 'Priya Das', studentId: 'STU-004', university: 'University of Birmingham', program: 'MSc Finance', amount: 28000, currency: 'BDT', status: 'paid', date: '2025-01-10', reference: 'PAY-2025-002' },
-  { id: '3', studentName: 'Arif Rahman', studentId: 'STU-001', university: 'University of Manchester', program: 'MSc Data Science', amount: 32000, currency: 'BDT', status: 'pending', date: '2025-01-17', reference: 'PAY-2025-003' },
-  { id: '4', studentName: 'Mitu Sarkar', studentId: 'STU-002', university: 'NYU', program: 'MS Computer Science', amount: 45000, currency: 'BDT', status: 'expected', date: '', reference: 'PAY-2025-004' },
-  { id: '5', studentName: 'Nayeem Islam', studentId: 'STU-005', university: 'RMIT University', program: 'Diploma IT', amount: 15000, currency: 'BDT', status: 'pending', date: '2025-01-13', reference: 'PAY-2025-005' },
-  { id: '6', studentName: 'Taslima Akter', studentId: 'STU-006', university: 'Boston University', program: 'MS MIS', amount: 40000, currency: 'BDT', status: 'expected', date: '', reference: 'PAY-2025-006' },
-  { id: '7', studentName: 'Sumaiya Begum', studentId: 'STU-007', university: 'University of Leeds', program: 'MSc Public Health', amount: 20000, currency: 'BDT', status: 'processing', date: '2025-01-09', reference: 'PAY-2025-007' },
-  { id: '8', studentName: 'Farzana Mimi', studentId: 'STU-008', university: 'University of Cambridge', program: 'MSc Public Health', amount: 25000, currency: 'BDT', status: 'paid', date: '2024-12-20', reference: 'PAY-2024-015' },
-  { id: '9', studentName: 'Jamil Hossain', studentId: 'STU-010', university: 'UBC', program: 'BEng Civil', amount: 18000, currency: 'BDT', status: 'failed', date: '2025-01-08', reference: 'PAY-2025-008' },
-  { id: '10', studentName: 'Rafiq Ahmed', studentId: 'STU-009', university: 'Monash University', program: 'MSc IT', amount: 22000, currency: 'BDT', status: 'paid', date: '2024-12-15', reference: 'PAY-2024-014' },
-  { id: '11', studentName: 'Kamal Hossain', studentId: 'STU-011', university: 'University of Lincoln', program: 'MSc Marketing', amount: 15000, currency: 'BDT', status: 'paid', date: '2024-11-20', reference: 'PAY-2024-012' },
-  { id: '12', studentName: 'Nasreen Akter', studentId: 'STU-012', university: 'Deakin University', program: 'MSc Nursing', amount: 12000, currency: 'BDT', status: 'paid', date: '2024-11-10', reference: 'PAY-2024-011' },
-];
-
 const statusConfig: Record<PaymentStatus, { variant: 'success' | 'warning' | 'outline' | 'brand' | 'danger'; label: string }> = {
   paid: { variant: 'success', label: 'Paid' },
   pending: { variant: 'warning', label: 'Pending' },
@@ -81,7 +56,7 @@ const statusConfig: Record<PaymentStatus, { variant: 'success' | 'warning' | 'ou
 
 export default function PartnerCommissionPage() {
   const { user } = usePortalStore();
-  const [summary, setSummary] = useState<CommissionSummary>(mockSummary);
+  const [summary, setSummary] = useState<CommissionSummary>({ totalEarned: 0, totalPaid: 0, totalPending: 0, totalExpected: 0, currency: "BDT" });
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -111,15 +86,31 @@ export default function PartnerCommissionPage() {
         : { 'Content-Type': 'application/json' };
       const res = await fetch(`/api/partner/commission?partnerId=${user?.id || ''}`, { headers });
       const data = await res.json();
-      if (data.success) {
-        if (data.summary) setSummary(data.summary);
-        if (Array.isArray(data.payments) && data.payments.length > 0) setPayments(data.payments);
-        else setPayments(mockPayments);
-      } else {
-        setPayments(mockPayments);
-      }
-    } catch {
-      setPayments(mockPayments);
+      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to load commission data');
+      const payload = data.data || {};
+      const apiSummary = payload.summary || {};
+      setSummary({
+        totalEarned: Number(apiSummary.leadLevelReceived || 0),
+        totalPaid: Number(apiSummary.totalCommissionPaid || 0),
+        totalPending: Number(apiSummary.leadLevelPending || 0),
+        totalExpected: Number(apiSummary.totalCommissionExpected || 0),
+        currency: 'BDT',
+      });
+      setPayments((payload.leads || []).map((lead: any) => ({
+        id: lead.id,
+        studentName: lead.studentName || lead.studentId || 'Unassigned student',
+        studentId: lead.studentId || '',
+        university: lead.destinationCountry || 'Not specified',
+        program: lead.studyLevel || 'Not specified',
+        amount: Number(lead.commissionReceived || lead.commissionExpected || 0),
+        currency: 'BDT',
+        status: lead.commissionStatus === 'paid' ? 'paid' : lead.commissionStatus === 'failed' ? 'failed' : lead.commissionStatus === 'processing' ? 'processing' : lead.commissionExpected ? 'pending' : 'expected',
+        date: lead.updatedAt || lead.createdAt || '',
+        reference: lead.partnerRef || lead.id,
+      })));
+    } catch (error) {
+      setPayments([]);
+      setSummary({ totalEarned: 0, totalPaid: 0, totalPending: 0, totalExpected: 0, currency: 'BDT' });
     } finally {
       setLoading(false);
     }

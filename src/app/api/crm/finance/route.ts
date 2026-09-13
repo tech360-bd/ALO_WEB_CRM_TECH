@@ -106,51 +106,19 @@ export async function GET(request: NextRequest) {
         summaryPromise,
       ]);
 
-      if (payments.length === 0) {
-        const mockPayments = [
-          {
-            studentId: 'STU-101',
-            description: 'Application Fee - University of Manchester',
-            amount: 250,
-            currency: 'GBP',
-            status: 'completed',
-          },
-          {
-            studentId: 'STU-419',
-            description: 'Consultancy Service Fee',
-            amount: 50000,
-            currency: 'BDT',
-            status: 'pending',
-          },
-          {
-            studentId: 'STU-882',
-            description: 'Visa Processing Fee',
-            amount: 15000,
-            currency: 'BDT',
-            status: 'failed',
-          }
-        ];
-
-        for (const m of mockPayments) {
-          await db.aloPayment.create({ data: m });
-        }
-
-        payments = await db.aloPayment.findMany({
-          where,
-          orderBy,
-          skip,
-          take: limit,
-        });
-        total = mockPayments.length;
-      }
-      
+      const studentIds = [...new Set(payments.map((payment) => payment.studentId))];
+      const students = studentIds.length
+        ? await db.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, name: true } })
+        : [];
+      const studentNames = new Map(students.map((student) => [student.id, student.name]));
       const totalPages = Math.ceil(total / limit);
+
 
       return NextResponse.json({
         success: true,
         data: payments.map(p => ({
           ...p,
-          studentName: p.studentId === 'STU-101' ? 'Rahim Uddin' : p.studentId === 'STU-419' ? 'Shakib Hasan' : 'Mitu Sarkar',
+          studentName: studentNames.get(p.studentId) || p.studentId,
           paymentType: p.description
         })),
         total,

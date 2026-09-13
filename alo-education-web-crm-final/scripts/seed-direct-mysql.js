@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Pure JavaScript / mysql2 Core Production Seeder for cPanel CloudLinux
 // Bypasses Prisma Rust Engine Tokio timer panics in cPanel Jailshell
 

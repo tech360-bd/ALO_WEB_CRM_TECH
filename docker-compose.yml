@@ -9,27 +9,35 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      DATABASE_URL: mysql://${MYSQL_USER:-aloeduca_ALO_final_web_crm}:${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}@db:3306/${MYSQL_DATABASE:-aloeduca_alo_education}
     volumes:
-      - ./db:/app/db
       - ./upload:/app/upload
       - ./download:/app/download
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - alo-network
 
   db:
-    image: postgres:16-alpine
-    container_name: alo-postgres
+    image: mysql:8.4
+    container_name: alo-mysql
     restart: unless-stopped
     environment:
-      POSTGRES_USER: alo_user
-      POSTGRES_PASSWORD: strong_password
-      POSTGRES_DB: alo_education
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-aloeduca_alo_education}
+      MYSQL_USER: ${MYSQL_USER:-aloeduca_ALO_final_web_crm}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - alo-pgdata:/var/lib/postgresql/data
+      - alo-mysqldata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$${MYSQL_USER}", "-p$${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
     networks:
       - alo-network
 
@@ -49,7 +57,7 @@ services:
       - alo-network
 
 volumes:
-  alo-pgdata:
+  alo-mysqldata:
 
 networks:
   alo-network:

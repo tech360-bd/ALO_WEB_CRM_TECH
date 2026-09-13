@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: partner.id } });
   const monthYear = new Date().toISOString().slice(0, 7);
-  const usage = await db.partnerMarketingUsage.findUnique({ where: { partnerId_monthYear: { partnerId: partner.id, monthYear } } });
+  const usage = await db.partnerMarketingUsage.findFirst({ where: { partnerId: partner.id, monthYear } });
 
   const imageLimit = quota?.monthlyImageLimit || 15;
   const videoLimit = quota?.monthlyVideoLimit || 10;

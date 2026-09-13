@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (source) where.source = source;
   const leads = await db.lead.findMany({
     where,
-    include: { counselor: true },
+
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json({ leads });
