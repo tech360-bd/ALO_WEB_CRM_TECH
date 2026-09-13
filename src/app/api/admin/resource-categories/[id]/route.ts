@@ -1,3 +1,5 @@
+import { pickEditableContentFields } from "@/lib/content-validation";
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -29,7 +31,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const patch: any = { ...body };
+    const patch: any = pickEditableContentFields(body, "resourceCategory");
     delete patch.id;
     delete patch.resources;
     delete patch.createdAt;
@@ -41,7 +43,7 @@ export async function PATCH(
 
     const updated = await db.resourceCategory.update({ where: { id }, data: patch });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CATEGORY_UPDATE",
@@ -54,7 +56,7 @@ export async function PATCH(
     return NextResponse.json({ category: updated });
   } catch (err: any) {
     console.error("[admin.resource-categories.update] error:", err);
-    return NextResponse.json({ error: "Failed to update category", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update category" }, { status: 500 });
   }
 }
 
@@ -77,6 +79,9 @@ export async function DELETE(
   try {
     const { id } = await params;
     const force = req.nextUrl.searchParams.get("force") === "1";
+    if (force && role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Only SUPER_ADMIN may force-reassign resources" }, { status: 403 });
+    }
     const existing = await db.resourceCategory.findUnique({
       where: { id },
       include: { _count: { select: { resources: true } } },
@@ -109,7 +114,7 @@ export async function DELETE(
 
     await db.resourceCategory.delete({ where: { id } });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CATEGORY_DELETE",
@@ -122,6 +127,6 @@ export async function DELETE(
     return NextResponse.json({ success: true, id });
   } catch (err: any) {
     console.error("[admin.resource-categories.delete] error:", err);
-    return NextResponse.json({ error: "Failed to delete category", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete category" }, { status: 500 });
   }
 }

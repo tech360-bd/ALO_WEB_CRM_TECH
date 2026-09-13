@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ scholarships, total: scholarships.length });
   } catch (err: any) {
     console.error("[admin.scholarships.list] error:", err);
-    return NextResponse.json({ error: "Failed to list scholarships", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list scholarships" }, { status: 500 });
   }
 }
 
@@ -117,7 +118,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "SCHOLARSHIP_CREATE",
@@ -130,6 +131,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ scholarship }, { status: 201 });
   } catch (err: any) {
     console.error("[admin.scholarships.create] error:", err);
-    return NextResponse.json({ error: "Failed to create scholarship", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create scholarship" }, { status: 500 });
   }
 }

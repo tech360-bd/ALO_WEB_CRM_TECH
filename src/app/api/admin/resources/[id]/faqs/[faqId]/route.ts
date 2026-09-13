@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -36,7 +37,7 @@ export async function PATCH(
 
     const updated = await db.resourceFaq.update({ where: { id: faqId }, data: patch });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_FAQ_UPDATE",
@@ -49,7 +50,7 @@ export async function PATCH(
     return NextResponse.json({ faq: updated });
   } catch (err: any) {
     console.error("[admin.resources.faqs.update] error:", err);
-    return NextResponse.json({ error: "Failed to update FAQ", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update FAQ" }, { status: 500 });
   }
 }
 
@@ -77,7 +78,7 @@ export async function DELETE(
 
     await db.resourceFaq.delete({ where: { id: faqId } });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_FAQ_DELETE",
@@ -90,6 +91,6 @@ export async function DELETE(
     return NextResponse.json({ success: true, faqId });
   } catch (err: any) {
     console.error("[admin.resources.faqs.delete] error:", err);
-    return NextResponse.json({ error: "Failed to delete FAQ", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete FAQ" }, { status: 500 });
   }
 }

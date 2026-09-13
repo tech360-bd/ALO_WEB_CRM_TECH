@@ -54,7 +54,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     });
   } catch (err: any) {
     console.error("[resources.get] error:", err);
-    return NextResponse.json({ error: "Failed to fetch resource", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch resource" }, { status: 500 });
   }
 }
 

@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ faqs, total: faqs.length });
   } catch (err: any) {
     console.error("[admin.services.faqs.list] error:", err);
-    return NextResponse.json({ error: "Failed to list FAQs", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list FAQs" }, { status: 500 });
   }
 }
 
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       data: { serviceId: id, question, answer, sortOrder: order },
     });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "SERVICE_FAQ_CREATE",
@@ -87,6 +88,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ faq }, { status: 201 });
   } catch (err: any) {
     console.error("[admin.services.faqs.create] error:", err);
-    return NextResponse.json({ error: "Failed to create FAQ", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create FAQ" }, { status: 500 });
   }
 }

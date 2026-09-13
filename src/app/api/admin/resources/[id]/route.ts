@@ -1,3 +1,5 @@
+import { pickEditableContentFields } from "@/lib/content-validation";
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -32,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ resource });
   } catch (err: any) {
     console.error("[admin.resources.get] error:", err);
-    return NextResponse.json({ error: "Failed to fetch resource", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch resource" }, { status: 500 });
   }
 }
 
@@ -56,7 +58,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     const body = await req.json();
-    const patch: any = { ...body };
+    const patch: any = pickEditableContentFields(body, "resource");
     delete patch.id;
     delete patch.faqs;
     delete patch.relationships;
@@ -87,7 +89,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       },
     });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_UPDATE",
@@ -100,7 +102,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ resource: updated });
   } catch (err: any) {
     console.error("[admin.resources.update] error:", err);
-    return NextResponse.json({ error: "Failed to update resource", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update resource" }, { status: 500 });
   }
 }
 
@@ -120,6 +122,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   try {
     const { id } = await params;
     const hard = req.nextUrl.searchParams.get("hard") === "1";
+    if (hard && role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Only SUPER_ADMIN may permanently delete content" }, { status: 403 });
+    }
     const existing = await db.resource.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Resource not found" }, { status: 404 });
@@ -141,7 +146,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       await db.resource.update({ where: { id }, data: { status: "ARCHIVED" } });
     }
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: hard ? "RESOURCE_DELETE" : "RESOURCE_ARCHIVE",
@@ -154,6 +159,6 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ success: true, id, hard });
   } catch (err: any) {
     console.error("[admin.resources.delete] error:", err);
-    return NextResponse.json({ error: "Failed to delete resource", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete resource" }, { status: 500 });
   }
 }

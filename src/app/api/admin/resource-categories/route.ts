@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ categories, total: categories.length });
   } catch (err: any) {
     console.error("[admin.resource-categories.list] error:", err);
-    return NextResponse.json({ error: "Failed to list categories", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list categories" }, { status: 500 });
   }
 }
 
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CATEGORY_CREATE",
@@ -93,6 +94,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ category }, { status: 201 });
   } catch (err: any) {
     console.error("[admin.resource-categories.create] error:", err);
-    return NextResponse.json({ error: "Failed to create category", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create category" }, { status: 500 });
   }
 }

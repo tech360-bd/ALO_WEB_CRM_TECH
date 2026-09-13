@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ resources, total: resources.length });
   } catch (err: any) {
     console.error("[admin.resources.list] error:", err);
-    return NextResponse.json({ error: "Failed to list resources", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list resources" }, { status: 500 });
   }
 }
 
@@ -112,7 +113,7 @@ export async function POST(req: NextRequest) {
       include: { category: true },
     });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CREATE",
@@ -125,6 +126,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ resource }, { status: 201 });
   } catch (err: any) {
     console.error("[admin.resources.create] error:", err);
-    return NextResponse.json({ error: "Failed to create resource", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create resource" }, { status: 500 });
   }
 }

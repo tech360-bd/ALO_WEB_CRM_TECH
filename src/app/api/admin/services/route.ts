@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ services, total: services.length });
   } catch (err: any) {
     console.error("[admin.services.list] error:", err);
-    return NextResponse.json({ error: "Failed to list services", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list services" }, { status: 500 });
   }
 }
 
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "SERVICE_CREATE",
@@ -115,6 +116,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ service }, { status: 201 });
   } catch (err: any) {
     console.error("[admin.services.create] error:", err);
-    return NextResponse.json({ error: "Failed to create service", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create service" }, { status: 500 });
   }
 }

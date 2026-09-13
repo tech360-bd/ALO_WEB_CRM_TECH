@@ -51,7 +51,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     });
   } catch (err: any) {
     console.error("[scholarships.get] error:", err);
-    return NextResponse.json({ error: "Failed to fetch scholarship", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch scholarship" }, { status: 500 });
   }
 }
 

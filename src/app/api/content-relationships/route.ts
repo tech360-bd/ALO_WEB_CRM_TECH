@@ -1,3 +1,5 @@
+import { contentAuditLog } from "@/lib/content-audit";
+import { normalizeContentRelationshipType } from "@/lib/content-validation";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { withAuth, AuthContext } from "@/lib/auth-middleware";
@@ -9,9 +11,14 @@ export const dynamic = "force-dynamic";
 // Also supports: ?targetType=X&targetId=Y for reverse lookups
 export async function GET(req: NextRequest) {
   try {
-    const sourceType = req.nextUrl.searchParams.get("sourceType");
+    const sourceTypeParam = req.nextUrl.searchParams.get("sourceType");
+    const targetTypeParam = req.nextUrl.searchParams.get("targetType");
+    const sourceType = sourceTypeParam ? normalizeContentRelationshipType(sourceTypeParam) : null;
+    const targetType = targetTypeParam ? normalizeContentRelationshipType(targetTypeParam) : null;
+    if ((sourceTypeParam && !sourceType) || (targetTypeParam && !targetType)) {
+      return NextResponse.json({ error: "Unsupported content relationship type" }, { status: 400 });
+    }
     const sourceId = req.nextUrl.searchParams.get("sourceId");
-    const targetType = req.nextUrl.searchParams.get("targetType");
     const targetId = req.nextUrl.searchParams.get("targetId");
     const relationshipType = req.nextUrl.searchParams.get("relationshipType");
     // Public callers may only see active relationships.
@@ -51,7 +58,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ relationships: hydrated, total: hydrated.length });
   } catch (err: any) {
     console.error("[content-relationships.list] error:", err);
-    return NextResponse.json({ error: "Failed to list relationships", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list relationships" }, { status: 500 });
   }
 }
 
@@ -61,15 +68,20 @@ async function createRelationship(req: Request, auth: AuthContext) {
   try {
     const body = await req.json();
     const {
-      sourceType, sourceId, targetType, targetId,
+      sourceId, targetId,
       relationshipType = "RELATED", sortOrder = 0, status = "ACTIVE",
     } = body as any;
+    const sourceType = normalizeContentRelationshipType((body as any).sourceType);
+    const targetType = normalizeContentRelationshipType((body as any).targetType);
 
     if (!sourceType || !sourceId || !targetType || !targetId) {
       return NextResponse.json(
-        { error: "sourceType, sourceId, targetType, and targetId are required" },
+        { error: "sourceType, sourceId, targetType, and targetId are required and must use a supported content type" },
         { status: 400 }
       );
+    }
+    if (sourceType === targetType && sourceId === targetId) {
+      return NextResponse.json({ error: "A content item cannot relate to itself" }, { status: 400 });
     }
 
     // Validate that source/target actually exist when they're typed entities we manage
@@ -95,7 +107,7 @@ async function createRelationship(req: Request, auth: AuthContext) {
     });
 
     const userId = auth.userId;
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "CONTENT_RELATIONSHIP_CREATE",
@@ -108,7 +120,7 @@ async function createRelationship(req: Request, auth: AuthContext) {
     return NextResponse.json({ relationship: rel }, { status: 201 });
   } catch (err: any) {
     console.error("[content-relationships.create] error:", err);
-    return NextResponse.json({ error: "Failed to create relationship", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create relationship" }, { status: 500 });
   }
 }
 

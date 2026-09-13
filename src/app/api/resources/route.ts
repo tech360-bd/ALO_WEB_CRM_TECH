@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { withAuth, AuthContext } from "@/lib/auth-middleware";
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ resources, total: resources.length });
   } catch (err: any) {
     console.error("[resources.list] error:", err);
-    return NextResponse.json({ error: "Failed to list resources", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list resources" }, { status: 500 });
   }
 }
 
@@ -119,7 +120,7 @@ async function createResource(req: Request, auth: AuthContext) {
     });
 
     const userId = auth.userId;
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CREATE",
@@ -132,7 +133,7 @@ async function createResource(req: Request, auth: AuthContext) {
     return NextResponse.json({ resource }, { status: 201 });
   } catch (err: any) {
     console.error("[resources.create] error:", err);
-    return NextResponse.json({ error: "Failed to create resource", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create resource" }, { status: 500 });
   }
 }
 

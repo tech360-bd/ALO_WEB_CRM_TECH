@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { withAuth, AuthContext } from "@/lib/auth-middleware";
@@ -21,7 +22,7 @@ async function deleteRelationship(
     await db.contentRelationship.delete({ where: { id } });
 
     const userId = auth.userId;
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "CONTENT_RELATIONSHIP_DELETE",
@@ -40,7 +41,7 @@ async function deleteRelationship(
     return NextResponse.json({ success: true, id });
   } catch (err: any) {
     console.error("[content-relationships.delete] error:", err);
-    return NextResponse.json({ error: "Failed to delete relationship", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete relationship" }, { status: 500 });
   }
 }
 

@@ -53,7 +53,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     });
   } catch (err: any) {
     console.error("[services.get] error:", err);
-    return NextResponse.json({ error: "Failed to fetch service", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch service" }, { status: 500 });
   }
 }
 

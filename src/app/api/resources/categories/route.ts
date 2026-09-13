@@ -1,3 +1,4 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { withAuth, AuthContext } from "@/lib/auth-middleware";
@@ -30,7 +31,7 @@ export async function GET() {
     });
   } catch (err: any) {
     console.error("[resources.categories.list] error:", err);
-    return NextResponse.json({ error: "Failed to list categories", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list categories" }, { status: 500 });
   }
 }
 
@@ -52,7 +53,7 @@ async function createCategory(req: Request, auth: AuthContext) {
     });
 
     const userId = auth.userId;
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CATEGORY_CREATE",
@@ -65,7 +66,7 @@ async function createCategory(req: Request, auth: AuthContext) {
     return NextResponse.json({ category }, { status: 201 });
   } catch (err: any) {
     console.error("[resources.categories.create] error:", err);
-    return NextResponse.json({ error: "Failed to create category", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create category" }, { status: 500 });
   }
 }
 

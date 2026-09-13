@@ -1,3 +1,5 @@
+import { pickEditableContentFields } from "@/lib/content-validation";
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -31,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ scholarship });
   } catch (err: any) {
     console.error("[admin.scholarships.get] error:", err);
-    return NextResponse.json({ error: "Failed to fetch scholarship", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch scholarship" }, { status: 500 });
   }
 }
 
@@ -55,7 +57,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     const body = await req.json();
-    const patch: any = { ...body };
+    const patch: any = pickEditableContentFields(body, "scholarship");
     delete patch.id;
     delete patch.faqs;
     delete patch.relationships;
@@ -84,7 +86,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       include: { faqs: { orderBy: { sortOrder: "asc" } } },
     });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "SCHOLARSHIP_UPDATE",
@@ -97,7 +99,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ scholarship: updated });
   } catch (err: any) {
     console.error("[admin.scholarships.update] error:", err);
-    return NextResponse.json({ error: "Failed to update scholarship", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update scholarship" }, { status: 500 });
   }
 }
 
@@ -117,6 +119,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   try {
     const { id } = await params;
     const hard = req.nextUrl.searchParams.get("hard") === "1";
+    if (hard && role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Only SUPER_ADMIN may permanently delete content" }, { status: 403 });
+    }
     const existing = await db.scholarship.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
@@ -138,7 +143,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       await db.scholarship.update({ where: { id }, data: { status: "CLOSED" } });
     }
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: hard ? "SCHOLARSHIP_DELETE" : "SCHOLARSHIP_CLOSE",
@@ -151,6 +156,6 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ success: true, id, hard });
   } catch (err: any) {
     console.error("[admin.scholarships.delete] error:", err);
-    return NextResponse.json({ error: "Failed to delete scholarship", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete scholarship" }, { status: 500 });
   }
 }

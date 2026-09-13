@@ -1,3 +1,5 @@
+import { contentAuditLog } from "@/lib/content-audit";
+import { normalizeContentRelationshipType } from "@/lib/content-validation";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -42,7 +44,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     });
   } catch (err: any) {
     console.error("[admin.services.relationships.list] error:", err);
-    return NextResponse.json({ error: "Failed to list relationships", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list relationships" }, { status: 500 });
   }
 }
 
@@ -66,10 +68,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
 
     const body = await req.json();
-    const { targetType, targetId, relationshipType = "RELATED", sortOrder = 0, status = "ACTIVE" } = body as any;
+    const { targetId, relationshipType = "RELATED", sortOrder = 0, status = "ACTIVE" } = body as any;
+    const targetType = normalizeContentRelationshipType((body as any).targetType);
 
     if (!targetType || !targetId) {
-      return NextResponse.json({ error: "targetType and targetId are required" }, { status: 400 });
+      return NextResponse.json({ error: "targetType and targetId are required and must use a supported content type" }, { status: 400 });
+    }
+    if (targetType === "SERVICE" && targetId === id) {
+      return NextResponse.json({ error: "A service cannot relate to itself" }, { status: 400 });
     }
 
     // Prevent duplicates
@@ -91,7 +97,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       },
     });
 
-    await db.auditLog.create({
+    await contentAuditLog.create({
       data: {
         userId,
         action: "CONTENT_RELATIONSHIP_CREATE",
@@ -104,6 +110,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ relationship: rel }, { status: 201 });
   } catch (err: any) {
     console.error("[admin.services.relationships.create] error:", err);
-    return NextResponse.json({ error: "Failed to create relationship", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create relationship" }, { status: 500 });
   }
 }
