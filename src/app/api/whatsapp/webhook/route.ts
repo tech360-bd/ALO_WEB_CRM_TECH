@@ -254,14 +254,8 @@ export async function POST(req: NextRequest) {
     const existingStudent = await db.student.findFirst({
       where: {
         OR: [
-          { mobile: from },
-          ...(normalizedFrom
-            ? [
-                { mobile: normalizedFrom },
-                { altMobile: from },
-                { altMobile: normalizedFrom },
-              ]
-            : []),
+          { phone: from },
+          ...(normalizedFrom ? [{ phone: normalizedFrom }] : []),
         ],
       },
     });
@@ -308,15 +302,13 @@ export async function POST(req: NextRequest) {
       const newStudent = await db.student.create({
         data: {
           studentId: `AE-${new Date().getFullYear()}${(100001 + studentCount).toString()}`,
-          firstName: `WhatsApp`,
-          lastName: from.slice(-4),
-          fullName: `WhatsApp ${from.slice(-4)}`,
+          name: `WhatsApp ${from.slice(-4)}`,
           email: `wa_${from.slice(-4)}@aloeducation.com`,
-          mobile: from,
-          nationality: "Bangladeshi",
+          phone: from,
+          currentCountry: "Bangladesh",
           leadId: newLead.id,
-          profileCompletion: 5,
-          status: "ACTIVE",
+          profileComplete: 5,
+          status: "active",
         },
       });
       studentId = newStudent.id;
@@ -324,9 +316,12 @@ export async function POST(req: NextRequest) {
       await db.timelineEvent.create({
         data: {
           leadId: newLead.id,
-          type: "LEAD_CREATED",
+          studentId: newStudent.id,
+          stage: "lead_created",
           title: "Lead auto-created from WhatsApp",
           description: `Keyword "${keywordTriggered}" triggered auto lead creation. Message: ${messageText.slice(0, 100)}`,
+          actor: "whatsapp-webhook",
+          actionUrl: "",
         },
       });
 
@@ -433,12 +428,12 @@ export async function POST(req: NextRequest) {
     // 8. SLA event
     await db.slaEvent.create({
       data: {
+        threadId: "",
         channel: "WHATSAPP",
-        studentId,
-        counselorId: existingStudent?.counselorId,
-        receivedAt: new Date(),
-        status: "PENDING",
-        slaMinutes: 40,
+        studentId: studentId ?? "",
+        counselorId: existingStudent?.counselorId ?? "",
+        eventType: "warning",
+        firstMessageAt: new Date(),
       },
     });
 
@@ -447,9 +442,11 @@ export async function POST(req: NextRequest) {
       await db.timelineEvent.create({
         data: {
           studentId,
-          type: "MESSAGE_SENT",
+          stage: "message_sent",
           title: "WhatsApp message received + AI reply sent",
           description: `Inbound: "${messageText.slice(0, 100)}" → AI Reply: "${autoReply.slice(0, 100)}"`,
+          actor: "whatsapp-webhook",
+          actionUrl: "",
         },
       });
     }

@@ -154,7 +154,7 @@ export async function GET(req: NextRequest) {
         primaryColor: '#E8501A',
         backgroundColor: '#FFFFFF',
         accentColor: '#0057B8',
-        logoConfigured: brandAssets.some((a) => a.type === 'logo' || a.name.toLowerCase().includes('logo')),
+        logoConfigured: brandAssets.some((a) => a.type.toLowerCase() === 'logo' || a.name.toLowerCase().includes('logo')),
       },
     });
   } catch (error: unknown) {

@@ -12,17 +12,1140 @@ model User {
   id             String   @id @default(cuid())
   email          String   @unique
   name           String?
+  phone          String?
+  passwordHash   String   @default("")
   role           String   @default("student")
+  status         String   @default("ACTIVE")
+  mustChangePwd  Boolean  @default(false)
+  lastLoginAt    DateTime?
+  partnerId      String?
   permissions    String   @default("[]")
   actingAsRole   String?
   actingAsUserId String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  auditLogs                  AuditLog[]
   marketingAuditLogs         MarketingAuditLog[]
   marketingApprovals         MarketingApproval[]
   marketingCreatedLeads      MarketingLead[]     @relation("LeadCreator")
   marketingReviewedApprovals MarketingApproval[] @relation("ApprovalReviewer")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String
+  resource   String?
+  resourceId String?
+  details    String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+}
+
+model Lead {
+  id                    String   @id @default(cuid())
+  leadId                String   @unique
+  fullName              String
+  email                 String?
+  phone                 String
+  altPhone              String?
+  source                String   @default("WEBSITE")
+  sourceDetail          String?
+  preferredCountry      String?
+  preferredCourse       String?
+  notes                 String?
+  counselorId           String?
+  status                String   @default("NEW")
+  duplicateOfId         String?
+  studentId             String?
+  welcomeSent           Boolean  @default(false)
+  preferredLevel        String?
+  preferredIntake       String?
+  budget                String?
+  englishTest           String?
+  englishScore          String?
+  currentQualification  String?
+  cgpa                  String?
+  leadScore             Int      @default(0)
+  leadTier              String   @default("COLD")
+  assignedReason        String?
+  branch                String?
+  priority              String   @default("NORMAL")
+  followUpDate          DateTime?
+  utmSource             String?
+  utmMedium             String?
+  utmCampaign           String?
+  rawSubmission         String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([source])
+  @@index([status])
+  @@index([counselorId])
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  assigneeId  String
+  studentId   String?
+  type        String    @default("FOLLOW_UP")
+  priority    String    @default("NORMAL")
+  status      String    @default("PENDING")
+  dueDate     String?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([assigneeId])
+  @@index([status])
+  @@index([studentId])
+}
+
+model FacebookIntegration {
+  id              String   @id @default(cuid())
+  pageId          String   @unique
+  pageName        String?
+  pageAccessToken String
+  appId           String?
+  appSecret       String?
+  verifyToken     String?
+  connectedBy     String?
+  connectedAt     DateTime @default(now())
+  lastWebhookAt   DateTime?
+  status          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model FacebookLeadRaw {
+  id                    String   @id @default(cuid())
+  pageId                String
+  leadgenId             String   @unique
+  formId                String?
+  formName              String?
+  fieldData             String   @default("{}")
+  normalizedData        String   @default("{}")
+  matchedLeadId         String?
+  assignedCounselorId   String?
+  processingStatus      String   @default("NEW")
+  errorMessage          String?
+  receivedAt            DateTime @default(now())
+  processedAt           DateTime?
+  createdAt             DateTime @default(now())
+
+  @@index([pageId])
+  @@index([processingStatus])
+}
+
+model WebhookEvent {
+  id           String   @id @default(cuid())
+  provider     String
+  eventId      String?
+  eventType    String
+  payload      String
+  signature    String?
+  verified     Boolean  @default(false)
+  processed    Boolean  @default(false)
+  processedAt  DateTime?
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  @@unique([provider, eventId])
+  @@index([provider])
+  @@index([processed])
+}
+
+model WhatsAppMessageStatus {
+  id              String   @id @default(cuid())
+  messageId       String   @unique
+  socialMessageId String?
+  recipientPhone  String
+  status          String
+  statusTimestamp DateTime @default(now())
+  errorMessage    String?
+  providerPayload String?
+  createdAt       DateTime @default(now())
+
+  @@index([status])
+}
+
+model SocialInboxMessage {
+  id                   String    @id @default(cuid())
+  platform             String
+  direction            String    @default("INBOUND")
+  senderId             String?
+  senderName           String?
+  senderAvatar         String?
+  recipientId          String?
+  messageText          String?
+  messageMediaUrl      String?
+  messageMediaMetadata String?
+  commentId            String?
+  postId               String?
+  conversationId       String?
+  leadId               String?
+  studentId            String?
+  partnerId            String?
+  employeeId           String?
+  aiHandled            Boolean   @default(false)
+  aiDraftReply         String?
+  humanApproved        Boolean   @default(false)
+  isRead               Boolean   @default(false)
+  keywordTriggered     String?
+  externalId           String?
+  receivedAt           DateTime  @default(now())
+  sentAt               DateTime?
+  createdAt             DateTime  @default(now())
+
+  @@index([platform])
+  @@index([leadId])
+  @@index([studentId])
+  @@index([employeeId])
+  @@index([isRead])
+}
+
+model CommunicationAttachment {
+  id                 String   @id @default(cuid())
+  messageId          String
+  threadId           String
+  studentId          String?
+  channel            String
+  direction          String
+  providerFileId     String   @default("")
+  fileName           String   @default("")
+  fileType           String   @default("")
+  fileSizeBytes      Int      @default(0)
+  matchReviewRequired Boolean  @default(false)
+  whatsappMsgRef     String?
+  createdAt          DateTime @default(now())
+
+  @@index([messageId])
+  @@index([threadId])
+}
+
+model CommunicationSlaEvent {
+  id            String   @id @default(cuid())
+  threadId      String
+  counselorId   String   @default("")
+  counselorName String   @default("")
+  channel       String   @default("")
+  priority      String   @default("normal")
+  slaMinutes    Int      @default(30)
+  receivedAt    DateTime @default(now())
+  slaDueAt      DateTime?
+  slaStatus     String   @default("normal")
+  escalatedAt   DateTime?
+  resolvedAt    DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([threadId])
+  @@index([counselorId])
+  @@index([slaStatus])
+}
+
+model ContactMatchReview {
+  id               String   @id @default(cuid())
+  incomingPhone    String
+  normalizedPhone  String
+  incomingName     String?
+  incomingEmail    String?
+  matchedStudentId String?
+  matchedLeadId    String?
+  matchedPartnerId String?
+  matchConfidence  Int      @default(0)
+  matchReason      String?
+  status           String   @default("PENDING")
+  decision         String?
+  decidedBy        String?
+  decidedAt        DateTime?
+  createdAt        DateTime @default(now())
+
+  @@index([incomingPhone])
+  @@index([status])
+}
+
+model KeywordTrigger {
+  id                  String   @id @default(cuid())
+  keyword             String   @unique
+  keywordType         String   @default("EXACT")
+  platform            String   @default("ALL")
+  autoReplyText       String
+  autoDmText          String?
+  autoCreateLead      Boolean  @default(true)
+  autoAssignCounselor Boolean  @default(true)
+  sendPortalLink      Boolean  @default(true)
+  status              String   @default("ACTIVE")
+  triggerCount        Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([keyword])
+  @@index([status])
+}
+
+// AI/content intelligence assets are distinct from the public Resource CMS:
+// these records hold generated drafts, quality gates, and publication metrics.
+model ContentAsset {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  topic            String?
+  source           String?
+  sourceQuery      String?
+  authorAgentId    String?
+  humanApproverId  String?
+  contentType      String
+  body             String   @default("")
+  excerpt          String?
+  tags             String   @default("[]")
+  metaTitle        String?
+  metaDescription  String?
+  targetKeywords   String?
+  canonicalUrl     String?
+  factChecked      Boolean  @default(false)
+  sourceChecked    Boolean  @default(false)
+  brandChecked     Boolean  @default(false)
+  seoChecked       Boolean  @default(false)
+  duplicateChecked Boolean  @default(false)
+  legalChecked     Boolean  @default(false)
+  privacyChecked   Boolean  @default(false)
+  qualityScore     Int      @default(0)
+  status           String   @default("DRAFT")
+  publishedAt      DateTime?
+  publishedUrl     String?
+  impressions      Int      @default(0)
+  views            Int      @default(0)
+  engagement       Int      @default(0)
+  clicks           Int      @default(0)
+  leads            Int      @default(0)
+  applications     Int      @default(0)
+  enrollments      Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([status])
+}
+
+model ContentPublication {
+  id             String   @id @default(cuid())
+  contentAssetId String
+  platform       String
+  platformPostId String?
+  status         String   @default("PENDING")
+  scheduledAt    DateTime?
+  publishedAt    DateTime?
+  errorMessage   String?
+  publishedUrl   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([contentAssetId])
+  @@index([platform])
+}
+
+model ContentOpportunity {
+  id                    String   @id @default(cuid())
+  topic                 String
+  country               String?
+  universitySlug        String?
+  courseSlug            String?
+  scholarshipSlug       String?
+  searchIntent          String?
+  audience              String?
+  sourceEvidence        String?
+  priority              String   @default("MEDIUM")
+  estimatedUsefulness   Int      @default(0)
+  freshness             String   @default("FRESH")
+  competitionSignal     String?
+  contentType           String?
+  recommendedChannels  String?
+  assignedDepartment    String?
+  assignedAgentIds      String?
+  humanReviewerId       String?
+  status                String   @default("DISCOVERED")
+  contentAssetId        String?
+  conversionRelationship String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([status])
+  @@index([priority])
+}
+
+model ContentDependency {
+  id                   String   @id @default(cuid())
+  sourceType           String
+  sourceId             String
+  sourceField          String?
+  dependentAssetType   String
+  dependentAssetId     String
+  dependencyStrength   String   @default("DIRECT")
+  lastSyncedAt         DateTime?
+  stale                Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([sourceType, sourceId])
+  @@index([stale])
+}
+
+model ContentDNA {
+  id              String   @id @default(cuid())
+  contentAssetId  String?
+  country         String?
+  destination     String?
+  universitySlug  String?
+  courseSlug      String?
+  degree          String?
+  studentIntent   String?
+  stage           String?
+  scholarship     String?
+  cost            String?
+  application     String?
+  visa            String?
+  career          String?
+  contentType     String?
+  audience        String?
+  channel         String?
+  fingerprint     String   @unique
+  createdAt       DateTime @default(now())
+
+  @@index([contentAssetId])
+  @@index([country])
+}
+
+model SourceChangeEvent {
+  id                 String   @id @default(cuid())
+  sourceId           String
+  sourceUrl          String
+  entityType         String
+  universitySlug     String?
+  courseSlug         String?
+  changeType         String
+  fieldName          String?
+  changedFrom        String?
+  changedTo          String?
+  contentHashBefore  String?
+  contentHashAfter   String?
+  confidence         Float    @default(0)
+  materiality        String?
+  aiAssessment       String?
+  status             String   @default("PENDING")
+  reviewerId         String?
+  reviewedAt         DateTime?
+  appliedAt          DateTime?
+  createdAt          DateTime @default(now())
+
+  @@index([sourceId])
+  @@index([status])
+}
+
+model EmployeeLearningResource {
+  id              String   @id @default(cuid())
+  title           String
+  resourceType    String
+  content         String   @default("")
+  contentAssetId  String?
+  sourceChangeId  String?
+  department      String?
+  role            String?
+  status          String   @default("DRAFT")
+  publishedAt     DateTime?
+  downloadCount   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([resourceType])
+  @@index([status])
+}
+
+model UniversityResearchEvidence {
+  id                 String   @id @default(cuid())
+  universitySlug     String
+  courseSlug         String?
+  fieldName          String
+  fieldValue         String
+  sourceUrl          String
+  sourceTitle        String?
+  sourceSection      String?
+  retrievedAt        DateTime @default(now())
+  contentHash        String?
+  sourceSnapshot     String?
+  confidence         Float    @default(0.5)
+  verificationStatus String   @default("NEEDS_REVIEW")
+  changedFrom        String?
+  changedTo          String?
+  reviewerId         String?
+  aiAgentId          String?
+  approvalStatus     String   @default("PENDING")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([universitySlug])
+  @@index([verificationStatus])
+}
+
+model AiAgent {
+  id               String   @id @default(cuid())
+  department       String
+  agentName        String
+  agentCode        String
+  agentType        String   @default("GENERAL")
+  description      String?
+  status           String   @default("ACTIVE")
+  jobsProcessed    Int      @default(0)
+  pendingApprovals Int      @default(0)
+  lastRunAt        DateTime?
+  supervisorAgentId String?
+  createdAt        DateTime @default(now())
+
+  @@index([department])
+  @@index([status])
+  @@index([supervisorAgentId])
+}
+
+model AiAgentRegistry {
+  id              String   @id @default(cuid())
+  agentCode       String   @unique
+  agentName       String
+  agentType       String
+  description     String?
+  status          String   @default("ACTIVE")
+  version         String   @default("1.0.0")
+  promptTemplate  String?
+  apiUsed         String   @default("z-ai-web-dev-sdk")
+  fallbackApi     String?
+  dailyRequests   Int      @default(0)
+  monthlyRequests Int      @default(0)
+  totalRequests   Int      @default(0)
+  successRate     Float    @default(95.0)
+  avgResponseTime Float    @default(0)
+  lastExecutedAt  DateTime?
+  errorCount      Int      @default(0)
+  lastError       String?
+  executionLog    String?
+  config          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([agentType])
+  @@index([status])
+}
+
+model AgentSkillExtension {
+  id               String   @id @default(cuid())
+  agentId          String
+  skillCode        String
+  skillName        String
+  brain            String
+  capability       String
+  proficiencyLevel String   @default("EXPERT")
+  status           String   @default("ACTIVE")
+  assignedAt       DateTime @default(now())
+
+  @@unique([agentId, skillCode])
+  @@index([agentId])
+  @@index([brain])
+}
+
+model AgentToolExtension {
+  id               String   @id @default(cuid())
+  agentId          String
+  toolId           String
+  toolName         String
+  brain            String
+  inputSchema      String   @default("{}")
+  outputSchema     String   @default("{}")
+  permission       String   @default("EXECUTE")
+  riskLevel        String   @default("LOW")
+  approvalRequired Boolean  @default(false)
+  rateLimit        Int      @default(100)
+  timeout          Int      @default(30000)
+  status           String   @default("ACTIVE")
+  assignedAt       DateTime @default(now())
+
+  @@unique([agentId, toolId])
+  @@index([agentId])
+  @@index([brain])
+}
+
+model Department {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  description String?
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+}
+
+model EnterpriseDepartment {
+  id                       String   @id @default(cuid())
+  deptCode                 String   @unique
+  name                     String
+  description              String?
+  parentDeptId             String?
+  headAgentId              String?
+  aiEmployeeCount          Int      @default(20)
+  skillCount               Int      @default(100)
+  promptCount              Int      @default(500)
+  sopCount                 Int      @default(5)
+  constitutionalRulesCount Int      @default(5)
+  sopCoverage              Float    @default(95)
+  knowledgeCoverage        Float    @default(95)
+  skillCoverage            Float    @default(95)
+  testPassRate             Float    @default(95)
+  kpiAchievement           Float    @default(90)
+  securityCompliance       Float    @default(100)
+  auditCompliance          Float    @default(100)
+  selfRecoverySuccess      Float    @default(90)
+  humanEscalationRate      Float    @default(10)
+  dccCertified             Boolean  @default(false)
+  dccCertifiedAt           DateTime?
+  canCreateAgents          Boolean  @default(false)
+  status                   String   @default("ACTIVE")
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  @@index([status])
+  @@index([dccCertified])
+}
+
+model AiEmployee {
+  id              String   @id @default(cuid())
+  employeeCode    String   @unique
+  departmentId    String
+  name            String
+  role            String
+  status          String   @default("ACTIVE")
+  skillIds        String   @default("[]")
+  promptIds       String   @default("[]")
+  jobsProcessed   Int      @default(0)
+  successRate     Float    @default(95)
+  avgResponseTime Float    @default(0)
+  lastActiveAt    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([departmentId])
+  @@index([status])
+  @@index([role])
+}
+
+model AiSkill {
+  id               String   @id @default(cuid())
+  skillCode        String   @unique
+  name             String
+  description      String?
+  category         String
+  departmentId     String?
+  proficiencyLevel String   @default("EXPERT")
+  status           String   @default("ACTIVE")
+  createdAt        DateTime @default(now())
+
+  @@index([category])
+  @@index([departmentId])
+}
+
+model PromptTemplate {
+  id           String   @id @default(cuid())
+  templateCode String   @unique
+  name         String
+  description  String?
+  category     String
+  departmentId String?
+  promptText   String
+  variables    String   @default("[]")
+  version      Int      @default(1)
+  status       String   @default("ACTIVE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([category])
+  @@index([departmentId])
+}
+
+model AiSop {
+  id           String   @id @default(cuid())
+  sopCode      String   @unique
+  title        String
+  description  String?
+  departmentId String?
+  steps        String   @default("[]")
+  version      Int      @default(1)
+  status       String   @default("ACTIVE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([departmentId])
+}
+
+model AiEngine {
+  id              String   @id @default(cuid())
+  engineCode      String   @unique
+  name            String
+  type            String
+  description     String?
+  status          String   @default("ACTIVE")
+  healthStatus    String   @default("HEALTHY")
+  metrics         String?
+  lastHealthCheck DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([type])
+  @@index([status])
+}
+
+model AgentOSTool {
+  id                 String   @id @default(cuid())
+  toolId             String   @unique
+  name               String
+  description        String?
+  category           String
+  inputSchema        String   @default("{}")
+  outputSchema       String   @default("{}")
+  permissions        String   @default("[]")
+  riskLevel          String   @default("LOW")
+  allowedAgents      String   @default("[]")
+  allowedDepartments String   @default("[]")
+  rateLimit          Int      @default(100)
+  timeout            Int      @default(30000)
+  approvalPolicy     String   @default("STANDARD")
+  enabled            Boolean  @default(true)
+  version            String   @default("1.0.0")
+  metadata           String?  @default("{}")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([category])
+  @@index([riskLevel])
+  @@index([enabled])
+}
+
+model AgentOSTask {
+  id                   String   @id @default(cuid())
+  taskCode             String   @unique
+  agentId              String?
+  departmentId         String?
+  createdBy            String?
+  authorizationContext String?  @default("{}")
+  input                String   @default("{}")
+  planSummary          String?
+  approvedActions      String?  @default("[]")
+  toolCalls            String?  @default("[]")
+  executionResult      String?  @default("{}")
+  status               String   @default("CREATED")
+  error                String?
+  startedAt            DateTime?
+  completedAt          DateTime?
+  auditId              String?
+  priority             String   @default("NORMAL")
+  correlationId        String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([agentId])
+  @@index([status])
+}
+
+model AiCommandAction {
+  id             String   @id @default(cuid())
+  actionType     String
+  targetType     String
+  targetId       String?
+  requestedBy    String
+  aiAgentId      String?
+  actor          String?
+  trigger        String?
+  idempotencyKey String?  @unique
+  payload        String   @default("{}")
+  result         String?
+  lastError      String?
+  retryCount     Int      @default(0)
+  status         String   @default("PENDING")
+  approvedBy     String?
+  approvedAt     DateTime?
+  executedAt     DateTime?
+  rollbackReason String?
+  rolledBackAt   DateTime?
+  riskLevel      String   @default("LOW")
+  riskFlags      String   @default("[]")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([actionType])
+  @@index([requestedBy])
+  @@index([status])
+  @@index([aiAgentId])
+}
+
+model GlobalAiPause {
+  id            String   @id @default(cuid())
+  scope         String   @default("GLOBAL")
+  targetId      String?
+  active        Boolean  @default(false)
+  reason        String?
+  activatedBy   String?
+  activatedAt   DateTime?
+  deactivatedBy String?
+  deactivatedAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([scope, targetId])
+  @@index([active])
+}
+
+model AutomationEvent {
+  id             String   @id @default(cuid())
+  workflow       String
+  category       String
+  mode           String
+  trigger        String
+  actor          String
+  targetType     String
+  targetId       String?
+  action         String
+  riskLevel      String   @default("LOW")
+  result         String?
+  success        Boolean  @default(true)
+  errorMessage   String?
+  durationMs     Int?
+  idempotencyKey String?  @unique
+  createdAt      DateTime @default(now())
+
+  @@index([workflow])
+  @@index([mode])
+  @@index([category])
+}
+
+model EventLog {
+  id            String   @id @default(cuid())
+  eventType     String
+  aggregateType String
+  aggregateId   String?
+  studentId     String?
+  leadId        String?
+  actorType     String
+  actorId       String?
+  agentId       String?
+  payload       String   @default("{}")
+  correlationId String?
+  causationId   String?
+  timestamp     DateTime @default(now())
+
+  @@index([eventType])
+  @@index([studentId])
+  @@index([timestamp])
+}
+
+model AgentReplicationCycle {
+  id                String   @id @default(cuid())
+  parentAgentId     String
+  parentAgentCode   String
+  departmentId      String?
+  cycleNumber       Int      @default(1)
+  cycleStartDate    DateTime @default(now())
+  cycleEndDate      DateTime
+  targetChildren    Int      @default(3)
+  childrenCreated   Int      @default(0)
+  childrenPassedDcc Int      @default(0)
+  status            String   @default("ACTIVE")
+  isTwoLoop         Boolean  @default(false)
+  graduatedAt       DateTime?
+  createdBy         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([parentAgentId])
+  @@index([departmentId])
+  @@index([status])
+}
+
+model AiAgentLineage {
+  id              String   @id @default(cuid())
+  agentId         String
+  agentCode       String
+  parentAgentId   String?
+  parentAgentCode String?
+  generation      Int      @default(1)
+  lineagePath     String   @default("")
+  isTwoLoopModel  Boolean  @default(false)
+  graduatedAt     DateTime?
+  createdAt       DateTime @default(now())
+
+  @@index([agentId])
+  @@index([parentAgentId])
+  @@index([generation])
+}
+
+model ReviewInvitation {
+  id                   String   @id @default(cuid())
+  token                String   @unique
+  studentId            String?
+  studentName          String
+  studentEmail         String?
+  studentPhone         String?
+  counselorId          String?
+  country              String?
+  serviceType          String?
+  campaignId           String?
+  googleReviewUrl      String?
+  facebookRecommendUrl String?
+  status               String   @default("SENT")
+  sentAt               DateTime @default(now())
+  openedAt             DateTime?
+  submittedAt          DateTime?
+  expiresAt            DateTime?
+  reviewId             String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+  @@index([token])
+  @@index([sentAt])
+}
+
+model StudentReview {
+  id                  String   @id @default(cuid())
+  invitationId        String?
+  studentId           String?
+  studentName         String
+  studentEmail        String?
+  country             String?
+  counselorName       String?
+  serviceType         String?
+  rating              Int
+  reviewText          String
+  photoFileId         String?
+  consentPublish      Boolean  @default(false)
+  consentMarketing    Boolean  @default(false)
+  consentShowName     Boolean  @default(false)
+  consentCapturedAt   DateTime?
+  consentIp           String?
+  aiSpamScore         Float    @default(0)
+  aiFlags             String   @default("[]")
+  aiSentiment         String?
+  moderationStatus    String   @default("PENDING")
+  moderatedBy         String?
+  moderatedAt         DateTime?
+  moderationNotes     String?
+  publicationStatus   String   @default("INTERNAL")
+  publishedAt         DateTime?
+  unpublishedAt       DateTime?
+  googleSubmitted     Boolean  @default(false)
+  googleSubmittedAt   DateTime?
+  facebookSubmitted   Boolean  @default(false)
+  facebookSubmittedAt DateTime?
+  isVerifiedStudent   Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([invitationId])
+  @@index([studentId])
+  @@index([moderationStatus])
+  @@index([publicationStatus])
+  @@index([rating])
+  @@index([createdAt])
+}
+
+model ReviewRequest {
+  id                String   @id @default(cuid())
+  studentId         String
+  studentName       String
+  studentEmail      String?
+  studentPhone      String?
+  serviceType       String
+  country           String?
+  status            String   @default("PENDING")
+  feedbackRating    Int?
+  feedbackText      String?
+  googleReviewUrl   String?
+  reviewRequestedAt DateTime?
+  reviewCompletedAt DateTime?
+  incentivized      Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+}
+
+model BrandAsset {
+  id          String   @id @default(cuid())
+  assetType   String
+  name        String
+  value       String   @default("{}")
+  isActive    Boolean  @default(true)
+  version     Int      @default(1)
+  createdById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([assetType])
+  @@index([isActive])
+}
+
+model CampaignPost {
+  id                String   @id @default(cuid())
+  title             String
+  category          String
+  platform          String
+  caption           String?
+  hashtags          String?
+  ctaText           String?
+  ctaUrl            String?
+  imageUrl          String?
+  videoUrl          String?
+  videoScript       String?
+  reelCaption       String?
+  landingLink       String?
+  campaignObjective String?
+  platformSize      String?
+  scheduledAt       String?
+  publishedAt       DateTime?
+  publishedUrl      String?
+  approvalStatus    String   @default("DRAFT")
+  approvedBy        String?
+  approvedAt        DateTime?
+  rejectionReason   String?
+  createdBy         String?
+  brandAssetApplied Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([platform])
+  @@index([category])
+  @@index([approvalStatus])
+}
+
+model PhoneCallLog {
+  id              String   @id @default(cuid())
+  callType          String
+  fromNumber        String
+  toNumber          String
+  duration          Int      @default(0)
+  recordingPath     String?
+  callNotes         String?
+  disposition      String?
+  provider          String   @default("3CX")
+  providerEventId   String?  @unique
+  threecxCallId     String?
+  extension         String?
+  status            String?
+  startTimestamp    DateTime?
+  endTimestamp      DateTime?
+  recordingMetadata String?
+  transcriptionStatus String @default("NOT_AVAILABLE")
+  transcriptionText String?
+  consentRecorded   Boolean  @default(false)
+  aiSummary         String?
+  aiIntent          String?
+  aiRecommendations String?
+  aiAnalysisId      String?
+  studentId       String?
+  leadId          String?
+  partnerId       String?
+  employeeId      String?
+  timelineEventId String?
+  createdAt       DateTime @default(now())
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([fromNumber])
+}
+
+model ThreeCxIntegration {
+  id                 String   @id @default(cuid())
+  name               String   @default("default")
+  baseUrl            String?
+  integrationId      String?
+  apiKey             String?
+  webhookSecret      String?
+  status             String   @default("NOT_CONFIGURED")
+  version            String?
+  lastTestedAt       DateTime?
+  lastTestSuccess    Boolean?
+  lastError          String?
+  lastSuccessfulSync DateTime?
+  configuredBy       String?
+  active             Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([active])
+  @@index([status])
+}
+
+model SmsLog {
+  id             String   @id @default(cuid())
+  direction      String   @default("OUTBOUND")
+  fromNumber     String
+  toNumber       String
+  messageText    String
+  deliveryStatus String   @default("PENDING")
+  readStatus     Boolean  @default(false)
+  campaignId     String?
+  studentId      String?
+  leadId         String?
+  partnerId      String?
+  employeeId     String?
+  sentAt         DateTime?
+  createdAt      DateTime @default(now())
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([toNumber])
+}
+
+model CallOutcome {
+  id                 String   @id @default(cuid())
+  callLogId          String?
+  outcome            String
+  summary            String?
+  studentVisibleNote String?
+  internalNote       String?
+  nextAction         String?
+  followUpAt         DateTime?
+  consentRecorded    Boolean  @default(false)
+  recordingPath      String?
+  counselorId        String?
+  studentId          String?
+  applicationId      String?
+  duration           Int      @default(0)
+  createdAt          DateTime @default(now())
+
+  @@index([callLogId])
+  @@index([studentId])
+  @@index([outcome])
+}
+
+model UnknownIncomingContact {
+  id               String   @id @default(cuid())
+  phone            String
+  email            String?
+  name             String?
+  source           String   @default("PHONE_CALL")
+  callLogId        String?
+  matchedToStudent Boolean  @default(false)
+  matchedStudentId String?
+  matchedLeadId    String?
+  matchedPartnerId String?
+  action           String?
+  actionById       String?
+  actionAt         DateTime?
+  createdAt        DateTime @default(now())
+
+  @@index([phone])
+  @@index([matchedToStudent])
 }
 
 model DeploymentSequence {
@@ -461,6 +1584,7 @@ model Student {
   id              String    @id @default(cuid())
   studentId       String    @unique
   userId          String?
+  leadId          String?
   name            String    @default("")
   email           String    @default("")
   phone           String    @default("")
@@ -661,6 +1785,7 @@ model StudentMessage {
 model TimelineEvent {
   id          String   @id @default(cuid())
   studentId   String
+  leadId      String?
   stage       String
   title       String
   description String   @default("")
@@ -3789,6 +4914,7 @@ model EmployeeCommunicationProfile {
   employeeName          String
   officialEmail         String    @default("")
   officialPhone         String    @default("")
+  threecxExtension      String?   @unique
   whatsappAccess        Boolean   @default(false)
   whatsappNumberId      String    @default("")
   facebookAccess        Boolean   @default(false)
