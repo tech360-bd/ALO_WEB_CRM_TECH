@@ -1,3 +1,5 @@
+# ALO Education — Local Project README
+
 # ALO Education — Web CRM & Consultancy Platform Deployment Guide
 
 Follow these exact steps to deploy ALO Education on your production server.
@@ -93,3 +95,12 @@ Navigate to `https://yourdomain.com` in your browser. Verify:
 - Homepage and public pages load cleanly with HTTP 200.
 - Login works for Super Admin using credentials specified in `.env`.
 - CRM, Student Portal, Employee Portal, Partner Portal, and Application Manager modules are fully functional.
+
+
+---
+
+
+
+# README from GitHub
+
+# alo_education_z....ai
