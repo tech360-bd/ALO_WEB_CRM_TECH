@@ -1,9 +1,0 @@
-1:"$Sreact.fragment"
-2:I[61304,[],"ClientPageRoot"]
-3:I[90083,["18409","static/chunks/18409-009df9efad2cf6f8.js","98500","static/chunks/98500-1494f211297c269f.js","38443","static/chunks/38443-3be83446b2171175.js","90083","static/chunks/90083-9b3985ae09ebdaa5.js","15043","static/chunks/app/student/ai-interview/page-1a2682f41e47cdb4.js"],"default"]
-6:I[90484,[],"OutletBoundary"]
-7:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],null,["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"-vqd6LRgMzstdVGtzj8DZ"}
-4:{}
-5:"$0:rsc:props:children:0:props:serverProvidedParams:params"
-8:null

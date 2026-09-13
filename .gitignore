@@ -60,3 +60,72 @@ examples/
 # Database files
 *.db
 db/*.db
+# Build output
+.next/
+out/
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Archives / exported packages
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# Claude temporary worktrees
+.claude/worktrees/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ============================================================
+# ALO Git repository exclusions
+# ============================================================
+
+# Dependencies
+node_modules/
+
+# Next.js / build output
+.next/
+out/
+dist/
+build/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Archives / exported packages
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# Temporary Claude worktrees
+.claude/worktrees/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# macOS
+.DS_Store
