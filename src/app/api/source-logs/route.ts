@@ -1,35 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest } from '@/lib/auth-middleware';
-
-// GET /api/source-logs — Source Logs per spec section 30
-// source_logs: id, entity_type, entity_id, source_name, source_url, source_type, checked_at, checked_by, verification_status, notes, created_at
-// Source types: Official University, Government, Official Visa Authority, Official Scholarship, Other Approved Source
-// For university/course facts: Prefer official university source
 export async function GET(req: NextRequest) {
   try {
     const auth = await authenticateRequest(req);
     if (auth instanceof NextResponse) return auth;
-
     const entityType = req.nextUrl.searchParams.get('entityType');
     const entityId = req.nextUrl.searchParams.get('entityId');
     const sourceType = req.nextUrl.searchParams.get('sourceType');
     const verificationStatus = req.nextUrl.searchParams.get('verificationStatus');
     const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10), 200);
-
     const where: any = {};
     if (entityType) where.entityType = entityType;
     if (entityId) where.entityId = entityId;
     if (sourceType) where.sourceType = sourceType;
     if (verificationStatus) where.verificationStatus = verificationStatus;
-
     const [sourceLogs, officialSources, countrySources, crmSourceLogs] = await Promise.all([
       db.sourceLog.findMany({ where, orderBy: { checkedAt: 'desc' }, take: limit }).catch(() => []),
       db.officialSource.findMany({ where: { ...(entityType ? { targetType: entityType } : {}), ...(entityId ? { targetId: entityId } : {}), ...(sourceType ? { sourceType } : {}), ...(verificationStatus ? { verificationStatus } : {}) }, orderBy: { lastVerifiedAt: 'desc' }, take: limit }).catch(() => []),
       db.countrySource.findMany({ take: limit, orderBy: { lastVerifiedAt: 'desc' } }).catch(() => []),
       db.crmSourceLog.findMany({ take: limit, orderBy: { createdAt: 'desc' } }).catch(() => []),
     ]);
-
     return NextResponse.json({
       success: true,
       sourceLogs,
@@ -37,25 +28,20 @@ export async function GET(req: NextRequest) {
       countrySources,
       crmSourceLogs,
       total: sourceLogs.length + officialSources.length,
-      message: 'Source logs — Official University, Government, Official Visa Authority, Official Scholarship, Other Approved Source — Prefer official university source for university/course facts',
+      message: 'Source logs — Official University, Government, Official Visa Authority, Official Scholarship, Other Approved Source — Prefer official university source',
     });
   } catch (err: any) {
     console.error('[source-logs] error', err);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
-
-// POST /api/source-logs — create source log
 export async function POST(req: NextRequest) {
   try {
     const auth = await authenticateRequest(req);
     if (auth instanceof NextResponse) return auth;
-
     const body = await req.json();
     const { entityType, entityId, sourceName = '', sourceUrl = '', sourceType = 'Official University', verificationStatus = 'pending', notes = '', checkedBy = '' } = body;
-
     if (!entityType || !entityId || !sourceUrl) return NextResponse.json({ success: false, error: 'entityType, entityId, sourceUrl required' }, { status: 400 });
-
     const log = await db.sourceLog.create({
       data: {
         entityType,
@@ -69,8 +55,6 @@ export async function POST(req: NextRequest) {
         checkedAt: new Date(),
       },
     });
-
-    // Also create OfficialSource for unified system
     await db.officialSource.create({
       data: {
         sourceUrl,
@@ -85,7 +69,6 @@ export async function POST(req: NextRequest) {
         notes,
       },
     }).catch(() => {});
-
     return NextResponse.json({ success: true, sourceLog: log }, { status: 201 });
   } catch (err: any) {
     console.error('[source-logs.create] error', err);

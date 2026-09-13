@@ -1,48 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
-
-export async function GET(request: Request) {
+import { withAuth } from '@/lib/auth-middleware';
+export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
-  try {
-    const { searchParams } = new URL(req.url);
-    const country = searchParams.get('country') || '';
-    const city = searchParams.get('city') || '';
-    const level = searchParams.get('level') || '';
-    const subject = searchParams.get('subject') || '';
-    const search = searchParams.get('search') || '';
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '50');
-
-    const where: Record<string, unknown> = { status: 'active' };
-    if (country) where.country = { contains: country };
-    if (city) where.city = { contains: city };
-    if (search) {
-      where.OR = [
-        { name: { contains: search } },
-        { city: { contains: search } },
-        { country: { contains: search } },
-      ];
-    }
-
-    const [universities, total] = await Promise.all([
-      db.crmUniversity.findMany({
-        where,
-        orderBy: [{ worldRanking: 'asc' }],
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      db.crmUniversity.count({ where }),
-    ]);
-
-    return NextResponse.json({
-      success: true,
-      data: universities,
-      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
-    });
-  } catch (error) {
-    console.error('Universities API error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch universities' }, { status: 500 });
-  }
-  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
+    const isAuthorized = auth.roles.some((r) => ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNSELOR', 'super_admin', 'admin', 'staff', 'counselor'].includes(r));
+    if (!isAuthorized) return NextResponse.json({ success:false, error:'Staff required' }, { status:403 });
+    const search = req.nextUrl.searchParams.get('search') || '';
+    const country = req.nextUrl.searchParams.get('country') || '';
+    const where: any = {};
+    if (search) where.OR = [{ name: { contains: search } }, { universityId: { contains: search } }, { city: { contains: search } }];
+    if (country && country !== 'all') where.country = { contains: country };
+    const universities = await db.crmUniversity.findMany({ where, take: 100, orderBy: { name: 'asc' }, include: { _count: { select: { courses: true } } } });
+    const enriched = universities.map((u:any)=> ({
+      ...u,
+      dataQuality: u.sourceUrl ? 'Good' : 'Missing source warning',
+      verificationWarning: u.verificationStatus === 'NEEDS_REVIEW' ? 'Verification warning' : null,
+      duplicateWarning: null,
+      expiredWarning: u.lastVerifiedAt && (Date.now() - new Date(u.lastVerifiedAt).getTime())/(1000*60*60*24) > 180 ? 'Expired data warning' : null,
+    }));
+    return NextResponse.json({ success:true, universities: enriched, data: enriched, total: enriched.length });
+  })(request);
 }
