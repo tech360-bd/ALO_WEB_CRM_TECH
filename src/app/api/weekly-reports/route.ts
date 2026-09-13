@@ -8,10 +8,10 @@ export async function GET(req: NextRequest) {
   if (type) where.type = type;
   const reports = await db.weeklyReport.findMany({
     where,
-    orderBy: { createdAt: "desc" },
+    orderBy: { generatedAt: "desc" },
     take: 20,
   });
   // Parse JSON summaries
-  const parsed = reports.map((r) => ({ ...r, summary: JSON.parse(r.summary || "{}") }));
+  const parsed = reports.map((r) => ({ ...r, summary: JSON.parse(r.data || "{}") }));
   return NextResponse.json({ reports: parsed });
 }

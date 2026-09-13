@@ -1,66 +1,80 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// Unified inbox — all channels (WhatsApp, SMS, email, social, portal)
+/** Unified inbox over the canonical communication thread/message models. */
 export async function GET(req: NextRequest) {
-  const counselorId = req.nextUrl.searchParams.get("counselorId");
+  const assigneeId = req.nextUrl.searchParams.get("counselorId");
   const channel = req.nextUrl.searchParams.get("channel");
-  const where: any = {};
-  if (counselorId) where.counselorId = counselorId;
+  const where: { assignedTo?: string; channel?: string } = {};
+  if (assigneeId) where.assignedTo = assigneeId;
   if (channel && channel !== "ALL") where.channel = channel;
 
-  const messages = await db.communicationMessage.findMany({
-    where,
-    orderBy: { receivedAt: "desc" },
-    take: 50,
-  });
+  const messages = await db.communicationMessage.findMany({ where, orderBy: { createdAt: "desc" }, take: 50 });
+  const studentIds = Array.from(new Set(messages.map((message) => message.studentId).filter(Boolean)));
+  const students = studentIds.length
+    ? await db.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, studentId: true, name: true, phone: true, email: true } })
+    : [];
+  const studentMap = Object.fromEntries(students.map((student) => [student.id, student]));
+  const conversations: Record<string, { key: string; channel: string; studentId: string; studentName: string; contact: string; messages: typeof messages; unread: number; lastMessageAt: Date }> = {};
 
-  // Fetch student info for messages with studentId
-  const studentIds = Array.from(new Set(messages.map((m) => m.studentId).filter(Boolean))) as string[];
-  const students = studentIds.length > 0 ? await db.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, studentId: true, fullName: true } }) : [];
-  const studentMap: Record<string, any> = {};
-  for (const s of students) studentMap[s.id] = s;
-
-  // Group by conversation (student + channel)
-  const conversations: Record<string, any> = {};
-  for (const m of messages) {
-    const key = `${m.studentId || m.fromPhone || m.fromEmail || "unknown"}-${m.channel}`;
+  for (const message of messages) {
+    const key = `${message.studentId || message.threadId}-${message.channel}`;
+    const student = message.studentId ? studentMap[message.studentId] : undefined;
     if (!conversations[key]) {
-      const stu = m.studentId ? studentMap[m.studentId] : null;
       conversations[key] = {
         key,
-        channel: m.channel,
-        studentId: m.studentId,
-        studentName: stu?.fullName || m.fromName,
-        fromPhone: m.fromPhone,
-        fromEmail: m.fromEmail,
+        channel: message.channel,
+        studentId: message.studentId,
+        studentName: student?.name || message.senderName,
+        contact: student?.phone || student?.email || message.senderContact,
         messages: [],
         unread: 0,
-        lastMessageAt: m.receivedAt,
+        lastMessageAt: message.createdAt,
       };
     }
-    conversations[key].messages.push(m);
-    if (m.direction === "INBOUND" && !m.read) conversations[key].unread++;
-    if (new Date(m.receivedAt) > new Date(conversations[key].lastMessageAt)) conversations[key].lastMessageAt = m.receivedAt;
+    conversations[key].messages.push(message);
+    if (message.direction.toUpperCase() === "INBOUND" && !message.isRead) conversations[key].unread += 1;
+    if (message.createdAt > conversations[key].lastMessageAt) conversations[key].lastMessageAt = message.createdAt;
   }
 
-  const conversationList = Object.values(conversations).sort((a: any, b: any) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
-
-  // SLA stats
-  const slaStats = await db.slaEvent.groupBy({ by: ["status"], _count: true });
-
+  const conversationList = Object.values(conversations).sort((a, b) => b.lastMessageAt.getTime() - a.lastMessageAt.getTime());
+  const slaStats = await db.slaEvent.groupBy({ by: ["eventType"], _count: true });
   return NextResponse.json({ conversations: conversationList, slaStats, totalMessages: messages.length });
 }
 
-// Send reply
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { channel, toPhone, toEmail, body: msgBody, studentId, counselorId, aiAssisted, humanApproved } = body;
-  const msg = await db.communicationMessage.create({
-    data: { channel, direction: "OUTBOUND", toPhone, toEmail, body: msgBody, studentId, counselorId, aiAssisted: aiAssisted || false, humanApproved: humanApproved ?? true, read: true, sentAt: new Date() },
+  const { channel, body: messageBody, studentId, counselorId, aiAssisted, humanApproved } = body as {
+    channel: string; body: string; studentId?: string; counselorId?: string; aiAssisted?: boolean; humanApproved?: boolean;
+  };
+  if (!channel || !messageBody?.trim()) return NextResponse.json({ error: "channel and body are required" }, { status: 400 });
+
+  const thread = await db.communicationThread.create({
+    data: {
+      studentId: studentId || "",
+      channel,
+      assignedToId: counselorId || "",
+      status: "open",
+      lastMessagePreview: messageBody.slice(0, 160),
+    },
+  });
+  const message = await db.communicationMessage.create({
+    data: {
+      threadId: thread.id,
+      channel,
+      direction: "OUTBOUND",
+      studentId: studentId || "",
+      assignedTo: counselorId || "",
+      messageBody,
+      content: messageBody,
+      isAiGenerated: aiAssisted || false,
+      isRead: humanApproved ?? true,
+      readAt: new Date(),
+      createdBy: counselorId || "system",
+    },
   });
   if (studentId) {
-    await db.timelineEvent.create({ data: { studentId, userId: counselorId, type: "MESSAGE_SENT", title: `${channel} reply sent`, description: msgBody.slice(0, 100) } });
+    await db.timelineEvent.create({ data: { studentId, stage: "communication", actor: counselorId || "system", title: `${channel} reply sent`, description: messageBody.slice(0, 100) } });
   }
-  return NextResponse.json({ message: msg });
+  return NextResponse.json({ message });
 }

@@ -6,7 +6,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
   try {
     const url = new URL(request.url);
     const id = url.pathname.split('/').slice(-2, -1)[0];
-    
+
     if (!auth.roles.includes('super_admin')) {
        return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
@@ -15,7 +15,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       where: { id },
       include: { students: true }
     });
-    
+
     if (!batch) {
       return NextResponse.json({ success: false, error: 'Batch not found' }, { status: 404 });
     }
@@ -24,7 +24,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
     const events = await db.studentEvent.findMany({
       where: {
         eventType: 'STUDENT_IMPORTED_FROM_OLD_CRM',
-        eventData: { contains: id }, // Assuming simple JSON string search
+        payload: { contains: id }, // Assuming simple JSON string search
       }
     });
 
@@ -35,7 +35,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       await db.portalStudentProfile.deleteMany({
         where: { studentId: { in: studentIds } }
       });
-      
+
       // Delete events
       await db.studentEvent.deleteMany({
          where: { studentId: { in: studentIds } }

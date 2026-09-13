@@ -31,10 +31,10 @@ export async function POST(req: NextRequest) {
 
   const batch = await db.importBatch.create({
     data: {
-      type,
+      sourceCrmName: type || "CSV",
       fileName,
-      uploadedBy,
-      status: "PROCESSING",
+      createdBy: uploadedBy || "system",
+      status: "processing",
       totalRows: dataRows.length,
     },
   });
@@ -78,11 +78,11 @@ export async function POST(req: NextRequest) {
 
   await db.importBatch.update({
     where: { id: batch.id },
-    data: { status: "COMPLETED", successRows: successCount, errorRows: errorCount },
+    data: { status: "completed", newCount: successCount, errorCount },
   });
 
   return NextResponse.json({
-    batch: { ...batch, successRows: successCount, errorRows: errorCount, status: "COMPLETED" },
+    batch: { ...batch, newCount: successCount, errorCount, status: "completed" },
     message: `Import completed: ${successCount} success, ${errorCount} errors out of ${dataRows.length} rows.`,
     preview: dataRows.slice(0, 5).map((r: string, i: number) => {
       const values = r.split(",").map((v: string) => v.trim());

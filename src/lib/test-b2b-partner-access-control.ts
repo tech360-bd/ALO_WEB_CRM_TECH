@@ -93,7 +93,7 @@ async function runB2bPartnerTests() {
   const app = await db.application.create({
     data: {
       studentId: testStudentWithApp,
-      applicationCode: 'APP-ACTIVE-002',
+      applicationId: 'APP-ACTIVE-002',
       stage: 'counseling',
       status: 'active',
       safeStatus: 'UNDER_REVIEW',

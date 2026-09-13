@@ -61,11 +61,11 @@ async function processAgentSchedules() {
             try {
                 // Parse cron in context of its timezone (default Asia/Dhaka)
                 const interval = cronParser.parse(sched.cronExpression, { tz: sched.timezone });
-                
+
                 // If it never ran, or if current time is past nextRunAt
-                if (!sched.lastRunAt || (sched.nextRunAt && now >= sched.nextRunAt)) {
+                if (!sched.nextRunAt || now >= sched.nextRunAt) {
                     console.log(`[Agent Cron] Triggering schedule: ${sched.name} for Agent ${sched.agentId}`);
-                    
+
                     // 1. Create the task
                     await db.agentTask.create({
                         data: {
@@ -76,8 +76,6 @@ async function processAgentSchedules() {
                             input: sched.inputPayload,
                             output: "",
                             status: "pending",
-                            entityType: "schedule",
-                            entityId: sched.id,
                             errorMessage: ""
                         }
                     });
@@ -87,7 +85,6 @@ async function processAgentSchedules() {
                     await db.agentSchedule.update({
                         where: { id: sched.id },
                         data: {
-                            lastRunAt: now,
                             nextRunAt: nextDate
                         }
                     });
@@ -155,7 +152,7 @@ async function main() {
             processAgentSchedules(),
             processWhatsAppFollowUps()
         ]);
-        
+
         // Wait 60 seconds before next polling cycle
         await delay(60000);
     }

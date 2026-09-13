@@ -12,11 +12,7 @@ export default function RolesManagementPage() {
   const fetchPermissions = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/permissions", {
-        headers: {
-          "Authorization": "Bearer fake_token_for_now" // We will replace with real fetch pattern
-        }
-      });
+      const res = await fetch("/api/permissions");
       const json = await res.json();
       if (json.success) {
         setPermissionsData(json.data);
@@ -39,8 +35,7 @@ export default function RolesManagementPage() {
       const res = await fetch("/api/permissions", {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer fake_token_for_now" // We will replace with real fetch pattern
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           roleId,
@@ -105,8 +100,8 @@ export default function RolesManagementPage() {
                           onClick={() => handleTogglePermission(role.id, perm.id, isGranted)}
                           disabled={role.isSystem}
                           className={`inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
-                            isGranted 
-                              ? "bg-[#0066CC]/10 text-[#0066CC] hover:bg-[#0066CC]/20" 
+                            isGranted
+                              ? "bg-[#0066CC]/10 text-[#0066CC] hover:bg-[#0066CC]/20"
                               : "bg-gray-100 text-gray-400 hover:bg-gray-200"
                           } ${role.isSystem ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                           title={role.isSystem ? "System roles cannot be modified" : "Click to toggle"}

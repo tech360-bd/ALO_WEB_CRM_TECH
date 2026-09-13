@@ -15,8 +15,8 @@ export async function GET(req: NextRequest) {
     payments,
     auditLogs,
   ] = await Promise.all([
-    db.lead.findMany({ include: { counselor: true } }),
-    db.student.findMany({ include: { counselor: true } }),
+    db.lead.findMany(),
+    db.student.findMany(),
     db.document.findMany(),
     db.application.findMany(),
     db.visaCase.findMany(),
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   for (const d of documents) docsByStatus[d.status] = (docsByStatus[d.status] || 0) + 1;
 
   const visaByStage: Record<string, number> = {};
-  for (const v of visaCases) visaByStage[v.visaStage] = (visaByStage[v.visaStage] || 0) + 1;
+  for (const v of visaCases) visaByStage[v.currentStage] = (visaByStage[v.currentStage] || 0) + 1;
 
   const agentsByDept: Record<string, number> = {};
   for (const a of aiAgents) agentsByDept[a.department] = (agentsByDept[a.department] || 0) + 1;
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
     },
     recentAudit: auditLogs,
     avgProfileCompletion: students.length
-      ? Math.round(students.reduce((s, st) => s + st.profileCompletion, 0) / students.length)
+      ? Math.round(students.reduce((s, st) => s + st.profileComplete, 0) / students.length)
       : 0,
   });
 }

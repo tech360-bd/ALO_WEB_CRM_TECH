@@ -10,9 +10,9 @@ export async function GET(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const search = searchParams.get('search');
-  
+
   let where: any = {};
-  
+
   if (authRes.type === 'student') {
     where.studentId = authRes.data.studentId;
   } else {
@@ -45,12 +45,13 @@ export async function POST(req: Request) {
   if (authRes instanceof NextResponse) return authRes;
 
   const body = await req.json();
-  const applicationCode = `APP-${new Date().getFullYear()}-${Math.floor(Math.random() * 900000) + 100000}`;
+  const sequence = await db.application.count();
+  const applicationCode = `APP-${new Date().getFullYear()}-${String(sequence + 1).padStart(6, '0')}`;
 
   const newApp = await db.application.create({
     data: {
       ...body,
-      applicationCode,
+      applicationId: body.applicationId || applicationCode,
       studentId: authRes.type === 'student' ? authRes.data.studentId : body.studentId,
     }
   });
@@ -62,4 +63,21 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ success: true, data: newApp });
+}
+
+export async function PATCH(req: Request) {
+  const authRes = await authenticateUnified(req);
+  if (authRes instanceof NextResponse) return authRes;
+  const body = await req.json();
+  const id = String(body.id || '');
+  if (!id) return NextResponse.json({ success: false, error: 'id is required' }, { status: 400 });
+  const existing = await db.application.findUnique({ where: { id } });
+  if (!existing) return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
+  if (authRes.type === 'student' && existing.studentId !== authRes.data.studentId) return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+  const allowed = ['stage', 'status', 'notes', 'counselorId', 'counselorName', 'applicationOfficer', 'visaOfficerId', 'deadline', 'intake', 'level', 'universityName', 'courseName', 'country'] as const;
+  const data = Object.fromEntries(allowed.filter((field) => body[field] !== undefined).map((field) => [field, body[field]]));
+  const updated = await db.application.update({ where: { id }, data });
+  if (authRes.type === 'portal') await logAuditAction(authRes.data, 'UPDATE_APPLICATION', 'Application', id, { fields: Object.keys(data) });
+  else await logStudentEvent(authRes.data.studentId, 'UPDATED_APPLICATION', { applicationId: id, fields: Object.keys(data) });
+  return NextResponse.json({ success: true, application: updated, data: updated });
 }

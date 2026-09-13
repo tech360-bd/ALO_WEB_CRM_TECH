@@ -220,7 +220,6 @@ export function DocumentHub() {
           id: reviewTarget.id,
           status: reviewStatus,
           rejectionReason: reviewStatus === "REJECTED" ? rejectionReason.trim() : null,
-          reviewedById: "demo-user",
         }),
       });
       if (!res.ok) throw new Error("patch failed");
@@ -265,7 +264,6 @@ export function DocumentHub() {
           fileType: "application/pdf",
           fileSize: 480000,
           required: uploadForm.required,
-          reviewedById: "demo-user",
         }),
       });
       if (!res.ok) throw new Error("upload failed");

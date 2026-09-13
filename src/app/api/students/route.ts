@@ -1,28 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+async function enrich(student: Awaited<ReturnType<typeof db.student.findUnique>>) {
+  if (!student) return null;
+  const [applications, visaCases, timelineEvents] = await Promise.all([
+    db.application.findMany({ where: { studentId: student.id } }),
+    db.visaCase.findMany({ where: { studentId: student.id } }),
+    db.timelineEvent.findMany({ where: { studentId: student.id }, take: 20, orderBy: { createdAt: "desc" } }),
+  ]);
+  return { ...student, applications, visaCases, timelineEvents };
+}
+
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
   if (id) {
-    const student = await db.student.findUnique({
-      where: { id },
-      include: {
-        counselor: true,
-        documents: { orderBy: { category: "asc" } },
-        applications: true,
-        visaCases: true,
-        interviews: { orderBy: { startedAt: "desc" } },
-        mockTests: { orderBy: { createdAt: "desc" } },
-        payments: true,
-        timelineEvents: { orderBy: { createdAt: "desc" }, take: 20, include: { user: true } },
-      },
-    });
-    if (!student) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json({ student });
+    const student = await db.student.findUnique({ where: { id }, include: { documents: { orderBy: { category: "asc" } }, interviewSessions: { orderBy: { startedAt: "desc" } }, payments: true, studentNotifications: { take: 5, orderBy: { createdAt: "desc" } } } });
+    const enriched = await enrich(student);
+    return enriched ? NextResponse.json({ student: enriched }) : NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  const students = await db.student.findMany({
-    include: { counselor: true },
-    orderBy: { createdAt: "desc" },
-  });
-  return NextResponse.json({ students });
+  const students = await db.student.findMany({ include: { documents: { orderBy: { category: "asc" } }, interviewSessions: { take: 1 }, payments: true }, orderBy: { createdAt: "desc" } });
+  const enriched = await Promise.all(students.map((student) => enrich(student)));
+  return NextResponse.json({ students: enriched });
 }

@@ -19,11 +19,7 @@ export async function canAccessFeature(ownerId: string, featureKey: string): Pro
   }
 
   // Check feature access rule
-  const rule = await db.featureAccessRule.findUnique({
-    where: {
-      ownerType_ownerId_featureKey: { ownerType: "EMPLOYEE", ownerId, featureKey },
-    },
-  });
+  const rule = await db.featureAccessRule.findFirst({ where: { ownerType: "EMPLOYEE", ownerId, featureKey } });
 
   if (!rule) return false;
   return rule.isEnabled;
@@ -33,11 +29,7 @@ export async function canAccessFeature(ownerId: string, featureKey: string): Pro
  * Get the quota limit for a feature (e.g. monthly image limit).
  */
 export async function getQuota(ownerType: string, ownerId: string, featureKey: string): Promise<number | null> {
-  const rule = await db.featureAccessRule.findUnique({
-    where: {
-      ownerType_ownerId_featureKey: { ownerType, ownerId, featureKey },
-    },
-  });
+  const rule = await db.featureAccessRule.findFirst({ where: { ownerType, ownerId, featureKey } });
   return rule?.limitValue ?? null;
 }
 
@@ -143,37 +135,24 @@ export async function canUseStudentBenefit(studentId: string, benefitType: "ENGL
     return { allowed: false, remaining: 0, reason: "Student benefits require an ALO application first" };
   }
 
-  // Check partner package limits
-  if (student.partnerId) {
-    const partnerEmp = await db.employee.findFirst({ where: { userId: student.partnerId } });
-    if (partnerEmp) {
-      const assignment = await db.partnerPackageAssignment.findFirst({
-        where: { partnerId: partnerEmp.id, status: "ACTIVE" },
-        include: { package: true },
-      });
-      if (assignment) {
-        const limit = benefitType === "ENGLISH_MOCK" ? assignment.package.englishMockVoucherLimit : assignment.package.interviewPrepLimit;
-        // Count usage for this student
-        const usageCount = await db.featureUsageLog.count({
-          where: {
-            ownerType: "PARTNER",
-            ownerId: partnerEmp.id,
-            featureKey: benefitType === "ENGLISH_MOCK" ? "partner.student.benefit" : "partner.student.benefit",
-            action: benefitType === "ENGLISH_MOCK" ? "mock_voucher_used" : "interview_prep_used",
-            metadata: { contains: studentId },
-          },
-        });
-        const remaining = Math.max(0, limit - usageCount);
-        if (remaining === 0) {
-          return { allowed: false, remaining: 0, reason: `${benefitType} voucher limit reached (${limit})` };
-        }
-        return { allowed: true, remaining };
-      }
+  // Partner leads carry the partner ownership in Main's schema.
+  const partnerLead = await db.partnerLead.findFirst({ where: { studentId } });
+  if (partnerLead?.partnerId) {
+    const assignment = await db.partnerPackageAssignment.findFirst({ where: { partnerId: partnerLead.partnerId, status: "active" } });
+    const packageRecord = assignment ? await db.partnerPackage.findUnique({ where: { id: assignment.packageId } }) : null;
+    if (assignment && packageRecord) {
+      const features = JSON.parse(packageRecord.features || "{}");
+      const configuredLimit = benefitType === "ENGLISH_MOCK" ? features.englishMockVoucherLimit : features.interviewPrepLimit;
+      const limit = typeof configuredLimit === "number" ? configuredLimit : (benefitType === "ENGLISH_MOCK" ? 3 : 1);
+      const usageCount = await db.featureUsageLog.count({ where: { ownerType: "PARTNER", ownerId: partnerLead.partnerId, featureKey: "partner.student.benefit", action: benefitType === "ENGLISH_MOCK" ? "mock_voucher_used" : "interview_prep_used", metadata: { contains: studentId } } });
+      const remaining = Math.max(0, limit - usageCount);
+      if (remaining === 0) return { allowed: false, remaining: 0, reason: `${benefitType} voucher limit reached (${limit})` };
+      return { allowed: true, remaining };
     }
   }
 
   // Non-partner ALO students: 3 free mocks + 1 interview (standard ALO policy)
-  const mockCount = await db.mockTest.count({ where: { studentId, isFree: true } });
+  const mockCount = await db.testSession.count({ where: { studentId } });
   if (benefitType === "ENGLISH_MOCK") {
     const remaining = Math.max(0, 3 - mockCount);
     if (remaining === 0) return { allowed: false, remaining: 0, reason: "Free mock limit reached (3). Payment required for additional mocks." };
@@ -209,11 +188,8 @@ export async function logSensitiveAccess(userId: string, action: string, resourc
  * Get partner package for a partner employee
  */
 export async function getPartnerPackage(partnerEmployeeId: string) {
-  const assignment = await db.partnerPackageAssignment.findFirst({
-    where: { partnerId: partnerEmployeeId, status: "ACTIVE" },
-    include: { package: true },
-  });
-  return assignment?.package || null;
+  const assignment = await db.partnerPackageAssignment.findFirst({ where: { partnerId: partnerEmployeeId, status: "active" } });
+  return assignment ? db.partnerPackage.findUnique({ where: { id: assignment.packageId } }) : null;
 }
 
 /**

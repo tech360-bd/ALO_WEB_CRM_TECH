@@ -1,11 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET — Application Manager dashboard
 export async function GET() {
   const [applications, b2bApplications, b2bProviders, comments, documents, deadlines, tasks, statusLogs] = await Promise.all([
-    db.application.findMany({ include: { student: { select: { studentId: true, fullName: true, email: true, mobile: true } } }, orderBy: { updatedAt: "desc" } }),
-    db.b2bApplication.findMany({ include: { b2bProvider: true }, orderBy: { createdAt: "desc" } }),
+    db.application.findMany({ orderBy: { updatedAt: "desc" } }),
+    db.b2bApplication.findMany({ orderBy: { createdAt: "desc" } }),
     db.b2bProvider.findMany({ orderBy: { name: "asc" } }),
     db.applicationComment.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
     db.applicationDocument.findMany({ orderBy: { createdAt: "desc" }, take: 30 }),
@@ -13,35 +12,26 @@ export async function GET() {
     db.applicationTask.findMany({ where: { status: "PENDING" }, orderBy: { dueDate: "asc" } }),
     db.applicationStatusLog.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
   ]);
-
-  // KPIs
+  const studentIds = Array.from(new Set(applications.map((application) => application.studentId)));
+  const students = await db.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, studentId: true, name: true, email: true, phone: true } });
+  const studentMap = Object.fromEntries(students.map((student) => [student.id, student]));
+  const enrichedApplications = applications.map((application) => ({ ...application, student: studentMap[application.studentId] || null }));
   const kpis = {
     totalApplications: applications.length,
-    newToday: applications.filter((a) => new Date(a.createdAt).toDateString() === new Date().toDateString()).length,
-    direct: applications.filter((a) => !a.appTeamOfficerId).length,
-    partner: applications.filter((a) => a.student?.email?.includes("partner")).length,
+    newToday: applications.filter((application) => new Date(application.createdAt).toDateString() === new Date().toDateString()).length,
+    direct: applications.filter((application) => !application.appTeamOfficerId).length,
+    partner: applications.filter((application) => application.isB2b).length,
     b2b: b2bApplications.length,
-    submitted: applications.filter((a) => a.stage === "APPLICATION_SUBMITTED").length,
-    decisionPending: applications.filter((a) => a.stage === "APPLICATION_SUBMITTED" || a.stage === "CONDITIONAL_OFFFER").length,
-    conditionalOffers: applications.filter((a) => a.stage === "CONDITIONAL_OFFFER").length,
-    unconditionalOffers: applications.filter((a) => a.stage === "UNCONDITIONAL_OFFER").length,
-    rejected: applications.filter((a) => a.stage === "VISA_REFUSED").length,
-    documentsPending: documents.filter((d) => d.status === "MISSING" || d.status === "UNDER_REVIEW").length,
-    casPending: applications.filter((a) => a.stage === "CAS_PENDING" || a.stage === "CAS_INTERVIEW").length,
+    submitted: applications.filter((application) => application.stage === "APPLICATION_SUBMITTED").length,
+    decisionPending: applications.filter((application) => ["APPLICATION_SUBMITTED", "CONDITIONAL_OFFFER"].includes(application.stage)).length,
+    conditionalOffers: applications.filter((application) => application.stage === "CONDITIONAL_OFFFER").length,
+    unconditionalOffers: applications.filter((application) => application.stage === "UNCONDITIONAL_OFFER").length,
+    rejected: applications.filter((application) => application.stage === "VISA_REFUSED").length,
+    documentsPending: documents.filter((document) => ["MISSING", "UNDER_REVIEW"].includes(document.status)).length,
+    casPending: applications.filter((application) => ["CAS_PENDING", "CAS_INTERVIEW"].includes(application.stage)).length,
     b2bConfidential: b2bApplications.length,
-    urgentDeadlines: deadlines.filter((d) => new Date(d.deadlineDate) <= new Date(Date.now() + 3 * 86400000)).length,
+    urgentDeadlines: deadlines.filter((deadline) => new Date(deadline.deadlineDate) <= new Date(Date.now() + 3 * 86400000)).length,
     pendingTasks: tasks.length,
   };
-
-  return NextResponse.json({
-    kpis,
-    applications: applications.slice(0, 20),
-    b2bApplications,
-    b2bProviders,
-    comments,
-    documents,
-    deadlines,
-    tasks,
-    statusLogs,
-  });
+  return NextResponse.json({ kpis, applications: enrichedApplications.slice(0, 20), b2bApplications, b2bProviders, comments, documents, deadlines, tasks, statusLogs });
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStudentAuth } from '@/app/student/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -54,47 +54,72 @@ export default function StudentAiInterviewPage() {
   const [feedback, setFeedback] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [completed, setCompleted] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionError, setSessionError] = useState<string | null>(null);
 
   const currentQ = SAMPLE_QUESTIONS[currentIdx];
 
+  useEffect(() => {
+    if (!token) return;
+    fetch('/api/visa/ai-interview/start', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ interviewType: 'embassy_mock' }),
+    }).then(async (res) => {
+      const data = await res.json();
+      if (!res.ok || !data.sessionId) throw new Error(data.error || 'Unable to start interview');
+      setSessionId(data.sessionId);
+    }).catch((error) => setSessionError(error instanceof Error ? error.message : 'Unable to start interview'));
+  }, [token]);
+
   const handleSubmitAnswer = async () => {
-    if (!userAnswer.trim()) return;
+    if (!userAnswer.trim() || !sessionId || !token) return;
 
     setSubmitting(true);
     try {
-      // Simulate AI analysis with accent-friendly speech evaluation
-      const simulatedScore = Math.floor(75 + Math.random() * 20);
-      const isStrong = simulatedScore >= 80;
-
+      const res = await fetch(`/api/visa/ai-interview/${sessionId}/answer`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: currentQ.question, answer: userAnswer }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.evaluation) throw new Error(data.error || 'AI evaluation failed');
       const evalFeedback = {
         questionId: currentQ.id,
         question: currentQ.question,
         answer: userAnswer,
-        score: simulatedScore,
-        strengths: isStrong
-          ? 'Clear career relevance and strong articulation of university specifics.'
-          : 'Good foundation and genuine intent conveyed.',
-        improvements: isStrong
-          ? 'Add specific module names to demonstrate deep course research.'
-          : 'Be more precise regarding your sponsor\'s annual income and bank statement history.',
-        accentToleranceNote: 'Bangladeshi English speech patterns evaluated on clarity, relevance, and semantic intent — no penalty applied for non-native accent.'
+        ...data.evaluation,
+        accentToleranceNote: 'Evaluation considers clarity, relevance, and semantic intent without penalizing non-native accents.',
       };
-
       setFeedback(evalFeedback);
       setHistory(prev => [...prev, evalFeedback]);
+    } catch (error) {
+      setSessionError(error instanceof Error ? error.message : 'AI evaluation failed');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setFeedback(null);
     setUserAnswer('');
     if (currentIdx < SAMPLE_QUESTIONS.length - 1) {
       setCurrentIdx(curr => curr + 1);
-    } else {
-      setCompleted(true);
+      return;
     }
+    if (sessionId && token) {
+      const res = await fetch(`/api/visa/ai-interview/${sessionId}/finish`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ finalFeedback: 'Review the answer-level feedback before your next practice session.' }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setSessionError(data.error || 'Unable to save interview result');
+        return;
+      }
+    }
+    setCompleted(true);
   };
 
   const handleRestart = () => {
@@ -107,6 +132,12 @@ export default function StudentAiInterviewPage() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto text-white">
+      {sessionError && (
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200" role="alert">
+          {sessionError}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>

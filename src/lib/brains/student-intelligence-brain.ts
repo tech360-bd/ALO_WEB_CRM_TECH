@@ -77,7 +77,7 @@ export async function getJourneyStage(studentId: string): Promise<JourneyStage |
   // Check visa cases
   const visaCases = await db.visaCase.findMany({
     where: { studentId },
-    select: { id: true, visaStage: true },
+    select: { id: true, currentStage: true },
     take: 50,
   });
 
@@ -86,7 +86,7 @@ export async function getJourneyStage(studentId: string): Promise<JourneyStage |
 
   // Visa stages
   const approvedVisa = visaCases.find(
-    (v) => v.visaStage === "VISA_APPROVED" || v.visaStage === "GRANTED"
+    (v) => v.currentStage === "VISA_APPROVED" || v.currentStage === "GRANTED"
   );
   if (approvedVisa) return "VISA_APPROVED";
   if (visaCases.length > 0) return "VISA_APPLIED";
@@ -134,16 +134,13 @@ export async function getStudentIntelligence(studentId: string): Promise<Student
     select: {
       id: true,
       studentId: true,
-      fullName: true,
+      name: true,
       email: true,
-      mobile: true,
+      phone: true,
       status: true,
-      profileCompletion: true,
+      profileComplete: true,
       counselorId: true,
       leadId: true,
-      hasPassport: true,
-      englishTestStatus: true,
-      englishTests: true,
     },
   });
 
@@ -151,27 +148,29 @@ export async function getStudentIntelligence(studentId: string): Promise<Student
 
   const journeyStage = (await getJourneyStage(studentId)) || "LEAD";
 
-  const [applications, visaCases, payments, documents, timelineEvents] = await Promise.all([
+  const [applications, visaCases, payments, documents, timelineEvents, passportCount, englishTestCount] = await Promise.all([
     db.application.count({ where: { studentId } }),
     db.visaCase.count({ where: { studentId } }),
     db.payment.count({ where: { studentId } }),
     db.document.count({ where: { studentId } }),
     db.timelineEvent.count({ where: { studentId } }),
+    db.studentPassport.count({ where: { studentId } }),
+    db.studentEnglishTest.count({ where: { studentId } }),
   ]);
 
   // Risk flags
   const riskFlags: string[] = [];
-  if (student.profileCompletion < 30) riskFlags.push("LOW_PROFILE_COMPLETION");
-  if (!student.hasPassport) riskFlags.push("NO_PASSPORT");
-  if (student.englishTestStatus === "YET_TO_RECEIVE") riskFlags.push("NO_ENGLISH_TEST");
+  if (student.profileComplete < 30) riskFlags.push("LOW_PROFILE_COMPLETION");
+  if (passportCount === 0) riskFlags.push("NO_PASSPORT");
+  if (englishTestCount === 0) riskFlags.push("NO_ENGLISH_TEST");
   if (applications === 0 && student.leadId) riskFlags.push("NO_APPLICATION_SUBMITTED");
 
   // Engagement score (0-100): weighted combination
   const engagementScore = Math.min(
     100,
-    student.profileCompletion * 0.3 +
-      (student.hasPassport ? 10 : 0) +
-      (student.englishTestStatus !== "YET_TO_RECEIVE" ? 10 : 0) +
+    student.profileComplete * 0.3 +
+      (passportCount > 0 ? 10 : 0) +
+      (englishTestCount > 0 ? 10 : 0) +
       Math.min(applications * 10, 20) +
       Math.min(timelineEvents * 2, 20) +
       (visaCases > 0 ? 10 : 0)
@@ -179,9 +178,9 @@ export async function getStudentIntelligence(studentId: string): Promise<Student
 
   // Recommended actions
   const recommendedActions: string[] = [];
-  if (student.profileCompletion < 50) recommendedActions.push("Complete student profile (missing fields)");
-  if (!student.hasPassport) recommendedActions.push("Collect passport scan");
-  if (student.englishTestStatus === "YET_TO_RECEIVE") recommendedActions.push("Schedule English proficiency test");
+  if (student.profileComplete < 50) recommendedActions.push("Complete student profile (missing fields)");
+  if (passportCount === 0) recommendedActions.push("Collect passport scan");
+  if (englishTestCount === 0) recommendedActions.push("Schedule English proficiency test");
   if (applications === 0 && journeyStage === "COUNSELLING") recommendedActions.push("Shortlist universities + submit first application");
   if (visaCases === 0 && applications > 0) recommendedActions.push("Prepare visa documents (financials, CAS)");
   if (student.counselorId === null) recommendedActions.push("Assign a counselor");
@@ -190,18 +189,18 @@ export async function getStudentIntelligence(studentId: string): Promise<Student
     student: {
       id: student.id,
       studentId: student.studentId,
-      fullName: student.fullName,
+      fullName: student.name,
       email: student.email,
-      mobile: student.mobile,
+      mobile: student.phone,
       status: student.status,
-      profileCompletion: student.profileCompletion,
+      profileCompletion: student.profileComplete,
       counselorId: student.counselorId,
     },
     journeyStage,
     intelligence: {
-      profileCompletion: student.profileCompletion,
-      hasPassport: student.hasPassport,
-      hasEnglishTest: student.englishTestStatus !== "YET_TO_RECEIVE",
+      profileCompletion: student.profileComplete,
+      hasPassport: passportCount > 0,
+      hasEnglishTest: englishTestCount > 0,
       hasApplication: applications > 0,
       hasVisaCase: visaCases > 0,
       applicationCount: applications,
@@ -312,7 +311,7 @@ export async function getStudentFunnelStats() {
 
   // Visa case status funnel (uses `visaStage` not `status`)
   const visaByStatus = await db.visaCase.groupBy({
-    by: ["visaStage"],
+    by: ["currentStage"],
     _count: true,
   });
 
@@ -338,7 +337,7 @@ export async function getStudentFunnelStats() {
     stageCounts,
     leadByStatus: leadByStatus.map((s: any) => ({ status: s.status, count: s._count })),
     applicationByStatus: appByStatus.map((s: any) => ({ status: s.stage, count: s._count })),
-    visaByStatus: visaByStatus.map((s: any) => ({ status: s.visaStage, count: s._count })),
+    visaByStatus: visaByStatus.map((s: any) => ({ status: s.currentStage, count: s._count })),
     studentByStatus: studentByStatus.map((s: any) => ({ status: s.status, count: s._count })),
   };
 }

@@ -33,7 +33,7 @@ Write the CV now. Output only the CV text with clear sections.`;
   let draft: Awaited<ReturnType<typeof db.cvDraft.create>> | null = null;
   if (studentId) {
     draft = await db.cvDraft.create({
-      data: { studentId, counselorId, template: template || "STANDARD", content, version: 1, status: "DRAFT" },
+      data: { studentId, content, version: 1, status: "DRAFT", reviewerId: counselorId || "" },
     });
   }
 

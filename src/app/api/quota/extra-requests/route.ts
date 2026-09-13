@@ -8,7 +8,6 @@ export async function GET(req: NextRequest) {
   if (status) where.status = status;
   const requests = await db.extraQuotaRequest.findMany({
     where,
-    include: { partner: { select: { fullName: true, employeeCode: true, companyEmail: true } } },
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json({ requests });

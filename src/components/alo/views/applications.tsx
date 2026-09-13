@@ -150,7 +150,6 @@ export function ApplicationsView() {
         body: JSON.stringify({
           id: updateTarget.id,
           stage: newStage,
-          userId: "demo-user",
         }),
       });
       if (!res.ok) throw new Error("patch failed");

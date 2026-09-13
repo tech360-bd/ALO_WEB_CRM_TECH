@@ -59,25 +59,13 @@ Write the ${typeMap[type] || "document"} now. Mark any assumptions with [verify:
     draft = await db.sopDraft.create({
       data: {
         studentId,
-        counselorId,
-        university,
-        course,
-        type: type || "SOP",
+        applicationId: "",
+        universityName: university || "",
+        courseName: course || "",
         content,
-        wordCount,
         version: 1,
         status: "DRAFT",
-        originalityScore: 75 + Math.floor(Math.random() * 20),
-        reviewChecklist: JSON.stringify([
-          "Personal motivation is clear and specific",
-          "Academic background connected to course",
-          "University choice explained with specifics",
-          "Career goals stated realistically",
-          "No copied or template content",
-          "Honest — no invented achievements",
-          "Student has reviewed and personalized",
-        ]),
-        aiGenerated: true,
+        reviewRequested: false,
       },
     });
     await db.timelineEvent.create({
