@@ -5531,3 +5531,434 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+// ============================================================
+// UNIVERSITY, COURSE, SERVICES, SCHOLARSHIP & RESOURCE SYSTEM
+// ============================================================
+
+model Service {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  title               String
+  shortDescription    String   @default("") @db.Text
+  description         String   @default("") @db.LongText // For compatibility with existing API expecting description
+  longDescription     String   @default("") @db.LongText
+  content             String   @default("") @db.LongText // For compatibility
+  icon                String   @default("")
+  heroImage           String   @default("")
+  heroTitle           String   @default("")
+  heroSubtitle        String   @default("")
+  // Compatibility fields for existing API
+  eligibility         String   @default("") @db.Text
+  requirements        String   @default("") @db.Text
+  documents           String   @default("") @db.Text
+  faqEnabled          Boolean  @default(true)
+  ctaLabel            String   @default("")
+  ctaUrl              String   @default("")
+  // 19 sections per spec
+  whatIs              String   @default("") @db.LongText
+  whyNeeded           String   @default("") @db.LongText
+  whoIsFor            String   @default("") @db.Text
+  whatAloDoes         String   @default("") @db.LongText
+  processSteps        String   @default("[]") @db.Text // JSON
+  requiredInfo        String   @default("[]") @db.Text
+  documentsNeeded     String   @default("[]") @db.Text
+  timeline            String   @default("") @db.Text
+  whatStudentsReceive String   @default("[]") @db.Text
+  whatNotGuaranteed   String   @default("") @db.Text
+  commonMistakes      String   @default("[]") @db.Text
+  // Visa guidance specific
+  documentPreparation String   @default("") @db.Text
+  checklist           String   @default("[]") @db.Text
+  financialGuidance   String   @default("") @db.Text
+  credibilityPrep     String   @default("") @db.Text
+  documentConsistency String   @default("") @db.Text
+  applicationReview   String   @default("") @db.Text
+  refusalRiskPrep     String   @default("") @db.Text
+  officialDisclaimer  String   @default("") @db.Text
+  // Scholarship guidance
+  findingScholarships String   @default("") @db.Text
+  eligibilityReview   String   @default("") @db.Text
+  deadlineTracking    String   @default("") @db.Text
+  statementSupport    String   @default("") @db.Text
+  // Course matching
+  profileAssessment   String   @default("") @db.Text
+  academicMatching    String   @default("") @db.Text
+  englishMatching     String   @default("") @db.Text
+  budgetMatching      String   @default("") @db.Text
+  destinationMatching String   @default("") @db.Text
+  intakeMatching      String   @default("") @db.Text
+  careerGoalMatching  String   @default("") @db.Text
+  // SEO
+  seoTitle            String   @default("")
+  seoDescription      String   @default("") @db.Text
+  canonicalUrl        String   @default("")
+  ogTitle             String   @default("")
+  ogDescription       String   @default("") @db.Text
+  // Source verification
+  sourceUrl           String   @default("")
+  sourceName          String   @default("")
+  verificationStatus  String   @default("pending") // verified, pending, needs_review
+  lastVerifiedAt      DateTime?
+  // Visibility
+  status              String   @default("active") // active, draft, archived, PUBLISHED
+  sortOrder           Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  faqs                ServiceFaq[]
+  relationships       ContentRelationship[] @relation("ServiceRelationships")
+  reverseRelationships ContentRelationship[] @relation("ServiceReverseRelationships")
+  relatedResources    String   @default("[]") // JSON array of resource ids
+  relatedServices     String   @default("[]")
+  relatedCourses      String   @default("[]")
+  relatedCountries    String   @default("[]")
+
+  @@index([slug])
+  @@index([status])
+  @@index([sortOrder])
+  @@map("services")
+}
+
+model ServiceFaq {
+  id         String   @id @default(cuid())
+  serviceId  String
+  question   String   @db.Text
+  answer     String   @db.LongText
+  category   String   @default("general") // Admission, Course, University, Scholarship, Visa, English Test, Application, Finance, Accommodation, Student Life
+  sortOrder  Int      @default(0)
+  status     String   @default("active")
+  sourceUrl  String   @default("")
+  lastVerifiedAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  service    Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+  @@index([category])
+  @@map("service_faqs")
+}
+
+model ResourceCategory {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String   @default("") @db.Text
+  icon        String   @default("")
+  sortOrder   Int      @default(0)
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  resources   Resource[]
+
+  @@index([slug])
+  @@index([status])
+  @@map("resource_categories")
+}
+
+model Resource {
+  id                  String   @id @default(cuid())
+  categoryId          String?
+  slug                String   @unique
+  title               String
+  summary             String   @default("") @db.Text
+  excerpt             String   @default("") @db.Text // Compatibility
+  keyTakeaways        String   @default("[]") @db.Text // JSON
+  detailedExplanation String   @default("") @db.LongText
+  whoAppliesTo        String   @default("") @db.Text
+  requirements        String   @default("") @db.Text
+  processSteps        String   @default("[]") @db.Text // JSON
+  documents           String   @default("[]") @db.Text
+  timeline            String   @default("") @db.Text
+  fees                String   @default("") @db.Text // only if verified
+  deadlines           String   @default("") @db.Text
+  commonMistakes      String   @default("[]") @db.Text
+  aloGuidance         String   @default("") @db.LongText
+  officialSources     String   @default("[]") @db.Text // JSON array of {sourceName, sourceUrl}
+  sourceUrl           String   @default("") // Compatibility
+  sourceName          String   @default("")
+  lastVerifiedAt      DateTime?
+  verificationStatus  String   @default("pending")
+  // Compatibility fields for existing API
+  featuredImage       String   @default("")
+  countrySlug         String   @default("")
+  studyLevel          String   @default("")
+  readingTime         Int      @default(5)
+  publishedAt         DateTime? @default(now())
+  authorId            String   @default("")
+  // SEO
+  seoTitle            String   @default("")
+  seoDescription      String   @default("") @db.Text
+  canonicalUrl        String   @default("")
+  ogTitle             String   @default("")
+  ogDescription       String   @default("") @db.Text
+  imageUrl            String   @default("")
+  // Content
+  content             String   @default("") @db.LongText
+  tags                String   @default("[]") // JSON
+  status              String   @default("active") // active, draft, archived, PUBLISHED
+  sortOrder           Int      @default(0)
+  viewCount           Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  category            ResourceCategory? @relation(fields: [categoryId], references: [id])
+  faqs                ResourceFaq[]
+  relationships       ContentRelationship[] @relation("ResourceRelationships")
+  reverseRelationships ContentRelationship[] @relation("ResourceReverseRelationships")
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([status])
+  @@index([sortOrder])
+  @@index([countrySlug])
+  @@index([studyLevel])
+  @@map("resources")
+}
+
+model ResourceFaq {
+  id         String   @id @default(cuid())
+  resourceId String
+  question   String   @db.Text
+  answer     String   @db.LongText
+  category   String   @default("general")
+  sortOrder  Int      @default(0)
+  status     String   @default("active")
+  sourceUrl  String   @default("")
+  lastVerifiedAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([resourceId])
+  @@map("resource_faqs")
+}
+
+model Scholarship {
+  id                      String   @id @default(cuid())
+  slug                    String   @unique
+  scholarshipCode         String   @unique @default(cuid())
+  name                    String
+  country                 String   @default("")
+  countryId               String   @default("")
+  university              String   @default("")
+  universityId            String   @default("")
+  fundingAmount           String   @default("") // e.g. £5,000 or Full funding
+  fundingAmountNumber     Float    @default(0)
+  amount                  Float    @default(0) // Compatibility
+  currency                String   @default("")
+  fundingCurrency         String   @default("")
+  fundingType             String   @default("") // tuition_waiver, full_funding, partial, living_stipend, etc
+  coverage                String   @default("") @db.Text // Compatibility
+  documentsRequired       String   @default("[]") @db.Text // Compatibility
+  eligibility             String   @default("") @db.Text
+  deadline                String   @default("")
+  deadlineDate            DateTime?
+  openingDate             DateTime?
+  closingDate             DateTime?
+  // Detail sections per spec 29 items
+  overview                String   @default("") @db.LongText
+  whoCanApply             String   @default("") @db.Text
+  academicRequirements    String   @default("") @db.Text
+  englishRequirements     String   @default("") @db.Text
+  nationalityRequirements String   @default("") @db.Text
+  courseEligibility       String   @default("") @db.Text
+  universityEligibility   String   @default("") @db.Text
+  whatCovers              String   @default("") @db.Text
+  whatNotCovers           String   @default("") @db.Text
+  minimumRequirements     String   @default("") @db.Text
+  requiredDocuments       String   @default("[]") @db.Text
+  howToApply              String   @default("") @db.LongText
+  applicationSteps        String   @default("[]") @db.Text
+  selectionProcess        String   @default("") @db.Text
+  resultTimeline          String   @default("") // only if officially available
+  renewalConditions       String   @default("") @db.Text
+  commonMistakes          String   @default("[]") @db.Text
+  howAloHelps             String   @default("") @db.Text
+  officialSourceUrl       String   @default("")
+  officialSourceName      String   @default("")
+  verificationStatus      String   @default("pending")
+  lastVerifiedAt          DateTime?
+  // SEO
+  seoTitle                String   @default("")
+  seoDescription          String   @default("") @db.Text
+  canonicalUrl            String   @default("")
+  // Visibility
+  status                  String   @default("active") // active, draft, archived, CLOSED, PUBLISHED
+  isFeatured              Boolean  @default(false)
+  sortOrder               Int      @default(0)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  faqs                    ScholarshipFaq[]
+  relationships           ContentRelationship[] @relation("ScholarshipRelationships")
+  reverseRelationships    ContentRelationship[] @relation("ScholarshipReverseRelationships")
+  eligibleCourses         String   @default("[]") // JSON array of courseIds
+  eligibleUniversities    String   @default("[]")
+
+  @@index([slug])
+  @@index([country])
+  @@index([universityId])
+  @@index([status])
+  @@index([deadlineDate])
+  @@index([isFeatured])
+  @@map("scholarships")
+}
+
+model ScholarshipFaq {
+  id            String   @id @default(cuid())
+  scholarshipId String
+  question      String   @db.Text
+  answer        String   @db.LongText
+  category      String   @default("general")
+  sortOrder     Int      @default(0)
+  status        String   @default("active")
+  sourceUrl     String   @default("")
+  lastVerifiedAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+
+  @@index([scholarshipId])
+  @@map("scholarship_faqs")
+}
+
+model UnifiedFaq {
+  id               String   @id @default(cuid())
+  slug             String   @default("")
+  question         String   @db.Text
+  answer           String   @db.LongText
+  category         String   @default("general") // Admission, Course, University, Scholarship, Visa, English Test, Application, Finance, Accommodation, Student Life
+  targetType       String   @default("") // university, course, scholarship, service, resource, language_test, country, general
+  targetId         String   @default("")
+  targetSlug       String   @default("")
+  tags             String   @default("[]") // JSON
+  relatedQuestions String   @default("[]") // JSON array of faq ids
+  sourceUrl        String   @default("")
+  sourceName       String   @default("")
+  verificationStatus String @default("pending")
+  lastVerifiedAt   DateTime?
+  status           String   @default("active")
+  sortOrder        Int      @default(0)
+  viewCount        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([category])
+  @@index([targetType, targetId])
+  @@index([targetSlug])
+  @@index([status])
+  @@index([sortOrder])
+  @@map("unified_faqs")
+}
+
+model OfficialSource {
+  id               String   @id @default(cuid())
+  sourceUrl        String
+  sourceType       String   @default("official_university") // official_university, official_government, official_test_provider, official_scholarship, ALO_editorial, other
+  sourceTitle      String   @default("")
+  targetType       String   @default("") // university, course, scholarship, country, english_test, service, resource
+  targetId         String   @default("")
+  targetSlug       String   @default("")
+  dataSection      String   @default("") // tuition, scholarship, deadline, visa, english, requirements, etc
+  contentHash      String   @default("")
+  verificationStatus String @default("pending") // verified, pending, needs_review, failed
+  lastVerifiedAt   DateTime?
+  verifiedBy       String   @default("")
+  httpStatus       Int      @default(0)
+  notes            String   @default("") @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([targetType, targetId])
+  @@index([targetSlug])
+  @@index([sourceType])
+  @@index([verificationStatus])
+  @@index([dataSection])
+  @@map("official_sources")
+}
+
+model WeeklyUpdateRequest {
+  id           String   @id @default(cuid())
+  targetType   String   // university, course, scholarship, country
+  targetId     String
+  targetName   String
+  fieldName    String
+  oldValue     String   @default("") @db.Text
+  newValue     String   @default("") @db.Text
+  sourceUrl    String   @default("")
+  evidence     String   @default("") @db.Text
+  aiConfidence Float    @default(0.9)
+  status       String   @default("PENDING_REVIEW") // PENDING_REVIEW, APPROVED, REJECTED, EDITED, MERGED
+  reviewedBy   String   @default("")
+  reviewedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([targetType, targetId])
+  @@index([status])
+  @@index([fieldName])
+  @@map("weekly_update_requests")
+}
+
+model RelatedContent {
+  id           String   @id @default(cuid())
+  sourceType   String   // university, course, scholarship, service, resource, language_test, country
+  sourceId     String
+  sourceSlug   String   @default("")
+  relatedType  String   // course, university, scholarship, resource, service, faq, country, language_test
+  relatedId    String
+  relatedSlug  String   @default("")
+  relation     String   @default("related") // exact, same_university, same_country, same_subject, same_destination, same_tag
+  score        Float    @default(0) // relevance score 0-1
+  createdAt    DateTime @default(now())
+
+  @@index([sourceType, sourceId])
+  @@index([sourceSlug])
+  @@index([relatedType])
+  @@index([relation])
+  @@index([score])
+  @@map("related_contents")
+}
+
+model ContentRelationship {
+  id               String   @id @default(cuid())
+  sourceType       String   // SERVICE, SCHOLARSHIP, RESOURCE, UNIVERSITY, COURSE, COUNTRY, LANGUAGE_TEST
+  sourceId         String
+  serviceId        String?
+  serviceReverseId String?
+  scholarshipId    String?
+  scholarshipReverseId String?
+  resourceId       String?
+  resourceReverseId String?
+  targetType       String
+  targetId         String
+  relationshipType String   @default("related")
+  status           String   @default("ACTIVE")
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  service          Service?     @relation("ServiceRelationships", fields: [serviceId], references: [id])
+  serviceReverse   Service?     @relation("ServiceReverseRelationships", fields: [serviceReverseId], references: [id])
+  scholarship      Scholarship? @relation("ScholarshipRelationships", fields: [scholarshipId], references: [id])
+  scholarshipReverse Scholarship? @relation("ScholarshipReverseRelationships", fields: [scholarshipReverseId], references: [id])
+  resource         Resource?    @relation("ResourceRelationships", fields: [resourceId], references: [id])
+  resourceReverse  Resource?    @relation("ResourceReverseRelationships", fields: [resourceReverseId], references: [id])
+
+  @@index([sourceType, sourceId])
+  @@index([serviceId])
+  @@index([serviceReverseId])
+  @@index([scholarshipId])
+  @@index([scholarshipReverseId])
+  @@index([resourceId])
+  @@index([resourceReverseId])
+  @@index([targetType, targetId])
+  @@index([relationshipType])
+  @@index([status])
+  @@map("content_relationships")
+}

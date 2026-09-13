@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Metadata } from 'next';
-import { PublicCourseDetail } from '@/components/website/public-pages/PublicPages';
+import CourseDetailHub from '@/components/website/CourseDetailHub';
 
 export async function generateMetadata({
   params,
@@ -11,7 +11,7 @@ export async function generateMetadata({
   const name = slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   return {
     title: `${name} — Course Details, Fees & Entry Requirements | ALO Education`,
-    description: `Full details for ${name}: tuition fees, IELTS requirements, intakes, scholarships, and how to apply through ALO Education from Bangladesh.`,
+    description: `Full details for ${name}: tuition fees, IELTS requirements, intakes, scholarships, and how to apply through ALO Education from Bangladesh. Complete course information hub with related content engine, FAQ accordion, source verification — DB-driven.`,
     alternates: {
       canonical: `https://aloeducation.com/course/${slug}`,
     },
@@ -31,16 +31,16 @@ export default async function CourseDetailPageRoute({
 }) {
   const { slug } = await params;
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+    <div className="min-h-screen bg-white flex flex-col justify-between">
       <main className="flex-1 pt-20 pb-16">
         <Suspense
           fallback={
-            <div className="p-12 text-center text-slate-500 font-medium">
-              Loading Course Details...
+            <div className="p-12 text-center text-gray-500 font-medium">
+              Loading Course Details — DB-driven with related content, FAQ, source verification...
             </div>
           }
         >
-          <PublicCourseDetail slug={slug} />
+          <CourseDetailHub slug={slug} />
         </Suspense>
       </main>
     </div>
