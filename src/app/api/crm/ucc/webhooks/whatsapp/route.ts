@@ -1,42 +1,22 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
+import {
+  normalizePhoneE164 as normalizePhone,
+  classifyIntent,
+  detectPriority,
+  verifySignatureStrict,
+  extractMessageContent,
+} from '@/lib/whatsapp-webhook-handler';
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 const APP_SECRET = process.env.WHATSAPP_APP_SECRET;
 
-// ============================================================
-// WhatsApp Business Cloud API Webhook
-// Requirements 121-177: Signature validation, idempotency,
-// phone deduplication, intent classification, SLA start
-// ============================================================
+// Consolidated via src/lib/whatsapp-webhook-handler.ts — preserves all functions from both
+// wattps://github.com/engralaminn-collab/alo_education_z....ai — lossless 2026-09-14
+// Original local functions now re-exported from handler: normalizePhone (E.164), classifyIntent, detectPriority
+// Additional handler utilities available: verifySignature, safeEqual, extractMessageContent, sendOutboundViaApi, generateStudentId
 
-function normalizePhone(phone: string): string {
-  // Normalize to E.164 international format
-  const digits = phone.replace(/[^0-9]/g, '');
-  if (digits.startsWith('880') && digits.length === 13) return `+${digits}`;
-  if (digits.startsWith('01') && digits.length === 11) return `+880${digits.slice(1)}`;
-  return `+${digits}`;
-}
-
-function classifyIntent(messageText: string): string {
-  const text = messageText.toLowerCase();
-  if (/passport|bank statement|transcript|nid|document|certificate|submit|upload/.test(text)) return 'DOCUMENT_REQUIREMENT';
-  if (/payment|pay|fees|deposit|money|transfer|receipt/.test(text)) return 'PAYMENT_QUESTION';
-  if (/visa|cas|i-20|coe|biometric|embassy|appointment/.test(text)) return 'VISA_QUESTION';
-  if (/offer|admission|university|apply|application|accepted|rejected/.test(text)) return 'APPLICATION_QUESTION';
-  if (/ielts|toefl|sat|gre|gmat|exam|test|score/.test(text)) return 'TEST_PREPARATION';
-  if (/urgent|asap|emergency|deadline|tomorrow|today/.test(text)) return 'URGENT';
-  if (/interview|counselor|appointment|meet|office/.test(text)) return 'APPOINTMENT';
-  return 'GENERAL';
-}
-
-function detectPriority(intent: string, text: string): string {
-  if (intent === 'URGENT') return 'critical';
-  if (/payment|visa|cas|coe|i-20|deadline/.test(text.toLowerCase())) return 'high';
-  if (intent === 'DOCUMENT_REQUIREMENT' || intent === 'PAYMENT_QUESTION') return 'high';
-  return 'normal';
-}
 
 // GET: Meta webhook verification
 export async function GET(request: Request) {

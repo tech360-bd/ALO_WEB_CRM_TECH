@@ -5,6 +5,9 @@ import { normalizeBdPhone, determineSenderNumber, MAIN_NUMBER, COO_NUMBER } from
 import { detectLanguage, detectIntent, detectSentiment, generateAiReply, logAiOperation, calculateLeadScore } from "@/lib/ai-whatsapp-engine";
 import { startSlaForThread, calculateSlaDueAt } from "@/lib/sla-engine";
 import { handleStopStartCommand, createFollowUpScheduleForStudent } from "@/lib/whatsapp-followup-engine";
+import { classifyIntent as classifyIntentCRM, detectPriority, normalizePhoneE164, extractMessageContent as extractMessageContentHandler } from "@/lib/whatsapp-webhook-handler";
+// Consolidated 2026-09-14: handler provides CRM intent/priority + E.164 + comprehensive extractMessageContent (additional, not replacing local)
+// All original functions preserved (normalizePhone via normalizeBdPhone, safeEqual, verifySignature, sendOutboundViaApi, extractMessageContent, generateStudentId)
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
