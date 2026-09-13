@@ -1,5 +1,7 @@
-import MasterSuperAdminDashboard from '@/components/admin/MasterSuperAdminDashboard';
+'use client';
+
+import EnhancedSuperAdminControlCenter from '@/components/admin/EnhancedSuperAdminControlCenter';
 
 export default function SuperAdminDashboardRoute() {
-  return <MasterSuperAdminDashboard />;
+  return <EnhancedSuperAdminControlCenter />;
 }
