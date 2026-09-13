@@ -129,3 +129,48 @@ pnpm-debug.log*
 
 # macOS
 .DS_Store
+
+# ============================================================
+# ALO Data & Evidence (large files — use external storage)
+# ============================================================
+# Large canonical datasets (>1MB) should NOT be tracked in git
+# Keep only small manifests (<100KB) if needed for CI
+# Use S3/R2/external storage for full datasets
+*.csv
+!prisma/seed-data/*.csv
+ALO_*.csv
+01_ALO_*.csv
+02_ALO_*.csv
+03_ALO_*.csv
+04_ALO_*.csv
+05_ALO_*.csv
+06_ALO_*.csv
+07_ALO_*.csv
+08_ALO_*.csv
+09_ALO_*.csv
+10_ALO_*.csv
+11_ALO_*.csv
+12_ALO_*.csv
+13_ALO_*.csv
+14_ALO_*.csv
+15_ALO_*.csv
+16_ALO_*.csv
+17_ALO_*.csv
+18_ALO_*.csv
+ALO_*.json
+!package.json
+!package-lock.json
+ALO-FULL-*.txt
+FULL_*.txt
+*.db
+*.sqlite
+*.sqlite3
+
+# Evidence directories
+/evidence/
+/delivery-evidence-*/
+/mysql-release-evidence-*/
+/.audit/
+/AUDIT-*/
+/.mega-*/
+/.backup-*/

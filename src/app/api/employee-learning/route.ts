@@ -1,20 +1,15 @@
 import { NextResponse } from "next/server";
-import { getAuth } from "firebase-admin/auth";
-import { customInitApp } from "@/lib/firebase-admin";
+import { withAuth } from "@/lib/auth-middleware";
 
 export async function GET(request: Request) {
-  customInitApp();
-  try {
-    const token = request.headers.get("Authorization")?.split("Bearer ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const decodedToken = await getAuth().verifyIdToken(token);
-    
-    return NextResponse.json({ status: "success", uid: decodedToken.uid, data: [] });
-  } catch (error) {
-    return NextResponse.json({ error: "Invalid Session" }, { status: 401 });
-  }
+  return withAuth(async (req, auth) => {
+    const resources = [
+      { id: "1", title: "ALO CRM Basics", type: "video", duration: "15 min", completed: false, category: "onboarding" },
+      { id: "2", title: "Student Counseling Best Practices", type: "article", duration: "10 min", completed: false, category: "counseling" },
+      { id: "3", title: "Visa Documentation Guide", type: "pdf", duration: "20 min", completed: false, category: "visa" },
+      { id: "4", title: "University Admission Requirements 2027", type: "course", duration: "45 min", completed: false, category: "admissions" },
+    ];
+    return NextResponse.json({ success: true, data: resources });
+  })(request);
 }
 
-export async function POST(request: Request) {
-  return NextResponse.json({ status: "pending_db_schema_integration" }, { status: 200 });
-}

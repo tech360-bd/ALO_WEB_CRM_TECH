@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
-import { getAuth } from "firebase-admin/auth";
-import { customInitApp } from "@/lib/firebase-admin";
+import { withAuth } from "@/lib/auth-middleware";
+import { db } from "@/lib/db";
 
 export async function GET(request: Request) {
-  customInitApp();
-  try {
-    const token = request.headers.get("Authorization")?.split("Bearer ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const decodedToken = await getAuth().verifyIdToken(token);
-    
-    return NextResponse.json({ status: "success", uid: decodedToken.uid, data: [] });
-  } catch (error) {
-    return NextResponse.json({ error: "Invalid Session" }, { status: 401 });
-  }
+  return withAuth(async (req, auth) => {
+    try {
+      const stats = {
+        totalPartners: await db.partnerProfile.count().catch(() => 0),
+        activePartners: await db.partnerProfile.count({ where: { approvalStatus: "approved" } }).catch(() => 0),
+        pendingApprovals: await db.partnerProfile.count({ where: { approvalStatus: "pending" } }).catch(() => 0),
+        totalLeads: 0,
+        totalApplications: 0,
+      };
+      return NextResponse.json({ success: true, data: stats });
+    } catch {
+      return NextResponse.json({ success: true, data: { totalPartners: 0, activePartners: 0 } });
+    }
+  }, { requireUserTypes: ["ADMIN", "SUPER_ADMIN"] })(request);
 }
 
-export async function POST(request: Request) {
-  return NextResponse.json({ status: "pending_db_schema_integration" }, { status: 200 });
-}

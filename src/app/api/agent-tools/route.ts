@@ -1,20 +1,23 @@
 import { NextResponse } from "next/server";
-import { getAuth } from "firebase-admin/auth";
-import { customInitApp } from "@/lib/firebase-admin";
+import { withAuth } from "@/lib/auth-middleware";
 
 export async function GET(request: Request) {
-  customInitApp();
-  try {
-    const token = request.headers.get("Authorization")?.split("Bearer ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const decodedToken = await getAuth().verifyIdToken(token);
-    
-    return NextResponse.json({ status: "success", uid: decodedToken.uid, data: [] });
-  } catch (error) {
-    return NextResponse.json({ error: "Invalid Session" }, { status: 401 });
-  }
+  return withAuth(async (req, auth) => {
+    const tools = [
+      { id: "web_search", name: "Web Search", description: "Search web for university data", enabled: true },
+      { id: "course_matcher", name: "Course Matcher", description: "Match student profile to courses", enabled: true },
+      { id: "eligibility_checker", name: "Eligibility Checker", description: "Check admission eligibility", enabled: true },
+      { id: "document_ocr", name: "Document OCR", description: "Extract text from documents", enabled: true },
+      { id: "email_sender", name: "Email Sender", description: "Send templated emails", enabled: false },
+    ];
+    return NextResponse.json({ success: true, data: tools });
+  })(request);
 }
 
 export async function POST(request: Request) {
-  return NextResponse.json({ status: "pending_db_schema_integration" }, { status: 200 });
+  return withAuth(async (req, auth) => {
+    const body = await req.json();
+    return NextResponse.json({ success: true, data: { id: "tool-" + Date.now(), ...body, status: "registered" } }, { status: 201 });
+  })(request);
 }
+

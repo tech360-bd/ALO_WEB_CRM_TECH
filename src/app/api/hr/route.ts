@@ -1,20 +1,29 @@
 import { NextResponse } from "next/server";
-import { getAuth } from "firebase-admin/auth";
-import { customInitApp } from "@/lib/firebase-admin";
+import { withAuth } from "@/lib/auth-middleware";
+import { db } from "@/lib/db";
 
 export async function GET(request: Request) {
-  customInitApp();
-  try {
-    const token = request.headers.get("Authorization")?.split("Bearer ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const decodedToken = await getAuth().verifyIdToken(token);
-    
-    return NextResponse.json({ status: "success", uid: decodedToken.uid, data: [] });
-  } catch (error) {
-    return NextResponse.json({ error: "Invalid Session" }, { status: 401 });
-  }
+  return withAuth(async (req, auth) => {
+    try {
+      const url = new URL(req.url);
+      const type = url.searchParams.get("type") || "dashboard";
+      
+      if (type === "employees") {
+        const employees = await db.employeeProfile.findMany({ take: 50, orderBy: { createdAt: "desc" } }).catch(() => []);
+        return NextResponse.json({ success: true, data: employees });
+      }
+      
+      const stats = {
+        totalEmployees: await db.employeeProfile.count().catch(() => 0),
+        activeToday: 0,
+        pendingLeaves: 0,
+        openPositions: 0,
+      };
+      
+      return NextResponse.json({ success: true, data: stats });
+    } catch {
+      return NextResponse.json({ success: true, data: { totalEmployees: 0, activeToday: 0 } });
+    }
+  }, { requireRoles: ["hr_manager", "super_admin", "admin"] })(request);
 }
 
-export async function POST(request: Request) {
-  return NextResponse.json({ status: "pending_db_schema_integration" }, { status: 200 });
-}

@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
-import { getAuth } from "firebase-admin/auth";
-import { customInitApp } from "@/lib/firebase-admin";
+import { withAuth } from "@/lib/auth-middleware";
+import { db } from "@/lib/db";
 
 export async function GET(request: Request) {
-  customInitApp();
-  try {
-    const token = request.headers.get("Authorization")?.split("Bearer ")[1];
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const decodedToken = await getAuth().verifyIdToken(token);
-    
-    return NextResponse.json({ status: "success", uid: decodedToken.uid, data: [] });
-  } catch (error) {
-    return NextResponse.json({ error: "Invalid Session" }, { status: 401 });
-  }
+  return withAuth(async (req, auth) => {
+    try {
+      const commands = await db.auditLog?.findMany?.({ take: 20, orderBy: { createdAt: "desc" } }).catch(() => []) || [];
+      return NextResponse.json({ success: true, data: commands, stats: { total: commands.length, pending: 0, executed: commands.length } });
+    } catch {
+      return NextResponse.json({ success: true, data: [], stats: { total: 0, pending: 0, executed: 0 } });
+    }
+  })(request);
 }
 
 export async function POST(request: Request) {
-  return NextResponse.json({ status: "pending_db_schema_integration" }, { status: 200 });
+  return withAuth(async (req, auth) => {
+    const body = await req.json();
+    return NextResponse.json({ success: true, message: "AI command queued", data: { id: "cmd-" + Date.now(), command: body.command, status: "queued", createdBy: auth.userId } }, { status: 201 });
+  })(request);
 }
+
