@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // cPanel Root Startup Entrypoint - server.js
 // Launches the verified Next.js standalone server for Node.js 22 on cPanel.
 

@@ -72,19 +72,15 @@ export async function POST(request: NextRequest) {
       // Create Application Draft
       const application = await db.application.create({
         data: {
-          applicationCode: appCode,
+          applicationId: appCode,
           studentId: student.id,
           universityName: course.university?.name || universityId || '',
           courseName: course.courseTitle,
           intake: `${targetIntake} ${targetYear}`,
           country: course.country || course.university?.country || 'United Kingdom',
-          campus: course.campus || 'Main Campus',
           level: course.studyLevel || 'Postgraduate',
           stage: 'counseling',
           status: 'draft',
-          reviewStatus: 'pending',
-          documentStatus: 'pending',
-          paymentStatus: 'pending',
         },
       });
 
@@ -123,8 +119,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'Application draft created successfully with document checklist.',
-        applicationId: application.id,
-        applicationCode: application.applicationCode,
+        databaseId: application.id,
+        applicationId: application.applicationId,
         data: application,
       });
     } catch (error: any) {

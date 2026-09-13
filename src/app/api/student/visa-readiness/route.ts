@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const totalDocs = docs.length;
   const docScore = totalDocs > 0 ? Math.round((approvedDocs / totalDocs) * 100) : 0;
   const overallScore = assessment?.overallScore || Math.round((docScore + 50) / 2);
-  const blockingItems = checklist.filter(c => c.isBlocking && c.status !== "APPROVED");
+  const blockingItems = checklist.filter(c => c.isRequired && c.status !== "APPROVED");
   const riskLevel = blockingItems.length > 3 ? "HIGH_RISK" : blockingItems.length > 0 ? "NEEDS_DOCUMENT_UPDATE" : docScore > 80 ? "READY" : "HUMAN_REVIEW_REQUIRED";
   return NextResponse.json({ checklist, assessment, docScore, overallScore, riskLevel, blockingItems: blockingItems.length, totalItems: checklist.length });
 }

@@ -14,7 +14,7 @@ export interface AuthContext {
   permissions: string[];
   sessionId: string;
   branch?: string;
-  
+
   // Actor info for audit logs (especially when actingAs is used)
   actorUserId: string;
   actorEmail: string;
@@ -26,12 +26,50 @@ export interface AuthContext {
 // ============================================================
 export async function authenticateRequest(request: Request): Promise<AuthContext | NextResponse> {
   const authHeader = request.headers.get('authorization');
-  
+
+  // The web app uses NextAuth cookies while older portal clients use a
+  // database-backed Bearer session. Support both without accepting fabricated
+  // tokens or bypassing the database checks.
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return NextResponse.json(
-      { success: false, error: 'Authentication required. Please login.' },
-      { status: 401 }
-    );
+    const { getServerSession } = await import('next-auth');
+    const { authOptions } = await import('@/lib/auth');
+    const nextAuthSession = await getServerSession(authOptions);
+    const nextAuthUser = nextAuthSession?.user as {
+      id?: string;
+      email?: string | null;
+      name?: string | null;
+      role?: string;
+      status?: string;
+    } | undefined;
+
+    if (!nextAuthUser?.id) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required. Please login.' },
+        { status: 401 }
+      );
+    }
+
+    const user = await db.user.findUnique({ where: { id: nextAuthUser.id } });
+    if (!user || user.status !== 'ACTIVE') {
+      return NextResponse.json(
+        { success: false, error: 'Account is not active.' },
+        { status: 403 }
+      );
+    }
+
+    const role = user.role || nextAuthUser.role || 'STUDENT';
+    return {
+      userId: user.id,
+      email: user.email,
+      name: user.name || user.email,
+      userType: role,
+      roles: [role, role.toLowerCase()],
+      permissions: JSON.parse(user.permissions || '[]'),
+      sessionId: `nextauth:${user.id}`,
+      actorUserId: user.id,
+      actorEmail: user.email,
+      actorName: user.name || user.email,
+    };
   }
 
   const token = authHeader.substring(7);
@@ -156,7 +194,11 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
 // ============================================================
 // withAuth — Higher-order wrapper for protected API routes
 // ============================================================
-type AuthenticatedHandler = (request: Request, auth: AuthContext, context?: any) => Promise<NextResponse>;
+type AuthenticatedHandler = (
+  request: Request,
+  auth: AuthContext,
+  context?: any
+) => Promise<NextResponse<any>>;
 
 export function withAuth(
   handler: AuthenticatedHandler,
@@ -258,7 +300,7 @@ export async function logAuditAction(
 ) {
   try {
     // If acting on behalf of someone, log both acting user and actual actor
-    const finalMetadata = auth.actorUserId !== auth.userId 
+    const finalMetadata = auth.actorUserId !== auth.userId
       ? { ...metadata, actingAsUser: auth.userId }
       : metadata;
 

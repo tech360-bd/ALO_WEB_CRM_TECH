@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET — HR dashboard with all HR data
-export async function GET(req: NextRequest) {
+export async function GET() {
   const [employees, leaveRequests, payroll, devices, loginSecurity, notices, exits] = await Promise.all([
-    db.employee.findMany({ include: { department: true, office: true, profile: true, salary: true } }),
+    db.employee.findMany(),
     db.leaveRequest.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
     db.payroll.findMany({ orderBy: { monthYear: "desc" }, take: 20 }),
     db.deviceManagement.findMany({ orderBy: { assignedDate: "desc" } }),
@@ -12,49 +11,26 @@ export async function GET(req: NextRequest) {
     db.noticeManagement.findMany(),
     db.exitManagement.findMany(),
   ]);
-
   const today = new Date().toISOString().slice(0, 10);
   const attendance = await db.employeeAttendance.findMany({ where: { date: today } });
-
-  // HR Analytics
+  const profiles = await db.employeeHR.findMany({ where: { employeeId: { in: employees.map((employee) => employee.employeeId) } } });
+  const profileMap = Object.fromEntries(profiles.map((profile) => [profile.employeeId, profile]));
   const analytics = {
-    headcount: employees.length,
-    activeEmployees: employees.filter((e) => e.status === "ACTIVE").length,
-    attendanceRate: attendance.length > 0 ? Math.round((attendance.filter((a) => a.status === "PRESENT").length / attendance.length) * 100) : 0,
-    lateToday: attendance.filter((a) => a.status === "LATE").length,
-    absentToday: attendance.filter((a) => a.status === "ABSENT").length,
-    onLeaveToday: attendance.filter((a) => a.status === "LEAVE").length,
-    pendingLeaves: leaveRequests.filter((l) => l.status === "PENDING").length,
-    payrollPending: payroll.filter((p) => p.status === "DRAFT").length,
-    payrollPaid: payroll.filter((p) => p.status === "PAID").length,
-    totalPayrollCost: payroll.filter((p) => p.status === "PAID").reduce((s, p) => s + p.netPay, 0),
-    devicesAssigned: devices.filter((d) => d.status === "ASSIGNED").length,
-    devicesReturned: devices.filter((d) => d.status === "RETURNED").length,
-    activeNotices: notices.filter((n) => n.status === "ACTIVE").length,
-    pendingExits: exits.filter((e) => e.status === "PENDING").length,
-    probationEmployees: employees.filter((e) => e.employmentType === "PROBATION").length,
-    newJoiners: employees.filter((e) => new Date(e.joiningDate) > new Date(Date.now() - 30 * 86400000)).length,
+    headcount: employees.length, activeEmployees: employees.filter((employee) => employee.status.toUpperCase() === "ACTIVE").length,
+    attendanceRate: attendance.length ? Math.round(attendance.filter((item) => item.status.toUpperCase() === "PRESENT").length / attendance.length * 100) : 0,
+    lateToday: attendance.filter((item) => item.status.toUpperCase() === "LATE").length,
+    absentToday: attendance.filter((item) => item.status.toUpperCase() === "ABSENT").length,
+    onLeaveToday: attendance.filter((item) => item.status.toUpperCase() === "LEAVE").length,
+    pendingLeaves: leaveRequests.filter((item) => item.status.toUpperCase() === "PENDING").length,
+    payrollPending: payroll.filter((item) => item.status.toUpperCase() === "DRAFT").length,
+    payrollPaid: payroll.filter((item) => item.status.toUpperCase() === "PAID").length,
+    totalPayrollCost: payroll.filter((item) => item.status.toUpperCase() === "PAID").reduce((sum, item) => sum + item.netPay, 0),
+    devicesAssigned: devices.filter((item) => item.status.toUpperCase() === "ASSIGNED").length,
+    devicesReturned: devices.filter((item) => item.status.toUpperCase() === "RETURNED").length,
+    activeNotices: notices.filter((item) => item.status.toUpperCase() === "ACTIVE").length,
+    pendingExits: exits.filter((item) => item.status.toUpperCase() === "PENDING").length,
+    probationEmployees: profiles.filter((profile) => profile.employmentType === "PROBATION").length,
+    newJoiners: profiles.filter((profile) => new Date(profile.joiningDate) > new Date(Date.now() - 30 * 86400000)).length,
   };
-
-  // Upcoming birthdays & anniversaries
-  const upcomingBirthdays = employees.filter((e) => e.profile?.dob).map((e) => {
-    const dob = new Date(e.profile!.dob!);
-    const nextBirthday = new Date(new Date().getFullYear(), dob.getMonth(), dob.getDate());
-    if (nextBirthday < new Date()) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-    const days = Math.ceil((nextBirthday.getTime() - Date.now()) / 86400000);
-    return { name: e.fullName, dob: e.profile!.dob, days, employeeId: e.employeeCode };
-  }).filter((b) => b.days <= 30).sort((a, b) => a.days - b.days);
-
-  return NextResponse.json({
-    analytics,
-    employees,
-    leaveRequests,
-    payroll,
-    devices,
-    loginSecurity,
-    notices,
-    exits,
-    upcomingBirthdays,
-    attendance,
-  });
+  return NextResponse.json({ analytics, employees: employees.map((employee) => ({ ...employee, hrProfile: profileMap[employee.employeeId] || null })), leaveRequests, payroll, devices, loginSecurity, notices, exits, attendance, upcomingBirthdays: [] });
 }

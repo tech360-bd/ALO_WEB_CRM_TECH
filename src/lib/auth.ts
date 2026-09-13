@@ -1,5 +1,5 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { NextAuthOptions } from "next-auth";
+import { getServerSession, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
@@ -33,10 +33,14 @@ export const authOptions: NextAuthOptions = {
         if (!user) return null;
         if (user.status !== "ACTIVE") return null;
 
-        // Check password (passwordHash stores bcrypt hash, or "alo-temporary" for seeded users)
-        const isValid = user.passwordHash === "alo-temporary"
-          ? credentials.password === "alo123" // temporary password for seeded users
-          : await bcrypt.compare(credentials.password, user.passwordHash);
+        // Passwords must always be verified against a real bcrypt hash. Legacy
+        // placeholder passwords are rejected rather than accepted globally.
+        let isValid = false;
+        try {
+          isValid = await bcrypt.compare(credentials.password, user.passwordHash);
+        } catch {
+          isValid = false;
+        }
 
         if (!isValid) return null;
 
@@ -122,7 +126,8 @@ export const authOptions: NextAuthOptions = {
 
 // Helper to get current user from session
 export async function getCurrentUser() {
-  return null; // Will be replaced by getServerSession in server components
+  const session = await getServerSession(authOptions);
+  return session?.user ?? null;
 }
 
 // Role-based redirect after login

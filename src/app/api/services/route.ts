@@ -1,14 +1,17 @@
+import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/services — list published services (public)
-// Supports: ?status=DRAFT (admin), ?sortOrder=asc|desc, ?limit=50
+// Supports: ?sortOrder=asc|desc, ?limit=50; unpublished records are never public
 export async function GET(req: NextRequest) {
   try {
-    const status = req.nextUrl.searchParams.get("status") || "PUBLISHED";
+    // The public endpoint must never expose DRAFT or ARCHIVED content.
+    const status = "PUBLISHED";
     const sortOrder = req.nextUrl.searchParams.get("sortOrder") === "desc" ? "desc" : "asc";
     const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") || "100", 10), 200);
 
@@ -37,13 +40,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ services, total: services.length });
   } catch (err: any) {
     console.error("[services.list] error:", err);
-    return NextResponse.json({ error: "Failed to list services", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to list services" }, { status: 500 });
   }
 }
 
 // POST /api/services — create a service (SUPER_ADMIN/ADMIN only — middleware enforced)
 // Body: full Service fields + optional faqs[]
-export async function POST(req: NextRequest) {
+async function createService(req: Request, auth: AuthContext) {
   try {
     const body = await req.json();
     const {
@@ -54,7 +57,6 @@ export async function POST(req: NextRequest) {
       sourceUrl, verificationStatus = "VERIFIED",
       lastVerifiedAt,
       faqs = [],
-      performedBy,
     } = body as any;
 
     if (!slug || !title || !shortDescription || !description || !icon || !content) {
@@ -99,8 +101,8 @@ export async function POST(req: NextRequest) {
     });
 
     // Audit log
-    const userId = await resolveUserId(performedBy);
-    await db.auditLog.create({
+    const userId = auth.userId;
+    await contentAuditLog.create({
       data: {
         userId,
         action: "SERVICE_CREATE",
@@ -113,16 +115,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ service }, { status: 201 });
   } catch (err: any) {
     console.error("[services.create] error:", err);
-    return NextResponse.json({ error: "Failed to create service", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create service" }, { status: 500 });
   }
 }
 
-// Helper — resolves performedBy (email or id) to a valid User.id for audit
-async function resolveUserId(performedBy?: string): Promise<string | null> {
-  if (!performedBy) return null;
-  if (performedBy.includes("@")) {
-    const u = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
-    return u?.id ?? null;
-  }
-  return performedBy;
-}
+export const POST = withAuth(createService, {
+  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
+});

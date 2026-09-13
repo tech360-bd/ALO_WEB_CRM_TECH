@@ -1,59 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { FEATURE_DEFINITIONS, canAccessFeature, checkQuotaBeforeAction } from "@/lib/access-control";
+import { FEATURE_DEFINITIONS } from "@/lib/access-control";
 
-// GET — access control center data
-export async function GET(req: NextRequest) {
+export async function GET() {
   const [employees, partners, packages, featureRules, quotaRequests, usageLogs] = await Promise.all([
-    db.employee.findMany({ select: { id: true, employeeCode: true, fullName: true, designation: true, department: { select: { name: true } }, office: { select: { name: true } }, status: true, profileStatus: true } }),
-    db.employee.findMany({ where: { role: "PARTNER" }, select: { id: true, employeeCode: true, fullName: true, designation: true } }),
-    db.partnerPackage.findMany({ include: { _count: { select: { assignments: true } } } }),
-    db.featureAccessRule.findMany({}),
-    db.extraQuotaRequest.findMany({ include: { partner: { select: { fullName: true, employeeCode: true } } }, orderBy: { createdAt: "desc" } }),
+    db.employee.findMany({ select: { id: true, employeeId: true, name: true, designation: true, department: true, status: true } }),
+    db.employee.findMany({ where: { role: "PARTNER" }, select: { id: true, employeeId: true, name: true, designation: true } }),
+    db.partnerPackage.findMany(),
+    db.featureAccessRule.findMany(),
+    db.extraQuotaRequest.findMany({ orderBy: { createdAt: "desc" } }),
     db.featureUsageLog.findMany({ take: 20, orderBy: { createdAt: "desc" } }),
   ]);
-
   return NextResponse.json({
-    employees,
-    partners,
-    packages,
-    featureRules,
-    featureDefinitions: FEATURE_DEFINITIONS,
-    quotaRequests,
-    usageLogs,
+    employees, partners, packages, featureRules, featureDefinitions: FEATURE_DEFINITIONS, quotaRequests, usageLogs,
     summary: {
       totalEmployees: employees.length,
-      activeEmployees: employees.filter((e) => e.status === "ACTIVE").length,
-      pendingProfiles: employees.filter((e) => e.profileStatus === "SUBMITTED" || e.profileStatus === "UNDER_REVIEW").length,
+      activeEmployees: employees.filter((employee) => employee.status.toUpperCase() === "ACTIVE").length,
+      pendingProfiles: employees.filter((employee) => employee.status.toUpperCase() === "PENDING").length,
       totalPartners: partners.length,
       totalPackages: packages.length,
-      pendingQuotaRequests: quotaRequests.filter((q) => q.status === "PENDING").length,
+      pendingQuotaRequests: quotaRequests.filter((request) => request.status.toUpperCase() === "PENDING").length,
     },
   });
 }
 
-// PATCH — toggle feature access for an employee/partner
 export async function PATCH(req: NextRequest) {
   const body = await req.json();
   const { ownerType, ownerId, featureKey, isEnabled, limitValue, requiresApproval, updatedBy } = body;
-
-  const rule = await db.featureAccessRule.upsert({
-    where: {
-      ownerType_ownerId_featureKey: { ownerType, ownerId, featureKey },
-    },
-    update: { isEnabled, limitValue, requiresApproval, updatedBy },
-    create: { ownerType, ownerId, featureKey, isEnabled, limitValue, requiresApproval, createdBy: updatedBy, updatedBy },
-  });
-
-  await db.auditLog.create({
-    data: {
-      userId: updatedBy,
-      action: "PERMISSION_CHANGE",
-      resource: "FeatureAccessRule",
-      resourceId: rule.id,
-      details: JSON.stringify({ ownerType, ownerId, featureKey, isEnabled, limitValue }),
-    },
-  });
-
+  if (!ownerType || !ownerId || !featureKey) return NextResponse.json({ error: "ownerType, ownerId and featureKey are required" }, { status: 400 });
+  const existing = await db.featureAccessRule.findFirst({ where: { ownerType, ownerId, featureKey } });
+  const rule = existing
+    ? await db.featureAccessRule.update({ where: { id: existing.id }, data: { isEnabled, limitValue, requiresApproval, updatedBy } })
+    : await db.featureAccessRule.create({ data: { ownerType, ownerId, featureKey, isEnabled, limitValue, requiresApproval, createdBy: updatedBy || "", updatedBy: updatedBy || "" } });
+  await db.auditLog.create({ data: { userId: updatedBy, action: "PERMISSION_CHANGE", resource: "FeatureAccessRule", resourceId: rule.id, details: JSON.stringify({ ownerType, ownerId, featureKey, isEnabled, limitValue }) } });
   return NextResponse.json({ rule });
 }

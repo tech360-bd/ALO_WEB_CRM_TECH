@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
         orderBy: { updatedAt: 'desc' },
         select: {
           id: true,
-          applicationCode: true,
+          applicationId: true,
           studentId: true,
           universityName: true,
           courseName: true,

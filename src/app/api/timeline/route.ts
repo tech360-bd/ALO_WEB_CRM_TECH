@@ -7,7 +7,6 @@ export async function GET(req: NextRequest) {
   if (studentId) where.studentId = studentId;
   const events = await db.timelineEvent.findMany({
     where,
-    include: { user: true },
     orderBy: { createdAt: "desc" },
     take: 50,
   });

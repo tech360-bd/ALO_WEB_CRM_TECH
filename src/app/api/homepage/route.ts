@@ -4,11 +4,11 @@ import { db } from "@/lib/db";
 // GET — all homepage content in one call
 export async function GET() {
   const [heroSlides, services, stories, team, faqs, countries, courses, universities, scholarships, exams] = await Promise.all([
-    db.homeHeroSlide.findMany({ where: { status: "ACTIVE" }, orderBy: { sortOrder: "asc" } }),
-    db.service.findMany({ where: { status: "ACTIVE" }, orderBy: { sortOrder: "asc" } }),
-    db.successStory.findMany({ where: { status: "ACTIVE", consentStatus: "APPROVED" }, orderBy: { sortOrder: "asc" } }),
-    db.teamMember.findMany({ where: { status: "ACTIVE" }, orderBy: { sortOrder: "asc" } }),
-    db.homepageFaq.findMany({ where: { status: "ACTIVE" }, orderBy: { sortOrder: "asc" } }),
+    db.homeHeroSlide.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
+    db.service.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
+    db.successStory.findMany({ where: { status: "ACTIVE", consentStatus: "APPROVED" }, orderBy: { createdAt: "desc" } }),
+    db.teamMember.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
+    db.homepageFaq.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
     db.countryPage.findMany({ where: { approvalStatus: "PUBLISHED" }, select: { slug: true, name: true, shortName: true, flag: true, capital: true, quickFacts: true, lastVerifiedAt: true, sourceUrl: true } }),
     db.coursePage.findMany({ where: { approvalStatus: "PUBLISHED" }, take: 12, orderBy: { name: "asc" }, include: { university: { select: { name: true, slug: true, city: true } } } }),
     db.universityPage.findMany({ where: { approvalStatus: "PUBLISHED" }, take: 8, orderBy: { name: "asc" }, select: { slug: true, name: true, city: true, countrySlug: true, quickFacts: true, overview: true, sourceUrl: true, lastVerifiedAt: true } }),
@@ -22,7 +22,7 @@ export async function GET() {
 
   const heroSlidesWithCountries = heroSlides.map((s) => ({
     ...s,
-    country: countryMap[s.countrySlug] || null,
+    country: countryMap[s.countryCode] || null,
   }));
 
   // Parse scholarships from countries
@@ -31,7 +31,7 @@ export async function GET() {
     let schols: any[] = [];
     try { schols = JSON.parse(c.scholarships || "[]"); } catch {}
     for (const s of schols) {
-      allScholarships.push({ ...s, country: c.name, countrySlug: c.slug, flag: c.flag });
+      allScholarships.push({ ...s, country: c.name, countryCode: c.slug, flag: c.flag });
     }
   }
 

@@ -12,7 +12,7 @@ export const GET = withStudentAuth(async (request, auth) => {
       documents.map(async (doc) => {
         const versions = await db.documentVersion.findMany({
           where: { documentId: doc.id },
-          orderBy: { versionNumber: 'desc' }
+          orderBy: { version: 'desc' }
         });
         return { ...doc, versions };
       })

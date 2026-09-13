@@ -26,14 +26,14 @@ export const PATCH = withStudentAuth(async (request, auth) => {
       return NextResponse.json({ success: false, error: 'Access denied' }, { status: 403 });
     }
 
-    if (action.isCompleted) {
+    if (action.status === "COMPLETED") {
       return NextResponse.json({ success: true, data: action }); // Already completed
     }
 
     const updatedAction = await db.studentNextBestAction.update({
       where: { id },
       data: {
-        isCompleted: true,
+        status: "COMPLETED",
         completedAt: new Date()
       }
     });

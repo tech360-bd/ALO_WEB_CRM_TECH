@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
       await db.communicationSlaEvent.updateMany({
         where: { threadId, slaStatus: { not: 'resolved' } },
         data: {
-          firstResponseAt: new Date(),
+          receivedAt: new Date(),
           slaStatus: 'resolved',
           resolvedAt: new Date(),
         },

@@ -50,13 +50,13 @@ export async function GET(req: NextRequest) {
       db.application.findMany({
         where: {
           OR: [
-            { applicationCode: { contains: query } },
+            { applicationId: { contains: query } },
             { universityName: { contains: query } },
             { courseName: { contains: query } },
           ],
         },
         take: 5,
-        select: { id: true, applicationCode: true, universityName: true, courseName: true, country: true, stage: true },
+        select: { id: true, applicationId: true, universityName: true, courseName: true, country: true, stage: true },
       }).catch(() => []),
       db.portalUser.findMany({
         where: {

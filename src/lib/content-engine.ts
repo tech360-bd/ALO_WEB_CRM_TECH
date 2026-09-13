@@ -20,7 +20,6 @@ function slugify(text: string): string {
 async function ensureUniqueSlug(baseSlug: string): Promise<string> {
   let slug = baseSlug || `asset-${Date.now()}`;
   let counter = 1;
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const exists = await db.contentAsset.findUnique({ where: { slug } });
     if (!exists) return slug;

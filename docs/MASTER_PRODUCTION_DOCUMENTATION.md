@@ -56,29 +56,41 @@
 
 ---
 
-## 5. DEPLOYMENT GUIDE (cPanel & Node.js Standalone)
-1. **Prepare Environment**:
-   - Node.js v22+ installed on cPanel.
-   - MySQL 8 database created with user permissions.
-2. **Build Standalone Bundle**:
+## 5. DEPLOYMENT GUIDE (VPS — Node.js Standalone, PM2, Nginx)
+1. **Prepare Environment (Ubuntu 22.04 LTS):**
+   - Node.js v22+ (`node -v`), npm 10+ (`npm -v`), PM2 (`npm i -g pm2`), Nginx (`nginx -v`), MySQL 8 (`mysql --version`), Git.
+2. **Build Standalone Bundle (CI or locally):**
    ```bash
-   npm run build
+   npm ci
+   npx prisma generate
+   npm run build  # must create .next/standalone/server.js
+   test -f .next/standalone/server.js && echo "✓ standalone ok"
    ```
-3. **Upload Files**:
-   - Upload `.next/standalone`, `.next/static`, and `public` to `/home/aloeduca/public_html/aloeducation.com/`.
-4. **Configure Environment Variables**:
-   - Create `.env` in application root with `DATABASE_URL`, `JWT_SECRET`, `AUTH_SECRET`, `NEXTAUTH_SECRET`, `CRON_SECRET`.
-5. **Run Application**:
+3. **Deploy to VPS (automated via GitHub Actions):**
+   - Push to `main` → CI must be green → `deploy-production.yml` deploys exact SHA to `/root/alo-github-main-new` (preserves `.env`, `storage/`, `uploads/`).
+   - Manual fallback: `bash scripts/deploy.sh` (see `docs/DEPLOYMENT.md`).
+4. **Configure Environment Variables (on VPS, never commit):**
+   - Create `/root/alo-github-main-new/.env` from `.env.example` with `DATABASE_URL`, `NEXTAUTH_SECRET`, `AUTH_SECRET`, `JWT_SECRET`, `SESSION_SECRET`, `CRON_SECRET`, `WHATSAPP_*`.
+5. **Run Application (PM2, HOSTNAME 0.0.0.0, PORT 3044):**
    ```bash
-   HOSTNAME=127.0.0.1 PORT=3000 node .next/standalone/server.js
+   pm2 start ecosystem.config.cjs --env production
+   pm2 save
+   ss -lntp | grep 3044
+   curl -fsS http://127.0.0.1:3044/api/health | python3 -m json.tool
+   ```
+6. **Nginx (after health passes):**
+   ```bash
+   # /etc/nginx/sites-enabled/aloeducation.com must have proxy_pass http://127.0.0.1:3044
+   nginx -t && systemctl reload nginx
+   curl -fsS https://aloeducation.com/api/health | python3 -m json.tool
    ```
 
 ---
 
 ## 6. OPERATIONS GUIDE
-- **Health Monitoring**: Check endpoint `GET /api/health` returning database status and uptime.
-- **Log Inspection**: Inspect logs in `storage/logs/` and server stdout.
-- **Cron Tasks**: Configure cPanel Cron Job to trigger `GET /api/cron/weekly-ai-agent` every Sunday at midnight.
+- **Health Monitoring**: `GET /api/health` → `{"status":"ok","database":{"connected":true}}` locally `http://127.0.0.1:3044/api/health` and publicly `https://aloeducation.com/api/health`.
+- **Log Inspection**: `pm2 logs alo-education --lines 100` and `storage/logs/` plus Nginx `/var/log/nginx/`.
+- **Cron Tasks**: VPS cron or Next.js cron route `GET /api/cron/weekly-ai-agent` (weekly, protected by `CRON_SECRET`) — see `docs/DEPLOYMENT.md` for schedule; not cPanel Cron.
 - **Locking Mechanism**: Ensure lock files under `storage/locks/` prevent concurrent cron runs.
 
 ---
@@ -143,9 +155,9 @@
 ---
 
 ## 12. BACKUP & DISASTER RECOVERY GUIDE
-- **Daily Database Backup**: Run `mysqldump -u [USER] -p[PASS] aloeduca_alo_crm > backup_$(date +%Y%m%d).sql` via cPanel cron.
-- **Weekly File Backup**: Compress `/home/aloeduca/public_html/aloeducation.com/storage/private` to off-site backup.
+- **Daily Database Backup**: `mysqldump -u [USER] -p[PASS] aloeduca_alo_crm > backup_$(date +%Y%m%d).sql` via VPS cron (`crontab -e`, not cPanel) — see `docs/DEPLOYMENT.md`.
+- **Weekly File Backup**: Compress `/root/alo-github-main-new/storage/private` and `/root/alo-shared/` to off-site backup (preserved by deploy).
 - **Disaster Recovery Steps**:
   1. Restore database from latest `.sql` dump.
-  2. Restore private uploaded documents directory.
-  3. Deploy standalone build bundle and restart Node.js server app.
+  2. Restore private uploaded documents directory (`storage/`, `public/uploads` from backup).
+  3. Deploy standalone build bundle and restart PM2 on 3044 (`pm2 reload ecosystem.config.cjs`).

@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
 
-const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'alo_education_webhook_verify';
-const APP_SECRET = process.env.WHATSAPP_APP_SECRET || '';
+const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
+const APP_SECRET = process.env.WHATSAPP_APP_SECRET;
 
 // ============================================================
 // WhatsApp Business Cloud API Webhook
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
   const token = searchParams.get('hub.verify_token');
   const challenge = searchParams.get('hub.challenge');
 
-  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+  if (VERIFY_TOKEN && mode === 'subscribe' && token === VERIFY_TOKEN) {
     console.log('[WhatsApp Webhook] VERIFIED');
     return new NextResponse(challenge, { status: 200 });
   }
@@ -57,14 +57,18 @@ export async function POST(request: Request) {
   try {
     const rawBody = await request.text();
 
-    // 1. Signature verification (production security)
-    if (APP_SECRET) {
-      const signature = request.headers.get('x-hub-signature-256') || '';
-      const expected = 'sha256=' + crypto.createHmac('sha256', APP_SECRET).update(rawBody).digest('hex');
-      if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
-        console.warn('[WhatsApp Webhook] Signature mismatch — rejected');
-        return new NextResponse('Forbidden', { status: 403 });
-      }
+    // 1. Signature verification is mandatory for every provider request.
+    if (!APP_SECRET) {
+      console.error('[WhatsApp Webhook] WHATSAPP_APP_SECRET is not configured — rejected');
+      return new NextResponse('Webhook verification is not configured', { status: 503 });
+    }
+    const signature = request.headers.get('x-hub-signature-256') || '';
+    const expected = 'sha256=' + crypto.createHmac('sha256', APP_SECRET).update(rawBody).digest('hex');
+    const provided = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expected);
+    if (provided.length !== expectedBuffer.length || !crypto.timingSafeEqual(provided, expectedBuffer)) {
+      console.warn('[WhatsApp Webhook] Signature mismatch — rejected');
+      return new NextResponse('Forbidden', { status: 403 });
     }
 
     const body = JSON.parse(rawBody);

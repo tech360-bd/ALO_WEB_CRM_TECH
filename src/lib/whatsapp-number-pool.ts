@@ -20,7 +20,7 @@ export const EMPLOYEE_POOL = OFFICIAL_NUMBERS.slice(2); // 01805020102-018050201
 export function normalizeBdPhone(phone: string): string {
   if (!phone) return '';
   let digits = phone.replace(/\D/g, '');
-  if (digits.startsWith('01') && digits.length === 11) digits = '880' + digits;
+  if (digits.startsWith('01') && digits.length === 11) digits = '880' + digits.slice(1);
   else if (digits.startsWith('+880')) digits = digits.slice(1);
   else if (digits.length === 10 && digits.startsWith('1')) digits = '880' + digits;
   return digits;

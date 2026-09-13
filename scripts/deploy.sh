@@ -1,79 +1,60 @@
 #!/bin/bash
-# ALO Education — Production Deployment Script
-# Server: 103.231.239.79 | User: aloedu | Path: /home/aloedu/apps/site-edu
-# PM2: site-edu | Port: 3015
+# ALO Education — Production Deployment Script (Node.js standalone)
+# Deprecated: Use GitHub Actions .github/workflows/deploy-production.yml for production.
+# This script is for manual VPS deployment via SSH if GitHub Actions is unavailable.
+# Target: /root/alo-github-main-new, PORT 3044, HOSTNAME 0.0.0.0
 
-set -e
+set -euo pipefail
 
-APP_DIR="/home/aloedu/apps/site-edu"
-PM2_NAME="site-edu"
-PORT=3015
+APP_DIR="/root/alo-github-main-new"
+PM2_NAME="alo-education"
+PORT=3044
 
 echo "═══════════════════════════════════════════"
-echo "  ALO Education — Production Deployment"
+echo "  ALO Education — Manual VPS Deployment"
 echo "═══════════════════════════════════════════"
 echo "App Dir: $APP_DIR"
 echo "PM2:     $PM2_NAME"
 echo "Port:    $PORT"
+echo "Note: Prefer GitHub Actions deploy-production.yml"
 echo ""
 
-# Step 1: Navigate to app directory
 cd "$APP_DIR" || { echo "ERROR: App directory not found"; exit 1; }
 
-# Step 2: Pull latest code (if git repo)
 if [ -d ".git" ]; then
-  echo "[1/8] Pulling latest code..."
-  git pull origin main
+  echo "[1/7] Fetching latest code (exact SHA)..."
+  git fetch origin --prune
+  # Checkout exact commit — not git pull origin main (which moves)
+  TARGET_SHA=$(git rev-parse origin/main)
+  git checkout --force "$TARGET_SHA"
+  echo "Checked out $TARGET_SHA"
 fi
 
-# Step 3: Install dependencies
-echo "[2/8] Installing dependencies..."
-bun install --production
+echo "[2/7] Installing dependencies (npm ci)..."
+npm ci
 
-# Step 4: Generate Prisma Client
-echo "[3/8] Generating Prisma Client..."
-bunx prisma generate
+echo "[3/7] Generating Prisma Client..."
+npx --yes prisma@6.19.3 generate
 
-# Step 5: Push schema to database
-echo "[4/8] Pushing schema to MySQL..."
-bunx prisma db push
+echo "[4/7] Building production (standalone)..."
+npm run build
+test -f .next/standalone/server.js || { echo "ERROR: .next/standalone/server.js missing"; exit 1; }
 
-# Step 6: Run seeds (idempotent)
-echo "[5/8] Running database seeds..."
-bun run prisma/seed.ts
-bun run prisma/seed-public.ts
-bun run prisma/seed-expanded.ts
-bun run prisma/seed-mega.ts
-bun run prisma/seed-counselor.ts
-bun run prisma/seed-ai-agents.ts
-bun run prisma/seed-employee-access.ts
-bun run prisma/seed-partner-portal.ts
-bun run prisma/seed-homepage.ts
-bun run prisma/seed-marketing.ts
-bun run prisma/seed-hr-appmanager.ts
-bun run prisma/seed-enterprise-ai.ts
-bun run prisma/seed-omnichannel.ts
-
-# Step 7: Build production
-echo "[6/8] Building production..."
-bun run build
-
-# Step 8: Restart PM2
-echo "[7/8] Restarting PM2..."
-pm2 restart "$PM2_NAME" --update-env 2>/dev/null || pm2 start "bun run start" --name "$PM2_NAME" --update-env
+echo "[5/7] Restarting PM2..."
+pm2 describe "$PM2_NAME" >/dev/null 2>&1 && pm2 reload "$PM2_NAME" --update-env || pm2 start ecosystem.config.cjs --env production
 pm2 save
 
-# Step 9: Health check
-echo "[8/8] Health check..."
-sleep 5
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:$PORT/api/stats")
-if [ "$HTTP_STATUS" = "200" ]; then
-  echo "✅ Health check passed (HTTP $HTTP_STATUS)"
-else
-  echo "❌ Health check failed (HTTP $HTTP_STATUS)"
-  echo "Check logs: pm2 logs $PM2_NAME"
+echo "[6/7] Verifying PM2..."
+pm2 describe "$PM2_NAME" | grep -E "status|script path|cwd|exec cwd" | head -n 20
+
+echo "[7/7] Health check..."
+sleep 3
+curl -fsS "http://127.0.0.1:$PORT/api/health" 2>&1 | head -n 30 || {
+  echo "Health failed — check pm2 logs"
+  pm2 logs "$PM2_NAME" --lines 50 2>&1 | tail -n 50
   exit 1
-fi
+}
+echo "✅ Health passed"
 
 echo ""
 echo "═══════════════════════════════════════════"
@@ -82,5 +63,5 @@ echo "════════════════════════�
 echo "URL:       https://aloeducation.com"
 echo "PM2:       pm2 status $PM2_NAME"
 echo "Logs:      pm2 logs $PM2_NAME"
-echo "Health:    curl http://127.0.0.1:$PORT/api/stats"
+echo "Health:    curl http://127.0.0.1:$PORT/api/health"
 echo "═══════════════════════════════════════════"

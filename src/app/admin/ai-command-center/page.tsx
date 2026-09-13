@@ -49,7 +49,7 @@ export default function AICommandCenterDashboard() {
         setHealth(data);
         if (data.recentActivity) {
             setLogs(prev => [
-                ...prev, 
+                ...prev,
                 { type: 'system', text: `Loaded ${data.totalAgents} Agents across ${data.totalDepartments} Departments.` }
             ]);
         }
@@ -92,21 +92,24 @@ export default function AICommandCenterDashboard() {
     setLogs((prev) => [...prev, { type: 'input', text: `> ADMIN COMMAND: ${cmdText}` }]);
 
     try {
-      // Create a task for the Master Router agent
-      const res = await fetch('/api/agentos/tasks', {
+      // Dispatch through the authenticated automation command endpoint. The
+      // backend validates the workflow and records an idempotent audit event.
+      const workflow = cmdText.toLowerCase().includes('score')
+        ? 'lead_scoring'
+        : cmdText.toLowerCase().includes('assign')
+          ? 'counselor_assignment'
+          : cmdText.toLowerCase().includes('tag')
+            ? 'lead_tagging'
+            : 'report_generation';
+      const res = await fetch('/api/automation/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            agentId: 'cuid-placeholder-for-router', // In a real app, resolve the ID of AGT-0001
-            input: cmdText,
-            triggerType: 'user',
-            triggeredBy: 'Super Admin'
-        }),
+        body: JSON.stringify({ workflow }),
       });
 
       if (res.ok) {
         const json = await res.json();
-        
+
         setLogs((prev) => [
           ...prev,
           {

@@ -15,20 +15,20 @@ export async function GET() {
     db.document.findMany({ take: 10, orderBy: { createdAt: "desc" } }),
     db.documentVersion.findMany({ orderBy: { createdAt: "desc" }, take: 10 }),
     db.aiDocumentClassification.findMany({ orderBy: { createdAt: "desc" }, take: 10 }),
-    db.timelineEvent.findMany({ orderBy: { createdAt: "desc" }, take: 15, include: { user: { select: { name: true, role: true } } } }),
-    db.socialInboxMessage.findMany({ orderBy: { receivedAt: "desc" }, take: 15 }),
-    db.communicationMessage.findMany({ orderBy: { receivedAt: "desc" }, take: 15 }),
+    db.timelineEvent.findMany({ orderBy: { createdAt: "desc" }, take: 15 }),
+    db.socialInboxMessage.findMany({ orderBy: { createdAt: "desc" }, take: 15 }),
+    db.communicationMessage.findMany({ orderBy: { createdAt: "desc" }, take: 15 }),
     db.communicationDraft.count({ where: { status: "DRAFT" } }),
     db.slaJustification.count({ where: { status: "PENDING" } }),
     db.escalationEvent.count({ where: { status: "OPEN" } }),
     db.communicationTask.count({ where: { status: "OPEN" } }),
     db.communicationTemplate.count(),
-    db.slaEvent.findMany({ orderBy: { receivedAt: "desc" } }),
+    db.slaEvent.findMany({ orderBy: { createdAt: "desc" } }),
   ]);
 
   // SLA compliance = responded / total * 100
   const slaTotal = slaEvents.length;
-  const slaResponded = slaEvents.filter((e) => e.status === "RESPONDED" || e.firstResponseAt).length;
+  const slaResponded = slaEvents.filter((e) => e.eventType === "RESPONDED" || e.responseAt).length;
   const slaCompliance = slaTotal > 0 ? Math.round((slaResponded / slaTotal) * 100) : 100;
 
   const stats = {
@@ -76,7 +76,7 @@ export async function GET() {
     unifiedTimeline.push({ type: "SOCIAL", title: `${m.platform} message`, description: m.messageText?.slice(0, 100), timestamp: m.receivedAt, channel: m.platform });
   }
   for (const t of timelineEvents) {
-    unifiedTimeline.push({ type: t.type, title: t.title, description: t.description, timestamp: t.createdAt, channel: "CRM", user: t.user?.name });
+    unifiedTimeline.push({ type: t.type, title: t.title, description: t.description, timestamp: t.createdAt, channel: "CRM", user: t.actor });
   }
   unifiedTimeline.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 

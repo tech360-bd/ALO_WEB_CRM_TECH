@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/alo/shared";
 import { useToast } from "@/hooks/use-toast";
 import type { ViewKey } from "@/lib/alo-types";
@@ -34,13 +33,6 @@ const ROLE_DASHBOARDS: Record<string, ViewKey> = {
   BRANCH_MANAGER: "crm",
   FRONT_DESK: "crm",
 };
-
-const QUICK_LOGINS = [
-  { label: "Student", email: "student@aloedu.com", icon: "GraduationCap", color: "bg-sky-50 text-sky-700 hover:bg-sky-100 border-sky-200" },
-  { label: "Partner", email: "partner@aloedu.com", icon: "Handshake", color: "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200" },
-  { label: "Employee", email: "counselor@aloedu.com", icon: "Briefcase", color: "bg-violet-50 text-violet-700 hover:bg-violet-100 border-violet-200" },
-  { label: "Super Admin", email: "superadmin@aloedu.com", icon: "ShieldCheck", color: "bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200" },
-];
 
 const PORTAL_LINKS = [
   { label: "Student Portal", view: "student-dashboard" as ViewKey, icon: "GraduationCap", description: "Track your applications, documents, and visa progress" },
@@ -107,16 +99,6 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
       setError("Login failed. Please check your connection and try again.");
       setLoading(false);
     }
-  };
-
-  const handleQuickLogin = (quickEmail: string, label: string) => {
-    setEmail(quickEmail);
-    setPassword("alo123");
-    setError(null);
-    toast({
-      title: "Demo credentials loaded",
-      description: `${label} credentials filled (password: alo123). Click "Sign In" to continue.`,
-    });
   };
 
   return (
@@ -268,30 +250,6 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
               </p>
             </form>
 
-            {/* Quick demo logins */}
-            <div className="mt-6 border-t border-[#E2E8F0] pt-6">
-              <div className="mb-3 flex items-center gap-2">
-                <Badge variant="secondary" className="border border-amber-200 bg-amber-50 text-amber-700">
-                  Demo
-                </Badge>
-                <p className="text-xs text-muted-foreground">
-                  Quick role login — pre-fills credentials (password: alo123)
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {QUICK_LOGINS.map((q) => (
-                  <button
-                    key={q.label}
-                    type="button"
-                    onClick={() => handleQuickLogin(q.email, q.label)}
-                    className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-medium transition-colors ${q.color}`}
-                  >
-                    <Icon name={q.icon} className="size-4" />
-                    {q.label}
-                  </button>
-                ))}
-              </div>
-            </div>
 
             {/* Security note */}
             <div className="mt-4 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0057B8]">

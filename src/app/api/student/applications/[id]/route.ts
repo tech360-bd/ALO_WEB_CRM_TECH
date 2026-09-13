@@ -32,19 +32,10 @@ export const GET = withStudentAuth(async (request, auth) => {
       comments
     ] = await Promise.all([
       db.applicationStageHistory.findMany({ where: { applicationId: id }, orderBy: { createdAt: 'desc' } }),
-      db.applicationOffer.findUnique({ 
-        where: { applicationId: id },
-        include: { versions: true }
-      }),
-      db.applicationPaymentInstruction.findMany({ 
-        where: { applicationId: id },
-        include: { proofs: true }
-      }),
-      db.documentChecklist.findUnique({ 
-        where: { applicationId: id },
-        include: { items: true }
-      }),
-      db.applicationComment.findMany({ 
+      db.applicationOffer.findFirst({ where: { applicationId: id } }),
+      db.applicationPaymentInstruction.findMany({ where: { applicationId: id } }),
+      db.documentChecklist.findUnique({ where: { applicationId: id } }),
+      db.applicationComment.findMany({
         where: { applicationId: id, commentType: 'student_visible' },
         orderBy: { createdAt: 'desc' }
       })

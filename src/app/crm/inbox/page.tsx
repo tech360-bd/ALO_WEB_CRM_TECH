@@ -13,9 +13,7 @@ export default function InboxPage() {
   const fetchConversations = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/crm/ucc/conversations", {
-        headers: { "Authorization": "Bearer fake_token_for_now" }
-      });
+      const res = await fetch("/api/crm/ucc/conversations");
       const json = await res.json();
       if (json.success) {
         setConversations(json.data);
@@ -29,9 +27,7 @@ export default function InboxPage() {
 
   const fetchMessages = async (threadId: string) => {
     try {
-      const res = await fetch(`/api/crm/ucc/conversations/${threadId}`, {
-        headers: { "Authorization": "Bearer fake_token_for_now" }
-      });
+      const res = await fetch(`/api/crm/ucc/conversations/${threadId}`);
       const json = await res.json();
       if (json.success) {
         setMessages(json.data);
@@ -64,8 +60,7 @@ export default function InboxPage() {
       const res = await fetch("/api/crm/ucc/conversations", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer fake_token_for_now"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           threadId: activeThreadId,
@@ -93,7 +88,7 @@ export default function InboxPage() {
             Unified Inbox
           </h2>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="p-4 text-gray-500 text-center">Loading...</div>

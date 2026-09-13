@@ -32,6 +32,17 @@ const badgeVariants = cva(
         /* Subtle */
         muted:
           "bg-muted text-muted-foreground border border-transparent",
+        /* Compatibility aliases used by legacy CRM views. */
+        info:
+          "bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900",
+        blue:
+          "bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900",
+        orange:
+          "bg-orange-100 text-orange-700 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-900",
+        neutral:
+          "bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700",
+        alo:
+          "bg-alo-brand-light text-alo-brand border border-alo-brand/20 dark:bg-alo-brand/10 dark:text-alo-brand dark:border-alo-brand/30",
       },
     },
     defaultVariants: {
