@@ -46,3 +46,19 @@
 - ALO existing: `src/app/api/crm/**`, `prisma: AloApplication, Lead, University, Marketing*`
 - External READMEs fetched 2026-09-14 (commit SHAs logged via fetch)
 
+
+---
+
+## Update 2026-09-14 — Missing functions ADDED (per user request)
+Commit `42d8feb` adds 6 missing extra functions without duplicate tables:
+
+1. `src/lib/evidence-ledger.ts` (trycompai) — priced evidence + durable lease `FOR UPDATE SKIP LOCKED` for AgentTask
+2. `src/lib/university-website-enrichment.ts` (fatfreecrm) — SSRF-safe JSON-LD `Organization` fetch → University.logo/description
+3. `src/lib/rfm-engine.ts` (oro) — `scoreLeadRfm()` recency/frequency/monetary → segment Champions/Loyal/At-Risk
+4. `src/lib/quote-invoice-pdf.ts` (idurar) — `generateQuotePdf()` tax-aware, multi-currency, branded HTML→pdfBase64
+5. `src/components/crm/SalesHierarchy.tsx` (frappe #2120) — drag-drop hierarchy tree + cascade permissions
+6. `src/lib/sla-holiday.ts` (frappe SLA) — `HOLIDAYS_2026_BD` + `nextWorkingDay()` + `addBusinessMinutes()`
+7. `src/lib/softphone-engine.ts` (Deskcomm) — `clickToCall()` + `logCall()` audit
+8. Already added `src/components/crm/KanbanPipeline.tsx` (kanban+saved/pinned views)
+
+Remaining private repos (alo-education-uk-final etc.) — 404, so UK delta import is pending manual CSV diff — will merge on next data sync without duplicate Course table.
