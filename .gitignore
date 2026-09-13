@@ -174,3 +174,6 @@ FULL_*.txt
 /AUDIT-*/
 /.mega-*/
 /.backup-*/
+
+# legacy php archive (local only)
+.archive/
