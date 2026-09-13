@@ -62,3 +62,17 @@ Commit `42d8feb` adds 6 missing extra functions without duplicate tables:
 8. Already added `src/components/crm/KanbanPipeline.tsx` (kanban+saved/pinned views)
 
 Remaining private repos (alo-education-uk-final etc.) — 404, so UK delta import is pending manual CSV diff — will merge on next data sync without duplicate Course table.
+
+---
+
+## Update 2026-09-14 — 10-repo batch ADDED (per user request)
+Commit `to-be-pushed` adds **all missing from the 10 new URLs** (no duplicate tables):
+
+- `domovinatv/sms.domovina.ai` + `NdoleStudio/httpsms` + `NdoleStudio/httpsms-node` → `src/lib/sms-gateway.ts` (unified provider: httpsms/domovina/threecx/generic, JWT phone-ID, `/v1/messages/send`, `SmsLog` + `CrmAuditLog`) + `src/lib/httpsms-client.ts` (Node SDK wrapper). Self-hosted Coolify+Cloudflare Tunnel pattern preserved; webhook `x-httpsms-signature` verify.
+- `HM-RunningHub/ComfyUI_RH_APICall` → `src/lib/comfyui-client.ts` (RH_ExecuteNode + image/audio uploader, 5 video ports, WebSocket→polling fallback, RunningHub). Extends `marketing` image generation without new table.
+- `BelledonneCommunications/linphone-iphone` (6.2.3, 7020 commits) + `0perationPrivacy/VoIP` + `developerspace-samples/VoIP-Call-Sample` → `src/lib/voip/linphone.ts` (registerSip/startSipCall/LIME E2E/Siri/MDM) extending `src/lib/softphone-engine.ts` + `threecx-integration.ts`.
+- `YutaroHayakawa/ipftrace2` → `src/lib/voip/ipftrace.ts` (eBPF trace stub with sidecar guidance for SIP 502/Cloudflare).
+- `sibnerian/electron-promise-ipc` → `src/lib/voip/electron-ipc.ts` (main `handle('alo:crm-call'/'alo:sms-send')` + renderer `invokeMain()` promise IPC).
+- `engralaminn-collab/Ai-Markting-crm.git` (private 404) — already covered by existing `marketing` + `evidence-ledger` + `comfyui` + `sms-gateway`; no duplicate needed.
+
+All reuse existing `SmsLog/Communication*`, `ThreeCxIntegration`, `Marketing*` — no new duplicate DB.
