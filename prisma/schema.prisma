@@ -635,16 +635,26 @@ model ApplicationStageHistory {
 model StudentDocument {
   id              String    @id @default(cuid())
   studentId       String
+  caseId          String    @default("")
   category        String
   fileName        String    @default("")
   fileUrl         String    @default("")
   status          String    @default("not_uploaded")
-  rejectionReason String    @default("")
-  reviewerNote    String    @default("")
+  version         Int       @default(1)
+  previousVersionId String @default("")
+  rejectionReason String    @default("") @db.Text
+  reviewerNote    String    @default("") @db.Text
   reviewedBy      String    @default("")
   reviewedAt      DateTime?
+  archivedAt      DateTime?
+  isArchived      Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([caseId])
+  @@index([status])
+  @@index([category])
 }
 
 model StudentMessage {
@@ -820,26 +830,39 @@ model AiExamFeedback {
 model AiInterviewSession {
   id             String    @id @default(cuid())
   studentId      String
+  caseId         String    @default("")
   interviewType  String
   status         String    @default("in_progress")
   readinessScore Float     @default(0)
   riskLevel      String    @default("needs_practice")
-  transcript     String    @default("[]")
+  transcript     String    @default("[]") @db.LongText
   startedAt      DateTime  @default(now())
   completedAt    DateTime?
+  audioUrl       String    @default("")
+  videoUrl       String    @default("")
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([caseId])
+  @@index([status])
 }
 
 model AiInterviewAnswer {
-  id        String   @id @default(cuid())
-  sessionId String
-  question  String
-  answer    String   @default("")
-  followUp  String   @default("")
-  score     Float    @default(0)
-  feedback  String   @default("")
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  sessionId  String
+  question   String   @db.Text
+  answer     String   @default("") @db.Text
+  followUp   String   @default("") @db.Text
+  score      Float    @default(0)
+  feedback   String   @default("") @db.Text
+  audioUrl   String   @default("")
+  videoUrl   String   @default("")
+  transcript String   @default("") @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([sessionId])
 }
 
 model AiInterviewResult {
@@ -854,11 +877,14 @@ model AiInterviewResult {
   sponsorExplanation   Float    @default(0)
   studyGapExplanation  Float    @default(0)
   futurePlanClarity    Float    @default(0)
+  refusalExplanation   Float    @default(0)
+  documentReadiness    Float    @default(0)
   visaRisk             Float    @default(0)
   overallReadiness     Float    @default(0)
   verdict              String   @default("needs_practice")
-  finalFeedback        String   @default("")
+  finalFeedback        String   @default("") @db.Text
   createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model MockTestCredit {
@@ -897,17 +923,30 @@ model MockTestPackage {
 }
 
 model VisaChecklistItem {
-  id            String    @id @default(cuid())
-  studentId     String
-  applicationId String    @default("")
-  item          String
-  category      String    @default("general")
-  isRequired    Boolean   @default(true)
-  status        String    @default("pending")
-  note          String    @default("")
-  completedAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  studentId       String
+  applicationId   String    @default("")
+  caseId          String    @default("")
+  item            String
+  documentName    String    @default("")
+  category        String    @default("general")
+  isRequired      Boolean   @default(true)
+  status          String    @default("pending")
+  priority        String    @default("medium")
+  deadline        DateTime?
+  reason          String    @default("")
+  note            String    @default("")
+  reviewerNote    String    @default("")
+  studentVisible  Boolean   @default(true)
+  counselorVisible Boolean  @default(true)
+  archivedAt      DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([caseId])
+  @@index([status])
 }
 
 model VisaReadinessReport {
@@ -921,7 +960,19 @@ model VisaReadinessReport {
   interviewReady Boolean  @default(false)
   riskFactors    String   @default("[]")
   recommendation String   @default("")
+  breakdown      String   @default("{}")
+  whatIsStrong   String   @default("[]")
+  whatIsWeak     String   @default("[]")
+  missing        String   @default("[]")
+  nextAction     String   @default("")
+  responsible    String   @default("")
+  deadline       String   @default("")
   generatedAt    DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([visaCaseId])
+  @@index([studentId])
 }
 
 model ImportBatch {
@@ -1010,6 +1061,11 @@ model VisaCase {
   visaOfficerName      String   @default("")
   isUrgent             Boolean  @default(false)
   nextAction           String   @default("")
+  responsible          String   @default("")
+  deadline             DateTime?
+  whatIsStrong         String   @default("[]")
+  whatIsWeak           String   @default("[]")
+  missing              String   @default("[]")
   lastUpdated          DateTime @default(now())
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
@@ -1018,37 +1074,65 @@ model VisaCase {
   @@index([visaOfficerId])
   @@index([counselorId])
   @@index([currentStage])
+  @@index([riskLevel])
+  @@index([readinessScore])
+  @@index([destinationCountry])
+  @@index([university])
 }
 
 model VisaInterview {
-  id              String    @id @default(cuid())
-  caseId          String
-  studentId       String
-  interviewType   String    @default("embassy_mock")
-  difficulty      String    @default("standard")
-  language        String    @default("english")
-  status          String    @default("scheduled")
-  scheduledAt     DateTime  @default(now())
-  overallScore    Float     @default(0)
-  verdict         String    @default("needs_practice")
-  officerNotes    String    @default("")
-  studentFeedback String    @default("")
-  officerId       String    @default("")
-  completedAt     DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  caseId           String
+  studentId        String
+  interviewType    String    @default("embassy_mock")
+  difficulty       String    @default("standard")
+  language         String    @default("english")
+  status           String    @default("scheduled")
+  scheduledAt      DateTime  @default(now())
+  overallScore     Float     @default(0)
+  verdict          String    @default("needs_practice")
+  readiness        String    @default("HUMAN_REVIEW_REQUIRED")
+  officerNotes     String    @default("")
+  studentFeedback  String    @default("")
+  finalAssessment  String    @default("")
+  strengths        String    @default("")
+  weaknesses       String    @default("")
+  improvements     String    @default("")
+  documentsRequired String   @default("")
+  secondInterview  Boolean   @default(false)
+  escalation       Boolean   @default(false)
+  officerId        String    @default("")
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  answers VisaInterviewAnswer[]
+  answers   VisaInterviewAnswer[]
+  questions VisaInterviewQuestion[]
+
+  @@index([caseId])
+  @@index([studentId])
+  @@index([status])
 }
 
 model VisaInterviewQuestion {
-  id         String   @id @default(cuid())
-  category   String
-  question   String
-  difficulty String   @default("standard")
-  language   String   @default("english")
-  followUps  String   @default("[]")
-  createdAt  DateTime @default(now())
+  id            String   @id @default(cuid())
+  interviewId   String   @default("")
+  caseId        String   @default("")
+  category      String
+  question      String
+  questionType  String   @default("open_ended")
+  researchLabel String   @default("Practice")
+  difficulty    String   @default("standard")
+  language      String   @default("english")
+  followUps     String   @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  interview VisaInterview? @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  @@index([interviewId])
+  @@index([caseId])
+  @@index([category])
 }
 
 model VisaInterviewAnswer {
@@ -1060,9 +1144,14 @@ model VisaInterviewAnswer {
   followUp    String   @default("")
   score       Float    @default(0)
   feedback    String   @default("")
+  category    String   @default("general")
+  aiAnalysis  String   @default("")
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   interview VisaInterview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  @@index([interviewId])
 }
 
 model VisaMockResult {
@@ -1085,11 +1174,16 @@ model VisaOfficerNote {
   studentId   String
   officerId   String
   officerName String   @default("")
-  content     String
+  content     String   @db.Text
   visibility  String   @default("internal_only")
+  commentType String   @default("officer_note")
   riskFlag    String   @default("none")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([caseId])
+  @@index([studentId])
+  @@index([visibility])
 }
 
 model VisaRiskAssessment {
@@ -1118,38 +1212,62 @@ model VisaFundingReview {
   sourceOfFund            String   @default("")
   hasBankStatement        Boolean  @default(false)
   hasSolvencyCert         Boolean  @default(false)
-  sourceOfFundExplanation String   @default("")
+  sourceOfFundExplanation String   @default("") @db.Text
   riskWarning             String   @default("none")
+  tuitionDeposit          String   @default("")
+  livingCostPlan          String   @default("") @db.Text
+  dependents              String   @default("[]")
+  sponsorDocuments        String   @default("[]")
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
+
+  @@index([studentId])
 }
 
 model VisaStudyGapReview {
-  id                 String   @id @default(cuid())
-  caseId             String   @unique
+  id                 String    @id @default(cuid())
+  caseId             String    @unique
   studentId          String
-  hasStudyGap        Boolean  @default(false)
-  gapDurationMonths  Int      @default(0)
-  gapPurpose         String   @default("")
-  workExpDuringGap   String   @default("")
-  explanationClarity String   @default("clear")
-  riskFlag           String   @default("low")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  hasStudyGap        Boolean   @default(false)
+  gapDurationMonths  Int       @default(0)
+  gapFrom            String    @default("")
+  gapTo              String    @default("")
+  gapPurpose         String    @default("") @db.Text
+  workExpDuringGap   String    @default("") @db.Text
+  explanationClarity String    @default("clear")
+  riskFlag           String    @default("low")
+  supportingDocuments String   @default("[]")
+  employmentDetails  String    @default("") @db.Text
+  trainingDetails    String    @default("") @db.Text
+  familyReason       String    @default("") @db.Text
+  medicalReason      String    @default("") @db.Text
+  visaReason         String    @default("") @db.Text
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([studentId])
 }
 
 model VisaRefusalReview {
-  id                String   @id @default(cuid())
-  caseId            String   @unique
-  studentId         String
-  hasVisaRefusal    Boolean  @default(false)
-  refusalCountry    String   @default("")
-  refusalReason     String   @default("")
-  refusalLetterUrl  String   @default("")
-  improvementPlan   String   @default("")
-  humanReviewStatus String   @default("pending")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  caseId             String   @unique
+  studentId          String
+  hasVisaRefusal     Boolean  @default(false)
+  refusalCountry     String   @default("")
+  visaType           String   @default("")
+  refusalDate        String   @default("")
+  refusalReason      String   @default("") @db.Text
+  refusalLetterUrl   String   @default("")
+  previousApplication String  @default("") @db.Text
+  improvementPlan    String   @default("") @db.Text
+  newExplanation     String   @default("") @db.Text
+  officerNote        String   @default("") @db.Text
+  previousRefusalCount Int    @default(0)
+  humanReviewStatus  String   @default("pending")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([studentId])
 }
 
 model VisaSensitiveReview {
@@ -1157,14 +1275,18 @@ model VisaSensitiveReview {
   caseId                  String   @unique
   studentId               String
   seriousMedicalCondition Boolean  @default(false)
-  medicalExplanation      String   @default("")
+  medicalExplanation      String   @default("") @db.Text
+  medicalDocumentUrl      String   @default("")
   criminalOffense         Boolean  @default(false)
-  criminalExplanation     String   @default("")
-  officerInternalNote     String   @default("")
-  studentSafeNote         String   @default("")
+  criminalExplanation     String   @default("") @db.Text
+  criminalDocumentUrl     String   @default("")
+  officerInternalNote     String   @default("") @db.Text
+  studentSafeNote         String   @default("") @db.Text
   humanReviewRequired     Boolean  @default(true)
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
+
+  @@index([studentId])
 }
 
 model VisaStudentFeedback {
@@ -1187,22 +1309,38 @@ model VisaTask {
   studentId   String
   taskType    String    @default("document_request")
   title       String
-  description String    @default("")
+  description String    @default("") @db.Text
   assignedTo  String    @default("")
+  priority    String    @default("medium")
+  createdBy   String    @default("")
   dueDate     DateTime?
   status      String    @default("pending")
+  archivedAt  DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([caseId])
+  @@index([studentId])
+  @@index([status])
+  @@index([assignedTo])
+  @@index([dueDate])
 }
 
 model VisaReport {
-  id          String   @id @default(cuid())
-  reportType  String   @default("daily_interview")
-  generatedBy String
-  filters     String   @default("{}")
-  fileUrl     String   @default("")
-  status      String   @default("ready")
-  createdAt   DateTime @default(now())
+  id               String   @id @default(cuid())
+  reportType       String   @default("daily_interview")
+  generatedBy      String
+  generatedByName  String   @default("")
+  filters          String   @default("{}")
+  data             String   @default("{}") @db.LongText
+  fileUrl          String   @default("")
+  format           String   @default("json")
+  status           String   @default("ready")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([reportType])
+  @@index([generatedBy])
 }
 
 model AiStudentMemory {

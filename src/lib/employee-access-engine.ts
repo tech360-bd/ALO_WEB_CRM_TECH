@@ -10,7 +10,7 @@ import { db } from '@/lib/db';
 // Designations — 17 core per spec
 // ------------------------------------------------------------
 export const DESIGNATIONS = [
-  'Chairman','CEO','Director','Office Manager','Country Manager','Counselor','Senior Counselor','Application Manager','Application Team','Visa Officer','Finance','Marketing','Front Desk','HR','Support','Viewer','Custom'
+  'Chairman','CEO','Director','Office Manager','Country Manager','Counselor','Senior Counselor','Application Manager','Application Team','Visa Officer','Visa Interview Officer','Visa Team','Finance','Marketing','Front Desk','HR','Support','Viewer','Custom'
 ] as const;
 
 // ------------------------------------------------------------
@@ -42,7 +42,9 @@ export const PERMISSION_MATRIX: Record<string, { modules: string[], actions: str
   'Senior Counselor': { modules: ['STUDENT','APPLICATION','DOCUMENT','VISA','COMMUNICATION','WHATSAPP','EMAIL','INTERVIEW'], actions: ['VIEW','CREATE','EDIT','SUBMIT','VERIFY','SEND','UPLOAD','ASSIGN'], scope: 'TEAM' },
   'Application Manager': { modules: ['APPLICATION','DOCUMENT','VISA','UNIVERSITY','OFFER','COMMUNICATION'], actions: ['VIEW','CREATE','EDIT','SUBMIT','VERIFY','APPROVE','SEND','ASSIGN','REASSIGN'], scope: 'DEPARTMENT' },
   'Application Team': { modules: ['APPLICATION','DOCUMENT','UNIVERSITY'], actions: ['VIEW','CREATE','EDIT','SUBMIT','VERIFY','UPLOAD'], scope: 'ASSIGNED' },
-  'Visa Officer': { modules: ['VISA','DOCUMENT','APPLICATION','INTERVIEW','COMMUNICATION'], actions: ['VIEW','CREATE','EDIT','VERIFY','SEND','UPLOAD'], scope: 'DEPARTMENT' },
+  'Visa Officer': { modules: ['VISA','DOCUMENT','APPLICATION','INTERVIEW','COMMUNICATION','VISA_DASHBOARD','VISA_CASES','VISA_INTERVIEWS','VISA_READINESS','VISA_REPORTS','VISA_FUNDING','VISA_STUDY_GAP','VISA_REFUSAL','VISA_SENSITIVE','VISA_NOTES','VISA_TASKS','VISA_CHECKLIST'], actions: ['VIEW','CREATE','EDIT','VERIFY','SEND','UPLOAD','ASSIGN','GENERATE','EXPORT'], scope: 'DEPARTMENT' },
+  'Visa Interview Officer': { modules: ['VISA','DOCUMENT','APPLICATION','INTERVIEW','COMMUNICATION','VISA_DASHBOARD','VISA_CASES','VISA_INTERVIEWS','VISA_READINESS','VISA_FUNDING','VISA_STUDY_GAP','VISA_REFUSAL','VISA_SENSITIVE','VISA_NOTES','VISA_TASKS','VISA_CHECKLIST','AI_INTERVIEW'], actions: ['VIEW','CREATE','EDIT','VERIFY','SEND','UPLOAD','ASSIGN','GENERATE'], scope: 'DEPARTMENT' },
+  'Visa Team': { modules: ['VISA','DOCUMENT','APPLICATION','INTERVIEW','COMMUNICATION','VISA_DASHBOARD','VISA_CASES','VISA_INTERVIEWS'], actions: ['VIEW','CREATE','EDIT','VERIFY','SEND','UPLOAD'], scope: 'DEPARTMENT' },
   Finance: { modules: ['FINANCE','PAYROLL','STUDENT','APPLICATION','PAYMENT'], actions: ['VIEW','CREATE','EDIT','VERIFY','APPROVE','EXPORT'], scope: 'DEPARTMENT', cannotSelfApprove: ['PAYROLL'] },
   Marketing: { modules: ['MARKETING','STUDENT','LEAD','REPORTS'], actions: ['VIEW','CREATE','EDIT','PUBLISH','EXPORT'], scope: 'DEPARTMENT' },
   'Front Desk': { modules: ['STUDENT','APPOINTMENT','COMMUNICATION'], actions: ['VIEW','CREATE','EDIT','SEND'], scope: 'OFFICE' },
