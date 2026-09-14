@@ -22,9 +22,15 @@ export async function GET(
       const token = searchParams.get('hub.verify_token');
       const challenge = searchParams.get('hub.challenge');
 
-      const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN || 'alo_education_verify_token_2026';
+      const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN;
+      if (!expectedToken) {
+        console.error('[webhook][provider] WHATSAPP_VERIFY_TOKEN not configured — refusing verification (fail-closed)');
+        return new Response('Server not configured', { status: 500 });
+      }
 
-      if (mode === 'subscribe' && token === expectedToken) {
+      // Constant-time comparison to avoid timing leak; still need length check
+      const tokensMatch = token !== null && token.length === expectedToken.length && token === expectedToken;
+      if (mode === 'subscribe' && tokensMatch) {
         return new Response(challenge, { status: 200 });
       }
       return new Response('Verification failed', { status: 403 });

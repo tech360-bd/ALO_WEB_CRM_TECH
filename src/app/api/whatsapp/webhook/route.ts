@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import crypto from "crypto";
 import { normalizeBdPhone, determineSenderNumber, MAIN_NUMBER, COO_NUMBER } from "@/lib/whatsapp-number-pool";
 import { detectLanguage, detectIntent, detectSentiment, generateAiReply, logAiOperation, calculateLeadScore } from "@/lib/ai-whatsapp-engine";
+import { handleIntakeMessage as handleStudentIntake } from "@/lib/ai-agents/student-intake-agent";
 import { startSlaForThread, calculateSlaDueAt } from "@/lib/sla-engine";
 import { handleStopStartCommand, createFollowUpScheduleForStudent } from "@/lib/whatsapp-followup-engine";
 
@@ -608,7 +609,7 @@ export async function POST(req: NextRequest) {
       console.error("UCC save error:", err);
     }
 
-    // 11. AI processing — language, intent, sentiment
+    // 11. AI processing — unified Student Intake Agent (ID-first) for whatsapp + fallback
     const lang = detectLanguage(messageBody);
     const intent = detectIntent(messageBody);
     const sentiment = detectSentiment(messageBody);
@@ -617,43 +618,91 @@ export async function POST(req: NextRequest) {
     let shouldHandover = false;
     let handoverReason = "";
 
-    // Check if AI should handle (respect office hours, handover state)
-    const shouldAiHandle = !stopStart.optedOut && type === 'text' && messageBody.length > 0;
-
+    // Unified intake agent: first asks Student ID, then informs independent application, then counseling (BN/EN, doc/voice, memory, office-hours human-like, sequential)
+    // Respect STOP opt-out; still allow media (image/doc/audio) to be routed via intake
+    const shouldAiHandle = !stopStart.optedOut && ((type === 'text' && messageBody.length > 0) || ['image','document','audio','video'].includes(type));
     if (shouldAiHandle) {
-      const aiResult = await generateAiReply({
-        message: messageBody,
-        studentName: fromName,
-        language: lang.language,
-        intent: intent.intent,
-        sentiment: sentiment.sentiment,
-        context: `StudentId: ${studentId}, LeadId: ${leadId}`,
-      });
-      aiReplyText = aiResult.reply;
-      shouldHandover = aiResult.shouldHandover;
-      handoverReason = aiResult.handoverReason || "";
-
-      await logAiOperation({
-        threadId: threadId || conversationId,
-        messageId: providerMessageId,
-        studentId: studentId || "",
-        intent: intent.intent,
-        intentConfidence: intent.confidence,
-        sentiment: sentiment.sentiment,
-        sentimentConfidence: sentiment.confidence,
-        language: lang.language,
-        shouldHandover,
-        handoverReason,
-      }).catch(() => {});
-
-      // Lead scoring
+      try {
+        const intake = await handleStudentIntake({
+          channel: 'whatsapp',
+          senderId: normalizedFrom || from,
+          text: messageBody,
+          mediaType: (['image','document','audio','video'].includes(type) ? (type === 'audio' ? 'voice' : type) : null) as any,
+          mediaInfo: { fileName: (extra as any)?.filename || (type === 'image' ? 'image' : undefined), mime: (extra as any)?.mime, mediaId: mediaId || undefined },
+        });
+        if (intake?.reply) {
+          aiReplyText = intake.reply;
+          // Keep intent/sentiment logging even when intake handled
+          await logAiOperation({
+            threadId: threadId || conversationId,
+            messageId: providerMessageId,
+            studentId: (intake.studentDbId as string) || studentId || "",
+            intent: intent.intent,
+            intentConfidence: intent.confidence,
+            sentiment: sentiment.sentiment,
+            sentimentConfidence: sentiment.confidence,
+            language: lang.language,
+            shouldHandover: false,
+            handoverReason: `intake:${intake.context.state}`,
+          }).catch(() => {});
+        } else {
+          // Fallback to legacy engine if intake empty
+          const aiResult = await generateAiReply({
+            message: messageBody,
+            studentName: fromName,
+            language: lang.language,
+            intent: intent.intent,
+            sentiment: sentiment.sentiment,
+            context: `StudentId: ${studentId}, LeadId: ${leadId}`,
+          });
+          aiReplyText = aiResult.reply;
+          shouldHandover = aiResult.shouldHandover;
+          handoverReason = aiResult.handoverReason || "";
+          await logAiOperation({
+            threadId: threadId || conversationId,
+            messageId: providerMessageId,
+            studentId: studentId || "",
+            intent: intent.intent,
+            intentConfidence: intent.confidence,
+            sentiment: sentiment.sentiment,
+            sentimentConfidence: sentiment.confidence,
+            language: lang.language,
+            shouldHandover,
+            handoverReason,
+          }).catch(() => {});
+        }
+      } catch {
+        const aiResult = await generateAiReply({
+          message: messageBody,
+          studentName: fromName,
+          language: lang.language,
+          intent: intent.intent,
+          sentiment: sentiment.sentiment,
+          context: `StudentId: ${studentId}, LeadId: ${leadId}`,
+        });
+        aiReplyText = aiResult.reply;
+        shouldHandover = aiResult.shouldHandover;
+        handoverReason = aiResult.handoverReason || "";
+        await logAiOperation({
+          threadId: threadId || conversationId,
+          messageId: providerMessageId,
+          studentId: studentId || "",
+          intent: intent.intent,
+          intentConfidence: intent.confidence,
+          sentiment: sentiment.sentiment,
+          sentimentConfidence: sentiment.confidence,
+          language: lang.language,
+          shouldHandover,
+          handoverReason,
+        }).catch(() => {});
+      }
+      // Lead scoring (always)
       const leadScore = calculateLeadScore({
         engagement: 5,
         intent: intent.intent,
         urgency: sentiment.isUrgent ? 8 : sentiment.isHighRisk ? 6 : 3,
         responseFrequency: 1,
       });
-
       if (studentId) {
         await db.aiLeadScore.upsert({
           where: { studentId },

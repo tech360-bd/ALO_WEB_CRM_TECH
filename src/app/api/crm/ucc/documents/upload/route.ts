@@ -51,15 +51,28 @@ export async function POST(request: Request) {
     const sanitizedName = validation.sanitizedName || file.name;
     const storedFileName = `${timestamp}_${sanitizedName}`;
 
-    const uploadDir = process.env.STORAGE_POOL_C || path.join(process.cwd(), 'public', 'uploads', 'documents');
+    // Fail-closed: never fall back to public/uploads in production (PII exposure SEC-01)
+    const configuredDir = process.env.STORAGE_POOL_C;
+    if (!configuredDir) {
+      if (process.env.NODE_ENV === 'production') {
+        return NextResponse.json({ success: false, error: 'Server storage not configured' }, { status: 500 });
+      }
+      console.warn('[upload] STORAGE_POOL_C not set — using private fallback outside public/ (dev only)');
+    }
+    const uploadDir = configuredDir || path.join(process.cwd(), 'storage', 'uploads', 'documents-private');
     if (!existsSync(uploadDir)) {
       mkdirSync(uploadDir, { recursive: true });
     }
 
     const filePath = path.join(uploadDir, storedFileName);
+    // Prevent path traversal via storedFileName (sanitized, but double-check)
+    if (!filePath.startsWith(path.resolve(uploadDir))) {
+      return NextResponse.json({ success: false, error: 'Invalid file path' }, { status: 400 });
+    }
     writeFileSync(filePath, buffer);
 
-    const fileUrl = `/uploads/documents/${storedFileName}`;
+    // Private URL — served only via signed /api/employee-access/secure-download (never static /uploads)
+    const fileUrl = `/api/employee-access/secure-download?filePath=${encodeURIComponent(storedFileName)}`;
 
 
     const attachment = await db.uccAttachment.create({

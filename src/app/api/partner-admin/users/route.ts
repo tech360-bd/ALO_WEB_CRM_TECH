@@ -10,7 +10,8 @@ export async function GET(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
 
-    const partnerId = (auth as any).partnerId || (auth as any).branch || 'PARTNER-DEMO';
+    const partnerId = (auth as any).partnerId || (auth as any).branch;
+    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
 
     const users = await db.portalUser.findMany({
       where: {
@@ -48,7 +49,8 @@ export async function POST(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
 
-    const partnerId = (auth as any).partnerId || (auth as any).branch || 'PARTNER-DEMO';
+    const partnerId = (auth as any).partnerId || (auth as any).branch;
+    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
     const body = await req.json();
     const { name, email } = body;
 

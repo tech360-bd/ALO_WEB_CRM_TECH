@@ -215,12 +215,54 @@ export async function POST(req: NextRequest) {
       }).catch(() => {});
     }
 
+    // Handle Messenger page messages (website/Facebook chat share same intake brain — sequential)
+    const messengerReplies: any[] = [];
+    if (body.object === 'page') {
+      const { handleIntakeMessage } = await import('@/lib/ai-agents/student-intake-agent');
+      for (const entry of entries) {
+        const messagings: any[] = (entry as any).messaging || [];
+        for (const ev of messagings) {
+          const senderId = ev?.sender?.id?.toString();
+          const text = ev?.message?.text || ev?.postback?.title || '';
+          const attachments: any[] = ev?.message?.attachments || [];
+          const mediaType = attachments[0]?.type === 'image' ? 'image' : attachments[0]?.type === 'file' ? 'document' : attachments[0]?.type === 'audio' ? 'voice' : null;
+          const fileName = attachments[0]?.payload?.url?.split('/').pop();
+          if (!senderId || (!text && !mediaType)) continue;
+          // Idempotency: skip duplicate mid
+          const mid = ev?.message?.mid;
+          if (mid) {
+            const dup = await db.webhookEvent.findUnique({ where: { provider_eventId: { provider: 'FACEBOOK', eventId: mid } } }).catch(()=> null) as any;
+            if (dup?.processed) { messengerReplies.push({ mid, idempotent: true }); continue; }
+          }
+          try {
+            const intake = await handleIntakeMessage({ channel: 'facebook', senderId, text: text || `[${mediaType}]`, mediaType: mediaType as any, mediaInfo: { fileName: fileName as string, mime: attachments[0]?.payload?.mime_type } });
+            // Persist inbound/outbound to SocialInbox + Ucc
+            await db.socialInboxMessage.create({ data: { platform: 'FACEBOOK', direction: 'INBOUND', senderId, messageText: text || `[${mediaType}]`, conversationId: `fb-${senderId}`, aiHandled: false } as any }).catch(()=>{});
+            await db.socialInboxMessage.create({ data: { platform: 'FACEBOOK', direction: 'OUTBOUND', senderName: 'ALO AI', recipientId: senderId, messageText: intake.reply, conversationId: `fb-${senderId}`, aiHandled: true } as any }).catch(()=>{});
+            // Send via Graph if token present (best-effort)
+            try {
+              const integ = await db.facebookIntegration.findFirst({ where: { pageId: String((entry as any).id) } });
+              const token = integ?.pageAccessToken || process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
+              if (token && intake.reply) {
+                await fetch(`https://graph.facebook.com/v18.0/me/messages?access_token=${encodeURIComponent(token)}`, {
+                  method: 'POST', headers: { 'Content-Type':'application/json' },
+                  body: JSON.stringify({ recipient: { id: senderId }, message: { text: intake.reply.slice(0, 1900) } })
+                }).catch(()=>{});
+              }
+            } catch {}
+            if (mid) await db.webhookEvent.create({ data: { provider: 'FACEBOOK', eventId: mid, eventType: 'MESSAGING', payload: JSON.stringify(ev), signature, verified: signatureValid, processed: true, processedAt: new Date() } as any }).catch(()=>{});
+            messengerReplies.push({ senderId, mid, state: intake.context.state, replyLen: intake.reply.length });
+          } catch (e: any) { messengerReplies.push({ senderId, error: e.message }); }
+        }
+      }
+    }
+
     // Persist webhook event for audit
     await db.webhookEvent.create({
       data: {
         provider: "FACEBOOK",
         eventId: entries[0]?.id || `fb-${Date.now()}`,
-        eventType: "LEAD_WEBHOOK",
+        eventType: processedLeads.length ? "LEAD_WEBHOOK" : "MESSAGING",
         payload: rawBody,
         signature,
         verified: signatureValid,
@@ -234,6 +276,7 @@ export async function POST(req: NextRequest) {
       signatureValid,
       processed: processedLeads.length,
       leads: processedLeads,
+      messenger: messengerReplies.length ? { processed: messengerReplies.length, replies: messengerReplies } : undefined,
     });
   } catch (err: any) {
     console.error("[facebook.webhook POST] error:", err);

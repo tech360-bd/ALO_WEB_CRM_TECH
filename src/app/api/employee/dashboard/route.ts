@@ -118,8 +118,8 @@ export async function GET(req: NextRequest) {
       const totalEmployees = await db.employee.count().catch(() => 0);
 
       roleSpecificData = {
-        totalEmployees: totalEmployees || 24,
-        activeEmployees: totalEmployees || 24,
+        totalEmployees: totalEmployees,
+        activeEmployees: totalEmployees,
         pendingProfiles: 2,
         leaveRequestsToday: 2,
         attendancePresent: 22,
@@ -138,17 +138,17 @@ export async function GET(req: NextRequest) {
       const totalPartners = await db.partnerProfile.count().catch(() => 0);
       const pendingSeats = await db.partnerUserSeatRequest.count({ where: { status: 'pending' } }).catch(() => 0);
       roleSpecificData = {
-        totalPartners: totalPartners || 8,
-        activePartners: totalPartners || 8,
+        totalPartners: totalPartners,
+        activePartners: totalPartners,
         pendingSeatRequests: pendingSeats,
         partnerLeadsCount: totalLeads,
       };
     } else if (userRole.includes('BRANCH')) {
       roleSpecificData = {
         branchName: branch,
-        branchStudents: activeStudents || 14,
-        branchLeads: assignedLeads || 32,
-        branchApplications: activeApplications || 9,
+        branchStudents: activeStudents,
+        branchLeads: assignedLeads,
+        branchApplications: activeApplications,
         branchCounselors: 4,
       };
     } else if (userRole.includes('COUNTRY')) {
@@ -182,18 +182,18 @@ export async function GET(req: NextRequest) {
       branch,
       country,
       metrics: {
-        totalLeads: totalLeads || 45,
-        assignedLeads: assignedLeads || 18,
-        hotLeads: hotLeads || 12,
-        totalStudents: totalStudents || 64,
-        activeStudents: activeStudents || 28,
-        activeApplications: activeApplications || 19,
-        submittedApplications: submittedApplications || 11,
-        offersReceived: offersReceived || 7,
-        visaCasesCount: visaCasesCount || 8,
-        pendingTasksCount: pendingTasksCount || 4,
-        unreadNotifsCount: unreadNotifsCount || 2,
-        unreadMessagesCount: unreadMessagesCount || 5,
+        totalLeads: totalLeads,
+        assignedLeads: assignedLeads,
+        hotLeads: hotLeads,
+        totalStudents: totalStudents,
+        activeStudents: activeStudents,
+        activeApplications: activeApplications,
+        submittedApplications: submittedApplications,
+        offersReceived: offersReceived,
+        visaCasesCount: visaCasesCount,
+        pendingTasksCount: pendingTasksCount,
+        unreadNotifsCount: unreadNotifsCount,
+        unreadMessagesCount: unreadMessagesCount,
         ...roleSpecificData,
       },
     });

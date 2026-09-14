@@ -29,8 +29,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-aloeduca_alo_education}
       MYSQL_USER: ${MYSQL_USER:-aloeduca_ALO_final_web_crm}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-    ports:
-      - "3306:3306"
+    # Do not expose MySQL to host in production (SEC-18) — app reaches via internal network
+    # Uncomment only for local dev debugging: - "127.0.0.1:3306:3306"
     volumes:
       - alo-mysqldata:/var/lib/mysql
     healthcheck:

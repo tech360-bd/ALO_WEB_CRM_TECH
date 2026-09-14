@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTasks, createTask } from "@/lib/agentos/agent-service";
 
 export async function GET(req: NextRequest) {
+  const { authenticateRequest } = await import('@/lib/auth-middleware');
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
   try {
     const agentId = req.nextUrl.searchParams.get("agentId") || undefined;
     const limit = parseInt(req.nextUrl.searchParams.get("limit") || "50", 10);
@@ -14,6 +17,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const { authenticateRequest } = await import('@/lib/auth-middleware');
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
   try {
     const body = await req.json();
     const { agentId, triggeredBy, triggerType, input, metadata } = body;

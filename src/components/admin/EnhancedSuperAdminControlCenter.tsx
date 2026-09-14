@@ -9,6 +9,7 @@ import Link from 'next/link';
 import {
   ShieldCheck, Users, Building2, Globe, FileText, AlertTriangle, CheckCircle2, Lock, Search, Bot, Key, Award, GraduationCap, Briefcase, DollarSign, BookOpen, MessageSquare, ShieldAlert, Cpu, Database, Eye, UserCheck, LogOut, ArrowRight, RefreshCw
 } from 'lucide-react';
+import StudentIntakeControlPanel from '@/components/admin/StudentIntakeControlPanel';
 
 interface Metrics {
   activeStudents: number;
@@ -275,6 +276,9 @@ export default function EnhancedSuperAdminControlCenter() {
           <Card className="bg-white border-[#E2E8F0] rounded-2xl shadow-sm hover:shadow-md transition-shadow h-full"><CardContent className="p-5"><p className="text-[11px] font-medium text-gray-500 uppercase">Courses — Unified DB</p><p className="text-2xl font-black text-[#0057B8] mt-1">{metrics?.totalCourses ?? 'UNAVAILABLE'}</p><p className="text-[11px] text-gray-500 mt-1">Real source: CrmCourse count • Same DB powering public course finder + course info + student + partner + CRM + admin • No second disconnected course DB • No orphan courses • Click-through: /admin/courses</p></CardContent></Card>
         </div>
       </div>
+
+      {/* BANGLA INTAKE AI — ID-first • All channels • Super-Admin managed • Office-hours sequential */}
+      <StudentIntakeControlPanel />
 
       {/* MAIN OPERATIONAL CONTENT — 12-col grid — Header 12 cols, Quick actions 12 cols, KPI 4 per row 3 cols each, Main operational content 8 cols, Right-side alerts 4 cols — Tablet 2 per row, Mobile 1 per row, Tables readable cards, No horizontal overflow, No hover-only */}
       <div className="grid grid-cols-12 gap-6">

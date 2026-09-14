@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as any;
 
-    const partnerId = auth.partnerId || 'PARTNER-DEMO';
+    const partnerId = auth.partnerId;
+    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
 
     const [vouchers, entitlements] = await Promise.all([
       db.studentMockTestVoucher.findMany({ where: { partnerId }, orderBy: { createdAt: 'desc' } }),
@@ -34,7 +35,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'studentId and applicationId are required' }, { status: 400 });
     }
 
-    const partnerId = auth.partnerId || 'PARTNER-DEMO';
+    const partnerId = auth.partnerId;
+    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
 
     const app = await db.portalStudentApplication.findUnique({
       where: { id: applicationId },

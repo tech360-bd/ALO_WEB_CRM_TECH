@@ -5,12 +5,34 @@ import crypto from 'crypto';
 
 // Protected file storage with signed URLs, expiry, audit, permission check
 
+function getFileSignSecret(): string {
+  const secret = process.env.FILE_SIGN_SECRET;
+  if (!secret || secret.length < 32) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('FILE_SIGN_SECRET must be at least 32 characters in production (fail-closed)');
+    }
+    // Dev-only fallback — still warned, never used for production PII
+    console.warn('[secure-download] FILE_SIGN_SECRET missing/short — using dev-only key (not for production)');
+    return 'dev-only-insecure-do-not-use-in-prod-32chars!!';
+  }
+  return secret;
+}
+
 function verifySignedUrl(filePath: string, expires: string, signature: string): boolean {
-  const secret = process.env.FILE_SIGN_SECRET || 'alo-file-secret';
+  const secret = getFileSignSecret();
   const data = `${filePath}:${expires}`;
   const expected = crypto.createHmac('sha256', secret).update(data).digest('hex');
-  if (expected !== signature) return false;
-  if (parseInt(expires) < Date.now()) return false;
+  // Constant-time compare to avoid timing oracle
+  try {
+    const a = Buffer.from(expected, 'hex');
+    const b = Buffer.from(signature, 'hex');
+    if (a.length !== b.length) return false;
+    if (!crypto.timingSafeEqual(a, b)) return false;
+  } catch {
+    return false;
+  }
+  const expNum = parseInt(expires, 10);
+  if (Number.isNaN(expNum) || expNum < Date.now()) return false;
   return true;
 }
 
@@ -94,8 +116,8 @@ export async function POST(req: NextRequest) {
     const { filePath, expiryMinutes } = body;
     if (!filePath) return NextResponse.json({ success: false, error: 'filePath required' }, { status: 400 });
 
-    const secret = process.env.FILE_SIGN_SECRET || 'alo-file-secret';
-    const expires = (Date.now() + (expiryMinutes || 15) * 60 * 1000).toString();
+    const secret = getFileSignSecret();
+    const expires = (Date.now() + Math.min(expiryMinutes || 15, 60) * 60 * 1000).toString();
     const data = `${filePath}:${expires}`;
     const signature = crypto.createHmac('sha256', secret).update(data).digest('hex');
 

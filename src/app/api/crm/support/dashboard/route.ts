@@ -51,12 +51,12 @@ export async function GET(request: NextRequest) {
             { phone: '+880 1899-123456', lastMsg: 'Scholarship info den please', msgCount: 5, time: '30 min ago' },
           ],
           kpis: [
-            { label: 'All Messages', value: String(totalMessages || 1247), change: '+156', up: true, icon: 'MessageSquare', sub: 'Total conversations' },
+            { label: 'All Messages', value: String(totalMessages), change: '+156', up: true, icon: 'MessageSquare', sub: 'Total conversations' },
             { label: 'Unread', value: '89', change: '+23', up: false, icon: 'Clock', sub: 'Need response' },
             { label: 'Unknown Contacts', value: '23', change: '+8', up: false, icon: 'UserX', sub: 'Need matching' },
             { label: 'Student ID Matched', value: '45', change: '+12', up: true, icon: 'UserCheck', sub: 'Linked to profiles' },
             { label: 'AI-Handled', value: '342', change: '+45', up: true, icon: 'Bot', sub: 'Without human agent' },
-            { label: 'Escalated', value: String(escalatedCount || 7), change: '+3', up: false, icon: 'AlertTriangle', sub: 'Need human agent' },
+            { label: 'Escalated', value: String(escalatedCount), change: '+3', up: false, icon: 'AlertTriangle', sub: 'Need human agent' },
           ]
         }
       });
