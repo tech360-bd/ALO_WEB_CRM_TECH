@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
+
+const MARKETING_AUTH = {
+  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
+};
 import { getBrandKit, SIZE_MATRIX } from "@/lib/marketing/brand-kit";
 import { generateBrandedImage } from "@/lib/marketing/image-generator";
 
@@ -11,7 +16,7 @@ export const dynamic = "force-dynamic";
 // Platforms default: ["FACEBOOK","INSTAGRAM","LINKEDIN","BLOG"]
 // Sizes default: ["SQUARE","PORTRAIT","LANDSCAPE","STORY"]
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
   const body = await req.json().catch(()=> ({}));
   const idea: string = (body.idea || body.keyword || body.title || "").toString().trim();
   const imageUrl: string | undefined = body.imageUrl || body.sourceImageUrl;
@@ -193,10 +198,10 @@ export async function POST(req: NextRequest) {
   };
   results.summary = { idea: idea || imageUrl, assets: assets.length, posts: posts.length, blogIncluded: platforms.includes("BLOG") };
 
-  return NextResponse.json({ success: true, ...results }, { status: 201 });
-}
+  return NextResponse.json({ success: true, ...results } as any, { status: 201 });
+}, MARKETING_AUTH);
 
-export async function GET() {
+export const GET = withAuth(async (_req: Request, _auth: AuthContext) => {
   const kit = await getBrandKit();
   return NextResponse.json({
     success: true,
@@ -204,5 +209,5 @@ export async function GET() {
     brandKit: { hasLogo: !!kit.logoUrl, address: kit.address, phone: kit.phone, whatsapp: kit.whatsapp, website: kit.website },
     sizes: Object.entries(SIZE_MATRIX).map(([k,v])=> ({ key:k, ...v })),
     platforms: ["FACEBOOK","INSTAGRAM","LINKEDIN","TIKTOK","YOUTUBE","WHATSAPP_STATUS","BLOG"]
-  });
-}
+  } as any);
+}, MARKETING_AUTH);

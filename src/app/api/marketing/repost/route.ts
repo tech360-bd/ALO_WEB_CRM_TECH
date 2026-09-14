@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
+
+const MARKETING_AUTH = {
+  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
+};
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // Repost approved library item to employee's own official social
 // Body: { postId, targetPlatform?: string, employeeId?: string, captionOverride?: string }
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
   const body = await req.json().catch(()=> ({}));
   const postId = body.postId as string;
   const employeeId = body.employeeId || body.createdBy || "counselor-repost";
@@ -47,5 +52,5 @@ export async function POST(req: NextRequest) {
       // real publish would call provider API — stub
     }
   } catch {}
-  return NextResponse.json({ success: true, reposted: cloned, sourceId: postId, message: "Reposted to your official social — brand kit retained" }, { status: 201 });
-}
+  return NextResponse.json({ success: true, reposted: cloned, sourceId: postId, message: "Reposted to your official social — brand kit retained" } as any, { status: 201 });
+}, MARKETING_AUTH);

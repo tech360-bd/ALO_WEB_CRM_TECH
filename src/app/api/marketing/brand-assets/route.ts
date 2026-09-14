@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
+
+const MARKETING_AUTH = {
+  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
+};
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export const GET = withAuth(async (_req: Request, _auth: AuthContext) => {
   const assets = await db.brandAsset.findMany({
     where: { isActive: true },
     orderBy: { createdAt: "desc" },
@@ -17,10 +22,10 @@ export async function GET() {
   const logoAsset = assets.find(a => a.assetType === "LOGO");
   let logoVal: any = null;
   if (logoAsset) { try { logoVal = JSON.parse(logoAsset.value || "{}"); } catch {} }
-  return NextResponse.json({ assets, brandKit, logoVal });
-}
+  return NextResponse.json({ assets, brandKit, logoVal } as any);
+}, MARKETING_AUTH);
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
   const body = await req.json();
   // support both new {assetType,value} and legacy {type,fileUrl} from dashboard
   const assetType = body.assetType || body.type || "LOGO";
@@ -53,13 +58,13 @@ export async function POST(req: NextRequest) {
     data: { action: "DATA_IMPORT", resource: "BrandAsset", resourceId: asset.id, details: JSON.stringify({ assetType, name }) },
   }).catch(() => {});
 
-  return NextResponse.json({ asset });
-}
+  return NextResponse.json({ asset } as any);
+}, MARKETING_AUTH);
 
-export async function PATCH(req: NextRequest) {
+export const PATCH = withAuth(async (req: Request, _auth: AuthContext) => {
   const body = await req.json();
   const { id, isActive } = body;
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   const asset = await db.brandAsset.update({ where: { id }, data: { isActive: !!isActive } });
-  return NextResponse.json({ asset });
-}
+  return NextResponse.json({ asset } as any);
+}, MARKETING_AUTH);
