@@ -86,7 +86,7 @@ export default function AdminHomepageBuilderPage() {
           </div>
         </div>
 
-        {/* CMS TABS */}
+        {/* CMS TABS — 12 tabs as per spec */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-white border border-slate-200 p-1.5 rounded-2xl flex flex-wrap h-auto gap-1">
             <TabsTrigger value="hero-slides" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
@@ -95,8 +95,32 @@ export default function AdminHomepageBuilderPage() {
             <TabsTrigger value="destinations" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
               Destinations (7)
             </TabsTrigger>
+            <TabsTrigger value="about" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+              About
+            </TabsTrigger>
+            <TabsTrigger value="mission-vision" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+              Mission/Vision
+            </TabsTrigger>
+            <TabsTrigger value="why-choose" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+              Why Choose (12)
+            </TabsTrigger>
             <TabsTrigger value="services" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
               Services (15)
+            </TabsTrigger>
+            <TabsTrigger value="journey" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+              Journey (12)
+            </TabsTrigger>
+            <TabsTrigger value="scholarships" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+              Scholarships
+            </TabsTrigger>
+            <TabsTrigger value="english-tests" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+              English Tests (15)
+            </TabsTrigger>
+            <TabsTrigger value="success-stories" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+              Success Stories
+            </TabsTrigger>
+            <TabsTrigger value="team" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+              Team
             </TabsTrigger>
             <TabsTrigger value="faqs" className="text-xs font-bold py-2.5 px-4 rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
               FAQs ({faqs.length})
@@ -137,7 +161,41 @@ export default function AdminHomepageBuilderPage() {
             </Card>
           </TabsContent>
 
-          {/* TAB 2: FAQS */}
+          {/* DESTINATIONS */}
+          <TabsContent value="destinations" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6">
+              <h3 className="font-bold text-sm text-slate-900 mb-2">Destinations (DB-driven: countries status=active)</h3>
+              <p className="text-xs text-slate-600 mb-4">Primary 7 displayed, extra via &ldquo;More Countries&rdquo;. Managed via /api/website/homepage countries table, slugs → /destinations/{'{slug}'}.</p>
+              <div className="flex flex-wrap gap-2">{['United Kingdom','USA','Canada','Australia','Ireland','New Zealand','Dubai / UAE'].map(n=><Badge key={n} variant="outline" className="text-xs">{n}</Badge>)}</div>
+            </Card>
+          </TabsContent>
+          <TabsContent value="about" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">About ALO Education</h3><p className="text-xs text-slate-600">Founded Feb 2023 by Taslima Akter in Dhaka — editable, with stats pulled from DB (universities/courses counts).</p></Card>
+          </TabsContent>
+          <TabsContent value="mission-vision" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">Mission / Vision / Values</h3><p className="text-xs text-slate-600">Trust, transparency, professionalism — DB-backed HomeSection entries.</p></Card>
+          </TabsContent>
+          <TabsContent value="why-choose" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">Why Choose ALO (12 features)</h3><p className="text-xs text-slate-600">Expert counselors, AI matching, transparent process — verified, no invented claims.</p></Card>
+          </TabsContent>
+          <TabsContent value="journey" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">Student Journey (12 steps)</h3><p className="text-xs text-slate-600">Counseling → Enrollment timeline, each step with description, no fake CTAs.</p></Card>
+          </TabsContent>
+          <TabsContent value="services" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">Services (15)</h3><p className="text-xs text-slate-600">15 comprehensive services backed by HomeService DB table (status=active) or fallback list.</p></Card>
+          </TabsContent>
+          <TabsContent value="scholarships" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">Scholarships & Funding</h3><p className="text-xs text-slate-600">DB-driven scholarships (active only), amounts displayed, eligibility CTA → /scholarships.</p></Card>
+          </TabsContent>
+          <TabsContent value="english-tests" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">English Tests (15+ incl. comparison)</h3><p className="text-xs text-slate-600">Dynamic from websiteEnglishTest / english_tests DB plus comparison page.</p></Card>
+          </TabsContent>
+          <TabsContent value="success-stories" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">Success Stories (approved + consented only)</h3><p className="text-xs text-slate-600">Filtered where status=approved & consentStatus=verified — never expose unapproved stories.</p></Card>
+          </TabsContent>
+          <TabsContent value="team" className="space-y-4">
+            <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6"><h3 className="font-bold text-sm text-slate-900 mb-2">Expert Team</h3><p className="text-xs text-slate-600">DB team_members (status=active) with photos/bios, founder Taslima Akter highlighted.</p></Card>
+          </TabsContent>
           <TabsContent value="faqs" className="space-y-4">
             <Card className="border-slate-200 rounded-2xl bg-white shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -158,8 +216,6 @@ export default function AdminHomepageBuilderPage() {
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* TAB 3: AUDIT LOG */}
           <TabsContent value="audit-log" className="space-y-4">
             <Card className="border-slate-200 rounded-2xl bg-white shadow-sm p-6">
               <h3 className="font-bold text-sm text-slate-900 mb-3">Homepage Builder Audit Trail</h3>

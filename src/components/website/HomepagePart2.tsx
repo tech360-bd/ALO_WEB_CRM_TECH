@@ -281,7 +281,26 @@ function WhyChooseSection() {
   );
 }
 
+const FALLBACK_SERVICES: HomeService[] = [
+  { id: '1', title: 'University Selection', slug: 'university-selection', icon: 'GraduationCap', description: 'Personalised university shortlisting based on your profile, budget and career goals.', ctaLabel: 'Explore', ctaUrl: '/services/university-selection', sortOrder: 1 },
+  { id: '2', title: 'Application Assistance', slug: 'application-assistance', icon: 'FileText', description: 'End-to-end application management from form filling to offer letter.', ctaLabel: 'Explore', ctaUrl: '/services/application-assistance', sortOrder: 2 },
+  { id: '3', title: 'Visa Guidance', slug: 'visa-guidance', icon: 'Shield', description: 'Country-specific visa checklists, document review and mock interviews.', ctaLabel: 'Explore', ctaUrl: '/services/visa-guidance', sortOrder: 3 },
+  { id: '4', title: 'Scholarship Support', slug: 'scholarship-support', icon: 'Award', description: 'Identify and apply for scholarships you are eligible for.', ctaLabel: 'Explore', ctaUrl: '/services/scholarship-support', sortOrder: 4 },
+  { id: '5', title: 'Test Preparation', slug: 'test-preparation', icon: 'BookOpen', description: 'IELTS, TOEFL, PTE, Duolingo — preparation tips and booking help.', ctaLabel: 'Explore', ctaUrl: '/services/test-preparation', sortOrder: 5 },
+  { id: '6', title: 'SOP & CV Review', slug: 'sop-review', icon: 'PenTool', description: 'Professional review for Statement of Purpose, CV and recommendation letters.', ctaLabel: 'Explore', ctaUrl: '/services/sop-review', sortOrder: 6 },
+  { id: '7', title: 'Pre-Departure Briefing', slug: 'pre-departure', icon: 'Plane', description: 'Accommodation, travel, insurance and cultural orientation.', ctaLabel: 'Explore', ctaUrl: '/services/pre-departure', sortOrder: 7 },
+  { id: '8', title: 'Accommodation Support', slug: 'accommodation-support', icon: 'Building2', description: 'Help finding safe, affordable student housing near your campus.', ctaLabel: 'Explore', ctaUrl: '/services/accommodation', sortOrder: 8 },
+  { id: '9', title: 'Financial Planning', slug: 'financial-planning', icon: 'DollarSign', description: 'Tuition, living costs, education loans and budgeting guidance.', ctaLabel: 'Explore', ctaUrl: '/services/financial-planning', sortOrder: 9 },
+  { id: '10', title: 'Career Counseling', slug: 'career-counseling', icon: 'Briefcase', description: 'Career path mapping and post-study work opportunities advice.', ctaLabel: 'Explore', ctaUrl: '/services/career-counseling', sortOrder: 10 },
+  { id: '11', title: 'Eligibility Check', slug: 'eligibility-check', icon: 'ClipboardCheck', description: 'Free profile assessment to check your admission chances.', ctaLabel: 'Check Now', ctaUrl: '/eligibility-check', sortOrder: 11 },
+  { id: '12', title: 'Course Matching', slug: 'course-matching', icon: 'Search', description: 'AI-powered course matching across thousands of programmes.', ctaLabel: 'Find Courses', ctaUrl: '/course-finder', sortOrder: 12 },
+  { id: '13', title: 'Document Verification', slug: 'document-verification', icon: 'FileCheck', description: 'Thorough verification of transcripts, certificates and more.', ctaLabel: 'Explore', ctaUrl: '/services/document-verification', sortOrder: 13 },
+  { id: '14', title: 'Interview Preparation', slug: 'interview-preparation', icon: 'MessageSquare', description: 'Mock interviews for university and visa success.', ctaLabel: 'Explore', ctaUrl: '/services/interview-preparation', sortOrder: 14 },
+  { id: '15', title: 'Post-Arrival Support', slug: 'post-arrival', icon: 'Heart', description: 'Ongoing support after you land — enrollment to settlement.', ctaLabel: 'Explore', ctaUrl: '/services/post-arrival', sortOrder: 15 },
+];
+
 function ServicesSection({ services }: { services: HomeService[] }) {
+  const list = services.length ? services : FALLBACK_SERVICES;
   return (
     <section className="py-20 md:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -292,7 +311,7 @@ function ServicesSection({ services }: { services: HomeService[] }) {
           titleHighlight="Support Services"
           subtitle="From application to arrival — every service you need under one roof."
         />
-        {services.length === 0 ? (
+        {list.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
             {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="h-44 rounded-xl bg-slate-100 animate-pulse" />
@@ -301,7 +320,7 @@ function ServicesSection({ services }: { services: HomeService[] }) {
         ) : (
           <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={viewportOnce}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-            {services.slice(0, 16).map((svc) => {
+            {list.slice(0, 16).map((svc) => {
               const Icon = getIcon(svc.icon);
               return (
                 <motion.div key={svc.id} variants={staggerItemScale} className="h-full">

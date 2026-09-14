@@ -1078,158 +1078,128 @@ function FooterSection() {
   return (
     <footer style={{ backgroundColor: C.text }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8">
-          {/* Column 1: Logo & About */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOnce}
-            variants={fadeUp}
-          >
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-8">
+          {/* Column 1: Brand */}
+          <motion.div className="col-span-2 sm:col-span-4 lg:col-span-2" initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
             <div className="flex items-center gap-3 mb-4">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg text-white"
-                style={{ background: gradients.orange }}
-              >
-                A
-              </div>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg text-white" style={{ background: gradients.orange }}>A</div>
               <span className="text-xl font-bold text-white">ALO Education</span>
             </div>
             <p className="text-sm leading-relaxed mb-6" style={{ color: '#94A3B8' }}>
-              Your trusted partner for studying abroad. We help students from Bangladesh and beyond achieve their dreams of international education with expert guidance and personalized support.
+              Your trusted partner for studying abroad. We help students from Bangladesh and beyond achieve their dreams of international education with expert guidance and personalized support. Founded Feb 2023 by Taslima Akter in Dhaka.
             </p>
-
-            {/* Social Icons */}
             <div className="flex gap-3">
               {[
                 { icon: Facebook, href: 'https://facebook.com/aloeducation', label: 'Facebook' },
-                { icon: Twitter, href: 'https://twitter.com/aloeducation', label: 'Twitter' },
                 { icon: Instagram, href: 'https://instagram.com/aloeducation', label: 'Instagram' },
                 { icon: Linkedin, href: 'https://linkedin.com/company/aloeducation', label: 'LinkedIn' },
+                { icon: Twitter, href: 'https://twitter.com/aloeducation', label: 'Twitter' },
               ].map((social, i) => (
-                <a
-                  key={i}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors duration-200"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a key={i} href={social.href} aria-label={social.label} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors duration-200" target="_blank" rel="noopener noreferrer">
                   <social.icon className="h-4.5 w-4.5 text-white" />
                 </a>
               ))}
             </div>
           </motion.div>
 
-          {/* Column 2: Quick Links */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOnce}
-            variants={fadeUp}
-          >
-            <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">Quick Links</h4>
-            <ul className="space-y-3">
+          {/* Column 2: Destinations A */}
+          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
+            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Destinations</h4>
+            <ul className="space-y-2.5">
               {[
-                { label: 'Home', href: '/' },
+                { label: 'United Kingdom', href: '/destinations/united-kingdom' },
+                { label: 'United States', href: '/destinations/usa' },
+                { label: 'Canada', href: '/destinations/canada' },
+                { label: 'Australia', href: '/destinations/australia' },
+              ].map((link) => (
+                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Column 3: Destinations B */}
+          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
+            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">More Destinations</h4>
+            <ul className="space-y-2.5">
+              {[
+                { label: 'Ireland', href: '/destinations/ireland' },
+                { label: 'New Zealand', href: '/destinations/new-zealand' },
+                { label: 'Dubai / UAE', href: '/destinations/dubai-uae' },
+                { label: 'All Countries', href: '/destinations' },
+              ].map((link) => (
+                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Column 4: Study Services */}
+          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
+            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Study Services</h4>
+            <ul className="space-y-2.5">
+              {[
+                { label: 'Course Finder', href: '/course-finder' },
                 { label: 'Universities', href: '/universities' },
-                { label: 'Courses', href: '/resources/course-finder' },
-                { label: 'About Us', href: '/about' },
-                { label: 'Contact', href: '/contact' },
-              ].map((link, i) => (
-                <li key={i}>
-                  <Link
-                    href={link.href}
-                    className="text-sm transition-colors duration-200 flex items-center gap-1.5 hover:gap-2.5"
-                    style={{ color: '#94A3B8' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = '#FFFFFF'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = '#94A3B8'; }}
-                  >
-                    <ChevronRight className="h-3 w-3" style={{ color: C.orange }} />
-                    {link.label}
-                  </Link>
-                </li>
+                { label: 'Scholarships', href: '/scholarships' },
+                { label: 'Eligibility Check', href: '/eligibility-check' },
+              ].map((link) => (
+                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Column 3: Destinations */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOnce}
-            variants={fadeUp}
-          >
-            <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">Popular Destinations</h4>
-            <ul className="space-y-3">
+          {/* Column 5: Application Support */}
+          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
+            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Application</h4>
+            <ul className="space-y-2.5">
               {[
-                { label: 'Study in UK', href: '/destinations/uk' },
-                { label: 'Study in USA', href: '/destinations/usa' },
-                { label: 'Study in Canada', href: '/destinations/canada' },
-                { label: 'Study in Australia', href: '/destinations/australia' },
-                { label: 'Study in Germany', href: '/destinations/germany' },
-                { label: 'Study in Ireland', href: '/destinations/ireland' },
-              ].map((link, i) => (
-                <li key={i}>
-                  <Link
-                    href={link.href}
-                    className="text-sm transition-colors duration-200 flex items-center gap-1.5 hover:gap-2.5"
-                    style={{ color: '#94A3B8' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = '#FFFFFF'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = '#94A3B8'; }}
-                  >
-                    <ChevronRight className="h-3 w-3" style={{ color: C.orange }} />
-                    {link.label}
-                  </Link>
-                </li>
+                { label: 'Services', href: '/services' },
+                { label: 'Visa Support', href: '/visa-support' },
+                { label: 'SOP / CV Review', href: '/services/sop-review' },
+                { label: 'Application Tips', href: '/application-process' },
+              ].map((link) => (
+                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Column 4: Contact */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOnce}
-            variants={fadeUp}
-          >
-            <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">Contact Us</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <Phone className="h-4.5 w-4.5 shrink-0 mt-0.5" style={{ color: C.orange }} />
-                <div>
-                  <p className="text-xs mb-0.5" style={{ color: '#64748B' }}>Phone</p>
-                  <p className="text-sm text-white">+880 1XXX-XXXXXX</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <MessageCircle className="h-4.5 w-4.5 shrink-0 mt-0.5" style={{ color: C.whatsapp }} />
-                <div>
-                  <p className="text-xs mb-0.5" style={{ color: '#64748B' }}>WhatsApp</p>
-                  <p className="text-sm text-white">+880 1XXX-XXXXXX</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Mail className="h-4.5 w-4.5 shrink-0 mt-0.5" style={{ color: C.blue }} />
-                <div>
-                  <p className="text-xs mb-0.5" style={{ color: '#64748B' }}>Email</p>
-                  <p className="text-sm text-white">info@aloeducation.com</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="h-4.5 w-4.5 shrink-0 mt-0.5" style={{ color: C.orange }} />
-                <div>
-                  <p className="text-xs mb-0.5" style={{ color: '#64748B' }}>Address</p>
-                  <p className="text-sm text-white">House 45, Road 12, Dhanmondi<br />Dhaka 1209, Bangladesh</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock className="h-4.5 w-4.5 shrink-0 mt-0.5" style={{ color: C.blue }} />
-                <div>
-                  <p className="text-xs mb-0.5" style={{ color: '#64748B' }}>Office Hours</p>
-                  <p className="text-sm text-white">Sat – Thu: 9:00 AM – 7:00 PM</p>
-                </div>
-              </li>
+          {/* Column 6: Resources */}
+          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
+            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Resources</h4>
+            <ul className="space-y-2.5">
+              {[
+                { label: 'Blogs', href: '/blog' },
+                { label: 'Study Guides', href: '/resources/study-abroad-guide' },
+                { label: 'Success Stories', href: '/success-stories' },
+                { label: 'FAQs', href: '/faqs' },
+              ].map((link) => (
+                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Column 7: Company */}
+          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
+            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Company</h4>
+            <ul className="space-y-2.5">
+              {[
+                { label: 'About Us', href: '/about' },
+                { label: 'Our Team', href: '/team' },
+                { label: 'Contact', href: '/contact' },
+                { label: 'Book Consultation', href: '/book-consultation' },
+              ].map((link) => (
+                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Column 8: Contact */}
+          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
+            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Contact</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2"><Phone className="h-3.5 w-3.5 shrink-0 mt-1" style={{ color: C.orange }} /><span className="text-xs" style={{ color: '#94A3B8' }}>+880 1805-020101</span></li>
+              <li className="flex items-start gap-2"><Mail className="h-3.5 w-3.5 shrink-0 mt-1" style={{ color: C.blue }} /><span className="text-xs" style={{ color: '#94A3B8' }}>info@aloeducation.com</span></li>
+              <li className="flex items-start gap-2"><MapPin className="h-3.5 w-3.5 shrink-0 mt-1" style={{ color: C.orange }} /><span className="text-xs" style={{ color: '#94A3B8' }}>Suite 12B, Green Tower, Gulshan-2, Dhaka 1212</span></li>
+              <li className="flex items-start gap-2"><Clock className="h-3.5 w-3.5 shrink-0 mt-1" style={{ color: C.blue }} /><span className="text-xs" style={{ color: '#94A3B8' }}>Sat–Thu 9AM–7PM</span></li>
             </ul>
           </motion.div>
         </div>

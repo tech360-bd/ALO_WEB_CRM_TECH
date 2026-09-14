@@ -33,13 +33,13 @@ import {
 /* ------------------------------------------------------------------ */
 
 const DEFAULT_DESTINATIONS = [
-  { label: 'United Kingdom', href: '/destinations/uk' },
-  { label: 'USA', href: '/destinations/usa' },
+  { label: 'United Kingdom', href: '/destinations/united-kingdom' },
+  { label: 'United States', href: '/destinations/usa' },
   { label: 'Canada', href: '/destinations/canada' },
   { label: 'Australia', href: '/destinations/australia' },
   { label: 'Ireland', href: '/destinations/ireland' },
   { label: 'New Zealand', href: '/destinations/new-zealand' },
-  { label: 'Dubai / UAE', href: '/destinations/dubai' },
+  { label: 'Dubai / UAE', href: '/destinations/dubai-uae' },
   { label: 'More Countries', href: '/destinations' },
 ];
 
@@ -66,11 +66,13 @@ const languagePrepItems = [
 const resourceItems = [
   { label: 'Blogs', href: '/blog' },
   { label: 'Articles', href: '/resources/articles' },
-  { label: 'Scholarships', href: '/scholarships' },
+  { label: 'Scholarships by Country', href: '/scholarships' },
   { label: 'Visa Guides', href: '/visa-support' },
   { label: 'Success Stories', href: '/success-stories' },
   { label: 'Application Tips', href: '/application-process' },
-  { label: 'Pre-Departure', href: '/resources/pre-departure' },
+  { label: 'Pre-Departure Guides', href: '/resources/pre-departure' },
+  { label: 'Accommodation Support', href: '/resources/accommodation' },
+  { label: 'Financial Planning', href: '/resources/financial-planning' },
   { label: 'FAQs', href: '/faqs' },
 ];
 
@@ -179,30 +181,58 @@ export default function PublicNavbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [destinations, setDestinations] = useState(DEFAULT_DESTINATIONS);
+  const [langItems, setLangItems] = useState(languagePrepItems);
 
-  // Load destinations from API (unique countries from universities)
+  // Load destinations from countries table (status=active) via /api/website/homepage — fallback to DEFAULT_DESTINATIONS
   useEffect(() => {
-    fetch('/api/universities?limit=200')
+    fetch('/api/website/homepage')
       .then(r => r.json())
       .then(data => {
-        if (data.universities?.length) {
-          const countryMap = new Map<string, number>();
-          data.universities.forEach((u: { country: string }) => {
-            if (u.country) {
-              const key = u.country.trim();
-              if (!countryMap.has(key)) countryMap.set(key, 1);
-            }
-          });
-          if (countryMap.size > 0) {
-            const apiDests = Array.from(countryMap.keys()).sort().map(country => ({
-              label: country,
-              href: `/destinations/${country.toLowerCase().replace(/\s+/g, '-')}`,
+        const countries = data.countries || data.data?.countries || [];
+        if (Array.isArray(countries) && countries.length > 0) {
+          const active = countries.filter((c: any) => !c.status || c.status === 'active');
+          if (active.length > 0) {
+            const first7 = active.slice(0, 7).map((c: any) => ({
+              label: c.name,
+              href: `/destinations/${c.slug}`,
             }));
-            setDestinations(apiDests);
+            const hasMore = active.length > 7;
+            setDestinations(hasMore ? [...first7, { label: 'More Countries', href: '/destinations' }] : first7);
+            return;
           }
         }
+        // Fallback to universities endpoint if homepage empty
+        return fetch('/api/universities?limit=200').then(r=>r.json()).then(uData=>{
+          if (uData.universities?.length) {
+            const countryMap = new Map<string, number>();
+            uData.universities.forEach((u: { country: string }) => {
+              if (u.country) { const key = u.country.trim(); if (!countryMap.has(key)) countryMap.set(key, 1); }
+            });
+            if (countryMap.size > 0) {
+              const apiDests = Array.from(countryMap.keys()).sort().map(country => ({
+                label: country,
+                href: `/destinations/${country.toLowerCase().replace(/\s+/g, '-').replace(/\//g,'-')}`,
+              }));
+              setDestinations(apiDests);
+            }
+          }
+        });
       })
       .catch(() => { /* keep DEFAULT_DESTINATIONS */ });
+  }, []);
+
+  // Load language prep dynamically from english_tests if available
+  useEffect(() => {
+    fetch('/api/website/homepage')
+      .then(r=>r.json())
+      .then(data=>{
+        const tests = data.englishTests || data.data?.englishTests || [];
+        if (Array.isArray(tests) && tests.length > 0) {
+          const mapped = tests.map((t: any)=>({ label: t.name, href: `/language-prep/${t.slug}` }));
+          // append comparison + view all
+          setLangItems([...mapped, { label: 'English Test Comparison', href: '/language-prep/comparison' }, { label: 'View All Test Prep →', href: '/language-prep' }]);
+        }
+      }).catch(()=>{});
   }, []);
 
   const closeMobile = () => setMobileOpen(false);
@@ -253,7 +283,7 @@ export default function PublicNavbar() {
             onMouseLeave={handleDesktopLeave}
           >
             <div className="grid grid-cols-2 gap-x-6 gap-y-1 w-[460px]">
-              {languagePrepItems.map((item) => (
+              {langItems.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
             </div>
@@ -360,7 +390,7 @@ export default function PublicNavbar() {
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="grid grid-cols-1 gap-0.5 pl-4">
-                            {languagePrepItems.map((item) => (
+                            {langItems.map((item) => (
                               <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
                             ))}
                           </div>
