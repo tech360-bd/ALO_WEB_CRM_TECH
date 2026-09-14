@@ -41,6 +41,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { HrRoleWidgets, HrmQuickActions } from '@/components/hrm/HrWidgets';
 
 interface UnifiedEmployeeDashboardProps {
   forcedRole?: string;
@@ -315,6 +316,14 @@ export default function UnifiedEmployeeDashboard({
 
         {!loading && (
           <>
+            {/* HRMS Enterprise — Role-specific HR Widgets (available on every internal dashboard except Student) */}
+            {activeRole !== 'STUDENT' && (
+              <div className="space-y-3">
+                <HrRoleWidgets role={activeRole} />
+                <HrmQuickActions role={activeRole} />
+              </div>
+            )}
+
             {/* Marketing Library — one-click repost to your official social (if approved) */}
             {(activeRole.includes("COUNSELOR") || activeRole.includes("MARKETING") || true) && (
               <div className="rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-r from-[#eef4ff] to-white p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

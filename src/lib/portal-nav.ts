@@ -2,7 +2,7 @@
 // Each portal keeps its own role-appropriate structure, grouped headings, icons, active states, badges, submenus
 
 import {
-  LayoutDashboard, User, Search, FolderHeart, FolderOpen, FileText, FileUp, MessageSquare, Award, CreditCard, ClipboardList, Calendar, Clock, GraduationCap, Building2, BookOpen, Shield, Users, Target, Plane, BarChart3, Megaphone, UserCog, Bot, Headphones, CheckSquare, Wallet, DollarSign, FileSearch, Globe, GitCompare, ShieldCheck, AlertTriangle, Database, Settings, Lock, ScrollText, Briefcase, CalendarDays, TrendingUp, HelpCircle, LogOut, Map, FileCheck, Video, Newspaper, Handshake, Library, Landmark, Receipt
+  LayoutDashboard, User, Search, FolderHeart, FolderOpen, FileText, FileUp, MessageSquare, Award, CreditCard, ClipboardList, Calendar, Clock, GraduationCap, Building2, BookOpen, Shield, Users, Target, Plane, BarChart3, Megaphone, UserCog, Bot, Headphones, CheckSquare, Wallet, DollarSign, FileSearch, Globe, GitCompare, ShieldCheck, AlertTriangle, Database, Settings, Lock, ScrollText, Briefcase, CalendarDays, TrendingUp, HelpCircle, LogOut, Map, FileCheck, Video, Newspaper, Handshake, Library, Landmark, Receipt, Laptop
 } from 'lucide-react';
 
 export type NavItem = { label: string; icon: any; href?: string; view?: string; badge?: string; children?: NavItem[] };
@@ -203,9 +203,42 @@ export const portalNav: Record<string, NavGroup[]> = {
   ],
 };
 
+// HRMS Enterprise — HR Center available on every internal dashboard except Student (injected at runtime)
+const HR_NAV_GROUP: NavGroup = {
+  title: 'HR Center',
+  items: [
+    { label:'HR Center', icon: Briefcase, href:'/crm/hrm', badge:'live' },
+    { label:'My HR Profile', icon: User, href:'/crm/hrm/profile' },
+    { label:'Attendance', icon: Clock, href:'/crm/hrm/attendance' },
+    { label:'Leave', icon: CalendarDays, href:'/crm/hrm/leave' },
+    { label:'Payroll / Slip', icon: DollarSign, href:'/crm/hrm/payroll' },
+    { label:'Documents', icon: FileText, href:'/crm/hrm/documents' },
+    { label:'Devices', icon: Laptop, href:'/crm/hrm/devices' },
+    { label:'Security', icon: ShieldCheck, href:'/crm/hrm/security' },
+  ]
+};
+
+const HR_ADMIN_EXTRA: NavItem[] = [
+  { label:'Agreements', icon: Shield, href:'/crm/hrm/agreements' },
+  { label:'Notices 90d', icon: ScrollText, href:'/crm/hrm/notices' },
+  { label:'Exit', icon: Briefcase, href:'/crm/hrm/exit' },
+  { label:'HR Analytics', icon: BarChart3, href:'/crm/hrm/analytics' },
+];
+
 export function getNavForRole(role: string): NavGroup[] {
   const key = role.toLowerCase().replace(/-/g,'_');
-  return portalNav[key] || portalNav['counselor'];
+  const base = portalNav[key] || portalNav['counselor'];
+  // Student dashboard must remain unchanged — never inject HR
+  if (key === 'student') return base;
+  // Inject HR Center if not already present
+  const hasHR = base.some(g=> g.title==='HR Center');
+  if (hasHR) return base;
+  const isHrAdmin = ['super_admin','admin','hr','hr_manager','finance','accounts'].includes(key);
+  const hrGroup: NavGroup = {
+    ...HR_NAV_GROUP,
+    items: isHrAdmin ? [...HR_NAV_GROUP.items, ...HR_ADMIN_EXTRA] : HR_NAV_GROUP.items
+  };
+  return [...base, hrGroup];
 }
 
 // Frequently used for bottom nav (mobile)
