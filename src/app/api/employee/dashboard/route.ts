@@ -139,14 +139,19 @@ export async function GET(req: NextRequest) {
       };
     } else if (userRole.includes('HR')) {
       const totalEmployees = await db.employee.count().catch(() => 0);
+      const activeEmployees = await db.employee.count({ where: { status: 'active' } }).catch(()=> totalEmployees);
+      const pendingProfiles = await db.employeeHRProfile.count({ where: { employeeId: { contains: '' } } }).catch(()=>0);
+      const leaveRequestsToday = await db.leaveRequest.count({ where: { status: 'PENDING' } }).catch(()=>0);
+      const attendancePresent = await db.employeeAttendance.count({ where: { status: 'present', date: new Date().toISOString().slice(0,10) } }).catch(()=>0);
+      const attendanceLate = await db.employeeAttendance.count({ where: { status: 'late', date: new Date().toISOString().slice(0,10) } }).catch(()=>0);
 
       roleSpecificData = {
         totalEmployees: totalEmployees,
-        activeEmployees: totalEmployees,
-        pendingProfiles: 2,
-        leaveRequestsToday: 2,
-        attendancePresent: 22,
-        attendanceLate: 2,
+        activeEmployees: activeEmployees,
+        pendingProfiles: pendingProfiles,
+        leaveRequestsToday: leaveRequestsToday,
+        attendancePresent: attendancePresent,
+        attendanceLate: attendanceLate,
       };
     } else if (userRole.includes('MARKETING')) {
       const campaigns = await db.marketingCampaign.findMany({ take: 5, orderBy: { createdAt: 'desc' } }).catch(() => []);
@@ -175,25 +180,35 @@ export async function GET(req: NextRequest) {
         branchCounselors: 4,
       };
     } else if (userRole.includes('COUNTRY')) {
+      const cStudents = await db.portalStudentProfile.count({ where: { preferredCountry: country } }).catch(()=>0);
+      const cApps = await db.application.count({ where: { country: country } }).catch(()=>0);
+      const cOffers = await db.application.count({ where: { country: country, offerStatus: 'CONDITIONAL_OFFER' } }).catch(()=>0);
+      const cVisaReady = await db.visaCase.count({ where: { destinationCountry: country, readinessScore: { gte: 80 } } }).catch(()=>0);
       roleSpecificData = {
         countryName: country,
-        countryStudents: 18,
-        countryApplications: 12,
-        countryOffers: 7,
-        countryVisaReady: 4,
+        countryStudents: cStudents,
+        countryApplications: cApps,
+        countryOffers: cOffers,
+        countryVisaReady: cVisaReady,
       };
     } else if (userRole.includes('FRONT_DESK')) {
+      const appointmentsTodayCount = await db.appointment.count({ where: { scheduledAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
+      const unassignedLeadsCount = await db.marketingLead.count({ where: { counselorId: null } }).catch(()=>0);
+      const walkIns = await db.leadForm.count({ where: { source: 'walk-in', createdAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
       roleSpecificData = {
-        walkInsToday: 6,
-        appointmentsToday: 4,
-        unassignedLeads: 3,
-        callInquiries: 11,
+        walkInsToday: walkIns,
+        appointmentsToday: appointmentsTodayCount,
+        unassignedLeads: unassignedLeadsCount,
+        callInquiries: unassignedLeadsCount,
       };
     } else if (userRole.includes('SUPPORT')) {
+      const openTicketsCount = await db.communicationThread.count({ where: { status: 'open' } }).catch(()=>0);
+      const resolvedTodayCount = await db.communicationThread.count({ where: { status: 'resolved', updatedAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
+      const urgentTicketsCount = await db.communicationThread.count({ where: { priority: 'urgent', status: 'open' } }).catch(()=>0);
       roleSpecificData = {
-        openTickets: 5,
-        resolvedToday: 8,
-        urgentTickets: 1,
+        openTickets: openTicketsCount,
+        resolvedToday: resolvedTodayCount,
+        urgentTickets: urgentTicketsCount,
         avgResponseTime: '12 mins',
       };
     }

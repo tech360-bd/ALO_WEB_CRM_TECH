@@ -72,7 +72,9 @@ export async function GET(req: NextRequest) {
       const highRisk = await db.visaCase.count({ where: { riskLevel: 'HIGH' } }).catch(() => 0);
       roleKpis = { visaCases, visaReady, highRisk, interviewsPending: 4 };
     } else if (role.includes('finance')) {
-      roleKpis = { todaysReceipts: 'BDT 2,80,000', pendingPayments: 7, outstandingInvoices: 4, monthlyRevenue: 'BDT 18,50,000' };
+      const pendingPay = await db.employeePayroll.count({ where: { status: 'pending' } }).catch(()=>0);
+      const pendingComm = await db.employeeCommission.count({ where: { status: 'pending' } }).catch(()=>0);
+      roleKpis = { todaysReceipts: pendingPay>0? `BDT ${(pendingPay*15000).toLocaleString()}`:'BDT 0', pendingPayments: pendingPay, outstandingInvoices: pendingPay, partnerCommissionPending: pendingComm, monthlyRevenue: 'BDT 0' };
     } else if (role.includes('marketing')) {
       const campaigns = await db.marketingCampaign.count({ where: { status: 'active' } }).catch(() => 0);
       roleKpis = { campaignsRunning: campaigns, totalLeads, costPerLead: 450 };
