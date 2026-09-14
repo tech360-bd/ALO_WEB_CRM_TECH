@@ -1,0 +1,22 @@
+--- a/.github/workflows/deploy-production.yml
++++ b/.github/workflows/deploy-production.yml
+@@ -39,8 +39,8 @@
+             echo "=== 11. VERIFY PM2 ==="
+             pm2 describe alo-education | grep -E 'status|script path|exec cwd|node.js version'
+ 
+-            echo "=== 12. VERIFY PORT 3025 ==="
+-            ss -lntp | grep ':3025'
++            echo "=== 12. VERIFY PORT 3044 ==="
++            ss -lntp | grep ':3044'
+ 
+             echo "=== DEPLOYMENT COMPLETE ==="
+ 
+@@ -60,7 +60,7 @@
+             pm2 describe alo-education | grep -q "online"
+ 
+             echo "=== LOCAL HTTP ==="
+-            curl -fsS http://127.0.0.1:3025/ > /dev/null
++            curl -fsS http://127.0.0.1:3044/ > /dev/null
+ 
+             echo "=== DEPLOYED COMMIT ==="
+             cd /root/alo-live

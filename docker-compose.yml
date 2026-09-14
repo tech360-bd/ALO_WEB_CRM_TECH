@@ -6,7 +6,7 @@ services:
     container_name: alo-education
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3044:3044"
     env_file:
       - .env
     environment:
