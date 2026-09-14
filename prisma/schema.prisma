@@ -9922,3 +9922,225 @@ model StudentSession {
   @@index([studentId])
 }
 
+// ==========================================
+// VIDEO ENGINE — UNIFIED VIDEO ECOSYSTEM (34 repos)
+// ==========================================
+
+model VideoProject {
+  id              String   @id @default(cuid())
+  title           String
+  description     String   @default("") @db.Text
+  category        String   @default("promo") // promo, course_explainer, testimonial, etc
+  providerId      String   @default("remotion") // remotion, cogvideo, hunyuan, ltx, etc (VideoProviderId)
+  templateId      String?  // Remotion composition id
+  aspectRatio     String   @default("16:9")
+  resolution      String   @default("1080p")
+  platform        String   @default("facebook")
+  durationSec     Int      @default(30)
+  language        String   @default("english")
+  script          String   @default("") @db.Text
+  voiceoverScript String   @default("") @db.Text
+  scenes          String   @default("[]") @db.LongText // JSON VideoScene[]
+  assets          String   @default("[]") @db.LongText // JSON VideoAssetRef[]
+  brandOverlay    Boolean  @default(true)
+  subtitle        Boolean  @default(true)
+  thumbnailConcept String  @default("") @db.Text
+  prompt          String   @default("") @db.Text // For AI providers
+  negativePrompt  String   @default("") @db.Text
+  referenceImageUrl String @default("")
+  audioUrl        String   @default("")
+  metadata        String   @default("{}") @db.LongText
+  status          String   @default("draft") // draft, queued, rendering, pending_approval, approved, published, failed
+  progress        Int      @default(0)
+  outputUrl       String   @default("")
+  thumbnailUrl    String   @default("")
+  subtitleUrl     String   @default("")
+  durationActualSec Int    @default(0)
+  renderJobId     String   @default("")
+  providerResponse String  @default("{}") @db.LongText
+  createdById     String
+  approvedById    String?
+  approvedAt      DateTime?
+  publishedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  jobs            VideoEngineJob[]
+  assetsRecords   VideoAsset[]
+
+  @@index([providerId])
+  @@index([category])
+  @@index([status])
+  @@index([createdById])
+  @@index([templateId])
+}
+
+model VideoEngineJob {
+  id            String   @id @default(cuid())
+  projectId     String
+  providerId    String   @default("remotion")
+  jobType       String   @default("render") // render, caption, talking_head, edit, download, manim
+  status        String   @default("queued")
+  progress      Int      @default(0)
+  logs          String   @default("[]") @db.LongText // JSON string[]
+  outputUrl     String   @default("")
+  thumbnailUrl  String   @default("")
+  subtitleUrl   String   @default("")
+  error         String   @default("") @db.Text
+  inputPayload  String   @default("{}") @db.LongText
+  outputPayload String   @default("{}") @db.LongText
+  providerJobId String   @default("")
+  costUSD       Float    @default(0)
+  durationSec   Int      @default(0)
+  startedAt     DateTime?
+  finishedAt    DateTime?
+  createdById   String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  project       VideoProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([providerId])
+  @@index([status])
+  @@index([jobType])
+}
+
+model VideoTemplate {
+  id              String   @id @default(cuid())
+  templateId      String   @unique // e.g., UniversityPromo, CourseExplainer
+  name            String
+  description     String   @default("") @db.Text
+  category        String   @default("promo")
+  providerId      String   @default("remotion")
+  durationFrames  Int      @default(900)
+  fps             Int      @default(30)
+  width           Int      @default(1920)
+  height          Int      @default(1080)
+  defaultProps    String   @default("{}") @db.LongText
+  thumbnailUrl    String   @default("")
+  code            String   @default("") @db.LongText // TSX code for Remotion or Python for Manim
+  isSystem        Boolean  @default(true)
+  isActive        Boolean  @default(true)
+  usageCount      Int      @default(0)
+  createdById     String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([category])
+  @@index([providerId])
+  @@index([isActive])
+}
+
+model VideoProviderConfig {
+  id              String   @id @default(cuid())
+  providerId      String   @unique // ltx, cogvideo, hunyuan, etc
+  name            String
+  enabled         Boolean  @default(false)
+  apiUrl          String   @default("")
+  apiKey          String   @default("")
+  localPath       String   @default("")
+  extraConfig     String   @default("{}") @db.LongText
+  vramRequiredGB  Int      @default(0)
+  status          String   @default("not_configured") // online, offline, degraded, not_configured
+  lastCheckedAt   DateTime?
+  lastError       String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([enabled])
+  @@index([status])
+}
+
+model VideoAsset {
+  id              String   @id @default(cuid())
+  projectId       String?
+  name            String
+  type            String   @default("video") // image, video, audio, logo, font, subtitle
+  url             String   @default("")
+  thumbnailUrl    String   @default("")
+  sizeBytes       BigInt   @default(0)
+  durationSec     Float    @default(0)
+  width           Int      @default(0)
+  height          Int      @default(0)
+  format          String   @default("")
+  providerId      String   @default("")
+  metadata        String   @default("{}") @db.LongText
+  createdById     String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  project         VideoProject? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@index([type])
+  @@index([providerId])
+}
+
+model VideoCaption {
+  id              String   @id @default(cuid())
+  projectId       String?
+  jobId           String?
+  videoUrl        String   @default("")
+  language        String   @default("en")
+  srtUrl          String   @default("")
+  vttUrl          String   @default("")
+  assUrl          String   @default("")
+  txtUrl          String   @default("")
+  segments        String   @default("[]") @db.LongText // JSON CaptionSegment[]
+  translated      String   @default("{}") @db.LongText // JSON map
+  providerId      String   @default("videocaptioner")
+  status          String   @default("completed")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([language])
+}
+
+model VideoRecording {
+  id              String   @id @default(cuid())
+  recordingId     String   @unique
+  type            String   @default("camera") // screen, camera, both, jitsi_session
+  jitsiRoomName   String   @default("")
+  counselingSessionId String @default("")
+  studentId       String   @default("")
+  counselorId     String   @default("")
+  outputUrl       String   @default("")
+  durationSec     Int      @default(0)
+  transcriptUrl   String   @default("")
+  summary         String   @default("") @db.Text
+  chapters        String   @default("[]") @db.LongText
+  actionItems     String   @default("[]") @db.LongText
+  complianceChecks String  @default("[]") @db.LongText
+  status          String   @default("completed")
+  consentGiven    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([counselorId])
+  @@index([counselingSessionId])
+  @@index([type])
+}
+
+model VideoAnalytics {
+  id              String   @id @default(cuid())
+  projectId       String
+  platform        String   @default("facebook")
+  views           Int      @default(0)
+  likes           Int      @default(0)
+  shares          Int      @default(0)
+  comments        Int      @default(0)
+  leadsGenerated  Int      @default(0)
+  ctr             Float    @default(0)
+  watchTimeSec    Int      @default(0)
+  completionRate  Float    @default(0)
+  date            DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  @@index([projectId])
+  @@index([platform])
+  @@index([date])
+}
+

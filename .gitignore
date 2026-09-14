@@ -179,3 +179,57 @@ FULL_*.txt
 .archive/
 delivery/
 .tmp_backup_phase14/
+
+# ============================================================
+# VIDEO ENGINE — external repos (34 repos, large, not in git)
+# ============================================================
+/external/video-repos/*/
+!/external/video-repos/clone-all.sh
+!/external/video-repos/README.md
+/external/video-repos/*.mp4
+/external/video-repos/*.webm
+/external/video-repos/*.mov
+
+# Video engine outputs
+/public/uploads/videos/
+/public/uploads/recordings/
+/out/
+/tmp/videos/
+*.mp4
+*.webm
+*.mov
+!public/videos/demo/*.mp4
+
+# Python / Manim
+__pycache__/
+*.pyc
+*.pyo
+.manim/
+media/
+videos/
+manim_cache/
+
+# ComfyUI
+/ComfyUI/
+/models/
+/output/
+
+# Remotion
+/remotion-output/
+.out/
+
+# AI models (large)
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+/models/ai/
+
+# Whisper models
+*.whisper
+whisper_models/
+
+# VideoCaptioner binary
+/VideoCaptioner/
+videocaptioner_bin/
