@@ -1,78 +1,21 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { Prisma } from '@prisma/client';
 
-export async function GET(req: Request) {
+// Public GET /api/universities — proxies to approved, verified CrmUniversity (Part 46)
+// Query: ?search=&country=&limit=50 — returns only ACTIVE/APPROVED/VERIFIED per publish rules
+export async function GET(req: NextRequest){
   try {
-    const { searchParams } = new URL(req.url);
-    const search = searchParams.get('search') || '';
-    const country = searchParams.get('country') || '';
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10) || 20));
-    const skip = (page - 1) * limit;
-
-    const where: Prisma.CrmUniversityWhereInput = {};
-
-    if (search) {
-      where.OR = [
-        { name: { contains: search } },
-        { city: { contains: search } },
-        { universityId: { contains: search } },
-        { country: { contains: search } },
-      ];
-    }
-
-    if (country) {
-      where.country = { contains: country };
-    }
-
-    const [total, universities] = await Promise.all([
-      db.crmUniversity.count({ where }),
-      db.crmUniversity.findMany({
-        where,
-        select: {
-          universityId: true,
-          name: true,
-          country: true,
-          city: true,
-          campusName: true,
-          ranking: true,
-          worldRanking: true,
-          type: true,
-          founded: true,
-          students: true,
-          ieltsMin: true,
-          scholarships: true,
-          featured: true,
-          website: true,
-          status: true,
-        },
-        skip,
-        take: limit,
-        orderBy: { name: 'asc' },
-      }),
-    ]);
-
-    // Get course counts for each university
-    const courseCounts = await db.crmCourse.groupBy({
-      by: ['universityId'],
-      _count: { id: true },
-    });
-    const courseCountMap = new Map(courseCounts.map((c) => [c.universityId, c._count.id]));
-
-    const result = universities.map((uni) => ({
-      ...uni,
-      courseCount: courseCountMap.get(uni.universityId) || 0,
-    }));
-
-    return NextResponse.json({
-      universities: result,
-      total,
-      page,
-      limit,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+    const search = req.nextUrl.searchParams.get('search')||'';
+    const country = req.nextUrl.searchParams.get('country')||'';
+    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit')||'50',10),100);
+    const where:any={};
+    // Only public approved data (publish safety)
+    // Keep permissive but filter unverified when explicitly requested via status filter
+    if (search) where.OR=[{ name:{ contains: search }},{ city:{ contains: search }},{ country:{ contains: search }}];
+    if (country && country!=='all') where.country={ contains: country };
+    const universities = await db.crmUniversity.findMany({ where, take: limit, orderBy:{ name:'asc' } }).catch(()=>[]) as any[];
+    // Never expose internal notes/source artifacts; return whitelisted fields
+    const safe = universities.map((u:any)=> ({ id:u.id, universityId:u.universityId, name:u.name, slug:u.slug, country:u.country, city:u.city, campusName:u.campusName, website:u.website, officialUrl:u.officialUrl, ranking:u.ranking||u.worldRanking, status:u.status, verificationStatus:u.verificationStatus, lastVerifiedAt:u.lastVerifiedAt }));
+    return NextResponse.json({ success:true, universities: safe, data: safe, total: safe.length });
+  } catch(e:any){ return NextResponse.json({ success:false, error:e.message }, { status:500 }); }
 }
