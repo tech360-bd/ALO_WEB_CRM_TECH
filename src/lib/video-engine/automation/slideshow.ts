@@ -6,17 +6,17 @@
  * - https://github.com/burhankocabiyik/videomaker.git
  * - https://github.com/WuTao-CS/VideoMaker.git
  * - https://github.com/seed0001/videoMaker.git
- * Pattern: images + music + transitions → video
+ * Pattern: images + music + transitions -> video
  */
 
-import type { ProviderHealth } from "../types";
+import type { ProviderHealth, VideoAspectRatio, VideoResolution } from "../types";
 
 export interface SlideshowRequest {
   images: { url: string; durationSec: number; caption?: string; transition?: string }[];
   musicUrl?: string;
   transition: "fade" | "slide" | "zoom" | "cut" | "ken_burns";
-  aspectRatio: "16:9" | "9:16" | "1:1";
-  resolution: "480p" | "720p" | "1080p" | "4K";
+  aspectRatio: VideoAspectRatio;
+  resolution: VideoResolution;
   fps?: number;
   title?: string;
   subtitle?: boolean;

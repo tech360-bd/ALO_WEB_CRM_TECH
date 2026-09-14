@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Clock, FileText, Globe, GraduationCap, Shield, Users, Award, BookOpen, AlertTriangle, ArrowRight, HelpCircle } from 'lucide-react';
+import { CheckCircle2, Clock, FileText, Globe, GraduationCap, Shield, Users, Award, BookOpen, AlertTriangle, ArrowRight, HelpCircle, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
 import FaqAccordion from './FaqAccordion';

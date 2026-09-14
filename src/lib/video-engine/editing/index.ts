@@ -12,7 +12,8 @@ import { removeSubtitles, getSubtitleRemoverHealth } from "./subtitle-remover";
 import { superResolveVideo, getSuperResolutionHealth, VSR_MODELS } from "./super-resolution";
 import { analyzeVideoWithAgent, getVideoAgentHealth, analyzeCounselingSession } from "./video-agent";
 
-export { VSR_MODELS, batchRemoveSubtitles } from "./subtitle-remover";
+export { VSR_MODELS } from "./super-resolution";
+export { batchRemoveSubtitles } from "./subtitle-remover";
 export { analyzeCounselingSession } from "./video-agent";
 
 export async function editVideo(

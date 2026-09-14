@@ -205,7 +205,7 @@ export class VideoEngine {
   }
 
   async createSlideshow(req: SlideshowRequest) {
-    return automationModule.createSlideshowVideo(req);
+    return automationModule.createSlideshowVideo(req as any);
   }
 
   async createAnimatedText(req: any) {

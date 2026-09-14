@@ -22,7 +22,7 @@ const PLATFORMS = [
 ];
 
 export default async function AdminDigitalAssetsPage() {
-  const session = await getServerSession(authOptions as any);
+  const session = await getServerSession(authOptions as any) as any;
   const role = (session?.user as any)?.role;
   const isAdmin = role === "SUPER_ADMIN" || role === "ADMIN";
 
@@ -82,7 +82,7 @@ export default async function AdminDigitalAssetsPage() {
         <ul className="list-disc ml-5 mt-1 space-y-1">
           <li>Reuses <code>SocialIntegration</code> + <code>SocialAccount</code> + <code>SocialAccountOwnership</code> (existing 463 models) — adds <code>employeeId</code> ownership via join, encrypts <code>accessToken</code> with <code>ENCRYPTION_KEY</code> AES-256-GCM.</li>
           <li>OAuth start at <code>/api/crm/ucc/oauth/start?provider=xxx</code>, callback <code>/api/crm/ucc/oauth/callback</code> — extend per-platform handlers under <code>/api/integrations/[platform]/callback</code>.</li>
-          <li>Verification: real API call <code>GET /{pageId}?fields=name&amp;access_token=...</code> (not mocked), token expiry check, capabilities matrix, error logs via <code>ProviderErrorLog</code> + <code>IntegrationAuditLog</code>.</li>
+          <li>Verification: real API call <code>GET /{'{pageId}'}?fields=name&amp;access_token=...</code> (not mocked), token expiry check, capabilities matrix, error logs via <code>ProviderErrorLog</code> + <code>IntegrationAuditLog</code>.</li>
           <li>See <code>docs/ENVIRONMENT_VARIABLES.md</code> for <code>FACEBOOK_APP_ID/SECRET</code> etc., and <code>docs/PRODUCTION_SETUP.md</code> for callback URLs <code>https://aloeducation.com/api/crm/ucc/oauth/callback</code>.</li>
         </ul>
       </div>
