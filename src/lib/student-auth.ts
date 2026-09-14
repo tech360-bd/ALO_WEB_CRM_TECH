@@ -133,7 +133,7 @@ export async function authenticateStudentRequest(
   // Touch lastActiveAt
   await db.studentSession.update({
     where: { id: session.id },
-    data: { lastActiveAt: new Date() },
+    data: { createdAt: new Date() },
   });
 
   return {
@@ -203,14 +203,8 @@ export async function logStudentEvent(
     await db.studentEvent.create({
       data: {
         studentId,
-        applicationId: options?.applicationId || '',
         eventType,
-        eventData: JSON.stringify(eventData),
-        actorId: options?.actorId || studentId,
-        actorType: options?.actorType || 'student',
-        actorName: options?.actorName || '',
-        ipAddress: options?.ipAddress || '',
-        channel: options?.channel || 'portal',
+        payload: JSON.stringify({ ...eventData, applicationId: options?.applicationId, actorId: options?.actorId || studentId, actorType: options?.actorType || 'student', actorName: options?.actorName || '', ipAddress: options?.ipAddress, channel: options?.channel || 'portal' }),
       },
     });
   } catch (err) {

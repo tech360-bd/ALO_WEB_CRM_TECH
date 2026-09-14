@@ -14,28 +14,32 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       include: {
         category: true,
         faqs: { orderBy: { sortOrder: "asc" } },
-        relationships: {
-          where: { status: "ACTIVE" },
-          orderBy: { sortOrder: "asc" },
-        },
-        reverseRelationships: {
-          where: { status: "ACTIVE" },
-          orderBy: { sortOrder: "asc" },
-        },
       },
     });
 
     if (!resource) {
       return NextResponse.json({ error: "Resource not found" }, { status: 404 });
     }
-    if (resource.status !== "PUBLISHED" && req.nextUrl.searchParams.get("preview") !== "1") {
+    if (resource.status !== "PUBLISHED") {
       return NextResponse.json({ error: "Resource not found" }, { status: 404 });
     }
 
-    const related = await hydrateRelationships([
-      ...resource.relationships.map((r) => ({ ...r, _direction: "out" })),
-      ...resource.reverseRelationships.map((r) => ({ ...r, _direction: "in" })),
-    ]);
+    const relationships = await db.contentRelationship.findMany({
+      where: {
+        status: "ACTIVE",
+        OR: [
+          { sourceType: "RESOURCE", sourceId: resource.id },
+          { targetType: "RESOURCE", targetId: resource.id },
+        ],
+      },
+      orderBy: { sortOrder: "asc" },
+    });
+    const related = await hydrateRelationships(relationships.map((r) => {
+      const outgoing = r.sourceType === "RESOURCE" && r.sourceId === resource.id;
+      return outgoing
+        ? { ...r, _direction: "out" }
+        : { ...r, targetType: r.sourceType, targetId: r.sourceId, _direction: "in" };
+    }));
 
     // Auto-generate table of contents from H2/H3 headings in content
     const toc = generateToc(resource.content);
@@ -50,109 +54,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     });
   } catch (err: any) {
     console.error("[resources.get] error:", err);
-    return NextResponse.json({ error: "Failed to fetch resource", detail: err.message }, { status: 500 });
-  }
-}
-
-// PATCH /api/resources/[slug] — update (admin)
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
-  try {
-    const { slug } = await params;
-    const body = await req.json();
-    const { faqs, performedBy, ...patch } = body as any;
-
-    const existing = await db.resource.findUnique({ where: { slug } });
-    if (!existing) {
-      return NextResponse.json({ error: "Resource not found" }, { status: 404 });
-    }
-
-    if (Array.isArray(patch.tags)) patch.tags = JSON.stringify(patch.tags);
-    if (patch.publishedAt) patch.publishedAt = new Date(patch.publishedAt);
-    if (patch.lastVerifiedAt) patch.lastVerifiedAt = new Date(patch.lastVerifiedAt);
-
-    if (patch.slug && patch.slug !== slug) {
-      const clash = await db.resource.findUnique({ where: { slug: patch.slug } });
-      if (clash) return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
-    }
-    if (patch.categoryId && patch.categoryId !== existing.categoryId) {
-      const cat = await db.resourceCategory.findUnique({ where: { id: patch.categoryId } });
-      if (!cat) return NextResponse.json({ error: "Category not found" }, { status: 404 });
-    }
-
-    const updated = await db.resource.update({
-      where: { slug },
-      data: { ...patch },
-      include: { faqs: { orderBy: { sortOrder: "asc" } }, category: true },
-    });
-
-    if (Array.isArray(faqs)) {
-      await db.resourceFaq.deleteMany({ where: { resourceId: updated.id } });
-      if (faqs.length) {
-        await db.resourceFaq.createMany({
-          data: faqs.map((f: any, i: number) => ({
-            resourceId: updated.id,
-            question: f.question, answer: f.answer, sortOrder: f.sortOrder ?? i,
-          })),
-        });
-      }
-      const fresh = await db.resource.findUnique({
-        where: { id: updated.id },
-        include: { faqs: { orderBy: { sortOrder: "asc" } } },
-      });
-      if (fresh) (updated as any).faqs = fresh.faqs;
-    }
-
-    const userId = await resolveUserId(performedBy);
-    await db.auditLog.create({
-      data: {
-        userId,
-        action: "RESOURCE_UPDATE",
-        resource: "Resource",
-        resourceId: updated.id,
-        details: JSON.stringify({ slug, changes: Object.keys(patch) }),
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ resource: updated });
-  } catch (err: any) {
-    console.error("[resources.update] error:", err);
-    return NextResponse.json({ error: "Failed to update resource", detail: err.message }, { status: 500 });
-  }
-}
-
-// DELETE /api/resources/[slug] — soft delete via ARCHIVED status (admin)
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
-  try {
-    const { slug } = await params;
-    const hard = req.nextUrl.searchParams.get("hard") === "1";
-    const performedBy = req.nextUrl.searchParams.get("performedBy") || undefined;
-
-    const existing = await db.resource.findUnique({ where: { slug } });
-    if (!existing) {
-      return NextResponse.json({ error: "Resource not found" }, { status: 404 });
-    }
-
-    if (hard) {
-      await db.resource.delete({ where: { slug } });
-    } else {
-      await db.resource.update({ where: { slug }, data: { status: "ARCHIVED" } });
-    }
-
-    const userId = await resolveUserId(performedBy);
-    await db.auditLog.create({
-      data: {
-        userId,
-        action: hard ? "RESOURCE_DELETE" : "RESOURCE_ARCHIVE",
-        resource: "Resource",
-        resourceId: existing.id,
-        details: JSON.stringify({ slug, hard }),
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, slug, hard });
-  } catch (err: any) {
-    console.error("[resources.delete] error:", err);
-    return NextResponse.json({ error: "Failed to delete resource", detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch resource" }, { status: 500 });
   }
 }
 
@@ -190,15 +92,6 @@ function slugifyHeading(text: string): string {
   return text.toLowerCase().replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-");
 }
 
-async function resolveUserId(performedBy?: string): Promise<string | null> {
-  if (!performedBy) return null;
-  if (performedBy.includes("@")) {
-    const u = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
-    return u?.id ?? null;
-  }
-  return performedBy;
-}
-
 async function hydrateRelationships(rels: any[]): Promise<any[]> {
   const out: any[] = [];
   for (const r of rels) {
@@ -206,16 +99,17 @@ async function hydrateRelationships(rels: any[]): Promise<any[]> {
     try {
       switch (r.targetType) {
         case "SERVICE":
-          target = await db.service.findUnique({ where: { id: r.targetId }, select: { slug: true, title: true, icon: true, shortDescription: true } });
+          target = await db.service.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, icon: true, shortDescription: true } });
           break;
         case "SCHOLARSHIP":
-          target = await db.scholarship.findUnique({ where: { id: r.targetId }, select: { slug: true, name: true, fundingType: true, amount: true, currency: true } });
+          target = await db.scholarship.findUnique({ where: { id: r.targetId, status: { not: "DRAFT" } }, select: { slug: true, name: true, fundingType: true, amount: true, currency: true } });
           break;
         case "RESOURCE":
-          target = await db.resource.findUnique({ where: { id: r.targetId }, select: { slug: true, title: true, excerpt: true, featuredImage: true } });
+          target = await db.resource.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, excerpt: true, featuredImage: true } });
           break;
       }
     } catch {}
+    if (!target) continue;
     out.push({
       id: r.id,
       direction: r._direction,

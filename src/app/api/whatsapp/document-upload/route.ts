@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 1. Match sender by phone to student
-  let student = await db.student.findFirst({ where: { mobile: phone } });
+  let student = await db.student.findFirst({ where: { phone } });
   let lead = await db.lead.findFirst({ where: { phone } });
   let leadId = lead?.id || null;
   let studentId = student?.id || null;
@@ -37,15 +37,12 @@ export async function POST(req: NextRequest) {
     student = await db.student.create({
       data: {
         studentId: `AE-${new Date().getFullYear()}${(100001 + studentCount).toString()}`,
-        firstName: "WhatsApp",
-        lastName: phone.slice(-4),
-        fullName: `WhatsApp ${phone.slice(-4)}`,
+        name: `WhatsApp ${phone.slice(-4)}`,
         email: `wa_${phone.slice(-4)}@aloeducation.com`,
-        mobile: phone,
-        nationality: "Bangladeshi",
+        phone,
         leadId: lead.id,
-        profileCompletion: 5,
-        status: "ACTIVE",
+        profileComplete: 5,
+        status: "active",
       },
     });
     studentId = student.id;
@@ -96,7 +93,7 @@ export async function POST(req: NextRequest) {
   // 6. Save to CRM timeline
   await db.timelineEvent.create({
     data: {
-      studentId,
+      studentId: studentId!,
       type: "DOC_UPLOADED",
       title: `${docName} uploaded via WhatsApp`,
       description: `Document "${fileName}" uploaded from WhatsApp number ${phone}`,

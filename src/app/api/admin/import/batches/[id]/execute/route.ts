@@ -7,7 +7,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
   try {
     const url = new URL(request.url);
     const id = url.pathname.split('/').slice(-2, -1)[0];
-    
+
     if (!auth.roles.includes('super_admin')) {
        return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
@@ -16,7 +16,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       where: { id },
       include: { students: true }
     });
-    
+
     if (!batch) {
       return NextResponse.json({ success: false, error: 'Batch not found' }, { status: 404 });
     }
@@ -67,9 +67,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
           data: {
             studentId: student.id,
             eventType: 'STUDENT_IMPORTED_FROM_OLD_CRM',
-            eventData: JSON.stringify({ batchId: batch.id, oldCrmId: staged.oldCrmId }),
-            actorId: auth.userId,
-            actorType: 'system'
+            payload: JSON.stringify({ batchId: batch.id, oldCrmId: staged.oldCrmId, actorId: auth.userId, actorType: 'system' })
           }
         });
 

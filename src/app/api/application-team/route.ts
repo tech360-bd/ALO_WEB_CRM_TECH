@@ -1,37 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// Application Team dashboard — applications, documents to review, partner submissions
 export async function GET() {
-  const applications = await db.application.findMany({
-    include: { student: { select: { studentId: true, fullName: true, email: true, mobile: true } } },
-    orderBy: { updatedAt: "desc" },
-  });
-
-  const documents = await db.document.findMany({
-    where: { status: { in: ["UPLOADED", "UNDER_REVIEW"] } },
-    include: { student: { select: { studentId: true, fullName: true } } },
-    orderBy: { uploadedAt: "desc" },
-  });
-
-  const partnerEmails = await db.partnerEmailUpdate.findMany({
-    where: { status: "PENDING" },
-    orderBy: { receivedAt: "desc" },
-  });
-
+  const applications = await db.application.findMany({ orderBy: { updatedAt: "desc" } });
+  const studentIds = Array.from(new Set(applications.map((application) => application.studentId)));
+  const students = await db.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, studentId: true, name: true, email: true, phone: true } });
+  const studentMap = Object.fromEntries(students.map((student) => [student.id, student]));
+  const documents = await db.document.findMany({ where: { status: { in: ["UPLOADED", "UNDER_REVIEW"] } }, include: { student: { select: { studentId: true, name: true } } }, orderBy: { uploadedAt: "desc" } });
+  const partnerEmails = await db.partnerEmailUpdate.findMany({ where: { parsedStatus: "PENDING" }, orderBy: { createdAt: "desc" } });
   const stageCounts: Record<string, number> = {};
-  for (const a of applications) stageCounts[a.stage] = (stageCounts[a.stage] || 0) + 1;
-
+  for (const application of applications) stageCounts[application.stage] = (stageCounts[application.stage] || 0) + 1;
+  const enrichedApplications = applications.map((application) => ({ ...application, student: studentMap[application.studentId] || null }));
   return NextResponse.json({
-    metrics: {
-      totalApplications: applications.length,
-      documentsToReview: documents.length,
-      pendingPartnerEmails: partnerEmails.length,
-      submittedToday: applications.filter((a) => new Date(a.updatedAt).toDateString() === new Date().toDateString()).length,
-    },
-    stageCounts,
-    applications: applications.slice(0, 20),
-    documentsToReview: documents.slice(0, 20),
-    partnerEmailUpdates: partnerEmails,
+    metrics: { totalApplications: applications.length, documentsToReview: documents.length, pendingPartnerEmails: partnerEmails.length, submittedToday: applications.filter((application) => new Date(application.updatedAt).toDateString() === new Date().toDateString()).length },
+    stageCounts, applications: enrichedApplications.slice(0, 20), documentsToReview: documents.slice(0, 20), partnerEmailUpdates: partnerEmails,
   });
 }

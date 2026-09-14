@@ -15,6 +15,9 @@ const buttonVariants = cva(
         /* Brand Blue — #0057B8 */
         brand:
           "bg-alo-brand text-white shadow-sm hover:bg-alo-brand/90 active:bg-alo-brand/80",
+        /* Legacy CRM alias retained for backwards compatibility. */
+        alo:
+          "bg-alo-brand text-white shadow-sm hover:bg-alo-brand/90 active:bg-alo-brand/80",
         /* CTA Orange — #C2410C accessible with white text */
         cta:
           "bg-alo-cta text-white shadow-sm hover:bg-alo-cta-hover active:bg-alo-cta-hover/90",
@@ -47,6 +50,7 @@ const buttonVariants = cva(
           "border-2 border-alo-cta text-alo-cta bg-transparent hover:bg-alo-cta/5",
       },
       size: {
+        xs: "h-7 rounded-md gap-1 px-2 text-xs has-[>svg]:px-1.5",
         sm: "h-8 rounded-md gap-1.5 px-3 text-[13px] has-[>svg]:px-2.5",
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         lg: "h-11 rounded-lg px-6 text-[15px] has-[>svg]:px-4",

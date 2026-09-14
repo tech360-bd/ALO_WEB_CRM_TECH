@@ -28,7 +28,7 @@ export const GET = withStudentAuth(async (request, auth) => {
     });
 
     const activeApplications = applicationsList.filter(app => app.status === 'active');
-    
+
     const stages = applicationsList.reduce((acc, app) => {
       acc[app.stage] = (acc[app.stage] || 0) + 1;
       return acc;
@@ -57,7 +57,7 @@ export const GET = withStudentAuth(async (request, auth) => {
     } : undefined;
 
     const nextBestActions = await db.studentNextBestAction.findMany({
-      where: { studentId: auth.studentId, isCompleted: false },
+      where: { studentId: auth.studentId, status: { not: "COMPLETED" } },
     });
 
     const priorityOrder: Record<string, number> = { urgent: 1, high: 2, medium: 3, low: 4 };
@@ -83,7 +83,7 @@ export const GET = withStudentAuth(async (request, auth) => {
 
     // Upcoming deadlines logic - find applications with deadlines
     const appsWithDeadlines = await db.application.findMany({
-      where: { 
+      where: {
         studentId: auth.studentId,
         deadline: { not: '' }
       },
@@ -100,10 +100,10 @@ export const GET = withStudentAuth(async (request, auth) => {
       deadline: app.deadline,
       type: 'Application Deadline'
     }));
-    
+
     // Sort deadlines if they are valid dates... let's just leave it as is or try to sort if it's ISO
     // Here we'll just keep it simple.
-    
+
     const interviewPrograms: any[] = []; // Schema doesn't support linking AiInterviewSession to application
 
     return NextResponse.json({

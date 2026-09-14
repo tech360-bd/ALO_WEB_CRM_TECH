@@ -53,9 +53,9 @@ export function verifyFacebookSignature(
       return true;
     }
     console.error(
-      "[facebook-lead-sync] FACEBOOK_APP_SECRET not set in production — webhook verification bypassed!"
+      "[facebook-lead-sync] FACEBOOK_APP_SECRET is required in production — rejecting webhook."
     );
-    return true; // dev-friendly fail-open (same behaviour as WhatsApp helper)
+    return false;
   }
   if (!signature || !signature.startsWith("sha256=")) return false;
 
@@ -369,23 +369,15 @@ export async function processFacebookLead(
     leadId = lead.id;
 
     // Create Student (origin = this lead)
-    const firstName = normalized.firstName || fullName.split(" ")[0] || "Facebook";
-    const lastName = normalized.lastName || fullName.split(" ").slice(1).join(" ") || "Lead";
     const student = await db.student.create({
       data: {
         studentId: studentCode,
         leadId: lead.id,
-        firstName,
-        lastName,
-        fullName,
+        name: fullName,
         email: normalized.email ?? `${leadIdCode.toLowerCase()}@facebook-lead.local`,
-        mobile: normalized.phone ?? "unknown",
-        nationality: normalized.country ?? "Unknown",
-        countryOfBirth: normalized.country ?? "Unknown",
-        studyDestination: normalized.country ?? null,
-        programTitle: normalized.course ?? null,
-        studyLevel: normalized.studyLevel ?? null,
-        status: "ACTIVE",
+        phone: normalized.phone ?? "unknown",
+        currentCountry: normalized.country ?? "",
+        status: "active",
       },
     });
     studentId = student.id;
@@ -401,17 +393,11 @@ export async function processFacebookLead(
       data: {
         leadId: lead.id,
         studentId: student.id,
-        type: "LEAD_CREATED",
+        stage: "lead_created",
         title: "Facebook Lead ingested",
         description: `Lead from Facebook form "${formName ?? formId ?? pageId}"`,
-        meta: JSON.stringify({
-          source: "FACEBOOK",
-          pageId,
-          leadgenId,
-          formId: formId ?? null,
-          formName: formName ?? null,
-          normalized,
-        }),
+        actor: "facebook-webhook",
+        actionUrl: "",
       },
     }).catch((err) => {
       console.error("[facebook-lead-sync] timeline event failed:", err);
@@ -434,6 +420,20 @@ export async function processFacebookLead(
       facebookLeadRawId: fbLeadRawId,
       processingStatus: "FAILED",
       error: err instanceof Error ? err.message : String(err),
+    };
+  }
+
+  // The database transaction above must produce a lead before any automation
+  // can run. Keep the invariant explicit so nullable failure state never reaches
+  // downstream services.
+  if (!leadId) {
+    return {
+      leadId: null,
+      studentId,
+      counselorId: null,
+      facebookLeadRawId: fbLeadRawId,
+      processingStatus: "FAILED",
+      error: "Lead creation did not return an identifier",
     };
   }
 

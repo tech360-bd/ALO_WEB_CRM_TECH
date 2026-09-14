@@ -5,7 +5,7 @@
 # Replace "alo.example.com" with your real domain before deploy.
 # ============================================================
 
-alo.example.com {
+aloeducation.com {
     encode gzip zstd
 
     # Security headers
@@ -23,8 +23,8 @@ alo.example.com {
     }
 
     # Reverse proxy to the local Next.js standalone server.
-    # The app port (127.0.0.1:3000) is NEVER exposed publicly.
-    reverse_proxy 127.0.0.1:3000 {
+    # Production: 127.0.0.1:3044 (HOSTNAME 0.0.0.0) — never exposed publicly.
+    reverse_proxy 127.0.0.1:3044 {
         header_up Host {host}
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-For {remote_host}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Phase 3 fix script: Repair the broken withAuth invocation pattern.
 //
 // The broken pattern:

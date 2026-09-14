@@ -19,10 +19,13 @@ export async function POST(req: NextRequest) {
   const user = await db.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-  // Verify current password
-  const isValid = user.passwordHash === "alo-temporary"
-    ? currentPassword === "alo123"
-    : await bcrypt.compare(currentPassword, user.passwordHash);
+  // Verify the current bcrypt password. Placeholder passwords are never valid.
+  let isValid = false;
+  try {
+    isValid = await bcrypt.compare(currentPassword, user.passwordHash);
+  } catch {
+    isValid = false;
+  }
 
   if (!isValid) {
     return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 });

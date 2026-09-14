@@ -121,15 +121,13 @@ export async function validateRequestAccess(
     const tempPerm = await db.employeeTemporaryPermission.findFirst({
       where: {
         employeeId: emp.id,
-        featureKey,
-        action,
-        status: 'active',
+        permissionKey: featureKey,
         expiresAt: { gt: new Date() },
       },
     });
 
     if (tempPerm) {
-      return { allowed: true, scope: (tempPerm.scope as AccessScope) || 'ASSIGNED' };
+      return { allowed: true, scope: 'ASSIGNED' };
     }
   }
 

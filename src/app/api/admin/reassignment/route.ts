@@ -4,9 +4,9 @@ import { logSecurityAudit, validateRequestAccess } from '@/lib/access-control/ce
 
 export async function POST(req: Request) {
   try {
-    const { adminId, exitingEmployeeId, targetEmployeeId } = await req.json();
+    const { adminId, employeeId, targetEmployeeId } = await req.json();
 
-    if (!adminId || !exitingEmployeeId || !targetEmployeeId) {
+    if (!adminId || !employeeId || !targetEmployeeId) {
       return NextResponse.json({ error: 'Missing reassignment parameters' }, { status: 400 });
     }
 
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: access.reason || 'Unauthorized' }, { status: 403 });
     }
 
-    const exitingEmp = await db.employee.findUnique({ where: { id: exitingEmployeeId } });
+    const exitingEmp = await db.employee.findUnique({ where: { id: employeeId } });
     const targetEmp = await db.employee.findUnique({ where: { id: targetEmployeeId } });
 
     if (!exitingEmp || !targetEmp) {
@@ -36,12 +36,9 @@ export async function POST(req: Request) {
     // Record reassignment log
     const logRecord = await db.employeeReassignment.create({
       data: {
-        exitingEmployeeId,
-        targetEmployeeId,
+        employeeId,
         reassignedBy: adminId,
-        studentsCount: reassignedLeads.count,
-        tasksCount: reassignedTasks.count,
-        status: 'completed',
+        reason: JSON.stringify({ targetEmployeeId, studentsCount: reassignedLeads.count, tasksCount: reassignedTasks.count }),
       },
     });
 
@@ -50,7 +47,7 @@ export async function POST(req: Request) {
       actorRole: 'Admin',
       action: 'WORK_REASSIGNMENT_EXECUTED',
       targetType: 'Employee',
-      targetId: exitingEmployeeId,
+      targetId: employeeId,
       newValue: JSON.stringify({ targetEmployeeId, studentsReassigned: reassignedLeads.count }),
     });
 

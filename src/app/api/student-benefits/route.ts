@@ -12,8 +12,8 @@ export async function GET(req: NextRequest) {
   ]);
 
   // Check eligibility — student must have active ALO application
-  const student = await db.student.findUnique({ where: { id: studentId }, include: { applications: true } });
-  const hasActiveApp = student?.applications.some((a) => !["VISA_REFUSED", "ENROLLED", "CANCELLED"].includes(a.stage)) || false;
+  const applications = await db.application.findMany({ where: { studentId } });
+  const hasActiveApp = applications.some((application) => !["VISA_REFUSED", "ENROLLED", "CANCELLED"].includes(application.stage));
 
   return NextResponse.json({
     eligible: hasActiveApp,

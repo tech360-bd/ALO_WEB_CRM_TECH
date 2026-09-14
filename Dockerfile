@@ -35,5 +35,7 @@ RUN mkdir -p /app/upload /app/download /app/db
 
 EXPOSE 3000
 
-# Run database migrations then start
-CMD ["sh", "-c", "bunx prisma db push --skip-generate && node server.js"]
+# Apply only reviewed, additive migrations before starting the server.
+# Never use `prisma db push` in production because it can change the schema
+# outside the migration history.
+CMD ["sh", "-c", "bunx prisma migrate deploy && node server.js"]

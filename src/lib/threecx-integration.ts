@@ -175,24 +175,17 @@ export async function lookupContactByPhone(phone: string): Promise<ContactLookup
   const normalized = await normalizePhone(phone);
   const candidates = [phone, normalized].filter(Boolean);
 
-  const orClauses = candidates.map((p) => ({ mobile: p }));
-
-  // 1. Student
+  // 1. Student — Main's canonical contact fields are name and phone.
   if (candidates.length) {
     const student = await db.student.findFirst({
-      where: {
-        OR: [
-          ...candidates.map((p) => ({ mobile: p })),
-          ...candidates.map((p) => ({ altMobile: p })),
-        ],
-      },
+      where: { OR: candidates.map((p) => ({ phone: p })) },
       select: {
         id: true,
         studentId: true,
-        fullName: true,
+        name: true,
         status: true,
         counselorId: true,
-        mobile: true,
+        phone: true,
       },
     });
     if (student) {
@@ -200,12 +193,12 @@ export async function lookupContactByPhone(phone: string): Promise<ContactLookup
         matched: true,
         type: "STUDENT",
         id: student.id,
-        name: student.fullName,
+        name: student.name,
         studentId: student.studentId,
         counselorId: student.counselorId,
         status: student.status,
-        matchedPhone: student.mobile,
-        matchReason: "mobile/altMobile match",
+        matchedPhone: student.phone,
+        matchReason: "phone match",
       };
     }
 
@@ -258,15 +251,15 @@ export async function lookupContactByPhone(phone: string): Promise<ContactLookup
       where: {
         OR: candidates.map((p) => ({ phone: p })),
       },
-      select: { id: true, employeeCode: true, fullName: true, status: true, phone: true, threecxExtension: true },
+      select: { id: true, employeeId: true, name: true, status: true, phone: true },
     });
     if (employee) {
       return {
         matched: true,
         type: "EMPLOYEE",
         id: employee.id,
-        name: employee.fullName,
-        employeeId: employee.employeeCode,
+        name: employee.name,
+        employeeId: employee.employeeId,
         status: employee.status,
         matchedPhone: employee.phone,
         matchReason: "Employee phone match",
@@ -293,14 +286,14 @@ export async function searchContacts(query: string) {
     db.student.findMany({
       where: {
         OR: [
-          { fullName: { contains: q } },
+          { name: { contains: q } },
           { studentId: { contains: q } },
-          { mobile: { contains: q } },
+          { phone: { contains: q } },
           { email: { contains: q } },
         ],
       },
       take: 5,
-      select: { id: true, studentId: true, fullName: true, mobile: true, email: true, status: true },
+      select: { id: true, studentId: true, name: true, phone: true, email: true, status: true },
     }),
     db.lead.findMany({
       where: {
@@ -325,22 +318,22 @@ export async function searchContacts(query: string) {
     db.employee.findMany({
       where: {
         OR: [
-          { fullName: { contains: q } },
-          { employeeCode: { contains: q } },
-          { companyEmail: { contains: q } },
+          { name: { contains: q } },
+          { employeeId: { contains: q } },
+          { email: { contains: q } },
           { phone: { contains: q } },
         ],
       },
       take: 5,
-      select: { id: true, employeeCode: true, fullName: true, companyEmail: true, phone: true, status: true },
+      select: { id: true, employeeId: true, name: true, email: true, phone: true, status: true },
     }),
   ]);
 
   const results = [
-    ...students.map((s) => ({ type: "STUDENT", id: s.id, label: s.fullName, sub: s.studentId, phone: s.mobile, email: s.email, status: s.status })),
+    ...students.map((s) => ({ type: "STUDENT", id: s.id, label: s.name, sub: s.studentId, phone: s.phone, email: s.email, status: s.status })),
     ...leads.map((l) => ({ type: "LEAD", id: l.id, label: l.fullName, sub: l.leadId, phone: l.phone, email: l.email, status: l.status })),
     ...partners.map((p) => ({ type: "PARTNER", id: p.id, label: p.name, sub: "Partner", phone: p.phone, email: p.email, status: p.status })),
-    ...employees.map((e) => ({ type: "EMPLOYEE", id: e.id, label: e.fullName, sub: e.employeeCode, phone: e.phone, email: e.companyEmail, status: e.status })),
+    ...employees.map((e) => ({ type: "EMPLOYEE", id: e.id, label: e.name, sub: e.employeeId, phone: e.phone, email: e.email, status: e.status })),
   ];
 
   return { results };
@@ -432,16 +425,17 @@ export async function journalCall(params: JournalCallParams) {
     },
   });
 
-  // Timeline event if linked to a student or lead
-  if (callLog.studentId || callLog.leadId) {
+  // Main TimelineEvent requires a studentId; lead-only calls remain in PhoneCallLog.
+  if (callLog.studentId) {
     await db.timelineEvent.create({
       data: {
         studentId: callLog.studentId,
         leadId: callLog.leadId,
-        type: "MESSAGE_SENT",
+        stage: "phone_call_journaled",
         title: `Phone call journaled (${callLog.callType})`,
         description: `From ${callLog.fromNumber} → ${callLog.toNumber}, duration ${callLog.duration}s. Provider: ${provider}.`,
-        meta: JSON.stringify({ callLogId: callLog.id, providerEventId: params.providerEventId }),
+        actor: "3cx-integration",
+        actionUrl: "",
       },
     }).catch(() => {
       // timeline event creation shouldn't block journaling
@@ -633,32 +627,30 @@ export async function journalChat(params: JournalChatParams) {
 // ─── Extensions ───
 
 export async function getExtensions() {
-  // Return all employees with their 3CX extension (if mapped)
-  const employees = await db.employee.findMany({
+  // Extension mappings live on Main's communication profile, not Employee.
+  const profiles = await db.employeeCommunicationProfile.findMany({
     where: { threecxExtension: { not: null } },
-    select: {
-      id: true,
-      employeeCode: true,
-      fullName: true,
-      designation: true,
-      threecxExtension: true,
-      status: true,
-      department: { select: { name: true } },
-    },
+    select: { employeeId: true, threecxExtension: true },
     orderBy: { threecxExtension: "asc" },
   });
-
-  const mapped = employees
-    .filter((e) => !!e.threecxExtension)
-    .map((e) => ({
-      extension: e.threecxExtension,
-      employeeId: e.id,
-      employeeCode: e.employeeCode,
-      employeeName: e.fullName,
-      designation: e.designation,
-      department: e.department?.name || null,
-      status: e.status,
-    }));
+  const employees = await db.employee.findMany({
+    where: { id: { in: profiles.map((p) => p.employeeId) } },
+    select: { id: true, employeeId: true, name: true, designation: true, department: true, status: true },
+  });
+  const employeeMap = new Map(employees.map((e) => [e.id, e]));
+  const mapped = profiles.flatMap((profile) => {
+    const employee = employeeMap.get(profile.employeeId);
+    if (!employee || !profile.threecxExtension) return [];
+    return [{
+      extension: profile.threecxExtension,
+      employeeId: employee.id,
+      employeeCode: employee.employeeId,
+      employeeName: employee.name,
+      designation: employee.designation,
+      department: employee.department,
+      status: employee.status,
+    }];
+  });
 
   return { extensions: mapped, count: mapped.length };
 }
@@ -667,55 +659,56 @@ export async function mapExtension(extension: string, employeeId: string, mapped
   const employee = await db.employee.findUnique({ where: { id: employeeId } });
   if (!employee) throw new Error("Employee not found");
 
-  // Check if extension already mapped to another employee
-  const existing = await db.employee.findFirst({
-    where: { threecxExtension: extension, id: { not: employeeId } },
-    select: { id: true, fullName: true },
+  const existing = await db.employeeCommunicationProfile.findFirst({
+    where: { threecxExtension: extension, employeeId: { not: employeeId } },
+    select: { employeeId: true },
   });
   if (existing) {
-    // Unmap from previous owner
-    await db.employee.update({
-      where: { id: existing.id },
+    await db.employeeCommunicationProfile.update({
+      where: { employeeId: existing.employeeId },
       data: { threecxExtension: null },
     });
   }
 
-  const updated = await db.employee.update({
-    where: { id: employeeId },
-    data: { threecxExtension: extension },
+  await db.employeeCommunicationProfile.upsert({
+    where: { employeeId },
+    update: { threecxExtension: extension },
+    create: {
+      employeeId,
+      employeeName: employee.name,
+      officialEmail: employee.email,
+      officialPhone: employee.phone,
+      threecxExtension: extension,
+    },
   });
 
   await db.auditLog.create({
     data: {
       userId: mappedBy,
       action: "AI_ACTION",
-      resource: "Employee",
+      resource: "EmployeeCommunicationProfile",
       resourceId: employeeId,
-      details: JSON.stringify({
-        action: "EXTENSION_MAPPED",
-        extension,
-        previousOwner: existing?.id || null,
-      }),
+      details: JSON.stringify({ action: "EXTENSION_MAPPED", extension, previousOwner: existing?.employeeId || null }),
     },
   });
 
   return {
-    employee: { id: updated.id, fullName: updated.fullName, threecxExtension: updated.threecxExtension },
-    previousOwner: existing ? { id: existing.id, fullName: existing.fullName } : null,
+    employee: { id: employee.id, fullName: employee.name, threecxExtension: extension },
+    previousOwner: existing ? { id: existing.employeeId } : null,
   };
 }
 
 export async function unmapExtension(extension: string, unmappedBy: string) {
-  const employee = await db.employee.findFirst({
+  const profile = await db.employeeCommunicationProfile.findFirst({
     where: { threecxExtension: extension },
-    select: { id: true, fullName: true },
+    select: { employeeId: true },
   });
-  if (!employee) {
+  if (!profile) {
     return { unmapped: false, message: "Extension not currently mapped." };
   }
 
-  await db.employee.update({
-    where: { id: employee.id },
+  await db.employeeCommunicationProfile.update({
+    where: { employeeId: profile.employeeId },
     data: { threecxExtension: null },
   });
 
@@ -723,13 +716,13 @@ export async function unmapExtension(extension: string, unmappedBy: string) {
     data: {
       userId: unmappedBy,
       action: "AI_ACTION",
-      resource: "Employee",
-      resourceId: employee.id,
+      resource: "EmployeeCommunicationProfile",
+      resourceId: profile.employeeId,
       details: JSON.stringify({ action: "EXTENSION_UNMAPPED", extension }),
     },
   });
 
-  return { unmapped: true, employee };
+  return { unmapped: true, employeeId: profile.employeeId, extension };
 }
 
 // ─── Click-to-Call (REAL HTTP) ───
@@ -991,10 +984,10 @@ export async function get3cxDashboardStats() {
   // PhoneCallLog has no @relation fields — manually enrich with student/lead names
   const studentIds = recentCallsRaw.map((c) => c.studentId).filter(Boolean) as string[];
   const leadIds = recentCallsRaw.map((c) => c.leadId).filter(Boolean) as string[];
-  const students: Array<{ id: string; fullName: string; studentId: string }> = studentIds.length
+  const students: Array<{ id: string; name: string; studentId: string }> = studentIds.length
     ? await db.student.findMany({
         where: { id: { in: studentIds } },
-        select: { id: true, fullName: true, studentId: true },
+        select: { id: true, name: true, studentId: true },
       })
     : [];
   const leads: Array<{ id: string; fullName: string; leadId: string }> = leadIds.length
