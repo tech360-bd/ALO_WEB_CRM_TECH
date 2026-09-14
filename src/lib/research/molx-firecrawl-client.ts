@@ -41,7 +41,11 @@ const BLOCKED_IP_PREFIXES = ['10.', '192.168.', '172.16.', '172.17.', '172.18.',
 function isBlockedUrl(url: string): boolean {
   try {
     const u = new URL(url);
-    const host = u.hostname.toLowerCase();
+    let host = u.hostname.toLowerCase();
+    // Decode IPv6 mapped IPv4 ::ffff:127.0.0.1 → check embedded IPv4
+    if (host.startsWith('::ffff:')) host = host.slice(7);
+    // Strip brackets if present
+    host = host.replace(/^\[/, '').replace(/\]$/, '');
     if (BLOCKED_HOSTS.some(b => host === b || host.endsWith('.' + b))) return true;
     if (BLOCKED_IP_PREFIXES.some(p => host.startsWith(p))) return true;
     // Block private IPs in host if numeric
@@ -52,6 +56,7 @@ function isBlockedUrl(url: string): boolean {
       if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
       if (parts[0] === 127) return true;
     }
+    // IPv6 private ranges already via prefix check (fc00:, fe80:, ::1)
     return false;
   } catch { return true; }
 }
@@ -61,7 +66,24 @@ async function fetchWithTimeout(url: string, opts: RequestInit & { timeoutMs?: n
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(url, { ...opts, signal: controller.signal });
+    // SEC-02: do not follow redirects automatically — validate Location before following
+    const merged: RequestInit = { redirect: 'manual', ...opts, signal: controller.signal } as RequestInit;
+    const res = await fetch(url, merged);
+    // If backend returned redirect, validate Location and block private hosts
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get('location');
+      if (loc && isBlockedUrl(loc)) {
+        throw new Error(`SSRF blocked: redirect to private host ${loc.slice(0,120)}`);
+      }
+      if (loc) {
+        // Follow single safe redirect manually (do not loop — prevents SSRF via redirect chain)
+        const nextRes = await fetch(loc, { ...opts, redirect: 'manual', signal: controller.signal } as RequestInit);
+        if (nextRes.headers.get('location') && isBlockedUrl(nextRes.headers.get('location')!)) {
+          throw new Error('SSRF blocked: redirect chain to private host');
+        }
+        return nextRes;
+      }
+    }
     return res;
   } finally {
     clearTimeout(id);
