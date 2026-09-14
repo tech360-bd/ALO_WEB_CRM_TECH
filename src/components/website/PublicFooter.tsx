@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Youtube, GraduationCap, MapPin, Phone, Mail, Clock } from 'lucide-react';
 import React from 'react';
+import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 
 const destinations = [
   { label: 'United Kingdom', href: '/destinations/united-kingdom' },
@@ -88,7 +89,11 @@ const GraduationCapStrip = () => {
 
 export default function PublicFooter() {
   return (
-    <footer className="w-full bg-white pt-16 mt-auto border-t border-slate-100">
+    <footer className="w-full bg-white pt-8 mt-auto border-t border-slate-100">
+      {/* Footer contact 3-button placement — Get Instant Help banner with office address + map */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <WebsiteActionButtons variant="footer" />
+      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-6">
           

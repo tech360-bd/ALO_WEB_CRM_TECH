@@ -15,6 +15,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 
 const C = { blue: '#0057B8', orange: '#E8501A', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
@@ -153,6 +154,11 @@ function HeroSection() {
                 <a href={`/course-finder?country=${slide.slug}`}><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold border-2" style={{ borderColor: C.blue, color: C.blue }}>Find Courses</Button></a>
                 <a href="/eligibility-check"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: C.border, color: C.text }}>Check Eligibility</Button></a>
                 <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: '#25D366', color: '#25D366' }}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button></a>
+              </motion.div>
+              {/* 3-button high-conversion hero placement — branded CTAs: AI Agent / WhatsApp AI / Facebook */}
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="pt-2">
+                <p className="text-[11px] font-semibold tracking-widest uppercase text-[#0057B8]/70 mb-2.5">Get Instant Help — choose your channel</p>
+                <WebsiteActionButtons variant="hero" />
               </motion.div>
             </div>
 

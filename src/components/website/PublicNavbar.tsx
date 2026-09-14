@@ -27,6 +27,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 
 /* ------------------------------------------------------------------ */
 /*  DATA (defaults – overridden by API when available)                 */
@@ -247,6 +248,16 @@ export default function PublicNavbar() {
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-sm"
     >
+      {/* Branded top contact bar — header/topbar placement for 3 high-conversion buttons */}
+      <div className="hidden md:flex w-full bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 sm:px-6 lg:px-8 py-2 items-center justify-between">
+        <div className="text-[11px] text-slate-600 flex items-center gap-2">
+          <span className="hidden lg:inline">✈️ 24/7 Student Support • Office: Barek Mansion-02, Panthapath, Dhaka</span>
+          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:text-[#E8501A] underline font-medium">Maps</a>
+          <span className="text-slate-300">|</span>
+          <span className="font-medium text-[#0F172A]">Senior Counselor Al Aminn: 01805020101</span>
+        </div>
+        <WebsiteActionButtons variant="header" />
+      </div>
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* LOGO */}
         <Link href="/" className="flex items-center gap-2 group">
@@ -424,12 +435,18 @@ export default function PublicNavbar() {
                       </AccordionItem>
                     </Accordion>
 
-                    <div className="mt-4 pt-4 border-t border-[#E2E8F0]">
+                    <div className="mt-4 pt-4 border-t border-[#E2E8F0] space-y-3">
                       <Link href="/book-consultation" onClick={closeMobile} className="block">
                         <Button className="w-full bg-[#E8501A] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
                           Book Free Consultation
                         </Button>
                       </Link>
+                      {/* Mobile 3-button compact placement — high-conversion, no overlap with nav */}
+                      <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 space-y-2">
+                        <p className="text-[11px] font-bold uppercase tracking-widest text-[#0057B8]">Get Instant Help</p>
+                        <WebsiteActionButtons variant="compact" className="justify-start" />
+                        <p className="text-[11px] text-slate-500 leading-snug">Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0057B8] underline">Maps</a> • Al Aminn 01805020101</p>
+                      </div>
                     </div>
                   </div>
                 </SheetContent>
