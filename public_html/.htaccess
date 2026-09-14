@@ -2,7 +2,7 @@
 # Path A: Next.js standalone behind Apache proxy (cPanel)
 # Canonical: https://aloeducation.com (non-www, HTTPS enforced)
 # Private app: /home/aloeduca/alo-web-crm (outside public_html)
-# Generated: 2026-09-15
+# Generated: 2026-09-15T16:50:00Z (verified 2026-09-15 GCU London 560/11200/145600)
 
 # --- Front-controller: proxy to Node standalone ---
 # If Node is available via cPanel "Setup Node.js App", proxy all to 3000

@@ -177,3 +177,4 @@ FULL_*.txt
 
 # legacy php archive (local only)
 .archive/
+delivery/

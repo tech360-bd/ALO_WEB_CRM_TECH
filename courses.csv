@@ -1779,26 +1779,6 @@ UNI-UN-0089-PHD-1777,UNI-UN-0089,PhD in Medicine,PhD,PhD,Medicine,36,active,CROS
 UNI-UN-0089-PHD-1778,UNI-UN-0089,PhD in Data Science,PhD,PhD,Data Science,36,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0089-PHD-1779,UNI-UN-0089,PhD in Economics,PhD,PhD,Economics,36,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0089-PHD-1780,UNI-UN-0089,PhD in Environmental Science,PhD,PhD,Environmental Science,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-FOU-1781,UNI-UN-0090,Foundation Certificate in Artificial Intelligence,Foundation,Foundation,Artificial Intelligence,9,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-FOU-1782,UNI-UN-0090,Foundation Certificate in Psychology,Foundation,Foundation,Psychology,9,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-FOU-1783,UNI-UN-0090,Foundation Certificate in Biology,Foundation,Foundation,Biology,9,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-FOU-1784,UNI-UN-0090,Foundation Certificate in Physics,Foundation,Foundation,Physics,9,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-FOU-1785,UNI-UN-0090,Foundation Certificate in Architecture,Foundation,Foundation,Architecture,9,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-UND-1786,UNI-UN-0090,BSc (Hons) Chemistry,Undergraduate,Bachelor's,Chemistry,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-UND-1787,UNI-UN-0090,BSc (Hons) Mathematics,Undergraduate,Bachelor's,Mathematics,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-UND-1788,UNI-UN-0090,BSc (Hons) Education,Undergraduate,Bachelor's,Education,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-UND-1789,UNI-UN-0090,BSc (Hons) Electrical Engineering,Undergraduate,Bachelor's,Electrical Engineering,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-UND-1790,UNI-UN-0090,BSc (Hons) Civil Engineering,Undergraduate,Bachelor's,Civil Engineering,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-POS-1791,UNI-UN-0090,MSc History,Postgraduate,Master's,History,12,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-POS-1792,UNI-UN-0090,MSc Mechanical Engineering,Postgraduate,Master's,Mechanical Engineering,12,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-POS-1793,UNI-UN-0090,MSc Nursing,Postgraduate,Master's,Nursing,12,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-POS-1794,UNI-UN-0090,MSc International Relations,Postgraduate,Master's,International Relations,12,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-POS-1795,UNI-UN-0090,MSc Finance & Accounting,Postgraduate,Master's,Finance & Accounting,12,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-PHD-1796,UNI-UN-0090,PhD in Pharmacy,PhD,PhD,Pharmacy,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-PHD-1797,UNI-UN-0090,PhD in Media & Communications,PhD,PhD,Media & Communications,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-PHD-1798,UNI-UN-0090,PhD in Computer Science,PhD,PhD,Computer Science,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-PHD-1799,UNI-UN-0090,PhD in Engineering,PhD,PhD,Engineering,36,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0090-PHD-1800,UNI-UN-0090,PhD in Law,PhD,PhD,Law,36,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0091-FOU-1801,UNI-UN-0091,Foundation Certificate in Business & Management,Foundation,Foundation,Business & Management,9,active,VERIFIED_OFFICIAL
 UNI-UN-0091-FOU-1802,UNI-UN-0091,Foundation Certificate in Medicine,Foundation,Foundation,Medicine,9,active,VERIFIED_OFFICIAL
 UNI-UN-0091-FOU-1803,UNI-UN-0091,Foundation Certificate in Data Science,Foundation,Foundation,Data Science,9,active,VERIFIED_OFFICIAL
@@ -11199,3 +11179,23 @@ UNI-UN-0560-PHD-11197,UNI-UN-0560,PhD in Media & Communications,PhD,PhD,Media & 
 UNI-UN-0560-PHD-11198,UNI-UN-0560,PhD in Computer Science,PhD,PhD,Computer Science,36,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0560-PHD-11199,UNI-UN-0560,PhD in Engineering,PhD,PhD,Engineering,36,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0560-PHD-11200,UNI-UN-0560,PhD in Law,PhD,PhD,Law,36,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0090-POS-1801,UNI-UN-0090,MSc Advanced Computer Science,Postgraduate,Master's,Computer Science,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1802,UNI-UN-0090,MSc Computer Science,Postgraduate,Master's,Computer Science,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1803,UNI-UN-0090,"MSc Environmental Management (Waste, Energy, Water, Oil and Gas)",Postgraduate,Master's,Environmental Science,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1804,UNI-UN-0090,MSc International Management and Business Development,Postgraduate,Master's,Business & Management,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1805,UNI-UN-0090,MSc International Marketing,Postgraduate,Master's,Marketing,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1806,UNI-UN-0090,MPH Master of Public Health,Postgraduate,Master's,Public Health,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1807,UNI-UN-0090,MSc Nursing,Postgraduate,Master's,Nursing,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1808,UNI-UN-0090,MSc Engineering,Postgraduate,Master's,Engineering,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1809,UNI-UN-0090,MSc Business & Management,Postgraduate,Master's,Business & Management,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1810,UNI-UN-0090,MSc Fashion,Postgraduate,Master's,Fashion,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1811,UNI-UN-0090,MSc Risk Management,Postgraduate,Master's,Risk Management,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1812,UNI-UN-0090,MSc Quantity Surveying,Postgraduate,Master's,Quantity Surveying,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1813,UNI-UN-0090,MSc Digital Fashion Strategy,Postgraduate,Master's,Digital Fashion Strategy,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1814,UNI-UN-0090,MSc International Banking Finance,Postgraduate,Master's,International Banking Finance,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1815,UNI-UN-0090,MSc Construction Management,Postgraduate,Master's,Construction Management,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-POS-1816,UNI-UN-0090,MSc Physiotherapy,Postgraduate,Master's,Physiotherapy,12,active,VERIFIED_OFFICIAL
+UNI-UN-0090-UND-1817,UNI-UN-0090,BSc (Hons) MBA,Undergraduate,Bachelor's,MBA,36,active,VERIFIED_OFFICIAL
+UNI-UN-0090-PHD-1818,UNI-UN-0090,PhD in MBA Luxury Brand Management,PhD,PhD,MBA Luxury Brand Management,36,active,VERIFIED_OFFICIAL
+UNI-UN-0090-FOU-1819,UNI-UN-0090,Foundation Certificate in Applied Instrumentation,Foundation,Foundation,Applied Instrumentation,9,active,VERIFIED_OFFICIAL
+UNI-UN-0090-UND-1820,UNI-UN-0090,BSc (Hons) Cyber Security,Undergraduate,Bachelor's,Cyber Security,36,active,VERIFIED_OFFICIAL

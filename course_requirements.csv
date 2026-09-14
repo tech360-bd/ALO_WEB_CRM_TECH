@@ -1779,26 +1779,6 @@ REQ-1777,UNI-UN-0089-PHD-1777,"Master's degree with research thesis, minimum GPA
 REQ-1778,UNI-UN-0089-PHD-1778,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
 REQ-1779,UNI-UN-0089-PHD-1779,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
 REQ-1780,UNI-UN-0089-PHD-1780,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1781,UNI-UN-0090-FOU-1781,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1782,UNI-UN-0090-FOU-1782,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1783,UNI-UN-0090-FOU-1783,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1784,UNI-UN-0090-FOU-1784,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1785,UNI-UN-0090-FOU-1785,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1786,UNI-UN-0090-UND-1786,High school graduation with strong performance (GPA 2.8+),2.8/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1787,UNI-UN-0090-UND-1787,High school graduation with strong performance (GPA 2.8+),2.8/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1788,UNI-UN-0090-UND-1788,High school graduation with strong performance (GPA 2.8+),2.8/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1789,UNI-UN-0090-UND-1789,High school graduation with strong performance (GPA 2.8+),2.8/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1790,UNI-UN-0090-UND-1790,High school graduation with strong performance (GPA 2.8+),2.8/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1791,UNI-UN-0090-POS-1791,"Bachelor's degree in related field, minimum 2:1 Honours or GPA 3.0/4.0",3.0/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1792,UNI-UN-0090-POS-1792,"Bachelor's degree in related field, minimum 2:1 Honours or GPA 3.0/4.0",3.0/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1793,UNI-UN-0090-POS-1793,"Bachelor's degree in related field, minimum 2:1 Honours or GPA 3.0/4.0",3.0/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1794,UNI-UN-0090-POS-1794,"Bachelor's degree in related field, minimum 2:1 Honours or GPA 3.0/4.0",3.0/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1795,UNI-UN-0090-POS-1795,"Bachelor's degree in related field, minimum 2:1 Honours or GPA 3.0/4.0",3.0/4.0,GPA / Percentage / ECTS,no,no,no
-REQ-1796,UNI-UN-0090-PHD-1796,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1797,UNI-UN-0090-PHD-1797,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1798,UNI-UN-0090-PHD-1798,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1799,UNI-UN-0090-PHD-1799,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
-REQ-1800,UNI-UN-0090-PHD-1800,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
 REQ-1801,UNI-UN-0091-FOU-1801,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
 REQ-1802,UNI-UN-0091-FOU-1802,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
 REQ-1803,UNI-UN-0091-FOU-1803,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
@@ -11199,3 +11179,23 @@ REQ-11197,UNI-UN-0560-PHD-11197,"Master's degree with research thesis, minimum G
 REQ-11198,UNI-UN-0560-PHD-11198,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
 REQ-11199,UNI-UN-0560-PHD-11199,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
 REQ-11200,UNI-UN-0560-PHD-11200,"Master's degree with research thesis, minimum GPA 3.2/4.0 or equivalent",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
+REQ-11201,UNI-UN-0090-POS-1801,"UK honours degree 2:2 (or equivalent). IELTS 6.0 no element below 5.5 (TOEFL 78, PTE 59).",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11202,UNI-UN-0090-POS-1802,UK honours degree 2:2 (or equivalent) in computing or related. IELTS 6.0 no element below 5.5.,3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11203,UNI-UN-0090-POS-1803,"UK honours degree 2:2 in environmental, earth sciences, engineering or related. IELTS 6.0.",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11204,UNI-UN-0090-POS-1804,"UK honours degree 2:2 (or equivalent). Four-year Bachelor 50% minimum (second class) or Three-year Bachelor 60% minimum (first class). IELTS 6.0 no element below 5.5, TOEFL 78 (L17 R18 S20 W17), PTE 59.",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11205,UNI-UN-0090-POS-1805,UK honours degree 2:2. IELTS 6.0 no element below 5.5.,3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11206,UNI-UN-0090-POS-1806,"UK honours degree 2:2 in health, life sciences or related. IELTS 6.0 no element below 5.5.",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11207,UNI-UN-0090-POS-1807,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11208,UNI-UN-0090-POS-1808,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11209,UNI-UN-0090-POS-1809,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11210,UNI-UN-0090-POS-1810,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11211,UNI-UN-0090-POS-1811,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11212,UNI-UN-0090-POS-1812,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11213,UNI-UN-0090-POS-1813,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11214,UNI-UN-0090-POS-1814,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11215,UNI-UN-0090-POS-1815,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11216,UNI-UN-0090-POS-1816,"UK honours degree 2:2 or equivalent, IELTS 6.0 no element below 5.5",3.0/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11217,UNI-UN-0090-UND-1817,High school graduation with strong performance (GPA 2.8+),2.8/4.0,GPA / Percentage / ECTS,no,no,no
+REQ-11218,UNI-UN-0090-PHD-1818,"Master's degree with research thesis, minimum GPA 3.2/4.0",3.2/4.0,GPA / Percentage / ECTS,no,no,yes
+REQ-11219,UNI-UN-0090-FOU-1819,High school completion with overall 60% or equivalent GPA,2.8/4.0,GPA / Percentage / ECTS,no,no,yes
+REQ-11220,UNI-UN-0090-UND-1820,High school graduation with strong performance (GPA 2.8+),2.8/4.0,GPA / Percentage / ECTS,no,no,no
