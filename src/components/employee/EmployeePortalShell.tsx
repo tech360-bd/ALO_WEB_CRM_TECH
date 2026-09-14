@@ -30,6 +30,8 @@ import {
   Bell,
   ChevronRight,
   Briefcase,
+  ShieldAlert,
+  Search,
 } from 'lucide-react';
 
 interface NavItem {
@@ -61,8 +63,14 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
   const { user, currentView, setView, logout, notifications, sidebarOpen, setSidebarOpen } =
     usePortalStore();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [actingAs, setActingAs] = useState<{ isActing: boolean; originalAdmin?: string } | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const designation = (user as any)?.designation || (user as any)?.role || 'Employee';
+  const branch = (user as any)?.branch || 'Dhaka Main Branch';
+  const country = (user as any)?.country || 'Bangladesh';
+  const taskCount = 5; // could be fetched from /api/employee/tasks count
+  const pendingApprovals = 2;
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -73,6 +81,19 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const actingAdmin = localStorage.getItem('alo_acting_as_admin');
+      if (actingAdmin) setActingAs({ isActing: true, originalAdmin: actingAdmin });
+    }
+  }, []);
+
+  const handleStopActingAs = () => {
+    localStorage.removeItem('alo_acting_as_admin');
+    setActingAs(null);
+    window.location.href = '/admin/employees';
+  };
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -136,6 +157,19 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
 
   return (
     <div className="h-screen flex flex-col bg-alo-page overflow-hidden">
+      {actingAs?.isActing && (
+        <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-md z-50">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <ShieldAlert className="w-5 h-5 text-amber-200 animate-pulse" />
+            <span>SUPER ADMIN ACTING AS: <span className="underline decoration-wavy">{user?.name}</span> ({designation})</span>
+            <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-2">Audit Logging Active</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs h-7" onClick={()=> window.location.href='/admin/access-control-center'}>View Acting-As Audit</Button>
+            <Button size="sm" className="bg-white text-orange-600 hover:bg-white/90 text-xs font-bold h-7 shadow" onClick={handleStopActingAs}>Stop Acting-As</Button>
+          </div>
+        </div>
+      )}
       <header className="h-14 bg-white border-b border-alo-border flex items-center justify-between px-4 lg:px-6 shrink-0 z-30">
         <div className="flex items-center gap-3">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
@@ -159,11 +193,18 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
               {user?.id}
             </Badge>
             <Badge variant="brand" className="text-xs">
-              Employee
+              {designation}
             </Badge>
+            <span className="hidden lg:inline text-xs text-slate-500">{branch} • {country}</span>
+            <span className="hidden lg:inline-flex items-center gap-1 text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded-full font-medium">{taskCount} tasks</span>
+            <span className="hidden lg:inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full font-medium">{pendingApprovals} approvals</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <div className="hidden md:flex relative">
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <input placeholder="Search students, leads..." className="pl-9 pr-3 h-9 text-xs bg-slate-50 border border-slate-200 rounded-lg w-56 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-200" />
+          </div>
           <div className="relative" ref={notifRef}>
             <Button
               variant="ghost"

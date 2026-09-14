@@ -4,6 +4,11 @@ import { db } from "@/lib/db";
 
 export async function GET(request: Request) {
   return withAuth(async (req, auth) => {
+    // RBAC: block student/partner from employee APIs
+    const _blockedTypes = ['STUDENT','student','PARTNER','partner'];
+    if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
+      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    }
     try {
       const tickets = await db.portalAuditLog.findMany({
         where: { actorUserId: auth.userId, action: { contains: "SUPPORT" } },

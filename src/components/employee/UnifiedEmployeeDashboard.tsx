@@ -273,10 +273,8 @@ export default function UnifiedEmployeeDashboard({
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Assigned Leads</p>
-                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.assignedLeads ?? 18}</h3>
-                    <p className="text-[11px] text-emerald-600 flex items-center gap-1 mt-1 font-medium">
-                      <TrendingUp className="w-3 h-3" /> +4 new today
-                    </p>
+                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.assignedLeads ?? 0}</h3>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{data?.hotLeads ?? 0} hot leads</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-orange-50 text-[#E8501A] flex items-center justify-center">
                     <Users className="w-6 h-6" />
@@ -288,8 +286,8 @@ export default function UnifiedEmployeeDashboard({
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Students</p>
-                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.activeStudents ?? 28}</h3>
-                    <p className="text-[11px] text-slate-400 mt-1 font-medium">{data?.totalStudents ?? 64} total in CRM</p>
+                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.activeStudents ?? 0}</h3>
+                    <p className="text-[11px] text-slate-400 mt-1 font-medium">{data?.totalStudents ?? 0} total in CRM</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#0057B8] flex items-center justify-center">
                     <GraduationCap className="w-6 h-6" />
@@ -301,8 +299,8 @@ export default function UnifiedEmployeeDashboard({
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Applications</p>
-                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.activeApplications ?? 19}</h3>
-                    <p className="text-[11px] text-[#0057B8] font-medium mt-1">{data?.offersReceived ?? 7} Offers Received</p>
+                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.activeApplications ?? 0}</h3>
+                    <p className="text-[11px] text-[#0057B8] font-medium mt-1">{data?.offersReceived ?? 0} Offers Received</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                     <FileText className="w-6 h-6" />
@@ -314,8 +312,8 @@ export default function UnifiedEmployeeDashboard({
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Tasks & SLA</p>
-                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.pendingTasksCount ?? 4}</h3>
-                    <p className="text-[11px] text-amber-600 font-medium mt-1">2 due in next 3 hours</p>
+                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.pendingTasksCount ?? 0}</h3>
+                    <p className="text-[11px] text-amber-600 font-medium mt-1">{data?.followUpsDue ?? 0} follow-ups due</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                     <Clock className="w-6 h-6" />
@@ -331,13 +329,13 @@ export default function UnifiedEmployeeDashboard({
                   Dashboard Overview
                 </TabsTrigger>
                 <TabsTrigger value="leads" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
-                  My Leads ({data?.assignedLeads ?? 18})
+                  My Leads ({data?.assignedLeads ?? 0})
                 </TabsTrigger>
                 <TabsTrigger value="students" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
-                  My Students ({data?.activeStudents ?? 28})
+                  My Students ({data?.activeStudents ?? 0})
                 </TabsTrigger>
                 <TabsTrigger value="applications" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
-                  Applications ({data?.activeApplications ?? 19})
+                  Applications ({data?.activeApplications ?? 0})
                 </TabsTrigger>
                 <TabsTrigger value="tasks" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
                   Tasks & Follow-ups
@@ -442,23 +440,29 @@ export default function UnifiedEmployeeDashboard({
                   <div className="space-y-6">
                     <Card className="bg-white border-slate-200 shadow-sm">
                       <CardHeader className="p-4 border-b border-slate-100">
-                        <CardTitle className="text-sm font-bold text-slate-800">Today's Counseling & Tasks</CardTitle>
+                        <CardTitle className="text-sm font-bold text-slate-800">Today's Tasks & Follow-ups</CardTitle>
                       </CardHeader>
                       <CardContent className="p-4 space-y-3">
-                        <div className="flex items-start gap-3 p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                          <Clock className="w-4 h-4 text-[#E8501A] mt-0.5 shrink-0" />
-                          <div className="text-xs">
-                            <p className="font-bold text-slate-800">IELTS Score Follow-up</p>
-                            <p className="text-slate-500">Student: Rahim Uddin &bull; Due 2:00 PM</p>
+                        {data?.pendingTasksCount > 0 ? (
+                          <div className="space-y-2">
+                            <div className="flex items-start gap-3 p-2.5 rounded-lg bg-orange-50 border border-orange-100">
+                              <Clock className="w-4 h-4 text-[#E8501A] mt-0.5 shrink-0" />
+                              <div className="text-xs">
+                                <p className="font-bold text-slate-800">{data.followUpsDue ?? 0} Follow-ups Due Today</p>
+                                <p className="text-slate-500">{data.overdueFollowUps ?? 0} overdue — take action</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-3 p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                              <Calendar className="w-4 h-4 text-[#0057B8] mt-0.5 shrink-0" />
+                              <div className="text-xs">
+                                <p className="font-bold text-slate-800">{data.pendingTasksCount ?? 0} Pending Tasks</p>
+                                <p className="text-slate-500">View in Tasks tab for details</p>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                          <Calendar className="w-4 h-4 text-[#0057B8] mt-0.5 shrink-0" />
-                          <div className="text-xs">
-                            <p className="font-bold text-slate-800">University Selection 1-on-1</p>
-                            <p className="text-slate-500">Student: Nusrat Jahan &bull; 4:30 PM (Office)</p>
-                          </div>
-                        </div>
+                        ) : (
+                          <div className="text-center py-6 text-slate-400 text-xs">No tasks due today. All clear.</div>
+                        )}
                       </CardContent>
                     </Card>
 
@@ -526,24 +530,19 @@ export default function UnifiedEmployeeDashboard({
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                          <tr className="hover:bg-slate-50">
-                            <td className="p-3 font-bold text-slate-800">Tariqul Islam</td>
-                            <td className="p-3 text-slate-600">+880 1712-345678</td>
-                            <td className="p-3 text-slate-600">United Kingdom</td>
-                            <td className="p-3"><Badge className="bg-emerald-100 text-emerald-800 text-[10px]">Hot Lead</Badge></td>
-                            <td className="p-3 text-right">
-                              <Button size="sm" variant="ghost" className="text-[#0057B8] text-xs h-7">Contact</Button>
-                            </td>
-                          </tr>
-                          <tr className="hover:bg-slate-50">
-                            <td className="p-3 font-bold text-slate-800">Shamima Nasrin</td>
-                            <td className="p-3 text-slate-600">+880 1819-876543</td>
-                            <td className="p-3 text-slate-600">Canada</td>
-                            <td className="p-3"><Badge className="bg-blue-100 text-blue-800 text-[10px]">In Follow-up</Badge></td>
-                            <td className="p-3 text-right">
-                              <Button size="sm" variant="ghost" className="text-[#0057B8] text-xs h-7">Contact</Button>
-                            </td>
-                          </tr>
+                          {(data?.myLeads && data.myLeads.length > 0) ? data.myLeads.map((lead:any)=>(
+                            <tr key={lead.id} className="hover:bg-slate-50">
+                              <td className="p-3 font-bold text-slate-800">{lead.name}</td>
+                              <td className="p-3 text-slate-600">{lead.phone}</td>
+                              <td className="p-3 text-slate-600">{lead.destination || lead.country || '—'}</td>
+                              <td className="p-3"><Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} text-[10px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge></td>
+                              <td className="p-3 text-right">
+                                <Button size="sm" variant="ghost" className="text-[#0057B8] text-xs h-7">Contact</Button>
+                              </td>
+                            </tr>
+                          )) : (
+                            <tr><td colSpan={5} className="p-6 text-center text-slate-400">No leads assigned yet.</td></tr>
+                          )}
                         </tbody>
                       </table>
                     </div>

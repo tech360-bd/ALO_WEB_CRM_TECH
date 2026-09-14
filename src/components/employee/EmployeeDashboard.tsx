@@ -75,7 +75,7 @@ export default function EmployeeDashboard() {
   const { user } = usePortalStore();
   const userName = user?.name || 'Sarah Khan';
   const [loading, setLoading] = useState(true);
-  const [taskData, setTaskData] = useState(mockTaskData);
+  const [taskData, setTaskData] = useState<any[]>([]);
   const [applicationData, setApplicationData] = useState<any[]>([]);
   const [reportSummary, setReportSummary] = useState<any>(null);
 
@@ -213,7 +213,9 @@ export default function EmployeeDashboard() {
             </CardHeader>
             <CardContent className="pt-4">
               <div className="space-y-1 max-h-96 overflow-y-auto">
-                {taskData.map((task, i) => (
+                {taskData.length===0 ? (
+                  <div className="text-center py-8 text-sm text-slate-400">No tasks assigned yet.</div>
+                ) : taskData.map((task, i) => (
                   <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/30 transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: task.priority === 'high' ? '#dc2626' : task.priority === 'medium' ? '#d97706' : '#059669' }} />

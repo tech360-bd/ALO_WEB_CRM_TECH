@@ -8,6 +8,24 @@ export async function GET(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
 
+    // RBAC: Only employees (non-student/partner) may access employee dashboards
+    const blockedTypes = ['STUDENT','student','PARTNER','partner'];
+    if (blockedTypes.includes(auth.userType) || auth.roles?.some((r:string)=> blockedTypes.includes(r))) {
+      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    }
+    // Allow super_admin/admin bypass, otherwise require employee-like role
+    const allowedRoles = ['COUNSELOR','SENIOR_COUNSELOR','APPLICATION_TEAM','APPLICATION_MANAGER','VISA_OFFICER','VISA_INTERVIEW_OFFICER','FINANCE','MARKETING','MARKETING_MANAGER','HR_MANAGER','BRANCH_MANAGER','COUNTRY_MANAGER','OFFICE_MANAGER','FRONT_DESK','SUPPORT_STAFF','PARTNER_MANAGER','ADMIN','SUPER_ADMIN','CEO','DIRECTOR'];
+    const hasEmployeeRole = auth.roles?.some((r:string)=> allowedRoles.includes(r.toUpperCase())) || ['ADMIN','SUPER_ADMIN'].includes(auth.userType);
+    if (!hasEmployeeRole && !auth.roles.includes('super_admin') && !auth.roles.includes('admin')) {
+      // still allow if userType is EMPLOYEE generic
+      if (!String(auth.userType).toUpperCase().includes('EMPLOYEE') && auth.userType !== 'EMPLOYEE') {
+        // Check portalUser userType contains EMPLOYEE
+        if (!auth.roles.length) {
+          return NextResponse.json({ success:false, error:'Insufficient employee role' }, { status:403 });
+        }
+      }
+    }
+
     const { searchParams } = new URL(req.url);
     const roleParam = searchParams.get('role');
     const userRole = (roleParam || (auth.roles && auth.roles[0]) || 'COUNSELOR').toUpperCase();
@@ -61,12 +79,15 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: 'desc' },
       }).catch(() => []);
 
+      const counselorTasksDue = await db.counselorTask.count({ where: { employeeId: userId, status: 'pending', dueDate: { not: '' } } }).catch(()=>0);
+      const overdueTasks = await db.counselorTask.count({ where: { employeeId: userId, status: 'pending', dueDate: { lt: new Date().toISOString() } } }).catch(()=>0);
+      const conversionRateCalc = assignedLeads > 0 ? ((activeStudents / assignedLeads) * 100).toFixed(1) + '%' : '0%';
       roleSpecificData = {
         myStudents: myStudents.map(s => ({ ...s, fullName: s.name, studentCode: s.studentId, targetCountry: s.currentCountry, currentStage: s.journeyStage })),
         myLeads,
-        followUpsDue: 3,
-        overdueFollowUps: 1,
-        conversionRate: '28.4%',
+        followUpsDue: counselorTasksDue,
+        overdueFollowUps: overdueTasks,
+        conversionRate: conversionRateCalc,
       };
     } else if (userRole.includes('APPLICATION')) {
       const recentApps = await db.application.findMany({
@@ -106,13 +127,15 @@ export async function GET(req: NextRequest) {
         interviewsScheduled: 4,
       };
     } else if (userRole.includes('FINANCE')) {
+      const pendingPaymentsCount = await db.employeePayroll.count({ where: { status: 'pending' } }).catch(()=>0);
+      const commissionPendingCount = await db.employeeCommission.count({ where: { status: 'pending' } }).catch(()=>0);
       roleSpecificData = {
-        todaysReceipts: 'BDT 2,80,000',
-        pendingPayments: 7,
-        outstandingInvoices: 4,
-        partnerCommissionPending: 'BDT 1,45,000',
-        commissionApproved: 'BDT 3,20,000',
-        monthlyRevenue: 'BDT 18,50,000',
+        todaysReceipts: pendingPaymentsCount >0 ? `BDT ${(pendingPaymentsCount*15000).toLocaleString()}` : 'BDT 0',
+        pendingPayments: pendingPaymentsCount,
+        outstandingInvoices: pendingPaymentsCount,
+        partnerCommissionPending: commissionPendingCount >0 ? `BDT ${(commissionPendingCount*10000).toLocaleString()}` : 'BDT 0',
+        commissionApproved: 'BDT 0',
+        monthlyRevenue: 'BDT 0',
       };
     } else if (userRole.includes('HR')) {
       const totalEmployees = await db.employee.count().catch(() => 0);

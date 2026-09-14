@@ -7,6 +7,10 @@ export async function GET(req: NextRequest) {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
+    const blockedTypes = ['STUDENT','student','PARTNER','partner'];
+    if (blockedTypes.includes(auth.userType) || auth.roles?.some((r:string)=> blockedTypes.includes(r))) {
+      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    }
 
     const { searchParams } = new URL(req.url);
     const scope = searchParams.get('scope') || 'assigned';
@@ -49,7 +53,12 @@ export async function POST(req: NextRequest) {
   try {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
+    const _authCheck = authResult as AuthContext;
+    const blockedPost = ['STUDENT','student','PARTNER','partner'];
+    if (blockedPost.includes(_authCheck.userType) || _authCheck.roles?.some((r:string)=> blockedPost.includes(r))) {
+      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    }
+    const auth = _authCheck as AuthContext;
 
     const body = await req.json();
     const { fullName, name, phone, email, country, destination, level, intake } = body;
