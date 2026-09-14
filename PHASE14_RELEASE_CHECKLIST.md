@@ -1,6 +1,6 @@
 # PHASE 14 — Release Checklist (Human Approval Required)
 
-**Branch:** `arena/01a09c20-alo-education-z-ai` @ `a948e8a` (+ local workflow 3044 fix pending push) | **Date:** 2026-09-15 Asia/Dhaka | **Do not deploy until all Mandatory checked and human signs.**
+**Branch:** `arena/01a09c20-alo-education-z-ai` @ `b302364` (+ local workflow 3044 fix pending push) | **Date:** 2026-09-15 Asia/Dhaka | **Do not deploy until all Mandatory checked and human signs.**
 
 ## Mandatory Gates (must be ✅ before READY → DEPLOYED)
 
