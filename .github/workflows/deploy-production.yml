@@ -10,851 +10,105 @@ concurrency:
   group: alo-production
   cancel-in-progress: false
 
-env:
-  PRODUCTION_APP_DIR: /root/alo-github-main-new
-  PM2_APP_NAME: alo-education
-  APP_PORT: "3044"
-  NODE_VERSION: "22"
-
 jobs:
   deploy:
     name: Deploy ALO Education to Production VPS
     runs-on: ubuntu-latest
-    timeout-minutes: 60
 
     steps:
-      # ───────────────────────────────────────────────────────────────
-      # 1. Checkout with safe submodule handling
-      # Fix: _reference_repos submodule entries without .gitmodules caused
-      # "fatal: No url found for submodule path '_reference_repos/CloddsBot'"
-      # We use submodules: false and have removed invalid submodule metadata.
-      # ───────────────────────────────────────────────────────────────
       - name: Checkout source
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          submodules: false
+        uses: actions/checkout@v4
 
-      - name: Verify checkout is clean (no submodule error)
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          echo "=== CHECKOUT VERIFICATION ==="
-          git status --short || true
-          git branch --show-current
-          git log -1 --oneline
-          git remote -v
-          echo "Checking for invalid submodule metadata..."
-          if git ls-files --stage | grep -q "^160000"; then
-            echo "::warning::Found gitlink entries (submodules) in index:"
-            git ls-files --stage | grep "^160000" || true
-            echo "These should be removed if _reference_repos is reference-only (see fix in this workflow)"
-            # Do not fail here, but warn — the fix removes them from index
-          else
-            echo "No submodule gitlinks found — clean checkout."
-          fi
-          if [ -f .gitmodules ]; then
-            echo ".gitmodules exists, validating..."
-            cat .gitmodules
-            git submodule status || echo "::warning::submodule status failed, check .gitmodules"
-          else
-            echo "No .gitmodules — expected after fix (reference repos removed from index)."
-          fi
-          echo "=== CHECKOUT OK ==="
-
-      # ───────────────────────────────────────────────────────────────
-      # 2. Pre-flight secret validation
-      # Required secrets (documented):
-      #   PRODUCTION_VPS_HOST, PRODUCTION_VPS_PORT, PRODUCTION_VPS_USER, PRODUCTION_VPS_SSH_KEY
-      # Legacy fallback supported: DEPLOY_HOST, DEPLOY_PORT, DEPLOY_USER, DEPLOY_SSH_KEY
-      # Optional: PRODUCTION_VPS_FINGERPRINT
-      # Never echo actual values.
-      # ───────────────────────────────────────────────────────────────
-      - name: Validate deployment configuration
-        shell: bash
-        env:
-          VPS_HOST_PRIMARY: ${{ secrets.PRODUCTION_VPS_HOST }}
-          VPS_HOST_LEGACY: ${{ secrets.DEPLOY_HOST }}
-          VPS_PORT_PRIMARY: ${{ secrets.PRODUCTION_VPS_PORT }}
-          VPS_PORT_LEGACY: ${{ secrets.DEPLOY_PORT }}
-          VPS_USER_PRIMARY: ${{ secrets.PRODUCTION_VPS_USER }}
-          VPS_USER_LEGACY: ${{ secrets.DEPLOY_USER }}
-          VPS_KEY_PRIMARY: ${{ secrets.PRODUCTION_VPS_SSH_KEY }}
-          VPS_KEY_LEGACY: ${{ secrets.DEPLOY_SSH_KEY }}
-        run: |
-          set -Eeuo pipefail
-          echo "=== PRE-FLIGHT: SECRET VALIDATION ==="
-
-          # Resolve with fallback (primary preferred)
-          VPS_HOST="${VPS_HOST_PRIMARY:-$VPS_HOST_LEGACY}"
-          VPS_PORT="${VPS_PORT_PRIMARY:-$VPS_PORT_LEGACY}"
-          VPS_USER="${VPS_USER_PRIMARY:-$VPS_USER_LEGACY}"
-          VPS_KEY="${VPS_KEY_PRIMARY:-$VPS_KEY_LEGACY}"
-
-          test -n "${VPS_HOST}" || {
-            echo "::error::Missing GitHub Actions secret PRODUCTION_VPS_HOST (or legacy DEPLOY_HOST)"
-            echo "Required secrets:"
-            echo "  PRODUCTION_VPS_HOST"
-            echo "  PRODUCTION_VPS_PORT"
-            echo "  PRODUCTION_VPS_USER"
-            echo "  PRODUCTION_VPS_SSH_KEY"
-            echo "Optional: PRODUCTION_VPS_FINGERPRINT"
-            echo "Legacy fallback also supported: DEPLOY_HOST, DEPLOY_PORT, DEPLOY_USER, DEPLOY_SSH_KEY"
-            exit 1
-          }
-
-          test -n "${VPS_PORT}" || {
-            echo "::error::Missing GitHub Actions secret PRODUCTION_VPS_PORT (or legacy DEPLOY_PORT)"
-            exit 1
-          }
-
-          test -n "${VPS_USER}" || {
-            echo "::error::Missing GitHub Actions secret PRODUCTION_VPS_USER (or legacy DEPLOY_USER)"
-            exit 1
-          }
-
-          test -n "${VPS_KEY}" || {
-            echo "::error::Missing GitHub Actions secret PRODUCTION_VPS_SSH_KEY (or legacy DEPLOY_SSH_KEY)"
-            exit 1
-          }
-
-          echo "Deployment SSH configuration is present (values redacted)."
-          echo "Host present: $(test -n "$VPS_HOST" && echo yes || echo no)"
-          echo "Port present: $(test -n "$VPS_PORT" && echo yes || echo no)"
-          echo "User present: $(test -n "$VPS_USER" && echo yes || echo no)"
-          echo "Key present: $(test -n "$VPS_KEY" && echo yes || echo no)"
-          echo "=== SECRET VALIDATION PASSED ==="
-
-      # ───────────────────────────────────────────────────────────────
-      # 3. SSH connectivity pre-flight (harmless commands)
-      # Confirms: SSH succeeds, correct username, remote shell available
-      # Does not print credentials.
-      # ───────────────────────────────────────────────────────────────
-      - name: SSH connectivity pre-flight
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.PRODUCTION_VPS_HOST || secrets.DEPLOY_HOST }}
-          port: ${{ secrets.PRODUCTION_VPS_PORT || secrets.DEPLOY_PORT }}
-          username: ${{ secrets.PRODUCTION_VPS_USER || secrets.DEPLOY_USER }}
-          key: ${{ secrets.PRODUCTION_VPS_SSH_KEY || secrets.DEPLOY_SSH_KEY }}
-          timeout: 30s
-          command_timeout: 2m
-          script: |
-            set -Eeuo pipefail
-            echo "=== SSH CONNECTIVITY PRE-FLIGHT ==="
-            echo "Remote user:"
-            whoami
-            echo "Hostname:"
-            hostname
-            echo "PWD:"
-            pwd
-            echo "Shell:"
-            echo $SHELL
-            echo "Uptime:"
-            uptime || true
-            echo "=== SSH CONNECTIVITY OK ==="
-
-      # ───────────────────────────────────────────────────────────────
-      # 4. Main production deployment (hardened, production-safe)
-      # Gates:
-      #   ✓ workflow syntax valid
-      #   ✓ required secrets present (checked above)
-      #   ✓ SSH connection successful (checked above)
-      #   ✓ production directory verified
-      #   ✓ Git remote verified
-      #   ✓ exact SHA verified
-      #   ✓ dependencies installed
-      #   ✓ Prisma validated & generated
-      #   ✓ migration verified
-      #   ✓ build successful
-      #   ✓ PM2 restart successful
-      #   ✓ port listening
-      #   ✓ health endpoint successful
-      #   ✓ .gitmodules clean
-      # ───────────────────────────────────────────────────────────────
-      - name: Deploy to production VPS
-        uses: appleboy/ssh-action@v1.2.2
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-          PRODUCTION_APP_DIR: ${{ env.PRODUCTION_APP_DIR }}
-          PM2_APP_NAME: ${{ env.PM2_APP_NAME }}
-          APP_PORT: ${{ env.APP_PORT }}
-        with:
-          host: ${{ secrets.PRODUCTION_VPS_HOST || secrets.DEPLOY_HOST }}
-          port: ${{ secrets.PRODUCTION_VPS_PORT || secrets.DEPLOY_PORT }}
-          username: ${{ secrets.PRODUCTION_VPS_USER || secrets.DEPLOY_USER }}
-          key: ${{ secrets.PRODUCTION_VPS_SSH_KEY || secrets.DEPLOY_SSH_KEY }}
-          timeout: 30s
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
           command_timeout: 45m
+          script_stop: true
           script: |
-            set -Eeuo pipefail
-
-            # Never use set -x (would leak secrets)
-            # All sensitive values come from GitHub Secrets, not hardcoded
+            set -e
 
             echo "=== ALO PRODUCTION DEPLOYMENT ==="
-            echo "Triggered by GitHub SHA: ${GITHUB_SHA:-unknown}"
-            echo "Production dir: ${PRODUCTION_APP_DIR:-/root/alo-github-main-new}"
-            echo "PM2 app: ${PM2_APP_NAME:-alo-education}"
-            echo "App port: ${APP_PORT:-3044}"
-            echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo ""
 
-            # ─────────────────────────────────────────────────────────
-            # PRE-FLIGHT
-            # ─────────────────────────────────────────────────────────
-            echo "=== PRE-FLIGHT ==="
-            echo "Node version:"
-            node -v || echo "node not found"
-            echo "NPM version:"
-            npm -v || echo "npm not found"
-            echo "PM2 version:"
-            pm2 -v || echo "pm2 not found"
-            echo "Git version:"
-            git --version
-            echo "Prisma check:"
-            npx prisma --version || echo "prisma not found yet (will be after npm ci)"
-            echo ""
+            cd /root/alo-live
 
-            # ─────────────────────────────────────────────────────────
-            # VERIFY APP DIRECTORY
-            # ─────────────────────────────────────────────────────────
-            echo "=== VERIFY APP DIRECTORY ==="
-            APP_DIR="${PRODUCTION_APP_DIR:-/root/alo-github-main-new}"
-            echo "Checking app dir: $APP_DIR"
-
-            if [ ! -d "$APP_DIR" ]; then
-              echo "::error::Production directory $APP_DIR does not exist"
-              echo "What was verified: directory existence"
-              echo "What is missing: $APP_DIR"
-              echo "Safe command to verify: ls -la /root/ | grep alo"
-              echo "Possible alternative dirs:"
-              ls -la /root/ | grep -E "alo|ALO" || true
-              echo "Also check:"
-              ls -la /home/ | grep -E "alo" || true
-              exit 1
-            fi
-
-            cd "$APP_DIR"
-            echo "PWD after cd: $(pwd)"
-
-            if [ ! -d ".git" ]; then
-              echo "::error::$APP_DIR is not a Git repository"
-              echo "What was verified: .git existence"
-              echo "Safe command: ls -la $APP_DIR | head -n 20"
-              ls -la | head -n 20
-              exit 1
-            fi
-
-            echo "Git toplevel:"
-            git rev-parse --show-toplevel
-
-            echo "Git status (short):"
-            git status --short || true
-
-            echo "Git remote -v:"
+            echo "=== 1. VERIFY REPOSITORY ==="
+            git rev-parse --is-inside-work-tree
             git remote -v
 
-            echo "Git branch --show-current:"
-            git branch --show-current || git rev-parse --abbrev-ref HEAD || true
+            echo "=== 2. FETCH GITHUB MAIN ==="
+            git fetch origin main
 
-            echo "Checking package.json exists..."
-            test -f package.json || {
-              echo "::error::package.json not found in $APP_DIR"
-              echo "What was verified: package.json existence"
-              echo "Safe command: ls -la $APP_DIR"
-              ls -la
-              exit 1
-            }
-            echo "package.json exists"
+            echo "=== 3. SYNC SOURCE ==="
+            git reset --hard origin/main
 
-            echo "Checking Prisma schema exists..."
-            if [ -f prisma/schema.prisma ]; then
-              echo "prisma/schema.prisma exists"
-            else
-              echo "::warning::prisma/schema.prisma not found, checking alternatives..."
-              find . -maxdepth 3 -name "schema.prisma" | head -n 10 || true
-              # Do not fail yet, but warn — some projects may have different path
-            fi
+            echo "=== 4. VERIFY COMMIT ==="
+            echo "DEPLOYING:"
+            git rev-parse HEAD
 
-            echo "Checking ecosystem.config.cjs exists..."
-            if [ -f ecosystem.config.cjs ]; then
-              echo "ecosystem.config.cjs exists"
-              cat ecosystem.config.cjs | grep -E "name|PORT|script" | head -n 20
-            else
-              echo "::warning::ecosystem.config.cjs not found"
-              ls -la | grep ecosystem || true
-            fi
+            echo "GITHUB:"
+            git rev-parse origin/main
 
-            echo "Checking .env exists (must preserve, never overwrite)..."
-            if [ -f .env ]; then
-              echo ".env exists — will preserve (never overwrite)"
-              ls -l .env
-              # Never cat .env (contains secrets)
-              echo ".env permissions:"
-              stat -c "%a %n" .env || ls -l .env
-            else
-              echo "::warning::.env not found in $APP_DIR — application may require it"
-              echo "What was verified: .env existence"
-              echo "Safe command: ls -la $APP_DIR | grep env"
-              ls -la | grep -E "env" || true
-              echo "If .env is managed elsewhere, document that mechanism"
-            fi
+            test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
 
-            echo "=== APP DIRECTORY VERIFIED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # VERIFY GIT REMOTE
-            # ─────────────────────────────────────────────────────────
-            echo "=== VERIFY GIT REMOTE ==="
-            echo "Expected remote should point to: engralaminn-collab/alo_education_z....ai or your fork"
-            git remote -v
-
-            # Verify remote URL contains expected repo (not blindly, just log)
-            if git remote -v | grep -q "alo_education"; then
-              echo "Git remote contains alo_education — OK"
-            else
-              echo "::warning::Git remote does not contain 'alo_education' — verify if this is correct production repo"
-              echo "What was verified: git remote -v output"
-              echo "What is missing: expected remote URL"
-            fi
-            echo "=== GIT REMOTE VERIFIED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # BACKUP (before destructive)
-            # ─────────────────────────────────────────────────────────
-            echo "=== BACKUP ==="
-            BACKUP_DIR="/root/alo-backups"
-            mkdir -p "$BACKUP_DIR"
-            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-            BACKUP_NAME="alo-backup-${TIMESTAMP}-${GITHUB_SHA:-unknown}"
-            BACKUP_PATH="${BACKUP_DIR}/${BACKUP_NAME}"
-
-            echo "Creating backup metadata at $BACKUP_PATH"
-            mkdir -p "$BACKUP_PATH"
-
-            echo "Current SHA: $(git rev-parse HEAD)" > "$BACKUP_PATH/current-sha.txt"
-            echo "Current branch: $(git branch --show-current || git rev-parse --abbrev-ref HEAD)" > "$BACKUP_PATH/current-branch.txt"
-            echo "GitHub expected SHA: ${GITHUB_SHA:-unknown}" > "$BACKUP_PATH/expected-sha.txt"
-            echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$BACKUP_PATH/date.txt"
-            git status --short > "$BACKUP_PATH/git-status.txt" || true
-            git remote -v > "$BACKUP_PATH/git-remote.txt" || true
-            pm2 describe "${PM2_APP_NAME:-alo-education}" > "$BACKUP_PATH/pm2-describe-before.txt" 2>&1 || true
-            pm2 status > "$BACKUP_PATH/pm2-status-before.txt" 2>&1 || true
-            # Do NOT backup .env into GitHub artifacts, only local backup dir
-            if [ -f .env ]; then
-              cp .env "$BACKUP_PATH/.env.backup" 2>/dev/null && chmod 600 "$BACKUP_PATH/.env.backup" && echo ".env backed up locally (not in Git)" || echo "Failed to backup .env locally"
-            fi
-
-            echo "Backup created at $BACKUP_PATH"
-            ls -lh "$BACKUP_PATH" || true
-            echo "=== BACKUP COMPLETE ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # VERIFY COMMIT (exact SHA)
-            # ─────────────────────────────────────────────────────────
-            echo "=== VERIFY COMMIT ==="
-            EXPECTED_SHA="${GITHUB_SHA:-}"
-            if [ -z "$EXPECTED_SHA" ]; then
-              echo "::warning::GITHUB_SHA not set in env, will use origin/main HEAD"
-            fi
-
-            echo "Fetching origin..."
-            git fetch origin --prune
-
-            # Prefer exact SHA if available, otherwise origin/main
-            if [ -n "$EXPECTED_SHA" ]; then
-              echo "Expected SHA from GitHub workflow: $EXPECTED_SHA"
-              echo "Checking if expected SHA exists in remote..."
-              if git cat-file -e "$EXPECTED_SHA" 2>/dev/null; then
-                echo "Expected SHA exists locally after fetch"
-              else
-                echo "Expected SHA not found locally, trying to fetch origin/main and check..."
-                git fetch origin main
-                # If SHA not in local, we should still verify origin/main contains it or matches
-                if git branch -r --contains "$EXPECTED_SHA" | grep -q "origin/main"; then
-                  echo "Expected SHA is contained in origin/main — OK"
-                else
-                  echo "::warning::Expected SHA $EXPECTED_SHA not found in origin/main history, but continuing to verify origin/main HEAD"
-                  echo "This may happen if workflow triggered from different branch — will verify origin/main HEAD vs expected"
-                fi
-              fi
-              echo "Actual HEAD before reset: $(git rev-parse HEAD)"
-              echo "Origin/main HEAD: $(git rev-parse origin/main)"
-              # For production, we deploy exact SHA that triggered workflow
-              # If workflow is push to main, origin/main should equal expected SHA
-              # Fail if they differ
-              ORIGIN_MAIN_SHA=$(git rev-parse origin/main)
-              if [ "$ORIGIN_MAIN_SHA" != "$EXPECTED_SHA" ]; then
-                echo "::warning::origin/main SHA ($ORIGIN_MAIN_SHA) differs from expected GitHub SHA ($EXPECTED_SHA)"
-                echo "This may be OK if new commits were pushed after workflow started, but we will deploy expected SHA for safety"
-                echo "Attempting to checkout expected SHA directly..."
-                git checkout "$EXPECTED_SHA" 2>&1 || {
-                  echo "::error::Failed to checkout expected SHA $EXPECTED_SHA"
-                  echo "What was verified: git cat-file -e and branch --contains"
-                  echo "What is missing: expected commit in remote"
-                  echo "Safe command: git log --oneline -20 && git branch -r --contains $EXPECTED_SHA"
-                  git log --oneline -20 || true
-                  exit 1
-                }
-                ACTUAL_SHA=$(git rev-parse HEAD)
-                echo "After checkout, actual HEAD: $ACTUAL_SHA"
-                if [ "$ACTUAL_SHA" != "$EXPECTED_SHA" ]; then
-                  echo "::error::SHA mismatch after checkout: expected $EXPECTED_SHA, got $ACTUAL_SHA"
-                  exit 1
-                fi
-                echo "Now reset to origin/main if origin/main is intended production source? Checking..."
-                # If business requires deploying origin/main exactly, we should reset to expected SHA, not origin/main blindly
-                # For safety, deploy expected SHA, not necessarily origin/main latest if they differ
-                # So we keep expected SHA checkout
-                echo "Deploying exact expected SHA: $EXPECTED_SHA"
-              else
-                echo "origin/main SHA matches expected SHA — OK"
-                echo "Syncing to origin/main..."
-                git reset --hard origin/main
-              fi
-            else
-              echo "No expected SHA, syncing to origin/main (fallback)"
-              git reset --hard origin/main
-            fi
-
-            ACTUAL_SHA=$(git rev-parse HEAD)
-            echo "Deployed HEAD after sync: $ACTUAL_SHA"
-            if [ -n "$EXPECTED_SHA" ]; then
-              if [ "$ACTUAL_SHA" != "$EXPECTED_SHA" ]; then
-                echo "::error::SHA verification failed: expected $EXPECTED_SHA, got $ACTUAL_SHA"
-                echo "What was verified: git rev-parse HEAD vs GITHUB_SHA"
-                echo "What was fixed: attempted checkout of expected SHA"
-                echo "What is missing: matching SHA"
-                echo "Safe command: git rev-parse HEAD && echo $EXPECTED_SHA"
-                exit 1
-              fi
-              echo "SHA verification PASSED: $ACTUAL_SHA == $EXPECTED_SHA"
-            fi
-            echo "=== COMMIT VERIFIED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # VERIFY .ENV PRESERVATION (again after git reset)
-            # ─────────────────────────────────────────────────────────
-            echo "=== VERIFY .ENV PRESERVATION ==="
-            if [ -f .env ]; then
-              echo ".env still exists after git reset — OK (preserved)"
-              ls -l .env
-            else
-              echo "::warning::.env missing after git reset — restoring from backup if available"
-              if [ -f "$BACKUP_PATH/.env.backup" ]; then
-                cp "$BACKUP_PATH/.env.backup" .env
-                chmod 600 .env
-                echo ".env restored from backup"
-              else
-                echo "::error::.env missing and no backup found — cannot continue if app requires .env"
-                echo "What was verified: .env existence after git reset"
-                echo "What is missing: .env"
-                echo "Safe command: ls -la $APP_DIR | grep env"
-                ls -la | grep env || true
-                # Do not fail immediately if app can run without .env, but warn
-                echo "Checking if .env.example exists as reference (do NOT copy to .env in production)..."
-                ls -la | grep -E "env" || true
-              fi
-            fi
-            echo "=== .ENV VERIFIED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # INSTALL DEPENDENCIES
-            # ─────────────────────────────────────────────────────────
-            echo "=== INSTALL DEPENDENCIES ==="
-            echo "Running npm ci (must use lockfile, not npm install)..."
+            echo "=== 5. INSTALL DEPENDENCIES ==="
             npm ci
-            echo "=== DEPENDENCIES INSTALLED ==="
-            echo ""
 
-            # ─────────────────────────────────────────────────────────
-            # PRISMA VALIDATION
-            # ─────────────────────────────────────────────────────────
-            echo "=== PRISMA VALIDATION ==="
-            echo "Prisma version:"
-            npx prisma --version
-
-            echo "Validating schema..."
-            npx prisma validate
-
-            echo "=== PRISMA VALIDATION PASSED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # PRISMA GENERATE
-            # ─────────────────────────────────────────────────────────
-            echo "=== PRISMA GENERATE ==="
-            echo "Generating Prisma client (explicit, with engine download)..."
+            echo "=== 6. GENERATE PRISMA CLIENT ==="
             npx prisma generate
 
-            echo "Verifying client exists..."
-            test -d node_modules/.prisma/client || {
-              echo "::error::Prisma client not generated at node_modules/.prisma/client"
-              echo "What was verified: npx prisma generate output and directory existence"
-              echo "What is missing: Prisma client"
-              echo "Safe command: npx prisma --version && npx prisma validate && ls -la node_modules/.prisma/"
-              ls -la node_modules/.prisma/ || true
-              exit 1
-            }
-            test -f node_modules/.prisma/client/index.js || test -f node_modules/.prisma/client/default.js || {
-              echo "::warning::Prisma client index.js not found, checking alternative..."
-              ls -la node_modules/.prisma/client/ | head -n 20 || true
-            }
-
-            echo "=== PRISMA GENERATE PASSED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # DATABASE MIGRATION (safe, never destructive)
-            # ─────────────────────────────────────────────────────────
-            echo "=== DATABASE MIGRATION ==="
-            echo "Checking if migration deployment is required..."
-            echo "Using safe command: npx prisma migrate deploy (never migrate dev, never db push, never reset)"
-
-            # Only run migrate deploy, never dev/push/reset
+            echo "=== 7. APPLY EXISTING MIGRATIONS ==="
             npx prisma migrate deploy
 
-            echo "=== DATABASE MIGRATION PASSED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # BUILD
-            # ─────────────────────────────────────────────────────────
-            echo "=== BUILD ==="
-            echo "Running npm run build (must exit 0, no || true)..."
+            echo "=== 8. BUILD APPLICATION ==="
             npm run build
 
-            echo "Verifying build output..."
-            if [ -d ".next" ]; then
-              echo ".next exists"
-              ls -lh .next/ | head -n 20 || true
-            else
-              echo "::error::.next directory missing after build"
-              echo "What was verified: npm run build output and .next existence"
-              echo "Safe command: ls -la && cat package.json | grep build"
-              ls -la
-              exit 1
-            fi
+            echo "=== 9. RESTART PM2 ==="
+            pm2 restart alo-education --update-env
 
-            if [ -d ".next/standalone" ]; then
-              echo ".next/standalone exists"
-              ls -lh .next/standalone/ | head -n 20 || true
-              if [ -f ".next/standalone/server.js" ]; then
-                echo ".next/standalone/server.js exists — OK"
-              else
-                echo "::warning::.next/standalone/server.js not found, checking nested..."
-                find .next/standalone -name "server.js" | head -n 10 || true
-              fi
-            else
-              echo "::warning::.next/standalone not found — build may use different output"
-            fi
-
-            echo "=== BUILD PASSED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # PM2 DEPLOYMENT
-            # ─────────────────────────────────────────────────────────
-            echo "=== PM2 RESTART ==="
-            PM2_APP="${PM2_APP_NAME:-alo-education}"
-            echo "Verifying existing PM2 process $PM2_APP before restart..."
-
-            if pm2 describe "$PM2_APP" > /dev/null 2>&1; then
-              echo "PM2 process $PM2_APP exists — describing:"
-              pm2 describe "$PM2_APP" | grep -E "status|script path|exec cwd|node.js version|name|pid" || pm2 describe "$PM2_APP" | head -n 100
-            else
-              echo "::warning::PM2 process $PM2_APP does not exist yet — will start via ecosystem file"
-              pm2 status || true
-            fi
-
-            echo "Restarting PM2 $PM2_APP with --update-env..."
-            if [ -f ecosystem.config.cjs ]; then
-              echo "Using ecosystem.config.cjs"
-              pm2 restart "$PM2_APP" --update-env || pm2 start ecosystem.config.cjs --update-env
-            elif [ -f ecosystem.config.js ]; then
-              echo "Using ecosystem.config.js"
-              pm2 restart "$PM2_APP" --update-env || pm2 start ecosystem.config.js --update-env
-            else
-              echo "::warning::No ecosystem file found, trying pm2 restart with standalone server.js"
-              pm2 restart "$PM2_APP" --update-env || pm2 start .next/standalone/server.js --name "$PM2_APP" --update-env
-            fi
-
-            echo "Saving PM2 state..."
+            echo "=== 10. SAVE PM2 ==="
             pm2 save
 
-            echo "PM2 status:"
-            pm2 status
+            echo "=== 11. VERIFY PM2 ==="
+            pm2 describe alo-education | grep -E 'status|script path|exec cwd|node.js version'
 
-            echo "PM2 describe after restart:"
-            pm2 describe "$PM2_APP" | grep -E "status|script path|exec cwd|node.js version|uptime|restarts" || pm2 describe "$PM2_APP" | head -n 100
+            echo "=== 12. VERIFY PORT 3025 ==="
+            ss -lntp | grep ':3025'
 
-            # Verify online
-            if pm2 describe "$PM2_APP" | grep -q "online"; then
-              echo "PM2 $PM2_APP is online — OK"
-            else
-              echo "::error::PM2 $PM2_APP not online after restart"
-              echo "What was verified: pm2 describe status"
-              echo "What is missing: online status"
-              echo "Safe command: pm2 status && pm2 logs $PM2_APP --lines 50 --nostream"
-              pm2 logs "$PM2_APP" --lines 100 --nostream || true
-              exit 1
-            fi
-
-            echo "=== PM2 RESTART PASSED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # PORT VERIFICATION
-            # ─────────────────────────────────────────────────────────
-            echo "=== PORT VERIFICATION ==="
-            PORT_TO_CHECK="${APP_PORT:-3044}"
-            echo "Checking port $PORT_TO_CHECK from ecosystem.config.cjs and real config..."
-
-            echo "From ecosystem.config.cjs:"
-            grep -E "PORT" ecosystem.config.cjs || true
-
-            echo "Checking listening ports..."
-            ss -lntp | grep -E ":${PORT_TO_CHECK}|:${APP_PORT}" || {
-              echo "::warning::Port $PORT_TO_CHECK not found in ss -lntp, checking all Node ports..."
-              ss -lntp | grep -E "node|pm2|:${PORT_TO_CHECK}" || ss -lntp | head -n 50 || true
-              echo "Checking netstat fallback..."
-              netstat -lntp 2>/dev/null | grep -E ":${PORT_TO_CHECK}" || true
-              echo "Checking if app is listening on different port..."
-              ss -lntp | grep -E "3044|3025|3000" || true
-            }
-
-            echo "=== PORT VERIFICATION DONE ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # HEALTH CHECK
-            # ─────────────────────────────────────────────────────────
-            echo "=== HEALTH CHECK ==="
-            echo "Waiting 8s for app warmup..."
-            sleep 8
-
-            echo "Testing local health endpoints..."
-
-            # Prefer /api/health if exists (we verified it exists in repo)
-            HEALTH_URLS=(
-              "http://127.0.0.1:${PORT_TO_CHECK}/api/health"
-              "http://127.0.0.1:${PORT_TO_CHECK}/health"
-              "http://127.0.0.1:${PORT_TO_CHECK}/"
-            )
-
-            HEALTH_PASSED=false
-            for URL in "${HEALTH_URLS[@]}"; do
-              echo "Trying $URL..."
-              if curl -fsS "$URL" > /tmp/health.json 2>&1; then
-                echo "Health check PASSED for $URL"
-                cat /tmp/health.json | head -n 20 || true
-                HEALTH_PASSED=true
-                break
-              else
-                echo "Health check failed for $URL (will try next)"
-                cat /tmp/health.json 2>&1 | head -n 20 || true
-              fi
-            done
-
-            if [ "$HEALTH_PASSED" = false ]; then
-              echo "::error::All health checks failed"
-              echo "What was verified: curl to local health endpoints"
-              echo "What is missing: HTTP 200 from app"
-              echo "Safe commands to diagnose:"
-              echo "  pm2 status"
-              echo "  pm2 logs $PM2_APP --lines 100 --nostream"
-              echo "  ss -lntp | grep $PORT_TO_CHECK"
-              echo "  curl -v http://127.0.0.1:${PORT_TO_CHECK}/api/health"
-              pm2 status || true
-              pm2 logs "$PM2_APP" --lines 100 --nostream || true
-              ss -lntp | grep -E ":${PORT_TO_CHECK}|:${APP_PORT}" || true
-
-              echo ""
-              echo "=== ROLLBACK SAFETY ==="
-              echo "Build succeeded but health failed — attempting rollback to previous backup..."
-
-              # Find latest backup before current
-              PREV_BACKUP=$(ls -dt /root/alo-backups/alo-backup-* 2>/dev/null | sed -n '2p' || true)
-              if [ -n "$PREV_BACKUP" ] && [ -d "$PREV_BACKUP" ]; then
-                echo "Found previous backup: $PREV_BACKUP"
-                echo "Restoring SHA: $(cat $PREV_BACKUP/current-sha.txt 2>/dev/null || echo unknown)"
-                PREV_SHA=$(cat "$PREV_BACKUP/current-sha.txt" 2>/dev/null || echo "")
-                if [ -n "$PREV_SHA" ]; then
-                  echo "Checking out previous SHA: $PREV_SHA"
-                  git checkout "$PREV_SHA" || git reset --hard "$PREV_SHA" || {
-                    echo "::warning::Failed to checkout previous SHA, trying origin/main"
-                    git reset --hard origin/main || true
-                  }
-                  echo "Restoring .env if needed..."
-                  if [ -f "$PREV_BACKUP/.env.backup" ] && [ ! -f .env ]; then
-                    cp "$PREV_BACKUP/.env.backup" .env
-                    chmod 600 .env
-                    echo ".env restored from previous backup"
-                  fi
-                  echo "Rebuilding previous version..."
-                  npm ci
-                  npx prisma generate
-                  npm run build
-                  echo "Restarting PM2..."
-                  pm2 restart "$PM2_APP" --update-env || pm2 start ecosystem.config.cjs --update-env
-                  pm2 save
-                  sleep 8
-                  echo "Verifying rollback health..."
-                  if curl -fsS "http://127.0.0.1:${PORT_TO_CHECK}/api/health" > /dev/null; then
-                    echo "Rollback health PASSED — previous version restored"
-                  else
-                    echo "::error::Rollback health also failed — manual intervention required"
-                    pm2 status
-                    pm2 logs "$PM2_APP" --lines 100 --nostream || true
-                    exit 1
-                  fi
-                else
-                  echo "::warning::No SHA in previous backup, cannot auto-rollback, manual intervention required"
-                fi
-              else
-                echo "::warning::No previous backup found for rollback — manual intervention required"
-                echo "Available backups:"
-                ls -la /root/alo-backups/ | tail -n 20 || true
-              fi
-
-              echo "=== ROLLBACK ATTEMPTED ==="
-              exit 1
-            fi
-
-            echo "=== HEALTH CHECK PASSED ==="
-            echo ""
-
-            # ─────────────────────────────────────────────────────────
-            # FINAL VERIFICATION
-            # ─────────────────────────────────────────────────────────
-            echo "=== FINAL VERIFICATION ==="
-            echo "Deployed commit: $(git rev-parse HEAD)"
-            echo "Expected commit: ${GITHUB_SHA:-unknown}"
-            if [ -n "${GITHUB_SHA:-}" ]; then
-              test "$(git rev-parse HEAD)" = "${GITHUB_SHA}" || {
-                echo "::error::Final SHA mismatch"
-                exit 1
-              }
-            fi
-            echo "PM2 status:"
-            pm2 status
-            echo "Port $PORT_TO_CHECK listening:"
-            ss -lntp | grep -E ":${PORT_TO_CHECK}" || ss -lntp | grep -E "3044|3025" | head -n 20
-            echo "Health endpoint:"
-            curl -fsS "http://127.0.0.1:${PORT_TO_CHECK}/api/health" | head -n 30 || curl -fsS "http://127.0.0.1:${PORT_TO_CHECK}/" | head -n 30 || true
-            echo ""
             echo "=== DEPLOYMENT COMPLETE ==="
-            echo "ALO Education ERP is LIVE on port ${PORT_TO_CHECK}"
-            echo "Commit: $(git rev-parse HEAD)"
-            echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-      - name: Production health check (external verification)
+      - name: Production health check
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.PRODUCTION_VPS_HOST || secrets.DEPLOY_HOST }}
-          port: ${{ secrets.PRODUCTION_VPS_PORT || secrets.DEPLOY_PORT }}
-          username: ${{ secrets.PRODUCTION_VPS_USER || secrets.DEPLOY_USER }}
-          key: ${{ secrets.PRODUCTION_VPS_SSH_KEY || secrets.DEPLOY_SSH_KEY }}
-          timeout: 30s
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
           command_timeout: 10m
+          script_stop: true
           script: |
-            set -Eeuo pipefail
-            echo "=== ALO PRODUCTION HEALTH CHECK (EXTERNAL) ==="
+            set -e
 
-            APP_DIR="${{ env.PRODUCTION_APP_DIR }}"
-            PM2_APP="${{ env.PM2_APP_NAME }}"
-            PORT_TO_CHECK="${{ env.APP_PORT }}"
+            echo "=== ALO PRODUCTION HEALTH CHECK ==="
 
-            echo "App dir: $APP_DIR"
-            echo "PM2 app: $PM2_APP"
-            echo "Port: $PORT_TO_CHECK"
-            echo ""
+            sleep 8
 
             echo "=== PM2 ==="
-            pm2 describe "$PM2_APP" | grep -q "online" || {
-              echo "::error::PM2 $PM2_APP not online"
-              pm2 status
-              pm2 logs "$PM2_APP" --lines 50 --nostream || true
-              exit 1
-            }
-            echo "PM2 $PM2_APP online — OK"
+            pm2 describe alo-education | grep -q "online"
 
-            echo "=== PORT $PORT_TO_CHECK ==="
-            ss -lntp | grep -E ":${PORT_TO_CHECK}" || {
-              echo "::warning::Port $PORT_TO_CHECK not in ss, checking alternatives..."
-              ss -lntp | grep -E "3044|3025|3000" | head -n 20 || true
-            }
-
-            echo "=== LOCAL HTTP /api/health ==="
-            curl -fsS "http://127.0.0.1:${PORT_TO_CHECK}/api/health" > /tmp/health2.json
-            cat /tmp/health2.json | head -n 30
-            echo "Health endpoint OK"
+            echo "=== LOCAL HTTP ==="
+            curl -fsS http://127.0.0.1:3025/ > /dev/null
 
             echo "=== DEPLOYED COMMIT ==="
-            cd "$APP_DIR"
-            echo "HEAD: $(git rev-parse HEAD)"
-            echo "Expected: ${{ github.sha }}"
-            test "$(git rev-parse HEAD)" = "${{ github.sha }}" || {
-              echo "::error::SHA mismatch in final health check"
-              echo "Deployed: $(git rev-parse HEAD)"
-              echo "Expected: ${{ github.sha }}"
-              exit 1
-            }
+            cd /root/alo-live
+            git rev-parse HEAD
+
+            echo "=== GITHUB COMMIT ==="
+            git rev-parse origin/main
+
+            test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
 
             echo "=== HEALTH CHECK PASSED ==="
-            echo "ALO Education is LIVE"
-
-  # ───────────────────────────────────────────────────────────────
-  # Workflow documentation for required secrets
-  # ───────────────────────────────────────────────────────────────
-  # Required GitHub Secrets (must be set in repo Settings → Secrets and variables → Actions):
-  #
-  #   PRODUCTION_VPS_HOST        — VPS IP/hostname (e.g., 65.108.91.110)
-  #   PRODUCTION_VPS_PORT        — SSH port (usually 22)
-  #   PRODUCTION_VPS_USER        — SSH username (e.g., root or deploy)
-  #   PRODUCTION_VPS_SSH_KEY     — Private SSH key (Ed25519 or RSA, no passphrase or with ssh-agent)
-  #
-  # Optional:
-  #   PRODUCTION_VPS_FINGERPRINT — SSH host fingerprint for verification
-  #
-  # Legacy fallback (for backward compatibility, prefer PRODUCTION_VPS_*):
-  #   DEPLOY_HOST, DEPLOY_PORT, DEPLOY_USER, DEPLOY_SSH_KEY
-  #
-  # Never hard-code:
-  #   - VPS IP, username, password, private key
-  #   - DATABASE_URL, JWT secrets, API keys
-  #   - .env contents
-  #
-  # All app secrets stay on VPS in /root/alo-github-main-new/.env (chmod 600), never in GitHub.
-  # Deployment verifies .env exists and never overwrites it.
-  #
-  # Production directory: /root/alo-github-main-new (configurable via env.PRODUCTION_APP_DIR)
-  # PM2 app name: alo-education (configurable via env.PM2_APP_NAME)
-  # App port: 3044 (from ecosystem.config.cjs, configurable via env.APP_PORT)
-  # Health endpoint: /api/health (exists at src/app/api/health/route.ts)
-  #
-  # Fix for previous failure:
-  #   - Removed invalid input script_stop (not valid for appleboy/ssh-action@v1.2.2)
-  #   - Changed secrets from DEPLOY_HOST to PRODUCTION_VPS_HOST with fallback
-  #   - Added pre-flight secret validation (no values echoed)
-  #   - Added SSH connectivity pre-flight
-  #   - Made app dir configurable and verified (not assumed)
-  #   - Added exact SHA verification (github.sha)
-  #   - Added backup before destructive git reset
-  #   - Preserve .env (never overwrite)
-  #   - Prisma: validate + generate explicit, migrate deploy only (never dev/push/reset)
-  #   - Build: npm ci + npm run build, fail on error, no || true
-  #   - PM2: describe before restart, restart --update-env, save, verify online
-  #   - Port: 3044 from ecosystem.config.cjs (not 3025), verified via ss
-  #   - Health: curl /api/health + / + SHA match
-  #   - Rollback safety if health fails
-  #   - Fixed .gitmodules: removed invalid _reference_repos submodule entries, submodules: false in checkout
-  #   - Updated checkout from v4 to v5 to fix Node 20 deprecation warning
-  #   - Improved error reporting with sections
-  #   - Security: set -Eeuo pipefail, no set -x, never log secrets
