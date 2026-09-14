@@ -43,11 +43,47 @@ function redactSecrets(obj: any): any {
 export async function aiGateway(req: GatewayRequest): Promise<GatewayResult> {
   const correlationId = req.correlationId || `gw_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`;
   const started = Date.now();
-  const route = await routeModel({ taskType: req.taskType, department: req.department, modelHint: req.model });
+
+  // Department-controlled routing: if department is configured, enforce its primary model
+  // and its fallback policy. Prevent silent fallback that would violate privacy/cost.
+  let route: ModelRoute;
+  let deptConfig: any = null;
+  if (req.department) {
+    try {
+      const { getDepartmentModelConfig } = await import('./department-model-config');
+      deptConfig = getDepartmentModelConfig(req.department);
+      if (deptConfig) {
+        // Enforce department's primary model explicitly (no inheritance)
+        route = {
+          provider: deptConfig.primary.provider as any,
+          model: deptConfig.primary.model,
+          reason: `department:${deptConfig.departmentSlug}`,
+        };
+        // Privacy check: if dept is CONFIDENTIAL/RESTRICTED, require local
+        if ((deptConfig.primary.privacy === 'CONFIDENTIAL' || deptConfig.primary.privacy === 'RESTRICTED') && !process.env.LOCAL_AI_URL && deptConfig.primary.provider !== 'local') {
+          throw new Error(`Privacy ${deptConfig.primary.privacy} blocks external model for ${deptConfig.departmentSlug} — LOCAL_AI_URL required`);
+        }
+      } else {
+        // Not configured department → BLOCKED (IDLE)
+        throw new Error(`Department ${req.department} is not configured for AI (IDLE) — configure exactly one department at a time via department-model-config.ts`);
+      }
+    } catch (e: any) {
+      if (e.message.includes('not configured for AI') || e.message.includes('Privacy')) throw e;
+      // If config import fails, fall back to generic routing (for non-department calls)
+      route = await routeModel({ taskType: req.taskType, department: req.department, modelHint: req.model });
+    }
+  } else {
+    route = await routeModel({ taskType: req.taskType, department: req.department, modelHint: req.model });
+  }
+  if (!route!) route = await routeModel({ taskType: req.taskType, department: req.department, modelHint: req.model });
 
   // Groq guard: rate limit + queue + circuit breaker (free-tier protection §13)
+  // Respect department fallback policy: if allowFallback false, do not fallback on guard
   const guard = await groqGuard.acquire(route.provider);
   if (!guard.allowed) {
+    if (deptConfig && !deptConfig.primary.allowFallback) {
+      throw new Error(`GroqGuard blocked ${route.provider} for ${deptConfig.departmentSlug} but fallback not allowed (allowFallback=false) — failing explicitly per rollout isolation`);
+    }
     // queued or circuit open → fallback route
     const fallbackRoute = guard.fallbackRoute || { provider: 'openrouter', model: process.env.AI_DEFAULT_MODEL || 'glm-4-flash', reason: 'groq_guard' } as ModelRoute;
     return invokeProvider({ ...req, model: fallbackRoute.model }, fallbackRoute, correlationId, started, true);
@@ -59,7 +95,10 @@ export async function aiGateway(req: GatewayRequest): Promise<GatewayResult> {
     return res;
   } catch (e: any) {
     groqGuard.recordFailure(route.provider, e);
-    // fallback once
+    // fallback once — but respect department policy
+    if (deptConfig && !deptConfig.primary.allowFallback) {
+      throw new Error(`Provider ${route.provider} failed for ${deptConfig.departmentSlug} and fallback disabled — failing explicitly: ${e.message?.slice(0,120)}`);
+    }
     if (route.provider === 'groq') {
       const fb: ModelRoute = { provider: 'openrouter', model: process.env.AI_FAST_MODEL || 'glm-4-flash', reason: 'groq_fallback' };
       try {
