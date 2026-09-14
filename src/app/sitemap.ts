@@ -7,6 +7,14 @@ import { slugify } from '@/lib/all-universities';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
 
+  const legalRoutes = ['/privacy-policy','/terms','/cookies','/communication-policy','/lead-data-usage-policy','/user-guide','/accessibility'].map(p=>({ url: `${baseUrl}${p}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.3 }));
+  const infoRoutes: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    ...legalRoutes,
+  ];
+  const destSlugs = ['uk','canada','australia','usa','ireland','new-zealand','dubai','germany','malaysia','netherlands','cyprus','sweden'];
+  const destinationRoutes: MetadataRoute.Sitemap = destSlugs.map((s)=>({ url: `${baseUrl}/destinations/${s}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 }));
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
     { url: `${baseUrl}/universities`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
@@ -18,14 +26,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/eligibility-check`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/compare`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/destinations`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/destinations/uk`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/destinations/usa`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/destinations/canada`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/destinations/australia`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/destinations/germany`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/destinations/ireland`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
-    { url: `${baseUrl}/destinations/new-zealand`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
+    ...destinationRoutes,
     { url: `${baseUrl}/book-consultation`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    ...infoRoutes,
   ];
 
   const allUnis = [...ukUniversitiesPart1, ...ukUniversitiesPart2, ...allIntlUniversities];

@@ -25,7 +25,7 @@ export type PortalView =
   | 'public-services' | 'public-about' | 'public-success-stories'
   | 'public-team' | 'public-faqs' | 'public-resources'
   | 'public-language-prep' | 'public-english-test' | 'public-visa-readiness'
-  | 'public-privacy' | 'public-terms' | 'public-cookies'
+  | 'public-privacy' | 'public-terms' | 'public-cookie' | 'public-cookies' | 'public-accessibility' | 'public-communication-policy' | 'public-lead-data-policy' | 'public-user-guide'
   // Student
   | 'student-dashboard' | 'student-profile' | 'student-applications' | 'student-applications-detail'
   | 'student-documents' | 'student-messages' | 'student-course-finder'

@@ -38,10 +38,9 @@ const MAIN_COUNTRIES = [
 const MORE_COUNTRIES = [
   { slug: "germany", name: "Germany", flag: "🇩🇪" },
   { slug: "malaysia", name: "Malaysia", flag: "🇲🇾" },
-  { slug: "denmark", name: "Denmark", flag: "🇩🇰" },
-  { slug: "japan", name: "Japan", flag: "🇯🇵" },
-  { slug: "south-korea", name: "South Korea", flag: "🇰🇷" },
-  { slug: "europe", name: "Europe (Schengen)", flag: "🇪🇺" },
+  { slug: "netherlands", name: "Netherlands", flag: "🇳🇱" },
+  { slug: "cyprus", name: "Cyprus", flag: "🇨🇾" },
+  { slug: "sweden", name: "Sweden", flag: "🇸🇪" },
 ];
 
 /* ─── Language Prep ─── */
@@ -90,10 +89,9 @@ const FOOTER_DESTINATIONS = [
   { label: "Germany", slug: "germany" },
   { label: "Dubai / UAE", slug: "dubai" },
   { label: "Malaysia", slug: "malaysia" },
-  { label: "Denmark", slug: "denmark" },
-  { label: "Japan", slug: "japan" },
-  { label: "South Korea", slug: "south-korea" },
-  { label: "Europe", slug: "europe" },
+  { label: "Netherlands", slug: "netherlands" },
+  { label: "Cyprus", slug: "cyprus" },
+  { label: "Sweden", slug: "sweden" },
 ];
 
 const FOOTER_QUICK_LINKS = [
@@ -115,9 +113,13 @@ const FOOTER_COMPANY = [
 ];
 
 const FOOTER_LEGAL = [
-  { label: "Terms of Service", view: "public-terms" as ViewKey },
   { label: "Privacy Policy", view: "public-privacy" as ViewKey },
+  { label: "Terms of Service", view: "public-terms" as ViewKey },
   { label: "Cookie Policy", view: "public-cookie" as ViewKey },
+  { label: "Communication Policy", view: "public-communication-policy" as ViewKey },
+  { label: "Lead Data Usage", view: "public-lead-data-policy" as ViewKey },
+  { label: "User Guide", view: "public-user-guide" as ViewKey },
+  { label: "Accessibility", view: "public-accessibility" as ViewKey },
 ];
 
 /* ─── Logo ─── */

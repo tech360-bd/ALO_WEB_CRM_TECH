@@ -210,6 +210,11 @@ function PublicView({ view }: { view: PortalView }) {
     case 'public-privacy': return <PublicLegalPage type="privacy" />;
     case 'public-terms': return <PublicLegalPage type="terms" />;
     case 'public-cookies': return <PublicLegalPage type="cookies" />;
+    case 'public-cookie': return <PublicLegalPage type="cookies" />;
+    case 'public-accessibility': return <PublicLegalPage type="accessibility" />;
+    case 'public-communication-policy': return <PublicLegalPage type="communication" />;
+    case 'public-lead-data-policy': return <PublicLegalPage type="lead-data" />;
+    case 'public-user-guide': return <PublicLegalPage type="user-guide" />;
     default: return <PublicHomepage />;
   }
 }
@@ -438,6 +443,10 @@ function HomePageContent() {
       '/privacy-policy': { view: 'public-privacy' },
       '/terms': { view: 'public-terms' },
       '/cookies': { view: 'public-cookies' },
+      '/communication-policy': { view: 'public-communication-policy' },
+      '/lead-data-usage-policy': { view: 'public-lead-data-policy' },
+      '/user-guide': { view: 'public-user-guide' },
+      '/accessibility': { view: 'public-accessibility' },
       '/student/login': { view: 'student-login', portal: 'student' },
       '/student/register': { view: 'student-register', portal: 'student' },
       '/partner/login': { view: 'partner-login', portal: 'partner' },
@@ -469,6 +478,10 @@ function HomePageContent() {
         'privacy': { view: 'public-privacy' },
         'terms': { view: 'public-terms' },
         'cookies': { view: 'public-cookies' },
+        'communication-policy': { view: 'public-communication-policy' },
+        'lead-data-usage-policy': { view: 'public-lead-data-policy' },
+        'user-guide': { view: 'public-user-guide' },
+        'accessibility': { view: 'public-accessibility' },
         'student-login': { view: 'student-login', portal: 'student' },
         'student-register': { view: 'student-register', portal: 'student' },
         'partner-login': { view: 'partner-login', portal: 'partner' },

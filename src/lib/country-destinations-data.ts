@@ -1025,6 +1025,218 @@ export const COUNTRY_DESTINATIONS: Record<string, CountryDestinationData> = {
     ]
   },
 
+  cyprus: {
+    slug: "cyprus",
+    code: "CY",
+    name: "Cyprus",
+    flag: "🇨🇾",
+    capital: "Nicosia",
+    currency: "EUR (€)",
+    heroTitle: "Study in Cyprus from Bangladesh | Affordable EU Degree & Schengen Access",
+    heroSubtitle: "Earn affordable EU-recognized degrees in an English-speaking island with low tuition, 20h/week work rights and Schengen travel.",
+    overview: "Cyprus offers affordable EU higher education with English-taught programs, low living costs, safe island lifestyle and direct access to Europe.",
+    whyStudySummary: "Lowest tuition in the EU (€5,000-€10,000/year), English medium, visa interview-free via college sponsorship and warm Mediterranean climate.",
+    visaType: "Cyprus Student Visa (National Visa)",
+    popularIntakes: ["September (Fall) 2026", "January (Spring) 2027", "June (Summer) 2027"],
+    studyLevels: ["Diploma / Higher Diploma", "Bachelor Degree (3-4 Years)", "Master's Degree (1-2 Years)", "MBA", "PhD"],
+    tuitionRange: "€5,000 - €10,000 / year",
+    livingCost: "€6,000 - €8,000 / year",
+    workRights: "20 hours/week during term (after 6 months), 38 hours/week holidays.",
+    seoTitle: "Study in Cyprus from Bangladesh | Affordable EU Degree, Visa & Work | ALO Education",
+    seoDescription: "Study in Cyprus for Bangladeshi students. EU universities, affordable tuition €5k-10k, student visa via college, work rights and post-study options.",
+    canonicalUrl: "https://aloeducation.com/destinations/cyprus",
+    lastVerifiedAt: "2026-09-15",
+
+    quickFacts: [
+      { label: "Capital City", value: "Nicosia" },
+      { label: "Currency", value: "Euro (€ / EUR)" },
+      { label: "Popular Cities", value: "Nicosia, Limassol, Larnaca, Paphos" },
+      { label: "Main Intakes", value: "September, January, June" },
+      { label: "Average Bachelor's Duration", value: "4 Years" },
+      { label: "Average Master's Duration", value: "1 to 2 Years" },
+      { label: "Tuition Range", value: "€5,000 - €10,000 / year (lowest in EU)" },
+      { label: "Language", value: "English-taught programs (IELTS 5.5 - 6.0)" }
+    ],
+
+    reasons: [
+      { icon: "coins", heading: "Most Affordable EU Tuition", description: "EU degrees from €5,000/year — with installment payment and low living costs compared to mainland Europe." },
+      { icon: "globe", heading: "EU & Schengen Advantage", description: "Cypriot residence allows travel across EU research events and future Schengen mobility." },
+      { icon: "award", heading: "English-Medium Education", description: "British-system universities teaching fully in English; many accept MOI from Bangladesh." },
+      { icon: "briefcase", heading: "Practical Work Exposure", description: "Paid internships and 20h/week work after 6 months in tourism, hospitality and services." }
+    ],
+
+    pathways: [
+      { fromLevel: "SSC / O-Level", toPathway: "Foundation / Diploma → Bachelor Degree", description: "Bridge pathway with SSC GPA 3.0+ into Hotel/Tourism and Business diplomas." },
+      { fromLevel: "HSC / A-Level", toPathway: "Direct Bachelor Degree (4 Years)", description: "Direct entry with HSC GPA 3.0+ or 2 A-Level passes." },
+      { fromLevel: "Diploma (4-Year BTEB)", toPathway: "Bachelor Degree with Credit Transfer", description: "Polytechnic diploma → 2nd year entry into Business/Computing/Engineering." },
+      { fromLevel: "Bachelor Degree (4 Years)", toPathway: "1-Year Master's / MBA", description: "CGPA 2.5+ accepted; many MBA programs without GMAT." }
+    ],
+
+    entryRequirements: [
+      { level: "Diploma / Foundation", academic: "SSC GPA 3.0+ or HSC 2.5+", english: "IELTS 5.0 or internal test / MOI", documents: ["SSC/HSC Certificates", "Passport", "Photo"] },
+      { level: "Bachelor Degree", academic: "HSC GPA 3.0+ or A-Level 2 passes", english: "IELTS 5.5 (no band <5.0) or PTE 46 or MOI", documents: ["Transcripts", "Passport", "SOP", "Photo"] },
+      { level: "Master's / MBA", academic: "Bachelor CGPA 2.5+ (50%+)", english: "IELTS 5.5-6.0 or PTE 50 or MOI", documents: ["Degree & Transcripts", "Passport", "CV", "SOP"] }
+    ],
+
+    englishTests: [
+      { name: "IELTS Academic", accepted: "Accepted by all Cyprus universities", note: "Minimum 5.0 to 6.0.", sourceUrl: "https://www.ielts.org" },
+      { name: "PTE Academic", accepted: "Accepted for admission", note: "Minimum 46-58.", sourceUrl: "https://www.pearsonpte.com" },
+      { name: "Medium of Instruction (MOI)", accepted: "Accepted by many colleges", note: "If Bachelor/12 years taught in English.", sourceUrl: "https://aloeducation.com" }
+    ],
+
+    visaSteps: [
+      { step: 1, title: "College Offer Letter", description: "Receive Provisional Offer after transcripts review." },
+      { step: 2, title: "Pay Initial Tuition Deposit", description: "Pay deposit (€1,500 - €3,000) to start immigration file." },
+      { step: 3, title: "College Applies for Entry Permit at Migration Dept (Cyprus)", description: "College sponsors and lodges entry visa at Civil Registry & Migration Department." },
+      { step: 4, title: "Receive Entry Visa Letter", description: "Receive Blue Slip/entry visa approval (4-8 weeks)." },
+      { step: 5, title: "Travel & Medical + Pink Slip Residence Permit", description: "Arrive on entry permit, medical test and Pink Slip Temporary Residence Permit." }
+    ],
+
+    workRightRules: [
+      {
+        termTime: "20 hours per week (after 6 months registration)",
+        vacation: "38 hours per week during holidays",
+        condition: "Must be enrolled full-time; contract via Labour Office",
+        postStudyRoute: "Job-search extension and employer sponsorship for Cyprus Work Permit.",
+        sourceUrl: "https://www.mfa.gov.cy"
+      }
+    ],
+
+    faqs: [
+      { question: "Is Cyprus degree recognized in the EU and internationally?", answer: "Yes, degrees from Cypriot public and accredited private universities are recognized across the EU Bologna process and listed in the WHED." },
+      { question: "How much is tuition in Cyprus for Bangladeshi students?", answer: "€5,000 to €10,000 per year — the most affordable EU option, payable in installments." },
+      { question: "Can I study in Cyprus without IELTS?", answer: "Many colleges accept MOI or conduct an internal English test; IELTS 5.5 recommended for smoother approval." },
+      { question: "How long is Cyprus student visa processing?", answer: "High Commission via college sponsorship typically 6-10 weeks after deposit and documents." },
+      { question: "Can I work while studying in Cyprus?", answer: "Yes, after 6 months of enrollment you can work 20 hours/week during term and 38 hours in holidays with Labour Office contract." },
+      { question: "Are there scholarships in Cyprus?", answer: "Colleges offer 20%-40% merit tuition discounts on first year; continuous scholarships based on semester GPA." },
+      { question: "What are main intakes in Cyprus?", answer: "September (major), January and June (mid) intakes." },
+      { question: "Is Cyprus safe and English-speaking?", answer: "Yes, Cyprus is among the safest EU islands and instruction plus daily life in Larnaca/Limassol is widely English." },
+      { question: "Can polytechnic diploma holders apply?", answer: "Yes, 4-year BTEB diploma accepted into 2nd year of Bachelor programs after credit evaluation." },
+      { question: "Do I need to show bank balance?", answer: "Yes, modest proof (~€7,000-10,000 plus tuition) via college bank letter, lower than mainland EU." },
+      { question: "What is Pink Slip in Cyprus?", answer: "The Temporary Residence Permit (Pink Slip) issued after arrival medical and college registration." },
+      { question: "Can I bring dependents to Cyprus?", answer: "Not on initial student permit; family reunification only after work/employer sponsorship." },
+      { question: "Which cities/branches are popular in Cyprus?", answer: "Nicosia (University of Nicosia, Cyprus), Limassol (CUT), Larnaca (UCLan Cyprus) and Paphos (Neapolis)." },
+      { question: "Can I travel to Schengen with Cyprus residence?", answer: "Cyprus residence facilitates short-stay academic travel; full Schengen membership progress allows future free travel." },
+      { question: "Does ALO Education handle Cyprus admission free?", answer: "Yes — free counseling, offer, visa file, medical guidance and pre-departure until Pink Slip." }
+    ],
+
+    sources: [
+      { section: "Student Entry & Residence", sourceName: "Republic of Cyprus Civil Registry & Migration Dept", sourceUrl: "https://www.mfa.gov.cy", lastVerifiedAt: "2026-09-15" }
+    ],
+
+    cities: [
+      { name: "Nicosia", costLevel: "Medium", vibe: "Capital — Admin & University Hub", universities: ["University of Nicosia", "University of Cyprus", "European University Cyprus"], livingCost: "€700 / month" },
+      { name: "Limassol", costLevel: "Medium", vibe: "Coastal Business & Tourism Hub", universities: ["Cyprus University of Technology", "Frederick University"], livingCost: "€750 / month" },
+      { name: "Larnaca", costLevel: "Low", vibe: "Coastal, Calm & Affordable", universities: ["UCLan Cyprus", "InterNapa College"], livingCost: "€600 / month" }
+    ]
+  },
+
+  sweden: {
+    slug: "sweden",
+    code: "SE",
+    name: "Sweden",
+    flag: "🇸🇪",
+    capital: "Stockholm",
+    currency: "SEK (kr)",
+    heroTitle: "Study in Sweden from Bangladesh | Innovation Leader & 12-Month Job Search",
+    heroSubtitle: "Study at world top-100 Swedish universities in English, 60+ intakes with 12-month post-study residence for job search.",
+    overview: "Sweden combines world-leading research (KTH, Lund, Uppsala) with all Master’s in English, strong funding via Swedish Institute scholarships and high quality of life.",
+    whyStudySummary: "All Master’s 100% English, generous Swedish Institute scholarships, 12-month post-study permit and gateway to EU careers.",
+    visaType: "Residence Permit for Studies (Migrationsverket)",
+    popularIntakes: ["Autumn (August/September) 2026", "Spring (January) 2027"],
+    studyLevels: ["Bachelor Degree (3 Years)", "Master's Degree (1-2 Years)", "PhD (4 Years, often salaried)"],
+    tuitionRange: "80,000 - 180,000 SEK / year (€7,000 - €16,000)",
+    livingCost: "122,000 SEK / year (~€10,500, Migrationsverket standard)",
+    workRights: "Unlimited hours — no legal limit, academic progress required.",
+    seoTitle: "Study in Sweden from Bangladesh | Top Unis, Scholarships & Job Search Permit | ALO Education",
+    seoDescription: "Study in Sweden for Bangladeshi students. Lund, KTH, Uppsala, Swedish Institute scholarships, residence permit, unlimited work rights and 12-month job search.",
+    canonicalUrl: "https://aloeducation.com/destinations/sweden",
+    lastVerifiedAt: "2026-09-15",
+
+    quickFacts: [
+      { label: "Capital City", value: "Stockholm" },
+      { label: "Currency", value: "Swedish Krona (SEK / kr)" },
+      { label: "Popular Cities", value: "Stockholm, Gothenburg, Lund, Uppsala, Malmö" },
+      { label: "Main Intakes", value: "Autumn (Aug/Sep) & Spring (Jan)" },
+      { label: "Average Master's Duration", value: "1 to 2 Years (all in English)" },
+      { label: "Average Bachelor's Duration", value: "3 Years" },
+      { label: "Post-Study Permit", value: "12 months Residence Permit for Job Search" },
+      { label: "Work Rights", value: "No hourly restriction during studies" }
+    ],
+
+    reasons: [
+      { icon: "award", heading: "Top 100 Research Universities", description: "KTH, Lund, Uppsala, Stockholm and Gothenburg rank world top 100-200 with Nobel heritage." },
+      { icon: "coins", heading: "Swedish Institute Scholarships", description: "Full SI Scholarships and university tuition waivers (25%-100%) for non-EU masters students." },
+      { icon: "briefcase", heading: "Unlimited Work + 12-Month Job Search", description: "No cap on student work hours; 12-month residence after graduation to find qualified employment." },
+      { icon: "globe", heading: "100% English in Masters", description: "All master’s taught entirely in English; 94% of Swedes speak English — no Swedish required for daily life." }
+    ],
+
+    pathways: [
+      { fromLevel: "HSC / A-Level", toPathway: "Bridge / Direct Bachelor (3 Years)", description: "A-Level/BB+ or HSC + 1 year university bridging to match 13-year Swedish entry (via UniversityAdmissions.se)." },
+      { fromLevel: "Diploma (4-Year BTEB)", toPathway: "Bachelor Degree (credit evaluation)", description: "BTEB diploma evaluated centrally; may enter technical/engineering bachelors." },
+      { fromLevel: "Bachelor Degree (4 Years)", toPathway: "1-2 Year Master's Degree (MSc/MA/MEng)", description: "Direct to 60ECTS (1 year) or 120ECTS (2 years) masters with CGPA 3.0+." },
+      { fromLevel: "Master's → PhD", toPathway: "Salaried PhD employment", description: "Swedish PhDs are paid positions (SEK 28k-35k/month) — apply by vacancy, not tuition." }
+    ],
+
+    entryRequirements: [
+      { level: "Bachelor Degree", academic: "A-Level BBB+ or HSC + 1 year university (13 years)", english: "IELTS 6.5 (no band <5.5) or TOEFL 90", documents: ["Transcripts via UniversityAdmissions.se", "Passport", "SOP"] },
+      { level: "Master's Degree", academic: "Bachelor 4-Year CGPA 3.0+ (70%+) in relevant field", english: "IELTS 6.5 (no band <5.5) or PTE 62 or TOEFL 90", documents: ["Degree & Transcripts", "SOP/Motivation", "CV", "2 References", "Passport"] },
+      { level: "PhD", academic: "Master's with thesis + research proposal", english: "IELTS 6.5-7.0", documents: ["Research Proposal", "CV/Publications", "References", "Passport"] }
+    ],
+
+    englishTests: [
+      { name: "IELTS Academic", accepted: "Accepted by all Swedish universities", note: "Minimum 6.5 (no 5.5).", sourceUrl: "https://www.ielts.org" },
+      { name: "TOEFL iBT", accepted: "Widely accepted", note: "Minimum 90.", sourceUrl: "https://www.ets.org/toefl" },
+      { name: "PTE Academic", accepted: "Accepted by most universities", note: "Minimum 62.", sourceUrl: "https://www.pearsonpte.com" }
+    ],
+
+    visaSteps: [
+      { step: 1, title: "Apply via UniversityAdmissions.se", description: "Central portal ranking: priority and document upload deadline 1 Feb (Autumn)." },
+      { step: 2, title: "Receive Admission & Pay Tuition Instalment", description: "Pay first instalment after admission to enable residence permit application." },
+      { step: 3, title: "Apply for Residence Permit (Migrationsverket)", description: "Online residence permit: show admission + finances (122k SEK/year) + passport + health." },
+      { step: 4, title: "Biometrics at Embassy of Sweden, Dhaka", description: "Fingerprint/photo after approval at Sweden Visa Centre." },
+      { step: 5, title: "Receive Residence Permit Card", description: "Pick up card and travel; register with Tax Agency and university on arrival." }
+    ],
+
+    workRightRules: [
+      {
+        termTime: "No legal hourly limit",
+        vacation: "Full-time permitted",
+        condition: "Must maintain progress; employment registered for tax",
+        postStudyRoute: "12-month Residence Permit for establishing / seeking employment after degree (extendable to work permit).",
+        sourceUrl: "https://www.migrationsverket.se/en/study.html"
+      }
+    ],
+
+    faqs: [
+      { question: "Can I study in Sweden entirely in English?", answer: "Yes — 1,000+ programs and every master’s is taught fully in English; Bachelor Swedish-taught but many English tracks exist." },
+      { question: "Is Sweden expensive vs other EU?", answer: "Tuition 80k-180k SEK/year (€7k-16k). Living ~10,500 EUR/year. Scholarships offset heavily; installment payment available." },
+      { question: "Are scholarships available for Bangladeshi masters students?", answer: "Yes — Swedish Institute Scholarships for Global Professionals (full + living) and university waivers 25%-100% per semester." },
+      { question: "Do I need Swedish language?", answer: "No for admission/daily life; learning SFI basic helps for part-time jobs and long-term integration." },
+      { question: "Can students work unlimited hours in Sweden?", answer: "Swedish law sets no weekly cap on student employment during studies; you must still pass courses." },
+      { question: "How long is post-study stay in Sweden?", answer: "12 months residence permit for job search/starting business after completing 2-year master’s (apply before permit expires)." },
+      { question: "What is UniversityAdmissions.se?", answer: "Central Swedish admission portal ranking up to 4 master’s by priority; one application, multiple universities." },
+      { question: "What finances must I show for Swedish residence permit?", answer: "Prove 10,314 SEK/month (122k SEK/year) via bank + tuition paid receipt." },
+      { question: "What CGPA is needed for KTH/Lund/Uppsala master’s?", answer: "Typically 3.2-3.6+/4 (75%+) plus relevant bachelor background; competitive programs higher." },
+      { question: "Is IELTS mandatory?", answer: "IELTS 6.5 (no 5.5) or TOEFL 90 is standard; PTE also accepted." },
+      { question: "When do Swedish admissions close?", answer: "Autumn intake: mid-Jan (courses) + 1 Feb (documents); Spring is smaller, closes mid-Aug." },
+      { question: "Can polytechnic diploma holders apply?", answer: "Evaluated centrally; bridging year or direct bachelor depends on university mapping of 12+ years." },
+      { question: "Where is biometrics for Sweden in Bangladesh?", answer: "Sweden Visa Application Centre / Embassy of Sweden on Bay's Edgewater, Gulshan-2, Dhaka." },
+      { question: "Are Swedish PhDs free/salaried?", answer: "Yes, PhD posts are employment contracts (28k-35k SEK/month) and tuition-free — you are hired, not paying." },
+      { question: "Does ALO cover Sweden admission?", answer: "Yes — program shortlist, UniversityAdmissions.se filing, SOP, SI scholarship, permit and Tax Agency guide — free counseling." }
+    ],
+
+    sources: [
+      { section: "Residence Permit for Studies", sourceName: "Swedish Migration Agency (Migrationsverket)", sourceUrl: "https://www.migrationsverket.se/en/study.html", lastVerifiedAt: "2026-09-15" }
+    ],
+
+    cities: [
+      { name: "Stockholm", costLevel: "High", vibe: "Capital — Tech, Finance & KTH Hub", universities: ["KTH Royal Institute of Technology", "Stockholm University", "Karolinska Institute"], livingCost: "12,500 SEK / month" },
+      { name: "Gothenburg", costLevel: "Medium", vibe: "Automotive & Port Innovation (Volvo)", universities: ["Chalmers University of Technology", "University of Gothenburg"], livingCost: "10,500 SEK / month" },
+      { name: "Lund", costLevel: "Medium", vibe: "Historic Research City (Oxford of Sweden)", universities: ["Lund University"], livingCost: "9,500 SEK / month" }
+    ]
+  },
+
   netherlands: {
     slug: "netherlands",
     code: "NL",

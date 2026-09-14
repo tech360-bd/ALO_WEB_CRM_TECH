@@ -6,19 +6,18 @@ import React from 'react';
 import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 
 const destinations = [
-  { label: 'United Kingdom', href: '/destinations/united-kingdom' },
-  { label: 'United States', href: '/destinations/usa' },
-  { label: 'Australia', href: '/destinations/australia' },
+  { label: 'United Kingdom', href: '/destinations/uk' },
+  { label: 'USA', href: '/destinations/usa' },
   { label: 'Canada', href: '/destinations/canada' },
+  { label: 'Australia', href: '/destinations/australia' },
   { label: 'Ireland', href: '/destinations/ireland' },
   { label: 'New Zealand', href: '/destinations/new-zealand' },
+  { label: 'Dubai / UAE', href: '/destinations/dubai' },
   { label: 'Germany', href: '/destinations/germany' },
-  { label: 'Dubai / UAE', href: '/destinations/dubai-uae' },
   { label: 'Malaysia', href: '/destinations/malaysia' },
-  { label: 'Denmark', href: '/destinations/denmark' },
-  { label: 'Japan', href: '/destinations/japan' },
-  { label: 'South Korea', href: '/destinations/south-korea' },
-  { label: 'Europe', href: '/destinations/europe' },
+  { label: 'Netherlands', href: '/destinations/netherlands' },
+  { label: 'Cyprus', href: '/destinations/cyprus' },
+  { label: 'Sweden', href: '/destinations/sweden' },
 ];
 
 const quickLinks = [
@@ -208,12 +207,20 @@ export default function PublicFooter() {
       <div className="bg-[#f5f5f5] py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#666666]">
           <p>© {new Date().getFullYear()} ALO Education Bangladesh. All Rights Reserved.</p>
-          <div className="flex items-center gap-4">
-            <Link href="/privacy-policy" className="hover:text-[#E8501A] transition-colors">Privacy Policy</Link>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 justify-center sm:justify-end">
+            <Link href="/privacy-policy" className="hover:text-[#E8501A] transition-colors">Privacy</Link>
             <span>·</span>
-            <Link href="/terms" className="hover:text-[#E8501A] transition-colors">Terms of Use</Link>
+            <Link href="/terms" className="hover:text-[#E8501A] transition-colors">Terms</Link>
             <span>·</span>
-            <Link href="/cookies" className="hover:text-[#E8501A] transition-colors">Cookie Policy</Link>
+            <Link href="/cookies" className="hover:text-[#E8501A] transition-colors">Cookies</Link>
+            <span>·</span>
+            <Link href="/communication-policy" className="hover:text-[#E8501A] transition-colors">Communication</Link>
+            <span>·</span>
+            <Link href="/lead-data-usage-policy" className="hover:text-[#E8501A] transition-colors">Lead Data</Link>
+            <span>·</span>
+            <Link href="/user-guide" className="hover:text-[#E8501A] transition-colors">User Guide</Link>
+            <span>·</span>
+            <Link href="/accessibility" className="hover:text-[#E8501A] transition-colors">Accessibility</Link>
           </div>
         </div>
       </div>
