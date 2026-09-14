@@ -1,0 +1,163 @@
+// ALO Education - Research Assistant for MRes/PhD coursework & papers
+// Helps with research-based coursework, proposal, literature review, methodology
+
+export interface ResearchAssistanceRequest {
+  studentProfile: any; // StudentProfile shape
+  courseTitle: string;
+  researchTopic: string;
+  assistanceType: 'proposal' | 'coursework' | 'literature_review' | 'methodology' | 'paper_draft' | 'full';
+  subjectArea: string;
+  programLevel: string; // MRes, PhD
+  wordCountTarget?: number;
+}
+
+export interface ResearchAssistanceResponse {
+  outline: string[];
+  proposalTemplate?: {
+    title: string;
+    abstract: string;
+    researchQuestions: string[];
+    objectives: string[];
+    literatureGaps: string[];
+    methodology: string;
+    timeline: Array<{ phase: string; duration: string; tasks: string[] }>;
+    references: string[];
+  };
+  courseworkHelp?: {
+    structure: string[];
+    keyConcepts: string[];
+    writingTips: string[];
+  };
+  literatureReview?: {
+    themes: Array<{ theme: string; keyPapers: string[]; gap: string }>;
+    searchStrategy: string[];
+  };
+  nextSteps: string[];
+  supervisorTips: string[];
+}
+
+const PROPOSAL_TEMPLATE_SECTIONS = [
+  "Title (clear, specific, indicates methodology & context)",
+  "Abstract (250 words, problem, aim, method, contribution)",
+  "Introduction & Research Background (context, problem statement)",
+  "Research Questions / Hypotheses (1 primary + 2-3 secondary)",
+  "Aim & Objectives (SMART, 3-5 objectives)",
+  "Literature Review (thematic, not chronological, identify gaps)",
+  "Theoretical Framework (choose lens for your discipline)",
+  "Methodology (philosophy, design, data collection, analysis, ethics)",
+  "Expected Contribution & Originality (for PhD - clear gap)",
+  "Timeline (Gantt: 12 months MRes, 36 months PhD)",
+  "References (APA/Harvard, 20-30 recent high-quality sources)",
+  "Budget / Resources (if applicable)",
+  "Appendices (ethics, CV)"
+];
+
+export async function assistResearch(request: ResearchAssistanceRequest): Promise<ResearchAssistanceResponse> {
+  const { researchTopic, courseTitle, subjectArea, assistanceType, programLevel } = request;
+  const isPhD = programLevel === 'PhD';
+  const duration = isPhD ? "36 months" : "12 months";
+
+  // Generate proposal template tailored to topic
+  const proposalTemplate = {
+    title: `Proposed: ${researchTopic} - A ${subjectArea} perspective (${programLevel} at ${courseTitle})`,
+    abstract: `This ${programLevel} research investigates "${researchTopic}" within ${subjectArea}. Despite growing interest, gaps remain in Bangladeshi/UK context. Using mixed-methods, the study aims to [fill gap], offering practical implications for [industry/policy] and theoretical contribution to [field].`,
+    researchQuestions: [
+      `Primary: How does "${researchTopic}" influence [outcome] in [context]?`,
+      `Secondary: What are the key factors mediating this relationship?`,
+      `Secondary: How do cultural/contextual factors (Bangladesh/UK) moderate outcomes?`,
+    ],
+    objectives: [
+      `To critically review literature on ${researchTopic} in ${subjectArea}`,
+      `To empirically investigate [specific aspect] via [method]`,
+      `To develop a framework/model for [application]`,
+      `To provide recommendations for [policy/practice]`,
+    ],
+    literatureGaps: [
+      `Limited studies on ${researchTopic} in South Asian context`,
+      `Methodological gap - prior work mostly qualitative, need mixed-methods`,
+      `Temporal gap - post-COVID digital transformation not covered`,
+    ],
+    methodology: isPhD
+      ? "Philosophy: Pragmatism; Design: Sequential Explanatory Mixed-Methods; Phase1: Quantitative survey (n=300); Phase2: Semi-structured interviews (n=20); Analysis: SEM + Thematic Analysis (NVivo); Ethics: University REC approval, informed consent."
+      : "MRes 12-month: Literature synthesis + small-scale empirical (survey n=100 or interviews n=12), thematic analysis, 15,000 word dissertation.",
+    timeline: isPhD ? [
+      { phase: "Phase 1 - Literature & Proposal", duration: "Months 1-6", tasks: ["Systematic review", "Proposal defense", "Ethics"] },
+      { phase: "Phase 2 - Data Collection 1", duration: "Months 7-15", tasks: ["Survey design", "Pilot", "Main survey"] },
+      { phase: "Phase 3 - Data Collection 2", duration: "Months 16-24", tasks: ["Interviews", "Transcription", "Analysis"] },
+      { phase: "Phase 4 - Write-up", duration: "Months 25-36", tasks: ["Thesis draft", "Publications", "Viva prep"] },
+    ] : [
+      { phase: "Term 1", duration: "Months 1-4", tasks: ["Taught modules: Research Methods", "Literature review", "Proposal"] },
+      { phase: "Term 2", duration: "Months 5-8", tasks: ["Data collection", "Analysis"] },
+      { phase: "Term 3", duration: "Months 9-12", tasks: ["Dissertation write-up", "Submission"] },
+    ],
+    references: [
+      `Search: Scopus/Web of Science keywords: "${researchTopic}", "${subjectArea}", filtrer 2020-2026, UK/Bangladesh`,
+      `Use Zotero/Mendeley for APA 7th, aim 30 sources for MRes, 80+ for PhD`,
+    ],
+  };
+
+  const courseworkHelp = {
+    structure: [
+      "Introduction (10% - context, aim, structure outline)",
+      "Main Body - Thematic Sections (70% - theory, evidence, critical analysis)",
+      "Critical Evaluation (compare perspectives, identify limitations)",
+      "Conclusion (10% - summary, implications, future research)",
+      "References (10% - correctly formatted)",
+    ],
+    keyConcepts: [
+      `Core theories in ${subjectArea} relevant to ${researchTopic}`,
+      `Recent empirical findings (2022-2026)`,
+      `Methodological debates in ${subjectArea}`,
+    ],
+    writingTips: [
+      "Use PEECL: Point, Evidence, Evaluate, Conclude, Link",
+      "Critical, not descriptive - compare authors, find contradictions",
+      "Bangladeshi example + UK comparison adds international perspective (valued by supervisors)",
+      "Avoid plagiarism: paraphrase + cite, use Turnitin draft check",
+    ],
+  };
+
+  const literatureReview = {
+    themes: [
+      { theme: `Foundational theories of ${researchTopic}`, keyPapers: ["Seminal 2018-2020 works"], gap: "Lacks recent digital context" },
+      { theme: `Empirical studies in ${subjectArea} (2021-2024)`, keyPapers: ["UK studies", "Asian studies"], gap: "No Bangladesh-specific" },
+      { theme: `Methodological approaches`, keyPapers: ["Quantitative vs Qualitative"], gap: "Mixed-methods underused" },
+    ],
+    searchStrategy: [
+      `Databases: Scopus, Web of Science, EThOS (for UK theses)`,
+      `Keywords: ("${researchTopic}") AND ("${subjectArea}") AND (Bangladesh OR UK)`,
+      `Filters: 2020-2026, Peer-reviewed, English, open-access priority`,
+      `Snowball: Check reference lists of top 5 papers`,
+    ],
+  };
+
+  let outline: string[] = [];
+  if (assistanceType === 'proposal' || assistanceType === 'full') outline.push(...PROPOSAL_TEMPLATE_SECTIONS);
+  if (assistanceType === 'coursework' || assistanceType === 'full') outline.push(...courseworkHelp.structure);
+  if (assistanceType === 'literature_review') outline.push(...literatureReview.searchStrategy);
+  if (outline.length === 0) outline = PROPOSAL_TEMPLATE_SECTIONS;
+
+  return {
+    outline,
+    proposalTemplate,
+    courseworkHelp,
+    literatureReview,
+    nextSteps: [
+      "1. Finalize research topic to 1 sentence (specific, not broad)",
+      "2. Identify 3 potential supervisors via supervisor-matcher (match interests)",
+      "3. Draft 300-word concept note + email supervisor (template provided via agent)",
+      "4. Expand to full proposal using template above",
+      "5. Submit via ALO portal for supervisor pre-application review",
+    ],
+    supervisorTips: [
+      "Email subject: 'Prospective MRes/PhD applicant - [Topic] - Bangladesh background'",
+      "Attach CV, transcripts, 300-word concept note, not full proposal initially",
+      "Mention why their work (cite 1 paper) aligns with your interest",
+      "Acknowledge you understand Top-up/MRes/PhD differences and meet English (IELTS) & academic thresholds",
+    ],
+  };
+}
+
+export function getResearchCourseworkGuidance(subject: string, level: string): string {
+  return `Research guidance for ${level} in ${subject}: Focus on systematic methodology, ethical approval, and contribution. For PhD, originality is mandatory; for MRes, competence in research execution is key. For Bangladeshi students, UK supervisors value clear proposal + prior research methods exposure.`;
+}

@@ -1,0 +1,102 @@
+// ALO Education - Campus-Course Mapper
+// Ensures if university has branch campuses, each campus info & its courses are linked
+
+import * as fs from 'fs';
+import * as path from 'path';
+import { parse } from 'csv-parse/sync';
+
+export interface Campus {
+  campus_id: string;
+  university_id: string;
+  campus_name: string;
+  city: string;
+  country: string;
+  address: string;
+  campusType?: string;
+}
+
+export interface CourseWithCampus {
+  course_id: string;
+  university_id: string;
+  course_title: string;
+  study_level: string;
+  program_level: string;
+  subject_area: string;
+  duration_months: string;
+  campus_id: string;
+  campus_name: string;
+  international_available: string;
+  city?: string;
+  country?: string;
+}
+
+export function loadCampuses(): Campus[] {
+  const p = path.resolve(process.cwd(), 'campuses.csv');
+  if (!fs.existsSync(p)) return [];
+  return parse(fs.readFileSync(p,'utf-8'), { columns:true, skip_empty_lines:true });
+}
+
+export function loadCoursesWithCampus(): CourseWithCampus[] {
+  const p = path.resolve(process.cwd(), 'courses.csv');
+  if (!fs.existsSync(p)) return [];
+  const courses: CourseWithCampus[] = parse(fs.readFileSync(p,'utf-8'), { columns:true, skip_empty_lines:true });
+  // Enrich with campus city/country if missing
+  const campuses = loadCampuses();
+  const campMap = new Map(campuses.map(c=>[c.campus_id,c]));
+  return courses.map(c=>{
+    const camp = campMap.get(c.campus_id);
+    return { ...c, city: camp?.city, country: camp?.country };
+  });
+}
+
+export function getCampusesForUniversity(universityId: string): Campus[] {
+  return loadCampuses().filter(c=>c.university_id===universityId);
+}
+
+export function getCoursesForCampus(campusId: string): CourseWithCampus[] {
+  return loadCoursesWithCampus().filter(c=>c.campus_id===campusId);
+}
+
+export function getBranchCampusesSummary(): Array<{ university_id:string; university_name:string; campuses:Campus[]; coursesPerCampus: Record<string,number> }> {
+  const campuses = loadCampuses();
+  const courses = loadCoursesWithCampus();
+  const uniMap = new Map<string, { name:string; campuses:Campus[] }>();
+  const coursesByCampus = new Map<string, number>();
+  for (const c of courses) {
+    coursesByCampus.set(c.campus_id, (coursesByCampus.get(c.campus_id)||0)+1);
+  }
+  for (const camp of campuses) {
+    if (!uniMap.has(camp.university_id)) uniMap.set(camp.university_id, { name: camp.campus_name.replace(/ (Main Campus|Campus)$/,'').trim(), campuses: [] });
+    uniMap.get(camp.university_id)!.campuses.push(camp);
+  }
+  const result: any[] = [];
+  for (const [uid, data] of uniMap) {
+    if (data.campuses.length > 1) {
+      const perCampus: Record<string,number> = {};
+      for (const camp of data.campuses) perCampus[camp.campus_name] = coursesByCampus.get(camp.campus_id)||0;
+      result.push({ university_id: uid, university_name: data.name, campuses: data.campuses, coursesPerCampus: perCampus });
+    }
+  }
+  return result;
+}
+
+export function verifyNoCourseOmitted(): { totalUniversities:number; totalCourses:number; levels:Record<string,number>; campusCoverage:{ totalCampuses:number; campusesWithCourses:number; orphanCampuses:string[] }; internationalCoverage:number } {
+  const courses = loadCoursesWithCampus();
+  const campuses = loadCampuses();
+  const unis = new Set(courses.map(c=>c.university_id));
+  const levelCounts: Record<string,number> = {};
+  for (const c of courses) {
+    const key = `${c.study_level}:${c.program_level}`;
+    levelCounts[key]=(levelCounts[key]||0)+1;
+  }
+  const campusIdsWithCourses = new Set(courses.map(c=>c.campus_id));
+  const orphan = campuses.filter(c=>!campusIdsWithCourses.has(c.campus_id)).map(c=>c.campus_id);
+  const international = courses.filter(c=>c.international_available==='yes').length;
+  return {
+    totalUniversities: unis.size,
+    totalCourses: courses.length,
+    levels: levelCounts,
+    campusCoverage: { totalCampuses: campuses.length, campusesWithCourses: campusIdsWithCourses.size, orphanCampuses: orphan },
+    internationalCoverage: international,
+  };
+}
