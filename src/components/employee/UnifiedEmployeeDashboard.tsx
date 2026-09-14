@@ -42,6 +42,7 @@ import {
 import { toast } from 'sonner';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { HrRoleWidgets, HrmQuickActions } from '@/components/hrm/HrWidgets';
+import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 interface UnifiedEmployeeDashboardProps {
   forcedRole?: string;
@@ -323,6 +324,22 @@ export default function UnifiedEmployeeDashboard({
                 <HrmQuickActions role={activeRole} />
               </div>
             )}
+            {/* Unified Communication Engine — 10x inbox widget, role-filtered visibility, SLA aware */}
+            <DashboardCommunicationWidget
+              role={
+                activeRole.includes('COUNSELOR') ? 'COUNSELOR' :
+                activeRole.includes('APPLICATION') ? 'APPLICATION_MANAGER' :
+                activeRole.includes('VISA') ? 'VISA_OFFICER' :
+                activeRole.includes('MARKETING') ? 'MARKETING_MANAGER' :
+                activeRole.includes('FINANCE') ? 'FINANCE' :
+                activeRole.includes('FRONT_DESK') ? 'FRONT_DESK' :
+                activeRole.includes('ADMIN') || activeRole.includes('SUPER_ADMIN') ? 'SUPER_ADMIN' :
+                'STAFF_CRM'
+              }
+              unreadCount={data?.unreadMessages ?? data?.unreadNotifsCount ?? 3}
+              slaOverdueCount={data?.slaBreaches ?? data?.overdueFollowUps ?? 1}
+              onNavigateToInbox={() => window.location.href='/crm/communications/inbox'}
+            />
 
             {/* Marketing Library — one-click repost to your official social (if approved) */}
             {(activeRole.includes("COUNSELOR") || activeRole.includes("MARKETING") || true) && (

@@ -1,14 +1,22 @@
-import InboxPage from '@/app/crm/inbox/page';
+import CommunicationInbox from '@/components/communication/CommunicationInbox';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Communications Inbox | ALO Education',
-  description: 'Unified inbox for WhatsApp, Email, SMS, Phone, Social, Portal, Internal',
+  title: 'Unified Inbox — Communication Engine | ALO Education',
+  description: 'Enterprise unified inbox — Message ID, Channel, Source, Sender, Recipient, Linked entities, Priority, Intent, Visibility, Status, SLA timer, Actions',
 };
 
-// Route mapping: /crm/communications/inbox is the canonical spec route.
-// It reuses the existing /crm/inbox implementation which already provides
-// unified threads, SLA, channel filtering, and permission scoping.
 export default function CommunicationsInboxPage() {
-  return <InboxPage />;
+  return (
+    <div className="p-4 lg:p-6 bg-[#F8FAFC] min-h-screen">
+      <div className="mb-4">
+        <h1 className="text-xl font-bold text-[#0F172A]">Unified Inbox — <span className="text-[#0057B8]">/crm/communications/inbox</span></h1>
+        <p className="text-xs text-gray-500 mt-1">Message ID • Channel • Source • Sender • Recipient • Linked lead/student/application/partner • Assigned to • Priority • Intent • Visibility • Status • SLA timer • Created date • Last reply • Action — 10x enterprise view, SLA-sorted, Asia/Dhaka office hours aware</p>
+      </div>
+      <CommunicationInbox canViewB2B={false} />
+      <div className="mt-6 text-[11px] text-gray-400 border-t pt-3">
+        Filters: Channel, Source, Office, Counselor, Assigned staff, Student, Partner, Application, Country, Course, Status, Unread, SLA overdue, Priority, Date range, B2B confidential, Marketing lead, Visa related, Document related — Actions: Reply, Use template, AI draft reply, Assign, Escalate, Create lead, Link to student, Link to application, Create task, Schedule follow-up, Mark read, Mark spam, Archive, Add note
+      </div>
+    </div>
+  );
 }

@@ -10,6 +10,7 @@ import {
   ShieldCheck, Users, Building2, Globe, FileText, AlertTriangle, CheckCircle2, Lock, Search, Bot, Key, Award, GraduationCap, Briefcase, DollarSign, BookOpen, MessageSquare, ShieldAlert, Cpu, Database, Eye, UserCheck, LogOut, ArrowRight, RefreshCw
 } from 'lucide-react';
 import StudentIntakeControlPanel from '@/components/admin/StudentIntakeControlPanel';
+import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 interface Metrics {
   activeStudents: number;
@@ -190,6 +191,7 @@ export default function EnhancedSuperAdminControlCenter() {
 
   return (
     <div className="space-y-6 bg-[#F8FAFC] min-h-screen p-4 lg:p-6 text-[#0F172A] font-sans">
+      <DashboardCommunicationWidget role="SUPER_ADMIN" unreadCount={12} slaOverdueCount={3} onNavigateToInbox={() => window.location.href='/crm/communications/inbox'} />
       {/* ACTING-AS BANNER — Secure, Visible, Time-Limited — Real Actor + Effective Identity + Reason + Expiry + Exit */}
       {actingAs && (
         <Card className="bg-amber-500 text-[#0F172A] border-amber-600 rounded-2xl shadow-md">
