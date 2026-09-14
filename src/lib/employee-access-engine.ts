@@ -179,9 +179,10 @@ export async function recordUsageEngine(userId: string, featureKey: string, amou
 }
 
 export async function canApproveActionEngine(actorId: string, targetId: string, action: string): Promise<{ allowed: boolean, reason?: string }> {
-  // ACCEPT vs APPROVE separation
-  if (action === 'ACCEPT' && action === 'APPROVE') {
-    return { allowed: false, reason: 'ACCEPT = responsibility, APPROVE = authority — different permissions required' };
+  // ACCEPT vs APPROVE separation - distinct semantics, handled via permission matrix
+  if (action === 'ACCEPT' || action === 'APPROVE') {
+    // Both require explicit permission, but different roles; separation of duties still applies
+    return await checkSeparationOfDuties(actorId, targetId, action);
   }
   return await checkSeparationOfDuties(actorId, targetId, action);
 }

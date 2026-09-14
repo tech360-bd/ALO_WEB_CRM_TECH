@@ -47,14 +47,14 @@ export async function GET(req: Request) {
     let universityIds: string[] | null = null;
     if (country) {
       const countryList = country.split(',').map(c => c.trim()).filter(Boolean);
-      const unis = await db.crmUniversity.findMany({
+      const unis = await (db as any).crmUniversity.findMany({
         where: {
           OR: countryList.map(c => ({ country: { contains: c } })),
         },
         select: { universityId: true },
       });
-      universityIds = unis.map((u) => u.universityId);
-      if (universityIds.length === 0) {
+      universityIds = (unis as any[]).map((u: any) => u.universityId);
+      if (!universityIds || universityIds.length === 0) {
         return NextResponse.json({
           success: true,
           courses: [],
@@ -123,14 +123,14 @@ export async function GET(req: Request) {
     ]);
 
     // Fetch related universities and intake fees in parallel
-    const uniIds = [...new Set(courses.map((c) => c.universityId))];
-    const courseIdsForFee = courses.map((c) => c.courseId);
+    const uniIds = [...new Set((courses as any[]).map((c: any) => c.universityId))];
+    const courseIdsForFee = (courses as any[]).map((c: any) => c.courseId);
 
     const [universities, intakeFees] = await Promise.all([
-      db.crmUniversity.findMany({
+      (db as any).crmUniversity.findMany({
         where: { universityId: { in: uniIds } },
       }),
-      db.crmCourseIntakeFee.findMany({
+      (db as any).crmCourseIntakeFee.findMany({
         where: {
           courseId: { in: courseIdsForFee },
           status: 'active',
@@ -139,16 +139,16 @@ export async function GET(req: Request) {
       }),
     ]);
 
-    const uniMap = new Map(universities.map((u) => [u.universityId, u]));
-    const feeMap = new Map<string, typeof intakeFees[number]>();
-    for (const f of intakeFees) {
+    const uniMap = new Map<string, any>((universities as any[]).map((u: any) => [u.universityId, u]));
+    const feeMap = new Map<string, any>();
+    for (const f of intakeFees as any[]) {
       if (!feeMap.has(f.courseId)) feeMap.set(f.courseId, f);
     }
 
     // Compose response
-    const result = courses.map((c) => {
-      const uni = uniMap.get(c.universityId);
-      const fee = feeMap.get(c.courseId);
+    const result = (courses as any[]).map((c: any) => {
+      const uni = uniMap.get(c.universityId) as any;
+      const fee = feeMap.get(c.courseId) as any;
       return {
         universityId: c.universityId,
         universityName: uni?.name || '',

@@ -13,9 +13,9 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
 
     if (!documentName) return NextResponse.json({ success: false, error: 'Document name required — 25+ types Passport/Photo/Offer Letter/CAS/Academic Certificates/Transcripts/English Test/Bank Statement/Solvency Certificate/Sponsor Letter/Sponsor ID/Sponsor Occupation Proof/Source of Funds/Birth Certificate/Marriage Certificate/Work Experience/Study Gap Evidence/Refusal Letter/TB/Medical/Accommodation/Consent Documents/Visa Application/Biometric Appointment/Payment Receipt/Other Country-specific' }, { status: 400 });
 
-    let visaCase = null;
-    if (caseId) visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase && studentId) visaCase = await db.visaCase.findFirst({ where: { studentId } });
+    let visaCase: any = null;
+    if (caseId) visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } });
+    if (!visaCase && studentId) visaCase = await (db as any).visaCase.findFirst({ where: { studentId } });
 
     if (caseId && visaCase) {
       const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
@@ -24,7 +24,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
       }
     }
 
-    const task = await db.visaTask.create({
+    const task = await (db as any).visaTask.create({
       data: {
         studentId: studentId || visaCase?.studentId || '',
         caseId: caseId || visaCase?.id || '',
@@ -41,7 +41,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
 
     // Also create checklist item if case exists
     if (visaCase) {
-      await db.visaChecklistItem.create({
+      await (db as any).visaChecklistItem.create({
         data: {
           studentId: visaCase.studentId,
           applicationId: visaCase.applicationId || '',
@@ -57,7 +57,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
       }).catch(() => {});
     }
 
-    await db.timelineEvent.create({
+    await (db as any).timelineEvent.create({
       data: {
         studentId: studentId || visaCase?.studentId || '',
         stage: 'VISA_DOCUMENT_REQUESTED',

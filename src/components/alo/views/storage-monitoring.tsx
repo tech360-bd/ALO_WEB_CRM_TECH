@@ -373,3 +373,4 @@ function FileBrowser() {
     </SectionCard>
   );
 }
+export default StorageMonitoring;

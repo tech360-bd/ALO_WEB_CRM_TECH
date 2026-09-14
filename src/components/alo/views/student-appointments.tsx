@@ -67,3 +67,4 @@ export function StudentAppointments() {
     </div>
   );
 }
+export default StudentAppointments;

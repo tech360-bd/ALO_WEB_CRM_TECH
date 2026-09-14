@@ -2346,3 +2346,4 @@ function RunClassificationDialog({
     </Dialog>
   );
 }
+export default OmnichannelCommunicationCenter;

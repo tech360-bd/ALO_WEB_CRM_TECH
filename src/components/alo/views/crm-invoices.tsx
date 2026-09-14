@@ -236,3 +236,4 @@ export function CrmInvoices() {
     </div>
   );
 }
+export default CrmInvoices;

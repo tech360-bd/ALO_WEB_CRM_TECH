@@ -1333,3 +1333,4 @@ function QuickReplyFormDialog({ open, onOpenChange, onSubmit, saving = false }: 
     </Dialog>
   );
 }
+export default CommTemplates;

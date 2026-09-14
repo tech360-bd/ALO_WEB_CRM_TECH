@@ -1767,3 +1767,4 @@ export function StudentProfileForm() {
     </TooltipProvider>
   );
 }
+export default StudentProfileForm;

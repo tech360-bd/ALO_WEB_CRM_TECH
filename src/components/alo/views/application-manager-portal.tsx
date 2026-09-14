@@ -2331,3 +2331,4 @@ function TasksTab({
     </div>
   );
 }
+export default ApplicationManagerPortal;

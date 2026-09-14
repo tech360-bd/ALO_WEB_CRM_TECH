@@ -108,6 +108,4 @@ export const POST = withAuth(async (req, auth, { params }: any) => {
   return NextResponse.json({ success: true, data: updated, application: updated, message: `Application submitted via ${body.submissionMethod || 'UNIVERSITY_PORTAL'}` });
 });
 
-export const PATCH = withAuth(async (req, auth, { params }: any) => {
-  return POST(req, auth, { params } as any);
-});
+export const PATCH = POST;

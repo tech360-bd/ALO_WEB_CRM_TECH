@@ -203,3 +203,4 @@ export function CrmFollowups() {
     </div>
   );
 }
+export default CrmFollowups;

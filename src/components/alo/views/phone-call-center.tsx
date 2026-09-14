@@ -1612,3 +1612,4 @@ function CallDetailSheet({
     </Sheet>
   );
 }
+export default PhoneCallCenter;

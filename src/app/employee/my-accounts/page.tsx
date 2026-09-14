@@ -19,7 +19,7 @@ const OWN_PLATFORMS = [
 ];
 
 export default async function EmployeeMyAccountsPage() {
-  const session = await getServerSession(authOptions as any);
+  const session = await getServerSession(authOptions as any) as any;
   const userId = (session?.user as any)?.id || (session?.user as any)?.email;
   if (!userId) {
     return <div className="p-8 text-red-600">Please login — employee session required.</div>;

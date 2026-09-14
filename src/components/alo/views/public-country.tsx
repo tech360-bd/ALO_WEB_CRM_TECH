@@ -1562,3 +1562,4 @@ function VisaReadinessChecker({ countryName }: { countryName: string }) {
     </div>
   );
 }
+export default PublicCountry;

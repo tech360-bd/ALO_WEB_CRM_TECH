@@ -1045,3 +1045,4 @@ export function HrmDashboard() {
     </div>
   );
 }
+export default HrmDashboard;

@@ -52,3 +52,4 @@ export function PublicCareers({ onNavigate }: Props) {
     </div>
   );
 }
+export default PublicCareers;

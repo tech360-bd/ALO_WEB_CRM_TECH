@@ -1134,3 +1134,4 @@ function PaymentsTab({ payments }: { payments: Payment[] }) {
     </SectionCard>
   );
 }
+export default Student360;

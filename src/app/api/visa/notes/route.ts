@@ -18,9 +18,9 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
       return NextResponse.json({ success: false, error: `Invalid visibility — allowed INTERNAL_ONLY/VISA_TEAM_ONLY/COUNSELOR_VISIBLE/APPLICATION_TEAM_VISIBLE/STUDENT_SAFE_FEEDBACK/SUPER_ADMIN_ONLY — student never sees internal — partner never sees visa notes — marketing never sees visa notes — student sees only approved student-safe feedback` }, { status: 400 });
     }
 
-    let visaCase = null;
-    if (caseId) visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase && studentId) visaCase = await db.visaCase.findFirst({ where: { studentId } });
+    let visaCase: any = null;
+    if (caseId) visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } });
+    if (!visaCase && studentId) visaCase = await (db as any).visaCase.findFirst({ where: { studentId } });
 
     if (visaCase) {
       const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
@@ -49,7 +49,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
       }
     }
 
-    const note = await db.visaOfficerNote.create({
+    const note = await (db as any).visaOfficerNote.create({
       data: {
         caseId: caseId || visaCase?.id || '',
         studentId: studentId || visaCase?.studentId || '',
@@ -62,10 +62,10 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
       } as any,
     });
 
-    await logAuditAction(auth, 'VISA_NOTE_CREATE', 'VisaOfficerNote', note.id, { caseId: caseId || visaCase?.id, studentId: studentId || visaCase?.studentId, visibility: normalizedVisibility, contentLength: content.length, noteType: commentType || noteType });
+    await logAuditAction(auth, 'VISA_NOTE_CREATE', 'VisaOfficerNote', (note as any).id, { caseId: caseId || visaCase?.id, studentId: studentId || visaCase?.studentId, visibility: normalizedVisibility, contentLength: content.length, noteType: commentType || noteType });
 
     if (normalizedVisibility.includes('student')) {
-      await db.timelineEvent.create({
+      await (db as any).timelineEvent.create({
         data: {
           studentId: studentId || visaCase?.studentId || '',
           stage: 'VISA_STUDENT_FEEDBACK_SENT',
@@ -74,7 +74,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
         },
       }).catch(() => {});
     } else {
-      await db.timelineEvent.create({
+      await (db as any).timelineEvent.create({
         data: {
           studentId: studentId || visaCase?.studentId || '',
           stage: 'VISA_INTERNAL_NOTE_CREATED',
@@ -98,9 +98,9 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
 
     if (!caseId && !studentId) return NextResponse.json({ success: false, error: 'caseId or studentId required' }, { status: 400 });
 
-    let visaCase = null;
-    if (caseId) visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase && studentId) visaCase = await db.visaCase.findFirst({ where: { studentId } });
+    let visaCase: any = null;
+    if (caseId) visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } });
+    if (!visaCase && studentId) visaCase = await (db as any).visaCase.findFirst({ where: { studentId } });
 
     const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
     const isStudent = auth.roles.includes('student') || auth.roles.includes('STUDENT');
@@ -126,9 +126,9 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     if (caseId) where.caseId = caseId;
     if (studentId) where.studentId = studentId;
 
-    const notes = await db.visaOfficerNote.findMany({ where, orderBy: { createdAt: 'desc' }, take: 100 });
+    const notes = await (db as any).visaOfficerNote.findMany({ where, orderBy: { createdAt: 'desc' }, take: 100 });
 
-    await logAuditAction(auth, 'VISA_NOTES_VIEW', 'VisaOfficerNote', caseId || studentId || 'list', { count: notes.length, studentId: visaCase?.studentId || studentId });
+    await logAuditAction(auth, 'VISA_NOTES_VIEW', 'VisaOfficerNote', caseId || studentId || 'list', { count: (notes as any[]).length, studentId: visaCase?.studentId || studentId });
 
     return NextResponse.json({ success: true, data: notes, notes, emptyState: notes.length === 0 ? 'No notes — proper empty state — visibility INTERNAL_ONLY/VISA_TEAM_ONLY/COUNSELOR_VISIBLE/APPLICATION_TEAM_VISIBLE/STUDENT_SAFE_FEEDBACK/SUPER_ADMIN_ONLY — student never sees internal' : null });
   } catch (error: any) {

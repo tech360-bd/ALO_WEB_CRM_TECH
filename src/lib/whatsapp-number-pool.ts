@@ -197,3 +197,7 @@ export function generateSecureToken(): { raw: string; hash: string } {
   const hash = crypto.createHash('sha256').update(raw).digest('hex');
   return { raw, hash };
 }
+
+export function getPool(): { number: string; reason: string }[] {
+  return OFFICIAL_NUMBERS.map((n) => ({ number: n, reason: 'pool' }));
+}

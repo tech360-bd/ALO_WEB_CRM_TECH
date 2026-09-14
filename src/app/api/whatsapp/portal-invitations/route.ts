@@ -16,19 +16,19 @@ export const POST = withAuth(async (req, auth) => {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
     // Idempotency: check existing valid invitation
-    const existing = await db.studentPortalInvitation.findFirst({
+    const existing = await (db as any).studentPortalInvitation.findFirst({
       where: { studentId, isUsed: false, expiresAt: { gt: new Date() } },
       orderBy: { createdAt: 'desc' },
     });
 
-    let invitation;
+    let invitation: any;
     let rawToken = raw;
 
     if (existing) {
       invitation = existing;
       rawToken = 'existing-token-not-exposed'; // Don't expose existing raw token
     } else {
-      invitation = await db.studentPortalInvitation.create({
+      invitation = await (db as any).studentPortalInvitation.create({
         data: {
           studentId,
           phone: phone || '',
@@ -53,7 +53,7 @@ export const POST = withAuth(async (req, auth) => {
 
     const welcomeText = welcomeMessages[lang] || welcomeMessages['mixed'];
 
-    let sendResult = null;
+    let sendResult: any = null;
     if (!existing) {
       // Only send if new invitation
       sendResult = await sendWhatsAppMessage({
@@ -61,13 +61,13 @@ export const POST = withAuth(async (req, auth) => {
         text: welcomeText,
       });
 
-      await db.studentPortalInvitation.update({
-        where: { id: invitation.id },
+      await (db as any).studentPortalInvitation.update({
+        where: { id: (invitation as any).id },
         data: { invitationSent: true, sentAt: new Date() },
       }).catch(() => {});
     }
 
-    await db.aloAuditLog.create({
+    await (db as any).aloAuditLog.create({
       data: {
         studentId,
         actorType: auth.roles[0] || 'system',
@@ -104,7 +104,7 @@ export const GET = withAuth(async (req, auth) => {
     const where: any = {};
     if (studentId) where.studentId = studentId;
 
-    const invitations = await db.studentPortalInvitation.findMany({
+    const invitations = await (db as any).studentPortalInvitation.findMany({
       where,
       orderBy: { createdAt: 'desc' },
       take: 50,

@@ -769,3 +769,4 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
     </div>
   );
 }
+export default PublicCourse;

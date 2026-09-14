@@ -76,3 +76,4 @@ export function PublicHigherStudy({ onNavigate }: Props) {
     </div>
   );
 }
+export default PublicHigherStudy;

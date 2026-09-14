@@ -1960,3 +1960,4 @@ function NewQuotaRequestDialog({
     </Dialog>
   );
 }
+export default AccessControlCenter;

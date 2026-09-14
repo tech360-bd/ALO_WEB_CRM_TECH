@@ -1517,3 +1517,4 @@ function FormSelectField({
     </div>
   );
 }
+export default AdminCourseManagement;

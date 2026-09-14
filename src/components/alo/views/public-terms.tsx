@@ -197,3 +197,4 @@ export function PublicTerms({ onNavigate }: PublicTermsProps) {
     </LegalLayout>
   );
 }
+export default PublicTerms;

@@ -69,6 +69,4 @@ export const PATCH = withAuth(async (req, auth, { params }: any) => {
   return NextResponse.json({ success: true, data: updated, application: updated });
 });
 
-export const POST = withAuth(async (req, auth, { params }: any) => {
-  return PATCH(req, auth, { params } as any);
-});
+export const POST = PATCH;

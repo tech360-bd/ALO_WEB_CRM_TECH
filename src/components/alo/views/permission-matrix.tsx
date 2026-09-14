@@ -708,3 +708,4 @@ export function PermissionMatrix() {
     </div>
   );
 }
+export default PermissionMatrix;

@@ -1364,3 +1364,4 @@ function CreateEmployeeSuccess({
     </div>
   );
 }
+export default EmployeeManagement;

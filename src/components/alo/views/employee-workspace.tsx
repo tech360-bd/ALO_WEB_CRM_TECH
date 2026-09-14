@@ -496,3 +496,4 @@ export function EmployeeWorkspace({
     </div>
   );
 }
+export default EmployeeWorkspace;

@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  PRODUCTION_APP_DIR: /root/alo-live
+  PRODUCTION_APP_DIR: /root/alo-github-main-new
   PM2_APP_NAME: alo-education
   APP_PORT: "3044"
   NODE_VERSION: "22"
@@ -194,7 +194,7 @@ jobs:
 
             echo "=== ALO PRODUCTION DEPLOYMENT ==="
             echo "Triggered by GitHub SHA: ${GITHUB_SHA:-unknown}"
-            echo "Production dir: ${PRODUCTION_APP_DIR:-/root/alo-live}"
+            echo "Production dir: ${PRODUCTION_APP_DIR:-/root/alo-github-main-new}"
             echo "PM2 app: ${PM2_APP_NAME:-alo-education}"
             echo "App port: ${APP_PORT:-3044}"
             echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -220,7 +220,7 @@ jobs:
             # VERIFY APP DIRECTORY
             # ─────────────────────────────────────────────────────────
             echo "=== VERIFY APP DIRECTORY ==="
-            APP_DIR="${PRODUCTION_APP_DIR:-/root/alo-live}"
+            APP_DIR="${PRODUCTION_APP_DIR:-/root/alo-github-main-new}"
             echo "Checking app dir: $APP_DIR"
 
             if [ ! -d "$APP_DIR" ]; then
@@ -831,10 +831,10 @@ jobs:
   #   - DATABASE_URL, JWT secrets, API keys
   #   - .env contents
   #
-  # All app secrets stay on VPS in /root/alo-live/.env (chmod 600), never in GitHub.
+  # All app secrets stay on VPS in /root/alo-github-main-new/.env (chmod 600), never in GitHub.
   # Deployment verifies .env exists and never overwrites it.
   #
-  # Production directory: /root/alo-live (configurable via env.PRODUCTION_APP_DIR)
+  # Production directory: /root/alo-github-main-new (configurable via env.PRODUCTION_APP_DIR)
   # PM2 app name: alo-education (configurable via env.PM2_APP_NAME)
   # App port: 3044 (from ecosystem.config.cjs, configurable via env.APP_PORT)
   # Health endpoint: /api/health (exists at src/app/api/health/route.ts)

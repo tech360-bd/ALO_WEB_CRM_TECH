@@ -181,3 +181,4 @@ export function PublicAccessibility({ onNavigate }: PublicAccessibilityProps) {
     </LegalLayout>
   );
 }
+export default PublicAccessibility;

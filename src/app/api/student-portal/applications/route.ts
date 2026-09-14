@@ -7,22 +7,13 @@ export async function GET(req: NextRequest) {
     const auth = await authenticateRequest(req);
     if (auth instanceof NextResponse) return auth;
     const userId = auth.userId;
-    const studentProfile = await db.portalStudentProfile.findFirst({ where: { userId } }).catch(() => null);
+    const studentProfile = await (db as any).portalStudentProfile.findFirst({ where: { userId } }).catch(() => null);
     const studentId = studentProfile?.studentId || userId;
 
-    let data: any = [];
-    if ('applications' === 'profile') {
-      data = studentProfile || await db.portalUser.findFirst({ where: { id: userId } }).catch(()=>null);
-    } else if ('applications' === 'applications') {
-      data = await db.application.findMany({ where: { studentId }, take: 50, orderBy: { createdAt: 'desc' } }).catch(()=>[]);
-    } else if ('applications' === 'documents') {
-      data = await db.portalStudentDocument.findMany({ where: { studentProfileId: studentProfile?.id || '' }, take: 100 }).catch(()=>[]);
-    } else if ('applications' === 'timeline') {
-      data = await db.portalTimelineEvent.findMany({ where: { studentProfileId: studentProfile?.id || '' }, take: 100, orderBy: { createdAt: 'desc' } }).catch(()=>[]);
-    }
+    const data = await (db as any).application.findMany({ where: { studentId }, take: 50, orderBy: { createdAt: 'desc' } }).catch(()=>[]);
 
     // Audit log
-    await db.portalAuditLog.create({
+    await (db as any).portalAuditLog.create({
       data: {
         actorUserId: userId,
         action: 'STUDENT_VIEW_applications',

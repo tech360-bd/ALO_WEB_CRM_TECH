@@ -275,3 +275,4 @@ export function CrmAnalytics() {
     </div>
   );
 }
+export default CrmAnalytics;

@@ -1437,3 +1437,4 @@ export function ImportCenter() {
     </div>
   );
 }
+export default ImportCenter;

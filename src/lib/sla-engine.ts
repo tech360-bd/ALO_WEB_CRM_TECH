@@ -146,7 +146,7 @@ export async function checkAndEscalateSla() {
     orderBy: { slaDueAt: 'asc' },
   });
 
-  const results = [];
+  const results: any[] = [];
 
   for (const thread of overdueThreads) {
     const elapsedMinutes = Math.floor((now.getTime() - (thread.slaTriggeredAt?.getTime() || thread.createdAt.getTime())) / 60000);

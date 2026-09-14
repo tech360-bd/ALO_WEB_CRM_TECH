@@ -812,3 +812,4 @@ export function FinanceDashboard() {
     </div>
   );
 }
+export default FinanceDashboard;

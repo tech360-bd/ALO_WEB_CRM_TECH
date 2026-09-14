@@ -327,3 +327,4 @@ export function PublicReviewSubmit({ token }: { token: string }) {
     </div>
   );
 }
+export default PublicReviewSubmit;

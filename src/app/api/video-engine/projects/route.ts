@@ -63,7 +63,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
     const project = await engine.createProject(projectInput as any, auth.userId);
 
     // Try to persist to DB
-    let persisted = null;
+    let persisted: any = null;
     try {
       persisted = await (db as any).videoProject.create({
         data: {

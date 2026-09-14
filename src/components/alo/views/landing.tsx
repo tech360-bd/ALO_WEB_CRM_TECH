@@ -727,3 +727,4 @@ function FieldError({ msg }: { msg: string }) {
     </p>
   );
 }
+export default LandingView;

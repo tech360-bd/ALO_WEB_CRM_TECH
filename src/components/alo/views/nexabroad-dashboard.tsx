@@ -783,3 +783,4 @@ function CounselorApprovalCard({
     </div>
   );
 }
+export default NexAbroadDashboard;

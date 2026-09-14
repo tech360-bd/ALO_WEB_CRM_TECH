@@ -190,3 +190,4 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
     </div>
   );
 }
+export default PublicApplicationProcess;

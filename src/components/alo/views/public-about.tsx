@@ -403,3 +403,4 @@ function Stat({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+export default PublicAbout;

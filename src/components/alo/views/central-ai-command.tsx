@@ -930,3 +930,4 @@ export function CentralAiCommand() {
     </div>
   );
 }
+export default CentralAiCommand;

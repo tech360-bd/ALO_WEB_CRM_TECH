@@ -140,7 +140,7 @@ function renderContentWithVerify(content: string) {
 // ============================================================
 // MAIN COMPONENT
 // ============================================================
-export function SopStudio({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => void }) {
+export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey, slug?: string) => void }) {
   const { toast } = useToast();
   const [tab, setTab] = React.useState<"sop" | "cv">("sop");
 
@@ -951,3 +951,4 @@ function CvResultView({ result, studentId }: { result: CvDraftResponse; studentI
     </div>
   );
 }
+export default SopStudio;

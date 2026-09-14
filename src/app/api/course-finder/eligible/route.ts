@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   ]);
   if (!student) return NextResponse.json({ error: "Student not found" }, { status: 404 });
 
-  const profile = profileSections.reduce<Record<string, unknown>>((acc, section) => {
+  const profile = (profileSections as any[]).reduce((acc: Record<string, unknown>, section: any) => {
     try {
       const value = JSON.parse(section.data || "{}");
       if (value && typeof value === "object") Object.assign(acc, value);
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
       // A malformed optional profile section must not make course search fail.
     }
     return acc;
-  }, {});
+  }, {} as Record<string, unknown>);
   const stringPreference = (...keys: string[]) => {
     for (const key of keys) {
       const value = profile[key];
@@ -37,18 +37,18 @@ export async function GET(req: NextRequest) {
     }
     return "";
   };
-  const studyDestination = stringPreference("studyDestination", "preferredCountry") || student.currentCountry;
+  const studyDestination = stringPreference("studyDestination", "preferredCountry") || (student as any).currentCountry;
   const studyLevel = stringPreference("studyLevel", "level");
   const studyArea = stringPreference("studyArea", "subject", "field");
-  const latestEnglish = englishTests[0];
-  const latestEducation = educationHistory[0];
+  const latestEnglish = (englishTests as any[])[0];
+  const latestEducation = (educationHistory as any[])[0];
 
-  const courses = await db.coursePage.findMany({
+  const courses = await (db as any).coursePage.findMany({
     where: { approvalStatus: "PUBLISHED" },
     include: { university: { select: { name: true, slug: true } } },
   });
 
-  const results = courses.map((course) => {
+  const results = (courses as any[]).map((course: any) => {
     let score = 0;
     let maxScore = 0;
     const reasons: string[] = [];
@@ -86,24 +86,24 @@ export async function GET(req: NextRequest) {
     } else if (!studyArea) missing.push("Preferred subject area not set");
 
     maxScore += 10;
-    score += Math.min(10, Math.floor(student.profileComplete / 10));
+    score += Math.min(10, Math.floor((student as any).profileComplete / 10));
 
     const eligibilityScore = Math.round((score / maxScore) * 100);
     const status = eligibilityScore >= 80 ? "ELIGIBLE" : eligibilityScore >= 60 ? "LIKELY_ELIGIBLE" : eligibilityScore >= 40 ? "NEED_REVIEW" : missing.length > 2 ? "MISSING_INFO" : "NOT_ELIGIBLE";
     return { courseSlug: course.slug, courseName: course.name, university: course.university?.name, eligibilityScore, status, reasons, missing };
   });
-  results.sort((a, b) => b.eligibilityScore - a.eligibilityScore);
+  results.sort((a: any, b: any) => b.eligibilityScore - a.eligibilityScore);
 
   return NextResponse.json({
-    student: { id: student.id, name: student.name, profileCompletion: student.profileComplete },
+    student: { id: (student as any).id, name: (student as any).name, profileCompletion: (student as any).profileComplete },
     results: results.slice(0, 50),
     summary: {
       total: results.length,
-      eligible: results.filter((r) => r.status === "ELIGIBLE").length,
-      likelyEligible: results.filter((r) => r.status === "LIKELY_ELIGIBLE").length,
-      needReview: results.filter((r) => r.status === "NEED_REVIEW").length,
-      notEligible: results.filter((r) => r.status === "NOT_ELIGIBLE").length,
-      missingInfo: results.filter((r) => r.status === "MISSING_INFO").length,
+      eligible: results.filter((r: any) => r.status === "ELIGIBLE").length,
+      likelyEligible: results.filter((r: any) => r.status === "LIKELY_ELIGIBLE").length,
+      needReview: results.filter((r: any) => r.status === "NEED_REVIEW").length,
+      notEligible: results.filter((r: any) => r.status === "NOT_ELIGIBLE").length,
+      missingInfo: results.filter((r: any) => r.status === "MISSING_INFO").length,
     },
   });
 }

@@ -819,3 +819,4 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
     </div>
   );
 }
+export default PublicUniversity;
