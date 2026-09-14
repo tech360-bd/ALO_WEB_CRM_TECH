@@ -103,6 +103,7 @@ export async function runOrchestrated(event: OrchestratorEvent, policy: Partial<
   try {
     if (event.targetType && event.targetId && (event.targetType==='Lead' || event.targetType==='Student' || event.targetType==='University')) {
       // best-effort: call RAG if function exists
+      // @ts-ignore - optional module, may not exist
       const rag = await import('@/lib/rag/rag-engine').catch(()=>null) as any;
       if (rag?.retrieveContext) {
         const ctx = await rag.retrieveContext(String(event.payload?.query || event.workflow)).catch(()=>null);

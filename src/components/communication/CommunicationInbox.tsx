@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   MessageSquare, Mail, Phone, MessageCircle, Send, Filter, Search, Clock,
-  AlertTriangle, CheckCircle2, Reply, UserPlus, FileText, Flag, Eye, Archive, Spam, Escalate, Calendar, Smartphone, Globe, Building2, BookOpen, Shield
+  AlertTriangle, CheckCircle2, Reply, UserPlus, FileText, Flag, Eye, Archive, Ban, ArrowUpCircle, Calendar, Smartphone, Globe, Building2, BookOpen, Shield
 } from 'lucide-react';
 import SlaCountdownBadge from './SlaCountdownBadge';
 
@@ -199,7 +199,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
                       </td>
                       <td className="px-2 py-2">
                         <Badge className={`text-[10px] ${t.status === 'resolved' ? 'bg-emerald-100 text-emerald-700' : t.status === 'escalated' ? 'bg-rose-100 text-rose-700' : 'bg-blue-50 text-blue-700'}`}>{t.status}</Badge>
-                        <div className="mt-1"><SlaCountdownBadge slaDueAt={t.slaDueAt ? new Date(t.slaDueAt) : null} slaStatus={t.slaStatus} compact /></div>
+                        <div className="mt-1"><SlaCountdownBadge slaDueAt={t.slaDueAt ? new Date(t.slaDueAt) : null} size="sm" /></div>
                       </td>
                       <td className="px-2 py-2 text-[11px] text-gray-600">
                         <div>{t.lastMessageAt ? new Date(t.lastMessageAt).toLocaleString('en-GB') : '—'}</div>
