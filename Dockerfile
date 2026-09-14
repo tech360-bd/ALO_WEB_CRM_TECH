@@ -20,7 +20,8 @@ FROM node:22-bookworm-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=3044
+ENV HOSTNAME=0.0.0.0
 
 # Run as non-root (SEC-18)
 RUN useradd -m -u 1001 nextjs
@@ -38,7 +39,7 @@ RUN mkdir -p /app/upload /app/download /app/db && chown -R nextjs:nextjs /app
 
 USER nextjs
 
-EXPOSE 3000
+EXPOSE 3044
 
 # Apply only reviewed, additive migrations before starting the server.
 # Never use `prisma db push` in production because it can change the schema
