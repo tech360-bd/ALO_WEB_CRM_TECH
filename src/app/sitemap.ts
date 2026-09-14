@@ -1,8 +1,5 @@
 import { MetadataRoute } from 'next';
-import { ukUniversitiesPart1 } from '@/lib/university-data-uk';
-import { ukUniversitiesPart2 } from '@/lib/university-data-uk2';
-import { allIntlUniversities } from '@/lib/university-data-intl';
-import { slugify } from '@/lib/all-universities';
+import { ALL_400_UNIVERSITIES, slugify } from '@/lib/all-universities';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
@@ -38,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...infoRoutes,
   ];
 
-  const allUnis = [...ukUniversitiesPart1, ...ukUniversitiesPart2, ...allIntlUniversities];
+  const allUnis = ALL_400_UNIVERSITIES;
   const universityRoutes: MetadataRoute.Sitemap = allUnis.map((uni) => ({
     url: `${baseUrl}/universities/${slugify(uni.name)}`,
     lastModified: new Date(),

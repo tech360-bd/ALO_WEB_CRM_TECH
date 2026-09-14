@@ -3,69 +3,85 @@ UNI-UN-0001,University of Oxford,United Kingdom,Oxford,1096,Russell Group,https:
 UNI-UN-0002,University of Cambridge,United Kingdom,Cambridge,1209,Russell Group,https://www.cam.ac.uk,5,active,VERIFIED_OFFICIAL
 UNI-UN-0003,Imperial College London,United Kingdom,London,1907,Russell Group,https://www.imperial.ac.uk,6,active,VERIFIED_OFFICIAL
 UNI-UN-0004,University College London (UCL),United Kingdom,London,1826,Russell Group,https://www.ucl.ac.uk,9,active,VERIFIED_OFFICIAL
-UNI-UN-0005,London School of Economics (LSE),United Kingdom,London,1895,Russell Group,https://www.lse.ac.uk,56,active,VERIFIED_OFFICIAL
 UNI-UN-0006,University of Edinburgh,United Kingdom,Edinburgh,1583,Russell Group,https://www.ed.ac.uk,22,active,VERIFIED_OFFICIAL
 UNI-UN-0007,University of Manchester,United Kingdom,Manchester,1824,Russell Group,https://www.manchester.ac.uk,32,active,VERIFIED_OFFICIAL
 UNI-UN-0008,King's College London,United Kingdom,London,1829,Russell Group,https://www.kcl.ac.uk,40,active,VERIFIED_OFFICIAL
 UNI-UN-0009,University of Bristol,United Kingdom,Bristol,1876,Russell Group,https://www.bristol.ac.uk,55,active,VERIFIED_OFFICIAL
+UNI-UN-0005,London School of Economics (LSE),United Kingdom,London,1895,Russell Group,https://www.lse.ac.uk,56,active,VERIFIED_OFFICIAL
 UNI-UN-0010,University of Warwick,United Kingdom,Coventry,1965,Russell Group,https://warwick.ac.uk,64,active,VERIFIED_OFFICIAL
 UNI-UN-0011,University of Glasgow,United Kingdom,Glasgow,1451,Russell Group,https://www.gla.ac.uk,76,active,VERIFIED_OFFICIAL
+UNI-UN-0019,Durham University,United Kingdom,Durham,1832,Russell Group,https://www.durham.ac.uk,78,active,VERIFIED_OFFICIAL
+UNI-UN-0016,University of Southampton,United Kingdom,Southampton,1862,Russell Group,https://www.southampton.ac.uk,80,active,VERIFIED_OFFICIAL
 UNI-UN-0012,University of Birmingham,United Kingdom,Birmingham,1900,Russell Group,https://www.birmingham.ac.uk,84,active,VERIFIED_OFFICIAL
 UNI-UN-0013,University of Leeds,United Kingdom,Leeds,1904,Russell Group,https://www.leeds.ac.uk,86,active,VERIFIED_OFFICIAL
+UNI-UN-0023,University of St Andrews,United Kingdom,St Andrews,1413,Russell Group,https://www.st-andrews.ac.uk,95,active,VERIFIED_OFFICIAL
 UNI-UN-0014,University of Sheffield,United Kingdom,Sheffield,1905,Russell Group,https://www.sheffield.ac.uk,104,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0015,University of Nottingham,United Kingdom,Nottingham,1798,Russell Group,https://www.nottingham.ac.uk,108,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0016,University of Southampton,United Kingdom,Southampton,1862,Russell Group,https://www.southampton.ac.uk,80,active,VERIFIED_OFFICIAL
-UNI-UN-0017,University of Liverpool,United Kingdom,Liverpool,1881,Red Brick,https://www.liverpool.ac.uk,176,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0018,University of Newcastle,United Kingdom,Newcastle,1834,Russell Group,https://www.ncl.ac.uk,122,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0019,Durham University,United Kingdom,Durham,1832,Russell Group,https://www.durham.ac.uk,78,active,VERIFIED_OFFICIAL
-UNI-UN-0020,University of Exeter,United Kingdom,Exeter,1955,Russell Group,https://www.exeter.ac.uk,153,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0021,Queen Mary University of London,United Kingdom,London,1785,Russell Group,https://www.qmul.ac.uk,120,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0022,University of York,United Kingdom,York,1963,Plate Glass,https://www.york.ac.uk,167,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0023,University of St Andrews,United Kingdom,St Andrews,1413,Russell Group,https://www.st-andrews.ac.uk,95,active,VERIFIED_OFFICIAL
-UNI-UN-0024,University of Bath,United Kingdom,Bath,1966,Plate Glass,https://www.bath.ac.uk,166,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0018,University of Newcastle,United Kingdom,Newcastle,1834,Russell Group,https://www.ncl.ac.uk,122,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0025,Lancaster University,United Kingdom,Lancaster,1964,Plate Glass,https://www.lancaster.ac.uk,132,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0026,University of Surrey,United Kingdom,Guildford,1966,Plate Glass,https://www.surrey.ac.uk,244,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0027,Loughborough University,United Kingdom,Loughborough,1909,Plate Glass,https://www.lboro.ac.uk,212,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0028,University of Reading,United Kingdom,Reading,1892,Red Brick,https://www.reading.ac.uk,229,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0029,University of Sussex,United Kingdom,Brighton,1961,Plate Glass,https://www.sussex.ac.uk,218,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0020,University of Exeter,United Kingdom,Exeter,1955,Russell Group,https://www.exeter.ac.uk,153,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0081,Cardiff University,United Kingdom,Cardiff,1883,Russell Group,https://www.cardiff.ac.uk,154,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0024,University of Bath,United Kingdom,Bath,1966,Plate Glass,https://www.bath.ac.uk,166,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0022,University of York,United Kingdom,York,1963,Plate Glass,https://www.york.ac.uk,167,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0017,University of Liverpool,United Kingdom,Liverpool,1881,Red Brick,https://www.liverpool.ac.uk,176,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0092,Queen's University Belfast,United Kingdom,Belfast,1845,Russell Group,https://www.qub.ac.uk,194,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0030,University of Aberdeen,United Kingdom,Aberdeen,1495,Russell Group,https://www.abdn.ac.uk,208,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0027,Loughborough University,United Kingdom,Loughborough,1909,Plate Glass,https://www.lboro.ac.uk,212,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0029,University of Sussex,United Kingdom,Brighton,1961,Plate Glass,https://www.sussex.ac.uk,218,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0028,University of Reading,United Kingdom,Reading,1892,Red Brick,https://www.reading.ac.uk,229,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0037,Heriot-Watt University,United Kingdom,Edinburgh,1821,Plate Glass,https://www.hw.ac.uk,235,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0026,University of Surrey,United Kingdom,Guildford,1966,Plate Glass,https://www.surrey.ac.uk,244,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0036,University of Strathclyde,United Kingdom,Glasgow,1796,Plate Glass,https://www.strath.ac.uk,251,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0035,University of Leicester,United Kingdom,Leicester,1921,Red Brick,https://www.le.ac.uk,285,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0083,Swansea University,United Kingdom,Swansea,1920,Russell Group,https://www.swansea.ac.uk,298,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0031,University of Dundee,United Kingdom,Dundee,1967,Plate Glass,https://www.dundee.ac.uk,318,active,NEEDS_REVIEW
+UNI-UN-0104,Cranfield University,United Kingdom,Cranfield,1946,Postgraduate,https://www.cranfield.ac.uk,319,active,NEEDS_REVIEW
+UNI-UN-0042,City University of London,United Kingdom,London,1894,Red Brick,https://www.city.ac.uk,328,active,NEEDS_REVIEW
 UNI-UN-0032,University of Kent,United Kingdom,Canterbury,1965,Plate Glass,https://www.kent.ac.uk,336,active,NEEDS_REVIEW
+UNI-UN-0041,Brunel University London,United Kingdom,Uxbridge,1966,Plate Glass,https://www.brunel.ac.uk,341,active,NEEDS_REVIEW
 UNI-UN-0033,University of East Anglia (UEA),United Kingdom,Norwich,1963,Plate Glass,https://www.uea.ac.uk,342,active,NEEDS_REVIEW
 UNI-UN-0034,University of Essex,United Kingdom,Colchester,1964,Plate Glass,https://www.essex.ac.uk,359,active,NEEDS_REVIEW
-UNI-UN-0035,University of Leicester,United Kingdom,Leicester,1921,Red Brick,https://www.le.ac.uk,285,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0036,University of Strathclyde,United Kingdom,Glasgow,1796,Plate Glass,https://www.strath.ac.uk,251,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0037,Heriot-Watt University,United Kingdom,Edinburgh,1821,Plate Glass,https://www.hw.ac.uk,235,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0079,Goldsmiths University of London,United Kingdom,London,1891,Red Brick,https://www.gold.ac.uk,401,active,NEEDS_REVIEW
 UNI-UN-0038,University of Stirling,United Kingdom,Stirling,1967,Plate Glass,https://www.stir.ac.uk,431,active,NEEDS_REVIEW
+UNI-UN-0062,Keele University,United Kingdom,Keele,1949,Plate Glass,https://www.keele.ac.uk,431,active,NEEDS_REVIEW
 UNI-UN-0039,Aston University,United Kingdom,Birmingham,1966,Plate Glass,https://www.aston.ac.uk,441,active,NEEDS_REVIEW
 UNI-UN-0040,University of Hull,United Kingdom,Hull,1927,Red Brick,https://www.hull.ac.uk,521,active,NEEDS_REVIEW
-UNI-UN-0041,Brunel University London,United Kingdom,Uxbridge,1966,Plate Glass,https://www.brunel.ac.uk,341,active,NEEDS_REVIEW
-UNI-UN-0042,City University of London,United Kingdom,London,1894,Red Brick,https://www.city.ac.uk,328,active,NEEDS_REVIEW
-UNI-UN-0043,University of Westminster,United Kingdom,London,1838,Modern,https://www.westminster.ac.uk,651,active,NEEDS_REVIEW
-UNI-UN-0044,Nottingham Trent University,United Kingdom,Nottingham,1992,Modern,https://www.ntu.ac.uk,595,active,NEEDS_REVIEW
-UNI-UN-0045,Sheffield Hallam University,United Kingdom,Sheffield,1843,Modern,https://www.shu.ac.uk,601,active,NEEDS_REVIEW
-UNI-UN-0046,University of Huddersfield,United Kingdom,Huddersfield,1825,Modern,https://www.hud.ac.uk,621,active,NEEDS_REVIEW
-UNI-UN-0047,Leeds Beckett University,United Kingdom,Leeds,1824,Modern,https://www.leedsbeckett.ac.uk,651,active,NEEDS_REVIEW
-UNI-UN-0048,Manchester Metropolitan University,United Kingdom,Manchester,1824,Modern,https://www.mmu.ac.uk,601,active,NEEDS_REVIEW
-UNI-UN-0049,University of Salford,United Kingdom,Salford,1896,Plate Glass,https://www.salford.ac.uk,721,active,NEEDS_REVIEW
-UNI-UN-0050,University of Central Lancashire (UCLan),United Kingdom,Preston,1828,Modern,https://www.uclan.ac.uk,701,active,NEEDS_REVIEW
+UNI-UN-0093,Ulster University,United Kingdom,Belfast,1968,Modern,https://www.ulster.ac.uk,531,active,NEEDS_REVIEW
 UNI-UN-0051,University of Portsmouth,United Kingdom,Portsmouth,1992,Modern,https://www.port.ac.uk,541,active,NEEDS_REVIEW
 UNI-UN-0052,University of Brighton,United Kingdom,Brighton,1859,Modern,https://www.brighton.ac.uk,581,active,NEEDS_REVIEW
-UNI-UN-0053,Bournemouth University,United Kingdom,Bournemouth,1992,Modern,https://www.bournemouth.ac.uk,801,active,NEEDS_REVIEW
+UNI-UN-0089,Edinburgh Napier University,United Kingdom,Edinburgh,1964,Modern,https://www.napier.ac.uk,581,active,NEEDS_REVIEW
+UNI-UN-0110,University of Bradford,United Kingdom,Bradford,1966,Plate Glass,https://www.bradford.ac.uk,581,active,NEEDS_REVIEW
+UNI-UN-0113,Liverpool John Moores University,United Kingdom,Liverpool,1823,Modern,https://www.ljmu.ac.uk,581,active,NEEDS_REVIEW
+UNI-UN-0044,Nottingham Trent University,United Kingdom,Nottingham,1992,Modern,https://www.ntu.ac.uk,595,active,NEEDS_REVIEW
+UNI-UN-0045,Sheffield Hallam University,United Kingdom,Sheffield,1843,Modern,https://www.shu.ac.uk,601,active,NEEDS_REVIEW
+UNI-UN-0048,Manchester Metropolitan University,United Kingdom,Manchester,1824,Modern,https://www.mmu.ac.uk,601,active,NEEDS_REVIEW
 UNI-UN-0054,Coventry University,United Kingdom,Coventry,1843,Modern,https://www.coventry.ac.uk,601,active,NEEDS_REVIEW
-UNI-UN-0055,De Montfort University,United Kingdom,Leicester,1870,Modern,https://www.dmu.ac.uk,651,active,NEEDS_REVIEW
 UNI-UN-0056,Northumbria University,United Kingdom,Newcastle,1992,Modern,https://www.northumbria.ac.uk,601,active,NEEDS_REVIEW
-UNI-UN-0057,University of Greenwich,United Kingdom,London,1890,Modern,https://www.gre.ac.uk,701,active,NEEDS_REVIEW
-UNI-UN-0058,Kingston University London,United Kingdom,London,1899,Modern,https://www.kingston.ac.uk,701,active,NEEDS_REVIEW
-UNI-UN-0059,Teesside University,United Kingdom,Middlesbrough,1930,Modern,https://www.tees.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0060,University of Lincoln,United Kingdom,Lincoln,1992,Modern,https://www.lincoln.ac.uk,601,active,NEEDS_REVIEW
 UNI-UN-0061,University of Plymouth,United Kingdom,Plymouth,1992,Modern,https://www.plymouth.ac.uk,601,active,NEEDS_REVIEW
-UNI-UN-0062,Keele University,United Kingdom,Keele,1949,Plate Glass,https://www.keele.ac.uk,431,active,NEEDS_REVIEW
 UNI-UN-0063,University of the West of England (UWE Bristol),United Kingdom,Bristol,1992,Modern,https://www.uwe.ac.uk,601,active,NEEDS_REVIEW
+UNI-UN-0067,Oxford Brookes University,United Kingdom,Oxford,1865,Modern,https://www.brookes.ac.uk,601,active,NEEDS_REVIEW
+UNI-UN-0090,Glasgow Caledonian University,United Kingdom,Glasgow,1875,Modern,https://www.gcu.ac.uk,601,active,NEEDS_REVIEW
+UNI-UN-0046,University of Huddersfield,United Kingdom,Huddersfield,1825,Modern,https://www.hud.ac.uk,621,active,NEEDS_REVIEW
+UNI-UN-0085,Bangor University,United Kingdom,Bangor,1884,Traditional,https://www.bangor.ac.uk,641,active,NEEDS_REVIEW
+UNI-UN-0043,University of Westminster,United Kingdom,London,1838,Modern,https://www.westminster.ac.uk,651,active,NEEDS_REVIEW
+UNI-UN-0047,Leeds Beckett University,United Kingdom,Leeds,1824,Modern,https://www.leedsbeckett.ac.uk,651,active,NEEDS_REVIEW
+UNI-UN-0055,De Montfort University,United Kingdom,Leicester,1870,Modern,https://www.dmu.ac.uk,651,active,NEEDS_REVIEW
+UNI-UN-0050,University of Central Lancashire (UCLan),United Kingdom,Preston,1828,Modern,https://www.uclan.ac.uk,701,active,NEEDS_REVIEW
+UNI-UN-0057,University of Greenwich,United Kingdom,London,1890,Modern,https://www.gre.ac.uk,701,active,NEEDS_REVIEW
+UNI-UN-0058,Kingston University London,United Kingdom,London,1899,Modern,https://www.kingston.ac.uk,701,active,NEEDS_REVIEW
+UNI-UN-0086,Aberystwyth University,United Kingdom,Aberystwyth,1872,Traditional,https://www.aber.ac.uk,701,active,NEEDS_REVIEW
+UNI-UN-0088,University of the West of Scotland,United Kingdom,Paisley,1897,Modern,https://www.uws.ac.uk,701,active,NEEDS_REVIEW
+UNI-UN-0125,University of Sunderland,United Kingdom,Sunderland,1901,Modern,https://www.sunderland.ac.uk,701,active,NEEDS_REVIEW
+UNI-UN-0049,University of Salford,United Kingdom,Salford,1896,Plate Glass,https://www.salford.ac.uk,721,active,NEEDS_REVIEW
+UNI-UN-0094,Birkbeck University of London,United Kingdom,London,1823,Specialized,https://www.bbk.ac.uk,741,active,NEEDS_REVIEW
+UNI-UN-0115,Edge Hill University,United Kingdom,Ormskirk,1885,Modern,https://www.edgehill.ac.uk,741,active,NEEDS_REVIEW
+UNI-UN-0053,Bournemouth University,United Kingdom,Bournemouth,1992,Modern,https://www.bournemouth.ac.uk,801,active,NEEDS_REVIEW
+UNI-UN-0059,Teesside University,United Kingdom,Middlesbrough,1930,Modern,https://www.tees.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0064,Middlesex University London,United Kingdom,London,1878,Modern,https://www.mdx.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0065,University of Gloucestershire,United Kingdom,Cheltenham,1990,Modern,https://www.glos.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0066,University of Hertfordshire,United Kingdom,Hatfield,1952,Modern,https://www.herts.ac.uk,801,active,NEEDS_REVIEW
-UNI-UN-0067,Oxford Brookes University,United Kingdom,Oxford,1865,Modern,https://www.brookes.ac.uk,601,active,NEEDS_REVIEW
 UNI-UN-0068,Anglia Ruskin University,United Kingdom,Cambridge,1858,Modern,https://www.aru.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0069,University of Bedfordshire,United Kingdom,Luton,1882,Modern,https://www.beds.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0070,University of East London,United Kingdom,London,1898,Modern,https://www.uel.ac.uk,801,active,NEEDS_REVIEW
@@ -77,23 +93,14 @@ UNI-UN-0075,Staffordshire University,United Kingdom,Stoke-on-Trent,1914,Modern,h
 UNI-UN-0076,Canterbury Christ Church University,United Kingdom,Canterbury,1962,Modern,https://www.canterbury.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0077,University for the Creative Arts,United Kingdom,Farnham,1965,Specialized,https://www.uca.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0078,Ravensbourne University London,United Kingdom,London,1962,Specialized,https://www.ravensbourne.ac.uk,801,active,NEEDS_REVIEW
-UNI-UN-0079,Goldsmiths University of London,United Kingdom,London,1891,Red Brick,https://www.gold.ac.uk,401,active,NEEDS_REVIEW
-UNI-UN-0080,University of Suffolk,United Kingdom,Ipswich,2016,Modern,https://www.uos.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0081,Cardiff University,United Kingdom,Cardiff,1883,Russell Group,https://www.cardiff.ac.uk,154,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0082,Cardiff Metropolitan University,United Kingdom,Cardiff,1865,Modern,https://www.cardiffmet.ac.uk,801,active,NEEDS_REVIEW
-UNI-UN-0083,Swansea University,United Kingdom,Swansea,1920,Russell Group,https://www.swansea.ac.uk,298,active,CROSS_SOURCE_VERIFIED
 UNI-UN-0084,University of South Wales,United Kingdom,Pontypridd,2013,Modern,https://www.southwales.ac.uk,801,active,NEEDS_REVIEW
-UNI-UN-0085,Bangor University,United Kingdom,Bangor,1884,Traditional,https://www.bangor.ac.uk,641,active,NEEDS_REVIEW
-UNI-UN-0086,Aberystwyth University,United Kingdom,Aberystwyth,1872,Traditional,https://www.aber.ac.uk,701,active,NEEDS_REVIEW
-UNI-UN-0087,Wrexham Glyndŵr University,United Kingdom,Wrexham,2008,Modern,https://www.glyndwr.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0088,University of the West of Scotland,United Kingdom,Paisley,1897,Modern,https://www.uws.ac.uk,701,active,NEEDS_REVIEW
-UNI-UN-0089,Edinburgh Napier University,United Kingdom,Edinburgh,1964,Modern,https://www.napier.ac.uk,581,active,NEEDS_REVIEW
-UNI-UN-0090,Glasgow Caledonian University,United Kingdom,Glasgow,1875,Modern,https://www.gcu.ac.uk,601,active,NEEDS_REVIEW
-UNI-UN-0091,University of the Highlands and Islands,United Kingdom,Inverness,2011,Modern,https://www.uhi.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0092,Queen's University Belfast,United Kingdom,Belfast,1845,Russell Group,https://www.qub.ac.uk,194,active,CROSS_SOURCE_VERIFIED
-UNI-UN-0093,Ulster University,United Kingdom,Belfast,1968,Modern,https://www.ulster.ac.uk,531,active,NEEDS_REVIEW
-UNI-UN-0094,Birkbeck University of London,United Kingdom,London,1823,Specialized,https://www.bbk.ac.uk,741,active,NEEDS_REVIEW
 UNI-UN-0095,University College Birmingham,United Kingdom,Birmingham,1957,Modern,https://www.ucb.ac.uk,801,active,NEEDS_REVIEW
+UNI-UN-0109,University of Bolton,United Kingdom,Bolton,2004,Modern,https://www.bolton.ac.uk,801,active,NEEDS_REVIEW
+UNI-UN-0120,London South Bank University,United Kingdom,London,1892,Modern,https://www.lsbu.ac.uk,801,active,NEEDS_REVIEW
+UNI-UN-0080,University of Suffolk,United Kingdom,Ipswich,2016,Modern,https://www.uos.ac.uk,0,active,NEEDS_REVIEW
+UNI-UN-0087,Wrexham Glyndŵr University,United Kingdom,Wrexham,2008,Modern,https://www.glyndwr.ac.uk,0,active,NEEDS_REVIEW
+UNI-UN-0091,University of the Highlands and Islands,United Kingdom,Inverness,2011,Modern,https://www.uhi.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0096,Royal Academy of Music,United Kingdom,London,1822,Specialized,https://www.ram.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0097,Royal College of Music,United Kingdom,London,1882,Specialized,https://www.rcm.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0098,Royal Central School of Speech and Drama,United Kingdom,London,1906,Specialized,https://www.cssd.ac.uk,0,active,NEEDS_REVIEW
@@ -102,28 +109,21 @@ UNI-UN-0100,St George's University of London,United Kingdom,London,1733,Speciali
 UNI-UN-0101,University of the Arts London,United Kingdom,London,1986,Specialized,https://www.arts.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0102,London School of Hygiene & Tropical Medicine,United Kingdom,London,1899,Specialized,https://www.lshtm.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0103,Royal Veterinary College,United Kingdom,London,1791,Specialized,https://www.rvc.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0104,Cranfield University,United Kingdom,Cranfield,1946,Postgraduate,https://www.cranfield.ac.uk,319,active,NEEDS_REVIEW
 UNI-UN-0105,University of Buckingham,United Kingdom,Buckingham,1976,Private,https://www.buckingham.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0106,St Mary's University Twickenham,United Kingdom,London,1850,Modern,https://www.stmarys.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0107,Bishop Grosseteste University,United Kingdom,Lincoln,1862,Modern,https://www.bishopg.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0108,University of Cumbria,United Kingdom,Carlisle,2007,Modern,https://www.cumbria.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0109,University of Bolton,United Kingdom,Bolton,2004,Modern,https://www.bolton.ac.uk,801,active,NEEDS_REVIEW
-UNI-UN-0110,University of Bradford,United Kingdom,Bradford,1966,Plate Glass,https://www.bradford.ac.uk,581,active,NEEDS_REVIEW
 UNI-UN-0111,Leeds Trinity University,United Kingdom,Leeds,1966,Modern,https://www.leedstrinity.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0112,York St John University,United Kingdom,York,1841,Modern,https://www.yorksj.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0113,Liverpool John Moores University,United Kingdom,Liverpool,1823,Modern,https://www.ljmu.ac.uk,581,active,NEEDS_REVIEW
 UNI-UN-0114,Liverpool Hope University,United Kingdom,Liverpool,1844,Modern,https://www.hope.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0115,Edge Hill University,United Kingdom,Ormskirk,1885,Modern,https://www.edgehill.ac.uk,741,active,NEEDS_REVIEW
 UNI-UN-0116,Newman University,United Kingdom,Birmingham,1968,Modern,https://newman.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0117,University Academy 92,United Kingdom,Manchester,2017,Modern,https://www.ua92.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0118,Arden University,United Kingdom,Coventry,2015,Private,https://arden.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0119,BPP University,United Kingdom,London,1976,Private,https://www.bpp.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0120,London South Bank University,United Kingdom,London,1892,Modern,https://www.lsbu.ac.uk,801,active,NEEDS_REVIEW
 UNI-UN-0121,Richmond University,United Kingdom,London,1972,Private,https://www.richmond.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0122,Hult International Business School,United Kingdom,London,1964,Private,https://www.hult.edu,0,active,NEEDS_REVIEW
 UNI-UN-0123,London School of Business and Finance,United Kingdom,London,2003,Private,https://www.lsbf.org.uk,0,active,NEEDS_REVIEW
 UNI-UN-0124,London School of Commerce,United Kingdom,London,1999,Private,https://www.lsc.ac.uk,0,active,NEEDS_REVIEW
-UNI-UN-0125,University of Sunderland,United Kingdom,Sunderland,1901,Modern,https://www.sunderland.ac.uk,701,active,NEEDS_REVIEW
 UNI-UN-0126,Institute of Cancer Research,United Kingdom,London,1909,Specialized,https://www.icr.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0127,University of Chichester,United Kingdom,Chichester,1839,Modern,https://www.chi.ac.uk,0,active,NEEDS_REVIEW
 UNI-UN-0128,Plymouth Marjon University,United Kingdom,Plymouth,1840,Modern,https://www.marjon.ac.uk,0,active,NEEDS_REVIEW
@@ -142,71 +142,91 @@ UNI-UN-0140,Arden University – Bristol,United Kingdom,Bristol,2021,Private,htt
 UNI-UN-0141,Massachusetts Institute of Technology,United States,"Cambridge, MA",1861,Private,https://www.mit.edu,1,active,VERIFIED_OFFICIAL
 UNI-UN-0142,Stanford University,United States,"Stanford, CA",1885,Private,https://www.stanford.edu,2,active,VERIFIED_OFFICIAL
 UNI-UN-0143,Harvard University,United States,"Cambridge, MA",1636,Private,https://www.harvard.edu,4,active,VERIFIED_OFFICIAL
-UNI-UN-0144,California Institute of Technology,United States,"Pasadena, CA",1891,Private,https://www.caltech.edu,15,active,VERIFIED_OFFICIAL
-UNI-UN-0145,"University of California, Berkeley",United States,"Berkeley, CA",1868,Public,https://www.berkeley.edu,12,active,VERIFIED_OFFICIAL
-UNI-UN-0146,"University of California, Los Angeles",United States,"Los Angeles, CA",1919,Public,https://www.ucla.edu,21,active,VERIFIED_OFFICIAL
 UNI-UN-0147,University of Chicago,United States,"Chicago, IL",1890,Private,https://www.uchicago.edu,11,active,VERIFIED_OFFICIAL
-UNI-UN-0148,Columbia University,United States,"New York, NY",1754,Private,https://www.columbia.edu,23,active,VERIFIED_OFFICIAL
+UNI-UN-0156,University of Pennsylvania,United States,"Philadelphia, PA",1740,Private,https://www.upenn.edu,11,active,VERIFIED_OFFICIAL
+UNI-UN-0145,"University of California, Berkeley",United States,"Berkeley, CA",1868,Public,https://www.berkeley.edu,12,active,VERIFIED_OFFICIAL
+UNI-UN-0144,California Institute of Technology,United States,"Pasadena, CA",1891,Private,https://www.caltech.edu,15,active,VERIFIED_OFFICIAL
 UNI-UN-0149,Yale University,United States,"New Haven, CT",1701,Private,https://www.yale.edu,16,active,VERIFIED_OFFICIAL
 UNI-UN-0150,Princeton University,United States,"Princeton, NJ",1746,Private,https://www.princeton.edu,17,active,VERIFIED_OFFICIAL
+UNI-UN-0155,Cornell University,United States,"Ithaca, NY",1865,Private,https://www.cornell.edu,20,active,VERIFIED_OFFICIAL
+UNI-UN-0146,"University of California, Los Angeles",United States,"Los Angeles, CA",1919,Public,https://www.ucla.edu,21,active,VERIFIED_OFFICIAL
+UNI-UN-0148,Columbia University,United States,"New York, NY",1754,Private,https://www.columbia.edu,23,active,VERIFIED_OFFICIAL
+UNI-UN-0157,Johns Hopkins University,United States,"Baltimore, MD",1876,Private,https://www.jhu.edu,32,active,VERIFIED_OFFICIAL
 UNI-UN-0151,University of Michigan,United States,"Ann Arbor, MI",1817,Public,https://www.umich.edu,33,active,VERIFIED_OFFICIAL
+UNI-UN-0159,Northwestern University,United States,"Evanston, IL",1851,Private,https://www.northwestern.edu,47,active,VERIFIED_OFFICIAL
+UNI-UN-0158,Duke University,United States,"Durham, NC",1838,Private,https://www.duke.edu,50,active,VERIFIED_OFFICIAL
 UNI-UN-0152,Carnegie Mellon University,United States,"Pittsburgh, PA",1900,Private,https://www.cmu.edu,58,active,VERIFIED_OFFICIAL
 UNI-UN-0153,Georgia Institute of Technology,United States,"Atlanta, GA",1885,Public,https://www.gatech.edu,61,active,VERIFIED_OFFICIAL
-UNI-UN-0154,University of Washington,United States,"Seattle, WA",1861,Public,https://www.washington.edu,76,active,VERIFIED_OFFICIAL
-UNI-UN-0155,Cornell University,United States,"Ithaca, NY",1865,Private,https://www.cornell.edu,20,active,VERIFIED_OFFICIAL
-UNI-UN-0156,University of Pennsylvania,United States,"Philadelphia, PA",1740,Private,https://www.upenn.edu,11,active,VERIFIED_OFFICIAL
-UNI-UN-0157,Johns Hopkins University,United States,"Baltimore, MD",1876,Private,https://www.jhu.edu,32,active,VERIFIED_OFFICIAL
-UNI-UN-0158,Duke University,United States,"Durham, NC",1838,Private,https://www.duke.edu,50,active,VERIFIED_OFFICIAL
-UNI-UN-0159,Northwestern University,United States,"Evanston, IL",1851,Private,https://www.northwestern.edu,47,active,VERIFIED_OFFICIAL
 UNI-UN-0160,"University of California, San Diego",United States,"La Jolla, CA",1960,Public,https://www.ucsd.edu,62,active,VERIFIED_OFFICIAL
+UNI-UN-0154,University of Washington,United States,"Seattle, WA",1861,Public,https://www.washington.edu,76,active,VERIFIED_OFFICIAL
 UNI-CA-0161,University of Toronto,Canada,"Toronto, ON",1827,Public,https://www.utoronto.ca,25,active,VERIFIED_OFFICIAL
-UNI-CA-0162,University of British Columbia,Canada,"Vancouver, BC",1908,Public,https://www.ubc.ca,34,active,VERIFIED_OFFICIAL
 UNI-CA-0163,McGill University,Canada,"Montreal, QC",1821,Public,https://www.mcgill.ca,29,active,VERIFIED_OFFICIAL
+UNI-CA-0162,University of British Columbia,Canada,"Vancouver, BC",1908,Public,https://www.ubc.ca,34,active,VERIFIED_OFFICIAL
 UNI-CA-0164,University of Alberta,Canada,"Edmonton, AB",1908,Public,https://www.ualberta.ca,96,active,VERIFIED_OFFICIAL
 UNI-CA-0165,University of Waterloo,Canada,"Waterloo, ON",1957,Public,https://uwaterloo.ca,112,active,CROSS_SOURCE_VERIFIED
-UNI-CA-0166,University of Montreal,Canada,"Montreal, QC",1878,Public,https://www.umontreal.ca,159,active,CROSS_SOURCE_VERIFIED
 UNI-CA-0167,McMaster University,Canada,"Hamilton, ON",1887,Public,https://www.mcmaster.ca,152,active,CROSS_SOURCE_VERIFIED
-UNI-CA-0168,Western University,Canada,"London, ON",1878,Public,https://www.uwo.ca,203,active,CROSS_SOURCE_VERIFIED
+UNI-CA-0166,University of Montreal,Canada,"Montreal, QC",1878,Public,https://www.umontreal.ca,159,active,CROSS_SOURCE_VERIFIED
 UNI-CA-0169,Queen's University,Canada,"Kingston, ON",1841,Public,https://www.queensu.ca,193,active,CROSS_SOURCE_VERIFIED
 UNI-CA-0170,University of Calgary,Canada,"Calgary, AB",1966,Public,https://www.ucalgary.ca,198,active,CROSS_SOURCE_VERIFIED
-UNI-CA-0171,Dalhousie University,Canada,"Halifax, NS",1818,Public,https://www.dal.ca,298,active,CROSS_SOURCE_VERIFIED
+UNI-CA-0168,Western University,Canada,"London, ON",1878,Public,https://www.uwo.ca,203,active,CROSS_SOURCE_VERIFIED
 UNI-CA-0172,University of Ottawa,Canada,"Ottawa, ON",1848,Public,https://www.uottawa.ca,237,active,CROSS_SOURCE_VERIFIED
+UNI-CA-0171,Dalhousie University,Canada,"Halifax, NS",1818,Public,https://www.dal.ca,298,active,CROSS_SOURCE_VERIFIED
 UNI-CA-0173,Simon Fraser University,Canada,"Burnaby, BC",1965,Public,https://www.sfu.ca,318,active,NEEDS_REVIEW
 UNI-CA-0174,University of Victoria,Canada,"Victoria, BC",1963,Public,https://www.uvic.ca,347,active,NEEDS_REVIEW
 UNI-CA-0175,York University,Canada,"Toronto, ON",1959,Public,https://www.yorku.ca,372,active,NEEDS_REVIEW
-UNI-CA-0176,Carleton University,Canada,"Ottawa, ON",1942,Public,https://carleton.ca,501,active,NEEDS_REVIEW
 UNI-CA-0177,University of Saskatchewan,Canada,"Saskatoon, SK",1907,Public,https://www.usask.ca,441,active,NEEDS_REVIEW
 UNI-CA-0178,University of Manitoba,Canada,"Winnipeg, MB",1877,Public,https://umanitoba.ca,476,active,NEEDS_REVIEW
-UNI-CA-0179,Toronto Metropolitan University,Canada,"Toronto, ON",1948,Public,https://www.torontomu.ca,551,active,NEEDS_REVIEW
 UNI-CA-0180,University of Guelph,Canada,"Guelph, ON",1964,Public,https://www.uoguelph.ca,486,active,NEEDS_REVIEW
+UNI-CA-0176,Carleton University,Canada,"Ottawa, ON",1942,Public,https://carleton.ca,501,active,NEEDS_REVIEW
+UNI-CA-0179,Toronto Metropolitan University,Canada,"Toronto, ON",1948,Public,https://www.torontomu.ca,551,active,NEEDS_REVIEW
 UNI-AU-0181,University of Melbourne,Australia,"Melbourne, VIC",1853,Public,https://www.unimelb.edu.au,13,active,VERIFIED_OFFICIAL
 UNI-AU-0182,University of Sydney,Australia,"Sydney, NSW",1850,Public,https://www.sydney.edu.au,18,active,VERIFIED_OFFICIAL
-UNI-AU-0183,Australian National University,Australia,"Canberra, ACT",1946,Public,https://www.anu.edu.au,30,active,VERIFIED_OFFICIAL
 UNI-AU-0184,University of New South Wales,Australia,"Sydney, NSW",1949,Public,https://www.unsw.edu.au,19,active,VERIFIED_OFFICIAL
-UNI-AU-0185,University of Queensland,Australia,"Brisbane, QLD",1909,Public,https://www.uq.edu.au,40,active,VERIFIED_OFFICIAL
+UNI-AU-0183,Australian National University,Australia,"Canberra, ACT",1946,Public,https://www.anu.edu.au,30,active,VERIFIED_OFFICIAL
 UNI-AU-0186,Monash University,Australia,"Melbourne, VIC",1958,Public,https://www.monash.edu,37,active,VERIFIED_OFFICIAL
-UNI-AU-0187,University of Adelaide,Australia,"Adelaide, SA",1874,Public,https://www.adelaide.edu.au,82,active,VERIFIED_OFFICIAL
+UNI-AU-0185,University of Queensland,Australia,"Brisbane, QLD",1909,Public,https://www.uq.edu.au,40,active,VERIFIED_OFFICIAL
 UNI-AU-0188,University of Western Australia,Australia,"Perth, WA",1911,Public,https://www.uwa.edu.au,77,active,VERIFIED_OFFICIAL
+UNI-AU-0187,University of Adelaide,Australia,"Adelaide, SA",1874,Public,https://www.adelaide.edu.au,82,active,VERIFIED_OFFICIAL
 UNI-AU-0189,University of Technology Sydney,Australia,"Sydney, NSW",1988,Public,https://www.uts.edu.au,85,active,VERIFIED_OFFICIAL
 UNI-AU-0190,RMIT University,Australia,"Melbourne, VIC",1887,Public,https://www.rmit.edu.au,123,active,CROSS_SOURCE_VERIFIED
 UNI-AU-0191,Macquarie University,Australia,"Sydney, NSW",1964,Public,https://www.mq.edu.au,133,active,CROSS_SOURCE_VERIFIED
-UNI-AU-0192,University of Newcastle,Australia,"Newcastle, NSW",1965,Public,https://www.newcastle.edu.au,174,active,CROSS_SOURCE_VERIFIED
 UNI-AU-0193,University of Wollongong,Australia,"Wollongong, NSW",1975,Public,https://www.uow.edu.au,167,active,CROSS_SOURCE_VERIFIED
-UNI-AU-0194,Deakin University,Australia,"Geelong, VIC",1974,Public,https://www.deakin.edu.au,233,active,CROSS_SOURCE_VERIFIED
-UNI-AU-0195,Flinders University,Australia,"Adelaide, SA",1966,Public,https://www.flinders.edu.au,260,active,CROSS_SOURCE_VERIFIED
-UNI-AU-0196,La Trobe University,Australia,"Melbourne, VIC",1964,Public,https://www.latrobe.edu.au,285,active,CROSS_SOURCE_VERIFIED
-UNI-AU-0197,Griffith University,Australia,"Brisbane, QLD",1971,Public,https://www.griffith.edu.au,243,active,CROSS_SOURCE_VERIFIED
-UNI-AU-0198,Swinburne University of Technology,Australia,"Melbourne, VIC",1908,Public,https://www.swinburne.edu.au,285,active,CROSS_SOURCE_VERIFIED
+UNI-AU-0192,University of Newcastle,Australia,"Newcastle, NSW",1965,Public,https://www.newcastle.edu.au,174,active,CROSS_SOURCE_VERIFIED
 UNI-AU-0199,Curtin University,Australia,"Perth, WA",1986,Public,https://www.curtin.edu.au,174,active,CROSS_SOURCE_VERIFIED
 UNI-AU-0200,Queensland University of Technology,Australia,"Brisbane, QLD",1989,Public,https://www.qut.edu.au,189,active,CROSS_SOURCE_VERIFIED
+UNI-AU-0194,Deakin University,Australia,"Geelong, VIC",1974,Public,https://www.deakin.edu.au,233,active,CROSS_SOURCE_VERIFIED
+UNI-AU-0197,Griffith University,Australia,"Brisbane, QLD",1971,Public,https://www.griffith.edu.au,243,active,CROSS_SOURCE_VERIFIED
+UNI-AU-0195,Flinders University,Australia,"Adelaide, SA",1966,Public,https://www.flinders.edu.au,260,active,CROSS_SOURCE_VERIFIED
+UNI-AU-0196,La Trobe University,Australia,"Melbourne, VIC",1964,Public,https://www.latrobe.edu.au,285,active,CROSS_SOURCE_VERIFIED
+UNI-AU-0198,Swinburne University of Technology,Australia,"Melbourne, VIC",1908,Public,https://www.swinburne.edu.au,285,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0541,University of Tasmania,Australia,Hobart,1890,Public,https://www.utas.edu.au,307,active,VERIFIED_OFFICIAL
+UNI-UN-0548,Western Sydney University,Australia,Sydney,1989,Public,https://www.westernsydney.edu.au,384,active,VERIFIED_OFFICIAL
+UNI-UN-0546,University of Canberra,Australia,Canberra,1967,Public,https://www.canberra.edu.au,403,active,VERIFIED_OFFICIAL
+UNI-UN-0550,James Cook University,Australia,Townsville,1970,Public,https://www.jcu.edu.au,412,active,VERIFIED_OFFICIAL
+UNI-UN-0543,Bond University,Australia,Gold Coast,1987,Private,https://www.bond.edu.au,451,active,VERIFIED_OFFICIAL
+UNI-UN-0549,Murdoch University,Australia,Perth,1973,Public,https://www.murdoch.edu.au,580,active,VERIFIED_OFFICIAL
+UNI-UN-0555,Edith Cowan University,Australia,Perth,1991,Public,https://www.ecu.edu.au,601,active,VERIFIED_OFFICIAL
+UNI-UN-0547,Victoria University,Australia,Melbourne,1990,Public,https://www.vu.edu.au,650,active,VERIFIED_OFFICIAL
+UNI-UN-0552,Australian Catholic University,Australia,Melbourne,1991,Public,https://www.acu.edu.au,701,active,VERIFIED_OFFICIAL
+UNI-UN-0554,University of the Sunshine Coast,Australia,Sippy Downs,1996,Public,https://www.usc.edu.au,701,active,VERIFIED_OFFICIAL
+UNI-UN-0542,University of New England,Australia,Armidale,1938,Public,https://www.une.edu.au,801,active,VERIFIED_OFFICIAL
+UNI-UN-0544,Southern Cross University,Australia,Lismore,1994,Public,https://www.scu.edu.au,801,active,VERIFIED_OFFICIAL
+UNI-UN-0545,Charles Darwin University,Australia,Darwin,2003,Public,https://www.cdu.edu.au,801,active,VERIFIED_OFFICIAL
+UNI-UN-0551,Charles Sturt University,Australia,Bathurst,1989,Public,https://www.csu.edu.au,801,active,VERIFIED_OFFICIAL
+UNI-UN-0553,Federation University Australia,Australia,Ballarat,1870,Public,https://www.federation.edu.au,801,active,VERIFIED_OFFICIAL
+UNI-UN-0556,University of Southern Queensland,Australia,Toowoomba,1967,Public,https://www.usq.edu.au,801,active,VERIFIED_OFFICIAL
+UNI-UN-0557,Central Queensland University,Australia,Rockhampton,1992,Public,https://www.cqu.edu.au,801,active,VERIFIED_OFFICIAL
+UNI-UN-0559,University of Notre Dame Australia,Australia,Fremantle,1989,Private,https://www.nd.edu.au,801,active,VERIFIED_OFFICIAL
+UNI-UN-0558,Torrens University Australia,Australia,Adelaide,2013,Private,https://www.torrens.edu.au,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0560,University of Divinity,Australia,Melbourne,1910,Private,https://www.divinity.edu.au,1000,active,VERIFIED_OFFICIAL
 UNI-IR-0201,Trinity College Dublin,Ireland,Dublin,1592,Public,https://www.tcd.ie,87,active,VERIFIED_OFFICIAL
 UNI-IR-0202,University College Dublin,Ireland,Dublin,1854,Public,https://www.ucd.ie,171,active,CROSS_SOURCE_VERIFIED
 UNI-IR-0203,University of Galway,Ireland,Galway,1845,Public,https://www.universityofgalway.ie,273,active,CROSS_SOURCE_VERIFIED
 UNI-IR-0204,University College Cork,Ireland,Cork,1845,Public,https://www.ucc.ie,292,active,CROSS_SOURCE_VERIFIED
-UNI-IR-0205,Dublin City University,Ireland,Dublin,1975,Public,https://www.dcu.ie,436,active,NEEDS_REVIEW
 UNI-IR-0206,University of Limerick,Ireland,Limerick,1972,Public,https://www.ul.ie,426,active,NEEDS_REVIEW
-UNI-IR-0207,Maynooth University,Ireland,Maynooth,1997,Public,https://www.maynoothuniversity.ie,601,active,NEEDS_REVIEW
+UNI-IR-0205,Dublin City University,Ireland,Dublin,1975,Public,https://www.dcu.ie,436,active,NEEDS_REVIEW
 UNI-IR-0208,Technological University Dublin,Ireland,Dublin,2019,Public,https://www.tudublin.ie,541,active,NEEDS_REVIEW
+UNI-IR-0207,Maynooth University,Ireland,Maynooth,1997,Public,https://www.maynoothuniversity.ie,601,active,NEEDS_REVIEW
 UNI-IR-0209,Waterford Institute of Technology,Ireland,Waterford,1970,IoT,https://www.setu.ie/waterford,0,active,NEEDS_REVIEW
 UNI-IR-0210,Institute of Technology Carlow,Ireland,Carlow,1970,IoT,https://www.itcarlow.ie,0,active,NEEDS_REVIEW
 UNI-IR-0211,Atlantic Technological University (formerly IT Sligo),Ireland,Sligo,1970,IoT,https://www.atu.ie,0,active,NEEDS_REVIEW
@@ -221,9 +241,9 @@ UNI-IR-0219,Dublin Business School,Ireland,Dublin,1975,Private,https://www.dbs.i
 UNI-IR-0220,American College Dublin,Ireland,Dublin,1993,Private,https://www.americancollegedublin.ie,0,active,NEEDS_REVIEW
 UNI-NE-0221,University of Auckland,New Zealand,Auckland,1883,Public,https://www.auckland.ac.nz,65,active,VERIFIED_OFFICIAL
 UNI-NE-0222,University of Otago,New Zealand,Dunedin,1869,Public,https://www.otago.ac.nz,214,active,CROSS_SOURCE_VERIFIED
-UNI-NE-0223,University of Canterbury,New Zealand,Christchurch,1873,Public,https://www.canterbury.ac.nz,261,active,CROSS_SOURCE_VERIFIED
 UNI-NE-0224,Victoria University of Wellington,New Zealand,Wellington,1897,Public,https://www.wgtn.ac.nz,244,active,CROSS_SOURCE_VERIFIED
 UNI-NE-0225,University of Waikato,New Zealand,Hamilton,1964,Public,https://www.waikato.ac.nz,250,active,CROSS_SOURCE_VERIFIED
+UNI-NE-0223,University of Canterbury,New Zealand,Christchurch,1873,Public,https://www.canterbury.ac.nz,261,active,CROSS_SOURCE_VERIFIED
 UNI-NE-0226,Massey University,New Zealand,Palmerston North,1927,Public,https://www.massey.ac.nz,327,active,NEEDS_REVIEW
 UNI-NE-0227,Lincoln University,New Zealand,Lincoln,1878,Public,https://www.lincoln.ac.nz,372,active,NEEDS_REVIEW
 UNI-NE-0228,Auckland University of Technology,New Zealand,Auckland,2000,Public,https://www.aut.ac.nz,412,active,NEEDS_REVIEW
@@ -242,76 +262,76 @@ UNI-NE-0240,Wintec,New Zealand,Hamilton,1924,ITP,https://www.wintec.ac.nz,0,acti
 UNI-GE-0241,Technical University of Munich,Germany,Munich,1868,Public,https://www.tum.de,28,active,VERIFIED_OFFICIAL
 UNI-GE-0242,LMU Munich,Germany,Munich,1472,Public,https://www.lmu.de,59,active,VERIFIED_OFFICIAL
 UNI-GE-0243,Heidelberg University,Germany,Heidelberg,1386,Public,https://www.uni-heidelberg.de,87,active,VERIFIED_OFFICIAL
-UNI-GE-0244,Humboldt University of Berlin,Germany,Berlin,1810,Public,https://www.hu-berlin.de,120,active,CROSS_SOURCE_VERIFIED
-UNI-GE-0245,RWTH Aachen University,Germany,Aachen,1870,Public,https://www.rwth-aachen.de,99,active,VERIFIED_OFFICIAL
 UNI-GE-0246,Freie Universität Berlin,Germany,Berlin,1948,Public,https://www.fu-berlin.de,98,active,VERIFIED_OFFICIAL
-UNI-GE-0247,University of Hamburg,Germany,Hamburg,1919,Public,https://www.uni-hamburg.de,191,active,CROSS_SOURCE_VERIFIED
-UNI-GE-0248,Technical University of Berlin,Germany,Berlin,1879,Public,https://www.tu.berlin,154,active,CROSS_SOURCE_VERIFIED
-UNI-GE-0249,University of Cologne,Germany,Cologne,1388,Public,https://www.uni-koeln.de,236,active,CROSS_SOURCE_VERIFIED
-UNI-GE-0250,Goethe University Frankfurt,Germany,Frankfurt,1914,Public,https://www.uni-frankfurt.de,182,active,CROSS_SOURCE_VERIFIED
-UNI-GE-0251,University of Stuttgart,Germany,Stuttgart,1829,Public,https://www.uni-stuttgart.de,314,active,NEEDS_REVIEW
-UNI-GE-0252,TU Dresden,Germany,Dresden,1828,Public,https://tu-dresden.de,200,active,CROSS_SOURCE_VERIFIED
-UNI-GE-0253,University of Bonn,Germany,Bonn,1818,Public,https://www.uni-bonn.de,229,active,CROSS_SOURCE_VERIFIED
-UNI-GE-0254,University of Mannheim,Germany,Mannheim,1907,Public,https://www.uni-mannheim.de,427,active,NEEDS_REVIEW
+UNI-GE-0245,RWTH Aachen University,Germany,Aachen,1870,Public,https://www.rwth-aachen.de,99,active,VERIFIED_OFFICIAL
 UNI-GE-0255,KIT – Karlsruhe Institute of Technology,Germany,Karlsruhe,1825,Public,https://www.kit.edu,102,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0244,Humboldt University of Berlin,Germany,Berlin,1810,Public,https://www.hu-berlin.de,120,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0248,Technical University of Berlin,Germany,Berlin,1879,Public,https://www.tu.berlin,154,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0250,Goethe University Frankfurt,Germany,Frankfurt,1914,Public,https://www.uni-frankfurt.de,182,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0247,University of Hamburg,Germany,Hamburg,1919,Public,https://www.uni-hamburg.de,191,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0252,TU Dresden,Germany,Dresden,1828,Public,https://tu-dresden.de,200,active,CROSS_SOURCE_VERIFIED
 UNI-GE-0256,FAU Erlangen-Nuremberg,Germany,Erlangen,1743,Public,https://www.fau.de,208,active,CROSS_SOURCE_VERIFIED
-UNI-GE-0257,University of Münster,Germany,Münster,1780,Public,https://www.uni-muenster.de,262,active,CROSS_SOURCE_VERIFIED
 UNI-GE-0258,University of Tübingen,Germany,Tübingen,1477,Public,https://www.uni-tuebingen.de,213,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0253,University of Bonn,Germany,Bonn,1818,Public,https://www.uni-bonn.de,229,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0249,University of Cologne,Germany,Cologne,1388,Public,https://www.uni-koeln.de,236,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0257,University of Münster,Germany,Münster,1780,Public,https://www.uni-muenster.de,262,active,CROSS_SOURCE_VERIFIED
+UNI-GE-0251,University of Stuttgart,Germany,Stuttgart,1829,Public,https://www.uni-stuttgart.de,314,active,NEEDS_REVIEW
 UNI-GE-0259,University of Würzburg,Germany,Würzburg,1402,Public,https://www.uni-wuerzburg.de,356,active,NEEDS_REVIEW
+UNI-GE-0254,University of Mannheim,Germany,Mannheim,1907,Public,https://www.uni-mannheim.de,427,active,NEEDS_REVIEW
 UNI-GE-0260,Jacobs University Bremen,Germany,Bremen,2001,Private,https://www.jacobs-university.de,0,active,NEEDS_REVIEW
+UNI-UA-0280,NYU Abu Dhabi,UAE,Abu Dhabi,2010,Private,https://nyuad.nyu.edu,24,active,VERIFIED_OFFICIAL
+UNI-UA-0274,Birmingham University Dubai,UAE,Dubai,2018,Private,https://www.birmingham.ac.uk/dubai,84,active,VERIFIED_OFFICIAL
 UNI-UA-0261,Khalifa University,UAE,Abu Dhabi,2007,Public,https://www.ku.ac.ae,181,active,CROSS_SOURCE_VERIFIED
 UNI-UA-0262,United Arab Emirates University,UAE,Al Ain,1976,Public,https://www.uaeu.ac.ae,290,active,CROSS_SOURCE_VERIFIED
+UNI-UA-0273,Heriot-Watt University Dubai,UAE,Dubai,2005,Private,https://www.hw.ac.uk/dubai,316,active,NEEDS_REVIEW
 UNI-UA-0263,American University of Sharjah,UAE,Sharjah,1997,Private,https://www.aus.edu,364,active,NEEDS_REVIEW
 UNI-UA-0264,University of Sharjah,UAE,Sharjah,1997,Private,https://www.sharjah.ac.ae,465,active,NEEDS_REVIEW
+UNI-UA-0268,Ajman University,UAE,Ajman,1988,Private,https://www.ajman.ac.ae,551,active,NEEDS_REVIEW
 UNI-UA-0265,Abu Dhabi University,UAE,Abu Dhabi,2003,Private,https://www.adu.ac.ae,580,active,NEEDS_REVIEW
 UNI-UA-0266,American University in Dubai,UAE,Dubai,1995,Private,https://www.aud.edu,601,active,NEEDS_REVIEW
+UNI-UA-0277,Al Ain University,UAE,Al Ain,2004,Private,https://aau.ac.ae,651,active,NEEDS_REVIEW
 UNI-UA-0267,Canadian University Dubai,UAE,Dubai,2006,Private,https://www.cud.ac.ae,701,active,NEEDS_REVIEW
-UNI-UA-0268,Ajman University,UAE,Ajman,1988,Private,https://www.ajman.ac.ae,551,active,NEEDS_REVIEW
-UNI-UA-0269,Middlesex University Dubai,UAE,Dubai,2005,Private,https://www.mdx.ac.ae,801,active,NEEDS_REVIEW
-UNI-UA-0270,University of Wollongong in Dubai,UAE,Dubai,1993,Private,https://www.uowdubai.ac.ae,751,active,NEEDS_REVIEW
 UNI-UA-0271,Zayed University,UAE,Dubai,1998,Public,https://www.zu.ac.ae,701,active,NEEDS_REVIEW
+UNI-UA-0270,University of Wollongong in Dubai,UAE,Dubai,1993,Private,https://www.uowdubai.ac.ae,751,active,NEEDS_REVIEW
+UNI-UA-0269,Middlesex University Dubai,UAE,Dubai,2005,Private,https://www.mdx.ac.ae,801,active,NEEDS_REVIEW
 UNI-UA-0272,British University in Dubai,UAE,Dubai,2003,Private,https://www.buid.ac.ae,1001,active,NEEDS_REVIEW
-UNI-UA-0273,Heriot-Watt University Dubai,UAE,Dubai,2005,Private,https://www.hw.ac.uk/dubai,316,active,NEEDS_REVIEW
-UNI-UA-0274,Birmingham University Dubai,UAE,Dubai,2018,Private,https://www.birmingham.ac.uk/dubai,84,active,VERIFIED_OFFICIAL
 UNI-UA-0275,Amity University Dubai,UAE,Dubai,2011,Private,https://amityuniversity.ae,1001,active,NEEDS_REVIEW
 UNI-UA-0276,Rochester Institute of Technology Dubai,UAE,Dubai,2008,Private,https://www.rit.edu/dubai,1001,active,NEEDS_REVIEW
-UNI-UA-0277,Al Ain University,UAE,Al Ain,2004,Private,https://aau.ac.ae,651,active,NEEDS_REVIEW
 UNI-UA-0278,Gulf Medical University,UAE,Ajman,1998,Private,https://gmu.ac.ae,1001,active,NEEDS_REVIEW
 UNI-UA-0279,Skyline University College,UAE,Sharjah,1990,Private,https://www.skylineuniversity.ac.ae,1001,active,NEEDS_REVIEW
-UNI-UA-0280,NYU Abu Dhabi,UAE,Abu Dhabi,2010,Private,https://nyuad.nyu.edu,24,active,VERIFIED_OFFICIAL
-UNI-FR-0281,Sorbonne University,France,Paris,1257,Public,https://www.sorbonne-universite.fr,59,active,VERIFIED_OFFICIAL
-UNI-FR-0282,Université Paris-Saclay,France,Saint-Aubin,2019,Public,https://www.universite-paris-saclay.fr,93,active,VERIFIED_OFFICIAL
 UNI-FR-0283,PSL Research University,France,Paris,2010,Public,https://psl.eu,24,active,VERIFIED_OFFICIAL
 UNI-FR-0284,École Polytechnique,France,Palaiseau,1794,Public,https://www.polytechnique.edu,46,active,VERIFIED_OFFICIAL
+UNI-FR-0281,Sorbonne University,France,Paris,1257,Public,https://www.sorbonne-universite.fr,59,active,VERIFIED_OFFICIAL
+UNI-FR-0282,Université Paris-Saclay,France,Saint-Aubin,2019,Public,https://www.universite-paris-saclay.fr,93,active,VERIFIED_OFFICIAL
 UNI-FR-0285,Université de Paris,France,Paris,2019,Public,https://u-paris.fr,150,active,CROSS_SOURCE_VERIFIED
 UNI-FR-0286,University of Strasbourg,France,Strasbourg,1538,Public,https://www.unistra.fr,250,active,CROSS_SOURCE_VERIFIED
-UNI-FR-0287,Aix-Marseille University,France,Marseille,1409,Public,https://www.univ-amu.fr,350,active,NEEDS_REVIEW
-UNI-FR-0288,University of Bordeaux,France,Bordeaux,1441,Public,https://www.u-bordeaux.fr,300,active,CROSS_SOURCE_VERIFIED
 UNI-FR-0289,Grenoble Alpes University,France,Grenoble,1339,Public,https://www.univ-grenoble-alpes.fr,294,active,CROSS_SOURCE_VERIFIED
+UNI-FR-0288,University of Bordeaux,France,Bordeaux,1441,Public,https://www.u-bordeaux.fr,300,active,CROSS_SOURCE_VERIFIED
+UNI-FR-0293,Pantheon-Sorbonne University,France,Paris,1971,Public,https://www.pantheonsorbonne.fr,328,active,NEEDS_REVIEW
+UNI-FR-0287,Aix-Marseille University,France,Marseille,1409,Public,https://www.univ-amu.fr,350,active,NEEDS_REVIEW
 UNI-FR-0290,University of Montpellier,France,Montpellier,1289,Public,https://www.umontpellier.fr,400,active,NEEDS_REVIEW
 UNI-FR-0291,Claude Bernard University Lyon 1,France,Lyon,1971,Public,https://www.univ-lyon1.fr,450,active,NEEDS_REVIEW
 UNI-FR-0292,Toulouse 1 Capitole University,France,Toulouse,1970,Public,https://www.ut-capitole.fr,501,active,NEEDS_REVIEW
-UNI-FR-0293,Pantheon-Sorbonne University,France,Paris,1971,Public,https://www.pantheonsorbonne.fr,328,active,NEEDS_REVIEW
-UNI-FR-0294,Paris Nanterre University,France,Nanterre,1964,Public,https://www.parisnanterre.fr,801,active,NEEDS_REVIEW
 UNI-FR-0295,University of Lille,France,Lille,1559,Public,https://www.univ-lille.fr,501,active,NEEDS_REVIEW
 UNI-FR-0296,University of Rennes 1,France,Rennes,1969,Public,https://www.univ-rennes1.fr,601,active,NEEDS_REVIEW
-UNI-FR-0297,Nantes University,France,Nantes,1961,Public,https://www.univ-nantes.fr,701,active,NEEDS_REVIEW
 UNI-FR-0298,University of Côte d'Azur,France,Nice,2015,Public,https://univ-cotedazur.fr,651,active,NEEDS_REVIEW
+UNI-FR-0297,Nantes University,France,Nantes,1961,Public,https://www.univ-nantes.fr,701,active,NEEDS_REVIEW
 UNI-FR-0299,Lorraine University,France,Nancy,1572,Public,https://www.univ-lorraine.fr,701,active,NEEDS_REVIEW
+UNI-FR-0294,Paris Nanterre University,France,Nanterre,1964,Public,https://www.parisnanterre.fr,801,active,NEEDS_REVIEW
 UNI-FR-0300,Paris-Panthéon-Assas University,France,Paris,1970,Public,https://www.u-assas.fr,801,active,NEEDS_REVIEW
-UNI-NE-0301,University of Amsterdam,Netherlands,Amsterdam,1632,Public,https://www.uva.nl,53,active,VERIFIED_OFFICIAL
 UNI-NE-0302,Delft University of Technology,Netherlands,Delft,1842,Public,https://www.tudelft.nl,49,active,VERIFIED_OFFICIAL
-UNI-NE-0303,Leiden University,Netherlands,Leiden,1575,Public,https://www.universiteitleiden.nl,67,active,VERIFIED_OFFICIAL
+UNI-NE-0301,University of Amsterdam,Netherlands,Amsterdam,1632,Public,https://www.uva.nl,53,active,VERIFIED_OFFICIAL
 UNI-NE-0304,Utrecht University,Netherlands,Utrecht,1636,Public,https://www.uu.nl,62,active,VERIFIED_OFFICIAL
-UNI-NE-0305,Erasmus University Rotterdam,Netherlands,Rotterdam,1913,Public,https://www.eur.nl,65,active,VERIFIED_OFFICIAL
-UNI-NE-0306,University of Groningen,Netherlands,Groningen,1614,Public,https://www.rug.nl,77,active,VERIFIED_OFFICIAL
 UNI-NE-0307,Wageningen University & Research,Netherlands,Wageningen,1876,Public,https://www.wur.nl,64,active,VERIFIED_OFFICIAL
-UNI-NE-0308,Vrije Universiteit Amsterdam,Netherlands,Amsterdam,1880,Public,https://www.vu.nl,207,active,CROSS_SOURCE_VERIFIED
-UNI-NE-0309,Radboud University,Netherlands,Nijmegen,1923,Public,https://www.ru.nl,140,active,CROSS_SOURCE_VERIFIED
-UNI-NE-0310,Maastricht University,Netherlands,Maastricht,1976,Public,https://www.maastrichtuniversity.nl,215,active,CROSS_SOURCE_VERIFIED
+UNI-NE-0305,Erasmus University Rotterdam,Netherlands,Rotterdam,1913,Public,https://www.eur.nl,65,active,VERIFIED_OFFICIAL
+UNI-NE-0303,Leiden University,Netherlands,Leiden,1575,Public,https://www.universiteitleiden.nl,67,active,VERIFIED_OFFICIAL
+UNI-NE-0306,University of Groningen,Netherlands,Groningen,1614,Public,https://www.rug.nl,77,active,VERIFIED_OFFICIAL
 UNI-NE-0311,Eindhoven University of Technology,Netherlands,Eindhoven,1956,Public,https://www.tue.nl,136,active,CROSS_SOURCE_VERIFIED
-UNI-NE-0312,Tilburg University,Netherlands,Tilburg,1927,Public,https://www.tilburguniversity.edu,303,active,NEEDS_REVIEW
+UNI-NE-0309,Radboud University,Netherlands,Nijmegen,1923,Public,https://www.ru.nl,140,active,CROSS_SOURCE_VERIFIED
+UNI-NE-0308,Vrije Universiteit Amsterdam,Netherlands,Amsterdam,1880,Public,https://www.vu.nl,207,active,CROSS_SOURCE_VERIFIED
+UNI-NE-0310,Maastricht University,Netherlands,Maastricht,1976,Public,https://www.maastrichtuniversity.nl,215,active,CROSS_SOURCE_VERIFIED
 UNI-NE-0313,University of Twente,Netherlands,Enschede,1961,Public,https://www.utwente.nl,233,active,CROSS_SOURCE_VERIFIED
+UNI-NE-0312,Tilburg University,Netherlands,Tilburg,1927,Public,https://www.tilburguniversity.edu,303,active,NEEDS_REVIEW
 UNI-NE-0314,Hanze University of Applied Sciences,Netherlands,Groningen,1798,Public,https://www.hanze.nl,0,active,NEEDS_REVIEW
 UNI-NE-0315,The Hague University of Applied Sciences,Netherlands,The Hague,1987,Public,https://www.thehagueuniversity.com,0,active,NEEDS_REVIEW
 UNI-NE-0316,Breda University of Applied Sciences,Netherlands,Breda,1966,Public,https://www.buas.nl,0,active,NEEDS_REVIEW
@@ -319,27 +339,30 @@ UNI-NE-0317,Avans University of Applied Sciences,Netherlands,Breda,2004,Public,h
 UNI-NE-0318,HZ University of Applied Sciences,Netherlands,Vlissingen,1987,Public,https://www.hz.nl,0,active,NEEDS_REVIEW
 UNI-NE-0319,Rotterdam University of Applied Sciences,Netherlands,Rotterdam,1988,Public,https://www.hr.nl,0,active,NEEDS_REVIEW
 UNI-NE-0320,Fontys University of Applied Sciences,Netherlands,Eindhoven,1996,Public,https://www.fontys.nl,0,active,NEEDS_REVIEW
+UNI-IT-0325,Polytechnic University of Milan,Italy,Milan,1863,Public,https://www.polimi.it,111,active,CROSS_SOURCE_VERIFIED
 UNI-IT-0321,University of Bologna,Italy,Bologna,1088,Public,https://www.unibo.it,133,active,CROSS_SOURCE_VERIFIED
 UNI-IT-0322,Sapienza University of Rome,Italy,Rome,1303,Public,https://www.uniroma1.it,134,active,CROSS_SOURCE_VERIFIED
 UNI-IT-0323,University of Padua,Italy,Padua,1222,Public,https://www.unipd.it,219,active,CROSS_SOURCE_VERIFIED
+UNI-IT-0339,Polytechnic University of Turin,Italy,Turin,1859,Public,https://www.polito.it,252,active,CROSS_SOURCE_VERIFIED
 UNI-IT-0324,University of Milan,Italy,Milan,1924,Public,https://www.unimi.it,276,active,CROSS_SOURCE_VERIFIED
-UNI-IT-0325,Polytechnic University of Milan,Italy,Milan,1863,Public,https://www.polimi.it,111,active,CROSS_SOURCE_VERIFIED
 UNI-IT-0326,University of Naples Federico II,Italy,Naples,1224,Public,https://www.unina.it,335,active,NEEDS_REVIEW
-UNI-IT-0327,University of Turin,Italy,Turin,1404,Public,https://www.unito.it,364,active,NEEDS_REVIEW
 UNI-IT-0328,University of Pisa,Italy,Pisa,1343,Public,https://www.unipi.it,349,active,NEEDS_REVIEW
 UNI-IT-0329,University of Florence,Italy,Florence,1321,Public,https://www.unifi.it,358,active,NEEDS_REVIEW
+UNI-IT-0327,University of Turin,Italy,Turin,1404,Public,https://www.unito.it,364,active,NEEDS_REVIEW
 UNI-IT-0330,University of Trento,Italy,Trento,1962,Public,https://www.unitn.it,429,active,NEEDS_REVIEW
-UNI-IT-0331,University of Milano-Bicocca,Italy,Milan,1998,Public,https://www.unimib.it,481,active,NEEDS_REVIEW
-UNI-IT-0332,University of Genoa,Italy,Genoa,1481,Public,https://www.unige.it,501,active,NEEDS_REVIEW
-UNI-IT-0333,University of Rome Tor Vergata,Italy,Rome,1982,Public,https://web.uniroma2.it,489,active,NEEDS_REVIEW
 UNI-IT-0334,University of Pavia,Italy,Pavia,1361,Public,https://web.unipv.it,440,active,NEEDS_REVIEW
+UNI-IT-0331,University of Milano-Bicocca,Italy,Milan,1998,Public,https://www.unimib.it,481,active,NEEDS_REVIEW
+UNI-IT-0333,University of Rome Tor Vergata,Italy,Rome,1982,Public,https://web.uniroma2.it,489,active,NEEDS_REVIEW
+UNI-IT-0332,University of Genoa,Italy,Genoa,1481,Public,https://www.unige.it,501,active,NEEDS_REVIEW
 UNI-IT-0335,University of Trieste,Italy,Trieste,1924,Public,https://www.units.it,551,active,NEEDS_REVIEW
-UNI-IT-0336,University of Bari Aldo Moro,Italy,Bari,1925,Public,https://www.uniba.it,701,active,NEEDS_REVIEW
 UNI-IT-0337,University of Perugia,Italy,Perugia,1308,Public,https://www.unipg.it,651,active,NEEDS_REVIEW
+UNI-IT-0336,University of Bari Aldo Moro,Italy,Bari,1925,Public,https://www.uniba.it,701,active,NEEDS_REVIEW
 UNI-IT-0338,University of Siena,Italy,Siena,1240,Public,https://www.unisi.it,701,active,NEEDS_REVIEW
-UNI-IT-0339,Polytechnic University of Turin,Italy,Turin,1859,Public,https://www.polito.it,252,active,CROSS_SOURCE_VERIFIED
 UNI-IT-0340,University of Salerno,Italy,Salerno,1968,Public,https://web.unisa.it,801,active,NEEDS_REVIEW
+UNI-MA-0357,Queen Mary University of London Malta,Malta,Gozo,2017,Private,https://www.qmul.ac.uk/malta,120,active,CROSS_SOURCE_VERIFIED
+UNI-MA-0358,Barts London School of Medicine Malta,Malta,Victoria,2017,Private,https://www.qmul.ac.uk/malta,120,active,CROSS_SOURCE_VERIFIED
 UNI-MA-0341,University of Malta,Malta,Msida,1559,Public,https://www.um.edu.mt,801,active,NEEDS_REVIEW
+UNI-MA-0352,Middlesex University Malta,Malta,Pembroke,2013,Private,https://www.mdx.edu.mt,801,active,NEEDS_REVIEW
 UNI-MA-0342,"Malta College of Arts, Science and Technology",Malta,Paola,2001,Public,https://www.mcast.edu.mt,1001,active,NEEDS_REVIEW
 UNI-MA-0343,American University of Malta,Malta,Cospicua,2016,Private,https://aum.edu.mt,1001,active,NEEDS_REVIEW
 UNI-MA-0344,Global College Malta,Malta,Ricasoli,2012,Private,https://gcm.edu.mt,1001,active,NEEDS_REVIEW
@@ -350,29 +373,26 @@ UNI-MA-0348,London School of Commerce Malta,Malta,Floriana,2014,Private,https://
 UNI-MA-0349,Pegasus Open University Malta,Malta,Valletta,2015,Private,https://www.pegasusuniversity.it,1001,active,NEEDS_REVIEW
 UNI-MA-0350,Saint Martin's Institute of Higher Education,Malta,Hamrun,1985,Private,https://www.stmartins.edu,1001,active,NEEDS_REVIEW
 UNI-MA-0351,Triagon Academy Malta,Malta,Valletta,2018,Private,https://www.triagon.edu.mt,1001,active,NEEDS_REVIEW
-UNI-MA-0352,Middlesex University Malta,Malta,Pembroke,2013,Private,https://www.mdx.edu.mt,801,active,NEEDS_REVIEW
 UNI-MA-0353,GBSB Global Business School Malta,Malta,Birkirkara,2021,Private,https://global-business-school.org/malta,1001,active,NEEDS_REVIEW
 UNI-MA-0354,Institute of Tourism Studies Malta,Malta,Luqa,1987,Public,https://its.edu.mt,1001,active,NEEDS_REVIEW
 UNI-MA-0355,United Campus Malta,Malta,Msida,2015,Private,https://www.ucm.edu.mt,1001,active,NEEDS_REVIEW
 UNI-MA-0356,European Graduate School Malta,Malta,Valletta,1997,Private,https://egs.edu,1001,active,NEEDS_REVIEW
-UNI-MA-0357,Queen Mary University of London Malta,Malta,Gozo,2017,Private,https://www.qmul.ac.uk/malta,120,active,CROSS_SOURCE_VERIFIED
-UNI-MA-0358,Barts London School of Medicine Malta,Malta,Victoria,2017,Private,https://www.qmul.ac.uk/malta,120,active,CROSS_SOURCE_VERIFIED
 UNI-MA-0359,HandsOn Academy Malta,Malta,Mosta,2020,Private,https://handson.edu.mt,1001,active,NEEDS_REVIEW
 UNI-MA-0360,Learnkey Training Institute,Malta,Gzira,1995,Private,https://learnkey.com.mt,1001,active,NEEDS_REVIEW
 UNI-CY-0361,University of Cyprus,Cyprus,Nicosia,1989,Public,https://www.ucy.ac.cy,368,active,NEEDS_REVIEW
 UNI-CY-0362,Cyprus University of Technology,Cyprus,Limassol,2004,Public,https://www.cut.ac.cy,501,active,NEEDS_REVIEW
 UNI-CY-0363,University of Nicosia,Cyprus,Nicosia,1980,Private,https://www.unic.ac.cy,501,active,NEEDS_REVIEW
 UNI-CY-0364,European University Cyprus,Cyprus,Nicosia,1961,Private,https://euc.ac.cy,601,active,NEEDS_REVIEW
+UNI-CY-0374,Eastern Mediterranean University,Cyprus,Famagusta,1979,Public,https://www.emu.edu.tr,601,active,NEEDS_REVIEW
+UNI-CY-0373,Near East University,Cyprus,Nicosia,1988,Private,https://neu.edu.tr,651,active,NEEDS_REVIEW
 UNI-CY-0365,Frederick University,Cyprus,Nicosia,1965,Private,https://www.frederick.ac.cy,801,active,NEEDS_REVIEW
+UNI-CY-0368,University of Central Lancashire Cyprus,Cyprus,Larnaca,2012,Private,https://www.uclancyprus.ac.cy,801,active,NEEDS_REVIEW
 UNI-CY-0366,Open University of Cyprus,Cyprus,Nicosia,2002,Public,https://www.ouc.ac.cy,1001,active,NEEDS_REVIEW
 UNI-CY-0367,Neapolis University Pafos,Cyprus,Paphos,2010,Private,https://www.nup.ac.cy,1001,active,NEEDS_REVIEW
-UNI-CY-0368,University of Central Lancashire Cyprus,Cyprus,Larnaca,2012,Private,https://www.uclancyprus.ac.cy,801,active,NEEDS_REVIEW
 UNI-CY-0369,Philips University,Cyprus,Nicosia,1978,Private,https://philipsuni.ac.cy,1001,active,NEEDS_REVIEW
 UNI-CY-0370,American University of Cyprus,Cyprus,Larnaca,2021,Private,https://auc.ac.cy,1001,active,NEEDS_REVIEW
 UNI-CY-0371,Cyprus International Institute of Management,Cyprus,Nicosia,1990,Private,https://www.ciim.ac.cy,1001,active,NEEDS_REVIEW
 UNI-CY-0372,Cyprus International University,Cyprus,Nicosia,1997,Private,https://www.ciu.edu.tr,1001,active,NEEDS_REVIEW
-UNI-CY-0373,Near East University,Cyprus,Nicosia,1988,Private,https://neu.edu.tr,651,active,NEEDS_REVIEW
-UNI-CY-0374,Eastern Mediterranean University,Cyprus,Famagusta,1979,Public,https://www.emu.edu.tr,601,active,NEEDS_REVIEW
 UNI-CY-0375,European University of Lefke,Cyprus,Lefka,1990,Public,https://www.eul.edu.tr,1001,active,NEEDS_REVIEW
 UNI-CY-0376,Girne American University,Cyprus,Kyrenia,1985,Private,https://www.gau.edu.tr,1001,active,NEEDS_REVIEW
 UNI-CY-0377,Cyprus West University,Cyprus,Famagusta,2015,Private,https://cwu.edu.tr,1001,active,NEEDS_REVIEW
@@ -386,16 +406,156 @@ UNI-SO-0384,Korea University,South Korea,Seoul,1905,Private,https://www.korea.ac
 UNI-SO-0385,POSTECH,South Korea,Pohang,1986,Private,https://www.postech.ac.kr,100,active,VERIFIED_OFFICIAL
 UNI-SO-0386,Sungkyunkwan University,South Korea,Seoul,1398,Private,https://www.skku.edu,145,active,CROSS_SOURCE_VERIFIED
 UNI-SO-0387,Hanyang University,South Korea,Seoul,1939,Private,https://www.hanyang.ac.kr,164,active,CROSS_SOURCE_VERIFIED
+UNI-SO-0400,UNIST,South Korea,Ulsan,2007,Public,https://www.unist.ac.kr,197,active,CROSS_SOURCE_VERIFIED
+UNI-SO-0399,GIST,South Korea,Gwangju,1993,Public,https://www.gist.ac.kr,328,active,NEEDS_REVIEW
 UNI-SO-0388,Kyung Hee University,South Korea,Seoul,1949,Private,https://www.khu.ac.kr,332,active,NEEDS_REVIEW
 UNI-SO-0389,Ewha Womans University,South Korea,Seoul,1886,Private,https://www.ewha.ac.kr,362,active,NEEDS_REVIEW
-UNI-SO-0390,Sogang University,South Korea,Seoul,1960,Private,https://www.sogang.ac.kr,501,active,NEEDS_REVIEW
 UNI-SO-0391,Chung-Ang University,South Korea,Seoul,1918,Private,https://www.cau.ac.kr,494,active,NEEDS_REVIEW
+UNI-SO-0390,Sogang University,South Korea,Seoul,1960,Private,https://www.sogang.ac.kr,501,active,NEEDS_REVIEW
 UNI-SO-0392,Pusan National University,South Korea,Busan,1946,Public,https://www.pusan.ac.kr,601,active,NEEDS_REVIEW
-UNI-SO-0393,Kyungpook National University,South Korea,Daegu,1946,Public,https://www.knu.ac.kr,651,active,NEEDS_REVIEW
 UNI-SO-0394,Ajou University,South Korea,Suwon,1973,Private,https://www.ajou.ac.kr,601,active,NEEDS_REVIEW
+UNI-SO-0393,Kyungpook National University,South Korea,Daegu,1946,Public,https://www.knu.ac.kr,651,active,NEEDS_REVIEW
 UNI-SO-0395,Inha University,South Korea,Incheon,1954,Private,https://www.inha.ac.kr,701,active,NEEDS_REVIEW
 UNI-SO-0396,Konkuk University,South Korea,Seoul,1931,Private,https://www.konkuk.ac.kr,801,active,NEEDS_REVIEW
 UNI-SO-0397,Dongguk University,South Korea,Seoul,1906,Private,https://www.dongguk.edu,801,active,NEEDS_REVIEW
 UNI-SO-0398,Seoultech,South Korea,Seoul,1910,Public,https://www.seoultech.ac.kr,1001,active,NEEDS_REVIEW
-UNI-SO-0399,GIST,South Korea,Gwangju,1993,Public,https://www.gist.ac.kr,328,active,NEEDS_REVIEW
-UNI-SO-0400,UNIST,South Korea,Ulsan,2007,Public,https://www.unist.ac.kr,197,active,CROSS_SOURCE_VERIFIED
+UNI-UN-0401,University of Malaya,Malaysia,Kuala Lumpur,1905,Public,https://www.um.edu.my,60,active,VERIFIED_OFFICIAL
+UNI-UN-0402,Universiti Kebangsaan Malaysia,Malaysia,Bangi,1970,Public,https://www.ukm.my,138,active,VERIFIED_OFFICIAL
+UNI-UN-0403,Universiti Sains Malaysia,Malaysia,Penang,1969,Public,https://www.usm.my,146,active,VERIFIED_OFFICIAL
+UNI-UN-0404,Universiti Putra Malaysia,Malaysia,Serdang,1931,Public,https://www.upm.edu.my,148,active,VERIFIED_OFFICIAL
+UNI-UN-0405,Universiti Teknologi Malaysia,Malaysia,Johor Bahru,1904,Public,https://www.utm.my,181,active,VERIFIED_OFFICIAL
+UNI-UN-0406,Taylor's University,Malaysia,Subang Jaya,1969,Private,https://www.taylors.edu.my,284,active,VERIFIED_OFFICIAL
+UNI-UN-0407,UCSI University,Malaysia,Kuala Lumpur,1986,Private,https://www.ucsiuniversity.edu.my,284,active,VERIFIED_OFFICIAL
+UNI-UN-0410,Universiti Teknologi Petronas,Malaysia,Seri Iskandar,1997,Private,https://www.utp.edu.my,361,active,VERIFIED_OFFICIAL
+UNI-UN-0408,Universiti Utara Malaysia,Malaysia,Sintok,1984,Public,https://www.uum.edu.my,521,active,VERIFIED_OFFICIAL
+UNI-UN-0409,Universiti Malaysia Sarawak,Malaysia,Kota Samarahan,1992,Public,https://www.unimas.my,651,active,VERIFIED_OFFICIAL
+UNI-UN-0411,International Islamic University Malaysia,Malaysia,Kuala Lumpur,1983,Public,https://www.iium.edu.my,651,active,VERIFIED_OFFICIAL
+UNI-UN-0412,Universiti Teknologi MARA,Malaysia,Shah Alam,1956,Public,https://www.uitm.edu.my,651,active,VERIFIED_OFFICIAL
+UNI-UN-0415,Sunway University,Malaysia,Subang Jaya,1987,Private,https://www.sunway.edu.my,701,active,VERIFIED_OFFICIAL
+UNI-UN-0413,Universiti Tenaga Nasional,Malaysia,Kajang,1997,Private,https://www.uniten.edu.my,751,active,VERIFIED_OFFICIAL
+UNI-UN-0416,Management and Science University,Malaysia,Shah Alam,2001,Private,https://www.msu.edu.my,801,active,VERIFIED_OFFICIAL
+UNI-UN-0418,Universiti Tunku Abdul Rahman,Malaysia,Kampar,2002,Private,https://www.utar.edu.my,801,active,VERIFIED_OFFICIAL
+UNI-UN-0420,Asia Pacific University,Malaysia,Kuala Lumpur,1993,Private,https://www.apu.edu.my,801,active,VERIFIED_OFFICIAL
+UNI-UN-0414,Multimedia University,Malaysia,Cyberjaya,1996,Private,https://www.mmu.edu.my,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0417,Universiti Kuala Lumpur,Malaysia,Kuala Lumpur,2002,Private,https://www.unikl.edu.my,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0419,Universiti Sains Islam Malaysia,Malaysia,Nilai,1998,Public,https://www.usim.edu.my,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0429,Karolinska Institute,Sweden,Stockholm,1810,Public,https://www.ki.se,6,active,VERIFIED_OFFICIAL
+UNI-UN-0423,KTH Royal Institute of Technology,Sweden,Stockholm,1827,Public,https://www.kth.se,73,active,VERIFIED_OFFICIAL
+UNI-UN-0421,Lund University,Sweden,Lund,1666,Public,https://www.lu.se,75,active,VERIFIED_OFFICIAL
+UNI-UN-0422,Uppsala University,Sweden,Uppsala,1477,Public,https://www.uu.se,105,active,VERIFIED_OFFICIAL
+UNI-UN-0424,Stockholm University,Sweden,Stockholm,1878,Public,https://www.su.se,128,active,VERIFIED_OFFICIAL
+UNI-UN-0425,Chalmers University of Technology,Sweden,Gothenburg,1829,Public,https://www.chalmers.se,129,active,VERIFIED_OFFICIAL
+UNI-UN-0426,University of Gothenburg,Sweden,Gothenburg,1891,Public,https://www.gu.se,187,active,VERIFIED_OFFICIAL
+UNI-UN-0440,Swedish University of Agricultural Sciences,Sweden,Uppsala,1977,Public,https://www.slu.se,280,active,VERIFIED_OFFICIAL
+UNI-UN-0427,Linköping University,Sweden,Linköping,1969,Public,https://www.liu.se,320,active,VERIFIED_OFFICIAL
+UNI-UN-0428,Umeå University,Sweden,Umeå,1965,Public,https://www.umu.se,365,active,VERIFIED_OFFICIAL
+UNI-UN-0430,Stockholm School of Economics,Sweden,Stockholm,1909,Private,https://www.hhs.se,450,active,VERIFIED_OFFICIAL
+UNI-UN-0431,Luleå University of Technology,Sweden,Luleå,1971,Public,https://www.ltu.se,600,active,VERIFIED_OFFICIAL
+UNI-UN-0439,Jönköping University,Sweden,Jönköping,1977,Private,https://www.ju.se,650,active,VERIFIED_OFFICIAL
+UNI-UN-0432,Örebro University,Sweden,Örebro,1999,Public,https://www.oru.se,700,active,VERIFIED_OFFICIAL
+UNI-UN-0434,Malmö University,Sweden,Malmö,1998,Public,https://www.mau.se,720,active,VERIFIED_OFFICIAL
+UNI-UN-0436,Linnaeus University,Sweden,Växjö,2010,Public,https://www.lnu.se,780,active,VERIFIED_OFFICIAL
+UNI-UN-0435,Karlstad University,Sweden,Karlstad,1977,Public,https://www.kau.se,800,active,VERIFIED_OFFICIAL
+UNI-UN-0433,Mid Sweden University,Sweden,Sundsvall,1993,Public,https://www.miun.se,850,active,VERIFIED_OFFICIAL
+UNI-UN-0438,Mälardalen University,Sweden,Västerås,1977,Public,https://www.mdu.se,880,active,VERIFIED_OFFICIAL
+UNI-UN-0437,University of Borås,Sweden,Borås,1977,Public,https://www.hb.se,900,active,VERIFIED_OFFICIAL
+UNI-UN-0441,University of São Paulo,Brazil,São Paulo,1934,Public,https://www.usp.br,85,active,VERIFIED_OFFICIAL
+UNI-UN-0442,University of Campinas,Brazil,Campinas,1966,Public,https://www.unicamp.br,210,active,VERIFIED_OFFICIAL
+UNI-UN-0443,Federal University of Rio de Janeiro,Brazil,Rio de Janeiro,1920,Public,https://www.ufrj.br,350,active,VERIFIED_OFFICIAL
+UNI-UN-0444,São Paulo State University,Brazil,São Paulo,1976,Public,https://www.unesp.br,480,active,VERIFIED_OFFICIAL
+UNI-UN-0445,Federal University of Minas Gerais,Brazil,Belo Horizonte,1927,Public,https://www.ufmg.br,550,active,VERIFIED_OFFICIAL
+UNI-UN-0447,Federal University of Rio Grande do Sul,Brazil,Porto Alegre,1934,Public,https://www.ufrgs.br,580,active,VERIFIED_OFFICIAL
+UNI-UN-0446,Pontifical Catholic University of Rio de Janeiro,Brazil,Rio de Janeiro,1940,Private,https://www.puc-rio.br,600,active,VERIFIED_OFFICIAL
+UNI-UN-0458,Federal University of Santa Catarina,Brazil,Florianópolis,1960,Public,https://www.ufsc.br,620,active,VERIFIED_OFFICIAL
+UNI-UN-0448,University of Brasília,Brazil,Brasília,1962,Public,https://www.unb.br,670,active,VERIFIED_OFFICIAL
+UNI-UN-0449,Federal University of São Carlos,Brazil,São Carlos,1968,Public,https://www.ufscar.br,750,active,VERIFIED_OFFICIAL
+UNI-UN-0451,Federal University of Pernambuco,Brazil,Recife,1946,Public,https://www.ufpe.br,780,active,VERIFIED_OFFICIAL
+UNI-UN-0450,Pontifical Catholic University of São Paulo,Brazil,São Paulo,1946,Private,https://www.pucsp.br,800,active,VERIFIED_OFFICIAL
+UNI-UN-0452,Federal University of Paraná,Brazil,Curitiba,1912,Public,https://www.ufpr.br,820,active,VERIFIED_OFFICIAL
+UNI-UN-0460,Federal University of Bahia,Brazil,Salvador,1946,Public,https://www.ufba.br,840,active,VERIFIED_OFFICIAL
+UNI-UN-0453,Federal University of Ceará,Brazil,Fortaleza,1954,Public,https://www.ufc.br,850,active,VERIFIED_OFFICIAL
+UNI-UN-0457,Federal University of Goiás,Brazil,Goiânia,1960,Public,https://www.ufg.br,880,active,VERIFIED_OFFICIAL
+UNI-UN-0454,Fluminense Federal University,Brazil,Niterói,1960,Public,https://www.uff.br,900,active,VERIFIED_OFFICIAL
+UNI-UN-0459,State University of Maringá,Brazil,Maringá,1969,Public,https://www.uem.br,920,active,VERIFIED_OFFICIAL
+UNI-UN-0455,University of Fortaleza,Brazil,Fortaleza,1973,Private,https://www.unifor.br,950,active,VERIFIED_OFFICIAL
+UNI-UN-0456,Mackenzie Presbyterian University,Brazil,São Paulo,1952,Private,https://www.mackenzie.br,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0461,Lomonosov Moscow State University,Russia,Moscow,1755,Public,https://www.msu.ru,75,active,VERIFIED_OFFICIAL
+UNI-UN-0463,Novosibirsk State University,Russia,Novosibirsk,1958,Public,https://www.nsu.ru,228,active,VERIFIED_OFFICIAL
+UNI-UN-0462,Saint Petersburg State University,Russia,Saint Petersburg,1724,Public,https://www.spbu.ru,242,active,VERIFIED_OFFICIAL
+UNI-UN-0464,Tomsk State University,Russia,Tomsk,1878,Public,https://www.tsu.ru,264,active,VERIFIED_OFFICIAL
+UNI-UN-0465,Moscow Institute of Physics and Technology,Russia,Moscow,1951,Public,https://www.mipt.ru,281,active,VERIFIED_OFFICIAL
+UNI-UN-0466,Higher School of Economics,Russia,Moscow,1992,Public,https://www.hse.ru,305,active,VERIFIED_OFFICIAL
+UNI-UN-0479,Bauman Moscow State Technical University,Russia,Moscow,1830,Public,https://www.bmstu.ru,320,active,VERIFIED_OFFICIAL
+UNI-UN-0477,MGIMO University,Russia,Moscow,1944,Public,https://www.mgimo.ru,345,active,VERIFIED_OFFICIAL
+UNI-UN-0476,ITMO University,Russia,Saint Petersburg,1900,Public,https://www.itmo.ru,350,active,VERIFIED_OFFICIAL
+UNI-UN-0467,Kazan Federal University,Russia,Kazan,1804,Public,https://www.kpfu.ru,370,active,VERIFIED_OFFICIAL
+UNI-UN-0469,People's Friendship University of Russia,Russia,Moscow,1960,Public,https://www.rudn.ru,392,active,VERIFIED_OFFICIAL
+UNI-UN-0475,Peter the Great St. Petersburg Polytechnic University,Russia,Saint Petersburg,1899,Public,https://www.spbstu.ru,400,active,VERIFIED_OFFICIAL
+UNI-UN-0478,MEPhI National Research Nuclear University,Russia,Moscow,1942,Public,https://www.mephi.ru,450,active,VERIFIED_OFFICIAL
+UNI-UN-0471,MISIS University,Russia,Moscow,1918,Public,https://www.misis.ru,500,active,VERIFIED_OFFICIAL
+UNI-UN-0468,Ural Federal University,Russia,Yekaterinburg,1920,Public,https://www.urfu.ru,516,active,VERIFIED_OFFICIAL
+UNI-UN-0470,Far Eastern Federal University,Russia,Vladivostok,1899,Public,https://www.dvfu.ru,631,active,VERIFIED_OFFICIAL
+UNI-UN-0472,Lobachevsky University,Russia,Nizhny Novgorod,1916,Public,https://www.unn.ru,700,active,VERIFIED_OFFICIAL
+UNI-UN-0473,Siberian Federal University,Russia,Krasnoyarsk,2006,Public,https://www.sfu-kras.ru,750,active,VERIFIED_OFFICIAL
+UNI-UN-0474,Southern Federal University,Russia,Rostov-on-Don,1915,Public,https://www.sfedu.ru,780,active,VERIFIED_OFFICIAL
+UNI-UN-0480,Sechenov First Moscow State Medical University,Russia,Moscow,1758,Public,https://www.sechenov.ru,850,active,VERIFIED_OFFICIAL
+UNI-UN-0482,IIT Bombay,India,Mumbai,1958,Public,https://www.iitb.ac.in,118,active,VERIFIED_OFFICIAL
+UNI-UN-0483,IIT Delhi,India,New Delhi,1961,Public,https://www.iitd.ac.in,123,active,VERIFIED_OFFICIAL
+UNI-UN-0484,IIT Madras,India,Chennai,1959,Public,https://www.iitm.ac.in,148,active,VERIFIED_OFFICIAL
+UNI-UN-0481,Indian Institute of Science,India,Bangalore,1909,Public,https://www.iisc.ac.in,155,active,VERIFIED_OFFICIAL
+UNI-UN-0486,IIT Kharagpur,India,Kharagpur,1951,Public,https://www.iitkgp.ac.in,222,active,VERIFIED_OFFICIAL
+UNI-UN-0487,IIT Kanpur,India,Kanpur,1959,Public,https://www.iitk.ac.in,222,active,VERIFIED_OFFICIAL
+UNI-UN-0499,Anna University,India,Chennai,1978,Public,https://www.annauniv.edu,400,active,VERIFIED_OFFICIAL
+UNI-UN-0485,University of Delhi,India,New Delhi,1922,Public,https://www.du.ac.in,407,active,VERIFIED_OFFICIAL
+UNI-UN-0489,Jawaharlal Nehru University,India,New Delhi,1969,Public,https://www.jnu.ac.in,520,active,VERIFIED_OFFICIAL
+UNI-UN-0488,University of Mumbai,India,Mumbai,1857,Public,https://www.mu.ac.in,580,active,VERIFIED_OFFICIAL
+UNI-UN-0491,Banaras Hindu University,India,Varanasi,1916,Public,https://www.bhu.ac.in,600,active,VERIFIED_OFFICIAL
+UNI-UN-0496,Jamia Millia Islamia,India,New Delhi,1920,Public,https://www.jmi.ac.in,600,active,VERIFIED_OFFICIAL
+UNI-UN-0497,University of Hyderabad,India,Hyderabad,1974,Public,https://www.uohyd.ac.in,650,active,VERIFIED_OFFICIAL
+UNI-UN-0493,VIT Vellore,India,Vellore,1984,Private,https://www.vit.ac.in,700,active,VERIFIED_OFFICIAL
+UNI-UN-0498,Aligarh Muslim University,India,Aligarh,1920,Public,https://www.amu.ac.in,700,active,VERIFIED_OFFICIAL
+UNI-UN-0495,Manipal Academy of Higher Education,India,Manipal,1953,Private,https://www.manipal.edu,750,active,VERIFIED_OFFICIAL
+UNI-UN-0490,University of Calcutta,India,Kolkata,1857,Public,https://www.caluniv.ac.in,800,active,VERIFIED_OFFICIAL
+UNI-UN-0500,Jadavpur University,India,Kolkata,1955,Public,https://www.jaduniv.edu.in,800,active,VERIFIED_OFFICIAL
+UNI-UN-0494,BITS Pilani,India,Pilani,1964,Private,https://www.bits-pilani.ac.in,881,active,VERIFIED_OFFICIAL
+UNI-UN-0492,Amity University,India,Noida,2005,Private,https://www.amity.edu,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0501,Tsinghua University,China,Beijing,1911,Public,https://www.tsinghua.edu.cn,14,active,VERIFIED_OFFICIAL
+UNI-UN-0502,Peking University,China,Beijing,1898,Public,https://www.pku.edu.cn,14,active,VERIFIED_OFFICIAL
+UNI-UN-0503,Fudan University,China,Shanghai,1905,Public,https://www.fudan.edu.cn,39,active,VERIFIED_OFFICIAL
+UNI-UN-0505,Shanghai Jiao Tong University,China,Shanghai,1896,Public,https://www.sjtu.edu.cn,46,active,VERIFIED_OFFICIAL
+UNI-UN-0504,Zhejiang University,China,Hangzhou,1897,Public,https://www.zju.edu.cn,47,active,VERIFIED_OFFICIAL
+UNI-UN-0506,USTC,China,Hefei,1958,Public,https://www.ustc.edu.cn,82,active,VERIFIED_OFFICIAL
+UNI-UN-0507,Nanjing University,China,Nanjing,1902,Public,https://www.nju.edu.cn,133,active,VERIFIED_OFFICIAL
+UNI-UN-0514,HUST,China,Wuhan,1952,Public,https://www.hust.edu.cn,158,active,VERIFIED_OFFICIAL
+UNI-UN-0510,Harbin Institute of Technology,China,Harbin,1920,Public,https://www.hit.edu.cn,174,active,VERIFIED_OFFICIAL
+UNI-UN-0511,Tongji University,China,Shanghai,1907,Public,https://www.tongji.edu.cn,192,active,VERIFIED_OFFICIAL
+UNI-UN-0508,Wuhan University,China,Wuhan,1893,Public,https://www.whu.edu.cn,194,active,VERIFIED_OFFICIAL
+UNI-UN-0517,Beihang University,China,Beijing,1952,Public,https://www.buaa.edu.cn,242,active,VERIFIED_OFFICIAL
+UNI-UN-0512,Beijing Normal University,China,Beijing,1902,Public,https://www.bnu.edu.cn,247,active,VERIFIED_OFFICIAL
+UNI-UN-0509,Sun Yat-sen University,China,Guangzhou,1924,Public,https://www.sysu.edu.cn,260,active,VERIFIED_OFFICIAL
+UNI-UN-0520,Xi'an Jiaotong University,China,Xi'an,1896,Public,https://www.xjtu.edu.cn,269,active,VERIFIED_OFFICIAL
+UNI-UN-0516,Tianjin University,China,Tianjin,1895,Public,https://www.tju.edu.cn,307,active,VERIFIED_OFFICIAL
+UNI-UN-0519,Nankai University,China,Tianjin,1919,Public,https://www.nankai.edu.cn,315,active,VERIFIED_OFFICIAL
+UNI-UN-0515,South China University of Technology,China,Guangzhou,1952,Public,https://www.scut.edu.cn,336,active,VERIFIED_OFFICIAL
+UNI-UN-0513,Xiamen University,China,Xiamen,1921,Public,https://www.xmu.edu.cn,352,active,VERIFIED_OFFICIAL
+UNI-UN-0518,Southeast University,China,Nanjing,1902,Public,https://www.seu.edu.cn,355,active,VERIFIED_OFFICIAL
+UNI-UN-0521,University of Cape Town,South Africa,Cape Town,1829,Public,https://www.uct.ac.za,171,active,VERIFIED_OFFICIAL
+UNI-UN-0522,University of the Witwatersrand,South Africa,Johannesburg,1922,Public,https://www.wits.ac.za,264,active,VERIFIED_OFFICIAL
+UNI-UN-0523,Stellenbosch University,South Africa,Stellenbosch,1918,Public,https://www.sun.ac.za,283,active,VERIFIED_OFFICIAL
+UNI-UN-0524,University of Pretoria,South Africa,Pretoria,1908,Public,https://www.up.ac.za,323,active,VERIFIED_OFFICIAL
+UNI-UN-0525,University of Johannesburg,South Africa,Johannesburg,2005,Public,https://www.uj.ac.za,363,active,VERIFIED_OFFICIAL
+UNI-UN-0526,University of KwaZulu-Natal,South Africa,Durban,2004,Public,https://www.ukzn.ac.za,445,active,VERIFIED_OFFICIAL
+UNI-UN-0527,University of the Western Cape,South Africa,Cape Town,1960,Public,https://www.uwc.ac.za,601,active,VERIFIED_OFFICIAL
+UNI-UN-0528,Rhodes University,South Africa,Grahamstown,1904,Public,https://www.ru.ac.za,701,active,VERIFIED_OFFICIAL
+UNI-UN-0529,North-West University,South Africa,Potchefstroom,2004,Public,https://www.nwu.ac.za,801,active,VERIFIED_OFFICIAL
+UNI-UN-0530,University of South Africa,South Africa,Pretoria,1873,Public,https://www.unisa.ac.za,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0534,Tshwane University of Technology,South Africa,Pretoria,2004,Public,https://www.tut.ac.za,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0535,Durban University of Technology,South Africa,Durban,2002,Public,https://www.dut.ac.za,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0537,Cape Peninsula University of Technology,South Africa,Cape Town,2005,Public,https://www.cput.ac.za,1000,active,VERIFIED_OFFICIAL
+UNI-UN-0531,Nelson Mandela University,South Africa,Port Elizabeth,2005,Public,https://www.mandela.ac.za,1001,active,VERIFIED_OFFICIAL
+UNI-UN-0532,University of Fort Hare,South Africa,Alice,1916,Public,https://www.ufh.ac.za,1200,active,VERIFIED_OFFICIAL
+UNI-UN-0533,University of Limpopo,South Africa,Polokwane,2005,Public,https://www.ul.ac.za,1200,active,VERIFIED_OFFICIAL
+UNI-UN-0536,Central University of Technology,South Africa,Bloemfontein,1981,Public,https://www.cut.ac.za,1200,active,VERIFIED_OFFICIAL
+UNI-UN-0538,University of Zululand,South Africa,KwaDlangezwa,1960,Public,https://www.unizulu.ac.za,1200,active,VERIFIED_OFFICIAL
+UNI-UN-0539,Walter Sisulu University,South Africa,Mthatha,2005,Public,https://www.wsu.ac.za,1200,active,VERIFIED_OFFICIAL
+UNI-UN-0540,Sefako Makgatho University,South Africa,Ga-Rankuwa,2014,Public,https://www.smu.ac.za,1200,active,VERIFIED_OFFICIAL
