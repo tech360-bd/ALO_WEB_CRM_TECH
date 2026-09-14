@@ -1329,6 +1329,627 @@ export const COUNTRY_DESTINATIONS: Record<string, CountryDestinationData> = {
     cities: [
       { name: "Amsterdam", costLevel: "High", vibe: "Historic, Cultural & Global Commercial Capital", universities: ["University of Amsterdam", "Vrije Universiteit Amsterdam"], livingCost: "€1,300 / month" }
     ]
+  },
+  "south-korea": {
+    slug: "south-korea",
+    code: "KR",
+    name: "South Korea",
+    flag: "🇰🇷",
+    capital: "Seoul",
+    currency: "KRW (₩)",
+    heroTitle: "Study in South Korea from Bangladesh | Global Top 100 & KGSP Scholarships",
+    heroSubtitle: "Study at SKY universities (SNU, Korea, Yonsei) with Global Korea Scholarship (GKS), English-taught GSIS programs and 2-year job-seeker D-10 visa.",
+    overview: "South Korea blends chaebol-powered innovation (Samsung, Hyundai, LG) with top-100 universities, affordable tuition and rich K-culture in the world’s most connected nation.",
+    whyStudySummary: "QS Top 100 universities, GKS full scholarships (tuition+living+airfare+Korean), 20-30h/week work and 2-year D-10 job search after graduation.",
+    visaType: "D-2 Student Visa (Study Abroad)",
+    popularIntakes: ["Spring (March) 2027", "Fall (September) 2026"],
+    studyLevels: ["Korean Language Program (D-4)", "Bachelor Degree (4 Years)", "Master's Degree (2 Years)", "PhD (3-4 Years)"],
+    tuitionRange: "₩6,000,000 - ₩12,000,000 / year ($4,500 - $9,000)",
+    livingCost: "₩12,000,000 - ₩18,000,000 / year ($9,000 - $13,500)",
+    workRights: "20-25h/week (TOPIK 2), 30h+ for TOPIK 4/Graduate.",
+    seoTitle: "Study in South Korea from Bangladesh | SNU, KAIST, GKS & D-2 Visa | ALO Education",
+    seoDescription: "Study in South Korea for Bangladeshi students. SKY/ KAIST/ POSTECH, GKS scholarship, D-2 visa, TOPIK, 20-30h work and 2-year D-10 job seeker.",
+    canonicalUrl: "https://aloeducation.com/destinations/south-korea",
+    lastVerifiedAt: "2026-09-15",
+    quickFacts: [
+      { label: "Capital City", value: "Seoul" },
+      { label: "Currency", value: "Korean Won (₩ / KRW)" },
+      { label: "Popular Cities", value: "Seoul, Busan, Daejeon, Daegu, Suwon" },
+      { label: "Main Intakes", value: "March (Spring) & September (Fall)" },
+      { label: "Average Bachelor's Duration", value: "4 Years" },
+      { label: "Average Master's Duration", value: "2 Years" },
+      { label: "Global Korea Scholarship (GKS)", value: "Full tuition + ₩900k/month + airfare + Korean course" },
+      { label: "Language of Instruction", value: "Korean + 30% English-taught (GSIS/IT/Business)" }
+    ],
+    reasons: [
+      { icon: "award", heading: "SKY & KAIST World Top 40-100", description: "SNU (#31), KAIST (#56), POSTECH, Korea & Yonsei deliver Ivy-level research with Bangladesh-friendly admissions." },
+      { icon: "coins", heading: "GKS Fully-Funded", description: "1,200+ GKS awards yearly: 100% tuition, ₩900k-$1M living, flight, settlement, full Korean year at SNU/KU." },
+      { icon: "briefcase", heading: "Chaebol Internships → D-10", description: "Intern at Samsung/LG/Hyundai/Kakao; graduates get 2-year D-10 job seeker → E-7 skilled visa." },
+      { icon: "globe", heading: "K-Culture + Safest Mega-City", description: "Seoul is safest large city, 98% 5G, 100% English signage on campus and ultra-low crime." }
+    ],
+    pathways: [
+      { fromLevel: "SSC / O-Level", toPathway: "1-Year Korean Language (D-4) → 4-Year Bachelor", description: "TOPIK 1 + SSC 3.5 → language year then matriculate with TOPIK 3." },
+      { fromLevel: "HSC / A-Level", toPathway: "Direct Bachelor (4 Years) English or Korean track", description: "HSC GPA 3.5+/A-Level 2 passes → SNU/Korea direct with IELTS 5.5 or TOPIK 3." },
+      { fromLevel: "Diploma (4-Year BTEB)", toPathway: "Bachelor 3rd Year Transfer (2 Years)", description: "BTEB 4-year credited into engineering/IT — 2 years to degree at Tech universities." },
+      { fromLevel: "Bachelor (4 Years)", toPathway: "GSIS English Master's (2 Years) → D-10", description: "CGPA 3.0+ accepted; GSIS (SNU GSIS/KU/Yonsei) entirely in English, no TOPIK needed." }
+    ],
+    entryRequirements: [
+      { level: "Korean Language (D-4)", academic: "SSC GPA 3.0+ or HSC 2.8+", english: "IELTS not required / TOPIK 1 optional", documents: ["Certificates", "Passport", "Bank 6 months", "Study Plan"] },
+      { level: "Bachelor Degree", academic: "HSC GPA 3.5+ or A-Level 2 passes (C+)", english: "IELTS 5.5 (no 5.0) / TOPIK 3 / Duolingo 95", documents: ["Transcripts", "Passport", "SOP", "Bank Statement ($18k)"] },
+      { level: "Master's / GSIS", academic: "Bachelor CGPA 3.0+ (60%+) relevant", english: "IELTS 6.0 / TOPIK 4 / TOEFL 80", documents: ["Degree & Transcripts", "2 References", "Study Plan", "Bank"] }
+    ],
+    englishTests: [
+      { name: "IELTS Academic", accepted: "Accepted by GSIS/English tracks", note: "5.5 Bachelor, 6.0-6.5 Master.", sourceUrl: "https://www.ielts.org" },
+      { name: "TOPIK", accepted: "Korean Proficiency — main admit + work bonus", note: "TOPIK 3 Bachelor, TOPIK 4 opens 30h work + scholarships.", sourceUrl: "https://www.topik.go.kr" },
+      { name: "TOEFL iBT", accepted: "All English GSIS programs", note: "80-90.", sourceUrl: "https://www.ets.org/toefl" }
+    ],
+    visaSteps: [
+      { step: 1, title: "Admission + Certificate of Admission (CoA)", description: "Get SNU/Korea letter + CoA for D-2 visa." },
+      { step: 2, title: "Tuberculosis Test + Financials", description: "TB test + $18k-20k bank 6 months (or GKS award letter)." },
+      { step: 3, title: "Apply D-2 at Korean Embassy Dhaka", description: "Visa via KVAC Gulshan with CoA, TB, finances, study plan." },
+      { step: 4, title: "Arrive + Alien Registration Card (ARC)", description: "ARC within 90 days → opens bank, phone, part-time permit." },
+      { step: 5, title: "Part-Time Work Permit Approval", description: "Apply via HiKorea (TOPIK level sets hour cap 20-30h)." }
+    ],
+    workRightRules: [
+      {
+        termTime: "20h/week (TOPIK 2), 25h undergrad TOPIK 4, 30h graduate TOPIK 4",
+        vacation: "Unlimited on vacation (with permit)",
+        condition: "D-2 enrolled, GPA ≥2.0, TOPIK certificate, HiKorea permit",
+        postStudyRoute: "D-10 Job Seeker up to 2 years → E-7 Skilled Worker.",
+        sourceUrl: "https://www.hikorea.go.kr"
+      }
+    ],
+    faqs: [
+      { question: "What is GKS and can Bangladeshi get it?", answer: "Global Korea Scholarship (GKS) — 800 University + 400 Embassy track yearly, ~40 for Bangladesh — full tuition, living ₩900k, airfare, Korean year." },
+      { question: "Do I need Korean language?", answer: "GSIS/business/IT masters 100% English (IELTS 6.0). For Korean-taught, TOPIK 3 needed; language year D-4 gets you there." },
+      { question: "How much bank balance for D-2?", answer: "$18,000-$20,000 for 6 months, or GKS award replaces financial proof." },
+      { question: "Can I work part-time in Korea?", answer: "Yes with ARC + HiKorea permit: 20h (TOPIK2) → 30h (TOPIK4 grad). PC bang, convenience, tutoring, internships." },
+      { question: "How long is post-study D-10?", answer: "Up to 2 years job-seeker; convert to E-7 when chaebol/SME sponsors at ~30M KRW salary." },
+      { question: "What is difference SKY vs KAIST vs POSTECH?", answer: "SKY = comprehensive (SNU/Korea/Yonsei); KAIST/POSTECH = STEM specialist (MIT model) top for engineering." },
+      { question: "When do Korean intakes close?", answer: "March intake closes Sep-Oct; September intake closes Mar-Apr. GKS Embassy closes Sep." },
+      { question: "Can BTEB diploma apply?", answer: "Yes → 3rd year transfer into polytechnic universities (Tech) — 2 years remaining." },
+      { question: "Where is Korean visa in Bangladesh?", answer: "Korea Visa Application Center (KVAC), Navana Chandradeep, Gulshan-1 Dhaka + TB at IOM." },
+      { question: "Are all masters 2 years in Korea?", answer: "Yes — 4 semesters coursework + thesis; GSIS adds Korean semester if GKS." },
+      { question: "Does ALO handle GKS?", answer: "Yes — university vs embassy track, personal statement, research proposal, interview — free." }
+    ],
+    sources: [
+      { section: "D-2 Visa & GKS", sourceName: "National Institute for International Education (NIIED) / HiKorea", sourceUrl: "https://www.studyinkorea.go.kr", lastVerifiedAt: "2026-09-15" }
+    ],
+    cities: [
+      { name: "Seoul", costLevel: "High", vibe: "Mega-Tech Capital (SKY, Samsung)", universities: ["Seoul National University", "Korea University", "Yonsei University", "Sogang"], livingCost: "₩1,100,000 / month" },
+      { name: "Daejeon", costLevel: "Medium", vibe: "STEM Capital (KAIST)", universities: ["KAIST", "Chungnam National"], livingCost: "₩800,000 / month" },
+      { name: "Busan", costLevel: "Medium", vibe: "Port & Film City (Pusan National)", universities: ["Pusan National University", "Dong-A"], livingCost: "₩750,000 / month" }
+    ]
+  },
+  malta: {
+    slug: "malta",
+    code: "MT",
+    name: "Malta",
+    flag: "🇲🇹",
+    capital: "Valletta",
+    currency: "EUR (€)",
+    heroTitle: "Study in Malta from Bangladesh | English-Speaking EU & Schengen Island",
+    heroSubtitle: "Study 100% in English in the EU’s sunniest English-speaking nation — affordable tuition, Schengen travel and hospitality internships.",
+    overview: "Malta is the Mediterranean’s only English-as-official EU state — British-system education, Schengen, safe island lifestyle 15 minutes from anywhere and 300 sunny days.",
+    whyStudySummary: "Native English + cheap €6k-12k tuition, Schengen, paid tourism/igaming internships, 9-month post-study stay.",
+    visaType: "National Long-Stay Visa (Type D) + Malta Residence Permit",
+    popularIntakes: ["October (Fall) 2026", "February (Spring) 2027", "June (Summer) 2027"],
+    studyLevels: ["Foundation / Diploma", "Bachelor Degree (3-4 Years)", "Master's Degree (1-2 Years)", "MBA (1 Year)"],
+    tuitionRange: "€6,000 - €14,000 / year",
+    livingCost: "€7,500 - €10,000 / year",
+    workRights: "20 hours/week during term (after 90 days).",
+    seoTitle: "Study in Malta from Bangladesh | English EU, Visa & Jobs | ALO Education",
+    seoDescription: "Study in Malta for Bangladeshi students. University of Malta, MCAST, English programs, Type D visa, 20h work, Schengen and post-study options.",
+    canonicalUrl: "https://aloeducation.com/destinations/malta",
+    lastVerifiedAt: "2026-09-15",
+    quickFacts: [
+      { label: "Capital City", value: "Valletta" },
+      { label: "Currency", value: "Euro (€ / EUR)" },
+      { label: "Popular Cities/Islands", value: "Valletta, Sliema, St Julian's, Gozo" },
+      { label: "Main Intakes", value: "October (main), February, June" },
+      { label: "Tuition Range", value: "€6,000 - €14,000 / year" },
+      { label: "Language", value: "English — 2nd official language" },
+      { label: "Post-Study Stay", value: "9 months Job Search (Third Country Nationals)" },
+      { label: "Schengen", value: "Full Schengen since 2007" }
+    ],
+    reasons: [
+      { icon: "globe", heading: "Native English EU", description: "Only EU where English is native official language — 100% campus + daily life in English, IELTS 5.5 accepted." },
+      { icon: "coins", heading: "Double-Cheap Mediterranean", description: "Tuition €6k vs mainland €12k+, rent €400-600 shared, sea-view campuses." },
+      { icon: "briefcase", heading: "iGaming & Tourism Capital", description: "HQ for Bet365, Kindred, SiGMA, Lufthansa Technik, 5-star hotels — paid internships feeder." },
+      { icon: "award", heading: "Schengen + UK Bridge", description: "Malta residence = Schengen travel; transfer pathways to UK universities (credit recognition)." }
+    ],
+    pathways: [
+      { fromLevel: "SSC / O-Level", toPathway: "Foundation/Diploma (1 Year) → 3-Year Bachelor", description: "SSC 3.0+ → MCAST/GBSB foundation then degree." },
+      { fromLevel: "HSC / A-Level", toPathway: "Direct Bachelor (3 Years Bologna)", description: "HSC 3.0+ / 2 A-Levels direct — IELTS 5.5." },
+      { fromLevel: "Diploma (BTEB 4-Year)", toPathway: "Bachelor Final Year / Advanced Entry", description: "BTEB 4-year → Year 2/3 in Computing/Engineering/Hospitality." },
+      { fromLevel: "Bachelor (4 Years)", toPathway: "1-Year Master's / MBA", description: "CGPA 2.5+ — MBA without GMAT, work-based projects." }
+    ],
+    entryRequirements: [
+      { level: "Foundation / Diploma", academic: "SSC GPA 3.0+ or HSC 2.5+", english: "IELTS 5.0 / Duolingo 80 / Internal", documents: ["Certificates", "Passport", "Photo"] },
+      { level: "Bachelor Degree", academic: "HSC GPA 3.0+ or A-Level 2 passes", english: "IELTS 5.5 (5.0) / PTE 42 / MOI", documents: ["Transcripts", "Passport", "SOP"] },
+      { level: "Master's / MBA", academic: "Bachelor CGPA 2.5+ (50%+)", english: "IELTS 6.0 (5.5) / PTE 50", documents: ["Degree & Transcript", "CV", "SOP", "Passport"] }
+    ],
+    englishTests: [
+      { name: "IELTS Academic", accepted: "All institutions 5.0-6.0", note: "5.5 Bachelor, 6.0 Master.", sourceUrl: "https://www.ielts.org" },
+      { name: "PTE Academic", accepted: "MCAST, GBSB, AUM", note: "42-50.", sourceUrl: "https://www.pearsonpte.com" },
+      { name: "Medium of Instruction", accepted: "Malta is English-native — widely accepted", note: "12 years English from Bangladesh approved schools.", sourceUrl: "https://aloeducation.com" }
+    ],
+    visaSteps: [
+      { step: 1, title: "Offer + Pay Deposit", description: "MCAST/University of Malta/GYBSB issues letter for Identity Malta." },
+      { step: 2, title: "Prepare Bank + Insurance", description: "€10k living + tuition receipt + 6-mo bank + health €250." },
+      { step: 3, title: "Apply Type D National Visa (VFS New Delhi via Dhaka)", description: "Via VFS Malta Dhaka (outsourced to New Delhi hub) — biometrics." },
+      { step: 4, title: "Arrive + Identity Malta Residence Card", description: "Register within 1 week, biometrics → E-residence card." },
+      { step: 5, title: "Work Permit (Jobsplus) after 90 days", description: "Employer applies — 20h/week during studies." }
+    ],
+    workRightRules: [
+      {
+        termTime: "20 hours per week",
+        vacation: "40 hours during holidays (with permit)",
+        condition: "After 90 days residence, Jobsplus single permit via employer",
+        postStudyRoute: "9-month Seek Work permit (employment licence) → Single Permit Work.",
+        sourceUrl: "https://identitymalta.gov.mt"
+      }
+    ],
+    faqs: [
+      { question: "Is Malta degree EU-recognized?", answer: "Yes — Bologna EU-wide (ECTS), University of Malta QS Top 800, MCAST state-accredited." },
+      { question: "How much tuition in Malta?", answer: "€6,000-€10k private, ~€8,000-14k University of Malta non-EU — cheapest native-English EU." },
+      { question: "Can I study without IELTS in Malta?", answer: "Yes — MOI widely accepted; internal test available." },
+      { question: "How long Malta visa takes?", answer: "6-10 weeks Type D via VFS (Dhaka→New Delhi hub)." },
+      { question: "Can I work in Malta as student?", answer: "20h/week after 90 days via Jobsplus employer application." },
+      { question: "Why Malta for hospitality?", answer: "5-star Hilton/Marriott/InterContinental internships 500-800€/month plus Malta is tourism engine of EU." },
+      { question: "Schengen benefit of Malta?", answer: "Malta residence → 90/180 days free travel across 29 Schengen states." },
+      { question: "Can I bring dependents?", answer: "Not on student permit; after work Single Permit, family reunification possible." },
+      { question: "Which universities in Malta?", answer: "University of Malta (state, 1592), MCAST, American University of Malta (AUM), GBSB Global." },
+      { question: "BTEB diploma eligible?", answer: "Yes — advanced entry Year 2/3 MCAST computing/engineering/hospitality." },
+      { question: "Does ALO do Malta free?", answer: "Yes — free offer + Identity Malta file + VFS coaching + pre-departure." }
+    ],
+    sources: [
+      { section: "Type D & Residence", sourceName: "Identity Malta / Jobsplus", sourceUrl: "https://identitymalta.gov.mt", lastVerifiedAt: "2026-09-15" }
+    ],
+    cities: [
+      { name: "Valletta / Sliema", costLevel: "Medium", vibe: "UNESCO Capital — University of Malta", universities: ["University of Malta", "GBSB Malta"], livingCost: "€900 / month" },
+      { name: "Msida", costLevel: "Medium", vibe: "Student City (Tal-Qroqq Campus)", universities: ["University of Malta (Main Campus)", "MCAST"], livingCost: "€800 / month" },
+      { name: "Gozo", costLevel: "Low", vibe: "Calm Island Campus", universities: ["MCAST Gozo", "Queen Mary Malta"], livingCost: "€650 / month" }
+    ]
+  },
+  brazil: {
+    slug: "brazil",
+    code: "BR",
+    name: "Brazil",
+    flag: "🇧🇷",
+    capital: "Brasília",
+    currency: "BRL (R$)",
+    heroTitle: "Study in Brazil from Bangladesh | Largest Latin Economy & Tuition-Free Public Unis",
+    heroSubtitle: "Study at QS Top 100 USP/UNICAMP tuition-free (public) or US$3k private, Portuguese+English programs and 12-month post-study job search.",
+    overview: "Brazil is Latin America’s research giant — USP Top 100 world, tuition-free federal universities via ENEM/SISU or private affordable, vibrant tropical campus life across São Paulo-Rio innovation corridor.",
+    whyStudySummary: "Public federal free + private $2k-6k, 100% scholarships via Ciência sem Fronteiras successor, post-study 1-year work and Mercosur mobility.",
+    visaType: "VITEM IV — Temporary Visa IV (Student)",
+    popularIntakes: ["March (Fall) 2027", "August (Spring) 2026"],
+    studyLevels: ["Portuguese Preparatory", "Bachelor Degree (4-5 Years)", "Master's (2 Years)", "PhD (4 Years)"],
+    tuitionRange: "$0 (federal public) / $2,000 - $6,000 / year (private)",
+    livingCost: "R$24,000 - R$36,000 / year ($5,000 - $7,000)",
+    workRights: "20 hours/week (with university authorization).",
+    seoTitle: "Study in Brazil from Bangladesh | USP Free, VITEM IV & Scholarships | ALO Education",
+    seoDescription: "Study in Brazil for Bangladeshi students. USP/UNICAMP/PUC, free public universities, VITEM IV student visa, work rights and Mercosur.",
+    canonicalUrl: "https://aloeducation.com/destinations/brazil",
+    lastVerifiedAt: "2026-09-15",
+    quickFacts: [
+      { label: "Capital City", value: "Brasília" },
+      { label: "Currency", value: "Brazilian Real (R$ / BRL)" },
+      { label: "Popular Cities", value: "São Paulo, Rio de Janeiro, Brasília, Campinas" },
+      { label: "Main Intakes", value: "March (main) & August (mid)" },
+      { label: "Top University", value: "USP #85 QS (tuition-free federal)" },
+      { label: "Visa", value: "VITEM IV via Brasília/Dhaka (through New Delhi)" },
+      { label: "Living Cost", value: "R$2,000 - 3,000 / month shared" }
+    ],
+    reasons: [
+      { icon: "coins", heading: "Tuition-Free Public Elite", description: "Federal/USP/UNICAMP/UFRJ charge R$0 to all admitted — including internationals via ENEM/vestibular." },
+      { icon: "award", heading: "Latin #1 Research (USP)", description: "USP alone out-publishes all Spanish America; agritech, aerospace, deep-sea oil global leader." },
+      { icon: "briefcase", heading: "Mercosur Work Access", description: "Graduates access Brazil + Mercosur job market (Argentina/Uruguay/Paraguay) 1-year job search." },
+      { icon: "globe", heading: "Portuguese + English Masters", description: "600+ English masters (engineering, agri, MBA) while learning Portuguese (world 6th language)." }
+    ],
+    pathways: [
+      { fromLevel: "HSC / A-Level", toPathway: "Celpe-Bras Prep (1 Year) → Federal Bachelor (ENEM)", description: "HSC 3.5 → prep + ENEM → free public." },
+      { fromLevel: "HSC / A-Level", toPathway: "Direct Private Bachelor (PUC/Mackenzie) English-friendly", description: "HSC 3.0 IELTS 5.5 direct — $3k/year." },
+      { fromLevel: "Bachelor (4 Years)", toPathway: "2-Year English Master's (CAPES Pro)", description: "CGPA 2.8 → CAPES scholarship covers R$2,200/month stipend." },
+      { fromLevel: "Diploma BTEB", toPathway: "Tecnólogo → Bachelor", description: "4-year poly bridging via evaluation." }
+    ],
+    entryRequirements: [
+      { level: "Public Federal Bachelor", academic: "HSC 3.5+ + ENEM score / Celpe-Bras Intermediário", english: "Portuguese A2 + IELTS 5.0 optional", documents: ["ENEM", "Celpe-Bras", "Passport", "Financials"] },
+      { level: "Private Bachelor", academic: "HSC 3.0+ or A-Level 2 passes", english: "IELTS 5.5 or internal + Portuguese A1", documents: ["Transcripts", "Passport", "SOP"] },
+      { level: "Master's", academic: "Bachelor 2.8+ relevant", english: "IELTS 6.0 / Celpe-Bras Intermediate", documents: ["Degree", "Research Proposal", "CV", "Passport"] }
+    ],
+    englishTests: [
+      { name: "Celpe-Bras", accepted: "Mandatory for public Portuguese programs", note: "Intermediate/Advanced.", sourceUrl: "https://www.gov.br/inep" },
+      { name: "IELTS Academic", accepted: "English masters at USP/CAPES", note: "5.5-6.0.", sourceUrl: "https://www.ielts.org" },
+      { name: "TOEFL iBT", accepted: "Private business schools (FGV)", note: "80.", sourceUrl: "https://www.ets.org/toefl" }
+    ],
+    visaSteps: [
+      { step: 1, title: "Admission Letter (Carta de Aceitação)", description: "Federal/private issues letter + RNE pre-registration." },
+      { step: 2, title: "VITEM IV at Brasília (via New Delhi Embassy Dhaka funnel)", description: "Apply via Brazil Visa Centre Dhaka→New Delhi with letter, finances 6 months, police." },
+      { step: 3, title: "Federal Police Registration (RNM) 90 days", description: "Get National Migrant Registry within 90 days of arrival." },
+      { step: 4, title: "CPF & Bank", description: "CPF tax ID → free SUS health insurance." }
+    ],
+    workRightRules: [
+      {
+        termTime: "20 hours per week",
+        vacation: "40 hours vacation",
+        condition: "University authorization (Autorização de Trabalho), enrolled full-time",
+        postStudyRoute: "1-year job search (Autorização de Residência) → Mercosur Residence / Work.",
+        sourceUrl: "https://www.gov.br/mre/pt-br"
+      }
+    ],
+    faqs: [
+      { question: "Is public university really free in Brazil?", answer: "Yes — federal/state (USP, UNICAMP, UFRJ, UFMG) charge R$0 tuition to qualified internationals; private R$10k-30k/year." },
+      { question: "Do I need Portuguese?", answer: "For free public yes (Celpe-Bras Intermediate). Private/English masters allow IELTS 5.5 and learn Portuguese alongside." },
+      { question: "How to get free public seat?", answer: "Via ENEM score (AirSAT style) or Pec-G + Celpe-Bras. ALO tutors ENEM + essay." },
+      { question: "Living cost in São Paulo?", answer: "R$2,000-3,000/month shared (dorm R$800) — cheaper than EU." },
+      { question: "Work allowed in Brazil?", answer: "20h term with university letter at Labor Ministry — agri/tech internships R$1,500-2,500 stipend." },
+      { question: "Post-study stay in Brazil?", answer: "1-year job search residence, then Mercosur/Work visa; SUS health free throughout." },
+      { question: "Scholarships for Bangladesh?", answer: "PEC-G (tuition free + $500 stipend), CAPES/CNPq R$2,200 masters, FAPESP PhD R$4k." },
+      { question: "BTEB diploma valid?", answer: "Evaluated via Revalidação — tecnólogo credit may cut 1-2 years." },
+      { question: "Visa time in Bangladesh?", answer: "VITEM IV ~45 days via New Delhi hub — police clearance essential." },
+      { question: "ALO Brazil support?", answer: "Free — ENEM/Celpe-Bras prep, Carta, VITEM IV, CPF/RNM guide." }
+    ],
+    sources: [
+      { section: "VITEM IV & RNM", sourceName: "Ministry of Foreign Affairs Brazil (MRE) / Polícia Federal", sourceUrl: "https://www.gov.br/mre/pt-br", lastVerifiedAt: "2026-09-15" }
+    ],
+    cities: [
+      { name: "São Paulo", costLevel: "Medium", vibe: "Financial & USP Research Megacity", universities: ["USP", "UNICAMP (Campinas)", "FGV", "Mackenzie"], livingCost: "R$2,800 / month" },
+      { name: "Rio de Janeiro", costLevel: "Medium", vibe: "Coastal — UFRJ, PUC-Rio", universities: ["UFRJ", "PUC-Rio", "UERJ"], livingCost: "R$2,500 / month" },
+      { name: "Brasília", costLevel: "Low", vibe: "Administrative Capital — UnB", universities: ["University of Brasília (UnB)"], livingCost: "R$2,200 / month" }
+    ]
+  },
+  russia: {
+    slug: "russia",
+    code: "RU",
+    name: "Russia",
+    flag: "🇷🇺",
+    capital: "Moscow",
+    currency: "RUB (₽)",
+    heroTitle: "Study in Russia from Bangladesh | World-Famous STEM & Government Quota Free Seats",
+    heroSubtitle: "Study at Lomonosov/MSU, MIPT, ITMO with Russian Government Quota — 100% free (tuition+dorm+stipend) + English medicine/engineering.",
+    overview: "Russia is a STEM superpower — Mendeleev chemistry, Sputnik engineering — 15,000 Government Quota free seats yearly for internationals including Bangladesh, dorm $30/month.",
+    whyStudySummary: "Government Quota R$0 + dorm $15-40/mo cheapest major power, English MBBS globally listed, 1-year post-study job search.",
+    visaType: "Study Visa (Ordinary Study — вуза)",
+    popularIntakes: ["September (Fall) 2026", "February (Spring) 2027 (prep only)"],
+    studyLevels: ["Russian Language Preparatory (1 Year)", "Bachelor / Specialist (4-6 Years incl Medicine)", "Master's (2 Years)", "PhD (3-4 Years)"],
+    tuitionRange: "$0 (Quota) / $2,000 - $5,000 / year (paid)",
+    livingCost: "$2,500 - $4,500 / year",
+    workRights: "20 hours/week (students) — simplified since 2020.",
+    seoTitle: "Study in Russia from Bangladesh | MSU, Government Quota Free & Visa | ALO Education",
+    seoDescription: "Study in Russia for Bangladeshi students. Lomonosov/ITMO/Sechenov, government quota free, study visa, 20h work and dorm.",
+    canonicalUrl: "https://aloeducation.com/destinations/russia",
+    lastVerifiedAt: "2026-09-15",
+    quickFacts: [
+      { label: "Capital City", value: "Moscow" },
+      { label: "Currency", value: "Russian Ruble (₽ / RUB)" },
+      { label: "Popular Cities", value: "Moscow, St Petersburg, Kazan, Tomsk, Novosibirsk" },
+      { label: "Main Intake", value: "September (Feb prep only)" },
+      { label: "Tuition Free Quota", value: "15,000 seats world, ~80-100 for Bangladesh" },
+      { label: "Medium", value: "Russian + 2,200 English programs (Medicine/Engineering)" },
+      { label: "Post-Study", value: "1-year job search extension" }
+    ],
+    reasons: [
+      { icon: "coins", heading: "Quota = 100% Free + Dorm + Stipend", description: "Russian Government Quota = tuition R$0 + dorm ₽1,500/mo + ₽1,800 stipend — awarded via Rossotrudnichestvo Dhaka interview." },
+      { icon: "award", heading: "STEM Legend (MSU/MIPT/ITMO)", description: "Mipt is Russia’s MIT, MSU Top 75 world, 12 Nobels, Sputnik & nuclear engineering lineage." },
+      { icon: "briefcase", heading: "Cheapest Big Power Living", description: "Dorm $15-40/mo, canteen $70/mo, metro $25/mo — total $250-400/mo." },
+      { icon: "globe", heading: "English MBBS World-Listed", description: "Sechenov, Pirogov MBBS 6-year English, WHO/NMC/MCI listed, no IELTS if HSC English 60%." }
+    ],
+    pathways: [
+      { fromLevel: "SSC / HSC", toPathway: "1-Year Russian Prep (Podgotovka) → 4-Year Bachelor", description: "No Russian needed — paid/govt-funded prep then main." },
+      { fromLevel: "HSC (Science 3.5+)", toPathway: "6-Year MBBS English (MD Physician)", description: "PCB 60% → Sechenov/Pirogov English MBBS." },
+      { fromLevel: "BTEB Diploma 4-Year", toPathway: "Bachelor Engineering Direct Year 2", description: "Evaluated via NOSTRIFICATION (GlavExpertCentre)." },
+      { fromLevel: "Bachelor 4-Year", toPathway: "2-Year Master's (English) → Quota PhD", description: "CGPA 3.0 → ITMO/TPU English masters." }
+    ],
+    entryRequirements: [
+      { level: "Preparatory (Russian)", academic: "SSC GPA 3.0+/HSC 2.8+", english: "No IELTS/TOPIK required", documents: ["Certificates", "Passport valid 18m+", "Medical incl HIV"] },
+      { level: "Bachelor / MBBS", academic: "HSC 3.5+ (Science 3.5 for MBBS)", english: "IELTS 5.0 optional (English track) / Russian B1 after prep", documents: ["Certificates translated & apostilled", "HIV/medical", "Passport"] },
+      { level: "Master's", academic: "Bachelor 2.8+ (60%+)", english: "IELTS 5.5 English track / TORFL-1", documents: ["Degree apostilled", "Transcript", "Passport"] }
+    ],
+    englishTests: [
+      { name: "IELTS Academic", accepted: "English medicine/engineering tracks 5.0-5.5", note: "HSC English 60% often replaces.", sourceUrl: "https://www.ielts.org" },
+      { name: "TORFL", accepted: "Russian language levels 1-4", note: "TORFL-1 after prep for main faculty.", sourceUrl: "https://www.education-in-russia.com" },
+      { name: "No Test", accepted: "Quota preparatory — no language test entry", note: "Learn 1 year in Russia.", sourceUrl: "https://education-in-russia.com" }
+    ],
+    visaSteps: [
+      { step: 1, title: "Quota Application (Rossotrudnichestvo Dhaka) OR Paid Admission", description: "Quota: education-in-russia.com profile + exam/interview Mar-Apr. Paid: university invitation." },
+      { step: 2, title: "Invitation (Priglasheniye) via Ministry of Internal Affairs", description: "21-45 days telex invitation." },
+      { step: 3, title: "Study Visa at Russian Embassy Dhaka (Gulshan-2)", description: "Single 90-day visa → extend to 1-year multi inside Russia." },
+      { step: 4, title: "Medical + Registration 7 days", description: "HIV etc 30 days; register dorm within 7 days." }
+    ],
+    workRightRules: [
+      {
+        termTime: "20 hours per week (simplified since 14 Aug 2020 law)",
+        vacation: "40 hours vacation (no permit needed if enrolled full-time accredited)",
+        condition: "Full-time accredited university, employment contract — no separate permit",
+        postStudyRoute: "1-year temporary residence for graduates job search → Work permit.",
+        sourceUrl: "https://education-in-russia.com"
+      }
+    ],
+    faqs: [
+      { question: "Is Russia free via quota?", answer: "Yes — Quota = tuition R$0 + dorm Rb1,500 ($16) + stipend. ~90 for Bangladesh 2026 — apply Jan-Mar via Russian House Dhaka." },
+      { question: "Do I need Russian language?", answer: "Not for quota — 1-year preparatory included free; English MBBS/engineering bypass with IELTS 5.0." },
+      { question: "How cheap is Russia living?", answer: "Dorm $16-40, food $70-100, metro $25 — total $250-400/month." },
+      { question: "Is MBBS in English WHO listed?", answer: "Yes — Sechenov First Moscow, Pirogov, Kazan Federal WHO/NMC/MCI listed 6-year MD." },
+      { question: "Work allowed in Russia?", answer: "20h term, 40h vacation since 2020 — no separate work permit if student at accredited university." },
+      { question: "How long quota process?", answer: "Apply Jan-Mar, interview Apr, result Jun-Jul, invitation Aug, visa Sep — ALO handles apostille/nostrification." },
+      { question: "BTEB diploma accepted?", answer: "Yes via GlavExpertCentre nostrification — possible Year 2 engineering entry." },
+      { question: "Visa documents for Russia?", answer: "Invitation, passport 18m+, HIV negative, medical, bank proof minimal ($4k/year)." },
+      { question: "Safe after Hostilities?", answer: "Campuses charter flights/health/Sputnik insurance; ALO offers Kazan/Tomsk away from west as options." },
+      { question: "ALO Russia quota help?", answer: "Free — profile, prep, apostille, invitation, embassy — until dorm registration." }
+    ],
+    sources: [
+      { section: "Quota & Study Visa", sourceName: "Rossotrudnichestvo / Ministry of Science & Higher Education Russia", sourceUrl: "https://education-in-russia.com", lastVerifiedAt: "2026-09-15" }
+    ],
+    cities: [
+      { name: "Moscow", costLevel: "Medium", vibe: "Capital — MSU, Sechenov, MIPT", universities: ["Lomonosov MSU", "MIPT (Phystech)", "Sechenov Medical", "RUDN"], livingCost: "₽25000 / month" },
+      { name: "St Petersburg", costLevel: "Medium", vibe: "Cultural Capital — ITMO, SPbPU", universities: ["ITMO", "Peter the Great SPbPU", "SPb State"], livingCost: "₽20000 / month" },
+      { name: "Kazan", costLevel: "Low", vibe: "Volga Tatar Heritage — KFU", universities: ["Kazan Federal University", "Kazan Medical"], livingCost: "₽15000 / month" }
+    ]
+  },
+  india: {
+    slug: "india",
+    code: "IN",
+    name: "India",
+    flag: "🇮🇳",
+    capital: "New Delhi",
+    currency: "INR (₹)",
+    heroTitle: "Study in India from Bangladesh | IIT System & Cheapest English Degree in Asia",
+    heroSubtitle: "Study in world top 150 IIT/IISc with ICCR fully-funded 900 scholarships for Bangladesh, English-medium 2km from Dhaka.",
+    overview: "India is English-medium STEM at scale — 23 IITs, 20 IIMs, AIIMS medicine, UGC-recognized private stars (VIT, Manipal, Ashoka) two hours flight from Dhaka with near-culture and fee ₹1-3 lakh/year.",
+    whyStudySummary: "Cheapest QS-ranked English degree (₹1.5 lakh/year), ICCR 900 Bangladesh seats full stipend, land-border visa 7 days, zero culture shock.",
+    visaType: "Student Visa (S)",
+    popularIntakes: ["July (Fall) 2026", "January (Spring) 2027"],
+    studyLevels: ["Diploma", "Bachelor Degree (3-4 Years)", "Master's (2 Years)", "PhD (3-5 Years, JRF)", "MBBS (5.5 Years, NEET)"],
+    tuitionRange: "₹100,000 - ₹350,000 / year ($1,200 - $4,200, private) / ₹0 ICCR",
+    livingCost: "₹120,000 - ₹200,000 / year ($1,500 - $2,400)",
+    workRights: "No off-campus work (internships allowed).",
+    seoTitle: "Study in India from Bangladesh | IIT, ICCR 900 Scholarships & S Visa | ALO Education",
+    seoDescription: "Study in India for Bangladeshi students. IIT/IISc/ICCR, VIT, Manipal, S visa via IVAC Dhaka, $1,500/year living.",
+    canonicalUrl: "https://aloeducation.com/destinations/india",
+    lastVerifiedAt: "2026-09-15",
+    quickFacts: [
+      { label: "Capital City", value: "New Delhi" },
+      { label: "Currency", value: "Indian Rupee (₹ / INR)" },
+      { label: "Popular Cities", value: "Bangalore, Delhi, Mumbai, Hyderabad, Chennai, Pune, Kolkata" },
+      { label: "Main Intakes", value: "July (main) & January (mid/via Study in India portal)" },
+      { label: "ICCR Scholarships", value: "900 seats for Bangladesh full (stipend ₹18k-25k/month + house)" },
+      { label: "Top Ranked", value: "IISc #155, IIT Bombay #149 QS 2025" },
+      { label: "Flight Dhaka", value: "45 min to Kolkata, 2.5h to Delhi" }
+    ],
+    reasons: [
+      { icon: "coins", heading: "₹1,200/Year Ranked English Degree", description: "Cheapest QS-ranked English medium globally — VIT/Manipal ₹1.5 lakh/year beats EU." },
+      { icon: "award", heading: "IIT/IISc Top 150 + ICCR Free", description: "ICCR General Cultural Scholarship Scheme 900 for BD — 100% + dorm + medical." },
+      { icon: "globe", heading: "Zero Culture Shock 45 min", description: "Same food/language/festival as West Bengal, land border 7-day S visa via IVAC." },
+      { icon: "briefcase", heading: "Bengaluru Tech Hiring", description: "Intern at Infosys/Wipro/Flipkart campus (not counted as work) → placement." }
+    ],
+    pathways: [
+      { fromLevel: "SSC / HSC 3.0+", toPathway: "Direct Bachelor (3-4Y) via Study in India (SII)", description: "HSC 3.0 → SII portal auto-matching to VIT/Manipal/Amrita." },
+      { fromLevel: "HSC Science 4.0+ PCB", toPathway: "NEET → AIIMS/MAMC MBBS (5.5Y)", description: "NEET quota for Bangladesh: high merit + ICCR." },
+      { fromLevel: "BTEB Diploma 4Y", toPathway: "Direct Lateral Entry Year 2 Engineering", description: "AICTE-approved lateral via JELET evaluation." },
+      { fromLevel: "Bachelor 4Y", toPathway: "IIT GATE → MTech/PhD JRF ₹37k/month stipend", description: "GATE+ ICCR → IIT MTech free + Junior Research Fellowship." }
+    ],
+    entryRequirements: [
+      { level: "Bachelor (Private)", academic: "HSC GPA 3.0+ (60%+) or A-Level 2 passes", english: "IELTS not required (MOI) / PTE optional 46", documents: ["Certificates", "Passport", "SII registration"] },
+      { level: "IIT/IISc/ICCR", academic: "HSC 4.5+/GPA 4.8 + JEE Advanced/GATE for top", english: "MOI", documents: ["High merit transcripts", "Passport", "ICCR portal"] },
+      { level: "MBBS NEET", academic: "HSC Science GPA 5.0 PCB 60%+", english: "MOI", documents: ["NEET score", "Medical fitness"] }
+    ],
+    englishTests: [
+      { name: "No IELTS Needed", accepted: "English official — HSC English passes suffices for most privates", note: "ICCR never asks IELTS.", sourceUrl: "https://www.iccr.gov.in" },
+      { name: "IELTS Academic", accepted: "Optional for top IITs masters 6.0", note: "Not mandatory.", sourceUrl: "https://www.ielts.org" }
+    ],
+    visaSteps: [
+      { step: 1, title: "SII or ICCR Admission Letter", description: "SII allotment / ICCR award letter via High Commission Dhaka." },
+      { step: 2, title: "Student Visa (S) via IVAC", description: "IVAC Dhaka/Jashore/Benapole — 7-15 days, Bonafide + financial affidavit." },
+      { step: 3, title: "FRRO Registration 14 days", description: "Register at FRRO Bangalore/Delhi within 14 days of arrival." },
+      { step: 4, title: "Residential Permit", description: "Extend yearly via university FRRO helpdesk." }
+    ],
+    workRightRules: [
+      {
+        termTime: "No off-campus paid work (as per S visa)",
+        vacation: "Internships on-campus allowed unlimited (via Training & Placement Cell)",
+        condition: "S visa — academic internships not classified as employment",
+        postStudyRoute: "No automatic stay; convert to Employment Visa via ₹16 lakh+ offer (Tech).",
+        sourceUrl: "https://indianvisaonline.gov.in"
+      }
+    ],
+    faqs: [
+      { question: "How much is India tuition for Bangladeshis?", answer: "Private ₹1-3 lakh/year ($1,200-3,500); ICCR = ₹0 + stipend ₹25k/month; public CUET limited higher." },
+      { question: "What is ICCR and how many seats for Bangladesh?", answer: "Indian Council for Cultural Relations — 900 Bangladesh seats (largest allocation world) full: tuition+hostel+stipend." },
+      { question: "Is IELTS needed for India?", answer: "No — HSC English pass suffices; SII/ICCR never mandates IELTS." },
+      { question: "Can I work while studying in India?", answer: "Off-campus work prohibited on S visa; but paid campus internships via T&P allowed (Infosys, TCS)." },
+      { question: "How fast is Indian student visa?", answer: "7-15 days via IVAC Dhaka (S visa) — fastest regionally." },
+      { question: "Is Indian MBBS valid in Bangladesh?", answer: "NEET-based AIIMS/MAMC MBBS MCI/NMC & BMDC listed — return for BMDC registration after." },
+      { question: "BTEB diploma lateral?", answer: "Yes — AICTE lateral Year 2 into VIT/Manipal/Jadavpur engineering via diploma GPA 3.5+." },
+      { question: "Hostel cost in Bengaluru?", answer: "₹8k-15k/month AC room + food; mess ₹4k — cheapest tech hub." },
+      { question: "From Dhaka how close?", answer: "45 min Kolkata, 2h30 Delhi, Benapole land crossing 6h — parents visit monthly." },
+      { question: "ALO does India/ICCR?", answer: "Yes — SII ranking, ICCR 900 file, IVAC visa, FRRO — free until hostel." }
+    ],
+    sources: [
+      { section: "S Visa & ICCR", sourceName: "ICCR / Study in India (SII) / High Commission of India, Dhaka", sourceUrl: "https://www.studyinindia.gov.in", lastVerifiedAt: "2026-09-15" }
+    ],
+    cities: [
+      { name: "Bangalore", costLevel: "Low", vibe: "India's Silicon Valley — IISc, VIT Bangalore", universities: ["IISc", "Christ University", "PES University"], livingCost: "₹15,000 / month" },
+      { name: "Delhi NCR", costLevel: "Medium", vibe: "Capital — IIT Delhi, AIIMS, Ashoka", universities: ["IIT Delhi", "AIIMS Delhi", "Ashoka University", "Amity"], livingCost: "₹18,000 / month" },
+      { name: "Vellore/Chennai", costLevel: "Low", vibe: "Private Star Corridor — VIT, SRM", universities: ["VIT Vellore", "SRM", "Manipal (Mangalore)"], livingCost: "₹14,000 / month" }
+    ]
+  },
+  china: {
+    slug: "china",
+    code: "CN",
+    name: "China",
+    flag: "🇨🇳",
+    capital: "Beijing",
+    currency: "CNY (¥)",
+    heroTitle: "Study in China from Bangladesh | C9 League & CSC Fully-Funded 15,000",
+    heroSubtitle: "Study at Tsinghua/Peking (C9=China’s Ivy) with CSC Chinese Government Scholarship 15,000 seats — free tuition+dorm+¥3k stipend + English MBBS.",
+    overview: "China is world’s largest scholarship donor — 15k CSC for internationals including ~200 for Bangladesh — C9 elite + 985/211 leaders, Hubble-class labs, fastest visa 1 week via Dhaka Visa Center.",
+    whyStudySummary: "CSC 100% + ¥2,500-3,500/month living + flight + Chinese year, Tsinghua/Peking Top 15 world, 90% English MBBS/engineering, 1-year job search.",
+    visaType: "X1 (Long-term >180 days) / X2 (Short-term) Study Visa",
+    popularIntakes: ["September (Fall) 2026", "March (Spring) 2027 (limited)"],
+    studyLevels: ["Chinese Language (1 Year)", "Bachelor (4 Years)", "Master's (2-3 Years)", "PhD (3-4 Years)", "MBBS (6 Years English)"],
+    tuitionRange: "¥0 (CSC) / ¥15,000 - ¥40,000 / year ($2,200 - $5,500)",
+    livingCost: "¥12,000 - ¥24,000 / year ($1,700 - $3,400)",
+    workRights: "Part-time with university approval (since 2022).",
+    seoTitle: "Study in China from Bangladesh | Tsinghua, CSC Free & X1 Visa | ALO Education",
+    seoDescription: "Study in China for Bangladeshi students. Tsinghua/Peking/CSC 15k, MBBS English, X1 visa 1 week, dorm and stipend.",
+    canonicalUrl: "https://aloeducation.com/destinations/china",
+    lastVerifiedAt: "2026-09-15",
+    quickFacts: [
+      { label: "Capital City", value: "Beijing" },
+      { label: "Currency", value: "Chinese Yuan (¥ / CNY)" },
+      { label: "Popular Cities", value: "Beijing, Shanghai, Wuhan, Guangzhou, Hangzhou" },
+      { label: "Main Intake", value: "September (March limited masters)" },
+      { label: "CSC Seats", value: "15,000 worldwide, ~180-220 for Bangladesh" },
+      { label: "Top League", value: "C9 League = China’s Ivy (Tsinghua, Peking, Fudan…)" },
+      { label: "MBBS English", value: "45+ Ministry-approved English MBBS (6Y), NMC/MCI listed" }
+    ],
+    reasons: [
+      { icon: "coins", heading: "CSC Empire: 100% + ¥3k/mo", description: "Biggest world: CSC Type A (Embassy) + Type B (University) = tuition R$0 + dorm free + stipend + medical." },
+      { icon: "award", heading: "C9 Top 15 World Labs", description: "Tsinghua #14, Peking #14 QS 2025, 5G/quantum/AI at Huawei/Alibaba co-labs." },
+      { icon: "globe", heading: "MBBS Without Donation", description: "English MBBS 6Y ¥30k/year private vs India capitation — WHO/MCI/BMDC approved colleges." },
+      { icon: "briefcase", heading: "2nd Economy Job Corridor", description: "Intern Huawei/Alibaba + stay 1-year S2 job seeker →Work Z visa at ¥7k salary." }
+    ],
+    pathways: [
+      { fromLevel: "HSC 3.5+", toPathway: "Chinese Prep Year (CSC-sponsored) → 4Y Bachelor", description: "No Chinese needed — CSC gives 1 year HSK prep fully funded." },
+      { fromLevel: "HSC Science 3.8+ PCB", toPathway: "English MBBS 6 Years (45 approved)", description: "PCB 60% → Wuhan/China Medical etc English MBBS." },
+      { fromLevel: "BTEB 4Y Poly", toPathway: "English Bachelor Engineering (4Y) Direct", description: "BTEB GPA 3.3 → HIT, Wuhan Tech direct with IELTS 5.5." },
+      { fromLevel: "Bachelor 4Y", toPathway: "English Master's 2-3Y CSC → PhD", description: "CGPA 3.0 → HIT/Tsinghua English master CSC." }
+    ],
+    entryRequirements: [
+      { level: "Chinese Preparatory", academic: "HSC GPA 3.0+ or SSC+HSC", english: "No IELTS / HSK 2 after prep", documents: ["Certificates", "Physical Exam", "Police", "Passport"] },
+      { level: "Bachelor / MBBS English", academic: "HSC 3.5+ (MBBS 3.8 PCB 60%+)", english: "IELTS 5.5 / TOEFL 70 / MOI (English MBBS 5.5)", documents: ["Certificates notarized", "Passport", "Financial proof minimal"] },
+      { level: "Master's / PhD English", academic: "Bachelor 3.0+ (Master's 3.2+ for C9)", english: "IELTS 6.0 / MOI", documents: ["Degree notarized", "Research Proposal (2 pages)", "2 References", "Passport"] }
+    ],
+    englishTests: [
+      { name: "IELTS Academic", accepted: "English MBBS/engineering 5.5-6.0", note: "MOI accepted at many CSC colleges.", sourceUrl: "https://www.ielts.org" },
+      { name: "HSK", accepted: "Chinese tracks Level 4 bachelor, 5 master", note: "Not needed if English track — CSC gives 1yr free HSK.", sourceUrl: "https://www.chinesetest.cn" },
+      { name: "No Test", accepted: "CSC prep + many provinces accept MOI", note: "HSC English pass.", sourceUrl: "https://www.campuschina.org" }
+    ],
+    visaSteps: [
+      { step: 1, title: "CSC Apply (Nov-Mar Embassy A + Dec-Apr University B)", description: "Campuschina.org or university direct + JW201/202 form." },
+      { step: 2, title: "JW202 + Admission Notice via Ministry", description: "MOE issues JW201/202 — needed for X visa." },
+      { step: 3, title: "X1 Visa 1 Week at Dhaka Visa Centre", description: "Jalalabad border style center in Dhaka (Baridhara) — physical exam + bank minimal." },
+      { step: 4, title: "Residence Permit 30 days", description: "Convert X1 to Residence Permit (1 year) at PSB Entry-Exit within 30 days of entry." }
+    ],
+    workRightRules: [
+      {
+        termTime: "Part-time with university + PSB approval (2022 rule)",
+        vacation: "Full-time vacation with approval",
+        condition: "On-campus + off-campus internships via university; X1 full-time enrolled",
+        postStudyRoute: "12-month S2 Job Seeker → Z Work (with Bachelor+ degree + 2 years not needed if high-ranked).",
+        sourceUrl: "https://www.campuschina.org"
+      }
+    ],
+    faqs: [
+      { question: "Is CSC really fully funded for Bangladesh?", answer: "Yes — 180-220 of 15k Type A+B include Bangladesh: tuition R$0 + dorm free + ¥3k master/¥3,500 PhD + flight for Type A." },
+      { question: "Do I need Chinese language for MBBS?", answer: "No — 45 Ministry-approved English MBBS 6Y taught 100% English; HSK required only if Chinese medium." },
+      { question: "How cheap is China MBBS?", answer: "English MBBS ¥30k-40k/year ($4,400) vs private India ₹15 lakh — dorm ¥6k/year." },
+      { question: "Work allowed on X1?", answer: "Since 2022 yes with university letter + PSB stamp — 20h tutoring/lab, vacation full." },
+      { question: "Age limit for CSC?", answer: "Bachelor 25, Master 35, PhD 40 — HSC 2024 can apply 2026." },
+      { question: "BTEB diploma accepted for China?", answer: "Yes — BTEB 4Y GPA 3.3 → HIT/Wuhan/UESTC engineering Year 1 via IELTS 5.5." },
+      { question: "Fastest visa in Asia?", answer: "Yes — X1 visa Dhaka Center 4-7 days after JW202 — fastest major." },
+      { question: "Can I stay after in China?", answer: "1-year job seeker residence, then Z work with salary ¥7k+; Huawei/SME sponsors." },
+      { question: "Which cities/branches for Bangladesh?", answer: "Wuhan (WUT, HUST), Hangzhou (Zhejiang), Harbin (HIT), Beijing (Tsinghua, Renmin)." },
+      { question: "ALO handles CSC?", answer: "Yes free — Type A embassy vs Type B university timing, research proposal, JW202, X1." }
+    ],
+    sources: [
+      { section: "CSC & X Visa", sourceName: "China Scholarship Council (CSC) / Campuschina.org / PSB", sourceUrl: "https://www.campuschina.org", lastVerifiedAt: "2026-09-15" }
+    ],
+    cities: [
+      { name: "Beijing", costLevel: "Medium", vibe: "Capital — Tsinghua, Peking, Renmin", universities: ["Tsinghua University", "Peking University", "Renmin University"], livingCost: "¥2,000 / month" },
+      { name: "Wuhan", costLevel: "Low", vibe: "Student Mega-City (86 Unis) — HUST, WUT", universities: ["Huazhong HUST", "Wuhan University", "WUT"], livingCost: "¥1,200 / month" },
+      { name: "Harbin", costLevel: "Low", vibe: "Northern Tech Hub — HIT (C9)", universities: ["Harbin Institute of Technology (HIT)"], livingCost: "¥1,100 / month" }
+    ]
+  },
+  "south-africa": {
+    slug: "south-africa",
+    code: "ZA",
+    name: "South Africa",
+    flag: "🇿🇦",
+    capital: "Pretoria (admin), Cape Town (legis)",
+    currency: "ZAR (R)",
+    heroTitle: "Study in South Africa from Bangladesh | Africa’s Top 200 & English Safari Degree",
+    heroSubtitle: "Study at UCT/Wits (#150 world) in 100% English, game-reserve medicine, Big 5 campus and 12-month Critical Skills work.",
+    overview: "South Africa hosts Africa’s only Top 200 universities — UCT, Wits, Stellenbosch, Pretoria — English 100%, 11 official languages, Safari pre-med and cheapest Top 500 degree in southern hemisphere.",
+    whyStudySummary: "UCT/Wits Top 150-200, tuition $3k-7k/year, English 100% + 12-month Critical Skills list post-study, 3 capitals’ internship corridor.",
+    visaType: "Study Visa — Section 13 under Immigration Act 13 of 2002",
+    popularIntakes: ["February (Semester 1) 2027", "July (Semester 2) 2026"],
+    studyLevels: ["Foundation/Extended Program", "Bachelor Degree (3-4 Years)", "Honours (1 Year)", "Master's (2 Years)", "PhD"],
+    tuitionRange: "ZAR 40,000 - ZAR 120,000 / year ($2,200 - $6,500)",
+    livingCost: "ZAR 80,000 - ZAR 120,000 / year ($4,300 - $6,500)",
+    workRights: "20 hours/week during term, full-time holidays.",
+    seoTitle: "Study in South Africa from Bangladesh | UCT, Wits & Study Visa | ALO Education",
+    seoDescription: "Study in South Africa for Bangladeshi students. UCT/Wits/Stellenbosch, tuition $3k, Section 13 study visa, 20h work, Critical Skills.",
+    canonicalUrl: "https://aloeducation.com/destinations/south-africa",
+    lastVerifiedAt: "2026-09-15",
+    quickFacts: [
+      { label: "Capital City", value: "Pretoria (administrative), Cape Town (legislative)" },
+      { label: "Currency", value: "South African Rand (R / ZAR)" },
+      { label: "Popular Cities", value: "Cape Town, Johannesburg, Pretoria, Stellenbosch, Durban" },
+      { label: "Main Intakes", value: "February (main) & July (mid-year)" },
+      { label: "Top Ranked", value: "UCT #171 QS 2025, Wits #264" },
+      { label: "Language", value: "English 100% universities" },
+      { label: "Post-Study", value: "Critical Skills Visa list + 12 months job search" }
+    ],
+    reasons: [
+      { icon: "award", heading: "Africa’s Only Top 200", description: "UCT/Wits/Stellenbosch teach what Stellenbosch Wine + Kruger Safari Stanford exchange cannot copy." },
+      { icon: "coins", heading: "Dollar-Cheap Top 500", description: "ZAR is 18/$, tuition $3k vs $15k Australia same QS band — dorm+food $300/month." },
+      { icon: "briefcase", heading: "Big 5 Medicine & MBA", description: "Only place you dissect + game-reserve clinical + MBChB 6-year English at UCT." },
+      { icon: "globe", heading: "Rainbow Nation in English", description: "11 languages, 100% campus English, direct flights via Emirates 12h + multicultural." }
+    ],
+    pathways: [
+      { fromLevel: "HSC / A-Level", toPathway: "Extended/Fundamentals (1Y) → 3Y Bachelor", description: "HSC 3.0 → Extended Science/commerce bridging then mainstream." },
+      { fromLevel: "HSC 3.5+ / A-Level 2 passes", toPathway: "Direct 3Y Bachelor (BSc/BA/BCom)", description: "Direct if APS 28+ (HSC conversion)." },
+      { fromLevel: "BTEB 4Y Poly", toPathway: "Diploma → Advanced Diploma → Degree", description: " evaluated via SAQA." },
+      { fromLevel: "Bachelor 4Y (60%+)", toPathway: "1Y Honours + 2Y Master → PhD", description: "ZA unique Honours ladder." }
+    ],
+    entryRequirements: [
+      { level: "Extended/Foundation", academic: "HSC GPA 3.0+ (50%+) or SSC 3.5", english: "IELTS 5.5 (5.0) / MOI + NBT", documents: ["NSC conversion via Matric Board", "Passport", "Medical"] },
+      { level: "Bachelor Direct", academic: "HSC GPA 3.5+ / A-Level 2 passes (APS 28+)", english: "IELTS 6.0 (5.5) / PTE 50 / MOI strong", documents: ["SAQA evaluation", "NBT test", "Passport"] },
+      { level: "Master's/Honours", academic: "Bachelor 60%+ (65%+ for UCT/Wits)", english: "IELTS 6.5 (6.0) / TOEFL 90", documents: ["Degree SAQA", "Research Concept (Honours)", "CV"] }
+    ],
+    englishTests: [
+      { name: "IELTS Academic", accepted: "All 26 universities 5.5-6.5", note: "5.5 extended, 6.0 bachelor, 6.5 master.", sourceUrl: "https://www.ielts.org" },
+      { name: "PTE Academic", accepted: "UCT, Wits, Pretoria", note: "50-58.", sourceUrl: "https://www.pearsonpte.com" },
+      { name: "Medium of Instruction", accepted: "Many accept HSC English 60%+ ", note: "Plus NBT Academic Literacy.", sourceUrl: "https://aloeducation.com" }
+    ],
+    visaSteps: [
+      { step: 1, title: "University Offer + SAQA Certificate", description: "SAQA evaluates HSC/Bachelor to South African NQF." },
+      { step: 2, title: "Medical + Radiological + Police", description: "Medical & X-ray within 6 months + police clearance." },
+      { step: 3, title: "Section 13 Study Visa at SA High Commission New Delhi (via Dhaka funnel)", description: "VFS New Delhi → Dhaka submission, 30-45 days." },
+      { step: 4, title: "Port of Entry + Residence Reporting", description: "Register at VFS DHA 11 days, get Study Visa permit card." }
+    ],
+    workRightRules: [
+      {
+        termTime: "20 hours per week",
+        vacation: "40 hours during holidays",
+        condition: "Endorsement on Study Visa Section 13(1) — part-time work endorsed",
+        postStudyRoute: "Critical Skills Visa (if on list) or General Work; 12-month job-seeker endorsement for shortage.",
+        sourceUrl: "https://www.dha.gov.za"
+      }
+    ],
+    faqs: [
+      { question: "Why South Africa for Bangladeshis?", answer: "Only Top 200 in Africa at 1/5 EU cost, 100% English, Safari medicine/MBA unique — cultural distance less than EU." },
+      { question: "Is degree recognized in BD/UK/USA?", answer: "Yes — UCT/Wits SAQA NQF 7/8/9 mapped to UK Level 6/7/8, WHO/BMDC eco-list." },
+      { question: "Tuition really $3k?", answer: "Yes — UCT commerce/arts ZAR 60k ($3,300), engineering ZAR 110k ($6k) vs UK £15k similar rank." },
+      { question: "Work allowed?", answer: "20h term + 40h vacation if endorsed on Section 13 study visa — hospitality/tourism/safari guide." },
+      { question: "Post-study stay?", answer: "Critical Skills List (IT, engineering, health) immediate work; others 12-month job seeker while on Section 13." },
+      { question: "What is SAQA?", answer: "South African Qualifications Authority evaluates HSC/Bachelor to APS points for admission." },
+      { question: "What is NBT?", answer: "National Benchmark Test — UCT/Wits maths + literacy placement (not fail, streaming)." },
+      { question: "BTEB diploma accepted?", answer: "Yes via SAQA + evaluated perhaps advanced diploma entry." },
+      { question: "Visa time from Bangladesh?", answer: "45-60 days Section 13 via VFS New Delhi hub (police+medical key)." },
+      { question: "Does ALO cover SA?", answer: "Yes free — SAQA, NBT booking, Section 13 file — until DHA card." }
+    ],
+    sources: [
+      { section: "Study Visa Section 13", sourceName: "Department of Home Affairs South Africa (DHA)", sourceUrl: "https://www.dha.gov.za", lastVerifiedAt: "2026-09-15" }
+    ],
+    cities: [
+      { name: "Cape Town", costLevel: "Medium", vibe: "UCT #171 World — Table Mountain", universities: ["University of Cape Town (UCT)", "Cape Peninsula UT"], livingCost: "ZAR 9,000 / month" },
+      { name: "Johannesburg", costLevel: "Medium", vibe: "Economic Hub — Wits", universities: ["University of the Witwatersrand (Wits)", "University of Johannesburg"], livingCost: "ZAR 8,500 / month" },
+      { name: "Stellenbosch", costLevel: "Medium", vibe: "Wine Region — Stellenbosch", universities: ["Stellenbosch University", "Stellenbosch MBA"], livingCost: "ZAR 8,000 / month" }
+    ]
   }
 };
 
@@ -1346,6 +1967,17 @@ export function getCountryDestination(slug: string): CountryDestinationData | nu
     'dubai-uae': 'dubai',
     'uae': 'dubai',
     'nz': 'new-zealand',
+    'korea': 'south-korea',
+    'south korea': 'south-korea',
+    'kr': 'south-korea',
+    'mt': 'malta',
+    'br': 'brazil',
+    'ru': 'russia',
+    'in': 'india',
+    'cn': 'china',
+    'za': 'south-africa',
+    'southafrica': 'south-africa',
+    'south africa': 'south-africa',
   };
 
   if (aliasMap[key] && COUNTRY_DESTINATIONS[aliasMap[key]]) {

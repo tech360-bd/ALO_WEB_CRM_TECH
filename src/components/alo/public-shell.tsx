@@ -41,6 +41,13 @@ const MORE_COUNTRIES = [
   { slug: "netherlands", name: "Netherlands", flag: "🇳🇱" },
   { slug: "cyprus", name: "Cyprus", flag: "🇨🇾" },
   { slug: "sweden", name: "Sweden", flag: "🇸🇪" },
+  { slug: "south-korea", name: "South Korea", flag: "🇰🇷" },
+  { slug: "malta", name: "Malta", flag: "🇲🇹" },
+  { slug: "brazil", name: "Brazil", flag: "🇧🇷" },
+  { slug: "russia", name: "Russia", flag: "🇷🇺" },
+  { slug: "india", name: "India", flag: "🇮🇳" },
+  { slug: "china", name: "China", flag: "🇨🇳" },
+  { slug: "south-africa", name: "South Africa", flag: "🇿🇦" },
 ];
 
 /* ─── Language Prep ─── */
@@ -92,6 +99,13 @@ const FOOTER_DESTINATIONS = [
   { label: "Netherlands", slug: "netherlands" },
   { label: "Cyprus", slug: "cyprus" },
   { label: "Sweden", slug: "sweden" },
+  { label: "South Korea", slug: "south-korea" },
+  { label: "Malta", slug: "malta" },
+  { label: "Brazil", slug: "brazil" },
+  { label: "Russia", slug: "russia" },
+  { label: "India", slug: "india" },
+  { label: "China", slug: "china" },
+  { label: "South Africa", slug: "south-africa" },
 ];
 
 const FOOTER_QUICK_LINKS = [

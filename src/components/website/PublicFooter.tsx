@@ -18,6 +18,13 @@ const destinations = [
   { label: 'Netherlands', href: '/destinations/netherlands' },
   { label: 'Cyprus', href: '/destinations/cyprus' },
   { label: 'Sweden', href: '/destinations/sweden' },
+  { label: 'South Korea', href: '/destinations/south-korea' },
+  { label: 'Malta', href: '/destinations/malta' },
+  { label: 'Brazil', href: '/destinations/brazil' },
+  { label: 'Russia', href: '/destinations/russia' },
+  { label: 'India', href: '/destinations/india' },
+  { label: 'China', href: '/destinations/china' },
+  { label: 'South Africa', href: '/destinations/south-africa' },
 ];
 
 const quickLinks = [
