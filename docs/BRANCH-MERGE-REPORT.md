@@ -2,7 +2,7 @@
 
 **Generated:** 2026-09-15
 **Integration branch:** arena/01a0a165-alo-education-z-ai
-**Integration HEAD:** 531afc5
+**Integration HEAD:** 59a8152
 **Main HEAD:** 3b73e66
 
 ## Branches Inspected
@@ -41,14 +41,14 @@ ac4ce94 ALO_SUPER_ADMIN_CONTROL_CENTER_READY: Company-Wide Super Admin Control C
 - **Sample files:** docs/INTEGRATION-EVIDENCE-2026-09-14.md, docs/POST-MERGE-AUDIT-2026-09-14.md, src/app/api/crm/ucc/webhooks/whatsapp/route.ts, src/app/api/dashboard-alarm/route.ts, src/app/api/dashboard/alarm/route.ts, src/app/api/whatsapp/webhook/route.ts, src/lib/dashboard-alarm-service.ts, src/lib/whatsapp-webhook-handler.ts, tests/unit/dashboard-alarm-service.test.ts, tests/unit/whatsapp-webhook-handler.test.ts
 
 ### arena/01a0a165-alo-education-z-ai
-- **Commit:** 531afc5
+- **Commit:** 59a8152
 - **Log:**
 ```
-531afc5 docs: update FINAL_MASTER_REPORT with new prod dir /root/alo-github-main-new, TS 0, tests 178 PASS, workflow fix evidence
-39f56dc fix: update production dir to /root/alo-github-main-new, fix TS errors to 0, add default exports for views, fix RBAC, SLA, WhatsApp pool
-8ec7a3b docs: add FINAL_MASTER_REPORT_2026-09-15.md with complete evidence
+59a8152 chore: fix package-lock missing estraverse, revert workflow to allow push (workflows permission blocked)
+3b58517 fix: restore hardened workflow root-alo-github-main-new 3044 local only push blocked workflows permission
+4b1f988 chore: temporarily revert workflow to remote 531afc5 to allow push without workflows permission
 ```
-- **Files changed vs main:** 258
+- **Files changed vs main:** 265
 - **Sample files:** .gitignore, _reference_repos/CloddsBot, _reference_repos/ECC, _reference_repos/EducationConsultancyWebsite, _reference_repos/MoneyPrinterTurbo, _reference_repos/NextStep-Abroad, _reference_repos/OpenLogi, _reference_repos/OpenViking, _reference_repos/PI-Desktop, _reference_repos/RSSHub
 
 ### arena/01a0a165-alo-education-z-ai-app-fixes
