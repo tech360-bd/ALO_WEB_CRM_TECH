@@ -233,3 +233,11 @@ whisper_models/
 # VideoCaptioner binary
 /VideoCaptioner/
 videocaptioner_bin/
+
+# Reference repos — local reference copies only, not real submodules
+# Previously tracked as gitlinks (160000) without .gitmodules causing
+# "fatal: No url found for submodule path" on checkout.
+# Fixed by removing from index and ignoring locally.
+_reference_repos/
+_reference_repos/*
+**/_reference_repos/
