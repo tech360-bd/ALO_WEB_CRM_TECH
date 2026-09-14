@@ -62,18 +62,18 @@ export const GET = withAuth(async (request: Request, auth: AuthContext) => {
     }
 
     // Fetch student names for threads that have studentIds
-    const studentIds = [...new Set(assignedThreads.map(t => t.studentId).filter(Boolean))];
+    const studentIds = [...new Set((assignedThreads as any[]).map((t: any) => t.studentId).filter(Boolean))];
     const students = studentIds.length > 0
-      ? await db.student.findMany({
+      ? await (db as any).student.findMany({
           where: { id: { in: studentIds } },
           select: { id: true, studentId: true, name: true },
         })
       : [];
 
-    const studentMap = new Map(students.map(s => [s.id, s]));
+    const studentMap = new Map<string, any>((students as any[]).map((s: any) => [s.id, s]));
 
     // Build response threads
-    const threads = assignedThreads.map(thread => {
+    const threads = (assignedThreads as any[]).map((thread: any) => {
       const student = thread.studentId ? studentMap.get(thread.studentId) : null;
       return {
         id: thread.id,

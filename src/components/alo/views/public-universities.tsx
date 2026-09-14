@@ -364,3 +364,4 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
     </div>
   );
 }
+export default PublicUniversities;

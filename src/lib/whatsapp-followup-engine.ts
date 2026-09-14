@@ -220,7 +220,7 @@ export async function processDueFollowUps() {
     orderBy: { scheduledAt: 'asc' },
   });
 
-  const results = [];
+  const results: any[] = [];
 
   for (const item of due) {
     try {

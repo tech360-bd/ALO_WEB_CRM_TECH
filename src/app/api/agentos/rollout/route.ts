@@ -152,16 +152,17 @@ export async function POST(req: NextRequest) {
       next: 'Human must review result, audit log, usage, then explicitly approve to move to ACTIVE (Gate 9).',
     });
   } catch (e: any) {
-    error = e?.message || String(e);
+    const errMsg = e?.message || String(e);
+    error = errMsg;
     // Redact secrets
-    const redactedError = error.replace(/sk-[a-zA-Z0-9_-]{10,}/g, '[REDACTED]').replace(/Bearer\s+[A-Za-z0-9._-]+/g, 'Bearer [REDACTED]').slice(0, 800);
+    const redactedError = errMsg.replace(/sk-[a-zA-Z0-9_-]{10,}/g, '[REDACTED]').replace(/Bearer\s+[A-Za-z0-9._-]+/g, 'Bearer [REDACTED]').slice(0, 800);
     return NextResponse.json({
       success: false,
       error: redactedError,
       department: dept,
       config: getRedactedConfigReport(dept),
       activation,
-      hint: error.includes('not configured') ? 'Configure GROQ_API_KEY' : error.includes('fallback not allowed') ? 'Fallback disabled per SEO isolation — fix primary provider' : 'Check provider endpoint, credentials, network, timeout',
+      hint: errMsg.includes('not configured') ? 'Configure GROQ_API_KEY' : errMsg.includes('fallback not allowed') ? 'Fallback disabled per SEO isolation — fix primary provider' : 'Check provider endpoint, credentials, network, timeout',
     }, { status: 500 });
   }
 }

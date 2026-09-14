@@ -384,3 +384,4 @@ export function CrmTasks() {
     </div>
   );
 }
+export default CrmTasks;

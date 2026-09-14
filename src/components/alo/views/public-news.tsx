@@ -426,3 +426,4 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
     </div>
   );
 }
+export default PublicNews;

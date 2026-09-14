@@ -395,3 +395,4 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
     </div>
   );
 }
+export default PublicContact;

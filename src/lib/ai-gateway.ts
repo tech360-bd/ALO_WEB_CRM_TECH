@@ -125,14 +125,14 @@ async function invokeProvider(req: GatewayRequest, route: ModelRoute, correlatio
 
   // Real audit log — no fake metrics
   try {
-    await db.agentAuditLog.create({
+    await (db as any).agentAuditLog.create({
       data: {
         agentId: req.agentId || 'ai-gateway',
         action: 'AI_GATEWAY_CALL',
         details: JSON.stringify(redactSecrets({
           correlationId, taskId: req.taskId, department: req.department, taskType: req.taskType,
-          provider: route.provider, model: route.model, latencyMs, usage: raw.usage, fallbackUsed,
-          promptChars: req.prompt.length, jsonSchema: req.jsonSchema ? 'provided' : undefined,
+          provider: route.provider, model: route.model, latencyMs, usage: (raw as any).usage, fallbackUsed,
+          promptChars: req.prompt?.length || 0, jsonSchema: req.jsonSchema ? 'provided' : undefined,
         })),
         createdAt: new Date(),
       } as any,
@@ -161,8 +161,9 @@ export async function generateStructured<T = any>(prompt: string, schema: Record
 export async function classify(text: string, labels: string[], opts?: Omit<GatewayRequest, 'prompt'>): Promise<{ label: string; confidence: 'HIGH'|'MEDIUM'|'LOW'; raw: GatewayResult }> {
   const prompt = `Classify the following into exactly one of [${labels.join(', ')}]. Return JSON {"label":"...", "confidence":"HIGH|MEDIUM|LOW"}.\n\nText: ${text.slice(0,4000)}`;
   const { data, raw } = await generateStructured<{ label: string; confidence: string }>(prompt, { type:'object', properties:{ label:{type:'string'}, confidence:{type:'string'} }, required:['label'] }, opts as any);
-  const label = labels.includes(data?.label) ? data.label : labels[0];
-  const conf = (data?.confidence as any) || 'LOW';
+  const dataLabel = (data as any)?.label as string | undefined;
+  const label = dataLabel && labels.includes(dataLabel) ? dataLabel : labels[0];
+  const conf = ((data as any)?.confidence as any) || 'LOW';
   return { label, confidence: conf==='HIGH'?'HIGH':conf==='MEDIUM'?'MEDIUM':'LOW', raw };
 }
 

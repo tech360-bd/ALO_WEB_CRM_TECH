@@ -946,3 +946,4 @@ export function VisaDashboard() {
     </div>
   );
 }
+export default VisaDashboard;

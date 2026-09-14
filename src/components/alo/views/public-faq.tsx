@@ -286,3 +286,4 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
     </div>
   );
 }
+export default PublicFaq;

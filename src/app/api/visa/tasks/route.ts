@@ -28,13 +28,13 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
     const isVisa = auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
     if (!isSuper && isVisa && caseId) {
-      const visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
+      const visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } }) as any;
       if (visaCase && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
         return NextResponse.json({ success: false, error: 'Cannot view tasks for unassigned case — IDOR blocked' }, { status: 403 });
       }
     }
 
-    const tasks = await db.visaTask.findMany({ where, orderBy: [{ dueDate: 'asc' }, { createdAt: 'desc' }] });
+    const tasks = await (db as any).visaTask.findMany({ where, orderBy: [{ dueDate: 'asc' }, { createdAt: 'desc' }] });
 
     // Overdue detection
     const now = new Date();
@@ -67,9 +67,9 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
       return NextResponse.json({ success: false, error: `Invalid task type — allowed Document Request/Interview/Bank Review/Sponsor Review/Refusal Review/Study Gap Review/Counselor Action/Application Action/Student Action/Senior Review` }, { status: 400 });
     }
 
-    let visaCase = null;
-    if (caseId) visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase && studentId) visaCase = await db.visaCase.findFirst({ where: { studentId } });
+    let visaCase: any = null;
+    if (caseId) visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } });
+    if (!visaCase && studentId) visaCase = await (db as any).visaCase.findFirst({ where: { studentId } });
 
     if (visaCase) {
       const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
@@ -78,7 +78,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
       }
     }
 
-    const task = await db.visaTask.create({
+    const task = await (db as any).visaTask.create({
       data: {
         caseId: caseId || visaCase?.id || '',
         studentId: studentId || visaCase?.studentId || '',
@@ -93,8 +93,8 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
       } as any,
     });
 
-    await logAuditAction(auth, 'VISA_TASK_CREATE', 'VisaTask', task.id, { caseId: caseId || visaCase?.id, studentId: studentId || visaCase?.studentId, taskType, title, assignedTo, dueDate, priority });
-    await db.timelineEvent.create({
+    await logAuditAction(auth, 'VISA_TASK_CREATE', 'VisaTask', (task as any).id, { caseId: caseId || visaCase?.id, studentId: studentId || visaCase?.studentId, taskType, title, assignedTo, dueDate, priority });
+    await (db as any).timelineEvent.create({
       data: {
         studentId: studentId || visaCase?.studentId || '',
         stage: 'VISA_TASK_CREATED',

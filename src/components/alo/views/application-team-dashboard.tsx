@@ -790,3 +790,4 @@ export function ApplicationTeamDashboard() {
     </div>
   );
 }
+export default ApplicationTeamDashboard;

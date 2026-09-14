@@ -735,3 +735,4 @@ function ActiveConversation({
     </Card>
   );
 }
+export default UnifiedInbox;

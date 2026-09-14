@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Deployment target validation — port 3044, dir /root/alo-live, domain aloeducation.com
+// Deployment target validation — port 3044, dir /root/alo-github-main-new, domain aloeducation.com
 const ROOT = join(import.meta.dirname, "../..");
 
-describe("Deployment configuration — target 3044 / /root/alo-live", () => {
+describe("Deployment configuration — target 3044 / /root/alo-github-main-new", () => {
   it("selects npm as sole package manager (no bun.lock)", () => {
     expect(existsSync(join(ROOT, "package-lock.json"))).toBe(true);
     expect(existsSync(join(ROOT, "bun.lock"))).toBe(false);

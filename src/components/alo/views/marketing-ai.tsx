@@ -1059,3 +1059,4 @@ export function MarketingAi() {
     </div>
   );
 }
+export default MarketingAi;

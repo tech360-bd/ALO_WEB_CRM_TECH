@@ -247,7 +247,7 @@ function safeParse<T>(val: any, fallback: T): T {
 // ============================================================
 // MAIN COMPONENT
 // ============================================================
-export function CounselorDashboard({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => void }) {
+export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey, slug?: string) => void }) {
   const { toast } = useToast();
   const { privacyOn } = usePrivacy();
   const [data, setData] = React.useState<DashboardData | null>(null);
@@ -903,3 +903,4 @@ function QuickActionButton({ icon, label, onClick }: { icon: string; label: stri
     </button>
   );
 }
+export default CounselorDashboard;

@@ -432,3 +432,4 @@ function ResultCard({ title, subtitle, description, onClick }: { title: string; 
     </Card>
   );
 }
+export default PublicSearch;

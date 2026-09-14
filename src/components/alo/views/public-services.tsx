@@ -184,3 +184,4 @@ export function PublicServices({ slug, onNavigate }: Props) {
     </div>
   );
 }
+export default PublicServices;

@@ -469,3 +469,4 @@ function StepDot({ active, done, label }: { active: boolean; done: boolean; labe
     </div>
   );
 }
+export default AuthResetPassword;

@@ -205,3 +205,4 @@ export function CrmEmail() {
     </div>
   );
 }
+export default CrmEmail;

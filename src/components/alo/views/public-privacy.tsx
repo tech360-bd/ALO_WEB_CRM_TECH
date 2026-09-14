@@ -229,3 +229,4 @@ export function LegalLayout({
     </div>
   );
 }
+export default PublicPrivacy;

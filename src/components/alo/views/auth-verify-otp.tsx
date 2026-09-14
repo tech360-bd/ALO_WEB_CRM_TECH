@@ -378,3 +378,4 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
     </div>
   );
 }
+export default AuthVerifyOtp;

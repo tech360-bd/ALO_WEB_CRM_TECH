@@ -303,3 +303,4 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
     </div>
   );
 }
+export default AuthLogin;

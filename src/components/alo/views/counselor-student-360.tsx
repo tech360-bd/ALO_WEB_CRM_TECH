@@ -496,7 +496,7 @@ function authorDisplay(authorId: string, authorRole: string) {
 // ============================================================
 // MAIN COMPONENT
 // ============================================================
-export function CounselorStudent360({ slug, onNavigate }: { slug?: string; onNavigate: (v: ViewKey, slug?: string) => void }) {
+export function CounselorStudent360({ slug, onNavigate = () => {} }: { slug?: string; onNavigate?: (v: ViewKey, slug?: string) => void }) {
   const { toast } = useToast();
   const [students, setStudents] = React.useState<StudentListItem[]>([]);
   const [selectedId, setSelectedId] = React.useState<string>("");
@@ -1561,3 +1561,4 @@ function ScoreCell({ label, value }: { label: string; value?: number | string })
     </div>
   );
 }
+export default CounselorStudent360;

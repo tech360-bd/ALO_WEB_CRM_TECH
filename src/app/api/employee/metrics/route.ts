@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
       roleKpis = { todaysReceipts: pendingPay>0? `BDT ${(pendingPay*15000).toLocaleString()}`:'BDT 0', pendingPayments: pendingPay, outstandingInvoices: pendingPay, partnerCommissionPending: pendingComm, monthlyRevenue: 'BDT 0' };
     } else if (role.includes('marketing')) {
       const campaigns = await db.marketingCampaign.count({ where: { status: 'active' } }).catch(() => 0);
-      roleKpis = { campaignsRunning: campaigns, totalLeads, costPerLead: 450 };
+      roleKpis = { campaignsRunning: campaigns, totalLeads: assignedLeads, costPerLead: 450 };
     } else if (role.includes('hr')) {
       const totalEmployees = await db.employee.count().catch(() => 0);
       roleKpis = { totalEmployees, activeEmployees: totalEmployees };

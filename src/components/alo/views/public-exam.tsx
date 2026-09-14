@@ -664,3 +664,4 @@ function FreeQuotaCard({
     </div>
   );
 }
+export default PublicExam;

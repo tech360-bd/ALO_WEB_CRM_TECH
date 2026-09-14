@@ -88,7 +88,7 @@ export async function runOrchestrated(event: OrchestratorEvent, policy: Partial<
 
   // 4. Select agent (registry-driven: prefer department match, else coordinator)
   let agentId: string | null = null;
-  let agentDepartment = event.department || null;
+  let agentDepartment: string | null | undefined = event.department || null;
   try {
     const dept = event.department ? await (db as any).enterpriseDepartment?.findFirst?.({ where:{ name: event.department } }).catch(()=>null) : null;
     const candidate = dept
@@ -96,13 +96,14 @@ export async function runOrchestrated(event: OrchestratorEvent, policy: Partial<
       : await (db as any).aiEmployee?.findFirst?.({ where:{ status:{ in:['ACTIVE','IDLE'] } }, orderBy:{ updatedAt:'desc' } }).catch(()=>null);
     agentId = candidate?.id || (await (db as any).aiAgent?.findFirst?.({ where:{ status:'ACTIVE' } }).catch(()=>null))?.id || 'orchestrator';
   } catch { agentId = 'orchestrator'; }
-  push('agent_selection', true, agentId);
+  push('agent_selection', true, agentId || undefined);
 
   // 5. RAG context (when target is lead/student/university)
   let ragContext = '';
   try {
     if (event.targetType && event.targetId && (event.targetType==='Lead' || event.targetType==='Student' || event.targetType==='University')) {
       // best-effort: call RAG if function exists
+      // @ts-ignore - optional module, may not exist
       const rag = await import('@/lib/rag/rag-engine').catch(()=>null) as any;
       if (rag?.retrieveContext) {
         const ctx = await rag.retrieveContext(String(event.payload?.query || event.workflow)).catch(()=>null);

@@ -1788,3 +1788,4 @@ export function PartnerAdminDashboard() {
     </div>
   );
 }
+export default PartnerAdminDashboard;

@@ -6,6 +6,7 @@
 
 export async function setupMainIpc(mainWindow?: any){
   try {
+    // @ts-ignore - electron is optional, only available in desktop app
     const { ipcMain } = await import('electron');
     // expose `alo:crm-call` that renderer can `await ipcRenderer.invoke('alo:crm-call', { to })`
     ipcMain.handle('alo:crm-call', async (_e:any, args:{ to:string })=>{
@@ -21,6 +22,7 @@ export async function setupMainIpc(mainWindow?: any){
 
 export async function invokeMain<T>(channel: string, args:any): Promise<T>{
   try {
+    // @ts-ignore - electron is optional, only available in desktop app
     const { ipcRenderer } = await import('electron');
     return await ipcRenderer.invoke(channel, args);
   } catch {

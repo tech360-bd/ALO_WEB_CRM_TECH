@@ -1094,3 +1094,4 @@ function MockExamDialog({
     </Dialog>
   );
 }
+export default EnglishTestView;

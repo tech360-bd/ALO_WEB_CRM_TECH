@@ -545,3 +545,4 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
     </div>
   );
 }
+export default ScholarshipFinder;

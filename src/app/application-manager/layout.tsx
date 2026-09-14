@@ -37,7 +37,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
   const router = useRouter();
   const token = usePortalStore(s => s.token);
   const user = usePortalStore(s => s.user);
-  const clearAuth = usePortalStore(s => s.clearAuth);
+  const clearAuth = usePortalStore(s => (s as any).clearAuth || s.logout);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [metrics, setMetrics] = useState<any>(null);
   const [loadingAuth, setLoadingAuth] = useState(true);

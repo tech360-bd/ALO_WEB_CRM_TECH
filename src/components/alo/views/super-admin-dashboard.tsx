@@ -1907,3 +1907,4 @@ export function SuperAdminDashboard({
     </div>
   );
 }
+export default SuperAdminDashboard;

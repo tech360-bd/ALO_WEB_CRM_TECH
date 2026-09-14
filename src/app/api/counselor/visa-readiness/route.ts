@@ -13,9 +13,9 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     const caseId = searchParams.get('caseId');
     if (!studentId && !caseId) return NextResponse.json({ success: false, error: 'studentId or caseId required' }, { status: 400 });
 
-    let visaCase = null;
-    if (caseId) visaCase = await db.visaCase.findUnique({ where: { id: caseId } }).catch(() => null);
-    else visaCase = await db.visaCase.findFirst({ where: { studentId: studentId! }, orderBy: { createdAt: 'desc' } }).catch(() => null);
+    let visaCase: any = null;
+    if (caseId) visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } }).catch(() => null);
+    else visaCase = await (db as any).visaCase.findFirst({ where: { studentId: studentId! }, orderBy: { createdAt: 'desc' } }).catch(() => null);
 
     const resolvedStudentId = visaCase?.studentId || studentId!;
 
@@ -27,16 +27,16 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     }
 
     const [checklist, readiness, interviews, funding, studyGap, refusal, notes, tasks, documents, timeline] = await Promise.all([
-      db.visaChecklistItem.findMany({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'asc' } }).catch(() => []),
-      db.visaReadinessReport.findFirst({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'desc' } }).catch(() => null),
-      db.visaInterview.findMany({ where: { studentId: resolvedStudentId }, orderBy: { scheduledAt: 'desc' }, take: 10, include: { answers: true } }).catch(() => []),
-      visaCase ? db.visaFundingReview.findUnique({ where: { caseId: visaCase.id } }).catch(() => null) : Promise.resolve(null),
+      (db as any).visaChecklistItem.findMany({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'asc' } }).catch(() => []),
+      (db as any).visaReadinessReport.findFirst({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'desc' } }).catch(() => null),
+      (db as any).visaInterview.findMany({ where: { studentId: resolvedStudentId }, orderBy: { scheduledAt: 'desc' }, take: 10, include: { answers: true } }).catch(() => []),
+      visaCase ? (db as any).visaFundingReview.findUnique({ where: { caseId: visaCase.id } }).catch(() => null) : Promise.resolve(null),
       visaCase ? (db as any).visaStudyGapReview.findUnique({ where: { caseId: visaCase.id } }).catch(() => null) : Promise.resolve(null),
       visaCase ? (db as any).visaRefusalReview.findUnique({ where: { caseId: visaCase.id } }).catch(() => null) : Promise.resolve(null),
-      db.visaOfficerNote.findMany({ where: { studentId: resolvedStudentId, visibility: { in: ['counselor_visible','student_safe_feedback','visa_team_only','application_team_visible','COUNSELOR_VISIBLE','STUDENT_SAFE_FEEDBACK'] } }, orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
+      (db as any).visaOfficerNote.findMany({ where: { studentId: resolvedStudentId, visibility: { in: ['counselor_visible','student_safe_feedback','visa_team_only','application_team_visible','COUNSELOR_VISIBLE','STUDENT_SAFE_FEEDBACK'] } }, orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
       (db as any).visaTask ? (db as any).visaTask.findMany({ where: { studentId: resolvedStudentId }, orderBy: { dueDate: 'asc' }, take: 20 }).catch(() => []) : Promise.resolve([]),
-      db.studentDocument.findMany({ where: { studentId: resolvedStudentId }, orderBy: { updatedAt: 'desc' }, take: 30 }).catch(() => []),
-      db.timelineEvent.findMany({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'desc' }, take: 30 }).catch(() => []),
+      (db as any).studentDocument.findMany({ where: { studentId: resolvedStudentId }, orderBy: { updatedAt: 'desc' }, take: 30 }).catch(() => []),
+      (db as any).timelineEvent.findMany({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'desc' }, take: 30 }).catch(() => []),
     ]);
 
     const canViewSensitive = auth.roles.includes('visa_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');

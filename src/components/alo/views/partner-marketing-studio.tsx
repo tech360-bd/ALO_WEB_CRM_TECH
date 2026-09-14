@@ -1311,3 +1311,4 @@ export function PartnerMarketingStudio() {
     </div>
   );
 }
+export default PartnerMarketingStudio;

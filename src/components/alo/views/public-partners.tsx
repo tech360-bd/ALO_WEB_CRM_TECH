@@ -47,3 +47,4 @@ export function PublicPartners({ onNavigate }: Props) {
     </div>
   );
 }
+export default PublicPartners;

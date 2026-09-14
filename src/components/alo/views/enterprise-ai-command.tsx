@@ -1414,3 +1414,4 @@ export function EnterpriseAiCommand() {
     </div>
   );
 }
+export default EnterpriseAiCommand;

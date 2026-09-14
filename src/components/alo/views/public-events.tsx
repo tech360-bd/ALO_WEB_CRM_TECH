@@ -512,3 +512,4 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
     </div>
   );
 }
+export default PublicEvents;

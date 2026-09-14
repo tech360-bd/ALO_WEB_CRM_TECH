@@ -42,7 +42,8 @@ export async function sendSms(opts: SendSmsOpts): Promise<{ messageId: string; p
     if (!res.ok) throw new Error(json.message || `httpsms send failed ${res.status}`);
     result = { messageId: json.id || json.messageId || `sms_${Date.now()}`, provider, status: json.status || 'queued' };
   } else if (provider === 'threecx') {
-    const { send3cxSms } = await import('@/lib/threecx-integration').catch(()=>({ send3cxSms: null as any }));
+    const mod = await import('@/lib/threecx-integration').catch(()=>({ send3cxSms: null as any })) as any;
+    const send3cxSms = mod.send3cxSms || mod.default?.send3cxSms;
     if (send3cxSms) result = await send3cxSms(normalized, opts.message);
     else throw new Error('3CX SMS not configured');
   } else {

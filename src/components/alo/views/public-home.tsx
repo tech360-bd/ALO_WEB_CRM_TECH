@@ -2071,3 +2071,4 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
     </div>
   );
 }
+export default PublicHome;

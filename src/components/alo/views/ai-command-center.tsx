@@ -704,3 +704,4 @@ export function AiCommandCenter() {
     </div>
   );
 }
+export default AiCommandCenter;

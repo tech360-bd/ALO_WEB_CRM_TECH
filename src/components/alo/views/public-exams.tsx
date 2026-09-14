@@ -330,3 +330,4 @@ function ExamCard({
     </Card>
   );
 }
+export default PublicExams;

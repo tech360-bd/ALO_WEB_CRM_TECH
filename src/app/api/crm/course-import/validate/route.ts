@@ -169,8 +169,8 @@ export async function POST(request: Request) {
     // Fetch existing university IDs
     const universities = await db.crmUniversity.findMany({
       select: { universityId: true },
-    });
-    const knownUniversities = new Set(universities.map((u) => u.universityId));
+    }) as any[];
+    const knownUniversities = new Set<string>(universities.map((u: any) => u.universityId));
 
     // Fetch existing intake records for duplicate check
     const existingIntakes = await db.crmCourseIntakeFee.findMany({

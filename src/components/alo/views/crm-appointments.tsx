@@ -236,3 +236,4 @@ export function CrmAppointments() {
     </div>
   );
 }
+export default CrmAppointments;

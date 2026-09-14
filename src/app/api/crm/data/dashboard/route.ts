@@ -37,30 +37,30 @@ export async function GET(request: NextRequest) {
         db.crmCourseIntakeFee.findMany({ select: { universityId: true } }),
       ]);
 
-      const universityCountry = new Map(universities.map((university) => [university.universityId, university.country]));
+      const universityCountry = new Map<string, string>((universities as any[]).map((university: any) => [university.universityId, university.country]));
       const countryMap = new Map<string, { universities: number; courses: number; scholarships: number; intakes: number }>();
-      for (const university of universities) {
-        const country = university.country || 'Unknown';
+      for (const university of universities as any[]) {
+        const country = (university as any).country || 'Unknown';
         const row = countryMap.get(country) || { universities: 0, courses: 0, scholarships: 0, intakes: 0 };
         row.universities += 1;
         countryMap.set(country, row);
       }
-      for (const course of courses) {
-        const country = course.country || 'Unknown';
+      for (const course of courses as any[]) {
+        const country = (course as any).country || 'Unknown';
         const row = countryMap.get(country) || { universities: 0, courses: 0, scholarships: 0, intakes: 0 };
         row.courses += 1;
         countryMap.set(country, row);
       }
       // Scholarship/intake records do not duplicate country in Main's schema;
       // keep their totals accurate in the KPI and expose country aggregates where available.
-      for (const scholarship of scholarships) {
-        const country = universityCountry.get(scholarship.universityId) || 'Unknown';
+      for (const scholarship of scholarships as any[]) {
+        const country = universityCountry.get((scholarship as any).universityId) || 'Unknown';
         const row = countryMap.get(country) || { universities: 0, courses: 0, scholarships: 0, intakes: 0 };
         row.scholarships += 1;
         countryMap.set(country, row);
       }
-      for (const intake of intakes) {
-        const country = universityCountry.get(intake.universityId) || 'Unknown';
+      for (const intake of intakes as any[]) {
+        const country = universityCountry.get((intake as any).universityId) || 'Unknown';
         const row = countryMap.get(country) || { universities: 0, courses: 0, scholarships: 0, intakes: 0 };
         row.intakes += 1;
         countryMap.set(country, row);

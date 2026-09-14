@@ -356,3 +356,4 @@ export function WeeklyReports() {
     </div>
   );
 }
+export default WeeklyReports;

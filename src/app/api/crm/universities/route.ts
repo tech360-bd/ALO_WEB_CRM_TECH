@@ -5,8 +5,8 @@ export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
     const isAuthorized = auth.roles.some((r) => ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNSELOR', 'super_admin', 'admin', 'staff', 'counselor'].includes(r));
     if (!isAuthorized) return NextResponse.json({ success:false, error:'Staff required' }, { status:403 });
-    const search = req.nextUrl.searchParams.get('search') || '';
-    const country = req.nextUrl.searchParams.get('country') || '';
+    const search = new URL(req.url).searchParams.get('search') || '';
+    const country = new URL(req.url).searchParams.get('country') || '';
     const where: any = {};
     if (search) where.OR = [{ name: { contains: search } }, { universityId: { contains: search } }, { city: { contains: search } }];
     if (country && country !== 'all') where.country = { contains: country };

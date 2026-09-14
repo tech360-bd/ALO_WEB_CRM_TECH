@@ -63,7 +63,7 @@ export const POST = withAuth(async (req, auth) => {
     }
 
     // Resolve SLA
-    await resolveSlaOnReply(finalThreadId).catch(() => {});
+    await resolveSlaOnReply(finalThreadId, auth.userId).catch(() => {});
 
     // Timeline
     if (studentId) {

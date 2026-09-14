@@ -219,3 +219,4 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
     </div>
   );
 }
+export default PublicTeam;

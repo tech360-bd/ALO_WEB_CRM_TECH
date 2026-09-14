@@ -695,3 +695,4 @@ export function AuditLogs() {
     </div>
   );
 }
+export default AuditLogs;

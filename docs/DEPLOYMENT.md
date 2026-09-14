@@ -14,12 +14,20 @@ This doc is the single source of truth for GitHub Secrets, deployment-user setup
 
 | Secret | Value | Notes |
 |---|---|---|
-| `DEPLOY_HOST` | VPS IP/hostname, e.g. `65.108.91.110` or `aloeducation.com` | SSH host |
-| `DEPLOY_USER` | `deploy` (recommended) or `root` (legacy) | Restricted deploy user, see §2 |
-| `DEPLOY_SSH_KEY` | Private key content (`cat ~/.ssh/alo-education-deploy`) including `-----BEGIN OPENSSH PRIVATE KEY-----` | Ed25519, no passphrase, never commit |
-| `DEPLOY_PORT` | `22` (or `2222` if hardened) | SSH port |
+| `PRODUCTION_VPS_HOST` | VPS IP/hostname, e.g. `65.108.91.110` or `aloeducation.com` | SSH host — **required** (new naming) |
+| `PRODUCTION_VPS_USER` | `deploy` (recommended) or `root` (legacy) | Restricted deploy user, see §2 |
+| `PRODUCTION_VPS_SSH_KEY` | Private key content (`cat ~/.ssh/alo-education-deploy`) including `-----BEGIN OPENSSH PRIVATE KEY-----` | Ed25519, no passphrase, never commit |
+| `PRODUCTION_VPS_PORT` | `22` (or `2222` if hardened) | SSH port |
+| `PRODUCTION_VPS_FINGERPRINT` | Optional SSH host fingerprint | For `known_hosts` verification |
 
-All four are required by `.github/workflows/deploy-production.yml`. The workflow never prints them.
+All four `PRODUCTION_VPS_*` are required by `.github/workflows/deploy-production.yml`. Legacy fallback `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PORT` is still supported for backward compatibility, but prefer `PRODUCTION_VPS_*`. The workflow never prints secret values.
+
+**Fix for previous failure Job 103991234761:**
+- Previous workflow used `DEPLOY_HOST` secrets but runner received empty `INPUT_HOST/PORT/USERNAME/KEY` → `Error: missing server host`
+- Invalid input `script_stop: true` (not valid for `appleboy/ssh-action@v1.2.2`) caused `invalid input script_stop` error
+- Fixed by: using valid inputs `host/port/username/key/timeout/command_timeout/script`, removing `script_stop`, adding pre-flight validation that fails with `::error::` without echoing values, and adding SSH connectivity check.
+- Port mismatch fixed: ecosystem.config.cjs `PORT=3044` is now used, not `3025`
+- Submodule fix: `_reference_repos/*` were tracked as gitlinks (160000) without `.gitmodules` → `fatal: No url found for submodule path`. Fixed by `git rm --cached _reference_repos` and `submodules: false` in checkout, plus `.gitignore` entry.
 
 Optional (already in server `.env`, not GitHub secrets):
 - `DATABASE_URL`, `NEXTAUTH_SECRET`, `WHATSAPP_TOKEN`, etc. — managed only on the server.
