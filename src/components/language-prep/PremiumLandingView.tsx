@@ -144,6 +144,9 @@ export default function PremiumLanguagePrepLandingView() {
 
   return (
     <div className="min-h-screen bg-white text-[#0F172A]">
+      {/* SEO — JSON-LD FAQPage + BreadcrumbList — no fake, verified sources */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aloeducation.com/' }, { '@type': 'ListItem', position: 2, name: 'Language Preparation', item: 'https://aloeducation.com/language-prep' }] }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f: any) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }) }} />
       {/* ============ 1. HERO — White-first, premium, no dark overlay ============ */}
       <section className="relative bg-white pt-12 pb-16 lg:pt-20 lg:pb-24 overflow-hidden">
         {/* Subtle soft background shapes — no excessive gradients */}

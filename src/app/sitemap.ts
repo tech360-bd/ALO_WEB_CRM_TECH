@@ -15,6 +15,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
   const destSlugs = ['uk','canada','australia','usa','ireland','new-zealand','dubai','germany','malaysia','netherlands','cyprus','sweden','south-korea','malta','brazil','russia','india','china','south-africa'];
   const destinationRoutes: MetadataRoute.Sitemap = destSlugs.map((s)=>({ url: `${baseUrl}/destinations/${s}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 }));
+  const langPrepSlugs = ['ielts','ielts-ukvi','pte-academic','toefl-ibt','duolingo','oietc','oxford-ellt','languagecert','kaplan','oet','gre','gmat','sat','act','moi'];
+  const languagePrepRoutes: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/language-prep`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${baseUrl}/language-prep/comparison`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    ...langPrepSlugs.map((s)=>({ url: `${baseUrl}/language-prep/${s}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 })),
+  ];
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
     { url: `${baseUrl}/universities`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
@@ -27,6 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/compare`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/destinations`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     ...destinationRoutes,
+    ...languagePrepRoutes,
     { url: `${baseUrl}/book-consultation`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     ...infoRoutes,
   ];
