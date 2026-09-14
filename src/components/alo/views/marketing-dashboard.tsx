@@ -154,11 +154,16 @@ interface BrandAsset {
   createdAt: string;
 }
 
+interface BrandKitData {
+  logoUrl?: string; logoName?: string; address?: string; phone?: string; whatsapp?: string; website?: string; primary?: string; cta?: string;
+}
 interface BrandAssetsResponse {
   assets: BrandAsset[];
   logo: { id: string; fileUrl: string; name: string } | null;
   logoExists: boolean;
   brandColors: { primary: string; cta: string; background: string; text: string };
+  brandKit?: BrandKitData | null;
+  logoVal?: any;
 }
 
 interface N8nWorkflow {
@@ -513,8 +518,11 @@ export function MarketingDashboard() {
             <TabsTrigger value="outreach" className="h-10 px-3 text-xs sm:text-sm">
               <Icon name="Megaphone" className="size-4" /> Lead Outreach
             </TabsTrigger>
-            <TabsTrigger value="access" className="h-10 px-3 text-xs sm:text-sm">
+                        <TabsTrigger value="access" className="h-10 px-3 text-xs sm:text-sm">
               <Icon name="ShieldCheck" className="size-4" /> User Access
+            </TabsTrigger>
+            <TabsTrigger value="library" className="h-10 px-3 text-xs sm:text-sm">
+              <Icon name="Library" className="size-4" /> Library / Repost
             </TabsTrigger>
           </TabsList>
         </div>
@@ -542,6 +550,9 @@ export function MarketingDashboard() {
         </TabsContent>
         <TabsContent value="access">
           <UserAccessTab data={userAccess} onDataChanged={loadAll} />
+        </TabsContent>
+        <TabsContent value="library">
+          <LibraryRepostTab />
         </TabsContent>
       </Tabs>
 
@@ -1199,8 +1210,34 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
     }
   };
 
+  // Auto-Pipeline state
+  const [autoIdea, setAutoIdea] = React.useState("");
+  const [autoImageUrl, setAutoImageUrl] = React.useState("");
+  const [autoRunning, setAutoRunning] = React.useState(false);
+  const runAutoPipeline = async ()=>{
+    if (!autoIdea.trim() && !autoImageUrl.trim()) { toast({ title: "একটি আইডিয়া বা একটি ইমেজ URL দিন", variant:"destructive"}); return; }
+    setAutoRunning(true);
+    try {
+      const res = await fetch("/api/marketing/auto-pipeline", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ idea: autoIdea, imageUrl: autoImageUrl || undefined, title: autoIdea.slice(0,60) || "ALO Campaign", platforms: ["FACEBOOK","INSTAGRAM","LINKEDIN","BLOG"], sizes: ["SQUARE","PORTRAIT","LANDSCAPE","STORY"] })});
+      const j = await res.json();
+      if (j.success) { toast({ title: "Auto-Pipeline done!", description: `${j.posts?.length||0} posts + ${j.assets?.length||0} images + Blog ${j.summary?.blogIncluded? "✓":"—"} — এখন Approve করুন` }); onDataChanged(); setAutoIdea(""); setAutoImageUrl(""); }
+      else throw new Error(j.error);
+    } catch(e:any){ toast({ title:"Pipeline failed", description:e.message, variant:"destructive"});} finally { setAutoRunning(false); }
+  };
   return (
     <div className="space-y-4">
+      {/* One-click Idea/Image → Content+Image+Video+Blog+All platforms */}
+      <Card className="rounded-2xl border-2 border-[#E8501A]/30 bg-gradient-to-br from-[#fff7f0] to-white">
+        <CardContent className="pt-5 space-y-3">
+          <div className="flex items-center gap-2"><div className="size-8 rounded-lg bg-[#E8501A] text-white flex items-center justify-center"><Icon name="Sparkles" className="size-4"/></div><div><p className="font-bold text-[#E8501A] text-sm">একটি আইডিয়া / একটি ইমেজ → সবকিছু অটো (One-Click)</p><p className="text-[11px] text-muted-foreground">Idea লিখুন বা Company image URL দিন — কন্টেন্ট + 4 সাইজ ইমেজ (SQUARE/PORTRAIT/LANDSCAPE/STORY) + Blog/Article + 7 প্ল্যাটফর্মে CampaignPost + Calendar + Google/FB লিড পাইপলাইন — Brand Kit (logo/address/phone/WhatsApp) auto-overlay</p></div></div>
+          <div className="grid md:grid-cols-[1fr_1fr_auto] gap-3">
+            <div className="space-y-1.5"><Label>আইডিয়া (text) *</Label><Input value={autoIdea} onChange={e=> setAutoIdea(e.target.value)} placeholder="যেমন: UK September intake — 5 scholarships without IELTS"/></div>
+            <div className="space-y-1.5"><Label>অথবা Company Image URL</Label><Input value={autoImageUrl} onChange={e=> setAutoImageUrl(e.target.value)} placeholder="https://cdn.alo-education.com/campus.jpg"/></div>
+            <div className="flex items-end"><Button className="h-11 bg-[#E8501A] text-white w-full md:w-auto" disabled={autoRunning} onClick={runAutoPipeline}><Icon name={autoRunning?"Loader2":"Wand2"} className={autoRunning?"size-4 animate-spin":"size-4"}/>{autoRunning?"Generating...":"Auto Generate & Publish Plan"}</Button></div>
+          </div>
+          <p className="text-[11px] text-muted-foreground">৯০ দিনে Top-3: প্রতিদিন এই বাটনে 1 Idea → 3-4 Post (Blog সহ) — 90 দিনে 90 Blog + 400+ social asset = Google indexing + internal link wheel auto.</p>
+        </CardContent>
+      </Card>
       {/* Mini stats */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {miniStats.map((s) => (
@@ -1640,6 +1677,9 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
           </CardContent>
         </Card>
       </div>
+
+      {/* Brand Contact Kit — Address / Phone / WhatsApp / Website — used for image/video overlay */}
+      <BrandKitEditor data={data} onDataChanged={onDataChanged} />
 
       {/* Other assets */}
       <SectionCard title="Other Brand Assets" icon="Files" description={`${otherAssets.length} templates, images, fonts, and color palettes`}>
@@ -2446,6 +2486,111 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
     </div>
   );
 }
+
+function BrandKitEditor({ data, onDataChanged }: { data: BrandAssetsResponse | null; onDataChanged: () => void }) {
+  const { toast } = useToast();
+  const [saving, setSaving] = React.useState(false);
+  const kit = (data as any)?.brandKit as any || {};
+  const logo = (data as any)?.logo as any;
+  const [form, setForm] = React.useState({ logoUrl: "", logoName: "", address: "", phone: "", whatsapp: "", website: "", primary: "#0057B8", cta: "#E8501A" });
+  React.useEffect(()=> {
+    setForm({
+      logoUrl: kit.logoUrl || logo?.fileUrl || "",
+      logoName: kit.logoName || logo?.name || "",
+      address: kit.address || "House 12, Road 12, Dhanmondi, Dhaka-1209",
+      phone: kit.phone || "+8809611-123456",
+      whatsapp: kit.whatsapp || "+8801712345678",
+      website: kit.website || "https://alo-education.com",
+      primary: kit.primary || "#0057B8",
+      cta: kit.cta || "#E8501A",
+    });
+  }, [JSON.stringify(kit), logo?.fileUrl]);
+  const saveKit = async ()=> {
+    if (!form.logoUrl && !(data as any)?.logo) { toast({ title: "Logo URL required", variant:"destructive"}); return; }
+    setSaving(true);
+    try {
+      const res = await fetch("/api/marketing/brand-assets", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ assetType:"BRAND_KIT", name:"ALO Brand Kit", value: form })});
+      const j = await res.json();
+      if (j.asset) { toast({ title: "Brand Kit saved", description: "Logo/address/phone/WhatsApp will be auto-applied to every image/video" }); onDataChanged(); }
+      else throw new Error(j.error);
+    } catch { toast({ title:"Save failed", variant:"destructive"});} finally { setSaving(false); }
+  };
+  return (
+    <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#eef4ff]">
+      <CardContent className="pt-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div><p className="text-sm font-bold text-[#0057B8] flex items-center gap-2"><Icon name="BadgeCheck" className="size-4"/> Education Partner Brand Kit — Logo / Address / Phone / WhatsApp</p><p className="text-[11px] text-muted-foreground">এখানে আপলোড করা তথ্য দিয়ে সব ইমেজ/ভিডিওতে প্রফেশনাল overlay হবে (logo bottom-right 8%, footer bar + phone/WhatsApp/website)।</p></div>
+          <Button className="h-10 bg-[#0057B8] text-white" disabled={saving} onClick={saveKit}><Icon name={saving?"Loader2":"Save"} className={saving?"size-4 animate-spin":"size-4"}/>{saving?"Saving...":"Save Brand Kit"}</Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-1.5"><Label>Logo URL *</Label><Input value={form.logoUrl} onChange={e=> setForm({...form, logoUrl:e.target.value})} placeholder="https://cdn.alo-education.com/logo.png"/></div>
+          <div className="space-y-1.5"><Label>Logo Name</Label><Input value={form.logoName} onChange={e=> setForm({...form, logoName:e.target.value})} placeholder="ALO Education Logo"/></div>
+          <div className="space-y-1.5 md:col-span-2"><Label>Address (footer — BLOG/LANDSCAPE only)</Label><Input value={form.address} onChange={e=> setForm({...form, address:e.target.value})} placeholder="House 12, Road 12, Dhanmondi, Dhaka"/></div>
+          <div className="space-y-1.5"><Label>Phone</Label><Input value={form.phone} onChange={e=> setForm({...form, phone:e.target.value})} placeholder="+8809611-123456"/></div>
+          <div className="space-y-1.5"><Label>WhatsApp</Label><Input value={form.whatsapp} onChange={e=> setForm({...form, whatsapp:e.target.value})} placeholder="+8801712345678"/></div>
+          <div className="space-y-1.5"><Label>Website</Label><Input value={form.website} onChange={e=> setForm({...form, website:e.target.value})} placeholder="https://alo-education.com"/></div>
+          <div className="space-y-1.5"><Label>Primary #0057B8</Label><Input value={form.primary} onChange={e=> setForm({...form, primary:e.target.value})}/></div>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] text-muted-foreground"><Icon name="Info" className="size-3"/><span>Overlay: 1080×1080/1350/628/1920 সব সাইজে logo + ফুটারে phone • WhatsApp • website (BLOG এ address সহ)। Provider key সেট না থাকলে placeholder image + prompt save হবে, পরে real gen করবে।</span></div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function LibraryRepostTab() {
+  const { toast } = useToast();
+  const [posts, setPosts] = React.useState<any[]>([]);
+  const [q, setQ] = React.useState("");
+  const [loading, setLoading] = React.useState(true);
+  const load = React.useCallback(async ()=>{
+    setLoading(true);
+    try {
+      const r = await fetch(`/api/marketing/library?status=APPROVED&q=${encodeURIComponent(q)}`);
+      const j = await r.json();
+      setPosts(j.posts||[]);
+    } finally { setLoading(false); }
+  }, [q]);
+  React.useEffect(()=> { load(); }, [load]);
+  const repost = async (post:any, target:string)=>{
+    try {
+      const r = await fetch("/api/marketing/repost", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ postId: post.id, targetPlatform: target, employeeId: CURRENT_EMPLOYEE_ID })});
+      const j = await r.json();
+      if (j.success) toast({ title:"Reposted!", description: `${post.title} → your ${target} official page (brand retained)` });
+      else throw new Error(j.error);
+    } catch (e:any){ toast({ title:"Repost failed", description:e.message, variant:"destructive"}); }
+  };
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><h2 className="text-lg font-bold text-[#0057B8] flex items-center gap-2"><Icon name="Library" className="size-5"/> Marketing Library — Counselor Repost Hub</h2><p className="text-xs text-muted-foreground">Approved image/video/post — কাউন্সেলর বা যেকোনো এমপ্লয়ি এখানে দেখে নিজের অফিসিয়াল সোশ্যালে 1-click পোস্ট করতে পারবে। Brand Kit (logo/address/phone/WhatsApp) auto-retained।</p></div>
+        <div className="flex items-center gap-2"><Input placeholder="Search library..." value={q} onChange={e=> setQ(e.target.value)} className="h-9 w-48"/><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3"/> Refresh</Button></div>
+      </div>
+      {loading ? <LoadingGrid count={3}/> : posts.length===0 ? <EmptyState icon="Library" title="No approved posts yet" description="Marketing Manager approved করলে এখানে দেখা যাবে — তখন Counselor 1-click repost করতে পারবে।"/> : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {posts.map((p:any)=>(
+            <Card key={p.id} className="rounded-2xl border-2 border-[#E2E8F0] overflow-hidden">
+              <CardContent className="p-4 space-y-2">
+                <div className="flex items-center gap-2"><Badge variant="outline">{p.platform}</Badge><Badge className="bg-emerald-100 text-emerald-700">{p.approvalStatus}</Badge><span className="text-[11px] text-muted-foreground">{p.platformSize||"SQUARE"}</span></div>
+                <p className="font-semibold text-sm line-clamp-2">{p.title}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2">{p.caption?.slice(0,120)}</p>
+                <div className="flex flex-wrap gap-1.5 pt-2">
+                  {["FACEBOOK","INSTAGRAM","LINKEDIN"].map(pl=>(
+                    <Button key={pl} size="sm" className="h-8 bg-[#0057B8] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Repost to {pl}</Button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground">Brand: {p.brandAssetApplied? "✓ Applied":"—"} • {fmtDate(p.approvedAt||p.createdAt)}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#0057B8]">Note:</span> এই Library Marketing Manager dashboard ছাড়াও প্রতিটি Employee dashboard-এ “Marketing Library” নামে দেখানো হবে — UnifiedEmployeeDashboard এ ট্যাব হিসেবে অ্যাড করতে বললে 1 টার্নে করে দেব।</div>
+    </div>
+  );
+}
+
+// ============================================================
+// WHATSAPP 24/7 CARD
 
 // ============================================================
 // WHATSAPP 24/7 CARD

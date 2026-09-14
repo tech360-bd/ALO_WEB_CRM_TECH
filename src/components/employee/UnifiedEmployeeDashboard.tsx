@@ -257,6 +257,16 @@ export default function UnifiedEmployeeDashboard({
 
         {!loading && (
           <>
+            {/* Marketing Library — one-click repost to your official social (if approved) */}
+            {(activeRole.includes("COUNSELOR") || activeRole.includes("MARKETING") || true) && (
+              <div className="rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-r from-[#eef4ff] to-white p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-xl bg-[#0057B8] text-white flex items-center justify-center"><span className="text-lg">📚</span></div>
+                  <div><p className="font-bold text-sm text-[#0057B8]">Marketing Library — Repost Hub</p><p className="text-[11px] text-slate-500">Approved image/video/post দেখে নিজের অফিসিয়াল Facebook/Instagram/LinkedIn এ 1-click পোস্ট করুন — Brand Kit auto-retained</p></div>
+                </div>
+                <button onClick={()=> window.location.href='/crm/marketing-manager'} className="h-9 px-4 rounded-xl bg-[#E8501A] text-white text-xs font-bold hover:bg-[#d04010]">Open Library →</button>
+              </div>
+            )}
             {/* Top KPI Cards Grid (12-col grid responsive) */}
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card className="bg-white border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
