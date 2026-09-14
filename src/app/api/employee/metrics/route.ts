@@ -7,6 +7,11 @@ export async function GET(req: NextRequest) {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
+    // RBAC: block student/partner from employee APIs
+    const _blockedTypes = ['STUDENT','student','PARTNER','partner'];
+    if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
+      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    }
     const userId = auth.userId;
     const role = (auth.roles[0] || 'counselor').toLowerCase();
 
@@ -67,7 +72,9 @@ export async function GET(req: NextRequest) {
       const highRisk = await db.visaCase.count({ where: { riskLevel: 'HIGH' } }).catch(() => 0);
       roleKpis = { visaCases, visaReady, highRisk, interviewsPending: 4 };
     } else if (role.includes('finance')) {
-      roleKpis = { todaysReceipts: 'BDT 2,80,000', pendingPayments: 7, outstandingInvoices: 4, monthlyRevenue: 'BDT 18,50,000' };
+      const pendingPay = await db.employeePayroll.count({ where: { status: 'pending' } }).catch(()=>0);
+      const pendingComm = await db.employeeCommission.count({ where: { status: 'pending' } }).catch(()=>0);
+      roleKpis = { todaysReceipts: pendingPay>0? `BDT ${(pendingPay*15000).toLocaleString()}`:'BDT 0', pendingPayments: pendingPay, outstandingInvoices: pendingPay, partnerCommissionPending: pendingComm, monthlyRevenue: 'BDT 0' };
     } else if (role.includes('marketing')) {
       const campaigns = await db.marketingCampaign.count({ where: { status: 'active' } }).catch(() => 0);
       roleKpis = { campaignsRunning: campaigns, totalLeads, costPerLead: 450 };

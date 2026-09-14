@@ -61,9 +61,9 @@ export async function GET(request: NextRequest) {
             { time: '10:00 AM', visitor: 'Sharif Uddin', type: 'Appointment', status: 'In Session' },
           ],
           kpis: [
-            { label: "Today's Appointments", value: String(todayAppointmentsCount || 12), change: '+3', up: true, icon: 'Calendar', sub: 'Scheduled' },
-            { label: 'Walk-ins Today', value: String(walkIns.length || 5), change: '+2', up: true, icon: 'DoorOpen', sub: 'Unscheduled visits' },
-            { label: 'New Inquiries', value: String(newInquiriesCount || 8), change: '+1', up: true, icon: 'UserPlus', sub: 'Via phone/walk-in' },
+            { label: "Today's Appointments", value: String(todayAppointmentsCount), change: '+3', up: true, icon: 'Calendar', sub: 'Scheduled' },
+            { label: 'Walk-ins Today', value: String(walkIns.length), change: '+2', up: true, icon: 'DoorOpen', sub: 'Unscheduled visits' },
+            { label: 'New Inquiries', value: String(newInquiriesCount), change: '+1', up: true, icon: 'UserPlus', sub: 'Via phone/walk-in' },
             { label: 'Waiting Students', value: '3', change: '-1', up: true, icon: 'Clock', sub: 'In waiting area' },
             { label: 'Missed Calls', value: '4', change: '+1', up: false, icon: 'Phone', sub: 'Need callback' },
             { label: 'Phone Callbacks', value: '7', change: '+2', up: false, icon: 'MessageSquare', sub: 'Scheduled' },

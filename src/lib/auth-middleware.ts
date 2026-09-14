@@ -141,29 +141,61 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       .map(rp => rp.permission.id)
   );
 
-  // Handle "actingAs" logic if requested and if user is super_admin
+  // Handle "actingAs" — only super_admin, strict equality, audited, no escalation beyond original actor (SEC-03)
   const actingAsUserId = request.headers.get('x-acting-as-user');
-  if (actingAsUserId && roles.includes('super_admin')) {
-    const actingAsUser = await db.portalUser.findUnique({
-      where: { id: actingAsUserId },
-      include: {
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
+  if (actingAsUserId) {
+    // Must be exact super_admin (not admin) — fail closed if not
+    if (!roles.includes('super_admin')) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: only super_admin may act as another user' },
+        { status: 403 }
+      ) as any;
+    }
+    // Prevent acting-as loop: cannot act as self (no-op, but audit)
+    if (actingAsUserId === session.user.id) {
+      // no impersonation needed — continue as self but audit
+    } else {
+      const actingAsUser = await db.portalUser.findUnique({
+        where: { id: actingAsUserId },
+        include: {
+          roles: {
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    if (actingAsUser && actingAsUser.status === 'active') {
+      if (!actingAsUser || actingAsUser.status !== 'active') {
+        return NextResponse.json(
+          { success: false, error: 'Acting-as target not found or inactive' },
+          { status: 404 }
+        ) as any;
+      }
+
+      // Audit every impersonation — never silent
+      try {
+        await db.portalAuditLog.create({
+          data: {
+            actorUserId: session.user.id,
+            action: 'IMPERSONATION_START',
+            entityType: 'PortalUser',
+            entityId: actingAsUser.id,
+            metadata: JSON.stringify({ actor: session.user.email, target: actingAsUser.email, sessionId: session.id }),
+            ipAddress: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || '',
+            userAgent: request.headers.get('user-agent') || '',
+          },
+        }).catch(() => {});
+      } catch {}
+
       actingUserId = actingAsUser.id;
       actingEmail = actingAsUser.email;
       actingName = actingAsUser.name;

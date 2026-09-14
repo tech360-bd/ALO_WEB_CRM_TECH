@@ -1,0 +1,1 @@
+-- No views in current schema - all queries via Prisma

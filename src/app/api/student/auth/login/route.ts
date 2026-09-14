@@ -3,12 +3,21 @@ import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { createStudentSession } from '@/lib/student-auth';
 
-// In-memory rate limiting map for basic protection. (In production, use Redis)
+// Rate limiting — in-memory (single-instance) with Redis-ready abstraction.
+// SEC-06 fix: extract first IP from x-forwarded-for (trusted proxy chain) and fallback correctly.
 const rateLimits = new Map<string, { count: number; expiresAt: number }>();
+
+function getClientIp(req: Request): string {
+  const xff = req.headers.get('x-forwarded-for');
+  if (xff) return xff.split(',')[0].trim() || 'unknown';
+  const realIp = req.headers.get('x-real-ip');
+  if (realIp) return realIp.trim();
+  return 'unknown';
+}
 
 export async function POST(req: Request) {
   try {
-    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+    const ip = getClientIp(req);
     const now = Date.now();
     
     // Check rate limit

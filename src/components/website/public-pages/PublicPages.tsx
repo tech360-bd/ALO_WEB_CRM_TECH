@@ -884,7 +884,7 @@ export function PublicContactPage() {
 // ============================================================
 // LEGAL PAGES — Privacy / Terms / Cookies
 // ============================================================
-export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' }) {
+export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' | 'communication' | 'lead-data' | 'user-guide' | 'accessibility' }) {
   const content = {
     privacy: {
       title: 'Privacy Policy',
@@ -917,6 +917,50 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
         { h: 'Managing Cookies', p: 'You can control cookies through your browser settings. Disabling essential cookies may affect website functionality.' },
         { h: 'Third-Party Cookies', p: 'We use Google Analytics and similar tools that may set their own cookies. These are governed by their respective privacy policies.' },
         { h: 'Updates', p: 'This policy may be updated periodically. We will notify users of significant changes via email or website notification.' },
+      ],
+    },
+    communication: {
+      title: 'Communication Policy',
+      badge: 'LEGAL',
+      sections: [
+        { h: 'Channels', p: 'We contact you only on channels you consented to: WhatsApp (01805020100), SMS, Email, Phone, Portal messages. Facebook/Instagram only if you messaged our page.' },
+        { h: 'Consent & Opt-out', p: 'Consent captured at lead creation. Reply STOP on WhatsApp/SMS, Unsubscribe in email, or toggle in portal. Opt-out honored within 24h; transactional CAS/visa messages may still be sent where legally required.' },
+        { h: 'SLA & After-hours', p: 'Counselor 30 min → Branch Manager 30m → CEO +20m → Urgent +10m. After-hours 18:00-10:00 Asia/Dhaka queues with one acknowledgement, no duplicate.' },
+        { h: 'Templates & AI drafts', p: 'Templates versioned in CommunicationTemplate, require approval if requiresApproval. AI drafts are AI → human approval → send with riskLevel.' },
+        { h: 'Recording & B2B', p: 'Calls may be recorded with consent (CallLog). Recordings stored privately outside public_html. Partner isolation server-enforced by partner_id.' },
+      ],
+    },
+    'lead-data': {
+      title: 'Lead Data Usage Policy',
+      badge: 'LEGAL',
+      sections: [
+        { h: 'What We Collect', p: 'LeadId AE-YYYY000001 + name, phone, email, preferred country/course, budget, English test, CGPA, source, utm, notes. WhatsApp/Facebook linked to LeadOutreach + Thread.' },
+        { h: 'Lawful Basis & Purpose', p: 'Consent + Legitimate interest. Used for contact attempts (3/7/14/21/25/30 day), counseling, shortlisting, visa, analytics. Never sold.' },
+        { h: 'Lifecycle & Retention', p: 'New → Contact Attempted → Contacted → Consultation → Qualified → Student Created → Enrolled → Closed (25 stages). Active 24 months, closed 7 years then anonymized.' },
+        { h: 'Your Rights', p: 'Access, correction, deletion, export, withdraw. Email info@aloeducation.com with Lead/Student ID. Soft-delete + audit. Response within 30 days.' },
+        { h: 'B2B Attribution', p: 'TYPE1 inbound: partner provides student visibility per privacy setting. TYPE2 outbound: ALO submits with attribution. Partner sees only own records.' },
+      ],
+    },
+    'user-guide': {
+      title: 'User Guide',
+      badge: 'HELP',
+      sections: [
+        { h: 'Student Portal', p: 'AE-YYYY000001 via OTP → complete profile → shortlist via Course Finder → upload docs privately → track Application→Offer→Deposit→CAS/I-20→Visa→Enrolled in Timeline.' },
+        { h: 'Partner Portal', p: 'AEP-YYYY0000 → refer student → track applications & docs → view own commissions → message & support.' },
+        { h: 'Employee / Counselor', p: 'ALO-EMP-YYYY0001 activation → dashboard SLA 30/20/10 pipeline → private notes (students never see) → attendance/leave/payroll.' },
+        { h: 'Admin / Super Admin', p: 'Executive dashboard → manage users/roles/permissions (57+17) → approve universities/broadcasts → audit/health/cron/backup outside public_html.' },
+        { h: 'Tips', p: 'Forgot password → OTP/email reset. Notifications Email+WhatsApp+In-App. Documents allowlist pdf/jpg/png/doc/docx 20MB random names. Health /health public.' },
+      ],
+    },
+    accessibility: {
+      title: 'Accessibility Statement',
+      badge: 'ACCESSIBILITY',
+      sections: [
+        { h: 'Commitment', p: 'We aim for WCAG 2.1 AA across https://aloeducation.com — semantic HTML, landmarks, skip links, heading hierarchy.' },
+        { h: 'Visual', p: 'Contrast ≥4.5:1 (#0057B8/#E8501A on white), alt text, aria-hidden decorative, zoom 200% without horizontal scroll.' },
+        { h: 'Keyboard & Screen Reader', p: 'All interactive elements via Tab/Enter/Space, visible focus ring, associated label + aria-describedby errors, NVDA/JAWS conventions.' },
+        { h: 'Limitations', p: 'Third-party embeds (Maps/Facebook) may not be fully AA — we provide text address, WhatsApp 01805020100, phone fallbacks.' },
+        { h: 'Feedback', p: 'Email info@aloeducation.com with URL + issue. Acknowledge within 2 working days, fix prioritized, review every 6 months.' },
       ],
     },
   }[type];

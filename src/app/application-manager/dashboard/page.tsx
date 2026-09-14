@@ -13,6 +13,7 @@ import {
   Timer, FileWarning, Briefcase
 } from 'lucide-react';
 import Link from 'next/link';
+import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 export default function ApplicationManagerDashboard() {
   const token = usePortalStore(state => state.token);
@@ -105,6 +106,7 @@ export default function ApplicationManagerDashboard() {
   return (
     <div className="p-4 md:p-6 bg-[#FFFFFF] min-h-screen">
       <div className="max-w-[1600px] mx-auto space-y-6">
+        <DashboardCommunicationWidget role="APPLICATION_MANAGER" unreadCount={6} slaOverdueCount={2} onNavigateToInbox={() => window.location.href='/crm/communications/inbox'} />
         {/* Header 12-col */}
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12">

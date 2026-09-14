@@ -1,26 +1,30 @@
 # ─── Build stage ────────────────────────────────────────────
-FROM oven/bun:1 AS base
+FROM node:22-bookworm AS base
 WORKDIR /app
 
-# Install dependencies
-COPY package.json bun.lock* ./
-RUN bun install --frozen-lockfile
+# Install dependencies — supports both npm and bun lockfiles (SEC-11 fix)
+COPY package.json package-lock.json* bun.lock* ./
+RUN if [ -f bun.lock ]; then npm install -g bun && bun install --frozen-lockfile; else npm ci; fi
 
 # Copy source
 COPY . .
 
 # Generate Prisma client
-RUN bunx prisma generate
+RUN npx prisma generate
 
 # Build Next.js
-RUN bun run build
+RUN npm run build
 
 # ─── Production stage ───────────────────────────────────────
-FROM oven/bun:1 AS runner
+FROM node:22-bookworm-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=3044
+ENV HOSTNAME=0.0.0.0
+
+# Run as non-root (SEC-18)
+RUN useradd -m -u 1001 nextjs
 
 # Copy standalone build
 COPY --from=base /app/.next/standalone ./
@@ -30,12 +34,14 @@ COPY --from=base /app/prisma ./prisma
 COPY --from=base /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=base /app/node_modules/@prisma ./node_modules/@prisma
 
-# Create upload/download dirs
-RUN mkdir -p /app/upload /app/download /app/db
+# Create upload/download dirs with correct ownership
+RUN mkdir -p /app/upload /app/download /app/db && chown -R nextjs:nextjs /app
 
-EXPOSE 3000
+USER nextjs
+
+EXPOSE 3044
 
 # Apply only reviewed, additive migrations before starting the server.
 # Never use `prisma db push` in production because it can change the schema
 # outside the migration history.
-CMD ["sh", "-c", "bunx prisma migrate deploy && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]

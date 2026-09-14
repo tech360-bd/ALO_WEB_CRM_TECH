@@ -1,35 +1,37 @@
-// ALO Education — Storage & Brand Seed (Task 22)
+// ALO Education — Storage & Brand Seed (Task 22) — Portable 2026-09-15
 // Seeds the three storage pools, the default brand profile,
 // and 10 marketing model profiles + 4 voice profiles.
-// Idempotent via upsert.
+// Idempotent via upsert. Storage paths now portable (STORAGE_ROOT env or ./storage).
 
 import { PrismaClient } from "@prisma/client";
+import * as path from "path";
 const db = new PrismaClient();
 
 async function main() {
   console.log("=== ALO Storage & Brand Seed (Task 22) ===\n");
 
-  // 1. Initialize storage pools
+  // 1. Initialize storage pools (portable: project-root/storage, fallback /home/z legacy)
+  const storageRoot = process.env.STORAGE_ROOT || path.resolve(process.cwd(), "storage");
   const pools = [
     {
       poolKey: "STUDENT_PARTNER",
       name: "Student & Partner Private Storage",
       description: "Student documents, partner documents, passports, certificates, financial docs. Pool A (~120GB SSD).",
-      mountPath: "/home/z/my-project/storage/student-partner",
+      mountPath: `${storageRoot}/student-partner`,
       capacityBytes: 120 * 1024 * 1024 * 1024,
     },
     {
       poolKey: "OFFICIAL",
       name: "ALO Official Documents & Project Archives",
       description: "Company policies, SOPs, Knowledge Center, brand assets, project archives. Pool B (~120GB SSD).",
-      mountPath: "/home/z/my-project/storage/official",
+      mountPath: `${storageRoot}/official`,
       capacityBytes: 120 * 1024 * 1024 * 1024,
     },
     {
       poolKey: "OPERATIONAL",
       name: "Employee & Production & General Operational Storage",
       description: "Employee work files, marketing media, AI-generated media, reports. Pool C (~500GB HDD).",
-      mountPath: "/home/z/my-project/storage/operational",
+      mountPath: `${storageRoot}/operational`,
       capacityBytes: 500 * 1024 * 1024 * 1024,
     },
   ];

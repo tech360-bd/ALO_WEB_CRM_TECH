@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as any;
 
-    const partnerId = auth.partnerId || 'PARTNER-DEMO';
+    const partnerId = auth.partnerId;
+    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
 
     const [quota, usage, requests] = await Promise.all([
       db.partnerMarketingQuota.findUnique({ where: { partnerId } }),
@@ -18,8 +19,8 @@ export async function GET(req: NextRequest) {
 
     const imageLimit = quota?.monthlyImageLimit || 15;
     const videoLimit = quota?.monthlyVideoLimit || 10;
-    const imagesUsed = usage?.imagesUsed || 4;
-    const videosUsed = usage?.videosUsed || 2;
+    const imagesUsed = usage?.imagesUsed || 0;
+    const videosUsed = usage?.videosUsed || 0;
 
     return NextResponse.json({
       success: true,
@@ -48,7 +49,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { idea, countryId, universityId, courseId, intake, platform, language, assetType } = body;
 
-    const partnerId = auth.partnerId || 'PARTNER-DEMO';
+    const partnerId = auth.partnerId;
+    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
 
     let usage = await db.partnerMarketingUsage.findFirst({ where: { partnerId }, orderBy: { createdAt: 'desc' } });
     if (!usage) {

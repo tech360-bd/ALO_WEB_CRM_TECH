@@ -7,6 +7,11 @@ export async function GET(req: NextRequest) {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
+    // RBAC: block student/partner from employee APIs
+    const _blockedTypes = ['STUDENT','student','PARTNER','partner'];
+    if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
+      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    }
 
     const tasks = await db.counselorTask.findMany({
       where: {

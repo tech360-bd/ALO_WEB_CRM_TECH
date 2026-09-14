@@ -1,0 +1,16 @@
+{
+  "universities": 560,
+  "courses": 11200,
+  "campuses": 685,
+  "branch_campuses_added": 125,
+  "intakes": 145600,
+  "supervisors": 2821,
+  "levels": {
+    "Foundation": 1680,
+    "Bachelor's": 2240,
+    "Bachelor Top-up": 1680,
+    "Master's": 2240,
+    "MRes": 1680,
+    "PhD": 1680
+  }
+}

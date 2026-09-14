@@ -20,40 +20,24 @@ export async function GET(request: NextRequest) {
       const cvCount = await db.cvReview.count();
       const docCount = await db.portalStudentDocument.count();
 
+      // REAL ONLY — no hardcoded Arif/Sadia/Imtiaz (portal-real requirement)
       return NextResponse.json({
         success: true,
         data: {
           aiTaskOverview: [
-            { task: 'Course Match for Sharif Uddin', type: 'Course Match', status: 'approved', created: 'Today, 9:00 AM', action: 'Approved' },
-            { task: 'SOP Draft — Arif Khan (Manchester)', type: 'SOP Draft', status: 'pending', created: 'Today, 8:30 AM', action: 'Review' },
-            { task: 'CV Draft — Sadia Rahman', type: 'CV Draft', status: 'approved', created: 'Today, 8:15 AM', action: 'Approved' },
-            { task: 'Document Check — Imtiaz Ahmed', type: 'Doc Check', status: 'rejected', created: 'Yesterday, 5:30 PM', action: 'Regenerate' },
-            { task: 'Visa Risk Note — Fahim Rahman (UK)', type: 'Visa Risk', status: 'pending', created: 'Yesterday, 4:00 PM', action: 'Review' },
-          ],
-          auditLogs: [
-            { time: 'Today, 9:15 AM', action: 'SOP generated for Arif Khan', model: 'GPT-4o', tokens: 1240, user: 'AI Engine' },
-            { time: 'Today, 8:45 AM', action: 'Course matching executed for batch', model: 'Embedding v2', tokens: 3400, user: 'System' },
-            { time: 'Today, 8:30 AM', action: 'CV draft generated for Sadia Rahman', model: 'GPT-4o', tokens: 980, user: 'AI Engine' },
-          ],
-          pendingApprovals: [
-            { task: 'SOP Draft — Arif Khan (Manchester)', type: 'SOP', priority: 'high', created: '8:30 AM' },
-            { task: 'Visa Risk Note — Fahim Rahman (UK)', type: 'Visa Risk', priority: 'high', created: '4:00 PM' },
-            { task: 'CV Draft — Mithila Akter', type: 'CV', priority: 'medium', created: '11:30 AM' },
-          ],
-          performanceMetrics: [
-            { metric: 'Avg SOP Quality Score', value: '4.8/5.0', trend: '+0.3', icon: 'FileText' },
-            { metric: 'Course Match Accuracy', value: '94%', trend: '+4%', icon: 'BookOpen' },
-            { metric: 'Doc Check Accuracy', value: '98%', trend: '+2%', icon: 'CheckCircle2' },
-            { metric: 'Visa Risk Precision', value: '91%', trend: '+5%', icon: 'ShieldAlert' },
-            { metric: 'Avg Generation Time', value: '2.1s', trend: '-0.8s', icon: 'Clock' },
-          ],
+            ...sopDrafts.map((s: any) => ({ task: `SOP Draft — ${s.studentId || s.id}`, type: 'SOP Draft', status: (s.status || 'pending').toLowerCase(), created: s.createdAt ? new Date(s.createdAt).toLocaleString() : '', action: 'Review' })),
+            ...cvReviews.map((c: any) => ({ task: `CV Review — ${c.studentId || c.id}`, type: 'CV Review', status: (c.status || 'pending').toLowerCase(), created: c.createdAt ? new Date(c.createdAt).toLocaleString() : '', action: 'Review' })),
+          ].slice(0, 10),
+          auditLogs: await db.auditLog.findMany({ take: 5, orderBy: { createdAt: 'desc' }, select: { createdAt: true, action: true, resource: true } }).then(rows => rows.map(r => ({ time: new Date(r.createdAt).toLocaleString(), action: `${r.action} — ${r.resource}`, model: '—', tokens: 0, user: 'system' }))).catch(()=>[]),
+          pendingApprovals: await db.portalStudentDocument.findMany({ where: { status: 'PENDING_REVIEW' }, take: 5, orderBy: { createdAt: 'desc' } }).then(rows => rows.map(r=>({ task: r.category || r.fileName || 'Pending', type: r.category || 'Doc', priority: 'high', created: r.createdAt ? new Date(r.createdAt).toLocaleTimeString() : '' }))).catch(()=>[]),
+          performanceMetrics: [],
           kpis: [
-            { label: 'AI Course Matches', value: String(courseMatches || 456), change: '+78', up: true, icon: 'BookOpen', sub: 'This month' },
-            { label: 'AI SOP Drafts', value: String(sopsCount || 89), change: '+23', up: true, icon: 'FileText', sub: 'Generated' },
-            { label: 'AI CV Drafts', value: String(cvCount || 67), change: '+15', up: true, icon: 'FileText', sub: 'Generated' },
-            { label: 'AI Document Checks', value: String(docCount || 234), change: '+42', up: true, icon: 'CheckCircle2', sub: 'Completed' },
-            { label: 'AI Visa Risk Notes', value: '123', change: '+18', up: true, icon: 'ShieldAlert', sub: 'Generated' },
-            { label: 'Human Overrides', value: '3.4%', change: '-0.8%', up: true, icon: 'Brain', sub: 'Manual corrections' },
+            { label: 'AI Course Matches', value: String(courseMatches), change: '', up: true, icon: 'BookOpen', sub: 'This month' },
+            { label: 'AI SOP Drafts', value: String(sopsCount), change: '', up: true, icon: 'FileText', sub: 'Generated' },
+            { label: 'AI CV Drafts', value: String(cvCount), change: '', up: true, icon: 'FileText', sub: 'Generated' },
+            { label: 'AI Document Checks', value: String(docCount), change: '', up: true, icon: 'CheckCircle2', sub: 'Completed' },
+            { label: 'AI Visa Risk Notes', value: String(await db.visaRiskAssessment.count().catch(()=>0)), change: '', up: true, icon: 'ShieldAlert', sub: 'Generated' },
+            { label: 'Human Overrides', value: '—', change: '', up: true, icon: 'Brain', sub: 'Manual corrections' },
           ]
         }
       });

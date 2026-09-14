@@ -3,3 +3,7 @@ alo_cmd_orchestrator,Super Admin AI Command Center,Platform Governance,COMPANY,R
 alo_reply_assistant,UCC AI Reply Assistant,Omnichannel Messaging,ASSIGNED,SAFE_ACTION (Human Review)
 alo_ocr_agent,Document Intelligence Agent,OCR & Autofill,ASSIGNED,APPROVAL_REQUIRED (High-Risk)
 alo_office_hours_agent,After-Hours Qualification Agent,Lead Qualification,ALL,SAFE_ACTION
+alo_international_course_advisor,International Course Advisor (6 Levels + Branch Campus + Deadline + Supervisor + Research),Course Discovery & Research Guidance,ASSIGNED,SAFE_ACTION (Eligibility Check + Supervisor Match + Research Proposal Help)
+alo_campus_mapper,Campus-Course Mapper (Branch Campus Handler),Campus & Course Linkage,ASSIGNED,READ_ONLY
+alo_supervisor_matcher,MRes/PhD Supervisor Matcher,Research Supervisor Identification,ASSIGNED,SAFE_ACTION
+alo_research_assistant,Research Coursework & Paper Assistant,MRes/PhD Research Support,ASSIGNED,SAFE_ACTION (Proposal/Coursework/Literature)

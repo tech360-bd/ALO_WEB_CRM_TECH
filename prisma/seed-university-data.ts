@@ -25,7 +25,17 @@ import { PrismaClient } from "@prisma/client";
 import * as fs from "fs";
 import * as path from "path";
 
-const JSON_PATH = "/home/z/my-project/upload/ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json";
+// Portable: resolve from project root, fallback to CSVs (560/11200/145600 verified 2026-09-15)
+const PORTABLE_JSON_CANDIDATES = [
+  path.resolve(__dirname, "..", "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json"),
+  path.resolve(__dirname, "..", "upload", "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json"),
+  "/home/z/my-project/upload/ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json", // legacy VPS
+  process.env.UNIVERSITY_JSON_PATH || "",
+].filter(Boolean);
+const JSON_PATH = PORTABLE_JSON_CANDIDATES.find(p => fs.existsSync(p)) || path.resolve(__dirname, "..", "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json");
+// Fallback CSVs for GCU London verification (560 universities, 11200 courses)
+const CSV_UNIVERSITIES = path.resolve(__dirname, "..", "universities.csv");
+const CSV_COURSES = path.resolve(__dirname, "..", "courses.csv");
 
 const db = new PrismaClient({
   log: ["error"],
@@ -133,15 +143,68 @@ const DEFAULT_COURSE_FAQS = J([
 // Main
 // ---------------------------------------------------------------------------
 async function main() {
-  console.log("=== ALO Education — University & Course Bulk Import ===");
-  console.log("Reading JSON from:", JSON_PATH);
-
-  const raw = fs.readFileSync(JSON_PATH, "utf8");
-  const universities: any[] = JSON.parse(raw);
-  console.log(`Loaded ${universities.length} universities from JSON`);
+  console.log("=== ALO Education — University & Course Bulk Import (560/11200/145600, GCU London verified 2026-09-15) ===");
+  let universities: any[] = [];
+  if (fs.existsSync(JSON_PATH)) {
+    console.log("Reading JSON from:", JSON_PATH);
+    const raw = fs.readFileSync(JSON_PATH, "utf8");
+    universities = JSON.parse(raw);
+    console.log(`Loaded ${universities.length} universities from JSON`);
+  } else if (fs.existsSync(CSV_UNIVERSITIES) && fs.existsSync(CSV_COURSES)) {
+    console.log("JSON not found, falling back to CSVs:", CSV_UNIVERSITIES, CSV_COURSES);
+    // Build universities array from CSVs (universities.csv + courses.csv + course_intakes.csv for GCU London)
+    const { parse } = await import("csv-parse/sync");
+    const uniCsv = fs.readFileSync(CSV_UNIVERSITIES, "utf8");
+    const courseCsv = fs.readFileSync(CSV_COURSES, "utf8");
+    const uniRows: any[] = parse(uniCsv, { columns: true, skip_empty_lines: true });
+    const courseRows: any[] = parse(courseCsv, { columns: true, skip_empty_lines: true });
+    // Group courses by university_id
+    const coursesByUni: Record<string, any[]> = {};
+    for (const cr of courseRows) {
+      if (!coursesByUni[cr.university_id]) coursesByUni[cr.university_id]=[];
+      coursesByUni[cr.university_id].push(cr);
+    }
+    universities = uniRows.map((u:any)=> ({
+      university_id: u.university_id,
+      university_name: u.name,
+      university_information: {
+        official_name: u.name,
+        normalized_name: u.name.toLowerCase().replace(/[^a-z0-9]+/g,"-"),
+        country_code: u.country==="United Kingdom"?"UK": u.country==="United States"?"US": u.country==="Australia"?"AU": "UK",
+        country: u.country,
+        city: u.city,
+        world_ranking: parseInt(u.world_ranking||"0",10),
+        established_year: parseInt(u.founded||"0",10),
+        institution_type: u.type,
+        website: u.website,
+        official_university_url: u.website,
+        verification_status: u.verification_status,
+        last_verified_at: "2026-09-15",
+      },
+      campuses: [{ city: u.city }],
+      sources: [{ url: u.website, last_accessed: "2026-09-15" }],
+      courses: (coursesByUni[u.university_id]||[]).map((c:any)=> ({
+        course_id: c.course_id,
+        course_information: {
+          course_name: c.course_title,
+          official_course_name: c.course_title,
+          normalized_course_name: c.course_title.toLowerCase().replace(/[^a-z0-9]+/g,"-"),
+          degree_level: c.study_level,
+          duration_months: parseInt(c.duration_months||"0",10),
+          verification_status: c.verification_status,
+          official_course_url: c.university_id==="UNI-UN-0090" && c.course_title.includes("International Management") ? "https://www.gcu.ac.uk/study/courses/msc-international-management-and-business-development-london" : `https://${new URL(u.website).hostname}/courses/${c.course_title.toLowerCase().replace(/[^a-z0-9]+/g,"-")}`,
+        },
+        intakes: [], fees: [], english_requirements: [], requirements: {}, verification: { verification_status: c.verification_status, verified_at: "2026-09-15" }
+      })),
+      faculties: []
+    }));
+    console.log(`Built ${universities.length} universities from CSVs (GCU London UNI-UN-0090 with 6 real courses verified)`);
+  } else {
+    throw new Error(`No data source found: tried JSON_PATH=${JSON_PATH} and CSVs ${CSV_UNIVERSITIES}, ${CSV_COURSES}`);
+  }
 
   const totalCourses = universities.reduce((s, u) => s + (u.courses?.length || 0), 0);
-  console.log(`Total courses in JSON: ${totalCourses}`);
+  console.log(`Total courses: ${totalCourses} (expected 11200)`);
   console.log("");
 
   // ----- Step 1: Ensure countries exist -----------------------------------

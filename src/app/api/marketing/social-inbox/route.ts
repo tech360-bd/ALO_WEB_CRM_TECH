@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, AuthContext } from "@/lib/auth-middleware";
+
+const MARKETING_AUTH = {
+  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
+};
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 // GET — unified social inbox (Facebook, Instagram, Messenger, WhatsApp, Email, SMS, Website chat)
-export async function GET(req: NextRequest) {
-  const platform = req.nextUrl.searchParams.get("platform");
-  const unreadOnly = req.nextUrl.searchParams.get("unread") === "true";
+export const GET = withAuth(async (req: Request, _auth: AuthContext) => {
+  const platform = new URL(req.url).searchParams.get("platform");
+  const unreadOnly = new URL(req.url).searchParams.get("unread") === "true";
   const where: any = {};
   if (platform && platform !== "ALL") where.platform = platform;
   if (unreadOnly) where.isRead = false;
@@ -54,11 +62,11 @@ export async function GET(req: NextRequest) {
     unreadCount: messages.filter((m) => !m.isRead && m.direction === "INBOUND").length,
     aiHandledCount: messages.filter((m) => m.aiHandled).length,
     platformStats,
-  });
-}
+  } as any);
+}, MARKETING_AUTH);
 
 // POST — send reply from social inbox
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
   const body = await req.json();
   const { platform, conversationId, senderId, messageText, employeeId, aiDraftUsed } = body;
 
@@ -89,5 +97,5 @@ export async function POST(req: NextRequest) {
     data: { userId: employeeId, action: "MESSAGE_ACTION", resource: "SocialInboxMessage", resourceId: message.id, details: JSON.stringify({ platform, conversationId, aiDraftUsed }) },
   });
 
-  return NextResponse.json({ message, success: true });
-}
+  return NextResponse.json({ message, success: true } as any);
+}, MARKETING_AUTH);

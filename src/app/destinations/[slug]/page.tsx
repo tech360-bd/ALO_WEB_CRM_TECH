@@ -1,7 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import PremiumCountryPage from '@/components/website/PremiumCountryPage';
-import MasterCountryDestinationView from '@/components/website/MasterCountryDestinationView';
 import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
 

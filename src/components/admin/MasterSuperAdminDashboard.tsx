@@ -15,6 +15,7 @@ import {
 import { toast } from 'sonner';
 import AgentRegistry from '@/components/crm/agentos/AgentRegistry';
 import AICommandingCenter from './AICommandingCenter';
+import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 export default function MasterSuperAdminDashboard() {
   const { user, token, setView } = usePortalStore();
@@ -98,6 +99,7 @@ export default function MasterSuperAdminDashboard() {
 
   return (
     <div className="space-y-6 bg-slate-50/50 min-h-screen p-4 lg:p-6 text-slate-900 font-sans">
+      <DashboardCommunicationWidget role="SUPER_ADMIN" unreadCount={18} slaOverdueCount={4} onNavigateToInbox={() => window.location.href='/crm/communications/inbox'} />
       {/* ACTING-AS BANNER */}
       {actingAsRole && (
         <div className="bg-amber-500 text-slate-950 p-3.5 rounded-xl shadow-md flex items-center justify-between font-bold text-xs border border-amber-600">

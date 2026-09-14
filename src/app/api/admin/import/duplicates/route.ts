@@ -1,45 +1,28 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { db } from '@/lib/db';
 
+// GET /api/admin/import/duplicates?batchId=xxx — student duplicate preview for batch
+// Also supports ?level=POSSIBLE_MATCH for filtering
 export const GET = withAuth(async (request: Request) => {
+  const { searchParams } = new URL(request.url);
+  const batchId = searchParams.get('batchId');
+  const level = searchParams.get('level');
+  const where: any = {};
+  if (batchId) where.batchId = batchId;
+  if (level) where.duplicateRiskLevel = level;
+  // only rows with risk != none
+  if (!where.duplicateRiskLevel) where.duplicateRiskLevel = { not: 'none' };
   try {
-    const { searchParams } = new URL(request.url);
-    const batchId = searchParams.get('batchId');
-
-    const where = { duplicateRiskLevel: { in: ['high', 'medium'] } };
-    if (batchId) {
-       (where as any).batchId = batchId;
-    }
-
-    const stagedDuplicates = await db.importStagingStudent.findMany({
-      where,
-      orderBy: { createdAt: 'desc' }
-    });
-
-    const results: any[] = [];
-    for (const staged of stagedDuplicates) {
-      if (staged.email || staged.phone) {
-        const matches = await db.student.findMany({
-          where: {
-            OR: [
-              ...(staged.email ? [{ email: staged.email }] : []),
-              ...(staged.phone ? [{ phone: staged.phone }] : []),
-            ]
-          }
-        });
-        
-        if (matches.length > 0) {
-          results.push({
-            staging: staged,
-            matches
-          });
-        }
+    const rows = await db.importStagingStudent.findMany({ where, take: 100, orderBy:{ createdAt:'desc' } });
+    // enrich with existing student if matched
+    const enriched = await Promise.all(rows.map(async (r:any)=>{
+      let existing=null;
+      if (r.matchedStudentId) {
+        try { existing = await db.student.findUnique({ where:{ id: r.matchedStudentId } }); } catch {}
       }
-    }
-
-    return NextResponse.json({ success: true, duplicates: results });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
+      return { staged: r, existing };
+    }));
+    return NextResponse.json({ success:true, duplicates: enriched, total: enriched.length });
+  } catch (e:any) { return NextResponse.json({ success:false, error:e.message }, { status:500 }); }
 });

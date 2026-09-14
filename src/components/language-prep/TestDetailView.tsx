@@ -126,6 +126,9 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
   return (
     <div className="min-h-screen bg-white text-[#0F172A]">
+      {/* SEO — JSON-LD FAQ + Breadcrumb — verified, no fake */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aloeducation.com/' }, { '@type': 'ListItem', position: 2, name: 'Language Preparation', item: 'https://aloeducation.com/language-prep' }, { '@type': 'ListItem', position: 3, name: test.name, item: `https://aloeducation.com/language-prep/${test.slug}` }] }) }} />
+      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.slice(0, 20).map((f: any) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })) }) }} />}
       {/* Breadcrumb + Hero — White-first, no dark overlay */}
       <section className="relative bg-white pt-8 pb-12 lg:pt-12 lg:pb-16 overflow-hidden border-b border-[#E2E8F0]">
         <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC] to-white pointer-events-none" />

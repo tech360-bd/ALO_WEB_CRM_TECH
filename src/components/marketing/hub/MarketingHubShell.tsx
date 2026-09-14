@@ -3,29 +3,63 @@
 import { useState, type ReactNode } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 
-// Import all Marketing Hub views
+// Import all Marketing Hub views — 21-command center
 import MarketingDashboardView from './MarketingDashboardView';
-import UnifiedInboxView from './UnifiedInboxView';
-import WhatsAppAutomationView from './WhatsAppAutomationView';
+import AIMarketingDirectorView from './AIMarketingDirectorView';
+import CampaignBuilderCalendarView from './CampaignBuilderCalendarView';
+import AIContentStudioView from './AIContentStudioView';
+import AIVideoStudioView from './AIVideoStudioView';
 import SocialMediaAutomationView from './SocialMediaAutomationView';
+import AdvertisingManagerView from './AdvertisingManagerView';
+import WhatsAppAutomationView from './WhatsAppAutomationView';
+import SMSMarketingView from './SMSMarketingView';
+import EmailMarketingView from './EmailMarketingView';
+import SEOBlogManagerView from './SEOBlogManagerView';
+import LeadGenerationView from './LeadGenerationView';
+import LeadNurturingView from './LeadNurturingView';
+import AIEmployeeDepartmentView from './AIEmployeeDepartmentView';
+import CampaignBuilderCalendarView2 from './CampaignBuilderCalendarView';
+import ApprovalQueueView from './ApprovalQueueView';
+import MarketingAnalyticsView from './MarketingAnalyticsView';
+import MarketingBudgetView from './MarketingBudgetView';
+import IntegrationsView from './IntegrationsView';
+import MarketingSettingsView from './MarketingSettingsView';
+import MarketingAuditAccessView from './MarketingAuditAccessView';
+import UnifiedInboxView from './UnifiedInboxView';
 import KeywordTriggersView from './KeywordTriggersView';
 import AiReplyManagerView from './AiReplyManagerView';
 import HumanHandoffView from './HumanHandoffView';
 import BrandAssetsPostCreatorView from './BrandAssetsPostCreatorView';
-import CampaignBuilderCalendarView from './CampaignBuilderCalendarView';
-import ApprovalQueueView from './ApprovalQueueView';
 import LeadPipelineView from './LeadPipelineView';
 import ConversationAssignmentView from './ConversationAssignmentView';
 import N8nWorkflowsView from './N8nWorkflowsView';
-import MarketingAnalyticsView from './MarketingAnalyticsView';
-import MarketingAuditAccessView from './MarketingAuditAccessView';
 
-// View component map
+// View component map — maps 21 required nav to real views
 const viewComponents: Record<MarketingSubView, React.ComponentType> = {
   dashboard: MarketingDashboardView,
+  'ai-director': AIMarketingDirectorView,
+  'campaign-manager': CampaignBuilderCalendarView,
+  'content-studio': AIContentStudioView,
+  'video-studio': AIVideoStudioView,
+  'social-media': SocialMediaAutomationView,
+  'advertising': AdvertisingManagerView,
+  'whatsapp-marketing': WhatsAppAutomationView,
+  'sms-marketing': SMSMarketingView,
+  'email-marketing': EmailMarketingView,
+  'seo-blog': SEOBlogManagerView,
+  'lead-generation': LeadGenerationView,
+  'lead-nurturing': LeadNurturingView,
+  'ai-employees': AIEmployeeDepartmentView,
+  'marketing-calendar': CampaignBuilderCalendarView2,
+  'approval-center': ApprovalQueueView,
+  'analytics-reports': MarketingAnalyticsView,
+  'marketing-budget': MarketingBudgetView,
+  'integrations': IntegrationsView,
+  'marketing-settings': MarketingSettingsView,
+  'security-audit': MarketingAuditAccessView,
+  // legacy aliases for backward compatibility
   'unified-inbox': UnifiedInboxView,
   'whatsapp-automation': WhatsAppAutomationView,
-  'social-media': SocialMediaAutomationView,
   'comment-to-lead': SocialMediaAutomationView,
   'keyword-triggers': KeywordTriggersView,
   'ai-reply-manager': AiReplyManagerView,
@@ -73,6 +107,11 @@ import {
   ArrowLeft,
   Bell,
   ChevronRight,
+  Heart,
+  Plug,
+  Settings,
+  Wallet,
+  Globe,
 } from 'lucide-react';
 
 // ============================================================
@@ -81,9 +120,29 @@ import {
 
 export type MarketingSubView =
   | 'dashboard'
+  | 'ai-director'
+  | 'campaign-manager'
+  | 'content-studio'
+  | 'video-studio'
+  | 'social-media'
+  | 'advertising'
+  | 'whatsapp-marketing'
+  | 'sms-marketing'
+  | 'email-marketing'
+  | 'seo-blog'
+  | 'lead-generation'
+  | 'lead-nurturing'
+  | 'ai-employees'
+  | 'marketing-calendar'
+  | 'approval-center'
+  | 'analytics-reports'
+  | 'marketing-budget'
+  | 'integrations'
+  | 'marketing-settings'
+  | 'security-audit'
+  // legacy aliases
   | 'unified-inbox'
   | 'whatsapp-automation'
-  | 'social-media'
   | 'comment-to-lead'
   | 'keyword-triggers'
   | 'ai-reply-manager'
@@ -122,52 +181,52 @@ const subNavGroups: SubNavGroup[] = [
   {
     title: 'Overview',
     items: [
-      { icon: LayoutDashboard, label: 'Marketing Dashboard', view: 'dashboard' },
+      { icon: LayoutDashboard, label: '1. Marketing Overview', view: 'dashboard' },
+      { icon: Bot, label: '2. AI Marketing Command Center', view: 'ai-director', badge: 'AI', badgeColor: 'bg-[#F37021]' },
     ],
   },
   {
-    title: 'Inbox & Channels',
+    title: 'Campaign & Content',
     items: [
-      { icon: MessageCircle, label: 'Unified Inbox', view: 'unified-inbox', badge: '24', badgeColor: 'bg-green-500' },
-      { icon: MessageCircle, label: 'WhatsApp Automation', view: 'whatsapp-automation', badge: '8', badgeColor: 'bg-emerald-500' },
-      { icon: Share2, label: 'Social Media', view: 'social-media', badge: '12', badgeColor: 'bg-blue-500' },
-      { icon: FileUp, label: 'Document Upload', view: 'whatsapp-automation' },
+      { icon: Megaphone, label: '3. Campaign Manager', view: 'campaign-manager' },
+      { icon: Palette, label: '4. AI Content Studio', view: 'content-studio', badge: 'NEW', badgeColor: 'bg-[#0066CC]' },
+      { icon: Image, label: '5. AI Video Studio', view: 'video-studio' },
     ],
   },
   {
-    title: 'Automation',
+    title: 'Channels',
     items: [
-      { icon: Bot, label: 'AI Reply Manager', view: 'ai-reply-manager' },
-      { icon: Zap, label: 'Comment to Lead', view: 'comment-to-lead', badge: '5', badgeColor: 'bg-orange-500' },
-      { icon: Clock, label: 'Keyword Triggers', view: 'keyword-triggers' },
-      { icon: Users, label: 'Human Handoff', view: 'human-handoff', badge: '3', badgeColor: 'bg-red-500' },
-      { icon: GitBranch, label: 'Follow-up Automation', view: 'follow-up-automation' },
+      { icon: Share2, label: '6. Social Media Manager', view: 'social-media', badge: '12', badgeColor: 'bg-[#0066CC]' },
+      { icon: Target, label: '7. Advertising Manager', view: 'advertising', badge: 'NEW', badgeColor: 'bg-[#F37021]' },
+      { icon: MessageCircle, label: '8. WhatsApp Marketing', view: 'whatsapp-marketing', badge: '8', badgeColor: 'bg-emerald-500' },
+      { icon: MessageCircle, label: '9. SMS Marketing', view: 'sms-marketing' },
+      { icon: MessageCircle, label: '10. Email Marketing', view: 'email-marketing' },
     ],
   },
   {
-    title: 'Content & Brand',
+    title: 'Growth',
     items: [
-      { icon: Palette, label: 'Brand Assets', view: 'brand-assets' },
-      { icon: Image, label: 'Post Creator', view: 'post-creator' },
-      { icon: Megaphone, label: 'Campaign Builder', view: 'campaign-builder' },
-      { icon: Calendar, label: 'Campaign Calendar', view: 'campaign-calendar' },
-      { icon: CheckSquare, label: 'Approval Queue', view: 'approval-queue', badge: '7', badgeColor: 'bg-purple-500' },
+      { icon: Globe, label: '11. SEO & Blog Manager', view: 'seo-blog' },
+      { icon: Target, label: '12. Lead Generation', view: 'lead-generation' },
+      { icon: Heart, label: '13. Lead Nurturing', view: 'lead-nurturing' },
     ],
   },
   {
-    title: 'Lead & Outreach',
+    title: 'Operations',
     items: [
-      { icon: Target, label: 'Lead Pipeline', view: 'lead-pipeline' },
-      { icon: Users, label: 'Conversation Assignment', view: 'conversation-assignment' },
-      { icon: GitBranch, label: 'n8n Workflows', view: 'n8n-workflows' },
+      { icon: Bot, label: '14. AI Employee Department', view: 'ai-employees', badge: '20', badgeColor: 'bg-[#F37021]' },
+      { icon: Calendar, label: '15. Marketing Calendar', view: 'marketing-calendar' },
+      { icon: CheckSquare, label: '16. Approval Center', view: 'approval-center', badge: '7', badgeColor: 'bg-purple-500' },
     ],
   },
   {
-    title: 'Reports & Settings',
+    title: 'Analytics & Control',
     items: [
-      { icon: BarChart3, label: 'Analytics', view: 'analytics' },
-      { icon: ScrollText, label: 'Audit Logs', view: 'audit-logs' },
-      { icon: Shield, label: 'Access Control', view: 'access-control' },
+      { icon: BarChart3, label: '17. Analytics & Reports', view: 'analytics-reports' },
+      { icon: Wallet, label: '18. Marketing Budget', view: 'marketing-budget' },
+      { icon: Plug, label: '19. Integrations', view: 'integrations' },
+      { icon: Settings, label: '20. Marketing Settings', view: 'marketing-settings' },
+      { icon: Shield, label: '21. Security & Audit Logs', view: 'security-audit' },
     ],
   },
 ];
@@ -194,13 +253,13 @@ function SubSidebarNavItem({
           onClick={onClick}
           className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 cursor-pointer ${
             isActive
-              ? 'bg-orange-50 text-orange-700 border border-orange-200'
+              ? 'bg-[#F37021]/10 text-[#F37021] border border-[#F37021]/20'
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
           }`}
         >
           <Icon
             className={`w-4 h-4 shrink-0 ${
-              isActive ? 'text-orange-600' : 'text-gray-400'
+              isActive ? 'text-[#F37021]' : 'text-gray-400'
             }`}
           />
           <span className="flex-1 text-left truncate">{item.label}</span>
@@ -212,7 +271,7 @@ function SubSidebarNavItem({
             </span>
           )}
           {isActive && (
-            <ChevronRight className="w-3 h-3 text-orange-500 shrink-0" />
+            <ChevronRight className="w-3 h-3 text-[#F37021] shrink-0" />
           )}
         </button>
       </TooltipTrigger>
@@ -238,7 +297,7 @@ function SubSidebarContent({
     <div className="flex flex-col h-full">
       {/* Logo Area */}
       <div className="p-3 flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F37021] to-[#FFB347] text-white flex items-center justify-center shrink-0">
           <Megaphone className="w-4 h-4" />
         </div>
         <div className="flex-1 min-w-0">
@@ -330,7 +389,7 @@ export default function MarketingHubShell({ children }: MarketingHubShellProps) 
               onClick={() => setActiveView(item.view)}
               className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium transition-colors cursor-pointer ${
                 activeView === item.view
-                  ? 'bg-orange-500 text-white'
+                  ? 'bg-[#F37021] text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >

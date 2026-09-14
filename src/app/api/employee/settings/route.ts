@@ -11,6 +11,11 @@ import { withAuth, logAuditAction } from '@/lib/auth-middleware';
 
 export async function GET(request: Request) {
   return withAuth(async (_request, auth) => {
+    // RBAC: block student/partner from employee APIs
+    const _blockedTypes = ['STUDENT','student','PARTNER','partner'];
+    if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
+      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    }
     try {
       const user = await db.portalUser.findUnique({
         where: { id: auth.userId },

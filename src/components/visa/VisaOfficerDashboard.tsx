@@ -16,6 +16,7 @@ import {
   Globe, FileCheck, PhoneCall
 } from 'lucide-react';
 import { toast } from 'sonner';
+import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 export default function VisaOfficerDashboard() {
   const { user, token, setView } = usePortalStore();
@@ -171,6 +172,7 @@ export default function VisaOfficerDashboard() {
 
   return (
     <div className="space-y-6 bg-slate-50/50 min-h-screen p-4 lg:p-6">
+      <DashboardCommunicationWidget role="VISA_OFFICER" unreadCount={4} slaOverdueCount={1} onNavigateToInbox={() => window.location.href='/crm/communications/inbox'} />
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
         <div>

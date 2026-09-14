@@ -7,7 +7,7 @@
 import { db } from '@/lib/db';
 
 export const SLA_DEFAULTS = {
-  COUNSELOR_MINUTES: 30,
+  COUNSELOR_MINUTES: 40,
   MANAGER_MINUTES: 20,
   CEO_MINUTES: 10,
 };

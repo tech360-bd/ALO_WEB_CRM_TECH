@@ -81,12 +81,12 @@ export async function GET(request: NextRequest) {
             status: a.stage
           })),
           kpis: {
-            totalLeads: String(totalLeads || 18),
-            totalStudents: String(totalStudents || 12),
-            hotLeadsCount: String(hotLeads.length || 6),
-            pendingTasksCount: String(pendingTasksCount || 4),
+            totalLeads: String(totalLeads),
+            totalStudents: String(totalStudents),
+            hotLeadsCount: String(hotLeads.length),
+            pendingTasksCount: String(pendingTasksCount),
             profileCompletion: '92%',
-            applicationReadyCount: String(applicationReady.length || 5)
+            applicationReadyCount: String(applicationReady.length)
           }
         }
       });

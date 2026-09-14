@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET — AI agent registry (Central AI Command Center)
-export async function GET() {
+// GET — AI agent registry (Central AI Command Center) — auth required (SEC-10)
+export async function GET(request: Request) {
+  const { authenticateRequest } = await import('@/lib/auth-middleware');
+  const auth = await authenticateRequest(request);
+  if (auth instanceof NextResponse) return auth;
   const agents = await db.aiAgentRegistry.findMany({ orderBy: { agentType: "asc" } });
   return NextResponse.json({
     agents,
@@ -18,8 +21,14 @@ export async function GET() {
   });
 }
 
-// PATCH — toggle agent status
+// PATCH — toggle agent status (admin only)
 export async function PATCH(req: NextRequest) {
+  const { authenticateRequest } = await import('@/lib/auth-middleware');
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  if (!auth.roles.some((r: string) => ['super_admin','admin','SUPER_ADMIN','ADMIN'].includes(r))) {
+    return NextResponse.json({ error: 'Forbidden: admin required' }, { status: 403 });
+  }
   const body = await req.json();
   const { id, status } = body;
   const agent = await db.aiAgentRegistry.update({ where: { id }, data: { status } });

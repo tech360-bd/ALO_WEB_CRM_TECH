@@ -27,19 +27,20 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 
 /* ------------------------------------------------------------------ */
 /*  DATA (defaults – overridden by API when available)                 */
 /* ------------------------------------------------------------------ */
 
 const DEFAULT_DESTINATIONS = [
-  { label: 'United Kingdom', href: '/destinations/uk' },
-  { label: 'USA', href: '/destinations/usa' },
+  { label: 'United Kingdom', href: '/destinations/united-kingdom' },
+  { label: 'United States', href: '/destinations/usa' },
   { label: 'Canada', href: '/destinations/canada' },
   { label: 'Australia', href: '/destinations/australia' },
   { label: 'Ireland', href: '/destinations/ireland' },
   { label: 'New Zealand', href: '/destinations/new-zealand' },
-  { label: 'Dubai / UAE', href: '/destinations/dubai' },
+  { label: 'Dubai / UAE', href: '/destinations/dubai-uae' },
   { label: 'More Countries', href: '/destinations' },
 ];
 
@@ -66,11 +67,13 @@ const languagePrepItems = [
 const resourceItems = [
   { label: 'Blogs', href: '/blog' },
   { label: 'Articles', href: '/resources/articles' },
-  { label: 'Scholarships', href: '/scholarships' },
+  { label: 'Scholarships by Country', href: '/scholarships' },
   { label: 'Visa Guides', href: '/visa-support' },
   { label: 'Success Stories', href: '/success-stories' },
   { label: 'Application Tips', href: '/application-process' },
-  { label: 'Pre-Departure', href: '/resources/pre-departure' },
+  { label: 'Pre-Departure Guides', href: '/resources/pre-departure' },
+  { label: 'Accommodation Support', href: '/resources/accommodation' },
+  { label: 'Financial Planning', href: '/resources/financial-planning' },
   { label: 'FAQs', href: '/faqs' },
 ];
 
@@ -179,30 +182,58 @@ export default function PublicNavbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [destinations, setDestinations] = useState(DEFAULT_DESTINATIONS);
+  const [langItems, setLangItems] = useState(languagePrepItems);
 
-  // Load destinations from API (unique countries from universities)
+  // Load destinations from countries table (status=active) via /api/website/homepage — fallback to DEFAULT_DESTINATIONS
   useEffect(() => {
-    fetch('/api/universities?limit=200')
+    fetch('/api/website/homepage')
       .then(r => r.json())
       .then(data => {
-        if (data.universities?.length) {
-          const countryMap = new Map<string, number>();
-          data.universities.forEach((u: { country: string }) => {
-            if (u.country) {
-              const key = u.country.trim();
-              if (!countryMap.has(key)) countryMap.set(key, 1);
-            }
-          });
-          if (countryMap.size > 0) {
-            const apiDests = Array.from(countryMap.keys()).sort().map(country => ({
-              label: country,
-              href: `/destinations/${country.toLowerCase().replace(/\s+/g, '-')}`,
+        const countries = data.countries || data.data?.countries || [];
+        if (Array.isArray(countries) && countries.length > 0) {
+          const active = countries.filter((c: any) => !c.status || c.status === 'active');
+          if (active.length > 0) {
+            const first7 = active.slice(0, 7).map((c: any) => ({
+              label: c.name,
+              href: `/destinations/${c.slug}`,
             }));
-            setDestinations(apiDests);
+            const hasMore = active.length > 7;
+            setDestinations(hasMore ? [...first7, { label: 'More Countries', href: '/destinations' }] : first7);
+            return;
           }
         }
+        // Fallback to universities endpoint if homepage empty
+        return fetch('/api/universities?limit=200').then(r=>r.json()).then(uData=>{
+          if (uData.universities?.length) {
+            const countryMap = new Map<string, number>();
+            uData.universities.forEach((u: { country: string }) => {
+              if (u.country) { const key = u.country.trim(); if (!countryMap.has(key)) countryMap.set(key, 1); }
+            });
+            if (countryMap.size > 0) {
+              const apiDests = Array.from(countryMap.keys()).sort().map(country => ({
+                label: country,
+                href: `/destinations/${country.toLowerCase().replace(/\s+/g, '-').replace(/\//g,'-')}`,
+              }));
+              setDestinations(apiDests);
+            }
+          }
+        });
       })
       .catch(() => { /* keep DEFAULT_DESTINATIONS */ });
+  }, []);
+
+  // Load language prep dynamically from english_tests if available
+  useEffect(() => {
+    fetch('/api/website/homepage')
+      .then(r=>r.json())
+      .then(data=>{
+        const tests = data.englishTests || data.data?.englishTests || [];
+        if (Array.isArray(tests) && tests.length > 0) {
+          const mapped = tests.map((t: any)=>({ label: t.name, href: `/language-prep/${t.slug}` }));
+          // append comparison + view all
+          setLangItems([...mapped, { label: 'English Test Comparison', href: '/language-prep/comparison' }, { label: 'View All Test Prep →', href: '/language-prep' }]);
+        }
+      }).catch(()=>{});
   }, []);
 
   const closeMobile = () => setMobileOpen(false);
@@ -217,6 +248,16 @@ export default function PublicNavbar() {
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-sm"
     >
+      {/* Branded top contact bar — header/topbar placement for 3 high-conversion buttons */}
+      <div className="hidden md:flex w-full bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 sm:px-6 lg:px-8 py-2 items-center justify-between">
+        <div className="text-[11px] text-slate-600 flex items-center gap-2">
+          <span className="hidden lg:inline">✈️ 24/7 Student Support • Office: Barek Mansion-02, Panthapath, Dhaka</span>
+          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:text-[#E8501A] underline font-medium">Maps</a>
+          <span className="text-slate-300">|</span>
+          <span className="font-medium text-[#0F172A]">Senior Counselor Al Aminn: 01805020101</span>
+        </div>
+        <WebsiteActionButtons variant="header" />
+      </div>
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* LOGO */}
         <Link href="/" className="flex items-center gap-2 group">
@@ -253,7 +294,7 @@ export default function PublicNavbar() {
             onMouseLeave={handleDesktopLeave}
           >
             <div className="grid grid-cols-2 gap-x-6 gap-y-1 w-[460px]">
-              {languagePrepItems.map((item) => (
+              {langItems.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
             </div>
@@ -360,7 +401,7 @@ export default function PublicNavbar() {
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="grid grid-cols-1 gap-0.5 pl-4">
-                            {languagePrepItems.map((item) => (
+                            {langItems.map((item) => (
                               <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
                             ))}
                           </div>
@@ -394,12 +435,18 @@ export default function PublicNavbar() {
                       </AccordionItem>
                     </Accordion>
 
-                    <div className="mt-4 pt-4 border-t border-[#E2E8F0]">
+                    <div className="mt-4 pt-4 border-t border-[#E2E8F0] space-y-3">
                       <Link href="/book-consultation" onClick={closeMobile} className="block">
                         <Button className="w-full bg-[#E8501A] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
                           Book Free Consultation
                         </Button>
                       </Link>
+                      {/* Mobile 3-button compact placement — high-conversion, no overlap with nav */}
+                      <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 space-y-2">
+                        <p className="text-[11px] font-bold uppercase tracking-widest text-[#0057B8]">Get Instant Help</p>
+                        <WebsiteActionButtons variant="compact" className="justify-start" />
+                        <p className="text-[11px] text-slate-500 leading-snug">Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0057B8] underline">Maps</a> • Al Aminn 01805020101</p>
+                      </div>
                     </div>
                   </div>
                 </SheetContent>

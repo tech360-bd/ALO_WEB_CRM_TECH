@@ -2134,15 +2134,32 @@ model EmployeeHRProfile {
 }
 
 model EmployeeAttendance {
-  id          String   @id @default(cuid())
-  employeeId  String
-  date        String
-  checkIn     String   @default("")
-  checkOut    String   @default("")
-  status      String   @default("present")
-  hoursWorked Float    @default(0)
-  note        String   @default("")
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  employeeId    String
+  date          String   // YYYY-MM-DD
+  clockIn       String   @default("")
+  clockOut      String   @default("")
+  checkIn       String   @default("")
+  checkOut      String   @default("")
+  status        String   @default("present") // present, late, absent, half_day, holiday, leave, weekend
+  workingHours  Float    @default(8)
+  hoursWorked   Float    @default(0)
+  idleTime      Float    @default(0) // minutes
+  lateMinutes   Int      @default(0)
+  isLate        Boolean  @default(false)
+  isHoliday     Boolean  @default(false)
+  leaveId       String   @default("")
+  note          String   @default("")
+  ipAddress     String   @default("")
+  device        String   @default("")
+  isManual      Boolean  @default(false)
+  approvedBy    String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([date])
+  @@index([status])
 }
 
 model EmployeeSalary {
@@ -3687,16 +3704,35 @@ model EmployeeEmergencyContact {
 // EMPLOYEE DOCUMENTS (HR docs, NID, passport, etc.)
 // ==========================================
 model EmployeeDocument {
-  id           String   @id @default(cuid())
-  employeeId   String
-  documentType String   @default("")
-  filePath     String   @default("")
-  fileName     String   @default("")
-  status       String   @default("pending")
-  reviewerId   String   @default("")
-  reviewNote   String   @default("")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String   @id @default(cuid())
+  employeeId    String
+  documentType  String   @default("") // passport, nid, photo, cv, certificate, experience_letter, appointment_letter, etc 20 types
+  title         String   @default("")
+  filePath      String   @default("")
+  fileName      String   @default("")
+  fileSize      Int      @default(0)
+  fileHash      String   @default("")
+  mimeType      String   @default("")
+  isMandatory   Boolean  @default(false)
+  isVerified    Boolean  @default(false)
+  status        String   @default("pending") // pending, approved, rejected, expired
+  version       Int      @default(1)
+  expiryDate    String   @default("")
+  reviewerId    String   @default("")
+  reviewNote    String   @default("")
+  uploadedBy    String   @default("")
+  isDeleted     Boolean  @default(false)
+  deletedAt     DateTime?
+  deletedBy     String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  versions EmployeeDocumentVersion[]
+
+  @@index([employeeId])
+  @@index([documentType])
+  @@index([isMandatory])
+  @@index([status])
 }
 
 // ==========================================
@@ -3795,6 +3831,9 @@ model PartnerMarketingUsage {
   postsPublished Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  @@unique([partnerId, monthYear])
+  @@index([partnerId])
 }
 
 // ==========================================
@@ -4739,23 +4778,33 @@ model EmployeeLeave {
 }
 
 model EmployeeLeaveBalance {
-  id               String   @id @default(cuid())
-  employeeId       String   @unique
-  year             String   @default("")
-  casualTotal      Int      @default(10)
-  casualUsed       Int      @default(0)
-  casualRemaining  Int      @default(10)
-  annualTotal      Int      @default(15)
-  annualUsed       Int      @default(0)
-  annualRemaining  Int      @default(15)
-  medicalTotal     Int      @default(10)
-  medicalUsed      Int      @default(0)
-  medicalRemaining Int      @default(10)
-  lwpTotal         Int      @default(0)
-  lwpUsed          Int      @default(0)
-  compOffTotal     Int      @default(0)
-  compOffUsed      Int      @default(0)
-  updatedAt        DateTime @updatedAt
+  id                String   @id @default(cuid())
+  employeeId        String   @unique
+  year              String   @default("")
+  casualTotal       Int      @default(10)
+  casualUsed        Int      @default(0)
+  casualRemaining   Int      @default(10)
+  annualTotal       Int      @default(15)
+  annualUsed        Int      @default(0)
+  annualRemaining   Int      @default(15)
+  medicalTotal      Int      @default(12)
+  medicalUsed       Int      @default(0)
+  medicalRemaining  Int      @default(12)
+  maternityTotal    Int      @default(120)
+  maternityUsed     Int      @default(0)
+  maternityRemaining Int     @default(120)
+  paternityTotal    Int      @default(7)
+  paternityUsed     Int      @default(0)
+  paternityRemaining Int     @default(7)
+  lwpTotal          Int      @default(0)
+  lwpUsed           Int      @default(0)
+  compOffTotal      Int      @default(0)
+  compOffUsed       Int      @default(0)
+  compOffRemaining  Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  @@index([employeeId])
+  @@index([year])
 }
 
 model EmployeePayroll {
@@ -8082,37 +8131,95 @@ model EmailSync {
 }
 
 model EmployeeHR {
-  id                 String   @id @default(cuid())
-  userId             String   @unique
-  employeeId         String   @unique // AE-EMP-XXXXX
-  officialEmail      String
-  officialPhone      String
-  branch             String   @default("Dhaka HQ")
-  designation        String
-  department         String
-  joiningDate        String
-  employmentType     String   @default("FULL_TIME") // FULL_TIME, PART_TIME, CONTRACT, PROBATION
-  status             String   @default("ACTIVE") // ACTIVE, ON_LEAVE, RESIGNED, TERMINATED
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  employeeId           String   @unique // AE-EMP-XXXXX
+  officialEmail        String
+  officialPhone        String
+  personalEmail        String   @default("")
+  phone                String   @default("")
+  photo                String   @default("")
+  fullName             String   @default("")
+  fatherName           String   @default("")
+  motherName           String   @default("")
+  gender               String   @default("") // Male, Female, Other
+  dob                  String   @default("") // YYYY-MM-DD
+  nationality          String   @default("Bangladeshi")
+  religion             String   @default("")
+  bloodGroup           String   @default("")
+  maritalStatus        String   @default("") // Single, Married, Divorced, Widowed
+  nidNumber            String   @default("")
+  passportNumber       String   @default("")
+  passportExpiry       String   @default("")
+  tinNumber            String   @default("")
+  drivingLicense       String   @default("")
+  presentAddress       String   @default("") @db.Text
+  permanentAddress     String   @default("") @db.Text
+  emergencyContactName String   @default("")
+  emergencyContactPhone String  @default("")
+  emergencyRelation    String   @default("")
+  bankName             String   @default("")
+  bankAccount          String   @default("")
+  bankBranch           String   @default("")
+  bankRouting          String   @default("")
+  mobileBankingType    String   @default("") // bKash, Nagad, Rocket
+  mobileBankingNumber  String   @default("")
+  branch               String   @default("Dhaka HQ")
+  officeId             String   @default("")
+  designation          String
+  department           String
+  employmentType       String   @default("FULL_TIME") // FULL_TIME, PART_TIME, CONTRACT, PROBATION
+  employeeType         String   @default("PERMANENT")
+  employmentStatus     String   @default("ACTIVE") // ACTIVE, PROBATION, CONFIRMED, ON_LEAVE, RESIGNED, TERMINATED
+  status               String   @default("ACTIVE") // ACTIVE, ON_LEAVE, RESIGNED, TERMINATED
+  joiningDate          String
+  confirmationDate     String   @default("")
+  probationEndDate     String   @default("")
+  probationMonths      Int      @default(6)
   // Salary & compensation (private — visible only with permission)
-  baseSalary         Float    @default(0)
-  salaryCurrency     String   @default("BDT")
+  salaryGrade          String   @default("G7")
+  grossSalary          Float    @default(0)
+  baseSalary           Float    @default(0)
+  allowances           Float    @default(0)
+  houseRent            Float    @default(0)
+  medicalAllowance     Float    @default(0)
+  conveyanceAllowance  Float    @default(0)
+  taxDeduction         Float    @default(0)
+  pfDeduction          Float    @default(0)
+  pfRate               Float    @default(8)
+  insurance            Float    @default(0)
+  salaryCurrency       String   @default("BDT")
+  workingHours         String   @default("9:00 AM - 6:00 PM")
+  shift                String   @default("Day")
+  weekOff              String   @default("Friday")
   // Performance
-  performanceScore   Float    @default(0) // 0-100
-  targetLeads        Int      @default(0)
-  achievedLeads      Int      @default(0)
-  targetConversion   Float    @default(0)
-  achievedConversion Float    @default(0)
+  performanceScore     Float    @default(0) // 0-100
+  targetLeads          Int      @default(0)
+  achievedLeads        Int      @default(0)
+  targetConversion     Float    @default(0)
+  achievedConversion   Float    @default(0)
   // Manager
-  managerId          String?
-  // Documents
-  documents          String   @default("[]") // JSON array of {name, type, uploadedAt}
-  warnings           String   @default("[]") // JSON
-  managerFeedback    String   @default("[]") // JSON
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  managerId            String?
+  reportingManagerId   String   @default("")
+  // Meta
+  skills               String   @default("[]") // JSON array
+  languages            String   @default("[]") // JSON array {name, level}
+  isDeleted            Boolean  @default(false)
+  deletedAt            DateTime?
+  deletedBy            String   @default("")
+  version              Int      @default(1)
+  documents            String   @default("[]") // JSON array of {name, type, uploadedAt}
+  warnings             String   @default("[]") // JSON
+  managerFeedback      String   @default("[]") // JSON
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   @@index([userId])
+  @@index([employeeId])
   @@index([branch])
+  @@index([department])
+  @@index([status])
+  @@index([employmentStatus])
 }
 
 model EscalationEvent {
@@ -9421,6 +9528,233 @@ model AgentSchedule {
   nextRunAt DateTime?
   agent AgentDefinition @relation(fields: [agentId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+
+// =============================================================================
+// HRMS ENTERPRISE — EXTENDED NORMALIZED TABLES (2025-09-15)
+// =============================================================================
+
+model HrmEmployeeExperience {
+  id          String   @id @default(cuid())
+  employeeId  String
+  company     String   @default("")
+  designation String   @default("")
+  fromDate    String   @default("") // YYYY-MM-DD
+  toDate      String   @default("")
+  isCurrent   Boolean  @default(false)
+  description String   @default("") @db.Text
+  certificatePath String @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([employeeId])
+}
+
+model HrmEmployeeSkill {
+  id         String   @id @default(cuid())
+  employeeId String
+  name       String
+  level      String   @default("intermediate") // beginner, intermediate, advanced, expert
+  category   String   @default("general")
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  @@unique([employeeId, name])
+  @@index([employeeId])
+}
+
+model HrmEmployeeLanguage {
+  id         String   @id @default(cuid())
+  employeeId String
+  name       String   // English, Bangla, Hindi etc
+  reading    String   @default("good")
+  writing    String   @default("good")
+  speaking   String   @default("good")
+  overall    String   @default("intermediate")
+  certificatePath String @default("")
+  createdAt  DateTime @default(now())
+  @@index([employeeId])
+}
+
+model HrmAttendanceHoliday {
+  id        String   @id @default(cuid())
+  date      String   @unique // YYYY-MM-DD
+  title     String
+  type      String   @default("public") // public, weekly, company
+  isHoliday Boolean  @default(true)
+  createdAt DateTime @default(now())
+  @@index([date])
+}
+
+model HrmPayrollConfig {
+  id               String   @id @default(cuid())
+  employeeId       String   @unique
+  salaryGrade      String   @default("G7")
+  grossSalary      Float    @default(0)
+  basicPercent     Float    @default(60)
+  houseRentPercent Float    @default(30)
+  medicalPercent   Float    @default(10)
+  taxSlab          String   @default("general")
+  pfEnabled        Boolean  @default(true)
+  pfRate           Float    @default(8)
+  insuranceAmount  Float    @default(0)
+  updatedBy        String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  @@index([employeeId])
+}
+
+model HrmPayrollRun {
+  id            String   @id @default(cuid())
+  monthYear     String   // YYYY-MM
+  totalEmployees Int     @default(0)
+  totalGross    Float    @default(0)
+  totalDeductions Float  @default(0)
+  totalNet      Float    @default(0)
+  status        String   @default("draft") // draft, reviewed, approved, paid, cancelled
+  preparedBy    String   @default("")
+  reviewedBy    String   @default("")
+  approvedBy    String   @default("")
+  paidAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  @@unique([monthYear])
+  @@index([status])
+}
+
+model HrmNotice {
+  id                  String    @id @default(cuid())
+  employeeId          String
+  noticeType          String    // RESIGNATION, TERMINATION, ABSCONDING
+  noticeDate          String    // YYYY-MM-DD
+  noticePeriodDays    Int       @default(90)
+  lastWorkingDay      String    // YYYY-MM-DD
+  remainingDays       Int       @default(90)
+  reason              String    @default("") @db.Text
+  handoverChecklist   String    @default("[]") // JSON
+  assetReturnStatus   String    @default("PENDING")
+  clearanceStatus     String    @default("PENDING")
+  finalSettlementStatus String  @default("PENDING")
+  finalSettlementAmount Float   @default(0)
+  status              String    @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED, REVOKED
+  createdBy           String    @default("")
+  approvedBy          String    @default("")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  @@index([employeeId])
+  @@index([status])
+  @@index([noticeDate])
+}
+
+model HrmExit {
+  id                    String    @id @default(cuid())
+  employeeId            String    @unique
+  exitType              String    // RESIGNATION, TERMINATION, ABSCONDING
+  exitDate              String
+  exitInterviewDate     String    @default("")
+  exitInterviewNotes    String    @default("") @db.Text
+  exitInterviewConducted Boolean  @default(false)
+  clearanceStatus       String    @default("PENDING")
+  clearanceChecklist    String    @default("[]")
+  finalSettlement       Float     @default(0)
+  experienceLetterPath  String    @default("")
+  relievingLetterPath   String    @default("")
+  status                String    @default("PENDING") // PENDING, CLEARED, COMPLETED
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  @@index([exitType])
+  @@index([status])
+}
+
+model HrmDeviceLog {
+  id         String   @id @default(cuid())
+  deviceId   String
+  employeeId String
+  action     String   // assigned, returned, lost, damaged, repaired
+  condition  String   @default("good")
+  note       String   @default("")
+  actedBy    String   @default("")
+  createdAt  DateTime @default(now())
+  @@index([deviceId])
+  @@index([employeeId])
+}
+
+model HrmLoginSecurityExtended {
+  id                String   @id @default(cuid())
+  userId            String
+  employeeId        String   @default("")
+  ipAddress         String
+  browser           String   @default("")
+  operatingSystem   String   @default("")
+  deviceFingerprint String   @default("")
+  device            String   @default("")
+  location          String   @default("")
+  city              String   @default("")
+  country           String   @default("")
+  loginAt           DateTime @default(now())
+  logoutAt          DateTime?
+  success           Boolean  @default(true)
+  failureReason     String   @default("")
+  sessionId         String   @default("")
+  createdAt         DateTime @default(now())
+  @@index([userId])
+  @@index([employeeId])
+  @@index([ipAddress])
+  @@index([createdAt])
+}
+
+model HrmAuditLog {
+  id          String   @id @default(cuid())
+  employeeId  String   @default("")
+  actorId     String
+  actorRole   String   @default("")
+  action      String   // CREATE, UPDATE, DELETE, VIEW, APPROVE, REJECT, PAYROLL_GENERATE etc
+  entityType  String   // EmployeeHR, Attendance, Leave, Payroll, Device, Document etc
+  entityId    String   @default("")
+  oldValue    String   @default("{}") @db.LongText
+  newValue    String   @default("{}") @db.LongText
+  ipAddress   String   @default("")
+  userAgent   String   @default("")
+  createdAt   DateTime @default(now())
+  @@index([employeeId])
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model HrmNotification {
+  id            String    @id @default(cuid())
+  recipientId   String
+  recipientRole String    @default("EMPLOYEE")
+  title         String
+  message       String    @db.Text
+  category      String    @default("HR") // JOINING, CONFIRMATION, INCREMENT, PROMOTION, DOCUMENT_EXPIRY, BIRTHDAY, ANNIVERSARY, PAYROLL_READY, SALARY_PAID
+  priority      String    @default("NORMAL")
+  isRead        Boolean   @default(false)
+  actionUrl     String    @default("")
+  metadata      String    @default("{}")
+  sentAt        DateTime  @default(now())
+  readAt        DateTime?
+  createdAt     DateTime  @default(now())
+  @@index([recipientId])
+  @@index([isRead])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model HrmHrPolicy {
+  id          String   @id @default(cuid())
+  title       String
+  category    String   // HR_POLICY, COMPANY_POLICY, LEAVE_POLICY, SALARY_POLICY, NOTICE_POLICY, PF_POLICY, GRATUITY_POLICY, SECURITY_POLICY, CONFIDENTIALITY_POLICY
+  content     String   @db.LongText
+  version     Int      @default(1)
+  fileUrl     String   @default("")
+  status      String   @default("active") // active, archived, draft
+  createdBy   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([category])
+  @@index([status])
 }
 
 model ApplicationPaymentInstruction {

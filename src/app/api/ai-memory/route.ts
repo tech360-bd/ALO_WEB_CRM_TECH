@@ -74,8 +74,23 @@ function toMemory(data: NonNullable<Awaited<ReturnType<typeof loadStudentMemory>
 }
 
 export async function GET(req: NextRequest) {
+  const { authenticateRequest } = await import('@/lib/auth-middleware');
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
   const studentId = req.nextUrl.searchParams.get("studentId");
   if (!studentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
+  // Object-level: students can only view own memory; staff can view assigned/any with role
+  const isStudent = (auth as any).roles?.includes('STUDENT') || (auth as any).roles?.includes('student');
+  // Simplified check: if STUDENT role and requested id != user's linked student, deny unless staff
+  const allowedRoles = ['super_admin','admin','counselor','senior_counselor','application_team','SUPER_ADMIN','ADMIN','COUNSELOR'];
+  const isStaff = (auth as any).roles?.some((r: string) => allowedRoles.includes(r));
+  if (isStudent && !isStaff) {
+    // Student must match own id; fetch linked student for this user
+    const linked = await db.student.findFirst({ where: { userId: (auth as any).userId } }).catch(() => null);
+    if (!linked || linked.id !== studentId) {
+      return NextResponse.json({ error: 'Forbidden: not your record' }, { status: 403 });
+    }
+  }
 
   const data = await loadStudentMemory(studentId);
   if (!data) return NextResponse.json({ error: "Student not found" }, { status: 404 });
@@ -84,9 +99,22 @@ export async function GET(req: NextRequest) {
 
 // AI explains next step based on student data (memory)
 export async function POST(req: NextRequest) {
+  const { authenticateRequest } = await import('@/lib/auth-middleware');
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
   const body = await req.json();
   const { studentId, question } = body;
   if (!studentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
+  // Reuse same object-level check as GET
+  const allowedRoles = ['super_admin','admin','counselor','senior_counselor','application_team','SUPER_ADMIN','ADMIN','COUNSELOR'];
+  const isStaff = (auth as any).roles?.some((r: string) => allowedRoles.includes(r));
+  const isStudentRole = (auth as any).roles?.includes('STUDENT') || (auth as any).roles?.includes('student');
+  if (isStudentRole && !isStaff) {
+    const linked = await db.student.findFirst({ where: { userId: (auth as any).userId } }).catch(() => null);
+    if (!linked || linked.id !== studentId) {
+      return NextResponse.json({ error: 'Forbidden: not your record' }, { status: 403 });
+    }
+  }
 
   const data = await loadStudentMemory(studentId);
   if (!data) return NextResponse.json({ error: "Student not found" }, { status: 404 });

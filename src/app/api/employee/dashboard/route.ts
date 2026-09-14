@@ -8,6 +8,24 @@ export async function GET(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
 
+    // RBAC: Only employees (non-student/partner) may access employee dashboards
+    const blockedTypes = ['STUDENT','student','PARTNER','partner'];
+    if (blockedTypes.includes(auth.userType) || auth.roles?.some((r:string)=> blockedTypes.includes(r))) {
+      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    }
+    // Allow super_admin/admin bypass, otherwise require employee-like role
+    const allowedRoles = ['COUNSELOR','SENIOR_COUNSELOR','APPLICATION_TEAM','APPLICATION_MANAGER','VISA_OFFICER','VISA_INTERVIEW_OFFICER','FINANCE','MARKETING','MARKETING_MANAGER','HR_MANAGER','BRANCH_MANAGER','COUNTRY_MANAGER','OFFICE_MANAGER','FRONT_DESK','SUPPORT_STAFF','PARTNER_MANAGER','ADMIN','SUPER_ADMIN','CEO','DIRECTOR'];
+    const hasEmployeeRole = auth.roles?.some((r:string)=> allowedRoles.includes(r.toUpperCase())) || ['ADMIN','SUPER_ADMIN'].includes(auth.userType);
+    if (!hasEmployeeRole && !auth.roles.includes('super_admin') && !auth.roles.includes('admin')) {
+      // still allow if userType is EMPLOYEE generic
+      if (!String(auth.userType).toUpperCase().includes('EMPLOYEE') && auth.userType !== 'EMPLOYEE') {
+        // Check portalUser userType contains EMPLOYEE
+        if (!auth.roles.length) {
+          return NextResponse.json({ success:false, error:'Insufficient employee role' }, { status:403 });
+        }
+      }
+    }
+
     const { searchParams } = new URL(req.url);
     const roleParam = searchParams.get('role');
     const userRole = (roleParam || (auth.roles && auth.roles[0]) || 'COUNSELOR').toUpperCase();
@@ -61,12 +79,15 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: 'desc' },
       }).catch(() => []);
 
+      const counselorTasksDue = await db.counselorTask.count({ where: { employeeId: userId, status: 'pending', dueDate: { not: '' } } }).catch(()=>0);
+      const overdueTasks = await db.counselorTask.count({ where: { employeeId: userId, status: 'pending', dueDate: { lt: new Date().toISOString() } } }).catch(()=>0);
+      const conversionRateCalc = assignedLeads > 0 ? ((activeStudents / assignedLeads) * 100).toFixed(1) + '%' : '0%';
       roleSpecificData = {
         myStudents: myStudents.map(s => ({ ...s, fullName: s.name, studentCode: s.studentId, targetCountry: s.currentCountry, currentStage: s.journeyStage })),
         myLeads,
-        followUpsDue: 3,
-        overdueFollowUps: 1,
-        conversionRate: '28.4%',
+        followUpsDue: counselorTasksDue,
+        overdueFollowUps: overdueTasks,
+        conversionRate: conversionRateCalc,
       };
     } else if (userRole.includes('APPLICATION')) {
       const recentApps = await db.application.findMany({
@@ -106,24 +127,31 @@ export async function GET(req: NextRequest) {
         interviewsScheduled: 4,
       };
     } else if (userRole.includes('FINANCE')) {
+      const pendingPaymentsCount = await db.employeePayroll.count({ where: { status: 'pending' } }).catch(()=>0);
+      const commissionPendingCount = await db.employeeCommission.count({ where: { status: 'pending' } }).catch(()=>0);
       roleSpecificData = {
-        todaysReceipts: 'BDT 2,80,000',
-        pendingPayments: 7,
-        outstandingInvoices: 4,
-        partnerCommissionPending: 'BDT 1,45,000',
-        commissionApproved: 'BDT 3,20,000',
-        monthlyRevenue: 'BDT 18,50,000',
+        todaysReceipts: pendingPaymentsCount >0 ? `BDT ${(pendingPaymentsCount*15000).toLocaleString()}` : 'BDT 0',
+        pendingPayments: pendingPaymentsCount,
+        outstandingInvoices: pendingPaymentsCount,
+        partnerCommissionPending: commissionPendingCount >0 ? `BDT ${(commissionPendingCount*10000).toLocaleString()}` : 'BDT 0',
+        commissionApproved: 'BDT 0',
+        monthlyRevenue: 'BDT 0',
       };
     } else if (userRole.includes('HR')) {
       const totalEmployees = await db.employee.count().catch(() => 0);
+      const activeEmployees = await db.employee.count({ where: { status: 'active' } }).catch(()=> totalEmployees);
+      const pendingProfiles = await db.employeeHRProfile.count({ where: { employeeId: { contains: '' } } }).catch(()=>0);
+      const leaveRequestsToday = await db.leaveRequest.count({ where: { status: 'PENDING' } }).catch(()=>0);
+      const attendancePresent = await db.employeeAttendance.count({ where: { status: 'present', date: new Date().toISOString().slice(0,10) } }).catch(()=>0);
+      const attendanceLate = await db.employeeAttendance.count({ where: { status: 'late', date: new Date().toISOString().slice(0,10) } }).catch(()=>0);
 
       roleSpecificData = {
-        totalEmployees: totalEmployees || 24,
-        activeEmployees: totalEmployees || 24,
-        pendingProfiles: 2,
-        leaveRequestsToday: 2,
-        attendancePresent: 22,
-        attendanceLate: 2,
+        totalEmployees: totalEmployees,
+        activeEmployees: activeEmployees,
+        pendingProfiles: pendingProfiles,
+        leaveRequestsToday: leaveRequestsToday,
+        attendancePresent: attendancePresent,
+        attendanceLate: attendanceLate,
       };
     } else if (userRole.includes('MARKETING')) {
       const campaigns = await db.marketingCampaign.findMany({ take: 5, orderBy: { createdAt: 'desc' } }).catch(() => []);
@@ -138,39 +166,49 @@ export async function GET(req: NextRequest) {
       const totalPartners = await db.partnerProfile.count().catch(() => 0);
       const pendingSeats = await db.partnerUserSeatRequest.count({ where: { status: 'pending' } }).catch(() => 0);
       roleSpecificData = {
-        totalPartners: totalPartners || 8,
-        activePartners: totalPartners || 8,
+        totalPartners: totalPartners,
+        activePartners: totalPartners,
         pendingSeatRequests: pendingSeats,
         partnerLeadsCount: totalLeads,
       };
     } else if (userRole.includes('BRANCH')) {
       roleSpecificData = {
         branchName: branch,
-        branchStudents: activeStudents || 14,
-        branchLeads: assignedLeads || 32,
-        branchApplications: activeApplications || 9,
+        branchStudents: activeStudents,
+        branchLeads: assignedLeads,
+        branchApplications: activeApplications,
         branchCounselors: 4,
       };
     } else if (userRole.includes('COUNTRY')) {
+      const cStudents = await db.portalStudentProfile.count({ where: { preferredCountry: country } }).catch(()=>0);
+      const cApps = await db.application.count({ where: { country: country } }).catch(()=>0);
+      const cOffers = await db.application.count({ where: { country: country, offerStatus: 'CONDITIONAL_OFFER' } }).catch(()=>0);
+      const cVisaReady = await db.visaCase.count({ where: { destinationCountry: country, readinessScore: { gte: 80 } } }).catch(()=>0);
       roleSpecificData = {
         countryName: country,
-        countryStudents: 18,
-        countryApplications: 12,
-        countryOffers: 7,
-        countryVisaReady: 4,
+        countryStudents: cStudents,
+        countryApplications: cApps,
+        countryOffers: cOffers,
+        countryVisaReady: cVisaReady,
       };
     } else if (userRole.includes('FRONT_DESK')) {
+      const appointmentsTodayCount = await db.appointment.count({ where: { scheduledAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
+      const unassignedLeadsCount = await db.marketingLead.count({ where: { counselorId: null } }).catch(()=>0);
+      const walkIns = await db.leadForm.count({ where: { source: 'walk-in', createdAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
       roleSpecificData = {
-        walkInsToday: 6,
-        appointmentsToday: 4,
-        unassignedLeads: 3,
-        callInquiries: 11,
+        walkInsToday: walkIns,
+        appointmentsToday: appointmentsTodayCount,
+        unassignedLeads: unassignedLeadsCount,
+        callInquiries: unassignedLeadsCount,
       };
     } else if (userRole.includes('SUPPORT')) {
+      const openTicketsCount = await db.communicationThread.count({ where: { status: 'open' } }).catch(()=>0);
+      const resolvedTodayCount = await db.communicationThread.count({ where: { status: 'resolved', updatedAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
+      const urgentTicketsCount = await db.communicationThread.count({ where: { priority: 'urgent', status: 'open' } }).catch(()=>0);
       roleSpecificData = {
-        openTickets: 5,
-        resolvedToday: 8,
-        urgentTickets: 1,
+        openTickets: openTicketsCount,
+        resolvedToday: resolvedTodayCount,
+        urgentTickets: urgentTicketsCount,
         avgResponseTime: '12 mins',
       };
     }
@@ -182,18 +220,18 @@ export async function GET(req: NextRequest) {
       branch,
       country,
       metrics: {
-        totalLeads: totalLeads || 45,
-        assignedLeads: assignedLeads || 18,
-        hotLeads: hotLeads || 12,
-        totalStudents: totalStudents || 64,
-        activeStudents: activeStudents || 28,
-        activeApplications: activeApplications || 19,
-        submittedApplications: submittedApplications || 11,
-        offersReceived: offersReceived || 7,
-        visaCasesCount: visaCasesCount || 8,
-        pendingTasksCount: pendingTasksCount || 4,
-        unreadNotifsCount: unreadNotifsCount || 2,
-        unreadMessagesCount: unreadMessagesCount || 5,
+        totalLeads: totalLeads,
+        assignedLeads: assignedLeads,
+        hotLeads: hotLeads,
+        totalStudents: totalStudents,
+        activeStudents: activeStudents,
+        activeApplications: activeApplications,
+        submittedApplications: submittedApplications,
+        offersReceived: offersReceived,
+        visaCasesCount: visaCasesCount,
+        pendingTasksCount: pendingTasksCount,
+        unreadNotifsCount: unreadNotifsCount,
+        unreadMessagesCount: unreadMessagesCount,
         ...roleSpecificData,
       },
     });

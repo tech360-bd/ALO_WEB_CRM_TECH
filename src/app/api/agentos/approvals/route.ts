@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPendingApprovals, processApproval } from "@/lib/agentos/agent-service";
 
 export async function GET(req: NextRequest) {
+  const { authenticateRequest } = await import('@/lib/auth-middleware');
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
   try {
     const limit = parseInt(req.nextUrl.searchParams.get("limit") || "50", 10);
     const approvals = await getPendingApprovals(limit);
@@ -13,12 +16,17 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const { authenticateRequest } = await import('@/lib/auth-middleware');
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
   try {
     const body = await req.json();
-    const { approvalId, decision, reviewerId, notes } = body;
+    // reviewerId must match authenticated user (prevent impersonation) — SEC-10
+    const { approvalId, decision, notes } = body;
+    const reviewerId = (auth as any).userId;
 
-    if (!approvalId || !decision || !reviewerId) {
-      return NextResponse.json({ error: "approvalId, decision, and reviewerId are required" }, { status: 400 });
+    if (!approvalId || !decision) {
+      return NextResponse.json({ error: "approvalId and decision are required" }, { status: 400 });
     }
 
     if (decision !== "approved" && decision !== "rejected") {

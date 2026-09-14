@@ -154,11 +154,16 @@ interface BrandAsset {
   createdAt: string;
 }
 
+interface BrandKitData {
+  logoUrl?: string; logoName?: string; address?: string; phone?: string; whatsapp?: string; website?: string; primary?: string; cta?: string;
+}
 interface BrandAssetsResponse {
   assets: BrandAsset[];
   logo: { id: string; fileUrl: string; name: string } | null;
   logoExists: boolean;
   brandColors: { primary: string; cta: string; background: string; text: string };
+  brandKit?: BrandKitData | null;
+  logoVal?: any;
 }
 
 interface N8nWorkflow {
@@ -513,8 +518,23 @@ export function MarketingDashboard() {
             <TabsTrigger value="outreach" className="h-10 px-3 text-xs sm:text-sm">
               <Icon name="Megaphone" className="size-4" /> Lead Outreach
             </TabsTrigger>
-            <TabsTrigger value="access" className="h-10 px-3 text-xs sm:text-sm">
+                        <TabsTrigger value="access" className="h-10 px-3 text-xs sm:text-sm">
               <Icon name="ShieldCheck" className="size-4" /> User Access
+            </TabsTrigger>
+            <TabsTrigger value="library" className="h-10 px-3 text-xs sm:text-sm">
+              <Icon name="Library" className="size-4" /> Library / Repost
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="h-10 px-3 text-xs sm:text-sm">
+              <Icon name="BarChart3" className="size-4" /> Analytics
+            </TabsTrigger>
+            <TabsTrigger value="pipeline" className="h-10 px-3 text-xs sm:text-sm">
+              <Icon name="GitBranch" className="size-4" /> Lead Pipeline
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="h-10 px-3 text-xs sm:text-sm">
+              <Icon name="CalendarDays" className="size-4" /> Calendar
+            </TabsTrigger>
+            <TabsTrigger value="audit" className="h-10 px-3 text-xs sm:text-sm">
+              <Icon name="ScrollText" className="size-4" /> Audit Logs
             </TabsTrigger>
           </TabsList>
         </div>
@@ -542,6 +562,21 @@ export function MarketingDashboard() {
         </TabsContent>
         <TabsContent value="access">
           <UserAccessTab data={userAccess} onDataChanged={loadAll} />
+        </TabsContent>
+        <TabsContent value="library">
+          <LibraryRepostTab />
+        </TabsContent>
+        <TabsContent value="analytics">
+          <AnalyticsTab />
+        </TabsContent>
+        <TabsContent value="pipeline">
+          <LeadPipelineTab />
+        </TabsContent>
+        <TabsContent value="calendar">
+          <CalendarTab />
+        </TabsContent>
+        <TabsContent value="audit">
+          <AuditLogsTab />
         </TabsContent>
       </Tabs>
 
@@ -867,6 +902,14 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
       sendPortalLink: true,
     });
 
+  const seedDefaults = async () => {
+    try {
+      const r = await fetch("/api/marketing/keyword-triggers/seed", { method: "POST" });
+      const j = await r.json();
+      if (j.success) { toast({ title: `Seeded ${j.created} default triggers`, description: `${j.skipped} already existed — now ${j.total} spec keywords active.` }); onTriggersChanged(); }
+      else throw new Error(j.error);
+    } catch (e: any) { toast({ title: "Seed failed", description: e.message, variant: "destructive" }); }
+  };
   const saveTrigger = async () => {
     if (!form.keyword.trim() || !form.autoReplyText.trim()) {
       toast({ title: "Keyword and reply text required", variant: "destructive" });
@@ -1023,6 +1066,12 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </div>
+
+      {/* Spec 8 default triggers — one-click seed */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#0057B8]/20 bg-[#eef4ff] px-4 py-3">
+        <div><p className="text-sm font-bold text-[#0057B8]">Spec 8 Keyword Triggers</p><p className="text-[11px] text-muted-foreground">Study Abroad • IELTS • Visa • UK • Canada • Australia • Scholarship • Apply — auto-reply + DM + lead + portal link</p></div>
+        <Button size="sm" className="h-9 bg-[#0057B8] text-white" onClick={seedDefaults}><Icon name="Zap" className="size-3.5"/> Seed 8 Defaults</Button>
       </div>
 
       {/* Flow visualization */}
@@ -1199,8 +1248,34 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
     }
   };
 
+  // Auto-Pipeline state
+  const [autoIdea, setAutoIdea] = React.useState("");
+  const [autoImageUrl, setAutoImageUrl] = React.useState("");
+  const [autoRunning, setAutoRunning] = React.useState(false);
+  const runAutoPipeline = async ()=>{
+    if (!autoIdea.trim() && !autoImageUrl.trim()) { toast({ title: "একটি আইডিয়া বা একটি ইমেজ URL দিন", variant:"destructive"}); return; }
+    setAutoRunning(true);
+    try {
+      const res = await fetch("/api/marketing/auto-pipeline", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ idea: autoIdea, imageUrl: autoImageUrl || undefined, title: autoIdea.slice(0,60) || "ALO Campaign", platforms: ["FACEBOOK","INSTAGRAM","LINKEDIN","BLOG"], sizes: ["SQUARE","PORTRAIT","LANDSCAPE","STORY"] })});
+      const j = await res.json();
+      if (j.success) { toast({ title: "Auto-Pipeline done!", description: `${j.posts?.length||0} posts + ${j.assets?.length||0} images + Blog ${j.summary?.blogIncluded? "✓":"—"} — এখন Approve করুন` }); onDataChanged(); setAutoIdea(""); setAutoImageUrl(""); }
+      else throw new Error(j.error);
+    } catch(e:any){ toast({ title:"Pipeline failed", description:e.message, variant:"destructive"});} finally { setAutoRunning(false); }
+  };
   return (
     <div className="space-y-4">
+      {/* One-click Idea/Image → Content+Image+Video+Blog+All platforms */}
+      <Card className="rounded-2xl border-2 border-[#E8501A]/30 bg-gradient-to-br from-[#fff7f0] to-white">
+        <CardContent className="pt-5 space-y-3">
+          <div className="flex items-center gap-2"><div className="size-8 rounded-lg bg-[#E8501A] text-white flex items-center justify-center"><Icon name="Sparkles" className="size-4"/></div><div><p className="font-bold text-[#E8501A] text-sm">একটি আইডিয়া / একটি ইমেজ → সবকিছু অটো (One-Click)</p><p className="text-[11px] text-muted-foreground">Idea লিখুন বা Company image URL দিন — কন্টেন্ট + 4 সাইজ ইমেজ (SQUARE/PORTRAIT/LANDSCAPE/STORY) + Blog/Article + 7 প্ল্যাটফর্মে CampaignPost + Calendar + Google/FB লিড পাইপলাইন — Brand Kit (logo/address/phone/WhatsApp) auto-overlay</p></div></div>
+          <div className="grid md:grid-cols-[1fr_1fr_auto] gap-3">
+            <div className="space-y-1.5"><Label>আইডিয়া (text) *</Label><Input value={autoIdea} onChange={e=> setAutoIdea(e.target.value)} placeholder="যেমন: UK September intake — 5 scholarships without IELTS"/></div>
+            <div className="space-y-1.5"><Label>অথবা Company Image URL</Label><Input value={autoImageUrl} onChange={e=> setAutoImageUrl(e.target.value)} placeholder="https://cdn.alo-education.com/campus.jpg"/></div>
+            <div className="flex items-end"><Button className="h-11 bg-[#E8501A] text-white w-full md:w-auto" disabled={autoRunning} onClick={runAutoPipeline}><Icon name={autoRunning?"Loader2":"Wand2"} className={autoRunning?"size-4 animate-spin":"size-4"}/>{autoRunning?"Generating...":"Auto Generate & Publish Plan"}</Button></div>
+          </div>
+          <p className="text-[11px] text-muted-foreground">৯০ দিনে Top-3: প্রতিদিন এই বাটনে 1 Idea → 3-4 Post (Blog সহ) — 90 দিনে 90 Blog + 400+ social asset = Google indexing + internal link wheel auto.</p>
+        </CardContent>
+      </Card>
       {/* Mini stats */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {miniStats.map((s) => (
@@ -1640,6 +1715,9 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
           </CardContent>
         </Card>
       </div>
+
+      {/* Brand Contact Kit — Address / Phone / WhatsApp / Website — used for image/video overlay */}
+      <BrandKitEditor data={data} onDataChanged={onDataChanged} />
 
       {/* Other assets */}
       <SectionCard title="Other Brand Assets" icon="Files" description={`${otherAssets.length} templates, images, fonts, and color palettes`}>
@@ -2447,9 +2525,327 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
   );
 }
 
+function BrandKitEditor({ data, onDataChanged }: { data: BrandAssetsResponse | null; onDataChanged: () => void }) {
+  const { toast } = useToast();
+  const [saving, setSaving] = React.useState(false);
+  const kit = (data as any)?.brandKit as any || {};
+  const logo = (data as any)?.logo as any;
+  const [form, setForm] = React.useState({ logoUrl: "", logoName: "", address: "", phone: "", whatsapp: "", website: "", primary: "#0057B8", cta: "#E8501A" });
+  React.useEffect(()=> {
+    setForm({
+      logoUrl: kit.logoUrl || logo?.fileUrl || "",
+      logoName: kit.logoName || logo?.name || "",
+      address: kit.address || "House 12, Road 12, Dhanmondi, Dhaka-1209",
+      phone: kit.phone || "+8809611-123456",
+      whatsapp: kit.whatsapp || "+8801712345678",
+      website: kit.website || "https://alo-education.com",
+      primary: kit.primary || "#0057B8",
+      cta: kit.cta || "#E8501A",
+    });
+  }, [JSON.stringify(kit), logo?.fileUrl]);
+  const saveKit = async ()=> {
+    if (!form.logoUrl && !(data as any)?.logo) { toast({ title: "Logo URL required", variant:"destructive"}); return; }
+    setSaving(true);
+    try {
+      const res = await fetch("/api/marketing/brand-assets", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ assetType:"BRAND_KIT", name:"ALO Brand Kit", value: form })});
+      const j = await res.json();
+      if (j.asset) { toast({ title: "Brand Kit saved", description: "Logo/address/phone/WhatsApp will be auto-applied to every image/video" }); onDataChanged(); }
+      else throw new Error(j.error);
+    } catch { toast({ title:"Save failed", variant:"destructive"});} finally { setSaving(false); }
+  };
+  return (
+    <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#eef4ff]">
+      <CardContent className="pt-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div><p className="text-sm font-bold text-[#0057B8] flex items-center gap-2"><Icon name="BadgeCheck" className="size-4"/> Education Partner Brand Kit — Logo / Address / Phone / WhatsApp</p><p className="text-[11px] text-muted-foreground">এখানে আপলোড করা তথ্য দিয়ে সব ইমেজ/ভিডিওতে প্রফেশনাল overlay হবে (logo bottom-right 8%, footer bar + phone/WhatsApp/website)।</p></div>
+          <Button className="h-10 bg-[#0057B8] text-white" disabled={saving} onClick={saveKit}><Icon name={saving?"Loader2":"Save"} className={saving?"size-4 animate-spin":"size-4"}/>{saving?"Saving...":"Save Brand Kit"}</Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-1.5"><Label>Logo URL *</Label><Input value={form.logoUrl} onChange={e=> setForm({...form, logoUrl:e.target.value})} placeholder="https://cdn.alo-education.com/logo.png"/></div>
+          <div className="space-y-1.5"><Label>Logo Name</Label><Input value={form.logoName} onChange={e=> setForm({...form, logoName:e.target.value})} placeholder="ALO Education Logo"/></div>
+          <div className="space-y-1.5 md:col-span-2"><Label>Address (footer — BLOG/LANDSCAPE only)</Label><Input value={form.address} onChange={e=> setForm({...form, address:e.target.value})} placeholder="House 12, Road 12, Dhanmondi, Dhaka"/></div>
+          <div className="space-y-1.5"><Label>Phone</Label><Input value={form.phone} onChange={e=> setForm({...form, phone:e.target.value})} placeholder="+8809611-123456"/></div>
+          <div className="space-y-1.5"><Label>WhatsApp</Label><Input value={form.whatsapp} onChange={e=> setForm({...form, whatsapp:e.target.value})} placeholder="+8801712345678"/></div>
+          <div className="space-y-1.5"><Label>Website</Label><Input value={form.website} onChange={e=> setForm({...form, website:e.target.value})} placeholder="https://alo-education.com"/></div>
+          <div className="space-y-1.5"><Label>Primary #0057B8</Label><Input value={form.primary} onChange={e=> setForm({...form, primary:e.target.value})}/></div>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] text-muted-foreground"><Icon name="Info" className="size-3"/><span>Overlay: 1080×1080/1350/628/1920 সব সাইজে logo + ফুটারে phone • WhatsApp • website (BLOG এ address সহ)। Provider key সেট না থাকলে placeholder image + prompt save হবে, পরে real gen করবে।</span></div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function LibraryRepostTab() {
+  const { toast } = useToast();
+  const [posts, setPosts] = React.useState<any[]>([]);
+  const [q, setQ] = React.useState("");
+  const [loading, setLoading] = React.useState(true);
+  const load = React.useCallback(async ()=>{
+    setLoading(true);
+    try {
+      const r = await fetch(`/api/marketing/library?status=APPROVED&q=${encodeURIComponent(q)}`);
+      const j = await r.json();
+      setPosts(j.posts||[]);
+    } finally { setLoading(false); }
+  }, [q]);
+  React.useEffect(()=> { load(); }, [load]);
+  const repost = async (post:any, target:string)=>{
+    try {
+      const r = await fetch("/api/marketing/repost", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ postId: post.id, targetPlatform: target, employeeId: CURRENT_EMPLOYEE_ID })});
+      const j = await r.json();
+      if (j.success) toast({ title:"Reposted!", description: `${post.title} → your ${target} official page (brand retained)` });
+      else throw new Error(j.error);
+    } catch (e:any){ toast({ title:"Repost failed", description:e.message, variant:"destructive"}); }
+  };
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><h2 className="text-lg font-bold text-[#0057B8] flex items-center gap-2"><Icon name="Library" className="size-5"/> Marketing Library — Counselor Repost Hub</h2><p className="text-xs text-muted-foreground">Approved image/video/post — কাউন্সেলর বা যেকোনো এমপ্লয়ি এখানে দেখে নিজের অফিসিয়াল সোশ্যালে 1-click পোস্ট করতে পারবে। Brand Kit (logo/address/phone/WhatsApp) auto-retained।</p></div>
+        <div className="flex items-center gap-2"><Input placeholder="Search library..." value={q} onChange={e=> setQ(e.target.value)} className="h-9 w-48"/><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3"/> Refresh</Button></div>
+      </div>
+      {loading ? <LoadingGrid count={3}/> : posts.length===0 ? <EmptyState icon="Library" title="No approved posts yet" description="Marketing Manager approved করলে এখানে দেখা যাবে — তখন Counselor 1-click repost করতে পারবে।"/> : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {posts.map((p:any)=>(
+            <Card key={p.id} className="rounded-2xl border-2 border-[#E2E8F0] overflow-hidden">
+              <CardContent className="p-4 space-y-2">
+                <div className="flex items-center gap-2"><Badge variant="outline">{p.platform}</Badge><Badge className="bg-emerald-100 text-emerald-700">{p.approvalStatus}</Badge><span className="text-[11px] text-muted-foreground">{p.platformSize||"SQUARE"}</span></div>
+                <p className="font-semibold text-sm line-clamp-2">{p.title}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2">{p.caption?.slice(0,120)}</p>
+                <div className="flex flex-wrap gap-1.5 pt-2">
+                  {["FACEBOOK","INSTAGRAM","LINKEDIN"].map(pl=>(
+                    <Button key={pl} size="sm" className="h-8 bg-[#0057B8] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Repost to {pl}</Button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground">Brand: {p.brandAssetApplied? "✓ Applied":"—"} • {fmtDate(p.approvedAt||p.createdAt)}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#0057B8]">Note:</span> এই Library Marketing Manager dashboard ছাড়াও প্রতিটি Employee dashboard-এ “Marketing Library” নামে দেখানো হবে — UnifiedEmployeeDashboard এ ট্যাব হিসেবে অ্যাড করতে বললে 1 টার্নে করে দেব।</div>
+    </div>
+  );
+}
+
+// ============================================================
+// WHATSAPP 24/7 CARD
+
 // ============================================================
 // WHATSAPP 24/7 CARD
 // ============================================================
+
+
+// ============================================================
+// TAB — ANALYTICS (full pipeline: inbox + posts + leads + outreach + SLA)
+// ============================================================
+function AnalyticsTab() {
+  const [data, setData] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+  const load = React.useCallback(async () => {
+    setLoading(true);
+    try { const r = await fetch("/api/marketing/analytics"); const j = await r.json(); setData(j); } catch {} finally { setLoading(false); }
+  }, []);
+  React.useEffect(() => { load(); }, [load]);
+  if (loading) return <LoadingGrid count={4} />;
+  if (!data) return <EmptyState icon="BarChart3" title="Analytics unavailable" description="Could not load analytics." />;
+  const { inbox, posts, leads, outreach, triggers, workflows } = data;
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[#0057B8] flex items-center gap-2"><Icon name="BarChart3" className="size-5"/> Marketing Analytics — 360°</h2><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button></div>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <StatCard label="Leads Total" value={leads.total} icon="Users" accent="blue" hint={`${leads.hot} hot • ${leads.followUpOverdue} overdue`} />
+        <StatCard label="Conversion" value={`${leads.conversionRate}%`} icon="TrendingUp" accent="emerald" hint={`${leads.byStatus?.converted || 0} converted`} />
+        <StatCard label="Inbox Conversations" value={inbox.conversations} icon="MessagesSquare" accent="violet" hint={`${inbox.unread} unread`} />
+        <StatCard label="SLA Breached" value={inbox.slaBreached40} icon="Timer" accent="rose" hint={`${inbox.slaWarn20} warn`} />
+        <StatCard label="Posts Published" value={posts.byStatus?.PUBLISHED || 0} icon="FileText" accent="orange" hint={`${posts.total} total`} />
+        <StatCard label="Brand Applied" value={`${posts.brandAppliedPct}%`} icon="BadgeCheck" accent="emerald" hint={`${posts.brandApplied} posts`} />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <SectionCard title="Inbox by Platform" icon="Inbox">
+          <div className="space-y-2">{Object.entries(inbox.byPlatform || {}).map(([k,v]: any) => (<div key={k} className="flex items-center justify-between"><span className="text-xs font-medium">{k}</span><div className="flex items-center gap-2"><MiniBar value={Number(v)} max={Math.max(1, ...Object.values(inbox.byPlatform||{}) as number[])} color="#0057B8" /><span className="text-sm font-bold tabular-nums">{String(v)}</span></div></div>))}</div>
+        </SectionCard>
+        <SectionCard title="Leads by Status (Pipeline)" icon="GitBranch">
+          <div className="space-y-2">{Object.entries(leads.byStatus || {}).map(([k,v]: any) => (<div key={k} className="flex items-center justify-between"><Badge variant="outline" className="capitalize">{k}</Badge><span className="text-sm font-bold">{String(v)}</span></div>))}</div>
+        </SectionCard>
+        <SectionCard title="Posts by Category" icon="FileText">
+          <div className="space-y-2">{Object.entries(posts.byCategory || {}).map(([k,v]: any) => (<div key={k} className="flex items-center justify-between"><span className="text-xs font-medium">{k.replace(/_/g," ")}</span><Badge className="bg-[#E8501A] text-white">{String(v)}</Badge></div>))}</div>
+        </SectionCard>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <SectionCard title="Leads by Source" icon="Globe">
+          <div className="space-y-1.5">{Object.entries(leads.bySource || {}).map(([k,v]: any) => (<div key={k} className="flex items-center justify-between border-b border-[#E2E8F0] py-1.5"><span className="text-xs">{k || "UNKNOWN"}</span><span className="text-sm font-semibold">{String(v)}</span></div>))}</div>
+        </SectionCard>
+        <SectionCard title="Outreach & Automations" icon="Zap">
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="rounded-xl bg-[#F8FAFC] p-3"><p className="text-muted-foreground">Outreach Opted-In</p><p className="text-2xl font-bold text-emerald-600">{outreach.optedIn}</p><p className="text-[11px] text-muted-foreground">vs {outreach.optedOut} opted-out • {outreach.total} total</p></div>
+            <div className="rounded-xl bg-[#F8FAFC] p-3"><p className="text-muted-foreground">Keyword Triggers</p><p className="text-2xl font-bold text-[#0057B8]">{triggers.active}/{triggers.total}</p><p className="text-[11px] text-muted-foreground">{triggers.totalFires} fires • {workflows.active}/{workflows.total} workflows</p></div>
+            <div className="rounded-xl bg-[#F8FAFC] p-3 col-span-2"><p className="text-muted-foreground">Pending Approvals</p><p className="text-2xl font-bold text-amber-600">{posts.pendingApproval}</p><p className="text-[11px] text-muted-foreground">Manager/SA must approve before publish — audit-logged</p></div>
+          </div>
+        </SectionCard>
+      </div>
+      <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3"><Icon name="Info" className="size-4 text-[#0057B8] mt-0.5"/><p className="text-xs text-muted-foreground"><span className="font-semibold text-[#0057B8]">Tip:</span> Use Lead Pipeline tab to move leads (new → contacted → qualified → assigned → converted) and assign counselor + follow-up date — all audit-logged.</p></div>
+    </div>
+  );
+}
+
+// ============================================================
+// TAB — LEAD PIPELINE (kanban + assignment + follow-up + scoring)
+// ============================================================
+function LeadPipelineTab() {
+  const { toast } = useToast();
+  const [data, setData] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [filter, setFilter] = React.useState("ALL");
+  const [assignOpen, setAssignOpen] = React.useState<any>(null);
+  const [counselor, setCounselor] = React.useState("");
+  const [followUp, setFollowUp] = React.useState("");
+  const load = React.useCallback(async () => {
+    setLoading(true);
+    try { const r = await fetch(`/api/marketing/lead-pipeline${filter!=="ALL" ? `?status=${filter}` : ""}`); const j = await r.json(); setData(j); } catch {} finally { setLoading(false); }
+  }, [filter]);
+  React.useEffect(()=> { load(); }, [load]);
+  const move = async (lead:any, status:string)=> {
+    try { const r= await fetch("/api/marketing/lead-pipeline",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:lead.id,status})}); const j=await r.json(); if(j.lead){ toast({title:`Moved to ${status}`,description:lead.name}); load(); } else throw new Error(j.error);} catch(e:any){ toast({title:"Move failed",description:e.message,variant:"destructive"});}
+  };
+  const assign = async ()=> {
+    if (!assignOpen) return;
+    try { const r= await fetch("/api/marketing/lead-pipeline",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:assignOpen.id,counselorId:counselor,counselorName:counselor,followUpDueAt: followUp || undefined})}); const j=await r.json(); if(j.lead){ toast({title:"Assigned",description:`${assignOpen.name} → ${counselor}`}); setAssignOpen(null); setCounselor(""); setFollowUp(""); load(); } else throw new Error(j.error);} catch(e:any){ toast({title:"Assign failed",description:e.message,variant:"destructive"});}
+  };
+  const STAGES = ["new","contacted","qualified","assigned","converted","lost"] as const;
+  const STAGE_COLOR: Record<string,string> = { new:"bg-slate-100 text-slate-700", contacted:"bg-blue-100 text-blue-700", qualified:"bg-violet-100 text-violet-700", assigned:"bg-amber-100 text-amber-700", converted:"bg-emerald-100 text-emerald-700", lost:"bg-red-100 text-red-700" };
+  if (loading) return <LoadingGrid count={6} />;
+  const byStatus = data?.byStatus || {};
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><h2 className="text-lg font-bold text-[#0057B8] flex items-center gap-2"><Icon name="GitBranch" className="size-5"/> Lead Pipeline — Kanban + Assignment</h2><p className="text-xs text-muted-foreground">Drag not needed — use Move buttons. Counselor assignment & follow-up calendar are SLA-tracked (40→20→10).</p></div>
+        <div className="flex items-center gap-2">
+          <Select value={filter} onValueChange={setFilter}><SelectTrigger className="h-9 w-36"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All Stages</SelectItem>{STAGES.map(s=><SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}</SelectContent></Select>
+          <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
+        </div>
+      </div>
+      {data?.overdueFollowUps ? <div className="rounded-2xl border-2 border-red-200 bg-red-50 px-4 py-3 flex items-center gap-3"><Icon name="AlertTriangle" className="size-5 text-red-600"/><p className="text-sm font-semibold text-red-700">{data.overdueFollowUps} overdue follow-ups</p><span className="text-xs text-red-600">— move to Contacted or schedule next date</span></div> : null}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {STAGES.map(stage => (
+          <Card key={stage} className="rounded-2xl border-2 border-[#E2E8F0]">
+            <CardContent className="p-0">
+              <div className="flex items-center justify-between border-b border-[#E2E8F0] px-4 py-3"><span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold capitalize", STAGE_COLOR[stage])}>{stage}</span><Badge variant="secondary">{byStatus[stage]?.length||0}</Badge></div>
+              <ScrollArea className="h-[420px]"><div className="space-y-3 p-3">
+                {(byStatus[stage]||[]).length===0 ? <p className="py-8 text-center text-xs text-muted-foreground">No leads in {stage}</p> : (byStatus[stage]||[]).map((l:any)=>(
+                  <div key={l.id} className="rounded-xl border border-[#E2E8F0] bg-white p-3">
+                    <p className="text-sm font-semibold">{l.name || "Unknown"} {l.hotLead ? <Badge className="ml-1 bg-orange-100 text-orange-700 text-[10px]">HOT</Badge>:null}</p>
+                    <p className="text-[11px] text-muted-foreground">{l.phone || l.email || l.id.slice(0,8)} • {l.destination || "—"} • Score {l.score||0}</p>
+                    {l.counselorName ? <p className="text-[11px]"><span className="font-semibold text-[#0057B8]">Counselor:</span> {l.counselorName}</p>:null}
+                    {l.followUpDueAt ? <p className="text-[11px]"><Icon name="Calendar" className="inline size-3"/> {fmtDate(l.followUpDueAt)} {new Date(l.followUpDueAt) < new Date() && !l.followUpDone ? <Badge className="bg-red-100 text-red-700 ml-1">OVERDUE</Badge>:null}</p>:null}
+                    <p className="text-[10px] text-muted-foreground">{l.source || "UNKNOWN"} • {timeAgo(l.createdAt)}</p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {STAGES.filter(s=>s!==stage).slice(0,3).map(ns=>(
+                        <Button key={ns} size="sm" variant="outline" className="h-7 text-[10px] capitalize" onClick={()=> move(l, ns)}>{ns}</Button>
+                      ))}
+                      <Button size="sm" className="h-7 bg-[#0057B8] text-white text-[10px]" onClick={()=> { setAssignOpen(l); setCounselor(l.counselorName||""); }}><Icon name="UserPlus" className="size-3"/> Assign</Button>
+                      <a href={`https://alo-education.com/lead-form?leadId=${l.id}`} target="_blank" rel="noopener noreferrer" className="text-[10px] underline text-[#E8501A]">Portal Link</a>
+                    </div>
+                  </div>
+                ))}
+              </div></ScrollArea>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      <Dialog open={!!assignOpen} onOpenChange={o=> !o && setAssignOpen(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Assign Counselor + Follow-up</DialogTitle><DialogDescription>{assignOpen?.name} — set counselor and follow-up date. SLA 40→20→10 tracked.</DialogDescription></DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1.5"><Label>Counselor Name / ID</Label><Input value={counselor} onChange={e=> setCounselor(e.target.value)} placeholder="e.g., counselor.rahim@alo-education.com"/></div>
+            <div className="space-y-1.5"><Label>Follow-up Date</Label><Input type="datetime-local" value={followUp} onChange={e=> setFollowUp(e.target.value)} /></div>
+          </div>
+          <DialogFooter><Button variant="outline" onClick={()=> setAssignOpen(null)}>Cancel</Button><Button className="bg-[#0057B8] text-white" onClick={assign}>Save Assignment</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#0057B8]">Dedup:</span> Phone/email/socialUserId/WhatsApp are deduped on lead creation. Student ID AE-YYYY000001 auto-generated. All moves, assigns, follow-ups are audit-logged.</div>
+    </div>
+  );
+}
+
+// ============================================================
+// TAB — CALENDAR (posts + marketing calendar + SLA)
+// ============================================================
+function CalendarTab() {
+  const [data, setData] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [filter, setFilter] = React.useState("ALL");
+  const load = React.useCallback(async ()=> { setLoading(true); try{ const r=await fetch(`/api/marketing/calendar${filter!=="ALL"?`?status=${filter}`:""}`); const j=await r.json(); setData(j);} catch{} finally{ setLoading(false); }}, [filter]);
+  React.useEffect(()=>{ load(); },[load]);
+  if (loading) return <LoadingGrid count={4} />;
+  const items = data?.items || [];
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><h2 className="text-lg font-bold text-[#0057B8] flex items-center gap-2"><Icon name="CalendarDays" className="size-5"/> Content Calendar — Schedule & Publish</h2><p className="text-xs text-muted-foreground">Campaign posts + marketing calendar merged. Schedule from Campaign Posts tab or here.</p></div>
+        <div className="flex items-center gap-2">
+          <Select value={filter} onValueChange={setFilter}><SelectTrigger className="h-9 w-36"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All</SelectItem><SelectItem value="scheduled">Scheduled</SelectItem><SelectItem value="published">Published</SelectItem><SelectItem value="approved">Approved</SelectItem></SelectContent></Select>
+          <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
+        </div>
+      </div>
+      {items.length===0 ? <EmptyState icon="CalendarDays" title="No calendar items" description="Posts you schedule or publish will appear here. Use Campaign Posts → Schedule to add."/> : (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Title</TableHead><TableHead>Platform</TableHead><TableHead>Status</TableHead><TableHead>Type</TableHead></TableRow></TableHeader>
+            <TableBody>
+              {items.map((it:any)=>(
+                <TableRow key={it.id}>
+                  <TableCell className="text-xs whitespace-nowrap">{fmtDate(it.scheduledAt)}<br/><span className="text-[11px] text-muted-foreground">{timeAgo(it.scheduledAt)}</span></TableCell>
+                  <TableCell className="max-w-[260px] truncate text-sm font-medium">{it.title}</TableCell>
+                  <TableCell><Badge variant="outline">{it.platform}</Badge></TableCell>
+                  <TableCell><span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", it.status==="published"?"bg-emerald-100 text-emerald-700": it.status==="scheduled"?"bg-cyan-100 text-cyan-700":"bg-slate-100 text-slate-700")}>{it.status}</span></TableCell>
+                  <TableCell className="text-xs text-muted-foreground">{it.type}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#0057B8]">Sizing:</span> SQUARE 1080×1080, PORTRAIT 1080×1350, LANDSCAPE 1200×628, STORY 1080×1920 — overlay auto-applied with brand kit. Calendar items can be rescheduled via PATCH /api/marketing/calendar .</div>
+    </div>
+  );
+}
+
+// ============================================================
+// TAB — AUDIT LOGS (full CRM timeline)
+// ============================================================
+function AuditLogsTab() {
+  const [logs, setLogs] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [resource, setResource] = React.useState("ALL");
+  const load = React.useCallback(async ()=> { setLoading(true); try{ const r=await fetch(`/api/marketing/audit-logs?take=100${resource!=="ALL"?`&resource=${resource}`:""}`); const j=await r.json(); setLogs(j.logs||[]);} catch{} finally{ setLoading(false); }}, [resource]);
+  React.useEffect(()=>{ load(); },[load]);
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><h2 className="text-lg font-bold text-[#0057B8] flex items-center gap-2"><Icon name="ScrollText" className="size-5"/> Audit Logs — Full CRM Timeline</h2><p className="text-xs text-muted-foreground">Every comment, DM, WhatsApp, email, SMS, lead, campaign, assignment & publish — channel, messageId, conversationId, leadId/studentId, AI/human, timestamp</p></div>
+        <div className="flex items-center gap-2">
+          <Select value={resource} onValueChange={setResource}><SelectTrigger className="h-9 w-44"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All Resources</SelectItem><SelectItem value="CampaignPost">CampaignPost</SelectItem><SelectItem value="MarketingLead">MarketingLead</SelectItem><SelectItem value="SocialInboxMessage">SocialInbox</SelectItem><SelectItem value="KeywordTrigger">KeywordTrigger</SelectItem><SelectItem value="BrandAsset">BrandAsset</SelectItem></SelectContent></Select>
+          <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
+        </div>
+      </div>
+      {loading ? <LoadingGrid count={4}/> : logs.length===0 ? <EmptyState icon="ScrollText" title="No audit logs yet" description="Actions across marketing (approve, assign, publish, SLA escalations) will appear here."/> : (
+        <div className="space-y-2">
+          {logs.map((l:any)=>(
+            <div key={l.id} className="flex gap-3 rounded-xl border border-[#E2E8F0] bg-white p-3">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]"><Icon name="ScrollText" className="size-4"/></div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium">{l.action} <span className="font-normal text-muted-foreground">on</span> {l.resource} <span className="font-mono text-[11px] text-muted-foreground">{l.resourceId?.slice(0,12)}</span></p>
+                <p className="text-[11px] text-muted-foreground truncate">{l.details ? (typeof l.details==="string"? l.details.slice(0,180): JSON.stringify(l.details).slice(0,180)) : "—"}</p>
+                <p className="text-[11px] text-muted-foreground">{l.userName || l.userId || "system"} • {fmtDate(l.createdAt)} • {timeAgo(l.createdAt)} • <Badge variant="outline" className="text-[10px]">{l.source || "auditLog"}</Badge></p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function WhatsAppCard() {
   const { toast } = useToast();

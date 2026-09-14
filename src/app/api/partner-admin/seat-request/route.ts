@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as any;
 
-    const partnerId = auth.partnerId || 'PARTNER-DEMO';
+    const partnerId = auth.partnerId;
+    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
     const requests = await db.partnerUserSeatRequest.findMany({
       where: { partnerId },
       orderBy: { createdAt: 'desc' },
@@ -29,7 +30,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { requestedExtraSeats, reason } = body;
 
-    const partnerId = auth.partnerId || 'PARTNER-DEMO';
+    const partnerId = auth.partnerId;
+    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
     const currentLimit = 3;
 
     const seatRequest = await db.partnerUserSeatRequest.create({

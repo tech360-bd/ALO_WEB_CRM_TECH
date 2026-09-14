@@ -336,6 +336,8 @@ export default function MarketingDashboardView() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Production dashboard: real DB-backed metrics only — never display fabricated stats
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
 
@@ -344,10 +346,68 @@ export default function MarketingDashboardView() {
         const res = await fetch('/api/marketing/dashboard');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
-        if (!cancelled) setData(json);
-      } catch {
-        // Fallback to mock data when API is unavailable
-        if (!cancelled) setData(MOCK_DATA);
+        // Transform real KPI response to view model; if API returns raw kpis structure, adapt
+        // Accept both legacy MOCK shape and new real shape
+        let normalized: DashboardData;
+        if (json.kpis && json.leadSources) {
+          normalized = json as DashboardData;
+        } else if (json.kpis) {
+          // Build minimal view from real kpis, filling missing sections with DB-empty states (never fabricate)
+          const k = json.kpis;
+          normalized = {
+            kpis: {
+              todayLeads: k.todayLeads ?? 0,
+              todayLeadsDelta: 0,
+              hotLeads: k.hotLeads ?? 0,
+              hotLeadsDelta: 0,
+              whatsappReplies: k.whatsappReplies ?? 0,
+              whatsappRepliesDelta: 0,
+              websiteChatLeads: k.websiteChatLeads ?? 0,
+              websiteChatLeadsDelta: 0,
+              campaignsRunning: k.campaignsRunning ?? 0,
+              pendingApprovals: k.pendingApproval ?? k.pendingApprovals ?? 0,
+              pendingComments: k.pendingComments ?? 0,
+              scheduledPosts: k.scheduledPosts ?? 0,
+              failedPosts: k.failedPosts ?? 0,
+              costPerLead: k.costPerLead ?? 0,
+              costPerLeadDelta: 0,
+              leadConversionRate: k.leadConversionRate ?? 0,
+              leadConversionRateDelta: 0,
+              slaOverdue: k.followUpOverdue ?? k.slaOverdue ?? 0,
+            },
+            leadSources: (json.leadSources as any) || [],
+            slaStatus: {
+              assigned: k.counselorAssigned ?? 0,
+              responded: 0,
+              escalated: 0,
+              overdueConversations: [],
+            },
+            aiAgents: json.aiAgents || [],
+            recentLeads: (json.recentLeads as any[])?.map((l: any) => ({
+              id: l.id?.slice(0, 8) || 'L-' + Math.random().toString(36).slice(2, 6),
+              name: l.name || l.fullName || 'Unknown',
+              phone: l.phone || '',
+              source: l.source || 'unknown',
+              status: l.status || 'new',
+              counselor: l.counselorName || l.counselor || 'Unassigned',
+              time: l.createdAt ? new Date(l.createdAt).toLocaleTimeString() : 'recent',
+            })) || [],
+            pendingApprovals: (json.recentApprovals as any[])?.map((a: any) => ({
+              id: a.id?.slice(0, 8) || 'AP-' + Math.random().toString(36).slice(2, 6),
+              type: a.itemType || 'Content',
+              title: a.title || 'Pending approval',
+              platform: '—',
+              requestedBy: a.requestedById?.slice(0, 8) || 'team',
+              scheduledFor: a.createdAt ? new Date(a.createdAt).toLocaleDateString() : 'pending',
+            })) || [],
+          } as DashboardData;
+          // Ensure required visual sections never empty with fake data: if arrays empty, show empty-state messaging in UI
+        } else {
+          throw new Error('Invalid dashboard payload');
+        }
+        if (!cancelled) { setData(normalized); setError(null); }
+      } catch (e: any) {
+        if (!cancelled) { setError(e?.message || 'Failed to load dashboard'); setData(null); }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -359,11 +419,22 @@ export default function MarketingDashboardView() {
     };
   }, []);
 
-  // ---- Loading state ----
-  if (loading || !data) {
+  // ---- Loading / Error state — never show fabricated stats ----
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-alo-brand" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#F37021]" />
+      </div>
+    );
+  }
+  if (error || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center space-y-3">
+        <AlertTriangle className="h-8 w-8 text-amber-500" />
+        <h3 className="font-semibold text-[#0F172A]">Dashboard data unavailable</h3>
+        <p className="text-sm text-gray-500 max-w-md">{error || 'No marketing data returned from /api/marketing/dashboard. This view only displays database-backed metrics — no fabricated statistics are shown.'}</p>
+        <p className="text-xs text-gray-400">Data source: MarketingLead, MarketingCampaign, MarketingApproval, MarketingCalendar, MarketingAgentJob via Prisma • Period: today • Sync: live</p>
+        <Button onClick={() => location.reload()} className="bg-[#F37021] hover:bg-[#d85f1b] text-white mt-2">Retry</Button>
       </div>
     );
   }

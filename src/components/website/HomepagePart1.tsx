@@ -15,6 +15,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 
 const C = { blue: '#0057B8', orange: '#E8501A', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
@@ -81,13 +82,25 @@ function HeroSection() {
   const slides = data?.heroSlides?.length ? data.heroSlides : FALLBACK_COUNTRIES;
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const [imgErrors, setImgErrors] = useState<Set<string>>(new Set());
   const timer = useRef<ReturnType<typeof setInterval>>(null);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      setReduceMotion(mq.matches);
+      const handler = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
+      mq.addEventListener?.('change', handler);
+      return () => mq.removeEventListener?.('change', handler);
+    }
+  }, []);
+
   const startTimer = useCallback(() => {
+    if (reduceMotion) return;
     if (timer.current) clearInterval(timer.current);
     timer.current = setInterval(() => setCurrent(p => (p + 1) % slides.length), 5000);
-  }, [slides.length]);
+  }, [slides.length, reduceMotion]);
 
   useEffect(() => { startTimer(); return () => { if (timer.current) clearInterval(timer.current); }; }, [startTimer]);
   useEffect(() => { if (paused && timer.current) clearInterval(timer.current); if (!paused) startTimer(); }, [paused, startTimer]);
@@ -98,7 +111,7 @@ function HeroSection() {
   return (
     <section className="relative w-full h-[90vh] min-h-[600px] max-h-[950px] overflow-hidden bg-white" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <AnimatePresence mode="wait">
-        <motion.div key={slide.name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} className="absolute inset-0">
+        <motion.div key={slide.name} initial={reduceMotion ? false as any : { opacity: 0 }} animate={{ opacity: 1 }} exit={reduceMotion ? undefined as any : { opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.8 }} className="absolute inset-0">
           {slide.heroImage && !imgErrors.has(slide.name) ? (
             <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:block">
               <Image src={slide.heroImage} alt={slide.name} fill className="object-cover object-center" onError={() => setImgErrors(prev => new Set([...prev, slide.name]))} />
@@ -125,12 +138,12 @@ function HeroSection() {
                   </Badge>
                 </motion.div>
               </AnimatePresence>
-              <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-tight" style={{ color: C.text, fontFamily: 'system-ui, sans-serif' }}>
-                Study Abroad in the World
-              </motion.h1>
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-tight" style={{ color: C.text, fontFamily: 'system-ui, sans-serif' }}>
+                Your Future Starts Here
+              </h1>
               <AnimatePresence mode="wait">
-                <motion.h2 key={slide.name} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.4 }} className="text-2xl sm:text-3xl lg:text-4xl font-bold" style={{ color: slide.accentColor }}>
-                  Study Abroad in {slide.name} & More
+                <motion.h2 key={slide.name} initial={reduceMotion ? false as any : { opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? undefined as any : { opacity: 0, x: 20 }} transition={{ duration: reduceMotion ? 0 : 0.4 }} className="text-2xl sm:text-3xl lg:text-4xl font-bold" style={{ color: slide.accentColor }} aria-live="polite">
+                  Study Abroad in {slide.name}
                 </motion.h2>
               </AnimatePresence>
               <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-base text-[#64748B] leading-relaxed max-w-lg">
@@ -141,6 +154,11 @@ function HeroSection() {
                 <a href={`/course-finder?country=${slide.slug}`}><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold border-2" style={{ borderColor: C.blue, color: C.blue }}>Find Courses</Button></a>
                 <a href="/eligibility-check"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: C.border, color: C.text }}>Check Eligibility</Button></a>
                 <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: '#25D366', color: '#25D366' }}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button></a>
+              </motion.div>
+              {/* 3-button high-conversion hero placement — branded CTAs: AI Agent / WhatsApp AI / Facebook */}
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="pt-2">
+                <p className="text-[11px] font-semibold tracking-widest uppercase text-[#0057B8]/70 mb-2.5">Get Instant Help — choose your channel</p>
+                <WebsiteActionButtons variant="hero" />
               </motion.div>
             </div>
 
@@ -154,13 +172,13 @@ function HeroSection() {
                     </div>
                     <div className="grid grid-cols-3 gap-3">
                       {[
-                        { icon: GraduationCap, label: 'Universities', value: slide.universityCount || 42 },
-                        { icon: BookOpen, label: 'Courses', value: slide.courseCount || 1200 },
-                        { icon: Award, label: 'Scholarships', value: slide.scholarshipCount || 35 },
+                        { icon: GraduationCap, label: 'Universities', value: slide.universityCount },
+                        { icon: BookOpen, label: 'Courses', value: slide.courseCount },
+                        { icon: Award, label: 'Scholarships', value: slide.scholarshipCount },
                       ].map(s => (
                         <div key={s.label} className="text-center p-3 rounded-xl" style={{ backgroundColor: `${slide.accentColor}08` }}>
                           <s.icon className="h-5 w-5 mx-auto mb-1" style={{ color: slide.accentColor }} />
-                          <div className="text-xl font-bold" style={{ color: slide.accentColor }}><AnimatedCounter target={s.value} />+</div>
+                          <div className="text-xl font-bold" style={{ color: slide.accentColor }}>{s.value && s.value > 0 ? <><AnimatedCounter target={s.value} />+</> : '—'}</div>
                           <div className="text-xs text-[#64748B]">{s.label}</div>
                         </div>
                       ))}
@@ -199,10 +217,10 @@ function HeroSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 flex-wrap justify-center px-4">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 flex-wrap justify-center px-4" role="tablist" aria-label="Hero destinations">
         {slides.map((s, i) => (
-          <button key={s.id} onClick={() => go(i)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style={{ backgroundColor: i === current ? s.accentColor : '#F1F5F9', color: i === current ? '#FFFFFF' : '#64748B' }}>
-            <span>{s.flag}</span>
+          <button key={s.id} onClick={() => go(i)} role="tab" aria-selected={i===current} aria-label={`View ${s.name}`} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all min-h-[32px]" style={{ backgroundColor: i === current ? s.accentColor : '#F1F5F9', color: i === current ? '#FFFFFF' : '#64748B' }}>
+            <span aria-hidden>{s.flag}</span>
             <span className="hidden sm:inline">{s.name}</span>
           </button>
         ))}

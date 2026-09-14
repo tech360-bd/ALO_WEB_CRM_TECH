@@ -15,39 +15,29 @@ export async function GET(request: NextRequest) {
       const verifiedDocs = await db.portalStudentDocument.count({ where: { status: 'VERIFIED' } });
       const rejectedDocs = await db.portalStudentDocument.count({ where: { status: 'REJECTED' } });
 
+      // REAL ONLY — no fake fallback (SEC-01 workforce report + portal-real requirement)
+      const rejectedList = await db.portalStudentDocument.findMany({ where: { status: 'REJECTED' }, take: 10, orderBy: { updatedAt: 'desc' } }).catch(() => []);
+      const expiredList = await db.portalStudentDocument.findMany({ where: { status: 'EXPIRED' }, take: 10, orderBy: { updatedAt: 'desc' } }).catch(() => []);
       return NextResponse.json({
         success: true,
         data: {
-          reviewQueue: documents.length > 0 ? documents.map(d => ({
+          reviewQueue: documents.map(d => ({
             student: d.name || 'Student Document',
             docType: d.category || d.fileName || 'General Document',
             status: d.status.toLowerCase(),
             uploaded: d.createdAt ? new Date(d.createdAt).toLocaleDateString() : 'Today',
             reviewer: d.reviewedBy || 'Compliance Officer'
-          })) : [
-            { student: 'Arif Khan', docType: 'IELTS Certificate', status: 'pending', uploaded: 'Dec 10, 9:30 AM', reviewer: 'Unassigned' },
-            { student: 'Sadia Rahman', docType: 'Transcript (BSc)', status: 'pending', uploaded: 'Dec 10, 8:15 AM', reviewer: 'Unassigned' },
-            { student: 'Imtiaz Ahmed', docType: 'Financial Statement', status: 'pending', uploaded: 'Dec 9, 4:45 PM', reviewer: 'Unassigned' },
-          ],
-          rejectedDocs: [
-            { student: 'Sabbir Ahmed', doc: 'IELTS Certificate', reason: 'Score below requirement (5.5, need 6.0)', rejected: 'Dec 9' },
-            { student: 'Fariha Tabassum', doc: 'Financial Statement', reason: 'Insufficient funds shown', rejected: 'Dec 8' },
-          ],
-          expiredDocs: [
-            { student: 'Sharif Uddin', doc: 'Passport', expired: 'Nov 30, 2024', action: 'Renewal required' },
-            { student: 'Tasnia Akter', doc: 'IELTS Certificate', expired: 'Dec 1, 2024', action: 'Re-test required' },
-          ],
-          deadlineAlerts: [
-            { student: 'Fahim Rahman', university: 'University of Birmingham', doc: 'CAS', deadline: 'Dec 15', daysLeft: 5 },
-            { student: 'Riya Sen', university: 'University of Edinburgh', doc: 'All docs', deadline: 'Dec 14', daysLeft: 4 },
-          ],
+          })),
+          rejectedDocs: rejectedList.map(d => ({ student: d.name || '—', doc: d.category || d.fileName || '—', reason: (d as any).rejectionReason || '—', rejected: d.updatedAt ? new Date(d.updatedAt).toLocaleDateString() : '' })),
+          expiredDocs: expiredList.map(d => ({ student: d.name || '—', doc: d.category || d.fileName || '—', expired: d.updatedAt ? new Date(d.updatedAt).toLocaleDateString() : '', action: 'Renewal required' })),
+          deadlineAlerts: [],
           kpis: [
-            { label: 'New Uploads', value: String(totalDocs || 34), change: '+12', up: true, icon: 'Upload', sub: 'Today' },
-            { label: 'Pending Review', value: String(pendingReview || 28), change: '+8', up: false, icon: 'Clock', sub: 'In queue' },
-            { label: 'Rejected', value: String(rejectedDocs || 5), change: '-2', up: true, icon: 'XCircle', sub: 'Need resubmission' },
-            { label: 'Critical / Expired', value: '8', change: '+1', up: false, icon: 'AlertTriangle', sub: 'Requires action' },
-            { label: 'Verified', value: String(verifiedDocs || 120), change: '+15', up: true, icon: 'CheckCircle2', sub: 'Ready for visa' },
-            { label: 'Avg Review Time', value: '45m', change: '-10m', up: true, icon: 'Clock', sub: 'Per document' },
+            { label: 'New Uploads', value: String(totalDocs), change: '', up: true, icon: 'Upload', sub: 'Today' },
+            { label: 'Pending Review', value: String(pendingReview), change: '', up: false, icon: 'Clock', sub: 'In queue' },
+            { label: 'Rejected', value: String(rejectedDocs), change: '', up: true, icon: 'XCircle', sub: 'Need resubmission' },
+            { label: 'Critical / Expired', value: String(expiredList.length), change: '', up: false, icon: 'AlertTriangle', sub: 'Requires action' },
+            { label: 'Verified', value: String(verifiedDocs), change: '', up: true, icon: 'CheckCircle2', sub: 'Ready for visa' },
+            { label: 'Avg Review Time', value: '—', change: '', up: true, icon: 'Clock', sub: 'Per document' },
           ]
         }
       });

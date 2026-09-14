@@ -23,15 +23,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden. Super Admin access required.' }, { status: 403 });
     }
 
-    let healthData = {
+    // Truthful dashboard: real DB counts, not hard-coded 2000
+    // Distinguish designed vs configured vs active vs idle vs error
+    let healthData: any = {
       server_status: 'online',
-      sqlite_status: 'online',
-      departments_count: 100,
-      agents_count: 2000,
-      skills_count: 2000,
-      approved_skills_count: 2000,
-      quarantined_skills_count: 0,
-      workflows_count: 40,
       protection_mode_enabled: true,
       payment_guard_enabled: true,
       self_improvement_enabled: true,
@@ -40,12 +35,66 @@ export async function GET(req: NextRequest) {
       public_skills_disabled: true,
       paid_api_allowed: false,
     };
+    let dbError: string | undefined;
+    try {
+      const { getDashboardStats } = await import('@/lib/agentos/agent-service');
+      const { getDepartmentModelConfig, listConfiguredDepartments } = await import('@/lib/department-model-config');
+      const { evaluateDepartmentGates } = await import('@/lib/department-activation');
+      const stats = await getDashboardStats();
+      // Real counts from DB (if DB unavailable, catch and report degraded)
+      healthData = {
+        ...healthData,
+        // Designed (seed) vs actual DB
+        designed_departments: 100,
+        designed_agents: 2000,
+        // Real DB counts
+        departments_count: stats.totalDepartments,
+        agents_count: stats.totalAgents,
+        active_agents: stats.activeAgents,
+        idle_agents: stats.idleAgents,
+        paused_agents: stats.pausedAgents,
+        error_agents: stats.errorAgents,
+        total_engine_types: stats.totalEngineTypes,
+        pending_approvals: stats.pendingApprovals,
+        tasks_today: stats.tasksToday,
+        tasks_this_week: stats.tasksThisWeek,
+        total_tasks_ever: stats.totalTasksEver,
+        // Activation truthfulness
+        configured_departments: listConfiguredDepartments().map(c => c.departmentSlug),
+        // Detailed breakdown
+        agents_by_status: stats.agentsByStatus,
+        agents_by_department: stats.agentsByDepartment.slice(0, 5), // top 5 for brevity
+        // Controlled rollout status for SEO (first rollout)
+        seo_activation: await evaluateDepartmentGates('seo').catch(() => null),
+        // DB health
+        database: 'connected',
+        sqlite_status: 'online',
+      };
+    } catch (e: any) {
+      dbError = e?.message || String(e);
+      healthData = {
+        ...healthData,
+        database: 'degraded',
+        sqlite_status: 'degraded',
+        db_error: 'Database unavailable — counts are 0 until DB seeded and migrated. Run npx prisma migrate deploy and seed scripts.',
+        departments_count: 0,
+        agents_count: 0,
+        active_agents: 0,
+        idle_agents: 0,
+        paused_agents: 0,
+        error_agents: 0,
+        designed_departments: 100,
+        designed_agents: 2000,
+        note: 'Hard-coded 2000 was removed — this endpoint now reports real DB counts. 0 is truthful when DB empty.',
+      };
+    }
 
     return NextResponse.json({
       success: true,
       masterRole: 'ALO_SUPER_ADMIN',
-      system: '2000+ Expandable Private AI Operating System',
+      system: '2000+ Expandable Private AI Operating System (truthful counts)',
       health: healthData,
+      ...(dbError ? { warning: 'Database query failed — see health.database', dbError: dbError.slice(0, 300) } : {}),
     });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to query AI Command Center health', details: error.message }, { status: 500 });
