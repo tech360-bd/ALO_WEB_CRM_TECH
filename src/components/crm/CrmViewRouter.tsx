@@ -18,6 +18,7 @@ import CrmInboxPage from './pages/CrmInboxPage';
 import CrmCommunicationsPage from './pages/CrmCommunicationsPage';
 import CrmWhatsAppPage from './pages/CrmWhatsAppPage';
 import CrmSocialPage from './pages/CrmSocialPage';
+import SocialMediaManagementHub from '@/components/social/SocialMediaManagementHub';
 import CrmSupportPage from './pages/CrmSupportPage';
 import CrmTasksPage from './pages/CrmTasksPage';
 import CrmAppointmentsPage from './pages/CrmAppointmentsPage';
@@ -64,6 +65,12 @@ const crmViewMap: Partial<Record<PortalView, React.ComponentType>> = {
   'crm-communications': CrmCommunicationsPage,
   'crm-whatsapp': CrmWhatsAppPage,
   'crm-social': CrmSocialPage,
+  'social-media-hub': () => <SocialMediaManagementHub portal="crm" />,
+  'social-inbox': () => <SocialMediaManagementHub portal="crm" />,
+  'social-analytics': () => <SocialMediaManagementHub portal="crm" />,
+  'social-content': () => <SocialMediaManagementHub portal="crm" />,
+  'social-posts': () => <SocialMediaManagementHub portal="crm" />,
+  'social-automation': () => <SocialMediaManagementHub portal="crm" />,
   'crm-support': CrmSupportPage,
 
   // Operations

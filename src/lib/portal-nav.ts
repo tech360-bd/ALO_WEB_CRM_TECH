@@ -11,6 +11,10 @@ export type NavGroup = { title: string; items: NavItem[] };
 // Shared Knowledge Sharing nav item reused across all portals
 const KNOWLEDGE_SHARING_ITEM = { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' };
 
+// Social Media Management — 24 Platforms, Own AI Agent (Groq/ZAI/OpenRouter), No SaaS
+const SOCIAL_MEDIA_ITEM = { label:'Social Media Management', icon: Share2, view:'social-media-hub', badge:'24 AI' };
+const SOCIAL_MEDIA_ITEM_ADMIN = { label:'Social Media — 24 Platforms', icon: Share2, view:'social-media-hub', badge:'24 AI' };
+
 export const portalNav: Record<string, NavGroup[]> = {
   student: [
     { title: '', items: [
@@ -42,6 +46,11 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Tasks', icon: CheckSquare, view:'employee-tasks' },
       { label:'Reports', icon: BarChart3, view:'employee-reports' },
     ]},
+    { title:'Social & Marketing', items: [
+      { label:'Social Media — 24 Platforms', icon: Share2, view:'social-media-hub', badge:'24 AI' },
+      { label:'Social Inbox', icon: MessageSquare, view:'social-inbox' },
+      { label:'Content Studio', icon: FileText, view:'marketing-campaigns' },
+    ]},
     { title:'Knowledge & Partnerships', items: [
       { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
       { label:'International Officer', icon: Globe, view:'international-officer-dashboard' },
@@ -61,6 +70,10 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Applications', icon: FileText, view:'employee-applications' },
       { label:'Team Calendar', icon: CalendarDays, view:'employee-calendar' },
       { label:'Performance Reports', icon: BarChart3, view:'employee-reports' },
+    ]},
+    { title:'Social & Marketing', items: [
+      { label:'Social Media — 24 Platforms', icon: Share2, view:'social-media-hub', badge:'24 AI' },
+      { label:'Social Inbox', icon: MessageSquare, view:'social-inbox' },
     ]},
     { title:'Knowledge & Partnerships', items: [
       { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
@@ -133,6 +146,9 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Campaigns', icon: Megaphone, view:'marketing-campaigns' },
       { label:'Content Calendar', icon: Calendar, view:'marketing-campaigns' },
       { label:'Content Studio', icon: FileText, view:'marketing-campaigns' },
+      { label:'Social Media — 24 Platforms', icon: Share2, view:'social-media-hub', badge:'24 AI' },
+      { label:'Social Inbox', icon: MessageSquare, view:'social-inbox' },
+      { label:'AI Content Generator', icon: Bot, view:'social-media-hub' },
       { label:'Assets', icon: Library, view:'marketing-brand-assets' },
       { label:'Approvals', icon: FileCheck, view:'marketing-approvals' },
       { label:'Landing Pages', icon: Globe, view:'marketing-campaigns' },
@@ -156,6 +172,10 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Messages', icon: MessageSquare, view:'partner-messages' },
       { label:'Commission/Settlement', icon: DollarSign, view:'partner-commission' },
       { label:'Reports', icon: BarChart3, view:'partner-reports' },
+    ]},
+    { title:'Social & Marketing', items: [
+      { label:'Social Media — 24 Platforms', icon: Share2, view:'social-media-hub', badge:'24 AI' },
+      { label:'Social Scheduler', icon: Calendar, view:'social-media-hub' },
     ]},
     { title:'Knowledge & Partnerships', items: [
       { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
@@ -237,6 +257,7 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Lead-to-Enrollment Funnel', icon: TrendingUp, view:'crm-analytics' },
       { label:'Capacity & Workload', icon: Users, view:'crm-tasks' },
       { label:'Critical Exceptions', icon: AlertTriangle, view:'crm-tasks' },
+      { label:'Social Media — 24 Platforms', icon: Share2, view:'social-media-hub', badge:'24 AI' },
       { label:'Integration Health', icon: Settings, view:'crm-social' },
       { label:'AI Activity', icon: Bot, view:'crm-ai-command' },
       { label:'Executive Reports', icon: BarChart3, view:'crm-reports' },
@@ -252,6 +273,7 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Master Command Center', icon: Shield, view:'super-admin-master-command', badge:'live' },
       { label:'Website CMS Hub', icon: Globe, view:'super-admin-website-cms', badge:'new' },
       { label:'CRM Command Center', icon: Briefcase, view:'super-admin-crm-command', badge:'new' },
+      { label:'Social Media — 24 Platforms', icon: Share2, view:'social-media-hub', badge:'24 AI' },
       { label:'System Overview', icon: LayoutDashboard, view:'crm-dashboard' },
       { label:'Users & Roles', icon: Users, view:'crm-users' },
       { label:'Departments/Branches', icon: Building2, view:'crm-roles' },
