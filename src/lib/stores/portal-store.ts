@@ -77,7 +77,12 @@ export type PortalView =
   | 'marketing-analytics' | 'marketing-inbox' | 'marketing-approvals'
   | 'marketing-brand-assets' | 'marketing-keywords' | 'marketing-whatsapp'
   | 'marketing-leads' | 'marketing-ai-replies' | 'marketing-assignment'
-  | 'marketing-handoff' | 'marketing-workflows' | 'marketing-audit';
+  | 'marketing-handoff' | 'marketing-workflows' | 'marketing-audit'
+  // Knowledge Sharing — included in each dashboard allowing anyone to upload info/updates
+  | 'knowledge-sharing-hub' | 'knowledge-sharing-detail'
+  // International Officer / Partner Dashboard — university research, partnership communications, contacts, strategy
+  | 'international-officer-dashboard' | 'international-officer-research' | 'international-officer-communications'
+  | 'international-officer-contacts' | 'international-officer-agreements' | 'international-officer-strategy';
 
 export interface PortalRolePermission {
   module: string;

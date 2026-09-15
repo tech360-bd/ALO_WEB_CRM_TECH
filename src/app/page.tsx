@@ -151,6 +151,10 @@ import HumanHandoffView from '@/components/marketing/hub/HumanHandoffView';
 import N8nWorkflowsView from '@/components/marketing/hub/N8nWorkflowsView';
 import MarketingAuditAccessView from '@/components/marketing/hub/MarketingAuditAccessView';
 
+// ---- Knowledge Sharing & International Officer ----
+import KnowledgeSharingHub from '@/components/alo/views/knowledge-sharing-hub';
+import InternationalOfficerDashboard from '@/components/alo/views/international-officer-dashboard';
+
 // ---- SEO Growth System ----
 import CrmSeoGrowthDashboard from '@/components/crm/seo/CrmSeoGrowthDashboard';
 import CrmSeoKeywordTracker from '@/components/crm/seo/CrmSeoKeywordTracker';
@@ -245,6 +249,9 @@ function StudentView({ view }: { view: PortalView }) {
     'student-events': <StudentHelpCenter />,
     'student-onboarding': <StudentProfilePage />,
     'student-interviews': <StudentVisaCenter />,
+    // Knowledge Sharing — included in each dashboard
+    'knowledge-sharing-hub': <KnowledgeSharingHub />,
+    'knowledge-sharing-detail': <KnowledgeSharingHub />,
   };
   return <StudentPortalShell>{pageMap[view] || <StudentDashboard />}</StudentPortalShell>;
 }
@@ -268,6 +275,15 @@ const employeePageMap: Record<string, React.ReactNode> = {
   'employee-notifications': <EmployeeNotificationsPage />,
   'employee-settings': <EmployeeSettingsPage />,
   'employee-help': <EmployeeHelpPage />,
+  // Knowledge Sharing & International Officer — included in each dashboard
+  'knowledge-sharing-hub': <KnowledgeSharingHub />,
+  'knowledge-sharing-detail': <KnowledgeSharingHub />,
+  'international-officer-dashboard': <InternationalOfficerDashboard />,
+  'international-officer-research': <InternationalOfficerDashboard />,
+  'international-officer-communications': <InternationalOfficerDashboard />,
+  'international-officer-contacts': <InternationalOfficerDashboard />,
+  'international-officer-agreements': <InternationalOfficerDashboard />,
+  'international-officer-strategy': <InternationalOfficerDashboard />,
 };
 
 function EmployeeView({ view }: { view: PortalView }) {
@@ -289,6 +305,15 @@ const partnerPageMap: Record<string, React.ReactNode> = {
   'partner-notifications': <PartnerNotificationsPage />,
   'partner-settings': <PartnerSettingsPage />,
   'partner-help': <PartnerHelpPage />,
+  // Knowledge Sharing & International Officer — Partner Dashboard enhanced
+  'knowledge-sharing-hub': <KnowledgeSharingHub />,
+  'knowledge-sharing-detail': <KnowledgeSharingHub />,
+  'international-officer-dashboard': <InternationalOfficerDashboard />,
+  'international-officer-research': <InternationalOfficerDashboard />,
+  'international-officer-communications': <InternationalOfficerDashboard />,
+  'international-officer-contacts': <InternationalOfficerDashboard />,
+  'international-officer-agreements': <InternationalOfficerDashboard />,
+  'international-officer-strategy': <InternationalOfficerDashboard />,
 };
 
 function PartnerView({ view }: { view: PortalView }) {
@@ -315,6 +340,15 @@ const marketingPageMap: Record<string, React.ReactNode> = {
   'marketing-handoff': <HumanHandoffView />,
   'marketing-workflows': <N8nWorkflowsView />,
   'marketing-audit': <MarketingAuditAccessView />,
+  // Knowledge Sharing & International Officer
+  'knowledge-sharing-hub': <KnowledgeSharingHub />,
+  'knowledge-sharing-detail': <KnowledgeSharingHub />,
+  'international-officer-dashboard': <InternationalOfficerDashboard />,
+  'international-officer-research': <InternationalOfficerDashboard />,
+  'international-officer-communications': <InternationalOfficerDashboard />,
+  'international-officer-contacts': <InternationalOfficerDashboard />,
+  'international-officer-agreements': <InternationalOfficerDashboard />,
+  'international-officer-strategy': <InternationalOfficerDashboard />,
 };
 
 function MarketingView({ view }: { view: PortalView }) {
@@ -389,6 +423,16 @@ const crmPageMap: Record<string, React.ReactNode> = {
   'crm-seo-competitors': <CrmSeoCompetitorAnalysis />,
   'crm-seo-technical': <CrmSeoTechnicalAudit />,
   'crm-seo-policy': <CrmSeoPolicyWatcher />,
+  // Knowledge Sharing — included in each dashboard allowing anyone to upload
+  'knowledge-sharing-hub': <KnowledgeSharingHub />,
+  'knowledge-sharing-detail': <KnowledgeSharingHub />,
+  // International Officer / Partner Dashboard — university research, partnership comms, contacts, business strategy
+  'international-officer-dashboard': <InternationalOfficerDashboard />,
+  'international-officer-research': <InternationalOfficerDashboard />,
+  'international-officer-communications': <InternationalOfficerDashboard />,
+  'international-officer-contacts': <InternationalOfficerDashboard />,
+  'international-officer-agreements': <InternationalOfficerDashboard />,
+  'international-officer-strategy': <InternationalOfficerDashboard />,
 };
 
 function CrmAdminView({ view }: { view: PortalView }) {
