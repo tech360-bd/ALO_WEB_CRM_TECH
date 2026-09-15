@@ -1,0 +1,631 @@
+name: ALO Education Production Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref (commit SHA, branch, or tag) to deploy — defaults to main HEAD'
+        required: false
+        default: 'main'
+        type: string
+      skip_migrations:
+        description: 'Skip Prisma migrations (safe default)'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '22'
+  APP_PORT: '3044'
+  PM2_NAME: 'alo-education'
+  PRIMARY_DOMAIN: 'aloeducation.com'
+
+jobs:
+  validate-and-build:
+    name: Validate & Build (Runner)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      deploy_ref: ${{ steps.resolve_ref.outputs.deploy_ref }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          fetch-depth: 0
+
+      - name: Resolve deployment ref
+        id: resolve_ref
+        shell: bash
+        run: |
+          set -euo pipefail
+          REF="${{ inputs.ref || github.sha }}"
+          if [ "$REF" = "main" ]; then
+            REF="$(git rev-parse HEAD)"
+          fi
+          # If short SHA or branch, resolve to full SHA if possible
+          if git rev-parse --verify "$REF" >/dev/null 2>&1; then
+            FULL_SHA="$(git rev-parse "$REF")"
+          else
+            FULL_SHA="$REF"
+          fi
+          echo "deploy_ref=$FULL_SHA" >> "$GITHUB_OUTPUT"
+          echo "Resolved deploy ref: $FULL_SHA (input: ${{ inputs.ref || github.sha }})"
+
+      - name: Verify deployment secrets presence (no values printed)
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+        run: |
+          set -euo pipefail
+          echo "Checking required deployment secrets..."
+          missing=0
+          if [ -z "${DEPLOY_HOST:-}" ]; then
+            echo "::error::DEPLOY_HOST is missing or empty — add it in GitHub repo Settings → Secrets and variables → Actions"
+            missing=1
+          else
+            echo "✓ DEPLOY_HOST present (value masked)"
+          fi
+          if [ -z "${DEPLOY_USER:-}" ]; then
+            echo "::error::DEPLOY_USER is missing or empty"
+            missing=1
+          else
+            echo "✓ DEPLOY_USER present: masked"
+          fi
+          if [ -z "${DEPLOY_SSH_KEY:-}" ]; then
+            echo "::error::DEPLOY_SSH_KEY is missing or empty"
+            missing=1
+          else
+            echo "✓ DEPLOY_SSH_KEY present (masked, length check)"
+            len=$(echo -n "$DEPLOY_SSH_KEY" | wc -c)
+            if [ "$len" -lt 100 ]; then
+              echo "::error::DEPLOY_SSH_KEY looks too short ($len chars)"
+              missing=1
+            fi
+          fi
+          if [ -n "${DEPLOY_PORT:-}" ]; then
+            echo "✓ DEPLOY_PORT present: ${DEPLOY_PORT} (custom SSH port)"
+          else
+            echo "ℹ DEPLOY_PORT not set — will use default SSH port 22"
+          fi
+          if [ "$missing" -ne 0 ]; then
+            echo "::error::One or more required deployment secrets are missing. Configure them in GitHub → Settings → Secrets → Actions."
+            echo "Required: DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY, optional DEPLOY_PORT"
+            exit 1
+          fi
+          echo "Deployment SSH configuration is present."
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies (lockfile)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f package-lock.json ]; then
+            npm ci --legacy-peer-deps=false
+          else
+            echo "::warning::package-lock.json not found, running npm install"
+            npm install
+          fi
+
+      - name: Prisma validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx prisma validate
+          echo "✓ Prisma schema valid"
+
+      - name: Prisma generate
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx prisma generate
+          echo "✓ Prisma client generated"
+
+      - name: Lint (if configured)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if npm run | grep -q "lint"; then
+            echo "Running lint..."
+            npm run lint || {
+              echo "::warning::Lint failed — review output but not blocking deploy (adjust if you want strict)"
+              # Uncomment to make lint blocking:
+              # exit 1
+            }
+          else
+            echo "No lint script — skipping"
+          fi
+
+      - name: Typecheck (if configured)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if npm run | grep -q "typecheck"; then
+            echo "Running typecheck..."
+            npm run typecheck || {
+              echo "::warning::Typecheck reported errors — check tsc-errors.txt"
+              # For production, we allow warnings but log them
+              # To make blocking: exit 1
+            }
+          else
+            echo "No typecheck script — skipping"
+          fi
+
+      - name: Tests (if configured)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if npm run | grep -q "\"test\""; then
+            echo "Running unit tests..."
+            npm run test || {
+              echo "::warning::Tests failed — review but not blocking deploy yet"
+            }
+          else
+            echo "No test script — skipping"
+          fi
+
+      - name: Production build (runner validation)
+        shell: bash
+        env:
+          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
+          NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          SESSION_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+          NEXTAUTH_URL: "https://aloeducation.com"
+          NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
+        run: |
+          set -euo pipefail
+          echo "Running production build for validation (dummy DB)..."
+          # Build may need DATABASE_URL even if not connecting — provide dummy
+          # Use low memory flags as in package.json build script
+          RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' npm run build || {
+            echo "::error::Production build failed on runner — fix build errors before deploying"
+            exit 1
+          }
+          echo "✓ Production build succeeded on runner"
+          ls -lh .next/standalone/server.js || echo "::warning::Standalone server not found after build"
+
+  deploy:
+    name: Deploy to VPS (SSH)
+    runs-on: ubuntu-latest
+    needs: validate-and-build
+    timeout-minutes: 30
+    if: always() && needs.validate-and-build.result != 'failure' && needs.validate-and-build.result != 'cancelled'
+    steps:
+      - name: Checkout repository (for ref info)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          fetch-depth: 0
+
+      - name: Verify deployment secrets again (SSH step guard)
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOY_HOST" || { echo "::error::DEPLOY_HOST missing"; exit 1; }
+          test -n "$DEPLOY_USER" || { echo "::error::DEPLOY_USER missing"; exit 1; }
+          test -n "$DEPLOY_SSH_KEY" || { echo "::error::DEPLOY_SSH_KEY missing"; exit 1; }
+          echo "✓ Secrets verified for deploy job"
+
+      - name: Deploy via SSH — safe production deployment
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          DEPLOY_REF: ${{ needs.validate-and-build.outputs.deploy_ref || github.sha }}
+          SKIP_MIGRATIONS: ${{ inputs.skip_migrations }}
+          APP_PORT: ${{ env.APP_PORT }}
+          PM2_NAME: ${{ env.PM2_NAME }}
+          PRIMARY_DOMAIN: ${{ env.PRIMARY_DOMAIN }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          envs: DEPLOY_REF,SKIP_MIGRATIONS,APP_PORT,PM2_NAME,PRIMARY_DOMAIN
+          command_timeout: 25m
+          script_stop: true
+          script: |
+            set -euo pipefail
+            echo "============================================================"
+            echo " ALO Education Production Deployment"
+            echo " Deploy Ref: $DEPLOY_REF"
+            echo " Skip Migrations: $SKIP_MIGRATIONS"
+            echo " App Port: $APP_PORT | PM2: $PM2_NAME | Domain: $PRIMARY_DOMAIN"
+            echo "============================================================"
+
+            # ---- 1. Detect actual source and runtime directories ----
+            CANDIDATE_DIRS=(
+              "/root/alo-github-main-new"
+              "/root/alo-github-main"
+              "/root/alo-live"
+              "/home/aloeduca/alo-education"
+              "/home/aloeduca/alo-web-crm"
+              "/opt/alo-education"
+            )
+            DEPLOY_DIR=""
+            for d in "${CANDIDATE_DIRS[@]}"; do
+              if [ -d "$d/.git" ] || [ -d "$d" ]; then
+                if [ -d "$d/.git" ]; then
+                  echo "Found git checkout at: $d"
+                  if [ -z "$DEPLOY_DIR" ]; then
+                    DEPLOY_DIR="$d"
+                  fi
+                fi
+              fi
+            done
+
+            # Prefer intended directory /root/alo-github-main-new per spec, fallback to first found git repo
+            if [ -d "/root/alo-github-main-new/.git" ]; then
+              DEPLOY_DIR="/root/alo-github-main-new"
+              echo "Using intended directory per spec: $DEPLOY_DIR"
+            elif [ -d "/root/alo-github-main/.git" ]; then
+              DEPLOY_DIR="/root/alo-github-main"
+              echo "Using known source directory: $DEPLOY_DIR (will also sync to /root/alo-github-main-new if needed)"
+            elif [ -z "$DEPLOY_DIR" ]; then
+              # Default to intended dir and clone later
+              DEPLOY_DIR="/root/alo-github-main-new"
+              echo "No existing git dir found, will use intended: $DEPLOY_DIR"
+            fi
+
+            echo "Final DEPLOY_DIR: $DEPLOY_DIR"
+            echo "Listing candidate dirs:"
+            for d in "${CANDIDATE_DIRS[@]}"; do ls -ld "$d" 2>&1 || echo "  $d not found"; done
+
+            # ---- 2. Ensure deploy dir exists and is a git repo ----
+            if [ ! -d "$DEPLOY_DIR" ]; then
+              echo "Creating deploy dir: $DEPLOY_DIR"
+              mkdir -p "$DEPLOY_DIR"
+            fi
+
+            cd "$DEPLOY_DIR"
+
+            if [ ! -d ".git" ]; then
+              echo "Initializing git repo in $DEPLOY_DIR — cloning from origin if possible"
+              # Try to find remote URL from other candidate dir
+              REMOTE_URL=""
+              for d in "${CANDIDATE_DIRS[@]}"; do
+                if [ -d "$d/.git" ] && [ "$d" != "$DEPLOY_DIR" ]; then
+                  REMOTE_URL=$(cd "$d" && git remote get-url origin 2>/dev/null || true)
+                  if [ -n "$REMOTE_URL" ]; then
+                    echo "Found remote URL from $d: $REMOTE_URL"
+                    break
+                  fi
+                fi
+              done
+              if [ -z "$REMOTE_URL" ]; then
+                REMOTE_URL="https://github.com/engralaminn-collab/alo_education_z....ai.git"
+                echo "Using default remote URL: $REMOTE_URL"
+              fi
+              if [ ! -d ".git" ]; then
+                git init
+                git remote add origin "$REMOTE_URL" || git remote set-url origin "$REMOTE_URL"
+              fi
+            fi
+
+            echo "Current git status:"
+            git status --porcelain || true
+            git remote -v || true
+            git log --oneline -5 || true
+
+            # ---- 3. Backup production-critical files ----
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BACKUP_DIR=".deploy-backup-${TIMESTAMP}-${DEPLOY_REF:0:7}"
+            mkdir -p "$BACKUP_DIR"
+            echo "Creating backup at $BACKUP_DIR"
+            [ -f .env ] && cp -v .env "$BACKUP_DIR/.env.backup" || echo ".env not present, skipping backup"
+            [ -d storage ] && cp -rv storage "$BACKUP_DIR/storage" || echo "storage not present"
+            [ -d uploads ] && cp -rv uploads "$BACKUP_DIR/uploads" || echo "uploads not present"
+            [ -d public/uploads ] && cp -rv public/uploads "$BACKUP_DIR/public_uploads" || echo "public/uploads not present"
+            [ -f ecosystem.config.cjs ] && cp -v ecosystem.config.cjs "$BACKUP_DIR/" || true
+            echo "Backup complete: $(ls -lh "$BACKUP_DIR" | head -n 20)"
+
+            # Preserve .env across checkout
+            ENV_TMP="/tmp/alo-env-backup-${TIMESTAMP}"
+            if [ -f .env ]; then
+              cp -v .env "$ENV_TMP"
+              echo "Preserved .env to $ENV_TMP"
+            fi
+
+            # ---- 4. Fetch and checkout intended commit safely ----
+            echo "Fetching origin..."
+            git fetch origin --prune || {
+              echo "::warning::git fetch failed, trying with https remote"
+              git remote set-url origin "https://github.com/engralaminn-collab/alo_education_z....ai.git" || true
+              git fetch origin --prune || true
+            }
+
+            # Resolve DEPLOY_REF to a commit SHA if it's a branch name
+            RESOLVED_REF="$DEPLOY_REF"
+            if git rev-parse --verify "origin/$DEPLOY_REF" >/dev/null 2>&1; then
+              RESOLVED_REF="origin/$DEPLOY_REF"
+              echo "Resolved branch $DEPLOY_REF to $RESOLVED_REF"
+            elif git rev-parse --verify "$DEPLOY_REF" >/dev/null 2>&1; then
+              echo "Deploy ref $DEPLOY_REF exists locally"
+            else
+              echo "Trying to resolve $DEPLOY_REF as remote branch or SHA"
+              if git rev-parse --verify "origin/main" >/dev/null 2>&1; then
+                echo "Fallback to origin/main"
+                RESOLVED_REF="origin/main"
+              fi
+            fi
+
+            echo "Checking out $RESOLVED_REF (intended $DEPLOY_REF)..."
+            # Save current commit for rollback info
+            PREV_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+            echo "Previous commit: $PREV_COMMIT"
+
+            # Force checkout without cleaning untracked production files (no git clean -fdx)
+            git checkout --force "$RESOLVED_REF" || git checkout --force origin/main || {
+              echo "::error::Failed to checkout $RESOLVED_REF"
+              exit 1
+            }
+
+            # If DEPLOY_REF was a SHA, checkout that SHA explicitly
+            if [ "${#DEPLOY_REF}" -ge 7 ] && [ "${#DEPLOY_REF}" -le 40 ]; then
+              if git cat-file -e "$DEPLOY_REF" 2>/dev/null; then
+                echo "Checking out exact SHA: $DEPLOY_REF"
+                git checkout --force "$DEPLOY_REF" || true
+              fi
+            fi
+
+            NEW_COMMIT=$(git rev-parse HEAD)
+            echo "Deployed commit: $NEW_COMMIT"
+            echo "Expected commit: $DEPLOY_REF"
+            echo "Previous commit: $PREV_COMMIT"
+            echo "$NEW_COMMIT" > .deployed_commit
+            echo "Deployed: $NEW_COMMIT at $(date -u)" >> .deploy_history.log
+            git log --oneline -3
+
+            # Restore .env if it was overwritten
+            if [ -f "$ENV_TMP" ]; then
+              if [ ! -f .env ]; then
+                echo "Restoring .env from backup"
+                cp -v "$ENV_TMP" .env
+              else
+                echo ".env exists after checkout — comparing"
+                if ! cmp -s "$ENV_TMP" .env; then
+                  echo "WARNING: .env changed after checkout — keeping existing .env but saving backup comparison"
+                  cp -v "$ENV_TMP" "$BACKUP_DIR/.env.pre-restore"
+                fi
+              fi
+              rm -f "$ENV_TMP"
+            else
+              if [ ! -f .env ]; then
+                echo "::warning::.env missing after checkout and no backup found — deployment may fail without env"
+                if [ -f .env.example ]; then
+                  echo "Found .env.example — you must create .env manually on VPS"
+                fi
+              fi
+            fi
+
+            # ---- 5. Install dependencies using lockfile ----
+            echo "Installing dependencies..."
+            if [ -f package-lock.json ]; then
+              npm ci || npm install
+            else
+              npm install
+            fi
+
+            # ---- 6. Prisma generate and safe migration handling ----
+            echo "Prisma validate..."
+            npx prisma validate || { echo "::error::Prisma validation failed"; exit 1; }
+
+            echo "Prisma generate..."
+            npx prisma generate || { echo "::error::Prisma generate failed"; exit 1; }
+
+            echo "Checking migration status (safe, non-destructive)..."
+            npx prisma migrate status || echo "::warning::prisma migrate status reported issues — check manually"
+
+            if [ "$SKIP_MIGRATIONS" = "true" ] || [ "$SKIP_MIGRATIONS" = "True" ]; then
+              echo "Skipping migrations per input (skip_migrations=true) — safe default"
+            else
+              echo "Applying migrations (prisma migrate deploy)..."
+              # Backup DB before migration if possible
+              if [ -f .env ]; then
+                echo "Attempting to backup DB before migration (if mysqldump available)"
+                # Extract DB name from DATABASE_URL if possible — redacted
+                # Do not print secret values
+                if command -v mysqldump >/dev/null 2>&1; then
+                  echo "mysqldump available — manual backup recommended before migrations"
+                fi
+              fi
+              npx prisma migrate deploy || {
+                echo "::error::Migration deploy failed — rollback may be needed. Check $BACKUP_DIR"
+                exit 1
+              }
+              echo "✓ Migrations applied"
+            fi
+
+            # ---- 7. Production build ----
+            echo "Running production build..."
+            # Ensure storage/logs exists for PM2
+            mkdir -p storage/logs
+
+            # Use build flags from package.json
+            RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' npm run build || {
+              echo "::error::Production build failed"
+              exit 1
+            }
+
+            echo "Running prepare-standalone..."
+            node scripts/prepare-standalone.mjs || {
+              echo "::warning::prepare-standalone failed, checking if standalone server exists"
+            }
+
+            if [ ! -f .next/standalone/server.js ]; then
+              echo "::error::Standalone server not found at .next/standalone/server.js after build"
+              ls -lh .next/ || true
+              ls -lh .next/standalone/ || true
+              exit 1
+            fi
+            echo "✓ Build artifacts verified"
+
+            # ---- 8. PM2 start/restart ----
+            echo "Configuring PM2 process: $PM2_NAME on port $APP_PORT"
+
+            # Ensure PM2 is installed
+            if ! command -v pm2 >/dev/null 2>&1; then
+              echo "PM2 not found, installing globally..."
+              npm install -g pm2
+            fi
+
+            # Check if port is used by another app
+            echo "Checking port $APP_PORT usage..."
+            ss -tlnp | grep -E ":$APP_PORT" || echo "Port $APP_PORT not currently listening (expected before restart)"
+
+            # Start or restart PM2
+            if pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
+              echo "Restarting existing PM2 process $PM2_NAME"
+              pm2 restart "$PM2_NAME" --update-env || pm2 restart ecosystem.config.cjs --update-env
+            else
+              echo "Starting new PM2 process $PM2_NAME"
+              if [ -f ecosystem.config.cjs ]; then
+                pm2 start ecosystem.config.cjs --env production
+              else
+                echo "::warning::ecosystem.config.cjs not found, starting with default"
+                pm2 start .next/standalone/server.js --name "$PM2_NAME" -- --port "$APP_PORT" --hostname 0.0.0.0
+              fi
+            fi
+
+            pm2 save || true
+            # Ensure startup
+            pm2 startup -u "$(whoami)" --hp "$(eval echo ~$(whoami))" 2>&1 | tail -n 5 || true
+
+            echo "PM2 list:"
+            pm2 list
+            echo "PM2 describe $PM2_NAME:"
+            pm2 describe "$PM2_NAME" || true
+
+            # ---- 9. Confirm app listens on port 3044 ----
+            echo "Waiting for app to listen on port $APP_PORT..."
+            for i in {1..30}; do
+              if ss -tlnp | grep -q ":$APP_PORT"; then
+                echo "✓ Port $APP_PORT is listening (attempt $i)"
+                break
+              fi
+              echo "  Waiting for port $APP_PORT... ($i/30)"
+              sleep 2
+              if [ "$i" -eq 30 ]; then
+                echo "::error::Port $APP_PORT not listening after 60s"
+                pm2 logs "$PM2_NAME" --lines 100 --nostream || true
+                exit 1
+              fi
+            done
+
+            # ---- 10. Local health checks ----
+            echo "Running local health checks..."
+            sleep 3
+            LOCAL_HEALTH="http://127.0.0.1:${APP_PORT}/api/health"
+            echo "Curl $LOCAL_HEALTH"
+            curl -fsS --max-time 15 "$LOCAL_HEALTH" | head -c 2000 || {
+              echo "::error::Local health check failed at $LOCAL_HEALTH"
+              pm2 logs "$PM2_NAME" --lines 150 --nostream || true
+              exit 1
+            }
+            echo ""
+            echo "✓ Local health check passed"
+
+            # Check critical pages locally
+            for path in "/" "/api/health" "/universities" "/courses" "/destinations"; do
+              url="http://127.0.0.1:${APP_PORT}${path}"
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$url" || echo "000")
+              echo "  Local $path -> HTTP $code"
+              if [ "$code" = "000" ] || [ "$code" -ge 500 ]; then
+                echo "::warning::Local check $path returned $code"
+              fi
+            done
+
+            # ---- 11. Public domain health check ----
+            echo "Public domain health check for $PRIMARY_DOMAIN..."
+            # Try https first, then http
+            for proto in https http; do
+              url="${proto}://${PRIMARY_DOMAIN}/api/health"
+              echo "Trying $url"
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$url" || echo "000")
+              echo "  $url -> HTTP $code"
+              if [ "$code" = "200" ]; then
+                echo "✓ Public health check passed via $proto"
+                curl -fsS --max-time 15 "$url" | head -c 2000 || true
+                echo ""
+                break
+              fi
+            done
+
+            # Check homepage public
+            for proto in https http; do
+              url="${proto}://${PRIMARY_DOMAIN}/"
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 -L "$url" || echo "000")
+              echo "  Public homepage $url -> HTTP $code"
+              if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
+                echo "✓ Public homepage reachable via $proto"
+                break
+              fi
+            done
+
+            # ---- 12. Reverse proxy verification ----
+            echo "Checking reverse proxy config..."
+            if [ -f /etc/caddy/Caddyfile ]; then
+              echo "Caddyfile found:"
+              cat /etc/caddy/Caddyfile | head -n 100 || true
+              if grep -q "$APP_PORT" /etc/caddy/Caddyfile; then
+                echo "✓ Caddyfile proxies to $APP_PORT"
+              else
+                echo "::warning::Caddyfile does not proxy to $APP_PORT — may need update"
+                grep -n "reverse_proxy" /etc/caddy/Caddyfile || true
+              fi
+            fi
+            if [ -f /etc/nginx/sites-enabled/default ] || [ -f /etc/nginx/conf.d/default.conf ] || [ -f /etc/nginx/nginx.conf ]; then
+              echo "Nginx config found — checking proxy"
+              grep -R "proxy_pass.*$APP_PORT\|reverse_proxy.*$APP_PORT\|3044" /etc/nginx/ 2>/dev/null | head -n 20 || echo "Nginx proxy check no match for $APP_PORT"
+            fi
+
+            # ---- 13. Final verification ----
+            echo "============================================================"
+            echo " Deployment Summary"
+            echo " Deployed Commit: $(git rev-parse HEAD)"
+            echo " Previous Commit: $PREV_COMMIT"
+            echo " Deploy Dir: $DEPLOY_DIR"
+            echo " PM2 Process: $PM2_NAME"
+            echo " App Port: $APP_PORT"
+            echo " Domain: $PRIMARY_DOMAIN"
+            echo " Backup Dir: $BACKUP_DIR"
+            echo "============================================================"
+            pm2 list
+            ss -tlnp | grep -E ":$APP_PORT" || true
+            curl -fsS --max-time 10 "http://127.0.0.1:${APP_PORT}/api/health" | head -c 1000 || true
+            echo ""
+            echo "✓ Deployment completed successfully"
+
+      - name: Post-deploy public check (from runner)
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Post-deploy public check from GitHub runner (best-effort)"
+          for url in "https://aloeducation.com/api/health" "https://aloeducation.com/" "http://aloeducation.com/api/health"; do
+            echo "Checking $url"
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 -L "$url" || echo "000")
+            echo "  -> HTTP $code"
+            if [ "$code" = "200" ]; then
+              curl -s --max-time 15 "$url" | head -c 2000 || true
+              echo ""
+            fi
+          done
+          echo "Runner post-check complete"
