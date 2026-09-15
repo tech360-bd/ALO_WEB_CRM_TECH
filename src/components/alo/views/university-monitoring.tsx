@@ -824,3 +824,4 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
     </div>
   );
 }
+export default UniversityMonitoring;

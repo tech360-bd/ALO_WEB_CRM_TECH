@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
 import { canAccessFeature } from '@/lib/access-check-engine';
+import { canAccessFeatureEngine } from '@/lib/employee-access-engine';
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     const action = searchParams.get('action') || 'view';
 
     if (featureKey) {
-      const allowed = await canAccessFeature(auth.userId, auth.roles, featureKey, action);
+      const allowed = await canAccessFeatureEngine(auth.userId, auth.roles, featureKey, action);
       return NextResponse.json({ success: true, featureKey, action, allowed, userId: auth.userId, roles: auth.roles });
     }
 
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
     const checks = await Promise.all(
       ['whatsapp','social','email','phone','ai','application','student','document','finance','visa','marketing','partner','b2b','quota'].map(async (key) => ({
         featureKey: key,
-        allowed: await canAccessFeature(auth.userId, auth.roles, key, 'view').catch(() => false),
+        allowed: await canAccessFeatureEngine(auth.userId, auth.roles, key, 'view').catch(() => false),
       }))
     );
 

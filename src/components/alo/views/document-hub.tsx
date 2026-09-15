@@ -757,3 +757,4 @@ export function DocumentHub() {
     </div>
   );
 }
+export default DocumentHub;

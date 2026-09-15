@@ -138,8 +138,8 @@ export async function POST(req: Request) {
   const authRes = await authenticateUnified(req);
   if (authRes instanceof NextResponse) return authRes;
 
-  if (authRes.type === 'student' && !['ALO_FULL_STUDENT', 'STUDENT'].includes(authRes.data.userType || '')) {
-    // students can create self application
+  if (authRes.type === 'student') {
+    // students can create self application - userType check not needed, StudentAuthContext has no userType
   }
 
   const body = await req.json();

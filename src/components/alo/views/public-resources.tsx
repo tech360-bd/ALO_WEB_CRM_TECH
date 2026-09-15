@@ -281,3 +281,4 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
     </div>
   );
 }
+export default PublicResources;

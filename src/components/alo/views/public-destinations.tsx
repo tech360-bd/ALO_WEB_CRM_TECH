@@ -292,3 +292,4 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
     </div>
   );
 }
+export default PublicDestinations;

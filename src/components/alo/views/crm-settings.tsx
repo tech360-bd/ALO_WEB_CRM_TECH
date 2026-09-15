@@ -415,3 +415,4 @@ export function CrmSettings() {
     </div>
   );
 }
+export default CrmSettings;

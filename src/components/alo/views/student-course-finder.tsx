@@ -1284,3 +1284,4 @@ function CompareTable({
     </ScrollArea>
   );
 }
+export default StudentCourseFinder;

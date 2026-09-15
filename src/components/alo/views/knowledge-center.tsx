@@ -1469,3 +1469,4 @@ export function KnowledgeCenter() {
     </div>
   );
 }
+export default KnowledgeCenter;

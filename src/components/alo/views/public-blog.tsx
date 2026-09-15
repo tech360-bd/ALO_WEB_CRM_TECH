@@ -460,3 +460,4 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
     </div>
   );
 }
+export default PublicBlog;

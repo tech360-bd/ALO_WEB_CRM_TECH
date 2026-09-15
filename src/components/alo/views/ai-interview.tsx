@@ -1036,3 +1036,4 @@ function ReportPhase({
     </div>
   );
 }
+export default AiInterviewView;

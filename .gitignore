@@ -241,3 +241,6 @@ videocaptioner_bin/
 _reference_repos/
 _reference_repos/*
 **/_reference_repos/
+
+!docs/BRANCH-MERGE-LEDGER.csv
+!docs/BRANCH-MERGE-*.csv

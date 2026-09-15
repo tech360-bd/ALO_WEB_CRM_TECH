@@ -2940,3 +2940,4 @@ function WhatsAppCard() {
     </Card>
   );
 }
+export default MarketingDashboard;

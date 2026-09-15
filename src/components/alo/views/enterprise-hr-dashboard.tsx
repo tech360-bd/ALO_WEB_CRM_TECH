@@ -2789,3 +2789,4 @@ function AnalyticsBarCard({
     </SectionCard>
   );
 }
+export default EnterpriseHrDashboard;

@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
     const isAuthorized = auth.roles.some((r) => ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNSELOR', 'super_admin', 'admin', 'staff', 'counselor'].includes(r));
     if (!isAuthorized) return NextResponse.json({ success:false, error:'Staff required' }, { status:403 });
-    const search = req.nextUrl.searchParams.get('search') || '';
+    const search = new URL(req.url).searchParams.get('search') || '';
     const where: any = {};
     if (search) where.OR = [{ courseTitle: { contains: search } }, { courseId: { contains: search } }, { subjectArea: { contains: search } }];
     const courses = await db.crmCourse.findMany({ where, take: 100, orderBy: { courseTitle: 'asc' }, include: { university: { select: { name: true, country: true } }, intakeFees: { take:1 }, requirements: { take:1 } } });

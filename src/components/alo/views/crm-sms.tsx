@@ -200,3 +200,4 @@ export function CrmSms() {
     </div>
   );
 }
+export default CrmSms;

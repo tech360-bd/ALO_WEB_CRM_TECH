@@ -34,3 +34,4 @@ export function StudentHelp() {
     </div>
   );
 }
+export default StudentHelp;

@@ -883,3 +883,4 @@ function CompareTable({
     </div>
   );
 }
+export default PublicCourseFinder;

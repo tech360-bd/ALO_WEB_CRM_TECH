@@ -25,3 +25,4 @@ export function StudentCas() {
     </div>
   );
 }
+export default StudentCas;

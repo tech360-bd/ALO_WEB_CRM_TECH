@@ -652,3 +652,4 @@ export function PartnerPortal() {
     </div>
   );
 }
+export default PartnerPortal;

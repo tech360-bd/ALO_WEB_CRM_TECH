@@ -26,3 +26,4 @@ export function PublicRefundPolicy({ onNavigate }: Props) {
     </div>
   );
 }
+export default PublicRefundPolicy;

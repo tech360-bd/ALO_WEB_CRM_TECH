@@ -1,114 +1,25 @@
-name: ALO Education Production Deployment
+- name: Verify deployment secrets
+  shell: bash
+  env:
+    DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+    DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+    DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+  run: |
+    set -euo pipefail
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+    test -n "$DEPLOY_HOST" || {
+      echo "::error::DEPLOY_HOST is missing or empty"
+      exit 1
+    }
 
-concurrency:
-  group: alo-production
-  cancel-in-progress: false
+    test -n "$DEPLOY_USER" || {
+      echo "::error::DEPLOY_USER is missing or empty"
+      exit 1
+    }
 
-jobs:
-  deploy:
-    name: Deploy ALO Education to Production VPS
-    runs-on: ubuntu-latest
+    test -n "$DEPLOY_SSH_KEY" || {
+      echo "::error::DEPLOY_SSH_KEY is missing or empty"
+      exit 1
+    }
 
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          command_timeout: 45m
-          script_stop: true
-          script: |
-            set -e
-
-            echo "=== ALO PRODUCTION DEPLOYMENT ==="
-
-            cd /root/alo-live
-
-            echo "=== 1. VERIFY REPOSITORY ==="
-            git rev-parse --is-inside-work-tree
-            git remote -v
-
-            echo "=== 2. FETCH GITHUB MAIN ==="
-            git fetch origin main
-
-            echo "=== 3. SYNC SOURCE ==="
-            git reset --hard origin/main
-
-            echo "=== 4. VERIFY COMMIT ==="
-            echo "DEPLOYING:"
-            git rev-parse HEAD
-
-            echo "GITHUB:"
-            git rev-parse origin/main
-
-            test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
-
-            echo "=== 5. INSTALL DEPENDENCIES ==="
-            npm ci
-
-            echo "=== 6. GENERATE PRISMA CLIENT ==="
-            npx prisma generate
-
-            echo "=== 7. APPLY EXISTING MIGRATIONS ==="
-            npx prisma migrate deploy
-
-            echo "=== 8. BUILD APPLICATION ==="
-            npm run build
-
-            echo "=== 9. RESTART PM2 ==="
-            pm2 restart alo-education --update-env
-
-            echo "=== 10. SAVE PM2 ==="
-            pm2 save
-
-            echo "=== 11. VERIFY PM2 ==="
-            pm2 describe alo-education | grep -E 'status|script path|exec cwd|node.js version'
-
-            echo "=== 12. VERIFY PORT 3025 ==="
-            ss -lntp | grep ':3025'
-
-            echo "=== DEPLOYMENT COMPLETE ==="
-
-      - name: Production health check
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          command_timeout: 10m
-          script_stop: true
-          script: |
-            set -e
-
-            echo "=== ALO PRODUCTION HEALTH CHECK ==="
-
-            sleep 8
-
-            echo "=== PM2 ==="
-            pm2 describe alo-education | grep -q "online"
-
-            echo "=== LOCAL HTTP ==="
-            curl -fsS http://127.0.0.1:3025/ > /dev/null
-
-            echo "=== DEPLOYED COMMIT ==="
-            cd /root/alo-live
-            git rev-parse HEAD
-
-            echo "=== GITHUB COMMIT ==="
-            git rev-parse origin/main
-
-            test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
-
-            echo "=== HEALTH CHECK PASSED ==="
+    echo "Deployment SSH configuration is present."

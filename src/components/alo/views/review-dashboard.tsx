@@ -355,3 +355,4 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
     </div>
   );
 }
+export default ReviewDashboard;

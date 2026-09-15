@@ -527,3 +527,4 @@ export function ApplicationsView() {
     </div>
   );
 }
+export default ApplicationsView;

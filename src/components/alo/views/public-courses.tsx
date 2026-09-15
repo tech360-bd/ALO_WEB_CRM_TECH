@@ -455,3 +455,4 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
     </div>
   );
 }
+export default PublicCourses;

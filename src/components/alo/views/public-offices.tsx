@@ -43,3 +43,4 @@ export function PublicOffices({ onNavigate }: Props) {
     </div>
   );
 }
+export default PublicOffices;

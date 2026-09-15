@@ -1186,3 +1186,4 @@ function ContactAloDialog({
     </Dialog>
   );
 }
+export default PartnerCommHub;

@@ -1190,3 +1190,4 @@ function ConfigurePermissionsDialog({
     </Dialog>
   );
 }
+export default SocialDashboard;

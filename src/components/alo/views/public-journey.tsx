@@ -61,3 +61,4 @@ export function PublicJourney({ onNavigate }: PublicJourneyProps) {
     </div>
   );
 }
+export default PublicJourney;

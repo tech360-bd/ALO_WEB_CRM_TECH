@@ -451,3 +451,4 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
     </div>
   );
 }
+export default AuthRegister;

@@ -633,12 +633,12 @@ export async function getExtensions() {
     select: { employeeId: true, threecxExtension: true },
     orderBy: { threecxExtension: "asc" },
   });
-  const employees = await db.employee.findMany({
-    where: { id: { in: profiles.map((p) => p.employeeId) } },
+  const employees = await (db as any).employee.findMany({
+    where: { id: { in: (profiles as any[]).map((p: any) => p.employeeId) } },
     select: { id: true, employeeId: true, name: true, designation: true, department: true, status: true },
   });
-  const employeeMap = new Map(employees.map((e) => [e.id, e]));
-  const mapped = profiles.flatMap((profile) => {
+  const employeeMap = new Map<string, any>((employees as any[]).map((e: any) => [e.id, e]));
+  const mapped = (profiles as any[]).flatMap((profile: any) => {
     const employee = employeeMap.get(profile.employeeId);
     if (!employee || !profile.threecxExtension) return [];
     return [{

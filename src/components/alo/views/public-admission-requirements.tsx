@@ -377,3 +377,4 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
     </div>
   );
 }
+export default PublicAdmissionRequirements;

@@ -711,3 +711,4 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
     </TooltipProvider>
   );
 }
+export default StudentDashboard;

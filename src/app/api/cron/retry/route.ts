@@ -26,7 +26,7 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'asc' },
     });
 
-    const results = [];
+    const results: any[] = [];
 
     for (const item of pendingRetries) {
       try {
