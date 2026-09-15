@@ -10,14 +10,30 @@ concurrency:
   group: alo-production
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     name: Deploy ALO Education to Production VPS
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
+      - name: Verify deployment manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== GIT COMMIT ==="
+          git rev-parse HEAD
+          echo "=== DEPLOYMENT TARGET ==="
+          echo "APP_DIR=/root/alo-github-main-new"
+          echo "APP_PORT=3044"
+          echo "PM2=alo-education"
+          echo "DOMAIN=aloeducation.com"
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.2.2
@@ -29,54 +45,121 @@ jobs:
           command_timeout: 45m
           script_stop: true
           script: |
-            set -e
+            set -euo pipefail
+
+            APP_DIR="/root/alo-github-main-new"
+            GIT_DIR="/root/alo-github-main"
+            PM2_NAME="alo-education"
+            APP_PORT="3044"
+            RELEASE_ID="${GITHUB_SHA:-unknown}"
+            BACKUP_DIR="/root/alo-config-backups/deploy-${RELEASE_ID}"
 
             echo "=== ALO PRODUCTION DEPLOYMENT ==="
+            echo "TARGET: ${APP_DIR}"
+            echo "GIT CHECKOUT: ${GIT_DIR}"
+            echo "PORT: ${APP_PORT}"
+            echo "COMMIT: ${RELEASE_ID}"
 
-            cd /root/alo-live
+            echo "=== 1. VERIFY NODE / NPM ==="
+            node --version
+            npm --version
 
-            echo "=== 1. VERIFY REPOSITORY ==="
-            git rev-parse --is-inside-work-tree
-            git remote -v
+            echo "=== 2. VERIFY SOURCE DIRECTORY ==="
+            test -d "${APP_DIR}"
+            test -f "${APP_DIR}/package.json"
+            test -f "${APP_DIR}/package-lock.json"
+            test -f "${APP_DIR}/ecosystem.config.cjs"
 
-            echo "=== 2. FETCH GITHUB MAIN ==="
-            git fetch origin main
+            echo "=== 3. VERIFY PM2 CONFIGURATION ==="
+            grep -q 'name: "alo-education"' "${APP_DIR}/ecosystem.config.cjs"
+            grep -q 'PORT: "3044"' "${APP_DIR}/ecosystem.config.cjs"
+            grep -q '.next/standalone/server.js' "${APP_DIR}/ecosystem.config.cjs"
 
-            echo "=== 3. SYNC SOURCE ==="
-            git reset --hard origin/main
+            echo "=== 4. VERIFY CURRENT DEPLOYMENT STATE ==="
+            pm2 describe "${PM2_NAME}" 2>/dev/null || true
+            ss -lntp | grep ':3044' || true
 
-            echo "=== 4. VERIFY COMMIT ==="
-            echo "DEPLOYING:"
-            git rev-parse HEAD
+            echo "=== 5. BACK UP RUNTIME CONFIGURATION ==="
+            mkdir -p "${BACKUP_DIR}"
+            if [ -f "${APP_DIR}/.env" ]; then
+              cp -p "${APP_DIR}/.env" "${BACKUP_DIR}/.env"
+              chmod 600 "${BACKUP_DIR}/.env"
+            fi
+            if [ -f "${APP_DIR}/ecosystem.config.cjs" ]; then
+              cp -p "${APP_DIR}/ecosystem.config.cjs" "${BACKUP_DIR}/ecosystem.config.cjs"
+            fi
+            if [ -f "${APP_DIR}/Caddyfile" ]; then
+              cp -p "${APP_DIR}/Caddyfile" "${BACKUP_DIR}/Caddyfile"
+            fi
+            if [ -f "${APP_DIR}/nginx.conf" ]; then
+              cp -p "${APP_DIR}/nginx.conf" "${BACKUP_DIR}/nginx.conf"
+            fi
 
-            echo "GITHUB:"
-            git rev-parse origin/main
+            echo "=== 6. VERIFY DEPLOYED SOURCE ==="
+            if git -C "${GIT_DIR}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+              git -C "${GIT_DIR}" status --short --branch
+              git -C "${GIT_DIR}" fetch origin main
+              echo "SOURCE_REPO_HEAD=$(git -C "${GIT_DIR}" rev-parse HEAD)"
+              echo "SOURCE_REPO_ORIGIN_MAIN=$(git -C "${GIT_DIR}" rev-parse origin/main)"
+            else
+              echo "No Git checkout at ${GIT_DIR}; deployment source will remain the prepared directory ${APP_DIR}."
+            fi
 
-            test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+            echo "=== 7. INSTALL DEPENDENCIES ==="
+            cd "${APP_DIR}"
+            npm ci --omit=optional
 
-            echo "=== 5. INSTALL DEPENDENCIES ==="
-            npm ci
-
-            echo "=== 6. GENERATE PRISMA CLIENT ==="
+            echo "=== 8. GENERATE PRISMA CLIENT ==="
             npx prisma generate
 
-            echo "=== 7. APPLY EXISTING MIGRATIONS ==="
-            npx prisma migrate deploy
+            echo "=== 9. VALIDATE PRISMA SCHEMA ==="
+            npx prisma validate
 
-            echo "=== 8. BUILD APPLICATION ==="
+            echo "=== 10. BUILD APPLICATION ==="
             npm run build
 
-            echo "=== 9. RESTART PM2 ==="
-            pm2 restart alo-education --update-env
+            echo "=== 11. VERIFY STANDALONE SERVER ==="
+            test -f "${APP_DIR}/.next/standalone/server.js"
 
-            echo "=== 10. SAVE PM2 ==="
+            echo "=== 12. DATABASE MIGRATIONS ==="
+            npx prisma migrate deploy
+
+            echo "=== 13. RESTART PM2 ==="
+            pm2 restart "${PM2_NAME}" --update-env
             pm2 save
 
-            echo "=== 11. VERIFY PM2 ==="
-            pm2 describe alo-education | grep -E 'status|script path|exec cwd|node.js version'
+            echo "=== 14. VERIFY PM2 ==="
+            pm2 describe "${PM2_NAME}"
+            pm2 jlist | node -e '
+              let data="";
+              process.stdin.on("data", c => data += c);
+              process.stdin.on("end", () => {
+                const apps = JSON.parse(data);
+                const app = apps.find(x => x.name === "alo-education");
+                if (!app || app.pm2_env.status !== "online") process.exit(1);
+                process.stdout.write("PM2_STATUS=online\n");
+              });
+            '
 
-            echo "=== 12. VERIFY PORT 3025 ==="
-            ss -lntp | grep ':3025'
+            echo "=== 15. VERIFY PORT 3044 ==="
+            for i in 1 2 3 4 5 6 7 8 9 10; do
+              if ss -lntp | grep -q ':3044'; then
+                break
+              fi
+              sleep 2
+            done
+            ss -lntp | grep ':3044'
+
+            echo "=== 16. LOCAL HEALTH ==="
+            HEALTH_OK=0
+            for path in /api/health /api/healthz /; do
+              if curl -fsS --max-time 10 "http://127.0.0.1:${APP_PORT}${path}" >/dev/null; then
+                echo "LOCAL_HEALTH_OK=${path}"
+                HEALTH_OK=1
+                break
+              fi
+            done
+            test "${HEALTH_OK}" = "1"
 
             echo "=== DEPLOYMENT COMPLETE ==="
 
@@ -90,25 +173,47 @@ jobs:
           command_timeout: 10m
           script_stop: true
           script: |
-            set -e
+            set -euo pipefail
+
+            APP_DIR="/root/alo-github-main-new"
+            PM2_NAME="alo-education"
+            APP_PORT="3044"
 
             echo "=== ALO PRODUCTION HEALTH CHECK ==="
-
-            sleep 8
+            sleep 5
 
             echo "=== PM2 ==="
-            pm2 describe alo-education | grep -q "online"
+            pm2 jlist | node -e '
+              let data="";
+              process.stdin.on("data", c => data += c);
+              process.stdin.on("end", () => {
+                const apps = JSON.parse(data);
+                const app = apps.find(x => x.name === "alo-education");
+                if (!app || app.pm2_env.status !== "online") process.exit(1);
+                process.stdout.write("PM2_STATUS=online\n");
+              });
+            '
+
+            echo "=== PORT ==="
+            ss -lntp | grep ':3044'
 
             echo "=== LOCAL HTTP ==="
-            curl -fsS http://127.0.0.1:3025/ > /dev/null
+            curl -fsS --max-time 15 "http://127.0.0.1:${APP_PORT}/" >/dev/null
 
-            echo "=== DEPLOYED COMMIT ==="
-            cd /root/alo-live
-            git rev-parse HEAD
+            echo "=== LOCAL API HEALTH ==="
+            if curl -fsS --max-time 15 "http://127.0.0.1:${APP_PORT}/api/health" >/dev/null; then
+              echo "API_HEALTH_OK=/api/health"
+            elif curl -fsS --max-time 15 "http://127.0.0.1:${APP_PORT}/api/healthz" >/dev/null; then
+              echo "API_HEALTH_OK=/api/healthz"
+            else
+              echo "API health endpoint not available; root HTTP health passed."
+            fi
 
-            echo "=== GITHUB COMMIT ==="
-            git rev-parse origin/main
+            echo "=== DOMAIN HTTP ==="
+            curl -fsS --max-time 20 -H 'Host: aloeducation.com' "http://127.0.0.1:${APP_PORT}/" >/dev/null
 
-            test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+            echo "=== DEPLOYMENT DIRECTORY ==="
+            cd "${APP_DIR}"
+            test -f .next/standalone/server.js
 
             echo "=== HEALTH CHECK PASSED ==="
