@@ -82,7 +82,11 @@ export type PortalView =
   | 'knowledge-sharing-hub' | 'knowledge-sharing-detail'
   // International Officer / Partner Dashboard — university research, partnership communications, contacts, strategy
   | 'international-officer-dashboard' | 'international-officer-research' | 'international-officer-communications'
-  | 'international-officer-contacts' | 'international-officer-agreements' | 'international-officer-strategy';
+  | 'international-officer-contacts' | 'international-officer-agreements' | 'international-officer-strategy'
+  // Super Admin Master Command — Website CMS + CRM Command Center
+  | 'super-admin-master-command' | 'super-admin-website-cms' | 'super-admin-crm-command'
+  // Social Media Management — 24 Platforms, Own AI Agent
+  | 'social-media-hub' | 'social-inbox' | 'social-analytics' | 'social-content' | 'social-posts' | 'social-automation';
 
 export interface PortalRolePermission {
   module: string;

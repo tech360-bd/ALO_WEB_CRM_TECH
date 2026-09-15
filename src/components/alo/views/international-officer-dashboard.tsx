@@ -268,7 +268,7 @@ export function InternationalOfficerDashboard() {
         <StatCard label="Research Activities" value={metrics?.totalResearchActivities || 0} icon="FileSearch" accent="violet" hint={`${metrics?.pendingActivities || 0} pending`} />
         <StatCard label="Agreements" value={metrics?.totalAgreements || 0} icon="FileSignature" accent="emerald" hint={`${metrics?.activeAgreements || 0} active`} />
         <StatCard label="Pending Agreements" value={metrics?.pendingAgreements || 0} icon="Clock" accent="orange" hint="Need action" />
-        <StatCard label="Contacts" value={metrics?.totalContacts || 0} icon="Contact" accent="teal" hint={`${metrics?.universityContacts || 0} universities`} />
+        <StatCard label="Contacts" value={metrics?.totalContacts || 0} icon="Contact" accent="blue" hint={`${metrics?.universityContacts || 0} universities`} />
         <StatCard label="Strategies" value={metrics?.businessStrategies || 0} icon="MapPinned" accent="amber" hint="Active" />
       </div>
 

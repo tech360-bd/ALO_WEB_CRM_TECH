@@ -128,6 +128,7 @@ import CrmScholarshipsPage from '@/components/crm/pages/CrmScholarshipsPage';
 import CrmInboxPage from '@/components/crm/pages/CrmInboxPage';
 import CrmWhatsAppPage from '@/components/crm/pages/CrmWhatsAppPage';
 import CrmSocialPage from '@/components/crm/pages/CrmSocialPage';
+import SocialMediaManagementHub from '@/components/social/SocialMediaManagementHub';
 import CrmCommunicationsPage from '@/components/crm/pages/CrmCommunicationsPage';
 import CrmAgentOperationsPage from '@/components/crm/pages/CrmAgentOperationsPage';
 import CrmAnalyticsPage from '@/components/crm/pages/CrmAnalyticsPage';
@@ -154,6 +155,11 @@ import MarketingAuditAccessView from '@/components/marketing/hub/MarketingAuditA
 // ---- Knowledge Sharing & International Officer ----
 import KnowledgeSharingHub from '@/components/alo/views/knowledge-sharing-hub';
 import InternationalOfficerDashboard from '@/components/alo/views/international-officer-dashboard';
+
+// ---- Super Admin Master Command Center — Website CMS + CRM Command ----
+import { SuperAdminMasterCommandCenter } from '@/components/admin/SuperAdminMasterCommandCenter';
+import { SuperAdminWebsiteCmsHub } from '@/components/admin/SuperAdminWebsiteCmsHub';
+import { SuperAdminCrmCommandCenter } from '@/components/admin/SuperAdminCrmCommandCenter';
 
 // ---- SEO Growth System ----
 import CrmSeoGrowthDashboard from '@/components/crm/seo/CrmSeoGrowthDashboard';
@@ -249,6 +255,9 @@ function StudentView({ view }: { view: PortalView }) {
     'student-events': <StudentHelpCenter />,
     'student-onboarding': <StudentProfilePage />,
     'student-interviews': <StudentVisaCenter />,
+    // Social Media — Student sees ALO social content (read-only inspiration)
+    'social-media-hub': <SocialMediaManagementHub portal="student" />,
+    'social-content': <SocialMediaManagementHub portal="student" />,
     // Knowledge Sharing — included in each dashboard
     'knowledge-sharing-hub': <KnowledgeSharingHub />,
     'knowledge-sharing-detail': <KnowledgeSharingHub />,
@@ -275,6 +284,13 @@ const employeePageMap: Record<string, React.ReactNode> = {
   'employee-notifications': <EmployeeNotificationsPage />,
   'employee-settings': <EmployeeSettingsPage />,
   'employee-help': <EmployeeHelpPage />,
+  // Social Media Management — 24 Platforms, Own AI Agent — All Portals
+  'social-media-hub': <SocialMediaManagementHub portal="employee" />,
+  'social-inbox': <SocialMediaManagementHub portal="employee" />,
+  'social-analytics': <SocialMediaManagementHub portal="employee" />,
+  'social-content': <SocialMediaManagementHub portal="employee" />,
+  'social-posts': <SocialMediaManagementHub portal="employee" />,
+  'social-automation': <SocialMediaManagementHub portal="employee" />,
   // Knowledge Sharing & International Officer — included in each dashboard
   'knowledge-sharing-hub': <KnowledgeSharingHub />,
   'knowledge-sharing-detail': <KnowledgeSharingHub />,
@@ -305,6 +321,13 @@ const partnerPageMap: Record<string, React.ReactNode> = {
   'partner-notifications': <PartnerNotificationsPage />,
   'partner-settings': <PartnerSettingsPage />,
   'partner-help': <PartnerHelpPage />,
+  // Social Media Management — 24 Platforms, Own AI Agent
+  'social-media-hub': <SocialMediaManagementHub portal="partner" />,
+  'social-inbox': <SocialMediaManagementHub portal="partner" />,
+  'social-analytics': <SocialMediaManagementHub portal="partner" />,
+  'social-content': <SocialMediaManagementHub portal="partner" />,
+  'social-posts': <SocialMediaManagementHub portal="partner" />,
+  'social-automation': <SocialMediaManagementHub portal="partner" />,
   // Knowledge Sharing & International Officer — Partner Dashboard enhanced
   'knowledge-sharing-hub': <KnowledgeSharingHub />,
   'knowledge-sharing-detail': <KnowledgeSharingHub />,
@@ -327,9 +350,15 @@ function PartnerView({ view }: { view: PortalView }) {
 const marketingPageMap: Record<string, React.ReactNode> = {
   'marketing-dashboard': <MarketingDashboardView />,
   'marketing-campaigns': <CampaignBuilderCalendarView />,
-  'marketing-social': <SocialMediaAutomationView />,
+  'marketing-social': <SocialMediaManagementHub portal="marketing" />,
   'marketing-analytics': <MarketingAnalyticsView />,
   'marketing-inbox': <UnifiedInboxView />,
+  'social-media-hub': <SocialMediaManagementHub portal="marketing" />,
+  'social-inbox': <SocialMediaManagementHub portal="marketing" />,
+  'social-analytics': <SocialMediaManagementHub portal="marketing" />,
+  'social-content': <SocialMediaManagementHub portal="marketing" />,
+  'social-posts': <SocialMediaManagementHub portal="marketing" />,
+  'social-automation': <SocialMediaManagementHub portal="marketing" />,
   'marketing-approvals': <ApprovalQueueView />,
   'marketing-brand-assets': <BrandAssetsPostCreatorView />,
   'marketing-keywords': <KeywordTriggersView />,
@@ -377,6 +406,13 @@ const crmPageMap: Record<string, React.ReactNode> = {
   'crm-whatsapp': <CrmWhatsAppPage />,
   'crm-social': <CrmSocialPage />,
   'crm-communications': <CrmCommunicationsPage />,
+  // Social Media Management — 24 Platforms, Own AI Agent
+  'social-media-hub': <SocialMediaManagementHub portal="crm" />,
+  'social-inbox': <SocialMediaManagementHub portal="crm" />,
+  'social-analytics': <SocialMediaManagementHub portal="crm" />,
+  'social-content': <SocialMediaManagementHub portal="crm" />,
+  'social-posts': <SocialMediaManagementHub portal="crm" />,
+  'social-automation': <SocialMediaManagementHub portal="crm" />,
   // Operations
   'crm-tasks': <CrmTasksPage />,
   'crm-appointments': <CrmAppointmentsPage />,
@@ -433,6 +469,10 @@ const crmPageMap: Record<string, React.ReactNode> = {
   'international-officer-contacts': <InternationalOfficerDashboard />,
   'international-officer-agreements': <InternationalOfficerDashboard />,
   'international-officer-strategy': <InternationalOfficerDashboard />,
+  // Super Admin Master Command Center — Website CMS + CRM Command + Agent Tasks + System + Mobile PWA
+  'super-admin-master-command': <SuperAdminMasterCommandCenter />,
+  'super-admin-website-cms': <SuperAdminWebsiteCmsHub />,
+  'super-admin-crm-command': <SuperAdminCrmCommandCenter />,
 };
 
 function CrmAdminView({ view }: { view: PortalView }) {
