@@ -12,13 +12,13 @@ export async function GET(request: Request) {
     if (auth instanceof NextResponse) return auth;
 
     const { searchParams } = new URL(request.url);
-    const module = searchParams.get('module') || 'overview'; // overview, leads, students, applications, documents, visa, finance, marketing, hr, partners, universities, courses, communications, reports, tasks, audit
+    const requestedModule = searchParams.get('module') || 'overview'; // overview, leads, students, applications, documents, visa, finance, marketing, hr, partners, universities, courses, communications, reports, tasks, audit
 
     const primaryRole = auth.roles[0] || auth.userType || '';
     const isSuper = ['SUPER_ADMIN', 'super_admin'].includes(primaryRole) || auth.roles.includes('super_admin') || auth.userType === 'SUPER_ADMIN';
 
     // Overview — real counts for all modules
-    if (module === 'overview') {
+    if (requestedModule === 'overview') {
       const [
         leadsCount,
         studentsCount,
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
     }
 
     // Leads module
-    if (module === 'leads') {
+    if (requestedModule === 'leads') {
       const status = searchParams.get('status');
       const search = searchParams.get('search');
       const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200);
@@ -110,7 +110,7 @@ export async function GET(request: Request) {
     }
 
     // Students
-    if (module === 'students') {
+    if (requestedModule === 'students') {
       const search = searchParams.get('search');
       const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200);
       const where: any = search ? { OR: [{ fullName: { contains: search } }, { studentId: { contains: search } }] } : {};
@@ -120,7 +120,7 @@ export async function GET(request: Request) {
     }
 
     // Applications
-    if (module === 'applications') {
+    if (requestedModule === 'applications') {
       const stage = searchParams.get('stage');
       const search = searchParams.get('search');
       const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200);
@@ -133,7 +133,7 @@ export async function GET(request: Request) {
     }
 
     // Documents
-    if (module === 'documents') {
+    if (requestedModule === 'documents') {
       const status = searchParams.get('status');
       const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200);
       const where: any = status && status !== 'all' ? { status } : {};
@@ -143,7 +143,7 @@ export async function GET(request: Request) {
     }
 
     // Visa cases
-    if (module === 'visa') {
+    if (requestedModule === 'visa') {
       const stage = searchParams.get('stage');
       const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200);
       const where: any = stage && stage !== 'all' ? { currentStage: stage } : {};
@@ -153,7 +153,7 @@ export async function GET(request: Request) {
     }
 
     // Finance
-    if (module === 'finance') {
+    if (requestedModule === 'finance') {
       const [payments, commissions, payrolls] = await Promise.all([
         db.payment.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
         db.commission.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
@@ -163,7 +163,7 @@ export async function GET(request: Request) {
     }
 
     // Marketing
-    if (module === 'marketing') {
+    if (requestedModule === 'marketing') {
       const [campaigns, leads, contents] = await Promise.all([
         db.marketingCampaign.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
         db.marketingLead.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
@@ -173,7 +173,7 @@ export async function GET(request: Request) {
     }
 
     // HR
-    if (module === 'hr') {
+    if (requestedModule === 'hr') {
       const [employees, attendance, leaves] = await Promise.all([
         db.employee.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }).catch(() => []),
         db.employeeAttendance.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
@@ -183,14 +183,14 @@ export async function GET(request: Request) {
     }
 
     // Partners
-    if (module === 'partners') {
+    if (requestedModule === 'partners') {
       const partners = await db.partnerProfile.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }).catch(() => []);
       const partnerLeads = await db.partnerLead.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []);
       return NextResponse.json({ success: true, module: 'partners', data: { partners, leads: partnerLeads } });
     }
 
     // Universities & Courses
-    if (module === 'universities') {
+    if (requestedModule === 'universities') {
       const search = searchParams.get('search');
       const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
       const where: any = search ? { OR: [{ name: { contains: search } }, { country: { contains: search } }] } : {};
@@ -199,7 +199,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: true, module: 'universities', data: unis, total });
     }
 
-    if (module === 'courses') {
+    if (requestedModule === 'courses') {
       const search = searchParams.get('search');
       const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
       const where: any = search ? { OR: [{ courseTitle: { contains: search } }, { subjectArea: { contains: search } }] } : {};
@@ -209,7 +209,7 @@ export async function GET(request: Request) {
     }
 
     // Communications
-    if (module === 'communications') {
+    if (requestedModule === 'communications') {
       const [threads, messages, sla] = await Promise.all([
         db.communicationThread.findMany({ orderBy: { lastMessageAt: 'desc' }, take: 20 }).catch(() => []),
         db.communicationMessage.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
@@ -219,7 +219,7 @@ export async function GET(request: Request) {
     }
 
     // Tasks — agent tasks that Super Admin can perform
-    if (module === 'tasks') {
+    if (requestedModule === 'tasks') {
       const [counselorTasks, visaTasks, aiTasks, appTasks] = await Promise.all([
         db.counselorTask.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
         db.visaTask.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
@@ -230,7 +230,7 @@ export async function GET(request: Request) {
     }
 
     // Reports
-    if (module === 'reports') {
+    if (requestedModule === 'reports') {
       const [weekly, marketing, visa] = await Promise.all([
         db.weeklyReport.findMany({ orderBy: { generatedAt: 'desc' }, take: 10 }).catch(() => []),
         db.marketingReport.findMany({ orderBy: { createdAt: 'desc' }, take: 10 }).catch(() => []),
@@ -240,7 +240,7 @@ export async function GET(request: Request) {
     }
 
     // Audit logs
-    if (module === 'audit') {
+    if (requestedModule === 'audit') {
       const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200);
       const logs = await db.portalAuditLog.findMany({ orderBy: { createdAt: 'desc' }, take: limit }).catch(() => []);
       const crmLogs = await db.crmAuditLog.findMany({ orderBy: { createdAt: 'desc' }, take: limit }).catch(() => []);
@@ -261,10 +261,10 @@ export async function POST(request: Request) {
     if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
-    const { action, module, data, id } = body;
+    const { action, module: targetModule, data, id } = body;
 
     // Log every super admin action
-    await logAuditAction(auth, `SUPER_ADMIN_${action}`, module, id || '', data || {}).catch(()=>{});
+    await logAuditAction(auth, `SUPER_ADMIN_${action}`, targetModule, id || '', data || {}).catch(()=>{});
 
     switch (action) {
       case 'assign_lead': {
