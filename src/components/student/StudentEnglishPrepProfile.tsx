@@ -20,10 +20,6 @@ export default function StudentEnglishPrepProfile() {
     weakestModule: '',
   });
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   async function fetchProfile() {
     try {
       setLoading(true);
@@ -46,6 +42,10 @@ export default function StudentEnglishPrepProfile() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -12,16 +12,73 @@ const geistMono = {
   className: "font-mono",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
+  themeColor: "#0057B8",
+};
+
 export const metadata: Metadata = {
-  title: "ALO Education — Study Abroad Consultancy in Bangladesh",
-  description: "ALO Education helps Bangladeshi students study in UK, USA, Canada, Australia, Ireland, New Zealand and Dubai. Expert counseling, university admissions, visa guidance, scholarship support and AI-powered course matching.",
+  title: {
+    default: "ALO Education — Study Abroad Consultancy in Bangladesh",
+    template: "%s | ALO Education",
+  },
+  description: "ALO Education helps Bangladeshi students study in UK, USA, Canada, Australia, Ireland, New Zealand and Dubai. Expert counseling, university admissions, visa guidance, scholarship support and AI-powered course matching. Web-based CRM with native app-like mobile experience.",
+  applicationName: "ALO Education",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "ALO Education",
+    startupImage: ["/icons/icon-512x512.png"],
+  },
+  formatDetection: {
+    telephone: true,
+    date: false,
+    address: false,
+    email: false,
+  },
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: [
+      { url: "/icons/icon-72x72.png", sizes: "72x72", type: "image/png" },
+      { url: "/icons/icon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+      { url: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/icons/icon-152x152.png", sizes: "152x152", type: "image/png" },
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+    ],
+    shortcut: "/icons/icon-192x192.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_BD",
+    siteName: "ALO Education",
+    title: "ALO Education — Study Abroad Consultancy",
+    description: "Study in UK, USA, Canada, Australia & more with expert guidance. AI-powered counseling, admissions, visa & scholarships.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ALO Education",
+    description: "Study abroad consultancy — UK, USA, Canada, Australia, NZ, Dubai",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
+    "msapplication-TileColor": "#0057B8",
+    "msapplication-TileImage": "/icons/icon-144x144.png",
   },
 };
 
 import PublicCommunicationBar from "@/components/website/PublicCommunicationBar";
 import PublicLayoutWrapper from "@/components/website/PublicLayoutWrapper";
+import { PwaRegister } from "@/components/pwa/PwaRegister";
 
 export default function RootLayout({
   children,
@@ -37,6 +94,7 @@ export default function RootLayout({
           {children}
         </PublicLayoutWrapper>
         <PublicCommunicationBar />
+        <PwaRegister />
         <Toaster />
       </body>
     </html>

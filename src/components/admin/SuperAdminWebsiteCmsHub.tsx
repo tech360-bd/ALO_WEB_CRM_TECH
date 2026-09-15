@@ -1,0 +1,337 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { toast } from "@/hooks/use-toast";
+
+type CmsType = string;
+
+interface CmsItem {
+  id: string;
+  [key: string]: any;
+}
+
+const WEBSITE_TYPES = [
+  { key: "hero-slides", label: "Hero Slides", icon: "🎯", desc: "Homepage hero carousel" },
+  { key: "home-services", label: "Home Services", icon: "🛎️", desc: "Services section" },
+  { key: "success-stories", label: "Success Stories", icon: "🌟", desc: "Student testimonials" },
+  { key: "team-members", label: "Team Members", icon: "👥", desc: "Our team" },
+  { key: "faqs", label: "Homepage FAQs", icon: "❓", desc: "FAQ section" },
+  { key: "home-sections", label: "Home Sections", icon: "📄", desc: "Editable sections" },
+  { key: "english-tests", label: "English Tests", icon: "📝", desc: "IELTS, PTE etc" },
+  { key: "countries", label: "Countries", icon: "🌍", desc: "Destinations" },
+  { key: "services", label: "Services (Old)", icon: "⚙️", desc: "Legacy services" },
+];
+
+const COUNTRY_SUB_TYPES = [
+  { key: "country-quick-facts", label: "Quick Facts" },
+  { key: "country-cities", label: "Cities" },
+  { key: "country-reasons", label: "Why Study Reasons" },
+  { key: "country-entry-reqs", label: "Entry Requirements" },
+  { key: "country-english-tests", label: "English Tests (Country)" },
+  { key: "country-visa-steps", label: "Visa Steps" },
+  { key: "country-work-rights", label: "Work Rights" },
+  { key: "country-faqs", label: "Country FAQs" },
+  { key: "country-sources", label: "Sources" },
+];
+
+export function SuperAdminWebsiteCmsHub() {
+  const [activeType, setActiveType] = useState<CmsType>("hero-slides");
+  const [items, setItems] = useState<CmsItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [editing, setEditing] = useState<CmsItem | null>(null);
+  const [formData, setFormData] = useState<any>({});
+  const [showForm, setShowForm] = useState(false);
+  const [selectedCountryId, setSelectedCountryId] = useState("");
+  const [countries, setCountries] = useState<any[]>([]);
+
+  // Fetch countries for dropdown
+  useEffect(() => {
+    fetch("/api/admin/website/cms?type=countries&limit=100")
+      .then(r => r.json())
+      .then(j => { if (j.success) setCountries(j.data); })
+      .catch(()=>{});
+  }, []);
+
+  const fetchItems = async () => {
+    setLoading(true);
+    try {
+      let url = `/api/admin/website/cms?type=${activeType}&limit=200`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (selectedCountryId && activeType.startsWith("country-")) url += `&countryId=${selectedCountryId}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      if (json.success) {
+        setItems(json.data || []);
+      } else {
+        toast({ title: "Error", description: json.error, variant: "destructive" });
+      }
+    } catch (e: any) {
+      toast({ title: "Fetch failed", description: e.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, [activeType, selectedCountryId]);
+
+  const handleEdit = (item: CmsItem) => {
+    setEditing(item);
+    setFormData(item);
+    setShowForm(true);
+  };
+
+  const handleCreate = () => {
+    setEditing(null);
+    setFormData(activeType.startsWith("country-") && selectedCountryId ? { countryId: selectedCountryId } : {});
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      const method = editing ? "PUT" : "POST";
+      let url = `/api/admin/website/cms?type=${activeType}`;
+      if (editing) url += `&id=${editing.id}`;
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const json = await res.json();
+      if (json.success) {
+        toast({ title: editing ? "Updated" : "Created", description: `${activeType} ${editing ? "updated" : "created"} successfully` });
+        setShowForm(false);
+        fetchItems();
+      } else {
+        toast({ title: "Error", description: json.error, variant: "destructive" });
+      }
+    } catch (e: any) {
+      toast({ title: "Save failed", description: e.message, variant: "destructive" });
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this item? This cannot be undone.")) return;
+    try {
+      const res = await fetch(`/api/admin/website/cms?type=${activeType}&id=${id}`, { method: "DELETE" });
+      const json = await res.json();
+      if (json.success) {
+        toast({ title: "Deleted", description: "Item deleted" });
+        fetchItems();
+      } else {
+        toast({ title: "Error", description: json.error, variant: "destructive" });
+      }
+    } catch (e: any) {
+      toast({ title: "Delete failed", description: e.message, variant: "destructive" });
+    }
+  };
+
+  const renderFormFields = () => {
+    switch (activeType) {
+      case "hero-slides":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className="text-xs font-medium">Headline</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.headline||""} onChange={e=>setFormData({...formData, headline: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Country Code</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.countryCode||""} onChange={e=>setFormData({...formData, countryCode: e.target.value})} placeholder="UK, USA..." /></div>
+            <div className="md:col-span-2"><label className="text-xs font-medium">Subtitle</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={2} value={formData.subtitle||""} onChange={e=>setFormData({...formData, subtitle: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Image URL</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.imageUrl||""} onChange={e=>setFormData({...formData, imageUrl: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Accent Color</label><input className="w-full border rounded-lg px-3 py-2 text-sm" type="color" value={formData.accentColor||"#0057B8"} onChange={e=>setFormData({...formData, accentColor: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Popular City</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.popularCity||""} onChange={e=>setFormData({...formData, popularCity: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Popular Intake</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.popularIntake||""} onChange={e=>setFormData({...formData, popularIntake: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">CTA Primary Label</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.ctaPrimaryLabel||""} onChange={e=>setFormData({...formData, ctaPrimaryLabel: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">CTA Primary URL</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.ctaPrimaryUrl||""} onChange={e=>setFormData({...formData, ctaPrimaryUrl: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Sort Order</label><input type="number" className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.sortOrder||0} onChange={e=>setFormData({...formData, sortOrder: parseInt(e.target.value)||0})} /></div>
+            <div><label className="text-xs font-medium">Status</label><select className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.status||"active"} onChange={e=>setFormData({...formData, status: e.target.value})}><option value="active">Active</option><option value="draft">Draft</option><option value="archived">Archived</option></select></div>
+          </div>
+        );
+      case "home-services":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className="text-xs font-medium">Title</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.title||""} onChange={e=>setFormData({...formData, title: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Slug</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.slug||""} onChange={e=>setFormData({...formData, slug: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Icon (emoji)</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.icon||""} onChange={e=>setFormData({...formData, icon: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Sort Order</label><input type="number" className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.sortOrder||0} onChange={e=>setFormData({...formData, sortOrder: parseInt(e.target.value)||0})} /></div>
+            <div className="md:col-span-2"><label className="text-xs font-medium">Description</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={3} value={formData.description||""} onChange={e=>setFormData({...formData, description: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">CTA Label</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.ctaLabel||""} onChange={e=>setFormData({...formData, ctaLabel: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">CTA URL</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.ctaUrl||""} onChange={e=>setFormData({...formData, ctaUrl: e.target.value})} /></div>
+          </div>
+        );
+      case "success-stories":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className="text-xs font-medium">Student Name</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.studentName||""} onChange={e=>setFormData({...formData, studentName: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Home District</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.homeDistrict||""} onChange={e=>setFormData({...formData, homeDistrict: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">University</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.university||""} onChange={e=>setFormData({...formData, university: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Course</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.course||""} onChange={e=>setFormData({...formData, course: e.target.value})} /></div>
+            <div className="md:col-span-2"><label className="text-xs font-medium">Testimonial</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={3} value={formData.testimonial||""} onChange={e=>setFormData({...formData, testimonial: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Outcome</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.outcome||""} onChange={e=>setFormData({...formData, outcome: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Photo URL</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.photo||""} onChange={e=>setFormData({...formData, photo: e.target.value})} /></div>
+          </div>
+        );
+      case "team-members":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className="text-xs font-medium">Name</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.name||""} onChange={e=>setFormData({...formData, name: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Role</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.role||""} onChange={e=>setFormData({...formData, role: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Specialty</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.specialty||""} onChange={e=>setFormData({...formData, specialty: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Photo URL</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.photo||""} onChange={e=>setFormData({...formData, photo: e.target.value})} /></div>
+            <div className="md:col-span-2"><label className="text-xs font-medium">Bio</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={3} value={formData.bio||""} onChange={e=>setFormData({...formData, bio: e.target.value})} /></div>
+          </div>
+        );
+      case "faqs":
+        return (
+          <div className="space-y-4">
+            <div><label className="text-xs font-medium">Question</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.question||""} onChange={e=>setFormData({...formData, question: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Answer</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={4} value={formData.answer||""} onChange={e=>setFormData({...formData, answer: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Sort Order</label><input type="number" className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.sortOrder||0} onChange={e=>setFormData({...formData, sortOrder: parseInt(e.target.value)||0})} /></div>
+          </div>
+        );
+      case "home-sections":
+        return (
+          <div className="space-y-4">
+            <div><label className="text-xs font-medium">Section Key (unique)</label><input className="w-full border rounded-lg px-3 py-2 text-sm font-mono" value={formData.sectionKey||""} onChange={e=>setFormData({...formData, sectionKey: e.target.value})} placeholder="hero, about, why-choose, etc" /></div>
+            <div><label className="text-xs font-medium">Title</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.title||""} onChange={e=>setFormData({...formData, title: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Subtitle</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.subtitle||""} onChange={e=>setFormData({...formData, subtitle: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Content (HTML/Markdown supported)</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm font-mono" rows={6} value={formData.content||""} onChange={e=>setFormData({...formData, content: e.target.value})} /></div>
+          </div>
+        );
+      case "english-tests":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className="text-xs font-medium">Name</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.name||""} onChange={e=>setFormData({...formData, name: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Slug</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.slug||""} onChange={e=>setFormData({...formData, slug: e.target.value})} /></div>
+            <div className="md:col-span-2"><label className="text-xs font-medium">Short Description</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={2} value={formData.shortDescription||""} onChange={e=>setFormData({...formData, shortDescription: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Best For</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.bestFor||""} onChange={e=>setFormData({...formData, bestFor: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Accepted Destinations</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.acceptedDest||""} onChange={e=>setFormData({...formData, acceptedDest: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Result Time</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.resultTime||""} onChange={e=>setFormData({...formData, resultTime: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Score Range</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.scoreRange||""} onChange={e=>setFormData({...formData, scoreRange: e.target.value})} /></div>
+          </div>
+        );
+      case "countries":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className="text-xs font-medium">Name</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.name||""} onChange={e=>setFormData({...formData, name: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Slug</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.slug||""} onChange={e=>setFormData({...formData, slug: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Code</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.code||formData.countryCode||""} onChange={e=>setFormData({...formData, code: e.target.value, countryCode: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Flag Emoji</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.flag||""} onChange={e=>setFormData({...formData, flag: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Capital</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.capital||""} onChange={e=>setFormData({...formData, capital: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Currency</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.currency||""} onChange={e=>setFormData({...formData, currency: e.target.value})} /></div>
+            <div className="md:col-span-2"><label className="text-xs font-medium">Hero Title</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.heroTitle||""} onChange={e=>setFormData({...formData, heroTitle: e.target.value})} /></div>
+            <div className="md:col-span-2"><label className="text-xs font-medium">Hero Subtitle</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={2} value={formData.heroSubtitle||""} onChange={e=>setFormData({...formData, heroSubtitle: e.target.value})} /></div>
+            <div className="md:col-span-2"><label className="text-xs font-medium">Overview</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={4} value={formData.overview||formData.description||""} onChange={e=>setFormData({...formData, overview: e.target.value, description: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Tuition Range</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.tuitionRange||""} onChange={e=>setFormData({...formData, tuitionRange: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Living Cost</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.livingCost||""} onChange={e=>setFormData({...formData, livingCost: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Visa Type</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.visaType||""} onChange={e=>setFormData({...formData, visaType: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Sort Order</label><input type="number" className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.sortOrder||0} onChange={e=>setFormData({...formData, sortOrder: parseInt(e.target.value)||0})} /></div>
+          </div>
+        );
+      default:
+        return (
+          <div className="space-y-3">
+            <p className="text-xs text-slate-500">Editing {activeType} — generic JSON editor for advanced fields</p>
+            <textarea className="w-full border rounded-lg px-3 py-2 text-xs font-mono" rows={12} value={JSON.stringify(formData, null, 2)} onChange={e=>{ try{ setFormData(JSON.parse(e.target.value)); }catch{}}} />
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900">Super Admin — Website CMS Hub</h2>
+          <p className="text-sm text-slate-600 mt-1">Edit any part of website directly — real DB operations, audit logged, RBAC protected. Mobile PWA ready.</p>
+        </div>
+        <div className="flex gap-2">
+          <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchItems()} className="border rounded-lg px-3 py-2 text-sm w-48" />
+          <button onClick={fetchItems} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium">🔍 Search</button>
+          <button onClick={handleCreate} className="px-4 py-2 bg-[#0057B8] hover:bg-[#004494] text-white rounded-lg text-sm font-semibold">+ New</button>
+        </div>
+      </div>
+
+      {/* Type tabs */}
+      <div className="flex flex-wrap gap-2">
+        {WEBSITE_TYPES.map(t => (
+          <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${activeType===t.key ? "bg-[#0057B8] text-white border-[#0057B8] shadow" : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"}`}>
+            <span className="mr-1">{t.icon}</span> {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Country sub-types */}
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold text-amber-800">Country Details:</span>
+          {COUNTRY_SUB_TYPES.map(t=>(
+            <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border ${activeType===t.key ? "bg-amber-600 text-white border-amber-600" : "bg-white border-amber-200 text-amber-800 hover:bg-amber-100"}`}>{t.label}</button>
+          ))}
+          <select value={selectedCountryId} onChange={e=>setSelectedCountryId(e.target.value)} className="ml-2 border border-amber-300 rounded-lg px-2 py-1.5 text-xs bg-white">
+            <option value="">All Countries / Select for sub-data</option>
+            {countries.map(c=><option key={c.id} value={c.id}>{c.flag} {c.name}</option>)}
+          </select>
+        </div>
+      </div>
+
+      {/* Items table */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-4 border-b flex items-center justify-between">
+          <h3 className="font-semibold text-sm">{activeType} — {items.length} items {loading && "(loading...)"}</h3>
+          <span className="text-xs text-slate-500">Real DB • Audit Logged • PWA Mobile Ready</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-xs text-slate-500">
+              <tr>
+                <th className="text-left px-4 py-2">ID / Title</th>
+                <th className="text-left px-4 py-2">Key Info</th>
+                <th className="text-left px-4 py-2">Status</th>
+                <th className="text-right px-4 py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map(item=>(
+                <tr key={item.id} className="border-t hover:bg-slate-50">
+                  <td className="px-4 py-2.5">
+                    <div className="font-medium text-slate-900 truncate max-w-[220px]">{item.title || item.name || item.headline || item.question || item.studentName || item.sectionKey || item.slug || item.id.slice(0,8)}</div>
+                    <div className="text-xs text-slate-400 font-mono">{item.id.slice(0,12)}...</div>
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <div className="text-xs text-slate-600 truncate max-w-[320px]">{item.subtitle || item.description || item.testimonial || item.answer || item.overview || item.heroTitle || item.countryId || item.factValue || item.cityName || item.heading || ""}</div>
+                  </td>
+                  <td className="px-4 py-2.5"><span className={`text-xs px-2 py-1 rounded-full ${item.status==="active"||item.status==="published"||item.status==="verified" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>{item.status||"—"}</span></td>
+                  <td className="px-4 py-2.5 text-right space-x-1">
+                    <button onClick={()=>handleEdit(item)} className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-medium">Edit</button>
+                    <button onClick={()=>handleDelete(item.id)} className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium">Delete</button>
+                  </td>
+                </tr>
+              ))}
+              {items.length===0 && !loading && <tr><td colSpan={4} className="px-4 py-12 text-center text-slate-400 text-sm">No items found. Create first {activeType}.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Form modal */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="p-5 border-b flex items-center justify-between">
+              <h3 className="font-bold text-slate-900">{editing ? "Edit" : "Create"} {activeType}</h3>
+              <button onClick={()=>setShowForm(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <div className="p-5 overflow-y-auto flex-1">
+              {renderFormFields()}
+            </div>
+            <div className="p-4 border-t bg-slate-50 flex justify-end gap-2">
+              <button onClick={()=>setShowForm(false)} className="px-4 py-2 bg-white border rounded-xl text-sm">Cancel</button>
+              <button onClick={handleSave} className="px-5 py-2 bg-[#0057B8] hover:bg-[#004494] text-white rounded-xl text-sm font-semibold">Save — Real DB</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

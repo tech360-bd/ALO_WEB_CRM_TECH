@@ -63,7 +63,21 @@ export function CounselorDashboard({ stats, leads, onSearch }: any) {
       <FilterBar onSearch={onSearch} onExport={()=> window.print()} filters={<><Select><SelectTrigger className="w-[140px] h-8"><SelectValue placeholder="Stage" /></SelectTrigger><SelectContent><SelectItem value="all">All Stages</SelectItem><SelectItem value="new">New</SelectItem><SelectItem value="contacted">Contacted</SelectItem></SelectContent></Select><Select><SelectTrigger className="w-[140px] h-8"><SelectValue placeholder="Priority" /></SelectTrigger><SelectContent><SelectItem value="all">Any Priority</SelectItem></SelectContent></Select></>} />
       <BulkToolbar count={selected.size} onExport={()=> {}} onAction={()=> {}} />
       <SectionCard title="Today's Follow-ups" description="Asia/Dhaka • Source: Task where assignedTo=currentUser" action={<Button variant="ghost" size="sm" onClick={()=> setView('employee-tasks')}>View all</Button>}>
-        <DataTableFrame><Table><TableHeader><TableRow><TableHead className="w-8"><Checkbox checked={selected.size=== (leads?.length||0) && selected.size>0} onCheckedChange={c=> setSelected(c? new Set(leads?.map((l:any)=> l.id)): new Set())} /></TableHead><TableHead>Lead</TableHead><TableHead>Stage</TableHead><TableHead>Due</TableHead></TableRow></TableHeader><TableBody>{(leads||[{id:'1', name:'Rahim Ahmed', stage:'New', due:'Today 4pm'}]).map((l:any)=> <TableRow key={l.id}><TableCell><Checkbox checked={selected.has(l.id)} onCheckedChange={c=>{const n=new Set(selected); c? n.add(l.id): n.delete(l.id); setSelected(n);}}/></TableCell><TableCell>{l.name}</TableCell><TableCell><Badge>{l.stage}</Badge></TableCell><TableCell>{l.due}</TableCell></TableRow>)}</TableBody></Table></DataTableFrame>
+        <DataTableFrame><Table><TableHeader><TableRow><TableHead className="w-8"><Checkbox checked={selected.size=== (leads?.length||0) && selected.size>0} onCheckedChange={c=> {
+          if (c) {
+            setSelected(new Set(leads?.map((l:any)=> l.id)));
+          } else {
+            setSelected(new Set());
+          }
+        }} /></TableHead><TableHead>Lead</TableHead><TableHead>Stage</TableHead><TableHead>Due</TableHead></TableRow></TableHeader><TableBody>{(leads||[{id:'1', name:'Rahim Ahmed', stage:'New', due:'Today 4pm'}]).map((l:any)=> <TableRow key={l.id}><TableCell><Checkbox checked={selected.has(l.id)} onCheckedChange={c=>{
+          const n=new Set(selected);
+          if (c) {
+            n.add(l.id);
+          } else {
+            n.delete(l.id);
+          }
+          setSelected(n);
+        }}/></TableCell><TableCell>{l.name}</TableCell><TableCell><Badge>{l.stage}</Badge></TableCell><TableCell>{l.due}</TableCell></TableRow>)}</TableBody></Table></DataTableFrame>
       </SectionCard>
     </div>
   );

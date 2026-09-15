@@ -10144,3 +10144,196 @@ model VideoAnalytics {
   @@index([date])
 }
 
+// ==========================================
+// KNOWLEDGE SHARING — Unified Cross-Portal
+// Allows ANY authenticated user (student, partner, employee, counselor, admin) to upload info/updates
+// Others can view/utilize, with approval workflow
+// ==========================================
+
+model KnowledgeSharingPost {
+  id              String   @id @default(cuid())
+  title           String
+  slug            String   @unique
+  content         String   @db.LongText
+  summary         String?  @db.Text
+  category        String   @default("general") // general, university_update, visa_update, scholarship, country_guide, course_info, partnership, business_strategy, training, announcement, research
+  tags            String   @default("[]") // JSON array
+  fileUrl         String?  // optional attachment private storage
+  fileType        String?  // pdf, image, docx, etc
+  fileSize        Int?
+  authorId        String
+  authorName      String   @default("")
+  authorRole      String   @default("") // STUDENT, PARTNER, EMPLOYEE, COUNSELOR, ADMIN, SUPER_ADMIN, INTERNATIONAL_OFFICER
+  authorEmail     String   @default("")
+  visibility      String   @default("ALL") // ALL, EMPLOYEE, STUDENT, PARTNER, COUNSELOR, ADMIN, INTERNATIONAL_OFFICER
+  status          String   @default("PENDING") // PENDING, APPROVED, REJECTED, PUBLISHED, ARCHIVED
+  verificationStatus String @default("NEEDS_REVIEW") // NEEDS_REVIEW, VERIFIED, REJECTED
+  upvotes         Int      @default(0)
+  views           Int      @default(0)
+  isPinned        Boolean  @default(false)
+  isFeatured      Boolean  @default(false)
+  approvedById    String?
+  approvedAt      DateTime?
+  rejectionReason String?
+  sourceUrl       String?
+  universitySlug  String?
+  countrySlug     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  comments        KnowledgeSharingComment[]
+  upvoteLogs      KnowledgeSharingUpvote[]
+
+  @@index([category])
+  @@index([visibility])
+  @@index([status])
+  @@index([authorId])
+  @@index([universitySlug])
+  @@index([countrySlug])
+  @@index([createdAt])
+}
+
+model KnowledgeSharingComment {
+  id          String   @id @default(cuid())
+  postId      String
+  post        KnowledgeSharingPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId    String
+  authorName  String   @default("")
+  authorRole  String   @default("")
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([postId])
+  @@index([authorId])
+}
+
+model KnowledgeSharingUpvote {
+  id        String   @id @default(cuid())
+  postId    String
+  post      KnowledgeSharingPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+// ==========================================
+// INTERNATIONAL OFFICER — University Research & Partnership Management
+// Manages university research activities, partnership communications (emails/agreements), contact details
+// Business strategy for rapidly establishing partnerships
+// ==========================================
+
+model InternationalOfficerProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  officerCode     String   @unique // ALO-IO-XXXXX
+  name            String
+  email           String
+  phone           String   @default("")
+  region          String   @default("") // UK, USA, Canada, Australia, etc
+  specialization  String   @default("") // Research, Partnership, Communication
+  status          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([region])
+  @@index([status])
+}
+
+model UniversityResearchActivity {
+  id              String   @id @default(cuid())
+  universitySlug  String
+  universityName  String
+  countrySlug     String   @default("")
+  activityType    String   @default("RESEARCH") // RESEARCH, PARTNERSHIP_OUTREACH, AGREEMENT_NEGOTIATION, EMAIL_COMMUNICATION, MEETING, FOLLOW_UP
+  title           String
+  description     String   @db.LongText
+  researchData    String?  @db.LongText // JSON: AI-collected info, ranking, courses, etc
+  status          String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, ON_HOLD
+  priority        String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  assignedOfficerId String?
+  assignedOfficerName String @default("")
+  evidenceUrls    String   @default("[]") // JSON array of source URLs
+  nextAction      String   @default("")
+  dueDate         DateTime?
+  completedAt     DateTime?
+  createdById     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([universitySlug])
+  @@index([countrySlug])
+  @@index([activityType])
+  @@index([status])
+  @@index([assignedOfficerId])
+}
+
+model PartnershipCommunication {
+  id              String   @id @default(cuid())
+  universitySlug  String
+  universityName  String
+  communicationType String @default("EMAIL") // EMAIL, AGREEMENT, CALL, MEETING, WHATSAPP, OFFICIAL_LETTER
+  subject         String
+  body            String   @db.LongText
+  direction       String   @default("OUTBOUND") // OUTBOUND, INBOUND
+  status          String   @default("DRAFT") // DRAFT, SENT, DELIVERED, REPLIED, FAILED
+  contactName     String   @default("")
+  contactEmail    String   @default("")
+  contactPhone    String   @default("")
+  agreementId     String?  // link to UniversityAgreement if type AGREEMENT
+  emailId         String?  // link to OfficialEmail if type EMAIL
+  b2bContactId    String?  // link to B2BContact
+  attachments     String   @default("[]") // JSON array
+  sentAt          DateTime?
+  repliedAt       DateTime?
+  createdById     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([universitySlug])
+  @@index([communicationType])
+  @@index([status])
+  @@index([contactEmail])
+}
+
+model PartnershipBusinessStrategy {
+  id              String   @id @default(cuid())
+  title           String
+  slug            String   @unique
+  countrySlug     String   @default("") // UK, USA, Canada, Australia, etc
+  region          String   @default("") // Europe, North America, Asia, etc
+  strategyType    String   @default("RAPID_PARTNERSHIP") // RAPID_PARTNERSHIP, RESEARCH_COLLABORATION, AGENT_AGREEMENT, COMMISSION_BASED
+  description     String   @db.LongText
+  bestMethods     String   @db.LongText // JSON or markdown: best methods for rapidly establishing partnerships
+  bestLocations   String   @db.LongText // JSON or markdown: best locations/cities/universities for partnerships
+  targetUniversities String @default("[]") // JSON array of university slugs
+  contactStrategy String   @db.LongText // How to communicate, leverage research data, expand business
+  researchLeverage String  @db.LongText // How to leverage research data
+  businessExpansion String @db.LongText // How to expand business through partnerships
+  status          String   @default("ACTIVE") // ACTIVE, DRAFT, ARCHIVED
+  createdById     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([countrySlug])
+  @@index([region])
+  @@index([strategyType])
+  @@index([status])
+}
+
+model InternationalOfficerDashboardMetric {
+  id              String   @id @default(cuid())
+  officerId       String?
+  metricType      String   // TOTAL_UNIVERSITIES_RESEARCHED, ACTIVE_PARTNERSHIPS, PENDING_AGREEMENTS, EMAILS_SENT, MEETINGS_SCHEDULED, PARTNERSHIPS_ESTABLISHED, RESEARCH_EVIDENCE_COLLECTED
+  value           Int      @default(0)
+  period          String   @default("ALL_TIME") // ALL_TIME, THIS_MONTH, THIS_WEEK, TODAY
+  calculatedAt    DateTime @default(now())
+
+  @@index([officerId])
+  @@index([metricType])
+  @@index([period])
+}
+

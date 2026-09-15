@@ -130,8 +130,8 @@ export async function canAccessFeatureEngine(userId: string, roles: string[], fe
 
   // Designation matrix
   const designation = await getEmployeeDesignation(userId);
-  const module = featureKey.toUpperCase();
-  return canPerformAction(designation, module, action.toUpperCase());
+  const featureModule = featureKey.toUpperCase();
+  return canPerformAction(designation, featureModule, action.toUpperCase());
 }
 
 export async function canViewEmployeePrivateProfileEngine(actorId: string, actorRoles: string[], targetEmployeeId: string): Promise<boolean> {

@@ -3,6 +3,7 @@
  * All jobs use Asia/Dhaka timezone with distributed locking (DB-based)
  * Verification: run `npm run cron:verify` or `npx tsx scripts/verify-15-cron.ts`
  */
+import * as cronParser from 'cron-parser';
 
 export interface CronJobDefinition {
   id: string; // unique
@@ -208,20 +209,19 @@ export function verifyCronDefinitions(): { ok: boolean; errors: string[] } {
     if (job.timezone !== 'Asia/Dhaka') errors.push(`${job.id} timezone != Asia/Dhaka (${job.timezone})`);
     if (!job.locking) errors.push(`${job.id} locking disabled`);
     if (!job.route.startsWith('/api/cron/')) errors.push(`${job.id} route must start with /api/cron/`);
-    // Validate cronExpression via cron-parser (v4 parse or v5 CronExpressionParser.parse / parseExpression)
     try {
-      const cronParser = require('cron-parser');
-      const parser = (cronParser.parse || cronParser.parseExpression || cronParser.CronExpressionParser?.parse || cronParser.default?.parse || cronParser.default?.CronExpressionParser?.parse);
+      const parserAny = cronParser as any;
+      const parser = parserAny.parse || parserAny.parseExpression || parserAny.CronExpressionParser?.parse || parserAny.default?.parse || parserAny.default?.CronExpressionParser?.parse;
       if (typeof parser === 'function') {
-        parser.call(cronParser, job.cronExpression, { tz: job.timezone });
-      } else if (cronParser.CronExpressionParser && typeof cronParser.CronExpressionParser.parse === 'function') {
-        cronParser.CronExpressionParser.parse(job.cronExpression, { tz: job.timezone });
-      } else {
-        throw new Error('cron-parser parse not found');
+        parser.call(parserAny, job.cronExpression, { tz: job.timezone });
+      } else if (parserAny.CronExpressionParser && typeof parserAny.CronExpressionParser.parse === 'function') {
+        parserAny.CronExpressionParser.parse(job.cronExpression, { tz: job.timezone });
+      } else if (typeof parserAny.parseExpression === 'function') {
+        parserAny.parseExpression(job.cronExpression, { tz: job.timezone });
       }
-    } catch (e:any) {
+    } catch (e: any) {
       errors.push(`${job.id} invalid cron: ${job.cronExpression} - ${e.message}`);
     }
   }
-  return { ok: errors.length===0, errors };
+  return { ok: errors.length === 0, errors };
 }

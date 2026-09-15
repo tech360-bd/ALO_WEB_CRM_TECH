@@ -2,11 +2,14 @@
 // Each portal keeps its own role-appropriate structure, grouped headings, icons, active states, badges, submenus
 
 import {
-  LayoutDashboard, User, Search, FolderHeart, FolderOpen, FileText, FileUp, MessageSquare, Award, CreditCard, ClipboardList, Calendar, Clock, GraduationCap, Building2, BookOpen, Shield, Users, Target, Plane, BarChart3, Megaphone, UserCog, Bot, Headphones, CheckSquare, Wallet, DollarSign, FileSearch, Globe, GitCompare, ShieldCheck, AlertTriangle, Database, Settings, Lock, ScrollText, Briefcase, CalendarDays, TrendingUp, HelpCircle, LogOut, Map, FileCheck, Video, Newspaper, Handshake, Library, Landmark, Receipt, Laptop
+  LayoutDashboard, User, Search, FolderHeart, FolderOpen, FileText, FileUp, MessageSquare, Award, CreditCard, ClipboardList, Calendar, Clock, GraduationCap, Building2, BookOpen, Shield, Users, Target, Plane, BarChart3, Megaphone, UserCog, Bot, Headphones, CheckSquare, Wallet, DollarSign, FileSearch, Globe, GitCompare, ShieldCheck, AlertTriangle, Database, Settings, Lock, ScrollText, Briefcase, CalendarDays, TrendingUp, HelpCircle, LogOut, Map, FileCheck, Video, Newspaper, Handshake, Library, Landmark, Receipt, Laptop, Share2, Lightbulb, Mail, Contact, FileSignature, MapPinned, BookMarked, Send
 } from 'lucide-react';
 
 export type NavItem = { label: string; icon: any; href?: string; view?: string; badge?: string; children?: NavItem[] };
 export type NavGroup = { title: string; items: NavItem[] };
+
+// Shared Knowledge Sharing nav item reused across all portals
+const KNOWLEDGE_SHARING_ITEM = { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' };
 
 export const portalNav: Record<string, NavGroup[]> = {
   student: [
@@ -22,6 +25,7 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Messages', icon: MessageSquare, view:'student-messages' },
       { label:'Payments', icon: CreditCard, view:'student-payments' },
       { label:'AI Study Assistant', icon: Bot, view:'student-ai-advisor' },
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
       { label:'Help & Support', icon: HelpCircle, view:'student-help' },
     ]},
   ],
@@ -38,6 +42,14 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Tasks', icon: CheckSquare, view:'employee-tasks' },
       { label:'Reports', icon: BarChart3, view:'employee-reports' },
     ]},
+    { title:'Knowledge & Partnerships', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
+      { label:'International Officer', icon: Globe, view:'international-officer-dashboard' },
+      { label:'University Research', icon: BookMarked, view:'international-officer-research' },
+      { label:'Partnership Comms', icon: Mail, view:'international-officer-communications' },
+      { label:'Contact Details', icon: Contact, view:'international-officer-contacts' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy' },
+    ]},
   ],
   senior_counselor: [
     { title:'Team', items: [
@@ -49,6 +61,11 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Applications', icon: FileText, view:'employee-applications' },
       { label:'Team Calendar', icon: CalendarDays, view:'employee-calendar' },
       { label:'Performance Reports', icon: BarChart3, view:'employee-reports' },
+    ]},
+    { title:'Knowledge & Partnerships', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
+      { label:'International Officer', icon: Globe, view:'international-officer-dashboard' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy' },
     ]},
   ],
   admissions: [
@@ -62,6 +79,9 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Deadlines', icon: Calendar, view:'crm-applications' },
       { label:'Reports', icon: BarChart3, view:'crm-reports' },
     ]},
+    { title:'Knowledge', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
+    ]},
   ],
   document_verification: [
     { title:'Review', items: [
@@ -72,6 +92,9 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Approved', icon: FileCheck, view:'crm-documents' },
       { label:'Rejected', icon: FileText, view:'crm-documents' },
       { label:'Review History', icon: ScrollText, view:'crm-audit-logs' },
+    ]},
+    { title:'Knowledge', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
     ]},
   ],
   visa: [
@@ -86,6 +109,9 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Case History', icon: ScrollText, view:'crm-audit-logs' },
       { label:'Reports', icon: BarChart3, view:'crm-visa-reports' },
     ]},
+    { title:'Knowledge', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
+    ]},
   ],
   front_desk: [
     { title:'Front Desk', items: [
@@ -96,6 +122,9 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Lead Lookup', icon: Search, view:'crm-leads' },
       { label:'Today’s Visitors', icon: Users, view:'crm-leads' },
       { label:'Handover Queue', icon: ClipboardList, view:'crm-tasks' },
+    ]},
+    { title:'Knowledge', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
     ]},
   ],
   marketing: [
@@ -112,6 +141,10 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Reports', icon: BarChart3, view:'marketing-analytics' },
       { label:'Integrations', icon: Settings, view:'crm-social' },
     ]},
+    { title:'Knowledge', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy' },
+    ]},
   ],
   partner: [
     { title:'Partner', items: [
@@ -123,6 +156,15 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Messages', icon: MessageSquare, view:'partner-messages' },
       { label:'Commission/Settlement', icon: DollarSign, view:'partner-commission' },
       { label:'Reports', icon: BarChart3, view:'partner-reports' },
+    ]},
+    { title:'Knowledge & Partnerships', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
+      { label:'International Officer', icon: Globe, view:'international-officer-dashboard' },
+      { label:'University Research', icon: BookMarked, view:'international-officer-research' },
+      { label:'Partnership Comms', icon: Mail, view:'international-officer-communications' },
+      { label:'Agreements', icon: FileSignature, view:'international-officer-agreements' },
+      { label:'Contact Details', icon: Contact, view:'international-officer-contacts' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy' },
     ]},
   ],
   data: [
@@ -138,6 +180,11 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Validation Queue', icon: FileSearch, view:'crm-import-center' },
       { label:'Change History', icon: ScrollText, view:'crm-audit-logs' },
     ]},
+    { title:'Knowledge & Partnerships', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
+      { label:'University Research', icon: BookMarked, view:'international-officer-research' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy' },
+    ]},
   ],
   finance: [
     { title:'Finance', items: [
@@ -148,6 +195,9 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Refund Requests', icon: CreditCard, view:'crm-finance' },
       { label:'Reconciliation', icon: BarChart3, view:'crm-finance' },
       { label:'Reports', icon: BarChart3, view:'crm-finance' },
+    ]},
+    { title:'Knowledge', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
     ]},
   ],
   hr: [
@@ -161,6 +211,9 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Announcements', icon: Newspaper, view:'crm-hrm' },
       { label:'HR Reports', icon: BarChart3, view:'crm-hrm' },
     ]},
+    { title:'Knowledge', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
+    ]},
   ],
   department_head: [
     { title:'Department', items: [
@@ -170,6 +223,11 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'Escalations', icon: AlertTriangle, view:'crm-tasks' },
       { label:'Applications', icon: FileText, view:'crm-applications' },
       { label:'Reports', icon: BarChart3, view:'crm-reports' },
+    ]},
+    { title:'Knowledge & Partnerships', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
+      { label:'International Officer', icon: Globe, view:'international-officer-dashboard' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy' },
     ]},
   ],
   coo: [
@@ -183,9 +241,17 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'AI Activity', icon: Bot, view:'crm-ai-command' },
       { label:'Executive Reports', icon: BarChart3, view:'crm-reports' },
     ]},
+    { title:'Knowledge & Partnerships', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub' },
+      { label:'International Officer', icon: Globe, view:'international-officer-dashboard' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy' },
+    ]},
   ],
   super_admin: [
-    { title:'System', items: [
+    { title:'Master Command', items: [
+      { label:'Master Command Center', icon: Shield, view:'super-admin-master-command', badge:'live' },
+      { label:'Website CMS Hub', icon: Globe, view:'super-admin-website-cms', badge:'new' },
+      { label:'CRM Command Center', icon: Briefcase, view:'super-admin-crm-command', badge:'new' },
       { label:'System Overview', icon: LayoutDashboard, view:'crm-dashboard' },
       { label:'Users & Roles', icon: Users, view:'crm-users' },
       { label:'Departments/Branches', icon: Building2, view:'crm-roles' },
@@ -199,6 +265,57 @@ export const portalNav: Record<string, NavGroup[]> = {
       { label:'System Health', icon: BarChart3, view:'crm-dashboard' },
       { label:'Backup/Recovery', icon: Database, view:'crm-settings' },
       { label:'Settings', icon: Settings, view:'crm-settings' },
+    ]},
+    { title:'Knowledge & Partnerships', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
+      { label:'International Officer', icon: Globe, view:'international-officer-dashboard' },
+      { label:'University Research', icon: BookMarked, view:'international-officer-research' },
+      { label:'Partnership Comms', icon: Mail, view:'international-officer-communications' },
+      { label:'Agreements', icon: FileSignature, view:'international-officer-agreements' },
+      { label:'Contact Details', icon: Contact, view:'international-officer-contacts' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy' },
+    ]},
+  ],
+  // NEW: Dedicated International Officer Role
+  international_officer: [
+    { title:'International Officer', items: [
+      { label:'Dashboard', icon: LayoutDashboard, view:'international-officer-dashboard' },
+      { label:'University Research', icon: BookMarked, view:'international-officer-research' },
+      { label:'Research Evidence', icon: FileSearch, view:'international-officer-research' },
+      { label:'Digital Twin', icon: Building2, view:'international-officer-research' },
+    ]},
+    { title:'Partnership Management', items: [
+      { label:'Communications', icon: Mail, view:'international-officer-communications' },
+      { label:'Emails & Letters', icon: Send, view:'international-officer-communications' },
+      { label:'Agreements', icon: FileSignature, view:'international-officer-agreements' },
+      { label:'Contact Details', icon: Contact, view:'international-officer-contacts' },
+      { label:'B2B Contacts', icon: Users, view:'international-officer-contacts' },
+    ]},
+    { title:'Strategy & Knowledge', items: [
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy', badge:'key' },
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
+      { label:'Reports & Analytics', icon: BarChart3, view:'international-officer-dashboard' },
+    ]},
+  ],
+  // Partner Manager also gets full access
+  partner_manager: [
+    { title:'Partner Management', items: [
+      { label:'Dashboard', icon: LayoutDashboard, view:'partner-dashboard' },
+      { label:'My Referrals', icon: Handshake, view:'partner-leads' },
+      { label:'Documents', icon: FileUp, view:'partner-documents' },
+      { label:'Messages', icon: MessageSquare, view:'partner-messages' },
+      { label:'Commission', icon: DollarSign, view:'partner-commission' },
+    ]},
+    { title:'International Partnerships', items: [
+      { label:'International Officer', icon: Globe, view:'international-officer-dashboard' },
+      { label:'University Research', icon: BookMarked, view:'international-officer-research' },
+      { label:'Partnership Comms', icon: Mail, view:'international-officer-communications' },
+      { label:'Agreements', icon: FileSignature, view:'international-officer-agreements' },
+      { label:'Contact Details', icon: Contact, view:'international-officer-contacts' },
+      { label:'Business Strategy', icon: MapPinned, view:'international-officer-strategy', badge:'key' },
+    ]},
+    { title:'Knowledge', items: [
+      { label:'Knowledge Sharing', icon: Share2, view:'knowledge-sharing-hub', badge:'new' },
     ]},
   ],
 };

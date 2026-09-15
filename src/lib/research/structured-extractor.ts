@@ -15,6 +15,7 @@
 // ============================================================
 import { webSearch, webScrape } from './molx-firecrawl-client';
 import { db } from '@/lib/db';
+import crypto from 'node:crypto';
 
 // ---------- web-agent style schema validator ----------
 type JsonSchema = { type?: string; properties?: Record<string, any>; required?: string[]; [k:string]: any };
@@ -169,7 +170,7 @@ export async function upsertWithProvenance(opts: { entityType: 'UNIVERSITY'|'COU
   // Also persist as SourceSnapshot when an OfficialSource row exists for sourceUrl
   const src: any = await db.officialSource.findFirst({ where:{ sourceUrl: opts.sourceUrl }}).catch(()=>null);
   if (src?.id) {
-    await db.sourceSnapshot.create({ data:{ sourceId: src.id, httpStatus: 200, contentHash: require('crypto').createHash('sha256').update(JSON.stringify(payload)).digest('hex'), rawHtml: JSON.stringify(payload).slice(0, 40000), verifiedAt: new Date(lastVerifiedAt) } as any }).catch(()=>{});
+    await db.sourceSnapshot.create({ data:{ sourceId: src.id, httpStatus: 200, contentHash: crypto.createHash('sha256').update(JSON.stringify(payload)).digest('hex'), rawHtml: JSON.stringify(payload).slice(0, 40000), verifiedAt: new Date(lastVerifiedAt) } as any }).catch(()=>{});
   }
   return { id, action: 'insert' };
 }
