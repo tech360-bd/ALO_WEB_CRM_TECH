@@ -82,9 +82,17 @@ jobs:
           echo "✓ No secret-shaped strings in tracked source files"
 
       - name: Prisma validate
+        env:
+          # Dummy value ONLY so the CLI can resolve env("DATABASE_URL") during
+          # schema validation. No connection is made. Scoped to this step so the
+          # Tests step still sees NO DATABASE_URL (DB-integration files then
+          # self-skip with reason instead of hitting a dummy server).
+          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
         run: npx prisma validate
 
       - name: Prisma generate (needed for typecheck)
+        env:
+          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
         run: npx prisma generate
 
       - name: Lint

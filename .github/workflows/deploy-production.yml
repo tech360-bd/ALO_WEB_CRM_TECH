@@ -177,6 +177,12 @@ jobs:
 
       - name: Prisma validate
         shell: bash
+        env:
+          # Dummy value ONLY so the CLI can resolve env("DATABASE_URL") during
+          # schema validation on the clean runner (no .env in Git, no connection
+          # made). Step-scoped: the Tests step must see NO DATABASE_URL so the
+          # DB-integration files self-skip with reason.
+          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
         run: |
           set -euo pipefail
           npx prisma validate
@@ -184,6 +190,8 @@ jobs:
 
       - name: Prisma generate
         shell: bash
+        env:
+          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
         run: |
           set -euo pipefail
           npx prisma generate
