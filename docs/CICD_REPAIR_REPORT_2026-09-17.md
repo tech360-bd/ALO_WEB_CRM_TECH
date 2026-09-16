@@ -124,7 +124,8 @@ engine download itself, which is standard on GitHub runners.
 ## GitHub Actions results
 
 - **Historical (pre-fix):** 29/29 failed — run IDs listed above; zero successes ever recorded for
-  this workflow.
+  this workflow. (A 30th run, `35140963500`, was produced by this session's branch push and
+  reproduced Class A — the broken fragment is still in the tree; details below.)
 - **Post-fix:** **no run of the repaired workflows has executed yet — stated plainly.** Two hard
   gates stand between the repaired files and a real run:
   1. **Push restriction:** `git push` of the commit containing `.github/workflows/*` was rejected:
@@ -143,6 +144,13 @@ engine download itself, which is standard on GitHub runners.
 - A pull request from this branch documents the change set for review; because the remote branch
   cannot yet contain `ci.yml`, the PR itself triggers no CI run — the first real run will be the
   one an admin triggers after installing the workflows (or after the permission grant + merge).
+- **New confirming evidence (this session):** pushing this branch created run `35140963500`,
+  which failed exactly like Class A — "This run likely failed because of a workflow file issue",
+  0 jobs. The broken 25-line fragment inherited from `f97a5ec` is still in the branch tree
+  (the repaired replacement cannot be pushed — blocker 0), and GitHub fails *any* push to *any*
+  branch whose tree contains an unparseable workflow file. This run is NOT a failure of the
+  repaired workflows (none are installed on the remote yet); it is the pre-existing defect
+  reproducing, and it stops the moment the repaired `deploy-production.yml` lands.
 - **No workflow is claimed successful until its actual run shows success.**
 
 ## Production deployment
