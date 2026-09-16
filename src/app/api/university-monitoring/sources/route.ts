@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "sourceUrl, sourceName, and entityType are required" }, { status: 400 });
   }
 
-  const existing = await db.officialSource.findUnique({ where: { sourceUrl } });
+  const existing = await db.officialSource.findFirst({ where: { sourceUrl } });
   if (existing) {
     return NextResponse.json({ error: "A source with this URL already exists" }, { status: 400 });
   }

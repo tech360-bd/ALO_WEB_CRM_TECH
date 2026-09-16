@@ -36,6 +36,8 @@ export async function POST(req: Request) {
     // Record reassignment log
     const logRecord = await db.employeeReassignment.create({
       data: {
+        fromEmployeeId: exitingEmp.id,
+        toEmployeeId: targetEmp.id,
         employeeId,
         reassignedBy: adminId,
         reason: JSON.stringify({ targetEmployeeId, studentsCount: reassignedLeads.count, tasksCount: reassignedTasks.count }),

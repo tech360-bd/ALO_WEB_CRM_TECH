@@ -37,7 +37,7 @@ export const POST = withAuth(async (req, auth) => {
         senderId: auth.userId,
         content,
         channel: channel || (thread as any).channel || 'whatsapp',
-        attachmentUrl: attachmentUrl || null,
+        fileUrl: attachmentUrl || '',
       },
     }).catch(() => null);
 
@@ -50,6 +50,8 @@ export const POST = withAuth(async (req, auth) => {
           channel: channel || 'whatsapp',
           content,
           senderId: auth.userId,
+          senderName: auth.name || 'Employee',
+          senderRole: 'employee',
           status: 'sent',
         },
       });

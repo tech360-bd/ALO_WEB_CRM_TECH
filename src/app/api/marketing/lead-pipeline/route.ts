@@ -25,7 +25,7 @@ export const GET = withAuth(async (req: Request, _auth: AuthContext) => {
   }).catch(() => []);
 
   // Group by status
-  const byStatus: Record<string, typeof leads> = {};
+  const byStatus: Record<string, any[]> = {};
   for (const l of leads) {
     const s = l.status || "new";
     if (!byStatus[s]) byStatus[s] = [];

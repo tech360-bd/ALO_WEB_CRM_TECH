@@ -75,7 +75,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Audit log
   await db.auditLog.create({
     data: {
-      userId: userId === "system" ? null : userId,
+      userId: !userId || userId === "system" ? "" : userId,
       action: `REVIEW_${action}`,
       resource: "StudentReview",
       resourceId: review.id,

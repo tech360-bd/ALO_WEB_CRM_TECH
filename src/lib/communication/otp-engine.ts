@@ -44,7 +44,8 @@ export async function generateOtp(params: { ownerType: string; ownerId: string; 
   try {
     await db.otpCode.create({
       data: {
-        identifier: params.phone,
+        phone: params.phone || '',
+        email: '',
         code: otpHash,
         purpose: params.purpose || 'verification',
         expiresAt,

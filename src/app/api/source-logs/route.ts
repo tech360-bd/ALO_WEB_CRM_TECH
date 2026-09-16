@@ -67,6 +67,8 @@ export async function POST(req: NextRequest) {
         verifiedBy: checkedBy || auth.userId || 'system',
         lastVerifiedAt: verificationStatus === 'verified' ? new Date() : null,
         notes,
+        entityType: String(entityType).toUpperCase(),
+        sourceName: sourceName || sourceUrl,
       },
     }).catch(() => {});
     return NextResponse.json({ success: true, sourceLog: log }, { status: 201 });

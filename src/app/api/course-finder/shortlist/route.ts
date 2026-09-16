@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   const { studentId, courseSlug } = await req.json();
   if (!studentId || !courseSlug) return NextResponse.json({ error: "studentId and courseSlug required" }, { status: 400 });
   try {
-    await db.courseShortlist.create({ data: { studentId, courseSlug } });
+    await db.courseShortlist.create({ data: { studentId, courseId: courseSlug, courseSlug } });
     return NextResponse.json({ saved: true });
   } catch {
     // Already shortlisted — remove it (toggle)

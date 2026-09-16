@@ -90,7 +90,9 @@ export async function POST(req: NextRequest) {
 
   await db.timelineEvent.create({
     data: {
+      studentId: "",
       leadId: lead.id,
+      stage: "lead",
       type: "LEAD_CREATED",
       title: "New lead created",
       description: `Lead came via ${lead.source}${lead.sourceDetail ? ` (${lead.sourceDetail})` : ""}`,

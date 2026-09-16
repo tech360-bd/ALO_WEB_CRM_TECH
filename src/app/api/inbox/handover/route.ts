@@ -18,7 +18,7 @@ export const POST = withAuth(async (req, auth) => {
     try {
       await db.communicationThread.update({ where: { id: finalThreadId }, data: { assignedToId: toEmployeeId, status: 'assigned' } });
     } catch {
-      try { await db.uccConversation.update({ where: { id: finalThreadId }, data: { assignedTo: toEmployeeId, status: 'assigned' } }); } catch {}
+      try { await db.uccConversation.update({ where: { id: finalThreadId }, data: { assignedToUserId: toEmployeeId, status: 'assigned' } }); } catch {}
     }
 
     // Create task for new assignee

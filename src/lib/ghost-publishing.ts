@@ -71,7 +71,7 @@ export async function ghostPublishPost(input: GhostPostInput, actorId: string): 
             body: JSON.stringify({}),
           }).catch(()=>{});
         }
-        await db.crmAuditLog.create({ data: { action: 'GHOST_POST_PUBLISHED', entityType: 'GhostPost', entityId: post.id, actorId, details: JSON.stringify({ slug: input.slug, status: input.status }), createdAt: new Date() } as any }).catch(()=>{});
+        await db.crmAuditLog.create({ data: { action: 'GHOST_POST_PUBLISHED', targetCollection: 'GhostPost', targetId: post.id, actorUserId: actorId || '', afterData: JSON.stringify({ slug: input.slug, status: input.status }), createdAt: new Date() } }).catch(()=>{});
         return { id: post.id, url: post.url || `${GHOST_URL}/${input.slug}/`, published: post.status === 'published' };
       }
     } catch (e: any) {
@@ -81,7 +81,7 @@ export async function ghostPublishPost(input: GhostPostInput, actorId: string): 
 
   // Fallback: treat as local draft (ALO CMS remains source of truth)
   const localId = `ghost_local_${input.slug}`;
-  await db.crmAuditLog.create({ data: { action: 'GHOST_POST_LOCAL_DRAFT', entityType: 'GhostPost', entityId: localId, actorId, details: JSON.stringify({ slug: input.slug }), createdAt: new Date() } as any }).catch(()=>{});
+  await db.crmAuditLog.create({ data: { action: 'GHOST_POST_LOCAL_DRAFT', targetCollection: 'GhostPost', targetId: localId, actorUserId: actorId || '', afterData: JSON.stringify({ slug: input.slug }), createdAt: new Date() } }).catch(()=>{});
   return { id: localId, url: `/blog/${input.slug}`, published: false };
 }
 

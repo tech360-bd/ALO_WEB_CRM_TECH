@@ -65,8 +65,8 @@ export async function grantConsent(params: ConsentParams): Promise<ConsentResult
       action: "MARKETING_CONSENT_GRANT",
       resource: "Visitor",
       resourceId: key,
-      userId: params.studentId || null,
-      ipAddress: params.ip || null,
+      userId: params.studentId || "",
+      ipAddress: params.ip || "",
       details: JSON.stringify({
         visitorId: params.visitorId,
         email: params.email?.toLowerCase(),

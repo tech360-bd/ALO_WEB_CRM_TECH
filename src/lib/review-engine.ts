@@ -78,7 +78,7 @@ export async function createReviewRequest(
   // Audit trail
   await db.auditLog.create({
     data: {
-      userId: params.requestedById || null,
+      userId: params.requestedById || "",
       action: "REVIEW_REQUESTED",
       resource: "ReviewRequest",
       resourceId: created.id,

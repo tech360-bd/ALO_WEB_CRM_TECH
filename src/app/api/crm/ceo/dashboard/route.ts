@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
             { channel: 'WhatsApp', spend: '৳0.3L', leads: 178, roi: '8.2x', trend: 'up' },
             { channel: 'Referral', spend: '৳0.5L', leads: 120, roi: '6.1x', trend: 'up' },
           ],
-          highRiskCases: await db.visaCase.findMany({ where: { riskLevel: 'HIGH' }, take: 5 }).then(rows=> rows.map(r=>({ student: r.studentId, country: r.country || '—', issue: r.riskReason || 'High risk', severity: 'high' }))).catch(()=>[]),
+          highRiskCases: await db.visaCase.findMany({ where: { riskLevel: 'HIGH' }, take: 5 }).then(rows=> rows.map(r=>({ student: r.studentId, country: r.destinationCountry || '—', issue: r.nextAction || 'High risk', severity: 'high' }))).catch(()=>[]),
           kpis: [
             { label: 'Total Revenue', value: totalRevenueResult._sum.amount ? `৳${(totalRevenueResult._sum.amount / 100000).toFixed(1)}L` : '৳45.2L', change: '+8.3%', up: true, icon: 'DollarSign', sub: 'This fiscal year' },
             { label: 'Lead Conversion', value: '32.4%', change: '+2.1%', up: true, icon: 'TrendingUp', sub: 'Last 90 days' },

@@ -7,16 +7,20 @@ export async function GET(request: Request) {
     try {
       const url = new URL(req.url);
       const status = url.searchParams.get("status") || "pending";
-      
+      // CrmSourceVerificationEvent has no `status` column — callers' "pending"
+      // maps to the model's NEEDS_REVIEW verification state.
+      const verificationStatus = status === "pending" ? "NEEDS_REVIEW" : status;
+
       const changes = await db.crmSourceVerificationEvent.findMany({
-        where: status !== "all" ? { status } : {},
+        where: status !== "all" ? { verificationStatus } : {},
         orderBy: { createdAt: "desc" },
         take: 50,
-      }).catch(() => []);
-      
+      });
+
       return NextResponse.json({ success: true, data: changes, total: changes.length });
-    } catch {
-      return NextResponse.json({ success: true, data: [], total: 0 });
+    } catch (err: any) {
+      console.error('[source-intelligence] error', err);
+      return NextResponse.json({ success: false, error: err?.message || 'Failed to load verification events' }, { status: 500 });
     }
   })(request);
 }

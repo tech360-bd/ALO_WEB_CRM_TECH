@@ -58,7 +58,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       data: { studentId: id, authorId, authorRole, content: commentBody },
     });
     await db.timelineEvent.create({
-      data: { studentId: id, userId: authorId, type: "MESSAGE_SENT", title: "Student-visible comment added", description: commentBody.slice(0, 100) },
+      data: { studentId: id, userId: authorId, stage: "communication", type: "MESSAGE_SENT", title: "Student-visible comment added", description: commentBody.slice(0, 100) },
     });
     return NextResponse.json({ comment });
   }

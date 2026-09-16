@@ -59,7 +59,7 @@ export async function createCapRecording(opts: CapRecordingOpts & { fileKey?: st
     data: { fileId: id, action: 'CAP_RECORDING_CREATED', actorId: opts.createdById, details: JSON.stringify({ title: opts.title, orgId: opts.orgId, spaceId: opts.spaceId, visibility, studentId: opts.studentId, durationSec: opts.durationSec }), createdAt: new Date() } as any,
   }).catch(()=>{});
 
-  await db.crmAuditLog.create({ data: { action: 'CAP_RECORDING_CREATE', entityType: 'CapRecording', entityId: id, actorId: opts.createdById, details: JSON.stringify({ title: opts.title, visibility }), createdAt: new Date() } as any }).catch(()=>{});
+  await db.crmAuditLog.create({ data: { action: 'CAP_RECORDING_CREATE', targetCollection: 'CapRecording', targetId: id, actorUserId: opts.createdById || '', afterData: JSON.stringify({ title: opts.title, visibility }), createdAt: new Date() } }).catch(()=>{});
 
   const shareUrl = `${PUBLIC_BASE}/r/${id}`;
   const previewUrl = `${PUBLIC_BASE}/api/cap/preview/${id}`;

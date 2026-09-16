@@ -17,13 +17,18 @@ export async function POST(request: Request) {
       if (file.size > maxSize) return NextResponse.json({ success: false, error: "File too large (max 10MB)" }, { status: 400 });
       
       // Create metadata record
+      const fileUuid = "file-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
+      const fileExt = file.name.split(".").pop() || "bin";
       const metadata = await db.fileMetadata.create({
         data: {
-          uuid: "file-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9),
+          uuid: fileUuid,
           originalName: file.name,
+          storedName: `${fileUuid}.${fileExt}`,
           mimeType: file.type || "application/octet-stream",
           extension: file.name.split(".").pop() || "",
           sizeBytes: BigInt(file.size),
+          checksumSha256: "", // populated once file bytes are persisted server-side
+          storagePath: `${entityType.toLowerCase()}/${fileUuid}.${fileExt}`,
           storagePool: "default",
           entityType,
           entityId,

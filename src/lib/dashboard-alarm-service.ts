@@ -82,7 +82,7 @@ export async function acknowledgeAlarm(alarmId: string, auth: any) {
     data: { status: 'acknowledged', acknowledgedBy: auth.userId, acknowledgedAt: new Date() },
   });
   await (db as any).aloAuditLog.create({
-    data: { actorType: auth.roles?.[0] || 'employee', actorName: auth.name || auth.userId, action: 'ALARM_ACKNOWLEDGED', targetId: alarmId, details: JSON.stringify({ alarmId }), createdAt: new Date() },
+    data: { actorType: auth.roles?.[0] || 'employee', actorName: auth.name || auth.userId, action: 'ALARM_ACKNOWLEDGED', resource: 'DashboardAlarm', resourceId: alarmId, details: JSON.stringify({ alarmId }), createdAt: new Date() },
   }).catch(() => null);
   return updated;
 }
@@ -93,7 +93,7 @@ export async function resolveAlarm(alarmId: string, auth: any) {
     data: { status: 'resolved', resolvedBy: auth.userId, resolvedAt: new Date() },
   });
   await (db as any).aloAuditLog.create({
-    data: { actorType: auth.roles?.[0] || 'employee', actorName: auth.name || auth.userId, action: 'ALARM_RESOLVED', targetId: alarmId, details: JSON.stringify({ alarmId }), createdAt: new Date() },
+    data: { actorType: auth.roles?.[0] || 'employee', actorName: auth.name || auth.userId, action: 'ALARM_RESOLVED', resource: 'DashboardAlarm', resourceId: alarmId, details: JSON.stringify({ alarmId }), createdAt: new Date() },
   }).catch(() => null);
   return updated;
 }

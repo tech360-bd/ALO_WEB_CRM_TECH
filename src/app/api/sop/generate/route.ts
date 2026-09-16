@@ -69,7 +69,7 @@ Write the ${typeMap[type] || "document"} now. Mark any assumptions with [verify:
       },
     });
     await db.timelineEvent.create({
-      data: { studentId, userId: counselorId, type: "AI_ACTION", title: `${typeMap[type] || "SOP"} draft generated`, description: `AI draft created (${wordCount} words) — pending student & counselor review` },
+      data: { studentId, stage: "application", userId: counselorId, type: "AI_ACTION", title: `${typeMap[type] || "SOP"} draft generated`, description: `AI draft created (${wordCount} words) — pending student & counselor review` },
     });
   }
 

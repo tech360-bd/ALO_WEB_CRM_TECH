@@ -58,7 +58,7 @@ export async function vaultStoreSecret(opts: {
       };
       const created: any = await vaultFetch('/api/ciphers', { method: 'POST', body: JSON.stringify(body) });
       const cipherId = created.id || created.Id || `vw_${Date.now()}`;
-      await db.crmAuditLog.create({ data: { action: 'VAULT_SECRET_STORED', entityType: 'VaultCipher', entityId: cipherId, actorId: opts.actorId, details: JSON.stringify({ name: opts.name, storedIn: 'vaultwarden' }), createdAt: new Date() } as any }).catch(()=>{});
+      await db.crmAuditLog.create({ data: { action: 'VAULT_SECRET_STORED', targetCollection: 'VaultCipher', targetId: cipherId, actorUserId: opts.actorId || '', afterData: JSON.stringify({ name: opts.name, storedIn: 'vaultwarden' }), createdAt: new Date() } }).catch(()=>{});
       return { cipherId, storedIn: 'vaultwarden' };
     }
   } catch (e: any) {
@@ -68,26 +68,26 @@ export async function vaultStoreSecret(opts: {
   // Local fallback: store encrypted in CrmAuditLog details (never plain) + return synthetic id
   const cipherId = `local_${Buffer.from(opts.name).toString('base64url').slice(0, 12)}_${Date.now()}`;
   await db.crmAuditLog.create({
-    data: { action: 'VAULT_SECRET_STORED_LOCAL', entityType: 'VaultCipher', entityId: cipherId, actorId: opts.actorId, details: JSON.stringify({ name: opts.name, encrypted: encryptedBackup, storedIn: 'local-encrypted' }), createdAt: new Date() } as any,
+    data: { action: 'VAULT_SECRET_STORED_LOCAL', targetCollection: 'VaultCipher', targetId: cipherId, actorUserId: opts.actorId || '', afterData: JSON.stringify({ name: opts.name, encrypted: encryptedBackup, storedIn: 'local-encrypted' }), createdAt: new Date() },
   }).catch(()=>{});
   return { cipherId, storedIn: 'local-encrypted' };
 }
 
 export async function vaultGetSecret(cipherId: string, actorId: string): Promise<{ username: string; password: string; name: string } | null> {
   if (cipherId.startsWith('local_')) {
-    const log: any = await db.crmAuditLog.findFirst({ where: { entityId: cipherId, action: 'VAULT_SECRET_STORED_LOCAL' } }).catch(()=>null);
-    if (!log?.details) return null;
+    const log: any = await db.crmAuditLog.findFirst({ where: { targetId: cipherId, action: 'VAULT_SECRET_STORED_LOCAL' } }).catch(()=>null);
+    if (!log?.afterData) return null;
     try {
-      const enc = JSON.parse(log.details).encrypted;
+      const enc = JSON.parse(log.afterData).encrypted;
       const dec = decryptToken(enc);
       const j = JSON.parse(dec);
-      await db.crmAuditLog.create({ data: { action: 'VAULT_SECRET_ACCESSED', entityType: 'VaultCipher', entityId: cipherId, actorId, details: JSON.stringify({ name: j.name }), createdAt: new Date() } as any }).catch(()=>{});
+      await db.crmAuditLog.create({ data: { action: 'VAULT_SECRET_ACCESSED', targetCollection: 'VaultCipher', targetId: cipherId, actorUserId: actorId || '', afterData: JSON.stringify({ name: j.name }), createdAt: new Date() } }).catch(()=>{});
       return { username: j.username, password: j.password, name: j.name };
     } catch { return null; }
   }
   try {
     const cipher: VaultCipher = await vaultFetch(`/api/ciphers/${cipherId}`);
-    await db.crmAuditLog.create({ data: { action: 'VAULT_SECRET_ACCESSED', entityType: 'VaultCipher', entityId: cipherId, actorId, details: JSON.stringify({ name: cipher.name }), createdAt: new Date() } as any }).catch(()=>{});
+    await db.crmAuditLog.create({ data: { action: 'VAULT_SECRET_ACCESSED', targetCollection: 'VaultCipher', targetId: cipherId, actorUserId: actorId || '', afterData: JSON.stringify({ name: cipher.name }), createdAt: new Date() } }).catch(()=>{});
     return { username: cipher.login?.username || '', password: cipher.login?.password || '', name: cipher.name };
   } catch { return null; }
 }

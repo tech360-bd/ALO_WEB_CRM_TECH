@@ -1,3 +1,5 @@
+import RetryConnectionButton from "./RetryConnectionButton";
+
 export const metadata = {
   title: "Offline — ALO Education",
   description: "You are offline. Cached content available.",
@@ -15,12 +17,7 @@ export default function OfflinePage() {
           No internet connection. Some cached pages and CRM data may still be available. Your actions will sync when you reconnect.
         </p>
         <div className="space-y-3">
-          <button
-            onClick={() => typeof window !== 'undefined' && window.location.reload()}
-            className="w-full py-3 bg-[#0057B8] hover:bg-[#004494] text-white font-semibold rounded-xl transition-colors"
-          >
-            Retry Connection
-          </button>
+          <RetryConnectionButton />
           <a
             href="/"
             className="block w-full py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl transition-colors"

@@ -129,7 +129,9 @@ export async function autoAssignCounselor(leadId: string): Promise<{ counselorId
   // Create timeline event
   await db.timelineEvent.create({
     data: {
+      studentId: "",
       leadId: lead.id,
+      stage: "lead",
       type: "NOTE",
       title: "Counselor auto-assigned",
       description: reason,

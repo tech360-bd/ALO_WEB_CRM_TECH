@@ -50,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const { db } = await import('@/lib/db');
     const [blogs, courses, scholarships] = await Promise.all([
       db.blogPost.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 5000 }).catch(() => [] as any[]),
-      db.coursePage.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 5000 }).catch(() => [] as any[]),
+      db.coursePage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED' }, take: 5000 }).catch(() => [] as any[]),
       db.scholarship.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 2000 }).catch(() => [] as any[]),
     ]);
     const map = (rows: any[], prefix: string, weekly = true): MetadataRoute.Sitemap =>

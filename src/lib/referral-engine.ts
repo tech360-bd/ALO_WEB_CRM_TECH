@@ -226,7 +226,9 @@ export async function trackReferralUsage(
       // Timeline event on the lead
       await tx.timelineEvent.create({
         data: {
+          studentId: "",
           leadId: lead.id,
+          stage: "lead",
           type: "NOTE",
           title: "Referral source",
           description: `This prospect was referred via code ${referralCode}.`,

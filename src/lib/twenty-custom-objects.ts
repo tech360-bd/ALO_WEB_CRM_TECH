@@ -95,17 +95,18 @@ export async function twentySaveRecord(objectSlug: string, recordId: string, pay
   await db.crmAuditLog.create({
     data: {
       action: 'TWENTY_RECORD_UPSERT',
-      entityType: `Twenty:${objectSlug}`,
-      entityId: recordId,
-      actorId,
-      details: JSON.stringify({ objectSlug, tenantId, payload }),
+      targetCollection: `Twenty:${objectSlug}`,
+      targetId: recordId,
+      actorUserId: actorId || '',
+      afterData: JSON.stringify({ objectSlug, tenantId, payload }),
       createdAt: new Date(),
-    } as any,
+    },
   }).catch(()=>{});
 
   await db.timelineEvent.create({
     data: {
       studentId: recordId,
+      stage: 'crm',
       type: 'TWENTY_CUSTOM_FIELDS_SAVED',
       title: `${def.label}: ${recordId}`,
       description: JSON.stringify({ objectSlug, payload }),
@@ -118,9 +119,9 @@ export async function twentySaveRecord(objectSlug: string, recordId: string, pay
 
 export async function twentyGetRecord(objectSlug: string, recordId: string): Promise<Record<string, unknown> | null> {
   const log: any = await db.crmAuditLog.findFirst({
-    where: { entityType: `Twenty:${objectSlug}`, entityId: recordId },
+    where: { targetCollection: `Twenty:${objectSlug}`, targetId: recordId },
     orderBy: { createdAt: 'desc' },
   }).catch(()=>null);
-  if (!log?.details) return null;
-  try { return JSON.parse(log.details).payload; } catch { return null; }
+  if (!log?.afterData) return null;
+  try { return JSON.parse(log.afterData).payload; } catch { return null; }
 }

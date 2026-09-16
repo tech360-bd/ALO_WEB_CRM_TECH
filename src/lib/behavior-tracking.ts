@@ -86,7 +86,7 @@ export async function trackBehaviorEvent(
       action: "BEHAVIOR_EVENT",
       resource: "Visitor",
       resourceId: params.visitorId,
-      userId: params.studentId || null,
+      userId: params.studentId || "",
       details: JSON.stringify({
         eventType: params.eventType,
         eventData: params.eventData || {},
@@ -108,7 +108,7 @@ export async function trackBehaviorEvent(
     try {
       await db.courseView.create({
         data: {
-          userId: params.studentId || null,
+          userId: params.studentId || "",
           role: params.studentId ? "STUDENT" : "VISITOR",
           courseSlug: String(params.eventData.courseSlug),
         },
@@ -278,7 +278,7 @@ export async function upsertMarketingProfile(
       action: "MARKETING_PROFILE",
       resource: "Visitor",
       resourceId: visitorId,
-      userId: (merged.studentId as string) || null,
+      userId: (merged.studentId as string) || "",
       details: JSON.stringify(merged),
     },
   });

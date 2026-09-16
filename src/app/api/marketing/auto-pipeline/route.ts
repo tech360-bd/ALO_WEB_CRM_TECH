@@ -38,7 +38,7 @@ export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
   const results: any = { title, category, platforms, sizes, brandKitApplied: true };
 
   // 1) Create MarketingContentIdea (for audit + SEO pipeline)
-  let contentIdea = null;
+  let contentIdea: any = null;
   try {
     contentIdea = await db.marketingContentIdea.create({
       data: {

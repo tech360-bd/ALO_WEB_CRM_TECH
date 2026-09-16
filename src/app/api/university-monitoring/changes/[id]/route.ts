@@ -136,7 +136,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       // Audit log entry — use userId (resolved to a valid User.id, or null for "system")
       await tx.auditLog.create({
         data: {
-          userId: userId === "system" ? null : userId,
+          userId: !userId || userId === "system" ? "" : userId,
           action: updated.entityType === "UNIVERSITY" ? "UNIVERSITY_DATA_APPROVED" : "COURSE_DATA_APPROVED",
           resource: updated.entityType,
           resourceId: updated.universitySlug || updated.courseSlug || updated.id,

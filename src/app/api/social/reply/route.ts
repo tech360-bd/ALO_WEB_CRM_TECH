@@ -18,13 +18,15 @@ export const POST = withAuth(async (req, auth) => {
     });
 
     // Log message
-    await db.socialMessageLog.create({
+    await db.socialInboxMessage.create({
       data: {
-        inboxId,
-        direction: 'outbound',
-        content,
+        conversationId: inboxId,
+        direction: 'OUTBOUND',
+        messageText: content,
         platform: platform || (inbox as any).platform || 'facebook',
         senderId: auth.userId,
+        employeeId: auth.userId,
+        sentAt: new Date(),
       },
     }).catch(() => {});
 
