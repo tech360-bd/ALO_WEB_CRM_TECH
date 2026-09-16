@@ -138,9 +138,11 @@ engine download itself, which is standard on GitHub runners.
 - **Delivery workaround (this repository's own established pattern):** the four repaired workflow
   files are committed under `docs/workflows-ready/` (pushable — docs path) with a one-step install
   guide (`docs/workflows-ready/README.md`), superseding the old
-  `docs/DEPLOY_PRODUCTION_WORKFLOW_READY.yml`. The commit that places them directly in
-  `.github/workflows/` (`40c49cf`, content-identical to the originally prepared `6336aad`) is preserved locally and becomes pushable the moment the
-  GitHub App installation is granted **Workflows: Read & write** for this repository.
+  `docs/DEPLOY_PRODUCTION_WORKFLOW_READY.yml`. The install commit that places these exact files directly in
+  `.github/workflows/` is preserved as the local tip of this session branch (its SHA changes whenever
+  it is rebased over new docs commits, so it is referenced by content, not SHA: `git log` on the
+  session checkout shows it as `ci: rebuild delivery pipeline …`). It becomes pushable the moment
+  the GitHub App installation is granted **Workflows: Read & write** for this repository.
 - A pull request from this branch documents the change set for review; because the remote branch
   cannot yet contain `ci.yml`, the PR itself triggers no CI run — the first real run will be the
   one an admin triggers after installing the workflows (or after the permission grant + merge).
@@ -181,7 +183,7 @@ engine download itself, which is standard on GitHub runners.
 
 | # | Blocker | Impact | Exact action required | Who |
 |---|---|---|---|---|
-| 0 | **GitHub App token lacks `workflows` permission** — pushes creating/updating `.github/workflows/*` are remote-rejected | Repaired workflows cannot land on the remote from this session; delivered as `docs/workflows-ready/` copies instead | Grant the Arena GitHub App installation **Workflows: Read & write** on this repo (Settings → GitHub Apps → configure → Repository permissions), then the preserved commit `6336aad` pushes as-is; **or** an admin installs the four files per `docs/workflows-ready/README.md` | Repo owner/admin |
+| 0 | **GitHub App token lacks `workflows` permission** — pushes creating/updating `.github/workflows/*` are remote-rejected | Repaired workflows cannot land on the remote from this session; delivered as `docs/workflows-ready/` copies instead | Grant the Arena GitHub App installation **Workflows: Read & write** on this repo (Settings → GitHub Apps → configure → Repository permissions), then the session branch's local tip commit (installs the four workflows into `.github/workflows/`) pushes as-is; **or** an admin installs the four files per `docs/workflows-ready/README.md` | Repo owner/admin |
 | 1 | Deploy secrets/variable presence unverifiable (403 for this token) and possibly unconfigured | Deploy job fails fast at the gate (safe) until configured | Add `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` (dedicated ed25519 deploy key — least privilege, never a personal password), optional `DEPLOY_PORT`; add variable `DEPLOY_HOST_SSH_FINGERPRINT` via `ssh-keyscan -p <port> <host> \| ssh-keygen -lf -` (verify out-of-band first) | Repo owner/admin |
 | 2 | `production` environment + branch protection not confirmable | No human approval gate on deploys; main can be pushed directly | Create environment `production` (optionally required reviewers); protect `main` (require PR + the CI check, forbid force-push) | Repo owner/admin |
 | 3 | VPS ground truth unverified (no SSH access here) | Directory/PM2/port assumptions validated only by code inspection (`ecosystem.config.cjs`) and the workflow's runtime auto-detection | First supervised deploy run: watch the "Deployment Summary" block; confirm dir/SHA/port/health output | Repo owner + operator |
@@ -200,8 +202,9 @@ engine download itself, which is standard on GitHub runners.
   2. docs-delivery commit — `docs/workflows-ready/` (4 repaired workflow files + install guide),
      `docs/CICD_WORKFLOWS.md`, this report, DB-integration test self-skip guard, secret-hygiene
      placeholder rewrites (all pushable paths)
-  3. `40c49cf` (preserved locally, sits on top of the docs commits) — the same four workflows installed directly
-     under `.github/workflows/`; **push blocked by the `workflows` permission** (blocker 0)
+  3. the local-only tip commit (subject: `ci: rebuild delivery pipeline — root-caused all 29 failed
+     runs, four-workflow system`) — the same four workflows installed directly under
+     `.github/workflows/`; **push blocked by the `workflows` permission** (blocker 0)
 - Push result: commits 1 + 2 (`e5957e6`, `424bb18`) and the evidence note `d64d00a` are pushed to
   `origin/arena/01a0aa5e-alo-education-z-ai` (PR #11: /pull/11); commit 3 intentionally not pushed until the permission is granted —
   nothing was force-pushed and no remote history was rewritten.
@@ -218,7 +221,7 @@ engine download itself, which is standard on GitHub runners.
 - The repaired workflow files could not be pushed into `.github/workflows/` (GitHub App token
   lacks the `workflows` permission — remote-rejected, evidence above); they are delivered as
   pushable `docs/workflows-ready/` copies with a one-step install guide, and the direct-install
-  commit `6336aad` is preserved locally for the moment the permission is granted.
+  install commit is preserved as the local branch tip for the moment the permission is granted.
 - No production deployment occurred; deploy execution requires owner-configured secrets and a
   merge to `main`. No claim of "deployed", "live", or "all workflows fixed in production" is
   made — the first supervised run is the moment those claims can be evidenced.
