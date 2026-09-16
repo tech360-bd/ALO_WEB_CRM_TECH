@@ -7,9 +7,14 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { PrismaClient } from '@prisma/client';
 
-const db = new PrismaClient();
+// CI safety: this file requires a real (disposable, NEVER production) MySQL database.
+// Without DATABASE_URL the whole file is skipped and reported as skipped — not passed.
+// Run with: DATABASE_URL="mysql://localhost:3306/test" npm test
+const HAS_TEST_DB = Boolean(process.env.DATABASE_URL);
+const db = HAS_TEST_DB ? new PrismaClient() : (undefined as unknown as PrismaClient);
 
 beforeAll(async () => {
+  if (!HAS_TEST_DB) return;
   // Ensure clean state
   await db.leadForm.deleteMany({});
   await db.searchLog.deleteMany({});
@@ -22,17 +27,19 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  if (!HAS_TEST_DB) return;
   await db.$disconnect();
 });
 
 beforeEach(async () => {
+  if (!HAS_TEST_DB) return;
   await db.leadForm.deleteMany({});
   await db.internalComment.deleteMany({});
   await db.portalNotification.deleteMany({});
   await db.portalAuditLog.deleteMany({});
 });
 
-describe('consultation workflow', () => {
+describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
   it('creates a lead with valid input', async () => {
     const lead = await db.leadForm.create({
       data: {

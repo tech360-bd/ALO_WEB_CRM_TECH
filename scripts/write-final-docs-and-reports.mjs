@@ -225,7 +225,7 @@ writeBoth("DATABASE_MIGRATION_VERIFICATION.md", `# Database Migration Verificati
 ## Engine
 - Configured provider in prisma/schema.prisma: mysql
 - Production MySQL 8.0.37 verification: required on cPanel or disposable MySQL host
-- Required MySQL migrate deploy command: DATABASE_URL=mysql://USER:PASSWORD@HOST:3306/DB npx prisma migrate deploy
+- Required MySQL migrate deploy command: DATABASE_URL=mysql://USER:REPLACE_WITH_PASSWORD@HOST:3306/DB npx prisma migrate deploy
 - Result: FAIL
 
 ## Evidence
