@@ -98,7 +98,23 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Provision swap (tsc on this repo needs >4GB effective memory; standard runners have ~7GB RAM)
+        run: |
+          set -euo pipefail
+          # Run 35161361303 evidence: Typecheck aborted with exit 134 (V8 heap
+          # OOM) on a standard runner. Locally this repo's tsc only completes
+          # with a raised heap limit PLUS swap; replicate that proven recipe.
+          if [ "$(swapon --show --noheadings | wc -l)" -eq 0 ]; then
+            sudo fallocate -l 8G /swapfile
+            sudo chmod 600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+          fi
+          free -h
+
       - name: Typecheck
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
         run: npm run typecheck
 
       - name: Tests (blocking; DB-integration files skip-with-reason when no test DATABASE_URL)
