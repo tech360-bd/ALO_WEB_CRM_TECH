@@ -52,7 +52,7 @@ npm install
 echo "[5/6] Generating Prisma Client for MariaDB 11.4.13..."
 # Ensure MariaDB URL exists in .env
 if ! grep -q "DATABASE_URL" .env; then
-  echo "DATABASE_URL=\"mysql://root:password@localhost:3306/alo_education\"" >> .env
+  echo "DATABASE_URL=\"mysql://root:REPLACE_WITH_DB_PASSWORD@localhost:3306/alo_education\"" >> .env
   echo "  -> Added placeholder DATABASE_URL to .env. Please update with actual MariaDB credentials."
 fi
 npx prisma generate

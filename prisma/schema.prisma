@@ -4945,7 +4945,10 @@ model EmployeeAgreementAcceptance {
 
 model EmployeeDocumentVersion {
   id           String   @id @default(cuid())
-  documentId   String   // EmployeeDocument.id
+  // Legacy alias for EmployeeDocument.id used by HRM/employee-access routes.
+  // NOT an FK: agreement-archive rows (api/hrm/agreements) store EmployeeAgreement.id here,
+  // and employee-document rows created via api/employee/documents omit it. Default keeps both writers valid.
+  documentId   String   @default("")
   agreementId  String?  // Optional link to agreement
   version      Int      @default(1)
   filePath     String   @default("")
@@ -4958,13 +4961,16 @@ model EmployeeDocumentVersion {
   effectiveDate String  @default("")
   supersededDate String @default("")
   createdAt    DateTime @default(now())
+  // Canonical FK to EmployeeDocument — column created by migration 20260913050000_benchmark_capabilities.
+  // Nullable because agreement-only version rows (EmployeeAgreement.versions) have no employee document.
+  employeeDocumentId String?
 
+  document  EmployeeDocument?  @relation(fields: [employeeDocumentId], references: [id])
   agreement EmployeeAgreement? @relation(fields: [agreementId], references: [id])
 
   @@index([documentId])
   @@index([agreementId])
   @@index([status])
-  employeeDocumentId String
   @@index([employeeDocumentId])
 }
 

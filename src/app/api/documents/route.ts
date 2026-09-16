@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     },
   });
   await db.timelineEvent.create({ data: { studentId, stage: "document_uploaded", title: `${name || category} uploaded`, description: `Document ${name || category} was uploaded`, actor: actorId || "student" } });
-  await db.auditLog.create({ data: { userId: actorId, action: "DOC_UPLOAD", resource: "Document", resourceId: doc.id, details: JSON.stringify({ category, studentId }) } });
+  await db.auditLog.create({ data: { userId: actorId || "", action: "DOC_UPLOAD", resource: "Document", resourceId: doc.id, details: JSON.stringify({ category, studentId }) } });
   return NextResponse.json({ document: doc, message: "Document uploaded. Under review by application team." });
 }
 
@@ -50,6 +50,6 @@ export async function PATCH(req: NextRequest) {
   const actorId = reviewerId(auth);
   const updated = await db.document.update({ where: { id }, data: { status, rejectionReason: status === "REJECTED" ? rejectionReason || "" : "", reviewedById: actorId, reviewedAt: new Date() } });
   await db.timelineEvent.create({ data: { studentId: doc.studentId, stage: status === "APPROVED" ? "document_approved" : "document_rejected", title: `${doc.name} ${String(status).toLowerCase()}`, description: status === "REJECTED" ? rejectionReason || "Document requires changes" : "Document approved by application team", actor: actorId || "application-team" } });
-  await db.auditLog.create({ data: { userId: actorId, action: status === "APPROVED" ? "DOC_APPROVE" : "DOC_REJECT", resource: "Document", resourceId: id, details: JSON.stringify({ status, rejectionReason }) } });
+  await db.auditLog.create({ data: { userId: actorId || "", action: status === "APPROVED" ? "DOC_APPROVE" : "DOC_REJECT", resource: "Document", resourceId: id, details: JSON.stringify({ status, rejectionReason }) } });
   return NextResponse.json({ document: updated });
 }

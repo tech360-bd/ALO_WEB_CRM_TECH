@@ -1,25 +1,579 @@
-- name: Verify deployment secrets
-  shell: bash
-  env:
-    DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-    DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-    DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-  run: |
-    set -euo pipefail
+# ============================================================================
+# ALO Education — Production Deployment (aloeducation.com, PM2 alo-education,
+# port 3044). Protects the isolated learning service (learn.aloeducation.com,
+# PM2 alo-learning-journey, port 3017) — it is NEVER touched by this workflow.
+#
+# Pipeline: push to main (or workflow_dispatch, or workflow_call from
+# deploy-recovery.yml) → validate-and-build gate on the runner (secrets check,
+# npm ci, prisma validate/generate, lint, typecheck, BLOCKING tests, production
+# build) → SSH deploy of the EXACT validated commit SHA → health checks →
+# automatic rollback on deploy/health failure.
+#
+# Safety properties:
+#   * concurrency group prevents overlapping deployments (never cancelled mid-flight)
+#   * deploy job runs in the protected `production` GitHub Environment
+#   * least-privilege permissions (contents: read)
+#   * SSH host key PINNED via vars.DEPLOY_HOST_SSH_FINGERPRINT (host-key
+#     checking is NOT disabled; missing fingerprint fails the run early)
+#   * actions pinned to reviewed immutable commit SHAs (see comments)
+#   * VPS git fetch authenticates with the ephemeral GITHUB_TOKEN via an
+#     inline credential helper — the token is never written to .git/config,
+#     never echoed, and auto-masked in logs
+#   * deploys the exact tested SHA, not a moving branch ref
+#   * backups of .env/storage/uploads before replacing code; NO git clean -fdx
+#   * migrations only on explicit operator opt-in (skip_migrations defaults true)
+#   * docs-only pushes do not trigger a deployment (paths-ignore)
+#   * health-check failure triggers a bounded automatic rollback to the
+#     previously deployed commit, with diagnostics preserved either way
+# ============================================================================
 
-    test -n "$DEPLOY_HOST" || {
-      echo "::error::DEPLOY_HOST is missing or empty"
-      exit 1
-    }
+name: ALO Education Production Deployment
 
-    test -n "$DEPLOY_USER" || {
-      echo "::error::DEPLOY_USER is missing or empty"
-      exit 1
-    }
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - '.gitignore'
+      - 'LICENSE'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref (40-char commit SHA recommended) to deploy — defaults to the commit this run starts from'
+        required: false
+        default: ''
+        type: string
+      skip_migrations:
+        description: 'Skip Prisma migrations (safe default true — migrations require a verified backup + review first)'
+        required: false
+        default: true
+        type: boolean
+  workflow_call:
+    inputs:
+      ref:
+        description: 'Exact commit SHA to deploy (validated by the caller)'
+        required: true
+        type: string
+      skip_migrations:
+        required: false
+        default: true
+        type: boolean
 
-    test -n "$DEPLOY_SSH_KEY" || {
-      echo "::error::DEPLOY_SSH_KEY is missing or empty"
-      exit 1
-    }
+permissions:
+  contents: read
 
-    echo "Deployment SSH configuration is present."
+concurrency:
+  group: alo-production-deploy
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22'
+  APP_PORT: '3044'
+  PM2_NAME: 'alo-education'
+  PRIMARY_DOMAIN: 'aloeducation.com'
+  TARGET_REPO: 'engralaminn-collab/alo_education_z....ai'
+  PROTECTED_PM2: 'alo-learning-journey'
+  PROTECTED_PORT: '3017'
+  PROTECTED_DOMAIN: 'learn.aloeducation.com'
+  INTENDED_DEPLOY_DIR: '/root/alo-github-main'
+
+jobs:
+  # ==========================================================================
+  # GATE 1 — validate the exact commit and build it on a clean runner.
+  # If anything here fails, nothing touches production.
+  # ==========================================================================
+  validate-and-build:
+    name: Validate & Build (gate)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      deploy_ref: ${{ steps.resolve_ref.outputs.deploy_ref }}
+    steps:
+      - name: Checkout repository
+        # actions/checkout v7.0.1 — pinned to immutable SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          fetch-depth: 0
+
+      - name: Resolve deployment ref to an exact SHA
+        id: resolve_ref
+        shell: bash
+        run: |
+          set -euo pipefail
+          REF="${{ inputs.ref || github.sha }}"
+          if [ -z "$REF" ]; then REF="$(git rev-parse HEAD)"; fi
+          if git rev-parse --verify "$REF^{commit}" >/dev/null 2>&1; then
+            FULL_SHA="$(git rev-parse "$REF^{commit}")"
+          else
+            echo "::error::Ref '$REF' does not resolve to a commit in this repository"
+            exit 1
+          fi
+          echo "deploy_ref=$FULL_SHA" >> "$GITHUB_OUTPUT"
+          echo "Resolved deploy ref: $FULL_SHA (input: '${{ inputs.ref || github.sha }}')"
+          git log -1 --format='Commit: %H%nAuthor: %an <%ae>%nDate:   %ad%nSubject:%s' "$FULL_SHA"
+
+      - name: Verify repository identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          REMOTE_URL=$(git remote get-url origin)
+          echo "Remote URL host/path check (token redacted):"
+          echo "$REMOTE_URL" | sed -E 's#//[^@]*@#//***@#'
+          if ! echo "$REMOTE_URL" | grep -q "${TARGET_REPO}"; then
+            echo "::error::Remote URL does not match expected ${TARGET_REPO} — aborting to protect a wrong repository"
+            exit 1
+          fi
+          echo "✓ Repository identity verified"
+
+      - name: Verify deployment configuration presence (names only, never values)
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          HOST_FINGERPRINT: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
+        run: |
+          set -euo pipefail
+          missing=0
+          for v in DEPLOY_HOST DEPLOY_USER DEPLOY_SSH_KEY; do
+            if [ -z "${!v:-}" ]; then
+              echo "::error::$v is missing — add it in GitHub Settings → Secrets and variables → Actions"
+              missing=1
+            else
+              echo "✓ $v present"
+            fi
+          done
+          if [ -n "${DEPLOY_PORT:-}" ]; then echo "✓ DEPLOY_PORT present"; else echo "ℹ DEPLOY_PORT not set — SSH will use port 22"; fi
+          if [ -z "${HOST_FINGERPRINT:-}" ]; then
+            echo "::error::Repository variable DEPLOY_HOST_SSH_FINGERPRINT is missing — host-key pinning is mandatory."
+            echo "::error::Create it with:  ssh-keyscan -p <DEPLOY_PORT> <DEPLOY_HOST> | ssh-keygen -lf -   (use the ed25519 line, format SHA256:...)"
+            missing=1
+          else
+            case "$HOST_FINGERPRINT" in
+              SHA256:*) echo "✓ DEPLOY_HOST_SSH_FINGERPRINT present (SHA256 format)" ;;
+              *) echo "::error::DEPLOY_HOST_SSH_FINGERPRINT must look like SHA256:... (got a different format)"; missing=1 ;;
+            esac
+          fi
+          if [ "$missing" -ne 0 ]; then exit 1; fi
+
+      - name: Setup Node.js
+        # actions/setup-node v7.0.0 — pinned to immutable SHA
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies from lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f package-lock.json || { echo "::error::package-lock.json missing — CI must install from a committed lockfile"; exit 1; }
+          npm ci
+
+      - name: Prisma validate
+        shell: bash
+        env:
+          # Dummy value ONLY so the CLI can resolve env("DATABASE_URL") during
+          # schema validation on the clean runner (no .env in Git, no connection
+          # made). Step-scoped: the Tests step must see NO DATABASE_URL so the
+          # DB-integration files self-skip with reason.
+          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
+        run: |
+          set -euo pipefail
+          npx prisma validate
+          echo "✓ Prisma schema valid"
+
+      - name: Prisma generate
+        shell: bash
+        env:
+          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
+        run: |
+          set -euo pipefail
+          npx prisma generate
+          echo "✓ Prisma client generated"
+
+      - name: Lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run lint
+
+      - name: Provision swap (tsc on this repo needs >4GB effective memory; standard runners have ~7GB RAM)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Same OOM class as CI run 35161361303 (tsc exit 134). Proven local
+          # recipe: raised heap limit + swap.
+          if [ "$(swapon --show --noheadings | wc -l)" -eq 0 ]; then
+            sudo fallocate -l 8G /swapfile
+            sudo chmod 600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+          fi
+          free -h
+
+      - name: Typecheck
+        shell: bash
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
+        run: |
+          set -euo pipefail
+          npm run typecheck
+
+      - name: Tests (blocking — failures stop the deployment)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # DB-integration tests self-skip (and are reported as skipped) when no
+          # disposable test DATABASE_URL is configured — they never run against
+          # production and are never counted as passed.
+          npm test
+
+      - name: Production build (clean-runner validation)
+        shell: bash
+        env:
+          # Dummy values ONLY for build validation on the runner. Real values
+          # live exclusively in the VPS .env (never in Git, never in logs).
+          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
+          NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          SESSION_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+          NEXTAUTH_URL: "https://aloeducation.com"
+          NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
+          FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
+        run: |
+          set -euo pipefail
+          npm run build
+          test -f .next/standalone/server.js || { echo "::error::.next/standalone/server.js missing after build"; exit 1; }
+          echo "✓ Production build succeeded on runner"
+
+  # ==========================================================================
+  # GATE 2 — deploy the exact validated SHA to the VPS, then health-check.
+  # Runs in the protected `production` environment (add required reviewers in
+  # Settings → Environments → production for manual approval).
+  # ==========================================================================
+  deploy:
+    name: Deploy to VPS (exact SHA, protected service untouched)
+    runs-on: ubuntu-latest
+    needs: validate-and-build
+    if: needs.validate-and-build.result == 'success'
+    timeout-minutes: 60
+    environment: production
+    steps:
+      - name: Deploy via SSH
+        id: deploy_ssh
+        # appleboy/ssh-action v1.2.5 — pinned; host key verified via fingerprint input
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2
+        env:
+          DEPLOY_REF: ${{ needs.validate-and-build.outputs.deploy_ref }}
+          SKIP_MIGRATIONS: ${{ inputs.skip_migrations }}
+          APP_PORT: ${{ env.APP_PORT }}
+          PM2_NAME: ${{ env.PM2_NAME }}
+          PRIMARY_DOMAIN: ${{ env.PRIMARY_DOMAIN }}
+          TARGET_REPO: ${{ env.TARGET_REPO }}
+          PROTECTED_PM2: ${{ env.PROTECTED_PM2 }}
+          PROTECTED_PORT: ${{ env.PROTECTED_PORT }}
+          PROTECTED_DOMAIN: ${{ env.PROTECTED_DOMAIN }}
+          INTENDED_DEPLOY_DIR: ${{ env.INTENDED_DEPLOY_DIR }}
+          GH_FETCH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
+          envs: DEPLOY_REF,SKIP_MIGRATIONS,APP_PORT,PM2_NAME,PRIMARY_DOMAIN,TARGET_REPO,PROTECTED_PM2,PROTECTED_PORT,PROTECTED_DOMAIN,INTENDED_DEPLOY_DIR,GH_FETCH_TOKEN
+          command_timeout: 40m
+          # NOTE: no `script_stop` — it is not a valid input for ssh-action v1.x
+          # (it caused annotations on every historical failed run). The script
+          # itself runs with `set -euo pipefail`, which stops on first failure.
+          script: |
+            set -euo pipefail
+            echo "============================================================"
+            echo " ALO Education Production Deployment"
+            echo " Deploy SHA: $DEPLOY_REF | Skip migrations: $SKIP_MIGRATIONS"
+            echo " App: PM2 $PM2_NAME on port $APP_PORT — domain $PRIMARY_DOMAIN"
+            echo " PROTECTED (never touched): PM2 $PROTECTED_PM2, port $PROTECTED_PORT, $PROTECTED_DOMAIN"
+            echo "============================================================"
+
+            # ---- 0. Protect the isolated learning service ----
+            if command -v pm2 >/dev/null 2>&1 && pm2 describe "$PROTECTED_PM2" >/dev/null 2>&1; then
+              echo "⚠ Protected process $PROTECTED_PM2 found — this deployment will NOT stop/restart/reconfigure it"
+              pm2 describe "$PROTECTED_PM2" | grep -E 'status|exec cwd|script path' || true
+            else
+              echo "Protected process $PROTECTED_PM2 not currently registered — nothing to protect, nothing to touch"
+            fi
+
+            # ---- 1. Choose the deployment directory from GROUND TRUTH ----
+            # Priority: (a) the directory the live PM2 process actually runs from,
+            # (b) an existing checkout whose git remote matches this repository,
+            # (c) the intended directory /root/alo-github-main.
+            DEPLOY_DIR=""
+            if command -v pm2 >/dev/null 2>&1; then
+              LIVE_CWD=$(pm2 describe "$PM2_NAME" 2>/dev/null | awk -F'│' '/exec cwd/ {gsub(/^[ \t]+|[ \t│]+$/,"",$3); print $3}' | head -n1 || true)
+              if [ -n "${LIVE_CWD:-}" ] && [ -d "$LIVE_CWD/.git" ]; then
+                DEPLOY_DIR="$LIVE_CWD"
+                echo "Using live PM2 exec cwd: $DEPLOY_DIR"
+              fi
+            fi
+            if [ -z "$DEPLOY_DIR" ]; then
+              for d in "$INTENDED_DEPLOY_DIR" "/root/alo-github-main-new" "/root/alo-live" "/opt/alo-education"; do
+                if [ -d "$d/.git" ]; then
+                  REMOTE=$(cd "$d" && git remote get-url origin 2>/dev/null | sed -E 's#//[^@]*@#//***@#' || echo "")
+                  if echo "$REMOTE" | grep -q "$TARGET_REPO"; then
+                    DEPLOY_DIR="$d"
+                    echo "Using existing checkout with matching remote: $DEPLOY_DIR"
+                    break
+                  fi
+                fi
+              done
+            fi
+            if [ -z "$DEPLOY_DIR" ]; then
+              DEPLOY_DIR="$INTENDED_DEPLOY_DIR"
+              echo "No existing checkout found — using intended directory: $DEPLOY_DIR"
+              mkdir -p "$DEPLOY_DIR"
+            fi
+            cd "$DEPLOY_DIR"
+
+            if [ ! -d .git ]; then
+              echo "Initializing git repository in $DEPLOY_DIR (existing files preserved):"
+              ls -la | head -n 20 || true
+              git init
+              git remote add origin "https://github.com/${TARGET_REPO}.git" || git remote set-url origin "https://github.com/${TARGET_REPO}.git"
+            fi
+            REMOTE_URL=$(git remote get-url origin | sed -E 's#//[^@]*@#//***@#')
+            echo "Remote: $REMOTE_URL"
+            echo "$REMOTE_URL" | grep -q "$TARGET_REPO" || { echo "Remote does not match $TARGET_REPO — aborting"; exit 1; }
+            # Normalize origin to a clean, credential-free URL
+            git remote set-url origin "https://github.com/${TARGET_REPO}.git"
+
+            # Disk / memory sanity before building on this machine
+            echo "--- Resources ---"
+            df -h "$DEPLOY_DIR" | tail -n 1
+            free -m | head -n 2
+            AVAIL_KB=$(df -Pk "$DEPLOY_DIR" | awk 'NR==2 {print $4}')
+            [ "$AVAIL_KB" -gt 2097152 ] || { echo "::error::Less than 2GB free disk — aborting before build"; exit 1; }
+
+            # ---- 2. Backup before touching anything ----
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BACKUP_DIR=".deploy-backup-${TIMESTAMP}-${DEPLOY_REF:0:7}"
+            mkdir -p "$BACKUP_DIR"
+            PREV_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+            echo "$PREV_COMMIT" > .deploy-prev-commit
+            echo "Previous commit: $PREV_COMMIT (recorded in .deploy-prev-commit for rollback)"
+            [ -f .env ] && cp -p .env "$BACKUP_DIR/.env.backup" && echo "✓ .env backed up" || echo "ℹ .env not present (must be created from .env.example before first run)"
+            for d in storage uploads public/uploads; do
+              [ -d "$d" ] && cp -r "$d" "$BACKUP_DIR/$(echo "$d" | tr / _)" && echo "✓ $d backed up"
+            done
+            [ -f ecosystem.config.cjs ] && cp -p ecosystem.config.cjs "$BACKUP_DIR/" || true
+
+            # ---- 3. Fetch + checkout the EXACT validated SHA ----
+            # The repository is private; the VPS has no stored credentials, so a
+            # plain `git fetch origin` fails (exit 128 — the historical failure).
+            # We authenticate with the workflow's ephemeral GITHUB_TOKEN through
+            # an inline credential helper: the token never lands in .git/config
+            # or in any remote URL, and GitHub masks it in logs.
+            echo "Fetching from GitHub (token via inline credential helper)..."
+            git -c credential.helper='!f() { echo "username=x-access-token"; echo "password=${GH_FETCH_TOKEN}"; }; f' \
+              fetch origin --prune "+refs/heads/*:refs/remotes/origin/*" "+refs/tags/*:refs/tags/*"
+            unset GH_FETCH_TOKEN
+
+            git cat-file -e "${DEPLOY_REF}^{commit}" || { echo "::error::Deploy SHA $DEPLOY_REF not found after fetch"; exit 1; }
+            echo "Checking out exact SHA $DEPLOY_REF (no git clean — user data preserved)"
+            git checkout --force "$DEPLOY_REF"
+            NEW_COMMIT=$(git rev-parse HEAD)
+            [ "$NEW_COMMIT" = "$DEPLOY_REF" ] || { echo "::error::HEAD $NEW_COMMIT != requested $DEPLOY_REF — aborting"; exit 1; }
+            echo "✓ Deployed checkout is exactly $NEW_COMMIT"
+            echo "$NEW_COMMIT" > .deployed_commit
+            echo "Deployed: $NEW_COMMIT at $(date -u) (prev $PREV_COMMIT)" >> .deploy_history.log
+            git log --oneline -3
+
+            # Restore .env if checkout removed it (it is untracked, but be safe)
+            if [ ! -f .env ] && [ -f "$BACKUP_DIR/.env.backup" ]; then
+              cp -p "$BACKUP_DIR/.env.backup" .env && chmod 600 .env
+              echo "✓ .env restored from backup"
+            fi
+            [ -f .env ] || echo "::warning::.env missing — app will fail health checks until it is created on the server"
+
+            # ---- 4. Dependencies + Prisma ----
+            if [ -f package-lock.json ]; then npm ci; else npm install; fi
+            npx prisma validate
+            npx prisma generate
+            npx prisma migrate status || echo "::warning::prisma migrate status reported drift — review manually"
+            if [ "$SKIP_MIGRATIONS" = "true" ] || [ "$SKIP_MIGRATIONS" = "1" ]; then
+              echo "Migrations SKIPPED (safe default). Schema changes require: verified backup + review + docs/db runbook."
+            else
+              echo "⚠ Operator explicitly requested migrations — ensure a VERIFIED backup exists first"
+              command -v mysqldump >/dev/null 2>&1 && echo "ℹ mysqldump available on this host — a DB dump should exist BEFORE this step"
+              npx prisma migrate deploy || { echo "::error::prisma migrate deploy FAILED — stopping; rollback step will restore previous commit"; exit 1; }
+              echo "✓ Migrations applied"
+            fi
+
+            # ---- 5. Build on the VPS ----
+            mkdir -p storage/logs
+            NODE_OPTIONS='--max-old-space-size=4096' npm run build || { echo "::error::Production build failed on VPS — rollback step will restore previous commit"; exit 1; }
+            test -f .next/standalone/server.js || { echo "::error::.next/standalone/server.js missing after build"; exit 1; }
+            echo "✓ Build artifacts verified"
+
+            # ---- 6. Restart ONLY the intended PM2 process ----
+            command -v pm2 >/dev/null 2>&1 || npm install -g pm2
+            if pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
+              echo "Restarting $PM2_NAME"
+              if [ -f ecosystem.config.cjs ]; then
+                pm2 restart ecosystem.config.cjs --update-env
+              else
+                pm2 restart "$PM2_NAME" --update-env
+              fi
+            else
+              echo "Starting $PM2_NAME"
+              if [ -f ecosystem.config.cjs ]; then
+                pm2 start ecosystem.config.cjs --env production
+              else
+                # Next.js standalone reads PORT/HOSTNAME from the environment
+                # (CLI flags like --port are NOT parsed by server.js)
+                PORT="$APP_PORT" HOSTNAME=0.0.0.0 NODE_ENV=production \
+                  pm2 start .next/standalone/server.js --name "$PM2_NAME"
+              fi
+            fi
+            pm2 save || true
+            pm2 list
+
+            # ---- 7. Port + local health checks ----
+            echo "Waiting for port $APP_PORT..."
+            LISTENING=0
+            for i in $(seq 1 45); do
+              if ss -tln | grep -q ":$APP_PORT "; then LISTENING=1; echo "✓ Port $APP_PORT listening (attempt $i)"; break; fi
+              sleep 2
+            done
+            if [ "$LISTENING" -ne 1 ]; then
+              echo "::error::Port $APP_PORT not listening after 90s"
+              pm2 logs "$PM2_NAME" --lines 120 --nostream || true
+              exit 1
+            fi
+            if ss -tln | grep -q ":$PROTECTED_PORT "; then
+              echo "✓ Protected port $PROTECTED_PORT still listening — $PROTECTED_PM2 unaffected"
+            else
+              echo "::warning::Protected port $PROTECTED_PORT not listening (we did NOT touch it) — verify $PROTECTED_PM2 manually"
+            fi
+
+            sleep 3
+            HEALTH_JSON=$(curl -fsS --max-time 15 "http://127.0.0.1:${APP_PORT}/api/health") || {
+              echo "::error::Local health endpoint failed"
+              pm2 logs "$PM2_NAME" --lines 150 --nostream || true
+              exit 1
+            }
+            echo "Health response: $HEALTH_JSON"
+            case "$HEALTH_JSON" in
+              *'"status":"ok"'*) echo "✓ Health status ok (DB connected)" ;;
+              *'"status":"degraded"'*) echo "::warning::Health status DEGRADED — app is up but the database connection failed; investigate before trusting this deployment" ;;
+              *) echo "::warning::Unexpected health payload — review output above" ;;
+            esac
+
+            for path in "/" "/universities" "/courses" "/destinations"; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "http://127.0.0.1:${APP_PORT}${path}" || echo "000")
+              echo "  Local $path -> HTTP $code"
+            done
+
+            # ---- 8. Public domain check ----
+            for proto in https http; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "${proto}://${PRIMARY_DOMAIN}/api/health" || echo "000")
+              echo "  Public ${proto}://${PRIMARY_DOMAIN}/api/health -> HTTP $code"
+              [ "$code" = "200" ] && break
+            done
+
+            # ---- 9. Reverse proxy read-only verification ----
+            if [ -f /etc/caddy/Caddyfile ]; then
+              grep -q "$APP_PORT" /etc/caddy/Caddyfile && echo "✓ Caddyfile proxies to $APP_PORT" || echo "::warning::Caddyfile does not mention $APP_PORT — verify proxy config manually (never edited by this workflow)"
+            fi
+            if [ -d /etc/nginx ]; then
+              grep -R "proxy_pass.*$APP_PORT" /etc/nginx/ 2>/dev/null | head -n 5 || echo "ℹ No nginx proxy_pass to $APP_PORT found (may use Caddy)"
+            fi
+
+            echo "============================================================"
+            echo " Deployment Summary"
+            echo " Deployed commit : $(git rev-parse HEAD)"
+            echo " Previous commit : $PREV_COMMIT"
+            echo " Deploy dir      : $DEPLOY_DIR"
+            echo " PM2 process     : $PM2_NAME (protected $PROTECTED_PM2 untouched)"
+            echo " Port            : $APP_PORT (protected $PROTECTED_PORT untouched)"
+            echo " Backup dir      : $BACKUP_DIR"
+            echo " Time (UTC)      : $(date -u)"
+            echo "============================================================"
+
+      - name: Automatic rollback on failure (bounded, preserves diagnostics)
+        # appleboy/ssh-action v1.2.5 — pinned
+        if: failure() && steps.deploy_ssh.outcome == 'failure'
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2
+        env:
+          APP_PORT: ${{ env.APP_PORT }}
+          PM2_NAME: ${{ env.PM2_NAME }}
+          TARGET_REPO: ${{ env.TARGET_REPO }}
+          INTENDED_DEPLOY_DIR: ${{ env.INTENDED_DEPLOY_DIR }}
+          GH_FETCH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
+          envs: APP_PORT,PM2_NAME,TARGET_REPO,INTENDED_DEPLOY_DIR,GH_FETCH_TOKEN
+          command_timeout: 30m
+          script: |
+            set -uo pipefail
+            echo "=== ROLLBACK: deployment or health check failed ==="
+            # Locate the same directory the deploy step used
+            DEPLOY_DIR=""
+            if command -v pm2 >/dev/null 2>&1; then
+              LIVE_CWD=$(pm2 describe "$PM2_NAME" 2>/dev/null | awk -F'│' '/exec cwd/ {gsub(/^[ \t]+|[ \t│]+$/,"",$3); print $3}' | head -n1 || true)
+              [ -n "${LIVE_CWD:-}" ] && [ -d "$LIVE_CWD/.git" ] && DEPLOY_DIR="$LIVE_CWD"
+            fi
+            for d in "$INTENDED_DEPLOY_DIR" "/root/alo-github-main-new" "/root/alo-live" "/opt/alo-education"; do
+              [ -z "$DEPLOY_DIR" ] && [ -f "$d/.deploy-prev-commit" ] && DEPLOY_DIR="$d"
+            done
+            if [ -z "$DEPLOY_DIR" ] || [ ! -f "$DEPLOY_DIR/.deploy-prev-commit" ]; then
+              echo "::error::Cannot determine rollback target (no .deploy-prev-commit found) — manual intervention required; diagnostics preserved on the server"
+              exit 1
+            fi
+            cd "$DEPLOY_DIR"
+            PREV_COMMIT=$(cat .deploy-prev-commit)
+            echo "Rolling back to previous commit: $PREV_COMMIT"
+            if [ "$PREV_COMMIT" = "unknown" ]; then
+              echo "::error::No known previous commit — refusing to guess. Manual rollback required (see .deploy-backup-* directories)."
+              exit 1
+            fi
+            # Preserve diagnostics from the failed attempt
+            pm2 logs "$PM2_NAME" --lines 200 --nostream > "storage/logs/failed-deploy-$(date +%Y%m%d-%H%M%S).log" 2>&1 || true
+            git cat-file -e "${PREV_COMMIT}^{commit}" 2>/dev/null || \
+              git -c credential.helper='!f() { echo "username=x-access-token"; echo "password=${GH_FETCH_TOKEN}"; }; f' fetch origin --prune "+refs/heads/*:refs/remotes/origin/*" || true
+            unset GH_FETCH_TOKEN
+            git checkout --force "$PREV_COMMIT" || { echo "::error::Rollback checkout failed — restore manually from backup"; exit 1; }
+            NODE_OPTIONS='--max-old-space-size=4096' npm run build || { echo "::error::Rollback build failed — restore manually from backup"; exit 1; }
+            if pm2 describe "$PM2_NAME" >/dev/null 2>&1; then pm2 restart "$PM2_NAME" --update-env; fi
+            sleep 5
+            if curl -fsS --max-time 15 "http://127.0.0.1:${APP_PORT}/api/health" >/dev/null; then
+              echo "✓ ROLLBACK SUCCEEDED — previous commit $PREV_COMMIT is live and healthy again"
+              echo "Rolled back to $PREV_COMMIT at $(date -u) after failed deploy" >> .deploy_history.log
+            else
+              echo "::error::ROLLBACK did not restore health — MANUAL INTERVENTION REQUIRED. Backups: .deploy-backup-* in $DEPLOY_DIR"
+              pm2 logs "$PM2_NAME" --lines 100 --nostream || true
+              exit 1
+            fi
+
+      - name: Post-deploy public check (from runner)
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          echo "Public reachability check from the GitHub runner:"
+          for url in "https://aloeducation.com/api/health" "https://aloeducation.com/" "https://learn.aloeducation.com/"; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 -L "$url" || echo "000")
+            echo "  $url -> HTTP $code"
+          done
+          echo "(learn.aloeducation.com is the PROTECTED service — listed for isolation awareness only)"

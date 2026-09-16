@@ -42,7 +42,7 @@ export async function startDoodleCapture(opts: DoodleCaptureOpts): Promise<{ cap
       createdAt: new Date(),
     } as any,
   }).catch(()=>{});
-  await db.crmAuditLog.create({ data: { action: 'DOODLE_CAPTURE_START', entityType: 'MeetingCapture', entityId: captureId, actorId: opts.counselorId, details: JSON.stringify({ meetingId: opts.meetingId, studentId: opts.studentId }), createdAt: new Date() } as any }).catch(()=>{});
+  await db.crmAuditLog.create({ data: { action: 'DOODLE_CAPTURE_START', targetCollection: 'MeetingCapture', targetId: captureId, actorUserId: opts.counselorId || '', afterData: JSON.stringify({ meetingId: opts.meetingId, studentId: opts.studentId }), createdAt: new Date() } }).catch(()=>{});
   return { captureId, startedAt: new Date().toISOString() };
 }
 

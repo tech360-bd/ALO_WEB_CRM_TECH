@@ -83,6 +83,8 @@ export async function POST(req: NextRequest) {
         verifiedBy,
         lastVerifiedAt: verificationStatus === 'verified' ? new Date() : null,
         notes,
+        entityType: String(targetType || 'OTHER').toUpperCase(),
+        sourceName: sourceTitle || sourceUrl,
       },
     });
 

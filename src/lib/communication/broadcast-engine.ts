@@ -48,11 +48,11 @@ export async function createBroadcast(params: {
   // Create audit
   await db.aloAuditLog.create({
     data: {
-      actorId: params.createdBy,
+      actorName: params.createdBy || '',
       action: 'BROADCAST_CREATED',
-      entityType: 'Broadcast',
-      entityId: broadcast.id,
-      metadata: JSON.stringify({ channel: params.channel, audienceType: params.audienceType, estimatedRecipients, requiresSuperAdmin }),
+      resource: 'Broadcast',
+      resourceId: broadcast.id,
+      details: JSON.stringify({ channel: params.channel, audienceType: params.audienceType, estimatedRecipients, requiresSuperAdmin }),
     }
   }).catch(()=>{});
   await db.crmAuditLog.create({
@@ -97,11 +97,11 @@ export async function approveBroadcast(params: { broadcastId: string; approvedBy
 
   await db.aloAuditLog.create({
     data: {
-      actorId: params.approvedBy,
+      actorName: params.approvedBy || '',
       action: 'BROADCAST_APPROVED',
-      entityType: 'Broadcast',
-      entityId: params.broadcastId,
-      metadata: JSON.stringify({ approverRole: params.approverRole }),
+      resource: 'Broadcast',
+      resourceId: params.broadcastId,
+      details: JSON.stringify({ approverRole: params.approverRole }),
     }
   }).catch(()=>{});
 

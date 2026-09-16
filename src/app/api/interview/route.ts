@@ -105,6 +105,7 @@ Score each dimension from 1-10 and assess risk. Return ONLY valid JSON (no markd
       await db.timelineEvent.create({
         data: {
           studentId,
+          stage: "visa",
           type: "INTERVIEW_COMPLETED",
           title: `AI ${type.replace(/_/g, " ").toLowerCase()} completed`,
           description: `Readiness ${parsed.overallReadiness}% - ${parsed.readiness.replace(/_/g, " ")}`,

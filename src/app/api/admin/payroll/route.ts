@@ -24,6 +24,10 @@ export async function POST(req: Request) {
 
       const payroll = await db.employeePayroll.create({
         data: {
+          // Payroll-run row: employeeId/period are the per-employee legacy fields —
+          // keep them populated with run-level values to satisfy the schema.
+          employeeId: '',
+          period: monthYear,
           monthYear,
           status: 'draft',
           employeeCount: activeEmployees.length,
@@ -44,6 +48,9 @@ export async function POST(req: Request) {
         await db.employeePayrollItem.create({
           data: {
             payrollId: payroll.id,
+            itemType: 'earning',
+            label: `${emp.name} — ${monthYear} salary`,
+            amount: net,
             employeeId: emp.id,
             employeeName: emp.name,
             basicSalary: gross * 0.6,

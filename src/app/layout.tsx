@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   },
 };
 
-import PublicCommunicationBar from "@/components/website/PublicCommunicationBar";
+import FloatingActionWidget from "@/components/website/FloatingActionWidget";
 import PublicLayoutWrapper from "@/components/website/PublicLayoutWrapper";
 import { PwaRegister } from "@/components/pwa/PwaRegister";
 
@@ -93,7 +93,9 @@ export default function RootLayout({
         <PublicLayoutWrapper>
           {children}
         </PublicLayoutWrapper>
-        <PublicCommunicationBar />
+        {/* Single global floating contact widget (replaces the old duplicate
+            PublicCommunicationBar stack + fake chat). */}
+        <FloatingActionWidget />
         <PwaRegister />
         <Toaster />
       </body>

@@ -158,7 +158,7 @@ export async function upsertWithProvenance(opts: { entityType: 'UNIVERSITY'|'COU
     const lead = await db.lead.create({ data: { source: opts.sourceUrl, status: 'NEW', notes: JSON.stringify(payload), createdAt: new Date(lastVerifiedAt) } as any }).catch(async ()=> {
       // fallback to CrmAuditLog when Lead model shape differs
       const id = `lead_${Date.now()}`;
-      await db.crmAuditLog.create({ data:{ action:'RESEARCH_LEAD_UPSERT', entityType:'Lead', entityId:id, actorId: opts.actorId||'research-agent', details: JSON.stringify(payload), createdAt: new Date() } as any }).catch(()=>{});
+      await db.crmAuditLog.create({ data:{ action:'RESEARCH_LEAD_UPSERT', targetCollection:'Lead', targetId:id, actorUserId: opts.actorId||'research-agent', afterData: JSON.stringify(payload), createdAt: new Date() } }).catch(()=>{});
       return { id };
     });
     return { id: (lead as any).id, action: 'insert' };
@@ -166,7 +166,7 @@ export async function upsertWithProvenance(opts: { entityType: 'UNIVERSITY'|'COU
   // University/Course/Country/Visa map to OfficialSource + SourceSnapshot + VerificationRun flow (existing monitoring engine)
   // We log via CrmAuditLog + SourceSnapshot for now; the monitoring engine will promote to DataChange after human review
   const id = `${opts.entityType.toLowerCase()}_${Date.now()}`;
-  await db.crmAuditLog.create({ data:{ action:'RESEARCH_UPSERT', entityType: opts.entityType, entityId: id, actorId: opts.actorId||'research-agent', details: JSON.stringify(payload), createdAt: new Date() } as any }).catch(()=>{});
+  await db.crmAuditLog.create({ data:{ action:'RESEARCH_UPSERT', targetCollection: opts.entityType, targetId: id, actorUserId: opts.actorId||'research-agent', afterData: JSON.stringify(payload), createdAt: new Date() } }).catch(()=>{});
   // Also persist as SourceSnapshot when an OfficialSource row exists for sourceUrl
   const src: any = await db.officialSource.findFirst({ where:{ sourceUrl: opts.sourceUrl }}).catch(()=>null);
   if (src?.id) {

@@ -144,7 +144,7 @@ export async function getUniversityBySlugDB(slug: string): Promise<any | null> {
   try {
     // DB first
     const uni = await db.crmUniversity.findFirst({
-      where: { OR: [{ slug }, { universityId: slug }, { name: { contains: slug.replace(/-/g, ' '), mode: 'insensitive' } }], publicationStatus: { not: 'draft' } },
+      where: { OR: [{ slug }, { universityId: slug }, { name: { contains: slug.replace(/-/g, ' ') } }], publicationStatus: { not: 'draft' } },
       include: {
         courses: { where: { publicationStatus: 'published' }, take: 20, select: { courseId: true, courseTitle: true, slug: true, studyLevel: true, subjectArea: true, country: true } },
         scholarshipRecords: { where: { status: 'active' }, take: 10 },

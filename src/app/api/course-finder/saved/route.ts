@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!studentId || !courseId) return NextResponse.json({ success:false, error:'studentId and courseId required' }, { status:400 });
     const existing = await db.courseShortlist.findFirst({ where: { studentId, courseId } }).catch(()=>null);
     if (existing) return NextResponse.json({ success:false, error:'Already saved — unique constraint', duplicate: true }, { status:409 });
-    const created = await db.courseShortlist.create({ data: { studentId, courseId } }).catch(async ()=> {
+    const created = await db.courseShortlist.create({ data: { studentId, courseId, courseSlug: String(courseId) } }).catch(async ()=> {
       return await db.savedCourse.create({ data: { studentId, courseName: courseId, universityName: 'Check', country: 'Check', level: '', department: '', tuitionFee: '', intake: '' } });
     });
     return NextResponse.json({ success:true, data: created, message: 'Course saved — unique constraint prevents duplicates' });

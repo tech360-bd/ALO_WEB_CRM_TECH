@@ -47,16 +47,15 @@ export async function postJournal(entry: JournalEntry): Promise<{ journalId: str
   await db.crmAuditLog.create({
     data: {
       action: 'JOURNAL_POSTED',
-      entityType: 'JournalEntry',
-      entityId: journalId,
-      actorId: entry.actorId,
-      details: JSON.stringify({ date: entry.date, memo: entry.memo, lines: entry.lines }),
+      targetCollection: 'JournalEntry',
+      targetId: journalId,
+      actorUserId: entry.actorId || '',
+      afterData: JSON.stringify({ date: entry.date, memo: entry.memo, lines: entry.lines }),
       createdAt: new Date(entry.date),
-    } as any,
+    },
   }).catch(()=>{});
-  await db.fileEvent.create({
-    data: { fileId: journalId, action: 'JOURNAL_POSTED', actorId: entry.actorId, details: JSON.stringify(entry), createdAt: new Date() } as any,
-  }).catch(()=>{});
+  // NOTE: journal entries are not files — FileEvent.fileId is an FK to FileMetadata.id,
+  // so a journal-id FileEvent row could never be valid. Audit trail lives in CrmAuditLog.
   return { journalId };
 }
 
@@ -125,11 +124,11 @@ export async function postVendorCredit(vendorCreditId: string, amount: number, o
  */
 export async function computeARAging(): Promise<{ grossReceivable: number; unappliedCredits: number; netReceivable: number; note: string }> {
   // Sum journals touching A/R
-  const logs: any[] = await db.crmAuditLog.findMany({ where: { entityType: 'JournalEntry', action: 'JOURNAL_POSTED' }, take: 5000 }).catch(()=>[]);
+  const logs: any[] = await db.crmAuditLog.findMany({ where: { targetCollection: 'JournalEntry', action: 'JOURNAL_POSTED' }, take: 5000 }).catch(()=>[]);
   let gross = 0, unapplied = 0;
   for (const l of logs) {
     try {
-      const d = JSON.parse(l.details);
+      const d = JSON.parse(l.afterData);
       for (const line of d.lines || []) {
         if (line.account === '1100') {
           if (line.debit > 0) gross += line.debit;

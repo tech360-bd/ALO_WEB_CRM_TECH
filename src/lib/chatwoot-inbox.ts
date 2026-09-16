@@ -69,7 +69,7 @@ export async function chatwootCreateConversation(opts: {
     const msgId = mj?.id || 0;
 
     // Mirror to ALO CommunicationThread for CRM analytics
-    await db.crmAuditLog.create({ data: { action: 'CHATWOOT_CONVERSATION_CREATED', entityType: 'ChatwootConversation', entityId: String(convId), actorId: 'system', details: JSON.stringify({ inboxId: opts.inboxId, studentId: opts.studentId }), createdAt: new Date() } as any }).catch(()=>{});
+    await db.crmAuditLog.create({ data: { action: 'CHATWOOT_CONVERSATION_CREATED', targetCollection: 'ChatwootConversation', targetId: String(convId), actorUserId: 'system', afterData: JSON.stringify({ inboxId: opts.inboxId, studentId: opts.studentId }), createdAt: new Date() } }).catch(()=>{});
     return { conversationId: convId, messageId: msgId };
   } catch { return null; }
 }

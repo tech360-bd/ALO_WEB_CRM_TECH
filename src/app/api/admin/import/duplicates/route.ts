@@ -17,7 +17,7 @@ export const GET = withAuth(async (request: Request) => {
     const rows = await db.importStagingStudent.findMany({ where, take: 100, orderBy:{ createdAt:'desc' } });
     // enrich with existing student if matched
     const enriched = await Promise.all(rows.map(async (r:any)=>{
-      let existing=null;
+      let existing: any = null;
       if (r.matchedStudentId) {
         try { existing = await db.student.findUnique({ where:{ id: r.matchedStudentId } }); } catch {}
       }

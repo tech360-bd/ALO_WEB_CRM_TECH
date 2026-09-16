@@ -48,7 +48,7 @@ export async function GET(request: Request) {
         db.crmCourse.count().catch(() => 0),
         db.marketingCampaign.count().catch(() => 0),
         db.counselorTask.count({ where: { status: { in: ['pending', 'in_progress'] } } }).catch(() => 0),
-        db.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, name: true, email: true, phone: true, status: true, source: true, createdAt: true } }).catch(() => []),
+        db.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, fullName: true, email: true, phone: true, status: true, source: true, createdAt: true } }).catch(() => []),
         db.application.findMany({ orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, applicationCode: true, studentId: true, universityName: true, courseName: true, stage: true, status: true, createdAt: true } }).catch(() => []),
         db.portalStudentProfile.findMany({ orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, fullName: true, studentId: true, preferredCountry: true, journeyStage: true, createdAt: true } }).catch(() => []),
         db.weeklyReport.findMany({ orderBy: { generatedAt: 'desc' }, take: 3 }).catch(() => []),
@@ -82,7 +82,7 @@ export async function GET(request: Request) {
           },
           funnel,
           recent: {
-            leads: recentLeads,
+            leads: recentLeads.map((l: any) => ({ ...l, name: l.fullName })),
             applications: recentApplications,
             students: recentStudents,
             reports: weeklyReports,
@@ -270,7 +270,7 @@ export async function POST(request: Request) {
       case 'assign_lead': {
         const { leadId, counselorId, counselorName } = data;
         if (!leadId || !counselorId) return NextResponse.json({ success: false, error: 'leadId and counselorId required' }, { status: 400 });
-        const updated = await db.lead.update({ where: { id: leadId }, data: { assignedCounselorId: counselorId, assignedCounselorName: counselorName || '', status: 'assigned' } }).catch(() => null);
+        const updated = await db.lead.update({ where: { id: leadId }, data: { counselorId, status: 'assigned' } }).catch(() => null);
         if (!updated) {
           // Try marketing lead
           const mLead = await db.marketingLead.update({ where: { id: leadId }, data: { counselorId, counselorName: counselorName || '', status: 'assigned', assignedAt: new Date() } }).catch(() => null);
@@ -283,7 +283,7 @@ export async function POST(request: Request) {
         const { applicationId, stage, note } = data;
         if (!applicationId || !stage) return NextResponse.json({ success: false, error: 'applicationId and stage required' }, { status: 400 });
         const app = await db.application.update({ where: { id: applicationId }, data: { stage, notes: note || '', updatedBy: auth.userId } });
-        await db.applicationStatusLog.create({ data: { applicationId, stage, status: stage, note: note || '', actor: auth.name } }).catch(()=>{});
+        await db.applicationStatusLog.create({ data: { applicationId, newStatus: stage, safeStatus: stage, changedBy: auth.name || auth.userId || '', note: note || '' } }).catch(()=>{});
         return NextResponse.json({ success: true, data: app });
       }
       case 'verify_document': {

@@ -27,7 +27,7 @@ export const POST = withAuth(async (req, auth) => {
     // Link to message if exists
     if (messageId) {
       try {
-        await db.communicationMessage.update({ where: { id: messageId }, data: { attachmentUrl: fileUrl } });
+        await db.communicationMessage.update({ where: { id: messageId }, data: { fileUrl } });
       } catch {}
     }
 

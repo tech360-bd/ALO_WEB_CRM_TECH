@@ -33,8 +33,7 @@ export async function POST(request: Request) {
           description: body.description || body.input || "",
           status: "pending",
           priority: body.priority || "normal",
-          assignedTo: auth.userId,
-          createdBy: auth.userId,
+          employeeId: auth.userId,
         }
       }).catch(() => ({ id: "temp-" + Date.now(), ...body }));
       

@@ -9,20 +9,26 @@ export async function GET(request: Request) {
       const type = url.searchParams.get("type") || "dashboard";
       
       if (type === "dashboard") {
+        const [totalUniversities, verified, changesDetected] = await Promise.all([
+          db.crmUniversity.count(),
+          db.crmUniversity.count({ where: { status: "active" } }),
+          db.crmSourceVerificationEvent.count({ where: { verificationStatus: "NEEDS_REVIEW" } }),
+        ]);
         const stats = {
-          totalUniversities: await db.crmUniversity.count().catch(() => 0),
-          verified: await db.crmUniversity.count({ where: { status: "active" } }).catch(() => 0),
-          pendingVerification: 0,
+          totalUniversities,
+          verified,
+          pendingVerification: changesDetected,
           lastScan: new Date().toISOString(),
-          changesDetected: await db.crmSourceVerificationEvent.count({ where: { status: "pending" } }).catch(() => 0),
+          changesDetected,
         };
         return NextResponse.json({ success: true, data: stats });
       }
       
-      const logs = await db.crmSourceLog.findMany({ orderBy: { createdAt: "desc" }, take: 50 }).catch(() => []);
+      const logs = await db.crmSourceLog.findMany({ orderBy: { createdAt: "desc" }, take: 50 });
       return NextResponse.json({ success: true, data: logs });
-    } catch {
-      return NextResponse.json({ success: true, data: { totalUniversities: 0, verified: 0 } });
+    } catch (err: any) {
+      console.error('[university-monitoring] error', err);
+      return NextResponse.json({ success: false, error: err?.message || 'Failed to load monitoring data' }, { status: 500 });
     }
   })(request);
 }
@@ -36,9 +42,10 @@ export async function POST(request: Request) {
       await db.crmSourceLog.create({
         data: {
           universityId: universityId || "all",
-          source: "manual_trigger",
+          sourceUrl: "manual_trigger",
           status: "pending",
-          message: `Scan triggered by ${auth.email}`,
+          verifiedBy: auth.email || auth.userId || "",
+          verifiedAt: new Date().toISOString(),
         }
       }).catch(() => null);
       

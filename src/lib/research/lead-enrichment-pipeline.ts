@@ -95,44 +95,44 @@ export async function upsertSignal(opts: { domain: string; type: string; sourceU
   const key = normalizeSignalKey(opts);
   const windowsDays = FRESHNESS_WINDOW_DAYS[opts.type] || 30;
   // dedupe via CrmAuditLog (signals table in OpenProspector → adapted to CrmAuditLog TimelineEvent)
-  const existing: any = await db.crmAuditLog.findFirst({ where:{ entityType:'Signal', entityId: key }}).catch(()=>null);
+  const existing: any = await db.crmAuditLog.findFirst({ where:{ targetCollection:'Signal', targetId: key }}).catch(()=>null);
   if (existing) {
     try {
-      const prev = JSON.parse(existing.details);
+      const prev = JSON.parse(existing.afterData);
       const seenCount = (prev.seenCount||1)+1;
-      await db.crmAuditLog.update({ where:{ id: existing.id }, data:{ details: JSON.stringify({ ...prev, seenCount, lastSeenAt: new Date().toISOString(), title: opts.title || prev.title }) } as any }).catch(()=>{});
+      await db.crmAuditLog.update({ where:{ id: existing.id }, data:{ afterData: JSON.stringify({ ...prev, seenCount, lastSeenAt: new Date().toISOString(), title: opts.title || prev.title }) } }).catch(()=>{});
       return { key, seenCount, isNew: false };
     } catch {}
   }
-  await db.crmAuditLog.create({ data:{ action:'SIGNAL_UPSERT', entityType:'Signal', entityId: key, actorId: opts.actorId||'openprospector', details: JSON.stringify({ domain: opts.domain, type: opts.type, sourceUrl: opts.sourceUrl, occurredAt: opts.occurredAt, detectedAt: new Date().toISOString(), title: opts.title, freshnessWindowDays: windowsDays, seenCount:1, metadata: opts.metadata }), createdAt: new Date() } as any }).catch(()=>{});
-  await db.timelineEvent.create({ data:{ studentId: 'system', type:'SIGNAL_DETECTED', title: opts.title || `${opts.type} @ ${opts.domain}`, description: JSON.stringify({ key, occurredAt: opts.occurredAt, sourceUrl: opts.sourceUrl }), createdAt: new Date() } as any }).catch(()=>{});
+  await db.crmAuditLog.create({ data:{ action:'SIGNAL_UPSERT', targetCollection:'Signal', targetId: key, actorUserId: opts.actorId||'openprospector', afterData: JSON.stringify({ domain: opts.domain, type: opts.type, sourceUrl: opts.sourceUrl, occurredAt: opts.occurredAt, detectedAt: new Date().toISOString(), title: opts.title, freshnessWindowDays: windowsDays, seenCount:1, metadata: opts.metadata }), createdAt: new Date() } }).catch(()=>{});
+  await db.timelineEvent.create({ data:{ studentId: 'system', stage: 'research', type:'SIGNAL_DETECTED', title: opts.title || `${opts.type} @ ${opts.domain}`, description: JSON.stringify({ key, occurredAt: opts.occurredAt, sourceUrl: opts.sourceUrl }), createdAt: new Date() } }).catch(()=>{});
   return { key, seenCount:1, isNew:true };
 }
 export async function listSignals(opts?: { liveOnly?: boolean }): Promise<{ key:string; domain:string; type:string; sourceUrl:string; seenCount:number; live: boolean; staleReason?: string }[]> {
-  const logs: any[] = await db.crmAuditLog.findMany({ where:{ entityType:'Signal' }, orderBy:{ createdAt:'desc' }, take:200 }).catch(()=>[]);
+  const logs: any[] = await db.crmAuditLog.findMany({ where:{ targetCollection:'Signal' }, orderBy:{ createdAt:'desc' }, take:200 }).catch(()=>[]);
   const now = Date.now();
   const rows = logs.map((l:any)=> {
     try {
-      const j = JSON.parse(l.details);
+      const j = JSON.parse(l.afterData);
       const occurredMs = new Date(j.occurredAt).getTime();
       const windowMs = (j.freshnessWindowDays||30)*86400000;
       const live = !isNaN(occurredMs) && (now - occurredMs) <= windowMs;
-      return { key: l.entityId, domain:j.domain, type:j.type, sourceUrl:j.sourceUrl, seenCount:j.seenCount||1, live, staleReason: live?undefined:`outside ${j.freshnessWindowDays}d window` };
+      return { key: l.targetId, domain:j.domain, type:j.type, sourceUrl:j.sourceUrl, seenCount:j.seenCount||1, live, staleReason: live?undefined:`outside ${j.freshnessWindowDays}d window` };
     } catch { return null }
   }).filter(Boolean) as any[];
   if (opts?.liveOnly) return rows.filter(r=>r.live);
   return rows;
 }
 export async function runSignal(key: string, actorId?: string): Promise<{ ok: boolean; status: number; message: string }> {
-  const log: any = await db.crmAuditLog.findFirst({ where:{ entityType:'Signal', entityId:key }}).catch(()=>null);
+  const log: any = await db.crmAuditLog.findFirst({ where:{ targetCollection:'Signal', targetId:key }}).catch(()=>null);
   if (!log) return { ok:false, status:404, message:'signal not found' };
   try {
-    const j = JSON.parse(log.details);
+    const j = JSON.parse(log.afterData);
     const occurredMs = new Date(j.occurredAt).getTime();
     if (isNaN(occurredMs)) return { ok:false, status:409, message:'undateable signal — not live' };
     const live = (Date.now()-occurredMs) <= (j.freshnessWindowDays*86400000);
     if (!live) return { ok:false, status:409, message:`stale — occurred ${j.occurredAt}, window ${j.freshnessWindowDays}d` };
-    await db.crmAuditLog.create({ data:{ action:'SIGNAL_SOURCED', entityType:'Signal', entityId: key, actorId: actorId||'pipeline', details: JSON.stringify({ sourcedAt: new Date().toISOString() }), createdAt: new Date() } as any }).catch(()=>{});
+    await db.crmAuditLog.create({ data:{ action:'SIGNAL_SOURCED', targetCollection:'Signal', targetId: key, actorUserId: actorId||'pipeline', afterData: JSON.stringify({ sourcedAt: new Date().toISOString() }), createdAt: new Date() } }).catch(()=>{});
     return { ok:true, status:200, message:`sourced ${j.type} @ ${j.domain}` };
   } catch { return { ok:false, status:500, message:'parse error' }; }
 }
@@ -193,6 +193,6 @@ export async function runGtmPipeline(opts: { rows: Record<string,string>[]; enri
     else review.push({ ...enriched, _quality: q, _crmFailure: true });
   }
   stats.deduped = deduped;
-  await db.crmAuditLog.create({ data:{ action:'GTM_PIPELINE_RUN', entityType:'GtmRun', entityId: `gtm_${Date.now()}`, actorId: opts.actorId||'gtm', details: JSON.stringify({ stats, qualified: qualified.length, review: review.length, rejected: rejected.length }), createdAt: new Date() } as any }).catch(()=>{});
+  await db.crmAuditLog.create({ data:{ action:'GTM_PIPELINE_RUN', targetCollection:'GtmRun', targetId: `gtm_${Date.now()}`, actorUserId: opts.actorId||'gtm', afterData: JSON.stringify({ stats, qualified: qualified.length, review: review.length, rejected: rejected.length }), createdAt: new Date() } }).catch(()=>{});
   return { qualified, review, rejected, stats };
 }

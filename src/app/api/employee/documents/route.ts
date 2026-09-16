@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     if (!employeeId || !documentType || !filePath) return NextResponse.json({ error: 'Missing required document parameters.' }, { status: 400 });
     let document = await db.employeeDocument.findFirst({ where: { employeeId, documentType } });
     const fileHash = crypto.createHash('md5').update(`${filePath}-${Date.now()}`).digest('hex');
-    const versionData = (employeeDocumentId: string, version: number) => ({ employeeDocumentId, version, filePath, fileName: fileName || `${documentType}.pdf`, status: 'pending', uploadedBy: uploadedBy || employeeId, fileSize: null, fileType: 'application/octet-stream' });
+    const versionData = (employeeDocumentId: string, version: number) => ({ employeeDocumentId, version, filePath, fileName: fileName || `${documentType}.pdf`, status: 'pending', uploadedBy: uploadedBy || employeeId });
     if (!document) {
       document = await db.employeeDocument.create({ data: { employeeId, documentType, filePath, fileName: fileName || `${documentType}.pdf`, status: 'pending' } });
       await db.employeeDocumentVersion.create({ data: versionData(document.id, 1) });

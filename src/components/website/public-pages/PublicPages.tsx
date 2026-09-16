@@ -16,7 +16,6 @@ import {
   Phone, Mail, Clock, FileText, Shield, Globe, BookOpen, Star,
 } from 'lucide-react';
 
-import FloatingActionWidget from '@/components/website/FloatingActionWidget';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 
@@ -71,16 +70,39 @@ function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8' }
 export function PublicCourseFinderPage() {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({ country: '', level: '', subject: '', search: '' });
 
   useEffect(() => {
-    const q = new URLSearchParams(filters).toString();
-    fetch(`/api/course-finder?${q}&limit=24`)
-      .then((r) => r.json())
+    const ctrl = new AbortController();
+    setLoading(true);
+    setError(null);
+    // /api/course-finder expects studyLevel & subjectArea — sending level/subject
+    // used to be silently ignored, making those filters dead controls.
+    const q = new URLSearchParams();
+    if (filters.search) q.set('search', filters.search);
+    if (filters.country) q.set('country', filters.country);
+    if (filters.level) q.set('studyLevel', filters.level);
+    if (filters.subject) q.set('subjectArea', filters.subject);
+    q.set('limit', '24');
+    fetch(`/api/course-finder?${q.toString()}`, { signal: ctrl.signal })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`Course search failed (HTTP ${r.status})`);
+        return r.json();
+      })
       .then((d) => setCourses(d.courses || d.data || []))
-      .catch(() => setCourses([]))
+      .catch((e) => {
+        if (e?.name !== 'AbortError') {
+          setCourses([]);
+          setError(e?.message || 'Could not load courses. Please try again.');
+        }
+      })
       .finally(() => setLoading(false));
+    return () => ctrl.abort();
   }, [filters]);
+
+  const currencySymbol = (code?: string) =>
+    ({ GBP: '£', USD: '$', EUR: '€', AUD: 'A$', CAD: 'C$', NZD: 'NZ$' } as Record<string, string>)[code || ''] || (code ? `${code} ` : '');
 
   return (
     <PublicShell
@@ -133,6 +155,15 @@ export function PublicCourseFinderPage() {
         <div className="lg:col-span-3">
           {loading ? (
             <div className="text-center py-20 text-slate-500">Loading courses...</div>
+          ) : error ? (
+            <div className="text-center py-20" role="alert">
+              <Search className="h-12 w-12 mx-auto mb-3 text-red-300" />
+              <p className="text-slate-700 font-medium mb-1">Something went wrong</p>
+              <p className="text-sm text-slate-500 mb-4">{error}</p>
+              <Button variant="outline" size="sm" onClick={() => setFilters({ ...filters })}>
+                Try again
+              </Button>
+            </div>
           ) : courses.length === 0 ? (
             <div className="text-center py-20 text-slate-500">
               <Search className="h-12 w-12 mx-auto mb-3 text-slate-300" />
@@ -152,11 +183,12 @@ export function PublicCourseFinderPage() {
                     <Card className="p-5 hover:shadow-md transition-shadow h-full">
                       <div className="flex items-start justify-between mb-2">
                         <Badge variant="secondary" className="bg-blue-50 text-[#0057B8]">
-                          {c.studyLevel || c.level || 'Course'}
+                          {c.studyLevel || c.programLevel || c.level || 'Course'}
                         </Badge>
-                        {c.tuitionFee && (
+                        {(c.yearlyTuition || c.tuitionFee) > 0 && (
                           <span className="text-xs font-semibold text-slate-700">
-                            ${(c.tuitionFee / 1000).toFixed(0)}k/yr
+                            {currencySymbol(c.tuitionCurrency || c.currency)}
+                            {Math.round((c.yearlyTuition || c.tuitionFee) / 1000)}k/yr
                           </span>
                         )}
                       </div>
@@ -171,9 +203,9 @@ export function PublicCourseFinderPage() {
                         <span className="flex items-center gap-1">
                           <MapPin className="h-3 w-3" /> {c.country || '—'}
                         </span>
-                        {c.duration && (
+                        {(c.durationMonths || c.duration) && (
                           <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {c.duration}
+                            <Clock className="h-3 w-3" /> {c.duration || `${c.durationMonths} months`}
                           </span>
                         )}
                       </div>
@@ -367,20 +399,34 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
 export function PublicUniversitiesPage() {
   const [universities, setUniversities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    fetch(`/api/universities?limit=50&status=active${search ? `&search=${encodeURIComponent(search)}` : ''}`)
-      .then((r) => r.json())
+    const ctrl = new AbortController();
+    setLoading(true);
+    setError(null);
+    fetch(`/api/universities?limit=50&status=active${search ? `&search=${encodeURIComponent(search)}` : ''}`, { signal: ctrl.signal })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`Could not load universities (HTTP ${r.status})`);
+        return r.json();
+      })
       .then((d) => setUniversities(d.universities || d.data || []))
-      .catch(() => setUniversities([]))
+      .catch((e) => {
+        if (e?.name !== 'AbortError') {
+          setUniversities([]);
+          setError(e?.message || 'Could not load universities. Please try again.');
+        }
+      })
       .finally(() => setLoading(false));
-  }, [search]);
+    return () => ctrl.abort();
+  }, [search, reloadKey]);
 
   return (
     <PublicShell
       title="Universities"
-      badge="150+ PARTNER UNIVERSITIES"
+      badge="UNIVERSITY DIRECTORY"
       subtitle="Browse our partner universities worldwide. Find the right fit for your academic goals."
     >
       <Card className="p-4 mb-6">
@@ -397,10 +443,21 @@ export function PublicUniversitiesPage() {
 
       {loading ? (
         <div className="text-center py-20 text-slate-500">Loading universities...</div>
+      ) : error ? (
+        <div className="text-center py-20" role="alert">
+          <Building2 className="h-12 w-12 mx-auto mb-3 text-red-300" />
+          <p className="text-slate-700 font-medium mb-1">Something went wrong</p>
+          <p className="text-sm text-slate-500 mb-4">{error}</p>
+          <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
+            Try again
+          </Button>
+        </div>
       ) : universities.length === 0 ? (
         <div className="text-center py-20 text-slate-500">
           <Building2 className="h-12 w-12 mx-auto mb-3 text-slate-300" />
-          No universities found.
+          {search
+            ? `No universities match “${search}”. Try a different search.`
+            : 'No universities are published yet. Verified partner universities will appear here as soon as their official data is loaded.'}
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1131,568 +1188,6 @@ export function PublicVisaReadinessPage() {
   );
 }
 
-export function PublicUniversityDetail({ slug }: { slug: string | null }) {
-  const [uni, setUni] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [courses, setCourses] = useState<any[]>([]);
-  const [activeCourseLevel, setActiveCourseLevel] = useState<string>('all');
-  const [courseSearchQuery, setCourseSearchQuery] = useState<string>('');
-
-  useEffect(() => {
-    if (!slug) {
-      setLoading(false);
-      return;
-    }
-    const cleanSlug = decodeURIComponent(slug).toLowerCase().replace(/-/g, ' ');
-
-    fetch(`/api/universities?search=${encodeURIComponent(cleanSlug)}&limit=1`)
-      .then((r) => r.json())
-      .then((d) => {
-        const found = d.universities?.[0];
-        if (found) {
-          setUni(found);
-        } else {
-          const { ukUniversitiesPart1 } = require('@/lib/university-data-uk');
-          const { ukUniversitiesPart2 } = require('@/lib/university-data-uk2');
-          const { allIntlUniversities } = require('@/lib/university-data-intl');
-          const allStatic = [...ukUniversitiesPart1, ...ukUniversitiesPart2, ...allIntlUniversities];
-          const matched = allStatic.find(
-            (u: any) =>
-              u.name.toLowerCase() === cleanSlug ||
-              u.name.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanSlug.replace(/[^a-z0-9]/g, '')
-          ) || allStatic[0];
-          setUni(matched);
-        }
-      })
-      .catch(() => {
-        const { ukUniversitiesPart1 } = require('@/lib/university-data-uk');
-        setUni(ukUniversitiesPart1[0]);
-      })
-      .finally(() => setLoading(false));
-
-    fetch(`/api/course-finder?search=${encodeURIComponent(cleanSlug)}&limit=1000`)
-      .then((r) => r.json())
-      .then((d) => setCourses(d.courses || d.data || []))
-      .catch(() => setCourses([]));
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <PublicShell title="Loading University Master Profile..." badge="UNIVERSITY DIRECTORY">
-        <div className="p-16 text-center text-slate-500 font-medium">Loading official university data...</div>
-      </PublicShell>
-    );
-  }
-
-  const u = uni || {
-    name: slug ? slug.replace(/-/g, ' ').toUpperCase() : 'University Profile',
-    city: 'Main Campus',
-    country: 'United Kingdom',
-    worldRanking: 150,
-    founded: 1950,
-    type: 'Recognized Higher Education Institution',
-    ieltsMin: 6.5,
-    tuitionRange: '£14,000 - £28,000',
-    intlStudents: '8,500+',
-    totalStudents: '25,000+',
-    scholarships: true,
-    website: 'https://www.aloeducation.com',
-    subjects: ['Business', 'Computer Science', 'Engineering', 'Medicine', 'Law'],
-  };
-
-  const formattedName = u.name || 'University Profile';
-  const country = u.country || 'UK';
-  const city = u.city || 'Main Campus';
-  const websiteUrl = u.website || `https://www.google.com/search?q=${encodeURIComponent(formattedName)}`;
-
-  const faqs = [
-    { q: `How can I apply to ${formattedName}?`, a: `You can apply directly through ALO Education. Our expert counselors will verify your academic documents, assist with Statement of Purpose (SOP), and submit your application with priority tracking.` },
-    { q: `What courses are available at ${formattedName}?`, a: `${formattedName} offers a wide range of degree programs across Foundation, Bachelor's, Top-up, Taught Master's, MRes, MPhil, and PhD research degrees in fields like Business, Computing, Engineering, and Health Sciences.` },
-    { q: `What is the tuition fee range at ${formattedName}?`, a: `Tuition fees generally range from ${u.tuitionRange || '£13,000 to £28,000 per year'} depending on the program level, lab requirements, and study location.` },
-    { q: `What intakes are available at ${formattedName}?`, a: `Primary intakes are September/October (Fall) and January/February (Spring). Selected postgraduate programs also offer May/June intakes.` },
-    { q: `What English test score is required for ${formattedName}?`, a: `Minimum IELTS Academic score is typically ${u.ieltsMin || '6.0 to 6.5'} (with no band below 5.5 to 6.0). PTE Academic, TOEFL iBT, Duolingo, and MOI letters are also accepted depending on university policy.` },
-    { q: `Are scholarships available for international students at ${formattedName}?`, a: `Yes! Merit-based scholarships ranging from £1,000 to £5,000 or up to 50% tuition reduction are available for eligible South Asian and international applicants.` },
-    { q: `Can I apply to ${formattedName} with a study gap?`, a: `Yes, study gaps of 2 to 5+ years are accepted provided you submit valid work experience certificates, training documentation, or a detailed study gap explanation.` },
-    { q: `Can ALO Education help me write an SOP for ${formattedName}?`, a: `Absolutely. ALO Education provides personalized SOP review and guidance to ensure your Statement of Purpose meets university and visa compliance requirements.` },
-    { q: `Can I compare ${formattedName} with another university?`, a: `Yes! Use the ALO Education Compare tool (/compare) to evaluate ${formattedName} side-by-side with up to 3 other universities on fees, IELTS, and post-study work rights.` },
-    { q: `How long does an application decision take at ${formattedName}?`, a: `Conditional offer letters are typically issued within 1 to 3 weeks following complete document submission.` },
-    { q: `What is the CAS / Deposit requirement for ${formattedName}?`, a: `After receiving an offer, students pay a tuition deposit (usually £2,000 - £5,000 or 50%) to request the CAS letter for UK Student Visa processing.` },
-    { q: `What documents are required to apply to ${formattedName}?`, a: `You will need your Passport, High School / Bachelor's Certificates and Transcripts, English Test Score, CV, Statement of Purpose (SOP), and 2 Reference Letters.` },
-    { q: `Does ${formattedName} offer placement or internship options?`, a: `Many undergraduate and postgraduate courses include an optional 1-year industrial placement or internship module.` },
-    { q: `What post-study work rights are available after graduating from ${formattedName}?`, a: `Graduates are eligible for the 2-Year Graduate Route Post-Study Work Visa in the UK (or equivalent post-study work permits in Canada, Australia, USA).` },
-    { q: `How do I book a free consultation for ${formattedName}?`, a: `Click the "Talk to Counselor" button or visit /book-consultation to speak with an ALO Education senior advisor immediately.` },
-  ];
-
-  return (
-    <div className="min-h-screen bg-slate-50">
-      <main className="pt-24 pb-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          
-          {/* BREADCRUMB */}
-          <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
-            <a href="/" className="hover:text-[#0057B8]">Home</a>
-            <span>›</span>
-            <a href="/universities" className="hover:text-[#0057B8]">Universities</a>
-            <span>›</span>
-            <span className="text-slate-700 font-semibold">{country}</span>
-            <span>›</span>
-            <span className="text-[#0057B8] font-bold">{formattedName}</span>
-          </nav>
-
-          {/* SECTION 1: HERO */}
-          <div className="bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl p-8 md:p-10 text-white mb-10 shadow-xl relative overflow-hidden">
-            <div className="relative z-10">
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1 uppercase tracking-wider">
-                  Verified Partner University
-                </Badge>
-                <span className="text-xs font-semibold bg-white/10 text-white px-3 py-1 rounded-full border border-white/20">
-                  QS Rank #{u.worldRanking || 'Top 200'}
-                </span>
-                <span className="text-xs text-blue-200">Last Verified: August 2026</span>
-              </div>
-
-              <h1 className="text-3xl md:text-5xl font-extrabold mb-3 tracking-tight">{formattedName}</h1>
-              <p className="text-lg text-blue-100 mb-6 flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-[#FFB347]" /> {city}, {country} • Established {u.founded || '1900'}
-              </p>
-
-              {/* HERO ACTION BUTTONS */}
-              <div className="flex flex-wrap gap-3 mb-8">
-                <a href="/eligibility-check">
-                  <Button className="bg-[#E8501A] text-white hover:bg-[#d44315] font-bold text-sm px-6 py-3 shadow-lg">
-                    Apply Through ALO
-                  </Button>
-                </a>
-                <a href="#available-courses">
-                  <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-semibold text-sm">
-                    View Courses ({courses.length > 0 ? courses.length : 'All Levels'})
-                  </Button>
-                </a>
-                <a href="/compare">
-                  <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-semibold text-sm">
-                    Compare University
-                  </Button>
-                </a>
-                <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-semibold text-sm flex items-center gap-1.5">
-                    <Globe className="h-4 w-4" /> Official Website
-                  </Button>
-                </a>
-              </div>
-
-              {/* HERO CARDS GRID */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-6 border-t border-white/15 text-xs">
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Country</p>
-                  <p className="font-bold text-white text-sm">{country}</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">City</p>
-                  <p className="font-bold text-white text-sm line-clamp-1">{city}</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Popular Intakes</p>
-                  <p className="font-bold text-[#FFB347] text-sm">Sep / Jan</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Tuition Range</p>
-                  <p className="font-bold text-white text-sm line-clamp-1">{u.tuitionRange || '£14k - £28k'}</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">English Tests</p>
-                  <p className="font-bold text-white text-sm">IELTS, PTE, DET</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Scholarships</p>
-                  <p className="font-bold text-emerald-300 text-sm">Up to £5,000</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">App Status</p>
-                  <p className="font-bold text-emerald-300 text-sm">Open 2026/27</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Verification</p>
-                  <p className="font-bold text-white text-sm">Source Verified</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* SECTION 2: ABOUT UNIVERSITY */}
-          <Card className="p-8 mb-10 shadow-sm border-slate-200">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-4 flex items-center gap-2">
-              <Building2 className="h-6 w-6 text-[#0057B8]" /> About {formattedName}
-            </h2>
-            <div className="prose prose-slate max-w-none text-slate-700 text-sm leading-relaxed space-y-4">
-              <p>
-                {formattedName} is a leading global institution located in {city}, {country}. Recognized for its academic excellence, cutting-edge research facilities, and vibrant international community, the university attracts students from over 120 countries worldwide.
-              </p>
-              <p>
-                <strong>Academic Strengths:</strong> Key faculties include Business & Management, Computer Science & AI, Engineering, Health Sciences, Law, and Social Sciences. Programs are designed in consultation with industry leaders to provide students with practical skills and career readiness.
-              </p>
-              <p>
-                <strong>International Student Support:</strong> ALO Education works directly with {formattedName} to provide Bangladeshi students with full support—including pre-CAS interviews, document verification, SOP review, and scholarship guidance.
-              </p>
-            </div>
-          </Card>
-
-          {/* SECTION 2.5: BRANCH CAMPUSES & LOCATIONS */}
-          <Card className="p-8 mb-10 shadow-sm border-slate-200 bg-gradient-to-br from-blue-50/50 to-white">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-2 flex items-center gap-2">
-              <MapPin className="h-6 w-6 text-[#E8501A]" /> Official Branch Campuses & Study Locations
-            </h2>
-            <p className="text-xs text-slate-500 mb-6">Explore all main and international branch campuses for {formattedName}</p>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 text-xs">
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-                <Badge className="bg-[#0057B8] text-white">Main Flagship Campus</Badge>
-                <h3 className="font-bold text-sm text-slate-900">{city} Main Campus</h3>
-                <p className="text-slate-600 leading-relaxed">Primary research facilities, central student union, libraries, and full degree offerings.</p>
-                <div className="text-[11px] text-slate-500 font-semibold pt-1 border-t border-slate-100">Intakes: September & January</div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-                <Badge className="bg-[#E8501A] text-white">Metropolitan Campus</Badge>
-                <h3 className="font-bold text-sm text-slate-900">{country === 'UK' ? 'London Study Center' : 'Metropolitan Branch'}</h3>
-                <p className="text-slate-600 leading-relaxed">Specialized business, computing, and professional master's programs in the heart of the financial district.</p>
-                <div className="text-[11px] text-slate-500 font-semibold pt-1 border-t border-slate-100">Intakes: September, January & May</div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-                <Badge className="bg-emerald-700 text-white">International Branch</Badge>
-                <h3 className="font-bold text-sm text-slate-900">Dubai / Global International Campus</h3>
-                <p className="text-slate-600 leading-relaxed">Transnational education option offering identical degree certificates with lower living costs.</p>
-                <div className="text-[11px] text-slate-500 font-semibold pt-1 border-t border-slate-100">Intakes: January, May & September</div>
-              </div>
-            </div>
-          </Card>
-
-          {/* SECTION 3: AVAILABLE COURSES */}
-          <div id="available-courses" className="mb-10">
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-[#0F172A]">Available Courses & Programs</h2>
-                <p className="text-xs text-slate-500">Explore degree options matched to your academic background</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['all', 'Foundation', 'Bachelor', 'Master', 'PhD'].map((lvl) => (
-                  <Button
-                    key={lvl}
-                    size="sm"
-                    variant={activeCourseLevel === lvl ? 'default' : 'outline'}
-                    onClick={() => setActiveCourseLevel(lvl)}
-                    className={activeCourseLevel === lvl ? 'bg-[#0057B8] text-white' : 'text-slate-600'}
-                  >
-                    {lvl === 'all' ? 'All Levels' : lvl}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Course search bar */}
-            <div className="mb-5">
-              <input
-                type="text"
-                placeholder="Search courses by name, subject or degree level..."
-                value={courseSearchQuery}
-                onChange={(e) => setCourseSearchQuery(e.target.value)}
-                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0057B8]/40"
-              />
-            </div>
-
-            {/* Course count summary */}
-            {(() => {
-              const uniSubjects = (u.subjects && u.subjects.length > 0)
-                ? u.subjects
-                : ['Business & Management', 'Computer Science', 'Engineering', 'Health Sciences', 'Law'];
-
-              const { generateCourses } = require('@/lib/university-courses-uk');
-              let displayCourses = (courses && courses.length >= 5)
-                ? courses
-                : generateCourses(u.name || 'University', city, uniSubjects, u.tuitionRange || '£14,500', u.ieltsMin || 6.5);
-
-              let filtered = activeCourseLevel === 'all'
-                ? displayCourses
-                : displayCourses.filter((c: any) => (c.studyLevel || '').toLowerCase().includes(activeCourseLevel.toLowerCase()));
-
-              if (courseSearchQuery.trim()) {
-                const q = courseSearchQuery.toLowerCase();
-                filtered = filtered.filter((c: any) =>
-                  (c.courseTitle || '').toLowerCase().includes(q) ||
-                  (c.studyLevel || '').toLowerCase().includes(q) ||
-                  (c.faculty || '').toLowerCase().includes(q) ||
-                  (c.department || '').toLowerCase().includes(q)
-                );
-              }
-
-              return (
-                <>
-                  <p className="text-xs text-slate-500 mb-4 font-semibold">
-                    Showing <span className="text-[#0057B8] font-bold">{filtered.length}</span> of{' '}
-                    <span className="text-[#0057B8] font-bold">{displayCourses.length}</span> courses across{' '}
-                    <span className="font-bold text-slate-700">{uniSubjects.length} faculties</span>
-                  </p>
-
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {filtered.map((c: any, idx: number) => (
-                      <Card key={c.courseCode || c.id || idx} className="p-5 hover:shadow-lg transition-shadow border-slate-200 bg-white flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center justify-between gap-2 mb-2">
-                            <Badge variant="secondary" className={
-                              c.studyLevel === 'Foundation' || c.studyLevel === 'International Year One' || c.studyLevel === 'Pre-Masters'
-                                ? 'bg-amber-50 text-amber-700 text-[10px] font-bold'
-                                : c.studyLevel === 'Bachelor' || c.studyLevel === 'Top-up'
-                                  ? 'bg-blue-50 text-[#0057B8] text-[10px] font-bold'
-                                  : c.studyLevel === 'Master' || c.studyLevel === 'MBA'
-                                    ? 'bg-emerald-50 text-emerald-700 text-[10px] font-bold'
-                                    : 'bg-purple-50 text-purple-700 text-[10px] font-bold'
-                            }>
-                              {c.studyLevel || 'Degree'}
-                            </Badge>
-                            <span className="text-[10px] font-semibold text-slate-400">{c.courseCode || `ALO-${1000 + idx}`}</span>
-                          </div>
-
-                          <h3 className="font-bold text-[#0F172A] text-sm mb-1.5 line-clamp-2">
-                            {c.courseTitle || c.name}
-                          </h3>
-
-                          {c.faculty && (
-                            <p className="text-[10px] text-slate-400 font-medium mb-1.5 line-clamp-1">🏛️ {c.faculty}</p>
-                          )}
-
-                          <div className="space-y-0.5 text-[11px] text-slate-600 mb-2">
-                            <p>📅 <strong>Duration:</strong> {c.durationMonths ? `${c.durationMonths} months` : c.duration || 'Full-time'}</p>
-                            <p>💷 <strong>Tuition:</strong> {c.tuitionFeePerYear || c.tuitionFee || u.tuitionRange || '£14,500/yr'}</p>
-                            <p>📋 <strong>Intakes:</strong>{' '}
-                              {c.intakes
-                                ? (Array.isArray(c.intakes)
-                                  ? c.intakes.map((i: any) => i.intakeName || i).join(' • ')
-                                  : c.intakes)
-                                : 'Sep 2026 • Jan 2027 • May 2027'
-                              }
-                            </p>
-                            <p>⏰ <strong>Deadline:</strong>{' '}
-                              {c.intakes && Array.isArray(c.intakes) && c.intakes[0]?.lastApplicationDate
-                                ? c.intakes[0].lastApplicationDate
-                                : c.deadline || '15 Jul 2026 (Sep) • 15 Nov 2026 (Jan)'
-                              }
-                            </p>
-                          </div>
-
-                          <div className="flex items-center gap-2 text-[10px] font-semibold mb-2">
-                            <span className="bg-blue-50 text-[#0057B8] px-2 py-0.5 rounded-full">
-                              IELTS {c.ieltsOverall || c.ielts || u.ieltsMin || 6.0}+
-                            </span>
-                            <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
-                              PTE {c.pteMin || 59}+
-                            </span>
-                            {c.studyMode && (
-                              <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{c.studyMode}</span>
-                            )}
-                          </div>
-
-                          {c.careerOutcomes && Array.isArray(c.careerOutcomes) && c.careerOutcomes.length > 0 && (
-                            <p className="text-[10px] text-slate-500 line-clamp-1">🎯 <strong>Careers:</strong> {c.careerOutcomes.slice(0, 3).join(', ')}</p>
-                          )}
-                        </div>
-
-                        <div className="pt-3 mt-3 border-t border-slate-100 flex gap-2">
-                          <a href="/eligibility-check" className="flex-1">
-                            <Button size="sm" className="w-full bg-[#E8501A] text-white hover:bg-[#d44315] text-[11px] font-bold">
-                              Apply Now
-                            </Button>
-                          </a>
-                          {c.officialUrl && (
-                            <a href={c.officialUrl} target="_blank" rel="noopener noreferrer">
-                              <Button size="sm" variant="outline" className="text-[11px] font-semibold border-slate-200">
-                                View Details
-                              </Button>
-                            </a>
-                          )}
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-
-          {/* SECTION 4: ENTRY REQUIREMENTS */}
-          <Card className="p-8 mb-10 shadow-sm border-slate-200">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-6 flex items-center gap-2">
-              <FileText className="h-6 w-6 text-[#0057B8]" /> Entry Requirements by Academic Level
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-                <Badge className="bg-[#0057B8] text-white mb-3">Undergraduate / Bachelor's</Badge>
-                <ul className="space-y-2 text-xs text-slate-700 list-disc list-inside leading-relaxed">
-                  <li>HSC / A-Levels: Minimum 60-65% overall score or GPA 3.0/4.0.</li>
-                  <li>English: IELTS 6.0 - 6.5 (Min 5.5 per component).</li>
-                  <li>PTE Academic (54-62) / Duolingo (105-115) accepted.</li>
-                  <li>Valid Passport & Statement of Purpose (SOP).</li>
-                </ul>
-              </div>
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-                <Badge className="bg-[#E8501A] text-white mb-3">Postgraduate / Master's</Badge>
-                <ul className="space-y-2 text-xs text-slate-700 list-disc list-inside leading-relaxed">
-                  <li>4-Year Bachelor's Degree with minimum 55-60% or CGPA 2.75+.</li>
-                  <li>English: IELTS 6.5 (Min 6.0 per component).</li>
-                  <li>2 Academic / Professional Reference Letters (LOR).</li>
-                  <li>CV & Detailed Personal Statement.</li>
-                </ul>
-              </div>
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-                <Badge className="bg-purple-700 text-white mb-3">Research / PhD</Badge>
-                <ul className="space-y-2 text-xs text-slate-700 list-disc list-inside leading-relaxed">
-                  <li>Master's Degree with Merit/Distinction (CGPA 3.25+).</li>
-                  <li>English: IELTS 7.0 (Min 6.5 per component).</li>
-                  <li>Approved Research Proposal (1,500-2,500 words).</li>
-                  <li>Supervisor Acceptance / Interview clearance.</li>
-                </ul>
-              </div>
-            </div>
-          </Card>
-
-          {/* SECTION 5: TUITION, DEPOSIT & SCHOLARSHIP */}
-          <Card className="p-8 mb-10 shadow-sm border-slate-200">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-4 flex items-center gap-2">
-              <Award className="h-6 w-6 text-[#E8501A]" /> Tuition Fees, Deposit & Scholarships
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
-              <div className="p-5 rounded-xl bg-blue-50/50 border border-blue-100">
-                <p className="text-xs font-semibold text-[#0057B8] uppercase mb-1">Average Tuition Fee</p>
-                <p className="text-xl font-extrabold text-slate-900">{u.tuitionRange || '£14,000 - £26,000 / year'}</p>
-              </div>
-              <div className="p-5 rounded-xl bg-orange-50/50 border border-orange-100">
-                <p className="text-xs font-semibold text-[#E8501A] uppercase mb-1">CAS Tuition Deposit</p>
-                <p className="text-xl font-extrabold text-slate-900">£2,000 - £5,000</p>
-              </div>
-              <div className="p-5 rounded-xl bg-emerald-50/50 border border-emerald-100">
-                <p className="text-xs font-semibold text-emerald-700 uppercase mb-1">Scholarship Award</p>
-                <p className="text-xl font-extrabold text-slate-900">£1,000 - £5,000</p>
-              </div>
-            </div>
-            <p className="text-xs text-slate-500 italic bg-slate-100 p-3 rounded-lg">
-              * Note: Fees and scholarship availability are subject to change by the university. Confirm official figures with your ALO counselor prior to application submission.
-            </p>
-          </Card>
-
-          {/* SECTION 6: APPLICATION PROCESS */}
-          <Card className="p-8 mb-10 shadow-sm border-slate-200">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-6">Application Process Pipeline</h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { step: '01', title: 'Check Eligibility', desc: 'Verify GPA, IELTS, and entry criteria with ALO.' },
-                { step: '02', title: 'Select Program', desc: 'Choose your desired course and intake.' },
-                { step: '03', title: 'Submit Documents', desc: 'Upload transcripts, passport, and SOP.' },
-                { step: '04', title: 'Receive Offer', desc: 'Get conditional or unconditional offer letter.' },
-                { step: '05', title: 'Pay Deposit', desc: 'Secure deposit to issue CAS / I-20.' },
-                { step: '06', title: 'Visa File Prep', desc: 'Prepare bank statement and visa file.' },
-                { step: '07', title: 'Visa Submission', desc: 'Submit visa application and biometrics.' },
-                { step: '08', title: 'Pre-Departure', desc: 'Book flight, accommodation, and travel.' },
-              ].map((s) => (
-                <div key={s.step} className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="text-xl font-black text-[#0057B8]">{s.step}</span>
-                  <h4 className="font-bold text-sm text-slate-900 mt-1">{s.title}</h4>
-                  <p className="text-xs text-slate-600 mt-1">{s.desc}</p>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* SECTION 7: REQUIRED DOCUMENTS */}
-          <Card className="p-8 mb-10 shadow-sm border-slate-200">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-4 flex items-center gap-2">
-              <FileText className="h-6 w-6 text-[#0057B8]" /> Required Document Checklist
-            </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6 text-xs text-slate-700">
-              {['Valid Passport (Min 6 months)', 'SSC & HSC / Degree Certificates', 'Official Academic Transcripts', 'IELTS / PTE / Duolingo Scorecard', 'Statement of Purpose (SOP)', '2 Academic Reference Letters', 'Updated CV / Resume', 'Work Experience Letter (if applicable)', 'Bank Solvency & Financial Evidence'].map((doc) => (
-                <div key={doc} className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center gap-2 font-medium">
-                  <Shield className="h-4 w-4 text-[#0057B8] shrink-0" />
-                  <span>{doc}</span>
-                </div>
-              ))}
-            </div>
-            <a href="/student/documents">
-              <Button className="bg-[#0057B8] text-white text-xs">Upload Documents in Student Portal →</Button>
-            </a>
-          </Card>
-
-          {/* SECTION 8: AI HELP TOOLS */}
-          <Card className="p-8 mb-10 shadow-sm border-slate-200 bg-gradient-to-br from-blue-50/40 to-orange-50/40">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-4">AI Tools for {formattedName}</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-              <a href="/eligibility-check" className="p-4 rounded-xl bg-white border border-slate-200 hover:border-[#0057B8] transition-colors block">
-                <h4 className="font-bold text-[#0057B8] mb-1">1. Check Admission Eligibility</h4>
-                <p className="text-slate-600">Instantly evaluate your GPA & IELTS score.</p>
-              </a>
-              <a href="/course-finder" className="p-4 rounded-xl bg-white border border-slate-200 hover:border-[#0057B8] transition-colors block">
-                <h4 className="font-bold text-[#0057B8] mb-1">2. Smart Course Matcher</h4>
-                <p className="text-slate-600">Find best-matching courses at this university.</p>
-              </a>
-              <a href="/student/sop" className="p-4 rounded-xl bg-white border border-slate-200 hover:border-[#0057B8] transition-colors block">
-                <h4 className="font-bold text-[#0057B8] mb-1">3. AI SOP Assistant</h4>
-                <p className="text-slate-600">Generate structured Statement of Purpose draft.</p>
-              </a>
-              <a href="/student/mock-tests" className="p-4 rounded-xl bg-white border border-slate-200 hover:border-[#0057B8] transition-colors block">
-                <h4 className="font-bold text-[#0057B8] mb-1">4. Interview Practice Studio</h4>
-                <p className="text-slate-600">Practice pre-CAS & credibility interview questions.</p>
-              </a>
-              <a href="/student/documents" className="p-4 rounded-xl bg-white border border-slate-200 hover:border-[#0057B8] transition-colors block">
-                <h4 className="font-bold text-[#0057B8] mb-1">5. Auto Document Checklist</h4>
-                <p className="text-slate-600">Generate personalized application checklist.</p>
-              </a>
-              <a href="/compare" className="p-4 rounded-xl bg-white border border-slate-200 hover:border-[#0057B8] transition-colors block">
-                <h4 className="font-bold text-[#0057B8] mb-1">6. Compare Universities</h4>
-                <p className="text-slate-600">Compare {formattedName} side-by-side.</p>
-              </a>
-            </div>
-          </Card>
-
-          {/* SECTION 9: 15 FAQS */}
-          <Card className="p-8 mb-10 shadow-sm border-slate-200">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-6">Frequently Asked Questions</h2>
-            <Accordion type="single" collapsible className="w-full">
-              {faqs.map((f, i) => (
-                <AccordionItem key={i} value={`faq-${i}`}>
-                  <AccordionTrigger className="text-left font-semibold text-slate-900 text-sm">
-                    {f.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs text-slate-600 leading-relaxed">
-                    {f.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </Card>
-
-          {/* SECTION 10: FINAL CTA */}
-          <div className="bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl p-10 text-white text-center shadow-xl">
-            <h2 className="text-3xl font-extrabold mb-3">Apply to {formattedName} Today</h2>
-            <p className="text-blue-100 max-w-2xl mx-auto mb-8 text-sm">
-              Take the first step toward your international education. Talk to an ALO counselor or submit your application online.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a href="/eligibility-check">
-                <Button className="bg-[#E8501A] text-white hover:bg-[#d44315] font-bold text-sm px-8 py-3.5">
-                  Check Eligibility
-                </Button>
-              </a>
-              <a href="/book-consultation">
-                <Button variant="outline" className="bg-white text-[#0057B8] hover:bg-blue-50 font-bold text-sm px-8 py-3.5">
-                  Talk to Counselor
-                </Button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
 export function PublicCourseDetail({ slug }: { slug: string | null }) {
   return (
     <PublicShell
@@ -1919,8 +1414,6 @@ export function PublicFooter() {
           </div>
         </div>
       </div>
-
-      <FloatingActionWidget />
     </footer>
   );
 }

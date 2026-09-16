@@ -1,0 +1,89 @@
+# ============================================================================
+# ALO Education — Manual Recovery Deployment
+#
+# Purpose: redeploy an EXACT, previously validated commit when main is broken
+# or a bad release reached production. Operator-triggered only.
+#
+# Hard rules (per delivery policy):
+#   * accepts ONLY a 40-hex-char commit SHA — no branch names, no tags, no
+#     arbitrary refs, no shell snippets, no paths, no user-supplied secrets
+#   * the SHA must exist in THIS repository (checked out and shown before deploy)
+#   * shows the target environment summary before invoking the deployment
+#   * the actual deployment is the SAME reusable pipeline as
+#     deploy-production.yml (validate-and-build gate → protected environment →
+#     pinned host key → exact-SHA deploy → health checks → auto-rollback)
+#   * migrations stay skipped unless the operator explicitly opts in
+# ============================================================================
+
+name: Recovery — Deploy Exact Commit
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'Exact 40-character commit SHA to deploy (git rev-parse <commit>)'
+        required: true
+        type: string
+      skip_migrations:
+        description: 'Skip Prisma migrations (keep true unless the backup/review gate in docs/db was completed)'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: alo-production-deploy   # same group as deploy-production.yml — a
+  cancel-in-progress: false      # recovery can never race a normal deployment
+
+jobs:
+  validate-input:
+    name: Validate SHA & show target
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validate input format (strict)
+        shell: bash
+        env:
+          SHA_INPUT: ${{ inputs.commit_sha }}
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "$SHA_INPUT" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "::error::commit_sha must be exactly 40 lowercase hex characters — branches, tags, short SHAs and anything else are rejected by design"
+            exit 1
+          fi
+          echo "✓ Input is a well-formed 40-char commit SHA"
+
+      - name: Checkout the exact SHA (proves it exists in this repository)
+        # actions/checkout v7.0.1 — pinned to immutable SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.commit_sha }}
+          fetch-depth: 0
+
+      - name: Show deployment target summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "================ RECOVERY TARGET ================"
+          echo "Repository      : ${{ github.repository }}"
+          echo "Commit          : $(git rev-parse HEAD)"
+          git log -1 --format='Author          : %an <%ae>%nDate            : %ad%nSubject         : %s'
+          echo "Branches containing this commit:"
+          git branch -r --contains HEAD | head -n 10 || true
+          echo "Environment     : production (aloeducation.com, PM2 alo-education, port 3044)"
+          echo "Protected       : learn.aloeducation.com (PM2 alo-learning-journey, port 3017) — untouched"
+          echo "Skip migrations : ${{ inputs.skip_migrations }}"
+          echo "================================================="
+
+  recover:
+    name: Deploy via standard protected pipeline
+    needs: validate-input
+    uses: ./.github/workflows/deploy-production.yml
+    with:
+      ref: ${{ inputs.commit_sha }}
+      skip_migrations: ${{ inputs.skip_migrations }}
+    secrets: inherit
+    permissions:
+      contents: read

@@ -80,7 +80,7 @@ export async function radarExtractArticle(articleUrl: string, taxonomy?: string[
 export async function radarMatchToCRM(signal: RadarSignal): Promise<{ matched: boolean; matchedEntity?: string; action: 'create_lead'|'link_university'|'review_queue' }> {
   // Try university slug match
   if (signal.universitySlug) {
-    const uni: any = await db.university?.findFirst?.({ where:{ slug: signal.universitySlug } }).catch(()=>null);
+    const uni: any = await db.crmUniversity.findFirst({ where:{ slug: signal.universitySlug } }).catch(()=>null);
     if (uni) return { matched:true, matchedEntity: uni.slug, action:'link_university' };
   }
   // Try entity name fuzzy in Lead
@@ -121,7 +121,7 @@ export async function radarRunCycle(opts?: { sourcesLimit?: number; taxonomy?: s
       else queued++;
       signals.push(sig);
       // Persist as DataChange-equivalent (audit log + monitoring log) for Super Admin approval (existing pattern)
-      await db.crmAuditLog.create({ data:{ action:'RADAR_SIGNAL', entityType:'RadarSignal', entityId: `radar_${Date.now()}_${extracted}`, actorId:'market-intel-radar', details: JSON.stringify({ signal: sig, match: m, sourceId: src.id }), createdAt: new Date() } as any }).catch(()=>{});
+      await db.crmAuditLog.create({ data:{ action:'RADAR_SIGNAL', targetCollection:'RadarSignal', targetId: `radar_${Date.now()}_${extracted}`, actorUserId:'market-intel-radar', afterData: JSON.stringify({ signal: sig, match: m, sourceId: src.id }), createdAt: new Date() } }).catch(()=>{});
       // Throttle API
       await new Promise(r=>setTimeout(r, 600));
     }
@@ -131,6 +131,6 @@ export async function radarRunCycle(opts?: { sourcesLimit?: number; taxonomy?: s
 
 // Dashboard helper (mirrors MIR Next.js dashboard: approval workflow)
 export async function radarRecentSignals(limit=20): Promise<RadarSignal[]> {
-  const logs: any[] = await db.crmAuditLog.findMany({ where:{ entityType:'RadarSignal' }, orderBy:{ createdAt:'desc' }, take: limit }).catch(()=>[]);
-  return logs.map((l:any)=> { try { return JSON.parse(l.details).signal; } catch { return null } }).filter(Boolean);
+  const logs: any[] = await db.crmAuditLog.findMany({ where:{ targetCollection:'RadarSignal' }, orderBy:{ createdAt:'desc' }, take: limit }).catch(()=>[]);
+  return logs.map((l:any)=> { try { return JSON.parse(l.afterData).signal; } catch { return null } }).filter(Boolean);
 }

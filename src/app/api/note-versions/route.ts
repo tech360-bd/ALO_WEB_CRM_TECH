@@ -9,14 +9,15 @@ export async function GET(request: Request) {
       const entityId = url.searchParams.get("entityId") || url.searchParams.get("noteId");
       
       const versions = await db.portalTimelineEvent.findMany({
-        where: entityId ? { entityId } : {},
+        where: entityId ? { studentProfileId: entityId } : {},
         orderBy: { createdAt: "desc" },
         take: 20,
-      }).catch(() => []);
-      
+      });
+
       return NextResponse.json({ success: true, data: versions });
-    } catch {
-      return NextResponse.json({ success: true, data: [] });
+    } catch (err: any) {
+      console.error('[note-versions] error', err);
+      return NextResponse.json({ success: false, error: err?.message || 'Failed to load note versions' }, { status: 500 });
     }
   })(request);
 }

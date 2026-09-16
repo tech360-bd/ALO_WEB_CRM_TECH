@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Try unified FAQs first
-    let faqs = await db.unifiedFaq.findMany({
+    let faqs: any[] = await db.unifiedFaq.findMany({
       where,
       orderBy: { sortOrder: 'asc' },
       take: limit,

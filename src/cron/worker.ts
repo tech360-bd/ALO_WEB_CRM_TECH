@@ -45,9 +45,11 @@ async function withCronLock<T>(jobId: string, lockTtlMinutes: number, fn: () => 
           create: { lockKey, lockedAt: now, expiresAt },
         });
       } else {
+        // DeploymentSequence has no updatedAt — re-touching the row is a no-op;
+        // upsert only ensures the lock key exists.
         await db.deploymentSequence.upsert({
           where: { name: lockKey },
-          update: { updatedAt: now },
+          update: {},
           create: { name: lockKey },
         });
       }

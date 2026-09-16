@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
     else if (lower.includes('admission') || lower.includes('apply')) intent = 'admission';
 
     // Identity matching — Student ID, verified phone, WhatsApp number, verified email, social account ID, existing CRM lead, application ID, document ownership
-    let existingStudent = null;
-    let existingLead = null;
+    let existingStudent: any = null;
+    let existingLead: any = null;
 
     if (studentId) {
       existingStudent = await db.portalStudentProfile.findFirst({ where: { OR: [{ studentId }, { id: studentId }] } }).catch(() => null);

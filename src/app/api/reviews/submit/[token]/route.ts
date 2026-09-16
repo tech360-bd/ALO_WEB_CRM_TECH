@@ -121,7 +121,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
   // Audit log
   await db.auditLog.create({
     data: {
-      userId: invitation.studentId,
+      userId: invitation.studentId || "",
       action: "REVIEW_SUBMITTED",
       resource: "StudentReview",
       resourceId: review.id,

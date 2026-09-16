@@ -94,6 +94,7 @@ export async function POST(req: NextRequest) {
   await db.timelineEvent.create({
     data: {
       studentId: studentId!,
+      stage: "documents",
       type: "DOC_UPLOADED",
       title: `${docName} uploaded via WhatsApp`,
       description: `Document "${fileName}" uploaded from WhatsApp number ${phone}`,
