@@ -139,7 +139,7 @@ engine download itself, which is standard on GitHub runners.
   files are committed under `docs/workflows-ready/` (pushable — docs path) with a one-step install
   guide (`docs/workflows-ready/README.md`), superseding the old
   `docs/DEPLOY_PRODUCTION_WORKFLOW_READY.yml`. The commit that places them directly in
-  `.github/workflows/` (`6336aad`) is preserved locally and becomes pushable the moment the
+  `.github/workflows/` (`40c49cf`, content-identical to the originally prepared `6336aad`) is preserved locally and becomes pushable the moment the
   GitHub App installation is granted **Workflows: Read & write** for this repository.
 - A pull request from this branch documents the change set for review; because the remote branch
   cannot yet contain `ci.yml`, the PR itself triggers no CI run — the first real run will be the
@@ -200,10 +200,10 @@ engine download itself, which is standard on GitHub runners.
   2. docs-delivery commit — `docs/workflows-ready/` (4 repaired workflow files + install guide),
      `docs/CICD_WORKFLOWS.md`, this report, DB-integration test self-skip guard, secret-hygiene
      placeholder rewrites (all pushable paths)
-  3. `6336aad` (preserved locally, sits on top of 2) — the same four workflows installed directly
+  3. `40c49cf` (preserved locally, sits on top of the docs commits) — the same four workflows installed directly
      under `.github/workflows/`; **push blocked by the `workflows` permission** (blocker 0)
-- Push result: commit 1 + 2 pushed to `origin/arena/01a0aa5e-alo-education-z-ai` (see PR link in
-  the follow-up note); commit 3 intentionally not pushed until the permission is granted —
+- Push result: commits 1 + 2 (`e5957e6`, `424bb18`) and the evidence note `d64d00a` are pushed to
+  `origin/arena/01a0aa5e-alo-education-z-ai` (PR #11: /pull/11); commit 3 intentionally not pushed until the permission is granted —
   nothing was force-pushed and no remote history was rewritten.
 
 ## Final status
