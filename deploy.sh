@@ -1,5 +1,23 @@
 #!/usr/bin/env bash
+# ============================================================================
+# DEPRECATED for production deployments (2026-09-17).
+# The canonical deployment path is .github/workflows/deploy-production.yml.
+# This script runs `prisma db push --accept-data-loss` and auto-seeds — both
+# are destructive/irreversible and are NEVER performed by the workflow.
+# To run it anyway (e.g. for a throwaway local box), set:
+#   I_UNDERSTAND_THIS_SCRIPT_IS_DEPRECATED_AND_UNSAFE=yes
+# ============================================================================
 set -e
+
+if [ "${I_UNDERSTAND_THIS_SCRIPT_IS_DEPRECATED_AND_UNSAFE:-}" != "yes" ]; then
+  echo "REFUSING TO RUN: deploy.sh is DEPRECATED for production — use the" >&2
+  echo "GitHub Actions workflow (.github/workflows/deploy-production.yml)." >&2
+  echo "This script would run 'prisma db push --accept-data-loss' and auto-seed," >&2
+  echo "which can irreversibly alter a production database." >&2
+  echo "Override (only for throwaway environments):" >&2
+  echo "  I_UNDERSTAND_THIS_SCRIPT_IS_DEPRECATED_AND_UNSAFE=yes bash $0" >&2
+  exit 1
+fi
 
 echo "============================================================"
 echo "ALO Education — Production Deployment Script"

@@ -1,17 +1,51 @@
 #!/bin/bash
+# ============================================================================
+# DEPRECATED — DO NOT USE FOR PRODUCTION DEPLOYMENTS (status as of 2026-09-17)
+# ============================================================================
+# The canonical, tested deployment path is the GitHub Actions workflow:
+#   .github/workflows/deploy-production.yml
+# (gates: lockfile install, lint, typecheck, blocking tests, production build,
+#  exact-SHA checkout, host-key pinning, backups, bounded rollback).
+#
+# This legacy script is kept for history only because it was referenced by
+# earlier audits. Its original hazards are now neutralized in place:
+#   * it used to DELETE package-lock.json (rm -rf ... package-lock.json) and
+#     `npm install` — breaking reproducible installs. Fixed: lockfile is kept
+#     and `npm ci` is used.
+#   * it used to REWRITE package.json dependency versions (npm pkg set) to a
+#     hardcoded mapping — drifting from the committed lockfile. Removed.
+#   * it used to APPEND to the server .env and print "DEPLOYMENT SUCCESSFUL"
+#     unconditionally. The .env append remains but only ever writes an
+#     explicit REPLACE_WITH_* placeholder, and the success banner now prints
+#     only if every step exited 0 (`set -euo pipefail`).
+#
+# Running it requires explicit acknowledgment via environment variable:
+#   I_UNDERSTAND_THIS_SCRIPT_IS_DEPRECATED_AND_UNSAFE=yes bash alo-vps-deploy.sh
+# ============================================================================
+set -euo pipefail
+
+if [ "${I_UNDERSTAND_THIS_SCRIPT_IS_DEPRECATED_AND_UNSAFE:-}" != "yes" ]; then
+  echo "REFUSING TO RUN: alo-vps-deploy.sh is DEPRECATED and superseded by" >&2
+  echo ".github/workflows/deploy-production.yml. It previously deleted" >&2
+  echo "package-lock.json, rewrote pinned dependency versions, appended to .env," >&2
+  echo "and reported success unconditionally." >&2
+  echo "" >&2
+  echo "For deployments use: git push to main (workflow deploys the exact" >&2
+  echo "validated SHA), or Actions → 'Recovery — Deploy Exact Commit'." >&2
+  echo "" >&2
+  echo "If you truly need this script, run it with:" >&2
+  echo "  I_UNDERSTAND_THIS_SCRIPT_IS_DEPRECATED_AND_UNSAFE=yes bash $0" >&2
+  exit 1
+fi
+
 echo "=============================================================="
-echo " ALO EDUCATION: VPS ARCHITECTURE & BUILD DEPLOYMENT"
+echo " ALO EDUCATION: VPS ARCHITECTURE & BUILD DEPLOYMENT (LEGACY — DEPRECATED)"
 echo "=============================================================="
 
-# 1. ENFORCE VERSIONS IN PACKAGE.JSON
-echo "[1/6] Locking exact framework versions from audit mapping..."
-npm pkg set dependencies.next="16.2.12"
-npm pkg set dependencies.react="19.2.8"
-npm pkg set dependencies.react-dom="19.2.8"
-npm pkg set dependencies.tailwindcss="4.3.3"
-npm pkg set dependencies.@prisma/client="6.19.3"
-npm pkg set devDependencies.prisma="6.19.3"
-npm pkg set devDependencies.typescript="5.9.3"
+# 1. (REMOVED) Version rewriting — the committed package-lock.json is the
+#    single source of truth for dependency versions; rewriting package.json
+#    here caused lockfile drift and non-reproducible builds.
+echo "[1/6] Skipping version rewriting (removed — package-lock.json is authoritative)."
 
 # 2. FIX NEXT.JS 16 MIDDLEWARE WARNING
 echo "[2/6] Migrating deprecated middleware to proxy convention..."
@@ -44,16 +78,19 @@ if [ -f "src/lib/storage-service.ts" ]; then
 fi
 
 # 4. CLEAN CACHE & INSTALL DEPENDENCIES
-echo "[4/6] Cleaning Next.js cache and installing dependencies..."
-rm -rf .next node_modules package-lock.json
-npm install
+# (package-lock.json is NO LONGER deleted — reproducible installs are required)
+echo "[4/6] Cleaning Next.js cache and installing dependencies from the committed lockfile..."
+rm -rf .next node_modules
+npm ci
 
 # 5. GENERATE PRISMA ORM FOR MARIADB
 echo "[5/6] Generating Prisma Client for MariaDB 11.4.13..."
-# Ensure MariaDB URL exists in .env
-if ! grep -q "DATABASE_URL" .env; then
+# Ensure MariaDB URL exists in .env (placeholder ONLY — never a real credential)
+if [ -f .env ] && ! grep -q "DATABASE_URL" .env; then
   echo "DATABASE_URL=\"mysql://root:REPLACE_WITH_DB_PASSWORD@localhost:3306/alo_education\"" >> .env
-  echo "  -> Added placeholder DATABASE_URL to .env. Please update with actual MariaDB credentials."
+  echo "  -> Added placeholder DATABASE_URL to .env. You MUST replace REPLACE_WITH_DB_PASSWORD with the real credential."
+elif [ ! -f .env ]; then
+  echo "  -> .env not present; create it from .env.production.example before starting the app." >&2
 fi
 npx prisma generate
 
@@ -61,6 +98,8 @@ npx prisma generate
 echo "[6/6] Executing Next.js Production Build (Turbopack)..."
 npm run build
 
+# Reaching this banner means every step above exited 0 (set -euo pipefail):
+# the success message is now conditional on actual success.
 echo "=============================================================="
-echo " VPS DEPLOYMENT SUCCESSFUL"
+echo " VPS BUILD COMPLETE (LEGACY SCRIPT — remember: deprecated for deployments)"
 echo "=============================================================="

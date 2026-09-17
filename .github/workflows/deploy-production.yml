@@ -15,6 +15,12 @@
 #   * least-privilege permissions (contents: read)
 #   * SSH host key PINNED via vars.DEPLOY_HOST_SSH_FINGERPRINT (host-key
 #     checking is NOT disabled; missing fingerprint fails the run early)
+#   * SSH port is REQUIRED via secrets.DEPLOY_PORT — there is NO silent
+#     fallback to port 22; the gate rejects a missing, non-numeric, or
+#     out-of-range port with an actionable error before anything runs
+#   * a read-only TCP preflight classifies SSH reachability (DNS / refused /
+#     filtered-timeout / open) before the authenticated SSH step, so a network
+#     problem can never be mistaken for a credential problem (and vice versa)
 #   * actions pinned to reviewed immutable commit SHAs (see comments)
 #   * VPS git fetch authenticates with the ephemeral GITHUB_TOKEN via an
 #     inline credential helper — the token is never written to .git/config,
@@ -77,7 +83,7 @@ env:
   PROTECTED_PM2: 'alo-learning-journey'
   PROTECTED_PORT: '3017'
   PROTECTED_DOMAIN: 'learn.aloeducation.com'
-  INTENDED_DEPLOY_DIR: '/root/alo-github-main'
+  INTENDED_DEPLOY_DIR: '/root/alo-github-main-new'
 
 jobs:
   # ==========================================================================
@@ -147,7 +153,29 @@ jobs:
               echo "✓ $v present"
             fi
           done
-          if [ -n "${DEPLOY_PORT:-}" ]; then echo "✓ DEPLOY_PORT present"; else echo "ℹ DEPLOY_PORT not set — SSH will use port 22"; fi
+          # DEPLOY_PORT is MANDATORY (policy: no silent fallback to port 22).
+          # It must be an explicit, numeric, in-range TCP port.
+          if [ -z "${DEPLOY_PORT:-}" ]; then
+            echo "::error::DEPLOY_PORT is missing — the SSH port must be configured explicitly; the silent fallback to port 22 was removed by deployment policy."
+            echo "::error::Add repository secret DEPLOY_PORT (Settings → Secrets and variables → Actions) with the VPS's REAL SSH port. Verify it on the server console first:  ss -tlnp | grep sshd"
+            missing=1
+          else
+            case "$DEPLOY_PORT" in
+              0[0-9]*)
+                echo "::error::DEPLOY_PORT '$DEPLOY_PORT' has a leading zero — provide the port as a plain decimal number without leading zeros."
+                missing=1 ;;
+              ''|*[!0-9]*)
+                echo "::error::DEPLOY_PORT must be a positive integer (1–65535) — got a non-numeric value."
+                missing=1 ;;
+              *)
+                if [ "$((10#$DEPLOY_PORT))" -ge 1 ] && [ "$((10#$DEPLOY_PORT))" -le 65535 ]; then
+                  echo "✓ DEPLOY_PORT present (numeric, in range 1–65535)"
+                else
+                  echo "::error::DEPLOY_PORT '$DEPLOY_PORT' is out of range — it must be between 1 and 65535."
+                  missing=1
+                fi ;;
+            esac
+          fi
           if [ -z "${HOST_FINGERPRINT:-}" ]; then
             echo "::error::Repository variable DEPLOY_HOST_SSH_FINGERPRINT is missing — host-key pinning is mandatory."
             echo "::error::Create it with:  ssh-keyscan -p <DEPLOY_PORT> <DEPLOY_HOST> | ssh-keygen -lf -   (use the ed25519 line, format SHA256:...)"
@@ -267,6 +295,52 @@ jobs:
     timeout-minutes: 60
     environment: production
     steps:
+      - name: TCP preflight — classify SSH reachability before authentication
+        # Read-only diagnostic: connects (and immediately disconnects) to the
+        # SSH port WITHOUT credentials. Distinguishes network-level failures
+        # (DNS, refused, filtered/timeout) from authentication/host-key
+        # failures so incident reports name the real cause. Never weakens
+        # host-key checking (the deploy step still pins the fingerprint).
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+        run: |
+          set -euo pipefail
+          CLASS="unknown"
+          # IP literals (v4/v6) need no name resolution — only real hostnames go through getent
+          if [[ "$DEPLOY_HOST" =~ ^[0-9]+(\.[0-9]+){3}$ ]] || [[ "$DEPLOY_HOST" == *:* ]]; then
+            echo "✓ DEPLOY_HOST is an IP literal — skipping name resolution"
+          elif ! getent hosts "$DEPLOY_HOST" >/dev/null 2>&1; then
+            CLASS="dns-failure"
+            echo "::error::TCP preflight: DNS resolution FAILED for '$DEPLOY_HOST' — check the DEPLOY_HOST secret and the server's DNS record."
+          else
+            echo "✓ DNS resolves for $DEPLOY_HOST"
+            START=$(date +%s)
+            if timeout 15 bash -c "exec 3<>/dev/tcp/$DEPLOY_HOST/$DEPLOY_PORT" 2>/dev/null; then
+              CLASS="open"
+              echo "✓ TCP preflight: port $DEPLOY_PORT is REACHABLE on $DEPLOY_HOST (auth/host-key verification happens in the deploy step)"
+            else
+              RC=$?
+              ELAPSED=$(( $(date +%s) - START ))
+              if [ "$RC" -eq 124 ]; then
+                CLASS="filtered-or-timeout"
+                echo "::error::TCP preflight: connection to $DEPLOY_HOST:$DEPLOY_PORT TIMED OUT after ${ELAPSED}s — port filtered by a firewall, host down, or wrong port."
+              else
+                CLASS="refused-or-unreachable"
+                echo "::error::TCP preflight: connection to $DEPLOY_HOST:$DEPLOY_PORT REFUSED/UNREACHABLE after ${ELAPSED}s — nothing listening on that port (wrong DEPLOY_PORT?) or host/network unreachable."
+              fi
+            fi
+          fi
+          {
+            echo "tcp_preflight_class=$CLASS"
+          } >> "$GITHUB_OUTPUT" || true
+          echo "TCP preflight classification: $CLASS"
+          if [ "$CLASS" != "open" ]; then
+            echo "::error::TCP preflight did not classify the target as reachable (class: $CLASS) — aborting BEFORE the SSH step so the failure is classified as a network/configuration problem, not an authentication one."
+            exit 1
+          fi
+
       - name: Deploy via SSH
         id: deploy_ssh
         # appleboy/ssh-action v1.2.5 — pinned; host key verified via fingerprint input
@@ -287,7 +361,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          port: ${{ secrets.DEPLOY_PORT }}
           fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
           envs: DEPLOY_REF,SKIP_MIGRATIONS,APP_PORT,PM2_NAME,PRIMARY_DOMAIN,TARGET_REPO,PROTECTED_PM2,PROTECTED_PORT,PROTECTED_DOMAIN,INTENDED_DEPLOY_DIR,GH_FETCH_TOKEN
           command_timeout: 40m
@@ -313,8 +387,10 @@ jobs:
 
             # ---- 1. Choose the deployment directory from GROUND TRUTH ----
             # Priority: (a) the directory the live PM2 process actually runs from,
-            # (b) an existing checkout whose git remote matches this repository,
-            # (c) the intended directory /root/alo-github-main.
+            # (b) an existing checkout whose git remote matches this repository
+            #     (candidates: the intended /root/alo-github-main-new, then the
+            #     legacy /root/alo-github-main, /root/alo-live, /opt/alo-education),
+            # (c) the intended directory /root/alo-github-main-new.
             DEPLOY_DIR=""
             if command -v pm2 >/dev/null 2>&1; then
               LIVE_CWD=$(pm2 describe "$PM2_NAME" 2>/dev/null | awk -F'│' '/exec cwd/ {gsub(/^[ \t]+|[ \t│]+$/,"",$3); print $3}' | head -n1 || true)
@@ -324,7 +400,7 @@ jobs:
               fi
             fi
             if [ -z "$DEPLOY_DIR" ]; then
-              for d in "$INTENDED_DEPLOY_DIR" "/root/alo-github-main-new" "/root/alo-live" "/opt/alo-education"; do
+              for d in "$INTENDED_DEPLOY_DIR" "/root/alo-github-main" "/root/alo-live" "/opt/alo-education"; do
                 if [ -d "$d/.git" ]; then
                   REMOTE=$(cd "$d" && git remote get-url origin 2>/dev/null | sed -E 's#//[^@]*@#//***@#' || echo "")
                   if echo "$REMOTE" | grep -q "$TARGET_REPO"; then
@@ -521,7 +597,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          port: ${{ secrets.DEPLOY_PORT }}
           fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
           envs: APP_PORT,PM2_NAME,TARGET_REPO,INTENDED_DEPLOY_DIR,GH_FETCH_TOKEN
           command_timeout: 30m
@@ -534,7 +610,7 @@ jobs:
               LIVE_CWD=$(pm2 describe "$PM2_NAME" 2>/dev/null | awk -F'│' '/exec cwd/ {gsub(/^[ \t]+|[ \t│]+$/,"",$3); print $3}' | head -n1 || true)
               [ -n "${LIVE_CWD:-}" ] && [ -d "$LIVE_CWD/.git" ] && DEPLOY_DIR="$LIVE_CWD"
             fi
-            for d in "$INTENDED_DEPLOY_DIR" "/root/alo-github-main-new" "/root/alo-live" "/opt/alo-education"; do
+            for d in "$INTENDED_DEPLOY_DIR" "/root/alo-github-main" "/root/alo-live" "/opt/alo-education"; do
               [ -z "$DEPLOY_DIR" ] && [ -f "$d/.deploy-prev-commit" ] && DEPLOY_DIR="$d"
             done
             if [ -z "$DEPLOY_DIR" ] || [ ! -f "$DEPLOY_DIR/.deploy-prev-commit" ]; then
