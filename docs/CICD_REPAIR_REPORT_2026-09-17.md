@@ -284,3 +284,32 @@ CI genuinely green on GitHub; production deployment blocked solely by the missin
 trust-on-first-use). After it is added, re-run `35162872547` or push to `main` for the first
 supervised deployment; migrations remain skipped by default (`SKIP_MIGRATIONS=true`) until the
 `docs/db` backup/review gate is completed.
+
+---
+
+## CORRECTION (2026-09-17, full-project audit — supersedes ADDENDUM point 6 where contradictory)
+
+Addendum point 6 described run `35162872547` as "the gate's configuration presence check failed
+fast by design … deploy job SKIPPED, production untouched". **The GitHub jobs API contradicts
+this for that run**: in `35162872547` the *entire* validate-and-build gate succeeded (every step
+green, including `Verify deployment configuration presence`), and the `Deploy to VPS` job **did
+run and failed inside the `Deploy via SSH` step**, with the automatic rollback step failing
+identically. The same pattern held for dispatch run `35176144484` (2026-09-17 02:54 UTC, same
+SHA `d425d458cbf4`). The original point-6 text is preserved above unmodified as the historical
+record; the corrected interpretation is:
+
+- Secrets `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` **and** the repository variable
+  `DEPLOY_HOST_SSH_FINGERPRINT` all passed the gate's presence check in both runs.
+- The failure sits in the SSH connect/auth/host-key layer (raw step logs are no longer
+  downloadable from the audit environment — the Azure log-storage endpoint is unreachable from
+  it; the jobs-API step list is the surviving evidence). Rollback failing identically indicates
+  the SSH session most likely never established, i.e. production was probably not modified by
+  either run — recorded honestly as "most likely", not as certainty.
+- Whether `DEPLOY_PORT` was set at the time is not recoverable from available evidence.
+
+Related verified events of 2026-09-17: monitor run `35201979705` (08:51 UTC) FAILED its public
+production health checks, and HTTP 502 was observed at the public endpoint at 19:45:40 UTC —
+production is down/degraded independent of any deployment. Investigation/repair runbook:
+`docs/VPS_INCIDENT_RUNBOOK_2026-09-17.md`. Configuration hardening applied the same day:
+`DEPLOY_PORT` mandatory (no silent port-22 fallback, 1–65535 validation) and a read-only TCP
+preflight (DNS/refused/filtered/open classification) before the SSH step.

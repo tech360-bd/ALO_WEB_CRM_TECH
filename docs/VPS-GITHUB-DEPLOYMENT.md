@@ -25,7 +25,7 @@ cat YOUR_DEPLOY_DIR/.env 2>&1 | head -n 20  # verify .env exists (do not cat sec
 ls -lh YOUR_DEPLOY_DIR/storage YOUR_DEPLOY_DIR/uploads 2>&1 | head -n 20
 ```
 
-Document the actual values: `DEPLOY_HOST=YOUR_VPS_HOST`, `DEPLOY_USER=YOUR_SSH_USER`, `DEPLOY_PORT=YOUR_SSH_PORT` (usually 22), `DEPLOY_DIR=/root/alo-live` (or whatever you saw), `PM2_NAME=alo-education`, `HEALTH_PORT=3000` (or 3025 if Caddy expects 3025).
+Document the actual values: `DEPLOY_HOST=YOUR_VPS_HOST`, `DEPLOY_USER=YOUR_SSH_USER`, `DEPLOY_PORT=YOUR_SSH_PORT` (**required — no port-22 fallback since 2026-09-17; verify with `ss -tlnp | grep sshd`**, historical reports recorded `57813`), `DEPLOY_DIR=/root/alo-github-main-new` (intended; the workflow auto-detects the live PM2 `exec cwd` first), `PM2_NAME=alo-education`, `HEALTH_PORT=3044` (must equal the app `PORT`; `3000`/`3025` are legacy values — 3044 is the verified production port).
 
 ---
 
@@ -76,7 +76,7 @@ ssh -i ~/.ssh/alo-education-deploy -p YOUR_SSH_PORT YOUR_SSH_USER@YOUR_VPS_HOST 
 | `DEPLOY_HOST` | `YOUR_VPS_HOST` | e.g. `65.108.91.110` or `aloeducation.com` |
 | `DEPLOY_USER` | `YOUR_SSH_USER` | e.g. `deploy` or `root` |
 | `DEPLOY_SSH_KEY` | *private key file content* | `cat ~/.ssh/alo-education-deploy` (including `-----BEGIN...`/`-----END...`) |
-| `DEPLOY_PORT` | `YOUR_SSH_PORT` | e.g. `22` or `2222` |
+| `DEPLOY_PORT` | `YOUR_SSH_PORT` | **required** — the real sshd port, verified on the server (`ss -tlnp \| grep sshd`); no fallback to 22 |
 
 Never print secret values in logs — the workflow masks them with `***`.
 

@@ -1,6 +1,6 @@
 # Environment Variables — ALO Education CRM
 
-**Source of truth:** `.env.example` (and `.env.production.example` for VPS). Never commit `.env`, `.env.production`, `.env.local`. Secrets only in VPS `/root/alo-live/.env` and GitHub Actions Secrets (DEPLOY_*). **Port:** production `3044` (Caddy `reverse_proxy 127.0.0.1:3044`, `HEALTH_PORT=3044`, `PORT=3044`). Dev may run `3000` via override but prod MUST be `3044`.
+**Source of truth:** `.env.example` (and `.env.production.example` for VPS). Never commit `.env`, `.env.production`, `.env.local`. Secrets only in the VPS deploy dir's `.env` (intended `/root/alo-github-main-new/.env` — corrected 2026-09-17; the older `/root/alo-live` path is a legacy candidate only) and GitHub Actions Secrets (`DEPLOY_*` — exact names in `docs/DEPLOYMENT.md` §1). **Port:** production `3044` (reverse proxy `127.0.0.1:3044`, `PORT=3044` in `ecosystem.config.cjs`). Dev may run `3000` via override but prod MUST be `3044`.
 
 > For each variable: purpose, required/optional, which module reads it, where to obtain, secret?, restart required? Do NOT report integrated merely because in .env — see audit column.
 
@@ -103,10 +103,10 @@
 ## Deployment
 | Variable | Purpose | Req/Opt | Module | Where | Secret | Restart |
 |---|---|---|---|---|---|---|
-| DEPLOY_DIR | VPS path | Required deploy | GH Action | `/root/alo-live` (actual prod path per workflow) | no | yes |
+| DEPLOY_DIR | VPS path | Required deploy | GH Action | `/root/alo-github-main-new` intended (workflow auto-detects: live PM2 `exec cwd` first, then a checkout whose remote matches this repo) — corrected 2026-09-17 | no | yes |
 | PM2_NAME | pm2 id | Required | ecosystem | `alo-education` | no | yes |
 | HEALTH_PORT | health check port | Required | workflow/cron | `3044` (must equal PORT) | no | yes |
-| DEPLOY_HOST etc | GH Secrets | Required deploy | `appleboy/ssh-action` | GH repo Settings->Secrets | **yes** | — (CI only) |
+| DEPLOY_HOST etc | GH Secrets | Required deploy | `appleboy/ssh-action` | GH repo Settings->Secrets — exact names: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PORT` (**required** since 2026-09-17), var `DEPLOY_HOST_SSH_FINGERPRINT` | **yes** | — (CI only) |
 
 ## How to verify
 - `rg -n "process.env.MOLX_URL" src/` — must hit `molx-firecrawl-client.ts` (we do).
