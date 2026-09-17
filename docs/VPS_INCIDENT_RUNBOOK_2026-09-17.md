@@ -16,6 +16,7 @@ VERIFIED facts from INFERENCE.**
 | 2026-09-17 08:51 | Scheduled Health & Dependency Monitor | `35201979705` | Job `Public production health` FAILED at `Check production endpoints` → public HTTPS health was already broken. |
 | 2026-09-17 13:56 | CI dispatch on `main` | `35230323815` | CI green (code healthy; unrelated to production state). |
 | 2026-09-17 19:45:40 | Manual observation (reported by owner) | — | `https://aloeducation.com/api/health` returned **HTTP 502** (bad gateway — reverse proxy reachable, upstream app not serving). |
+| 2026-09-17 22:22 | PR #13 merged → `main` = `16e757c` (mandatory `DEPLOY_PORT` gate + TCP preflight) | run `35281659466` | Gate failed FAST at *Verify deployment configuration presence* with annotation **"DEPLOY_PORT is missing"**; `Deploy to VPS` job **SKIPPED** → production untouched. **This confirms the root cause of every class-C deploy failure: the `DEPLOY_PORT` secret was never set, and the old workflow silently dialed port 22** (the VPS SSH port is not 22 — historical reports record 57813). The deploy path can never silently guess the port again. |
 
 ## 2. What the evidence does and does NOT establish
 
@@ -27,12 +28,14 @@ VERIFIED facts from INFERENCE.**
 - Production was unhealthy at 08:51 UTC independent of any deployment (no deploy has ever
   succeeded — 0 successes in 31+ runs of this workflow), so the 502 is NOT deployment-caused.
 
-**Inference (most likely, requires console confirmation):** the SSH failures are
-connection-level — wrong `DEPLOY_PORT` (secret may hold a port other than the one sshd
-listens on; historical reports recorded `57813`), sshd down/reconfigured, firewall/cloud
-security-group blocking GitHub Actions IPs, or a host-key fingerprint mismatch
-(`DEPLOY_HOST_SSH_FINGERPRINT` set but not matching the real host key). A rejected *passwordless
-private key* (public key not in the user's `authorized_keys`) is the other candidate.
+**Inference → CONFIRMED ROOT CAUSE (2026-09-17 22:22 UTC):** run `35281659466`'s gate
+annotations prove **`DEPLOY_PORT` was never configured**; the pre-fix workflow's
+`${{ secrets.DEPLOY_PORT || 22 }}` therefore dialed **port 22** on every attempt while the
+VPS's real SSH port is not 22 (historical reports consistently record **57813**). That
+explains both class-C failures AND their identical rollback failures — the SSH sessions never
+established, so production was never modified by any deploy run. Remaining console actions:
+verify the real port, set the secret, re-verify the host fingerprint and authorized key
+(§4 below).
 
 **Unknown (not recoverable from here):** the exact stderr of the two SSH steps (raw logs
 unavailable), whether `DEPLOY_PORT` was set at all at run time, current sshd/firewall state,
