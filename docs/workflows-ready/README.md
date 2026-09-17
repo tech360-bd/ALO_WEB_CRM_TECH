@@ -1,53 +1,47 @@
-# Ready-to-install GitHub workflows (repaired CI/CD system)
+# Workflows: canonical location = `.github/workflows/` (INSTALLED & ACTIVE)
 
-**Why this folder exists:** the session's GitHub App token is refused pushes that create or
-update `.github/workflows/*` ("refusing to allow a GitHub App to create or update workflow …
-without `workflows` permission"). The four repaired workflow files are therefore delivered here
-so a repository admin can install them in one step. This mirrors the pattern previously used in
-this repository (`docs/DEPLOY_PRODUCTION_WORKFLOW_READY.yml`, which is now **superseded** by
-`deploy-production.yml` in this folder — do not install the old one).
+**Status (2026-09-17): the repaired CI/CD system is installed, recognized by GitHub, and has
+executed real jobs. This folder no longer contains workflow copies** — keeping them would
+maintain competing versions of the same workflows (they went stale the moment hotfixes landed).
+The single source of truth:
 
-## Files
-
-| File | Install as | Purpose |
-|---|---|---|
-| `ci.yml` | `.github/workflows/ci.yml` | PR quality gate (lint, typecheck, blocking tests, prisma validate, build). No deploy capability, no secrets — fork-PR safe. |
-| `deploy-production.yml` | `.github/workflows/deploy-production.yml` (**replaces the current broken 25-line fragment on main**) | Validate exact SHA on runner → SSH deploy that SHA to the VPS (PM2 `alo-education`, port 3044) → health checks → automatic bounded rollback on failure. Protects `learn.aloeducation.com` / port 3017 / `alo-learning-journey`. |
-| `deploy-recovery.yml` | `.github/workflows/deploy-recovery.yml` | Manual recovery: redeploy an exact 40-hex-char commit SHA through the same protected pipeline. |
-| `health-monitor.yml` | `.github/workflows/health-monitor.yml` | Daily public health checks of production + weekly (Monday) dependency audit. |
-
-## Install (repository admin, on a machine with push rights)
-
-```bash
-git checkout main && git pull
-mkdir -p .github/workflows
-cp docs/workflows-ready/ci.yml \
-   docs/workflows-ready/deploy-production.yml \
-   docs/workflows-ready/deploy-recovery.yml \
-   docs/workflows-ready/health-monitor.yml \
-   .github/workflows/
-git add .github/workflows && git commit -m "ci: install repaired four-workflow delivery pipeline (from docs/workflows-ready)" && git push
+```text
+.github/workflows/ci.yml                 — "CI — Pull Request Validation"        (active, id 360057612)
+.github/workflows/deploy-production.yml  — "ALO Education Production Deployment" (active, id 356862745)
+.github/workflows/deploy-recovery.yml    — "Recovery — Deploy Exact Commit"      (active, id 360076097)
+.github/workflows/health-monitor.yml     — "Health & Dependency Monitor"         (active, id 360076098)
 ```
 
-Or, if this branch is merged via PR after the workflows permission is granted (see below), the
-files under `.github/workflows/` on this branch are already the same content — the copies in this
-folder can then be deleted in a follow-up.
+## Activation history (real evidence, no fabrication)
 
-## Required configuration before the first deploy run (names only, never values)
+| When (UTC) | Event | Evidence |
+|---|---|---|
+| 2026-09-16 22:51 | First real CI run after install (head `894ba68`) | Run `35159653083` — FAILED at `Prisma validate` (exit 1): clean runner has no `.env`, CLI cannot resolve `env("DATABASE_URL")` |
+| 2026-09-16 23:13 | Hotfix `77c46cf` (step-scoped dummy `DATABASE_URL` for validate/generate) | Run `35161361303` — validate/generate/lint PASSED; FAILED at `Typecheck` (exit 134 = V8 heap OOM on ~7GB runner) |
+| 2026-09-16 23:19 | Hotfix `29a7bab` (job-local 8G swap + `--max-old-space-size=6144`) | Run `35161864642` — **SUCCESS**, all steps green (11m48s), PR #11 check **pass** |
+| 2026-09-16 23:34 | PR #11 merged → `main` = `d425d458cbf4` (broken 25-line fragment replaced) | Run `35162872547` — real jobs; gate step `Verify deployment configuration presence` **failed fast by design**: repository variable `DEPLOY_HOST_SSH_FINGERPRINT` missing → deploy job SKIPPED, production untouched |
 
-1. Secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` (dedicated ed25519 deploy key —
-   least privilege), optional `DEPLOY_PORT`.
-2. Variable: `DEPLOY_HOST_SSH_FINGERPRINT` — create with
-   `ssh-keyscan -p <PORT> <HOST> | ssh-keygen -lf -` (use the ed25519 `SHA256:...` value;
-   verify it out-of-band before trusting it).
-3. Environment `production` (optionally with required reviewers).
-4. Branch protection on `main`: require PR + the "CI — Pull Request Validation" check.
+The "0 jobs / workflow file issue" loop is **destroyed**: since the fragment's replacement, every
+push creates real, named jobs; the 4 junk startup-failure runs (e.g. `35141310858`) were the
+fragment's last gasps.
 
-Full checklist with rotation steps: `docs/CICD_WORKFLOWS.md` §3.
-Evidence for why the old pipeline failed 29/29: `docs/CICD_REPAIR_REPORT_2026-09-17.md`.
+## The ONE outstanding configuration item (owner action)
 
-## Alternative: unblock automated delivery
+Add repository **variable** `DEPLOY_HOST_SSH_FINGERPRINT` (the deploy gate's own error message
+gives the recipe; verify the value out-of-band before trusting it — never TOFU):
 
-Grant the Arena GitHub App installation **Workflows: Read & write** for this repository
-(repo Settings → GitHub Apps → configure the Arena app → Repository permissions), then the
-session branch can be pushed and merged normally — no manual copying needed.
+```bash
+ssh-keyscan -p <DEPLOY_PORT> <DEPLOY_HOST> | ssh-keygen -lf -   # use the ed25519 line: SHA256:...
+```
+
+Secrets `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` passed the gate's presence check in run
+`35162872547` (only the fingerprint variable was flagged). After the variable is added, re-run
+`35162872547` (or push any code change to `main`) for the first supervised deployment.
+
+Full checklist, rotation steps and runbooks: `../CICD_WORKFLOWS.md`.
+Forensics of the original 29 failures: `../CICD_REPAIR_REPORT_2026-09-17.md`.
+
+*Historical note: `docs/DEPLOY_PRODUCTION_WORKFLOW_READY.yml` (an earlier single-file proposal,
+never installed) and the interim `docs/workflows-ready/*.yml` copies were deleted on 2026-09-17
+to prevent competing workflow versions. `docs/patches/WORKFLOW_3044_FIX.patch` is kept as
+historical reference only.*

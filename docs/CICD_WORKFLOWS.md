@@ -5,6 +5,16 @@
 (auto-detected on the VPS: live PM2 `exec cwd` wins, then remote-matching checkout, then the intended dir).
 **Protected, never touched:** `learn.aloeducation.com` → PM2 `alo-learning-journey` → port **3017**.
 
+> **LIVE STATUS (2026-09-17): all four workflows are INSTALLED in `.github/workflows/` and ACTIVE
+> on GitHub** (ids: CI 360057612 · deploy 356862745 · recovery 360076097 · monitor 360076098).
+> CI ran **green** on a real runner: run `35161864642` (all steps pass, PR #11 check pass, merged
+> to `main` = `d425d458cbf4`). The production gate executed for real (run `35162872547`) and
+> failed fast **by design**: repository variable `DEPLOY_HOST_SSH_FINGERPRINT` is missing —
+> the single outstanding owner action before the first supervised deployment
+> (recipe: `ssh-keyscan -p <DEPLOY_PORT> <DEPLOY_HOST> | ssh-keygen -lf -`, verify out-of-band).
+> Evidence chain: `docs/CICD_REPAIR_REPORT_2026-09-17.md` (ADDENDUM 2026-09-17) and
+> `docs/workflows-ready/README.md`.
+
 ---
 
 ## 1. Why this document exists — the 29 failed runs

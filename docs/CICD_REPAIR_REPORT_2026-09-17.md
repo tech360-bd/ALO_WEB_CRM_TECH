@@ -211,7 +211,11 @@ engine download itself, which is standard on GitHub runners.
 
 ## Final status
 
-**Code repaired, not deployed.**
+> **SUPERSEDED for delivery status by the "ADDENDUM 2026-09-17: ACTIVATION" at the end of this
+> report** (workflows are now installed and ACTIVE on GitHub; CI ran green; merged to main).
+> The section below is preserved as the accurate state at original write time.
+
+**Code repaired, not deployed.** *(at write time — see addendum)*
 
 - The 29-failure pipeline is diagnosed from real run evidence and rebuilt as a four-workflow
   system with gates, pinning, host-key verification, exact-SHA deploys, rollback, and monitoring.
@@ -225,3 +229,58 @@ engine download itself, which is standard on GitHub runners.
 - No production deployment occurred; deploy execution requires owner-configured secrets and a
   merge to `main`. No claim of "deployed", "live", or "all workflows fixed in production" is
   made — the first supervised run is the moment those claims can be evidenced.
+
+---
+
+## ADDENDUM 2026-09-17 (later same mission): ACTIVATION — workflows installed, executed, CI green, merged to main
+
+The sections above describe the state at write time (workflows blocked from `.github/workflows/`
+by the GitHub App `workflows` permission, delivered as `docs/workflows-ready/` copies). That
+blocker was resolved and the pipeline went live. Real events, real run IDs:
+
+1. **Permission granted / owner install.** The four workflows were installed into
+   `.github/workflows/` on the session branch (commit `894ba68`, byte-identical to the validated
+   copies) and the App token subsequently accepted workflow-file pushes.
+2. **Run `35159653083`** (CI — Pull Request Validation, head `894ba68`) — first REAL run:
+   named workflow, one real job, real steps. **FAILED at `Prisma validate` (exit 1).**
+   Root cause: on a clean runner there is no `.env` (correctly never committed) and no
+   `DATABASE_URL`, so the Prisma CLI cannot resolve the schema's `env("DATABASE_URL")`.
+   Locally masked because validation used the WASM `validate()` API (no env resolution) and
+   builds always ran with dummy env. Fix `77c46cf`: step-scoped dummy `DATABASE_URL` on the
+   runner-side validate/generate steps (ci.yml + deploy-production.yml gate). Deliberately NOT
+   job-scoped — the Tests step must see no `DATABASE_URL` so DB-integration files self-skip.
+3. **Run `35161361303`** (head `77c46cf`) — validate ✓ generate ✓ lint ✓, **FAILED at
+   `Typecheck` (exit 134)** = V8 heap abort: `tsc --noEmit` on this repo exceeds the default
+   ~4GB old-space on standard (~7GB RAM) runners — the same OOM class that required 4GB heap
+   + swap locally. Fix `29a7bab`: job-local 8G swapfile (guarded) + `NODE_OPTIONS
+   --max-old-space-size=6144` on the Typecheck step (both ci.yml and the deploy gate; recovery
+   inherits via `workflow_call`).
+4. **Run `35161864642`** (head `29a7bab`) — **SUCCESS. Every step green** (11m48s): npm ci from
+   lockfile, secret-leak scan, prisma validate/generate, full-repo lint, typecheck, blocking
+   tests (DB-integration suite SKIPPED with reason — reported as skipped, not passed), production
+   build on the runner with `.next/standalone/server.js` verified. PR #11 check: **pass**.
+5. **PR #11 merged** per repo policy after green CI + diff review + clean secret scan of all
+   3,735 added lines. `main` = **`d425d458cbf4`** — the broken 25-line fragment is gone from
+   main; the four repaired workflows are canonical.
+6. **Run `35162872547`** (ALO Education Production Deployment, push to main `d425d45`) — real
+   jobs created ("Validate & Build (gate)", "Deploy to VPS"). The gate executed checkout → exact-SHA
+   resolution → repository identity → **configuration presence check, which failed fast by
+   design**: repository variable `DEPLOY_HOST_SSH_FINGERPRINT` is missing (host-key pinning is
+   mandatory; annotation includes the `ssh-keyscan | ssh-keygen -lf -` recipe). Secrets
+   `DEPLOY_HOST`/`DEPLOY_USER`/`DEPLOY_SSH_KEY` passed the presence check. Deploy job SKIPPED —
+   **production untouched, no SSH attempted, no partial deployment.** This run is the safety
+   system working, not a defect.
+7. **Workflow registration** (`gh workflow list --all`): all four ACTIVE — ids 360057612 (CI),
+   356862745 (deploy), 360076097 (recovery), 360076098 (health monitor). Dispatching
+   recovery/monitor manually with the session token is blocked (403, needs `actions: write`) —
+   recovery remains owner-triggerable from the Actions UI; health-monitor first scheduled run
+   fires 03:30 UTC daily.
+8. **Housekeeping:** stale competing copies deleted (`docs/workflows-ready/*.yml`, historical
+   `docs/DEPLOY_PRODUCTION_WORKFLOW_READY.yml`); canonical files live only in `.github/workflows/`.
+
+**Status after addendum: CODE REPAIRED, WORKFLOW ACTIVE, DEPLOYMENT NOT YET AUTHORIZED** —
+CI genuinely green on GitHub; production deployment blocked solely by the missing
+`DEPLOY_HOST_SSH_FINGERPRINT` variable (owner action, recipe above; verify out-of-band — never
+trust-on-first-use). After it is added, re-run `35162872547` or push to `main` for the first
+supervised deployment; migrations remain skipped by default (`SKIP_MIGRATIONS=true`) until the
+`docs/db` backup/review gate is completed.
