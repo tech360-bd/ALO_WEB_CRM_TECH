@@ -119,9 +119,9 @@ should use the reviewed CLI seeds (`npx prisma db seed`, `prisma/seed-*.ts`).
 | `OPERATIONS-BOOK.md` | 423, 458 — `mysqldump`/`mysql -p'<password>'` |
 | `documentation/CPANEL-DEPLOYMENT-GUIDE.md` | 47 — full DSN with the same password |
 
-The same file also carried weak default secrets (`NEXTAUTH_SECRET="alo-edu-secret-change-this-now-32"`,
-`JWT_SECRET="alo-edu-jwt-secret-change-this-32"`), and `DEPLOYMENT.md:41` paired the **real
-database username** with an example password.
+The same file also carried weak default values for `NEXTAUTH_SECRET` and `JWT_SECRET`
+(literal `alo-edu-…-change-this-now-32` strings, not real randomness), and
+`DEPLOYMENT.md:41` paired the **real database username** with an example password.
 
 **Fix:** all occurrences replaced with runtime lookups / obvious placeholders, and a rotation
 notice added at each site. The real username was removed from `DEPLOYMENT.md`.

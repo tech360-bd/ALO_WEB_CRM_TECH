@@ -174,8 +174,12 @@ describe('SEC-D no plaintext production credential may be committed', () => {
 
   it('repository contains no hardcoded default session/JWT secrets', async () => {
     const { execSync } = await import('node:child_process');
+    // Prefix assembled at runtime so this file (or a findings doc quoting it)
+    // can never satisfy its own grep.
+    const prefix = ['alo', 'edu'].join('-');
+    const pattern = `${prefix}-(secret|jwt-secret)-change-this`;
     const out = execSync(
-      'git grep -I --untracked -nE "alo-edu-(secret|jwt-secret)-change-this" -- . || true',
+      `git grep -I --untracked -nE ${JSON.stringify(pattern)} -- . || true`,
       { cwd: process.cwd(), encoding: 'utf8' }
     );
     expect(out.trim()).toBe('');
