@@ -1,14 +1,14 @@
 # Environment Variable Audit
 
 > Generated on 2026-09-18 by scanning `process.env.*` across `src/`, `server.js`, `next.config.ts`.
-> **211 variables referenced in source · 171 declared in `.env.example`.**
+> **208 variables referenced in source · 168 declared in `.env.example`.**
 
 ## Reconciliation (§60/§64)
 
 | Metric | Count |
 |---|---|
-| Referenced in source | 211 |
-| Declared in .env.example | 171 |
+| Referenced in source | 208 |
+| Declared in .env.example | 168 |
 | **Used but NOT declared** (must add to .env.example) | **120** |
 | Declared but NOT used (LEGACY_UNUSED candidates) | 78 |
 

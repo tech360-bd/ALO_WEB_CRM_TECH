@@ -16,7 +16,7 @@
 
 | Layer | Count | Source |
 |---|---|---|
-| Tracked files | **5,637** | `git ls-files` |
+| Tracked files | **5,635** | `git ls-files` |
 | Website pages (`page.tsx`) | **367** | filesystem |
 | Layouts (`layout.tsx`) | **5** | filesystem |
 | API routes (`route.ts`) | **819** | filesystem |

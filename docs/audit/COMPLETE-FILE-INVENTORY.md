@@ -1,15 +1,15 @@
 # Complete File Inventory
 
-> Generated from `git ls-files` on 2026-09-18. **5637 tracked files.** Do not edit by hand.
+> Generated from `git ls-files` on 2026-09-18. **5635 tracked files.** Do not edit by hand.
 > Categorization is by path/extension heuristic (mandate §4); nothing is deleted on filename alone.
 
 ## Category counts
 
 | Category | Count |
 |---|---|
-| ACTIVE | 1991 |
+| ACTIVE | 1990 |
 | DATA | 1664 |
-| OTHER | 688 |
+| OTHER | 687 |
 | LEGACY | 628 |
 | DOCUMENTATION | 604 |
 | TEST | 35 |
@@ -26,7 +26,7 @@
 | `components` | 428 |
 | `pages` | 380 |
 | `docs` | 289 |
-| `lib` | 239 |
+| `lib` | 238 |
 | `public` | 179 |
 | `deploy-build` | 110 |
 | `scripts` | 107 |
@@ -330,7 +330,6 @@
 | `ecosystem.config.cjs` | 1 |
 | `english_requirements.csv` | 1 |
 | `eslint.config.mjs` | 1 |
-| `firestore.rules` | 1 |
 | `fix-visa.ts` | 1 |
 | `fix_all.ts` | 1 |
 | `fix_employee.py` | 1 |
