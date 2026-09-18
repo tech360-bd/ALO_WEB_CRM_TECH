@@ -1,0 +1,232 @@
+# Environment Variable Audit
+
+> Generated on 2026-09-18 by scanning `process.env.*` across `src/`, `server.js`, `next.config.ts`.
+> **211 variables referenced in source · 171 declared in `.env.example`.**
+
+## Reconciliation (§60/§64)
+
+| Metric | Count |
+|---|---|
+| Referenced in source | 211 |
+| Declared in .env.example | 171 |
+| **Used but NOT declared** (must add to .env.example) | **120** |
+| Declared but NOT used (LEGACY_UNUSED candidates) | 78 |
+
+## Used-but-undeclared variables (§62 — must be documented)
+
+| Variable | Likely secret? |
+|---|---|
+| `BRAND_LOGO_URL` | no |
+| `BRAND_PRIMARY_COLOR` | no |
+| `BRAND_SECONDARY_COLOR` | no |
+| `BRAND_WATERMARK_ENABLED` | no |
+| `BRAND_WATERMARK_POSITION` | no |
+| `CAP_PUBLIC_BASE_URL` | no |
+| `CHATWOOT_API_KEY` | YES |
+| `COGVIDEO_API_KEY` | YES |
+| `COGVIDEO_API_URL` | no |
+| `COGVIDEO_ENABLED` | no |
+| `COGVIDEO_REPLICATE_MODEL` | no |
+| `COMFYUI_API_KEY` | YES |
+| `COMFYUI_API_URL` | no |
+| `COMFYUI_ENABLED` | no |
+| `COMFYUI_URL` | no |
+| `CRM_DEV_SEED_PASSWORD` | YES |
+| `DASH_ENABLED` | no |
+| `ENABLE_CRM_DEV_SEED` | no |
+| `FACEBOOK_ACCESS_TOKEN` | YES |
+| `FFMPEG_PATH` | no |
+| `FIRECRAWL_KEY` | YES |
+| `GOOGLE_BUSINESS_WEBHOOK_TOKEN` | YES |
+| `GROQ_MODEL_FAST` | no |
+| `GROQ_MODEL_LARGE` | no |
+| `HLS_ENABLED` | no |
+| `HLS_OUTPUT_PATH` | no |
+| `HLS_SEGMENT_DURATION` | no |
+| `HRMS_ENCRYPTION_KEY` | YES |
+| `HTTPSMS_API_KEY` | YES |
+| `HTTPSMS_BASE_URL` | no |
+| `HUNYUAN_API_KEY` | YES |
+| `HUNYUAN_API_URL` | no |
+| `HUNYUAN_ENABLED` | no |
+| `IMAGE_GEN_API_KEY` | YES |
+| `INFINITETALK_API_URL` | no |
+| `INFINITETALK_ENABLED` | no |
+| `INFINITETALK_LOCAL_PATH` | no |
+| `JITSI_APP_ID` | no |
+| `JITSI_DOMAIN` | no |
+| `JITSI_ENABLED` | no |
+| `JITSI_JWT_SECRET` | YES |
+| `LLM_API_KEY` | YES |
+| `LLM_API_URL` | no |
+| `LLM_MODEL` | no |
+| `LONGCAT_API_URL` | no |
+| `LONGCAT_ENABLED` | no |
+| `LTX_API_KEY` | YES |
+| `LTX_API_URL` | no |
+| `LTX_ENABLED` | no |
+| `LTX_LOCAL_PATH` | no |
+| `MANIM_ENABLED` | no |
+| `MANIM_PATH` | no |
+| `MANIM_QUALITY` | no |
+| `N8N_API_KEY` | YES |
+| `N8N_API_URL` | no |
+| `N8N_AUTH_HEADER` | no |
+| `N8N_ENABLED` | no |
+| `N8N_VIDEO_EVENTS` | no |
+| `N8N_WEBHOOK_URL` | no |
+| `NEXTCLOUD_APP_TOKEN` | YES |
+| `NEXTCLOUD_PASSWORD` | YES |
+| `NEXTCLOUD_USERNAME` | no |
+| `NEXT_PUBLIC_FB_CONNECTED` | no |
+| `NEXT_PUBLIC_UMAMI_URL` | no |
+| `NEXT_PUBLIC_UMAMI_WEBSITE_ID` | no |
+| `OPENAI_API_BASE` | no |
+| `OPENAI_API_KEY` | YES |
+| `PIXELLE_API_URL` | no |
+| `PIXELLE_ENABLED` | no |
+| `PYTHON_PATH` | no |
+| `REDDIT_CLIENT_ID` | no |
+| `REDDIT_CLIENT_SECRET` | YES |
+| `REDDIT_ENABLED` | no |
+| `REMOTION_ENABLED` | no |
+| `REMOTION_LAMBDA_ENABLED` | no |
+| `REMOTION_LAMBDA_FUNCTION` | no |
+| `REMOTION_LAMBDA_REGION` | no |
+| `RETALKING_API_URL` | no |
+| `RETALKING_ENABLED` | no |
+| `RETALKING_LOCAL_PATH` | no |
+| `RTMP_APP` | no |
+| `RTMP_ENABLED` | no |
+| `RTMP_URL` | no |
+| `RUNNINGHUB_API_KEY` | YES |
+| `RUNNINGHUB_API_URL` | no |
+| `SMS_PROVIDER` | no |
+| `SMS_PROVIDER_URL` | no |
+| `SMTP_HOST` | no |
+| `SMTP_PASSWORD` | YES |
+| `SMTP_USER` | no |
+| `STUN_SERVERS` | no |
+| `SUBTITLE_REMOVER_ENABLED` | no |
+| `SUBTITLE_REMOVER_MODEL_PATH` | no |
+| `SUPER_RESOLUTION_ENABLED` | no |
+| `TELEPHONY_PROVIDER_API_KEY` | YES |
+| `TURN_CREDENTIAL` | YES |
+| `TURN_URL` | no |
+| `TURN_USERNAME` | no |
+| `UMAMI_API_KEY` | YES |
+| `UMAMI_URL` | no |
+| `UMAMI_WEBSITE_ID` | no |
+| `VAULTWARDEN_ADMIN_TOKEN` | YES |
+| `VAULTWARDEN_ORG_ID` | no |
+| `VAULTWARDEN_TOKEN` | YES |
+| `VAULTWARDEN_URL` | no |
+| `VIDEOCAPTIONER_ENABLED` | no |
+| `VIDEOCAPTIONER_PATH` | no |
+| `VIDEO_AGENT_API_URL` | no |
+| `VIDEO_AGENT_ENABLED` | no |
+| `VIDEO_STORAGE_BASE_URL` | no |
+| `VIDEO_STORAGE_BUCKET` | no |
+| `VIDEO_STORAGE_PROVIDER` | no |
+| `VIDEO_STORAGE_REGION` | no |
+| `VSR_MODEL` | no |
+| `WEBRTC_ENABLED` | no |
+| `WHISPER_LOCAL_ENABLED` | no |
+| `WHISPER_LOCAL_MODEL_PATH` | no |
+| `WHISPER_MODEL` | no |
+| `YOUTUBE_DL_ENABLED` | no |
+| `YTDLP_PATH` | no |
+
+## Declared-but-unused (LEGACY_UNUSED candidates — §65; do not delete without source audit)
+
+- `APP_ENV`
+- `APP_DEBUG`
+- `MYSQL_ROOT_PASSWORD`
+- `MYSQL_DATABASE`
+- `MYSQL_USER`
+- `MYSQL_PASSWORD`
+- `PUBLIC_WEBSITE_URL`
+- `DB_CONNECTION`
+- `DB_HOST`
+- `DB_PORT`
+- `DB_DATABASE`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `DB_CHARSET`
+- `DB_COLLATION`
+- `DATABASE_URL`
+- `AUTH_SECRET`
+- `JWT_SECRET`
+- `SESSION_SECRET`
+- `SEED_SUPER_ADMIN_EMAIL`
+- `SEED_SUPER_ADMIN_PASSWORD`
+- `ENABLE_DEVELOPMENT_SAMPLE_DATA`
+- `DEVELOPMENT_SAMPLE_PASSWORD`
+- `TZ`
+- `MAIL_FROM_ADDRESS`
+- `MAIL_FROM_NAME`
+- `MAIL_HOST`
+- `MAIL_PORT`
+- `MAIL_SECURE`
+- `MAIL_USERNAME`
+- `MAIL_PASSWORD`
+- `IMAP_HOST`
+- `IMAP_PORT`
+- `IMAP_SECURE`
+- `IMAP_USERNAME`
+- `IMAP_PASSWORD`
+- `POP3_HOST`
+- `POP3_PORT`
+- `POP3_SECURE`
+- `POP3_USERNAME`
+- `POP3_PASSWORD`
+- `AI_AGENT_MODEL`
+- `META_API_KEY`
+- `WHATSAPP_API_KEY`
+- `WHATSAPP_BUSINESS_ACCOUNT_ID`
+- `WHATSAPP_GRAPH_VERSION`
+- `THREECX_API_URL`
+- `THREECX_API_TOKEN`
+- `EMAIL_PROVIDER_API_KEY`
+- `INSTAGRAM_APP_ID`
+- `INSTAGRAM_APP_SECRET`
+- `LINKEDIN_CLIENT_ID`
+- `LINKEDIN_CLIENT_SECRET`
+- `YOUTUBE_CLIENT_ID`
+- `YOUTUBE_CLIENT_SECRET`
+- `TIKTOK_CLIENT_KEY`
+- `TIKTOK_CLIENT_SECRET`
+- `X_CLIENT_ID`
+- `X_CLIENT_SECRET`
+- `X_BEARER_TOKEN`
+- `PINTEREST_APP_ID`
+- `PINTEREST_APP_SECRET`
+- `PM2_NAME`
+- `ALO_MAIN_WHATSAPP_NUMBER`
+- `ALO_COMPLAINT_WHATSAPP_NUMBER`
+- `ALO_FOLLOWUP_WHATSAPP_NUMBER`
+- `ALO_COO_WHATSAPP_NUMBER`
+- `ALO_24_7_SUPPORT_NUMBER`
+- `ALO_EMPLOYEE_WHATSAPP_START`
+- `ALO_EMPLOYEE_WHATSAPP_END`
+- `OPENROUTER_MODEL`
+- `OPENROUTER_SITE_URL`
+- `OPENROUTER_APP_NAME`
+- `META_APP_ID`
+- `META_APP_SECRET`
+- `META_VERIFY_TOKEN`
+- `X_CONSUMER_SECRET`
+- `GOOGLE_PUBSUB_AUDIENCE`
+
+## §64 duplicate-name pairs (canonical name must be chosen, not blindly deleted)
+
+| Pair | Both used? | Both declared? |
+|---|---|---|
+| `WHATSAPP_ACCESS_TOKEN` / `WHATSAPP_TOKEN` | YES | YES |
+| `NEXTCLOUD_USER` / `NEXTCLOUD_USERNAME` | YES | partial |
+| `VAULTWARDEN_TOKEN` / `VAULTWARDEN_ADMIN_TOKEN` | YES | partial |
+| `APP_URL` / `ALO_APP_URL` | YES | YES |
+| `MOLX_URL` / `NEXT_PUBLIC_MOLX_URL` | YES | YES |
+
+> **No fake values** are filled for missing production secrets (§61). Missing =
+> `MISSING`; placeholders in `.env.example` are `CONFIGURE_IN_SERVER_SECRET_STORE`.
