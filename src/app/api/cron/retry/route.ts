@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { sendWhatsAppMessage } from '@/lib/whatsapp-cloud-api';
+import { requireCron } from "@/lib/cron-auth";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
+  const denied = await requireCron(req);
+  if (denied) return denied;
+
   const start = Date.now();
   let logId: string | null = null;
   try {

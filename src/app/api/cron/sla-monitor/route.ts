@@ -1,19 +1,18 @@
 import { NextResponse } from 'next/server';
 import { checkAndEscalateSla } from '@/lib/sla-engine';
 import { db } from '@/lib/db';
+import { requireCron } from "@/lib/cron-auth";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
+  const denied = await requireCron(req);
+  if (denied) return denied;
+
   const start = Date.now();
   const authHeader = req.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
 
-  // Allow internal cron or super_admin
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    // Check if request is from super_admin via withAuth fallback
-    // For cron, we allow without auth but log
-  }
 
   let logId: string | null = null;
   try {

@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireCron } from "@/lib/cron-auth";
 
 export async function POST(req: Request) {
+  const denied = await requireCron(req);
+  if (denied) return denied;
+
   try {
     // Scan official university course pages for updates
     const courses = await db.crmCourse.findMany({

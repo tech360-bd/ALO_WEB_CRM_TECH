@@ -1,19 +1,16 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireCron } from "@/lib/cron-auth";
 
 // GET /api/cron/weekly-university-scan — triggered by Vercel Cron / MonitoringJob every Sunday 02:00 Asia/Dhaka
 // Implements the 12-step workflow (load → source URLs → visit permitted → extract → normalize → compare → detect → evidence → update_requests → notify → wait approval)
 // This endpoint is idempotent via VerificationRun.runId; never auto-publishes.
 
-export async function GET(request: Request){
-  // Cron secret guard (optional)
-  const authHeader = request.headers.get('authorization')||'';
-  const cronSecret = process.env.CRON_SECRET||'';
-  if (cronSecret && authHeader!==`Bearer ${cronSecret}`) {
-    // also allow internal without secret in preview
-    // return 401 if secret configured and wrong
-  }
-  const url = new URL(request.url);
+export async function GET(req: Request){
+  const denied = await requireCron(req);
+  if (denied) return denied;
+
+  const url = new URL(req.url);
   const dryRun = url.searchParams.get('dryRun')==='1';
   try {
     // 1. Find monitoring job

@@ -1,0 +1,155 @@
+# ============================================================
+# ALO Education CRM — Apache configuration
+# ============================================================
+
+# ------------------------------------------------------------
+# 1. Force HTTPS (only when mod_rewrite is available)
+# ------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS — uncomment in production
+    # RewriteCond %{HTTPS} off
+    # RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # --------------------------------------------------------
+    # 2. Clean URLs — strip ".php" extension
+    #    /students  ->  /students.php
+    #    /leads/123 ->  /leads.php?id=123  (handled in app)
+    # --------------------------------------------------------
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.*)$ $1.php [L,QSA]
+
+    # --------------------------------------------------------
+    # 3. Send 410 Gone for attempts to access removed PHP files
+    # --------------------------------------------------------
+    RewriteRule ^install\.php$ - [L]
+</IfModule>
+
+# ------------------------------------------------------------
+# 4. Default charset
+# ------------------------------------------------------------
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .php .html .css .js .json
+
+# ------------------------------------------------------------
+# 5. Disable directory listing
+# ------------------------------------------------------------
+Options -Indexes
+IndexIgnore *
+
+# ------------------------------------------------------------
+# 6. Deny access to sensitive directories
+# ------------------------------------------------------------
+<IfModule mod_authz_core.c>
+    # Apache 2.4+
+    <DirectoryMatch "^(.*/)?(config|database|app|cron|logs|backups)(/.*)?$">
+        Require all denied
+    </DirectoryMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+    # Apache 2.2 fallback
+    <DirectoryMatch "^(.*/)?(config|database|app|cron|logs|backups)(/.*)?$">
+        Order deny,allow
+        Deny from all
+    </DirectoryMatch>
+</IfModule>
+
+# Direct deny rules for common directory names (works without
+# the DirectoryMatch module above)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ------------------------------------------------------------
+# 7. Protect sensitive files (.sql, .md, .json, .lock, .env)
+# ------------------------------------------------------------
+<FilesMatch "\.(sql|md|lock|env|ini|sh|bak|swp|log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Block composer.json / package.json / config.json etc.
+<FilesMatch "(composer\.json|composer\.lock|package\.json|package-lock\.json|\.htaccess|\.htpasswd)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ------------------------------------------------------------
+# 8. Hide server signature
+# ------------------------------------------------------------
+ServerSignature Off
+ServerTokens Prod
+
+# ------------------------------------------------------------
+# 9. Security headers
+# ------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    # Allow only same-origin scripts/styles/images
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self';"
+    # HSTS — only enable when HTTPS is enforced
+    # Header set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+</IfModule>
+
+# ------------------------------------------------------------
+# 10. Prevent PHP execution in /uploads/ (defense-in-depth)
+# ------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteRule ^uploads/.*\.(php|phtml|php3|php4|php5|php7|phps|pht)$ - [F,L]
+</IfModule>
+
+# ------------------------------------------------------------
+# 11. Media type defaults
+# ------------------------------------------------------------
+<IfModule mod_mime.c>
+    AddType image/svg+xml .svg
+    AddType application/font-woff2 .woff2
+    AddType application/javascript .js
+    AddType text/css .css
+</IfModule>
+
+# ------------------------------------------------------------
+# 12. Compression
+# ------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# ------------------------------------------------------------
+# 13. Caching for static assets
+# ------------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/gif "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+</IfModule>
+
+# ------------------------------------------------------------
+# 14. Custom error pages (optional)
+# ------------------------------------------------------------
+# ErrorDocument 403 /errors/403.php
+# ErrorDocument 404 /errors/404.php
+# ErrorDocument 500 /errors/500.php

@@ -1,0 +1,182 @@
+<?php
+/**
+ * Settings — page
+ *
+ * Tabs: General, Company, Email (SMTP), WhatsApp, SMS, CRM, Security,
+ * Notifications, Marketing, Currency. Each tab has a form that updates
+ * the settings table. Only Super Admin can access.
+ */
+declare(strict_types=1);
+
+require_once __DIR__ . '/../app/bootstrap.php';
+require_login();
+require_role('super_admin');
+
+$pdo = db();
+
+$tab = $_GET['tab'] ?? 'general';
+$tabs = [
+    'general'        => 'General',
+    'company'        => 'Company',
+    'email'          => 'Email (SMTP)',
+    'whatsapp'       => 'WhatsApp',
+    'sms'            => 'SMS',
+    'crm'            => 'CRM',
+    'security'       => 'Security',
+    'notifications'  => 'Notifications',
+    'marketing'      => 'Marketing',
+    'currency'       => 'Currency',
+];
+if (!isset($tabs[$tab])) $tab = 'general';
+
+/* Define settings per tab */
+$tabSettings = [
+    'general' => [
+        'app_name'        => ['App Name', 'text'],
+        'app_url'         => ['App URL', 'text'],
+        'app_env'         => ['Environment', 'select', ['production','development']],
+        'timezone'         => ['Timezone', 'text'],
+    ],
+    'company' => [
+        'company_name'    => ['Company Name', 'text'],
+        'company_address' => ['Company Address', 'textarea'],
+        'company_phone'   => ['Company Phone', 'text'],
+        'company_email'   => ['Company Email', 'text'],
+        'company_website' => ['Company Website', 'text'],
+        'company_logo'   => ['Logo URL', 'text'],
+    ],
+    'email' => [
+        'mail_host'        => ['SMTP Host', 'text'],
+        'mail_port'        => ['SMTP Port', 'text'],
+        'mail_username'   => ['SMTP Username', 'text'],
+        'mail_password'   => ['SMTP Password', 'password'],
+        'mail_from'       => ['From Email', 'text'],
+        'mail_from_name'  => ['From Name', 'text'],
+    ],
+    'whatsapp' => [
+        'wa_api_url'        => ['API URL', 'text'],
+        'wa_api_token'      => ['API Token', 'password'],
+        'wa_phone_number'   => ['Phone Number', 'text'],
+    ],
+    'sms' => [
+        'sms_api_url'    => ['API URL', 'text'],
+        'sms_api_token'  => ['API Token', 'password'],
+    ],
+    'crm' => [
+        'crm_default_counselor'   => ['Default Counselor ID', 'text'],
+        'crm_lead_followup_days'    => ['Lead Follow-up (days)', 'text'],
+        'crm_default_currency'      => ['Default Currency', 'text'],
+        'crm_id_prefix'             => ['CRM ID Prefix', 'text'],
+    ],
+    'security' => [
+        'session_lifetime'         => ['Session Lifetime (sec)', 'text'],
+        'max_login_attempts'        => ['Max Login Attempts', 'text'],
+        'login_lockout_minutes'     => ['Lockout Minutes', 'text'],
+        'password_min_length'       => ['Password Min Length', 'text'],
+    ],
+    'notifications' => [
+        'notif_lead_assigned'         => ['Notify on Lead Assignment', 'checkbox'],
+        'notif_application_submitted' => ['Notify on Application Submitted', 'checkbox'],
+        'notif_payment_received'     => ['Notify on Payment Received', 'checkbox'],
+        'notif_task_due'              => ['Notify on Task Due', 'checkbox'],
+    ],
+    'marketing' => [
+        'mkt_facebook_pixel'      => ['Facebook Pixel ID', 'text'],
+        'mkt_google_analytics'    => ['Google Analytics ID', 'text'],
+        'mkt_default_language'    => ['Default Language', 'text'],
+    ],
+    'currency' => [
+        'currency_default'        => ['Default Currency', 'text'],
+        'currency_symbol'         => ['Symbol', 'text'],
+        'currency_position'      => ['Position', 'select', ['before','after']],
+        'currency_thousand_sep'   => ['Thousands Separator', 'text'],
+        'currency_decimal_sep'    => ['Decimal Separator', 'text'],
+    ],
+];
+
+/* Handle save */
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $posted = $_POST['settings'] ?? [];
+    if (!is_array($posted)) $posted = [];
+    $updated = 0;
+    $up = $pdo->prepare(
+        'INSERT INTO settings (setting_key, setting_value, updated_at)
+         VALUES (:k, :v, NOW())
+         ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()'
+    );
+    foreach ($tabSettings[$tab] as $key => $def) {
+        $val = $posted[$key] ?? '';
+        if (is_array($val)) $val = implode(',', $val);
+        $val = trim((string) $val);
+        $up->bindParam(':k', $key);
+        $up->bindParam(':v', $val);
+        $up->execute();
+        $updated++;
+    }
+    log_audit('update', 'settings', null, null, ['tab' => $tab, 'updated' => $updated]);
+    flash('success', 'Settings saved.');
+    redirect('settings/index.php?tab=' . $tab);
+}
+
+/* Load current values */
+$values = [];
+$currentSettings = $pdo->query('SELECT setting_key, setting_value FROM settings')->fetchAll();
+foreach ($currentSettings as $s) {
+    $values[$s['setting_key']] = $s['setting_value'];
+}
+
+render_header('Settings');
+?>
+<div class="toolbar">
+  <h1>Settings</h1>
+</div>
+
+<div class="tabs" data-tab-group="settings">
+  <?php foreach ($tabs as $key => $label): ?>
+    <a href="?tab=<?php echo e($key); ?>" data-tab="tab-<?php echo e($key); ?>" class="<?php echo $tab === $key ? 'active' : ''; ?>"><?php echo e($label); ?></a>
+  <?php endforeach; ?>
+</div>
+
+<div class="card">
+  <div class="card-head"><h3><?php echo e($tabs[$tab]); ?> Settings</h3></div>
+  <div class="card-body">
+    <form method="post" action="?tab=<?php echo e($tab); ?>">
+      <?php echo csrf_field(); ?>
+      <div class="form-grid">
+        <?php foreach ($tabSettings[$tab] as $key => $def): ?>
+          <?php
+            [$label, $type] = $def;
+            $current = $values[$key] ?? '';
+            $name = 'settings[' . $key . ']';
+          ?>
+          <div class="form-group">
+            <label><?php echo e($label); ?></label>
+            <?php if ($type === 'textarea'): ?>
+              <textarea name="<?php echo e($name); ?>"><?php echo e($current); ?></textarea>
+            <?php elseif ($type === 'select'): ?>
+              <select name="<?php echo e($name); ?>">
+                <?php foreach ($def[2] as $opt): ?>
+                  <option value="<?php echo e($opt); ?>" <?php if ($current === $opt) echo 'selected'; ?>><?php echo e(ucwords($opt)); ?></option>
+                <?php endforeach; ?>
+              </select>
+            <?php elseif ($type === 'checkbox'): ?>
+              <label style="font-weight:normal">
+                <input type="checkbox" name="<?php echo e($name); ?>" value="1" <?php if ($current === '1' || $current === 'on' || $current === 'true') echo 'checked'; ?>>
+                Enable
+              </label>
+            <?php elseif ($type === 'password'): ?>
+              <input type="password" name="<?php echo e($name); ?>" value="<?php echo e($current); ?>" autocomplete="off">
+            <?php else: ?>
+              <input type="text" name="<?php echo e($name); ?>" value="<?php echo e($current); ?>">
+            <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<?php render_footer();
