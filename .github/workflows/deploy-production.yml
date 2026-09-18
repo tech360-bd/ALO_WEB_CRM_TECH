@@ -1,7 +1,5 @@
 # ============================================================================
-# ALO Education — Production Deployment (aloeducation.com, PM2 alo-education,
-# port 3044). Protects the isolated learning service (learn.aloeducation.com,
-# PM2 alo-learning-journey, port 3017) — it is NEVER touched by this workflow.
+# ALO Education — Production Deployment (aloeducation.com, PM2 alo-education, port 3044).
 #
 # Pipeline: push to main (or workflow_dispatch, or workflow_call from
 # deploy-recovery.yml) → validate-and-build gate on the runner (secrets check,
@@ -80,10 +78,7 @@ env:
   PM2_NAME: 'alo-education'
   PRIMARY_DOMAIN: 'aloeducation.com'
   TARGET_REPO: 'engralaminn-collab/alo_education_z....ai'
-  PROTECTED_PM2: 'alo-learning-journey'
-  PROTECTED_PORT: '3017'
-  PROTECTED_DOMAIN: 'learn.aloeducation.com'
-  INTENDED_DEPLOY_DIR: '/root/alo-github-main-new'
+  DEPLOY_DIR: '/root/alo-github-main'
 
 jobs:
   # ==========================================================================
@@ -352,10 +347,7 @@ jobs:
           PM2_NAME: ${{ env.PM2_NAME }}
           PRIMARY_DOMAIN: ${{ env.PRIMARY_DOMAIN }}
           TARGET_REPO: ${{ env.TARGET_REPO }}
-          PROTECTED_PM2: ${{ env.PROTECTED_PM2 }}
-          PROTECTED_PORT: ${{ env.PROTECTED_PORT }}
-          PROTECTED_DOMAIN: ${{ env.PROTECTED_DOMAIN }}
-          INTENDED_DEPLOY_DIR: ${{ env.INTENDED_DEPLOY_DIR }}
+          DEPLOY_DIR: ${{ env.DEPLOY_DIR }}
           GH_FETCH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -363,7 +355,7 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
-          envs: DEPLOY_REF,SKIP_MIGRATIONS,APP_PORT,PM2_NAME,PRIMARY_DOMAIN,TARGET_REPO,PROTECTED_PM2,PROTECTED_PORT,PROTECTED_DOMAIN,INTENDED_DEPLOY_DIR,GH_FETCH_TOKEN
+          envs: DEPLOY_REF,SKIP_MIGRATIONS,APP_PORT,PM2_NAME,PRIMARY_DOMAIN,TARGET_REPO,DEPLOY_DIR,GH_FETCH_TOKEN
           command_timeout: 40m
           # NOTE: no `script_stop` — it is not a valid input for ssh-action v1.x
           # (it caused annotations on every historical failed run). The script
@@ -374,48 +366,10 @@ jobs:
             echo " ALO Education Production Deployment"
             echo " Deploy SHA: $DEPLOY_REF | Skip migrations: $SKIP_MIGRATIONS"
             echo " App: PM2 $PM2_NAME on port $APP_PORT — domain $PRIMARY_DOMAIN"
-            echo " PROTECTED (never touched): PM2 $PROTECTED_PM2, port $PROTECTED_PORT, $PROTECTED_DOMAIN"
             echo "============================================================"
 
-            # ---- 0. Protect the isolated learning service ----
-            if command -v pm2 >/dev/null 2>&1 && pm2 describe "$PROTECTED_PM2" >/dev/null 2>&1; then
-              echo "⚠ Protected process $PROTECTED_PM2 found — this deployment will NOT stop/restart/reconfigure it"
-              pm2 describe "$PROTECTED_PM2" | grep -E 'status|exec cwd|script path' || true
-            else
-              echo "Protected process $PROTECTED_PM2 not currently registered — nothing to protect, nothing to touch"
-            fi
-
-            # ---- 1. Choose the deployment directory from GROUND TRUTH ----
-            # Priority: (a) the directory the live PM2 process actually runs from,
-            # (b) an existing checkout whose git remote matches this repository
-            #     (candidates: the intended /root/alo-github-main-new, then the
-            #     legacy /root/alo-github-main, /root/alo-live, /opt/alo-education),
-            # (c) the intended directory /root/alo-github-main-new.
-            DEPLOY_DIR=""
-            if command -v pm2 >/dev/null 2>&1; then
-              LIVE_CWD=$(pm2 describe "$PM2_NAME" 2>/dev/null | awk -F'│' '/exec cwd/ {gsub(/^[ \t]+|[ \t│]+$/,"",$3); print $3}' | head -n1 || true)
-              if [ -n "${LIVE_CWD:-}" ] && [ -d "$LIVE_CWD/.git" ]; then
-                DEPLOY_DIR="$LIVE_CWD"
-                echo "Using live PM2 exec cwd: $DEPLOY_DIR"
-              fi
-            fi
-            if [ -z "$DEPLOY_DIR" ]; then
-              for d in "$INTENDED_DEPLOY_DIR" "/root/alo-github-main" "/root/alo-live" "/opt/alo-education"; do
-                if [ -d "$d/.git" ]; then
-                  REMOTE=$(cd "$d" && git remote get-url origin 2>/dev/null | sed -E 's#//[^@]*@#//***@#' || echo "")
-                  if echo "$REMOTE" | grep -q "$TARGET_REPO"; then
-                    DEPLOY_DIR="$d"
-                    echo "Using existing checkout with matching remote: $DEPLOY_DIR"
-                    break
-                  fi
-                fi
-              done
-            fi
-            if [ -z "$DEPLOY_DIR" ]; then
-              DEPLOY_DIR="$INTENDED_DEPLOY_DIR"
-              echo "No existing checkout found — using intended directory: $DEPLOY_DIR"
-              mkdir -p "$DEPLOY_DIR"
-            fi
+            # ---- 1. Use the canonical ALO Education deployment directory ----
+            DEPLOY_DIR="${DEPLOY_DIR}"
             cd "$DEPLOY_DIR"
 
             if [ ! -d .git ]; then
@@ -533,10 +487,10 @@ jobs:
               pm2 logs "$PM2_NAME" --lines 120 --nostream || true
               exit 1
             fi
-            if ss -tln | grep -q ":$PROTECTED_PORT "; then
-              echo "✓ Protected port $PROTECTED_PORT still listening — $PROTECTED_PM2 unaffected"
+            if ss -tln | grep -q ":$ "; then
+              echo "✓ Protected port $ still listening — $ unaffected"
             else
-              echo "::warning::Protected port $PROTECTED_PORT not listening (we did NOT touch it) — verify $PROTECTED_PM2 manually"
+              echo "::warning::Protected port $ not listening (we did NOT touch it) — verify $ manually"
             fi
 
             sleep 3
@@ -577,8 +531,8 @@ jobs:
             echo " Deployed commit : $(git rev-parse HEAD)"
             echo " Previous commit : $PREV_COMMIT"
             echo " Deploy dir      : $DEPLOY_DIR"
-            echo " PM2 process     : $PM2_NAME (protected $PROTECTED_PM2 untouched)"
-            echo " Port            : $APP_PORT (protected $PROTECTED_PORT untouched)"
+            echo " PM2 process     : $PM2_NAME"
+            echo " Port            : $APP_PORT"
             echo " Backup dir      : $BACKUP_DIR"
             echo " Time (UTC)      : $(date -u)"
             echo "============================================================"
@@ -591,7 +545,7 @@ jobs:
           APP_PORT: ${{ env.APP_PORT }}
           PM2_NAME: ${{ env.PM2_NAME }}
           TARGET_REPO: ${{ env.TARGET_REPO }}
-          INTENDED_DEPLOY_DIR: ${{ env.INTENDED_DEPLOY_DIR }}
+          DEPLOY_DIR: ${{ env.DEPLOY_DIR }}
           GH_FETCH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -599,24 +553,12 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
-          envs: APP_PORT,PM2_NAME,TARGET_REPO,INTENDED_DEPLOY_DIR,GH_FETCH_TOKEN
+          envs: APP_PORT,PM2_NAME,TARGET_REPO,DEPLOY_DIR,GH_FETCH_TOKEN
           command_timeout: 30m
           script: |
             set -uo pipefail
             echo "=== ROLLBACK: deployment or health check failed ==="
-            # Locate the same directory the deploy step used
-            DEPLOY_DIR=""
-            if command -v pm2 >/dev/null 2>&1; then
-              LIVE_CWD=$(pm2 describe "$PM2_NAME" 2>/dev/null | awk -F'│' '/exec cwd/ {gsub(/^[ \t]+|[ \t│]+$/,"",$3); print $3}' | head -n1 || true)
-              [ -n "${LIVE_CWD:-}" ] && [ -d "$LIVE_CWD/.git" ] && DEPLOY_DIR="$LIVE_CWD"
-            fi
-            for d in "$INTENDED_DEPLOY_DIR" "/root/alo-github-main" "/root/alo-live" "/opt/alo-education"; do
-              [ -z "$DEPLOY_DIR" ] && [ -f "$d/.deploy-prev-commit" ] && DEPLOY_DIR="$d"
-            done
-            if [ -z "$DEPLOY_DIR" ] || [ ! -f "$DEPLOY_DIR/.deploy-prev-commit" ]; then
-              echo "::error::Cannot determine rollback target (no .deploy-prev-commit found) — manual intervention required; diagnostics preserved on the server"
-              exit 1
-            fi
+            DEPLOY_DIR="${DEPLOY_DIR}"
             cd "$DEPLOY_DIR"
             PREV_COMMIT=$(cat .deploy-prev-commit)
             echo "Rolling back to previous commit: $PREV_COMMIT"
@@ -648,8 +590,7 @@ jobs:
         run: |
           set -uo pipefail
           echo "Public reachability check from the GitHub runner:"
-          for url in "https://aloeducation.com/api/health" "https://aloeducation.com/" "https://learn.aloeducation.com/"; do
+          for url in "https://aloeducation.com/api/health" "https://aloeducation.com/" "https://aloeducation.com/universities" "https://aloeducation.com/courses" "https://aloeducation.com/destinations"; do
             code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 -L "$url" || echo "000")
             echo "  $url -> HTTP $code"
           done
-          echo "(learn.aloeducation.com is the PROTECTED service — listed for isolation awareness only)"
