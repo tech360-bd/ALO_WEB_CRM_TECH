@@ -417,10 +417,15 @@ OFFER → PREPARATION → DOCUMENT_COLLECTION → VERIFICATION → FINANCIAL_REV
 
 ## 13. Backup & Recovery
 
+> **SECURITY (2026-09-18):** a real production database password was previously committed in this file. It has been removed and **must be treated as compromised — rotate it**. Never put credentials in documentation; read them from the server's `.env` / secret store at runtime.
+
 ### Database Backup
 ```bash
 # Daily MySQL backup
-mysqldump -u user_edu -p'Alo_Edu_2026!' db_education | gzip > /backup/db_$(date +%Y%m%d).sql.gz
+# Credentials come from the server's .env — never hardcode them in docs.
+DB_USER=$(grep -E '^DB_USERNAME=' /path/to/.env | cut -d= -f2-)
+DB_NAME=$(grep -E '^DB_DATABASE=' /path/to/.env | cut -d= -f2-)
+mysqldump -u "$DB_USER" -p "$DB_NAME" | gzip > /backup/db_$(date +%Y%m%d).sql.gz
 
 # Keep 30 days
 find /backup -name "*.sql.gz" -mtime +30 -delete
@@ -455,7 +460,7 @@ free -m
 
 ### Database Connection Failed
 ```bash
-mysql -u user_edu -p'Alo_Edu_2026!' db_education -e "SELECT 1"
+mysql -u "$DB_USER" -p "$DB_NAME" -e "SELECT 1"
 # Check .env DATABASE_URL has no quotes
 ```
 

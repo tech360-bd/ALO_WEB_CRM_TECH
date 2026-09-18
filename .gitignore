@@ -138,6 +138,8 @@ pnpm-debug.log*
 # Use S3/R2/external storage for full datasets
 *.csv
 !prisma/seed-data/*.csv
+# Audit deliverables required by the merge mandate ARE tracked (small manifests)
+!AUDIT/*.csv
 ALO_*.csv
 01_ALO_*.csv
 02_ALO_*.csv

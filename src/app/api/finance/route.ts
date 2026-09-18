@@ -1,8 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth } from "@/lib/auth-middleware";
+
+// ============================================================
+// SEC-F fix (2026-09-18): this route had NO authentication. Any anonymous
+// caller received the company's full financial picture — total revenue,
+// pending/paid partner and employee commissions, recent payments and
+// commission records. Now staff-only.
+// ============================================================
+
+const ALLOWED_USER_TYPES = ["FINANCE", "CEO", "ADMIN", "SUPER_ADMIN"];
 
 // Finance dashboard — revenue, commission, payments
-export async function GET() {
+export const GET = withAuth(async () => {
   const payments = await db.payment.findMany({ orderBy: { createdAt: "desc" } });
   const commissions = await db.employeeCommission.findMany({ orderBy: { createdAt: "desc" } });
 
@@ -29,4 +39,4 @@ export async function GET() {
     partnerCommissions: partnerCommissions.slice(0, 10),
     employeeCommissions: commissions.slice(0, 10),
   });
-}
+}, { requireUserTypes: ALLOWED_USER_TYPES });

@@ -42,11 +42,13 @@ cp .env.example .env
 nano .env
 ```
 
-Set these critical values:
+Set these critical values (all placeholders — real values live only in the server `.env`):
+
+> **SECURITY (2026-09-18):** a real production database password was previously committed in this file. It has been removed and **must be treated as compromised — rotate it**. Never put credentials in documentation; read them from the server's `.env` / secret store at runtime.
 ```
-DATABASE_URL="mysql://user_edu:Alo_Edu_2026!@127.0.0.1:3306/db_education"
-NEXTAUTH_SECRET="alo-edu-secret-change-this-now-32"
-JWT_SECRET="alo-edu-jwt-secret-change-this-32"
+DATABASE_URL="mysql://<DB_USER>:<DB_PASSWORD>@127.0.0.1:3306/<DB_NAME>"
+NEXTAUTH_SECRET="<generate: openssl rand -hex 32>"
+JWT_SECRET="<generate: openssl rand -hex 32>"
 NEXTAUTH_URL="https://aloeducation.com"
 PORT=3015
 UPLOAD_DIR=/home/aloedu/storage/uploads

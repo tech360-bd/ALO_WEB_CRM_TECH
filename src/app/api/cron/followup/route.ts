@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { processDueFollowUps } from '@/lib/whatsapp-followup-engine';
 import { db } from '@/lib/db';
+import { requireCron } from "@/lib/cron-auth";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
+  const denied = await requireCron(req);
+  if (denied) return denied;
+
   const start = Date.now();
   let logId: string | null = null;
   try {

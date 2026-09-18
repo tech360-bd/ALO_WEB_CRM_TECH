@@ -1,0 +1,104 @@
+path,source,original_status,merge_action,final_status,reason,verification
+alo-cpanel/.htaccess,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/403.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/404.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/500.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/FINAL-DELIVERY-REPORT.md,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/README-CPANEL.md,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/STATUS.md,canonical+other,CHANGED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/admin/audit.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/api/communications/send.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/api/courses/by_university.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/api/dashboard/stats.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/api/leads/search.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/api/students/search.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/api/tasks/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/app/auth.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/app/bootstrap.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/app/csrf.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/app/helpers.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/app/layout.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/app/permissions.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/app/validation.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/applications/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/applications/edit.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/applications/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/assets/css/style.css,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/assets/js/app.js,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/backups/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/communications/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/communications/send.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/config/config.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/config/database.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/courses/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/courses/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/courses/view.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/crm/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/cron/followups.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/cron/marketing.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/cron/notifications.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/cron/reminders.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/database/schema.sql,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/database/seed.sql,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/documents/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/documents/upload.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/email/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/finance/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/finance/invoice_create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/forgot-password.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/install.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/leads/convert.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/leads/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/leads/edit.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/leads/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/leads/view.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/login.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/logout.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/logs/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/marketing/approve.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/marketing/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/marketing/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/notifications.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/reports/export.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/reports/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/reset-password.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/search.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/settings/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/students/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/students/edit.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/students/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/students/view.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/tasks/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/tasks/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/universities/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/universities/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/universities/view.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/uploads/.htaccess,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/uploads/communications/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/uploads/documents/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/uploads/marketing/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/uploads/students/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/users/create.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/users/edit.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/users/index.php,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+alo-cpanel/whatsapp/index.html,canonical+other,ADDED,EXTRACT_AND_MERGE,KEPT,"Legacy cPanel/PHP secondary source; retained inert, credentials stripped",secret-scanned; classified LEGACY in alo-cpanel/STATUS.md
+ecosystem.config.cjs,canonical+other,MODIFIED,MERGE_BOTH,KEPT,PM2 hardening from other builder + this repo port 3044 and paths,tests/unit/deployment-config.test.ts 12/12
+examples/websocket/frontend.tsx,canonical+other,ADDED,KEEP,KEPT,Reference code from other builder (websocket); not wired into the Next.js build,no tsconfig/next.config reference
+examples/websocket/server.ts,canonical+other,ADDED,KEEP,KEPT,Reference code from other builder (websocket); not wired into the Next.js build,no tsconfig/next.config reference
+src/app/api/cron/analytics/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/cron/followup/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/cron/health/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/cron/retry/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/cron/sla-monitor/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/cron/weekly-ai-agent/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/cron/weekly-reports/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/cron/weekly-university-scan/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/cron/weekly-university-update/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Cron route + shared auth guard,401 before any db access (tested)
+src/app/api/employee/documents/[id]/download/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Original authz rule + identity taken from verified session,lint + full suite pass
+src/app/api/finance/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Original behaviour + withAuth authorization,tests/unit/finance-authz-regression.test.ts 5/5
+src/app/api/hr/payroll/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Original behaviour + withAuth authorization,tests/unit/finance-authz-regression.test.ts 5/5
+src/app/api/student/profile/route.ts,canonical+other,MODIFIED,MERGE_BOTH,KEPT,Original response shape + owner scoping + credential stripping,lint + full suite pass
+src/lib/cron-auth.ts,canonical+other,CHANGED,MERGE_BOTH,KEPT,Fail-closed cron guard generalised from automation/schedule,tests/unit/cron-auth-regression.test.ts 11/11
+tests/unit/cron-auth-regression.test.ts,canonical+other,CHANGED,MERGE_BOTH,KEPT,Regression tests for confirmed vulnerabilities,vitest — all pass
+tests/unit/finance-authz-regression.test.ts,canonical+other,CHANGED,MERGE_BOTH,KEPT,Regression tests for confirmed vulnerabilities,vitest — all pass

@@ -38,7 +38,8 @@ nano .env
 
 ```env
 DATABASE_URL="mysql://USER:PASSWORD@localhost:3306/DATABASE"
-# Example: mysql://aloeduca_ALO_final_web_crm:StrongPass%40123@localhost:3306/aloeduca_alo_education
+# Example shape only (never write a real username or password into docs):
+#   mysql://<DB_USER>:<URL_ENCODED_DB_PASSWORD>@127.0.0.1:3306/<DB_NAME>
 # Password must be URL-encoded if it contains special characters
 
 NEXTAUTH_SECRET=generate-with-openssl-rand-base64-32
