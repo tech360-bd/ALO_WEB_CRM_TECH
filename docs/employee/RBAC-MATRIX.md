@@ -35,7 +35,8 @@ Security, Operations.
 ## Verification status
 - **VERIFIED:** unauthorized requests fail server-side on the regression-tested
   routes (finance, payroll, student profile, employee documents, commissions,
-  counselor students, crm/seed, all 9 cron routes) — 35 regression tests.
+  counselor students, crm/seed, all 9 cron routes) — 23 regression tests
+  (11 api-authz + 7 cron-auth + 5 finance-authz).
 - **CODE_COMPLETE:** the RBAC layer (`requireUserTypes`, permission service)
   exists and is applied across 576 authenticated routes.
 - **IMPLEMENTED_BUT_UNVERIFIED:** the full §26 verb×role matrix has not been

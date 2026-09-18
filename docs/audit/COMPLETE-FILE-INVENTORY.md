@@ -1,17 +1,17 @@
 # Complete File Inventory
 
-> Generated from `git ls-files` on 2026-09-18. **5618 tracked files.** Do not edit by hand.
+> Generated from `git ls-files` on 2026-09-18. **5637 tracked files.** Do not edit by hand.
 > Categorization is by path/extension heuristic (mandate §4); nothing is deleted on filename alone.
 
 ## Category counts
 
 | Category | Count |
 |---|---|
-| ACTIVE | 1990 |
+| ACTIVE | 1991 |
 | DATA | 1664 |
 | OTHER | 688 |
 | LEGACY | 628 |
-| DOCUMENTATION | 586 |
+| DOCUMENTATION | 604 |
 | TEST | 35 |
 | CONFIG | 15 |
 | GENERATED | 12 |
@@ -25,11 +25,11 @@
 | `api` | 819 |
 | `components` | 428 |
 | `pages` | 380 |
-| `docs` | 273 |
+| `docs` | 289 |
 | `lib` | 239 |
 | `public` | 179 |
 | `deploy-build` | 110 |
-| `scripts` | 106 |
+| `scripts` | 107 |
 | `legacy-cpanel` | 84 |
 | `data` | 48 |
 | `prisma` | 38 |
@@ -219,8 +219,10 @@
 | `FIELD_MAPPING_GUIDE.md` | 1 |
 | `FILE_MANIFEST.csv` | 1 |
 | `FINAL-AUDIT-REPORT.md` | 1 |
+| `FINAL-COMPLETE-SYSTEM-AUDIT.md` | 1 |
 | `FINAL-DELIVERY-20260913.md` | 1 |
 | `FINAL-EMPLOYEE-DASHBOARD-OPERATING-SYSTEM-REPORT.md` | 1 |
+| `FINAL-ENVIRONMENT-AUDIT.md` | 1 |
 | `FINAL-INVENTORY.md` | 1 |
 | `FINAL-MARKETING-AUDIT.md` | 1 |
 | `FINAL-MASTER-PRODUCTION-REPORT.md` | 1 |

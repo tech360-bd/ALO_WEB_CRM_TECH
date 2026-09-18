@@ -33,7 +33,7 @@
 - `/api/student/profile` — IDOR + credential leak → owner-scoped, fields stripped.
 - `/api/employee/documents/[id]/download` — spoofable `?viewerId=` → session identity.
 - All 9 `/api/cron/*` — publicly triggerable → `cron-auth.ts` fail-closed guard
-  (`cron-auth-regression.test.ts`, 11 tests).
+  (`cron-auth-regression.test.ts`, 7 tests).
 
 ## Known weaknesses (OWNER ACTIONS)
 1. **No `src/middleware.ts`** — no edge-level auth or rate limiting; all
@@ -49,7 +49,7 @@
 6. **`/api/health` leaks the raw DB error and returns 200 when degraded.**
 
 ## Verification status
-- Server-side authz on the audited sensitive routes: **VERIFIED** (35 regression tests).
+- Server-side authz on the audited sensitive routes: **VERIFIED** (23 regression tests: 11 api-authz + 7 cron-auth + 5 finance-authz).
 - Webhook signature + idempotency: **VERIFIED** (24 unit tests).
 - Full penetration test (XSS/SSRF/upload/CSRF live): **IMPLEMENTED_BUT_UNVERIFIED** —
   requires a running instance; OWNER action.

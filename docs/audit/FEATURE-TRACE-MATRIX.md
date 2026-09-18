@@ -24,7 +24,7 @@
 | SLA tracking | dashboards | `/api/crm/ucc/sla` | SLA engine | `SlaPolicy`, `CommunicationSlaEvent` | — | session | partial | CODE_COMPLETE |
 | Escalation | dashboards | `/api/crm/ucc/*` | escalation | `EscalationEvent` | — | session | partial | CODE_COMPLETE |
 | Marketing campaign | `/crm` marketing | `/api/marketing/*` | marketing | `MarketingCampaign`+ | providers | session+RBAC | partial | IMPLEMENTED_BUT_UNVERIFIED |
-| Cron job | — | `/api/cron/*` (9) | cron-auth | various | — | cron-secret | 11 unit tests | VERIFIED (auth) |
+| Cron job | — | `/api/cron/*` (9) | cron-auth | various | — | cron-secret | 7 unit tests | VERIFIED (auth) |
 | Finance/payroll | admin UI | `/api/finance`, `/api/hr/payroll` | withAuth | `EmployeeSalary`+ | — | session+role | 5 regression | VERIFIED (authz) |
 
 ## Reading this matrix

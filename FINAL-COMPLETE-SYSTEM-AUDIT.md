@@ -16,7 +16,7 @@
 
 | Layer | Count | Source |
 |---|---|---|
-| Tracked files | **5,618** | `git ls-files` |
+| Tracked files | **5,637** | `git ls-files` |
 | Website pages (`page.tsx`) | **367** | filesystem |
 | Layouts (`layout.tsx`) | **5** | filesystem |
 | API routes (`route.ts`) | **819** | filesystem |
@@ -63,13 +63,13 @@ individually. Per-route classification: `AUDIT/ARENA-ROUTE-INVENTORY.csv` and
 | Marketing | CODE_COMPLETE | 34 API routes |
 | AI Agents | IMPLEMENTED_BUT_UNVERIFIED | runtime CODE_COMPLETE; 3 agents are stubs |
 | Workflows / Automation | CODE_COMPLETE | orchestrator + approval queue |
-| RBAC | VERIFIED (audited routes) | 35 regression tests; full matrix untested |
+| RBAC | VERIFIED (audited routes) | 23 regression tests (11 api-authz + 7 cron-auth + 5 finance-authz); full matrix untested |
 | Authentication | CODE_COMPLETE | session auth; no edge middleware |
 | OAuth | CODE_COMPLETE | live flow LIVE_TEST_PENDING |
 | Webhooks | MOCK_VERIFIED | signature crypto unit-tested; live pending |
 | Audit logging | CODE_COMPLETE | `PortalAuditLog` |
 | Storage | CODE_COMPLETE | local/S3 adapters; encryption at rest |
-| Cron | VERIFIED (auth) | all 9 routes fail-closed; 11 tests |
+| Cron | VERIFIED (auth) | all 9 routes fail-closed; 7 tests |
 | Providers | CONFIGURATION_REQUIRED | **none live-verified** |
 | Deployment | CONFIGURATION_REQUIRED | GitHub→VPS path; secrets missing |
 | VPS / Network | **BLOCKED** | no production access from sandbox |
@@ -125,7 +125,7 @@ TikTok, YouTube, Google Business (no DM API). Full detail:
 
 ## 6. Security (§106) — fixed + remaining
 
-**Fixed and regression-tested (35 tests):** finance/payroll authz, student-profile
+**Fixed and regression-tested (23 tests: 11 api-authz + 7 cron-auth + 5 finance-authz):** finance/payroll authz, student-profile
 IDOR, employee-document download spoofing, commissions/counselor/crm-seed
 exposure, all 9 cron routes. Webhook signature fail-closed (24 tests). CI
 secret-scan passes.

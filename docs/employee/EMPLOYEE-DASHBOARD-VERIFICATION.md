@@ -9,7 +9,7 @@
 | Test | Status | Evidence |
 |---|---|---|
 | Dashboard loads | IMPLEMENTED_BUT_UNVERIFIED | `/employee` page exists; needs live session |
-| Unauthorized access fails | VERIFIED (audited routes) | `requireUserTypes`; 35 regression tests |
+| Unauthorized access fails | VERIFIED (audited routes) | `requireUserTypes`; 23 regression tests (11 api-authz + 7 cron-auth + 5 finance-authz) |
 | Wrong role denied | VERIFIED (audited routes) | finance/payroll role gate tested |
 | Authorized user sees only permitted data | IMPLEMENTED_BUT_UNVERIFIED | owner-scoping fixed (student profile, employee docs); full matrix untested |
 | API returns 401/403 | VERIFIED (audited routes) | 401 anonymous / 403 wrong-type asserted |
