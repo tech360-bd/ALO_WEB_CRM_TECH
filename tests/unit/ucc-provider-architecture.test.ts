@@ -177,7 +177,7 @@ describe('base adapter anti-fake guard', () => {
   it('declines an operation the provider does not support as UNSUPPORTED_FEATURE', async () => {
     const a = new EmptyAdapter();
     // Telegram has no OAuth — must be UNSUPPORTED_FEATURE, not a fake URL.
-    const url = a.getAuthorizationUrl();
+    const url = a.getAuthorizationUrl({ redirectUri: 'https://x/cb', scopes: [], csrf: 's' });
     expect(url.ok).toBe(false);
     expect(url.error?.class).toBe('UNSUPPORTED_FEATURE');
   });

@@ -97,44 +97,69 @@ export abstract class BaseProviderAdapter implements ProviderAdapter {
   // --- Default-deny implementations ------------------------------------
   // Each returns a blocking result unless a subclass overrides it. This
   // means a half-built adapter can never fabricate a success.
+  // Signatures match the ProviderAdapter interface exactly (params prefixed
+  // with _ where the default ignores them) so overrides stay assignable.
 
-  getAuthorizationUrl(): ProviderResult<{ url: string }> {
+  getAuthorizationUrl(
+    _state: { redirectUri: string; scopes: string[]; csrf: string }
+  ): ProviderResult<{ url: string }> {
     return this.pending('oauth', 'getAuthorizationUrl');
   }
 
-  async handleOAuthCallback(): Promise<ProviderResult<{ accessTokenEnc: string }>> {
+  async handleOAuthCallback(
+    _params: { code: string; state: string }
+  ): Promise<ProviderResult<{ accessTokenEnc: string; refreshTokenEnc?: string; expiresAt?: string; externalAccountId?: string }>> {
     return this.pending('oauth', 'handleOAuthCallback');
   }
 
-  async refreshToken(): Promise<ProviderResult<{ accessTokenEnc: string }>> {
+  async refreshToken(
+    _refreshTokenEnc: string
+  ): Promise<ProviderResult<{ accessTokenEnc: string; refreshTokenEnc?: string; expiresAt?: string }>> {
     return this.pending('token_refresh', 'refreshToken');
   }
 
-  async revokeToken(): Promise<ProviderResult<{ revoked: boolean }>> {
+  async revokeToken(_tokenEnc: string): Promise<ProviderResult<{ revoked: boolean }>> {
     return this.pending('revocation', 'revokeToken');
   }
 
-  async validateConnection(): Promise<ProviderResult<{ valid: boolean }>> {
+  async validateConnection(
+    _accessTokenEnc: string
+  ): Promise<ProviderResult<{ valid: boolean; externalAccountId?: string; accountName?: string }>> {
     return notImplemented(this.code, 'validateConnection');
   }
 
-  async getAccount(): Promise<ProviderResult<NormalizedContact>> {
+  async getAccount(_accessTokenEnc: string): Promise<ProviderResult<NormalizedContact>> {
     return this.pending('account_management', 'getAccount');
   }
 
-  async getConversations(): Promise<ProviderResult<{ items: NormalizedMessage[] }>> {
+  async getConversations(
+    _accessTokenEnc: string,
+    _cursor?: string
+  ): Promise<ProviderResult<{ items: NormalizedMessage[]; nextCursor?: string }>> {
     return this.pending('conversation', 'getConversations');
   }
 
-  async getMessages(): Promise<ProviderResult<{ items: NormalizedMessage[] }>> {
+  async getMessages(
+    _accessTokenEnc: string,
+    _conversationId: string,
+    _cursor?: string
+  ): Promise<ProviderResult<{ items: NormalizedMessage[]; nextCursor?: string }>> {
     return this.pending('conversation', 'getMessages');
   }
 
-  async sendMessage(): Promise<ProviderResult<{ externalMessageId: string; deliveryStatus: DeliveryStatus }>> {
+  async sendMessage(
+    _accessTokenEnc: string,
+    _to: string,
+    _message: NormalizedMessage
+  ): Promise<ProviderResult<{ externalMessageId: string; deliveryStatus: DeliveryStatus }>> {
     return this.pending('send_messages', 'sendMessage');
   }
 
-  async sendAttachment(): Promise<ProviderResult<{ externalMessageId: string }>> {
+  async sendAttachment(
+    _accessTokenEnc: string,
+    _to: string,
+    _attachment: { mimeType: string; urlOrBuffer: string }
+  ): Promise<ProviderResult<{ externalMessageId: string }>> {
     return this.pending('attachments', 'sendAttachment');
   }
 
@@ -142,7 +167,9 @@ export abstract class BaseProviderAdapter implements ProviderAdapter {
     return this.pending('webhook', 'verifyWebhook');
   }
 
-  async receiveWebhook(): Promise<ProviderResult<{ messages: NormalizedMessage[]; contacts: NormalizedContact[]; eventIds: string[] }>> {
+  async receiveWebhook(
+    _req: WebhookRequest
+  ): Promise<ProviderResult<{ messages: NormalizedMessage[]; contacts: NormalizedContact[]; eventIds: string[] }>> {
     return this.pending('webhook', 'receiveWebhook');
   }
 
@@ -154,7 +181,9 @@ export abstract class BaseProviderAdapter implements ProviderAdapter {
     return null;
   }
 
-  async getRateLimit(): Promise<ProviderResult<{ remaining?: number; resetAt?: string }>> {
+  async getRateLimit(
+    _accessTokenEnc: string
+  ): Promise<ProviderResult<{ remaining?: number; resetAt?: string }>> {
     return notImplemented(this.code, 'getRateLimit');
   }
 
@@ -166,11 +195,14 @@ export abstract class BaseProviderAdapter implements ProviderAdapter {
     const e = err as { status?: number; code?: string; message?: string };
     const status = e?.status;
     let cls: ProviderErrorClass = 'INTERNAL';
+    // NETWORK is detected from the thrown shape (fetch failures carry no status).
+    const isNetworkError = !status && /fetch|network|socket|timeout|ECONN/i.test(e?.message ?? '');
     if (status === 401) cls = 'AUTHENTICATION';
     else if (status === 403) cls = 'AUTHORIZATION';
     else if (status === 429) cls = 'RATE_LIMIT';
     else if (status && status >= 500) cls = 'PROVIDER_OUTAGE';
     else if (status && status >= 400) cls = 'VALIDATION';
+    else if (isNetworkError) cls = 'NETWORK';
     const retryable = cls === 'RATE_LIMIT' || cls === 'PROVIDER_OUTAGE' || cls === 'NETWORK';
     return { class: cls, message: e?.message ?? 'unknown provider error', retryable, code: e?.code };
   }

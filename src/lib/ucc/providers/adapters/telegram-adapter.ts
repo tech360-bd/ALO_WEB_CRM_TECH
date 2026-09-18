@@ -59,7 +59,10 @@ export class TelegramAdapter extends BaseProviderAdapter {
     to: string,
     message: NormalizedMessage
   ): Promise<ProviderResult<{ externalMessageId: string; deliveryStatus: DeliveryStatus }>> {
-    const gated = this.gate('send_messages', 'sendMessage');
+    const gated = this.gate<{ externalMessageId: string; deliveryStatus: DeliveryStatus }>(
+      'send_messages',
+      'sendMessage'
+    );
     if (gated) return gated;
     const token = this.getToken();
     if (!token) return fail('CONFIGURATION', 'telegram: bot token not configured', false);
