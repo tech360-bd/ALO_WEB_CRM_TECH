@@ -133,8 +133,8 @@ notice added at each site. The real username was removed from `DEPLOYMENT.md`.
 
 **VERIFIED root cause.** The scan step in `.github/workflows/ci.yml` excluded
 `':!docs' ':!*.md'` — i.e. **all documentation was never scanned**, which is exactly where the
-password lived. Its patterns also did not cover the `mysql -u user -p'password'` CLI form,
-only `mysql://user:pass@` DSNs.
+password lived. Its patterns also did not cover the MySQL CLI inline-password form
+(`mysql -u <user> -p'<secret>' <db>`), only `mysql://user:pass@` DSNs.
 
 **Fix:** the scan now covers every tracked file including markdown, and adds patterns for
 private keys, `sk-`/`AIza` provider keys, the `mysqldump|mysql|psql|pg_dump … -p<literal>`
