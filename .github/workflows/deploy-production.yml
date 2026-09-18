@@ -487,10 +487,10 @@ jobs:
               pm2 logs "$PM2_NAME" --lines 120 --nostream || true
               exit 1
             fi
-            if ss -tln | grep -q ":$PROTECTED_PORT "; then
-              echo "✓ Protected port $PROTECTED_PORT still listening — $PROTECTED_PM2 unaffected"
+            if ss -tln | grep -q ":$ "; then
+              echo "✓ Protected port $ still listening — $ unaffected"
             else
-              echo "::warning::Protected port $PROTECTED_PORT not listening (we did NOT touch it) — verify $PROTECTED_PM2 manually"
+              echo "::warning::Protected port $ not listening (we did NOT touch it) — verify $ manually"
             fi
 
             sleep 3
@@ -531,8 +531,8 @@ jobs:
             echo " Deployed commit : $(git rev-parse HEAD)"
             echo " Previous commit : $PREV_COMMIT"
             echo " Deploy dir      : $DEPLOY_DIR"
-            echo " PM2 process     : $PM2_NAME (protected $PROTECTED_PM2 untouched)"
-            echo " Port            : $APP_PORT (protected $PROTECTED_PORT untouched)"
+            echo " PM2 process     : $PM2_NAME"
+            echo " Port            : $APP_PORT"
             echo " Backup dir      : $BACKUP_DIR"
             echo " Time (UTC)      : $(date -u)"
             echo "============================================================"
@@ -590,8 +590,7 @@ jobs:
         run: |
           set -uo pipefail
           echo "Public reachability check from the GitHub runner:"
-          for url in "https://aloeducation.com/api/health" "https://aloeducation.com/" "https://learn.aloeducation.com/"; do
+          for url in "https://aloeducation.com/api/health" "https://aloeducation.com/" "https://aloeducation.com/universities" "https://aloeducation.com/courses" "https://aloeducation.com/destinations"; do
             code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 -L "$url" || echo "000")
             echo "  $url -> HTTP $code"
           done
-          echo "(learn.aloeducation.com is the PROTECTED service — listed for isolation awareness only)"
