@@ -1,7 +1,7 @@
 # Environment Variable Guide
 
 > Mandate §60–§65. The full data-driven audit is in
-> `docs/audit/ENVIRONMENT-AUDIT.md` / `FINAL-ENVIRONMENT-AUDIT.md` (generated from
+> `docs/deployment/ENVIRONMENT-AUDIT.md` / `FINAL-ENVIRONMENT-AUDIT.md` (generated from
 > a `process.env.*` scan). This guide explains the categories and the rules.
 
 ## Counts (from the scan)

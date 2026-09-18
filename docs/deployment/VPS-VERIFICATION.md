@@ -50,7 +50,7 @@ and the 502 is an open OWNER investigation.
 ## IP / secret exposure (§72)
 - No server private IPs, DB IPs, Redis IPs, SSH config, or secrets are placed in
   public frontend config in the audited source. `NEXT_PUBLIC_*` vars are limited
-  to non-secret client config (see `docs/audit/ENVIRONMENT-AUDIT.md`).
+  to non-secret client config (see `docs/deployment/ENVIRONMENT-AUDIT.md`).
 - The CI secret-scan step passes on the committed tree.
 
 ## Protected application check (§108)

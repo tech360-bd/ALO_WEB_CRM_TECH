@@ -21,7 +21,9 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sh = (cmd) => execSync(cmd, { cwd: root, encoding: 'utf8', maxBuffer: 1 << 28 });
 const stamp = new Date().toISOString().slice(0, 10);
 const auditDir = resolve(root, 'docs/audit');
+const deployDir = resolve(root, 'docs/deployment');
 mkdirSync(auditDir, { recursive: true });
+mkdirSync(deployDir, { recursive: true });
 
 const tracked = sh('git ls-files').split('\n').filter(Boolean);
 
@@ -264,7 +266,8 @@ env.push('> **No fake values** are filled for missing production secrets (§61).
 env.push('> \`MISSING\`; placeholders in \`.env.example\` are \`CONFIGURE_IN_SERVER_SECRET_STORE\`.');
 env.push('');
 const envText = env.join('\n');
-writeFileSync(resolve(auditDir, 'ENVIRONMENT-AUDIT.md'), envText);
+// §96 places ENVIRONMENT-AUDIT.md under docs/deployment/; §60 also wants a root copy.
+writeFileSync(resolve(deployDir, 'ENVIRONMENT-AUDIT.md'), envText);
 writeFileSync(resolve(root, 'FINAL-ENVIRONMENT-AUDIT.md'), envText);
 
 console.log('Generated audit docs:');
