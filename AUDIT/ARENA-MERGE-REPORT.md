@@ -132,7 +132,7 @@ Both import the **real** handlers; only `@/lib/db` and `next-auth` are mocked.
 | CI secret-scan step (extracted from `ci.yml` via `js-yaml`, executed verbatim) | **PASS** on the staged tree incl. all 85 imported files; **FAIL** on pre-fix `cc15869`, flagging the 4 leaked lines |
 | `tests/unit/deployment-config.test.ts` | 12/12 |
 | All 4 workflow YAMLs | parse clean |
-| `npm run typecheck` | **NOT VERIFIED here** — needs `prisma generate`; `binaries.prisma.sh` is outside the sandbox egress allowlist. CI runs it on a real runner |
+| `npm run typecheck` | **NOT VERIFIED here** — needs `prisma generate`; `binaries.prisma.sh` is outside the sandbox egress allowlist. CI runs it on a real runner and is the authority (see §6.1 — it caught a real error) |
 | `npm run build` | **NOT VERIFIED here** — same cause |
 | `prisma validate` | **NOT VERIFIED here** — same cause |
 | PHP syntax (`alo-cpanel/`) | **NOT VERIFIED** — `php` is not installed in the sandbox and CI does not lint PHP. Files were imported unmodified except `config.php`/`install.php` |
@@ -142,6 +142,24 @@ No test was faked, skipped to force a pass, or converted from failure without
 fixing the cause. Two of my own test assertions were wrong during this session
 (too strict about what counts as a database call) and were corrected, not
 deleted.
+
+### 6.1 Defects caught by verifying the *committed* tree, not the working tree
+
+The dirty working tree hides two classes of error, so every gate was re-run in a
+detached `git worktree` at the pushed SHA. Two real defects surfaced that the
+working tree and the local suite had both passed over:
+
+| # | Defect | How it was missed locally | Fix (commit) |
+|---|---|---|---|
+| 1 | All four `AUDIT/*.csv` deliverables were **untracked** — `.gitignore:139` has a blanket `*.csv`, so `git ls-files 'AUDIT/*.csv'` returned **0** against 4 files on disk. The mandated manifests were on disk but not in the repo. | `git status` showed them only as `!!` (ignored); `git add -A` silently skips ignored paths, so the first merge commit shipped without them | Added a directory-scoped `!AUDIT/*.csv` negation beside the existing `!prisma/seed-data/*.csv`. Blanket rule untouched → the ~900 MB of root datasets stay untracked. (`352b35c4`) |
+| 2 | `POST /api/cron/analytics` called `GET()` with no argument after `GET` gained a `req: Request` parameter for the cron guard → **TS2554**. CI run `35306349229` failed **Typecheck**. | `npm test` and `eslint` both pass on it — it is a type-only error, and local `tsc` has no generated Prisma client to resolve against | `POST(req: Request) { return GET(req); }`, matching the other 4 delegating cron routes. (`4008bb4e`) |
+
+Defect 2 is exactly why §6 lists typecheck as CI-authoritative: the sandbox
+cannot generate the Prisma client, so `tsc --noEmit` over the repo produces no
+meaningful signal. It was instead proven in isolation — the old
+`POST() { return GET(); }` shape reproduces `TS2554: Expected 1 arguments, but
+got 0` verbatim under `tsc --strict`; the new `POST(req: Request)` shape does
+not. CI is the final word.
 
 ---
 
