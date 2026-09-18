@@ -1,14 +1,14 @@
 # Complete File Inventory
 
-> Generated from `git ls-files` on 2026-09-18. **5635 tracked files.** Do not edit by hand.
+> Generated from `git ls-files` on 2026-09-18. **5637 tracked files.** Do not edit by hand.
 > Categorization is by path/extension heuristic (mandate §4); nothing is deleted on filename alone.
 
 ## Category counts
 
 | Category | Count |
 |---|---|
-| ACTIVE | 1990 |
-| DATA | 1664 |
+| ACTIVE | 1991 |
+| DATA | 1665 |
 | OTHER | 687 |
 | LEGACY | 628 |
 | DOCUMENTATION | 604 |
@@ -29,7 +29,7 @@
 | `lib` | 238 |
 | `public` | 179 |
 | `deploy-build` | 110 |
-| `scripts` | 107 |
+| `scripts` | 108 |
 | `legacy-cpanel` | 84 |
 | `data` | 48 |
 | `prisma` | 38 |
@@ -226,6 +226,7 @@
 | `FINAL-INVENTORY.md` | 1 |
 | `FINAL-MARKETING-AUDIT.md` | 1 |
 | `FINAL-MASTER-PRODUCTION-REPORT.md` | 1 |
+| `FINAL-MERGE-MANIFEST.json` | 1 |
 | `FINAL-UNIFIED-COMMUNICATION-AUDIT.md` | 1 |
 | `FINAL-WHATSAPP-CRM-IMPLEMENTATION-REPORT.md` | 1 |
 | `FINAL_DELIVERY_FREEZE_RECORD.md` | 1 |

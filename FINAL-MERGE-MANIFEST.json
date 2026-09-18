@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-18T08:33:19.337Z",
+  "generatedAt": "2026-09-18T08:48:05.523Z",
   "mandate": "§32/§41 zero-loss merge manifest",
   "scope": "ALO Education (aloeducation.com) only",
   "merge": {
@@ -12,13 +12,13 @@
   "baseline": {
     "base": "cc15869",
     "baseSubject": "docs: final remediation & deployment report (A–H) + 502/SSH root-cause confirmation (#14)",
-    "head": "af979b7e48f5ea8872e76f0b8e351ba04d447e29",
-    "headShort": "af979b7",
+    "head": "4e30846cc64a890fe6ad1290744efe85d344cde8",
+    "headShort": "4e30846",
     "branch": "arena/01a0b26d-alo-education-z-ai"
   },
   "counts": {
-    "trackedFilesNow": 5635,
-    "added": 159,
+    "trackedFilesNow": 5637,
+    "added": 161,
     "modified": 26,
     "deleted": 2,
     "renamed": 0
@@ -40,11 +40,11 @@
   "renamed": [],
   "addedByArea": {
     "audit-deliverables": 7,
-    "other": 4,
+    "other": 5,
     "legacy-cpanel": 84,
     "docs": 47,
     "examples": 2,
-    "scripts": 2,
+    "scripts": 3,
     "src": 1,
     "ucc-provider-core": 7,
     "tests": 5
@@ -88,6 +88,7 @@
     "FINAL-COMPLETE-SYSTEM-AUDIT.md",
     "FINAL-ENVIRONMENT-AUDIT.md",
     "FINAL-MARKETING-AUDIT.md",
+    "FINAL-MERGE-MANIFEST.json",
     "FINAL-UNIFIED-COMMUNICATION-AUDIT.md",
     "alo-cpanel/.htaccess",
     "alo-cpanel/403.php",
@@ -222,6 +223,7 @@
     "docs/security/FINAL-SECURITY-AUDIT.md",
     "examples/websocket/frontend.tsx",
     "examples/websocket/server.ts",
+    "scripts/generate-merge-manifest.mjs",
     "scripts/generate-system-audit.mjs",
     "scripts/generate-ucc-matrices.mjs",
     "src/lib/cron-auth.ts",
@@ -263,7 +265,7 @@
     "localTests": "251 passed / 7 skipped (npx vitest run)",
     "ci": "CI is the authority for typecheck/build (prisma generate blocked in sandbox).",
     "lastCiRun": {
-      "commit": "af979b7",
+      "commit": "4e30846",
       "note": "see GitHub Actions for this commit"
     }
   }
