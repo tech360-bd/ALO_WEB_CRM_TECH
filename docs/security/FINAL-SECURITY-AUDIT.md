@@ -26,8 +26,13 @@
 | Privilege escalation | VERIFIED (audited routes) | finance/payroll gated; cron routes guarded |
 
 ## Fixed in this branch (regression-tested)
-- `/api/commissions`, `/api/counselor/students/[id]`, `/api/crm/seed` — were
-  unauthenticated/leaking; now gated (`api-authz-regression.test.ts`).
+- `/api/commissions` (`withAuth`), `/api/counselor/students/[id]`
+  (`authenticateRequest`) — were unauthenticated/leaking; now **auth-gated**
+  (`api-authz-regression.test.ts`).
+- `/api/crm/seed` — was a public POST creating 16 privileged accounts with
+  plaintext passwords returned in the body; now **environment-gated** (fail-closed
+  404 in production unless `ENABLE_CRM_DEV_SEED=true`, bcrypt-hashed, never
+  returns credentials). Note: this is an env gate, **not** an auth gate.
 - `/api/hr/payroll`, `/api/finance` — zero auth → `withAuth` + role gate
   (`finance-authz-regression.test.ts`, 5 tests).
 - `/api/student/profile` — IDOR + credential leak → owner-scoped, fields stripped.
