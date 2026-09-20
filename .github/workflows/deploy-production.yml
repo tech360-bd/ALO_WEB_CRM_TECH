@@ -509,7 +509,7 @@ jobs:
             }
 
             HEALTH="$(curl -fsS --max-time 15 "http://127.0.0.1:$APP_PORT/api/health")"
-            echo "Health: \$HEALTH"
+            echo "Health: $HEALTH"
 
             case "$HEALTH" in
               *'"status":"ok"'*) echo "✓ Health OK" ;;
@@ -517,7 +517,7 @@ jobs:
             esac
 
             PUBLIC_CODE="$(curl -ksS -o /dev/null -w "%{http_code}" --max-time 20 "https://$PRIMARY_DOMAIN/api/health" || true)"
-            echo "Public health HTTP: \$PUBLIC_CODE"
+            echo "Public health HTTP: $PUBLIC_CODE"
 
             echo "============================================================"
             echo " DEPLOYMENT SUCCESS"
@@ -526,8 +526,8 @@ jobs:
             echo "Node    : $(node -v)"
             echo "npm     : $(npm -v)"
             echo "PM2     : $(pm2 -v)"
-            echo "Port    : \$APP_PORT"
-            echo "Files   : \$TRACKED_COUNT"
+            echo "Port    : $APP_PORT"
+            echo "Files   : $TRACKED_COUNT"
             echo "============================================================"
 
       - name: Automatic rollback
@@ -588,5 +588,5 @@ jobs:
           for URL in             "https://aloeducation.com/"             "https://aloeducation.com/api/health"             "https://aloeducation.com/universities"             "https://aloeducation.com/courses"             "https://aloeducation.com/destinations"
           do
             CODE="$(curl -ksS -o /dev/null -w "%{http_code}" --max-time 20 -L "$URL" || true)"
-            echo "$URL -> HTTP \$CODE"
+            echo "$URL -> HTTP $CODE"
           done
