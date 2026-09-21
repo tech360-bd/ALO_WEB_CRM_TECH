@@ -136,6 +136,7 @@ interface PortalState {
   setSelectedPortal: (portal: SelectedPortal) => void;
   selectAndNavigate: (portal: SelectedPortal, view: PortalView) => void;
   setPublicPage: (view: PortalView, slug?: string | null) => void;
+  hydrate: () => void;
   login: (email: string, password: string) => Promise<boolean>;
   register: (data: { name: string; email: string; phone: string; password: string; portalType: string }) => Promise<boolean>;
   logout: () => void;
@@ -170,6 +171,35 @@ export const usePortalStore = create<PortalState>((set, get) => ({
     if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
+  hydrate: () => {
+    if (typeof window === 'undefined') return;
+    try {
+      const token = localStorage.getItem('portal_token');
+      const rawUser = localStorage.getItem('portal_user');
+      if (!token || !rawUser) return;
+      const user = JSON.parse(rawUser) as PortalUserData;
+      const viewMap: Record<string, PortalView> = {
+        STUDENT: 'student-dashboard',
+        PARTNER: 'partner-dashboard',
+        EMPLOYEE: 'employee-dashboard',
+        MARKETING: 'marketing-dashboard',
+        MARKETING_MANAGER: 'marketing-dashboard',
+        ADMIN: 'crm-dashboard',
+        SUPER_ADMIN: 'crm-dashboard',
+      };
+      set({
+        isAuthenticated: true,
+        user,
+        userType: user.userType,
+        token,
+        currentView: viewMap[user.userType] || 'portals',
+      });
+    } catch {
+      localStorage.removeItem('portal_token');
+      localStorage.removeItem('portal_user');
+    }
+  },
+
   login: async (email, password) => {
     const { selectedPortal } = get();
     set({ loginLoading: true, loginError: null, authMessage: null });
@@ -191,14 +221,21 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           ADMIN: 'crm-dashboard',
           SUPER_ADMIN: 'crm-dashboard',
         };
+        const sessionToken = data.token || 'session-active';
         set({
           isAuthenticated: true,
           user: data.user,
           userType: ut,
-          token: data.token || 'session-active',
+          token: sessionToken,
           loginLoading: false,
           currentView: viewMap[ut] || 'portals',
         });
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('portal_token', sessionToken);
+          localStorage.setItem('portal_user', JSON.stringify(data.user));
+          localStorage.setItem(`${selectedPortal}_token`, sessionToken);
+          localStorage.setItem(`${selectedPortal}_user`, JSON.stringify(data.user));
+        }
         return true;
       }
       if (data.error === 'account_suspended') {
@@ -233,15 +270,26 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           set({ loginLoading: false, currentView: 'verify-otp', authMessage: data.message });
           return true;
         }
+        // Registration creates a pending/unverified account; it does not create
+        // a session token. Never mark the browser authenticated with a fake
+        // token. The register view can show the returned success message.
+        if (!data.token) {
+          set({ loginLoading: false, authMessage: data.message || 'Registration received.' });
+          return true;
+        }
         const ut = data.user.userType as PortalUserType;
         set({
           isAuthenticated: true,
           user: data.user,
           userType: ut,
-          token: 'session-active',
+          token: data.token,
           loginLoading: false,
           currentView: ut === 'STUDENT' ? 'student-dashboard' : 'partner-dashboard',
         });
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('portal_token', data.token);
+          localStorage.setItem('portal_user', JSON.stringify(data.user));
+        }
         return true;
       }
       set({ loginLoading: false, loginError: data.error || 'Registration failed' });
@@ -262,6 +310,16 @@ export const usePortalStore = create<PortalState>((set, get) => ({
         });
       }
     } catch { /* Ignore API errors during logout */ }
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('portal_token');
+      localStorage.removeItem('portal_user');
+      localStorage.removeItem('student_token');
+      localStorage.removeItem('student_user');
+      localStorage.removeItem('partner_token');
+      localStorage.removeItem('partner_user');
+      localStorage.removeItem('employee_token');
+      localStorage.removeItem('employee_user');
+    }
     set({
       isAuthenticated: false,
       user: null,

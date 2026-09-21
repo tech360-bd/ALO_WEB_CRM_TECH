@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -798,6 +798,19 @@ export default function StudentCourseFinder() {
   };
 
   const totalResults = filteredCourses.length;
+  const pageSize = 6;
+  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
+  const paginatedCourses = filteredCourses.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  // Filtering and sorting invalidate the current page. Clamp again when a
+  // result set shrinks after a deletion or a restrictive filter.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCountries, selectedLevels, selectedSubjects, selectedIntakes, selectedTuition, selectedIelts, scholarshipFilter, activeQuickFilters, sortBy]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
 
   // Clear all filters
   const clearAllFilters = () => {
@@ -976,7 +989,7 @@ export default function StudentCourseFinder() {
                 </Sheet>
 
                 <p className="text-sm text-slate-500">
-                  Showing <span className="font-semibold text-slate-800">{totalResults}</span> courses
+                  Showing <span className="font-semibold text-slate-800">{totalResults === 0 ? 0 : (currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalResults)}</span> of {totalResults} courses
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -997,7 +1010,7 @@ export default function StudentCourseFinder() {
 
             {/* Course Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredCourses.map((course) => (
+              {paginatedCourses.map((course) => (
                 <CourseCard
                   key={course.id}
                   course={course}
@@ -1019,40 +1032,37 @@ export default function StudentCourseFinder() {
             )}
 
             {/* Pagination */}
-            {filteredCourses.length > 0 && (
+            {totalResults > 0 && totalPages > 1 && (
               <div className="mt-8">
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
                       <PaginationPrevious
                         href="#"
-                        onClick={(e) => { e.preventDefault(); setCurrentPage((p) => Math.max(1, p - 1)); }}
+                        aria-disabled={currentPage === 1}
+                        onClick={(e) => { e.preventDefault(); if (currentPage > 1) setCurrentPage((p) => p - 1); }}
                         className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                       />
                     </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#" isActive className="cursor-pointer" onClick={(e) => { e.preventDefault(); setCurrentPage(1); }}>
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#" className="cursor-pointer" onClick={(e) => { e.preventDefault(); setCurrentPage(2); }}>
-                        2
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#" className="cursor-pointer" onClick={(e) => { e.preventDefault(); setCurrentPage(3); }}>
-                        3
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>
+                    {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          href="#"
+                          isActive={pageNumber === currentPage}
+                          aria-label={`Go to page ${pageNumber}`}
+                          onClick={(e) => { e.preventDefault(); setCurrentPage(pageNumber); }}
+                          className="cursor-pointer"
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
                     <PaginationItem>
                       <PaginationNext
                         href="#"
-                        onClick={(e) => { e.preventDefault(); setCurrentPage((p) => p + 1); }}
-                        className="cursor-pointer"
+                        aria-disabled={currentPage === totalPages}
+                        onClick={(e) => { e.preventDefault(); if (currentPage < totalPages) setCurrentPage((p) => p + 1); }}
+                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                       />
                     </PaginationItem>
                   </PaginationContent>

@@ -54,10 +54,10 @@ export async function GET(req: Request) {
 
   // Filters
   if (source) where.applicationSource = source;
-  if (country) where.country = { contains: country, mode: 'insensitive' };
-  if (university) where.universityName = { contains: university, mode: 'insensitive' };
-  if (course) where.courseName = { contains: course, mode: 'insensitive' };
-  if (intake) where.intake = { contains: intake, mode: 'insensitive' };
+  if (country) where.country = { contains: country };
+  if (university) where.universityName = { contains: university };
+  if (course) where.courseName = { contains: course };
+  if (intake) where.intake = { contains: intake };
   if (counselorId) where.counselorId = counselorId;
   if (officerId) where.appTeamOfficerId = officerId;
   if (documentStatus) where.documentStatus = documentStatus;
@@ -82,11 +82,11 @@ export async function GET(req: Request) {
   }
   if (search) {
     where.OR = [
-      { applicationCode: { contains: search, mode: 'insensitive' } },
-      { studentId: { contains: search, mode: 'insensitive' } },
-      { universityName: { contains: search, mode: 'insensitive' } },
-      { courseName: { contains: search, mode: 'insensitive' } },
-      { country: { contains: search, mode: 'insensitive' } },
+      { applicationCode: { contains: search } },
+      { studentId: { contains: search } },
+      { universityName: { contains: search } },
+      { courseName: { contains: search } },
+      { country: { contains: search } },
     ];
   }
 

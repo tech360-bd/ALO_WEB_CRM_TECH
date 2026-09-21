@@ -54,11 +54,15 @@ const navItems: NavItem[] = [
 ];
 
 export default function PartnerPortalShell({ children }: { children: React.ReactNode }) {
-  const { user, currentView, setView, logout, notifications, sidebarOpen, setSidebarOpen } =
+  const { user, currentView, setView, logout, hydrate, notifications, sidebarOpen, setSidebarOpen } =
     usePortalStore();
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

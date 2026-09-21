@@ -26,9 +26,9 @@ export default function StudentMockTestsPage() {
               </div>
               <h3 className="font-bold mb-2">{item.name}</h3>
               <p className="text-sm text-gray-500 mb-4">{item.tests} tests • {item.completed} completed</p>
-              <button className="w-full bg-gray-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-black">
+              <a href="/student/mock-tests/available" className="block w-full bg-gray-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-black text-center">
                 Start Practice
-              </button>
+              </a>
             </div>
           ))}
         </div>
@@ -36,7 +36,7 @@ export default function StudentMockTestsPage() {
         <div className="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-lg">
           <p className="text-sm text-amber-800">
             <strong>Note:</strong> You have 3 free mock test vouchers. Complete your profile and submit an application to earn more vouchers.
-            Visit <a href="/student-portal/mock-tests" className="underline">Student Portal Mock Tests</a> for full access.
+            Visit <a href="/student/mock-tests/available" className="underline">Student Portal Mock Tests</a> for full access.
           </p>
         </div>
       </div>

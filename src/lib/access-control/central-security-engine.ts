@@ -224,6 +224,7 @@ export function canApproveAction(
     uRoles.includes('CHAIRMAN') ||
     uRoles.includes('HR_MANAGER') ||
     uRoles.includes('FINANCE_OFFICER') ||
+    uRoles.includes('FINANCE') ||
     uRoles.includes('APPLICATION_MANAGER');
 
   if (!isAuthorized) {

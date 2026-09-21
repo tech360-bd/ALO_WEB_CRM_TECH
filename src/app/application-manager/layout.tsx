@@ -37,6 +37,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
   const router = useRouter();
   const token = usePortalStore(s => s.token);
   const user = usePortalStore(s => s.user);
+  const hydrate = usePortalStore(s => s.hydrate);
   const clearAuth = usePortalStore(s => (s as any).clearAuth || s.logout);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [metrics, setMetrics] = useState<any>(null);
@@ -44,7 +45,12 @@ export default function ApplicationManagerLayout({ children }: { children: React
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
+  useEffect(() => {
     const checkAuth = async () => {
+      setAuthError(null);
       if (!token) {
         setAuthError('Authentication required. Please login.');
         setLoadingAuth(false);
@@ -77,7 +83,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
 
   const handleLogout = () => {
     clearAuth();
-    router.push('/auth/login');
+    router.push('/login');
   };
 
   if (loadingAuth) {
@@ -101,7 +107,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
           <h2 className="text-lg font-semibold text-[#0F172A]">Access Restricted</h2>
           <p className="text-sm text-gray-600">{authError}</p>
           <div className="flex gap-3 justify-center pt-2">
-            <Link href="/auth/login"><Button className="bg-[#0057B8] hover:bg-[#004494] text-white">Login</Button></Link>
+            <Link href="/login"><Button className="bg-[#0057B8] hover:bg-[#004494] text-white">Login</Button></Link>
             <Link href="/"><Button variant="outline" className="border-[#E2E8F0]">Home</Button></Link>
           </div>
         </div>

@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 
 // PATCH /api/reviews/[id]
 // Marketing/Super Admin moderates a review: APPROVE | REJECT | PUBLISH | UNPUBLISH
 // Body: { action, notes, performedBy }
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+async function moderateReview(req: Request, auth: AuthContext, context?: { params: Promise<{ id: string }> }) {
+  const { id } = await context!.params;
   const body = await req.json();
-  const { action, notes, performedBy } = body as { action: string; notes?: string; performedBy: string };
+  const { action, notes } = body as { action: string; notes?: string };
 
-  if (!action || !performedBy) {
-    return NextResponse.json({ error: "action and performedBy are required" }, { status: 400 });
+  const role = (auth.userType || auth.roles[0] || '').toUpperCase();
+  if (!['SUPER_ADMIN', 'ADMIN', 'MARKETING_MANAGER'].includes(role)) {
+    return NextResponse.json({ error: 'Review moderation access required' }, { status: 403 });
+  }
+  if (!action) {
+    return NextResponse.json({ error: "action is required" }, { status: 400 });
   }
 
   const review = await db.studentReview.findUnique({ where: { id } });
@@ -50,13 +55,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     publishedAt = new Date();
   }
 
-  // Resolve performedBy to a valid User.id
-  let userId = performedBy;
-  if (performedBy.includes("@")) {
-    const user = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
-    if (user) userId = user.id;
-    else userId = "system";
-  }
+  const userId = auth.userId;
 
   const updated = await db.studentReview.update({
     where: { id },
@@ -88,3 +87,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     message: `Review ${action.toLowerCase()}d successfully.`,
   });
 }
+
+export const PATCH = withAuth(moderateReview, {
+  requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'MARKETING_MANAGER'],
+});

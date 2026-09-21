@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 
 // Super Admin / Staff course management — CRUD
-export async function GET(req: NextRequest) {
-  const search = req.nextUrl.searchParams.get("q");
-  const status = req.nextUrl.searchParams.get("status");
+async function listAdminCourses(req: Request, _auth: AuthContext) {
+  const searchParams = new URL(req.url).searchParams;
+  const search = searchParams.get("q");
+  const status = searchParams.get("status");
   const where: any = {};
   if (status) where.approvalStatus = status;
   if (search) {
@@ -43,7 +45,7 @@ export async function GET(req: NextRequest) {
 }
 
 // Create course
-export async function POST(req: NextRequest) {
+async function createAdminCourse(req: Request, _auth: AuthContext) {
   const body = await req.json();
   const course = await db.coursePage.create({
     data: {
@@ -79,7 +81,7 @@ export async function POST(req: NextRequest) {
 }
 
 // Update course
-export async function PATCH(req: NextRequest) {
+async function updateAdminCourse(req: Request, _auth: AuthContext) {
   const body = await req.json();
   const { id, ...data } = body;
   const course = await db.coursePage.update({
@@ -93,7 +95,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 // Delete course
-export async function DELETE(req: NextRequest) {
+async function deleteAdminCourse(req: Request, _auth: AuthContext) {
   const { id } = await req.json();
   await db.coursePage.delete({ where: { id } });
   await db.auditLog.create({
@@ -101,3 +103,9 @@ export async function DELETE(req: NextRequest) {
   });
   return NextResponse.json({ message: "Course deleted successfully." });
 }
+
+const ADMIN_COURSE_ACCESS = { requireUserTypes: ["ADMIN", "SUPER_ADMIN", "MARKETING_MANAGER"] };
+export const GET = withAuth(listAdminCourses, ADMIN_COURSE_ACCESS);
+export const POST = withAuth(createAdminCourse, ADMIN_COURSE_ACCESS);
+export const PATCH = withAuth(updateAdminCourse, ADMIN_COURSE_ACCESS);
+export const DELETE = withAuth(deleteAdminCourse, ADMIN_COURSE_ACCESS);

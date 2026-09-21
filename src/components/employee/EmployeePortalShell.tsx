@@ -60,7 +60,7 @@ const navItems: NavItem[] = [
 ];
 
 export default function EmployeePortalShell({ children }: { children: React.ReactNode }) {
-  const { user, currentView, setView, logout, notifications, sidebarOpen, setSidebarOpen } =
+  const { user, currentView, setView, logout, hydrate, notifications, sidebarOpen, setSidebarOpen } =
     usePortalStore();
   const [showNotifications, setShowNotifications] = useState(false);
   const [actingAs, setActingAs] = useState<{ isActing: boolean; originalAdmin?: string } | null>(null);
@@ -71,6 +71,10 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
   const country = (user as any)?.country || 'Bangladesh';
   const taskCount = 5; // could be fetched from /api/employee/tasks count
   const pendingApprovals = 2;
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

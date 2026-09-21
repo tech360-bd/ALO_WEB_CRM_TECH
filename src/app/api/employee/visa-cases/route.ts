@@ -35,10 +35,10 @@ export async function GET(req: NextRequest) {
     const where: any = {};
     if (riskLevel) where.riskLevel = riskLevel.toLowerCase();
     if (stage) where.currentStage = stage;
-    if (studentName) where.studentName = { contains: studentName, mode: 'insensitive' };
+    if (studentName) where.studentName = { contains: studentName };
     if (studentId) where.studentId = studentId;
     if (destinationCountry) where.destinationCountry = destinationCountry;
-    if (university) where.university = { contains: university, mode: 'insensitive' };
+    if (university) where.university = { contains: university };
 
     if (!isSuper) {
       if (auth.roles.includes('counselor') || auth.roles.includes('COUNSELOR')) {

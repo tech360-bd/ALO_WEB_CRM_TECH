@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import EditorialFlowDiagram from '@/components/marketing/EditorialFlowDiagram';
+import MarketingKitPanel from '@/components/marketing/MarketingKitPanel';
 import {
   Share2,
   Zap,
@@ -526,6 +528,11 @@ export default function MarketingAutomationDashboard() {
           </div>
         </Card>
       )}
+
+      <div className="space-y-6">
+        <EditorialFlowDiagram />
+        <MarketingKitPanel />
+      </div>
     </div>
   );
 }

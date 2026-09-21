@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { canApproveAction, logSecurityAudit, validateRequestAccess } from '@/lib/access-control/central-security-engine';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
-export async function POST(req: Request) {
+async function processPayroll(req: Request, auth: AuthContext) {
   try {
-    const { adminId, monthYear, action } = await req.json(); // action: 'prepare_draft' | 'approve_payroll'
+    const { monthYear, action, payrollId } = await req.json(); // action: 'prepare_draft' | 'approve_payroll'
+    const adminId = auth.userId;
 
-    if (!adminId || !monthYear) {
+    if (!action || (action === 'prepare_draft' && !monthYear) || (action === 'approve_payroll' && !payrollId)) {
       return NextResponse.json({ error: 'Missing payroll parameters' }, { status: 400 });
     }
 
@@ -83,9 +85,21 @@ export async function POST(req: Request) {
     }
 
     if (action === 'approve_payroll') {
-      const { payrollId, makerId } = await req.json();
-      
-      const check = canApproveAction(adminId, makerId || 'AI_ASSISTANT', ['super_admin', 'finance_officer']);
+      const payrollToApprove = await db.employeePayroll.findUnique({ where: { id: payrollId } });
+      if (!payrollToApprove) {
+        return NextResponse.json({ error: 'Payroll draft not found' }, { status: 404 });
+      }
+      if (['approved', 'paid'].includes(payrollToApprove.status.toLowerCase())) {
+        return NextResponse.json({ error: 'Payroll has already been approved or paid' }, { status: 409 });
+      }
+
+      // The maker is record-derived. Never trust a maker ID supplied by the
+      // caller and never fall back to a synthetic AI actor for payroll.
+      const makerId = payrollToApprove.preparedBy || payrollToApprove.reviewedBy;
+      if (!makerId) {
+        return NextResponse.json({ error: 'Payroll has no recorded maker; approval is blocked' }, { status: 409 });
+      }
+      const check = canApproveAction(adminId, makerId, [auth.userType, ...auth.roles]);
       if (!check.allowed) {
         return NextResponse.json({ error: check.reason || 'Maker-Checker Separation of Duties Violation' }, { status: 403 });
       }
@@ -116,3 +130,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error?.message || 'Server error processing payroll' }, { status: 500 });
   }
 }
+
+export const POST = withAuth(processPayroll, {
+  requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'HR_MANAGER', 'FINANCE'],
+});

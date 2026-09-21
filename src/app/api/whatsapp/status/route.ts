@@ -19,8 +19,16 @@ export async function POST(req: NextRequest) {
       const expected = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
       verified = safeEqual(expected, signature);
     } else {
-      // No secret configured — accept but mark unverified
+      // A delivery-status webhook mutates communication records. Never accept
+      // unsigned events in production; development remains usable for local
+      // provider simulators but clearly marks the event unverified.
+      if (process.env.NODE_ENV === "production") {
+        return NextResponse.json({ error: "Webhook verification is not configured" }, { status: 500 });
+      }
       console.warn("[whatsapp.status] WHATSAPP_APP_SECRET not set — skipping verification");
+    }
+    if (appSecret && !verified) {
+      return NextResponse.json({ error: "Invalid webhook signature" }, { status: 403 });
     }
 
     let body: any;
