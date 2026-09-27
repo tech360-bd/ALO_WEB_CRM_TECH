@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { resolveStudentAccess } from "@/lib/student-resource-auth";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const studentId = req.nextUrl.searchParams.get("studentId");
-  if (!studentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
+  const access = await resolveStudentAccess(req, req.nextUrl.searchParams.get("studentId"));
+  if (access instanceof NextResponse) return access;
+  const studentId = access.studentId;
   const checklist = await db.visaChecklistItem.findMany({ where: { studentId }, orderBy: { category: "asc" } });
   const assessment = await db.visaReadinessAssessment.findFirst({ where: { studentId }, orderBy: { createdAt: "desc" } });
   const docs = await db.document.findMany({ where: { studentId }, select: { category: true, status: true } });
