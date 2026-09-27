@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import PremiumCountryPage from '@/components/website/PremiumCountryPage';
-import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
+import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
 
 export async function generateStaticParams() {
@@ -22,19 +22,9 @@ export async function generateStaticParams() {
   ];
 }
 
-function resolveCountrySlug(slug: string) {
-  const s = slug.toLowerCase().trim();
-  if (s === 'united-kingdom' || s === 'great-britain') return 'uk';
-  if (s === 'united-states' || s === 'us' || s === 'america') return 'usa';
-  if (s === 'dubai-uae' || s === 'uae') return 'dubai';
-  if (s === 'nz') return 'new-zealand';
-  return s;
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const resolved = resolveCountrySlug(slug);
-  const country = COUNTRY_DESTINATIONS[resolved] || COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const country = getCountryDestination(slug);
 
   if (!country) {
     return {
@@ -58,8 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CountryDestinationPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const resolved = resolveCountrySlug(slug);
-  const countryData = COUNTRY_DESTINATIONS[resolved] || COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const countryData = getCountryDestination(slug);
 
   if (!countryData) {
     notFound();

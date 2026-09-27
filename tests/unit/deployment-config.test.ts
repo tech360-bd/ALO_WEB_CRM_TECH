@@ -28,16 +28,11 @@ describe("Deployment configuration — target 3044 / /root/alo-github-main-new",
     expect(cfg).toMatch(/output:\s*["']standalone["']/);
   });
 
-  it("ecosystem binds to PORT 3044 and HOSTNAME 0.0.0.0 (SEC-05: single PORT 3044 per spec)", () => {
-    // Port is now standardized to 3044 per spec (Caddyfile, nginx, compose, ecosystem aligned) — workflow 3044 pending GH App workflows permission
+  it("ecosystem and workflow bind to PORT 3044 and HOSTNAME 0.0.0.0", () => {
     const workflow = readFileSync(join(ROOT, ".github/workflows/deploy-production.yml"), "utf-8");
-    if (!workflow.includes(":3044")) {
-      console.warn("[SEC-05] workflow :3044 pending manual apply — see docs/PRODUCTION_SETUP.md");
-    } else {
-      expect(workflow).toMatch(/:3044/);
-      expect(workflow).not.toContain(":3025");
-      expect(workflow).not.toContain(":3000"); // only 3044 allowed per spec
-    }
+    expect(workflow).toMatch(/APP_PORT:\s*['"]3044['"]/);
+    expect(workflow).not.toContain(":3025");
+    expect(workflow).not.toContain(":3000");
     // ecosystem.config.cjs may not exist on some branches — skip if missing
     const ecoPath = join(ROOT, "ecosystem.config.cjs");
     if (existsSync(ecoPath)) {
@@ -68,17 +63,13 @@ describe("Deployment configuration — target 3044 / /root/alo-github-main-new",
     expect(existsSync(join(ROOT, "src/app/api/health/route.ts"))).toBe(true);
   });
 
-  it("nginx and workflow target is 3044 (SEC-05: single PORT 3044 per spec)", () => {
+  it("nginx and workflow target is 3044", () => {
     const nginx = readFileSync(join(ROOT, "nginx.conf"), "utf-8");
     const workflow = readFileSync(join(ROOT, ".github/workflows/deploy-production.yml"), "utf-8");
     expect(nginx).toMatch(/3044/);
-    if (!workflow.includes(":3044")) {
-      console.warn("[SEC-05] workflow 3044 pending manual apply");
-    } else {
-      expect(workflow).toMatch(/3044/);
-      expect(workflow).not.toMatch(/:3025/);
-      expect(workflow).not.toMatch(/:3000/);
-    }
+    expect(workflow).toMatch(/APP_PORT:\s*['"]3044['"]/);
+    expect(workflow).not.toMatch(/:3025/);
+    expect(workflow).not.toMatch(/:3000/);
   });
 });
 

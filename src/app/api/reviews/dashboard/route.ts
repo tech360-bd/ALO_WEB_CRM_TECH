@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { authenticateRequest } from "@/lib/auth-middleware";
+
+const REVIEW_ROLES = new Set(["SUPER_ADMIN", "ADMIN", "super_admin", "admin", "MARKETING_MANAGER", "marketing_manager"]);
 
 // GET /api/reviews/dashboard
 // Marketing Manager review dashboard summary.
 export async function GET(req: NextRequest) {
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  if (!REVIEW_ROLES.has(auth.userType) && !auth.roles.some((role) => REVIEW_ROLES.has(role))) {
+    return NextResponse.json({ error: "Review dashboard access required" }, { status: 403 });
+  }
+
   const period = req.nextUrl.searchParams.get("period") || "30d";
   const since = new Date();
   if (period === "7d") since.setDate(since.getDate() - 7);

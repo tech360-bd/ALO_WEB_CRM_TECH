@@ -102,18 +102,26 @@ jobs:
       - name: Resolve deployment ref to an exact SHA
         id: resolve_ref
         shell: bash
+        env:
+          DEPLOY_REF_INPUT: ${{ inputs.ref || github.sha }}
         run: |
           set -euo pipefail
-          REF="${{ inputs.ref || github.sha }}"
+          REF="${DEPLOY_REF_INPUT:-}"
           if [ -z "$REF" ]; then REF="$(git rev-parse HEAD)"; fi
+          # The deploy contract is an exact commit, never a branch, tag, or
+          # shell fragment supplied through workflow_dispatch.
+          if ! printf '%s' "$REF" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "::error::Deployment ref must be exactly a 40-character lowercase commit SHA"
+            exit 1
+          fi
           if git rev-parse --verify "$REF^{commit}" >/dev/null 2>&1; then
             FULL_SHA="$(git rev-parse "$REF^{commit}")"
           else
-            echo "::error::Ref '$REF' does not resolve to a commit in this repository"
+            echo "::error::The requested commit does not exist in this repository"
             exit 1
           fi
           echo "deploy_ref=$FULL_SHA" >> "$GITHUB_OUTPUT"
-          echo "Resolved deploy ref: $FULL_SHA (input: '${{ inputs.ref || github.sha }}')"
+          echo "Resolved deployment ref: $FULL_SHA"
           git log -1 --format='Commit: %H%nAuthor: %an <%ae>%nDate:   %ad%nSubject:%s' "$FULL_SHA"
 
       - name: Verify repository identity
@@ -320,13 +328,14 @@ jobs:
           TARGET_REPO: ${{ env.TARGET_REPO }}
           DEPLOY_DIR: ${{ env.DEPLOY_DIR }}
           GH_FETCH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SKIP_MIGRATIONS: ${{ inputs.skip_migrations }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
-          envs: DEPLOY_REF,APP_PORT,PM2_NAME,PRIMARY_DOMAIN,TARGET_REPO,DEPLOY_DIR,GH_FETCH_TOKEN
+          envs: DEPLOY_REF,APP_PORT,PM2_NAME,PRIMARY_DOMAIN,TARGET_REPO,DEPLOY_DIR,GH_FETCH_TOKEN,SKIP_MIGRATIONS
           command_timeout: 40m
           script: |
             set -euo pipefail
@@ -462,9 +471,54 @@ jobs:
             rm -rf node_modules
             npm ci
 
-            # Prisma.
+            # Prisma. Migrations are deliberately skipped by default. If an
+            # operator explicitly opts in, create a verified logical backup
+            # first and abort if mysqldump or the backup fails.
             npx prisma validate
             npx prisma generate
+
+            SKIP_MIGRATIONS="${SKIP_MIGRATIONS:-true}"
+            case "$SKIP_MIGRATIONS" in
+              true) echo "✓ Prisma migrations skipped (safe default)" ;;
+              false)
+                command -v mysqldump >/dev/null 2>&1 || {
+                  echo "::error::mysqldump is required before an explicit migration run"
+                  exit 1
+                }
+                DB_BACKUP="$BACKUP_DIR/database-before-migrate.sql"
+                DATABASE_URL_FROM_ENV="${DATABASE_URL:-}"
+                DATABASE_URL="$DATABASE_URL_FROM_ENV" DB_BACKUP="$DB_BACKUP" node <<'NODE'
+const fs = require('node:fs');
+const { spawnSync } = require('node:child_process');
+const dotenv = require('dotenv');
+const raw = process.env.DATABASE_URL || dotenv.parse(fs.readFileSync('.env')).DATABASE_URL;
+if (!raw) throw new Error('DATABASE_URL is missing');
+const url = new URL(raw);
+const database = decodeURIComponent(url.pathname.replace(/^\\//, ''));
+if (!database) throw new Error('DATABASE_URL has no database name');
+const args = [
+  '--host', url.hostname,
+  '--port', url.port || '3306',
+  '--user', decodeURIComponent(url.username),
+  '--single-transaction', '--routines', '--triggers', '--hex-blob',
+  '--result-file', process.env.DB_BACKUP,
+  database,
+];
+const result = spawnSync('mysqldump', args, {
+  env: { ...process.env, MYSQL_PWD: decodeURIComponent(url.password) },
+  stdio: 'inherit',
+});
+process.exit(result.status ?? 1);
+NODE
+                test -s "$DB_BACKUP" || {
+                  echo "::error::Database backup was not created; refusing to run migrations"
+                  exit 1
+                }
+                echo "✓ Database backup created before explicit migration run"
+                npx prisma migrate deploy
+                ;;
+              *) echo "::error::SKIP_MIGRATIONS must be true or false"; exit 1 ;;
+            esac
 
             # Build native Node/PM2 production. Docker is not used.
             mkdir -p storage/logs
@@ -518,6 +572,10 @@ jobs:
 
             PUBLIC_CODE="$(curl -ksS -o /dev/null -w "%{http_code}" --max-time 20 "https://$PRIMARY_DOMAIN/api/health" || true)"
             echo "Public health HTTP: $PUBLIC_CODE"
+            case "$PUBLIC_CODE" in
+              2*|3*) echo "✓ Public HTTPS health reachable" ;;
+              *) echo "::error::Public HTTPS health check failed with HTTP $PUBLIC_CODE"; exit 1 ;;
+            esac
 
             echo "============================================================"
             echo " DEPLOYMENT SUCCESS"
@@ -585,8 +643,17 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
+          FAILED=0
           for URL in             "https://aloeducation.com/"             "https://aloeducation.com/api/health"             "https://aloeducation.com/universities"             "https://aloeducation.com/courses"             "https://aloeducation.com/destinations"
           do
             CODE="$(curl -ksS -o /dev/null -w "%{http_code}" --max-time 20 -L "$URL" || true)"
             echo "$URL -> HTTP $CODE"
+            case "$CODE" in
+              2*|3*) ;;
+              *) FAILED=1 ;;
+            esac
           done
+          if [ "$FAILED" -ne 0 ]; then
+            echo "::error::One or more public verification URLs failed"
+            exit 1
+          fi

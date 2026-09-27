@@ -59,7 +59,15 @@ const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 // webhook prefix is public. Keep these rules centralized and fail closed.
 function matchesPath(pathname: string, prefix: string): boolean {
   const normalized = prefix.replace(/\/+$/, "");
+  // A root prefix is an exact route, not a wildcard. Treating "/" as a
+  // generic prefix would make every page public because every pathname starts
+  // with "/".
+  if (normalized === "") return pathname === "/";
   return pathname === normalized || pathname.startsWith(`${normalized}/`);
+}
+
+export function isPublicPageRequest(pathname: string): boolean {
+  return PUBLIC_ROUTES.some((route) => matchesPath(pathname, route));
 }
 
 // Public API reads are deliberately explicit. Mutating endpoints are public
@@ -113,6 +121,7 @@ const PUBLIC_API_WRITE_ROUTES = [
   "/api/automation/schedule",
   "/api/lead-forms",
   "/api/leads",
+  "/api/crm/leads/public",
   "/api/chat",
   "/api/ai/eligibility",
   "/api/ai/match",
@@ -134,6 +143,7 @@ const PUBLIC_API_WRITE_ROUTES = [
   "/api/marketing/consent",
   "/api/marketing/consent/revoke",
   "/api/marketing/webhooks/google-business",
+  "/api/language-prep/leads",
   "/api/referrals/track",
   "/api/website/search-log",
 ];
@@ -149,10 +159,22 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/storage": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER"],
   "/api/approval-center": ["SUPER_ADMIN", "ADMIN"],
   "/api/automation/dashboard": ["SUPER_ADMIN", "ADMIN"],
+  "/api/application-team": ["SUPER_ADMIN", "ADMIN", "APPLICATION_TEAM"],
+  "/api/crm/course-import": ["SUPER_ADMIN", "ADMIN", "APPLICATION_TEAM"],
+  "/api/counselor": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "BRANCH_MANAGER"],
+  "/api/crm/seed": ["SUPER_ADMIN", "ADMIN"],
   "/api/communications": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "BRANCH_MANAGER", "SUPPORT_STAFF", "PARTNER"],
+  "/api/omnichannel": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "BRANCH_MANAGER", "SUPPORT_STAFF"],
   "/api/campaigns": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
+  "/api/marketing/content-generate": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
+  "/api/marketing/user-access": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
   "/api/faqs": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
   "/api/student-migration": ["SUPER_ADMIN", "ADMIN"],
+  "/api/quota": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
+  "/api/reviews/dashboard": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/interviews": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER"],
+  "/api/official-sources": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/inbox/ai-suggest": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "BRANCH_MANAGER", "SUPPORT_STAFF"],
   "/api/students": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "BRANCH_MANAGER", "FRONT_DESK", "SUPPORT_STAFF", "STUDENT"],
   "/api/course-finder/admin": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
   "/api/course-finder/saved": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
@@ -162,6 +184,7 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/import-center": ["SUPER_ADMIN", "ADMIN"],
   "/api/csv-import": ["SUPER_ADMIN", "ADMIN"],
   "/api/partner-admin": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
+  "/api/partner-portal": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
   "/api/partner-packages": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
   "/api/enterprise-ai": ["SUPER_ADMIN", "ADMIN"],
   "/api/ai-registry": ["SUPER_ADMIN", "ADMIN"],
@@ -204,6 +227,8 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/integrations/3cx/contact-search": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK"],
   "/api/integrations/3cx/click-to-call": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK"],
   "/api/whatsapp/send": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
+  "/api/whatsapp/ai-reply": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "SUPPORT_STAFF"],
+  "/api/whatsapp/document-upload": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM"],
   "/api/lead-scoring": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
   "/api/reviews/request": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
   "/api/reviews/google": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
@@ -211,6 +236,10 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/referrals/create": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
   "/api/referrals/stats": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
   "/api/marketing/profile": ["SUPER_ADMIN", "ADMIN"],
+  "/api/sop/generate": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "STUDENT"],
+  "/api/timeline": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "STUDENT"],
+  "/api/student-benefits": ["STUDENT"],
+  "/api/marketing/webhooks": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
   "/api/admin": ["SUPER_ADMIN", "ADMIN"],
 };
 
@@ -300,11 +329,21 @@ export default async function proxy(request: NextRequest) {
   const matchedSensitive = Object.entries(SENSITIVE_API_ROUTES).find(([prefix]) => matchesPath(pathname, prefix));
 
   // Allow public page routes
-  if (PUBLIC_ROUTES.some((r) => matchesPath(pathname, r))) {
+  if (isPublicPageRequest(pathname)) {
     if (token && (pathname === "/login" || pathname === "/register")) {
       const dashboard = getDashboardRoute(token.role as string);
       return NextResponse.redirect(new URL(dashboard, request.url));
     }
+    return NextResponse.next();
+  }
+
+  // Dedicated student-session endpoints authenticate their Bearer token in the
+  // route handler (authenticateStudentRequest/requireStudentResource). Let that
+  // server-side check run instead of requiring a NextAuth JWT at the proxy.
+  // This is intentionally limited to the student namespace; it does not make
+  // any endpoint public.
+  const hasStudentBearer = /^Bearer\s+\S+$/i.test(request.headers.get("authorization") || "");
+  if ((matchesPath(pathname, "/api/student") || matchesPath(pathname, "/api/student-benefits") || matchesPath(pathname, "/api/visa/ai-interview")) && hasStudentBearer) {
     return NextResponse.next();
   }
 
@@ -338,7 +377,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   const allowedRoutes = ROLE_ROUTES[token.role as string] || [];
-  const isAllowed = allowedRoutes.some((r) => pathname.startsWith(r));
+  const isAllowed = allowedRoutes.some((route) => matchesPath(pathname, route));
 
   if (!isAllowed) {
     const dashboard = getDashboardRoute(token.role as string);

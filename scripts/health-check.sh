@@ -16,7 +16,7 @@ else
   echo "Trying verbose..."
   curl -i --max-time $TIMEOUT "$LOCAL_URL" 2>&1 | head -n 50 || true
   pm2 describe alo-education 2>&1 | grep -E "status|uptime|memory|script path" | head -n 20 || pm2 list 2>&1 | head -n 20 || true
-  ss -lntp 2>/dev/null | grep -E "3044|3025" | head -n 10 || netstat -lntp 2>/dev/null | head -n 20 || true
+  ss -lntp 2>/dev/null | grep -E "3044" | head -n 10 || netstat -lntp 2>/dev/null | head -n 20 || true
   exit 1
 fi
 
@@ -27,8 +27,7 @@ if [[ "${1:-}" == "--public" ]]; then
   else
     echo "✗ Public health FAILED (may be DNS/Caddy/Nginx)"
     curl -i --max-time $TIMEOUT "$PUBLIC_URL" 2>&1 | head -n 50 || true
-    # Don't exit 1 for public alone — allow local to be success
-    exit 0
+    exit 1
   fi
 fi
 

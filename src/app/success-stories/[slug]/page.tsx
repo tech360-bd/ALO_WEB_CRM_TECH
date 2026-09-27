@@ -48,8 +48,9 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const story = SUCCESS_STORIES.find((s) => s.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const story = SUCCESS_STORIES.find((s) => s.slug === slug);
   if (!story) return { title: 'Story Not Found' };
   return {
     title: `${story.name}'s Success Story | ALO Education`,
@@ -57,8 +58,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function SuccessStoryDetail({ params }: { params: { slug: string } }) {
-  const story = SUCCESS_STORIES.find((s) => s.slug === params.slug);
+export default async function SuccessStoryDetail({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const story = SUCCESS_STORIES.find((s) => s.slug === slug);
 
   if (!story) {
     notFound();

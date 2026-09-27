@@ -25,8 +25,9 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const member = TEAM_MEMBERS.find((m) => m.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const member = TEAM_MEMBERS.find((m) => m.slug === slug);
   if (!member) return { title: 'Member Not Found' };
   return {
     title: `${member.name} - ${member.role} | ALO Education Team`,
@@ -34,8 +35,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function TeamMemberPage({ params }: { params: { slug: string } }) {
-  const member = TEAM_MEMBERS.find((m) => m.slug === params.slug);
+export default async function TeamMemberPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const member = TEAM_MEMBERS.find((m) => m.slug === slug);
 
   if (!member) {
     notFound();

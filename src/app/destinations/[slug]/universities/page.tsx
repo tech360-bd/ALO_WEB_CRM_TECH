@@ -2,12 +2,12 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Building2, Globe, MapPin, Award, ExternalLink, ArrowRight } from 'lucide-react';
-import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
+import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const country = COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const country = getCountryDestination(slug);
   if (!country) return { title: 'Universities | ALO Education' };
 
   return {
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CountryUniversitiesPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const countryData = COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const countryData = getCountryDestination(slug);
   if (!countryData) notFound();
 
   const universities = await db.crmUniversity.findMany({
@@ -29,7 +29,7 @@ export default async function CountryUniversitiesPage({ params }: { params: Prom
       ],
     },
     orderBy: { name: 'asc' },
-  });
+  }).catch(() => []);
 
   return (
     <div className="bg-slate-50 min-h-screen py-12 text-slate-900">

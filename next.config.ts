@@ -6,6 +6,13 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   reactStrictMode: true,
   poweredByHeader: false,
+  // Public content uses curated Unsplash images through next/image. Keep the
+  // allowlist hostname-scoped rather than disabling image optimization.
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
+    ],
+  },
   compress: true,
   experimental: {
     workerThreads: false,

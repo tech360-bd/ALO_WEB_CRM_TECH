@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { aiChat, extractJson } from "@/lib/ai";
 import { db } from "@/lib/db";
+import { requireStudentResource } from "@/lib/student-resource-auth";
 
 // AI human-like interview system
 // Asks one question at a time, evaluates answers, provides follow-ups,
 // and at the end gives a score + readiness report saved to CRM.
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  const body = await req.json().catch(() => ({}));
+  if (body.studentId) {
+    const access = await requireStudentResource(req, body.studentId);
+    if (access instanceof NextResponse) return access;
+    body.studentId = access.studentId;
+  }
   const { action } = body;
 
   if (action === "next_question") {

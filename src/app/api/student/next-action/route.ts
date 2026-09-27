@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStudentResource } from "@/lib/student-resource-auth";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const studentId = req.nextUrl.searchParams.get("studentId");
-  if (!studentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
+  const requestedStudentId = req.nextUrl.searchParams.get("studentId");
+  if (!requestedStudentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
+
+  const access = await requireStudentResource(req, requestedStudentId);
+  if (access instanceof NextResponse) return access;
+  const studentId = access.studentId;
+
   const student = await db.student.findUnique({ where: { id: studentId }, select: { id: true, profileComplete: true } });
   if (!student) return NextResponse.json({ error: "Student not found" }, { status: 404 });
   const [documents, applications] = await Promise.all([

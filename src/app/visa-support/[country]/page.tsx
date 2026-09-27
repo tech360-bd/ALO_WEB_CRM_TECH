@@ -111,8 +111,9 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: { params: { country: string } }): Metadata {
-  const data = visaDatabase[params.country];
+export async function generateMetadata({ params }: { params: Promise<{ country: string }> }): Promise<Metadata> {
+  const { country } = await params;
+  const data = visaDatabase[country];
   if (!data) return { title: 'Not Found' };
   return {
     title: `${data.name} Student Visa Guide | ALO Education`,
@@ -120,8 +121,9 @@ export function generateMetadata({ params }: { params: { country: string } }): M
   };
 }
 
-export default function CountryVisaPage({ params }: { params: { country: string } }) {
-  const data = visaDatabase[params.country];
+export default async function CountryVisaPage({ params }: { params: Promise<{ country: string }> }) {
+  const { country } = await params;
+  const data = visaDatabase[country];
   if (!data) return notFound();
 
   return (

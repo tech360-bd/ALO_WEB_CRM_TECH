@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { isPublicApiRequest } from "@/proxy";
+import { isPublicApiRequest, isPublicPageRequest } from "@/proxy";
+
+describe("proxy page exposure policy", () => {
+  it("does not treat the root route as a wildcard public prefix", () => {
+    expect(isPublicPageRequest("/")).toBe(true);
+    expect(isPublicPageRequest("/admin/dashboard")).toBe(false);
+    expect(isPublicPageRequest("/employee/dashboard")).toBe(false);
+    expect(isPublicPageRequest("/not-a-public-page")).toBe(false);
+  });
+});
 
 describe("proxy API exposure policy", () => {
   it("keeps NextAuth public but protects custom password changes", () => {
@@ -15,6 +24,12 @@ describe("proxy API exposure policy", () => {
       "/api/communications/tasks",
       "/api/storage/list",
       "/api/storage/download/file-1",
+      "/api/omnichannel/dashboard",
+      "/api/marketing/user-access",
+      "/api/quota/usage",
+      "/api/reviews/dashboard",
+      "/api/official-sources",
+      "/api/interviews",
       "/api/brand-assets",
       "/api/learning-posts",
       "/api/leads",

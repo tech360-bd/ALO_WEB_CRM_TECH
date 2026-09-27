@@ -6,7 +6,7 @@
 # ============================================================
 set -Eeuo pipefail
 
-URL="${1:-http://127.0.0.1:3000/api/health}"
+URL="${1:-http://127.0.0.1:3044/api/health}"
 SERVICE="alo-education.service"
 
 log()  { echo "[health] $*"; }
