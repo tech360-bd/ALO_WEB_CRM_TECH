@@ -8,9 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { usePortalStore } from '@/lib/stores/portal-store';
 
 export default function EmployeeLoginPage() {
   const router = useRouter();
+  const login = usePortalStore((state) => state.login);
+  const setSelectedPortal = usePortalStore((state) => state.setSelectedPortal);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +21,7 @@ export default function EmployeeLoginPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    setSelectedPortal('employee');
     const token = typeof window !== 'undefined' ? localStorage.getItem('employee_token') : null;
     if (token) {
       router.replace('/employee/dashboard');
@@ -35,21 +39,11 @@ export default function EmployeeLoginPage() {
     setError('');
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, portalType: 'employee' }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        localStorage.setItem('employee_token', data.token || 'employee_session');
-        if (data.user) {
-          localStorage.setItem('employee_user', JSON.stringify(data.user));
-        }
+      const success = await login(email, password);
+      if (success) {
         router.replace('/employee/dashboard');
       } else {
-        setError(data.error || 'Invalid employee credentials. Please check your email and password.');
+        setError('Invalid employee credentials. Please check your email and password.');
       }
     } catch (err: any) {
       setError(err?.message || 'Login failed. Please check your network connection.');

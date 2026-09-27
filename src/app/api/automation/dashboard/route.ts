@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server"
+import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 import { db } from "@/lib/db";
 import { getAutomationStats } from "@/lib/crm-automation";
 
@@ -6,7 +7,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/automation/dashboard — unified AutomationEvent stats + globalAiPaused + recentEvents.
-export async function GET() {
+async function getAutomationDashboard(_req: Request, _auth: AuthContext) {
   try {
     // Get original automation stats (from AutomationMetric)
     const stats = await getAutomationStats();
@@ -112,3 +113,7 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const GET = withAuth(getAutomationDashboard, {
+  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
+});

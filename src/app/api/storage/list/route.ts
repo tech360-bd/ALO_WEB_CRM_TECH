@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authenticateRequest } from "@/lib/auth-middleware";
 import { db } from "@/lib/db";
 
 // GET /api/storage/list
 // Lists files with filters. Used by the Document Hub and Super Admin storage views.
 export async function GET(req: NextRequest) {
+  const authResult = await authenticateRequest(req);
+  if (authResult instanceof NextResponse) return authResult;
+  const role = (authResult.userType || authResult.roles[0] || "").toUpperCase();
+  if (!["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER"].includes(role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const entityType = req.nextUrl.searchParams.get("entityType");
   const entityId = req.nextUrl.searchParams.get("entityId");
   const studentId = req.nextUrl.searchParams.get("studentId");

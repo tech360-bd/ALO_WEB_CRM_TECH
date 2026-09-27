@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { encode } from "next-auth/jwt";
 import bcrypt from 'bcryptjs';
 
 const crmRoleMap: Record<string, string> = {
@@ -37,6 +38,40 @@ const crmDepartmentMap: Record<string, string> = {
   support_agent: 'Support',
   ai_manager: 'AI & Technology',
 };
+
+function pageSessionRole(userType: string, crmRole: string | null): string {
+  if (userType === 'SUPER_ADMIN' || userType === 'ADMIN' || userType === 'PARTNER' || userType === 'STUDENT') {
+    return userType;
+  }
+  return crmRole ? crmRole.toUpperCase() : 'EMPLOYEE';
+}
+
+async function setPageSessionCookie(response: NextResponse, user: { id: string; email: string; name: string; userType: string; status: string }, crmRole: string | null) {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) return response;
+
+  const token = await encode({
+    token: {
+      sub: user.id,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: pageSessionRole(user.userType, crmRole),
+      status: 'ACTIVE',
+    },
+    secret,
+    maxAge: 7 * 24 * 60 * 60,
+  });
+  const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', token, {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60,
+  });
+  return response;
+}
 
 export async function POST(request: Request) {
   try {
@@ -227,7 +262,7 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       token: sessionToken,
       user: {
@@ -237,6 +272,7 @@ export async function POST(request: Request) {
         branch: crmRole ? 'Dhanmondi HQ' : null,
       },
     });
+    return setPageSessionCookie(response, updatedUser, crmRole);
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

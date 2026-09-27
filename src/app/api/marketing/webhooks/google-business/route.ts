@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "node:crypto";
 import { db } from "@/lib/db";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -7,13 +8,24 @@ export const dynamic = "force-dynamic";
 // Called by Google Business webhook, Zapier, Make, or via manual place review push
 // Body: { placeId, placeName, name, phone, email, rating, review, sourceDetail?, campaignId? }
 // Creates MarketingLead source=GOOGLE_MAPS + MarketingComment + audit
-// Verify via ?token= env GOOGLE_BUSINESS_WEBHOOK_TOKEN (if set)
+// Verify via ?token= or x-webhook-token against the server secret. The
+// endpoint fails closed in production when the secret is not configured.
+
+function tokenMatches(provided: string, expected: string): boolean {
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
 
 export async function POST(req: NextRequest) {
-  const token = process.env.GOOGLE_BUSINESS_WEBHOOK_TOKEN;
-  if (token) {
-    const got = req.nextUrl.searchParams.get("token") || req.headers.get("x-webhook-token");
-    if (got !== token) return NextResponse.json({ error: "Invalid webhook token" }, { status: 401 });
+  const expected = process.env.GOOGLE_BUSINESS_WEBHOOK_TOKEN;
+  if (!expected || expected.length < 16) {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json({ error: "Webhook verification is not configured" }, { status: 500 });
+    }
+  } else {
+    const provided = req.nextUrl.searchParams.get("token") || req.headers.get("x-webhook-token") || "";
+    if (!tokenMatches(provided, expected)) return NextResponse.json({ error: "Invalid webhook token" }, { status: 401 });
   }
   const body = await req.json().catch(()=> ({}));
   const placeId: string = body.placeId || body.place_id || "";
@@ -36,7 +48,7 @@ export async function POST(req: NextRequest) {
       sourceDetail: JSON.stringify({ placeId, placeName, rating, review: review.slice(0, 300) }),
       status: "new",
       hotLead: rating >= 4 || /interested|admission|visa|scholarship/i.test(review),
-      createdById: body.createdById || "google-business-webhook",
+      createdById: "google-business-webhook",
     }
   });
 
@@ -66,5 +78,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  return NextResponse.json({ success: true, hint: "POST {placeId, name, phone, email, rating, review} → MarketingLead GOOGLE_MAPS. Use ?token= if GOOGLE_BUSINESS_WEBHOOK_TOKEN set." });
+  return NextResponse.json({
+    success: true,
+    webhook: "google-business",
+    verificationConfigured: Boolean(process.env.GOOGLE_BUSINESS_WEBHOOK_TOKEN && process.env.GOOGLE_BUSINESS_WEBHOOK_TOKEN.length >= 16),
+  });
 }
