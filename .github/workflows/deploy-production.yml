@@ -585,7 +585,13 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          for URL in             "https://aloeducation.com/"             "https://aloeducation.com/api/health"             "https://aloeducation.com/universities"             "https://aloeducation.com/courses"             "https://aloeducation.com/destinations"
+          # NOTE (2026-09-28): "/courses" was checked here previously, but no
+          # such route has ever existed in the app (only the dynamic detail
+          # page "/courses/[slug]" and the real listing page "/course-finder"
+          # do) — verified against src/app/courses/ and src/app/course-finder/
+          # in the repository. That produced a permanent, misleading 404 in
+          # every deployment log. Corrected to the actual listing route.
+          for URL in             "https://aloeducation.com/"             "https://aloeducation.com/api/health"             "https://aloeducation.com/universities"             "https://aloeducation.com/course-finder"             "https://aloeducation.com/destinations"
           do
             CODE="$(curl -ksS -o /dev/null -w "%{http_code}" --max-time 20 -L "$URL" || true)"
             echo "$URL -> HTTP $CODE"
