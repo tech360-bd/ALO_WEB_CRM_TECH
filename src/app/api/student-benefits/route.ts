@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStudentResource } from "@/lib/student-resource-auth";
 
 // GET — student benefits (entitlements + vouchers)
 export async function GET(req: NextRequest) {
-  const studentId = req.nextUrl.searchParams.get("studentId");
-  if (!studentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
+  const requestedStudentId = req.nextUrl.searchParams.get("studentId");
+  if (!requestedStudentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
+
+  const access = await requireStudentResource(req, requestedStudentId);
+  if (access instanceof NextResponse) return access;
+  const studentId = access.studentId;
 
   const [entitlements, vouchers] = await Promise.all([
     db.studentBenefitEntitlement.findMany({ where: { studentId } }),

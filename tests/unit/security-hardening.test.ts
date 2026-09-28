@@ -162,19 +162,15 @@ describe('SEC-10 auth enforcement', () => {
 });
 
 describe('SEC-05 port alignment', () => {
-  it('nginx/compose/eco/caddy use 3044 (prod spec) — workflow 3044 pending GH App permission', async () => {
+  it('nginx/compose/eco/caddy/workflow use 3044 (prod spec)', async () => {
     const fs = await import('fs');
     const nginx = fs.readFileSync('nginx.conf','utf8');
     expect(nginx).toContain('proxy_pass http://127.0.0.1:3044');
     expect(nginx).not.toContain('proxy_pass http://127.0.0.1:3000');
     const wf = fs.readFileSync('.github/workflows/deploy-production.yml','utf8');
-    // Workflow change to :3044 requires 'workflows' permission — GitHub App may reject push. Warn not fail until manually applied.
-    if (!wf.includes(':3044')) {
-      console.warn('[SEC-05] workflow still :3025 — manual fix required: update deploy-production.yml health curl/ss to :3044 (see docs/PRODUCTION_SETUP.md). This is expected until GH App gets workflows permission.');
-    } else {
-      expect(wf).toContain(':3044');
-      expect(wf).not.toContain(':3025');
-    }
+    expect(wf).toMatch(/APP_PORT:\s*['"]3044['"]/);
+    expect(wf).not.toContain(':3025');
+    expect(wf).not.toContain(':3000');
     const compose = fs.readFileSync('docker-compose.yml','utf8');
     expect(compose).toContain('3044:3044');
     const eco = fs.readFileSync('ecosystem.config.cjs','utf8');

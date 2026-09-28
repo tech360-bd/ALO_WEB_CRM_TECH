@@ -58,7 +58,7 @@ log "Starting service ..."
 systemctl start "$SERVICE_NAME"
 sleep 3
 
-if curl -fsS "http://127.0.0.1:3000/api/health" >/dev/null 2>&1; then
+if curl -fsS "http://127.0.0.1:3044/api/health" >/dev/null 2>&1; then
   log "✓ Health check passed"
 else
   fail "Health check failed — inspect: journalctl -u $SERVICE_NAME -n 100"

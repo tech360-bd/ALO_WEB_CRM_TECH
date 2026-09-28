@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authenticateRequest } from "@/lib/auth-middleware";
 import { checkPoolHealth, POOLS, type PoolKey } from "@/lib/storage-service";
 import { db } from "@/lib/db";
 
 // GET /api/storage/health
 // Returns storage pool health status for the Super Admin storage dashboard.
 export async function GET(req: NextRequest) {
+  const authResult = await authenticateRequest(req);
+  if (authResult instanceof NextResponse) return authResult;
+  const role = (authResult.userType || authResult.roles[0] || "").toUpperCase();
+  if (!["SUPER_ADMIN", "ADMIN"].includes(role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const pools: any[] = [];
   let totalUsed = 0;
   let totalCapacity = 0;

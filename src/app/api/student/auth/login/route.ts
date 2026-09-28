@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { encode } from 'next-auth/jwt';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { createStudentSession } from '@/lib/student-auth';
@@ -13,6 +14,33 @@ function getClientIp(req: Request): string {
   const realIp = req.headers.get('x-real-ip');
   if (realIp) return realIp.trim();
   return 'unknown';
+}
+
+async function setStudentPageSessionCookie(response: NextResponse, student: { id: string; email: string; name: string }) {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) return response;
+
+  const token = await encode({
+    token: {
+      sub: student.id,
+      id: student.id,
+      email: student.email,
+      name: student.name,
+      role: 'STUDENT',
+      status: 'ACTIVE',
+    },
+    secret,
+    maxAge: 24 * 60 * 60,
+  });
+  const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', token, {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 24 * 60 * 60,
+  });
+  return response;
 }
 
 export async function POST(req: Request) {
@@ -147,9 +175,8 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
-      token,
       student: {
         id: student.id,
         studentId: student.studentId,
@@ -160,6 +187,11 @@ export async function POST(req: Request) {
         journeyStage: student.journeyStage
       }
     });
+    const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+    response.cookies.set('alo_student_session', token, {
+      httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 24 * 60 * 60,
+    });
+    return setStudentPageSessionCookie(response, student);
 
   } catch (error) {
     console.error('Login error:', error);

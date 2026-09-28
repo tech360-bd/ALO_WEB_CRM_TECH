@@ -11,6 +11,9 @@ APP_USER="alo"
 APP_GROUP="alo"
 SERVICE_NAME="alo-education.service"
 NODE_MAJOR=22
+APP_PORT="${APP_PORT:-3044}"
+APPLY_MIGRATIONS="${APPLY_MIGRATIONS:-false}"
+VERIFIED_DB_BACKUP="${VERIFIED_DB_BACKUP:-}"
 
 log()  { echo "[deploy] $*"; }
 fail() { echo "[deploy][ERROR] $*" >&2; exit 1; }
@@ -64,6 +67,10 @@ rsync -a --delete \
   --exclude='node_modules' \
   --exclude='.next' \
   --exclude='.git' \
+  --exclude='.env' \
+  --exclude='storage' \
+  --exclude='uploads' \
+  --exclude='public/uploads' \
   --exclude='tests' \
   --exclude='remediation-baseline-*' \
   --exclude='remediation-work' \
@@ -84,12 +91,18 @@ sudo -u "$APP_USER" -H bash -lc "cd '$APP_DIR' && npm ci --omit=dev 2>/dev/null 
 log "Building (prisma generate + next build) ..."
 sudo -u "$APP_USER" -H bash -lc "cd '$APP_DIR' && npm run build"
 
-# ── 6. Apply migrations ─────────────────────────────────────
-log "Running prisma migrate deploy ..."
-sudo -u "$APP_USER" -H bash -lc "cd '$APP_DIR' && npx prisma migrate deploy"
-
-log "Running prisma db seed ..."
-sudo -u "$APP_USER" -H bash -lc "cd '$APP_DIR' && npx prisma db seed || true"
+# ── 6. Migrations are opt-in and backup-gated ─────────────────
+case "$APPLY_MIGRATIONS" in
+  false) log "Skipping Prisma migrations (safe default)" ;;
+  true)
+    [[ -n "$VERIFIED_DB_BACKUP" && -s "$VERIFIED_DB_BACKUP" ]] || fail "APPLY_MIGRATIONS=true requires VERIFIED_DB_BACKUP pointing to a verified backup file"
+    log "Applying Prisma migrations after verified backup: $VERIFIED_DB_BACKUP"
+    sudo -u "$APP_USER" -H bash -lc "cd '$APP_DIR' && npx prisma migrate deploy"
+    ;;
+  *) fail "APPLY_MIGRATIONS must be true or false" ;;
+esac
+# Seeds are never part of production deployment; run them only as a separately
+# reviewed, operator-controlled task against a disposable target.
 
 # ── 7. Install systemd unit ─────────────────────────────────
 log "Installing systemd unit ..."
@@ -110,7 +123,7 @@ sleep 3
 
 # ── 10. Smoke test ──────────────────────────────────────────
 log "Smoke testing ..."
-if curl -fsS "http://127.0.0.1:3000/api/health" >/dev/null 2>&1; then
+  if curl -fsS "http://127.0.0.1:$APP_PORT/api/health" >/dev/null 2>&1; then
   log "✓ Health check passed"
 else
   fail "Health check failed — inspect: journalctl -u $SERVICE_NAME -n 100"

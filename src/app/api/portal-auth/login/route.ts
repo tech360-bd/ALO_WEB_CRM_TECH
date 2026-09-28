@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { encode } from "next-auth/jwt";
 import bcrypt from 'bcryptjs';
 
 const crmRoleMap: Record<string, string> = {
@@ -20,6 +21,23 @@ const crmRoleMap: Record<string, string> = {
   'ai@alo.edu.bd': 'ai_manager',
 };
 
+const loginAttempts = new Map<string, { count: number; resetAt: number }>();
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_MAX_FAILURES = 5;
+
+function rateLimitKey(ip: string, email: string) { return `${ip}:${email}`; }
+function isRateLimited(key: string, now = Date.now()) {
+  const current = loginAttempts.get(key);
+  if (!current || current.resetAt <= now) { if (current) loginAttempts.delete(key); return false; }
+  return current.count >= LOGIN_MAX_FAILURES;
+}
+function recordLoginFailure(key: string, now = Date.now()) {
+  const current = loginAttempts.get(key);
+  if (!current || current.resetAt <= now) loginAttempts.set(key, { count: 1, resetAt: now + LOGIN_WINDOW_MS });
+  else current.count += 1;
+}
+function clearLoginFailures(key: string) { loginAttempts.delete(key); }
+
 const crmDepartmentMap: Record<string, string> = {
   super_admin: 'Administration',
   ceo: 'Executive',
@@ -38,6 +56,40 @@ const crmDepartmentMap: Record<string, string> = {
   ai_manager: 'AI & Technology',
 };
 
+function pageSessionRole(userType: string, crmRole: string | null): string {
+  if (userType === 'SUPER_ADMIN' || userType === 'ADMIN' || userType === 'PARTNER' || userType === 'STUDENT') {
+    return userType;
+  }
+  return crmRole ? crmRole.toUpperCase() : 'EMPLOYEE';
+}
+
+async function setPageSessionCookie(response: NextResponse, user: { id: string; email: string; name: string; userType: string; status: string }, crmRole: string | null) {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) return response;
+
+  const token = await encode({
+    token: {
+      sub: user.id,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: pageSessionRole(user.userType, crmRole),
+      status: 'ACTIVE',
+    },
+    secret,
+    maxAge: 7 * 24 * 60 * 60,
+  });
+  const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', token, {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60,
+  });
+  return response;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -54,9 +106,14 @@ export async function POST(request: Request) {
     const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       || request.headers.get('x-real-ip')
       || 'unknown';
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const attemptKey = rateLimitKey(ipAddress, normalizedEmail);
+    if (isRateLimited(attemptKey)) {
+      return NextResponse.json({ success: false, error: 'Too many login attempts. Please try again later.' }, { status: 429 });
+    }
 
     const user = await db.portalUser.findUnique({
-      where: { email: email.toLowerCase().trim() },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
@@ -67,6 +124,7 @@ export async function POST(request: Request) {
           failureReason: "user_not_found",
         },
       });
+      recordLoginFailure(attemptKey);
       return NextResponse.json(
         { success: false, error: "Invalid credentials" },
         { status: 401 }
@@ -83,6 +141,7 @@ export async function POST(request: Request) {
           failureReason: "account_suspended",
         },
       });
+      recordLoginFailure(attemptKey);
       return NextResponse.json(
         {
           success: false,
@@ -102,6 +161,7 @@ export async function POST(request: Request) {
           failureReason: "account_pending",
         },
       });
+      recordLoginFailure(attemptKey);
       return NextResponse.json(
         {
           success: false,
@@ -125,6 +185,7 @@ export async function POST(request: Request) {
           failureReason: `account_${user.status}`,
         },
       });
+      recordLoginFailure(attemptKey);
       return NextResponse.json(
         {
           success: false,
@@ -146,6 +207,7 @@ export async function POST(request: Request) {
           failureReason: "wrong_password",
         },
       });
+      recordLoginFailure(attemptKey);
       return NextResponse.json(
         { success: false, error: "Invalid credentials" },
         { status: 401 }
@@ -171,6 +233,7 @@ export async function POST(request: Request) {
     }
 
     if (!portalMatches) {
+      recordLoginFailure(attemptKey);
       return NextResponse.json(
         {
           success: false,
@@ -227,9 +290,9 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({
+    clearLoginFailures(attemptKey);
+    const response = NextResponse.json({
       success: true,
-      token: sessionToken,
       user: {
         ...updatedUser,
         crmRole,
@@ -237,6 +300,11 @@ export async function POST(request: Request) {
         branch: crmRole ? 'Dhanmondi HQ' : null,
       },
     });
+    const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+    response.cookies.set('alo_portal_session', sessionToken, {
+      httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 7 * 24 * 60 * 60,
+    });
+    return setPageSessionCookie(response, updatedUser, crmRole);
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

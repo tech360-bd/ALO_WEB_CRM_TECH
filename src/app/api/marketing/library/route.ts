@@ -20,7 +20,7 @@ export const GET = withAuth(async (req: Request, _auth: AuthContext) => {
   if (status && status !== "ALL") where.approvalStatus = status;
   else if (status === "ALL") where.approvalStatus = { in: ["APPROVED","PUBLISHED","SCHEDULED"] };
   if (platform) where.platform = platform;
-  if (q) where.title = { contains: q, mode: "insensitive" };
+  if (q) where.title = { contains: q };
   // Only approved/published are library
   if (!where.approvalStatus) where.approvalStatus = { in: ["APPROVED","PUBLISHED"] };
   const posts = await db.campaignPost.findMany({ where, orderBy: { approvedAt: "desc" }, take: 50 });

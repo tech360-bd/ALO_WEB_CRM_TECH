@@ -73,19 +73,27 @@ export async function revokeAllStudentSessions(studentId: string, reason = 'logo
 // ============================================================
 // Authenticate a student request via Bearer token
 // ============================================================
+function cookieValue(request: Request, name: string): string | null {
+  const header = request.headers.get('cookie') || '';
+  const pair = header.split(';').map((part) => part.trim()).find((part) => part.startsWith(`${name}=`));
+  return pair ? decodeURIComponent(pair.slice(name.length + 1)) : null;
+}
+
 export async function authenticateStudentRequest(
   request: Request
 ): Promise<StudentAuthContext | NextResponse> {
   const authHeader = request.headers.get('authorization');
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  const token = bearerToken && bearerToken !== 'null' && bearerToken !== 'undefined'
+    ? bearerToken
+    : cookieValue(request, 'alo_student_session');
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!token) {
     return NextResponse.json(
       { success: false, error: 'Authentication required. Please login to your student portal.' },
       { status: 401 }
     );
   }
-
-  const token = authHeader.substring(7);
 
   const session = await db.studentSession.findUnique({
     where: { token },

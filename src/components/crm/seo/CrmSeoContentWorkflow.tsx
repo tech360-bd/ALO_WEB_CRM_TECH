@@ -110,7 +110,7 @@ function PipelineOverview() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       {pipelineCards.map((p) => (
-        <Card key={p.label} className={`${p.color} border`} onClick={() => {}}>
+        <Card key={p.label} className={`${p.color} border`}>
           <CardContent className="p-4 flex items-center gap-3">
             <div className="rounded-lg bg-white/60 dark:bg-black/20 p-2">
               <p.icon className="h-4 w-4" />

@@ -2,12 +2,12 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { BookOpen, Calendar, DollarSign, Clock, Search, ArrowRight } from 'lucide-react';
-import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
+import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const country = COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const country = getCountryDestination(slug);
   if (!country) return { title: 'Courses | ALO Education' };
 
   return {
@@ -18,10 +18,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CountryCoursesPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const countryData = COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const countryData = getCountryDestination(slug);
   if (!countryData) notFound();
 
   const courses = await db.crmCourse.findMany({
+    where: {
+      OR: [
+        { country: { contains: countryData.name } },
+        { country: { contains: countryData.code } },
+        { university: { country: { contains: countryData.name } } },
+        { university: { country: { contains: countryData.code } } },
+      ],
+    },
     take: 30,
     orderBy: { courseTitle: 'asc' },
     include: {
@@ -29,7 +37,7 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
       intakeFees: true,
       requirements: true,
     },
-  });
+  }).catch(() => []);
 
   return (
     <div className="bg-slate-50 min-h-screen py-12 text-slate-900">

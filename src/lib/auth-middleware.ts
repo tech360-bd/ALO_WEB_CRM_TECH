@@ -22,15 +22,27 @@ export interface AuthContext {
 }
 
 // ============================================================
-// Extract and validate session from Authorization header
+// Extract and validate session from an HttpOnly cookie or legacy Authorization header
 // ============================================================
+function cookieValue(request: Request, name: string): string | null {
+  const header = request.headers.get('cookie') || '';
+  const pair = header.split(';').map((part) => part.trim()).find((part) => part.startsWith(`${name}=`));
+  return pair ? decodeURIComponent(pair.slice(name.length + 1)) : null;
+}
+
 export async function authenticateRequest(request: Request): Promise<AuthContext | NextResponse> {
   const authHeader = request.headers.get('authorization');
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  // New portal logins use an HttpOnly cookie. Bearer remains supported for
+  // legacy clients, but fabricated empty/null values must not shadow the cookie.
+  const token = bearerToken && bearerToken !== 'null' && bearerToken !== 'undefined'
+    ? bearerToken
+    : cookieValue(request, 'alo_portal_session');
 
   // The web app uses NextAuth cookies while older portal clients use a
   // database-backed Bearer session. Support both without accepting fabricated
   // tokens or bypassing the database checks.
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!token) {
     const { getServerSession } = await import('next-auth');
     const { authOptions } = await import('@/lib/auth');
     const nextAuthSession = await getServerSession(authOptions);
@@ -72,9 +84,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     };
   }
 
-  const token = authHeader.substring(7);
-
-  // Look up session in database
+  // Look up the cookie or bearer session in the database
   const session = await db.portalSession.findUnique({
     where: { token },
     include: {

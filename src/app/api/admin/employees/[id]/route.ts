@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { canViewField, logSecurityAudit, validateRequestAccess } from '@/lib/access-control/central-security-engine';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+async function getAdminEmployee(req: Request, auth: AuthContext, context?: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params;
-    const { searchParams } = new URL(req.url);
-    const viewerId = searchParams.get('viewerId') || '';
+    const { id } = await context!.params;
+    const viewerId = auth.userId;
 
     const emp = await db.employee.findUnique({ where: { id } });
     if (!emp) {
@@ -43,17 +43,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+async function updateAdminEmployee(req: Request, auth: AuthContext, context?: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params;
+    const { id } = await context!.params;
     const body = await req.json();
-    const { adminId, status, designation, department, role, branch } = body;
+    const { status, designation, department, role, branch } = body;
 
-    if (!adminId) {
-      return NextResponse.json({ error: 'Missing adminId parameter' }, { status: 400 });
-    }
-
-    const access = await validateRequestAccess({ userId: adminId }, 'employees', 'update');
+    const access = await validateRequestAccess({ userId: auth.userId }, 'employees', 'update');
     if (!access.allowed) {
       return NextResponse.json({ error: access.reason || 'Unauthorized' }, { status: 403 });
     }
@@ -76,7 +72,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     // Log security audit
     await logSecurityAudit({
-      actorId: adminId,
+      actorId: auth.userId,
       actorRole: 'Admin',
       action: status ? `EMPLOYEE_STATUS_CHANGED_${status.toUpperCase()}` : 'EMPLOYEE_PROFILE_UPDATED',
       targetType: 'Employee',
@@ -90,3 +86,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ error: error?.message || 'Server error updating employee' }, { status: 500 });
   }
 }
+
+export const GET = withAuth(getAdminEmployee, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'HR_MANAGER'] });
+export const PATCH = withAuth(updateAdminEmployee, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'HR_MANAGER'] });

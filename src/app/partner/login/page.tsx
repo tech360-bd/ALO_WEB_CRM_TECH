@@ -8,9 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { usePortalStore } from '@/lib/stores/portal-store';
 
 export default function PartnerLoginPage() {
   const router = useRouter();
+  const login = usePortalStore((state) => state.login);
+  const setSelectedPortal = usePortalStore((state) => state.setSelectedPortal);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +21,7 @@ export default function PartnerLoginPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    setSelectedPortal('partner');
     const token = typeof window !== 'undefined' ? localStorage.getItem('partner_token') : null;
     if (token) {
       router.replace('/partner/dashboard');
@@ -35,21 +39,11 @@ export default function PartnerLoginPage() {
     setError('');
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, portalType: 'partner' }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        localStorage.setItem('partner_token', data.token || 'partner_session');
-        if (data.user) {
-          localStorage.setItem('partner_user', JSON.stringify(data.user));
-        }
+      const success = await login(email, password);
+      if (success) {
         router.replace('/partner/dashboard');
       } else {
-        setError(data.error || 'Invalid partner credentials. Please check your email and password.');
+        setError('Invalid partner credentials. Please check your email and password.');
       }
     } catch (err: any) {
       setError(err?.message || 'Login failed. Please check your internet connection.');

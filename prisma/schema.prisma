@@ -4834,6 +4834,8 @@ model EmployeePayroll {
   @@index([employeeId])
   @@index([period])
   @@index([status])
+  // One payroll record per employee and period; the run-level admin record uses employeeId="".
+  @@unique([employeeId, period])
   monthYear String
   employeeCount Int @default(0)
   totalGross Float @default(0)

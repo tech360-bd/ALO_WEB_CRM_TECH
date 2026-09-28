@@ -37,19 +37,43 @@ const PUBLIC_ROUTES = [
   "/student-login",
   "/partner-login",
   "/employee-login",
+  // Direct App Router portal auth pages (legacy aliases above target these
+  // names, but real pages also need to be reachable without a session).
+  "/student/login",
+  "/student/register",
+  "/partner/login",
+  "/partner/register",
+  "/employee/login",
+  "/admin/login",
+  "/portal/login",
   "/account-suspended",
   "/account-pending",
   "/unauthorized",
 ];
 
-// Truly public API routes — accessible without authentication.
-const PUBLIC_API_ROUTES = [
-  "/api/auth",
-  "/api/portal-auth/login",
-  "/api/portal-auth/register",
-  "/api/portal-auth/forgot-password",
-  "/api/portal-auth/reset-password",
-  "/api/portal-auth/verify-otp",
+const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+// Route matching must respect path boundaries. A raw startsWith check would
+// accidentally make /api/auth/change-password public when /api/auth is listed,
+// and would make every internal /api/communications/* endpoint public when the
+// webhook prefix is public. Keep these rules centralized and fail closed.
+function matchesPath(pathname: string, prefix: string): boolean {
+  const normalized = prefix.replace(/\/+$/, "");
+  // A root prefix is an exact route, not a wildcard. Treating "/" as a
+  // generic prefix would make every page public because every pathname starts
+  // with "/".
+  if (normalized === "") return pathname === "/";
+  return pathname === normalized || pathname.startsWith(`${normalized}/`);
+}
+
+export function isPublicPageRequest(pathname: string): boolean {
+  return PUBLIC_ROUTES.some((route) => matchesPath(pathname, route));
+}
+
+// Public API reads are deliberately explicit. Mutating endpoints are public
+// only when listed in PUBLIC_API_WRITE_ROUTES; everything else reaches the
+// authentication/RBAC gate below.
+const PUBLIC_API_READ_ROUTES = [
   "/api/countries",
   "/api/universities",
   "/api/courses",
@@ -60,24 +84,56 @@ const PUBLIC_API_ROUTES = [
   "/api/resources",
   "/api/content-relationships",
   "/api/homepage",
-  "/api/website/",
-  "/api/lead-forms",
-  "/api/leads",
+  "/api/website",
   "/api/search",
   "/api/chat",
-  "/api/ai/eligibility",
-  "/api/ai/match",
   "/api/stats",
   "/api/blog",
   "/api/news",
   "/api/events",
+  "/api/faqs",
   "/api/reviews/submit",
   "/api/reviews/invitation",
-  "/api/whatsapp/webhook",
   "/api/whatsapp/status",
-  "/api/facebook/webhook",
   "/api/facebook/auth",
   "/api/facebook/callback",
+  "/api/health",
+  "/api/destinations",
+  "/api/ai/eligibility",
+  "/api/ai/match",
+  "/api/ai/sop",
+  "/api/ai/student-intake",
+  "/api/research/provider-status",
+  "/api/seo/health",
+  "/api/marketing/webhooks/google-business",
+  "/api/automation/schedule",
+  "/api/live-edit",
+];
+
+const PUBLIC_API_WRITE_ROUTES = [
+  "/api/portal-auth/login",
+  "/api/portal-auth/register",
+  "/api/portal-auth/forgot-password",
+  "/api/portal-auth/reset-password",
+  "/api/portal-auth/verify-otp",
+  "/api/student/auth/login",
+  "/api/student/auth/otp",
+  "/api/automation/schedule",
+  "/api/lead-forms",
+  "/api/leads",
+  "/api/crm/leads/public",
+  "/api/chat",
+  "/api/ai/eligibility",
+  "/api/ai/match",
+  "/api/ai/sop",
+  "/api/ai/student-intake",
+  "/api/events",
+  "/api/reviews/submit",
+  "/api/reviews/invitation",
+  "/api/reviews/feedback",
+  "/api/whatsapp/status",
+  "/api/whatsapp/webhook",
+  "/api/facebook/webhook",
   "/api/integrations/3cx/webhooks",
   "/api/integrations/3cx/call/journal",
   "/api/integrations/3cx/sms/journal",
@@ -86,45 +142,11 @@ const PUBLIC_API_ROUTES = [
   "/api/behavior/track",
   "/api/marketing/consent",
   "/api/marketing/consent/revoke",
-  "/api/marketing/webhooks",
-  "/api/reviews/feedback",
+  "/api/marketing/webhooks/google-business",
+  "/api/language-prep/leads",
   "/api/referrals/track",
-  "/api/live-edit",
-  "/api/automation/schedule",
-  "/api/dashboard-alarm",
-  "/api/automation/dashboard",
-  "/api/health",
-  "/api/brand-assets",
-  "/api/learning-posts",
-  "/api/approval-center",
-  "/api/communications",
-  "/api/storage",
-  "/api/destinations",
-  "/api/course-finder",
+  "/api/website/search-log",
 ];
-
-const PUBLIC_PREFIXES = [
-  "/api/portal-auth/login",
-  "/api/portal-auth/register",
-  "/api/portal-auth/forgot-password",
-  "/api/portal-auth/reset-password",
-  "/api/portal-auth/verify-otp",
-  "/api/website/",
-  "/api/health",
-  "/api/course-finder",
-  "/api/universities",
-  "/api/scholarships",
-  "/api/destinations",
-  "/api/chat",
-  "/api/marketing/webhooks",
-  "/_next/static",
-  "/_next/image",
-  "/favicon",
-  "/robots",
-  "/sitemap",
-];
-
-const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/finance": ["SUPER_ADMIN", "ADMIN", "FINANCE"],
@@ -134,11 +156,35 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/audit": ["SUPER_ADMIN", "ADMIN"],
   "/api/access-control": ["SUPER_ADMIN"],
   "/api/permissions": ["SUPER_ADMIN", "ADMIN"],
-  "/api/storage": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "STUDENT"],
+  "/api/storage": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER"],
+  "/api/approval-center": ["SUPER_ADMIN", "ADMIN"],
+  "/api/automation/dashboard": ["SUPER_ADMIN", "ADMIN"],
+  "/api/application-team": ["SUPER_ADMIN", "ADMIN", "APPLICATION_TEAM"],
+  "/api/crm/course-import": ["SUPER_ADMIN", "ADMIN", "APPLICATION_TEAM"],
+  "/api/counselor": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "BRANCH_MANAGER"],
+  "/api/crm/seed": ["SUPER_ADMIN", "ADMIN"],
+  "/api/communications": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "BRANCH_MANAGER", "SUPPORT_STAFF", "PARTNER"],
+  "/api/omnichannel": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "BRANCH_MANAGER", "SUPPORT_STAFF"],
+  "/api/campaigns": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
+  "/api/marketing/content-generate": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
+  "/api/marketing/user-access": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/faqs": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
   "/api/student-migration": ["SUPER_ADMIN", "ADMIN"],
+  "/api/quota": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
+  "/api/reviews/dashboard": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/interviews": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER"],
+  "/api/official-sources": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/inbox/ai-suggest": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "BRANCH_MANAGER", "SUPPORT_STAFF"],
+  "/api/students": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "BRANCH_MANAGER", "FRONT_DESK", "SUPPORT_STAFF", "STUDENT"],
+  "/api/course-finder/admin": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/course-finder/saved": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
+  "/api/course-finder/shortlist": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
+  "/api/course-finder/compare": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
+  "/api/course-finder/eligible": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
   "/api/import-center": ["SUPER_ADMIN", "ADMIN"],
   "/api/csv-import": ["SUPER_ADMIN", "ADMIN"],
   "/api/partner-admin": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
+  "/api/partner-portal": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
   "/api/partner-packages": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
   "/api/enterprise-ai": ["SUPER_ADMIN", "ADMIN"],
   "/api/ai-registry": ["SUPER_ADMIN", "ADMIN"],
@@ -149,6 +195,7 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/note-versions": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
   "/api/brand-assets": ["SUPER_ADMIN", "ADMIN"],
   "/api/learning-posts": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/knowledge-center": ["SUPER_ADMIN", "ADMIN", "EMPLOYEE", "HR_MANAGER", "BRANCH_MANAGER", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "MARKETING_MANAGER", "MARKETING", "FRONT_DESK", "SUPPORT_STAFF", "ENGLISH_TRAINER"],
   "/api/commissions": ["SUPER_ADMIN", "ADMIN", "FINANCE"],
   "/api/university-agreements": ["SUPER_ADMIN", "ADMIN"],
   "/api/b2b-contacts": ["SUPER_ADMIN", "ADMIN"],
@@ -180,6 +227,8 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/integrations/3cx/contact-search": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK"],
   "/api/integrations/3cx/click-to-call": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK"],
   "/api/whatsapp/send": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
+  "/api/whatsapp/ai-reply": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "SUPPORT_STAFF"],
+  "/api/whatsapp/document-upload": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM"],
   "/api/lead-scoring": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
   "/api/reviews/request": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
   "/api/reviews/google": ["SUPER_ADMIN", "ADMIN", "COUNSELOR"],
@@ -187,23 +236,45 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/referrals/create": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
   "/api/referrals/stats": ["SUPER_ADMIN", "ADMIN", "STUDENT"],
   "/api/marketing/profile": ["SUPER_ADMIN", "ADMIN"],
+  "/api/sop/generate": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "STUDENT"],
+  "/api/timeline": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "STUDENT"],
+  "/api/student-benefits": ["STUDENT"],
+  "/api/marketing/webhooks": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
   "/api/admin": ["SUPER_ADMIN", "ADMIN"],
 };
+
+export function isPublicApiRequest(pathname: string, method: string): boolean {
+  const normalizedMethod = method.toUpperCase();
+  const isWrite = WRITE_METHODS.has(normalizedMethod);
+  const isRead = normalizedMethod === "GET" || normalizedMethod === "HEAD";
+  const matchedSensitive = Object.keys(SENSITIVE_API_ROUTES).some((prefix) => matchesPath(pathname, prefix));
+
+  // NextAuth's catch-all is public, but the custom password-change handler is
+  // explicitly excluded from this rule.
+  if (matchesPath(pathname, "/api/auth") && !matchesPath(pathname, "/api/auth/change-password")) return true;
+  if (isRead && PUBLIC_API_READ_ROUTES.some((prefix) => matchesPath(pathname, prefix))) {
+    if (!matchedSensitive) return true;
+    if (["/api/services", "/api/scholarships", "/api/resources", "/api/content-relationships", "/api/live-edit", "/api/faqs"].some((prefix) => matchesPath(pathname, prefix))) return true;
+  }
+  if (isWrite && PUBLIC_API_WRITE_ROUTES.some((prefix) => matchesPath(pathname, prefix)) && !matchedSensitive) return true;
+  return false;
+}
 
 const ROLE_ROUTES: Record<string, string[]> = {
   SUPER_ADMIN: ["/super-admin", "/admin", "/crm", "/student", "/partner", "/visa", "/marketing", "/finance", "/hrm"],
   ADMIN: ["/admin", "/crm", "/student", "/visa", "/marketing", "/finance", "/hrm"],
-  COUNSELOR: ["/counselor", "/crm"],
-  APPLICATION_TEAM: ["/crm", "/application-team"],
-  VISA_OFFICER: ["/visa"],
-  VISA_INTERVIEW_OFFICER: ["/visa"],
-  MARKETING_MANAGER: ["/marketing"],
-  MARKETING: ["/marketing"],
-  FINANCE: ["/finance"],
-  HR_MANAGER: ["/hrm"],
-  BRANCH_MANAGER: ["/crm", "/counselor"],
-  FRONT_DESK: ["/crm", "/counselor"],
-  SUPPORT_STAFF: ["/crm"],
+  COUNSELOR: ["/counselor", "/crm", "/employee"],
+  APPLICATION_TEAM: ["/crm", "/application-team", "/application-manager", "/employee"],
+  EMPLOYEE: ["/employee"],
+  VISA_OFFICER: ["/visa", "/employee"],
+  VISA_INTERVIEW_OFFICER: ["/visa", "/employee"],
+  MARKETING_MANAGER: ["/marketing", "/employee"],
+  MARKETING: ["/marketing", "/employee"],
+  FINANCE: ["/finance", "/employee"],
+  HR_MANAGER: ["/hrm", "/employee"],
+  BRANCH_MANAGER: ["/crm", "/counselor", "/employee"],
+  FRONT_DESK: ["/crm", "/counselor", "/employee"],
+  SUPPORT_STAFF: ["/crm", "/employee"],
   PARTNER: ["/partner-admin", "/partner"],
   STUDENT: ["/student"],
   ENGLISH_TRAINER: ["/student"],
@@ -216,6 +287,7 @@ function getDashboardRoute(role: string): string {
     case "ADMIN": return "/admin/dashboard";
     case "COUNSELOR": return "/counselor/dashboard";
     case "APPLICATION_TEAM": return "/crm/dashboard";
+    case "EMPLOYEE": return "/employee/dashboard";
     case "BRANCH_MANAGER": return "/crm/dashboard";
     case "FRONT_DESK": return "/crm/dashboard";
     case "SUPPORT_STAFF": return "/crm/dashboard";
@@ -252,14 +324,12 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (PUBLIC_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
-    return NextResponse.next();
-  }
-
+  const method = request.method.toUpperCase();
   const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
+  const matchedSensitive = Object.entries(SENSITIVE_API_ROUTES).find(([prefix]) => matchesPath(pathname, prefix));
 
   // Allow public page routes
-  if (PUBLIC_ROUTES.some((r) => pathname === r || pathname.startsWith(r + "/"))) {
+  if (isPublicPageRequest(pathname)) {
     if (token && (pathname === "/login" || pathname === "/register")) {
       const dashboard = getDashboardRoute(token.role as string);
       return NextResponse.redirect(new URL(dashboard, request.url));
@@ -267,14 +337,20 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Public API handling with write-method guard
-  const isWrite = WRITE_METHODS.has(request.method.toUpperCase());
-  const matchedSensitive = Object.entries(SENSITIVE_API_ROUTES).find(([prefix]) => pathname.startsWith(prefix));
-  if (isWrite && matchedSensitive) {
-    if (pathname.startsWith("/api/storage/upload") || pathname.startsWith("/api/storage/download")) {
-      return NextResponse.next();
-    }
-  } else if (PUBLIC_API_ROUTES.some((r) => pathname.startsWith(r))) {
+  // Dedicated student-session endpoints authenticate their Bearer token or
+  // HttpOnly cookie in the route handler (authenticateStudentRequest/requireStudentResource). Let that
+  // server-side check run instead of requiring a NextAuth JWT at the proxy.
+  // This is intentionally limited to the student namespace; it does not make
+  // any endpoint public.
+  const hasStudentBearer = /^Bearer\s+\S+$/i.test(request.headers.get("authorization") || "");
+  const hasStudentCookie = /(?:^|;\s*)alo_student_session=[^;]+/.test(request.headers.get("cookie") || "");
+  if ((matchesPath(pathname, "/api/student") || matchesPath(pathname, "/api/student-benefits") || matchesPath(pathname, "/api/visa/ai-interview")) && (hasStudentBearer || hasStudentCookie)) {
+    return NextResponse.next();
+  }
+
+  // Public API requests are explicit. Protected-prefix matches are evaluated
+  // first so internal data is never exposed by a broad public prefix.
+  if (pathname.startsWith("/api/") && isPublicApiRequest(pathname, method)) {
     return NextResponse.next();
   }
 
@@ -284,7 +360,7 @@ export default async function proxy(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized — authentication required" }, { status: 401 });
     }
     for (const [prefix, allowedRoles] of Object.entries(SENSITIVE_API_ROUTES)) {
-      if (pathname.startsWith(prefix)) {
+      if (matchesPath(pathname, prefix)) {
         if (!allowedRoles.includes(token.role as string)) {
           return NextResponse.json({ error: "Forbidden — insufficient permissions for this endpoint" }, { status: 403 });
         }
@@ -302,7 +378,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   const allowedRoutes = ROLE_ROUTES[token.role as string] || [];
-  const isAllowed = allowedRoutes.some((r) => pathname.startsWith(r));
+  const isAllowed = allowedRoutes.some((route) => matchesPath(pathname, route));
 
   if (!isAllowed) {
     const dashboard = getDashboardRoute(token.role as string);

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getOptionalAuth } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
 // GET /api/scholarships — unified scholarship system DB-driven per spec section 10
 // Supports filters: country, universityId, fundingType, search, featured, limit
@@ -17,15 +17,15 @@ export async function GET(req: Request) {
 
     // Build where for new Scholarship model
     const where: any = { status: 'active' };
-    if (country) where.country = { contains: country, mode: 'insensitive' };
+    if (country) where.country = { contains: country };
     if (universityId) where.universityId = universityId;
     if (fundingType) where.fundingType = fundingType;
     if (featured === 'true') where.isFeatured = true;
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { overview: { contains: search, mode: 'insensitive' } },
-        { eligibility: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search } },
+        { overview: { contains: search } },
+        { eligibility: { contains: search } },
       ];
     }
 
@@ -105,12 +105,10 @@ export async function GET(req: Request) {
 }
 
 // POST /api/scholarships — create scholarship (admin)
-export async function POST(req: Request) {
+async function createScholarship(req: Request, auth: AuthContext) {
   try {
-    const auth = await getOptionalAuth(req);
-    const roles = auth?.roles || [];
-    const isAdmin = roles.some((r: string) => ['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(r));
-    if (auth && !isAdmin) {
+    const roles = [...auth.roles, auth.userType].map((role) => role.toUpperCase());
+    if (!roles.some((role) => ['SUPER_ADMIN', 'ADMIN'].includes(role))) {
       return NextResponse.json({ success: false, error: 'Admin required' }, { status: 403 });
     }
 
@@ -147,3 +145,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
+
+export const POST = withAuth(createScholarship, {
+  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
+});

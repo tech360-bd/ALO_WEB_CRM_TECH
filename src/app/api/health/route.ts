@@ -4,7 +4,7 @@
 //   - Load balancers (Caddy/Nginx) to verify the app is responding
 //   - Systemd watchdog to detect hangs
 //   - Monitoring tools (Uptime Kuma, Prometheus, etc.)
-//   - The mandatory clean-install gate: `curl -fsS http://127.0.0.1:3000/api/health`
+//   - The mandatory clean-install gate: `curl -fsS http://127.0.0.1:3044/api/health`
 
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
