@@ -5698,7 +5698,11 @@ model ApplicationFinance {
 
 model AuditLog {
   id           String   @id @default(cuid())
-  userId       String   @default("")
+  // Nullable: system/automation events (e.g. public lead intake) have no
+  // acting user. The previous `String @default("")` violated the FK to User
+  // on every system-generated audit row, turning successful lead submissions
+  // into HTTP 500s (found live, 2026-09-28).
+  userId       String?
   action       String
   resource     String   @default("")
   resourceId   String   @default("")

@@ -40,6 +40,24 @@ const PUBLIC_ROUTES = [
   "/account-suspended",
   "/account-pending",
   "/unauthorized",
+  // Public content & lead-generation pages (real routes under src/app that
+  // were previously — and wrongly — redirected to /login, breaking SEO and
+  // lead capture; verified public-by-design 2026-09-28):
+  "/news",
+  "/events",
+  "/eligibility-check",
+  "/eligibility-checker",
+  "/compare",
+  "/student-journey",
+  "/english-test-prep",
+  "/english-tests",
+  "/research-opportunities",
+  "/admission-requirements",
+  "/application-process",
+  "/offline",
+  // Auth entry points that live inside otherwise-gated portal prefixes:
+  "/student/login",
+  "/student/register",
 ];
 
 // Truly public API routes — accessible without authentication.

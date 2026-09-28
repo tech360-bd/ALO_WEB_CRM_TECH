@@ -140,11 +140,12 @@ export default function StudentLoginPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
+            {/* No fabricated statistics — feature highlights only. */}
             {[
-              { label: 'Applications Tracked', value: '12,000+' },
-              { label: 'Partner Universities', value: '362+' },
-              { label: 'Countries', value: '10+' },
-              { label: 'Visa Success Rate', value: '98%' },
+              { label: 'Application Tracking', value: 'Real-time' },
+              { label: 'University Directory', value: 'Verified' },
+              { label: 'Study Destinations', value: '8+' },
+              { label: 'Document Hub', value: 'Secure' },
             ].map((stat) => (
               <div key={stat.label} className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
                 <p className="text-2xl font-bold text-white">{stat.value}</p>

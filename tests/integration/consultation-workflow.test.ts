@@ -10,7 +10,9 @@ import { PrismaClient } from '@prisma/client';
 // CI safety: this file requires a real (disposable, NEVER production) MySQL database.
 // Without DATABASE_URL the whole file is skipped and reported as skipped — not passed.
 // Run with: DATABASE_URL="mysql://localhost:3306/test" npm test
-const HAS_TEST_DB = Boolean(process.env.DATABASE_URL);
+// Guard matches the documented contract above: only a MySQL URL counts as a
+// test DB (a sqlite `file:` dev URL cannot run this suite's native client).
+const HAS_TEST_DB = Boolean(process.env.DATABASE_URL?.startsWith('mysql://'));
 const db = HAS_TEST_DB ? new PrismaClient() : (undefined as unknown as PrismaClient);
 
 beforeAll(async () => {

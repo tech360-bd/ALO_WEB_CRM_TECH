@@ -78,18 +78,21 @@ export default function StudentJourneyPage() {
             From dreaming in Bangladesh to graduating on an international campus. We are with you at every step.
           </p>
           
+          {/* No fabricated statistics: unverified success rates and invented
+              counts are prohibited (content governance). Qualitative,
+              truthful value propositions only. */}
           <div className="flex flex-wrap justify-center gap-6 mt-12">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 w-40">
-              <div className="text-3xl font-bold text-[#E8501A] mb-2">98%</div>
-              <div className="text-sm text-gray-300">Visa Success Rate</div>
+              <div className="text-3xl font-bold text-[#E8501A] mb-2">End-to-End</div>
+              <div className="text-sm text-gray-300">Application Support</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 w-40">
-              <div className="text-3xl font-bold text-[#E8501A] mb-2">362+</div>
-              <div className="text-sm text-gray-300">Partner Universities</div>
+              <div className="text-3xl font-bold text-[#E8501A] mb-2">8+</div>
+              <div className="text-sm text-gray-300">Study Destinations</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 w-40">
-              <div className="text-3xl font-bold text-[#E8501A] mb-2">5000+</div>
-              <div className="text-sm text-gray-300">Success Stories</div>
+              <div className="text-3xl font-bold text-[#E8501A] mb-2">Verified</div>
+              <div className="text-sm text-gray-300">University Data</div>
             </div>
           </div>
         </div>

@@ -246,3 +246,7 @@ _reference_repos/*
 
 !docs/BRANCH-MERGE-LEDGER.csv
 !docs/BRANCH-MERGE-*.csv
+
+# Offline dev-sqlite sandbox artifacts (see docs/DEV-SQLITE-SANDBOX.md)
+prisma/schema.dev.prisma
+prisma/dev.db*

@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 export async function GET() {
   const [heroSlides, services, stories, team, faqs, countries, courses, universities, scholarships, exams] = await Promise.all([
     db.homeHeroSlide.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
-    db.service.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
+    db.service.findMany({ where: { status: "PUBLISHED" }, orderBy: { createdAt: "desc" } }),
     db.successStory.findMany({ where: { status: "ACTIVE", consentStatus: "APPROVED" }, orderBy: { createdAt: "desc" } }),
     db.teamMember.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
     db.homepageFaq.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
