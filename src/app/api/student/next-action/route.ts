@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireStudentResource } from "@/lib/student-resource-auth";
 
+import { resolveStudentAccess } from "@/lib/student-resource-auth";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,9 @@ export async function GET(req: NextRequest) {
   if (access instanceof NextResponse) return access;
   const studentId = access.studentId;
 
+  const access = await resolveStudentAccess(req, req.nextUrl.searchParams.get("studentId"));
+  if (access instanceof NextResponse) return access;
+  const studentId = access.studentId;
   const student = await db.student.findUnique({ where: { id: studentId }, select: { id: true, profileComplete: true } });
   if (!student) return NextResponse.json({ error: "Student not found" }, { status: 404 });
   const [documents, applications] = await Promise.all([
@@ -21,7 +25,7 @@ export async function GET(req: NextRequest) {
   ]);
   let nextAction = "Complete your profile to get started";
   let actionUrl = "student-profile";
-  let priority = "HIGH";
+  const priority = "HIGH";
   if (student.profileComplete < 50) nextAction = "Complete your profile — add your education, passport, and English test information";
   else if (student.profileComplete < 100) nextAction = "Your profile is almost complete. Add the remaining information to unlock course matching.";
   else {

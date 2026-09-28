@@ -13,6 +13,9 @@ export async function GET(req: NextRequest) {
   if (access instanceof NextResponse) return access;
   const studentId = access.studentId;
 
+  const access = await resolveStudentAccess(req, req.nextUrl.searchParams.get("studentId"));
+  if (access instanceof NextResponse) return access;
+  const studentId = access.studentId;
   const checklist = await db.visaChecklistItem.findMany({ where: { studentId }, orderBy: { category: "asc" } });
   const assessment = await db.visaReadinessAssessment.findFirst({ where: { studentId }, orderBy: { createdAt: "desc" } });
   const docs = await db.document.findMany({ where: { studentId }, select: { category: true, status: true } });
