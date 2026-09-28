@@ -1,10 +1,11 @@
 # ALO Education production recovery plan
 
-**Date:** 2026-09-28  
-**Branch:** `arena/01a0c218-alo-education-z-ai`  
-**Candidate HEAD:** `89442efb84b1a9624b7367c3501a588e0fadef4a`  
-**Remote branch:** verified with `git ls-remote` and refreshed tracking ref; remote equals candidate HEAD after the workflow-safety commits were pushed.  
-**Default branch:** `main` at `992e99636e281d6aca600919d7f9c71fe9ce75d7`.  
+**Date:** 2026-09-28
+**Branch:** `arena/01a0c218-alo-education-z-ai`
+**Implementation candidate:** `89442efb84b1a9624b7367c3501a588e0fadef4a`
+**Latest validated audit tip:** `7fda9cdcc1b65d628e9fae6de9f4443b1d3c9ce7` (documentation-only after the implementation candidate)
+**Remote branch:** verified with `git ls-remote` and refreshed tracking ref; remote equals the latest validated audit tip before this plan refresh; subsequent changes in this file are documentation-only.
+**Default branch:** `main` at `992e99636e281d6aca600919d7f9c71fe9ce75d7`.
 **Production:** no deployment, migration, live database mutation, DNS/SSL/firewall change, PM2 restart, or VPS mutation performed.
 
 ## 1. Current repository state
@@ -12,9 +13,9 @@
 | Check | Result | Evidence |
 |---|---|---|
 | Current branch | **PASS** | `arena/01a0c218-alo-education-z-ai` |
-| Working tree | **PASS** | `git status -sb` is clean after this plan/report are committed |
+| Working tree | **PASS** | `git status -sb` is clean before this plan refresh; the plan refresh itself is the only pending documentation change |
 | Local vs remote branch | **PASS** | `git rev-list --left-right --count HEAD...origin/arena/01a0c218-alo-education-z-ai` = `0 0` after refreshing the stale local tracking ref |
-| Branch vs `origin/main` | **AHEAD / NOT MERGED** | Candidate contains 11 commits not in `origin/main`; no merge into `main` was performed |
+| Branch vs `origin/main` | **AHEAD / NOT MERGED** | The latest validated audit tip contains 14 commits not in `origin/main`; no merge into `main` was performed |
 | Unresolved Git conflicts | **PASS** | `git diff --name-only --diff-filter=U` returned no paths |
 | Conflict markers | **PASS** | Exact marker scan over source, workflows, Prisma and tests returned none |
 | Published history | **PRESERVED** | No reset, force-push, branch deletion, or history rewrite |
@@ -39,6 +40,7 @@ The candidate was pushed fast-forward only; no force-push, reset, or history rew
 | Production build | **PASS** | CI step `Production build (dummy env, runner validation only)` completed successfully, including standalone artifact check |
 | Secret scan | **PASS** | CI tracked-file secret-leak scan completed successfully |
 | Workflow YAML parse | **PASS** | Local `js-yaml` parsing passed for `.github/workflows/ci.yml` and `.github/workflows/deploy-production.yml` after the migration-backup heredoc repair |
+| Latest audit-tip CI | **PASS** | Run `36423162778`, exact head `7fda9cdcc1b65d628e9fae6de9f4443b1d3c9ce7`, job `108930600289`, completed successfully in `12m24s`; docs-only commits did not change application/workflow implementation |
 
 The sandbox remains unable to obtain the official Prisma engine directly: DNS and TCP connection to `binaries.prisma.sh:443` succeeded, but TLS failed with OpenSSL `SSL_ERROR_SYSCALL`; `npx prisma --version` reported `Client network socket disconnected before secure TLS connection was established`. No TLS verification bypass, mirror, untrusted binary, or version change was used. The trusted CI runner is therefore the validated resolution path, while local Prisma commands remain **BLOCKED** by the sandbox network.
 
@@ -134,7 +136,7 @@ Run direct API tests for anonymous/invalid sessions, portal type and roles, susp
 
 ### Phase D — GitHub synchronization and PR
 
-1. Confirm candidate `89442efb` is the remote branch tip; current local/remote comparison is `0 0`.
+1. Confirm the latest validated audit tip `7fda9cdcc1b65d628e9fae6de9f4443b1d3c9ce7` was the remote branch tip before this documentation refresh; current local/remote comparison is `0 0` after the refresh is pushed.
 2. Wait for GitHub Actions checks on PR #18; do not merge while any required check is missing/failed.
 3. Review changed files and generated-artifact status.
 4. Obtain explicit merge approval; do not merge in this recovery task.
