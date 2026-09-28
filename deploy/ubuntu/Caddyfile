@@ -1,6 +1,6 @@
 # ============================================================
 # Caddy configuration for ALO Education ERP
-# Binds the Next.js standalone server to 127.0.0.1:3000 and
+# Binds the Next.js standalone server to 127.0.0.1:3044 and
 # exposes it publicly via HTTPS only.
 # Replace "alo.example.com" with your real domain before deploy.
 # ============================================================

@@ -142,7 +142,7 @@ export default function CrmHRMPage() {
 
       const json = await res.json();
       if (res.ok) {
-        toast.success('Payroll approved & disbursed successfully!');
+        toast.success('Payroll approved. Payment must be completed separately by an authorized payer.');
         setCurrentPayroll(json.payroll);
       } else {
         toast.error(json.error || 'Separation of Duties violation: Maker cannot approve own payroll.');

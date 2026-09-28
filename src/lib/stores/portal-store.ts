@@ -174,9 +174,12 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   hydrate: () => {
     if (typeof window === 'undefined') return;
     try {
-      const token = localStorage.getItem('portal_token');
       const rawUser = localStorage.getItem('portal_user');
-      if (!token || !rawUser) return;
+      localStorage.removeItem('portal_token');
+      localStorage.removeItem('student_token');
+      localStorage.removeItem('partner_token');
+      localStorage.removeItem('employee_token');
+      if (!rawUser) return;
       const user = JSON.parse(rawUser) as PortalUserData;
       const viewMap: Record<string, PortalView> = {
         STUDENT: 'student-dashboard',
@@ -191,7 +194,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
         isAuthenticated: true,
         user,
         userType: user.userType,
-        token,
+        token: null,
         currentView: viewMap[user.userType] || 'portals',
       });
     } catch {
@@ -221,19 +224,18 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           ADMIN: 'crm-dashboard',
           SUPER_ADMIN: 'crm-dashboard',
         };
-        const sessionToken = data.token || 'session-active';
         set({
           isAuthenticated: true,
           user: data.user,
           userType: ut,
-          token: sessionToken,
+          token: null,
           loginLoading: false,
           currentView: viewMap[ut] || 'portals',
         });
         if (typeof window !== 'undefined') {
-          localStorage.setItem('portal_token', sessionToken);
+          localStorage.removeItem('portal_token');
           localStorage.setItem('portal_user', JSON.stringify(data.user));
-          localStorage.setItem(`${selectedPortal}_token`, sessionToken);
+          localStorage.removeItem(`${selectedPortal}_token`);
           localStorage.setItem(`${selectedPortal}_user`, JSON.stringify(data.user));
         }
         return true;
@@ -282,12 +284,12 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           isAuthenticated: true,
           user: data.user,
           userType: ut,
-          token: data.token,
+          token: null,
           loginLoading: false,
           currentView: ut === 'STUDENT' ? 'student-dashboard' : 'partner-dashboard',
         });
         if (typeof window !== 'undefined') {
-          localStorage.setItem('portal_token', data.token);
+          localStorage.removeItem('portal_token');
           localStorage.setItem('portal_user', JSON.stringify(data.user));
         }
         return true;
@@ -301,14 +303,12 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   },
 
   logout: async () => {
-    const { token } = get();
     try {
-      if (token && token !== 'demo-session') {
-        await fetch('/api/portal-auth/logout', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        });
-      }
+      await fetch('/api/portal-auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
     } catch { /* Ignore API errors during logout */ }
     if (typeof window !== 'undefined') {
       localStorage.removeItem('portal_token');
@@ -424,7 +424,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           isAuthenticated: true,
           user: data.user,
           userType: ut,
-          token: data.token || 'session-active',
+          token: null,
           loginLoading: false,
           currentView: viewMap[ut] || 'portals',
         });

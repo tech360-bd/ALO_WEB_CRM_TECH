@@ -7,8 +7,8 @@ export type PayrollInput = {
   overtimeRate?: number; // per hour
   loanDeduction?: number;
   advanceDeduction?: number;
-  taxPercent?: number;
-  pfRate?: number; // 8 default
+  taxPercent: number;
+  pfRate: number; // persisted salary configuration
   insurance?: number;
   absentDays?: number;
   lateDays?: number;
@@ -25,8 +25,12 @@ export type PayrollResult = {
 };
 
 export function calculatePayroll(input: PayrollInput): PayrollResult {
-  const basic = Math.max(0, input.basicSalary || 0);
-  const allowances = Math.max(0, input.allowances || 0);
+  if (!Number.isFinite(input.basicSalary) || input.basicSalary <= 0) throw new Error('A positive persisted basic salary is required');
+  if (!Number.isFinite(input.allowances) || input.allowances < 0) throw new Error('A valid persisted allowance total is required');
+  if (!Number.isFinite(input.taxPercent) || input.taxPercent < 0) throw new Error('A valid persisted tax rate is required');
+  if (!Number.isFinite(input.pfRate) || input.pfRate < 0) throw new Error('A valid persisted PF rate is required');
+  const basic = input.basicSalary;
+  const allowances = input.allowances;
   const bonus = Math.max(0, input.bonus || 0);
   const overtime = Math.max(0, (input.overtimeHours||0) * (input.overtimeRate||0));
   const gross = basic + allowances + bonus + overtime;
@@ -37,8 +41,8 @@ export function calculatePayroll(input: PayrollInput): PayrollResult {
   const lwpDeduction = Math.max(0, (input.leaveWithoutPayDays||0) * perDay);
   const lateDeduction = Math.max(0, (input.lateDays||0) * (perDay * 0.5)); // half day per late after threshold
 
-  const pf = Math.max(0, basic * ((input.pfRate ?? 8)/100));
-  const tax = Math.max(0, gross * ((input.taxPercent||0)/100));
+  const pf = Math.max(0, basic * (input.pfRate/100));
+  const tax = Math.max(0, gross * (input.taxPercent/100));
   const insurance = Math.max(0, input.insurance||0);
   const loan = Math.max(0, input.loanDeduction||0);
   const advance = Math.max(0, input.advanceDeduction||0);

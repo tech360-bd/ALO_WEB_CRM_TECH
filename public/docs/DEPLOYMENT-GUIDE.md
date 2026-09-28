@@ -128,8 +128,8 @@ sudo bash deploy/ubuntu/restore.sh /var/backups/alo-education/<TIMESTAMP>/
 
 ```bash
 sudo bash deploy/ubuntu/rollback.sh
-# Or specify a timestamp:
-sudo bash deploy/ubuntu/rollback.sh 20260101-020000
+# Or specify an exact known-good commit SHA:
+sudo PRODUCTION_APP_DIR=/opt/alo-education bash deploy/ubuntu/rollback.sh <40-char-good-sha>
 ```
 
 ## 7. Health Monitoring

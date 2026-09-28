@@ -31,6 +31,9 @@ describe("Deployment configuration — target 3044 / /root/alo-github-main-new",
   it("ecosystem and workflow bind to PORT 3044 and HOSTNAME 0.0.0.0", () => {
     const workflow = readFileSync(join(ROOT, ".github/workflows/deploy-production.yml"), "utf-8");
     expect(workflow).toMatch(/APP_PORT:\s*['"]3044['"]/);
+    expect(workflow).toContain('passphrase: ${{ secrets.DEPLOY_SSH_KEY_PASSPHRASE }}');
+    expect(workflow).toContain('SHA256:K0041d6kUdse+U6+vHijY73qb1ur/GsedNae8g8a+tU');
+    expect(workflow).toContain('SKIP_MIGRATIONS');
     expect(workflow).not.toContain(":3025");
     expect(workflow).not.toContain(":3000");
     // ecosystem.config.cjs may not exist on some branches — skip if missing

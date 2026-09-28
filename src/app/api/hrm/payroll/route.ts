@@ -1,185 +1,209 @@
 import { NextResponse } from "next/server";
-import { withAuth } from "@/lib/auth-middleware";
+import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 import { db } from "@/lib/db";
 import { logHrmAudit } from "@/lib/hrms/audit";
-import { canManagePayroll, canViewSalaryDetails, isHR, isSuperAdmin, isFinance } from "@/lib/hrms/rbac";
-import { calculatePayroll } from "@/lib/hrms/payroll";
+import { canManagePayroll, isFinance, isHR, isSuperAdmin } from "@/lib/hrms/rbac";
 import { createHrmNotification } from "@/lib/hrms/notifications";
+import {
+  assertMakerChecker,
+  assertPayrollPeriod,
+  assertPayrollTransition,
+  buildPayrollItems,
+  PayrollValidationError,
+  validateSalaryRecord,
+} from "@/lib/hrms/payroll-controls";
 
-export async function GET(req: Request) {
-  return withAuth(async (request, auth) => {
-    const url = new URL(request.url);
-    const monthYear = url.searchParams.get("monthYear") || url.searchParams.get("period") || new Date().toISOString().slice(0,7);
-    const employeeId = url.searchParams.get("employeeId") || "";
-    const view = url.searchParams.get("view") || "list"; // list, slip, run
-
-    // Resolve own eid
-    const hrSelf = await (db as any).employeeHR.findUnique({ where:{ userId: auth.userId }}).catch(()=>null);
-    const ownEid = hrSelf?.employeeId || "";
-
-    if (view === 'slip') {
-      // Employee can view own final approved slip only; HR/Finance can view any
-      let eid = employeeId || ownEid;
-      const isOwner = eid === ownEid;
-      const canViewDetails = canViewSalaryDetails(auth);
-      if (!isOwner && !canViewDetails) return NextResponse.json({ success:false, error:"Access denied to salary details" }, { status:403 });
-
-      const payroll = await (db as any).payroll.findFirst({ where:{ employeeId: eid, monthYear }}).catch(async()=>{
-        return await (db as any).employeePayroll.findFirst({ where:{ employeeId: eid, monthYear }}).catch(()=>null);
-      });
-      if (!payroll) return NextResponse.json({ success:false, error:"Payroll not found for period" }, { status:404 });
-
-      // Employee only sees final approved salary (status PAID/APPROVED); hide breakdown if not authorized
-      if (isOwner && !canViewDetails && !['APPROVED','PAID','approved','paid'].includes(String(payroll.status).toUpperCase())) {
-        return NextResponse.json({ success:false, error:"Salary not yet approved" }, { status:403 });
-      }
-
-      const items = await (db as any).employeePayrollItem.findMany({ where:{ payrollId: payroll.id }}).catch(()=>[]);
-      const response: any = { ...payroll, items };
-      if (isOwner && !canViewDetails) {
-        // strip calculation details, return only final net + slip path
-        return NextResponse.json({ success:true, data:{ monthYear: payroll.monthYear, netPay: payroll.netPay || payroll.netSalary, gross: payroll.totalEarnings || payroll.grossSalary, status: payroll.status, salarySlipPath: payroll.salarySlipPath||"", note:"Detailed breakdown visible only to HR/Finance" }});
-      }
-      return NextResponse.json({ success:true, data: response });
-    }
-
-    if (view === 'run') {
-      if (!canManagePayroll(auth)) return NextResponse.json({ success:false, error:"Only HR/Finance can view payroll runs" }, { status:403 });
-      const runs = await (db as any).hrmPayrollRun.findMany({ orderBy:{ monthYear:'desc' }, take:12 }).catch(async()=>{
-        return await (db as any).employeePayroll.groupBy({ by:['monthYear'], _count:{ monthYear:true }, _sum:{ netSalary:true }}).catch(()=>[]);
-      });
-      return NextResponse.json({ success:true, data: runs });
-    }
-
-    // list payrolls for month
-    let where: any = { monthYear };
-    if (employeeId) where.employeeId = employeeId;
-    else if (!canManagePayroll(auth)) where.employeeId = ownEid;
-
-    const payrolls = await (db as any).payroll.findMany({ where, orderBy:{ employeeId:'asc' } }).catch(async()=>{
-      return await (db as any).employeePayroll.findMany({ where, orderBy:{ employeeId:'asc' } }).catch(()=>[]);
-    });
-
-    // For employee view, strip details
-    const isOwnerOnly = !canViewSalaryDetails(auth);
-    if (isOwnerOnly) {
-      const mapped = payrolls.map((p:any)=> ({ monthYear: p.monthYear, netPay: p.netPay||p.netSalary, status: p.status, employeeId: p.employeeId }));
-      return NextResponse.json({ success:true, data: mapped });
-    }
-    return NextResponse.json({ success:true, data: payrolls });
-  })(req);
+function canApproveOrPay(auth: AuthContext): boolean {
+  return isSuperAdmin(auth) || isFinance(auth) || isHR(auth);
 }
 
-export async function POST(req: Request) {
-  return withAuth(async (request, auth) => {
-    if (!canManagePayroll(auth)) return NextResponse.json({ success:false, error:"Only HR/Finance can generate payroll" }, { status:403 });
-    const body = await request.json().catch(()=>({}));
-    const { monthYear, employeeIds, bonusMap, loanMap, taxPercent, overtimeMap } = body;
-    const period = monthYear || new Date().toISOString().slice(0,7);
-    if (!period.match(/^\d{4}-\d{2}$/)) return NextResponse.json({ success:false, error:"monthYear YYYY-MM required" }, { status:400 });
+function errorResponse(error: unknown) {
+  if (error instanceof PayrollValidationError) {
+    const status = error.code === "DUPLICATE_RUN" ? 409 : error.code === "MAKER_CHECKER" ? 403 : 422;
+    return NextResponse.json({ success: false, error: error.message, code: error.code }, { status });
+  }
+  return NextResponse.json({ success: false, error: error instanceof Error ? error.message : "Payroll operation failed" }, { status: 500 });
+}
 
-    // Get employees
-    let employees: any[] = [];
-    if (employeeIds && Array.isArray(employeeIds) && employeeIds.length) {
-      employees = await (db as any).employeeHR.findMany({ where:{ employeeId:{ in: employeeIds }, isDeleted:false }}).catch(()=>[]);
-    } else {
-      employees = await (db as any).employeeHR.findMany({ where:{ isDeleted:false, status:'ACTIVE' }}).catch(()=>[]);
-      if (!employees.length) employees = await (db as any).employee.findMany({}).catch(()=>[]);
+async function listPayroll(request: Request, auth: AuthContext) {
+  const url = new URL(request.url);
+  const period = assertPayrollPeriod(url.searchParams.get("monthYear") || url.searchParams.get("period") || new Date().toISOString().slice(0, 7));
+  const employeeId = url.searchParams.get("employeeId");
+  const view = url.searchParams.get("view") || "list";
+  const canViewAll = canApproveOrPay(auth);
+
+  if (view === "run") {
+    if (!canManagePayroll(auth)) return NextResponse.json({ success: false, error: "Only HR/Finance can view payroll runs" }, { status: 403 });
+    const run = await (db as any).hrmPayrollRun.findUnique({ where: { monthYear: period } });
+    return NextResponse.json({ success: true, data: run ? [run] : [] });
+  }
+
+  if (view === "slip" && employeeId && !canViewAll) {
+    const employee = await (db as any).employee.findUnique({ where: { id: employeeId }, select: { userId: true } });
+    if (!employee || employee.userId !== auth.userId) {
+      return NextResponse.json({ success: false, error: "Access denied to salary details" }, { status: 403 });
     }
+  }
 
-    let totalGross=0, totalNet=0, totalDed=0, created=0;
-    const results: any[] = [];
+  const where: Record<string, unknown> = { period, ...(employeeId ? { employeeId } : {}) };
+  if (!canViewAll && !employeeId) {
+    const ownEmployee = await (db as any).employee.findFirst({ where: { userId: auth.userId }, select: { id: true } });
+    if (!ownEmployee) return NextResponse.json({ success: true, data: [] });
+    where.employeeId = ownEmployee.id;
+  }
 
-    for (const emp of employees) {
-      const eid = emp.employeeId || emp.id;
-      // Fetch attendance + leave for month
-      const attend = await (db as any).employeeAttendance.findMany({ where:{ employeeId: eid, date:{ startsWith: period } }}).catch(()=>[]);
-      const leaves = await (db as any).leaveRequest.findMany({ where:{ employeeId: eid, status:'APPROVED', startDate:{ startsWith: period } }}).catch(()=>[]);
-      const absentDays = attend.filter((a:any)=> (a.status||'').toLowerCase()==='absent').length;
-      const lateDays = attend.filter((a:any)=> (a.status||'').toLowerCase()==='late').length;
-      const lwp = await (db as any).employeeLeaveBalance.findUnique({ where:{ employeeId: eid }}).catch(()=>null);
-      const lwpDays = 0; // could compute from leave without pay
-      const bonus = (bonusMap && bonusMap[eid]) || 0;
-      const overtimeHours = (overtimeMap && overtimeMap[eid]) || 0;
-      const basic = Number(emp.baseSalary|| emp.baseSalary || 0) || Number(emp.grossSalary? emp.grossSalary*0.6 : 30000);
-      const allowances = Number(emp.allowances||0) || Number(emp.grossSalary? emp.grossSalary*0.4 : 12000);
-      const calc = calculatePayroll({
-        basicSalary: basic,
-        allowances,
-        bonus,
-        overtimeHours,
-        overtimeRate: 500,
-        loanDeduction: (loanMap && loanMap[eid]) || 0,
-        taxPercent: taxPercent||0,
-        pfRate: Number(emp.pfRate||8),
-        absentDays, lateDays, leaveWithoutPayDays: lwpDays, workingDaysInMonth: 30
+  const payrolls = await (db as any).employeePayroll.findMany({
+    where,
+    orderBy: { employeeId: "asc" },
+    include: { items: true },
+  });
+
+  if (view === "slip" && !canViewAll) {
+    return NextResponse.json({
+      success: true,
+      data: payrolls[0]
+        ? { period, employeeId: payrolls[0].employeeId, netSalary: payrolls[0].netSalary, status: payrolls[0].status, note: "Detailed breakdown visible only to HR/Finance" }
+        : null,
+    });
+  }
+  return NextResponse.json({ success: true, data: payrolls });
+}
+
+async function generatePayroll(request: Request, auth: AuthContext) {
+  if (!canManagePayroll(auth)) return NextResponse.json({ success: false, error: "Only HR/Finance can generate payroll" }, { status: 403 });
+  const body = await request.json().catch(() => ({}));
+  const requestedIds = Array.isArray(body.employeeIds) ? body.employeeIds.filter((id: unknown): id is string => typeof id === "string" && id.length > 0) : [];
+
+  try {
+    const period = assertPayrollPeriod(body.monthYear || body.period || "");
+    const result = await (db as any).$transaction(async (tx: any) => {
+      // HrmPayrollRun has a unique monthYear. The preflight makes the error
+      // explicit; the unique constraint remains the final concurrency guard.
+      const existingRun = await tx.hrmPayrollRun.findUnique({ where: { monthYear: period } });
+      if (existingRun) {
+        throw new PayrollValidationError("DUPLICATE_RUN", `Payroll for ${period} already exists`);
+      }
+
+      const employees = await tx.employee.findMany({
+        where: requestedIds.length ? { id: { in: requestedIds }, status: "active" } : { status: "active" },
+        select: { id: true, employeeId: true, name: true },
+      });
+      const salaries = new Map<string, any>();
+      for (const employee of employees) {
+        const salary = await tx.employeeSalary.findFirst({ where: { employeeId: employee.id }, orderBy: { effectiveFrom: "desc" } });
+        salaries.set(employee.id, validateSalaryRecord(salary, employee.id));
+      }
+      const built = buildPayrollItems(employees, salaries);
+
+      const run = await tx.hrmPayrollRun.create({
+        data: {
+          monthYear: period,
+          totalEmployees: built.items.length,
+          totalGross: built.totalGross,
+          totalDeductions: built.totalDeduction,
+          totalNet: built.totalNet,
+          status: "draft",
+          preparedBy: auth.userId,
+        },
       });
 
-      totalGross += calc.totalEarnings;
-      totalNet += calc.netSalary;
-      totalDed += calc.totalDeductions;
-
-      // Upsert payroll record
-      let payroll;
-      const existing = await (db as any).payroll.findFirst({ where:{ employeeId: eid, monthYear: period }}).catch(()=>null);
-      if (existing) {
-        payroll = await (db as any).payroll.update({ where:{ id: existing.id }, data:{
-          basicSalary: basic, allowances, bonus, overtime: overtimeHours*500, totalEarnings: calc.totalEarnings, totalDeductions: calc.totalDeductions, netPay: calc.netSalary, status:'DRAFT'
-        }});
-      } else {
-        payroll = await (db as any).payroll.create({ data:{
-          employeeId: eid, monthYear: period, basicSalary: basic, allowances, bonus, overtime: overtimeHours*500, totalEarnings: calc.totalEarnings, totalDeductions: calc.totalDeductions, netPay: calc.netSalary, status:'DRAFT', loanDeduction: (loanMap&&loanMap[eid])||0
-        }}).catch(async()=>{
-          return await (db as any).employeePayroll.create({ data:{ employeeId: eid, monthYear: period, period, basicSalary: basic, allowances, bonus, overtime: overtimeHours*500, grossSalary: calc.totalEarnings, netSalary: calc.netSalary, status:'draft', preparedBy: auth.userId }});
+      for (const item of built.items) {
+        const payroll = await tx.employeePayroll.create({
+          data: {
+            employeeId: item.employeeId,
+            period,
+            monthYear: period,
+            basicSalary: item.basicSalary,
+            allowances: item.allowances,
+            taxDeduction: item.tax,
+            grossSalary: item.netSalary + item.tax,
+            netSalary: item.netSalary,
+            status: "draft",
+            preparedBy: auth.userId,
+          },
+        });
+        await tx.employeePayrollItem.create({
+          data: {
+            payrollId: payroll.id,
+            employeeId: item.employeeId,
+            employeeName: item.employeeName,
+            itemType: "earning",
+            label: `${item.employeeName} — ${period} salary`,
+            amount: item.netSalary,
+            basicSalary: item.basicSalary,
+            allowances: item.allowances,
+            tax: item.tax,
+            netSalary: item.netSalary,
+            status: "draft",
+          },
         });
       }
+      return run;
+    }, { isolationLevel: "Serializable" });
 
-      // Create payroll items breakdown
-      for (const br of calc.breakdown) {
-        await (db as any).employeePayrollItem.create({ data:{ payrollId: payroll.id, itemType: br.type, label: br.label, amount: br.amount, employeeId: eid }}).catch(()=>{});
-      }
-
-      results.push({ employeeId: eid, netPay: calc.netSalary, status: payroll.status });
-      created++;
-    }
-
-    // Create payroll run summary
-    await (db as any).hrmPayrollRun.upsert({ where:{ monthYear: period }, update:{ totalEmployees: created, totalGross, totalNet, totalDeductions: totalDed, status:'draft', preparedBy: auth.userId }, create:{ monthYear: period, totalEmployees: created, totalGross, totalNet, totalDeductions: totalDed, status:'draft', preparedBy: auth.userId }}).catch(()=>{});
-
-    await logHrmAudit({ actor: auth, action:'GENERATE_PAYROLL', entityType:'Payroll', entityId: period, newValue:{ period, totalGross, totalNet, count: created }});
-
-    // Notify: payroll ready
-    for (const r of results) {
-      await createHrmNotification({ recipientId: r.employeeId, title:'Payroll generated', message:`Payroll for ${period} is ready (${r.status})`, category:'PAYROLL_READY', actionUrl:'/crm/hrm/payroll' }).catch(()=>{});
-    }
-
-    return NextResponse.json({ success:true, data:{ period, created, totalGross, totalNet, totalDeductions: totalDed, payrolls: results }});
-  })(req);
+    await logHrmAudit({ actor: auth, action: "GENERATE_PAYROLL", entityType: "HrmPayrollRun", entityId: result.id, newValue: result });
+    return NextResponse.json({ success: true, data: { period, created: result.totalEmployees, totalGross: result.totalGross, totalNet: result.totalNet, totalDeductions: result.totalDeductions, run: result } });
+  } catch (error) {
+    return errorResponse(error);
+  }
 }
 
-export async function PATCH(req: Request) {
-  return withAuth(async (request, auth) => {
-    if (!canManagePayroll(auth)) return NextResponse.json({ success:false, error:"Forbidden" }, { status:403 });
-    const body = await request.json().catch(()=>({}));
-    const { id, action } = body; // approve, pay, review
-    if (!id || !action) return NextResponse.json({ success:false, error:"id and action required" }, { status:400 });
-    const payroll = await (db as any).payroll.findUnique({ where:{ id }}).catch(async()=> await (db as any).employeePayroll.findUnique({ where:{ id }}).catch(()=>null));
-    if (!payroll) return NextResponse.json({ success:false, error:"Not found" }, { status:404 });
+async function updatePayroll(request: Request, auth: AuthContext) {
+  if (!canApproveOrPay(auth)) return NextResponse.json({ success: false, error: "HR/Finance approval required" }, { status: 403 });
+  const body = await request.json().catch(() => ({}));
+  const id = typeof body.id === "string" ? body.id : "";
+  const action = String(body.action || "").toLowerCase() as "review" | "approve" | "pay";
+  if (!id || !["review", "approve", "pay"].includes(action)) {
+    return NextResponse.json({ success: false, error: "id and action (review, approve, pay) required" }, { status: 400 });
+  }
 
-    const map: Record<string,string> = { approve:'APPROVED', review:'REVIEWED', pay:'PAID', draft:'DRAFT' };
-    const newStatus = map[String(action).toLowerCase()] || 'DRAFT';
-    let updated;
-    try {
-      updated = await (db as any).payroll.update({ where:{ id }, data:{ status: newStatus, approvedBy: auth.userId, ...(newStatus==='PAID'? { paidAt: new Date() }: {}) }});
-    } catch {
-      updated = await (db as any).employeePayroll.update({ where:{ id }, data:{ status: newStatus.toLowerCase(), approvedBy: auth.userId, ...(newStatus==='PAID'? { paidAt: new Date() }: {}) }});
-    }
-    await logHrmAudit({ actor: auth, action:`PAYROLL_${newStatus}`, entityType:'Payroll', entityId: id, oldValue: payroll, newValue: updated });
-    if (newStatus==='PAID') {
-      await createHrmNotification({ recipientId: payroll.employeeId, title:'Salary paid', message:`Salary for ${payroll.monthYear} has been paid`, category:'SALARY_PAID', actionUrl:'/crm/hrm/payroll' });
-    } else if (newStatus==='APPROVED') {
-      await createHrmNotification({ recipientId: payroll.employeeId, title:'Salary approved', message:`Salary slip for ${payroll.monthYear} approved`, category:'PAYROLL_READY', actionUrl:'/crm/hrm/payroll' });
-    }
-    return NextResponse.json({ success:true, data: updated });
-  })(req);
+  try {
+    const result = await (db as any).$transaction(async (tx: any) => {
+      const item = await tx.employeePayroll.findUnique({ where: { id } });
+      if (!item) throw new PayrollValidationError("DUPLICATE_RUN", "Payroll not found");
+      const run = await tx.hrmPayrollRun.findUnique({ where: { monthYear: item.period } });
+      if (!run) throw new PayrollValidationError("DUPLICATE_RUN", "Payroll run not found");
+      const nextStatus = assertPayrollTransition(run.status, action);
+      assertMakerChecker(auth.userId, run.preparedBy);
+
+      const updatedRun = await tx.hrmPayrollRun.update({
+        where: { id: run.id },
+        data: {
+          status: nextStatus,
+          ...(action === "review" ? { reviewedBy: auth.userId } : {}),
+          ...(action === "approve" ? { approvedBy: auth.userId } : {}),
+          ...(action === "pay" ? { paidAt: new Date() } : {}),
+        },
+      });
+      await tx.employeePayroll.updateMany({
+        where: { period: item.period },
+        data: {
+          status: nextStatus,
+          ...(action === "review" ? { reviewedBy: auth.userId } : {}),
+          ...(action === "approve" ? { approvedBy: auth.userId } : {}),
+          ...(action === "pay" ? { paidAt: new Date() } : {}),
+        },
+      });
+      return updatedRun;
+    }, { isolationLevel: "Serializable" });
+
+    await logHrmAudit({ actor: auth, action: `PAYROLL_${action.toUpperCase()}`, entityType: "HrmPayrollRun", entityId: result.id, newValue: result });
+    return NextResponse.json({ success: true, data: result });
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+export async function GET(request: Request) {
+  return withAuth(async (req, auth) => {
+    try { return await listPayroll(req, auth); } catch (error) { return errorResponse(error); }
+  })(request);
+}
+
+export async function POST(request: Request) {
+  return withAuth(async (req, auth) => generatePayroll(req, auth))(request);
+}
+
+export async function PATCH(request: Request) {
+  return withAuth(async (req, auth) => updatePayroll(req, auth))(request);
 }

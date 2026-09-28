@@ -177,7 +177,6 @@ export async function POST(req: Request) {
 
     const response = NextResponse.json({
       success: true,
-      token,
       student: {
         id: student.id,
         studentId: student.studentId,
@@ -187,6 +186,10 @@ export async function POST(req: Request) {
         profileComplete: student.profileComplete,
         journeyStage: student.journeyStage
       }
+    });
+    const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+    response.cookies.set('alo_student_session', token, {
+      httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 24 * 60 * 60,
     });
     return setStudentPageSessionCookie(response, student);
 

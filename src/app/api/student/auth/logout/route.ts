@@ -3,6 +3,14 @@ import { authenticateStudentRequest, revokeAllStudentSessions } from '@/lib/stud
 
 function clearPageSessionCookie(response: NextResponse) {
   const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+  response.cookies.set('alo_student_session', '', {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+    expires: new Date(0),
+  });
   response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', '', {
     httpOnly: true,
     secure,

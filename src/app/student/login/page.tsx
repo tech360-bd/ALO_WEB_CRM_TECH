@@ -24,7 +24,8 @@ export default function StudentLoginPage() {
 
   // If already logged in, redirect
   useEffect(() => {
-    const token = localStorage.getItem('student_token');
+    localStorage.removeItem('student_token');
+    const token = document.cookie.includes('alo_student_session=');
     if (token) {
       router.replace('/student/dashboard');
     }
@@ -100,7 +101,7 @@ export default function StudentLoginPage() {
       const data = await res.json();
 
       if (data.success) {
-        localStorage.setItem('student_token', data.token);
+        localStorage.removeItem('student_token');
         localStorage.setItem('student_user', JSON.stringify(data.student));
         router.push('/student/dashboard');
       } else {

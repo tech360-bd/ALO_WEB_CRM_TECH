@@ -98,7 +98,11 @@ describe('SEC-F no payroll/finance route may ship without an auth reference', ()
 
     const payroll = readFileSync('src/app/api/admin/payroll/route.ts', 'utf8');
     expect(payroll).toMatch(/employeePayroll\.findUnique/);
-    expect(payroll).toMatch(/preparedBy\s*\|\|\s*payrollToApprove\.reviewedBy/);
+    expect(payroll).toMatch(/const makerId = payrollToChange\.preparedBy/);
+    expect(payroll).toMatch(/pay_payroll/);
+    expect(payroll).toMatch(/assertPayrollTransition/);
+    expect(payroll).not.toMatch(/50000|2500/);
+    expect(payroll).not.toMatch(/status:\s*['"]approved['"][\s\S]{0,200}paidAt/); // approval must not also mark a run paid
     expect(payroll).not.toMatch(/const\s*\{[^}]*makerId[^}]*\}\s*=\s*await\s*req\.json/);
   });
 });

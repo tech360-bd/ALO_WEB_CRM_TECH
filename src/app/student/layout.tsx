@@ -76,24 +76,14 @@ export default function StudentPortalLayout({
       return;
     }
 
-    const savedToken = localStorage.getItem('student_token');
     const savedStudent = localStorage.getItem('student_user');
 
-    if (!savedToken || !savedStudent) {
-      router.replace('/student/login');
-      return;
-    }
-
     try {
-      const parsedStudent = JSON.parse(savedStudent);
-      setStudent(parsedStudent);
-      setToken(savedToken);
-      setLoading(false);
-
-      // Fetch fresh data
-      fetch('/api/student/auth/me', {
-        headers: { 'Authorization': `Bearer ${savedToken}` }
-      }).then(async (res) => {
+      if (savedStudent) setStudent(JSON.parse(savedStudent));
+      setToken(null);
+      // The HttpOnly session cookie is sent automatically; never read a
+      // session token from JavaScript or localStorage.
+      fetch('/api/student/auth/me', { credentials: 'include' }).then(async (res) => {
         if (!res.ok) {
           // Token invalid → logout
           localStorage.removeItem('student_token');
@@ -118,13 +108,10 @@ export default function StudentPortalLayout({
   }, [pathname, isLoginPage, router]);
 
   const logout = async () => {
-    const t = localStorage.getItem('student_token');
-    if (t) {
-      await fetch('/api/student/auth/logout', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${t}` }
-      }).catch(() => {});
-    }
+    await fetch('/api/student/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    }).catch(() => {});
     localStorage.removeItem('student_token');
     localStorage.removeItem('student_user');
     router.push('/student/login');

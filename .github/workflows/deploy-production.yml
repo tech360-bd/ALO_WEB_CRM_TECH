@@ -145,6 +145,7 @@ jobs:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
           HOST_FINGERPRINT: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
+          EXPECTED_HOST_FINGERPRINT: 'SHA256:K0041d6kUdse+U6+vHijY73qb1ur/GsedNae8g8a+tU'
         run: |
           set -euo pipefail
           missing=0
@@ -185,7 +186,13 @@ jobs:
             missing=1
           else
             case "$HOST_FINGERPRINT" in
-              SHA256:*) echo "✓ DEPLOY_HOST_SSH_FINGERPRINT present (SHA256 format)" ;;
+              SHA256:*)
+                if [ "$HOST_FINGERPRINT" != "$EXPECTED_HOST_FINGERPRINT" ]; then
+                  echo "::error::DEPLOY_HOST_SSH_FINGERPRINT does not match the pinned ED25519 fingerprint; obtain fresh server evidence before changing it."
+                  missing=1
+                else
+                  echo "✓ DEPLOY_HOST_SSH_FINGERPRINT matches the pinned ED25519 fingerprint"
+                fi ;;
               *) echo "::error::DEPLOY_HOST_SSH_FINGERPRINT must look like SHA256:... (got a different format)"; missing=1 ;;
             esac
           fi
@@ -333,6 +340,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
+          passphrase: ${{ secrets.DEPLOY_SSH_KEY_PASSPHRASE }}
           port: ${{ secrets.DEPLOY_PORT }}
           fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
           envs: DEPLOY_REF,APP_PORT,PM2_NAME,PRIMARY_DOMAIN,TARGET_REPO,DEPLOY_DIR,GH_FETCH_TOKEN,SKIP_MIGRATIONS
@@ -599,6 +607,7 @@ NODE
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
+          passphrase: ${{ secrets.DEPLOY_SSH_KEY_PASSPHRASE }}
           port: ${{ secrets.DEPLOY_PORT }}
           fingerprint: ${{ vars.DEPLOY_HOST_SSH_FINGERPRINT }}
           envs: APP_PORT,PM2_NAME,DEPLOY_DIR
@@ -644,7 +653,10 @@ NODE
         run: |
           set -uo pipefail
           FAILED=0
-          for URL in             "https://aloeducation.com/"             "https://aloeducation.com/api/health"             "https://aloeducation.com/universities"             "https://aloeducation.com/courses"             "https://aloeducation.com/destinations"
+          # NOTE (2026-09-28): `/courses` is not the listing route; use the
+          # real searchable listing page `/course-finder` to avoid a permanent
+          # misleading 404 in deployment logs.
+          for URL in             "https://aloeducation.com/"             "https://aloeducation.com/api/health"             "https://aloeducation.com/universities"             "https://aloeducation.com/course-finder"             "https://aloeducation.com/destinations"
           do
             CODE="$(curl -ksS -o /dev/null -w "%{http_code}" --max-time 20 -L "$URL" || true)"
             echo "$URL -> HTTP $CODE"

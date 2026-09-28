@@ -337,13 +337,14 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Dedicated student-session endpoints authenticate their Bearer token in the
-  // route handler (authenticateStudentRequest/requireStudentResource). Let that
+  // Dedicated student-session endpoints authenticate their Bearer token or
+  // HttpOnly cookie in the route handler (authenticateStudentRequest/requireStudentResource). Let that
   // server-side check run instead of requiring a NextAuth JWT at the proxy.
   // This is intentionally limited to the student namespace; it does not make
   // any endpoint public.
   const hasStudentBearer = /^Bearer\s+\S+$/i.test(request.headers.get("authorization") || "");
-  if ((matchesPath(pathname, "/api/student") || matchesPath(pathname, "/api/student-benefits") || matchesPath(pathname, "/api/visa/ai-interview")) && hasStudentBearer) {
+  const hasStudentCookie = /(?:^|;\s*)alo_student_session=[^;]+/.test(request.headers.get("cookie") || "");
+  if ((matchesPath(pathname, "/api/student") || matchesPath(pathname, "/api/student-benefits") || matchesPath(pathname, "/api/visa/ai-interview")) && (hasStudentBearer || hasStudentCookie)) {
     return NextResponse.next();
   }
 

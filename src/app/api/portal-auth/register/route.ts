@@ -146,6 +146,163 @@ export async function POST(request: Request) {
           fullName: name.trim(),
         },
       });
+
+      // ─── CRM INTEGRATION: create the corresponding CRM Lead record and
+      // run it through the existing lead-scoring / counselor auto-assignment
+      // pipeline so that every self-registered student is represented in the
+      // CRM (Lead table) and gets a counselor the same way leads created via
+      // /api/leads do. This uses the SAME automation functions as the rest
+      // of the CRM (no new/duplicate assignment logic) so behaviour stays
+      // consistent across every lead-entry point.
+      //
+      // This block must never fail (or block) account creation itself — the
+      // portal account has already been created successfully above. Any
+      // failure here is recorded (never silently ignored, never a random
+      // counselor fallback) via console.error + a CrmAuditLog entry so it is
+      // discoverable and repairable.
+      try {
+        const { findDuplicateLead, scoreLead, autoAssignCounselor, createFollowUpTask } =
+          await import("@/lib/crm-automation");
+
+        const duplicateLeadId = await findDuplicateLead({
+          email: normalizedEmail,
+          phone: phone?.trim() || undefined,
+        });
+
+        if (duplicateLeadId) {
+          // A lead already exists for this email/phone (e.g. came in earlier
+          // via the website inquiry form). Link it to the new student
+          // instead of creating a second, duplicate Lead record.
+          await db.lead.update({
+            where: { id: duplicateLeadId },
+            data: { studentId },
+          }).catch((linkErr) => {
+            console.error("[registration->crm] failed to link existing lead to new student", {
+              studentId,
+              duplicateLeadId,
+              error: linkErr instanceof Error ? linkErr.message : String(linkErr),
+            });
+          });
+
+          const existingLead = await db.lead.findUnique({ where: { id: duplicateLeadId } });
+          if (existingLead && !existingLead.counselorId) {
+            const assignment = await autoAssignCounselor(duplicateLeadId);
+            if (assignment.counselorId) {
+              const counselor = await db.user.findUnique({ where: { id: assignment.counselorId } });
+              await db.portalStudentProfile.update({
+                where: { studentId },
+                data: {
+                  counselorId: assignment.counselorId,
+                  counselorName: counselor?.name || "",
+                  journeyStage: "assigned",
+                },
+              });
+            } else {
+              await db.crmAuditLog.create({
+                data: {
+                  actorUserId: "system",
+                  actorRole: "SYSTEM",
+                  action: "COUNSELOR_AUTO_ASSIGN_FAILED",
+                  targetCollection: "Lead",
+                  targetId: duplicateLeadId,
+                  afterData: JSON.stringify({ studentId, reason: assignment.reason }),
+                },
+              }).catch(() => {});
+            }
+          }
+        } else {
+          const leadCount = await db.lead.count();
+          const lead = await db.lead.create({
+            data: {
+              leadId: `ALO-L-${(10001 + leadCount + 1).toString()}`,
+              fullName: name.trim(),
+              email: normalizedEmail,
+              phone: phone?.trim() || "",
+              source: "STUDENT_PORTAL_REGISTRATION",
+              sourceDetail: "Self-registered via public student registration form",
+              status: "NEW",
+              studentId,
+            },
+          });
+
+          await db.timelineEvent.create({
+            data: {
+              studentId,
+              leadId: lead.id,
+              stage: "lead",
+              type: "LEAD_CREATED",
+              title: "Student self-registered",
+              description: "Lead auto-created from student portal registration",
+            },
+          }).catch(() => {});
+
+          await scoreLead(lead.id).catch(() => {});
+          const assignment = await autoAssignCounselor(lead.id);
+          await createFollowUpTask(lead.id, 1).catch(() => {});
+
+          if (assignment.counselorId) {
+            const counselor = await db.user.findUnique({ where: { id: assignment.counselorId } });
+            await db.portalStudentProfile.update({
+              where: { studentId },
+              data: {
+                counselorId: assignment.counselorId,
+                counselorName: counselor?.name || "",
+                journeyStage: "assigned",
+              },
+            });
+          } else {
+            // Explicitly record the auto-assignment failure. Do NOT fall
+            // back to assigning a random counselor — the student remains
+            // unassigned (journeyStage stays "lead_created") until an
+            // admin/counselor is available and assignment can be retried.
+            console.error("[registration->crm] counselor auto-assignment failed", {
+              studentId,
+              leadId: lead.id,
+              reason: assignment.reason,
+            });
+            await db.crmAuditLog.create({
+              data: {
+                actorUserId: "system",
+                actorRole: "SYSTEM",
+                action: "COUNSELOR_AUTO_ASSIGN_FAILED",
+                targetCollection: "Lead",
+                targetId: lead.id,
+                afterData: JSON.stringify({ studentId, reason: assignment.reason }),
+              },
+            }).catch(() => {});
+          }
+
+          await db.crmAuditLog.create({
+            data: {
+              actorUserId: "system",
+              actorRole: "SYSTEM",
+              action: "LEAD_CREATED_FROM_REGISTRATION",
+              targetCollection: "Lead",
+              targetId: lead.id,
+              afterData: JSON.stringify({ studentId, email: normalizedEmail, counselorAssigned: !!assignment.counselorId }),
+            },
+          }).catch(() => {});
+        }
+      } catch (crmError) {
+        // Never block or fail account creation because of a CRM-side error.
+        // Record it clearly so it can be found and repaired.
+        console.error("[registration->crm] lead/assignment pipeline failed", {
+          studentId,
+          error: crmError instanceof Error ? crmError.message : String(crmError),
+        });
+        await db.crmAuditLog.create({
+          data: {
+            actorUserId: "system",
+            actorRole: "SYSTEM",
+            action: "REGISTRATION_CRM_PIPELINE_ERROR",
+            targetCollection: "PortalStudentProfile",
+            targetId: studentId,
+            afterData: JSON.stringify({
+              error: crmError instanceof Error ? crmError.message : String(crmError),
+            }),
+          },
+        }).catch(() => {});
+      }
     } else if (portalType === "partner") {
       // Generate a unique partner ID with retry on collision
       let partnerId = generatePartnerId();

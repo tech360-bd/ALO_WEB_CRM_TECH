@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { authenticateRequest } from "@/lib/auth-middleware";
 
 const ADMIN_ROLES = new Set(["SUPER_ADMIN", "ADMIN", "super_admin", "admin"]);
-const COUNSELOR_ROLES = new Set(["COUNSELOR", "counselor"]);
+const COUNSELOR_ROLES = new Set(["COUNSELOR", "counselor", "BRANCH_MANAGER", "branch_manager"]);
 
 export async function GET(req: NextRequest) {
   const auth = await authenticateRequest(req);
