@@ -1,21 +1,21 @@
 # ALO Education production recovery final report
 
-**Report date:** 2026-09-28  
-**Branch:** `arena/01a0c218-alo-education-z-ai`  
-**Validated application candidate:** `0ee0e70424363a75316fdf4951356a4ba29e7349`  
-**Parent implementation candidate:** `89442efb84b1a9624b7367c3501a588e0fadef4a`  
-**Base:** `origin/main` `992e99636e281d6aca600919d7f9c71fe9ce75d7`  
-**PR:** [#18](https://github.com/engralaminn-collab/alo_education_z....ai/pull/18), open, targeting `main`  
+**Report date:** 2026-09-28
+**Branch:** `arena/01a0c218-alo-education-z-ai`
+**Validated implementation/workflow candidate:** `89442efb84b1a9624b7367c3501a588e0fadef4a`
+**Latest audited tree before this report:** `62c2c8f1679b5d7f038aa67e9201deaa2dbe97bf` (documentation-only after the implementation candidate)
+**Base:** `origin/main` `992e99636e281d6aca600919d7f9c71fe9ce75d7`
+**PR:** [#18](https://github.com/engralaminn-collab/alo_education_z....ai/pull/18), open, targeting `main`
 **Decision:** **NOT READY for merge or production deployment**
 
-The final report and recovery plan are documentation-only additions after the implementation/workflow candidate. The exact candidate above was checked out by the latest PR CI run. No merge, production deployment, migration, live database mutation, VPS change, DNS/SSL/firewall change, or PM2 restart was performed.
+The implementation/workflow candidate was validated by CI run `36419251748`; the subsequent recovery plan and final-report commits changed documentation only and were also checked by CI run `36421730197`. No merge, production deployment, migration, live database mutation, VPS change, DNS/SSL/firewall change, or PM2 restart was performed.
 
 ## 1. Executive result
 
 | Gate | Status | Evidence / limitation |
 |---|---|---|
 | Published branch synchronization | **PASS** | Fast-forward pushes only; local and remote branch were compared at `0 0`; no force-push, reset, discarded work, or history rewrite |
-| Candidate CI | **PASS** | Run `36420640777`, job `108922225976`, exact head `0ee0e704`; all workflow steps succeeded in 8m13s |
+| Candidate CI | **PASS** | Implementation candidate run `36419251748`, job `108917730224`, exact head `89442efb`; all workflow steps succeeded. Final audit-tree run `36421730197`, job `108925827749`, also succeeded |
 | Prisma official engine access | **PASS IN TRUSTED CI / BLOCKED LOCALLY** | Official engine download, validation, generation and generated-client verification passed in GitHub Actions; the sandbox TLS path still fails |
 | Lint | **PASS** | Local `npm run lint` passed on the repaired candidate; CI `Lint` step passed |
 | Typecheck | **PASS IN CI** | CI `Typecheck` passed after generated-client verification and swap/heap provisioning; local reproduction remains blocked by Prisma engine access |
@@ -64,16 +64,20 @@ Safe resolution and evidence:
 
 The local sandbox path remains **BLOCKED**, but the candidate validation blocker is **RESOLVED IN TRUSTED CI**. The generated client is not committed; it is produced and verified by the runner.
 
-### Trusted CI run
+### Trusted CI runs
+
+Primary implementation/workflow validation:
 
 - Workflow: `CI — Pull Request Validation`
-- Run: [36420640777](https://github.com/engralaminn-collab/alo_education_z....ai/actions/runs/36420640777)
+- Run: [36419251748](https://github.com/engralaminn-collab/alo_education_z....ai/actions/runs/36419251748)
 - Job: `Lint · Typecheck · Tests · Prisma · Build`
-- Job ID: `108922225976`
-- Checked-out SHA: `0ee0e70424363a75316fdf4951356a4ba29e7349`
-- Duration: `8m13s`
+- Job ID: `108917730224`
+- Checked-out SHA: `89442efb84b1a9624b7367c3501a588e0fadef4a`
+- Duration: `11m53s`
 - Conclusion: `success`
 - Steps passed: checkout, Node setup, lockfile install, tracked-file secret scan, Prisma validate, Prisma generate, generated-client verification, lint, swap provisioning, typecheck, tests, production build, standalone artifact validation and summary.
+
+The final documentation tree was independently checked by [run 36421730197](https://github.com/engralaminn-collab/alo-education-z....ai/actions/runs/36421730197), job `108925827749`, exact head `62c2c8f1679b5d7f038aa67e9201deaa2dbe97bf`, with conclusion `success` in `12m10s`. These later commits changed audit documents only; they did not change application or workflow implementation.
 
 The test job is intentionally scoped safely: no `DATABASE_URL` is present, so DB-backed integration files self-skip with an explicit reason. The deterministic `visa-security-negative.test.ts` security regression file is not a real database or live API test and must not be represented as one.
 
