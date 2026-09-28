@@ -3,25 +3,25 @@
 **Report date:** 2026-09-28
 **Branch:** `arena/01a0c218-alo-education-z-ai`
 **Validated implementation/workflow candidate:** `89442efb84b1a9624b7367c3501a588e0fadef4a`
-**Latest audited tree before this report:** `62c2c8f1679b5d7f038aa67e9201deaa2dbe97bf` (documentation-only after the implementation candidate)
+**Latest validated branch tip:** `9a8da6c83a44234f2338fa969c788686e4e66b82` (documentation-only after the implementation candidate)
 **Base:** `origin/main` `992e99636e281d6aca600919d7f9c71fe9ce75d7`
 **PR:** [#18](https://github.com/engralaminn-collab/alo_education_z....ai/pull/18), open, targeting `main`
 **Decision:** **NOT READY for merge or production deployment**
 
-The implementation/workflow candidate was validated by CI run `36419251748`; the subsequent recovery plan and final-report commits changed documentation only and were also checked by CI run `36421730197`. No merge, production deployment, migration, live database mutation, VPS change, DNS/SSL/firewall change, or PM2 restart was performed.
+The implementation/workflow candidate was validated by CI run `36419251748`; the subsequent recovery-plan and final-report commits changed documentation only. The current exact branch tip was also checked by CI run `36424601811`. No merge, production deployment, migration, live database mutation, VPS change, DNS/SSL/firewall change, or PM2 restart was performed.
 
 ## 1. Executive result
 
 | Gate | Status | Evidence / limitation |
 |---|---|---|
 | Published branch synchronization | **PASS** | Fast-forward pushes only; local and remote branch were compared at `0 0`; no force-push, reset, discarded work, or history rewrite |
-| Candidate CI | **PASS** | Implementation candidate run `36419251748`, job `108917730224`, exact head `89442efb`; all workflow steps succeeded. Final audit-tree run `36421730197`, job `108925827749`, also succeeded |
+| Candidate CI | **PASS** | Implementation candidate run `36419251748`, job `108917730224`, exact head `89442efb`; all workflow steps succeeded. Current exact branch-tip run `36424601811`, job `108935362514`, also succeeded |
 | Prisma official engine access | **PASS IN TRUSTED CI / BLOCKED LOCALLY** | Official engine download, validation, generation and generated-client verification passed in GitHub Actions; the sandbox TLS path still fails |
 | Lint | **PASS** | Local `npm run lint` passed on the repaired candidate; CI `Lint` step passed |
-| Typecheck | **PASS IN CI** | CI `Typecheck` passed after generated-client verification and swap/heap provisioning; local reproduction remains blocked by Prisma engine access |
-| Unit/security test suite | **PASS IN CI** | Blocking CI `Tests` step passed; no failure was reported |
-| Disposable-DB integration tests | **NOT VERIFIED / PARTIAL** | CI intentionally has no `DATABASE_URL`; `consultation-workflow.test.ts` skips with reason rather than connecting to a dummy or production database |
-| Production build | **PASS IN CI** | CI build passed with the dummy validation environment and standalone artifact check |
+| Typecheck | **PASS** | CI `Typecheck` passed; local `npm run typecheck` also passed after reproducible `npm ci` installed the generated client package files |
+| Unit/security test suite | **PASS** | Local `npm test`: 28 files passed, 1 skipped; 275 tests passed, 7 skipped. CI blocking test step also passed |
+| Disposable-DB integration tests | **PARTIAL / NOT VERIFIED** | Local and CI runs safely skipped the 7 consultation tests because no disposable `DATABASE_URL` was supplied; no real MySQL integration run occurred |
+| Production build | **PASS IN CI / BLOCKED LOCALLY** | CI build passed with standalone artifact check; local build remains blocked at official Prisma engine download |
 | Workflow syntax | **PASS** | `js-yaml` parsed `.github/workflows/ci.yml` and `.github/workflows/deploy-production.yml`; the migration-backup heredoc parser defect was repaired |
 | Browser/E2E | **NOT VERIFIED** | Playwright browsers and an executable application environment were not available |
 | Live/provider/server/database validation | **NOT VERIFIED** | No authorized live or disposable staging environment was available |
@@ -77,7 +77,7 @@ Primary implementation/workflow validation:
 - Conclusion: `success`
 - Steps passed: checkout, Node setup, lockfile install, tracked-file secret scan, Prisma validate, Prisma generate, generated-client verification, lint, swap provisioning, typecheck, tests, production build, standalone artifact validation and summary.
 
-The final documentation tree was independently checked by [run 36421730197](https://github.com/engralaminn-collab/alo-education-z....ai/actions/runs/36421730197), job `108925827749`, exact head `62c2c8f1679b5d7f038aa67e9201deaa2dbe97bf`, with conclusion `success` in `12m10s`. These later commits changed audit documents only; they did not change application or workflow implementation.
+The current exact branch tip was independently checked by [run 36424601811](https://github.com/engralaminn-collab/alo_education_z....ai/actions/runs/36424601811), job `108935362514`, exact head `9a8da6c83a44234f2338fa969c788686e4e66b82`, with conclusion `success` after approximately 12m44s. The post-implementation commits changed audit documents only; they did not change application or workflow implementation.
 
 The test job is intentionally scoped safely: no `DATABASE_URL` is present, so DB-backed integration files self-skip with an explicit reason. The deterministic `visa-security-negative.test.ts` security regression file is not a real database or live API test and must not be represented as one.
 
@@ -85,13 +85,18 @@ The test job is intentionally scoped safely: no `DATABASE_URL` is present, so DB
 
 | Command | Result |
 |---|---|
+| `npm ci` | **PASS**; 1,175 packages installed from the lockfile; npm reported 3 high vulnerabilities |
+| `npx --no-install prisma --version` | **BLOCKED**; Prisma 6.19.3 was confirmed, but the official engine checksum request failed during TLS |
+| `npx --no-install prisma validate` / `generate` / `format --check` | **BLOCKED** by the same official engine TLS/network failure |
+| Generated client entrypoint/loadability after `npm ci` | **PASS**; `node_modules/.prisma/client/default.js` present and `PrismaClient` export loadable; this does not replace a successful fresh `prisma generate` |
 | `npm run lint` | **PASS** |
-| `npx prisma --version` | **BLOCKED** by official-engine TLS/network failure described above |
-| `npm run typecheck` | **BLOCKED LOCALLY** until the generated client can be obtained; **PASS IN CI** |
-| `npm test` | **BLOCKED LOCALLY** by the same generated-client/environment issue; **PASS IN CI** with DB integration explicitly skipped |
+| `npm run typecheck` | **PASS** locally and in CI after `npm ci` supplied the generated client files |
+| `npm test` | **PASS / PARTIAL** locally: 28 files and 275 tests passed; 1 file and 7 tests skipped for missing disposable DB. CI also passed with the same safe scope |
+| `npm run test:integration` | **PASS / PARTIAL**: 1 file and 22 tests passed; consultation file skipped with 7 tests because no `DATABASE_URL` was supplied |
 | `npm run build` | **BLOCKED LOCALLY** at mandatory Prisma generation; **PASS IN CI** with `.next/standalone/server.js` check |
-| `js-yaml` parse of `.github/workflows/ci.yml` and `.github/workflows/deploy-production.yml` | **PASS** |
-| `gh workflow run ci.yml --ref ...` | **BLOCKED BY GITHUB INTEGRATION PERMISSION** (`HTTP 403: Resource not accessible by integration`); the pull-request event supplied the trusted CI run above |
+| `bash -n scripts/*.sh deploy/ubuntu/*.sh` | **PASS** |
+| `js-yaml` parse of all four workflow files | **PASS** |
+| `npm audit --omit=dev --audit-level=high` | **FAIL / REVIEW REQUIRED** with 3 high Prisma CLI-chain advisories; no forced upgrade was applied |
 
 ## 3. Application-surface validation matrix
 
@@ -142,10 +147,10 @@ The authoritative detailed issue register remains `AUDIT/production-recovery-pla
 |---|---|---|---|---|
 | `REC-001` | Critical | Prisma/toolchain | **PARTIAL: CI RESOLVED / LOCAL BLOCKED** | Official Prisma 6.19.3 engine access, validation, generation and generated-client load passed in trusted CI; local TLS path remains blocked |
 | `REC-002` | Critical | Build gate | **PASS IN CI / LOCAL BLOCKED** | Exact-candidate build and standalone artifact passed in CI; no production artifact was deployed |
-| `REC-003` | Critical | Type safety | **PASS IN CI / LOCAL BLOCKED** | Generated client was explicitly verified before typecheck; local reproduction remains unavailable |
+| `REC-003` | Critical | Type safety | **PASS IN CI AND LOCAL TYPECHECK / GENERATION BLOCKED LOCALLY** | Generated client was verified in CI and loadable after `npm ci`; local `npm run typecheck` passed, but fresh `prisma generate` remains blocked by engine download |
 | `REC-004` | Critical | Database/migrations | **NOT VERIFIED** | Requires disposable/staging schema inspection, duplicate preflight, migration-on-copy and explicit approval; no migration ran |
 | `REC-005` | Critical | Production access/deployment | **NOT VERIFIED** | No authorized VPS/database/test-account access; live claims are prohibited |
-| `REC-006` | High | Full test suite | **PARTIAL** | Unit/security CI gate passed; DB-backed consultation integration skipped without `DATABASE_URL` and needs disposable MySQL |
+| `REC-006` | High | Full test suite | **PARTIAL** | Local run passed 28 files/275 tests and skipped 1 file/7 tests; DB-backed consultation integration needs disposable MySQL. CI gate also passed with the same scope |
 | `REC-007` | High | CI validation / counselor routes | **PASS** | Route repair passes local lint and trusted CI; historical malformed-route failure remains preserved as history |
 | `REC-008` | High | Payroll | **PARTIAL** | Code and CI unit coverage passed; persisted schema, race, transaction and real authorization behavior remain pending |
 | `REC-009` | High | Authentication/session security | **PARTIAL** | Cookie/session code and static/security coverage passed; direct persisted API/browser matrix remains pending |
@@ -189,4 +194,4 @@ The following production controls remain required and were not bypassed:
 7. If a separately approved deployment is later requested, record target SHA, CI run, artifact, server fingerprint, backup ID, migration decision, expected downtime and rollback SHA before starting. The default must remain `SKIP_MIGRATIONS=true`.
 8. After any authorized staging/live action, record server identity, deployed SHA, PM2 status, local/public health, database status, logs and rollback evidence. Without that evidence, production readiness remains **NOT READY**.
 
-**Final conclusion:** repository recovery, synchronization, Prisma trusted-runner validation, generated-client verification, lint, typecheck, CI unit/security gate, build gate and workflow-syntax repair are complete. The release is still **NOT READY** because database-backed integration, browser/E2E, provider, live server, backup/restore, migration compatibility and rollback evidence are unavailable, and no explicit merge or deployment approval exists.
+**Final conclusion:** repository recovery, synchronization, Prisma trusted-runner validation, generated-client verification, lint, local/CI typecheck, local/CI unit/security gates, CI build gate and workflow-syntax repair are complete. The release is still **NOT READY** because database-backed integration, browser/E2E, provider, live server, backup/restore, migration compatibility and rollback evidence are unavailable, and no explicit merge or deployment approval exists.
