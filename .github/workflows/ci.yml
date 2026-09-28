@@ -119,6 +119,22 @@ jobs:
           DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
         run: npx prisma generate
 
+      - name: Verify generated Prisma client
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f node_modules/.prisma/client/default.js || {
+            echo "::error::Generated Prisma client entrypoint is missing"
+            exit 1
+          }
+          node <<'NODE'
+          const { PrismaClient } = require('@prisma/client');
+          if (typeof PrismaClient !== 'function') {
+            throw new Error('PrismaClient export is unavailable');
+          }
+          console.log('✓ Generated Prisma client is loadable');
+          NODE
+
       - name: Lint
         run: npm run lint
 
