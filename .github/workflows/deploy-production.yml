@@ -512,28 +512,28 @@ jobs:
                 DB_BACKUP="$BACKUP_DIR/database-before-migrate.sql"
                 DATABASE_URL_FROM_ENV="${DATABASE_URL:-}"
                 DATABASE_URL="$DATABASE_URL_FROM_ENV" DB_BACKUP="$DB_BACKUP" node <<'NODE'
-const fs = require('node:fs');
-const { spawnSync } = require('node:child_process');
-const dotenv = require('dotenv');
-const raw = process.env.DATABASE_URL || dotenv.parse(fs.readFileSync('.env')).DATABASE_URL;
-if (!raw) throw new Error('DATABASE_URL is missing');
-const url = new URL(raw);
-const database = decodeURIComponent(url.pathname.replace(/^\\//, ''));
-if (!database) throw new Error('DATABASE_URL has no database name');
-const args = [
-  '--host', url.hostname,
-  '--port', url.port || '3306',
-  '--user', decodeURIComponent(url.username),
-  '--single-transaction', '--routines', '--triggers', '--hex-blob',
-  '--result-file', process.env.DB_BACKUP,
-  database,
-];
-const result = spawnSync('mysqldump', args, {
-  env: { ...process.env, MYSQL_PWD: decodeURIComponent(url.password) },
-  stdio: 'inherit',
-});
-process.exit(result.status ?? 1);
-NODE
+            const fs = require('node:fs');
+            const { spawnSync } = require('node:child_process');
+            const dotenv = require('dotenv');
+            const raw = process.env.DATABASE_URL || dotenv.parse(fs.readFileSync('.env')).DATABASE_URL;
+            if (!raw) throw new Error('DATABASE_URL is missing');
+            const url = new URL(raw);
+            const database = decodeURIComponent(url.pathname.replace(/^\\//, ''));
+            if (!database) throw new Error('DATABASE_URL has no database name');
+            const args = [
+              '--host', url.hostname,
+              '--port', url.port || '3306',
+              '--user', decodeURIComponent(url.username),
+              '--single-transaction', '--routines', '--triggers', '--hex-blob',
+              '--result-file', process.env.DB_BACKUP,
+              database,
+            ];
+            const result = spawnSync('mysqldump', args, {
+              env: { ...process.env, MYSQL_PWD: decodeURIComponent(url.password) },
+              stdio: 'inherit',
+            });
+            process.exit(result.status ?? 1);
+            NODE
                 test -s "$DB_BACKUP" || {
                   echo "::error::Database backup was not created; refusing to run migrations"
                   exit 1
