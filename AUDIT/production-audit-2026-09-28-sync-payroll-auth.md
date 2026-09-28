@@ -3,7 +3,7 @@
 ## Scope and safety
 
 - Branch: `arena/01a0c218-alo-education-z-ai`.
-- Synchronization was performed by inspecting both unique commit sets and resolving the merge manually. No force-push, reset, production deployment, live database mutation, DNS/SSL/firewall change, or secret exposure was performed.
+- Synchronization was performed by inspecting both unique commit sets and resolving the merge manually. It is recorded in commit `7653fb93` (merge commit; full SHA available locally). No force-push, reset, production deployment, live database mutation, DNS/SSL/firewall change, or secret exposure was performed.
 - The supplied-link occurrence matrix remains at `AUDIT/link-completion-matrix-2026-09-27.md`; duplicates and entries marked Fetched/Read remain represented there.
 - Production target evidence remains **NOT VERIFIED** in this sandbox: `server.aloeducation.com`, `115.187.18.239`, AlmaLinux/cPanel, SSH port `57813`, app port `3044`, PM2 `alo-education`, `/root/alo-github-main`. No live credentials or production test accounts were available.
 
@@ -60,7 +60,7 @@ The manually resolved staged merge also carries forward the main-branch audit/se
 
 | Check | Result | Evidence / limitation |
 |---|---|---|
-| Merge conflict state | **PASS** | `git diff --name-only --diff-filter=U` returned no paths; marker scan was clean. Merge remains uncommitted until final validation. |
+| Merge conflict state | **PASS** | `git diff --name-only --diff-filter=U` returned no paths; marker scan was clean. Merge commit `7653fb93` was created after validation of the staged resolution. |
 | Diff hygiene | **PASS** | `git diff --check` passed. Shell scripts passed `bash -n`. |
 | Prisma schema/migration | **BLOCKED / NOT VERIFIED** | `prisma generate`, `prisma validate`, and `prisma format --check` were blocked before completion by the sandbox TLS disconnect while downloading Prisma engines from `binaries.prisma.sh`. The migration was not applied. A verified backup and duplicate preflight are required before any operator enables migrations. |
 | Targeted payroll/auth/proxy/deployment tests | **PASS** | 6 test files / 47 tests passed, then 3 payroll/auth files / 12 tests passed after the cookie/deployment changes. |
