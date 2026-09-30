@@ -7,7 +7,8 @@
 import { NextResponse } from 'next/server';
 import * as crypto from 'crypto';
 import { db } from '@/lib/db';
-import { withAuth, logAuditAction } from '@/lib/auth-middleware';
+import { withAuth } from '@/lib/auth-middleware';
+import { writePortalAudit } from '@/lib/transactional-audit';
 import { sendActivationEmail } from '@/lib/email-service';
 
 // ------------------------------------------------------------
@@ -88,17 +89,17 @@ async function handlePost(request: Request, auth: any) {
         },
       });
 
-      return { invalidated, newToken };
-    });
+      // --- Audit log ---
+      await writePortalAudit(tx, auth, 'employee_activation_resend', 'employee', employeeId, {
+        employeeName: employee.name,
+        employeeEmail: employee.email,
+        employeeCode: employee.employeeProfile?.employeeId || 'N/A',
+        oldTokensInvalidated: invalidated.count,
+        newTokenExpiry: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
+        resentBy: auth.name,
+      }, request);
 
-    // --- Audit log ---
-    await logAuditAction(auth, 'employee_activation_resend', 'employee', employeeId, {
-      employeeName: employee.name,
-      employeeEmail: employee.email,
-      employeeCode: employee.employeeProfile?.employeeId || 'N/A',
-      oldTokensInvalidated: result.invalidated.count,
-      newTokenExpiry: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
-      resentBy: auth.name,
+      return { invalidated, newToken };
     });
 
     // Send activation email

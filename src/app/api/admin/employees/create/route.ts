@@ -7,7 +7,8 @@
 import { NextResponse } from 'next/server';
 import * as crypto from 'crypto';
 import { db } from '@/lib/db';
-import { authenticateRequest, withAuth, logAuditAction } from '@/lib/auth-middleware';
+import { withAuth } from '@/lib/auth-middleware';
+import { writePortalAudit } from '@/lib/transactional-audit';
 import { sendActivationEmail } from '@/lib/email-service';
 
 // ------------------------------------------------------------
@@ -118,18 +119,18 @@ async function handlePost(request: Request, auth: any) {
         },
       });
 
-      return { user, profile, activationToken };
-    });
+      // --- Audit log ---
+      await writePortalAudit(tx, auth, 'employee_account_created', 'employee', user.id, {
+        employeeCode,
+        designation,
+        department: department || '',
+        office: office || '',
+        role: role || '',
+        createdBy: auth.name,
+        activationEmailStatus: 'not_attempted',
+      }, request);
 
-    // --- Audit log ---
-    await logAuditAction(auth, 'employee_account_created', 'employee', result.user.id, {
-      employeeCode,
-      designation,
-      department: department || '',
-      office: office || '',
-      role: role || '',
-      createdBy: auth.name,
-      activationEmailStatus: 'not_attempted',
+      return { user, profile, activationToken };
     });
 
     // Send activation email

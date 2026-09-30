@@ -58,6 +58,9 @@ jobs:
           test -f package-lock.json || { echo "::error::package-lock.json missing"; exit 1; }
           npm ci
 
+      - name: Dependency security audit (high and critical block)
+        run: npm audit --audit-level=high
+
       - name: Secret-leak scan (tracked files)
         run: |
           set -euo pipefail

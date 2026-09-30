@@ -143,6 +143,9 @@
   },
   "overrides": {
     "postcss": "8.5.25",
-    "sharp": "0.35.4"
+    "sharp": "0.35.4",
+    "@prisma/config": {
+      "deepmerge-ts": "8.0.0"
+    }
   }
 }

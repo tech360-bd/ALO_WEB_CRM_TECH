@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { db, sendActivationEmail, sendPasswordResetEmail } = vi.hoisted(() => ({
-  db: { portalUser: { findUnique: vi.fn(), update: vi.fn() }, otpCode: { count: vi.fn(), create: vi.fn() }, passwordResetToken: { create: vi.fn() }, employeeActivationToken: { updateMany: vi.fn(), create: vi.fn() }, $transaction: vi.fn() },
+  db: { portalAuditLog: { create: vi.fn() }, portalUser: { findUnique: vi.fn(), update: vi.fn() }, otpCode: { count: vi.fn(), create: vi.fn() }, passwordResetToken: { create: vi.fn() }, employeeActivationToken: { updateMany: vi.fn(), create: vi.fn() }, $transaction: vi.fn() },
   sendActivationEmail: vi.fn(), sendPasswordResetEmail: vi.fn(),
 }));
 vi.mock('@/lib/db', () => ({ db }));
@@ -13,7 +13,7 @@ const request = (body: unknown) => new Request('https://example.com/api', { meth
 beforeEach(() => {
   vi.resetAllMocks();
   db.portalUser.findUnique.mockResolvedValue({ id: 'employee', userType: 'EMPLOYEE', status: 'pending_activation', name: 'Employee', email: 'employee@example.com' });
-  db.$transaction.mockImplementation(async callback => callback(db));
+  db.$transaction.mockImplementation(async callback => callback(Object.fromEntries(Object.entries(db).filter(([key]) => key !== '$transaction'))));
   db.employeeActivationToken.updateMany.mockResolvedValue({ count: 1 });
   db.employeeActivationToken.create.mockResolvedValue({ id: 'activation' });
   db.otpCode.count.mockResolvedValue(0);
@@ -24,6 +24,12 @@ describe('email consumer responses', () => {
     const response = await resend(request({ employeeId: 'employee' }));
     expect(response.status).toBe(502);
     expect(await response.json()).toMatchObject({ success: false, error: 'SMTP_SEND_FAILED' });
+  });
+  it('does not send or report success when transactional audit fails', async () => {
+    db.portalAuditLog.create.mockRejectedValue(new Error('audit unavailable'));
+    const response = await resend(request({ employeeId: 'employee' }));
+    expect(response.status).toBe(500);
+    expect(sendActivationEmail).not.toHaveBeenCalled();
   });
   it('resend reports success only after successful submission', async () => {
     sendActivationEmail.mockResolvedValue({ success: true, messageId: '<transport-id>' });

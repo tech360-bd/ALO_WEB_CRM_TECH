@@ -29,7 +29,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/sla-monitoring',
     locking: true,
     lockTtlMinutes: 5,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'agent-schedules',
@@ -41,7 +41,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/agent-schedules',
     locking: true,
     lockTtlMinutes: 5,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'whatsapp-followups',
@@ -53,7 +53,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/whatsapp-followups',
     locking: true,
     lockTtlMinutes: 10,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'sitemap-regeneration',
@@ -65,7 +65,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/sitemap-regeneration',
     locking: true,
     lockTtlMinutes: 15,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'database-backup',
@@ -77,7 +77,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/database-backup',
     locking: true,
     lockTtlMinutes: 60,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'expired-session-cleanup',
@@ -89,7 +89,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/expired-session-cleanup',
     locking: true,
     lockTtlMinutes: 15,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'temp-file-cleanup',
@@ -101,7 +101,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/temp-file-cleanup',
     locking: true,
     lockTtlMinutes: 30,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'scheduled-reports',
@@ -113,7 +113,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/scheduled-reports',
     locking: true,
     lockTtlMinutes: 30,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'university-verification',
@@ -125,7 +125,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/university-verification',
     locking: true,
     lockTtlMinutes: 45,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'intake-deadline-alerts',
@@ -137,7 +137,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/intake-deadline-alerts',
     locking: true,
     lockTtlMinutes: 15,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'email-queue',
@@ -149,7 +149,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/email-queue',
     locking: true,
     lockTtlMinutes: 10,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'scholarship-expiry',
@@ -161,7 +161,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/scholarship-expiry',
     locking: true,
     lockTtlMinutes: 20,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'ranking-update',
@@ -173,7 +173,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/ranking-update',
     locking: true,
     lockTtlMinutes: 30,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'document-expiry-alerts',
@@ -185,7 +185,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/document-expiry-alerts',
     locking: true,
     lockTtlMinutes: 20,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
   {
     id: 'analytics-aggregation',
@@ -197,7 +197,7 @@ export const CRON_JOBS: CronJobDefinition[] = [
     route: '/api/cron/analytics-aggregation',
     locking: true,
     lockTtlMinutes: 15,
-    enabled: true,
+    enabled: false, // Quarantined: locking/outcome/implementation audit incomplete
   },
 ];
 

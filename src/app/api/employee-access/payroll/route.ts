@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { writePortalAudit } from '@/lib/transactional-audit';
 import { canManagePayroll, isFinance, isHR, isSuperAdmin } from '@/lib/hrms/rbac';
 import {
   assertMakerChecker,
@@ -106,10 +107,10 @@ export async function POST(req: NextRequest) {
           status: body.isAiDraft ? 'draft' : 'review_pending',
         },
       });
+      await writePortalAudit(tx, auth, body.isAiDraft ? 'PAYROLL_AI_DRAFT_CREATED' : 'PAYROLL_CREATED', 'EmployeePayroll', created.id, { employeeId, period, netSalary: created.netSalary }, req);
       return created;
     }, { isolationLevel: 'Serializable' });
 
-    await logAuditAction(auth, body.isAiDraft ? 'PAYROLL_AI_DRAFT_CREATED' : 'PAYROLL_CREATED', 'EmployeePayroll', payroll.id, { employeeId, period, netSalary: payroll.netSalary });
     return NextResponse.json({ success: true, data: payroll, message: 'Payroll created from the persisted salary record; requires human review, approval, and payment.' });
   } catch (error) {
     return failure(error);
@@ -149,10 +150,10 @@ export async function PATCH(req: NextRequest) {
         },
       });
       if (changed.count !== 1) throw new PayrollValidationError('DUPLICATE_RUN', 'Payroll status changed; reload before retrying');
+      await writePortalAudit(tx, auth, `PAYROLL_${requestedStatus.toUpperCase()}`, 'EmployeePayroll', id, { status: requestedStatus, netSalary: existing.netSalary }, req);
       return tx.employeePayroll.findUnique({ where: { id } });
     }, { isolationLevel: 'Serializable' });
 
-    await logAuditAction(auth, `PAYROLL_${requestedStatus.toUpperCase()}`, 'EmployeePayroll', id, { status: requestedStatus, netSalary: existing.netSalary });
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
     return failure(error);

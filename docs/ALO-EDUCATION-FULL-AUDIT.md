@@ -136,3 +136,7 @@ No production data, credentials, seed, payment, notification, university submiss
 ## 2026-10-01 blocker-elimination checkpoint
 
 See [REPOSITORY-BLOCKERS-2026-10-01.md](REPOSITORY-BLOCKERS-2026-10-01.md), [MIGRATION-SAFETY-REPORT.md](MIGRATION-SAFETY-REPORT.md) and [CRON-RECONCILIATION.md](CRON-RECONCILIATION.md). Email false-success repair is tested; the full 21-point request is NOT complete. Migration ordering, audit atomicity/payload storage, cron stubs/locking, ledger lifecycle, legacy approval race and dependency highs remain repository-side blockers alongside external hosting/database credentials. No deployment, production-data change or live verification occurred. This checkpoint supersedes any broader completion wording above.
+
+## Continuation after 4ecdd245
+
+See [CONTINUATION-READINESS.md](CONTINUATION-READINESS.md) for the latest repair scope, tests and unresolved blockers. Prior dependency count and named approval/audit findings are superseded there; full repository readiness is still BLOCKED.

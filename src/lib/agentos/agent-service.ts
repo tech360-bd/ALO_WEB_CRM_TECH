@@ -327,26 +327,7 @@ export async function getPendingApprovals(limit = 50): Promise<AgentApprovalQueu
   }) as Promise<AgentApprovalQueue[]>;
 }
 
-export async function processApproval(
-  approvalId: string,
-  decision: "approved" | "rejected",
-  reviewerId: string,
-  notes?: string
-) {
-  return db.agentApprovalQueue.update({
-    where: { id: approvalId },
-    data: {
-      status: decision,
-      ...(decision === "approved" ? {
-        approvedById: reviewerId,
-        approvedAt: new Date(),
-      } : {
-        rejectedById: reviewerId,
-        rejectedAt: new Date(),
-      })
-    },
-  });
-}
+export { processApproval } from './approval-transition';
 
 // ─── Memory ────────────────────────────────────────────────────────────────────────
 

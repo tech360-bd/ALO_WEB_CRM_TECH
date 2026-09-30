@@ -104,3 +104,14 @@ Evidence is in docs/audit/2026-10-01/. Earlier environment references are a pre-
 | GitHub Actions secret availability | NOT VERIFIED | Listing returned 403; no assumption of configured secrets |
 
 Full current result and scope: [REPOSITORY-BLOCKERS-2026-10-01.md](REPOSITORY-BLOCKERS-2026-10-01.md). Status remains BLOCKED, not ready for cPanel configuration alone.
+
+## Continuation checkpoint (supersedes prior defect counts)
+
+- FIXED IN REPOSITORY: scoped dependency advisory chain (audit now zero), legacy approval conditional transition + SUPER_ADMIN, named employee/payroll audit boundaries, HRM salary-list scope, fixture password defaults.
+- BLOCKED: historical migration chain/applied history reconciliation; remaining audit callers; financial lifecycle business rules; missing cron implementations and durable locking.
+- FIXED IN REPOSITORY (quarantine only): 15 worker jobs disabled and flag honored; simulated university scan returns authenticated 503.
+- WAITING FOR DATABASE: schema/history, backup/restore, approved payload widening and payroll mapping.
+- WAITING FOR CPANEL / WAITING FOR EXTERNAL CREDENTIAL: unchanged; no runtime configuration invented.
+- NOT VERIFIED: live auth/portals/email/financial settlement; local production start is blocked by absent build artifact.
+
+See CONTINUATION-READINESS.md, AUDIT_ATOMICITY.md, FINANCIAL_LIFECYCLE_AUDIT.md, CRON_RECONCILIATION.md, MIGRATION_RECONCILIATION.md and DEPENDENCY_REMEDIATION.md. No deployment or production migration.

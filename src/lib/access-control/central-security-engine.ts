@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 
 export type AccessScope =
@@ -37,9 +38,10 @@ export interface SecurityAuditParams {
 /**
  * Log sensitive security & operational events into the immutable IntegrationAuditLog.
  */
-export async function logSecurityAudit(params: SecurityAuditParams): Promise<void> {
+export async function logSecurityAudit(params: SecurityAuditParams, tx?: Prisma.TransactionClient): Promise<void> {
   try {
-    await db.integrationAuditLog.create({
+    if (tx && '$transaction' in tx) throw new Error('Expected interactive transaction client');
+    await (tx || db).integrationAuditLog.create({
       data: {
         actorId: params.actorId,
         actorName: params.actorRole || 'System Actor',
@@ -59,6 +61,7 @@ export async function logSecurityAudit(params: SecurityAuditParams): Promise<voi
       },
     });
   } catch (error) {
+    if (tx) throw error;
     console.error('Failed to write security audit log:', error);
   }
 }

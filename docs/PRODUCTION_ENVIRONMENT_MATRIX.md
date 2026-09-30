@@ -237,3 +237,11 @@
 | SMTP_PASSWORD | src/lib/email-service.ts | SMTP authentication | Yes for mail | Yes | None | Hosting secret store |
 
 Missing configuration returns SMTP_NOT_CONFIGURED; no log fallback. SMTP acceptance does not prove inbox delivery. No SMTP credentials have been verified. No mail DNS changes are requested.
+
+## Continuation: requested variable-name reconciliation
+
+No new production secret values were created or verified. `DATABASE_URL`, `NODE_ENV`, `SESSION_SECRET` and SMTP_HOST/PORT/FROM/USER/PASSWORD remain actual consumers documented above. SMTP unchanged in this checkpoint.
+
+`APP_PUBLIC_URL`, `APP_ORIGIN`, `PORTAL_SECRET`, `OPS_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`: no direct runtime consumers found in the current src/scripts search. They must **not** be substituted for actual variables or advertised as required application configuration. Existing URL/auth/provisioning names include APP_URL, NEXTAUTH_URL, NEXT_PUBLIC_APP_URL, NEXTAUTH_SECRET, AUTH_SECRET, JWT_SECRET, SESSION_SECRET, SEED_SUPER_ADMIN_EMAIL, SEED_SUPER_ADMIN_PASSWORD. See the full matrix for consumers. PORT is supplied by the runtime; never invent a fixed hosting port.
+
+`TEST_FIXTURE_PASSWORD`: scripts/seed-portal-admin.ts and seed-all-portal-users.ts; secret, test-only, no repository value, supplied through isolated test environment; not a production setting. These scripts now require NODE_ENV=test and explicit 16+ character fixture/admin passwords; no known-password fallback. They remain operator-only legacy fixtures, not provisioning or deployment steps.
