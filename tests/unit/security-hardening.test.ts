@@ -161,14 +161,15 @@ describe('SEC-10 auth enforcement', () => {
   });
 });
 
-describe('SEC-05 port alignment', () => {
-  it('nginx/compose/eco/caddy/workflow use 3044 (prod spec)', async () => {
+describe('SEC-05 legacy isolation and managed runtime', () => {
+  it('historical configs remain intact but production workflow has no fixed-port contract', async () => {
     const fs = await import('fs');
     const nginx = fs.readFileSync('nginx.conf','utf8');
     expect(nginx).toContain('proxy_pass http://127.0.0.1:3044');
     expect(nginx).not.toContain('proxy_pass http://127.0.0.1:3000');
     const wf = fs.readFileSync('.github/workflows/deploy-production.yml','utf8');
-    expect(wf).toMatch(/APP_PORT:\s*['"]3044['"]/);
+    expect(wf).not.toMatch(/APP_PORT|3044|pm2|DEPLOY_SSH|DEPLOY_HOST/);
+    expect(wf).toContain("needs: validate-and-build");
     expect(wf).not.toContain(':3025');
     expect(wf).not.toContain(':3000');
     const compose = fs.readFileSync('docker-compose.yml','utf8');

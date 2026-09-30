@@ -1,3 +1,4 @@
+// HISTORICAL ONLY: excluded from cPanel production. Not a supported production path.
 // PM2 Ecosystem Configuration — ALO Education
 //
 // MERGED 2026-09-18 from two implementations:

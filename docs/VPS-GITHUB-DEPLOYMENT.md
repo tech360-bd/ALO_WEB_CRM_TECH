@@ -1,3 +1,5 @@
+> Deployment notice (2026-10-01): the instructions below are historical. The only production target is managed cPanel Node.js. See the root `CPANEL-DEPLOYMENT-GUIDE.md`; hosting configuration and live verification remain BLOCKED.
+
 # VPS + GitHub Connection & Safe Production Deployment (ALO Education)
 
 This guide shows **exactly** how to connect your private GitHub repo to your Linux VPS (Ubuntu/Debian) and deploy without losing `.env`, uploads, or database.

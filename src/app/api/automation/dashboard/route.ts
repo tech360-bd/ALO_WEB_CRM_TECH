@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 // GET /api/automation/dashboard — unified AutomationEvent stats + globalAiPaused + recentEvents.
 async function getAutomationDashboard(_req: Request, _auth: AuthContext) {
   try {
-    // Get original automation stats (from AutomationMetric)
+    // Canonical AutomationEvent stats
     const stats = await getAutomationStats();
 
     // ── Unified AutomationEvent stats ──
@@ -71,21 +71,21 @@ async function getAutomationDashboard(_req: Request, _auth: AuthContext) {
     });
 
     return NextResponse.json({
-      // Legacy (AutomationMetric-based)
+      // Compatibility response shape; canonical AutomationEvent source
       automation: stats,
 
       // Unified AutomationEvent stats
       automationEvents: {
         total: totalEvents,
         last24h: events24h,
-        byMode: byMode.map((m: any) => ({ mode: m.mode, count: m._count.mode })),
+        byMode: byMode.map((m: any) => ({ mode: m.mode, count: m._count })),
         byCategory: byCategory.map((c: any) => ({
           category: c.category,
-          count: c._count.category,
+          count: c._count,
         })),
         byWorkflow: byWorkflow.map((w: any) => ({
           workflow: w.workflow,
-          count: w._count.workflow,
+          count: w._count,
         })),
         recent: recentEvents,
       },
@@ -106,7 +106,7 @@ async function getAutomationDashboard(_req: Request, _auth: AuthContext) {
 
       // KPI target
       targetAutomation: 70,
-      status: stats.automationPercentage >= 70 ? "TARGET_MET" : "BELOW_TARGET",
+      status: !stats.hasData ? "NO_DATA" : stats.automationPercentage >= 70 ? "TARGET_MET" : "BELOW_TARGET",
     });
   } catch (error: any) {
     console.error("[automation.dashboard] error:", error);

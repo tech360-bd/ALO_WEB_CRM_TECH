@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDepartmentModelConfig, getRedactedConfigReport, listConfiguredDepartments } from '@/lib/department-model-config';
 import { evaluateDepartmentGates } from '@/lib/department-activation';
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest) {
     fallbackUsed = gw.fallbackUsed;
 
     // Validate output
-    const valid = !!gw.json?.keywords && Array.isArray(gw.json.keywords) && gw.json.keywords.length >= 3;
+    const valid = z.object({ keywords: z.array(z.string()).min(3) }).safeParse(gw.json).success;
     if (!valid) {
       return NextResponse.json({
         success: false,

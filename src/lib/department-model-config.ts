@@ -182,26 +182,14 @@ export function validateModelAssignment(
   requestedProvider?: string,
   requestedModel?: string
 ): { ok: boolean; reason: string } {
-  // Must be exact primary
-  if (requestedProvider && requestedProvider !== config.primary.provider) {
-    if (!config.primary.allowFallback) {
-      return { ok: false, reason: `Provider mismatch: requested ${requestedProvider} but primary is ${config.primary.provider} and fallback not allowed` };
-    }
-    if (config.primary.fallback && requestedProvider === config.primary.fallback.provider) {
-      return { ok: true, reason: `Fallback allowed: ${requestedProvider} via ${config.primary.fallback.reason}` };
-    }
-    return { ok: false, reason: `Provider ${requestedProvider} not allowed for ${config.departmentSlug}` };
-  }
-  if (requestedModel && requestedModel !== config.primary.model) {
-    if (!config.primary.allowFallback || !config.primary.fallback || requestedModel !== config.primary.fallback.model) {
-      return { ok: false, reason: `Model mismatch: requested ${requestedModel} but primary is ${config.primary.model}` };
-    }
-  }
-  // Privacy check: PUBLIC department can use external, but PRIVATE would require local
-  if (config.primary.privacy === 'RESTRICTED' || config.primary.privacy === 'CONFIDENTIAL') {
-    if (config.primary.provider !== 'local' && !process.env.LOCAL_AI_URL) {
-      return { ok: false, reason: `Privacy ${config.primary.privacy} requires local provider but LOCAL_AI_URL not set` };
-    }
+  const provider = requestedProvider || config.primary.provider;
+  const model = requestedModel || config.primary.model;
+  const isPrimary = provider === config.primary.provider && model === config.primary.model;
+  const isFallback = config.primary.allowFallback && config.primary.fallback &&
+    provider === config.primary.fallback.provider && model === config.primary.fallback.model;
+  if (!isPrimary && !isFallback) return { ok: false, reason: 'Provider/model pair is not allowed unless explicitly configured' };
+  if ((config.primary.privacy === 'RESTRICTED' || config.primary.privacy === 'CONFIDENTIAL') && provider !== 'local') {
+    return { ok: false, reason: `Privacy ${config.primary.privacy} requires the actual provider to be local` };
   }
   return { ok: true, reason: 'Model assignment valid' };
 }
