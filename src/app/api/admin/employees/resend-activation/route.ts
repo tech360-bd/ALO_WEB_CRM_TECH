@@ -102,16 +102,20 @@ async function handlePost(request: Request, auth: any) {
     });
 
     // Send activation email
-    await sendActivationEmail(
+    const emailResult = await sendActivationEmail(
       employee.email,
       employee.name,
       employee.employeeProfile?.employeeId || 'ALO-EMP-ACTIVE',
       tokenRaw
     );
 
+    if (!emailResult.success) {
+      return NextResponse.json({ success: false, error: emailResult.error, message: 'Activation token rotated, but email was not sent. Retry after correcting SMTP.' }, { status: 502 });
+    }
+
     return NextResponse.json({
       success: true,
-      message: `Activation email resent to ${employee.email}. Old links invalidated.`,
+      message: `Activation email accepted by SMTP for ${employee.email}. Old links invalidated.`,
       data: {
         employeeId,
         employeeName: employee.name,

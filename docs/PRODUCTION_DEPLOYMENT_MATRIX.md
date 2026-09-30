@@ -8,7 +8,7 @@
 | Repository / owner | engralaminn-collab/alo_education_z....ai | GitHub verified |
 | Default / production-trigger branch | main | Verified |
 | Working branch | arena/01a0f2b5-alo-education-z-ai | Session-fixed |
-| HEAD and remote main | df1961fd705e26e159d3a6c7b0aa5d7830f4d5ed | Verified; uncommitted repairs present |
+| Original main baseline | df1961fd705e26e159d3a6c7b0aa5d7830f4d5ed | Historical baseline; see latest checkpoint and Git for branch HEAD |
 | Framework | Next.js / React, standalone App Router | Source inspected |
 | Runtime | Local Node 22.22.3, npm 10.9.8; engines Node >=22, npm >=10 | Hosting version NOT VERIFIED |
 | Scope | 368 page.tsx files, 820 route.ts files | Counts, not functional certification |
@@ -86,3 +86,21 @@ Error: request to https://binaries.prisma.sh/all_commits/c2990dca591cba766e3b7ef
 ```
 
 Evidence is in docs/audit/2026-10-01/. Earlier environment references are a pre-edit snapshot; removed workflow references are historical, not deployment requirements. New smoke code uses no provider secret or guessed hosting variable. Full dynamic/SDK environment coverage and all 820 route behaviors remain unverified. The earlier full audit is an inventory and risk register, not fresh live certification.
+
+## Latest repair checkpoint — 2026-10-01 (supersedes prior current-result claims)
+
+| Item | Status | Evidence / next step |
+|---|---|---|
+| Honest SMTP transport and caller responses | FIXED IN REPOSITORY | email-service and regression tests; no fabricated send IDs |
+| SMTP delivery/inbox verification | WAITING FOR EXTERNAL CREDENTIAL | SMTP host/sender/credentials and controlled mailbox test |
+| Prisma engine locally | BLOCKED | External TLS restriction; exact evidence in REPOSITORY-BLOCKERS-2026-10-01.md |
+| Latest local build/start | BLOCKED | No generated client or standalone artifact; earlier CI is not this patch |
+| Migration ordering, payroll backfill | BLOCKED | Repository chain requires database-history-aware repair; MIGRATION-SAFETY-REPORT.md |
+| Database connection / backup restore | WAITING FOR DATABASE | Never migrated production |
+| Audit failure atomicity / journal storage / cron stubs | BLOCKED | Verified repository defects; not fixed by credentials |
+| Portal/auth production behavior | NOT VERIFIED | Unit/static tests do not certify live DB flows |
+| Prisma transitive dependency highs | BLOCKED | 3 HIGH, no safe forced downgrade applied |
+| cPanel deployment contract | WAITING FOR CPANEL | No real paths/startup/restart/Node contract supplied |
+| GitHub Actions secret availability | NOT VERIFIED | Listing returned 403; no assumption of configured secrets |
+
+Full current result and scope: [REPOSITORY-BLOCKERS-2026-10-01.md](REPOSITORY-BLOCKERS-2026-10-01.md). Status remains BLOCKED, not ready for cPanel configuration alone.

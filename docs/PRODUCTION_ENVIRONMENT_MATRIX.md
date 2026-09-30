@@ -225,3 +225,15 @@
 | `YOUTUBE_DL_ENABLED` | `src/lib/video-engine/config.ts:104` | Application configuration; see referenced consumer | No / review consumer | Feature-dependent | Approved host/provider configuration | Yes, when feature enabled | NOT VERIFIED |
 | `YTDLP_PATH` | `src/lib/video-engine/config.ts:105` | Application configuration; see referenced consumer | No / review consumer | Feature-dependent | Approved host/provider configuration | Yes, when feature enabled | NOT VERIFIED |
 | `ZAI_API_KEY` | `src/app/api/chat/route.ts:66`<br>`src/lib/ai.ts:130`<br>`src/lib/ai.ts:50`<br>`src/lib/ai.ts:86`<br>`src/lib/model-router.ts:25` | Application configuration; see referenced consumer | Yes | Feature-dependent | Provider/account secret manager | Yes, when feature enabled | NOT VERIFIED |
+
+## SMTP correction — 2026-10-01
+
+| Variable | Source | Purpose | Required | Secret | Repository value | Production source |
+|---|---|---|---|---|---|---|
+| SMTP_HOST | src/lib/email-service.ts | SMTP server | Yes for mail | No | empty template | Mail provider |
+| SMTP_PORT | src/lib/email-service.ts | SMTP port; 465 implicit TLS, otherwise STARTTLS required | Optional | No | 587 default | Mail provider |
+| SMTP_FROM | src/lib/email-service.ts | Authorized sender | Yes for mail | No | empty template | Mail provider |
+| SMTP_USER | src/lib/email-service.ts | Authentication identity | Yes for mail | Treat as private | empty template | Hosting secret/config store |
+| SMTP_PASSWORD | src/lib/email-service.ts | SMTP authentication | Yes for mail | Yes | None | Hosting secret store |
+
+Missing configuration returns SMTP_NOT_CONFIGURED; no log fallback. SMTP acceptance does not prove inbox delivery. No SMTP credentials have been verified. No mail DNS changes are requested.

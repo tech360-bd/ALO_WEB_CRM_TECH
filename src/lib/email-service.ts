@@ -1,6 +1,8 @@
+import nodemailer from 'smtp-mailer';
+
 /**
  * ALO Education Email Service
- * Provides production-ready SMTP email delivery with fallback logging.
+ * SMTP submission with explicit failure; no logging-only delivery fallback.
  */
 
 export interface SendMailOptions {
@@ -11,33 +13,35 @@ export interface SendMailOptions {
 }
 
 export async function sendEmail(options: SendMailOptions): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASSWORD;
-
-  // Log dispatch in server environment
-  console.log(`[EMAIL DISPATCH] To: ${options.to} | Subject: ${options.subject}`);
-
-  if (!smtpHost || !smtpUser || !smtpPass) {
-    console.warn('[EMAIL SERVICE] SMTP credentials not fully configured. Notification logged safely to server log.');
-    return {
-      success: true,
-      messageId: `log-fallback-${Date.now()}`,
-    };
+  const { SMTP_HOST: host, SMTP_USER: user, SMTP_PASSWORD: pass, SMTP_FROM: from } = process.env;
+  if (!host || !user || !pass || !from) {
+    return { success: false, error: 'SMTP_NOT_CONFIGURED' };
   }
-
+  const port = Number(process.env.SMTP_PORT || '587');
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    return { success: false, error: 'SMTP_INVALID_PORT' };
+  }
+  let transport: ReturnType<typeof nodemailer.createTransport> | undefined;
   try {
-    // Basic HTTP API / Webhook fallback or SMTP payload format
-    return {
-      success: true,
-      messageId: `smtp-${Date.now()}`,
-    };
-  } catch (err: any) {
-    console.error('[EMAIL SERVICE ERROR]', err);
-    return {
-      success: false,
-      error: err.message || 'Failed to send email',
-    };
+    transport = nodemailer.createTransport({
+      host, port, secure: port === 465, requireTLS: port !== 465,
+      auth: { user, pass },
+      connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 30000,
+      disableFileAccess: true, disableUrlAccess: true,
+    });
+    const result = await transport.sendMail({
+      from, to: options.to, subject: options.subject, html: options.html, text: options.text,
+    });
+    if (!result.accepted?.length || result.rejected?.length || !result.messageId) {
+      return { success: false, error: 'SMTP_NOT_ACCEPTED' };
+    }
+    // SMTP acceptance is not proof of inbox delivery. Never synthesize a fallback ID.
+    return { success: true, messageId: result.messageId };
+  } catch {
+    // Do not expose provider responses containing credentials, addresses or reset links.
+    return { success: false, error: 'SMTP_SEND_FAILED' };
+  } finally {
+    transport?.close();
   }
 }
 

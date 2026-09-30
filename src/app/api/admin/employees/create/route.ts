@@ -129,16 +129,18 @@ async function handlePost(request: Request, auth: any) {
       office: office || '',
       role: role || '',
       createdBy: auth.name,
-      activationEmailLogged: true,
+      activationEmailStatus: 'not_attempted',
     });
 
     // Send activation email
-    await sendActivationEmail(companyEmail, fullName, employeeCode, tokenRaw);
+    const emailResult = await sendActivationEmail(companyEmail, fullName, employeeCode, tokenRaw);
 
     // --- Return employee info (DO NOT return token hash) ---
     return NextResponse.json({
       success: true,
-      message: 'Employee account created. Activation email sent.',
+      message: emailResult.success ? 'Employee account created. Activation email accepted by SMTP.' : 'Employee account created, but activation email failed. Use resend activation after correcting SMTP configuration.',
+      emailSent: emailResult.success,
+      emailError: emailResult.error,
       data: {
         id: result.user.id,
         employeeCode,

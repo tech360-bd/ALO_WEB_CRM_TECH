@@ -112,3 +112,7 @@ Local AI, LanguageTool, scraping and video services may operate without paid cre
 Exact changed/untracked path inventory: `docs/audit/2026-09-30/changed-files.txt`. Main groups are root package/build configuration; workforce/health/automation APIs; provider/router/tool/orchestrator/ledger/measurement libraries; two UI components; consultation test isolation; eight new regression suites; Prisma verification script; audit documents and appendices. `test-results/.last-run.json` truthfully records the unsuccessful browser run.
 
 No commit, push, pull request or production release is claimed. Changes remain on the session branch. This report is a delivery record of verified repairs and outstanding work, not a production certification.
+
+## 2026-10-01 blocker-elimination checkpoint
+
+See [REPOSITORY-BLOCKERS-2026-10-01.md](REPOSITORY-BLOCKERS-2026-10-01.md), [MIGRATION-SAFETY-REPORT.md](MIGRATION-SAFETY-REPORT.md) and [CRON-RECONCILIATION.md](CRON-RECONCILIATION.md). Email false-success repair is tested; the full 21-point request is NOT complete. Migration ordering, audit atomicity/payload storage, cron stubs/locking, ledger lifecycle, legacy approval race and dependency highs remain repository-side blockers alongside external hosting/database credentials. No deployment, production-data change or live verification occurred. This checkpoint supersedes any broader completion wording above.
