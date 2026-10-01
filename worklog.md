@@ -325,3 +325,13 @@ Stage Summary:
 - Gaps closed: brand palette, metrics governance, bilingual infra, fake eligibility demo, IA aliases, softphone fake-success, canonical docs, metrics RBAC
 - DB: +1 model, +1 additive migration (apply via Hostinger flow: npm run db:deploy)
 - External dependencies requiring human action: migration apply, admin metrics sync+verification, 3Cx config, AI keys, disposable test DB for 7 self-skipped integration tests, incremental Bangla content coverage
+
+## 2026-10-02 — FINAL ACCEPTANCE GATES (55-gate evidence run)
+- Portal-root rewrites (/super-admin,/counselor,/application-manager,/visa) — no direct-URL 404s.
+- Asset gate closed: 35/35 referenced assets exist; avatar generated, manifest cleaned, fake video defaults removed.
+- Schema drift closed: 95 db-push-era tables → additive idempotent reconciliation migration (scripts/generate-reconciliation-migration.mjs); 480/480 model tables in migration history; documented in HOSTINGER-RUNTIME-STANDARD.md.
+- Runtime acceptance: 126/126 HTTP checks vs production standalone (no-404, no-fallback, sanitization, headers, assets, health 200/503-degraded, authz 401/403).
+- Second audit: typecheck 0 errors; lint 0 errors; tests 455 passed/7 env-skipped; main + clean-extract builds PASS.
+- Clean-extract gate: from zip → npm ci → generate (480 models) → build → standalone start → health + 8 routes 200.
+- Package: ALO-EDUCATION-PRODUCTION-SOURCE (2,339 files, 46MB) integrity/content/secret-scan verified; branch pushed.
+- FINAL-ACCEPTANCE-REPORT.md: 46 gates PASS, 6 BLOCKED BY EXTERNAL DEPENDENCY (MySQL/SMTP/engine-binaries etc., exact list §6), 0 failed.
