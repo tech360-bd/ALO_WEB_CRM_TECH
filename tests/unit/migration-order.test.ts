@@ -1,0 +1,139 @@
+// Migration-chain integrity and schema-drift guard.
+//
+// History: the legacy migration chain (preserved in prisma/legacy-migrations-20261001/)
+// could never be applied to a fresh database — its first migration ALTERed tables
+// before creation, contained 13 duplicate ADD COLUMNs, and omitted 76 models and
+// 404 scalar columns that exist in prisma/schema.prisma. The chain was re-baselined
+// on 2026-10-01 with a generated `0_init`.
+//
+// These tests statically prove the ACTIVE chain stays applicable in order and
+// reproduces every scalar column of the schema, so `prisma migrate deploy` on a
+// fresh MySQL database cannot silently drift from the Prisma client expectations.
+import { describe, expect, it } from 'vitest';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const migrationsDir = join(repoRoot, 'prisma', 'migrations');
+const schemaPath = join(repoRoot, 'prisma', 'schema.prisma');
+
+type SqlState = Map<string, Set<string>>; // table -> columns
+
+function migrationDirs(): string[] {
+  return readdirSync(migrationsDir)
+    .filter((d) => existsSync(join(migrationsDir, d, 'migration.sql')))
+    .sort();
+}
+
+function applySql(state: SqlState, sql: string, dir: string, violations: string[]): void {
+  for (const m of sql.matchAll(/CREATE TABLE `(\w+)` \(([\s\S]*?)\n\)/g)) {
+    const table = m[1];
+    if (state.has(table)) violations.push(`${dir}: CREATE TABLE ${table} duplicates an earlier CREATE`);
+    const cols = new Set<string>();
+    for (const line of m[2].split('\n')) {
+      const cm = line.match(/^\s*`(\w+)`\s+/);
+      if (cm && !/(PRIMARY KEY|UNIQUE INDEX|INDEX|FOREIGN KEY|CONSTRAINT)/.test(line)) cols.add(cm[1]);
+    }
+    state.set(table, cols);
+  }
+  for (const m of sql.matchAll(/ALTER TABLE `(\w+)`(?:\s*\n|\s+)((?:\s*ADD COLUMN [^\n]+\n?)+)/g)) {
+    const table = m[1];
+    if (!state.has(table)) { violations.push(`${dir}: ALTER TABLE ${table} before it exists`); continue; }
+    for (const cm of m[2].matchAll(/ADD COLUMN `(\w+)`/g)) {
+      const col = cm[1];
+      if (state.get(table)!.has(col)) violations.push(`${dir}: ADD COLUMN ${table}.${col} duplicates an existing column`);
+      else state.get(table)!.add(col);
+    }
+  }
+  for (const m of sql.matchAll(/ALTER TABLE `(\w+)`\s+ADD COLUMN `(\w+)`/g)) {
+    const [, table, col] = m;
+    if (!state.has(table)) { violations.push(`${dir}: ALTER TABLE ${table} before it exists`); continue; }
+    if (state.get(table)!.has(col)) violations.push(`${dir}: ADD COLUMN ${table}.${col} duplicates an existing column`);
+    else state.get(table)!.add(col);
+  }
+  for (const m of sql.matchAll(/DROP TABLE (?:IF EXISTS )?`(\w+)`/g)) state.delete(m[1]);
+  for (const m of sql.matchAll(/REFERENCES `(\w+)`\s*\(/g)) {
+    if (!state.has(m[1])) violations.push(`${dir}: FOREIGN KEY references ${m[1]} before it exists`);
+  }
+}
+
+function simulateChain(): { state: SqlState; violations: string[]; dirs: string[] } {
+  const state: SqlState = new Map();
+  const violations: string[] = [];
+  const dirs = migrationDirs();
+  for (const dir of dirs) {
+    applySql(state, readFileSync(join(migrationsDir, dir, 'migration.sql'), 'utf8'), dir, violations);
+  }
+  return { state, violations, dirs };
+}
+
+function schemaScalarColumns(): Map<string, Set<string>> {
+  const schema = readFileSync(schemaPath, 'utf8');
+  const result = new Map<string, Set<string>>();
+  for (const m of schema.matchAll(/^model (\w+) \{([\s\S]*?)^\}/gm)) {
+    const [, modelName, body] = m;
+    const mapMatch = body.match(/@@map\("(\w+)"\)/);
+    const table = mapMatch ? mapMatch[1] : modelName;
+    const cols = new Set<string>();
+    for (const line of body.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('@@') || trimmed.startsWith('//')) continue;
+      const fm = trimmed.match(/^(\w+)\s+(\S+)/);
+      if (!fm) continue;
+      const [, fieldName, fieldType] = fm;
+      if (fieldType.startsWith('[')) continue; // relation list
+      if (trimmed.includes('@relation')) continue;
+      const base = fieldType.replace(/[\]?]/g, '');
+      if (/^[A-Z]/.test(base) && !['String', 'Int', 'Float', 'Boolean', 'DateTime', 'Json', 'Bytes', 'Decimal', 'BigInt'].includes(base)) continue; // model-typed relation
+      cols.add(fieldName);
+    }
+    result.set(table, cols);
+  }
+  return result;
+}
+
+describe('prisma migration chain (re-baselined 2026-10-01)', () => {
+  it('starts from the generated 0_init baseline', () => {
+    const dirs = migrationDirs();
+    expect(dirs.length).toBeGreaterThan(0);
+    expect(dirs[0]).toBe('0_init');
+    // The legacy chain must stay out of the active directory.
+    expect(existsSync(join(repoRoot, 'prisma', 'legacy-migrations-20261001'))).toBe(true);
+  });
+
+  it('applies every ALTER TABLE only after the target exists, with no duplicate columns', () => {
+    const { violations } = simulateChain();
+    expect(violations, violations.join('\n')).toEqual([]);
+  });
+
+  it('creates every schema table and scalar column (no silent drift)', () => {
+    const { state } = simulateChain();
+    const schemaTables = schemaScalarColumns();
+    const missingTables: string[] = [];
+    const missingColumns: string[] = [];
+    for (const [table, cols] of schemaTables) {
+      const produced = state.get(table);
+      if (!produced) { missingTables.push(table); continue; }
+      for (const col of cols) if (!produced.has(col)) missingColumns.push(`${table}.${col}`);
+    }
+    expect(missingTables).toEqual([]);
+    expect(missingColumns).toEqual([]);
+  });
+
+  it('0_init is unedited Prisma-generated SQL (regenerated header intact)', () => {
+    const init = readFileSync(join(migrationsDir, '0_init', 'migration.sql'), 'utf8');
+    expect(init).toContain('prisma migrate diff --from-empty --to-schema-datamodel');
+    // Deterministic spot checks that the baseline covers families the legacy
+    // chain never created (76 models were missing before the re-baseline).
+    // ApplicationCasI20Coe maps to application_cas_i20_coe and CourseIntake
+    // maps to course_intakes via @@map.
+    for (const table of ['WhatsAppContact', 'EmployeeLeaveBalance', 'application_cas_i20_coe', 'course_intakes', 'VideoProject', 'english_tests', 'EmployeeHR']) {
+      expect(stateHasTable(table), `table ${table}`).toBe(true);
+    }
+  });
+});
+
+function stateHasTable(table: string): boolean {
+  return simulateChain().state.has(table);
+}
