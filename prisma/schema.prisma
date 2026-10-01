@@ -10345,3 +10345,409 @@ model InternationalOfficerDashboardMetric {
   @@index([period])
 }
 
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACCOUNTING — real double-entry ledger (2026-10-01)
+//
+// Replaces the legacy journal adapter that persisted journals as JSON inside
+// CrmAuditLog rows. Money is stored as INTEGER CENTS (never Float) and every
+// entry is created inside a Prisma transaction with service-level balance
+// enforcement; see src/lib/accounting/ledger.ts.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model ChartOfAccount {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  type        String   // ASSET | LIABILITY | EQUITY | REVENUE | EXPENSE
+  subType     String?  // e.g. CURRENT_ASSET, FIXED_ASSET, OPERATING_REVENUE
+  parentCode  String?
+  isPostable  Boolean  @default(true) // only leaf accounts accept journal lines
+  isActive    Boolean  @default(true)
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lines JournalLine[] @relation("ChartOfAccountLines")
+
+  @@index([type])
+  @@index([isActive])
+}
+
+model FiscalPeriod {
+  id          String    @id @default(cuid())
+  name        String    @unique // e.g. "2026-10"
+  startDate   DateTime
+  endDate     DateTime
+  status      String    @default("OPEN") // OPEN | CLOSED
+  closedById  String?
+  closedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([startDate, endDate])
+}
+
+model JournalEntry {
+  id           String   @id // deterministic (je_<uuid> or je_inv_<invoiceId>) for idempotency
+  entryDate    DateTime
+  memo         String
+  source       String   @default("manual") // finance.invoice | procurement.bill | payroll.run | asset.depreciation | reversal | manual
+  sourceRefId  String?  // business identifier for source-level idempotency
+  status       String   @default("POSTED") // POSTED | REVERSED
+  reversalOfId String?
+  reversedById String?
+  currency     String   @default("BDT")
+  totalDebit   Int // cents; service-enforced equal to totalCredit
+  totalCredit  Int // cents
+  actorId      String
+  postedAt     DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  lines JournalLine[]
+
+  @@unique([source, sourceRefId])
+  @@index([entryDate])
+  @@index([status])
+  @@index([source])
+  @@index([reversalOfId])
+}
+
+model JournalLine {
+  id          String       @id @default(cuid())
+  entryId     String
+  accountCode String
+  accountName String // denormalized at posting time for immutable history
+  debit       Int          @default(0) // cents, non-negative
+  credit      Int          @default(0) // cents, non-negative
+  entityId    String?
+  entityType  String?
+  entry       JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  account     ChartOfAccount @relation("ChartOfAccountLines", fields: [accountCode], references: [code])
+
+  @@index([accountCode])
+  @@index([entityType, entityId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PROCUREMENT — vendor master, purchase requests, purchase orders, vendor
+// invoices (2026-10-01). Approval-gated workflow that posts to the real
+// accounting ledger. Money is INTEGER CENTS.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Vendor {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  name          String
+  legalName     String   @default("")
+  taxId         String   @default("")
+  category      String   @default("general") // general | it | marketing | travel | facilities | professional
+  email         String   @default("")
+  phone         String   @default("")
+  address       String   @default("")
+  country       String   @default("Bangladesh")
+  paymentTerms  String   @default("NET-30") // NET-7 | NET-15 | NET-30 | NET-60 | PREPAID
+  bankDetails   String   @default("") // encrypted at rest by the storage layer; never rendered raw
+  rating        Float    @default(0) // 0..5 vendor performance
+  status        String   @default("ACTIVE") // ACTIVE | SUSPENDED | BLACKLISTED
+  notes         String   @default("")
+  createdById   String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  purchaseOrders  PurchaseOrder[]
+  vendorInvoices  VendorInvoice[]
+
+  @@index([status])
+  @@index([category])
+  @@index([name])
+}
+
+model PurchaseRequest {
+  id              String    @id @default(cuid())
+  prNumber        String    @unique
+  title           String
+  description     String    @default("")
+  requestedById   String
+  departmentId    String    @default("")
+  currency        String    @default("BDT")
+  amount          Int // cents; sum of lines, service-verified
+  status          String    @default("DRAFT") // DRAFT | SUBMITTED | APPROVED | REJECTED | CONVERTED | CANCELLED
+  neededBy        DateTime?
+  decidedById     String?
+  decidedAt       DateTime?
+  rejectionReason String    @default("")
+  convertedPoId   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  lines           PurchaseRequestLine[]
+  purchaseOrder   PurchaseOrder?
+
+  @@index([status])
+  @@index([requestedById])
+  @@index([createdAt])
+}
+
+model PurchaseRequestLine {
+  id          String   @id @default(cuid())
+  requestId   String
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Int      @default(0) // cents
+  amount      Int      @default(0) // cents; quantity * unitPrice, service-verified
+  request     PurchaseRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+}
+
+model PurchaseOrder {
+  id                String    @id @default(cuid())
+  poNumber          String    @unique
+  requestId         String?   @unique
+  vendorId          String
+  orderDate         DateTime  @default(now())
+  expectedDelivery  DateTime?
+  currency          String    @default("BDT")
+  subtotal          Int       @default(0) // cents
+  taxTotal          Int       @default(0) // cents
+  total             Int       @default(0) // cents; subtotal + taxTotal, service-verified
+  status            String    @default("DRAFT") // DRAFT | PENDING_APPROVAL | APPROVED | SENT | PARTIALLY_RECEIVED | RECEIVED | CANCELLED
+  approvedById      String?
+  approvedAt        DateTime?
+  rejectionReason   String    @default("")
+  notes             String    @default("")
+  journalEntryId    String?   // AP posting once approved
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  vendor    Vendor            @relation(fields: [vendorId], references: [id])
+  request   PurchaseRequest?  @relation(fields: [requestId], references: [id])
+  lines     PurchaseOrderLine[]
+  invoices  VendorInvoice[]
+
+  @@index([vendorId])
+  @@index([status])
+  @@index([orderDate])
+}
+
+model PurchaseOrderLine {
+  id               String   @id @default(cuid())
+  orderId          String
+  description      String
+  quantity         Int      @default(1)
+  unitPrice        Int      @default(0) // cents
+  amount           Int      @default(0) // cents
+  receivedQuantity Int      @default(0)
+  order            PurchaseOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+model VendorInvoice {
+  id            String    @id @default(cuid())
+  invoiceNumber String
+  vendorId      String
+  poId          String?
+  invoiceDate   DateTime
+  dueDate       DateTime?
+  currency      String    @default("BDT")
+  subtotal      Int       @default(0) // cents
+  taxTotal      Int       @default(0) // cents
+  total         Int       @default(0) // cents
+  amountPaid    Int       @default(0) // cents
+  status        String    @default("RECEIVED") // RECEIVED | MATCHED | APPROVED | PARTIALLY_PAID | PAID | DISPUTED
+  matchedById   String?
+  matchedAt     DateTime?
+  disputeReason String    @default("")
+  journalEntryId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  vendor Vendor         @relation(fields: [vendorId], references: [id])
+  po     PurchaseOrder? @relation(fields: [poId], references: [id])
+
+  @@unique([vendorId, invoiceNumber])
+  @@index([status])
+  @@index([poId])
+  @@index([invoiceDate])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ASSET MANAGEMENT — fixed assets, assignment history, maintenance,
+// straight-line depreciation posted to the accounting ledger (2026-10-01).
+// Money is INTEGER CENTS.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model FixedAsset {
+  id                String    @id @default(cuid())
+  assetTag          String    @unique
+  name              String
+  category          String    @default("IT") // IT | FURNITURE | VEHICLE | EQUIPMENT | BUILDING
+  description       String    @default("")
+  serialNumber      String    @default("")
+  purchaseDate      DateTime
+  purchaseCost      Int // cents
+  currency          String    @default("BDT")
+  salvageValue      Int       @default(0) // cents
+  usefulLifeMonths  Int       @default(36)
+  vendorId          String?
+  location          String    @default("")
+  departmentId      String    @default("")
+  assignedToId      String?   // employee id when IN_USE
+  status            String    @default("IN_STORAGE") // IN_USE | IN_STORAGE | MAINTENANCE | RETIRED | DISPOSED
+  disposalDate      DateTime?
+  disposalAmount    Int?      // cents
+  accumulatedDepreciation Int @default(0) // cents; denormalized from DepreciationEntry
+  notes             String    @default("")
+  createdById       String    @default("")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  assignments  AssetAssignment[]
+  maintenance   AssetMaintenance[]
+  depreciation  DepreciationEntry[]
+
+  @@index([status])
+  @@index([category])
+  @@index([assignedToId])
+}
+
+model AssetAssignment {
+  id           String    @id @default(cuid())
+  assetId      String
+  assignedToId String // employee id
+  assignedAt   DateTime  @default(now())
+  returnedAt   DateTime?
+  conditionOut String    @default("GOOD") // GOOD | FAIR | POOR
+  conditionIn  String?
+  notes        String    @default("")
+  asset        FixedAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@index([assignedToId])
+}
+
+model AssetMaintenance {
+  id             String    @id @default(cuid())
+  assetId        String
+  maintenanceDate DateTime
+  type           String    @default("PREVENTIVE") // PREVENTIVE | REPAIR | INSPECTION | UPGRADE
+  cost           Int       @default(0) // cents
+  description    String    @default("")
+  performedBy    String    @default("")
+  nextDueAt      DateTime?
+  asset          FixedAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@index([nextDueAt])
+}
+
+model DepreciationEntry {
+  id                String   @id @default(cuid())
+  assetId           String
+  period            String // YYYY-MM
+  depreciationAmount Int // cents
+  accumulatedAfter  Int // cents; running total after this entry
+  journalEntryId    String? // DR 5200 / CR 1510 posting
+  createdAt         DateTime @default(now())
+
+  asset FixedAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, period])
+  @@index([period])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AI MODEL REGISTRY — versioned models with evaluation gates, department
+// assignment, deployment promotion and rollback (2026-10-01). Implements the
+// department-specialized AI system objective with persisted evidence.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model AiModel {
+  id               String   @id @default(cuid())
+  modelCode        String   @unique // e.g. alo-admissions-v1
+  name             String
+  taskType         String   @default("general") // counseling | matching | verification | content | analysis | general
+  description      String   @default("")
+  status           String   @default("REGISTERED") // REGISTERED | EVALUATING | STAGING | PRODUCTION | RETIRED
+  currentVersionId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  versions    AiModelVersion[]
+  deployments AiModelDeployment[] @relation("AiModelDeployments")
+  departments AiModelDepartmentAssignment[]
+
+  @@index([status])
+  @@index([taskType])
+}
+
+model AiModelVersion {
+  id              String   @id @default(cuid())
+  modelId         String
+  version         Int      @default(1)
+  adapterType     String   @default("PROMPT") // PROMPT | RAG | FINE_TUNE | LORA | ROUTER | ENSEMBLE
+  baseModel       String   @default("")
+  datasetVersion  String   @default("")
+  trainingNotes   String   @default("")
+  artifactRef     String   @default("") // storage reference; never a public URL
+  status          String   @default("DRAFT") // DRAFT | EVALUATED | PRODUCTION | RETIRED
+  createdById     String   @default("")
+  createdAt       DateTime @default(now())
+
+  model        AiModel            @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  evaluations  AiModelEvaluation[]
+  deployments  AiModelDeployment[]
+
+  @@unique([modelId, version])
+  @@index([status])
+}
+
+model AiModelEvaluation {
+  id             String   @id @default(cuid())
+  versionId      String
+  benchmark      String // e.g. admissions-qa-v3
+  score          Float // 0..100
+  datasetVersion String   @default("")
+  passed         Boolean  @default(false)
+  details        String   @default("{}") // JSON metrics snapshot
+  evaluatedAt    DateTime @default(now())
+
+  version AiModelVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@index([versionId])
+  @@index([benchmark])
+}
+
+model AiModelDeployment {
+  id              String    @id @default(cuid())
+  versionId       String
+  modelId         String
+  environment     String    @default("STAGING") // STAGING | PRODUCTION
+  status          String    @default("ACTIVE") // ACTIVE | ROLLED_BACK
+  activatedAt     DateTime  @default(now())
+  activatedById   String
+  rolledBackAt    DateTime?
+  rollbackReason  String    @default("")
+  notes           String    @default("")
+
+  version AiModelVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  model   AiModel        @relation("AiModelDeployments", fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([versionId])
+  @@index([environment, status])
+}
+
+model AiModelDepartmentAssignment {
+  id          String   @id @default(cuid())
+  modelId     String
+  departmentId String
+  assignedAt  DateTime @default(now())
+
+  model AiModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@unique([modelId, departmentId])
+  @@index([departmentId])
+}

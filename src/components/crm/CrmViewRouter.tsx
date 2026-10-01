@@ -25,6 +25,8 @@ import CrmAppointmentsPage from './pages/CrmAppointmentsPage';
 import CrmPartnersPage from './pages/CrmPartnersPage';
 import CrmCommissionsPage from './pages/CrmCommissionsPage';
 import CrmFinancePage from './pages/CrmFinancePage';
+import CrmAccountingPage from './pages/CrmAccountingPage';
+import CrmProcurementPage from './pages/CrmProcurementPage';
 import CrmMarketingPage from './pages/CrmMarketingPage';
 import CrmHRMPage from './pages/CrmHRMPage';
 import CrmAgentOperationsPage from './pages/CrmAgentOperationsPage';
@@ -81,6 +83,8 @@ const crmViewMap: Partial<Record<PortalView, React.ComponentType>> = {
 
   // Business
   'crm-finance': CrmFinancePage,
+  'crm-accounting': CrmAccountingPage,
+  'crm-procurement': CrmProcurementPage,
   'crm-marketing': CrmMarketingPage,
   'crm-hrm': CrmHRMPage,
   'crm-ai-command': CrmAgentOperationsPage,

@@ -64,6 +64,7 @@ export type PortalView =
   | 'crm-applications' | 'crm-documents' | 'crm-communications'
   | 'crm-whatsapp' | 'crm-social' | 'crm-reports' | 'crm-audit-logs' | 'crm-settings'
   | 'crm-finance' | 'crm-commissions' | 'crm-marketing' | 'crm-hrm'
+  | 'crm-accounting' | 'crm-procurement'
   | 'crm-ai-command' | 'crm-tasks' | 'crm-appointments'
   | 'crm-course-finder' | 'crm-universities' | 'crm-visa'
   | 'crm-visa-dashboard' | 'crm-visa-cases' | 'crm-visa-interviews' | 'crm-visa-readiness' | 'crm-visa-reports'
