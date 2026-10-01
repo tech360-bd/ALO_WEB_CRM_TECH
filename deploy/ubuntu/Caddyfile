@@ -1,50 +1,51 @@
-# ============================================================
-# Caddy configuration for ALO Education ERP
-# Binds the Next.js standalone server to 127.0.0.1:3044 and
-# exposes it publicly via HTTPS only.
-# Replace "alo.example.com" with your real domain before deploy.
-# ============================================================
-
-aloeducation.com {
-    encode gzip zstd
-
-    # Security headers
-    header {
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        X-Content-Type-Options "nosniff"
-        X-Frame-Options "DENY"
-        Referrer-Policy "strict-origin-when-cross-origin"
-        Permissions-Policy "geolocation=(), microphone=(), camera=()"
-        Cross-Origin-Opener-Policy "same-origin"
-        Cross-Origin-Embedder-Policy "require-corp"
-        Cross-Origin-Resource-Policy "same-origin"
-        # Do not expose the app server version
-        -Server
-    }
-
-    # Reverse proxy to the local Next.js standalone server.
-    # Production: 127.0.0.1:3044 (HOSTNAME 0.0.0.0) — never exposed publicly.
-    reverse_proxy 127.0.0.1:3044 {
-        header_up Host {host}
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
-    }
-
-    # Static files (served by Next.js through the reverse proxy).
-    # Adjust caching rules per asset type if needed.
-    @static path /_next/static/* /public/*
-    handle @static {
-        header Cache-Control "public, max-age=31536000, immutable"
-    }
-
-    # Access / error logs
-    log {
-        output file /var/log/caddy/alo-education-access.log {
-            roll_size 100mb
-            roll_keep 10
-            roll_keep_for 720h
-        }
-        format json
-    }
-}
+# LEGACY / NOT USED FOR CURRENT PRODUCTION — disabled; Hostinger owns runtime.
+# # ============================================================
+# # Caddy configuration for ALO Education ERP
+# # Binds the Next.js standalone server to 127.0.0.1:3044 and
+# # exposes it publicly via HTTPS only.
+# # Replace "alo.example.com" with your real domain before deploy.
+# # ============================================================
+#
+# aloeducation.com {
+#     encode gzip zstd
+#
+#     # Security headers
+#     header {
+#         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+#         X-Content-Type-Options "nosniff"
+#         X-Frame-Options "DENY"
+#         Referrer-Policy "strict-origin-when-cross-origin"
+#         Permissions-Policy "geolocation=(), microphone=(), camera=()"
+#         Cross-Origin-Opener-Policy "same-origin"
+#         Cross-Origin-Embedder-Policy "require-corp"
+#         Cross-Origin-Resource-Policy "same-origin"
+#         # Do not expose the app server version
+#         -Server
+#     }
+#
+#     # Reverse proxy to the local Next.js standalone server.
+#     # Production: 127.0.0.1:3044 (HOSTNAME 0.0.0.0) — never exposed publicly.
+#     reverse_proxy 127.0.0.1:3044 {
+#         header_up Host {host}
+#         header_up X-Real-IP {remote_host}
+#         header_up X-Forwarded-For {remote_host}
+#         header_up X-Forwarded-Proto {scheme}
+#     }
+#
+#     # Static files (served by Next.js through the reverse proxy).
+#     # Adjust caching rules per asset type if needed.
+#     @static path /_next/static/* /public/*
+#     handle @static {
+#         header Cache-Control "public, max-age=31536000, immutable"
+#     }
+#
+#     # Access / error logs
+#     log {
+#         output file /var/log/caddy/alo-education-access.log {
+#             roll_size 100mb
+#             roll_keep 10
+#             roll_keep_for 720h
+#         }
+#         format json
+#     }
+# }

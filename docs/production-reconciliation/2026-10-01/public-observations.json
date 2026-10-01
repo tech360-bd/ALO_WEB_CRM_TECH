@@ -1,0 +1,18 @@
+{
+  "dateLocal": "2026-10-01",
+  "timezone": "Asia/Dhaka",
+  "sourceCommit": "9e504ad287bd98861d55c72d332fe4f0d840bf9e",
+  "transportCaveat": "Sandbox curl failed TLS before HTTP. Separate fetch_page retrieval succeeded. Fetch service does not expose raw HTTP status, headers, cache behavior or TLS certificate details; tool success is not an HTTP 200 assertion.",
+  "requests": [
+    {"url":"https://aloeducation.com/", "observed":"ALO Education homepage content retrieved; deployment SHA and origin SSR versus cached content not established"},
+    {"url":"https://aloeducation.com/login", "observed":"Admin & Staff Login form content retrieved; no credentials submitted"},
+    {"url":"https://aloeducation.com/api/health", "observed":{"status":"degraded","timestamp":"2026-09-30T21:27:20.432Z","node":"v22.22.0","platform":"linux","database":{"connected":false,"errorCategory":"Prisma database authentication failed","loginIdentifier":"REDACTED"}}},
+    {"url":"https://aloeducation.com/api/health?probe=read-only-20261001", "observed":{"status":"degraded","timestamp":"2026-09-30T21:28:12.895Z","node":"v22.22.0","platform":"linux","database":{"connected":false,"errorCategory":"Prisma database authentication failed","loginIdentifier":"REDACTED"}}},
+    {"url":"https://aloeducation.com/api/health/live", "observed":"404 Page Not Found content; raw response status unavailable"},
+    {"url":"https://aloeducation.com/api/agentos/approvals", "observed":{"error":"Unauthorized — authentication required"}},
+    {"url":"https://aloeducation.com/api/hr/payroll", "observed":{"error":"Unauthorized — authentication required"}},
+    {"url":"https://aloeducation.com/manifest.json", "observed":"ALO Education PWA manifest JSON retrieved; referenced icon/chunk bytes not verified"},
+    {"url":"https://aloeducation.com/robots.txt", "observed":"Robots text retrieved with /api/, /crm/, /admin/, /partner-admin/, /employee/ exclusions; robots exclusions are not authorization"}
+  ],
+  "notPerformed":["login/logout POST","approval/payment/payroll mutation","direct production DB queries (health endpoint itself may attempt SELECT 1)","SMTP AUTH or test send","cron endpoint execution","DNS modification","restart/deploy","production migration or restore"]
+}

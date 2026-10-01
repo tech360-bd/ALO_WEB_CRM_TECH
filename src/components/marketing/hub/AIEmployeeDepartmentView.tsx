@@ -36,7 +36,7 @@ export default function AIEmployeeDepartmentView() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Bot className="w-6 h-6 text-[#F37021]" />AI Employee Department</h2>
-        <p className="text-sm text-gray-500">20 specialized agents — delegated by AI Director, bounded by permissions, task queues, schedules, timezone Asia/Dhaka, health, retry, escalation. Reuses ALO Labs infrastructure — no duplicate agent system.</p>
+        <p className="text-sm text-gray-500">ALO Education marketing role catalog. Roles listed here are not evidence of active workers; execution and approval status must be verified in ALO Education’s own runtime.</p>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {EMPLOYEES.map(e=>(

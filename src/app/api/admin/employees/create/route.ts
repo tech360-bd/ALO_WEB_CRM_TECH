@@ -7,7 +7,8 @@
 import { NextResponse } from 'next/server';
 import * as crypto from 'crypto';
 import { db } from '@/lib/db';
-import { authenticateRequest, withAuth, logAuditAction } from '@/lib/auth-middleware';
+import { withAuth } from '@/lib/auth-middleware';
+import { writePortalAudit } from '@/lib/transactional-audit';
 import { sendActivationEmail } from '@/lib/email-service';
 
 // ------------------------------------------------------------
@@ -118,27 +119,29 @@ async function handlePost(request: Request, auth: any) {
         },
       });
 
+      // --- Audit log ---
+      await writePortalAudit(tx, auth, 'employee_account_created', 'employee', user.id, {
+        employeeCode,
+        designation,
+        department: department || '',
+        office: office || '',
+        role: role || '',
+        createdBy: auth.name,
+        activationEmailStatus: 'not_attempted',
+      }, request);
+
       return { user, profile, activationToken };
     });
 
-    // --- Audit log ---
-    await logAuditAction(auth, 'employee_account_created', 'employee', result.user.id, {
-      employeeCode,
-      designation,
-      department: department || '',
-      office: office || '',
-      role: role || '',
-      createdBy: auth.name,
-      activationEmailLogged: true,
-    });
-
     // Send activation email
-    await sendActivationEmail(companyEmail, fullName, employeeCode, tokenRaw);
+    const emailResult = await sendActivationEmail(companyEmail, fullName, employeeCode, tokenRaw);
 
     // --- Return employee info (DO NOT return token hash) ---
     return NextResponse.json({
       success: true,
-      message: 'Employee account created. Activation email sent.',
+      message: emailResult.success ? 'Employee account created. Activation email accepted by SMTP.' : 'Employee account created, but activation email failed. Use resend activation after correcting SMTP configuration.',
+      emailSent: emailResult.success,
+      emailError: emailResult.error,
       data: {
         id: result.user.id,
         employeeCode,

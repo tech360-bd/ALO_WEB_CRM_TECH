@@ -36,28 +36,33 @@ function SeverityBadge({ severity }: { severity: string }) {
 }
 
 export default function CeoDashboard() {
-  const { user, token } = usePortalStore();
+  const { user, token, setView } = usePortalStore();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
+    const controller = new AbortController();
     async function load() {
+      setLoading(true); setError(''); setData(null);
       try {
         const res = await fetch('/api/crm/ceo/dashboard', {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: token ? { Authorization: `Bearer ${token}` } : {}, signal: controller.signal, credentials: 'same-origin'
         });
-        if (res.ok) {
-          const json = await res.json();
-          setData(json.data);
-        }
+        if (!res.ok) throw new Error('Dashboard unavailable');
+        const json = await res.json();
+        if (!json.success || !json.data) throw new Error('Dashboard unavailable');
+        if (!controller.signal.aborted) setData({ ...json.data, owner: user?.id, sessionToken: token });
       } catch (err) {
-        console.error(err);
+        if (!controller.signal.aborted) setError('Executive dashboard data is unavailable.');
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     }
     load();
-  }, [token]);
+    return () => controller.abort();
+  }, [token, retry, user?.id]);
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -65,7 +70,10 @@ export default function CeoDashboard() {
     return <div className="flex justify-center items-center h-64"><Loader2 className="w-6 h-6 animate-spin text-alo-brand" /></div>;
   }
 
-  const { branchPerformance = [], topCounselors = [], marketingRoi = [], highRiskCases = [], kpis = [] } = data || {};
+  if (error) return <div role="alert" className="p-6">{error} <Button onClick={() => setRetry(value => value + 1)}>Retry</Button></div>;
+  if (data?.owner !== user?.id || data?.sessionToken !== token) return <p role="status">Loading executive dashboard…</p>;
+
+  const { unavailableMetrics = [], branchPerformance = [], topCounselors = [], marketingRoi = [], highRiskCases = [], kpis = [] } = data || {};
 
   return (
     <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6">
@@ -79,28 +87,32 @@ export default function CeoDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Download className="w-4 h-4" /> Export Report</Button>
-          <Button variant="brand" size="sm"><Eye className="w-4 h-4" /> Full Analytics</Button>
+          <Button variant="outline" size="sm" disabled title="Executive report export is not implemented"><Download className="w-4 h-4" /> Export Report</Button>
+          <Button variant="brand" size="sm" onClick={() => setView('crm-analytics')}><Eye className="w-4 h-4" /> Full Analytics</Button>
         </div>
       </div>
 
+      {unavailableMetrics.length > 0 && <p role="status" className="rounded border p-3 text-sm">Not available: {unavailableMetrics.join(', ')}. These sections do not indicate zero activity.</p>}
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-        {kpis.map((kpi) => (
+        {kpis.map((kpi) => {
+          const Icon = iconMap[kpi.icon] || BarChart3;
+          return (
           <Card key={kpi.label} className="bg-white rounded-xl border border-alo-border">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
+                <Icon className="w-5 h-5 text-alo-brand" />
+                {kpi.change != null && <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
                   {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}{kpi.change}
-                </span>
+                </span>}
               </div>
               <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
               <p className="text-xs text-alo-text-muted mt-0.5">{kpi.label}</p>
               <p className="text-[11px] text-alo-text-muted">{kpi.sub}</p>
             </CardContent>
           </Card>
-        ))}
+        ); })}
       </div>
 
       {/* Main Content */}
@@ -113,10 +125,11 @@ export default function CeoDashboard() {
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-alo-brand" /> Branch Performance
                 </CardTitle>
-                <span className="text-xs text-alo-text-muted">5 branches</span>
+                <span className="text-xs text-alo-text-muted">Aggregation unavailable</span>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
+              <p className="text-sm text-alo-text-muted">Branch performance is not available.</p>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -153,6 +166,7 @@ export default function CeoDashboard() {
             </CardHeader>
             <CardContent className="pt-4">
               <div className="space-y-3">
+                {marketingRoi.length === 0 && <p className="text-sm text-alo-text-muted">Marketing ROI is not available.</p>}
                 {marketingRoi.map((m) => (
                   <div key={m.channel} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-alo-brand-light/20 transition-colors">
                     <div className="flex items-center gap-3 min-w-0">
@@ -181,11 +195,12 @@ export default function CeoDashboard() {
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
                   <Users className="w-4 h-4 text-alo-brand" /> Top Counselors
                 </CardTitle>
-                <Badge variant="muted" className="text-[11px]">Top 5</Badge>
+                <Badge variant="muted" className="text-[11px]">Ranking unavailable</Badge>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-1">
+                {topCounselors.length === 0 && <p className="text-sm text-alo-text-muted">Counselor rankings are not available.</p>}
                 {topCounselors.map((c, i) => (
                   <div key={c.name} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/30 transition-colors">
                     <div className="flex items-center gap-3 min-w-0">

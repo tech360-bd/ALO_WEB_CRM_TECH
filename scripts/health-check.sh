@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# LEGACY / NOT USED FOR CURRENT PRODUCTION
+# Historical VPS diagnostics; not a Hostinger readiness check.
+echo "Use node scripts/validate-deployment-config.mjs for repository checks; host runtime remains externally verified." >&2
+exit 1
 # Canonical ALO health check for PM2/cPanel and optional systemd/Ubuntu use.
 # Usage: bash scripts/health-check.sh [--public] [--systemd] [URL]
 set -Eeuo pipefail

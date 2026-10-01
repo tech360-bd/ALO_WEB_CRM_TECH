@@ -1,70 +1,57 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { withAuth } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
 
-// Approval Center — real queue, no fabrication
-// GET /api/workforce/approval?status=WAITING_APPROVAL|ESCALATED|HUMAN_REQUIRED&page=1&pageSize=20
-export async function GET(req: Request) {
-  return withAuth(async ()=>{
-    const url = new URL(req.url);
-    const status = url.searchParams.get('status') || undefined;
-    const page = parseInt(url.searchParams.get('page')||'1',10);
-    const pageSize = Math.min(100, parseInt(url.searchParams.get('pageSize')||'20',10));
-    const where: any = {};
-    if (status) where.status = status;
-    try {
-      const [rows, total] = await Promise.all([
-        (db as any).agentApprovalQueue?.findMany?.({ where, orderBy:{ createdAt:'desc' }, skip:(page-1)*pageSize, take:pageSize }).catch(()=>[]) || [],
-        (db as any).agentApprovalQueue?.count?.({ where }).catch(()=>0) || 0,
-      ]);
-      // fallback to AiCommandAction pending when approvalQueue is empty (preserve 70/30 reality)
-      let fallback: any[] = [];
-      if (!rows.length) {
-        const alt = await (db as any).aiCommandAction?.findMany?.({ where:{ status: status==='WAITING_APPROVAL'?'PENDING': status || 'PENDING' }, take: pageSize, orderBy:{ createdAt:'desc' } }).catch(()=>[]) || [];
-        fallback = alt;
-      }
-      return NextResponse.json({ success:true, data: rows.length? rows: fallback, total: rows.length? total: fallback.length, page, pageSize });
-    } catch (e:any) {
-      return NextResponse.json({ success:false, error: e?.message || String(e) }, { status:500 });
-    }
-  })(req);
-}
+// Agent-level decisions only. AgentApprovalQueue has no task/tool/payload binding;
+// approving here MUST NOT execute an action or invent a resume payload.
+const statuses = ['pending', 'approved', 'rejected', 'escalated'] as const;
+const querySchema = z.object({
+  status: z.enum(statuses).optional(), page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+});
+export const GET = withAuth(async req => {
+  const query = querySchema.safeParse(Object.fromEntries(new URL(req.url).searchParams));
+  if (!query.success) return NextResponse.json({ success: false, error: 'Invalid approval filters' }, { status: 400 });
+  try {
+    const { status, page, pageSize } = query.data;
+    const where = status ? { status } : {};
+    const [data, total] = await Promise.all([
+      db.agentApprovalQueue.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * pageSize, take: pageSize }),
+      db.agentApprovalQueue.count({ where }),
+    ]);
+    return NextResponse.json({ success: true, source: 'AgentApprovalQueue', scope: 'agent', data, total, page, pageSize });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Approval storage unavailable' }, { status: 503 });
+  }
+}, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] });
 
-// POST { id, decision: 'APPROVE'|'REJECT'|'ESCALATE', note? }
-export async function POST(req: Request) {
-  return withAuth(async (_r, auth)=>{
-    const body = await req.json().catch(()=>({}));
-    const { id, decision, note } = body;
-    if (!id || !decision) return NextResponse.json({ success:false, error:'id and decision required' }, { status:400 });
-    const actor = (auth as any)?.userId || (auth as any)?.email || 'human';
-    try {
-      // try approvalQueue first
-      let row = await (db as any).agentApprovalQueue?.findUnique?.({ where:{ id } }).catch(()=>null);
-      if (row) {
-        const nextStatus = decision==='APPROVE'?'APPROVED': decision==='REJECT'?'REJECTED':'ESCALATED';
-        const updated = await (db as any).agentApprovalQueue.update({ where:{ id }, data:{ status: nextStatus, reviewedBy: actor, reviewedAt: new Date(), reviewNote: note || null } }).catch(()=>null);
-        if (decision==='APPROVE') {
-          const { runOrchestrated } = await import('@/lib/agent-orchestrator');
-          try { await runOrchestrated({ workflow: row.taskType || 'approval_resume', actionType:'APPROVAL_RESUME', payload: JSON.parse(row.payload||'{}'), actor, trigger:'approval_center', correlationId: row.correlationId }); } catch{}
-        }
-        await (db as any).agentAuditLog?.create?.({ data:{ agentId: row.agentId || 'approval-center', action:`APPROVAL_${decision}`, details: JSON.stringify({ id, decision, actor, note }) } as any }).catch(()=>{});
-        return NextResponse.json({ success:true, data: updated || row });
-      }
-      // fallback: AiCommandAction
-      const alt = await (db as any).aiCommandAction?.findUnique?.({ where:{ id } }).catch(()=>null);
-      if (alt) {
-        if (decision==='APPROVE') {
-          const { approveAndExecute } = await import('@/lib/ai-action-executor');
-          const res = await approveAndExecute(id, actor).catch((e:any)=> ({ error:e?.message }));
-          return NextResponse.json({ success:true, data: res });
-        } else {
-          const updated = await (db as any).aiCommandAction.update({ where:{ id }, data:{ status: decision==='REJECT'?'REJECTED':'ESCALATED' } }).catch(()=>null);
-          return NextResponse.json({ success:true, data: updated });
-        }
-      }
-      return NextResponse.json({ success:false, error:'Approval item not found' }, { status:404 });
-    } catch (e:any) {
-      return NextResponse.json({ success:false, error: e?.message || String(e) }, { status:500 });
-    }
-  })(req);
-}
+const decisionSchema = z.object({ id: z.string().min(1).max(191), decision: z.enum(['APPROVE', 'REJECT', 'ESCALATE']), note: z.string().max(1000).default('') }).strict();
+export const POST = withAuth(async (req, auth) => {
+  const body = decisionSchema.safeParse(await req.json().catch(() => null));
+  if (!body.success) return NextResponse.json({ success: false, error: 'Invalid approval decision' }, { status: 400 });
+  const { id, decision, note } = body.data;
+  const actor = auth.actorUserId;
+  try {
+    const result = await db.$transaction(async tx => {
+      const current = await tx.agentApprovalQueue.findUnique({ where: { id } });
+      if (!current) return 'NOT_FOUND';
+      if (current.status !== 'pending') return 'CONFLICT';
+      const changed = await tx.agentApprovalQueue.updateMany({ where: { id, status: 'pending' }, data: {
+        status: decision === 'APPROVE' ? 'approved' : decision === 'REJECT' ? 'rejected' : 'escalated', notes: note,
+        ...(decision === 'APPROVE' ? { approvedById: actor, approvedAt: new Date() } : {}),
+        ...(decision === 'REJECT' ? { rejectedById: actor, rejectedAt: new Date() } : {}),
+      } });
+      if (changed.count !== 1) return 'CONFLICT';
+      await tx.agentAuditLog.create({ data: { agentId: current.agentId, action: `APPROVAL_${decision}`, actorId: actor,
+        metadata: JSON.stringify({ approvalId: id, scope: 'agent', executed: false }) } });
+      return 'RECORDED';
+    });
+    if (result === 'NOT_FOUND') return NextResponse.json({ success: false, error: 'Approval not found' }, { status: 404 });
+    if (result === 'CONFLICT') return NextResponse.json({ success: false, error: 'Approval already decided' }, { status: 409 });
+    return NextResponse.json({ success: true, decisionRecorded: true, executed: false,
+      note: 'Agent-level decision recorded only; this does not authorize or execute a task.' });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Approval decision could not be persisted' }, { status: 503 });
+  }
+}, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] });

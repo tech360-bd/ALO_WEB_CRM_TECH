@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # PHASE 14 — Production Readiness Report (Read-Only Inspection + Minimal Safe Fixes)
 **Branch:** `arena/01a09c20-alo-education-z-ai` | **HEAD (actual):** `b3023649376750622e73daae5487bf7350cef4a1` short `b302364` | **Remote tracking (after `git fetch origin refs/heads/arena/...`):** `a948e8a` (was `acaddc2` stale `origin/...` before fetch, `ls-remote` already `a948e8a`, baseline `8b87f63 → b5d9416 → a948e8a` confirmed present on remote `refs/heads/arena/...` and `refs/pull/3/head`) | **Working tree (at inspection start):** clean `0` changes (before Phase14 fixes), now `3` unstaged (`workflow 3044`, `package-lock.json` from `npm audit fix`, `.tmp_backup_phase14` untracked) | **Date:** 2026-09-15 Asia/Dhaka, inspected before any edits per Strict Rules 1-2
 

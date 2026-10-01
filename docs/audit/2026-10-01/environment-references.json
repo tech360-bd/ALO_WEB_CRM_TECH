@@ -1,0 +1,852 @@
+{
+  "AI_DEFAULT_MODEL": [
+    "src/app/api/enterprise-ai/route.ts:9",
+    "src/lib/ai.ts:83",
+    "src/lib/model-router.ts:22"
+  ],
+  "AI_FAST_MODEL": [
+    "src/app/api/enterprise-ai/route.ts:10",
+    "src/lib/model-router.ts:22"
+  ],
+  "AI_SMART_MODEL": [
+    "src/app/api/enterprise-ai/route.ts:11"
+  ],
+  "ALO_APP_URL": [
+    "src/app/api/automation/schedule/route.ts:39",
+    "src/app/api/research/provider-status/route.ts:45"
+  ],
+  "ALO_CRON_SECRET": [
+    "src/app/api/automation/schedule/route.ts:14",
+    "src/app/api/automation/schedule/route.ts:38",
+    "src/app/api/automation/schedule/route.ts:95",
+    "src/app/api/research/provider-status/route.ts:14",
+    "src/lib/cron-auth.ts:48",
+    "src/lib/cron-auth.ts:54",
+    "tests/unit/cron-auth-regression.test.ts:69",
+    "tests/unit/cron-auth-regression.test.ts:80",
+    "tests/unit/cron-auth-regression.test.ts:94"
+  ],
+  "ALO_DATA_AUDIT_DIR": [
+    "alo-education-web-crm-final/scripts/run-official-data-audit.mjs:4",
+    "scripts/run-official-data-audit.mjs:4"
+  ],
+  "APIFY_ACTOR": [
+    "src/lib/research/lead-enrichment-pipeline.ts:65"
+  ],
+  "APIFY_TOKEN": [
+    "src/lib/research/lead-enrichment-pipeline.ts:64"
+  ],
+  "APOLLO_API_KEY": [
+    "src/lib/research/market-intel-radar.ts:92"
+  ],
+  "APP_URL": [
+    "src/app/api/automation/schedule/route.ts:39",
+    "src/app/api/research/provider-status/route.ts:45"
+  ],
+  "ASTON_COURSE_LIMIT": [
+    "alo-education-web-crm-final/scripts/run-official-university-crawler.mjs:11",
+    "scripts/run-official-university-crawler.mjs:11"
+  ],
+  "BITWARDEN_URL": [
+    "src/lib/vaultwarden-client.ts:15"
+  ],
+  "BRAND_LOGO_URL": [
+    "src/lib/video-engine/config.ts:133"
+  ],
+  "BRAND_PRIMARY_COLOR": [
+    "src/lib/video-engine/config.ts:134"
+  ],
+  "BRAND_SECONDARY_COLOR": [
+    "src/lib/video-engine/config.ts:135"
+  ],
+  "BRAND_WATERMARK_ENABLED": [
+    "src/lib/video-engine/config.ts:136"
+  ],
+  "BRAND_WATERMARK_POSITION": [
+    "src/lib/video-engine/config.ts:137"
+  ],
+  "BRIGHTDATA_API_KEY": [
+    "src/lib/research/lead-enrichment-pipeline.ts:143"
+  ],
+  "CAP_PUBLIC_BASE_URL": [
+    "src/lib/cap-recording.ts:32"
+  ],
+  "CHATWOOT_ACCOUNT_ID": [
+    "src/lib/chatwoot-inbox.ts:15"
+  ],
+  "CHATWOOT_API_KEY": [
+    "src/lib/chatwoot-inbox.ts:14"
+  ],
+  "CHATWOOT_TOKEN": [
+    "src/lib/chatwoot-inbox.ts:14"
+  ],
+  "CHATWOOT_URL": [
+    "src/lib/chatwoot-inbox.ts:13"
+  ],
+  "COGVIDEO_API_KEY": [
+    "src/lib/video-engine/config.ts:21"
+  ],
+  "COGVIDEO_API_URL": [
+    "src/lib/video-engine/config.ts:20"
+  ],
+  "COGVIDEO_ENABLED": [
+    "src/lib/video-engine/config.ts:19"
+  ],
+  "COGVIDEO_REPLICATE_MODEL": [
+    "src/lib/video-engine/config.ts:22"
+  ],
+  "COMFYUI_API_KEY": [
+    "src/lib/comfyui-client.ts:15"
+  ],
+  "COMFYUI_API_URL": [
+    "src/lib/comfyui-client.ts:14"
+  ],
+  "COMFYUI_ENABLED": [
+    "src/lib/video-engine/config.ts:45"
+  ],
+  "COMFYUI_URL": [
+    "src/lib/video-engine/config.ts:34",
+    "src/lib/video-engine/config.ts:46"
+  ],
+  "CRM_DEV_SEED_PASSWORD": [
+    "src/app/api/crm/seed/route.ts:43"
+  ],
+  "CRON_SECRET": [
+    "src/app/api/cron/sla-monitor/route.ts:14",
+    "src/lib/cron-auth.ts:48",
+    "src/lib/cron-auth.ts:54",
+    "tests/unit/cron-auth-regression.test.ts:95"
+  ],
+  "DASH_ENABLED": [
+    "src/lib/video-engine/streaming/index.ts:38"
+  ],
+  "DATABASE_URL": [
+    ".github/workflows/deploy-production.yml:518",
+    "alo-education-web-crm-final/scripts/seed-direct-mysql.js:14",
+    "prisma/seed-university-data.ts:42",
+    "scripts/seed-direct-mysql.js:13"
+  ],
+  "DB_BACKUP": [
+    ".github/workflows/deploy-production.yml:528"
+  ],
+  "DEPLOY_DIR": [
+    "src/app/api/automation/schedule/route.ts:56"
+  ],
+  "DEVELOPMENT_SAMPLE_PASSWORD": [
+    "alo-education-web-crm-final/prisma/seed.ts:116",
+    "prisma/seed-rbac.ts:71",
+    "prisma/seed.ts:116"
+  ],
+  "DOMOVINA_SMS_URL": [
+    "src/lib/sms-gateway.ts:28"
+  ],
+  "DOODLE_NOTE_API_KEY": [
+    "src/lib/doodle-note-engine.ts:77"
+  ],
+  "DOODLE_NOTE_MODEL": [
+    "src/lib/doodle-note-engine.ts:31"
+  ],
+  "ENABLE_CRM_DEV_SEED": [
+    "src/app/api/crm/seed/route.ts:33"
+  ],
+  "ENABLE_DEVELOPMENT_SAMPLE_DATA": [
+    "alo-education-web-crm-final/prisma/seed.ts:115",
+    "prisma/seed.ts:115"
+  ],
+  "ENCRYPTION_KEY": [
+    "src/lib/hrms/encryption.ts:10",
+    "src/lib/social/token-encryption.ts:8",
+    "src/lib/token-encryption.ts:12"
+  ],
+  "FACEBOOK_ACCESS_TOKEN": [
+    "src/app/api/crm/communications/social-inbox/route.ts:30"
+  ],
+  "FACEBOOK_APP_ID": [
+    "src/app/api/facebook/auth/route.ts:10",
+    "src/app/api/facebook/callback/route.ts:25"
+  ],
+  "FACEBOOK_APP_SECRET": [
+    "src/app/api/facebook/callback/route.ts:26",
+    "src/app/api/facebook/webhook/route.ts:51",
+    "src/lib/facebook-lead-sync.ts:38",
+    "src/lib/facebook-lead-sync.ts:47"
+  ],
+  "FACEBOOK_PAGE_ACCESS_TOKEN": [
+    "src/app/api/facebook/webhook/route.ts:245"
+  ],
+  "FACEBOOK_REDIRECT_URI": [
+    "src/app/api/facebook/auth/route.ts:11",
+    "src/app/api/facebook/callback/route.ts:27"
+  ],
+  "FACEBOOK_VERIFY_TOKEN": [
+    "src/app/api/facebook/callback/route.ts:102",
+    "src/app/api/facebook/callback/route.ts:91",
+    "src/app/api/facebook/webhook/route.ts:17"
+  ],
+  "FFMPEG_PATH": [
+    "src/lib/video-engine/config.ts:15"
+  ],
+  "FILE_SIGN_SECRET": [
+    "src/app/api/employee-access/secure-download/route.ts:9"
+  ],
+  "FIRECRAWL_API_KEY": [
+    "src/lib/research/molx-firecrawl-client.ts:28"
+  ],
+  "FIRECRAWL_KEY": [
+    "src/lib/research/molx-firecrawl-client.ts:28"
+  ],
+  "FIRECRAWL_URL": [
+    "src/lib/research/molx-firecrawl-client.ts:27"
+  ],
+  "GA4_API_SECRET": [
+    "src/lib/seo/ga4.ts:14"
+  ],
+  "GA4_MEASUREMENT_ID": [
+    "src/lib/seo/ga4.ts:13",
+    "src/lib/seo/ga4.ts:15"
+  ],
+  "GHOST_ADMIN_API_KEY": [
+    "src/lib/ghost-publishing.ts:15"
+  ],
+  "GHOST_CONTENT_API_KEY": [
+    "src/lib/ghost-publishing.ts:16"
+  ],
+  "GHOST_URL": [
+    "src/lib/ghost-publishing.ts:14"
+  ],
+  "GOOGLE_BUSINESS_ACCOUNT_ID": [
+    "src/app/api/seo/health/route.ts:38"
+  ],
+  "GOOGLE_BUSINESS_WEBHOOK_TOKEN": [
+    "src/app/api/marketing/webhooks/google-business/route.ts:21",
+    "src/app/api/marketing/webhooks/google-business/route.ts:84"
+  ],
+  "GOOGLE_CLIENT_ID": [
+    "src/app/api/seo/health/route.ts:11",
+    "src/lib/doodle-note-engine.ts:130"
+  ],
+  "GOOGLE_CLIENT_SECRET": [
+    "src/app/api/seo/health/route.ts:11",
+    "src/lib/doodle-note-engine.ts:131"
+  ],
+  "GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON": [
+    "src/app/api/seo/health/route.ts:11"
+  ],
+  "GOOGLE_SEARCH_CONSOLE_SITE_URL": [
+    "src/app/api/seo/health/route.ts:10"
+  ],
+  "GROQ_API_KEY": [
+    "src/lib/ai.ts:128",
+    "src/lib/ai.ts:83",
+    "src/lib/model-router.ts:21",
+    "tests/unit/department-rollout.test.ts:100",
+    "tests/unit/department-rollout.test.ts:106",
+    "tests/unit/department-rollout.test.ts:110",
+    "tests/unit/department-rollout.test.ts:124",
+    "tests/unit/department-rollout.test.ts:132",
+    "tests/unit/department-rollout.test.ts:42",
+    "tests/unit/department-rollout.test.ts:45",
+    "tests/unit/department-rollout.test.ts:46",
+    "tests/unit/department-rollout.test.ts:75",
+    "tests/unit/department-rollout.test.ts:82",
+    "tests/unit/department-rollout.test.ts:86"
+  ],
+  "GROQ_MAX_CONCURRENCY": [
+    "src/lib/groq-protection.ts:17"
+  ],
+  "GROQ_MAX_QUEUE": [
+    "src/lib/groq-protection.ts:19"
+  ],
+  "GROQ_MODEL_FAST": [
+    "src/lib/model-router.ts:22"
+  ],
+  "GROQ_MODEL_LARGE": [
+    "src/lib/model-router.ts:22"
+  ],
+  "GROQ_PER_MINUTE": [
+    "src/lib/groq-protection.ts:18"
+  ],
+  "HEALTH_PORT": [
+    "src/app/api/automation/schedule/route.ts:55"
+  ],
+  "HLS_ENABLED": [
+    "src/lib/video-engine/streaming/index.ts:28"
+  ],
+  "HLS_OUTPUT_PATH": [
+    "src/lib/video-engine/streaming/index.ts:29"
+  ],
+  "HLS_SEGMENT_DURATION": [
+    "src/lib/video-engine/streaming/index.ts:30"
+  ],
+  "HOSTNAME": [
+    "alo-education-web-crm-final/server.js:34",
+    "deploy-build/server.js:34",
+    "server.js:33"
+  ],
+  "HRMS_ENCRYPTION_KEY": [
+    "src/lib/hrms/encryption.ts:10"
+  ],
+  "HTTPSMS_API_KEY": [
+    "src/lib/sms-gateway.ts:29"
+  ],
+  "HTTPSMS_BASE_URL": [
+    "src/lib/sms-gateway.ts:28"
+  ],
+  "HTTPSMS_PHONE_ID": [
+    "src/lib/sms-gateway.ts:30",
+    "src/lib/sms-gateway.ts:77"
+  ],
+  "HTTPSMS_TOKEN": [
+    "src/lib/sms-gateway.ts:29"
+  ],
+  "HUNYUAN_API_KEY": [
+    "src/lib/video-engine/config.ts:27"
+  ],
+  "HUNYUAN_API_URL": [
+    "src/lib/video-engine/config.ts:26"
+  ],
+  "HUNYUAN_ENABLED": [
+    "src/lib/video-engine/config.ts:25"
+  ],
+  "IMAGE_GEN_API_KEY": [
+    "src/lib/marketing/image-generator.ts:27"
+  ],
+  "IMAGE_GEN_PROVIDER": [
+    "src/lib/marketing/image-generator.ts:28"
+  ],
+  "INFINITETALK_API_URL": [
+    "src/lib/video-engine/config.ts:52"
+  ],
+  "INFINITETALK_ENABLED": [
+    "src/lib/video-engine/config.ts:51"
+  ],
+  "INFINITETALK_LOCAL_PATH": [
+    "src/lib/video-engine/config.ts:53"
+  ],
+  "INSTAGRAM_ACCESS_TOKEN": [
+    "src/app/api/crm/communications/social-inbox/route.ts:30"
+  ],
+  "JITSI_APP_ID": [
+    "src/lib/video-engine/config.ts:95"
+  ],
+  "JITSI_DOMAIN": [
+    "src/lib/video-engine/config.ts:94"
+  ],
+  "JITSI_ENABLED": [
+    "src/lib/video-engine/config.ts:93"
+  ],
+  "JITSI_JWT_SECRET": [
+    "src/lib/video-engine/config.ts:96"
+  ],
+  "LANGUAGETOOL_API_KEY": [
+    "src/lib/languagetool-client.ts:13"
+  ],
+  "LANGUAGETOOL_URL": [
+    "src/lib/languagetool-client.ts:12"
+  ],
+  "LANGUAGETOOL_USERNAME": [
+    "src/lib/languagetool-client.ts:14"
+  ],
+  "LLM_API_KEY": [
+    "src/lib/video-engine/config.ts:67"
+  ],
+  "LLM_API_URL": [
+    "src/lib/video-engine/config.ts:66"
+  ],
+  "LLM_MODEL": [
+    "src/lib/video-engine/config.ts:68"
+  ],
+  "LOCAL_AI_API_KEY": [
+    "src/lib/ai.ts:85"
+  ],
+  "LOCAL_AI_MODEL": [
+    "src/lib/ai.ts:85",
+    "src/lib/model-router.ts:15",
+    "src/lib/model-router.ts:16",
+    "src/lib/model-router.ts:18",
+    "src/lib/model-router.ts:19"
+  ],
+  "LOCAL_AI_URL": [
+    "src/components/alo/views/ai-command-center.tsx:573",
+    "src/lib/ai.ts:127",
+    "src/lib/ai.ts:85",
+    "src/lib/department-activation.ts:110",
+    "src/lib/model-router.ts:15",
+    "src/lib/model-router.ts:18"
+  ],
+  "LONGCAT_API_URL": [
+    "src/lib/video-engine/config.ts:38"
+  ],
+  "LONGCAT_ENABLED": [
+    "src/lib/video-engine/config.ts:37"
+  ],
+  "LTX_API_KEY": [
+    "src/lib/video-engine/config.ts:32"
+  ],
+  "LTX_API_URL": [
+    "src/lib/video-engine/config.ts:31"
+  ],
+  "LTX_ENABLED": [
+    "src/lib/video-engine/config.ts:30"
+  ],
+  "LTX_LOCAL_PATH": [
+    "src/lib/video-engine/config.ts:33"
+  ],
+  "MANIM_ENABLED": [
+    "src/lib/video-engine/config.ts:115"
+  ],
+  "MANIM_PATH": [
+    "src/lib/video-engine/config.ts:117"
+  ],
+  "MANIM_QUALITY": [
+    "src/lib/video-engine/config.ts:118"
+  ],
+  "MOLX_API_KEY": [
+    "src/lib/research/molx-firecrawl-client.ts:26"
+  ],
+  "MOLX_URL": [
+    "src/lib/research/molx-firecrawl-client.ts:25"
+  ],
+  "N8N_API_KEY": [
+    "src/lib/video-engine/config.ts:124",
+    "src/lib/video-engine/n8n/index.ts:209"
+  ],
+  "N8N_API_URL": [
+    "src/lib/video-engine/config.ts:123",
+    "src/lib/video-engine/n8n/index.ts:208"
+  ],
+  "N8N_AUTH_HEADER": [
+    "src/lib/n8n.ts:13"
+  ],
+  "N8N_ENABLED": [
+    "src/lib/video-engine/config.ts:121"
+  ],
+  "N8N_VIDEO_EVENTS": [
+    "src/lib/video-engine/n8n/webhook-manager.ts:20"
+  ],
+  "N8N_WEBHOOK_URL": [
+    "src/lib/n8n.ts:12",
+    "src/lib/video-engine/config.ts:121",
+    "src/lib/video-engine/config.ts:122",
+    "src/lib/video-engine/n8n/webhook-manager.ts:18",
+    "src/lib/video-engine/n8n/webhook-manager.ts:19"
+  ],
+  "NAME": [
+    "alo-education-web-crm-final/scripts/phase0-backup-and-inventory.mjs:328",
+    "scripts/phase0-backup-and-inventory.mjs:328"
+  ],
+  "NEXTAUTH_SECRET": [
+    "src/app/api/portal-auth/login/route.ts:67",
+    "src/app/api/student/auth/login/route.ts:20",
+    "src/proxy.ts:328"
+  ],
+  "NEXTAUTH_URL": [
+    "src/app/api/crm/ucc/oauth/callback/route.ts:11",
+    "src/app/api/crm/ucc/oauth/start/route.ts:129",
+    "src/app/api/portal-auth/login/route.ts:303",
+    "src/app/api/portal-auth/login/route.ts:82",
+    "src/app/api/portal-auth/logout/route.ts:11",
+    "src/app/api/student/auth/login/route.ts:190",
+    "src/app/api/student/auth/login/route.ts:35",
+    "src/app/api/student/auth/logout/route.ts:5"
+  ],
+  "NEXTCLOUD_APP_PASSWORD": [
+    "src/lib/nextcloud-client.ts:13"
+  ],
+  "NEXTCLOUD_APP_TOKEN": [
+    "src/lib/nextcloud-client.ts:13"
+  ],
+  "NEXTCLOUD_PASSWORD": [
+    "src/lib/nextcloud-client.ts:13"
+  ],
+  "NEXTCLOUD_URL": [
+    "src/lib/nextcloud-client.ts:11"
+  ],
+  "NEXTCLOUD_USER": [
+    "src/lib/nextcloud-client.ts:12"
+  ],
+  "NEXTCLOUD_USERNAME": [
+    "src/lib/nextcloud-client.ts:12"
+  ],
+  "NEXT_PUBLIC_APP_URL": [
+    "src/app/api/automation/schedule/route.ts:39",
+    "src/app/api/seo/health/route.ts:12",
+    "src/app/api/whatsapp/portal-invitations/route.ts:44",
+    "src/lib/cap-recording.ts:32",
+    "src/lib/email-service.ts:45",
+    "src/lib/email-service.ts:66",
+    "src/lib/whatsapp-followup-engine.ts:242"
+  ],
+  "NEXT_PUBLIC_CONSENT_MODE": [
+    "src/lib/seo/ga4.ts:16"
+  ],
+  "NEXT_PUBLIC_DEVELOPMENT_DEMO_PASSWORD": [
+    "src/lib/stores/portal-store.ts:373"
+  ],
+  "NEXT_PUBLIC_FB_CONNECTED": [
+    "src/app/crm/communications/social-inbox/page.tsx:31"
+  ],
+  "NEXT_PUBLIC_GA4_ENABLED": [
+    "src/lib/seo/ga4.ts:15"
+  ],
+  "NEXT_PUBLIC_MOLX_URL": [
+    "src/lib/research/molx-firecrawl-client.ts:25"
+  ],
+  "NEXT_PUBLIC_SITE_URL": [
+    "src/app/api/seo/health/route.ts:12",
+    "src/app/robots.ts:4",
+    "src/app/sitemap.ts:5",
+    "src/lib/seo/schema-helpers.ts:17",
+    "src/lib/seo/schema-helpers.ts:37",
+    "src/lib/seo/schema-helpers.ts:65"
+  ],
+  "NEXT_PUBLIC_UMAMI_URL": [
+    "src/lib/umami-analytics.ts:13"
+  ],
+  "NEXT_PUBLIC_UMAMI_WEBSITE_ID": [
+    "src/lib/umami-analytics.ts:14"
+  ],
+  "NODE_ENV": [
+    "alo-education-web-crm-final/server.js:25",
+    "deploy-build/server.js:25",
+    "server.js:24",
+    "src/app/api/auth/register/route.ts:138",
+    "src/app/api/auth/register/route.ts:84",
+    "src/app/api/auth/reset-password/route.ts:54",
+    "src/app/api/auth/verify-otp/route.ts:87",
+    "src/app/api/crm/seed/route.ts:31",
+    "src/app/api/crm/ucc/documents/upload/route.ts:57",
+    "src/app/api/documents/auto-upload/route.ts:111",
+    "src/app/api/employee-access/secure-download/route.ts:11",
+    "src/app/api/marketing/webhooks/google-business/route.ts:23",
+    "src/app/api/portal-auth/login/route.ts:303",
+    "src/app/api/portal-auth/login/route.ts:82",
+    "src/app/api/portal-auth/logout/route.ts:11",
+    "src/app/api/student/auth/login/route.ts:190",
+    "src/app/api/student/auth/login/route.ts:35",
+    "src/app/api/student/auth/logout/route.ts:5",
+    "src/app/api/whatsapp/ai-reply/route.ts:17",
+    "src/app/api/whatsapp/status/route.ts:25",
+    "src/lib/communication/otp-engine.ts:56",
+    "src/lib/cron-auth.ts:88",
+    "src/lib/db.ts:17",
+    "src/lib/db.ts:7",
+    "src/lib/facebook-lead-sync.ts:49",
+    "src/lib/social/token-encryption.ts:10",
+    "src/lib/stores/portal-store.ts:368",
+    "src/lib/token-encryption.ts:14",
+    "src/lib/whatsapp-cloud-api.ts:46",
+    "src/lib/whatsapp-cloud-api.ts:58",
+    "src/lib/whatsapp-webhook-handler.ts:35",
+    "tests/unit/cron-auth-regression.test.ts:70",
+    "tests/unit/whatsapp-employee-communication.test.ts:76",
+    "tests/unit/whatsapp-employee-communication.test.ts:78"
+  ],
+  "OPENAI_API_BASE": [
+    "src/lib/video-engine/config.ts:66"
+  ],
+  "OPENAI_API_KEY": [
+    "src/lib/doodle-note-engine.ts:77",
+    "src/lib/marketing/image-generator.ts:27",
+    "src/lib/video-engine/config.ts:67"
+  ],
+  "OPENROUTER_API_KEY": [
+    "src/lib/ai.ts:129",
+    "src/lib/ai.ts:84",
+    "src/lib/model-router.ts:24"
+  ],
+  "OPENROUTER_MODEL": [
+    "src/lib/ai.ts:84",
+    "src/lib/model-router.ts:24",
+    "src/lib/model-router.ts:31"
+  ],
+  "PIXELLE_API_URL": [
+    "src/lib/video-engine/config.ts:42"
+  ],
+  "PIXELLE_ENABLED": [
+    "src/lib/video-engine/config.ts:41"
+  ],
+  "PORT": [
+    "alo-education-web-crm-final/server.js:35",
+    "deploy-build/server.js:35",
+    "server.js:34",
+    "src/app/api/automation/schedule/route.ts:55"
+  ],
+  "PYTHON_PATH": [
+    "src/lib/video-engine/config.ts:116",
+    "src/lib/video-engine/config.ts:78",
+    "src/lib/video-engine/config.ts:84"
+  ],
+  "REDDIT_CLIENT_ID": [
+    "src/lib/video-engine/config.ts:110"
+  ],
+  "REDDIT_CLIENT_SECRET": [
+    "src/lib/video-engine/config.ts:111"
+  ],
+  "REDDIT_ENABLED": [
+    "src/lib/video-engine/config.ts:109"
+  ],
+  "REDIS_URL": [
+    "src/app/api/automation/schedule/route.ts:40",
+    "src/app/api/research/provider-status/route.ts:47",
+    "src/lib/redis.ts:111",
+    "src/lib/redis.ts:93"
+  ],
+  "REMOTION_ENABLED": [
+    "src/lib/video-engine/config.ts:11"
+  ],
+  "REMOTION_LAMBDA_ENABLED": [
+    "src/lib/video-engine/config.ts:12"
+  ],
+  "REMOTION_LAMBDA_FUNCTION": [
+    "src/lib/video-engine/config.ts:14"
+  ],
+  "REMOTION_LAMBDA_REGION": [
+    "src/lib/video-engine/config.ts:13"
+  ],
+  "RETALKING_API_URL": [
+    "src/lib/video-engine/config.ts:57"
+  ],
+  "RETALKING_ENABLED": [
+    "src/lib/video-engine/config.ts:56"
+  ],
+  "RETALKING_LOCAL_PATH": [
+    "src/lib/video-engine/config.ts:58"
+  ],
+  "RTMP_APP": [
+    "src/lib/video-engine/streaming/index.ts:25"
+  ],
+  "RTMP_ENABLED": [
+    "src/lib/video-engine/streaming/index.ts:23"
+  ],
+  "RTMP_URL": [
+    "src/lib/video-engine/streaming/index.ts:24"
+  ],
+  "RUNNINGHUB_API_KEY": [
+    "src/lib/comfyui-client.ts:15"
+  ],
+  "RUNNINGHUB_API_URL": [
+    "src/lib/comfyui-client.ts:14"
+  ],
+  "SALESQL_API_KEY": [
+    "src/lib/research/market-intel-radar.ts:93"
+  ],
+  "SEED_PORTAL_PASSWORD": [
+    "prisma/seed-rbac.ts:71"
+  ],
+  "SEED_SUPER_ADMIN_EMAIL": [
+    "alo-education-web-crm-final/prisma/seed-complete.ts:8",
+    "alo-education-web-crm-final/prisma/seed.ts:8",
+    "alo-education-web-crm-final/scripts/seed-all-portal-users.ts:7",
+    "alo-education-web-crm-final/scripts/seed-alo.ts:7",
+    "alo-education-web-crm-final/scripts/seed-direct-mysql.js:19",
+    "alo-education-web-crm-final/scripts/seed-portal-admin.ts:7",
+    "prisma/seed-complete.ts:279",
+    "prisma/seed-rbac.ts:123",
+    "prisma/seed.ts:8",
+    "scripts/seed-all-portal-users.ts:7",
+    "scripts/seed-alo.ts:7",
+    "scripts/seed-direct-mysql.js:18",
+    "scripts/seed-portal-admin.ts:7"
+  ],
+  "SEED_SUPER_ADMIN_PASSWORD": [
+    "alo-education-web-crm-final/prisma/seed-complete.ts:9",
+    "alo-education-web-crm-final/prisma/seed.ts:9",
+    "alo-education-web-crm-final/scripts/seed-all-portal-users.ts:8",
+    "alo-education-web-crm-final/scripts/seed-alo.ts:8",
+    "alo-education-web-crm-final/scripts/seed-direct-mysql.js:20",
+    "alo-education-web-crm-final/scripts/seed-portal-admin.ts:8",
+    "prisma/seed-complete.ts:280",
+    "prisma/seed.ts:9",
+    "scripts/seed-all-portal-users.ts:8",
+    "scripts/seed-alo.ts:8",
+    "scripts/seed-direct-mysql.js:19",
+    "scripts/seed-portal-admin.ts:8"
+  ],
+  "SMS_PROVIDER": [
+    "src/lib/sms-gateway.ts:23"
+  ],
+  "SMS_PROVIDER_API_KEY": [
+    "src/lib/sms-gateway.ts:51"
+  ],
+  "SMS_PROVIDER_URL": [
+    "src/lib/sms-gateway.ts:52"
+  ],
+  "SMTP_HOST": [
+    "src/lib/email-service.ts:14"
+  ],
+  "SMTP_PASSWORD": [
+    "src/lib/email-service.ts:16"
+  ],
+  "SMTP_USER": [
+    "src/lib/email-service.ts:15"
+  ],
+  "STORAGE_POOL_C": [
+    "src/app/api/crm/ucc/documents/upload/route.ts:55",
+    "src/app/api/documents/auto-upload/route.ts:110"
+  ],
+  "STORAGE_ROOT": [
+    "prisma/seed-storage-brand.ts:14"
+  ],
+  "STUN_SERVERS": [
+    "src/lib/video-engine/streaming/index.ts:34"
+  ],
+  "SUBTITLE_REMOVER_ENABLED": [
+    "src/lib/video-engine/config.ts:77"
+  ],
+  "SUBTITLE_REMOVER_MODEL_PATH": [
+    "src/lib/video-engine/config.ts:79"
+  ],
+  "SUPER_RESOLUTION_ENABLED": [
+    "src/lib/video-engine/config.ts:82"
+  ],
+  "TELEGRAM_BOT_TOKEN": [
+    "src/lib/ucc/providers/index.ts:34",
+    "src/lib/video-engine/automation/telegram-bot.ts:67",
+    "src/lib/video-engine/automation/telegram-bot.ts:96"
+  ],
+  "TELEGRAM_WEBHOOK_SECRET": [
+    "src/lib/ucc/providers/adapters/telegram-adapter.ts:82"
+  ],
+  "TELEPHONY_PROVIDER_API_KEY": [
+    "src/app/api/crm/ucc/phone/route.ts:8"
+  ],
+  "TINYFISH_API_KEY": [
+    "src/lib/research/structured-extractor.ts:100"
+  ],
+  "TURN_CREDENTIAL": [
+    "src/lib/video-engine/streaming/index.ts:35"
+  ],
+  "TURN_URL": [
+    "src/lib/video-engine/streaming/index.ts:35"
+  ],
+  "TURN_USERNAME": [
+    "src/lib/video-engine/streaming/index.ts:35"
+  ],
+  "UMAMI_API_KEY": [
+    "src/lib/umami-analytics.ts:15"
+  ],
+  "UMAMI_URL": [
+    "src/lib/umami-analytics.ts:13"
+  ],
+  "UMAMI_WEBSITE_ID": [
+    "src/lib/umami-analytics.ts:14"
+  ],
+  "UNIVERSITY_JSON_PATH": [
+    "prisma/seed-university-data.ts:33"
+  ],
+  "VAULTWARDEN_ADMIN_TOKEN": [
+    "src/lib/vaultwarden-client.ts:16"
+  ],
+  "VAULTWARDEN_ORG_ID": [
+    "src/lib/vaultwarden-client.ts:17"
+  ],
+  "VAULTWARDEN_TOKEN": [
+    "src/lib/vaultwarden-client.ts:16"
+  ],
+  "VAULTWARDEN_URL": [
+    "src/lib/vaultwarden-client.ts:15"
+  ],
+  "VIDEOCAPTIONER_ENABLED": [
+    "src/lib/video-engine/config.ts:63"
+  ],
+  "VIDEOCAPTIONER_PATH": [
+    "src/lib/video-engine/config.ts:64"
+  ],
+  "VIDEO_AGENT_API_URL": [
+    "src/lib/video-engine/config.ts:88"
+  ],
+  "VIDEO_AGENT_ENABLED": [
+    "src/lib/video-engine/config.ts:87"
+  ],
+  "VIDEO_STORAGE_BASE_URL": [
+    "src/lib/video-engine/config.ts:130"
+  ],
+  "VIDEO_STORAGE_BUCKET": [
+    "src/lib/video-engine/config.ts:128"
+  ],
+  "VIDEO_STORAGE_PROVIDER": [
+    "src/lib/video-engine/config.ts:127"
+  ],
+  "VIDEO_STORAGE_REGION": [
+    "src/lib/video-engine/config.ts:129"
+  ],
+  "VSR_MODEL": [
+    "src/lib/video-engine/config.ts:83"
+  ],
+  "WEBRTC_ENABLED": [
+    "src/lib/video-engine/streaming/index.ts:33"
+  ],
+  "WHATSAPP_ACCESS_TOKEN": [
+    "src/app/api/whatsapp/webhook/route.ts:42",
+    "src/lib/whatsapp-cloud-api.ts:25",
+    "src/lib/whatsapp-webhook-handler.ts:62"
+  ],
+  "WHATSAPP_APP_SECRET": [
+    "src/app/api/crm/ucc/webhooks/whatsapp/route.ts:13",
+    "src/app/api/whatsapp/status/route.ts:16",
+    "src/app/api/whatsapp/webhook/route.ts:131",
+    "src/app/api/whatsapp/webhook/route.ts:31",
+    "src/app/api/whatsapp/webhook/route.ts:975",
+    "src/lib/whatsapp-cloud-api.ts:24",
+    "src/lib/whatsapp-webhook-handler.ts:33",
+    "src/lib/whatsapp-webhook-handler.ts:48",
+    "tests/unit/whatsapp-employee-communication.test.ts:74",
+    "tests/unit/whatsapp-employee-communication.test.ts:75",
+    "tests/unit/whatsapp-employee-communication.test.ts:80",
+    "tests/unit/whatsapp-employee-communication.test.ts:84",
+    "tests/unit/whatsapp-webhook-handler.test.ts:45",
+    "tests/unit/whatsapp-webhook-handler.test.ts:46",
+    "tests/unit/whatsapp-webhook-handler.test.ts:50"
+  ],
+  "WHATSAPP_BUSINESS_PHONE": [
+    "src/lib/whatsapp-cloud-api.ts:27"
+  ],
+  "WHATSAPP_PHONE_NUMBER_ID": [
+    "src/app/api/whatsapp/send/route.ts:31",
+    "src/app/api/whatsapp/webhook/route.ts:43",
+    "src/lib/whatsapp-cloud-api.ts:26",
+    "src/lib/whatsapp-webhook-handler.ts:63",
+    "tests/unit/whatsapp-employee-communication.test.ts:93"
+  ],
+  "WHATSAPP_TOKEN": [
+    "src/app/api/whatsapp/send/route.ts:30",
+    "src/app/api/whatsapp/webhook/route.ts:42",
+    "src/lib/whatsapp-webhook-handler.ts:62",
+    "tests/unit/whatsapp-employee-communication.test.ts:92"
+  ],
+  "WHATSAPP_VERIFY_TOKEN": [
+    "src/app/api/crm/ucc/webhooks/[provider]/route.ts:25",
+    "src/app/api/crm/ucc/webhooks/whatsapp/route.ts:12",
+    "src/app/api/whatsapp/status/route.ts:129",
+    "src/app/api/whatsapp/webhook/route.ts:31",
+    "src/app/api/whatsapp/webhook/route.ts:975",
+    "src/lib/whatsapp-webhook-handler.ts:33"
+  ],
+  "WHISPER_LOCAL_ENABLED": [
+    "src/lib/video-engine/config.ts:71"
+  ],
+  "WHISPER_LOCAL_MODEL_PATH": [
+    "src/lib/video-engine/config.ts:72"
+  ],
+  "WHISPER_MODEL": [
+    "src/lib/video-engine/config.ts:65"
+  ],
+  "X": [
+    "alo-education-web-crm-final/scripts/generate-inventories.mjs:143",
+    "scripts/generate-inventories.mjs:143"
+  ],
+  "YOUTUBE_DL_ENABLED": [
+    "src/lib/video-engine/config.ts:104"
+  ],
+  "YTDLP_PATH": [
+    "src/lib/video-engine/config.ts:105"
+  ],
+  "ZAI_API_KEY": [
+    "src/app/api/chat/route.ts:66",
+    "src/lib/ai.ts:130",
+    "src/lib/ai.ts:50",
+    "src/lib/ai.ts:86",
+    "src/lib/model-router.ts:25"
+  ]
+}

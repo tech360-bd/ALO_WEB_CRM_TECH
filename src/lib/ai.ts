@@ -1,8 +1,15 @@
 // AI wrapper supporting multi-provider fallback (Groq, OpenRouter, ZAI/GLM).
 import ZAI from 'z-ai-web-dev-sdk';
+import { z } from 'zod';
+
+export type TextProvider = 'groq' | 'openrouter' | 'zai' | 'local';
 
 export interface GenerateTextOptions {
   prompt: string;
+  /** An explicit provider disables all implicit fallback. */
+  provider?: TextProvider;
+  endpoint?: string;
+  timeoutMs?: number;
   model?: string;
   systemPrompt?: string;
   maxTokens?: number;
@@ -11,6 +18,8 @@ export interface GenerateTextOptions {
 
 export interface GenerateTextResult {
   text: string;
+  provider: TextProvider;
+  model: string;
   usage?: {
     promptTokens?: number;
     completionTokens?: number;
@@ -58,115 +67,75 @@ export async function getZai(): Promise<ZAI> {
   return client;
 }
 
+const completionSchema = z.object({
+  choices: z.array(z.object({ message: z.object({ content: z.string().trim().min(1) }) })).min(1),
+  usage: z.object({ prompt_tokens: z.number().nonnegative().optional(), completion_tokens: z.number().nonnegative().optional(), total_tokens: z.number().nonnegative().optional() }).optional(),
+});
+
+/** One provider, one request. Private/local requests never transit a cloud fallback. */
+async function requestText(provider: TextProvider, options: GenerateTextOptions): Promise<GenerateTextResult> {
+  const messages: Array<{ role: 'system' | 'user'; content: string }> = [];
+  if (options.systemPrompt) messages.push({ role: 'system', content: options.systemPrompt });
+  messages.push({ role: 'user', content: options.prompt });
+  const timeoutMs = options.timeoutMs ?? 30_000;
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120_000) throw new Error('Invalid AI timeout');
+  const defaults = {
+    groq: { key: process.env.GROQ_API_KEY, url: 'https://api.groq.com/openai/v1/chat/completions', model: process.env.AI_DEFAULT_MODEL || 'llama-3.3-70b-versatile' },
+    openrouter: { key: process.env.OPENROUTER_API_KEY, url: 'https://openrouter.ai/api/v1/chat/completions', model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct' },
+    local: { key: process.env.LOCAL_AI_API_KEY, url: process.env.LOCAL_AI_URL, model: process.env.LOCAL_AI_MODEL },
+    zai: { key: process.env.ZAI_API_KEY, url: '', model: 'glm-4-flash' },
+  };
+  const config = defaults[provider];
+  const model = options.model || config.model;
+  if (!model) throw new Error(`AI provider ${provider} requires a configured model`);
+  if (provider !== 'local' && !config.key) throw new Error(`AI provider ${provider} is not configured`);
+  if (provider === 'zai') {
+    const client = await getZai();
+    // The SDK has no AbortSignal support. Bound caller wait; the underlying SDK
+    // request cannot be cancelled (unlike the HTTP adapters below).
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const result: unknown = await Promise.race([
+      client.chat.completions.create({ model, messages, temperature: options.temperature, max_tokens: options.maxTokens }),
+      new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error('ZAI request timed out')), timeoutMs); }),
+    ]).finally(() => { if (timer) clearTimeout(timer); });
+    const parsed = completionSchema.parse(result);
+    return { text: parsed.choices[0].message.content, provider, model, usage: parsed.usage ? { promptTokens: parsed.usage.prompt_tokens, completionTokens: parsed.usage.completion_tokens, totalTokens: parsed.usage.total_tokens } : undefined };
+  }
+  const endpoint = options.endpoint || config.url;
+  if (!endpoint) throw new Error(`AI provider ${provider} endpoint is not configured`);
+  const url = new URL(endpoint);
+  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Invalid AI endpoint');
+  if (provider !== 'local' && url.protocol !== 'https:') throw new Error('External AI requires HTTPS');
+  // LOCAL_AI_URL is a trusted server configuration, never a browser-supplied URL.
+  // Accept a base URL, /v1 base, or full OpenAI-compatible chat endpoint (Ollama supports /v1).
+  if (!url.pathname.endsWith('/chat/completions')) {
+    url.pathname = url.pathname.replace(/\/$/, '') + (url.pathname.replace(/\/$/, '').endsWith('/v1') ? '/chat/completions' : '/v1/chat/completions');
+  }
+  const response = await fetch(url, {
+    method: 'POST', redirect: 'error', signal: AbortSignal.timeout(timeoutMs),
+    headers: { 'Content-Type': 'application/json', ...(config.key ? { Authorization: `Bearer ${config.key}` } : {}) },
+    body: JSON.stringify({ model, messages, temperature: options.temperature ?? 0.7, max_tokens: options.maxTokens }),
+  });
+  if (!response.ok) throw new Error(`AI provider ${provider} returned HTTP ${response.status}`);
+  const parsed = completionSchema.parse(await response.json());
+  return { text: parsed.choices[0].message.content, provider, model, usage: parsed.usage ? { promptTokens: parsed.usage.prompt_tokens, completionTokens: parsed.usage.completion_tokens, totalTokens: parsed.usage.total_tokens } : undefined };
+}
+
 export async function generateText(options: GenerateTextOptions): Promise<GenerateTextResult> {
-  // 1. Groq API Provider
-  if (process.env.GROQ_API_KEY) {
+  if (options.provider) return requestText(options.provider, options);
+  const providers: TextProvider[] = [];
+  if (process.env.LOCAL_AI_URL) return requestText('local', options); // no implicit cloud fallback from local
+  if (process.env.GROQ_API_KEY) providers.push('groq');
+  if (process.env.OPENROUTER_API_KEY) providers.push('openrouter');
+  if (process.env.ZAI_API_KEY) providers.push('zai');
+  for (const provider of providers) {
     try {
-      const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
-      if (options.systemPrompt) {
-        messages.push({ role: 'system', content: options.systemPrompt });
-      }
-      messages.push({ role: 'user', content: options.prompt });
-
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: options.model || process.env.AI_DEFAULT_MODEL || 'llama-3.3-70b-versatile',
-          messages,
-          temperature: options.temperature ?? 0.7,
-          max_tokens: options.maxTokens,
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.choices?.[0]?.message?.content) {
-        return {
-          text: data.choices[0].message.content,
-          usage: data.usage ? {
-            promptTokens: data.usage.prompt_tokens,
-            completionTokens: data.usage.completion_tokens,
-            totalTokens: data.usage.total_tokens,
-          } : undefined,
-        };
-      }
-    } catch (err) {
-      console.warn('Groq API error, attempting fallback:', err);
+      return await requestText(provider, options);
+    } catch {
+      console.warn(`[AI] ${provider} request failed; attempting next explicitly configured provider`);
     }
   }
-
-  // 2. OpenRouter Provider
-  if (process.env.OPENROUTER_API_KEY) {
-    try {
-      const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
-      if (options.systemPrompt) {
-        messages.push({ role: 'system', content: options.systemPrompt });
-      }
-      messages.push({ role: 'user', content: options.prompt });
-
-      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: options.model || process.env.AI_DEFAULT_MODEL || 'meta-llama/llama-3.3-70b-instruct',
-          messages,
-          temperature: options.temperature ?? 0.7,
-          max_tokens: options.maxTokens,
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.choices?.[0]?.message?.content) {
-        return {
-          text: data.choices[0].message.content,
-          usage: data.usage ? {
-            promptTokens: data.usage.prompt_tokens,
-            completionTokens: data.usage.completion_tokens,
-            totalTokens: data.usage.total_tokens,
-          } : undefined,
-        };
-      }
-    } catch (err) {
-      console.warn('OpenRouter API error, attempting fallback:', err);
-    }
-  }
-
-  // 3. ZAI / GLM Provider
-  if (process.env.ZAI_API_KEY) {
-    const zai = await getZai();
-    if (zai) {
-      const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
-      if (options.systemPrompt) {
-        messages.push({ role: 'system', content: options.systemPrompt });
-      }
-      messages.push({ role: 'user', content: options.prompt });
-
-      const result = await zai.chat.completions.create({
-        model: options.model || 'glm-4-flash',
-        messages,
-        temperature: options.temperature,
-        max_tokens: options.maxTokens,
-      });
-
-      const text = result.choices?.[0]?.message?.content || '';
-      return {
-        text,
-        usage: result.usage as { promptTokens?: number; completionTokens?: number; totalTokens?: number } | undefined,
-      };
-    }
-  }
-
-  // Never return a fabricated answer when no provider is configured. Callers can
-  // catch this explicit error and present a recoverable configuration message.
-  throw new Error(
-    'No AI provider is configured. Set GROQ_API_KEY, OPENROUTER_API_KEY, or ZAI_API_KEY.'
-  );
+  throw new Error(providers.length ? 'All configured AI providers failed' : 'No AI provider is configured. Set LOCAL_AI_URL and LOCAL_AI_MODEL, or a cloud provider key.');
 }
 
 /**

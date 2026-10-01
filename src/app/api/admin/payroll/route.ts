@@ -88,10 +88,10 @@ async function processPayroll(req: Request, auth: AuthContext) {
             },
           });
         }
+        await logSecurityAudit({ actorId: adminId, actorRole: 'HR/Admin', action: 'PAYROLL_DRAFT_PREPARED', targetType: 'EmployeePayroll', targetId: run.id }, tx);
         return run;
       }, { isolationLevel: 'Serializable' });
 
-      await logSecurityAudit({ actorId: adminId, actorRole: 'HR/Admin', action: 'PAYROLL_DRAFT_PREPARED', targetType: 'EmployeePayroll', targetId: payroll.id });
       return NextResponse.json({ success: true, payroll });
     }
 
@@ -117,17 +117,17 @@ async function processPayroll(req: Request, auth: AuthContext) {
           },
         });
         if (changed.count !== 1) throw new PayrollValidationError('DUPLICATE_RUN', 'Payroll status changed; reload before retrying');
+        await logSecurityAudit({
+          actorId: adminId,
+          actorRole: transition === 'paid' ? 'Finance Payer' : 'Finance Approver',
+          action: transition === 'paid' ? 'PAYROLL_PAID' : 'PAYROLL_APPROVED',
+          targetType: 'EmployeePayroll',
+          targetId: payrollId,
+          approvalId: adminId,
+        }, tx);
         return tx.employeePayroll.findUnique({ where: { id: payrollId } });
       }, { isolationLevel: 'Serializable' });
 
-      await logSecurityAudit({
-        actorId: adminId,
-        actorRole: transition === 'paid' ? 'Finance Payer' : 'Finance Approver',
-        action: transition === 'paid' ? 'PAYROLL_PAID' : 'PAYROLL_APPROVED',
-        targetType: 'EmployeePayroll',
-        targetId: payrollId,
-        approvalId: adminId,
-      });
       return NextResponse.json({ success: true, payroll: updated });
     }
 

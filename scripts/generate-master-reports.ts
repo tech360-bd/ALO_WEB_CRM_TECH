@@ -697,10 +697,10 @@ ${intakeBreakdownMd}
     const importReportMd = `# ALO Education — CRM Database Import Guide
 
 ## Overview
-This document provides instructions on how to import the relational database CSV files into the ALO Education CRM platform on an Ubuntu server environment.
+This document provides instructions on how to import the relational database CSV files into the ALO Education CRM platform in the approved Hostinger environment, after separate data-import approval.
 
 ## Import Steps
-1. Transfer the \`ALO_UNIVERSITY_COURSE_DATA_PACKAGE.zip\` file to your Ubuntu server.
+1. Review the data package through the approved application import workflow; do not copy files to a server.
 2. Unzip the file to extract the 18 relational and log CSV files:
    \`\`\`bash
    unzip ALO_UNIVERSITY_COURSE_DATA_PACKAGE.zip -d ./import-package

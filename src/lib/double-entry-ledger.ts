@@ -1,15 +1,8 @@
-// ============================================================
-// SlowBooks Pro — Free double-entry, invoicing, US payroll, inventory, bank feeds
-// Source: VonHoltenCodes/SlowBooks-Pro-2026 (494★ 657 commits 35 tags)
-//   Double-entry bookkeeping: Bill DR Expense/1300 CR A/P 2000, Vendor Credit
-//   mirror, A/R aging fix (unapplied credits hidden — now unapplied_credits col),
-//   journal vs sub-ledger split, 2089 tests.
-// ALO use: fix Payment/Payroll GL + A/R & A/P aging (hide-unapplied bug) +
-//   vendor credits + double-entry postings for commissions/invoices.
-// Reuses: Payment, Payroll, CrmAuditLog, Sla* — no new table; GL posted as AuditLog
-//   + FileEvent; aging computed via queries (no schema change).
-// ============================================================
+// ALO Education legacy journal adapter. Persists in CrmAuditLog; this is not a
+// complete accounting ledger (currency, periods, reversals and allocation remain).
 import { db } from '@/lib/db';
+import { randomUUID } from 'node:crypto';
+import { z } from 'zod';
 
 export type JournalEntry = {
   id: string;
@@ -31,31 +24,47 @@ export const GL_ACCOUNTS = {
   PAYROLL_PAYABLE: { code: '2100', name: 'Payroll Payable' },
 } as const;
 
+function cents(amount: number): number {
+  const value = Math.round(amount * 100);
+  if (!Number.isFinite(amount) || amount < 0 || !Number.isSafeInteger(value) || Math.abs(value / 100 - amount) > 1e-9) {
+    throw new Error('Journal amounts must be finite non-negative two-decimal amounts');
+  }
+  return value;
+}
+const linesSchema = z.array(z.object({
+  account: z.string().trim().min(1), accountName: z.string().trim().min(1),
+  debit: z.number(), credit: z.number(), entityId: z.string().optional(), entityType: z.string().optional(),
+})).min(2);
 function assertBalanced(lines: JournalEntry['lines']): void {
-  const d = lines.reduce((s,l)=> s + l.debit, 0);
-  const c = lines.reduce((s,l)=> s + l.credit, 0);
-  if (Math.abs(d - c) > 0.005) throw new Error(`Unbalanced journal: debit ${d} != credit ${c}`);
+  linesSchema.parse(lines);
+  let debits = 0, credits = 0;
+  for (const line of lines) {
+    const d = cents(line.debit), c = cents(line.credit);
+    if ((d === 0) === (c === 0)) throw new Error('Each journal line must have one positive debit or credit');
+    debits += d; credits += c;
+    if (!Number.isSafeInteger(debits) || !Number.isSafeInteger(credits)) throw new Error('Journal total exceeds safe amount');
+  }
+  if (debits !== credits) throw new Error('Unbalanced journal');
 }
 
-/**
- * Post a double-entry journal. Validates balanced, persists as CrmAuditLog + FileEvent.
- * Caller should also update Payment/Payroll row status separately.
- */
+/** A returned id proves this insert succeeded, not that payment/payroll was updated. */
 export async function postJournal(entry: JournalEntry): Promise<{ journalId: string }> {
   assertBalanced(entry.lines);
-  const journalId = entry.id || `je_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
-  await db.crmAuditLog.create({
-    data: {
-      action: 'JOURNAL_POSTED',
-      targetCollection: 'JournalEntry',
-      targetId: journalId,
-      actorUserId: entry.actorId || '',
-      afterData: JSON.stringify({ date: entry.date, memo: entry.memo, lines: entry.lines }),
-      createdAt: new Date(entry.date),
-    },
-  }).catch(()=>{});
-  // NOTE: journal entries are not files — FileEvent.fileId is an FK to FileMetadata.id,
-  // so a journal-id FileEvent row could never be valid. Audit trail lives in CrmAuditLog.
+  const date = new Date(`${entry.date}T00:00:00.000Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.date) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== entry.date) {
+    throw new Error('Journal date must be a valid YYYY-MM-DD date');
+  }
+  if (!entry.actorId.trim()) throw new Error('Journal actor is required');
+  const journalId = entry.id || `je_${randomUUID()}`;
+  const existing = await db.crmAuditLog.findFirst({ where: { action: 'JOURNAL_POSTED', targetCollection: 'JournalEntry', targetId: journalId }, select: { id: true } });
+  if (existing) throw new Error('Journal identifier already posted; reconcile rather than replay');
+  // Explicit PK prevents concurrent duplicate NEW postings with this identifier.
+  // Historical rows used random audit ids: the lookup above rejects their replay.
+  // Mixed-version writers and historical duplicate ids still need reconciliation.
+  await db.crmAuditLog.create({ data: {
+    id: journalId, action: 'JOURNAL_POSTED', targetCollection: 'JournalEntry', targetId: journalId,
+    actorUserId: entry.actorId, afterData: JSON.stringify({ date: entry.date, memo: entry.memo, lines: entry.lines }), createdAt: date,
+  } });
   return { journalId };
 }
 
@@ -117,30 +126,23 @@ export async function postVendorCredit(vendorCreditId: string, amount: number, o
   });
 }
 
-/**
- * A/R Aging — FIXES SlowBooks bug: unapplied credits hid from aging total.
- * GL 1100 at 700 but aging showed 1000 (300 credit not applied).
- * Correct: show gross + unapplied_credits column.
+/** Journal-only A/R movement summary. This is NOT due-date aging or proof that
+ * credits are unapplied: allocation and currency are absent from this adapter.
+ * Never mix pending Payment amounts with journal postings (double counting).
  */
-export async function computeARAging(): Promise<{ grossReceivable: number; unappliedCredits: number; netReceivable: number; note: string }> {
-  // Sum journals touching A/R
-  const logs: any[] = await db.crmAuditLog.findMany({ where: { targetCollection: 'JournalEntry', action: 'JOURNAL_POSTED' }, take: 5000 }).catch(()=>[]);
-  let gross = 0, unapplied = 0;
-  for (const l of logs) {
-    try {
-      const d = JSON.parse(l.afterData);
-      for (const line of d.lines || []) {
-        if (line.account === '1100') {
-          if (line.debit > 0) gross += line.debit;
-          if (line.credit > 0) unapplied += line.credit; // credit memos credit A/R
-        }
-      }
-    } catch {}
+export async function computeARAging(): Promise<{ grossReceivable: number; unappliedCredits: null; credits: number; netReceivable: number; note: string }> {
+  const logs = await db.crmAuditLog.findMany({
+    where: { targetCollection: 'JournalEntry', action: 'JOURNAL_POSTED' }, select: { afterData: true },
+  });
+  let gross = 0, credits = 0;
+  for (const log of logs) {
+    const data = z.object({ lines: linesSchema }).parse(JSON.parse(log.afterData));
+    assertBalanced(data.lines);
+    for (const line of data.lines) {
+      if (line.account === GL_ACCOUNTS.AR.code) { gross += cents(line.debit); credits += cents(line.credit); }
+    }
+    if (!Number.isSafeInteger(gross) || !Number.isSafeInteger(credits)) throw new Error('AR total exceeds safe amount');
   }
-  // Also sum Payment table pending (fallback when journals not yet posted)
-  try {
-    const payments: any[] = await db.payment.findMany({ take: 5000 }).catch(()=>[]);
-    for (const p of payments) if (p.status === 'pending' || p.status === 'unpaid') gross += Number(p.amount || 0);
-  } catch {}
-  return { grossReceivable: Math.round(gross*100)/100, unappliedCredits: Math.round(unapplied*100)/100, netReceivable: Math.round((gross - unapplied)*100)/100, note: 'Net = Gross − Unapplied Credits (fix: aging now carries unapplied_credits column)' };
+  return { grossReceivable: gross / 100, unappliedCredits: null, credits: credits / 100, netReceivable: (gross - credits) / 100,
+    note: 'Journal-only A/R movements, not due-date aging. Credit allocation/currency reconciliation is not implemented; unapplied credits are unknown.' };
 }

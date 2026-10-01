@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # VPS Production Audit — ALO Education (Inventory, Path/Port Fix, Build & Security)
 
 **Date:** 2026-09-15 Asia/Dhaka | **Auditor:** senior full-stack / DevOps / security | **Branch:** `arena/01a09c20-alo-education-z-ai` @ `3f0ba8d` (pushed) + local `M .github/workflows/deploy-production.yml` (3044 fix, patch `docs/patches/WORKFLOW_3044_FIX.patch`) | **VPS current dir (reported):** `/root/alo-github-main-new` | **Checked:** actual repo, nested dirs, package/lock, next.config, Prisma, ecosystem, workflow, deploy scripts, Docker/Caddy/Nginx, .env, health

@@ -1,0 +1,8 @@
+{
+  "textFilesFullyScanned": 5491,
+  "binaryFilesMetadataOnly": 315,
+  "filesWithMatches": 295,
+  "matchingLines": 3826,
+  "scope": "Tracked + nonignored additions; derived runtime report outputs excluded to avoid recursive scanning; no text size cutoff.",
+  "note": "Occurrence classification is not full business/source verification; source-level candidates require individual review."
+}

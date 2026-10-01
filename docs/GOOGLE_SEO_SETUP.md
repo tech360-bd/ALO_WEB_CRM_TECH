@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # Google SEO & Analytics Setup — ALO Education
 
 **Do not conflate** Google Search Console, GA4, Google Business Profile, Google OAuth — four separate integrations with separate auth.

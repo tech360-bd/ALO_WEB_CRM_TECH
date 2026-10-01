@@ -1,10 +1,11 @@
+# LEGACY / NOT USED FOR CURRENT PRODUCTION — Hostinger only.
 # ─── Build stage ────────────────────────────────────────────
 FROM node:22-bookworm AS base
 WORKDIR /app
 
-# Install dependencies — supports both npm and bun lockfiles (SEC-11 fix)
-COPY package.json package-lock.json* bun.lock* ./
-RUN if [ -f bun.lock ]; then npm install -g bun && bun install --frozen-lockfile; else npm ci; fi
+# Build tooling only; container production entry is disabled. npm only.
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # Copy source
 COPY . .
@@ -44,4 +45,6 @@ EXPOSE 3044
 # Apply only reviewed, additive migrations before starting the server.
 # Never use `prisma db push` in production because it can change the schema
 # outside the migration history.
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+# Quarantined legacy runtime: Docker is not the approved Hostinger transport.
+# Never migrate a database implicitly when starting an image.
+CMD ["sh", "-c", "echo 'DISABLED: legacy production container entry; use the approved Hostinger release procedure' >&2; exit 1"]

@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # Production Rollback — Safe Procedure (ALO Education — 3044 / /root/alo-github-main)
 
 This guide shows how to revert a failed production deployment without losing `.env`, uploads, or audit history.

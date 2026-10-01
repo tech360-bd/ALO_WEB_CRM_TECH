@@ -1,0 +1,17 @@
+
+> alo-education-erp@0.3.0 test:integration
+> vitest run tests/integration
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /home/user/alo_education_z....ai
+
+ ✓ tests/integration/visa-security-negative.test.ts (22 tests) 7ms
+ ↓ tests/integration/consultation-workflow.test.ts (7 tests | 7 skipped)
+
+ Test Files  1 passed | 1 skipped (2)
+      Tests  22 passed | 7 skipped (29)
+   Start at  20:31:32
+   Duration  387ms (transform 77ms, setup 0ms, import 105ms, tests 7ms, environment 0ms)

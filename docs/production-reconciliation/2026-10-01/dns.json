@@ -1,0 +1,100 @@
+[
+  {
+    "name": "aloeducation.com",
+    "type": "A",
+    "answers": [
+      "191.101.104.201",
+      "212.1.212.1"
+    ]
+  },
+  {
+    "name": "aloeducation.com",
+    "type": "AAAA",
+    "answers": [
+      "2a02:4780:22:1d35:3fea:262d:cfc4:7191",
+      "2a02:4780:1d:7b4d:591f:454c:8c74:8b36"
+    ]
+  },
+  {
+    "name": "aloeducation.com",
+    "type": "NS",
+    "answers": [
+      "helios.dns-parking.com",
+      "aster.dns-parking.com"
+    ]
+  },
+  {
+    "name": "aloeducation.com",
+    "type": "MX",
+    "answers": [
+      {
+        "exchange": "mx1.hostinger.com",
+        "priority": 5
+      },
+      {
+        "exchange": "mx2.hostinger.com",
+        "priority": 10
+      }
+    ]
+  },
+  {
+    "name": "aloeducation.com",
+    "type": "TXT",
+    "answers": [
+      [
+        "v=spf1 include:_spf.mail.hostinger.com ~all"
+      ]
+    ]
+  },
+  {
+    "name": "www.aloeducation.com",
+    "type": "CNAME",
+    "answers": [
+      "www.aloeducation.com.cdn.hstgr.net"
+    ]
+  },
+  {
+    "name": "_dmarc.aloeducation.com",
+    "type": "TXT",
+    "answers": [
+      [
+        "v=DMARC1; p=none"
+      ]
+    ]
+  },
+  {
+    "name": "hostingermail-a._domainkey.aloeducation.com",
+    "type": "CNAME",
+    "answers": [
+      "hostingermail-a.dkim.mail.hostinger.com"
+    ]
+  },
+  {
+    "name": "hostingermail-b._domainkey.aloeducation.com",
+    "type": "CNAME",
+    "answers": [
+      "hostingermail-b.dkim.mail.hostinger.com"
+    ]
+  },
+  {
+    "name": "hostingermail-c._domainkey.aloeducation.com",
+    "type": "CNAME",
+    "answers": [
+      "hostingermail-c.dkim.mail.hostinger.com"
+    ]
+  },
+  {
+    "name": "autodiscover.aloeducation.com",
+    "type": "CNAME",
+    "answers": [
+      "autodiscover.mail.hostinger.com"
+    ]
+  },
+  {
+    "name": "autoconfig.aloeducation.com",
+    "type": "CNAME",
+    "answers": [
+      "autoconfig.mail.hostinger.com"
+    ]
+  }
+]

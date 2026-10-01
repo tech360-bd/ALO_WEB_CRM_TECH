@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-01 Asia/Dhaka",
+  "scope": "Local working tree on arena/01a0f2b5-alo-education-z-ai after F-01 through F-11; not deployed, not current CI proof",
+  "committedHead": "9e504ad287bd98861d55c72d332fe4f0d840bf9e",
+  "checks": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "PASS",
+      "result": "449 pass, 7 skip; 50 files passed, 1 skipped. Includes isolated DB/provider doubles and source assertions.",
+      "logPath": "/home/user/functionality-tests-final.log",
+      "logSHA256": "f54a30e6fa17bf51cbda89c73a061a30889d2509c5ad6a495d96c02b29a9ca0b"
+    },
+    {
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "status": "PARTIAL",
+      "result": "22 pass, 7 skip; real consultation database tests skipped without TEST_DATABASE_URL. Overlaps npm test.",
+      "logPath": "/home/user/functionality-integration-final.log",
+      "logSHA256": "25da3b2270e0db432130dc59c0a1283becfcdfbe83d54bb9521a14122928f43e"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "status": "PASS",
+      "result": "0 errors, 23 warnings under existing configuration; no rules weakened.",
+      "logPath": "/home/user/functionality-lint-final.log",
+      "logSHA256": "540a42243eeb96330ee31ac14fe42c398c2e192ca0a8033df501372a98640f56"
+    },
+    {
+      "command": "npm audit --json",
+      "exitCode": 0,
+      "status": "PASS",
+      "result": "0 vulnerabilities",
+      "logPath": "/home/user/functionality-audit-final.json",
+      "logSHA256": "8405f8945216f2f0313b686394c7cdaf6106ca7bd2dc4a52b518e95a46375e6e"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 1,
+      "status": "BLOCKED",
+      "result": "Missing generated Prisma model metadata; stopped before TypeScript checking.",
+      "logPath": "/home/user/functionality-typecheck-final.log",
+      "logSHA256": "406b7ee9b91df482da177a51abf3788de38ecb698c23e2e2102c26a275783aa1"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 1,
+      "status": "BLOCKED",
+      "result": "Prisma engine download TLS failure before Next build.",
+      "logPath": "/home/user/functionality-build-final.log",
+      "logSHA256": "2d1bf784fe16542c838be910b49bb49d6aa9fd6bc922e6dcb8c9797b48fd20ef"
+    },
+    {
+      "command": "npm run test:e2e",
+      "exitCode": 1,
+      "status": "BLOCKED",
+      "result": "Standalone server absent; Playwright could not start configured web server. No browser journey executed.",
+      "logPath": "/home/user/functionality-e2e-final.log",
+      "logSHA256": "8551e5e7a7b872b297ce8af62a90aa68be3c64d541b6999c68fd3dad4d84fd8d"
+    }
+  ],
+  "ci": {
+    "status": "NOT VERIFIED",
+    "reason": "No new branch push/run; prior success 36776577753 only covers 9e504ad2"
+  },
+  "production": {
+    "status": "BLOCKED",
+    "reason": "DB authentication failure; deployed ZIP identity/authorized access missing; confirmed source defects remain"
+  }
+}

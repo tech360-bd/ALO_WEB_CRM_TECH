@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # Integration Setup — ALO Education CRM
 
 **Single connected CRM:** Web Search → Scrape → Extract → AI → Lead Validation → CRM Database → Employee Assignment → Communication & Follow-up. Production port 3044, Asia/Dhaka, MySQL Prisma, Redis locking.

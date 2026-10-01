@@ -1,0 +1,144 @@
+## arena/01a0f2b5-alo-education-z-ai
+ M .env.example
+ M .env.production.example
+ M .github/workflows/ci.yml
+ M .github/workflows/deploy-production.yml
+ M .github/workflows/deploy-recovery.yml
+ M .github/workflows/health-monitor.yml
+ M CPANEL_DEPLOYMENT_GUIDE.md
+ M DEPLOYMENT-GUIDE.md
+ M DEPLOYMENT.md
+ M README.md
+ M README_DEPLOYMENT.md
+ M docs/DEPLOYMENT.md
+ M docs/VPS-GITHUB-DEPLOYMENT.md
+ M documentation/CPANEL-DEPLOYMENT-GUIDE.md
+ M ecosystem.config.cjs
+ M package-lock.json
+ M package.json
+ M playwright.config.ts
+ M prisma/schema.prisma
+ M scripts/prepare-standalone.mjs
+ M scripts/seed-all-portal-users.ts
+ M scripts/seed-portal-admin.ts
+ M src/app/api/admin/employees/create/route.ts
+ M src/app/api/admin/employees/resend-activation/route.ts
+ M src/app/api/admin/payroll/route.ts
+ M src/app/api/agentos/approvals/route.ts
+ M src/app/api/agentos/rollout/route.ts
+ M src/app/api/automation/dashboard/route.ts
+ M src/app/api/automation/schedule/route.ts
+ M src/app/api/crm/ceo/dashboard/route.ts
+ M src/app/api/crm/finance/route.ts
+ M src/app/api/cron/weekly-ai-agent/route.ts
+ M src/app/api/cron/weekly-university-scan/route.ts
+ M src/app/api/documents/route.ts
+ M src/app/api/employee-access/payroll/route.ts
+ M src/app/api/health/route.ts
+ M src/app/api/hr/payroll/route.ts
+ M src/app/api/hrm/payroll/route.ts
+ M src/app/api/portal-auth/forgot-password/route.ts
+ M src/app/api/storage/upload/route.ts
+ M src/app/api/student-portal/payments/route.ts
+ M src/app/api/workforce/approval/route.ts
+ M src/app/api/workforce/gateway/route.ts
+ M src/app/api/workforce/metrics/route.ts
+ M src/app/api/workforce/orchestrate/route.ts
+ M src/components/alo/views/ai-command-center.tsx
+ M src/components/crm/dashboards/CeoDashboard.tsx
+ M src/components/marketing/hub/AIEmployeeDepartmentView.tsx
+ M src/components/student/StudentPayments.tsx
+ M src/cron/cron-definitions.ts
+ M src/cron/worker.ts
+ M src/lib/access-control/central-security-engine.ts
+ M src/lib/agent-orchestrator.ts
+ M src/lib/agentos/agent-service.ts
+ M src/lib/ai-agents/student-intake-agent.ts
+ M src/lib/ai-gateway.ts
+ M src/lib/ai.ts
+ M src/lib/automation-analytics.ts
+ M src/lib/automation-engine.ts
+ M src/lib/crm-automation.ts
+ M src/lib/department-model-config.ts
+ M src/lib/double-entry-ledger.ts
+ M src/lib/email-service.ts
+ M src/lib/model-router.ts
+ M src/lib/tool-gateway.ts
+ M test-results/.last-run.json
+ M tests/integration/consultation-workflow.test.ts
+ M tests/unit/deployment-config.test.ts
+ M tests/unit/security-hardening.test.ts
+?? CPANEL-DEPLOYMENT-GUIDE.md
+?? CRON-JOBS.md
+?? DATABASE-GUIDE.md
+?? ENVIRONMENT-VARIABLES.md
+?? GITHUB-AUTO-DEPLOYMENT.md
+?? GITHUB-DELIVERY.md
+?? PRODUCTION-READINESS.md
+?? ROLLBACK-GUIDE.md
+?? docs/ALO-EDUCATION-FULL-AUDIT.md
+?? docs/ALO-EDUCATION-PRODUCTION-COMPLETION-REPORT.md
+?? docs/API_FUNCTIONALITY_MATRIX.md
+?? docs/AUDIT_ATOMICITY.md
+?? docs/CONTINUATION-READINESS.md
+?? docs/CRON-RECONCILIATION.md
+?? docs/CRON_RECONCILIATION.md
+?? docs/DATABASE_RECONCILIATION.md
+?? docs/DEPENDENCY_REMEDIATION.md
+?? docs/FINAL_PRODUCTION_STATUS.md
+?? docs/FINANCIAL_LIFECYCLE_AUDIT.md
+?? docs/FULL_FUNCTIONALITY_INVENTORY.md
+?? docs/FUNCTIONALITY_REPAIR_LOG.md
+?? docs/HOSTINGER-PRODUCTION-RECONCILIATION.md
+?? docs/MIGRATION-SAFETY-REPORT.md
+?? docs/MIGRATION_DEPENDENCIES.json
+?? docs/MIGRATION_RECONCILIATION.md
+?? docs/PRODUCTION_DEPLOYMENT_MATRIX.md
+?? docs/PRODUCTION_ENVIRONMENT_MATRIX.md
+?? docs/PRODUCTION_RUNTIME_AUDIT.md
+?? docs/RBAC_FUNCTIONALITY_MATRIX.md
+?? docs/REPOSITORY-BLOCKERS-2026-10-01.md
+?? docs/ROUTE_FUNCTIONALITY_MATRIX.md
+?? docs/SCHEDULER_RECONCILIATION.md
+?? docs/audit/2026-09-30/
+?? docs/audit/2026-10-01-continuation/
+?? docs/audit/2026-10-01-repair/
+?? docs/audit/2026-10-01/
+?? docs/deployment-ownership/
+?? docs/functionality/
+?? docs/production-reconciliation/
+?? scripts/audit-functional-surface.mjs
+?? scripts/audit-portal-views.mjs
+?? scripts/preflight/
+?? scripts/production-smoke.mjs
+?? scripts/verify-prisma-client.mjs
+?? scripts/verify-standalone.mjs
+?? src/app/api/health/live/
+?? src/lib/agentos/approval-transition.ts
+?? src/lib/automation-measurement.ts
+?? src/lib/student/payment-history.ts
+?? src/lib/transactional-audit.ts
+?? src/types/
+?? tests/helpers/
+?? tests/unit/ai-provider-policy.test.ts
+?? tests/unit/approval-transition.test.ts
+?? tests/unit/automation-measurement.test.ts
+?? tests/unit/ceo-dashboard-functionality.test.ts
+?? tests/unit/cron-quarantine.test.ts
+?? tests/unit/document-portal-student-scope.test.ts
+?? tests/unit/email-consumers.test.ts
+?? tests/unit/email-service.test.ts
+?? tests/unit/false-success-quarantine.test.ts
+?? tests/unit/health-readiness.test.ts
+?? tests/unit/hrm-payroll-scope.test.ts
+?? tests/unit/journal-integrity.test.ts
+?? tests/unit/legacy-approval-route.test.ts
+?? tests/unit/payment-functionality.test.ts
+?? tests/unit/prisma-config-compatibility.test.ts
+?? tests/unit/standalone-verification.test.ts
+?? tests/unit/student-payment-history.test.ts
+?? tests/unit/test-database-safety.test.ts
+?? tests/unit/tool-permission-boundary.test.ts
+?? tests/unit/transactional-audit.test.ts
+?? tests/unit/workflow-persistence-integrity.test.ts
+?? tests/unit/workforce-route-security.test.ts

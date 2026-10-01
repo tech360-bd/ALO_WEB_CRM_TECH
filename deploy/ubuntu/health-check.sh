@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# LEGACY / NOT USED FOR CURRENT PRODUCTION — delegates only to a disabled legacy diagnostic.
 # Ubuntu compatibility entrypoint. Keep one health implementation so the
 # systemd and AlmaLinux/cPanel paths cannot drift.
 set -Eeuo pipefail

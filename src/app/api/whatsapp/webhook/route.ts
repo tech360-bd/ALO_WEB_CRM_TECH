@@ -1,4 +1,4 @@
-// @ts-nocheck - Complex webhook with Prisma stub issues, needs VPS generation
+// @ts-nocheck - Complex webhook with Prisma stub issues, requires generated-client verification in Node 22 CI
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import crypto from "crypto";

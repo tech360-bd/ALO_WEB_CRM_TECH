@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+// LEGACY / NOT USED FOR CURRENT PRODUCTION — no database or filesystem probing.
+http_response_code(410);
+exit('Legacy installer disabled. Hostinger Node.js 22 is the only current runtime.');
 /**
  * ALO Education — VPS Install Check (Path A: Next.js)
  * Run: php install-check.php  or  https://aloeducation.com/install-check.php (delete after)

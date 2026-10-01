@@ -1,0 +1,158 @@
+[
+  {
+    "file": "deploy.sh",
+    "beforeSHA256": "3e7bf11a0af22b1c7d364d9fadc779a13430aadb5f0dd520793a2b2fc7a30ef4",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-vps-deploy.sh",
+    "beforeSHA256": "cc3bca74bb910bb608dff8812d252e11c5b1071cd9e2cc97fe5304ac11c90bd9",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "scripts/deploy.sh",
+    "beforeSHA256": "fcbe3082cac4fa40a17cf9be1da53c8a2ac5f267e7eded9aa1045a60afd3347f",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "scripts/rollback.sh",
+    "beforeSHA256": "f72103d315f7eda9dbce0f3545e1c1ad377b22c5c48155e014a49e426c07d0a4",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "scripts/restart.sh",
+    "beforeSHA256": "aeca99bd7ec87b52544ba8d042f2c42891c96979f135dbf53db14f0bd2e2e331",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "scripts/restore-mysql.sh",
+    "beforeSHA256": "a3b4e9f02137fb55f4e8846a7e1205971b766403402a873def94ef8107cf563e",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "scripts/install_agentos.sh",
+    "beforeSHA256": "7953ad6b7a18a93b171ba9a7e8788451da73e446dfb94257e598e4614bcad77f",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "scripts/auto_domain_agent.sh",
+    "beforeSHA256": "8f6b9f4506b0cf66915513a01985065dfd13dd8a42150a6720706f62b1f3d582",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "deploy/ubuntu/deploy.sh",
+    "beforeSHA256": "b9eec89d01d72e6f29d7db5a1fdb9025e564eae14606becb8e391b25248b44e2",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "deploy/ubuntu/rollback.sh",
+    "beforeSHA256": "a87a8bf5811c618aaa177ad63f6b78f32548d218739ddfa3560c32b21888a622",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "deploy/ubuntu/restore.sh",
+    "beforeSHA256": "c0e73702858c80dc3fa901f28198c5ccb1348b97a73b5597a43c685140d60ceb",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": ".zscripts/build.sh",
+    "beforeSHA256": "46502ad360b645b2e609b285302419fd021236a47297958bf36c5bc38c4d75b8",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": ".zscripts/start.sh",
+    "beforeSHA256": "c93760995fd7db5dbced6042393ee576607c4a15e9fec78e57d3afc41a206a30",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/deploy.sh",
+    "beforeSHA256": "6ca3bc4d09a196c2d6d27b448df8f85cb1b7820429a8d87916c86c2e319e1b8d",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/scripts/restore-mysql.sh",
+    "beforeSHA256": "a3b4e9f02137fb55f4e8846a7e1205971b766403402a873def94ef8107cf563e",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/scripts/install_agentos.sh",
+    "beforeSHA256": "7953ad6b7a18a93b171ba9a7e8788451da73e446dfb94257e598e4614bcad77f",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/scripts/auto_domain_agent.sh",
+    "beforeSHA256": "8f6b9f4506b0cf66915513a01985065dfd13dd8a42150a6720706f62b1f3d582",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/deploy/ubuntu/deploy.sh",
+    "beforeSHA256": "89e589af29a1f3a0ce9c7122013c0b527d41205621885b66e1074967a9323310",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/deploy/ubuntu/rollback.sh",
+    "beforeSHA256": "1b89011272a50d94fd524f6d4a832eb063401c992cd34d71dc036fa0355b5c32",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/deploy/ubuntu/restore.sh",
+    "beforeSHA256": "17ad798527dae471494a53a07b61077a49a74d02f24236f401d48c84a86994e8",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/.zscripts/build.sh",
+    "beforeSHA256": "46502ad360b645b2e609b285302419fd021236a47297958bf36c5bc38c4d75b8",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/.zscripts/start.sh",
+    "beforeSHA256": "c93760995fd7db5dbced6042393ee576607c4a15e9fec78e57d3afc41a206a30",
+    "boundary": "inline refusal before historical body",
+    "status": "DISABLED"
+  },
+  {
+    "file": "ecosystem.config.cjs",
+    "beforeSHA256": "ff9478bd78bc0ba562f78239c8112aece83417641b7585ff4d23b16d8605505a",
+    "boundary": "module-load throw",
+    "status": "DISABLED"
+  },
+  {
+    "file": "deploy-build/ecosystem.config.cjs",
+    "beforeSHA256": "c3a9be7716698feea75105c8c347590e186d3c54a80609a235f3a87583bae7c0",
+    "boundary": "module-load throw",
+    "status": "DISABLED"
+  },
+  {
+    "file": "alo-education-web-crm-final/ecosystem.config.cjs",
+    "beforeSHA256": "c3a9be7716698feea75105c8c347590e186d3c54a80609a235f3a87583bae7c0",
+    "boundary": "module-load throw",
+    "status": "DISABLED"
+  },
+  {
+    "file": "Dockerfile",
+    "beforeSHA256": "d36f8368f646c7682bb0b41a854d96891fcbc4013cb027ef85e241e75d954c71",
+    "boundary": "container command refusal; no implicit migrations",
+    "status": "DISABLED"
+  }
+]

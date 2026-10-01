@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # ALO Education ERP — Ubuntu Deployment Guide
 
 This guide explains how to deploy the ALO Education ERP on a fresh Ubuntu 22.04 / 24.04 server.

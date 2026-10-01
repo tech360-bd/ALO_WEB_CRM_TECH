@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 import { db } from "@/lib/db";
-import { logHrmAudit } from "@/lib/hrms/audit";
+import { writeHrmAudit } from "@/lib/transactional-audit";
 import { canManagePayroll, isFinance, isHR, isSuperAdmin } from "@/lib/hrms/rbac";
 import { createHrmNotification } from "@/lib/hrms/notifications";
 import {
@@ -38,7 +38,7 @@ async function listPayroll(request: Request, auth: AuthContext) {
     return NextResponse.json({ success: true, data: run ? [run] : [] });
   }
 
-  if (view === "slip" && employeeId && !canViewAll) {
+  if (employeeId && !canViewAll) {
     const employee = await (db as any).employee.findUnique({ where: { id: employeeId }, select: { userId: true } });
     if (!employee || employee.userId !== auth.userId) {
       return NextResponse.json({ success: false, error: "Access denied to salary details" }, { status: 403 });
@@ -138,10 +138,10 @@ async function generatePayroll(request: Request, auth: AuthContext) {
           },
         });
       }
+      await writeHrmAudit(tx, auth, "GENERATE_PAYROLL", "HrmPayrollRun", run.id, run, request);
       return run;
     }, { isolationLevel: "Serializable" });
 
-    await logHrmAudit({ actor: auth, action: "GENERATE_PAYROLL", entityType: "HrmPayrollRun", entityId: result.id, newValue: result });
     return NextResponse.json({ success: true, data: { period, created: result.totalEmployees, totalGross: result.totalGross, totalNet: result.totalNet, totalDeductions: result.totalDeductions, run: result } });
   } catch (error) {
     return errorResponse(error);
@@ -184,10 +184,10 @@ async function updatePayroll(request: Request, auth: AuthContext) {
           ...(action === "pay" ? { paidAt: new Date() } : {}),
         },
       });
+      await writeHrmAudit(tx, auth, `PAYROLL_${action.toUpperCase()}`, "HrmPayrollRun", updatedRun.id, updatedRun, request);
       return updatedRun;
     }, { isolationLevel: "Serializable" });
 
-    await logHrmAudit({ actor: auth, action: `PAYROLL_${action.toUpperCase()}`, entityType: "HrmPayrollRun", entityId: result.id, newValue: result });
     return NextResponse.json({ success: true, data: result });
   } catch (error) {
     return errorResponse(error);

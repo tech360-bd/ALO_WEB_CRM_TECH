@@ -45,12 +45,15 @@ export const PATCH = withAuth(async (req: Request, auth) => {
   }
   // The approver is the authenticated actor — never a body-supplied value.
   const approvedBy = auth.userId;
-  const payroll = await db.payroll.update({
-    where: { id: String(id) },
-    data: { status: String(status), approvedBy, paidAt: status === "PAID" ? new Date() : null },
-  });
-  await db.auditLog.create({
-    data: { userId: approvedBy, action: "PAYROLL_STATUS_CHANGE", resource: "Payroll", resourceId: String(id), details: JSON.stringify({ status }) },
+  const payroll = await db.$transaction(async tx => {
+    const updated = await tx.payroll.update({
+      where: { id: String(id) },
+      data: { status: String(status), approvedBy, paidAt: status === "PAID" ? new Date() : null },
+    });
+    await tx.auditLog.create({
+      data: { userId: approvedBy, action: "PAYROLL_STATUS_CHANGE", resource: "Payroll", resourceId: String(id), details: JSON.stringify({ status }) },
+    });
+    return updated;
   });
   return NextResponse.json({ payroll, message: `Payroll ${String(status).toLowerCase()}.` });
 }, { requireUserTypes: ALLOWED_USER_TYPES });

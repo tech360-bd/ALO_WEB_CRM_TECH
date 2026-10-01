@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Deployment target validation — port 3044, dir /root/alo-github-main-new, domain aloeducation.com
+// Managed cPanel production deployment contract.
 const ROOT = join(import.meta.dirname, "../..");
 
-describe("Deployment configuration — target 3044 / /root/alo-github-main-new", () => {
+describe("Deployment configuration — managed cPanel", () => {
   it("selects npm as sole package manager (no bun.lock)", () => {
     expect(existsSync(join(ROOT, "package-lock.json"))).toBe(true);
     expect(existsSync(join(ROOT, "bun.lock"))).toBe(false);
@@ -20,7 +20,7 @@ describe("Deployment configuration — target 3044 / /root/alo-github-main-new",
     expect(build).not.toMatch(/prismagenerate/);
     expect(build).toMatch(/prisma generate/);
     expect(build).toMatch(/prepare-standalone/);
-    expect(pkg.scripts?.start).toBe("NODE_ENV=production node .next/standalone/server.js");
+    expect(pkg.scripts?.start).toBe("NODE_ENV=production node server.js");
   });
 
   it("next config uses output: standalone", () => {
@@ -28,20 +28,13 @@ describe("Deployment configuration — target 3044 / /root/alo-github-main-new",
     expect(cfg).toMatch(/output:\s*["']standalone["']/);
   });
 
-  it("ecosystem and workflow bind to PORT 3044 and HOSTNAME 0.0.0.0", () => {
+  it("historical production workflow is a main-only refusal notice", () => {
     const workflow = readFileSync(join(ROOT, ".github/workflows/deploy-production.yml"), "utf-8");
-    expect(workflow).toMatch(/APP_PORT:\s*['"]3044['"]/);
-    expect(workflow).toContain('passphrase: ${{ secrets.DEPLOY_SSH_KEY_PASSPHRASE }}');
-    expect(workflow).toContain('SHA256:K0041d6kUdse+U6+vHijY73qb1ur/GsedNae8g8a+tU');
-    expect(workflow).toContain('SKIP_MIGRATIONS');
-    expect(workflow).not.toContain(":3025");
-    expect(workflow).not.toContain(":3000");
-    // ecosystem.config.cjs may not exist on some branches — skip if missing
-    const ecoPath = join(ROOT, "ecosystem.config.cjs");
-    if (existsSync(ecoPath)) {
-      const eco = readFileSync(ecoPath, "utf-8");
-      expect(eco).toMatch(/PORT:\s*["']3044["']/);
-    }
+    expect(workflow).toContain("github.ref == 'refs/heads/main'");
+    expect(workflow).toContain("github.event_name == 'workflow_dispatch'");
+    expect(workflow).not.toContain("environment:");
+    expect(workflow).toContain("exit 1");
+    expect(workflow).not.toMatch(/DEPLOY_HOST|DEPLOY_PORT|DEPLOY_SSH|pm2|appleboy|3044|\/root\//);
   });
 
   it("prepare-standalone validates server.js", () => {
@@ -55,25 +48,11 @@ describe("Deployment configuration — target 3044 / /root/alo-github-main-new",
     expect(schema).toMatch(/provider\s*=\s*"mysql"/);
   });
 
-  it("production target constants are documented (SEC-05)", () => {
-    const expectedPort = 3044;
-    const expectedDomain = "https://aloeducation.com";
-    expect(expectedPort).toBe(3044);
-    expect(expectedDomain).toBe("https://aloeducation.com");
-  });
-
   it("health endpoint exists", () => {
     expect(existsSync(join(ROOT, "src/app/api/health/route.ts"))).toBe(true);
   });
 
-  it("nginx and workflow target is 3044", () => {
-    const nginx = readFileSync(join(ROOT, "nginx.conf"), "utf-8");
-    const workflow = readFileSync(join(ROOT, ".github/workflows/deploy-production.yml"), "utf-8");
-    expect(nginx).toMatch(/3044/);
-    expect(workflow).toMatch(/APP_PORT:\s*['"]3044['"]/);
-    expect(workflow).not.toMatch(/:3025/);
-    expect(workflow).not.toMatch(/:3000/);
-  });
+
 });
 
 describe("Health check — local and public", () => {
@@ -83,14 +62,6 @@ describe("Health check — local and public", () => {
     expect(["ok", "degraded"]).toContain(mockOk.status);
     expect(mockOk.database.connected).toBe(true);
     expect(mockDegraded.database.connected).toBe(false);
-  });
-
-  it("local health URL uses 127.0.0.1:3044 (SEC-05: spec 3044)", () => {
-    const local = "http://127.0.0.1:3044/api/health";
-    const url = new URL(local);
-    expect(url.hostname).toBe("127.0.0.1");
-    expect(url.port).toBe("3044");
-    expect(url.pathname).toBe("/api/health");
   });
 
   it("public health URL uses https://aloeducation.com", () => {

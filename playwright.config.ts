@@ -17,7 +17,7 @@ export default defineConfig({
   webServer: {
     command:
       "HOSTNAME=127.0.0.1 PORT=3211 NODE_ENV=production SESSION_SECRET='playwright-session-secret-32-bytes' AUTH_SECRET='playwright-auth-secret-32-bytes' NEXTAUTH_SECRET='playwright-nextauth-secret-32-bytes' NEXTAUTH_URL='http://127.0.0.1:3211' npm start",
-    url: 'http://127.0.0.1:3211/api/health',
+    url: 'http://127.0.0.1:3211/api/health/live',
     timeout: 60_000,
     reuseExistingServer: false,
   },
