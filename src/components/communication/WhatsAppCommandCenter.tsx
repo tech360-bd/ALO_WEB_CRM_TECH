@@ -216,7 +216,7 @@ export default function WhatsAppCommandCenter() {
                   slaFilter === f
                     ? f === 'overdue' ? 'bg-red-500 text-white border-red-500'
                       : f === 'warning' ? 'bg-amber-400 text-white border-amber-400'
-                      : 'bg-[#0057B8] text-white border-[#0057B8]'
+                      : 'bg-[#0B5ED7] text-white border-[#0B5ED7]'
                     : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                 }`}
               >
@@ -257,7 +257,7 @@ export default function WhatsAppCommandCenter() {
                 key={thread.id}
                 onClick={() => selectThread(thread)}
                 className={`w-full text-left p-3 border-b border-slate-100 hover:bg-slate-50 transition-colors ${
-                  selectedThread?.id === thread.id ? 'bg-blue-50 border-l-2 border-l-[#0057B8]' : ''
+                  selectedThread?.id === thread.id ? 'bg-blue-50 border-l-2 border-l-[#0B5ED7]' : ''
                 }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-1">
@@ -301,7 +301,7 @@ export default function WhatsAppCommandCenter() {
         <div className="flex-1 flex flex-col min-w-0">
           {/* Conv Header */}
           <div className="p-3 border-b border-slate-200 bg-white flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#0057B8] text-white flex items-center justify-center font-bold text-sm">
+            <div className="w-9 h-9 rounded-full bg-[#0B5ED7] text-white flex items-center justify-center font-bold text-sm">
               {(selectedThread.studentContext?.fullName || selectedThread.contactName || 'U')[0]}
             </div>
             <div className="flex-1 min-w-0">
@@ -362,7 +362,7 @@ export default function WhatsAppCommandCenter() {
 
                       <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                         isOutbound
-                          ? 'bg-[#0057B8] text-white rounded-br-sm'
+                          ? 'bg-[#0B5ED7] text-white rounded-br-sm'
                           : 'bg-white text-slate-900 border border-slate-200 rounded-bl-sm shadow-sm'
                       }`}>
                         {msg.messageBody || msg.content || ''}
@@ -443,14 +443,14 @@ export default function WhatsAppCommandCenter() {
                   value={draftText}
                   onChange={(e) => setDraftText(e.target.value)}
                   placeholder="Type your message..."
-                  className="w-full p-2.5 pr-24 border border-slate-200 rounded-xl text-xs resize-none h-16 focus:ring-1 focus:ring-[#0057B8] focus:outline-none"
+                  className="w-full p-2.5 pr-24 border border-slate-200 rounded-xl text-xs resize-none h-16 focus:ring-1 focus:ring-[#0B5ED7] focus:outline-none"
                   onKeyDown={(e) => { if (e.key === 'Enter' && e.ctrlKey) handleSend(); }}
                 />
                 <div className="absolute right-2 bottom-2 flex items-center gap-1">
-                  <button onClick={() => setShowTemplates(!showTemplates)} className="p-1 text-slate-400 hover:text-[#0057B8]">
+                  <button onClick={() => setShowTemplates(!showTemplates)} className="p-1 text-slate-400 hover:text-[#0B5ED7]">
                     <Tag className="w-4 h-4" />
                   </button>
-                  <button className="p-1 text-slate-400 hover:text-[#0057B8]">
+                  <button className="p-1 text-slate-400 hover:text-[#0B5ED7]">
                     <Paperclip className="w-4 h-4" />
                   </button>
                 </div>
@@ -471,7 +471,7 @@ export default function WhatsAppCommandCenter() {
                   onClick={handleSend}
                   disabled={!draftText.trim()}
                   size="sm"
-                  className="bg-[#0057B8] text-white text-[10px] font-bold gap-1 h-7"
+                  className="bg-[#0B5ED7] text-white text-[10px] font-bold gap-1 h-7"
                 >
                   <Send className="w-3 h-3" /> Send
                 </Button>
@@ -488,7 +488,7 @@ export default function WhatsAppCommandCenter() {
                     onClick={() => { setDraftText(t.body); setShowTemplates(false); }}
                     className="w-full text-left p-2 hover:bg-white rounded-lg border border-transparent hover:border-slate-200 text-xs transition-colors"
                   >
-                    <span className="font-bold text-[#0057B8]">{t.name}</span>
+                    <span className="font-bold text-[#0B5ED7]">{t.name}</span>
                     <p className="text-slate-500 text-[10px] mt-0.5 truncate">{t.body}</p>
                   </button>
                 ))}
@@ -530,11 +530,11 @@ export default function WhatsAppCommandCenter() {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Counselor</span>
-                <span className="font-bold text-[#0057B8] text-right">{selectedThread.studentContext.assignedCounselorName || 'Unassigned'}</span>
+                <span className="font-bold text-[#0B5ED7] text-right">{selectedThread.studentContext.assignedCounselorName || 'Unassigned'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Stage</span>
-                <Badge className="text-[10px] bg-blue-50 text-[#0057B8] font-bold">
+                <Badge className="text-[10px] bg-blue-50 text-[#0B5ED7] font-bold">
                   {selectedThread.studentContext.currentStage || 'Unknown'}
                 </Badge>
               </div>
@@ -556,7 +556,7 @@ export default function WhatsAppCommandCenter() {
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Quick Actions</p>
               <div className="space-y-1.5">
                 <Button variant="outline" size="sm" className="w-full text-[10px] font-bold gap-1.5 justify-start h-7">
-                  <FileText className="w-3 h-3 text-[#0057B8]" /> View Full Profile
+                  <FileText className="w-3 h-3 text-[#0B5ED7]" /> View Full Profile
                 </Button>
                 <Button variant="outline" size="sm" className="w-full text-[10px] font-bold gap-1.5 justify-start h-7">
                   <Phone className="w-3 h-3 text-emerald-600" /> Call Student

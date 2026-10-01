@@ -30,8 +30,8 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#0057B8';
-const ALO_ORANGE = '#E8501A';
+const ALO_BLUE = '#0B5ED7';
+const ALO_ORANGE = '#F97316';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AcademicQualification {
@@ -220,7 +220,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   },
   LIKELY_ELIGIBLE: {
     label: 'Likely Eligible',
-    color: '#0057B8',
+    color: '#0B5ED7',
     bgClass: 'bg-blue-100 dark:bg-blue-950',
     textClass: 'text-blue-800 dark:text-blue-200',
     borderClass: 'border-blue-300 dark:border-blue-700',
@@ -236,7 +236,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   },
   PARTIALLY_MATCHED: {
     label: 'Partial',
-    color: '#E8501A',
+    color: '#F97316',
     bgClass: 'bg-orange-100 dark:bg-orange-950',
     textClass: 'text-orange-800 dark:text-orange-200',
     borderClass: 'border-orange-300 dark:border-orange-700',
@@ -545,7 +545,7 @@ export function EligibilityCheckerEnhanced() {
   // ═══════════════════════════════════════════════════════════════════════════════
   if (step === 0) {
     return (
-      <section className="min-h-[80vh] flex items-center justify-center relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${ALO_BLUE} 0%, #003d7a 60%, ${ALO_ORANGE} 100%)` }}>
+      <section className="min-h-[80vh] flex items-center justify-center relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${ALO_BLUE} 0%, #073B8C 60%, ${ALO_ORANGE} 100%)` }}>
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-white blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-white blur-3xl" />
@@ -562,7 +562,7 @@ export function EligibilityCheckerEnhanced() {
             Get preliminary guidance on your eligibility for courses worldwide. Our engine evaluates your academic profile, English scores, and preferences against verified course data.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" onClick={goNext} className="bg-white text-[#0057B8] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
+            <Button size="lg" onClick={goNext} className="bg-white text-[#0B5ED7] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
               <ClipboardCheck className="h-5 w-5 mr-2" />
               Start Eligibility Check
             </Button>
@@ -1282,7 +1282,7 @@ function MatchScoreRing({ score }: { score: number }) {
   const radius = 22;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const color = score >= 75 ? '#16A34A' : score >= 50 ? '#0057B8' : score >= 30 ? '#CA8A04' : '#DC2626';
+  const color = score >= 75 ? '#16A34A' : score >= 50 ? '#0B5ED7' : score >= 30 ? '#CA8A04' : '#DC2626';
 
   return (
     <div className="relative inline-flex items-center justify-center">

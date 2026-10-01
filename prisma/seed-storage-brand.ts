@@ -52,8 +52,8 @@ async function main() {
     create: {
       id: "default-brand-profile",
       name: "ALO Education",
-      primaryColor: "#F37021", // ALO Orange
-      secondaryColor: "#0066CC", // Education Blue
+      primaryColor: "#F97316", // ALO Orange
+      secondaryColor: "#0B5ED7", // Education Blue
       accentColor: "#FFB347", // Sunshine Accent
       tagline: "Your Gateway to Global Education",
       website: "https://aloeducation.com",

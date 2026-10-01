@@ -86,7 +86,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
+              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("SLA")}
             >
               Save
@@ -132,7 +132,7 @@ export function CrmSettings() {
                 />
               </div>
             </div>
-            <div className="rounded-lg bg-[#EAF3FF] p-3 text-xs text-[#0066CC]">
+            <div className="rounded-lg bg-[#EAF3FF] p-3 text-xs text-[#0B5ED7]">
               <Icon name="Info" className="mr-1 inline size-3.5" />
               Escalations notify the counselor's manager and senior leadership.
             </div>
@@ -147,7 +147,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
+              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("Office Hours")}
             >
               Save
@@ -218,7 +218,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
+              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("Scoring")}
             >
               Save
@@ -265,7 +265,7 @@ export function CrmSettings() {
             <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-[#F7FAFE] p-3">
               <div>
                 <p className="text-xs text-[#5A7299]">Hot Lead Threshold</p>
-                <Badge className="mt-1 bg-[#F37021] text-white">≥ {scoring.hotTier}</Badge>
+                <Badge className="mt-1 bg-[#F97316] text-white">≥ {scoring.hotTier}</Badge>
               </div>
               <div>
                 <p className="text-xs text-[#5A7299]">Urgent Threshold</p>
@@ -283,7 +283,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
+              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("Assignment")}
             >
               Save
@@ -376,7 +376,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
+              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("Auto-reply")}
             >
               Save

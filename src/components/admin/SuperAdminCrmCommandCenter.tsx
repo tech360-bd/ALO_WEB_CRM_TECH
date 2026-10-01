@@ -209,7 +209,7 @@ export function SuperAdminCrmCommandCenter() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {MODULES.map(m=><button key={m.key} onClick={()=>setActiveModule(m.key)} className={`px-3 py-2.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${activeModule===m.key ? "bg-[#0057B8] text-white border-[#0057B8] shadow" : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"}`}><span>{m.icon}</span>{m.label}</button>)}
+        {MODULES.map(m=><button key={m.key} onClick={()=>setActiveModule(m.key)} className={`px-3 py-2.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${activeModule===m.key ? "bg-[#0B5ED7] text-white border-[#0B5ED7] shadow" : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"}`}><span>{m.icon}</span>{m.label}</button>)}
       </div>
 
       {loading ? <div className="bg-white rounded-xl border p-12 text-center text-sm text-slate-400">Loading real CRM data...</div> : activeModule==="overview" ? renderOverview() : renderListModule()}

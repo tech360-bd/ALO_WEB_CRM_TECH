@@ -19,7 +19,7 @@ async function seed() {
       flag: '🇬🇧',
       status: 'active',
       sortOrder: 1,
-      accentColor: '#0057B8',
+      accentColor: '#0B5ED7',
       popularCities: JSON.stringify(['London', 'Manchester', 'Birmingham', 'Leeds', 'Liverpool']),
       popularIntakes: JSON.stringify(['September 2026', 'January 2027', 'May 2027']),
       studyLevels: JSON.stringify(['Foundation', 'Bachelors', 'Masters', 'MRes', 'PhD']),

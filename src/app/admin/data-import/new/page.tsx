@@ -87,7 +87,7 @@ export default function NewDataImportRoute() {
         <Button
           onClick={handleUpload}
           disabled={loading || !file}
-          className="bg-[#0057B8] hover:bg-blue-700 text-white text-xs rounded-xl px-5 flex items-center gap-2 mx-auto"
+          className="bg-[#0B5ED7] hover:bg-blue-700 text-white text-xs rounded-xl px-5 flex items-center gap-2 mx-auto"
         >
           {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
           {loading ? 'Processing File...' : 'Upload & Validate File'}

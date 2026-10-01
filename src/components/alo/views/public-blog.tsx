@@ -95,7 +95,7 @@ function BlogList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0066CC]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -104,12 +104,12 @@ function BlogList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F37021] border border-[#F37021]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
               <Icon name="Newspaper" className="mr-1 size-3" />
               Insights & Guides
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              ALO Education <span className="text-[#0066CC]">Blog</span>
+              ALO Education <span className="text-[#0B5ED7]">Blog</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Honest, up-to-date study-abroad guidance written by ALO counselors — covering visas, scholarships,
@@ -129,8 +129,8 @@ function BlogList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
               className={cn(
                 "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
                 category === c
-                  ? "bg-[#0066CC] text-white"
-                  : "border border-[#0066CC]/20 bg-white text-[#0066CC] hover:bg-[#EAF3FF]"
+                  ? "bg-[#0B5ED7] text-white"
+                  : "border border-[#0B5ED7]/20 bg-white text-[#0B5ED7] hover:bg-[#EAF3FF]"
               )}
             >
               {c}
@@ -141,22 +141,22 @@ function BlogList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
         {/* Featured */}
         {!loading && featured.length > 0 && category === "All" && (
           <div className="mb-10">
-            <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-[#F37021]">Featured Articles</h2>
+            <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-[#F97316]">Featured Articles</h2>
             <div className="grid gap-5 lg:grid-cols-2">
               {featured.slice(0, 2).map((post) => (
                 <Card
                   key={post.id}
-                  className="alo-card-hover group cursor-pointer rounded-2xl border-2 border-[#0066CC]/15 bg-white transition-all hover:-translate-y-1 hover:shadow-lg"
+                  className="alo-card-hover group cursor-pointer rounded-2xl border-2 border-[#0B5ED7]/15 bg-white transition-all hover:-translate-y-1 hover:shadow-lg"
                   onClick={() => onNavigate("public-blog", post.slug)}
                 >
                   <CardContent className="p-0">
-                    <div className="aspect-[16/9] w-full rounded-t-2xl bg-gradient-to-br from-[#0066CC] to-[#F37021]" />
+                    <div className="aspect-[16/9] w-full rounded-t-2xl bg-gradient-to-br from-[#0B5ED7] to-[#F97316]" />
                     <div className="p-6">
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-[#FFF3EA] text-[#F37021] hover:bg-[#FFF3EA]">{post.category}</Badge>
+                        <Badge className="bg-[#FFF3EA] text-[#F97316] hover:bg-[#FFF3EA]">{post.category}</Badge>
                         <span className="text-xs text-[#5A7299]">{fmtDate(post.publishedAt)}</span>
                       </div>
-                      <h3 className="mt-3 text-lg font-bold text-[#0B2447] group-hover:text-[#0066CC]">{post.title}</h3>
+                      <h3 className="mt-3 text-lg font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{post.title}</h3>
                       <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{post.excerpt}</p>
                       <div className="mt-4 flex items-center gap-3 text-xs text-[#5A7299]">
                         {post.authorName && <span className="font-semibold text-[#0B2447]">{post.authorName}</span>}
@@ -188,7 +188,7 @@ function BlogList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
             title="Couldn't load blog posts"
             description="Please refresh the page or try again later."
             action={
-              <Button onClick={() => window.location.reload()} className="bg-[#0066CC] text-white hover:bg-[#0066CC]/90">
+              <Button onClick={() => window.location.reload()} className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90">
                 <Icon name="RefreshCw" className="size-4" /> Refresh
               </Button>
             }
@@ -199,7 +199,7 @@ function BlogList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
             title="Blog articles coming soon"
             description="Check back for study abroad tips and insights from our counselors."
             action={
-              <Button onClick={() => onNavigate("public-resources")} className="bg-[#0066CC] text-white hover:bg-[#0066CC]/90">
+              <Button onClick={() => onNavigate("public-resources")} className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90">
                 <Icon name="BookOpen" className="size-4" /> Browse Resources
               </Button>
             }
@@ -215,10 +215,10 @@ function BlogList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
                 <CardContent className="flex flex-1 flex-col p-5">
                   <div className="mb-4 aspect-[16/9] w-full rounded-xl bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]" />
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-[#EAF3FF] text-[#0066CC]">{post.category}</Badge>
+                    <Badge variant="outline" className="bg-[#EAF3FF] text-[#0B5ED7]">{post.category}</Badge>
                     <span className="text-xs text-[#5A7299]">{fmtDate(post.publishedAt)}</span>
                   </div>
-                  <h3 className="mt-2 line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#0066CC]">{post.title}</h3>
+                  <h3 className="mt-2 line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{post.title}</h3>
                   <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{post.excerpt}</p>
                   <div className="mt-auto flex items-center gap-2 pt-4 text-xs text-[#5A7299]">
                     {post.authorName && <span className="font-semibold text-[#0B2447]">{post.authorName}</span>}
@@ -317,7 +317,7 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
             title="Article not found"
             description={error || "We couldn't find that article."}
             action={
-              <Button onClick={() => onNavigate("public-blog")} className="bg-[#0066CC] text-white hover:bg-[#0066CC]/90">
+              <Button onClick={() => onNavigate("public-blog")} className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90">
                 <Icon name="ArrowLeft" className="size-4" /> Back to Blog
               </Button>
             }
@@ -334,7 +334,7 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0066CC]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-white">
+      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-white">
         <div className="mx-auto max-w-3xl px-4 py-10 lg:px-6 lg:py-14">
           <Breadcrumb
             items={[
@@ -344,7 +344,7 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
             ]}
           />
           <div className="mt-6 flex items-center gap-2">
-            <Badge className="bg-[#FFF3EA] text-[#F37021] hover:bg-[#FFF3EA]">{post.category}</Badge>
+            <Badge className="bg-[#FFF3EA] text-[#F97316] hover:bg-[#FFF3EA]">{post.category}</Badge>
             <span className="text-xs text-[#5A7299]">{fmtDate(post.publishedAt)}</span>
             <span className="text-xs text-[#5A7299]">·</span>
             <span className="flex items-center gap-1 text-xs text-[#5A7299]">
@@ -382,7 +382,7 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
             }
             if (block.type === "quote") {
               return (
-                <blockquote key={idx} className="border-l-4 border-[#F37021] bg-[#FFF3EA]/50 px-5 py-4 text-base italic text-[#0B2447]">
+                <blockquote key={idx} className="border-l-4 border-[#F97316] bg-[#FFF3EA]/50 px-5 py-4 text-base italic text-[#0B2447]">
                   {block.text}
                 </blockquote>
               );
@@ -392,7 +392,7 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
                 <ul key={idx} className="space-y-2">
                   {block.items.map((item, i) => (
                     <li key={i} className="flex items-start gap-2 text-[15px] leading-relaxed text-[#0B2447]">
-                      <Icon name="ChevronRight" className="mt-1 size-4 shrink-0 text-[#0066CC]" />
+                      <Icon name="ChevronRight" className="mt-1 size-4 shrink-0 text-[#0B5ED7]" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -408,7 +408,7 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
           const tags = (() => { try { return JSON.parse(post.tags) as string[]; } catch { return []; } })();
           if (tags.length === 0) return null;
           return (
-            <div className="mt-10 flex flex-wrap gap-2 border-t border-[#0066CC]/10 pt-6">
+            <div className="mt-10 flex flex-wrap gap-2 border-t border-[#0B5ED7]/10 pt-6">
               {tags.map((t) => (
                 <Badge key={t} variant="outline" className="bg-[#F7FAFE] text-[#5A7299]">#{t}</Badge>
               ))}
@@ -417,13 +417,13 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
         })()}
 
         {/* CTA */}
-        <div className="mt-10 rounded-2xl border-2 border-[#0066CC]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
+        <div className="mt-10 rounded-2xl border-2 border-[#0B5ED7]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-base font-bold text-[#0B2447]">Need personalised guidance?</p>
               <p className="text-sm text-[#5A7299]">Book a free 30-minute consultation with an ALO counselor.</p>
             </div>
-            <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[#F37021] text-white hover:bg-[#c8451a]">
+            <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[#F97316] text-white hover:bg-[#c8451a]">
               <Icon name="CalendarCheck" className="size-4" />
               Book Free Consultation
             </Button>
@@ -433,7 +433,7 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
 
       {/* Related */}
       {related.length > 0 && (
-        <section className="border-t border-[#0066CC]/10 bg-[#F7FAFE]">
+        <section className="border-t border-[#0B5ED7]/10 bg-[#F7FAFE]">
           <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6 lg:py-14">
             <h2 className="text-xl font-black text-[#0B2447]">Related articles</h2>
             <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -445,10 +445,10 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
                 >
                   <CardContent className="p-5">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="bg-[#EAF3FF] text-[#0066CC]">{r.category}</Badge>
+                      <Badge variant="outline" className="bg-[#EAF3FF] text-[#0B5ED7]">{r.category}</Badge>
                       <span className="text-xs text-[#5A7299]">{fmtDate(r.publishedAt)}</span>
                     </div>
-                    <h3 className="mt-2 line-clamp-2 text-sm font-bold text-[#0B2447] group-hover:text-[#0066CC]">{r.title}</h3>
+                    <h3 className="mt-2 line-clamp-2 text-sm font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{r.title}</h3>
                     <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-[#5A7299]">{r.excerpt}</p>
                   </CardContent>
                 </Card>

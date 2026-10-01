@@ -46,11 +46,11 @@ export default function AIContentStudioView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Sparkles className="w-6 h-6 text-[#F37021]" />AI Content Studio</h2>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Sparkles className="w-6 h-6 text-[#F97316]" />AI Content Studio</h2>
         <p className="text-sm text-gray-500">Generate 17 content types in Bangla/English/Mixed with ALO brand compliance. Every asset supports preview/edit/regenerate/approve/reject/schedule/publish/archive + history.</p>
       </div>
 
-      <Card className="border-[#0066CC]/20">
+      <Card className="border-[#0B5ED7]/20">
         <CardHeader><CardTitle className="text-sm">Generation Form</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="grid md:grid-cols-3 gap-3">
@@ -62,8 +62,8 @@ export default function AIContentStudioView() {
           </div>
           <div className="flex items-center gap-3">
             <label className="text-xs font-semibold">Variations</label><Input type="number" min={1} max={5} value={variations} onChange={e=>setVariations(parseInt(e.target.value)||1)} className="w-20 h-9" />
-            <Button onClick={handleGenerate} disabled={loading || !topic.trim()} className="bg-[#F37021] hover:bg-[#d85f1b] text-white"><>{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate</></Button>
-            <Badge className="bg-[#FFB347]/20 text-[#0F172A] border-[#FFB347]">Brand: ALO Orange #F37021 • Blue #0066CC</Badge>
+            <Button onClick={handleGenerate} disabled={loading || !topic.trim()} className="bg-[#F97316] hover:bg-[#d85f1b] text-white"><>{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate</></Button>
+            <Badge className="bg-[#FFB347]/20 text-[#0F172A] border-[#FFB347]">Brand: ALO Orange #F97316 • Blue #0B5ED7</Badge>
           </div>
         </CardContent>
       </Card>
@@ -71,7 +71,7 @@ export default function AIContentStudioView() {
       {results.length>0 && (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {results.map(r=>(
-            <Card key={r.id} className="border-[#0066CC]/10 hover:shadow-md transition-shadow flex flex-col">
+            <Card key={r.id} className="border-[#0B5ED7]/10 hover:shadow-md transition-shadow flex flex-col">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-2"><CardTitle className="text-sm line-clamp-2">{r.title}</CardTitle><Badge variant="outline" className="text-[10px]">{r.status}</Badge></div>
                 <p className="text-[11px] text-gray-400">{r.platform} • {r.language} • Brand compliance: pending</p>
@@ -87,7 +87,7 @@ export default function AIContentStudioView() {
                   <Button size="sm" variant="outline" className="h-8 text-[11px]"><Calendar className="w-3 h-3 mr-1" />Schedule</Button>
                 </div>
                 <div className="flex gap-2 mt-2">
-                  <Button size="sm" className="flex-1 h-8 text-[11px] bg-[#0066CC] text-white"><Globe className="w-3 h-3 mr-1" />Publish</Button>
+                  <Button size="sm" className="flex-1 h-8 text-[11px] bg-[#0B5ED7] text-white"><Globe className="w-3 h-3 mr-1" />Publish</Button>
                   <Button size="sm" variant="outline" className="flex-1 h-8 text-[11px]"><Archive className="w-3 h-3 mr-1" />Archive</Button>
                 </div>
                 <p className="text-[10px] text-gray-400 mt-2">History preserved — versioning & audit logged. Provider fallback preserved if image/video unavailable.</p>

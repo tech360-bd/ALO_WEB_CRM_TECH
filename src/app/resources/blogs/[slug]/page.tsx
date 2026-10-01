@@ -90,19 +90,19 @@ export default async function BlogDetailPage({
           
           {/* BREADCRUMB */}
           <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
-            <a href="/" className="hover:text-[#0057B8]">Home</a>
+            <a href="/" className="hover:text-[#0B5ED7]">Home</a>
             <span>›</span>
-            <a href="/resources" className="hover:text-[#0057B8]">Resources</a>
+            <a href="/resources" className="hover:text-[#0B5ED7]">Resources</a>
             <span>›</span>
-            <a href="/resources/blogs" className="hover:text-[#0057B8]">Blogs & Articles</a>
+            <a href="/resources/blogs" className="hover:text-[#0B5ED7]">Blogs & Articles</a>
             <span>›</span>
-            <span className="text-[#0057B8] font-bold truncate max-w-xs">{blog.title}</span>
+            <span className="text-[#0B5ED7] font-bold truncate max-w-xs">{blog.title}</span>
           </nav>
 
           {/* ARTICLE HEADER */}
           <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm mb-8">
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <Badge className="bg-blue-50 text-[#0057B8] font-bold text-xs px-3 py-1">
+              <Badge className="bg-blue-50 text-[#0B5ED7] font-bold text-xs px-3 py-1">
                 {blog.category}
               </Badge>
               <span className="text-xs text-slate-500 flex items-center gap-1">
@@ -122,7 +122,7 @@ export default async function BlogDetailPage({
             </p>
 
             <div className="flex items-center gap-3 pt-4 border-t border-slate-100 text-xs text-slate-700">
-              <div className="h-8 w-8 rounded-full bg-[#0057B8] text-white flex items-center justify-center font-bold">
+              <div className="h-8 w-8 rounded-full bg-[#0B5ED7] text-white flex items-center justify-center font-bold">
                 <User className="h-4 w-4" />
               </div>
               <div>
@@ -139,12 +139,12 @@ export default async function BlogDetailPage({
               {/* TABLE OF CONTENTS */}
               {blog.tableOfContents && blog.tableOfContents.length > 0 && (
                 <Card className="p-6 bg-blue-50/50 border-blue-100">
-                  <h3 className="font-bold text-[#0057B8] text-sm mb-3 flex items-center gap-2">
+                  <h3 className="font-bold text-[#0B5ED7] text-sm mb-3 flex items-center gap-2">
                     <FileText className="h-4 w-4" /> Table of Contents
                   </h3>
                   <div className="space-y-2 text-xs">
                     {blog.tableOfContents.map((toc, idx) => (
-                      <p key={idx} className="text-slate-700 hover:text-[#0057B8] cursor-pointer font-medium">
+                      <p key={idx} className="text-slate-700 hover:text-[#0B5ED7] cursor-pointer font-medium">
                         {toc}
                       </p>
                     ))}
@@ -164,7 +164,7 @@ export default async function BlogDetailPage({
               {blog.faqs && blog.faqs.length > 0 && (
                 <Card className="p-6 bg-white border-slate-200">
                   <h3 className="font-bold text-[#0F172A] text-lg mb-4 flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-[#0057B8]" /> Article Frequently Asked Questions
+                    <HelpCircle className="h-5 w-5 text-[#0B5ED7]" /> Article Frequently Asked Questions
                   </h3>
                   <div className="space-y-4 text-xs">
                     {blog.faqs.map((faq, idx) => (
@@ -180,13 +180,13 @@ export default async function BlogDetailPage({
 
             {/* SIDEBAR CTAS */}
             <div className="lg:col-span-4 space-y-6">
-              <Card className="p-6 bg-gradient-to-br from-[#0057B8] to-[#003d80] text-white rounded-3xl border-0 shadow-lg">
+              <Card className="p-6 bg-gradient-to-br from-[#0B5ED7] to-[#003d80] text-white rounded-3xl border-0 shadow-lg">
                 <h3 className="font-bold text-lg mb-2">Need Expert Counseling?</h3>
                 <p className="text-xs text-blue-100 mb-4 leading-relaxed">
                   Book a 1-on-1 session with ALO Education's senior study abroad advisors to evaluate your admission & visa profile.
                 </p>
                 <a href="/eligibility-check" className="block w-full">
-                  <Button className="w-full bg-[#E8501A] text-white hover:bg-[#d44315] font-bold text-xs py-3 rounded-xl shadow-md">
+                  <Button className="w-full bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs py-3 rounded-xl shadow-md">
                     Check Eligibility Free →
                   </Button>
                 </a>
@@ -212,10 +212,10 @@ export default async function BlogDetailPage({
             <div className="grid sm:grid-cols-3 gap-6">
               {relatedBlogs.map((rel) => (
                 <Card key={rel.id} className="p-5 bg-white border-slate-200 hover:shadow-md transition-all">
-                  <Badge className="bg-blue-50 text-[#0057B8] text-[10px] font-bold mb-2">{rel.category}</Badge>
+                  <Badge className="bg-blue-50 text-[#0B5ED7] text-[10px] font-bold mb-2">{rel.category}</Badge>
                   <h4 className="font-bold text-sm text-[#0F172A] mb-2 line-clamp-2">{rel.title}</h4>
                   <p className="text-xs text-slate-500 mb-4 line-clamp-2">{rel.excerpt}</p>
-                  <a href={`/resources/blogs/${rel.slug}`} className="text-xs font-bold text-[#0057B8] hover:underline flex items-center gap-1">
+                  <a href={`/resources/blogs/${rel.slug}`} className="text-xs font-bold text-[#0B5ED7] hover:underline flex items-center gap-1">
                     Read Article <ArrowRight className="h-3.5 w-3.5" />
                   </a>
                 </Card>

@@ -31,8 +31,8 @@ export default function CrmHrmHubPage() {
           <p className="text-xs text-slate-500">Enterprise Employee HR System — integrated inside CRM • White / Orange • Asia/Dhaka</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className="bg-blue-50 text-[#0057B8] border-blue-200 capitalize text-xs">{roleStr.replace(/_/g,' ')}</Badge>
-          <Link href="/crm/hrm/profile"><Button size="sm" className="bg-[#E8501A] hover:bg-[#D04010] text-white h-8 text-xs">My HR Profile</Button></Link>
+          <Badge className="bg-blue-50 text-[#0B5ED7] border-blue-200 capitalize text-xs">{roleStr.replace(/_/g,' ')}</Badge>
+          <Link href="/crm/hrm/profile"><Button size="sm" className="bg-[#F97316] hover:bg-[#D04010] text-white h-8 text-xs">My HR Profile</Button></Link>
         </div>
       </div>
 
@@ -44,7 +44,7 @@ export default function CrmHrmHubPage() {
       <Card className="bg-white border-slate-200">
         <CardHeader className="p-4 border-b border-slate-100 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-bold text-slate-800">HR Analytics — Live from DB</CardTitle>
-          <Link href="/crm/hrm/analytics"><Button variant="ghost" size="sm" className="text-xs text-[#E8501A]">Detailed Analytics →</Button></Link>
+          <Link href="/crm/hrm/analytics"><Button variant="ghost" size="sm" className="text-xs text-[#F97316]">Detailed Analytics →</Button></Link>
         </CardHeader>
         <CardContent className="p-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
           {loading ? <div className="col-span-4 text-xs text-slate-400">Loading analytics...</div> : (
@@ -92,13 +92,13 @@ export default function CrmHrmHubPage() {
           <Link key={m.title} href={m.href}>
             <Card className="bg-white border-slate-200 hover:border-orange-200 hover:shadow-md transition-all h-full">
               <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center"><m.icon className="w-5 h-5 text-[#E8501A]" /></div>
+                <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center"><m.icon className="w-5 h-5 text-[#F97316]" /></div>
                 <Badge variant="outline" className="text-xs bg-slate-50">{m.badge}</Badge>
               </CardHeader>
               <CardContent className="p-4 pt-2">
                 <p className="text-sm font-bold text-slate-900">{m.title}</p>
                 <p className="text-xs text-slate-500 mt-1 line-clamp-2">{m.desc}</p>
-                <p className="text-xs text-[#E8501A] font-medium mt-3">Open →</p>
+                <p className="text-xs text-[#F97316] font-medium mt-3">Open →</p>
               </CardContent>
             </Card>
           </Link>
@@ -107,18 +107,18 @@ export default function CrmHrmHubPage() {
 
       <Tabs defaultValue="birthdays" className="w-full">
         <TabsList className="bg-slate-100 p-1 h-9">
-          <TabsTrigger value="birthdays" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Upcoming Birthdays</TabsTrigger>
-          <TabsTrigger value="anniversary" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Work Anniversary</TabsTrigger>
-          <TabsTrigger value="confirmation" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Upcoming Confirmation</TabsTrigger>
+          <TabsTrigger value="birthdays" className="text-xs data-[state=active]:bg-[#F97316] data-[state=active]:text-white">Upcoming Birthdays</TabsTrigger>
+          <TabsTrigger value="anniversary" className="text-xs data-[state=active]:bg-[#F97316] data-[state=active]:text-white">Work Anniversary</TabsTrigger>
+          <TabsTrigger value="confirmation" className="text-xs data-[state=active]:bg-[#F97316] data-[state=active]:text-white">Upcoming Confirmation</TabsTrigger>
         </TabsList>
         <TabsContent value="birthdays" className="mt-3">
           <Card className="bg-white border-slate-200"><CardContent className="p-4 text-sm text-slate-600">
-            {analytics?.upcomingBirthday?.length ? analytics.upcomingBirthday.map((b:any)=> <div key={b.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{b.fullName}</span><span className="text-xs bg-orange-50 text-[#E8501A] px-2 py-0.5 rounded">{b.daysLeft}d left • {b.dob}</span></div>) : <span className="text-xs text-slate-400">No birthdays in next 30 days</span>}
+            {analytics?.upcomingBirthday?.length ? analytics.upcomingBirthday.map((b:any)=> <div key={b.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{b.fullName}</span><span className="text-xs bg-orange-50 text-[#F97316] px-2 py-0.5 rounded">{b.daysLeft}d left • {b.dob}</span></div>) : <span className="text-xs text-slate-400">No birthdays in next 30 days</span>}
           </CardContent></Card>
         </TabsContent>
         <TabsContent value="anniversary" className="mt-3">
           <Card className="bg-white border-slate-200"><CardContent className="p-4 text-sm text-slate-600">
-            {analytics?.upcomingWorkAnniversary?.length ? analytics.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{a.fullName}</span><span className="text-xs bg-blue-50 text-[#0057B8] px-2 py-0.5 rounded">{a.years} years • {a.joiningDate}</span></div>) : <span className="text-xs text-slate-400">No work anniversaries in next 30 days</span>}
+            {analytics?.upcomingWorkAnniversary?.length ? analytics.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{a.fullName}</span><span className="text-xs bg-blue-50 text-[#0B5ED7] px-2 py-0.5 rounded">{a.years} years • {a.joiningDate}</span></div>) : <span className="text-xs text-slate-400">No work anniversaries in next 30 days</span>}
           </CardContent></Card>
         </TabsContent>
         <TabsContent value="confirmation" className="mt-3">

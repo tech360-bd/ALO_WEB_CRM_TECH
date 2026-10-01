@@ -18,7 +18,7 @@ export default function DataImportDashboardRoute() {
         </div>
         <div className="flex gap-3">
           <Link href="/admin/data-import/new">
-            <Button className="bg-[#0057B8] hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
+            <Button className="bg-[#0B5ED7] hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
               <Upload className="w-4 h-4" /> New Multi-CSV Upload
             </Button>
           </Link>

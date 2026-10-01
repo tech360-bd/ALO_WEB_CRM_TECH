@@ -31,7 +31,7 @@ export default function HrmDevicesPage() {
           <Input placeholder="Serial Number" value={form.serialNumber} onChange={e=> setForm({...form, serialNumber:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
           <Input placeholder="Asset Tag" value={form.assetTag} onChange={e=> setForm({...form, assetTag:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
           <Input placeholder="Warranty (e.g., 2027-12-31)" value={form.warranty} onChange={e=> setForm({...form, warranty:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
-          <Button onClick={create} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-3">Register Device</Button>
+          <Button onClick={create} className="bg-[#F97316] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-3">Register Device</Button>
         </CardContent>
       </Card>
       <Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Devices ({devices.length})</CardTitle></CardHeader>

@@ -30,7 +30,7 @@ export default function CreateApplicationPage() {
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen">
       <div className="max-w-3xl mx-auto space-y-4">
-        <div><h1 className="text-xl font-bold text-[#0F172A]">Create Application</h1><p className="text-sm text-gray-500">Direct/Student Self/Partner/Manual Import/Referral/Event/Course Finder — real DB, audit logged</p><div className="flex gap-2 mt-2"><Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px]">REAL API</Badge><Badge className="bg-[#F8FAFC] text-gray-600 border-[#E2E8F0] text-[10px]">10 SOURCES NORMALIZED</Badge></div></div>
+        <div><h1 className="text-xl font-bold text-[#0F172A]">Create Application</h1><p className="text-sm text-gray-500">Direct/Student Self/Partner/Manual Import/Referral/Event/Course Finder — real DB, audit logged</p><div className="flex gap-2 mt-2"><Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-[10px]">REAL API</Badge><Badge className="bg-[#F8FAFC] text-gray-600 border-[#E2E8F0] text-[10px]">10 SOURCES NORMALIZED</Badge></div></div>
         {msg && <div className={`p-3 rounded-xl border text-sm flex gap-2 ${msg.type==='success'?'bg-emerald-50 border-emerald-200 text-emerald-700':'bg-red-50 border-red-200 text-red-700'}`}>{msg.type==='success'?<CheckCircle2 className="w-4 h-4"/>:<AlertTriangle className="w-4 h-4"/>}{msg.text}</div>}
         <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Application Details — Required Fields</CardTitle></CardHeader>
@@ -46,7 +46,7 @@ export default function CreateApplicationPage() {
                 <div className="col-span-6 md:col-span-3"><label className="text-xs font-medium">Level</label><Input value={form.level} onChange={e=>setForm({...form, level:e.target.value})} className="bg-white border-[#E2E8F0]" placeholder="Bachelor/Master" /></div>
                 <div className="col-span-12"><label className="text-xs font-medium">Notes</label><textarea value={form.notes} onChange={e=>setForm({...form, notes:e.target.value})} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm min-h-[80px]" /></div>
               </div>
-              <Button type="submit" disabled={loading} className="bg-[#0057B8] text-white w-full md:w-auto min-h-[48px]">{loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Creating...</> : 'Create Application — Real DB'}</Button>
+              <Button type="submit" disabled={loading} className="bg-[#0B5ED7] text-white w-full md:w-auto min-h-[48px]">{loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Creating...</> : 'Create Application — Real DB'}</Button>
             </form>
           </CardContent>
         </Card>

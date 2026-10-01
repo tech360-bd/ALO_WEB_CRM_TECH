@@ -8,7 +8,7 @@ import { type ViewKey } from "@/lib/alo-types";
 
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-slate-100 text-slate-700",
-  NORMAL: "bg-[#EAF3FF] text-[#0066CC]",
+  NORMAL: "bg-[#EAF3FF] text-[#0B5ED7]",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
 };
@@ -95,7 +95,7 @@ export function EmployeeWorkspace({
         action={
           <Button
             variant="outline"
-            className="border-[#DCE8F5] text-[#0066CC] hover:bg-[#EAF3FF]"
+            className="border-[#DCE8F5] text-[#0B5ED7] hover:bg-[#EAF3FF]"
             onClick={() => onNavigate?.("crm-tasks")}
           >
             <Icon name="CheckSquare" className="mr-1.5 size-4" /> View All Tasks
@@ -187,7 +187,7 @@ export function EmployeeWorkspace({
             <Button
               size="sm"
               variant="outline"
-              className="border-[#DCE8F5] text-[#0066CC] hover:bg-[#EAF3FF]"
+              className="border-[#DCE8F5] text-[#0B5ED7] hover:bg-[#EAF3FF]"
               onClick={() => onNavigate?.("crm-tasks")}
             >
               View all
@@ -213,7 +213,7 @@ export function EmployeeWorkspace({
                         ? "bg-rose-100 text-rose-700"
                         : t.priority === "HIGH"
                         ? "bg-amber-100 text-amber-700"
-                        : "bg-[#EAF3FF] text-[#0066CC]"
+                        : "bg-[#EAF3FF] text-[#0B5ED7]"
                     }`}
                   >
                     <Icon name="CheckSquare" className="size-4" />
@@ -249,7 +249,7 @@ export function EmployeeWorkspace({
             <Button
               size="sm"
               variant="outline"
-              className="border-[#DCE8F5] text-[#0066CC] hover:bg-[#EAF3FF]"
+              className="border-[#DCE8F5] text-[#0B5ED7] hover:bg-[#EAF3FF]"
               onClick={() => onNavigate?.("crm-appointments")}
             >
               Calendar
@@ -271,7 +271,7 @@ export function EmployeeWorkspace({
                 >
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold text-[#0B2447]">{a.title}</p>
-                    <Badge className="bg-[#EAF3FF] text-[#0066CC]">{a.type}</Badge>
+                    <Badge className="bg-[#EAF3FF] text-[#0B5ED7]">{a.type}</Badge>
                   </div>
                   <p className="mt-1 text-xs text-[#5A7299]">
                     <Icon name="Clock" className="mr-1 inline size-3" />
@@ -297,7 +297,7 @@ export function EmployeeWorkspace({
             <Button
               size="sm"
               variant="outline"
-              className="border-[#DCE8F5] text-[#0066CC] hover:bg-[#EAF3FF]"
+              className="border-[#DCE8F5] text-[#0B5ED7] hover:bg-[#EAF3FF]"
               onClick={() => onNavigate?.("unified-inbox")}
             >
               Inbox
@@ -321,7 +321,7 @@ export function EmployeeWorkspace({
                     <p className="truncate text-sm font-semibold text-[#0B2447]">
                       {m.fromName || "Unknown"}
                     </p>
-                    <Badge className="bg-[#EAF3FF] text-[#0066CC]">{m.channel}</Badge>
+                    <Badge className="bg-[#EAF3FF] text-[#0B5ED7]">{m.channel}</Badge>
                   </div>
                   <p className="mt-1 truncate text-xs text-[#5A7299]">
                     {m.body?.slice(0, 80)}
@@ -341,8 +341,8 @@ export function EmployeeWorkspace({
         >
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: "Active Applications", value: m.activeApplications || 0, color: "#0066CC" },
-              { label: "Offers Received", value: m.offersReceived || 0, color: "#F37021" },
+              { label: "Active Applications", value: m.activeApplications || 0, color: "#0B5ED7" },
+              { label: "Offers Received", value: m.offersReceived || 0, color: "#F97316" },
               { label: "CAS Pending", value: m.casPending || 0, color: "#8B5CF6" },
               { label: "Documents Pending", value: m.documentsPending || 0, color: "#F59E0B" },
               { label: "SOP Reviews", value: m.sopPending || 0, color: "#06B6D4" },
@@ -446,7 +446,7 @@ export function EmployeeWorkspace({
                     <Badge className={PRIORITY_COLORS[rec.priority] || "bg-slate-100"}>
                       {rec.priority}
                     </Badge>
-                    <span className="text-xs font-medium text-[#0066CC]">
+                    <span className="text-xs font-medium text-[#0B5ED7]">
                       Take action →
                     </span>
                   </div>
@@ -467,7 +467,7 @@ export function EmployeeWorkspace({
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-4">
                 <p className="text-xs text-[#5A7299]">Pending Commission</p>
-                <p className="mt-1 text-2xl font-bold text-[#F37021]">
+                <p className="mt-1 text-2xl font-bold text-[#F97316]">
                   {(m.pendingCommission || 0).toLocaleString()} BDT
                 </p>
               </div>
@@ -479,7 +479,7 @@ export function EmployeeWorkspace({
               </div>
               <div className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-4">
                 <p className="text-xs text-[#5A7299]">New Leads Today</p>
-                <p className="mt-1 text-2xl font-bold text-[#0066CC]">
+                <p className="mt-1 text-2xl font-bold text-[#0B5ED7]">
                   {m.newLeadsToday || 0}
                 </p>
               </div>

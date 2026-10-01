@@ -31,8 +31,8 @@ import { toast } from 'sonner';
 // usePortalStore no longer needed - public pages use real routes
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#0057B8';
-const ALO_ORANGE = '#E8501A';
+const ALO_BLUE = '#0B5ED7';
+const ALO_ORANGE = '#F97316';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface UniversityCardData {
@@ -139,7 +139,7 @@ function formatDate(iso: string | null | undefined): string {
 // ─── Skeletons ─────────────────────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
-    <div className="bg-gradient-to-br from-[#0057B8] to-[#003A7D] text-white">
+    <div className="bg-gradient-to-br from-[#0B5ED7] to-[#003A7D] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <Skeleton className="h-8 w-72 mb-4 bg-white/20" />
         <Skeleton className="h-5 w-96 mb-8 bg-white/15" />
@@ -524,7 +524,7 @@ function UniversityCard({
               </span>
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-slate-900 text-sm leading-snug truncate group-hover:text-[#0057B8] transition-colors">
+              <h3 className="font-semibold text-slate-900 text-sm leading-snug truncate group-hover:text-[#0B5ED7] transition-colors">
                 {flag} {uni.officialName || uni.name}
               </h3>
               <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
@@ -633,7 +633,7 @@ function UniversityCard({
           <Button
             variant="outline"
             size="sm"
-            className="h-8 text-xs col-span-1 text-[#E8501A] border-[#E8501A]/30 hover:bg-[#E8501A]/5"
+            className="h-8 text-xs col-span-1 text-[#F97316] border-[#F97316]/30 hover:bg-[#F97316]/5"
             onClick={() => onAskCounsellor(uni.name)}
           >
             <MessageCircle className="size-3 mr-1" />
@@ -944,7 +944,7 @@ export function UniversityDirectoryEnhanced() {
   return (
     <div className="min-h-screen bg-white">
       {/* ═══ HERO SECTION ═══ */}
-      <div className="bg-gradient-to-br from-[#0057B8] to-[#003A7D] text-white">
+      <div className="bg-gradient-to-br from-[#0B5ED7] to-[#003A7D] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* Title */}
           <div className="flex items-center gap-2.5 mb-3">
@@ -1104,7 +1104,7 @@ export function UniversityDirectoryEnhanced() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 text-xs text-slate-500 hover:text-[#E8501A]"
+                    className="h-7 text-xs text-slate-500 hover:text-[#F97316]"
                     onClick={handleResetFilters}
                   >
                     Clear All

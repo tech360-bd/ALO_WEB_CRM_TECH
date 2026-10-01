@@ -27,17 +27,17 @@ export default function LeadNurturingView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Heart className="w-6 h-6 text-[#F37021]" />Lead Nurturing</h2>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Heart className="w-6 h-6 text-[#F97316]" />Lead Nurturing</h2>
         <p className="text-sm text-gray-500">Automated follow-ups, segmentation, scoring, counselor assignment, welcome messages, reminders, status sync, conversion & enrollment attribution.</p>
       </div>
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Calendar className="w-4 h-4 text-[#0066CC]" />Nurturing Journeys</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Calendar className="w-4 h-4 text-[#0B5ED7]" />Nurturing Journeys</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid md:grid-cols-2 gap-3">
                 <div><label className="text-xs font-semibold">Journey</label><Select value={journey} onValueChange={setJourney}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="whatsapp_7day">WhatsApp 7-Day Drip</SelectItem><SelectItem value="email_5mail">Email 5-Mail Journey</SelectItem><SelectItem value="sms_reminder">SMS Deadline Reminder</SelectItem><SelectItem value="mixed">Mixed (WhatsApp+Email+SMS)</SelectItem></SelectContent></Select></div>
-                <div className="flex items-end"><Button onClick={handleTrigger} disabled={loading} className="w-full bg-[#F37021] text-white h-9">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Nurturing (Dry Run)</Button></div>
+                <div className="flex items-end"><Button onClick={handleTrigger} disabled={loading} className="w-full bg-[#F97316] text-white h-9">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Nurturing (Dry Run)</Button></div>
               </div>
               {log && <p className="text-xs bg-[#F8FAFC] border rounded-lg p-3">{log}</p>}
               <div className="grid grid-cols-3 gap-3 text-xs">
@@ -51,7 +51,7 @@ export default function LeadNurturingView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0066CC]" />Status Sync & Attribution</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0B5ED7]" />Status Sync & Attribution</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Lead Status Sync</p><p className="text-gray-600 mt-1">new → contacted → qualified → assigned → converted / lost — syncs to CRM via lead status.</p></div>
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Conversion & Enrollment Attribution</p><p className="text-gray-600 mt-1">Campaign → Lead → Application → Enrollment where reliable data exists (MarketingLead.campaignId + Acr).</p></div>

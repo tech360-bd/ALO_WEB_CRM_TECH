@@ -32,7 +32,7 @@ export default function MarketingBudgetView() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Wallet className="w-6 h-6 text-[#F37021]" />Marketing Budget</h2>
+          <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Wallet className="w-6 h-6 text-[#F97316]" />Marketing Budget</h2>
           <p className="text-sm text-gray-500">Budget allocation, spend tracking, CPL, revenue attribution — AI proposes, human approves. Server-side enforcement, audit with approver/timestamp.</p>
         </div>
         <Badge className="bg-amber-100 text-amber-800 border-amber-200"><ShieldCheck className="w-3 h-3 mr-1" />Server-Enforced Limits</Badge>
@@ -40,19 +40,19 @@ export default function MarketingBudgetView() {
 
       <div className="grid md:grid-cols-3 gap-4">
         <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Total Approved</p><p className="text-2xl font-bold text-emerald-600">৳{totalApproved.toLocaleString()}</p><p className="text-[11px] text-gray-400">MarketingCampaign where status=active</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Total Proposed</p><p className="text-2xl font-bold text-[#0066CC]">৳{totalProposed.toLocaleString()}</p><p className="text-[11px] text-gray-400">All campaigns + drafts</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Cost per Lead (avg)</p><p className="text-2xl font-bold text-[#F37021]">৳ —</p><p className="text-[11px] text-gray-400">MarketingCampaignSource.cost/leads (real)</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Total Proposed</p><p className="text-2xl font-bold text-[#0B5ED7]">৳{totalProposed.toLocaleString()}</p><p className="text-[11px] text-gray-400">All campaigns + drafts</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Cost per Lead (avg)</p><p className="text-2xl font-bold text-[#F97316]">৳ —</p><p className="text-[11px] text-gray-400">MarketingCampaignSource.cost/leads (real)</p></CardContent></Card>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#0066CC]" />Allocate Budget (Requires Approval)</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#0B5ED7]" />Allocate Budget (Requires Approval)</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid md:grid-cols-3 gap-3">
                 <Input value={newBudget.campaign} onChange={e=>setNewBudget({...newBudget, campaign:e.target.value})} placeholder="Campaign name" className="h-9" />
                 <Input type="number" value={newBudget.amount} onChange={e=>setNewBudget({...newBudget, amount: parseInt(e.target.value)||0})} className="h-9" />
-                <Button onClick={handleAllocate} className="bg-[#F37021] text-white h-9">Allocate → Approval</Button>
+                <Button onClick={handleAllocate} className="bg-[#F97316] text-white h-9">Allocate → Approval</Button>
               </div>
               {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg p-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" />{error}</p>}
               <p className="text-[11px] text-gray-500">Server rejects if `budget &gt; approvedBudget` without `MarketingApproval.status=approved`. Recorded: approved budget, approving user, timestamp, execution result. No AI auto-spend.</p>
@@ -61,7 +61,7 @@ export default function MarketingBudgetView() {
           <Card>
             <CardHeader><CardTitle className="text-sm">Budget Records</CardTitle></CardHeader>
             <CardContent>
-              {loading ? <Loader2 className="w-5 h-5 animate-spin text-[#F37021]" /> : budgets.length===0 ? <p className="text-sm text-gray-500">No budgets yet.</p> : (
+              {loading ? <Loader2 className="w-5 h-5 animate-spin text-[#F97316]" /> : budgets.length===0 ? <p className="text-sm text-gray-500">No budgets yet.</p> : (
                 <div className="space-y-2">
                   {budgets.map((b,i)=><div key={i} className="p-3 border rounded-xl flex items-center justify-between">
                     <div><p className="text-sm font-semibold">{b.campaign}</p><p className="text-xs text-gray-500">Approver: {b.approver} • {b.timestamp} • {b.approved ? 'Approved' : 'Pending approval'}</p></div>
@@ -74,7 +74,7 @@ export default function MarketingBudgetView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#F37021]" />Attribution & ROI</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#F97316]" />Attribution & ROI</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <p className="text-gray-600">Revenue attribution via MarketingLead → Application → Enrollment where reliable. Campaign comparison & channel comparison in Analytics.</p>
               <p className="text-[11px] text-gray-400">Exportable reports: daily/weekly/monthly, campaign vs campaign, channel vs channel.</p>

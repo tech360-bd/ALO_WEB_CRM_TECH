@@ -27,7 +27,7 @@ export function PublicPartners({ onNavigate }: Props) {
                 { icon: "Bell", title: "Notifications", desc: "Stay updated on application status changes and deadlines" },
               ].map((feature) => (
                 <div key={feature.title} className="flex items-start gap-3 rounded-xl border border-[#DCE8F5] bg-[#F7FAFE] p-4">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0066CC]">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0B5ED7]">
                     <Icon name={feature.icon} className="size-5" />
                   </div>
                   <div>
@@ -38,7 +38,7 @@ export function PublicPartners({ onNavigate }: Props) {
               ))}
             </div>
             <div className="mt-6 flex gap-3">
-              <Button onClick={() => onNavigate("auth-login")} className="bg-[#F37021] text-white hover:bg-[#D8590E]">Partner Login</Button>
+              <Button onClick={() => onNavigate("auth-login")} className="bg-[#F97316] text-white hover:bg-[#D8590E]">Partner Login</Button>
               <Button onClick={() => onNavigate("public-contact")} variant="outline">Become a Partner</Button>
             </div>
           </CardContent>

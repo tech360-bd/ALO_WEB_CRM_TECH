@@ -34,8 +34,8 @@ import {
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
+  blue: '#0B5ED7',
+  orange: '#F97316',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -133,7 +133,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Strategic Planning & Partnerships',
     bio: 'Over 12 years of experience in international education consulting. Founded ALO Education with a vision to make quality global education accessible to every aspiring student.',
     initials: 'TA',
-    gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
+    gradient: 'linear-gradient(135deg, #0B5ED7 0%, #0EA5E9 100%)',
   },
   {
     name: 'Al Aminn',
@@ -141,7 +141,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Operations & Process Optimization',
     bio: 'Expert in streamlining study abroad operations. Ensures every student receives a seamless experience from initial inquiry to university enrollment.',
     initials: 'AA',
-    gradient: 'linear-gradient(135deg, #E8501A 0%, #FFB347 100%)',
+    gradient: 'linear-gradient(135deg, #F97316 0%, #FFB347 100%)',
   },
   {
     name: 'Nusrat Jahan',
@@ -482,7 +482,7 @@ function TeamSection({ dbMembers }: { dbMembers?: Array<{ id: string; name: stri
         bio: m.bio,
         photo: m.photo,
         initials: m.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
-        gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
+        gradient: 'linear-gradient(135deg, #0B5ED7 0%, #0EA5E9 100%)',
       }))
     : TEAM_MEMBERS;
   return (

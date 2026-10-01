@@ -17,13 +17,13 @@ export default function AdminUniversityDataUpdatesPage() {
     <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-16">
       <div className="mx-auto max-w-7xl px-4 space-y-6">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 shadow-sm">
-          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-3">Super Admin — AI Update Center — Approval Workflow — No Automatic Publishing</Badge>
+          <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-xs mb-3">Super Admin — AI Update Center — Approval Workflow — No Automatic Publishing</Badge>
           <h1 className="text-3xl font-bold text-[#0F172A]">University Data Updates — Weekly AI Agent</h1>
           <p className="text-sm text-gray-600 mt-2">Weekly scan status, Last scan, Next scan, Changes found, Pending approval, Approved, Rejected, Needs review. Each change: OLD VALUE, NEW VALUE, SOURCE, EVIDENCE, CONFIDENCE. Actions: Approve, Reject, Edit, Approve & Publish. Only after approval: Update database, Update Course Finder, Update University page, Update Course page, Update Country page, Update CRM. Create approval log. AI agent must check ONLY official university website, official course page, official international student page, official scholarship page, official admissions page. Respect robots.txt, rate limits, website terms. Do not scrape aggressively. Weekly process: Run once per week, Load universities/courses requiring verification, Open official source URLs, Extract current info, Compare against DB, Detect changes, Create update_request, Save source URL, Save evidence, Show old/new value, Assign confidence, Wait for Super Admin. AI MUST NOT publish automatically.</p>
           <div className="flex gap-2 mt-4">
-            <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Pending' ? 'bg-[#0057B8] text-white' : ''}`} onClick={()=>setFilter('Pending')}>Pending Approval</Button>
-            <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Approved' ? 'bg-[#0057B8] text-white' : ''}`} onClick={()=>setFilter('Approved')}>Approved</Button>
-            <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Rejected' ? 'bg-[#0057B8] text-white' : ''}`} onClick={()=>setFilter('Rejected')}>Rejected</Button>
+            <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Pending' ? 'bg-[#0B5ED7] text-white' : ''}`} onClick={()=>setFilter('Pending')}>Pending Approval</Button>
+            <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Approved' ? 'bg-[#0B5ED7] text-white' : ''}`} onClick={()=>setFilter('Approved')}>Approved</Button>
+            <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Rejected' ? 'bg-[#0B5ED7] text-white' : ''}`} onClick={()=>setFilter('Rejected')}>Rejected</Button>
             <Button variant="outline" className="border-[#E2E8F0] h-11">Needs Manual Review</Button>
           </div>
           <p className="text-xs text-gray-500 mt-3">Weekly schedule exists — via cron job, Official sources only, Changes detected, Old/new values shown, Source URL stored, Evidence stored, Update request created, No automatic publishing, Super Admin approval required, Approved data updates all connected pages — all implemented.</p>
@@ -42,13 +42,13 @@ export default function AdminUniversityDataUpdatesPage() {
                       <div className="bg-red-50 border border-red-200 rounded-xl p-3"><p className="text-red-800 font-semibold">OLD VALUE</p><p className="text-red-700 mt-1 break-all">{u.oldValue||'N/A'}</p></div>
                       <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><p className="text-emerald-800 font-semibold">NEW VALUE</p><p className="text-emerald-700 mt-1 break-all">{u.newValue||'N/A'}</p></div>
                     </div>
-                    <p className="text-[11px] text-gray-500 mt-3">Source: {u.sourceUrl ? <a href={u.sourceUrl} target="_blank" className="text-[#0057B8] underline break-all">{u.sourceUrl}</a> : 'Official source'} • Evidence: {u.evidence||u.evidenceUrl||'Reference stored'}</p>
+                    <p className="text-[11px] text-gray-500 mt-3">Source: {u.sourceUrl ? <a href={u.sourceUrl} target="_blank" className="text-[#0B5ED7] underline break-all">{u.sourceUrl}</a> : 'Official source'} • Evidence: {u.evidence||u.evidenceUrl||'Reference stored'}</p>
                   </div>
                   <div className="flex flex-col gap-2">
                     <Button size="sm" className="bg-emerald-600 text-white h-9 text-xs">Approve</Button>
                     <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs">Reject</Button>
                     <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs">Edit</Button>
-                    <Button size="sm" className="bg-[#0057B8] text-white h-9 text-xs">Approve & Publish</Button>
+                    <Button size="sm" className="bg-[#0B5ED7] text-white h-9 text-xs">Approve & Publish</Button>
                   </div>
                 </div>
               </Card>

@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 
 const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
+  blue: '#0B5ED7',
+  orange: '#F97316',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -611,7 +611,7 @@ function TrustedUniversitiesSection({ universities }: { universities: UniItem[] 
               return (
                 <motion.div key={uni.universityId} variants={staggerItemScale}>
                   <Link href={`/universities/${uni.universityId || uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
-                    <Card className="h-24 flex items-center justify-center border hover:shadow-md hover:border-[#0057B8] transition-all duration-300 cursor-pointer" style={{ borderColor: C.border }}>
+                    <Card className="h-24 flex items-center justify-center border hover:shadow-md hover:border-[#0B5ED7] transition-all duration-300 cursor-pointer" style={{ borderColor: C.border }}>
                       <CardContent className="p-3 flex flex-col items-center justify-center gap-1.5 w-full h-full">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background: C.blue }}>
                           {initials}

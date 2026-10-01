@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 
 // ============================================================
 // UNIVERSITY DIRECTORY API
-// Brand: ALO Education — Blue #0057B8, Orange #E8501A
+// Brand: ALO Education — Blue #0B5ED7, Orange #F97316
 // ============================================================
 
 export async function GET(req: Request) {

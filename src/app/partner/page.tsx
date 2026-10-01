@@ -17,7 +17,7 @@ export default function PartnerRootPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0057B8]" />
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0B5ED7]" />
     </div>
   );
 }

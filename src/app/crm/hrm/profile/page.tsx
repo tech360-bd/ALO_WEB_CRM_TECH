@@ -53,10 +53,10 @@ export default function HrmProfilePage() {
 
       <Tabs defaultValue="personal">
         <TabsList className="bg-slate-100 h-9">
-          <TabsTrigger value="personal" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Personal</TabsTrigger>
-          <TabsTrigger value="employment" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Employment</TabsTrigger>
-          <TabsTrigger value="bank" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Bank & Payroll</TabsTrigger>
-          <TabsTrigger value="education" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Education & Skills</TabsTrigger>
+          <TabsTrigger value="personal" className="text-xs data-[state=active]:bg-[#F97316] data-[state=active]:text-white">Personal</TabsTrigger>
+          <TabsTrigger value="employment" className="text-xs data-[state=active]:bg-[#F97316] data-[state=active]:text-white">Employment</TabsTrigger>
+          <TabsTrigger value="bank" className="text-xs data-[state=active]:bg-[#F97316] data-[state=active]:text-white">Bank & Payroll</TabsTrigger>
+          <TabsTrigger value="education" className="text-xs data-[state=active]:bg-[#F97316] data-[state=active]:text-white">Education & Skills</TabsTrigger>
         </TabsList>
 
         <form onSubmit={onSave} className="mt-4 space-y-4">
@@ -162,7 +162,7 @@ export default function HrmProfilePage() {
           </TabsContent>
 
           <div className="flex gap-2">
-            <Button type="submit" disabled={saving} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-sm">{saving? 'Saving...' : 'Save (HR/Super Admin only)'}</Button>
+            <Button type="submit" disabled={saving} className="bg-[#F97316] hover:bg-[#D04010] text-white h-9 text-sm">{saving? 'Saving...' : 'Save (HR/Super Admin only)'}</Button>
             <Button type="button" variant="outline" onClick={fetchProfile} className="h-9 text-sm">Reload</Button>
           </div>
           <p className="text-xs text-slate-400">Employee view is read-only for sensitive fields; HR must approve changes — version history and audit log active.</p>

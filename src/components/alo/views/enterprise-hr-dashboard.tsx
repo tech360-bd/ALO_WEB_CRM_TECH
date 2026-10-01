@@ -367,7 +367,7 @@ function PrivateAmount({
         {privacyOn && revealed && (
           <button
             onClick={rehide}
-            className="text-muted-foreground hover:text-[#0057B8]"
+            className="text-muted-foreground hover:text-[#0B5ED7]"
             title="Hide again"
           >
             <Icon name="EyeOff" className="size-3" />
@@ -383,7 +383,7 @@ function PrivateAmount({
       </span>
       <button
         onClick={() => setShowPin(true)}
-        className="inline-flex items-center gap-0.5 rounded border border-[#0057B8]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#0057B8] hover:bg-[#e8f0fb]"
+        className="inline-flex items-center gap-0.5 rounded border border-[#0B5ED7]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#0B5ED7] hover:bg-[#e8f0fb]"
         title="Click to reveal (requires PIN)"
       >
         <Icon name="Lock" className="size-2.5" />
@@ -398,15 +398,15 @@ function PrivateAmount({
           }}
         >
           <div
-            className="w-full max-w-xs rounded-2xl border-2 border-[#0057B8]/20 bg-white p-5 shadow-xl"
+            className="w-full max-w-xs rounded-2xl border-2 border-[#0B5ED7]/20 bg-white p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
                 <Icon name="ShieldCheck" className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#0057B8]">Reveal amount</p>
+                <p className="text-sm font-bold text-[#0B5ED7]">Reveal amount</p>
                 <p className="text-xs text-muted-foreground">
                   Enter your PIN to view this amount
                 </p>
@@ -443,7 +443,7 @@ function PrivateAmount({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-9 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                className="flex-1 h-9 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
                 disabled={pin.length < 4}
                 onClick={() => {
                   reveal(id);
@@ -475,7 +475,7 @@ function EmployeeAvatar({ name, size = "sm" }: { name: string; size?: "sm" | "md
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-full bg-[#e8f0fb] text-[#0057B8] font-bold",
+        "flex items-center justify-center rounded-full bg-[#e8f0fb] text-[#0B5ED7] font-bold",
         size === "sm" ? "size-7 text-xs" : "size-9 text-sm"
       )}
     >
@@ -556,7 +556,7 @@ function LeaveRequestDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
             <Icon name="CalendarPlus" className="size-5" />
             Request Leave
           </DialogTitle>
@@ -619,11 +619,11 @@ function LeaveRequestDialog({
             </div>
           </div>
 
-          <div className="flex items-center justify-between rounded-lg border border-[#0057B8]/20 bg-[#f7f9fc] px-3 py-2">
+          <div className="flex items-center justify-between rounded-lg border border-[#0B5ED7]/20 bg-[#f7f9fc] px-3 py-2">
             <span className="text-xs font-medium text-muted-foreground">
               Calculated days
             </span>
-            <span className="text-sm font-bold text-[#0057B8] tabular-nums">
+            <span className="text-sm font-bold text-[#0B5ED7] tabular-nums">
               {days} {days === 1 ? "day" : "days"}
             </span>
           </div>
@@ -649,7 +649,7 @@ function LeaveRequestDialog({
             Cancel
           </Button>
           <Button
-            className="h-12 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+            className="h-12 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
             onClick={handleSubmit}
             disabled={submitting}
           >
@@ -743,7 +743,7 @@ function DeviceRegisterDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
             <Icon name="Laptop" className="size-5" />
             Register Device
           </DialogTitle>
@@ -849,7 +849,7 @@ function DeviceRegisterDialog({
             Cancel
           </Button>
           <Button
-            className="h-12 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+            className="h-12 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
             onClick={handleSubmit}
             disabled={submitting}
           >
@@ -1193,7 +1193,7 @@ export function EnterpriseHrDashboard() {
             accent="emerald"
             hint="Disbursed"
           />
-          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#0057B8]/20 hover:border-[#0057B8]/50 transition-colors">
+          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/20 hover:border-[#0B5ED7]/50 transition-colors">
             <CardContent className="pt-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -1213,7 +1213,7 @@ export function EnterpriseHrDashboard() {
                     Cumulative disbursed
                   </p>
                 </div>
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#fdece4] text-[#E8501A]">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#fdece4] text-[#F97316]">
                   <Icon name="Wallet" className="size-5" />
                 </div>
               </div>
@@ -1323,9 +1323,9 @@ export function EnterpriseHrDashboard() {
                       {upcomingBirthdays.map((b, i) => (
                         <div
                           key={i}
-                          className="flex items-center gap-3 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-3"
+                          className="flex items-center gap-3 rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-3"
                         >
-                          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#fdece4] text-[#E8501A]">
+                          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#fdece4] text-[#F97316]">
                             <Icon name="Cake" className="size-5" />
                           </div>
                           <div className="min-w-0 flex-1">
@@ -1409,12 +1409,12 @@ export function EnterpriseHrDashboard() {
                       </p>
                     </div>
                   </div>
-                  <div className="mt-4 rounded-lg border border-[#0057B8]/20 bg-[#f7f9fc] p-3">
+                  <div className="mt-4 rounded-lg border border-[#0B5ED7]/20 bg-[#f7f9fc] p-3">
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-xs font-semibold text-muted-foreground">
                         Attendance Rate
                       </span>
-                      <span className="text-sm font-bold text-[#0057B8]">
+                      <span className="text-sm font-bold text-[#0B5ED7]">
                         {analytics?.attendanceRate ?? 0}%
                       </span>
                     </div>
@@ -1437,7 +1437,7 @@ export function EnterpriseHrDashboard() {
                         <span className="text-xs font-medium text-muted-foreground">
                           Departments
                         </span>
-                        <span className="text-xs font-bold text-[#0057B8]">
+                        <span className="text-xs font-bold text-[#0B5ED7]">
                           {new Set(
                             employees
                               .map((e) => e.department?.name)
@@ -1457,7 +1457,7 @@ export function EnterpriseHrDashboard() {
                           .map((d) => (
                             <Badge
                               key={d}
-                              className="bg-[#e8f0fb] text-[#0057B8]"
+                              className="bg-[#e8f0fb] text-[#0B5ED7]"
                             >
                               {d}
                             </Badge>
@@ -1469,7 +1469,7 @@ export function EnterpriseHrDashboard() {
                         <span className="text-xs font-medium text-muted-foreground">
                           Offices
                         </span>
-                        <span className="text-xs font-bold text-[#0057B8]">
+                        <span className="text-xs font-bold text-[#0B5ED7]">
                           {new Set(
                             employees.map((e) => e.office?.name).filter(Boolean)
                           ).size}
@@ -1487,7 +1487,7 @@ export function EnterpriseHrDashboard() {
                           .map((o) => (
                             <Badge
                               key={o}
-                              className="bg-[#fdece4] text-[#E8501A]"
+                              className="bg-[#fdece4] text-[#F97316]"
                             >
                               {o}
                             </Badge>
@@ -1499,7 +1499,7 @@ export function EnterpriseHrDashboard() {
                         <span className="text-xs font-medium text-muted-foreground">
                           Designations
                         </span>
-                        <span className="text-xs font-bold text-[#0057B8]">
+                        <span className="text-xs font-bold text-[#0B5ED7]">
                           {new Set(employees.map((e) => e.designation)).size}
                         </span>
                       </div>
@@ -1512,7 +1512,7 @@ export function EnterpriseHrDashboard() {
                             <Badge
                               key={d}
                               variant="outline"
-                              className="border-[#0057B8]/30 text-[#0057B8]"
+                              className="border-[#0B5ED7]/30 text-[#0B5ED7]"
                             >
                               {d}
                             </Badge>
@@ -1573,7 +1573,7 @@ export function EnterpriseHrDashboard() {
                                   </div>
                                 </TableCell>
                                 <TableCell>
-                                  <span className="font-mono text-xs font-semibold text-[#0057B8]">
+                                  <span className="font-mono text-xs font-semibold text-[#0B5ED7]">
                                     {e.employeeCode}
                                   </span>
                                 </TableCell>
@@ -1631,7 +1631,7 @@ export function EnterpriseHrDashboard() {
                 description="Approve, reject, or submit leave requests"
                 action={
                   <Button
-                    className="h-12 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                    className="h-12 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
                     onClick={() => setLeaveDialogOpen(true)}
                   >
                     <Icon name="CalendarPlus" className="size-4" />
@@ -1766,7 +1766,7 @@ export function EnterpriseHrDashboard() {
               <div className="space-y-4">
                 {/* Monthly summary */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+                  <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
                     <CardContent className="pt-5">
                       <SensitiveField
                         id="hr-payroll-summary-total"
@@ -1779,7 +1779,7 @@ export function EnterpriseHrDashboard() {
                       />
                     </CardContent>
                   </Card>
-                  <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+                  <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
                     <CardContent className="pt-5">
                       <InfoRow
                         label="Pending Approval"
@@ -1802,7 +1802,7 @@ export function EnterpriseHrDashboard() {
                       />
                     </CardContent>
                   </Card>
-                  <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+                  <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
                     <CardContent className="pt-5">
                       <SensitiveField
                         id="hr-payroll-summary-avg"
@@ -1870,7 +1870,7 @@ export function EnterpriseHrDashboard() {
                                   </div>
                                 </TableCell>
                                 <TableCell>
-                                  <span className="font-mono text-xs font-semibold text-[#0057B8]">
+                                  <span className="font-mono text-xs font-semibold text-[#0B5ED7]">
                                     {p.monthYear}
                                   </span>
                                 </TableCell>
@@ -1914,7 +1914,7 @@ export function EnterpriseHrDashboard() {
                                   {p.status === "DRAFT" ? (
                                     <Button
                                       size="sm"
-                                      className="h-8 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                                      className="h-8 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
                                       onClick={() =>
                                         handleApprovePayroll(p, "APPROVED")
                                       }
@@ -1965,7 +1965,7 @@ export function EnterpriseHrDashboard() {
                 description="Track laptops, phones, tablets assigned to employees"
                 action={
                   <Button
-                    className="h-12 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                    className="h-12 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
                     onClick={() => setDeviceDialogOpen(true)}
                   >
                     <Icon name="Plus" className="size-4" />
@@ -2020,7 +2020,7 @@ export function EnterpriseHrDashboard() {
                                 <div className="flex items-center gap-1.5">
                                   <Icon
                                     name={deviceIcon(d.deviceType)}
-                                    className="size-3.5 text-[#0057B8]"
+                                    className="size-3.5 text-[#0B5ED7]"
                                   />
                                   <span className="text-xs font-medium text-foreground">
                                     {labelOf(d.deviceType)}
@@ -2038,7 +2038,7 @@ export function EnterpriseHrDashboard() {
                                 </span>
                               </TableCell>
                               <TableCell>
-                                <span className="font-mono text-xs text-[#E8501A]">
+                                <span className="font-mono text-xs text-[#F97316]">
                                   {d.assetTag || "—"}
                                 </span>
                               </TableCell>
@@ -2063,7 +2063,7 @@ export function EnterpriseHrDashboard() {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                    className="h-8 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                                     onClick={() => handleReturnDevice(d)}
                                   >
                                     <Icon name="Undo" className="size-3.5" />
@@ -2264,7 +2264,7 @@ export function EnterpriseHrDashboard() {
                         return (
                           <div
                             key={n.id}
-                            className="rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-3"
+                            className="rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-3"
                           >
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex items-center gap-2">
@@ -2361,7 +2361,7 @@ export function EnterpriseHrDashboard() {
                         return (
                           <div
                             key={e.id}
-                            className="rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-3"
+                            className="rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-3"
                           >
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex items-center gap-2">
@@ -2465,13 +2465,13 @@ export function EnterpriseHrDashboard() {
                   data={buildCountBuckets(
                     employees.map((e) => e.department?.name || "Unassigned")
                   )}
-                  color="#0057B8"
+                  color="#0B5ED7"
                 />
                 <AnalyticsBarCard
                   title="Headcount by Designation"
                   icon="Briefcase"
                   data={buildCountBuckets(employees.map((e) => e.designation))}
-                  color="#E8501A"
+                  color="#F97316"
                 />
                 <AnalyticsBarCard
                   title="Headcount by Office"
@@ -2506,7 +2506,7 @@ export function EnterpriseHrDashboard() {
                       >
                         <div className="flex w-full flex-1 items-end">
                           <div
-                            className="w-full rounded-t-lg bg-[#0057B8] transition-all hover:bg-[#0057B8]/80"
+                            className="w-full rounded-t-lg bg-[#0B5ED7] transition-all hover:bg-[#0B5ED7]/80"
                             style={{
                               height: `${Math.max(8, d.rate)}%`,
                               minHeight: "8px",
@@ -2517,7 +2517,7 @@ export function EnterpriseHrDashboard() {
                         <span className="text-[10px] font-medium text-muted-foreground">
                           {d.label}
                         </span>
-                        <span className="text-xs font-bold text-[#0057B8] tabular-nums">
+                        <span className="text-xs font-bold text-[#0B5ED7] tabular-nums">
                           {d.rate}%
                         </span>
                       </div>
@@ -2544,7 +2544,7 @@ export function EnterpriseHrDashboard() {
                             <span className="font-medium text-foreground">
                               {m.label}
                             </span>
-                            <span className="font-bold text-[#0057B8] tabular-nums">
+                            <span className="font-bold text-[#0B5ED7] tabular-nums">
                               {formatBDT(m.total)}
                             </span>
                           </div>
@@ -2557,7 +2557,7 @@ export function EnterpriseHrDashboard() {
                                 )
                               ) || 1
                             }
-                            color="#E8501A"
+                            color="#F97316"
                           />
                         </div>
                       ))}
@@ -2577,8 +2577,8 @@ export function EnterpriseHrDashboard() {
         description="How employee personal data is protected"
       >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+          <div className="flex items-start gap-2.5 rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-4">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
               <Icon name="Lock" className="size-4" />
             </div>
             <div>
@@ -2591,8 +2591,8 @@ export function EnterpriseHrDashboard() {
               </p>
             </div>
           </div>
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#fdece4] text-[#E8501A]">
+          <div className="flex items-start gap-2.5 rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-4">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#fdece4] text-[#F97316]">
               <Icon name="KeyRound" className="size-4" />
             </div>
             <div>
@@ -2605,7 +2605,7 @@ export function EnterpriseHrDashboard() {
               </p>
             </div>
           </div>
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
+          <div className="flex items-start gap-2.5 rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-4">
             <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
               <Icon name="History" className="size-4" />
             </div>
@@ -2773,7 +2773,7 @@ function AnalyticsBarCard({
               <div key={i} className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-foreground">{label}</span>
-                  <span className="font-bold text-[#0057B8] tabular-nums">
+                  <span className="font-bold text-[#0B5ED7] tabular-nums">
                     {d.count}
                   </span>
                 </div>

@@ -27,7 +27,7 @@ export default function EmailMarketingView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Mail className="w-6 h-6 text-[#F37021]" />Email Marketing</h2>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Mail className="w-6 h-6 text-[#F97316]" />Email Marketing</h2>
         <p className="text-sm text-gray-500">HTML templates, personalized content, segmentation, automated journeys, scheduled campaigns, delivery/bounce/unsubscribe, performance analytics.</p>
       </div>
       <div className="grid lg:grid-cols-12 gap-6">
@@ -42,7 +42,7 @@ export default function EmailMarketingView() {
               <div><label className="text-xs font-semibold">Subject</label><Input value={campaign.subject} onChange={e=>setCampaign({...campaign, subject:e.target.value})} className="mt-1 h-9" /></div>
               <div><label className="text-xs font-semibold">HTML Content (supports {'{{name}}'} personalization)</label><Textarea value={campaign.html} onChange={e=>setCampaign({...campaign, html:e.target.value})} className="mt-1 min-h-[140px] font-mono text-xs" /></div>
               <div className="flex gap-2">
-                <Button onClick={handleSend} disabled={sending} className="bg-[#F37021] text-white">{sending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Campaign</Button>
+                <Button onClick={handleSend} disabled={sending} className="bg-[#F97316] text-white">{sending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Campaign</Button>
                 <Button variant="outline" className="h-9"><Eye className="w-4 h-4 mr-2" />Preview</Button>
                 <Button variant="outline" className="h-9"><Palette className="w-4 h-4 mr-2" />Brand Check</Button>
               </div>
@@ -53,7 +53,7 @@ export default function EmailMarketingView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0066CC]" />Segmentation & Journeys</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0B5ED7]" />Segmentation & Journeys</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-3">
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Segments</p><p className="text-gray-600 mt-1">UK interest, HSC 2025, IELTS pending, Hot leads — via MarketingLead.destination/level/status.</p></div>
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Automated Journeys</p><p className="text-gray-600 mt-1">Welcome → Nurture (Day 3,7) → Deadline reminder — MarketingCalendar scheduledAt with idempotency.</p></div>

@@ -154,8 +154,8 @@ const VERIFICATION_LABELS: Record<string, string> = {
 };
 
 const TYPE_BADGE: Record<string, string> = {
-  country: "bg-[#e8f0fb] text-[#0057B8]",
-  university: "bg-[#fdece4] text-[#E8501A]",
+  country: "bg-[#e8f0fb] text-[#0B5ED7]",
+  university: "bg-[#fdece4] text-[#F97316]",
   course: "bg-violet-100 text-violet-700",
   exam: "bg-emerald-100 text-emerald-700",
   scholarship: "bg-rose-100 text-rose-700",
@@ -208,7 +208,7 @@ function PendingItemCard({
   acting: boolean;
 }) {
   return (
-    <div className="rounded-2xl border-2 border-[#0057B8]/15 bg-white p-4 transition-colors hover:border-[#0057B8]/40">
+    <div className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-white p-4 transition-colors hover:border-[#0B5ED7]/40">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -249,7 +249,7 @@ function PendingItemCard({
         <Button
           size="sm"
           variant="outline"
-          className="h-9 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+          className="h-9 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
           disabled={acting}
           onClick={() =>
             // informational only — surfaces a toast via parent's onAction with a custom action handled below.
@@ -301,8 +301,8 @@ function PublishedSection({
   children: React.ReactNode;
 }) {
   const accentBg: Record<string, string> = {
-    blue: "bg-[#e8f0fb] text-[#0057B8]",
-    orange: "bg-[#fdece4] text-[#E8501A]",
+    blue: "bg-[#e8f0fb] text-[#0B5ED7]",
+    orange: "bg-[#fdece4] text-[#F97316]",
     violet: "bg-violet-100 text-violet-700",
     emerald: "bg-emerald-100 text-emerald-700",
   };
@@ -610,7 +610,7 @@ export function ImportCenter() {
         action={
           <Button
             variant="outline"
-            className="h-10 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+            className="h-10 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
             onClick={fetchMain}
           >
             <Icon name="RefreshCw" className="size-4" />
@@ -773,7 +773,7 @@ export function ImportCenter() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-8 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                  className="h-8 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                                   onClick={() =>
                                     toast({
                                       title: "View public page",
@@ -850,7 +850,7 @@ export function ImportCenter() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-8 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                  className="h-8 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                                   onClick={() =>
                                     toast({
                                       title: "View public page",
@@ -928,7 +928,7 @@ export function ImportCenter() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-8 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                  className="h-8 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                                   onClick={() =>
                                     toast({
                                       title: "View public page",
@@ -1003,7 +1003,7 @@ export function ImportCenter() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-8 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                  className="h-8 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                                   onClick={() =>
                                     toast({
                                       title: "View public page",
@@ -1113,14 +1113,14 @@ export function ImportCenter() {
                   <div className="flex flex-wrap gap-3">
                     <Button
                       variant="outline"
-                      className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                      className="h-12 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                       onClick={handleParsePreview}
                     >
                       <Icon name="FileSearch" className="size-4" />
                       Parse &amp; Preview
                     </Button>
                     <Button
-                      className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                      className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90"
                       disabled={importing}
                       onClick={handleImportDraft}
                     >
@@ -1209,7 +1209,7 @@ export function ImportCenter() {
                 description="Newly imported or edited data. Not visible publicly. Counselors and editors create drafts from external sources."
               />
               <div className="flex items-center justify-center lg:px-1">
-                <Icon name="ArrowRight" className="size-6 text-[#0057B8]/40 lg:rotate-0 rotate-90" />
+                <Icon name="ArrowRight" className="size-6 text-[#0B5ED7]/40 lg:rotate-0 rotate-90" />
               </div>
               <WorkflowStage
                 index={2}
@@ -1219,7 +1219,7 @@ export function ImportCenter() {
                 description="Submitted for review by an admin or super admin. Source URL and verification status are checked before approval."
               />
               <div className="flex items-center justify-center lg:px-1">
-                <Icon name="ArrowRight" className="size-6 text-[#0057B8]/40 lg:rotate-0 rotate-90" />
+                <Icon name="ArrowRight" className="size-6 text-[#0B5ED7]/40 lg:rotate-0 rotate-90" />
               </div>
               <WorkflowStage
                 index={3}
@@ -1294,7 +1294,7 @@ export function ImportCenter() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                className="h-8 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                 onClick={fetchAudit}
                 disabled={auditLoading}
               >
@@ -1353,7 +1353,7 @@ export function ImportCenter() {
                             <span className="text-muted-foreground">{details.action || log.action.toLowerCase()}</span>{" "}
                             <Badge
                               variant="secondary"
-                              className="ml-1 rounded-full bg-[#e8f0fb] text-[11px] text-[#0057B8]"
+                              className="ml-1 rounded-full bg-[#e8f0fb] text-[11px] text-[#0B5ED7]"
                             >
                               {log.resource || "—"}
                             </Badge>
@@ -1389,12 +1389,12 @@ export function ImportCenter() {
         description="All public-facing data must meet these requirements before publishing."
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-4">
+          <div className="rounded-xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/40 p-4">
             <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#0057B8] text-white">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[#0B5ED7] text-white">
                 <Icon name="ListChecks" className="size-4" />
               </div>
-              <h4 className="text-sm font-semibold text-[#0057B8]">Required fields</h4>
+              <h4 className="text-sm font-semibold text-[#0B5ED7]">Required fields</h4>
             </div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               All public data must include <code className="rounded bg-white px-1 font-mono text-[10px]">sourceUrl</code>,{" "}
@@ -1404,12 +1404,12 @@ export function ImportCenter() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-[#E8501A]/15 bg-[#fdece4]/40 p-4">
+          <div className="rounded-xl border-2 border-[#F97316]/15 bg-[#fdece4]/40 p-4">
             <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#E8501A] text-white">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[#F97316] text-white">
                 <Icon name="CalendarClock" className="size-4" />
               </div>
-              <h4 className="text-sm font-semibold text-[#E8501A]">Time-sensitive data</h4>
+              <h4 className="text-sm font-semibold text-[#F97316]">Time-sensitive data</h4>
             </div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Fees, visa rules, work rights, scholarships, and deadlines can change — always show{" "}

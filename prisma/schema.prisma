@@ -3332,7 +3332,7 @@ model Country {
   studyLevels      String    @default("[]")
   status           String    @default("active")
   sortOrder        Int       @default(0)
-  accentColor      String    @default("#0057B8")
+  accentColor      String    @default("#0B5ED7")
   popularCities    String    @default("[]")
   universityCount  Int       @default(0)
   courseCount      Int       @default(0)
@@ -3923,7 +3923,7 @@ model HomeHeroSlide {
   subtitle             String    @default("")
   imageUrl             String    @default("")
   imageAlt             String    @default("")
-  accentColor          String    @default("#0057B8")
+  accentColor          String    @default("#0B5ED7")
   popularCity          String    @default("")
   popularIntake        String    @default("")
   universityCountLabel String    @default("")
@@ -10345,3 +10345,27 @@ model InternationalOfficerDashboardMetric {
   @@index([period])
 }
 
+// ─── Centralized verified marketing metrics (single source of truth) ─────────
+// Any public marketing metric (university count, course count, scholarship
+// count, visa success, student count, success stories, application count)
+// must be read through src/lib/verified-metrics.ts instead of being hardcoded
+// on pages. Governed rows carry source + verification metadata; anything
+// without a verified source is surfaced with status UNVERIFIED and must not
+// be presented as verified.
+model VerifiedMetric {
+  id           String    @id @default(cuid())
+  metric       String    @unique // universities.total, courses.total, scholarships.total, countries.total, ...
+  value        Int       @default(0)
+  displayValue String    @default("") // governed display string, e.g. "360+"
+  source       String    @default("internal-database-aggregate")
+  verifiedAt   DateTime?
+  verifiedBy   String? // user id or email of the verifier
+  expiresAt    DateTime?
+  status       String    @default("UNVERIFIED") // UNVERIFIED | UNDER_REVIEW | VERIFIED | EXPIRED
+  notes        String?   @db.Text
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([status])
+  @@index([metric, status])
+}

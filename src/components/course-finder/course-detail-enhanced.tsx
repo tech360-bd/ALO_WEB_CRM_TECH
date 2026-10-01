@@ -31,8 +31,8 @@ import { COUNTRY_FLAGS } from './types';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#0057B8';
-const ALO_ORANGE = '#E8501A';
+const ALO_BLUE = '#0B5ED7';
+const ALO_ORANGE = '#F97316';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface UniversityInfo {
@@ -140,15 +140,15 @@ function formatDate(iso: string | null | undefined): string {
 function getLevelBadgeClasses(level: string): string {
   switch (level?.toLowerCase()) {
     case 'undergraduate': case 'bachelor':
-      return 'bg-[#0057B8]/10 text-[#0057B8]';
+      return 'bg-[#0B5ED7]/10 text-[#0B5ED7]';
     case 'postgraduate': case 'master':
-      return 'bg-[#0057B8]/20 text-[#0057B8]';
+      return 'bg-[#0B5ED7]/20 text-[#0B5ED7]';
     case 'phd': case 'doctorate':
-      return 'bg-[#0057B8]/30 text-[#0057B8]';
+      return 'bg-[#0B5ED7]/30 text-[#0B5ED7]';
     case 'foundation':
       return 'bg-sky-100 text-sky-800';
     case 'diploma': case 'certificate':
-      return 'bg-[#0057B8]/15 text-[#0057B8]';
+      return 'bg-[#0B5ED7]/15 text-[#0B5ED7]';
     default:
       return 'bg-slate-100 text-slate-700';
   }
@@ -233,7 +233,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
         {/* Academic Requirements */}
         <section>
           <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <GraduationCap className="size-4 text-[#0057B8]" />
+            <GraduationCap className="size-4 text-[#0B5ED7]" />
             Academic Requirements
           </h3>
           <div className="space-y-2 bg-slate-50 rounded-lg p-4">
@@ -261,7 +261,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
         {/* English Requirements */}
         <section>
           <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <BookOpen className="size-4 text-[#0057B8]" />
+            <BookOpen className="size-4 text-[#0B5ED7]" />
             English Language Requirements
           </h3>
           <div className="grid grid-cols-2 gap-3">
@@ -291,7 +291,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
         {/* Professional Requirements */}
         <section>
           <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <Briefcase className="size-4 text-[#0057B8]" />
+            <Briefcase className="size-4 text-[#0B5ED7]" />
             Professional Requirements
           </h3>
           <div className="space-y-2">
@@ -311,11 +311,11 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
             ))}
             <div className="flex items-center justify-between bg-slate-50 rounded-lg p-3">
               <span className="text-sm text-slate-600">CV / Resume</span>
-              <Badge className="bg-[#0057B8]/10 text-[#0057B8] text-xs">Recommended</Badge>
+              <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] text-xs">Recommended</Badge>
             </div>
             <div className="flex items-center justify-between bg-slate-50 rounded-lg p-3">
               <span className="text-sm text-slate-600">References</span>
-              <Badge className="bg-[#0057B8]/10 text-[#0057B8] text-xs">Usually 1-2</Badge>
+              <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] text-xs">Usually 1-2</Badge>
             </div>
           </div>
         </section>
@@ -324,7 +324,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
         {isResearch && (
           <section>
             <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-              <FlaskConical className="size-4 text-[#0057B8]" />
+              <FlaskConical className="size-4 text-[#0B5ED7]" />
               Research Requirements
             </h3>
             <div className="bg-slate-50 rounded-lg p-4 space-y-2 text-sm text-slate-600">
@@ -338,7 +338,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
         {/* Documents Checklist */}
         <section>
           <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <ListChecks className="size-4 text-[#0057B8]" />
+            <ListChecks className="size-4 text-[#0B5ED7]" />
             Documents Checklist
           </h3>
           <div className="space-y-1.5">
@@ -349,7 +349,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
               'Portfolio (if required)', 'Financial Evidence / Bank Statements',
             ].map(doc => (
               <div key={doc} className="flex items-center gap-2 text-sm text-slate-600 py-1">
-                <CircleDot className="size-3.5 text-[#0057B8] flex-shrink-0" />
+                <CircleDot className="size-3.5 text-[#0B5ED7] flex-shrink-0" />
                 <span>{doc}</span>
               </div>
             ))}
@@ -359,7 +359,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
         {/* Financial Info */}
         <section>
           <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <Banknote className="size-4 text-[#0057B8]" />
+            <Banknote className="size-4 text-[#0B5ED7]" />
             Financial Information
           </h3>
           <div className="space-y-2 bg-slate-50 rounded-lg p-4">
@@ -402,7 +402,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
             {course.sourceUrl && (
               <p className="flex items-center gap-1">
                 <ExternalLink className="size-3" />
-                Source: <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:underline truncate max-w-[200px] inline-block">{course.sourceUrl}</a>
+                Source: <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] hover:underline truncate max-w-[200px] inline-block">{course.sourceUrl}</a>
               </p>
             )}
             <p>Collected: {formatDate(course.collectedAt)}</p>
@@ -492,8 +492,8 @@ function InfoItem({ icon: Icon, label, value, subLabel }: {
 }) {
   return (
     <div className="flex items-start gap-3 p-3">
-      <div className="w-9 h-9 rounded-lg bg-[#0057B8]/10 flex items-center justify-center flex-shrink-0">
-        <Icon className="size-4 text-[#0057B8]" />
+      <div className="w-9 h-9 rounded-lg bg-[#0B5ED7]/10 flex items-center justify-center flex-shrink-0">
+        <Icon className="size-4 text-[#0B5ED7]" />
       </div>
       <div className="min-w-0">
         <p className="text-xs text-slate-500 mb-0.5">{label}</p>
@@ -549,14 +549,14 @@ function ApplicationStepItem({ step, index }: { step: ReturnType<typeof getAppli
   return (
     <div className="flex gap-3 group">
       <div className="flex flex-col items-center">
-        <div className="w-8 h-8 rounded-full bg-[#0057B8] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-[#0B5ED7] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
           {step.step}
         </div>
         {index < 19 && <div className="w-px flex-1 bg-slate-200 mt-1" />}
       </div>
       <div className="pb-6">
         <div className="flex items-center gap-2">
-          <StepIcon className="size-4 text-[#0057B8]" />
+          <StepIcon className="size-4 text-[#0B5ED7]" />
           <h4 className="text-sm font-semibold text-slate-900">{step.title}</h4>
         </div>
         <p className="text-xs text-slate-500 mt-1 leading-relaxed">{step.desc}</p>
@@ -801,18 +801,18 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
       <nav className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
         <button
           onClick={() => window.history.back()}
-          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] transition-colors mb-3"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0B5ED7] transition-colors mb-3"
         >
           <ArrowLeft className="size-4" />
           Back
         </button>
         <ol className="flex items-center gap-1.5 text-sm text-slate-500 flex-wrap">
           <li>
-            <Link href="/" className="hover:text-[#0057B8] transition-colors">Home</Link>
+            <Link href="/" className="hover:text-[#0B5ED7] transition-colors">Home</Link>
           </li>
           <li><ChevronRight className="size-3.5" /></li>
           <li>
-            <Link href="/course-finder" className="hover:text-[#0057B8] transition-colors">Course Finder</Link>
+            <Link href="/course-finder" className="hover:text-[#0B5ED7] transition-colors">Course Finder</Link>
           </li>
           <li><ChevronRight className="size-3.5" /></li>
           <li className="text-slate-900 font-medium truncate max-w-[250px]" title={course.title}>
@@ -835,7 +835,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             <div className="min-w-0 flex-1">
               <Link
                 href={`/course-finder?slug=${uni.slug}`}
-                className="font-semibold text-slate-900 hover:text-[#0057B8] transition-colors truncate block"
+                className="font-semibold text-slate-900 hover:text-[#0B5ED7] transition-colors truncate block"
               >
                 {uni.name}
               </Link>
@@ -906,7 +906,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <ClipboardCheck className="size-5 text-[#0057B8]" />
+                  <ClipboardCheck className="size-5 text-[#0B5ED7]" />
                   Your Eligibility
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">Check if this course is right for you</p>
@@ -920,7 +920,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8]/5"
+                  className="border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#0B5ED7]/5"
                   onClick={() => toast.info('Navigating to eligibility checker with this course pre-selected...')}
                 >
                   <ClipboardCheck className="size-4 mr-1.5" />
@@ -936,7 +936,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                   <SheetContent side="right" className="sm:max-w-lg w-full">
                     <SheetHeader>
                       <SheetTitle className="flex items-center gap-2">
-                        <ScrollText className="size-5 text-[#0057B8]" />
+                        <ScrollText className="size-5 text-[#0B5ED7]" />
                         Full Requirements
                       </SheetTitle>
                       <SheetDescription>
@@ -1016,7 +1016,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               <Card className="overflow-hidden border-slate-200">
                 <CardContent className="p-5 sm:p-6">
                   <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Sparkles className="size-5 text-[#0057B8]" />
+                    <Sparkles className="size-5 text-[#0B5ED7]" />
                     Overview
                   </h2>
                   <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 whitespace-pre-line">
@@ -1030,13 +1030,13 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               <Card className="overflow-hidden border-slate-200">
                 <CardContent className="p-5 sm:p-6">
                   <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <BookOpen className="size-5 text-[#0057B8]" />
+                    <BookOpen className="size-5 text-[#0B5ED7]" />
                     Key Modules
                   </h2>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {modulesItems.map((mod, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                        <CheckCircle className="size-4 text-[#0057B8] mt-0.5 flex-shrink-0" />
+                        <CheckCircle className="size-4 text-[#0B5ED7] mt-0.5 flex-shrink-0" />
                         <span>{mod}</span>
                       </li>
                     ))}
@@ -1049,13 +1049,13 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               <Card className="overflow-hidden border-slate-200">
                 <CardContent className="p-5 sm:p-6">
                   <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Target className="size-5 text-[#0057B8]" />
+                    <Target className="size-5 text-[#0B5ED7]" />
                     Learning Outcomes
                   </h2>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {learningItems.map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                        <ChevronRight className="size-4 text-[#0057B8] mt-0.5 flex-shrink-0" />
+                        <ChevronRight className="size-4 text-[#0B5ED7] mt-0.5 flex-shrink-0" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -1068,7 +1068,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               <Card className="overflow-hidden border-slate-200">
                 <CardContent className="p-5 sm:p-6 space-y-4">
                   <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Briefcase className="size-5 text-[#0057B8]" />
+                    <Briefcase className="size-5 text-[#0B5ED7]" />
                     Career Outcomes
                   </h2>
                   {course.placementAvailable && (
@@ -1081,7 +1081,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {careerItems.map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                          <ChevronRight className="size-4 text-[#0057B8] mt-0.5 flex-shrink-0" />
+                          <ChevronRight className="size-4 text-[#0B5ED7] mt-0.5 flex-shrink-0" />
                           <span>{item}</span>
                         </li>
                       ))}
@@ -1095,7 +1095,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               <Card className="overflow-hidden border-slate-200">
                 <CardContent className="p-5 sm:p-6">
                   <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Award className="size-5 text-[#0057B8]" />
+                    <Award className="size-5 text-[#0B5ED7]" />
                     Professional Accreditation
                   </h2>
                   <p className="text-sm text-slate-700 leading-relaxed">{course.professionalAccreditation}</p>
@@ -1181,7 +1181,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             <Card className="overflow-hidden border-slate-200">
               <CardContent className="p-5 sm:p-6">
                 <h2 className="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-                  <ListChecks className="size-5 text-[#0057B8]" />
+                  <ListChecks className="size-5 text-[#0B5ED7]" />
                   How to Apply
                 </h2>
                 <p className="text-sm text-slate-500 mb-6">
@@ -1210,7 +1210,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8]/5"
+                    className="border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#0B5ED7]/5"
                     onClick={() => toast.info('Connecting you with a counsellor...')}
                   >
                     <MessageCircle className="size-5 mr-2" />
@@ -1240,7 +1240,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               <>
                 <div className="flex items-center gap-2 mb-4">
                   <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <BookOpen className="size-5 text-[#0057B8]" />
+                    <BookOpen className="size-5 text-[#0B5ED7]" />
                     Similar Courses
                   </h2>
                   {course.subjectArea && (
@@ -1259,7 +1259,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               <>
                 <div className="flex items-center gap-2 mb-4">
                   <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <BookOpen className="size-5 text-[#0057B8]" />
+                    <BookOpen className="size-5 text-[#0B5ED7]" />
                     Related Courses
                   </h2>
                 </div>
@@ -1286,7 +1286,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             href={course.officialCourseUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-[#0057B8] hover:underline font-medium"
+            className="inline-flex items-center gap-2 text-sm text-[#0B5ED7] hover:underline font-medium"
           >
             <ExternalLink className="size-4" />
             View on {uni?.name || 'University'} website
@@ -1309,7 +1309,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <Button
             variant="outline"
             size="lg"
-            className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8]/5 px-4"
+            className="border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#0B5ED7]/5 px-4"
             onClick={handleSaveCourse}
             disabled={saving}
           >
@@ -1319,7 +1319,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <Button
             variant="outline"
             size="lg"
-            className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8]/5 px-4"
+            className="border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#0B5ED7]/5 px-4"
             onClick={handleCompare}
           >
             <GitCompare className="size-5" />
@@ -1378,7 +1378,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <span className="flex items-center gap-1">
             <ShieldCheck className="size-3.5" />
             Source: {course.sourceUrl ? (
-              <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:underline truncate max-w-[300px] inline-block">
+              <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] hover:underline truncate max-w-[300px] inline-block">
                 {course.sourceUrl}
               </a>
             ) : (

@@ -18,7 +18,7 @@ export const viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: "cover",
-  themeColor: "#0057B8",
+  themeColor: "#0B5ED7",
 };
 
 export const metadata: Metadata = {
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
-    "msapplication-TileColor": "#0057B8",
+    "msapplication-TileColor": "#0B5ED7",
     "msapplication-TileImage": "/icons/icon-144x144.png",
   },
 };
@@ -79,6 +79,7 @@ export const metadata: Metadata = {
 import FloatingActionWidget from "@/components/website/FloatingActionWidget";
 import PublicLayoutWrapper from "@/components/website/PublicLayoutWrapper";
 import { PwaRegister } from "@/components/pwa/PwaRegister";
+import { I18nProvider } from "@/i18n";
 
 export default function RootLayout({
   children,
@@ -90,14 +91,17 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${geistMono.variable} font-sans antialiased bg-background text-foreground`}
       >
-        <PublicLayoutWrapper>
-          {children}
-        </PublicLayoutWrapper>
-        {/* Single global floating contact widget (replaces the old duplicate
-            PublicCommunicationBar stack + fake chat). */}
-        <FloatingActionWidget />
-        <PwaRegister />
-        <Toaster />
+        {/* Centralized English + বাংলা i18n (no per-language route forks) */}
+        <I18nProvider>
+          <PublicLayoutWrapper>
+            {children}
+          </PublicLayoutWrapper>
+          {/* Single global floating contact widget (replaces the old duplicate
+              PublicCommunicationBar stack + fake chat). */}
+          <FloatingActionWidget />
+          <PwaRegister />
+          <Toaster />
+        </I18nProvider>
       </body>
     </html>
   );

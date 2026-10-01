@@ -18,7 +18,7 @@ export default function BroadcastBuilder({ onCreated }: { onCreated?: ()=>void }
   };
   return (
     <Card className="border border-gray-200">
-      <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Megaphone className="w-4 h-4 text-[#0057B8]" /> Broadcast Builder</CardTitle></CardHeader>
+      <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Megaphone className="w-4 h-4 text-[#0B5ED7]" /> Broadcast Builder</CardTitle></CardHeader>
       <CardContent className="space-y-3">
         <Input placeholder="Title" value={form.title} onChange={e=>setForm(s=>({...s, title:e.target.value}))} />
         <div className="grid grid-cols-2 gap-2">
@@ -28,7 +28,7 @@ export default function BroadcastBuilder({ onCreated }: { onCreated?: ()=>void }
           </SelectContent></Select>
         </div>
         <Textarea placeholder="Message — opt-out respected, send log per recipient" value={form.messageBody} onChange={e=>setForm(s=>({...s, messageBody:e.target.value}))} />
-        <Button size="sm" className="bg-[#E8501A]" onClick={create}><Send className="w-4 h-4 mr-1" /> Create Broadcast — Approval Required</Button>
+        <Button size="sm" className="bg-[#F97316]" onClick={create}><Send className="w-4 h-4 mr-1" /> Create Broadcast — Approval Required</Button>
         <p className="text-[11px] text-gray-500">Rules: Mass {'>'}100 requires Super Admin • Marketing Manager can approve small • Opt-out via communication_preferences • Transactional allowed, marketing requires consent</p>
       </CardContent>
     </Card>

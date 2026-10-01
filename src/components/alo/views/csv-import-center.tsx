@@ -316,7 +316,7 @@ export function CsvImportCenter() {
                 accent: "blue" as const,
               };
               const accentMap: Record<string, string> = {
-                blue: "bg-[#e8f0fb] text-[#0057B8]",
+                blue: "bg-[#e8f0fb] text-[#0B5ED7]",
                 emerald: "bg-emerald-50 text-emerald-600",
                 amber: "bg-amber-50 text-amber-600",
                 violet: "bg-violet-50 text-violet-600",
@@ -325,7 +325,7 @@ export function CsvImportCenter() {
               return (
                 <Card
                   key={t.type}
-                  className="rounded-2xl border-2 border-[#0057B8]/15 transition-colors hover:border-[#0057B8]/40"
+                  className="rounded-2xl border-2 border-[#0B5ED7]/15 transition-colors hover:border-[#0B5ED7]/40"
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
@@ -340,7 +340,7 @@ export function CsvImportCenter() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-2">
                           <p className="font-semibold capitalize text-foreground">{meta.label}</p>
-                          <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">
+                          <Badge variant="outline" className="border-[#0B5ED7]/30 text-[#0B5ED7]">
                             {cols.length} columns
                           </Badge>
                         </div>
@@ -361,7 +361,7 @@ export function CsvImportCenter() {
                           }}
                           variant="ghost"
                           size="sm"
-                          className="mt-3 h-8 px-2 text-xs text-[#0057B8] hover:bg-[#e8f0fb]"
+                          className="mt-3 h-8 px-2 text-xs text-[#0B5ED7] hover:bg-[#e8f0fb]"
                         >
                           <Icon name="FileDown" className="size-3.5" />
                           Load sample
@@ -456,7 +456,7 @@ export function CsvImportCenter() {
                       </Label>
                       <button
                         onClick={() => loadSampleCsv()}
-                        className="text-xs font-medium text-[#0057B8] hover:underline"
+                        className="text-xs font-medium text-[#0B5ED7] hover:underline"
                       >
                         Load sample CSV
                       </button>
@@ -481,7 +481,7 @@ export function CsvImportCenter() {
                     <Button
                       onClick={parseAndPreview}
                       disabled={parsing}
-                      className="h-12 flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                      className="h-12 flex-1 bg-[#F97316] text-white hover:bg-[#F97316]/90"
                     >
                       {parsing ? (
                         <>
@@ -498,7 +498,7 @@ export function CsvImportCenter() {
                     <Button
                       onClick={resetImportForm}
                       variant="outline"
-                      className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                      className="h-12 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                     >
                       <Icon name="RotateCcw" className="size-4" />
                       Reset
@@ -538,7 +538,7 @@ export function CsvImportCenter() {
                   </li>
                 </ul>
                 <div className="mt-3 rounded-lg bg-[#e8f0fb]/60 p-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0057B8]">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0B5ED7]">
                     Import flow
                   </p>
                   <p className="mt-1 text-[11px] text-muted-foreground">
@@ -552,7 +552,7 @@ export function CsvImportCenter() {
                   <CollapsibleTrigger asChild>
                     <Button
                       variant="outline"
-                      className="h-9 w-full border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                      className="h-9 w-full border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                     >
                       <Icon name={showSample ? "ChevronUp" : "ChevronDown"} className="size-4" />
                       {showSample ? "Hide sample" : "Show sample CSV"}
@@ -569,7 +569,7 @@ export function CsvImportCenter() {
                       }}
                       variant="ghost"
                       size="sm"
-                      className="mt-2 h-8 text-xs text-[#0057B8] hover:bg-[#e8f0fb]"
+                      className="mt-2 h-8 text-xs text-[#0B5ED7] hover:bg-[#e8f0fb]"
                     >
                       <Icon name="Copy" className="size-3.5" />
                       Copy sample
@@ -676,21 +676,21 @@ export function CsvImportCenter() {
               {/* Preview table */}
               {result.preview.length > 0 && (
                 <div className="mt-5">
-                  <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-[#0057B8]">
+                  <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-[#0B5ED7]">
                     <Icon name="Eye" className="size-4" />
                     Preview — first {result.preview.length} parsed rows
                   </h4>
-                  <ScrollArea className="max-h-72 rounded-lg border border-[#0057B8]/15">
+                  <ScrollArea className="max-h-72 rounded-lg border border-[#0B5ED7]/15">
                     <Table>
                       <TableHeader className="sticky top-0 bg-white">
-                        <TableRow className="border-b border-[#0057B8]/15">
-                          <TableHead className="w-12 text-xs font-bold uppercase text-[#0057B8]">
+                        <TableRow className="border-b border-[#0B5ED7]/15">
+                          <TableHead className="w-12 text-xs font-bold uppercase text-[#0B5ED7]">
                             #
                           </TableHead>
                           {Object.keys(result.preview[0] || {}).map((h) => (
                             <TableHead
                               key={h}
-                              className="text-xs font-bold uppercase text-[#0057B8]"
+                              className="text-xs font-bold uppercase text-[#0B5ED7]"
                             >
                               {h}
                             </TableHead>
@@ -699,7 +699,7 @@ export function CsvImportCenter() {
                       </TableHeader>
                       <TableBody>
                         {result.preview.map((row, i) => (
-                          <TableRow key={i} className="border-b border-[#0057B8]/8">
+                          <TableRow key={i} className="border-b border-[#0B5ED7]/8">
                             <TableCell className="font-mono text-xs text-muted-foreground">
                               {i + 1}
                             </TableCell>
@@ -717,7 +717,7 @@ export function CsvImportCenter() {
               )}
 
               <div className="mt-5 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 p-3 text-xs text-muted-foreground">
-                <Icon name="Info" className="mt-0.5 size-4 shrink-0 text-[#0057B8]" />
+                <Icon name="Info" className="mt-0.5 size-4 shrink-0 text-[#0B5ED7]" />
                 <p>
                   Imported data goes through validation. Errors are saved in the{" "}
                   <span className="font-mono">import_errors</span> table. All imports are
@@ -748,29 +748,29 @@ export function CsvImportCenter() {
               <ScrollArea className="max-h-[60vh]">
                 <Table>
                   <TableHeader className="sticky top-0 bg-white">
-                    <TableRow className="border-b border-[#0057B8]/15">
-                      <TableHead className="min-w-[180px] text-xs font-bold uppercase text-[#0057B8]">
+                    <TableRow className="border-b border-[#0B5ED7]/15">
+                      <TableHead className="min-w-[180px] text-xs font-bold uppercase text-[#0B5ED7]">
                         File name
                       </TableHead>
-                      <TableHead className="min-w-[120px] text-xs font-bold uppercase text-[#0057B8]">
+                      <TableHead className="min-w-[120px] text-xs font-bold uppercase text-[#0B5ED7]">
                         Type
                       </TableHead>
-                      <TableHead className="min-w-[120px] text-xs font-bold uppercase text-[#0057B8]">
+                      <TableHead className="min-w-[120px] text-xs font-bold uppercase text-[#0B5ED7]">
                         Status
                       </TableHead>
-                      <TableHead className="text-right text-xs font-bold uppercase text-[#0057B8]">
+                      <TableHead className="text-right text-xs font-bold uppercase text-[#0B5ED7]">
                         Total
                       </TableHead>
-                      <TableHead className="text-right text-xs font-bold uppercase text-[#0057B8]">
+                      <TableHead className="text-right text-xs font-bold uppercase text-[#0B5ED7]">
                         Success
                       </TableHead>
-                      <TableHead className="text-right text-xs font-bold uppercase text-[#0057B8]">
+                      <TableHead className="text-right text-xs font-bold uppercase text-[#0B5ED7]">
                         Errors
                       </TableHead>
-                      <TableHead className="min-w-[140px] text-xs font-bold uppercase text-[#0057B8]">
+                      <TableHead className="min-w-[140px] text-xs font-bold uppercase text-[#0B5ED7]">
                         Date
                       </TableHead>
-                      <TableHead className="text-right text-xs font-bold uppercase text-[#0057B8]">
+                      <TableHead className="text-right text-xs font-bold uppercase text-[#0B5ED7]">
                         Actions
                       </TableHead>
                     </TableRow>
@@ -782,7 +782,7 @@ export function CsvImportCenter() {
                       return (
                         <TableRow
                           key={b.id}
-                          className="border-b border-[#0057B8]/8 hover:bg-[#f7f9fc]"
+                          className="border-b border-[#0B5ED7]/8 hover:bg-[#f7f9fc]"
                         >
                           <TableCell className="align-top">
                             <p className="font-medium text-foreground">{b.fileName}</p>
@@ -795,7 +795,7 @@ export function CsvImportCenter() {
                           <TableCell className="align-top">
                             <Badge
                               variant="outline"
-                              className="border-[#0057B8]/30 text-[#0057B8]"
+                              className="border-[#0B5ED7]/30 text-[#0B5ED7]"
                             >
                               <Icon name={typeMeta.icon} className="mr-1 size-3" />
                               {typeMeta.label}
@@ -836,7 +836,7 @@ export function CsvImportCenter() {
                               onClick={() => setErrorsBatch(b)}
                               variant="outline"
                               size="sm"
-                              className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                              className="h-8 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                               disabled={b.errorRows === 0 && (b._count?.errors ?? 0) === 0}
                             >
                               <Icon name="Eye" className="size-3.5" />
@@ -858,7 +858,7 @@ export function CsvImportCenter() {
       <Dialog open={!!errorsBatch} onOpenChange={(o) => !o && setErrorsBatch(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
               <Icon name="AlertTriangle" className="size-5" />
               Batch error summary
             </DialogTitle>
@@ -870,7 +870,7 @@ export function CsvImportCenter() {
             <div className="space-y-3">
               <div className="grid grid-cols-3 gap-2">
                 <div className="rounded-lg bg-[#e8f0fb]/60 p-3 text-center">
-                  <p className="text-2xl font-black tabular-nums text-[#0057B8]">
+                  <p className="text-2xl font-black tabular-nums text-[#0B5ED7]">
                     {errorsBatch.totalRows}
                   </p>
                   <p className="mt-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
@@ -894,9 +894,9 @@ export function CsvImportCenter() {
                   </p>
                 </div>
               </div>
-              <div className="rounded-lg border border-[#0057B8]/15 bg-[#f7f9fc] p-3">
+              <div className="rounded-lg border border-[#0B5ED7]/15 bg-[#f7f9fc] p-3">
                 <p className="text-xs text-muted-foreground">
-                  <Icon name="Info" className="mr-1 inline size-3.5 text-[#0057B8]" />
+                  <Icon name="Info" className="mr-1 inline size-3.5 text-[#0B5ED7]" />
                   Detailed error rows for this batch are stored in the{" "}
                   <span className="font-mono">ImportError</span> table. Each error captures the row
                   number, field name, error message, and raw data so it can be re-imported after

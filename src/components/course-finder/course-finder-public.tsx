@@ -285,7 +285,7 @@ function FilterSidebar({
       {/* English Requirements — Enhanced per spec: english_requirements filter */}
       <div className="space-y-3">
         <h4 className="text-sm font-medium text-[#0F172A] flex items-center gap-1.5">
-          <span className="w-5 h-5 rounded bg-blue-50 text-[#0057B8] flex items-center justify-center text-[10px] font-bold">EN</span>
+          <span className="w-5 h-5 rounded bg-blue-50 text-[#0B5ED7] flex items-center justify-center text-[10px] font-bold">EN</span>
           English Requirements
         </h4>
         <p className="text-[11px] text-slate-500 leading-relaxed">Filter courses by accepted English test and minimum score. Acceptance varies by university, course and visa route.</p>

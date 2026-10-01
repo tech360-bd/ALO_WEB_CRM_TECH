@@ -57,6 +57,11 @@ const nextConfig: NextConfig = {
       // their metadata, canonical URL, route-level loading/error states, and
       // dynamic content.
       { source: "/book-appointment", destination: "/book-consultation" },
+      // Spec-named IA aliases: the specification's /consultation and
+      // /test-preparation paths map onto the existing implementations.
+      { source: "/consultation", destination: "/book-consultation" },
+      { source: "/test-preparation", destination: "/english-test-prep" },
+      { source: "/test-preparation/:slug", destination: "/english-test-prep/:slug" },
       { source: "/staff/login", destination: "/employee/login" },
       { source: "/admin", destination: "/admin/login" },
       { source: "/admin/students", destination: "/admin/crm-command" },

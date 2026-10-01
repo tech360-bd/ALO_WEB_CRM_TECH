@@ -245,6 +245,8 @@ export const PERMISSION_CATALOG: Permission[] = [
   // --- ADMIN MODULE ---
   { id: "ad1", module: "admin", feature: "admin", action: "manage_permissions", description: "Manage role permissions" },
   { id: "ad2", module: "admin", feature: "admin", action: "view_all_data", description: "View all data" },
+  { id: "metrics.read", module: "admin", feature: "metrics", action: "view", description: "Read centralized verified metrics and governance state" },
+  { id: "metrics.manage", module: "admin", feature: "metrics", action: "update", description: "Govern centralized verified metrics (sync, verify, expire)" },
   { id: "ad3", module: "admin", feature: "admin", action: "manage_employees", description: "Manage employees" },
   { id: "ad4", module: "admin", feature: "admin", action: "manage_branches", description: "Manage branches" },
 ];

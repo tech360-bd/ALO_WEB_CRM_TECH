@@ -299,3 +299,29 @@ Stage Summary:
 - Clean install: PASS (full gate sequence verified)
 - ZIP: /home/z/my-project/download/ALO-Education-ERP-FINAL.zip (16MB, SHA-256: b37839c4b0445f001e832f315a890db8899b9cbb63ea12224e3e9f63e9423192)
 - Login credentials: admin@aloeducation.com / SET_VIA_ENVIRONMENT_ONLY (or ADMIN_PASSWORD env var)
+
+---
+Task ID: full-audit-repair-enhance-2026-10-02
+Agent: Arena Agent Mode (main)
+Task: Master-specification full-stack audit → repair → complete → enhance.
+
+Work Log:
+- Full repository audit: 368 pages, 820 API routes, 425 components, 239 lib modules, 479→480 Prisma models, 11 migrations, 51 vitest files, 4 workflows, deployment-ownership model (Hostinger-owned, CI-only Actions) — confirmed intact and preserved.
+- Baseline validation reproduced from CI recipe: npm audit 0 vulns; deployment-ownership + runtime-standard 16/16; prisma validate/generate/verify-client OK; lint 0 errors (23 cosmetic warnings); tsc 0 errors; vitest 449 passed / 7 skipped (DB self-skip); integration 22 passed / 7 skipped; next build + standalone verification PASS.
+- Documented spec conflict: production DB is MySQL 8 (not PostgreSQL) — kept per production-compatibility rule; Node 22.x confirmed everywhere.
+- Brand consolidation to official ALO palette: #0B5ED7 / #073B8C / #F97316 / #FFEDD5; migrated 5,118 hardcoded legacy hexes across src (+manifest, prisma defaults, seeds); added --alo-brand-deep/--alo-cta-light tokens (light+dark); historical migrations untouched.
+- New centralized verified-metrics system (Part 13): VerifiedMetric model + additive migration 20261002000000_verified_metrics; src/lib/verified-metrics.ts (governed rows win; live DB aggregates marked UNVERIFIED; never auto-verifies); public GET /api/metrics; audited RBAC-gated admin governance API; /api/website/homepage now sources stats through the service; removed fabricated "500+"/"8,800+" claims.
+- New centralized bilingual EN/বাংলা i18n (Part 31): src/i18n dictionaries+provider (persisted locale, html lang sync, Bengali system font stack); LanguageToggle on public navbar (desktop + mobile sheet); navbar/hero/CTA localized; no per-language route duplication.
+- Replaced fake-demo /eligibility-check (hardcoded Oxford sample) with the real EligibilityCheckerEnhanced engine; /eligibility-checker kept canonical; sitemap updated.
+- Spec IA aliases: /consultation → /book-consultation, /test-preparation(/:slug) → /english-test-prep(/:slug) via established rewrites pattern.
+- softphone-engine clickToCall: removed the repo's only TODO + fake-success path; now delegates to real audited 3CX initiateClickToCall with explicit not_configured/failed states.
+- RBAC: added metrics.read / metrics.manage permissions to catalog (admin grants flow through existing 'ALL' grants).
+- Docs: created ARCHITECTURE.md, DATABASE.md, AI_ARCHITECTURE.md, CRM_DOCUMENTATION.md, TESTING.md (actual-implementation docs); full report in FINAL-AUDIT-REPAIR-REPORT-2026-10-02.md.
+- Tests added: tests/unit/i18n-dictionaries.test.ts (6 tests) + bilingual-toggle Playwright e2e.
+- Re-validation after changes: lint 0 errors; unit/integration green; fresh typecheck re-run after 2 fixed errors (missing import, PermissionAction union alignment) — see final report §18/§19.
+
+Stage Summary:
+- Status: COMPLETE (all validation gates green; e2e requires CI/DB environment by design)
+- Gaps closed: brand palette, metrics governance, bilingual infra, fake eligibility demo, IA aliases, softphone fake-success, canonical docs, metrics RBAC
+- DB: +1 model, +1 additive migration (apply via Hostinger flow: npm run db:deploy)
+- External dependencies requiring human action: migration apply, admin metrics sync+verification, 3Cx config, AI keys, disposable test DB for 7 self-skipped integration tests, incremental Bangla content coverage

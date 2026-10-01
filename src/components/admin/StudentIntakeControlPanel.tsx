@@ -46,7 +46,7 @@ export default function StudentIntakeControlPanel() {
     <Card className="bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
       <CardHeader className="pb-3 border-b border-[#E2E8F0]">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold flex items-center gap-2"><Bot className="w-5 h-5 text-[#E8501A]" />Bangla Intake AI — ID-First (Website / WhatsApp / Facebook) • Super-Admin Managed</CardTitle>
+          <CardTitle className="text-sm font-bold flex items-center gap-2"><Bot className="w-5 h-5 text-[#F97316]" />Bangla Intake AI — ID-First (Website / WhatsApp / Facebook) • Super-Admin Managed</CardTitle>
           <Badge className={health?.officeHours ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}>
             {health?.officeHours ? 'Office Hours (human-like sequential)' : 'After Hours (AI queue)'}
           </Badge>
@@ -68,7 +68,7 @@ export default function StudentIntakeControlPanel() {
         </div>
         <div className="flex flex-col md:flex-row gap-2 items-end">
           <div className="flex-1 w-full"><label className="text-[11px] font-bold">Probe — test ID verification (super-admin only)</label><Input placeholder="AE-2025000123" value={probeId} onChange={e=>setProbeId(e.target.value)} className="h-9 text-xs mt-1" /></div>
-          <Button onClick={sendProbe} disabled={loading} className="bg-[#E8501A] text-white h-9 text-xs">{loading ? 'Checking...' : 'Test Verify → Independent Notice'}</Button>
+          <Button onClick={sendProbe} disabled={loading} className="bg-[#F97316] text-white h-9 text-xs">{loading ? 'Checking...' : 'Test Verify → Independent Notice'}</Button>
           <Link href="/api/ai/student-intake" target="_blank"><Button variant="outline" className="h-9 text-xs">GET contract</Button></Link>
         </div>
         {probeReply && <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-[12px] whitespace-pre-wrap"><CheckCircle2 className="w-4 h-4 inline mr-1 text-emerald-600"/>{probeReply}</div>}

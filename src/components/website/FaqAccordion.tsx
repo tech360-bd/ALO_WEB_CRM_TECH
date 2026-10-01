@@ -47,18 +47,18 @@ export default function FaqAccordion({ targetType = 'general', targetSlug = '', 
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2"><HelpCircle className="w-5 h-5 text-[#0057B8]" /><h3 className="text-lg font-bold text-[#0F172A]">{title}</h3><Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">{faqs.length} FAQs — DB-driven</Badge></div>
+      <div className="flex items-center gap-2"><HelpCircle className="w-5 h-5 text-[#0B5ED7]" /><h3 className="text-lg font-bold text-[#0F172A]">{title}</h3><Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">{faqs.length} FAQs — DB-driven</Badge></div>
       <Card className="p-2 md:p-4 bg-white border-[#E2E8F0] rounded-2xl">
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((f: any, i: number) => (
             <AccordionItem key={f.id || i} value={`faq-${i}`} className="border-b border-[#E2E8F0]/60">
-              <AccordionTrigger className="text-left font-semibold text-[#0F172A] text-sm hover:text-[#0057B8] py-4">
+              <AccordionTrigger className="text-left font-semibold text-[#0F172A] text-sm hover:text-[#0B5ED7] py-4">
                 <span className="flex items-center gap-2"><Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px] hidden md:inline">{f.category || 'general'}</Badge>{f.question || f.q}</span>
               </AccordionTrigger>
               <AccordionContent className="text-sm text-gray-700 leading-relaxed pb-4">
                 <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4">
                   {f.answer || f.a}
-                  {f.sourceUrl && <p className="text-[11px] text-gray-500 mt-3 border-t border-[#E2E8F0] pt-2">Source: <a href={f.sourceUrl} target="_blank" className="text-[#0057B8] underline">{f.sourceName || f.sourceUrl}</a> {f.lastVerifiedAt ? `• Last verified: ${new Date(f.lastVerifiedAt).toLocaleDateString()}` : ''}</p>}
+                  {f.sourceUrl && <p className="text-[11px] text-gray-500 mt-3 border-t border-[#E2E8F0] pt-2">Source: <a href={f.sourceUrl} target="_blank" className="text-[#0B5ED7] underline">{f.sourceName || f.sourceUrl}</a> {f.lastVerifiedAt ? `• Last verified: ${new Date(f.lastVerifiedAt).toLocaleDateString()}` : ''}</p>}
                   {!f.sourceUrl && <p className="text-[11px] text-gray-500 mt-2">Requirements vary by university and course. Check the specific course requirements.</p>}
                 </div>
               </AccordionContent>

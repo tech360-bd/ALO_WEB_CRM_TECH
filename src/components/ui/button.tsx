@@ -12,7 +12,7 @@ const buttonVariants = cva(
         /* Primary — SaaS Blue #2563EB */
         default:
           "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:bg-primary/80",
-        /* Brand Blue — #0057B8 */
+        /* Brand Blue — #0B5ED7 */
         brand:
           "bg-alo-brand text-white shadow-sm hover:bg-alo-brand/90 active:bg-alo-brand/80",
         /* Legacy CRM alias retained for backwards compatibility. */

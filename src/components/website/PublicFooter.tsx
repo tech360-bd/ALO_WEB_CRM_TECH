@@ -77,14 +77,14 @@ const GraduationCapStrip = () => {
       </div>
 
       {/* Layer 2 - Medium - Blue */}
-      <div className="absolute inset-0 flex items-center cap-layer-2 opacity-70 text-[#0066CC]">
+      <div className="absolute inset-0 flex items-center cap-layer-2 opacity-70 text-[#0B5ED7]">
         <GraduationCap className="w-10 h-10 mx-20" />
         <GraduationCap className="w-8 h-8 mx-40" />
         <GraduationCap className="w-12 h-12 mx-16" />
       </div>
 
       {/* Layer 3 - Fast - Orange */}
-      <div className="absolute inset-0 flex items-center cap-layer-3 opacity-100 text-[#F37021]">
+      <div className="absolute inset-0 flex items-center cap-layer-3 opacity-100 text-[#F97316]">
         <GraduationCap className="w-8 h-8 mx-32" />
         <GraduationCap className="w-10 h-10 mx-20" />
         <GraduationCap className="w-8 h-8 mx-48" />
@@ -108,7 +108,7 @@ export default function PublicFooter() {
             <Link href="/" className="flex items-center gap-2 group">
               <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-10 w-auto" />
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-[#0057B8] leading-tight">ALO Education</span>
+                <span className="text-xl font-bold text-[#0B5ED7] leading-tight">ALO Education</span>
               </div>
             </Link>
             <p className="text-[#64748B] text-sm leading-relaxed max-w-xs">
@@ -118,35 +118,35 @@ export default function PublicFooter() {
             {/* Contact Info */}
             <div className="flex flex-col gap-2.5 text-xs text-slate-600">
               <div className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#E8501A] mt-0.5 shrink-0" />
+                <MapPin className="w-3.5 h-3.5 text-[#F97316] mt-0.5 shrink-0" />
                 <span>House 08, Road 17/A, Sector 11, Uttara, Dhaka-1230, Bangladesh</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-[#E8501A] shrink-0" />
-                <a href="tel:+8801805020101" className="hover:text-[#0057B8] transition-colors font-medium">+880 1805 020101</a>
+                <Phone className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
+                <a href="tel:+8801805020101" className="hover:text-[#0B5ED7] transition-colors font-medium">+880 1805 020101</a>
               </div>
               <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#E8501A] shrink-0" />
-                <a href="mailto:info@aloeducation.com" className="hover:text-[#0057B8] transition-colors font-medium">info@aloeducation.com</a>
+                <Mail className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
+                <a href="mailto:info@aloeducation.com" className="hover:text-[#0B5ED7] transition-colors font-medium">info@aloeducation.com</a>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-[#E8501A] shrink-0" />
+                <Clock className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
                 <span>Sat–Thu: 9:00 AM – 7:00 PM</span>
               </div>
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center gap-4 text-[#0057B8]">
-              <a href="https://facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[#E8501A] transition-colors">
+            <div className="flex items-center gap-4 text-[#0B5ED7]">
+              <a href="https://facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[#F97316] transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="https://instagram.com/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[#E8501A] transition-colors">
+              <a href="https://instagram.com/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[#F97316] transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="https://linkedin.com/company/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-[#E8501A] transition-colors">
+              <a href="https://linkedin.com/company/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-[#F97316] transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href="https://youtube.com/@aloeducation" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-[#E8501A] transition-colors">
+              <a href="https://youtube.com/@aloeducation" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-[#F97316] transition-colors">
                 <Youtube className="w-5 h-5" />
               </a>
             </div>
@@ -154,11 +154,11 @@ export default function PublicFooter() {
 
           {/* Column 2: Destinations */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">Destinations</h3>
+            <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Destinations</h3>
             <ul className="flex flex-col gap-2">
               {destinations.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#E8501A] transition-colors text-sm font-medium">
+                  <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
                     {link.label}
                   </Link>
                 </li>
@@ -168,11 +168,11 @@ export default function PublicFooter() {
 
           {/* Column 3: Quick Links */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">Study Abroad</h3>
+            <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Study Abroad</h3>
             <ul className="flex flex-col gap-2">
               {quickLinks.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#E8501A] transition-colors text-sm font-medium">
+                  <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
                     {link.label}
                   </Link>
                 </li>
@@ -182,11 +182,11 @@ export default function PublicFooter() {
 
           {/* Column 4: Company */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider">Company</h3>
+            <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Company</h3>
             <ul className="flex flex-col gap-2">
               {companyLinks.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#E8501A] transition-colors text-sm font-medium">
+                  <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
                     {link.label}
                   </Link>
                 </li>
@@ -197,7 +197,7 @@ export default function PublicFooter() {
             <div className="mt-4">
               <Link
                 href="/book-consultation"
-                className="inline-flex items-center gap-2 bg-[#E8501A] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-[#c73e10] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#F97316] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-[#EA580C] transition-colors"
               >
                 Book Free Consultation →
               </Link>
@@ -215,19 +215,19 @@ export default function PublicFooter() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#666666]">
           <p>© {new Date().getFullYear()} ALO Education Bangladesh. All Rights Reserved.</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 justify-center sm:justify-end">
-            <Link href="/privacy-policy" className="hover:text-[#E8501A] transition-colors">Privacy</Link>
+            <Link href="/privacy-policy" className="hover:text-[#F97316] transition-colors">Privacy</Link>
             <span>·</span>
-            <Link href="/terms" className="hover:text-[#E8501A] transition-colors">Terms</Link>
+            <Link href="/terms" className="hover:text-[#F97316] transition-colors">Terms</Link>
             <span>·</span>
-            <Link href="/cookies" className="hover:text-[#E8501A] transition-colors">Cookies</Link>
+            <Link href="/cookies" className="hover:text-[#F97316] transition-colors">Cookies</Link>
             <span>·</span>
-            <Link href="/communication-policy" className="hover:text-[#E8501A] transition-colors">Communication</Link>
+            <Link href="/communication-policy" className="hover:text-[#F97316] transition-colors">Communication</Link>
             <span>·</span>
-            <Link href="/lead-data-usage-policy" className="hover:text-[#E8501A] transition-colors">Lead Data</Link>
+            <Link href="/lead-data-usage-policy" className="hover:text-[#F97316] transition-colors">Lead Data</Link>
             <span>·</span>
-            <Link href="/user-guide" className="hover:text-[#E8501A] transition-colors">User Guide</Link>
+            <Link href="/user-guide" className="hover:text-[#F97316] transition-colors">User Guide</Link>
             <span>·</span>
-            <Link href="/accessibility" className="hover:text-[#E8501A] transition-colors">Accessibility</Link>
+            <Link href="/accessibility" className="hover:text-[#F97316] transition-colors">Accessibility</Link>
           </div>
         </div>
       </div>

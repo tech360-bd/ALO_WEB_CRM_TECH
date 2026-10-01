@@ -179,14 +179,14 @@ export default function MasterCountryDestinationView({
             
             {/* LEFT COLUMN */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-[#0057B8] rounded-full text-xs font-bold border border-blue-100">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-[#0B5ED7] rounded-full text-xs font-bold border border-blue-100">
                 <span className="text-lg">{countryData.flag}</span>
                 <span className="tracking-wider uppercase">STUDY IN {countryData.name}</span>
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-extrabold">✓ Verified 2026</span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15]">
-                Study in <span className="text-[#0057B8]">{countryData.name}</span> from Bangladesh
+                Study in <span className="text-[#0B5ED7]">{countryData.name}</span> from Bangladesh
               </h1>
 
               <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-2xl">
@@ -197,13 +197,13 @@ export default function MasterCountryDestinationView({
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link
                   href={`/course-finder?country=${countryData.code}`}
-                  className="h-12 px-7 bg-[#0057B8] hover:bg-[#004494] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition shadow-md"
+                  className="h-12 px-7 bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition shadow-md"
                 >
                   <BookOpen className="w-4 h-4" /> Find Courses
                 </Link>
                 <a
                   href="#lead-form"
-                  className="h-12 px-7 bg-[#E8501A] hover:bg-[#d44315] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition shadow-md"
+                  className="h-12 px-7 bg-[#F97316] hover:bg-[#EA580C] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition shadow-md"
                 >
                   Check Eligibility
                 </a>
@@ -239,10 +239,10 @@ export default function MasterCountryDestinationView({
               {/* FLOATING STAT CARDS */}
               <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-xl space-y-1 hidden sm:block">
                 <div className="flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-[#0057B8]" />
+                  <Building2 className="w-4 h-4 text-[#0B5ED7]" />
                   <span className="font-bold text-xs text-slate-900">Partner Universities</span>
                 </div>
-                <p className="text-base font-black text-[#0057B8]">{linkedUniversities.length || 35}+ Verified</p>
+                <p className="text-base font-black text-[#0B5ED7]">{linkedUniversities.length || 35}+ Verified</p>
               </div>
 
               <div className="absolute -top-4 -right-4 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xl space-y-0.5 hidden sm:block">
@@ -263,7 +263,7 @@ export default function MasterCountryDestinationView({
           <div className="flex items-center gap-2 overflow-x-auto py-3 text-xs font-bold text-slate-600 no-scrollbar">
             <Link
               href={`/destinations/${countryData.slug}`}
-              className="px-4 py-2 rounded-xl bg-[#0057B8] text-white shrink-0 hover:bg-blue-700 transition"
+              className="px-4 py-2 rounded-xl bg-[#0B5ED7] text-white shrink-0 hover:bg-blue-700 transition"
             >
               Overview
             </Link>
@@ -285,7 +285,7 @@ export default function MasterCountryDestinationView({
             <a href="#universities" className="px-4 py-2 rounded-xl hover:bg-slate-100 shrink-0 transition">
               Universities
             </a>
-            <a href="#budget-calculator" className="px-4 py-2 rounded-xl hover:bg-slate-100 shrink-0 transition text-[#0057B8]">
+            <a href="#budget-calculator" className="px-4 py-2 rounded-xl hover:bg-slate-100 shrink-0 transition text-[#0B5ED7]">
               Cost Calculator
             </a>
             <a href="#entry-requirements" className="px-4 py-2 rounded-xl hover:bg-slate-100 shrink-0 transition">
@@ -322,7 +322,7 @@ export default function MasterCountryDestinationView({
             </div>
 
             <div className="lg:col-span-7 space-y-4">
-              <span className="text-xs font-bold text-[#0057B8] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              <span className="text-xs font-bold text-[#0B5ED7] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
                 Editorial Insight • ALO Education
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -332,7 +332,7 @@ export default function MasterCountryDestinationView({
                 {countryData.overview}
               </p>
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-2">
-                <div className="font-bold text-[#0057B8] flex items-center gap-1.5">
+                <div className="font-bold text-[#0B5ED7] flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" /> ALO Counselor Guidance for Bangladesh:
                 </div>
                 <p className="leading-relaxed">
@@ -375,7 +375,7 @@ export default function MasterCountryDestinationView({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {countryData.reasons.map((reason, idx) => (
               <div key={idx} className="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                <div className="p-3 bg-[#0057B8]/10 text-[#0057B8] w-fit rounded-xl">
+                <div className="p-3 bg-[#0B5ED7]/10 text-[#0B5ED7] w-fit rounded-xl">
                   <GraduationCap className="w-5 h-5" />
                 </div>
                 <h3 className="font-bold text-sm text-slate-900">{reason.heading}</h3>
@@ -397,7 +397,7 @@ export default function MasterCountryDestinationView({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {countryData.pathways.map((path, idx) => (
               <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                <span className="text-xs font-bold text-[#0057B8] bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+                <span className="text-xs font-bold text-[#0B5ED7] bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
                   Pathway {idx + 1}
                 </span>
                 <h4 className="font-bold text-sm text-slate-900">{path.fromLevel}</h4>
@@ -424,7 +424,7 @@ export default function MasterCountryDestinationView({
             </div>
             <Link
               href={`/course-finder?country=${countryData.code}`}
-              className="h-10 px-5 bg-[#0057B8] hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition"
+              className="h-10 px-5 bg-[#0B5ED7] hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition"
             >
               Explore All Courses <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -432,10 +432,10 @@ export default function MasterCountryDestinationView({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {linkedCourses.slice(0, 6).map((c: any) => (
-              <div key={c.id || c.courseId} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-[#0057B8] transition">
+              <div key={c.id || c.courseId} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-[#0B5ED7] transition">
                 <div className="space-y-2">
                   <div className="flex justify-between items-start gap-2">
-                    <Badge variant="outline" className="text-[#0057B8] border-blue-200 text-[10px] font-bold">
+                    <Badge variant="outline" className="text-[#0B5ED7] border-blue-200 text-[10px] font-bold">
                       {c.studyLevel || 'Postgraduate'}
                     </Badge>
                     <span className="text-[11px] text-slate-400 font-medium">{c.durationMonths ? `${c.durationMonths} Months` : '1 Year'}</span>
@@ -451,7 +451,7 @@ export default function MasterCountryDestinationView({
                   </div>
                   <Link
                     href={`/courses/${c.slug || c.courseId}`}
-                    className="text-xs font-bold text-[#0057B8] hover:underline flex items-center gap-1"
+                    className="text-xs font-bold text-[#0B5ED7] hover:underline flex items-center gap-1"
                   >
                     View Course <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
@@ -480,9 +480,9 @@ export default function MasterCountryDestinationView({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {linkedUniversities.slice(0, 8).map((u: any) => (
-              <div key={u.id || u.universityId} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-[#0057B8] transition">
+              <div key={u.id || u.universityId} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-[#0B5ED7] transition">
                 <div className="space-y-1.5">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0057B8] flex items-center justify-center font-black text-sm">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0B5ED7] flex items-center justify-center font-black text-sm">
                     {u.name?.charAt(0) || 'U'}
                   </div>
                   <h3 className="font-bold text-sm text-slate-900 line-clamp-2">{u.name}</h3>
@@ -496,7 +496,7 @@ export default function MasterCountryDestinationView({
                   </div>
                   <Link
                     href={`/universities/${u.slug || u.universityId}`}
-                    className="w-full py-2 bg-slate-50 hover:bg-[#0057B8] hover:text-white text-[#0057B8] font-bold text-center rounded-xl text-xs block transition border border-slate-200"
+                    className="w-full py-2 bg-slate-50 hover:bg-[#0B5ED7] hover:text-white text-[#0B5ED7] font-bold text-center rounded-xl text-xs block transition border border-slate-200"
                   >
                     View University
                   </Link>
@@ -518,7 +518,7 @@ export default function MasterCountryDestinationView({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-7 bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 text-xs">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <Calculator className="w-4 h-4 text-[#0057B8]" /> Interactive Budget Inputs
+                <Calculator className="w-4 h-4 text-[#0B5ED7]" /> Interactive Budget Inputs
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -566,7 +566,7 @@ export default function MasterCountryDestinationView({
               </div>
             </div>
 
-            <div className="lg:col-span-5 bg-[#0057B8] text-white p-6 rounded-2xl space-y-4 text-xs shadow-lg">
+            <div className="lg:col-span-5 bg-[#0B5ED7] text-white p-6 rounded-2xl space-y-4 text-xs shadow-lg">
               <h3 className="font-bold text-sm border-b border-white/20 pb-2">
                 Estimated Budget Summary (ESTIMATE ONLY)
               </h3>
@@ -605,7 +605,7 @@ export default function MasterCountryDestinationView({
             <div className="lg:col-span-7 space-y-4">
               {countryData.entryRequirements.map((req, idx) => (
                 <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
-                  <span className="font-bold text-[#0057B8] text-sm">{req.level} Requirements</span>
+                  <span className="font-bold text-[#0B5ED7] text-sm">{req.level} Requirements</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-slate-600">
                     <div><strong>Academic:</strong> {req.academic}</div>
                     <div><strong>English:</strong> {req.english}</div>
@@ -623,7 +623,7 @@ export default function MasterCountryDestinationView({
               />
 
               <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 text-xs">
-                <div className="flex items-center gap-2 font-bold text-sm text-[#0057B8]">
+                <div className="flex items-center gap-2 font-bold text-sm text-[#0B5ED7]">
                   <Sparkles className="w-4 h-4 text-amber-500" /> Instant AI Eligibility Checker
                 </div>
 
@@ -648,7 +648,7 @@ export default function MasterCountryDestinationView({
                   </div>
                   <button
                     onClick={handleRunEligibilityCheck}
-                    className="w-full h-11 bg-[#0057B8] hover:bg-blue-700 text-white font-bold rounded-xl transition"
+                    className="w-full h-11 bg-[#0B5ED7] hover:bg-blue-700 text-white font-bold rounded-xl transition"
                   >
                     Run AI Check
                   </button>
@@ -683,7 +683,7 @@ export default function MasterCountryDestinationView({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {countryData.visaSteps.map((step) => (
               <div key={step.step} className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-2 text-xs">
-                <span className="w-8 h-8 bg-[#0057B8] text-white font-black rounded-full flex items-center justify-center text-xs">
+                <span className="w-8 h-8 bg-[#0B5ED7] text-white font-black rounded-full flex items-center justify-center text-xs">
                   {step.step}
                 </span>
                 <h4 className="font-bold text-slate-900 text-sm">{step.title}</h4>
@@ -736,7 +736,7 @@ export default function MasterCountryDestinationView({
             {countryData.faqs.map((faq, idx) => (
               <div key={idx} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2 text-xs">
                 <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-[#0057B8] shrink-0" /> {faq.question}
+                  <HelpCircle className="w-4 h-4 text-[#0B5ED7] shrink-0" /> {faq.question}
                 </h4>
                 <p className="text-slate-600 leading-relaxed pl-6">{faq.answer}</p>
               </div>
@@ -815,7 +815,7 @@ export default function MasterCountryDestinationView({
               <button
                 type="submit"
                 disabled={submittingLead}
-                className="w-full h-12 bg-[#E8501A] hover:bg-[#d44315] text-white font-bold text-sm rounded-xl transition shadow-md"
+                className="w-full h-12 bg-[#F97316] hover:bg-[#EA580C] text-white font-bold text-sm rounded-xl transition shadow-md"
               >
                 {submittingLead ? 'Submitting...' : 'Submit Free Application Inquiry'}
               </button>

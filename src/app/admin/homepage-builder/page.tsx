@@ -15,7 +15,7 @@ export default function AdminHomepageBuilderPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Badge className="bg-[#0057B8] text-white font-bold text-xs">SUPER_ADMIN / ADMIN — Real DB</Badge>
+              <Badge className="bg-[#0B5ED7] text-white font-bold text-xs">SUPER_ADMIN / ADMIN — Real DB</Badge>
               <Badge variant="outline" className="text-emerald-700 border-emerald-300 font-semibold text-xs">Audit Logged • RBAC • PWA Ready</Badge>
             </div>
             <h1 className="text-xl font-black text-slate-900 tracking-tight">Homepage Master Builder & CMS — Real Implementation</h1>
@@ -26,11 +26,11 @@ export default function AdminHomepageBuilderPage() {
           <div className="flex items-center gap-2">
             <a href="/" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="sm" className="h-10 rounded-xl text-xs flex items-center gap-1.5 border-slate-300">
-                <Eye className="h-4 w-4 text-[#0057B8]" /> Live Preview
+                <Eye className="h-4 w-4 text-[#0B5ED7]" /> Live Preview
               </Button>
             </a>
             <a href="/admin/master-command">
-              <Button size="sm" className="h-10 rounded-xl text-xs bg-[#0057B8] hover:bg-[#004494]">Master Command Center</Button>
+              <Button size="sm" className="h-10 rounded-xl text-xs bg-[#0B5ED7] hover:bg-[#004494]">Master Command Center</Button>
             </a>
           </div>
         </div>

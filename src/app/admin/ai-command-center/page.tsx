@@ -138,7 +138,7 @@ export default function AICommandCenterDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-950 text-white p-6 rounded-2xl shadow-xl border border-slate-800">
         <div>
           <div className="flex items-center gap-2.5">
-            <Cpu className="w-7 h-7 text-[#F37021] animate-pulse" />
+            <Cpu className="w-7 h-7 text-[#F97316] animate-pulse" />
             <h1 className="text-2xl font-bold tracking-tight">ALO Education AI Command Center</h1>
           </div>
           <p className="text-xs text-slate-400 mt-1">
@@ -160,13 +160,13 @@ export default function AICommandCenterDashboard() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Card className="p-4 bg-white border border-slate-200 rounded-xl space-y-1 shadow-sm">
           <span className="text-[11px] font-semibold text-slate-500 uppercase">Departments</span>
-          <p className="text-2xl font-black text-[#0066CC]">{health?.totalDepartments || 0}</p>
-          <span className="text-[10px] text-[#0066CC] font-semibold">Active Organizational Units</span>
+          <p className="text-2xl font-black text-[#0B5ED7]">{health?.totalDepartments || 0}</p>
+          <span className="text-[10px] text-[#0B5ED7] font-semibold">Active Organizational Units</span>
         </Card>
         <Card className="p-4 bg-white border border-slate-200 rounded-xl space-y-1 shadow-sm">
           <span className="text-[11px] font-semibold text-slate-500 uppercase">Private Agents</span>
-          <p className="text-2xl font-black text-[#F37021]">{health?.totalAgents || 0}</p>
-          <span className="text-[10px] text-[#F37021] font-semibold">{health?.activeAgents || 0} Online & Ready</span>
+          <p className="text-2xl font-black text-[#F97316]">{health?.totalAgents || 0}</p>
+          <span className="text-[10px] text-[#F97316] font-semibold">{health?.activeAgents || 0} Online & Ready</span>
         </Card>
         <Card className="p-4 bg-white border border-slate-200 rounded-xl space-y-1 shadow-sm">
           <span className="text-[11px] font-semibold text-slate-500 uppercase">Tasks Executed Today</span>
@@ -195,7 +195,7 @@ export default function AICommandCenterDashboard() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-xl flex items-center gap-2 shrink-0 transition ${
-                isActive ? 'bg-[#0066CC] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                isActive ? 'bg-[#0B5ED7] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
             >
               <Icon className="w-4 h-4" /> {tab.label}
@@ -229,7 +229,7 @@ export default function AICommandCenterDashboard() {
             </div>
 
             <div className="pt-3 border-t border-slate-800 flex items-center gap-2">
-              <span className="text-[#F37021] font-bold text-sm">$</span>
+              <span className="text-[#F97316] font-bold text-sm">$</span>
               <input
                 type="text"
                 placeholder="Type command to dispatch task..."
@@ -241,7 +241,7 @@ export default function AICommandCenterDashboard() {
               <Button
                 disabled={executing}
                 onClick={handleRunCommand}
-                className="bg-[#0066CC] hover:bg-blue-700 text-white text-xs px-4 rounded-xl flex items-center gap-1.5"
+                className="bg-[#0B5ED7] hover:bg-blue-700 text-white text-xs px-4 rounded-xl flex items-center gap-1.5"
               >
                 {executing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                 Execute
@@ -256,7 +256,7 @@ export default function AICommandCenterDashboard() {
         <Card className="p-6 bg-white border border-slate-200 rounded-2xl space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-[#0066CC]" /> AI Enterprise Departments
+              <Building2 className="w-5 h-5 text-[#0B5ED7]" /> AI Enterprise Departments
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
@@ -266,7 +266,7 @@ export default function AICommandCenterDashboard() {
                   <span className="font-bold text-slate-900 flex items-center gap-1.5">
                     {d.icon} {d.name}
                   </span>
-                  <Badge className="bg-[#0066CC]/10 text-[#0066CC] text-[9px]">{d._count?.agents || 0} AGENTS</Badge>
+                  <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] text-[9px]">{d._count?.agents || 0} AGENTS</Badge>
                 </div>
                 <p className="text-[10px] text-slate-500 line-clamp-2">{d.description}</p>
                 <p className="text-[9px] font-semibold" style={{ color: d.color }}>Category: {d.category}</p>
@@ -281,7 +281,7 @@ export default function AICommandCenterDashboard() {
         <Card className="p-6 bg-white border border-slate-200 rounded-2xl space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Cpu className="w-5 h-5 text-[#F37021]" /> AI Engine Types
+              <Cpu className="w-5 h-5 text-[#F97316]" /> AI Engine Types
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -289,7 +289,7 @@ export default function AICommandCenterDashboard() {
               <div key={e.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900">{e.name}</span>
-                  <Badge className="bg-[#F37021]/10 text-[#F37021] text-[9px]">{e._count?.agents || 0} AGENTS USING</Badge>
+                  <Badge className="bg-[#F97316]/10 text-[#F97316] text-[9px]">{e._count?.agents || 0} AGENTS USING</Badge>
                 </div>
                 <p className="text-[11px] text-slate-600">{e.description}</p>
                 <div className="flex items-center gap-2 pt-2">

@@ -73,21 +73,21 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link 
           href="/success-stories" 
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#0057B8] mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#0B5ED7] mb-8 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back to all stories
         </Link>
 
-        <div className="bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl p-8 md:p-12 text-white mb-10 shadow-xl relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-3xl p-8 md:p-12 text-white mb-10 shadow-xl relative overflow-hidden">
           <Quote className="absolute -right-6 -bottom-6 h-48 w-48 text-white/10 rotate-12" />
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
-            <div className="h-32 w-32 md:h-40 md:w-40 rounded-full bg-white flex items-center justify-center text-[#0057B8] font-bold text-5xl shadow-lg border-4 border-white/20 shrink-0">
+            <div className="h-32 w-32 md:h-40 md:w-40 rounded-full bg-white flex items-center justify-center text-[#0B5ED7] font-bold text-5xl shadow-lg border-4 border-white/20 shrink-0">
               {story.name[0]}
             </div>
             <div>
               <div className="flex gap-1 mb-4 justify-center md:justify-start">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="h-5 w-5 fill-[#E8501A] text-[#E8501A]" />
+                  <Star key={star} className="h-5 w-5 fill-[#F97316] text-[#F97316]" />
                 ))}
               </div>
               <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center md:text-left">{story.name}</h1>
@@ -103,7 +103,7 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="md:col-span-2 space-y-8">
             <Card className="p-8 border-slate-100 shadow-sm relative">
-              <Quote className="absolute top-6 left-6 h-8 w-8 text-[#0057B8]/20" />
+              <Quote className="absolute top-6 left-6 h-8 w-8 text-[#0B5ED7]/20" />
               <p className="text-lg text-slate-700 italic leading-relaxed pt-8">
                 "{story.quote}"
               </p>
@@ -116,13 +116,13 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
                   {story.timeline.map((item, index) => (
                     <div key={index} className="flex gap-4">
                       <div className="flex flex-col items-center">
-                        <div className="h-3 w-3 rounded-full bg-[#E8501A] mt-1.5" />
+                        <div className="h-3 w-3 rounded-full bg-[#F97316] mt-1.5" />
                         {index !== story.timeline.length - 1 && (
                           <div className="w-px h-full bg-slate-200 my-1" />
                         )}
                       </div>
                       <div className="pb-2">
-                        <span className="text-xs font-semibold text-[#0057B8] bg-blue-50 px-2 py-1 rounded-full mb-1 inline-block">
+                        <span className="text-xs font-semibold text-[#0B5ED7] bg-blue-50 px-2 py-1 rounded-full mb-1 inline-block">
                           {item.date}
                         </span>
                         <h4 className="font-bold text-slate-800">{item.step}</h4>
@@ -142,27 +142,27 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
               <div className="space-y-4">
                 <div>
                   <p className="text-xs text-slate-500 font-semibold uppercase mb-1 flex items-center gap-1.5">
-                    <Award className="h-3.5 w-3.5 text-[#E8501A]" /> Scholarship
+                    <Award className="h-3.5 w-3.5 text-[#F97316]" /> Scholarship
                   </p>
                   <p className="text-sm font-medium text-slate-800">{story.scholarship}</p>
                 </div>
                 
                 <div>
                   <p className="text-xs text-slate-500 font-semibold uppercase mb-1 flex items-center gap-1.5">
-                    <User className="h-3.5 w-3.5 text-[#0057B8]" /> ALO Advisor
+                    <User className="h-3.5 w-3.5 text-[#0B5ED7]" /> ALO Advisor
                   </p>
                   <p className="text-sm font-medium text-slate-800">{story.advisor}</p>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-6 bg-[#0057B8] text-white border-none text-center">
+            <Card className="p-6 bg-[#0B5ED7] text-white border-none text-center">
               <h3 className="font-bold mb-2">Start Your Own Journey</h3>
               <p className="text-blue-100 text-sm mb-4">
                 Let our experts help you achieve your study abroad dreams just like {story.name.split(' ')[0]}.
               </p>
               <Link href="/eligibility-check">
-                <Button className="w-full bg-[#E8501A] hover:bg-[#d44315] text-white">
+                <Button className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white">
                   Check Your Eligibility
                 </Button>
               </Link>
@@ -177,12 +177,12 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
               {relatedStories.map((rs) => (
                 <Card key={rs.slug} className="p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d80] flex items-center justify-center text-white font-bold text-lg shrink-0">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#0B5ED7] to-[#003d80] flex items-center justify-center text-white font-bold text-lg shrink-0">
                       {rs.name[0]}
                     </div>
                     <div>
                       <h4 className="font-bold text-[#0F172A]">{rs.name}</h4>
-                      <p className="text-xs text-[#0057B8] line-clamp-1">{rs.course}</p>
+                      <p className="text-xs text-[#0B5ED7] line-clamp-1">{rs.course}</p>
                     </div>
                   </div>
                   <Link href={`/success-stories/${rs.slug}`}>

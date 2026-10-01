@@ -98,7 +98,7 @@ export function CrmFollowups() {
                   filter === f.k
                     ? f.k === "OVERDUE"
                       ? "bg-rose-600 text-white hover:bg-rose-700"
-                      : "bg-[#0066CC] text-white"
+                      : "bg-[#0B5ED7] text-white"
                     : "border-[#DCE8F5] text-[#5A7299]"
                 }
                 onClick={() => setFilter(f.k)}
@@ -137,7 +137,7 @@ export function CrmFollowups() {
                           className={
                             isOverdue
                               ? "bg-rose-100 text-rose-700"
-                              : "bg-[#EAF3FF] text-[#0066CC]"
+                              : "bg-[#EAF3FF] text-[#0B5ED7]"
                           }
                         >
                           <Icon name="CalendarClock" className="mr-1 size-3" />
@@ -180,14 +180,14 @@ export function CrmFollowups() {
                       <div className="mt-4 flex gap-2">
                         <Button
                           size="sm"
-                          className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
+                          className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
                         >
                           <Icon name="PhoneCall" className="mr-1 size-3.5" /> Call
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-[#F37021] text-[#F37021] hover:bg-[#FFF3EA]"
+                          className="border-[#F97316] text-[#F97316] hover:bg-[#FFF3EA]"
                         >
                           <Icon name="MessageSquare" className="mr-1 size-3.5" /> Message
                         </Button>

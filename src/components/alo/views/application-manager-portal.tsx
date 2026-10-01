@@ -268,7 +268,7 @@ const B2B_TYPE_META: Record<string, { label: string; cls: string; icon: string }
 };
 
 const SOURCE_META: Record<string, { label: string; cls: string; icon: string }> = {
-  DIRECT: { label: "Direct", cls: "bg-[#e8f0fb] text-[#0057B8]", icon: "FileText" },
+  DIRECT: { label: "Direct", cls: "bg-[#e8f0fb] text-[#0B5ED7]", icon: "FileText" },
   PARTNER: { label: "Partner", cls: "bg-violet-100 text-violet-700", icon: "Handshake" },
   B2B_INBOUND: { label: "B2B Inbound", cls: "bg-emerald-100 text-emerald-700", icon: "ArrowDownToLine" },
   B2B_OUTBOUND: { label: "B2B Outbound", cls: "bg-orange-100 text-orange-700", icon: "ArrowUpFromLine" },
@@ -304,7 +304,7 @@ const COMMENT_CHANNEL_CLS: Record<string, string> = {
 };
 
 const DEADLINE_TYPE_META: Record<string, { label: string; cls: string }> = {
-  APPLICATION: { label: "Application", cls: "bg-[#e8f0fb] text-[#0057B8]" },
+  APPLICATION: { label: "Application", cls: "bg-[#e8f0fb] text-[#0B5ED7]" },
   DOCUMENT: { label: "Document", cls: "bg-amber-100 text-amber-700" },
   OFFER_CONDITION: { label: "Offer Condition", cls: "bg-violet-100 text-violet-700" },
   DEPOSIT: { label: "Deposit", cls: "bg-orange-100 text-orange-700" },
@@ -523,14 +523,14 @@ export function ApplicationManagerPortal() {
       />
 
       {/* Access banner */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+      <Card className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#e8f0fb]/40">
         <CardContent className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
             <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${canViewB2B ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}>
               <Icon name={canViewB2B ? "ShieldCheck" : "ShieldAlert"} className="size-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#0057B8]">
+              <p className="text-sm font-semibold text-[#0B5ED7]">
                 {canViewB2B ? "Full B2B access granted" : "Limited view — B2B data hidden"}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -541,7 +541,7 @@ export function ApplicationManagerPortal() {
             </div>
           </div>
           <div className="flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-wide">
-            <span className="rounded-md bg-white px-2 py-1 text-[#0057B8] shadow-sm">{viewerRole.replace(/_/g, " ")}</span>
+            <span className="rounded-md bg-white px-2 py-1 text-[#0B5ED7] shadow-sm">{viewerRole.replace(/_/g, " ")}</span>
             {canViewB2B && (
               <span className="rounded-md bg-rose-100 px-2 py-1 text-rose-700 shadow-sm">B2B Confidential</span>
             )}
@@ -557,7 +557,7 @@ export function ApplicationManagerPortal() {
           title="Dashboard unavailable"
           description="Could not load dashboard data. Please retry."
           action={
-            <Button className="h-10 bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={fetchDashboard}>
+            <Button className="h-10 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" onClick={fetchDashboard}>
               <Icon name="RefreshCw" className="mr-1.5 size-4" /> Retry
             </Button>
           }
@@ -587,25 +587,25 @@ export function ApplicationManagerPortal() {
           <Tabs value={tab} onValueChange={setTab} className="space-y-4">
             <div className="overflow-x-auto pb-1">
               <TabsList className="flex h-auto w-max gap-1 rounded-2xl bg-[#e8f0fb]/60 p-1">
-                <TabsTrigger value="dashboard" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="dashboard" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7] data-[state=active]:shadow-sm">
                   <Icon name="LayoutDashboard" className="mr-1.5 size-4" /> Dashboard
                 </TabsTrigger>
-                <TabsTrigger value="applications" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="applications" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7] data-[state=active]:shadow-sm">
                   <Icon name="FolderKanban" className="mr-1.5 size-4" /> All Applications
                 </TabsTrigger>
-                <TabsTrigger value="b2b-apps" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="b2b-apps" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7] data-[state=active]:shadow-sm">
                   <Icon name="Lock" className="mr-1.5 size-4" /> B2B Applications
                 </TabsTrigger>
-                <TabsTrigger value="b2b-providers" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="b2b-providers" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7] data-[state=active]:shadow-sm">
                   <Icon name="Building2" className="mr-1.5 size-4" /> B2B Providers
                 </TabsTrigger>
-                <TabsTrigger value="comments" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="comments" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7] data-[state=active]:shadow-sm">
                   <Icon name="MessagesSquare" className="mr-1.5 size-4" /> Comments
                 </TabsTrigger>
-                <TabsTrigger value="deadlines" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="deadlines" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7] data-[state=active]:shadow-sm">
                   <Icon name="CalendarClock" className="mr-1.5 size-4" /> Deadlines
                 </TabsTrigger>
-                <TabsTrigger value="tasks" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="tasks" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7] data-[state=active]:shadow-sm">
                   <Icon name="ListTodo" className="mr-1.5 size-4" /> Tasks
                 </TabsTrigger>
               </TabsList>
@@ -699,14 +699,14 @@ export function ApplicationManagerPortal() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+            <Card className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#e8f0fb]/40">
               <CardContent className="pt-5">
                 <div className="flex items-start gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7]">
                     <Icon name="EyeOff" className="size-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-[#0057B8]">Safe Status Mapping</p>
+                    <p className="text-sm font-bold text-[#0B5ED7]">Safe Status Mapping</p>
                     <p className="mt-1 text-xs leading-relaxed text-foreground/80">
                       Students and partners see safe status only (Draft, Under Review, Submitted, Decision Pending, Offer Received, Rejected, Visa Preparation). Application Team sees exact internal status including B2B route.
                     </p>
@@ -751,7 +751,7 @@ function DashboardTab({
   const queueItems = [
     { key: "ready", label: "Ready to Submit", value: submissionQueue.readyToSubmit, icon: "Send", color: "#10b981", desc: "Documents received, application preparing" },
     { key: "missing", label: "Missing Docs", value: submissionQueue.missingDocs, icon: "FileWarning", color: "#f59e0b", desc: "Pending student document upload" },
-    { key: "fee", label: "Fee Pending", value: submissionQueue.feePending, icon: "DollarSign", color: "#E8501A", desc: "Deposit / application fee pending" },
+    { key: "fee", label: "Fee Pending", value: submissionQueue.feePending, icon: "DollarSign", color: "#F97316", desc: "Deposit / application fee pending" },
     { key: "b2b", label: "B2B Follow-up", value: submissionQueue.b2bFollowup, icon: "Handshake", color: "#e11d48", desc: "B2B follow-up due within 3 days" },
   ];
 
@@ -774,14 +774,14 @@ function DashboardTab({
             return (
               <Tooltip key={stage}>
                 <TooltipTrigger asChild>
-                  <div className="group flex items-center gap-2 rounded-xl border-2 border-[#0057B8]/15 bg-white px-3 py-2 transition-all hover:border-[#0057B8]/40 hover:shadow-sm">
+                  <div className="group flex items-center gap-2 rounded-xl border-2 border-[#0B5ED7]/15 bg-white px-3 py-2 transition-all hover:border-[#0B5ED7]/40 hover:shadow-sm">
                     <span className={`flex size-7 items-center justify-center rounded-lg text-xs font-bold ${STAGE_COLORS[stage] || "bg-slate-100 text-slate-600"}`}>
                       {count}
                     </span>
                     <div className="flex flex-col">
                       <span className="text-[11px] font-semibold text-foreground">{STAGE_LABELS[stage] || stage}</span>
                       <div className="mt-0.5 h-1 w-24 overflow-hidden rounded-full bg-muted">
-                        <div className="h-full rounded-full bg-[#0057B8]" style={{ width: `${(count / maxStageCount) * 100}%` }} />
+                        <div className="h-full rounded-full bg-[#0B5ED7]" style={{ width: `${(count / maxStageCount) * 100}%` }} />
                       </div>
                     </div>
                   </div>
@@ -837,7 +837,7 @@ function DashboardTab({
             ) : (
               recentLogs.map((log) => (
                 <div key={log.id} className="flex items-start gap-2.5 rounded-xl border border-border/60 bg-white p-2.5">
-                  <div className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg ${log.visibility === "B2B_CONFIDENTIAL" ? "bg-rose-100 text-rose-600" : "bg-[#e8f0fb] text-[#0057B8]"}`}>
+                  <div className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg ${log.visibility === "B2B_CONFIDENTIAL" ? "bg-rose-100 text-rose-600" : "bg-[#e8f0fb] text-[#0B5ED7]"}`}>
                     <Icon name={log.visibility === "B2B_CONFIDENTIAL" ? "Lock" : "GitCommit"} className="size-3.5" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -925,7 +925,7 @@ function DashboardTab({
                 return (
                   <div key={d.id} className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-white p-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex size-10 shrink-0 flex-col items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                      <div className="flex size-10 shrink-0 flex-col items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7]">
                         <span className="text-[10px] font-bold uppercase">{new Date(d.deadlineDate).toLocaleString("en-GB", { month: "short" })}</span>
                         <span className="text-sm font-bold leading-none">{new Date(d.deadlineDate).getDate()}</span>
                       </div>
@@ -952,7 +952,7 @@ function DashboardTab({
           action={
             <Button
               size="sm"
-              className="h-9 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+              className="h-9 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
               onClick={() => toast({ title: "Create Task", description: "Open the Tasks tab to create a new task with assignment & priority." })}
             >
               <Icon name="Plus" className="mr-1 size-4" /> New Task
@@ -1143,7 +1143,7 @@ function AllApplicationsTab({
                   const dl = deadlineByApp[a.id];
                   return (
                     <TableRow key={a.id} className="hover:bg-muted/30">
-                      <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">{a.applicationId}</TableCell>
+                      <TableCell className="font-mono text-xs font-semibold text-[#0B5ED7]">{a.applicationId}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-xs font-semibold text-foreground">{a.student?.fullName || "—"}</span>
@@ -1200,7 +1200,7 @@ function AllApplicationsTab({
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button size="icon" variant="ghost" className="size-8" onClick={() => toast({ title: "View Details", description: `Opening details for ${a.applicationId} — ${a.student?.fullName || "Student"}.` })}>
-                                <Icon name="Eye" className="size-4 text-[#0057B8]" />
+                                <Icon name="Eye" className="size-4 text-[#0B5ED7]" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>View Details</TooltipContent>
@@ -1363,7 +1363,7 @@ function B2BApplicationsTab({
         title="B2B Applications"
         icon="Lock"
         action={
-          <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => setCreateOpen(true)}>
+          <Button className="h-10 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Create B2B Application
           </Button>
         }
@@ -1447,7 +1447,7 @@ function B2BApplicationsTab({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
               <Icon name="Lock" className="size-5 text-rose-600" /> Create B2B Application
               <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">CONFIDENTIAL</Badge>
             </DialogTitle>
@@ -1523,7 +1523,7 @@ function B2BApplicationsTab({
           </div>
           <DialogFooter>
             <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" disabled={saving} onClick={handleCreate}>
+            <Button className="h-10 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" disabled={saving} onClick={handleCreate}>
               {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="Lock" className="mr-1.5 size-4" />}
               Create Confidential Entry
             </Button>
@@ -1535,7 +1535,7 @@ function B2BApplicationsTab({
       <Dialog open={!!updateTarget} onOpenChange={(o) => !o && setUpdateTarget(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
               <Icon name="GitCommit" className="size-5" /> Update B2B Status
             </DialogTitle>
             <DialogDescription>
@@ -1555,7 +1555,7 @@ function B2BApplicationsTab({
           </div>
           <DialogFooter>
             <Button variant="outline" className="h-10 rounded-xl" onClick={() => setUpdateTarget(null)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" disabled={saving} onClick={handleUpdateStatus}>
+            <Button className="h-10 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" disabled={saving} onClick={handleUpdateStatus}>
               {saving && <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" />} Update Status
             </Button>
           </DialogFooter>
@@ -1640,7 +1640,7 @@ function B2BProvidersTab({
         description="Confidential provider directory — credentials & commission rules encrypted"
         icon="Building2"
         action={
-          <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => setCreateOpen(true)}>
+          <Button className="h-10 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Add Provider
           </Button>
         }
@@ -1654,11 +1654,11 @@ function B2BProvidersTab({
               const tmeta = PROVIDER_TYPE_COLORS[p.providerType] || "bg-slate-100 text-slate-700";
               const tlabel = PROVIDER_TYPE_LABELS[p.providerType] || p.providerType;
               return (
-                <Card key={p.id} className="rounded-2xl border-2 border-[#0057B8]/15 transition-all hover:border-[#0057B8]/40 hover:shadow-md">
+                <Card key={p.id} className="rounded-2xl border-2 border-[#0B5ED7]/15 transition-all hover:border-[#0B5ED7]/40 hover:shadow-md">
                   <CardContent className="pt-5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-[#0057B8]">{p.name}</p>
+                        <p className="truncate text-sm font-bold text-[#0B5ED7]">{p.name}</p>
                         <p className="font-mono text-[10px] text-muted-foreground">{p.providerCode}</p>
                       </div>
                       <Badge className={tmeta}>{tlabel}</Badge>
@@ -1684,7 +1684,7 @@ function B2BProvidersTab({
                             href={p.portalUrl.startsWith("http") ? p.portalUrl : `https://${p.portalUrl}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="truncate text-[#0057B8] underline hover:text-[#0057B8]/70"
+                            className="truncate text-[#0B5ED7] underline hover:text-[#0B5ED7]/70"
                           >
                             {p.portalUrl}
                           </a>
@@ -1732,7 +1732,7 @@ function B2BProvidersTab({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
               <Icon name="Building2" className="size-5" /> Add B2B Provider
               <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">CONFIDENTIAL</Badge>
             </DialogTitle>
@@ -1784,7 +1784,7 @@ function B2BProvidersTab({
           </div>
           <DialogFooter>
             <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" disabled={saving} onClick={handleCreate}>
+            <Button className="h-10 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" disabled={saving} onClick={handleCreate}>
               {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="Lock" className="mr-1.5 size-4" />}
               Add Confidential Provider
             </Button>
@@ -1945,8 +1945,8 @@ function CommentsTab({
                     disabled={blocked}
                     className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left transition-all ${
                       active
-                        ? "border-[#0057B8] bg-[#e8f0fb] text-[#0057B8]"
-                        : "border-border bg-white text-foreground hover:border-[#0057B8]/40"
+                        ? "border-[#0B5ED7] bg-[#e8f0fb] text-[#0B5ED7]"
+                        : "border-border bg-white text-foreground hover:border-[#0B5ED7]/40"
                     } ${blocked ? "cursor-not-allowed opacity-50" : ""}`}
                   >
                     <Icon name={ch.icon} className="size-4 shrink-0" />
@@ -1981,7 +1981,7 @@ function CommentsTab({
                     <div key={c.id} className={`rounded-xl border p-3 ${c.isB2bConfidential ? "border-rose-200 bg-rose-50/40" : "border-border bg-white"}`}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                          <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
                             <Icon name="User" className="size-3.5" />
                           </div>
                           <div>
@@ -2006,8 +2006,8 @@ function CommentsTab({
             </div>
 
             {/* Add comment form */}
-            <div className="rounded-2xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/20 p-4">
-              <p className="mb-2 text-xs font-semibold text-[#0057B8]">Add Comment</p>
+            <div className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/20 p-4">
+              <p className="mb-2 text-xs font-semibold text-[#0B5ED7]">Add Comment</p>
               <Textarea
                 className="min-h-[80px] rounded-xl bg-white text-xs"
                 placeholder={`Write a ${COMMENT_CHANNELS.find((c) => c.value === visibility)?.label || "comment"}...`}
@@ -2036,7 +2036,7 @@ function CommentsTab({
                   </label>
                 )}
                 <Button
-                  className="ml-auto h-9 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                  className="ml-auto h-9 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
                   disabled={saving || !newComment.trim()}
                   onClick={handleAdd}
                 >
@@ -2091,10 +2091,10 @@ function DeadlinesTab({
             <p className="text-2xl font-bold text-amber-700">{upcoming}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+        <Card className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#e8f0fb]/40">
           <CardContent className="pt-4">
-            <p className="text-xs font-semibold uppercase text-[#0057B8]">Total Pending</p>
-            <p className="text-2xl font-bold text-[#0057B8]">{filtered.length}</p>
+            <p className="text-xs font-semibold uppercase text-[#0B5ED7]">Total Pending</p>
+            <p className="text-2xl font-bold text-[#0B5ED7]">{filtered.length}</p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-2 border-emerald-200 bg-emerald-50/40">
@@ -2144,7 +2144,7 @@ function DeadlinesTab({
                     <TableRow key={d.id} className="hover:bg-muted/30">
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-mono text-xs font-semibold text-[#0057B8]">{app?.applicationId || d.applicationId.slice(0, 8)}</span>
+                          <span className="font-mono text-xs font-semibold text-[#0B5ED7]">{app?.applicationId || d.applicationId.slice(0, 8)}</span>
                           <span className="text-[10px] text-muted-foreground">{app?.student?.fullName || ""}</span>
                         </div>
                       </TableCell>
@@ -2213,7 +2213,7 @@ function TasksTab({
         description="Track tasks across applications with assignment & priority"
         icon="ListTodo"
         action={
-          <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => setCreateOpen(true)}>
+          <Button className="h-10 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Create Task
           </Button>
         }
@@ -2241,7 +2241,7 @@ function TasksTab({
                   return (
                     <TableRow key={t.id} className="hover:bg-muted/30">
                       <TableCell>
-                        <span className="font-mono text-xs font-semibold text-[#0057B8]">{app?.applicationId || t.applicationId.slice(0, 8)}</span>
+                        <span className="font-mono text-xs font-semibold text-[#0B5ED7]">{app?.applicationId || t.applicationId.slice(0, 8)}</span>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
@@ -2271,7 +2271,7 @@ function TasksTab({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
               <Icon name="ListTodo" className="size-5" /> Create Task
             </DialogTitle>
             <DialogDescription>
@@ -2322,7 +2322,7 @@ function TasksTab({
           </div>
           <DialogFooter>
             <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={handleCreate}>
+            <Button className="h-10 rounded-xl bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" onClick={handleCreate}>
               <Icon name="Plus" className="mr-1.5 size-4" /> Create Task
             </Button>
           </DialogFooter>

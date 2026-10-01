@@ -136,7 +136,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ROLE_BADGE_COLORS: Record<string, string> = {
   SUPER_ADMIN: "bg-violet-100 text-violet-700",
-  ADMIN: "bg-[#e8f0fb] text-[#0057B8]",
+  ADMIN: "bg-[#e8f0fb] text-[#0B5ED7]",
   STUDENT: "bg-slate-100 text-slate-700",
   COUNSELOR: "bg-emerald-100 text-emerald-700",
 };
@@ -327,7 +327,7 @@ export function AuditLogs() {
             variant="outline"
             onClick={() => fetchLogs(true)}
             disabled={refreshing}
-            className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+            className="h-12 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
           >
             <Icon name={refreshing ? "Loader2" : "RefreshCw"} className={cn("size-4", refreshing && "animate-spin")} />
             Refresh
@@ -348,14 +348,14 @@ export function AuditLogs() {
       )}
 
       {/* Security summary */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+      <Card className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#e8f0fb]/40">
         <CardHeader>
           <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
               <Icon name="ShieldCheck" className="size-5" />
             </div>
             <div>
-              <CardTitle className="text-base text-[#0057B8]">Security &amp; Compliance Posture</CardTitle>
+              <CardTitle className="text-base text-[#0B5ED7]">Security &amp; Compliance Posture</CardTitle>
               <CardDescription className="text-xs">
                 Every access to ALO Education data is enforced by these non-negotiable policies.
               </CardDescription>
@@ -366,7 +366,7 @@ export function AuditLogs() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {SECURITY_POINTS.map((p) => (
               <div key={p.title} className="flex items-start gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-[#0057B8] shadow-sm">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-[#0B5ED7] shadow-sm">
                   <Icon name={p.icon} className="size-4" />
                 </div>
                 <div className="min-w-0">
@@ -556,7 +556,7 @@ export function AuditLogs() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="h-7 px-2 text-xs text-[#0057B8] hover:bg-[#e8f0fb]"
+                            className="h-7 px-2 text-xs text-[#0B5ED7] hover:bg-[#e8f0fb]"
                             onClick={() => setSelected(log)}
                           >
                             <Icon name="Eye" className="size-3.5" /> View
@@ -582,7 +582,7 @@ export function AuditLogs() {
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
               <Icon name="FileSearch" className="size-5" />
               Audit Event Detail
             </DialogTitle>
@@ -676,7 +676,7 @@ export function AuditLogs() {
                   <Icon name="Copy" className="size-4" /> Copy JSON
                 </Button>
                 <Button
-                  className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                  className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90"
                   onClick={() => {
                     toast({
                       title: "Event flagged for review",

@@ -219,7 +219,7 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
   onRemove: () => void;
 }) {
   return (
-    <div className={`group relative bg-white rounded-xl border p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-3 ${isSelected ? 'border-[#0057B8] ring-2 ring-[#0057B8]/20' : 'border-slate-200'}`}>
+    <div className={`group relative bg-white rounded-xl border p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-3 ${isSelected ? 'border-[#0B5ED7] ring-2 ring-[#0B5ED7]/20' : 'border-slate-200'}`}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3 min-w-0">
           <div className={`shrink-0 size-10 rounded-lg ${course.logoColor} flex items-center justify-center text-white font-bold text-sm`}>
@@ -235,7 +235,7 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
             <Checkbox
               checked={isSelected}
               onCheckedChange={onToggleSelect}
-              className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+              className="data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]"
             />
           </label>
           <Button variant="ghost" size="icon-sm" className="text-slate-400 hover:text-red-500 h-7 w-7" onClick={onRemove}>
@@ -343,7 +343,7 @@ export default function StudentCompare() {
                   <Bookmark className="size-4" />
                   My Shortlist
                   {shortlist.length > 0 && (
-                    <span className="ml-1 size-5 rounded-full bg-[#0057B8] text-white text-[10px] flex items-center justify-center font-bold">
+                    <span className="ml-1 size-5 rounded-full bg-[#0B5ED7] text-white text-[10px] flex items-center justify-center font-bold">
                       {shortlist.length}
                     </span>
                   )}
@@ -530,7 +530,7 @@ export default function StudentCompare() {
                                 >
                                   <div className={`inline-flex size-12 rounded-full items-center justify-center text-sm font-bold ${
                                     course.matchScore >= 90 ? 'bg-emerald-500 text-white' :
-                                    course.matchScore >= 80 ? 'bg-[#0057B8] text-white' :
+                                    course.matchScore >= 80 ? 'bg-[#0B5ED7] text-white' :
                                     'bg-amber-500 text-white'
                                   }`}>
                                     {course.matchScore}%

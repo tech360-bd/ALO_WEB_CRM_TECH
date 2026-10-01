@@ -423,7 +423,7 @@ export default function MarketingDashboardView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#F37021]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#F97316]" />
       </div>
     );
   }
@@ -434,7 +434,7 @@ export default function MarketingDashboardView() {
         <h3 className="font-semibold text-[#0F172A]">Dashboard data unavailable</h3>
         <p className="text-sm text-gray-500 max-w-md">{error || 'No marketing data returned from /api/marketing/dashboard. This view only displays database-backed metrics — no fabricated statistics are shown.'}</p>
         <p className="text-xs text-gray-400">Data source: MarketingLead, MarketingCampaign, MarketingApproval, MarketingCalendar, MarketingAgentJob via Prisma • Period: today • Sync: live</p>
-        <Button onClick={() => location.reload()} className="bg-[#F37021] hover:bg-[#d85f1b] text-white mt-2">Retry</Button>
+        <Button onClick={() => location.reload()} className="bg-[#F97316] hover:bg-[#d85f1b] text-white mt-2">Retry</Button>
       </div>
     );
   }

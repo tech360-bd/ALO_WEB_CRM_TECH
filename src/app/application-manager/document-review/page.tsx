@@ -26,7 +26,7 @@ export default function DocumentReviewPage() {
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
       <div className="flex items-center justify-between"><div><h1 className="text-xl font-bold text-[#0F172A]">Document Review — Engine Reuse</h1><p className="text-sm text-gray-500">Required/Uploaded/Missing/Rejected/Expired/Under Review/Verified/Locked/Request Again — preview/download/approve/reject/note/version audited</p></div><Button variant="outline" className="border-[#E2E8F0]" onClick={fetchDocs}><RefreshCw className={`w-4 h-4 ${loading?'animate-spin':''}`} /></Button></div>
-      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : (
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0B5ED7]" /></div> : (
         <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Documents ({docs.length}) — Real DB</CardTitle></CardHeader>
           <CardContent className="p-0">

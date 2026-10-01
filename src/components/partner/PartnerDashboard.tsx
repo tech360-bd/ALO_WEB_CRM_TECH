@@ -412,7 +412,7 @@ export default function PartnerDashboard() {
                     <circle cx="18" cy="18" r="15.9" fill="none" stroke="#d97706" strokeWidth="3"
                       strokeDasharray="18 82" strokeDashoffset="-56" strokeLinecap="round" />
                     {/* Expected: ৳65,000 of ৳2,50,000 = 26% */}
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#0057B8" strokeWidth="3"
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#0B5ED7" strokeWidth="3"
                       strokeDasharray="26 74" strokeDashoffset="-74" strokeLinecap="round" />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -437,7 +437,7 @@ export default function PartnerDashboard() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#0057B8]" />
+                    <div className="w-3 h-3 rounded-full bg-[#0B5ED7]" />
                     <div>
                       <p className="text-xs font-medium text-alo-text">Expected</p>
                       <p className="text-[11px] text-alo-text-muted">৳65,000</p>

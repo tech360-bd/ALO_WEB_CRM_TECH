@@ -279,7 +279,7 @@ export function AiCommandCenter() {
             variant="outline"
             onClick={() => fetchAgents(true)}
             disabled={refreshing}
-            className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+            className="h-12 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
           >
             <Icon name={refreshing ? "Loader2" : "RefreshCw"} className={cn("size-4", refreshing && "animate-spin")} />
             Refresh
@@ -288,14 +288,14 @@ export function AiCommandCenter() {
       />
 
       {/* AI Safety Rules Banner */}
-      <Card className="rounded-2xl border-2 border-[#E8501A]/40 bg-orange-50/40">
+      <Card className="rounded-2xl border-2 border-[#F97316]/40 bg-orange-50/40">
         <CardHeader>
           <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-[#E8501A] text-white">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-[#F97316] text-white">
               <Icon name="ShieldAlert" className="size-5" />
             </div>
             <div>
-              <CardTitle className="text-base text-[#E8501A]">
+              <CardTitle className="text-base text-[#F97316]">
                 AI Safety Rules — Non-Negotiable
               </CardTitle>
               <CardDescription className="text-xs">
@@ -319,7 +319,7 @@ export function AiCommandCenter() {
                 ))}
               </ul>
             </div>
-            <div className="md:border-l md:border-[#E8501A]/20 md:pl-6">
+            <div className="md:border-l md:border-[#F97316]/20 md:pl-6">
               <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-700">
                 <Icon name="CheckCircle2" className="size-4" /> AI MUST
               </p>
@@ -337,10 +337,10 @@ export function AiCommandCenter() {
       </Card>
 
       {/* §30 TOP KPIs — real automation from DB + workforce + Groq */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-br from-blue-50/80 to-slate-50">
+      <Card className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-gradient-to-br from-blue-50/80 to-slate-50">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm tracking-wide text-[#0057B8]">Automation measurement — database events · 70% target, not a guarantee</CardTitle>
+            <CardTitle className="text-sm tracking-wide text-[#0B5ED7]">Automation measurement — database events · 70% target, not a guarantee</CardTitle>
             <Badge variant="outline" className="text-[11px]">{metrics?.automation?.period?.label ?? "Last 30d"} · {metrics ? "live" : metricsErr ? "auth/empty" : "loading"}</Badge>
           </div>
           <CardDescription className="text-xs">AUTOMATION_RATE = AI_AUTOMATED / TOTAL_ELIGIBLE ×100 · TARGET 70% · VARIANCE = ACTUAL−TARGET · Source: AutomationEvent table</CardDescription>
@@ -349,7 +349,7 @@ export function AiCommandCenter() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
             <div className="rounded-xl border bg-white p-3">
               <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Automation Rate</div>
-              <div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-bold text-[#0057B8]">{metrics?.automation.hasData ? `${metrics.automation.automationRate.toFixed(2)}%` : "—"}</span><span className={`text-xs ${metrics && metrics.automation.variance >= -5 && metrics.automation.variance <= 10 ? "text-emerald-600" : metrics && metrics.automation.variance < -5 ? "text-amber-600" : "text-slate-500"}`}>{metrics?.automation.hasData ? `Δ ${metrics.automation.variance >=0?"+":""}${metrics.automation.variance.toFixed(2)}%` : ""}</span></div>
+              <div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-bold text-[#0B5ED7]">{metrics?.automation.hasData ? `${metrics.automation.automationRate.toFixed(2)}%` : "—"}</span><span className={`text-xs ${metrics && metrics.automation.variance >= -5 && metrics.automation.variance <= 10 ? "text-emerald-600" : metrics && metrics.automation.variance < -5 ? "text-amber-600" : "text-slate-500"}`}>{metrics?.automation.hasData ? `Δ ${metrics.automation.variance >=0?"+":""}${metrics.automation.variance.toFixed(2)}%` : ""}</span></div>
               <div className="mt-1 text-[11px] text-muted-foreground">TARGET 70% · {metrics?.automation.verdict ?? ""}</div>
             </div>
             <div className="rounded-xl border bg-white p-3">
@@ -517,7 +517,7 @@ export function AiCommandCenter() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7 px-2 text-xs text-[#0057B8] hover:bg-[#e8f0fb]"
+                              className="h-7 px-2 text-xs text-[#0B5ED7] hover:bg-[#e8f0fb]"
                               onClick={() => handleAgentAction(agent, "run")}
                             >
                               <Icon name="Play" className="size-3" /> Run
@@ -571,7 +571,7 @@ export function AiCommandCenter() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Health & Concurrency</CardTitle><CardDescription className="text-xs">GroqGuard + queue + circuit (real)</CardDescription></CardHeader><CardContent className="text-xs space-y-1"><div className="flex justify-between"><span>Concurrency</span><span className="font-mono">{metrics.groq.concurrency.current}/{metrics.groq.concurrency.max}</span></div><div className="flex justify-between"><span>Per-minute</span><span className="font-mono">{metrics.groq.perMinute.count}/{metrics.groq.perMinute.limit}</span></div><div className="flex justify-between"><span>Queue</span><span className="font-mono">{metrics.groq.queueLength} / 200</span></div><div className="flex justify-between"><span>Circuit</span><span className={metrics.groq.circuitOpen? "text-red-600 font-bold":"text-emerald-600"}>{metrics.groq.circuitOpen? "OPEN":"CLOSED"}</span></div><div className="flex justify-between"><span>Total requests / fallbacks</span><span className="font-mono">{metrics.groq.totalRequests} / {metrics.groq.totalFallbacks}</span></div></CardContent></Card>
           <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Model Router</CardTitle><CardDescription className="text-xs">FAST/COMPLEX/PRIVATE (Groq→fallback)</CardDescription></CardHeader><CardContent className="text-xs space-y-1"><div>GROQ_FAST → llama-3.1-8b-instant (6 conc, 30/min)</div><div>GROQ_LARGE → llama-3.3-70b-versatile (complex/reasoning)</div><div>LOCAL → {`process.env.LOCAL_AI_URL || fallback`}</div><div className="text-muted-foreground">Gateway: generateText/Structured/classify/summarize/chat/stream + audit to AgentAuditLog</div></CardContent></Card>
-          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Human↔AI Collaboration (real TimelineEvent)</CardTitle><CardDescription className="text-xs">Last 8 events · automated vs human</CardDescription></CardHeader><CardContent>{metrics.collaboration.length===0? <p className="text-xs text-muted-foreground">No timeline rows yet — run any workflow (leadWelcome/scoring/SLA) to populate.</p> : <ul className="space-y-1.5 text-xs">{metrics.collaboration.slice(0,8).map(c=> <li key={c.id} className="flex justify-between border-b py-1"><span className={c.automated?"text-[#0057B8]":"text-amber-700"}>{c.actor.slice(0,18)}</span><span className="text-muted-foreground">{c.action.slice(0,28)}</span><span className="font-mono text-[11px]">{c.target}</span></li>)}</ul>}</CardContent></Card>
+          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Human↔AI Collaboration (real TimelineEvent)</CardTitle><CardDescription className="text-xs">Last 8 events · automated vs human</CardDescription></CardHeader><CardContent>{metrics.collaboration.length===0? <p className="text-xs text-muted-foreground">No timeline rows yet — run any workflow (leadWelcome/scoring/SLA) to populate.</p> : <ul className="space-y-1.5 text-xs">{metrics.collaboration.slice(0,8).map(c=> <li key={c.id} className="flex justify-between border-b py-1"><span className={c.automated?"text-[#0B5ED7]":"text-amber-700"}>{c.actor.slice(0,18)}</span><span className="text-muted-foreground">{c.action.slice(0,28)}</span><span className="font-mono text-[11px]">{c.target}</span></li>)}</ul>}</CardContent></Card>
         </div>
       )}
 
@@ -684,7 +684,7 @@ export function AiCommandCenter() {
                     <Button
                       size="sm"
                       variant="link"
-                      className="mt-1 h-auto p-0 text-xs text-[#0057B8]"
+                      className="mt-1 h-auto p-0 text-xs text-[#0B5ED7]"
                       onClick={() =>
                         toast({
                           title: "Alert acknowledged",

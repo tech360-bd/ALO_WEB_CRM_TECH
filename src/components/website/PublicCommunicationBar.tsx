@@ -44,7 +44,7 @@ export default function PublicCommunicationBar() {
         {/* 1. AI AGENT BUTTON */}
         <button
           onClick={() => setChatOpen(!chatOpen)}
-          className="flex items-center gap-2 px-3.5 py-2.5 bg-[#E8501A] hover:bg-[#d44312] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 text-xs font-bold group"
+          className="flex items-center gap-2 px-3.5 py-2.5 bg-[#F97316] hover:bg-[#d44312] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 text-xs font-bold group"
           title="Chat with AI Agent"
         >
           <Bot className="w-4 h-4 text-white animate-pulse" />
@@ -80,7 +80,7 @@ export default function PublicCommunicationBar() {
       {chatOpen && (
         <div className="fixed bottom-24 right-6 z-50 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[450px]">
           {/* Modal Header */}
-          <div className="bg-[#E8501A] text-white p-3.5 flex items-center justify-between">
+          <div className="bg-[#F97316] text-white p-3.5 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5 text-white" />
               <div>
@@ -120,7 +120,7 @@ export default function PublicCommunicationBar() {
               onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
               className="flex-1 text-xs border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-600"
             />
-            <Button size="icon" className="h-8 w-8 bg-[#E8501A] hover:bg-[#d44312] text-white" onClick={handleSendChat}>
+            <Button size="icon" className="h-8 w-8 bg-[#F97316] hover:bg-[#d44312] text-white" onClick={handleSendChat}>
               <Send className="w-3.5 h-3.5" />
             </Button>
           </div>
