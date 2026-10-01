@@ -238,9 +238,7 @@ jobs:
           DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
         run: |
           set -uo pipefail
-          npx prisma migrate deploy 2>&1 | tee /tmp/deploy.log # ci-ephemeral-db-only: disposable localhost CI database — never production
-          status=${PIPESTATUS[0]}
-          if [ "$status" -ne 0 ]; then
+          if ! npx prisma migrate deploy 2>&1 | tee /tmp/deploy.log; then # ci-ephemeral-db-only: disposable localhost CI database — never production
             echo "::error::migrate deploy failed on fresh MySQL 8 — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
@@ -278,13 +276,11 @@ jobs:
         run: |
           set -euo pipefail
           mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS alo_test_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-          DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npx prisma migrate deploy 2>&1 | tee /tmp/deploy2.log # ci-ephemeral-db-only: disposable localhost CI database — never production
-          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+          if ! DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npx prisma migrate deploy 2>&1 | tee /tmp/deploy2.log; then # ci-ephemeral-db-only: disposable localhost CI database — never production
             echo "::error::test-db migrate deploy failed — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy2.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
-          TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log
-          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+          if ! TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log; then
             echo "::error::integration tests failed — $(grep -aE '✖|FAIL|Error|AssertionError' /tmp/integration.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
@@ -327,9 +323,8 @@ jobs:
             echo "::error::standalone server failed to boot — $(grep -aiE 'error|fail|cannot|EADDR' /tmp/server.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
-          node scripts/runtime-smoke.mjs --base-url http://127.0.0.1:3100 \
-            --database-url mysql://root:root@127.0.0.1:3306/alo_app_ci 2>&1 | tee /tmp/smoke.log
-          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+          if ! node scripts/runtime-smoke.mjs --base-url http://127.0.0.1:3100 \
+            --database-url mysql://root:root@127.0.0.1:3306/alo_app_ci 2>&1 | tee /tmp/smoke.log; then
             echo "::error::runtime smoke failed — $(grep -aE '✖|FAIL|Error|error' /tmp/smoke.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
