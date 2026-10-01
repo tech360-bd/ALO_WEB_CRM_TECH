@@ -189,7 +189,7 @@ export default function AdminLanguageTestsView() {
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0]">{t.durationDisplay || 'Duration N/A'}</span>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0"><Edit className="w-3.5 h-3.5" /></Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0"><Edit className="w-3.5 h-3.5" /></Button>
                   </div>
                 </Card>
               ))}

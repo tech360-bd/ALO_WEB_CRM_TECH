@@ -136,7 +136,7 @@ export default function PartnerMarketingStudioPage() {
                   </div>
 
                   <div className="pt-2 flex items-center justify-end gap-2">
-                    <Button size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white">
                       <Send className="w-3.5 h-3.5 mr-1" /> Submit for Approval &amp; Schedule
                     </Button>
                   </div>

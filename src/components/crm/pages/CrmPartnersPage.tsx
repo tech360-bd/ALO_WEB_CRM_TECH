@@ -83,7 +83,7 @@ export default function CrmPartnersPage() {
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-alo-text">Partner Management</h1>
-        <Button className="bg-alo-brand hover:bg-alo-brand-light text-white"><Plus className="mr-2 h-4 w-4" />Add Partner</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-alo-brand hover:bg-alo-brand-light text-white"><Plus className="mr-2 h-4 w-4" />Add Partner</Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -147,9 +147,9 @@ export default function CrmPartnersPage() {
                         <td className="py-3"><Badge className={statusColors[(p.approvalStatus || '').toLowerCase()] || statusColors.pending}>{p.approvalStatus || 'Pending'}</Badge></td>
                         <td className="py-3 text-right">
                           <div className="flex justify-end gap-1">
-                            <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm" className="text-red-500"><Trash2 className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-red-500"><Trash2 className="h-4 w-4" /></Button>
                           </div>
                         </td>
                       </tr>

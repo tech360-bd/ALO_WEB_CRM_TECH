@@ -618,7 +618,7 @@ function AiMatchCard({ course }: { course: AiMatchCourse }) {
 
         {/* Actions */}
         <div className="flex items-center gap-3 flex-wrap">
-          <Button variant="cta" className="flex-1 min-w-[120px]">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" className="flex-1 min-w-[120px]">
             Apply Now
           </Button>
           <Button

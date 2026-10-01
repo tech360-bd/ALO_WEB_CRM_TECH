@@ -142,9 +142,9 @@ export default function EmployeeMessagesPage() {
               <Input placeholder="Search conversations..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-alo-page border-alo-border h-9 text-sm" />
             </div>
             <div className="flex gap-1">
-              <button className="flex-1 py-1.5 text-xs font-medium rounded-lg bg-alo-brand text-white">All</button>
-              <button className="flex-1 py-1.5 text-xs font-medium rounded-lg text-alo-text-secondary hover:bg-alo-page">Students</button>
-              <button className="flex-1 py-1.5 text-xs font-medium rounded-lg text-alo-text-secondary hover:bg-alo-page">Colleagues</button>
+              <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex-1 py-1.5 text-xs font-medium rounded-lg bg-alo-brand text-white">All</button>
+              <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex-1 py-1.5 text-xs font-medium rounded-lg text-alo-text-secondary hover:bg-alo-page">Students</button>
+              <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex-1 py-1.5 text-xs font-medium rounded-lg text-alo-text-secondary hover:bg-alo-page">Colleagues</button>
             </div>
           </div>
           <ScrollArea className="flex-1">
@@ -199,7 +199,7 @@ export default function EmployeeMessagesPage() {
                   </Badge>
                 </p>
               </div>
-              <Button variant="ghost" size="icon-sm"><Phone className="w-4 h-4 text-alo-text-muted" /></Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm"><Phone className="w-4 h-4 text-alo-text-muted" /></Button>
             </div>
 
             <ScrollArea className="flex-1 p-4">
@@ -233,7 +233,7 @@ export default function EmployeeMessagesPage() {
               )}
               <div className="flex items-end gap-2">
                 <Button variant="ghost" size="icon-sm" onClick={() => setShowTemplates(!showTemplates)} title="Quick Templates"><Zap className="w-4 h-4 text-alo-text-muted" /></Button>
-                <Button variant="ghost" size="icon-sm"><Paperclip className="w-4 h-4 text-alo-text-muted" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm"><Paperclip className="w-4 h-4 text-alo-text-muted" /></Button>
                 <div className="flex-1">
                   <Input placeholder="Type a message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}

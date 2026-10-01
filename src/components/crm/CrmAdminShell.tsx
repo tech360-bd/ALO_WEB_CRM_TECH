@@ -403,7 +403,7 @@ export default function CrmAdminShell({ children }: { children: ReactNode }) {
           {/* Mobile hamburger */}
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden cursor-pointer">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden cursor-pointer">
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>

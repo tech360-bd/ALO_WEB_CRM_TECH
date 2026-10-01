@@ -325,7 +325,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                           value={form.phone}
                           onChange={(e) => setForm({ ...form, phone: e.target.value })}
                           className="mt-1 h-11"
-                          placeholder="+8801XXXXXXXXX"
+                          placeholder="+8801805020100"
                         />
                       </div>
                     </div>

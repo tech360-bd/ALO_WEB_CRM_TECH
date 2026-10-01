@@ -458,9 +458,9 @@ export default function CrmSocialPage() {
                 </select>
               </div>
               <div className="flex gap-1 ml-auto">
-                <Button variant="ghost" size="sm" className="text-gray-500"><ImageIcon className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="sm" className="text-gray-500"><Video className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="sm" className="text-gray-500"><Link2 className="h-4 w-4" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-gray-500"><ImageIcon className="h-4 w-4" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-gray-500"><Video className="h-4 w-4" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-gray-500"><Link2 className="h-4 w-4" /></Button>
               </div>
             </div>
             <div className="flex justify-end gap-2">

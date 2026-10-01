@@ -48,7 +48,7 @@ export default function ResourcesHubPage() {
           <Card className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm mb-8">
             <div className="flex gap-3">
               <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search resources — blogs, visa guides, scholarships, application tips..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" /></div>
-              <Button className="bg-[#0B5ED7] text-white h-11">Search Resources</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] text-white h-11">Search Resources</Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {categories.slice(0, 8).map((cat: any) => <Badge key={cat.id} variant="outline" className="border-[#E2E8F0] text-[11px]">{cat.name} ({cat.resourceCount || 0})</Badge>)}

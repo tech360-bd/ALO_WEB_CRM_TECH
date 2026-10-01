@@ -598,16 +598,16 @@ export default function EmployeeOmnichannelInbox() {
 
           {/* Actions */}
           <div className="p-4 space-y-2 border-t border-[#E2E8F0]">
-            <button className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Paperclip className="w-3 h-3" /> Upload Document
             </button>
-            <button className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Tag className="w-3 h-3" /> Add Tag
             </button>
-            <button className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
               <AlertTriangle className="w-3 h-3" /> Escalate
             </button>
-            <button className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-[#E2E8F0] text-slate-500 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-[#E2E8F0] text-slate-500 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Clock className="w-3 h-3" /> Snooze
             </button>
           </div>

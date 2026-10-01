@@ -423,7 +423,7 @@ export default function MarketingAuditAccessView() {
                 </div>
                 <Dialog open={showAddUser} onOpenChange={setShowAddUser}>
                   <DialogTrigger asChild>
-                    <Button size="sm" className="gap-2">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="gap-2">
                       <Plus className="h-4 w-4" />
                       Add User
                     </Button>

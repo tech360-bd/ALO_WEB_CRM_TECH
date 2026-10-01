@@ -137,7 +137,7 @@ export default function CrmSeoPolicyWatcher() {
             </SelectContent>
           </Select>
           <Input placeholder="Search policies..." className="w-52" />
-          <Button variant="outline" size="sm"><Search className="size-4" />Check Now</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Search className="size-4" />Check Now</Button>
         </div>
       </div>
 
@@ -432,7 +432,7 @@ export default function CrmSeoPolicyWatcher() {
                         <span>·</span>
                         <span className={c.humanReviewed === c.pages ? 'text-emerald-600 font-semibold' : 'text-amber-600'}>{c.humanReviewed}/{c.pages} reviewed</span>
                         {c.humanReviewed < c.pages && (
-                          <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">Review {c.pages - c.humanReviewed} left</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-6 px-2 text-xs">Review {c.pages - c.humanReviewed} left</Button>
                         )}
                       </div>
                       <Separator className="mt-3" />

@@ -1222,7 +1222,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               <p className="text-sm text-slate-600 mb-4">
                 You will need a valid passport to apply for a student visa. We recommend applying as soon as possible as it can take 2-4 weeks to process.
               </p>
-              <Button
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                 type="button"
                 variant="outline"
                 className="border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#0B5ED7] hover:text-white"

@@ -74,7 +74,7 @@ export default function CrmDocumentsPage() {
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-alo-text">Document Management</h1>
-        <Button className="bg-alo-brand hover:bg-alo-brand-light text-white"><Upload className="mr-2 h-4 w-4" />Upload Document</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-alo-brand hover:bg-alo-brand-light text-white"><Upload className="mr-2 h-4 w-4" />Upload Document</Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -124,9 +124,9 @@ export default function CrmDocumentsPage() {
                         <td className="py-3 text-alo-text-muted">{doc.createdAt?.substring(0, 10)}</td>
                         <td className="py-3 text-right">
                           <div className="flex justify-end gap-1">
-                            <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm" className="text-green-500"><CheckCircle className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="sm" className="text-red-500"><XCircle className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-green-500"><CheckCircle className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-red-500"><XCircle className="h-4 w-4" /></Button>
                           </div>
                         </td>
                       </tr>

@@ -309,7 +309,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             {/* Mobile hamburger */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu">
                   <Icon name="Menu" className="size-5" />
                 </Button>
               </SheetTrigger>

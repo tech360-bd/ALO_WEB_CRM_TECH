@@ -164,7 +164,7 @@ export function StudentReferrals() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="mt-1"
-                  placeholder="+8801XXXXXXXXX"
+                  placeholder="+8801805020100"
                 />
               </div>
               <div className="sm:col-span-2">

@@ -178,7 +178,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
         <div className="flex items-center gap-3">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden">
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>

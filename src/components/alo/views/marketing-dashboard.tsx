@@ -978,7 +978,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
               <Icon name="Plus" className="size-4" /> Add Keyword
             </Button>
           </DialogTrigger>
@@ -1313,7 +1313,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
               <Icon name="Plus" className="size-4" /> Create Post
             </Button>
           </DialogTrigger>
@@ -1476,7 +1476,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                           )}
                           {p.approvalStatus === "PUBLISHED" && p.publishedUrl && (
                             <a href={p.publishedUrl} target="_blank" rel="noopener noreferrer">
-                              <Button size="sm" variant="outline" className="h-8 border-emerald-300 text-emerald-700">
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 border-emerald-300 text-emerald-700">
                                 <Icon name="ExternalLink" className="size-3" /> View
                               </Button>
                             </a>
@@ -1663,7 +1663,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
               </div>
               <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
                 <DialogTrigger asChild>
-                  <Button className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
                     <Icon name="Upload" className="size-4" /> Upload Logo
                   </Button>
                 </DialogTrigger>
@@ -2070,7 +2070,7 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
               <Icon name="Plus" className="size-4" /> Add Workflow
             </Button>
           </DialogTrigger>

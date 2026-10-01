@@ -98,7 +98,7 @@ export default function CrmAppointmentsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Appointments</h1>
           <p className="text-gray-500">Manage counselling sessions, reviews, and meetings</p>
         </div>
-        <Button className="bg-alo-brand hover:bg-alo-brand-light text-white"><Plus className="w-4 h-4 mr-2" />New Appointment</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-alo-brand hover:bg-alo-brand-light text-white"><Plus className="w-4 h-4 mr-2" />New Appointment</Button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

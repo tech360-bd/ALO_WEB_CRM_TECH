@@ -47,7 +47,7 @@ export function TestPreparationMiniCard({
         </p>
 
         <a href="/language-prep" className="block w-full">
-          <Button className="w-full bg-white border border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#0B5ED7] hover:text-white font-bold h-11 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-white border border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#0B5ED7] hover:text-white font-bold h-11 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
             View All Test Prep <ArrowRight className="w-3.5 h-3.5" />
           </Button>
         </a>
@@ -99,7 +99,7 @@ export function TestPreparationMiniCard({
       </div>
 
       <a href="/language-prep" className="block w-full">
-        <Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold h-11 rounded-xl flex items-center justify-center gap-1.5 shadow-sm">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold h-11 rounded-xl flex items-center justify-center gap-1.5 shadow-sm">
           View All Test Prep <ArrowRight className="h-3.5 w-3.5" />
         </Button>
       </a>

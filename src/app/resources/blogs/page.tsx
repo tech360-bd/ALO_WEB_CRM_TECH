@@ -60,7 +60,7 @@ export default function BlogIndexPage() {
                     <span>{b.publishedAt}</span>
                   </div>
                   <a href={`/resources/blogs/${b.slug}`} className="block w-full">
-                    <Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
                       Read Full Article <ArrowRight className="h-4 w-4" />
                     </Button>
                   </a>

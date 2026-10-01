@@ -22,9 +22,9 @@ export default function AdminEditUniversityPage() {
           <p className="text-xs text-gray-500 mt-3">{uni?.name || 'Loading from DB...'} — {uni?.country || ''} — Last verified: {uni?.lastVerifiedAt || 'Not verified'} — Status: {uni?.status || ''}</p>
           <div className="flex gap-3 mt-6">
             <Link href="/admin/universities"><Button variant="outline" className="border-[#E2E8F0] h-11">Back to List — Search, Country, City, Status, Verified, Last updated</Button></Link>
-            <Button className="bg-[#0B5ED7] text-white h-11">Save — Audit Log + Source Verification</Button>
-            <Button variant="outline" className="border-[#E2E8F0] h-11">Archive</Button>
-            <Button variant="outline" className="border-[#E2E8F0] h-11">Merge Duplicate</Button>
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] text-white h-11">Save — Audit Log + Source Verification</Button>
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] h-11">Archive</Button>
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] h-11">Merge Duplicate</Button>
           </div>
         </Card>
       </div>

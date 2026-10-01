@@ -203,8 +203,8 @@ export default function PremiumStudentDashboard() {
               <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">Next: {nextAction?.text || 'Complete profile'}</Badge>
               <Link href="/student/messages"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9"><MessageSquare className="w-4 h-4 mr-1" />Messages</Button></Link>
               <Link href="/student/notifications"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9">Notifications</Button></Link>
-              <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9">Help</Button>
-              <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9">Logout</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-9">Help</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-9">Logout</Button>
             </div>
           </div>
           <Progress value={profileCompletion} className="h-2 mt-4" />
@@ -437,9 +437,9 @@ export default function PremiumStudentDashboard() {
               <div className="bg-white border border-[#E2E8F0] rounded-xl p-3 mt-3 text-xs">
                 <p className="font-bold">Your Referral Code: AEFR-{profile?.studentId?.substring(0,6) || 'XXXXXX'}</p>
                 <div className="flex gap-2 mt-2">
-                  <Button size="sm" className="bg-[#25D366] text-white h-8 text-[11px]">Share WhatsApp</Button>
-                  <Button size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[11px]">Copy Link</Button>
-                  <Button size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[11px]">Messenger</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[#25D366] text-white h-8 text-[11px]">Share WhatsApp</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[11px]">Copy Link</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[11px]">Messenger</Button>
                 </div>
               </div>
               <p className="text-[11px] text-gray-500 mt-2">Referrals: sent/pending/qualified/successful/available reward/offers — Marketing can configure offers from backend — not CRM administration, student-facing.</p>

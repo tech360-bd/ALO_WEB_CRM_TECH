@@ -39,7 +39,7 @@ export default function StudentShortlistPage() {
                 <div className="flex gap-2 mt-3">
                   <Link href="/student/compare"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs"><GitCompare className="w-3 h-3 mr-1" />Compare</Button></Link>
                   <Link href={`/student/apply/${c.courseId || c.id}`}><Button size="sm" className="bg-[#F97316] text-white h-9 text-xs"><Send className="w-3 h-3 mr-1" />Apply</Button></Link>
-                  <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs"><Trash2 className="w-3 h-3 mr-1" />Remove</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs"><Trash2 className="w-3 h-3 mr-1" />Remove</Button>
                 </div>
               </Card>
             ))}

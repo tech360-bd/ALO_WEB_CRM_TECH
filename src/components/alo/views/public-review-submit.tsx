@@ -161,14 +161,14 @@ export function PublicReviewSubmit({ token }: { token: string }) {
               <div className="flex flex-wrap gap-2">
                 {invitation.googleReviewUrl && (
                   <a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
                       <Icon name="Star" className="h-4 w-4 mr-1" /> Google Reviews
                     </Button>
                   </a>
                 )}
                 {invitation.facebookRecommendUrl && (
                   <a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
                       <Icon name="ThumbsUp" className="h-4 w-4 mr-1" /> Facebook
                     </Button>
                   </a>
@@ -303,14 +303,14 @@ export function PublicReviewSubmit({ token }: { token: string }) {
               <div className="flex flex-wrap gap-2">
                 {invitation.googleReviewUrl && (
                   <a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
                       <Icon name="Star" className="h-4 w-4 mr-1" /> Google Reviews
                     </Button>
                   </a>
                 )}
                 {invitation.facebookRecommendUrl && (
                   <a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
                       <Icon name="ThumbsUp" className="h-4 w-4 mr-1" /> Facebook
                     </Button>
                   </a>

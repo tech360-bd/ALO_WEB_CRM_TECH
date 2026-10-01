@@ -241,6 +241,22 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/student-benefits": ["STUDENT"],
   "/api/marketing/webhooks": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
   "/api/admin": ["SUPER_ADMIN", "ADMIN"],
+  // ── Server-side RBAC closure (2026-10-02): staff/partner API prefixes that
+  // previously required only "any authenticated token" now enforce their role
+  // families, mirroring the page-level ROLE_ROUTES rules. Handlers with their
+  // own checks keep them as defense-in-depth.
+  "/api/crm": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "VISA_INTERVIEW_OFFICER", "BRANCH_MANAGER", "FRONT_DESK", "SUPPORT_STAFF", "MARKETING_MANAGER", "MARKETING", "FINANCE", "HR_MANAGER"],
+  "/api/employee-access": ["SUPER_ADMIN", "ADMIN", "EMPLOYEE", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "VISA_INTERVIEW_OFFICER", "BRANCH_MANAGER", "FRONT_DESK", "SUPPORT_STAFF", "MARKETING_MANAGER", "MARKETING", "FINANCE", "HR_MANAGER", "ENGLISH_TRAINER"],
+  "/api/employee": ["SUPER_ADMIN", "ADMIN", "EMPLOYEE", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "VISA_INTERVIEW_OFFICER", "BRANCH_MANAGER", "FRONT_DESK", "SUPPORT_STAFF", "MARKETING_MANAGER", "MARKETING", "FINANCE", "HR_MANAGER", "ENGLISH_TRAINER"],
+  "/api/partner": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
+  "/api/applications": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "BRANCH_MANAGER"],
+  "/api/documents": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "FRONT_DESK", "PARTNER"],
+  "/api/social": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
+  "/api/app-manager": ["SUPER_ADMIN", "ADMIN", "APPLICATION_TEAM"],
+  "/api/international-officer": ["SUPER_ADMIN", "ADMIN", "INTERNATIONAL_OFFICER"],
+  "/api/knowledge-sharing": ["SUPER_ADMIN", "ADMIN", "EMPLOYEE", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "BRANCH_MANAGER", "FRONT_DESK", "SUPPORT_STAFF", "MARKETING_MANAGER", "MARKETING", "HR_MANAGER", "ENGLISH_TRAINER", "INTERNATIONAL_OFFICER"],
+  "/api/unified-communication": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "SUPPORT_STAFF", "BRANCH_MANAGER"],
+  "/api/interview": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER"],
 };
 
 export function isPublicApiRequest(pathname: string, method: string): boolean {
@@ -248,6 +264,10 @@ export function isPublicApiRequest(pathname: string, method: string): boolean {
   const isWrite = WRITE_METHODS.has(normalizedMethod);
   const isRead = normalizedMethod === "GET" || normalizedMethod === "HEAD";
   const matchedSensitive = Object.keys(SENSITIVE_API_ROUTES).some((prefix) => matchesPath(pathname, prefix));
+
+  // The public lead-capture endpoint stays public even though the /api/crm
+  // prefix is now role-restricted (anonymous visitors submit leads).
+  if (pathname === "/api/crm/leads/public") return true;
 
   // NextAuth's catch-all is public, but the custom password-change handler is
   // explicitly excluded from this rule.

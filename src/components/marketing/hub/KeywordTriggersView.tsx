@@ -267,8 +267,8 @@ export default function KeywordTriggersView() {
                     </td>
                     <td className="py-3 text-right">
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0"><Edit className="w-3 h-3" /></Button>
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-red-500 hover:text-red-700"><Trash2 className="w-3 h-3" /></Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0"><Edit className="w-3 h-3" /></Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-red-500 hover:text-red-700"><Trash2 className="w-3 h-3" /></Button>
                       </div>
                     </td>
                   </tr>

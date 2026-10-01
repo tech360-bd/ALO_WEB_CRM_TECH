@@ -289,7 +289,7 @@ function AIHint({ text }: { text: string }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button type="button" className="ml-1 inline-flex size-4 items-center justify-center rounded-full bg-[#e8f0fb] text-[#0B5ED7] align-middle hover:bg-[#0B5ED7] hover:text-white">
+        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" type="button" className="ml-1 inline-flex size-4 items-center justify-center rounded-full bg-[#e8f0fb] text-[#0B5ED7] align-middle hover:bg-[#0B5ED7] hover:text-white">
           <Icon name="Sparkles" className="size-2.5" />
         </button>
       </TooltipTrigger>
@@ -1017,11 +1017,11 @@ export function StudentProfileForm() {
                 <Field label="Alternative Email">
                   <Input type="email" className="h-10 border-[#0B5ED7]/20" value={form.altEmail} onChange={(e) => set("altEmail", e.target.value)} placeholder="backup@example.com" />
                 </Field>
-                <Field label="Mobile Number" required helper="Format: +8801XXXXXXXXX">
-                  <Input className="h-10 border-[#0B5ED7]/20" value={form.mobile} onChange={(e) => set("mobile", e.target.value)} placeholder="+8801XXXXXXXXX" />
+                <Field label="Mobile Number" required helper="Format: +8801805020100">
+                  <Input className="h-10 border-[#0B5ED7]/20" value={form.mobile} onChange={(e) => set("mobile", e.target.value)} placeholder="+8801805020100" />
                 </Field>
                 <Field label="Alternative Mobile">
-                  <Input className="h-10 border-[#0B5ED7]/20" value={form.altMobile} onChange={(e) => set("altMobile", e.target.value)} placeholder="+8801XXXXXXXXX" />
+                  <Input className="h-10 border-[#0B5ED7]/20" value={form.altMobile} onChange={(e) => set("altMobile", e.target.value)} placeholder="+8801805020100" />
                 </Field>
                 <Field label="Emergency Contact Name" required>
                   <Input className="h-10 border-[#0B5ED7]/20" value={form.emergencyName} onChange={(e) => set("emergencyName", e.target.value)} placeholder="e.g. Mohammed Father" />
@@ -1041,7 +1041,7 @@ export function StudentProfileForm() {
               </FormGrid>
               <div className="mt-4">
                 <Field label="Emergency Contact Number" required className="max-w-md">
-                  <Input className="h-10 border-[#0B5ED7]/20" value={form.emergencyPhone} onChange={(e) => set("emergencyPhone", e.target.value)} placeholder="+8801XXXXXXXXX" />
+                  <Input className="h-10 border-[#0B5ED7]/20" value={form.emergencyPhone} onChange={(e) => set("emergencyPhone", e.target.value)} placeholder="+8801805020100" />
                 </Field>
               </div>
             </SectionCard>
@@ -1502,7 +1502,7 @@ export function StudentProfileForm() {
                         <Input type="email" className="h-10 border-[#0B5ED7]/20" value={r.email} onChange={(ev) => updateList("recommendations", r.id, { email: ev.target.value })} placeholder="referee@example.edu" />
                       </Field>
                       <Field label="Mobile">
-                        <Input className="h-10 border-[#0B5ED7]/20" value={r.mobile} onChange={(ev) => updateList("recommendations", r.id, { mobile: ev.target.value })} placeholder="+8801XXXXXXXXX" />
+                        <Input className="h-10 border-[#0B5ED7]/20" value={r.mobile} onChange={(ev) => updateList("recommendations", r.id, { mobile: ev.target.value })} placeholder="+8801805020100" />
                       </Field>
                       <Field label="Country">
                         <Input className="h-10 border-[#0B5ED7]/20" value={r.country} onChange={(ev) => updateList("recommendations", r.id, { country: ev.target.value })} placeholder="Bangladesh" />

@@ -93,7 +93,48 @@ const GraduationCapStrip = () => {
   );
 };
 
+// ─── CMS-managed footer content (Virtual Editor) ──────────────
+// Footer link columns are editable by Super Admins via
+// /admin/website-cms ("Site-Wide & CRM" tab, type 'footer').
+// The constants above are the compiled-in fallback used until
+// items are published, so the footer never renders empty.
+interface FooterLink { label: string; href: string }
+function useCmsFooterLinks() {
+  const [links, setLinks] = React.useState<{
+    destinations: FooterLink[];
+    quickLinks: FooterLink[];
+    companyLinks: FooterLink[];
+  }>({ destinations, quickLinks, companyLinks });
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch('/api/website/cms-content?type=footer')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (cancelled || !j?.success || !Array.isArray(j.items) || j.items.length === 0) return;
+        const bySection: Record<string, FooterLink[]> = {};
+        for (const item of j.items) {
+          const section = String(item.section || '');
+          const label = String(item.label || '');
+          const href = String((item.data as Record<string, unknown>)?.href ?? '');
+          if (!section || !label || !href) continue;
+          (bySection[section] ||= []).push({ label, href });
+        }
+        if (Object.keys(bySection).length === 0) return;
+        setLinks((prev) => ({
+          destinations: bySection.destinations?.length ? bySection.destinations : prev.destinations,
+          quickLinks: bySection.quickLinks?.length ? bySection.quickLinks : prev.quickLinks,
+          companyLinks: bySection.companyLinks?.length ? bySection.companyLinks : prev.companyLinks,
+        }));
+      })
+      .catch(() => {/* keep fallback */ });
+    return () => { cancelled = true; };
+  }, []);
+  return links;
+}
+
 export default function PublicFooter() {
+  const cmsLinks = useCmsFooterLinks();
+  const { destinations: destLinks, quickLinks: quickL, companyLinks: companyL } = cmsLinks;
   return (
     <footer className="w-full bg-white pt-8 mt-auto border-t border-slate-100">
       {/* Footer contact 3-button placement — Get Instant Help banner with office address + map */}
@@ -156,7 +197,7 @@ export default function PublicFooter() {
           <div className="flex flex-col gap-4">
             <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Destinations</h3>
             <ul className="flex flex-col gap-2">
-              {destinations.map((link) => (
+              {destLinks.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
                     {link.label}
@@ -170,7 +211,7 @@ export default function PublicFooter() {
           <div className="flex flex-col gap-4">
             <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Study Abroad</h3>
             <ul className="flex flex-col gap-2">
-              {quickLinks.map((link) => (
+              {quickL.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
                     {link.label}
@@ -184,7 +225,7 @@ export default function PublicFooter() {
           <div className="flex flex-col gap-4">
             <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Company</h3>
             <ul className="flex flex-col gap-2">
-              {companyLinks.map((link) => (
+              {companyL.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
                     {link.label}

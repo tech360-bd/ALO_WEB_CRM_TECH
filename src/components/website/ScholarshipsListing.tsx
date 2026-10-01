@@ -44,7 +44,7 @@ export default function ScholarshipsListing() {
           <div className="grid md:grid-cols-3 gap-4">
             <div className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search scholarships..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" /></div>
             <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-11"><option value="all">All Countries</option><option value="UK">UK</option><option value="USA">USA</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option></select>
-            <Button className="bg-[#0B5ED7] text-white h-11">Search — DB-driven</Button>
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] text-white h-11">Search — DB-driven</Button>
           </div>
         </Card>
 
@@ -72,8 +72,8 @@ export default function ScholarshipsListing() {
                       </div>
                     </div>
                     <div className="mt-4 space-y-2">
-                      <Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#004494] h-11 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button>
-                      <Button variant="outline" className="w-full border-[#E2E8F0] h-11 text-xs">Check Eligibility</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#004494] h-11 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full border-[#E2E8F0] h-11 text-xs">Check Eligibility</Button>
                     </div>
                   </Card>
                 </Link>

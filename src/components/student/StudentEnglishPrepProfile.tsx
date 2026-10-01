@@ -176,8 +176,8 @@ export default function StudentEnglishPrepProfile() {
         <h4 className="font-bold text-sm">Need Help Choosing Test?</h4>
         <p className="text-xs text-blue-100 mt-1 leading-relaxed">Tell us your destination, university and course — our counselor can help you understand relevant English requirement.</p>
         <div className="flex gap-2 mt-3">
-          <a href="/language-prep" className="flex-1"><Button className="w-full bg-white text-[#0B5ED7] hover:bg-slate-50 font-bold h-9 rounded-xl text-xs">Explore Test Prep →</Button></a>
-          <a href="/language-prep/comparison"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-9 rounded-xl text-xs">Compare Tests</Button></a>
+          <a href="/language-prep" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-white text-[#0B5ED7] hover:bg-slate-50 font-bold h-9 rounded-xl text-xs">Explore Test Prep →</Button></a>
+          <a href="/language-prep/comparison"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-9 rounded-xl text-xs">Compare Tests</Button></a>
         </div>
       </Card>
     </div>

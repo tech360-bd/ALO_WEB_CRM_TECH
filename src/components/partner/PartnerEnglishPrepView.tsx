@@ -45,8 +45,8 @@ export default function PartnerEnglishPrepView() {
                 <span className="text-[10px] px-2 py-1 rounded-full bg-[#F8FAFC] border border-[#E2E8F0]">{t.durationDisplay || 'Duration'}</span>
               </div>
               <div className="mt-4 flex gap-2">
-                <a href={`/language-prep/${t.slug}`} className="flex-1"><Button className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs"><Eye className="w-3.5 h-3.5 mr-1" /> View Guide</Button></a>
-                <a href={t.officialUrl || t.sourceUrl} target="_blank"><Button variant="outline" className="bg-white border-[#E2E8F0] h-9 rounded-xl text-xs">Official ↗</Button></a>
+                <a href={`/language-prep/${t.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs"><Eye className="w-3.5 h-3.5 mr-1" /> View Guide</Button></a>
+                <a href={t.officialUrl || t.sourceUrl} target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-9 rounded-xl text-xs">Official ↗</Button></a>
               </div>
               <p className="text-[10px] text-slate-400 mt-2">Source: {t.sourceName || 'Check official'} • Verified: {t.lastVerifiedAt || 'Information requires verification'}</p>
             </Card>

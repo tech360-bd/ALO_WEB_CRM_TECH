@@ -564,7 +564,7 @@ export default function StudentDashboard() {
                         </div>
                       </div>
                       <CollapsibleTrigger asChild>
-                        <Button
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                           variant="ghost"
                           size="icon-sm"
                           className="shrink-0 mt-0.5"
@@ -615,7 +615,7 @@ export default function StudentDashboard() {
                     upload
                   </CardDescription>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
                   <Upload className="w-4 h-4 mr-1.5" />
                   Upload Document
                 </Button>

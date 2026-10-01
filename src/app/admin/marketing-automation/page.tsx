@@ -483,10 +483,10 @@ export default function MarketingAutomationDashboard() {
                 <p className="text-slate-500 mt-0.5">Prepared by Marketing Staff • Facebook, Instagram, LinkedIn</p>
               </div>
               <div className="flex items-center gap-2">
-                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded-xl px-3 py-1 flex items-center gap-1">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded-xl px-3 py-1 flex items-center gap-1">
                   <Check className="w-3.5 h-3.5" /> Approve & Publish
                 </Button>
-                <Button className="bg-red-50 text-red-600 hover:bg-red-100 text-xs rounded-xl px-3 py-1 flex items-center gap-1">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-red-50 text-red-600 hover:bg-red-100 text-xs rounded-xl px-3 py-1 flex items-center gap-1">
                   <X className="w-3.5 h-3.5" /> Reject
                 </Button>
               </div>

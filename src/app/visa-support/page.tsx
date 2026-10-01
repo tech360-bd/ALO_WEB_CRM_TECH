@@ -26,7 +26,7 @@ const VisaSupportPage = () => {
           <p className="text-xl max-w-3xl mx-auto mb-10">
             Join thousands of successful students. With our 98% visa success rate and 2000+ processed applications, your dream of studying abroad is closer than you think.
           </p>
-          <button className="bg-[#F97316] hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+          <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors">
             Book Free Visa Consultation
           </button>
         </div>

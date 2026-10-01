@@ -75,7 +75,7 @@ export default function CrmReportsPage() {
                   <Calendar className="h-3 w-3" />
                   {report.lastGenerated}
                 </div>
-                <Button size="sm" className="bg-alo-brand hover:bg-alo-brand-light text-white text-xs h-7">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-alo-brand hover:bg-alo-brand-light text-white text-xs h-7">
                   <Download className="mr-1 h-3 w-3" />Generate
                 </Button>
               </div>

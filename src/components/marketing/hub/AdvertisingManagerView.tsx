@@ -61,7 +61,7 @@ export default function AdvertisingManagerView() {
                 <div className="space-y-2">
                   {campaigns.slice(0,6).map((c:any)=><div key={c.id} className="p-3 border rounded-xl flex items-center justify-between">
                     <div><p className="text-sm font-semibold">{c.name}</p><p className="text-xs text-gray-500">{c.platform} • Budget ৳{c.budget?.toLocaleString?.() || c.budget} • Status {c.status}</p></div>
-                    <div className="flex gap-2"><Button size="sm" variant="outline" className="h-7 text-xs"><Pause className="w-3 h-3 mr-1" />Pause</Button><Button size="sm" className="h-7 text-xs bg-[#0B5ED7] text-white"><Play className="w-3 h-3 mr-1" />Activate</Button></div>
+                    <div className="flex gap-2"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-xs"><Pause className="w-3 h-3 mr-1" />Pause</Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 text-xs bg-[#0B5ED7] text-white"><Play className="w-3 h-3 mr-1" />Activate</Button></div>
                   </div>)}
                 </div>
               )}

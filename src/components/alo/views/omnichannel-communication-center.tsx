@@ -1321,7 +1321,7 @@ function LogCallDialog({
             </div>
             <div className="space-y-1.5">
               <Label className="text-[#0F172A]">To *</Label>
-              <Input className="h-11 font-mono" placeholder="+8801XXXXXXXXX" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
+              <Input className="h-11 font-mono" placeholder="+8801805020100" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
             </div>
           </div>
           <div className="space-y-1.5">
@@ -1610,7 +1610,7 @@ function SendSmsDialog({
         <div className="space-y-3">
           <div className="space-y-1.5">
             <Label className="text-[#0F172A]">Recipient Number *</Label>
-            <Input className="h-11 font-mono" placeholder="+8801XXXXXXXXX" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
+            <Input className="h-11 font-mono" placeholder="+8801805020100" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
           </div>
           <div className="space-y-1.5">
             <Label className="text-[#0F172A]">Message *</Label>

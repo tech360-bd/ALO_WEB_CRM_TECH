@@ -210,7 +210,7 @@ export default function BrandAssetsPostCreatorView() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1.5">
             <Download className="h-4 w-4" /> Export Brand Kit
           </Button>
         </div>
@@ -284,10 +284,10 @@ export default function BrandAssetsPostCreatorView() {
                     <p className="text-xs text-muted-foreground">Primary logo (Horizontal) • PNG, SVG</p>
                     <p className="text-xs text-muted-foreground">Last updated: Feb 10, 2025</p>
                     <div className="flex gap-2 mt-2 justify-center sm:justify-start">
-                      <Button variant="outline" size="sm" className="gap-1 text-xs">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-xs">
                         <Eye className="h-3 w-3" /> Preview
                       </Button>
-                      <Button variant="outline" size="sm" className="gap-1 text-xs">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-xs">
                         <Download className="h-3 w-3" /> Download
                       </Button>
                     </div>
@@ -299,7 +299,7 @@ export default function BrandAssetsPostCreatorView() {
                   <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                   <p className="text-sm font-medium">Drop logo files here or click to upload</p>
                   <p className="text-xs text-muted-foreground mt-1">PNG, SVG, or JPG up to 5MB</p>
-                  <Button variant="outline" size="sm" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
                     <Upload className="h-3 w-3" /> Choose Files
                   </Button>
                 </div>
@@ -363,7 +363,7 @@ export default function BrandAssetsPostCreatorView() {
                   <div className="flex items-center gap-3 mt-2">
                     <Input type="color" defaultValue="#F97316" className="w-12 h-10 p-1 cursor-pointer" />
                     <Input defaultValue="#F97316" className="flex-1 font-mono text-sm" placeholder="#000000" />
-                    <Button variant="outline" size="sm">Apply</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">Apply</Button>
                   </div>
                 </div>
               </CardContent>
@@ -548,7 +548,7 @@ export default function BrandAssetsPostCreatorView() {
                         value={hashtags}
                         onChange={(e) => setHashtags(e.target.value)}
                       />
-                      <Button variant="outline" className="gap-1 text-xs shrink-0 text-[#F97316] border-orange-200">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="gap-1 text-xs shrink-0 text-[#F97316] border-orange-200">
                         <Sparkles className="h-3.5 w-3.5" /> Generate
                       </Button>
                     </div>
@@ -616,7 +616,7 @@ export default function BrandAssetsPostCreatorView() {
                       <p className="text-xs text-muted-foreground mt-1">
                         {contentType === "Video" ? "MP4, MOV up to 100MB" : contentType === "Carousel" ? "Multiple images up to 10" : "PNG, JPG, GIF up to 10MB"}
                       </p>
-                      <Button variant="outline" size="sm" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
                         <Upload className="h-3 w-3" /> Choose Files
                       </Button>
                     </div>
@@ -704,14 +704,14 @@ export default function BrandAssetsPostCreatorView() {
 
                   {/* Action Buttons */}
                   <div className="space-y-2">
-                    <Button className="w-full bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5">
                       <Send className="h-4 w-4" /> Submit for Approval
                     </Button>
                     <div className="grid grid-cols-2 gap-2">
-                      <Button variant="outline" size="sm" className="gap-1">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1">
                         <Eye className="h-3.5 w-3.5" /> Preview
                       </Button>
-                      <Button variant="outline" size="sm" className="gap-1">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1">
                         <Save className="h-3.5 w-3.5" /> Save Draft
                       </Button>
                     </div>
@@ -845,10 +845,10 @@ export default function BrandAssetsPostCreatorView() {
                           Generated Caption
                         </CardTitle>
                         <div className="flex gap-1">
-                          <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                             <Copy className="h-3.5 w-3.5" />
                           </Button>
                         </div>
@@ -867,7 +867,7 @@ export default function BrandAssetsPostCreatorView() {
                           <Hash className="h-4 w-4 text-purple-500" />
                           Generated Hashtags
                         </CardTitle>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                           <Copy className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -905,7 +905,7 @@ export default function BrandAssetsPostCreatorView() {
                           <ImageIcon className="h-4 w-4 text-purple-500" />
                           Image Generation Prompt
                         </CardTitle>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                           <Copy className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -923,7 +923,7 @@ export default function BrandAssetsPostCreatorView() {
                           <Video className="h-4 w-4 text-purple-500" />
                           Video Script
                         </CardTitle>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                           <Copy className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -935,10 +935,10 @@ export default function BrandAssetsPostCreatorView() {
 
                   {/* Submit Approval */}
                   <div className="flex gap-3">
-                    <Button className="bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5 flex-1">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5 flex-1">
                       <Send className="h-4 w-4" /> Submit for Approval
                     </Button>
-                    <Button variant="outline" className="gap-1.5">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="gap-1.5">
                       <Pencil className="h-4 w-4" /> Edit in Creator
                     </Button>
                   </div>
@@ -997,7 +997,7 @@ export default function BrandAssetsPostCreatorView() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button className="bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5">
                     <Plus className="h-4 w-4" /> New Template
                   </Button>
                 </div>
@@ -1045,13 +1045,13 @@ export default function BrandAssetsPostCreatorView() {
 
                         {/* Template actions */}
                         <div className="px-3 pb-3 flex items-center gap-2">
-                          <Button variant="outline" size="sm" className="flex-1 gap-1 text-xs text-[#F97316] border-orange-200 hover:bg-orange-50">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="flex-1 gap-1 text-xs text-[#F97316] border-orange-200 hover:bg-orange-50">
                             <Copy className="h-3 w-3" /> Use
                           </Button>
-                          <Button variant="outline" size="sm" className="gap-1 text-xs">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-xs">
                             <Pencil className="h-3 w-3" />
                           </Button>
-                          <Button variant="outline" size="sm" className="gap-1 text-xs text-red-500 border-red-200 hover:bg-red-50">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-xs text-red-500 border-red-200 hover:bg-red-50">
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
@@ -1064,7 +1064,7 @@ export default function BrandAssetsPostCreatorView() {
                 <div className="text-center py-12">
                   <LayoutGrid className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
                   <p className="text-sm font-medium text-muted-foreground">No templates found for this category</p>
-                  <Button variant="outline" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
                     <Plus className="h-3 w-3" /> Create Template
                   </Button>
                 </div>

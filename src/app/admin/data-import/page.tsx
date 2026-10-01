@@ -60,7 +60,7 @@ export default function DataImportDashboardRoute() {
           ].map((file) => (
             <div key={file} className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
               <span className="font-semibold text-slate-800">{file}</span>
-              <Button size="sm" variant="ghost" className="h-7 text-[11px] text-blue-600 hover:text-blue-700">Template</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7 text-[11px] text-blue-600 hover:text-blue-700">Template</Button>
             </div>
           ))}
         </div>

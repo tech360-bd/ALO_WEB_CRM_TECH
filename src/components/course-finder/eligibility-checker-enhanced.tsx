@@ -566,7 +566,7 @@ export function EligibilityCheckerEnhanced() {
               <ClipboardCheck className="h-5 w-5 mr-2" />
               Start Eligibility Check
             </Button>
-            <Button variant="outline" size="lg" className="border-white/40 text-white hover:bg-white/10 px-8 py-3 text-base">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="lg" className="border-white/40 text-white hover:bg-white/10 px-8 py-3 text-base">
               <BookOpen className="h-5 w-5 mr-2" />
               How It Works
             </Button>
@@ -1394,10 +1394,10 @@ function ResultCard({ result, expanded, onToggle }: {
                 ))}
               </ul>
               <div className="flex flex-wrap gap-3 mt-4">
-                <Button size="sm" className="font-semibold" style={{ background: ALO_BLUE, color: '#fff' }}>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="font-semibold" style={{ background: ALO_BLUE, color: '#fff' }}>
                   <ArrowRight className="h-4 w-4 mr-1" /> Apply with ALO Education
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
                   <MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review
                 </Button>
               </div>
@@ -1443,7 +1443,7 @@ function ResultCard({ result, expanded, onToggle }: {
                 </Table>
               </div>
               <div className="flex flex-wrap gap-3 mt-4">
-                <Button variant="outline" size="sm" className="border-yellow-500 text-yellow-700">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-yellow-500 text-yellow-700">
                   <MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review
                 </Button>
               </div>
@@ -1552,7 +1552,7 @@ function ResultCard({ result, expanded, onToggle }: {
               <p className="text-sm text-muted-foreground mb-3">
                 This course has specific requirements that need human evaluation. Our automated engine cannot fully assess your eligibility for this programme. An ALO Education counsellor will review your profile against the full course requirements, including subject-specific criteria, work experience relevance, and any special conditions.
               </p>
-              <Button size="sm" style={{ background: '#7C3AED', color: '#fff' }}>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" style={{ background: '#7C3AED', color: '#fff' }}>
                 <MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review
               </Button>
             </div>

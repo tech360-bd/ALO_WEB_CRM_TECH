@@ -152,10 +152,10 @@ function HeroSection() {
                 {t('hero.subtitle')}
               </motion.p>
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-wrap gap-3">
-                <a href="/book-consultation"><Button className="min-h-[48px] h-12 rounded-xl px-6 font-semibold text-white" style={{ backgroundColor: C.orange }}>{t('cta.bookConsultation')} <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
-                <a href={`/course-finder?country=${slide.slug}`}><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold border-2" style={{ borderColor: C.blue, color: C.blue }}>{t('cta.findCourse')}</Button></a>
-                <a href="/eligibility-check"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: C.border, color: C.text }}>{t('cta.checkEligibility')}</Button></a>
-                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: '#25D366', color: '#25D366' }}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button></a>
+                <a href="/book-consultation"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold text-white" style={{ backgroundColor: C.orange }}>{t('cta.bookConsultation')} <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
+                <a href={`/course-finder?country=${slide.slug}`}><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold border-2" style={{ borderColor: C.blue, color: C.blue }}>{t('cta.findCourse')}</Button></a>
+                <a href="/eligibility-check"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: C.border, color: C.text }}>{t('cta.checkEligibility')}</Button></a>
+                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: '#25D366', color: '#25D366' }}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button></a>
               </motion.div>
               {/* 3-button high-conversion hero placement — branded CTAs: AI Agent / WhatsApp AI / Facebook */}
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="pt-2">
@@ -288,7 +288,7 @@ function CourseFinderSection() {
           </div>
           <div className="mt-4 flex justify-center">
             <a href="/eligibility-check">
-              <Button variant="outline" className="min-h-[48px] h-12 rounded-xl font-semibold border-2 px-8" style={{ borderColor: C.blue, color: C.blue }}>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl font-semibold border-2 px-8" style={{ borderColor: C.blue, color: C.blue }}>
                 <Sparkles className="mr-2 h-4 w-4" /> AI Course Match
               </Button>
             </a>
@@ -342,8 +342,8 @@ function DestinationsSection() {
                   </div>
                   {d.visaType && <Badge variant="outline" className="text-xs w-fit" style={{ borderColor: d.accentColor, color: d.accentColor }}>{d.visaType}</Badge>}
                   <div className="flex gap-2 pt-1">
-                    <a href={`/destinations/${d.slug}`} className="flex-1"><Button variant="outline" size="sm" className="w-full h-10 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>View Guide</Button></a>
-                    <a href={`/course-finder?country=${d.slug}`} className="flex-1"><Button size="sm" className="w-full h-10 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>{t('cta.findCourse')}</Button></a>
+                    <a href={`/destinations/${d.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full h-10 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>View Guide</Button></a>
+                    <a href={`/course-finder?country=${d.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="w-full h-10 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>{t('cta.findCourse')}</Button></a>
                   </div>
                 </CardContent>
               </Card>

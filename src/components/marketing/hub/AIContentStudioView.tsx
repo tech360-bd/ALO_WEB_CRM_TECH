@@ -79,16 +79,16 @@ export default function AIContentStudioView() {
               <CardContent className="flex-1 flex flex-col">
                 <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap line-clamp-6 flex-1">{r.body}</p>
                 <div className="grid grid-cols-3 gap-2 mt-4">
-                  <Button size="sm" variant="outline" className="h-8 text-[11px]"><Eye className="w-3 h-3 mr-1" />Preview</Button>
-                  <Button size="sm" variant="outline" className="h-8 text-[11px]"><Edit className="w-3 h-3 mr-1" />Edit</Button>
-                  <Button size="sm" variant="outline" className="h-8 text-[11px]"><RefreshCw className="w-3 h-3 mr-1" />Regenerate</Button>
-                  <Button size="sm" className="h-8 text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white"><Check className="w-3 h-3 mr-1" />Approve</Button>
-                  <Button size="sm" variant="outline" className="h-8 text-[11px] border-red-200 text-red-600"><X className="w-3 h-3 mr-1" />Reject</Button>
-                  <Button size="sm" variant="outline" className="h-8 text-[11px]"><Calendar className="w-3 h-3 mr-1" />Schedule</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]"><Eye className="w-3 h-3 mr-1" />Preview</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]"><Edit className="w-3 h-3 mr-1" />Edit</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]"><RefreshCw className="w-3 h-3 mr-1" />Regenerate</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-8 text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white"><Check className="w-3 h-3 mr-1" />Approve</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px] border-red-200 text-red-600"><X className="w-3 h-3 mr-1" />Reject</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]"><Calendar className="w-3 h-3 mr-1" />Schedule</Button>
                 </div>
                 <div className="flex gap-2 mt-2">
-                  <Button size="sm" className="flex-1 h-8 text-[11px] bg-[#0B5ED7] text-white"><Globe className="w-3 h-3 mr-1" />Publish</Button>
-                  <Button size="sm" variant="outline" className="flex-1 h-8 text-[11px]"><Archive className="w-3 h-3 mr-1" />Archive</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 h-8 text-[11px] bg-[#0B5ED7] text-white"><Globe className="w-3 h-3 mr-1" />Publish</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 h-8 text-[11px]"><Archive className="w-3 h-3 mr-1" />Archive</Button>
                 </div>
                 <p className="text-[10px] text-gray-400 mt-2">History preserved — versioning & audit logged. Provider fallback preserved if image/video unavailable.</p>
               </CardContent>

@@ -131,7 +131,7 @@ function ContentKanbanCard({ item }: { item: ContentCard }) {
     <Card className="p-3 space-y-2 hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-medium leading-snug line-clamp-2">{item.title}</p>
-        <button className="shrink-0 text-muted-foreground hover:text-foreground"><MoreHorizontal className="h-4 w-4" /></button>
+        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="shrink-0 text-muted-foreground hover:text-foreground"><MoreHorizontal className="h-4 w-4" /></button>
       </div>
       <div className="flex items-center gap-1 text-xs text-muted-foreground">
         <ExternalLink className="h-3 w-3" />
@@ -223,7 +223,7 @@ function ContentBacklog() {
                   <td className="px-3 py-2.5 text-xs whitespace-nowrap">{c.reviewer.split(' ')[0]}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">{c.lastUpdated}</td>
                   <td className="px-3 py-2.5">
-                    <Button variant="ghost" size="sm" className="h-7 text-xs"><Eye className="h-3 w-3 mr-1" />View</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 text-xs"><Eye className="h-3 w-3 mr-1" />View</Button>
                   </td>
                 </tr>
               ))}
@@ -255,9 +255,9 @@ function ReviewQueuePanel() {
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <Button size="sm" className="h-8 text-xs bg-green-600 hover:bg-green-700"><ThumbsUp className="h-3 w-3 mr-1" />Approve</Button>
-                <Button size="sm" variant="outline" className="h-8 text-xs"><Edit3 className="h-3 w-3 mr-1" />Changes</Button>
-                <Button size="sm" variant="outline" className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"><XCircle className="h-3 w-3 mr-1" />Reject</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-8 text-xs bg-green-600 hover:bg-green-700"><ThumbsUp className="h-3 w-3 mr-1" />Approve</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-xs"><Edit3 className="h-3 w-3 mr-1" />Changes</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"><XCircle className="h-3 w-3 mr-1" />Reject</Button>
               </div>
             </div>
           </Card>
@@ -321,8 +321,8 @@ function SourceVerificationPanel() {
       </div>
       <Separator />
       <div className="flex items-center gap-3">
-        <Button size="sm" className="text-xs"><RefreshCw className="h-3 w-3 mr-1" />Re-verify Sources</Button>
-        <Button size="sm" variant="outline" className="text-xs"><Send className="h-3 w-3 mr-1" />Request Expert Review</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="text-xs"><RefreshCw className="h-3 w-3 mr-1" />Re-verify Sources</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="text-xs"><Send className="h-3 w-3 mr-1" />Request Expert Review</Button>
       </div>
     </Card>
   );
@@ -343,7 +343,7 @@ export default function CrmSeoContentWorkflow() {
         </div>
         <div className="flex items-center gap-2">
           <Input placeholder="Search content..." className="w-[200px] h-9 text-sm" />
-          <Button size="sm"><FileText className="h-4 w-4 mr-1.5" />New Content</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm"><FileText className="h-4 w-4 mr-1.5" />New Content</Button>
         </div>
       </div>
 

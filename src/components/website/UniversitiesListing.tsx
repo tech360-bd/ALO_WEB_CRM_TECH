@@ -45,7 +45,7 @@ export default function UniversitiesListing() {
           <div className="grid md:grid-cols-3 gap-4">
             <div className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search universities..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" /></div>
             <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-11"><option value="all">All Countries</option><option value="United Kingdom">UK</option><option value="United States">USA</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option><option value="Ireland">Ireland</option><option value="New Zealand">New Zealand</option><option value="UAE">Dubai</option></select>
-            <Button className="bg-[#0B5ED7] text-white h-11">Search — DB-driven</Button>
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] text-white h-11">Search — DB-driven</Button>
           </div>
         </Card>
 
@@ -72,7 +72,7 @@ export default function UniversitiesListing() {
                         <div className="flex justify-between"><span className="text-gray-500">Scholarships:</span><span className="font-medium text-emerald-600">{u.scholarships ? 'Available' : 'Check'}</span></div>
                       </div>
                     </div>
-                    <Button className="w-full mt-4 bg-[#0B5ED7] text-white hover:bg-[#004494] h-11 text-xs font-bold">View University Hub <ArrowRight className="w-4 h-4 ml-1" /></Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full mt-4 bg-[#0B5ED7] text-white hover:bg-[#004494] h-11 text-xs font-bold">View University Hub <ArrowRight className="w-4 h-4 ml-1" /></Button>
                   </Card>
                 </Link>
               ))}

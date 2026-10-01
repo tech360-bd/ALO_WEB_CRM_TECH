@@ -311,7 +311,7 @@ export default function OAuthIntegrationWizard() {
                     )}
                   </button>
                 ) : (
-                  <button className="w-full py-2.5 text-xs font-bold rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500 hover:border-[#0B5ED7] hover:text-[#0B5ED7] flex items-center justify-center gap-2 transition">
+                  <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2.5 text-xs font-bold rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500 hover:border-[#0B5ED7] hover:text-[#0B5ED7] flex items-center justify-center gap-2 transition">
                     Configure Credentials <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 )}

@@ -557,7 +557,7 @@ export function PublicScholarshipsPage() {
                     </div>
                     <div className="flex gap-2">
                       <a href={`/scholarships/${slug}`} className="w-full">
-                        <Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-semibold py-2">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-semibold py-2">
                           View Full Details & Apply →
                         </Button>
                       </a>
@@ -622,7 +622,7 @@ export function PublicServicesPage() {
 
               <div className="p-6 pt-0">
                 <a href={`/services/${s.slug}`} className="block w-full">
-                  <Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
                     Explore Full Service Details & Process →
                   </Button>
                 </a>
@@ -636,7 +636,7 @@ export function PublicServicesPage() {
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
         <a href="/eligibility-check">
-          <Button className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs px-6 py-3 rounded-xl shadow-md">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs px-6 py-3 rounded-xl shadow-md">
             Book Free Consultation
           </Button>
         </a>
@@ -927,7 +927,7 @@ export function PublicContactPage() {
             <h3 className="font-bold text-green-900 mb-2">WhatsApp</h3>
             <p className="text-sm text-green-800 mb-4">Quick response on WhatsApp</p>
             <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-              <Button className="bg-[#25D366] text-white hover:brightness-110">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#25D366] text-white hover:brightness-110">
                 Chat Now
               </Button>
             </a>
@@ -1072,7 +1072,7 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
           <p className="text-xs text-slate-600">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
         </div>
         <a href="/english-test-prep">
-          <Button className="bg-[#F97316] text-white hover:bg-[#EA580C] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm">
             View All Test Prep →
           </Button>
         </a>
@@ -1103,7 +1103,7 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
                 <span className="font-bold text-[#0B5ED7]">{t.expectedScore}</span>
               </div>
               <a href={`/english-test-prep/${t.slug}`} className="block w-full">
-                <Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
                   Explore Full Test Prep & Modules →
                 </Button>
               </a>
@@ -1182,7 +1182,7 @@ export function PublicVisaReadinessPage() {
       <Card className="p-8 bg-gradient-to-r from-[#0B5ED7] to-[#003d80] text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Need Visa Help?</h3>
         <p className="text-blue-100 mb-5">Our visa experts will guide you through the entire process</p>
-        <Button className="bg-[#F97316] text-white hover:brightness-110">Book Visa Consultation</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:brightness-110">Book Visa Consultation</Button>
       </Card>
     </PublicShell>
   );
@@ -1241,12 +1241,12 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
             </p>
             <div className="space-y-2.5">
               <a href="/eligibility-check" className="block w-full">
-                <Button className="w-full bg-[#F97316] text-white hover:brightness-110 text-xs py-2.5">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] text-white hover:brightness-110 text-xs py-2.5">
                   Check Your Eligibility
                 </Button>
               </a>
               <a href="/book-consultation" className="block w-full">
-                <Button variant="outline" className="w-full text-xs py-2.5 border-[#0B5ED7] text-[#0B5ED7] hover:bg-blue-50">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full text-xs py-2.5 border-[#0B5ED7] text-[#0B5ED7] hover:bg-blue-50">
                   Talk to ALO Counselor
                 </Button>
               </a>
@@ -1277,7 +1277,7 @@ export function PublicComparePage() {
           Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
         </p>
         <div className="pt-4 flex gap-3">
-          <a href="/course-finder"><Button className="bg-[#F97316] text-white text-xs">Add Courses to Compare</Button></a>
+          <a href="/course-finder"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white text-xs">Add Courses to Compare</Button></a>
         </div>
       </Card>
     </PublicShell>

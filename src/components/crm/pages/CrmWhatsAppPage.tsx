@@ -318,10 +318,10 @@ export default function CrmWhatsAppPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8">
                     <Phone className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8">
                     <Video className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowTemplates(!showTemplates)}>
@@ -355,10 +355,10 @@ export default function CrmWhatsAppPage() {
               {/* Input Bar */}
               <div className="p-3 border-t bg-white">
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-400">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-9 w-9 text-gray-400">
                     <Smile className="h-5 w-5" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-400">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-9 w-9 text-gray-400">
                     <Paperclip className="h-5 w-5" />
                   </Button>
                   <div className="flex-1 relative">
@@ -375,7 +375,7 @@ export default function CrmWhatsAppPage() {
                       <Send className="h-4 w-4" />
                     </Button>
                   ) : (
-                    <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-400 shrink-0">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-9 w-9 text-gray-400 shrink-0">
                       <Mic className="h-5 w-5" />
                     </Button>
                   )}

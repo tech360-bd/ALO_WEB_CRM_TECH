@@ -176,17 +176,17 @@ export default function PremiumLanguagePrepLandingView() {
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <a href="#book-counselling">
-                  <Button className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm">
                     Book Free Counselling <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </a>
                 <a href="#test-discovery">
-                  <Button variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white">
                     Find Your English Test
                   </Button>
                 </a>
                 <a href="#assessment">
-                  <Button variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white">
                     Take Free Assessment
                   </Button>
                 </a>
@@ -410,10 +410,10 @@ export default function PremiumLanguagePrepLandingView() {
 
                   <div className="mt-5 flex gap-2">
                     <a href={`/language-prep/${recommended.primary?.slug}`} className="flex-1">
-                      <Button className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">Explore {recommended.primary?.name} →</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">Explore {recommended.primary?.name} →</Button>
                     </a>
                     <a href="#book-counselling">
-                      <Button variant="outline" className="border-[#E2E8F0] bg-white font-semibold h-11 rounded-xl text-xs">Book Counselling</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] bg-white font-semibold h-11 rounded-xl text-xs">Book Counselling</Button>
                     </a>
                   </div>
 
@@ -558,7 +558,7 @@ export default function PremiumLanguagePrepLandingView() {
               </p>
             </div>
             <a href="/language-prep/comparison">
-              <Button variant="outline" className="bg-white border-[#E2E8F0] font-semibold text-sm h-11 rounded-xl">Compare All Tests →</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] font-semibold text-sm h-11 rounded-xl">Compare All Tests →</Button>
             </a>
           </div>
 
@@ -613,10 +613,10 @@ export default function PremiumLanguagePrepLandingView() {
 
                 <div className="mt-5 pt-4 border-t border-[#E2E8F0] flex gap-2">
                   <a href={`/language-prep/${t.slug}`} className="flex-1">
-                    <Button className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-10 rounded-xl text-xs">Learn More</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-10 rounded-xl text-xs">Learn More</Button>
                   </a>
                   <a href={`/language-prep/comparison?tests=${t.slug}`}>
-                    <Button variant="outline" className="bg-white border-[#E2E8F0] font-semibold h-10 rounded-xl text-xs px-3">Compare</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] font-semibold h-10 rounded-xl text-xs px-3">Compare</Button>
                   </a>
                 </div>
 
@@ -684,7 +684,7 @@ export default function PremiumLanguagePrepLandingView() {
 
           <div className="text-center mt-8">
             <a href="/language-prep/comparison">
-              <Button className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold h-11 rounded-xl shadow-sm">View Full Comparison →</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold h-11 rounded-xl shadow-sm">View Full Comparison →</Button>
             </a>
           </div>
         </div>
@@ -809,8 +809,8 @@ export default function PremiumLanguagePrepLandingView() {
                     </div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <a href="/course-finder" className="flex-1"><Button className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
-                    <a href="#book-counselling"><Button variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Book Counselling</Button></a>
+                    <a href="/course-finder" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
+                    <a href="#book-counselling"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Book Counselling</Button></a>
                   </div>
                 </Card>
               )}
@@ -982,13 +982,13 @@ export default function PremiumLanguagePrepLandingView() {
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
                 <a href="#book-counselling">
-                  <Button className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-8 rounded-xl shadow-lg">Book Free Counselling →</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-8 rounded-xl shadow-lg">Book Free Counselling →</Button>
                 </a>
                 <a href="#test-discovery">
-                  <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl">Find My Test</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl">Find My Test</Button>
                 </a>
                 <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2">
                     <MessageSquare className="w-4 h-4" /> Chat with Counselor
                   </Button>
                 </a>

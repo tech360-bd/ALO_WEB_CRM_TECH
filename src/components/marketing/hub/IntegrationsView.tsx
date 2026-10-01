@@ -54,8 +54,8 @@ export default function IntegrationsView() {
                   <p className="text-gray-500">Env: {i.env.join(', ')}</p>
                   <p className="text-gray-400">Docs: {i.docs}</p>
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" className="h-7 text-[11px]"><Plug className="w-3 h-3 mr-1" />Connect</Button>
-                    <Button size="sm" variant="outline" className="h-7 text-[11px]"><RefreshCw className="w-3 h-3 mr-1" />Health Check</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[11px]"><Plug className="w-3 h-3 mr-1" />Connect</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[11px]"><RefreshCw className="w-3 h-3 mr-1" />Health Check</Button>
                   </div>
                   <p className="text-[11px] text-gray-400 flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Tokens encrypted, webhook signature verified, rate limits respected.</p>
                 </CardContent>

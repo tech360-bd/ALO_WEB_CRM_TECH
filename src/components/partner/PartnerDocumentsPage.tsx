@@ -197,7 +197,7 @@ export default function PartnerDocumentsPage() {
         </div>
         <Dialog open={uploadDialog} onOpenChange={setUploadDialog}>
           <DialogTrigger asChild>
-            <Button variant="brand">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand">
               <FileUp className="w-4 h-4" /> Upload Document
             </Button>
           </DialogTrigger>

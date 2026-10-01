@@ -67,8 +67,8 @@ export default function DocumentReviewDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Eye className="w-4 h-4" /> Review Queue</Button>
-          <Button variant="brand" size="sm"><Upload className="w-4 h-4" /> Bulk Upload</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Eye className="w-4 h-4" /> Review Queue</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Upload className="w-4 h-4" /> Bulk Upload</Button>
         </div>
       </div>
 

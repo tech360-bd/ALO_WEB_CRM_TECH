@@ -229,12 +229,12 @@ export default function EnhancedSuperAdminControlCenter() {
             <div className="flex flex-col gap-3 shrink-0">
               <div className="flex items-center gap-2">
                 <div className="relative"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><Input placeholder="Global Search — Student, Partner, Employee, Application, Document, Campaign, Visa, Invoice, Payment, Task, Report, Audit Logs — Auth Server-Side + Scope + Masked Sensitive + Audited + Pagination + No Leak Unauthorized" value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} className="pl-9 bg-white/10 border-white/20 text-white placeholder-gray-400 h-11 w-64 md:w-80 rounded-xl text-xs" /></div>
-                <Button size="sm" className="bg-white text-[#0F172A] hover:bg-gray-100 h-11 rounded-xl"><Search className="w-4 h-4 mr-1" />Search — Auth + RBAC + Scope + Masked + Audited</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-white text-[#0F172A] hover:bg-gray-100 h-11 rounded-xl"><Search className="w-4 h-4 mr-1" />Search — Auth + RBAC + Scope + Masked + Audited</Button>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs">Notifications</Button>
-                <Button size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs">Profile</Button>
-                <Button size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs"><LogOut className="w-4 h-4 mr-1" />Logout</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs">Notifications</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs">Profile</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs"><LogOut className="w-4 h-4 mr-1" />Logout</Button>
                 <Button size="sm" className={`${lockdownActive ? 'bg-red-600 hover:bg-red-700' : 'bg-[#F97316] hover:bg-[#EA580C]'} text-white h-9 text-xs font-bold`} onClick={handleToggleLockdown}><ShieldAlert className="w-4 h-4 mr-1" />{lockdownActive ? 'Lockdown ACTIVE — Recovery' : 'Emergency Lockdown — Confirmation + Reason + Audit'}</Button>
               </div>
             </div>
@@ -308,16 +308,16 @@ export default function EnhancedSuperAdminControlCenter() {
                         <div className="truncate">{emp.branch || 'Dhaka Main'}</div>
                         <div><Badge className={`${emp.status==='active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{(emp.status||'active').toUpperCase()}</Badge></div>
                         <div className="flex flex-wrap gap-1 justify-end">
-                          <Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">View Profile</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">View Profile</Button>
                           <Link href="/admin/employee-control"><Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Open Dashboard — Existing Dashboard Not Clone</Button></Link>
                           <Button size="sm" className="h-7 text-[10px] bg-[#0B5ED7] text-white" onClick={()=>handleStartActingAs(emp.designation || emp.role || 'Employee', emp.name || 'Employee', `Acting-As for ${emp.name} — reason required`)}>Acting-As — Reason + Audit + No Password + No Escalation</Button>
-                          <Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Assign Role</Button>
-                          <Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Permissions</Button>
-                          <Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Branch/Country/Dept</Button>
-                          <Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Activity/Tasks/Messages</Button>
-                          <Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Revoke Sessions</Button>
-                          <Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Suspend/Reactivate</Button>
-                          <Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Audit Log</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Assign Role</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Permissions</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Branch/Country/Dept</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Activity/Tasks/Messages</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Revoke Sessions</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Suspend/Reactivate</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Audit Log</Button>
                         </div>
                       </div>
                     ))}

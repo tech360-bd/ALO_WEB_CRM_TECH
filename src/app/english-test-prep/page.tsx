@@ -66,7 +66,7 @@ export default function TestPrepDirectoryPage() {
                     <span className="font-bold text-[#0B5ED7]">{t.expectedScore}</span>
                   </div>
                   <a href={`/english-test-prep/${t.slug}`} className="block w-full">
-                    <Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
                       Explore Full Test Prep & Modules →
                     </Button>
                   </a>

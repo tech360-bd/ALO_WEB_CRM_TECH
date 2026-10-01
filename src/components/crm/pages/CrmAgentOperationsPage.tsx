@@ -187,11 +187,11 @@ export default function CrmAgentOperationsPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
             <Activity className="h-4 w-4 mr-1" />
             Health Check
           </Button>
-          <Button variant="outline" size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
             <Settings className="h-4 w-4 mr-1" />
             Configure
           </Button>
@@ -361,7 +361,7 @@ export default function CrmAgentOperationsPage() {
                   </button>
                 ))}
               </div>
-              <Button variant="outline" size="sm" className="h-7 text-xs">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 text-xs">
                 <Download className="h-3 w-3 mr-1" />
                 Export
               </Button>

@@ -737,7 +737,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <Link href="/eligibility-check"><Button className="bg-[#0B5ED7] text-white hover:bg-[#004494] h-12 px-8 font-bold rounded-xl">Check Eligibility</Button></Link>
               <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
               <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[#E2E8F0] h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
-              <a href="https://wa.me/8801805020101" target="_blank"><Button variant="outline" className="bg-[#25D366]/10 border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white h-12 px-8 font-bold rounded-xl">WhatsApp 01805020101</Button></a>
+              <a href="https://wa.me/8801805020101" target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-[#25D366]/10 border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white h-12 px-8 font-bold rounded-xl">WhatsApp 01805020101</Button></a>
             </div>
           </div>
 

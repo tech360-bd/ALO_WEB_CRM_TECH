@@ -741,7 +741,7 @@ export default function UnifiedEmployeeDashboard({
                                   <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200 capitalize text-xs">
                                     {s.currentStage || 'Counseling'}
                                   </Badge>
-                                  <Button size="sm" variant="ghost" className="text-xs text-[#0B5ED7] font-medium h-7">
+                                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-xs text-[#0B5ED7] font-medium h-7">
                                     Open
                                   </Button>
                                 </div>
@@ -900,7 +900,7 @@ export default function UnifiedEmployeeDashboard({
                               <td className="p-3 text-slate-600">{lead.destination || lead.country || '—'}</td>
                               <td className="p-3"><Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} text-[10px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge></td>
                               <td className="p-3 text-right">
-                                <Button size="sm" variant="ghost" className="text-[#0B5ED7] text-xs h-7">Contact</Button>
+                                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[#0B5ED7] text-xs h-7">Contact</Button>
                               </td>
                             </tr>
                           ))})() : (
@@ -925,8 +925,8 @@ export default function UnifiedEmployeeDashboard({
                               <Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} text-[10px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge>
                             </div>
                             <div className="mt-3 flex gap-2">
-                              <Button size="sm" variant="outline" className="flex-1 text-xs h-8"><PhoneCall className="w-3 h-3 mr-1" /> Call</Button>
-                              <Button size="sm" className="flex-1 bg-[#0B5ED7] text-white text-xs h-8"><MessageSquare className="w-3 h-3 mr-1" /> Message</Button>
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 text-xs h-8"><PhoneCall className="w-3 h-3 mr-1" /> Call</Button>
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[#0B5ED7] text-white text-xs h-8"><MessageSquare className="w-3 h-3 mr-1" /> Message</Button>
                             </div>
                           </div>
                         ));
@@ -953,7 +953,7 @@ export default function UnifiedEmployeeDashboard({
                               <p className="font-bold text-slate-800 text-sm">{s.fullName}</p>
                               <p className="text-xs text-slate-400">{s.email} &bull; {s.phone}</p>
                             </div>
-                            <Button size="sm" variant="outline" className="text-xs border-slate-200 h-8">
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="text-xs border-slate-200 h-8">
                               Open Profile
                             </Button>
                           </div>

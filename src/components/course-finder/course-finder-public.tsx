@@ -668,7 +668,7 @@ export function CourseFinderPublic() {
           {/* Mobile Filter Sheet */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                 variant="outline"
                 className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white"
               >

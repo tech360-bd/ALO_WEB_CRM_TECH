@@ -525,7 +525,7 @@ export default function StudentVisaCenter() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-3">
-              <Button className="flex-1 bg-orange-600 hover:bg-orange-700 text-white">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex-1 bg-orange-600 hover:bg-orange-700 text-white">
                 <CalendarCheck className="w-4 h-4 mr-2" />
                 Book Mock Interview
               </Button>
@@ -698,7 +698,7 @@ export default function StudentVisaCenter() {
                 Please review the additional documents section.
               </p>
             </div>
-            <Button variant="outline" size="sm" className="border-red-200 text-red-700 hover:bg-red-50">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-red-200 text-red-700 hover:bg-red-50">
               <FileText className="w-3.5 h-3.5 mr-1.5" />
               View Refusal Details
             </Button>

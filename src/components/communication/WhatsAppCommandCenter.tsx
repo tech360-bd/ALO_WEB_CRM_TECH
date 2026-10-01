@@ -332,7 +332,7 @@ export default function WhatsAppCommandCenter() {
                   <p className="text-[11px] text-amber-700">DOCUMENT MATCH REVIEW REQUIRED — Select the application and document slot before saving</p>
                 </div>
               </div>
-              <Button size="sm" className="bg-amber-600 text-white text-[11px] font-bold gap-1.5 hover:bg-amber-700">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-amber-600 text-white text-[11px] font-bold gap-1.5 hover:bg-amber-700">
                 <ArrowRight className="w-3.5 h-3.5" /> Review & Assign
               </Button>
             </div>
@@ -450,7 +450,7 @@ export default function WhatsAppCommandCenter() {
                   <button onClick={() => setShowTemplates(!showTemplates)} className="p-1 text-slate-400 hover:text-[#0B5ED7]">
                     <Tag className="w-4 h-4" />
                   </button>
-                  <button className="p-1 text-slate-400 hover:text-[#0B5ED7]">
+                  <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="p-1 text-slate-400 hover:text-[#0B5ED7]">
                     <Paperclip className="w-4 h-4" />
                   </button>
                 </div>
@@ -555,13 +555,13 @@ export default function WhatsAppCommandCenter() {
             <div className="pt-2 border-t border-slate-100">
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Quick Actions</p>
               <div className="space-y-1.5">
-                <Button variant="outline" size="sm" className="w-full text-[10px] font-bold gap-1.5 justify-start h-7">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full text-[10px] font-bold gap-1.5 justify-start h-7">
                   <FileText className="w-3 h-3 text-[#0B5ED7]" /> View Full Profile
                 </Button>
-                <Button variant="outline" size="sm" className="w-full text-[10px] font-bold gap-1.5 justify-start h-7">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full text-[10px] font-bold gap-1.5 justify-start h-7">
                   <Phone className="w-3 h-3 text-emerald-600" /> Call Student
                 </Button>
-                <Button variant="outline" size="sm" className="w-full text-[10px] font-bold gap-1.5 justify-start h-7">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full text-[10px] font-bold gap-1.5 justify-start h-7">
                   <Zap className="w-3 h-3 text-amber-500" /> Escalate SLA
                 </Button>
               </div>

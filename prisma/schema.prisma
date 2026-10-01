@@ -6723,6 +6723,53 @@ model ContentAsset {
   @@index([status])
 }
 
+// ============================================================
+// Virtual Editor revision history — snapshots for draft /
+// preview / publish / rollback of CMS-managed website rows.
+// AUTO revisions are before-images captured on every update
+// and delete; DRAFT revisions hold unpublished content that is
+// applied to the live row only on explicit publish.
+// ============================================================
+model CmsRevision {
+  id          String    @id @default(cuid())
+  entityType  String
+  entityId    String    @default("")
+  kind        String    @default("AUTO")
+  label       String    @default("")
+  snapshot    Json
+  createdBy   String    @default("")
+  createdAt   DateTime  @default(now())
+  publishedAt DateTime?
+  publishedBy String?
+
+  @@index([entityType, entityId])
+  @@index([kind, createdAt])
+}
+
+// ─── Virtual Editor: site-wide & CRM managed content ─────────────
+// Generic, revision-tracked content store for the parts of the site
+// that are not naturally row-per-model: navigation links, footer
+// links/socials, SEO defaults, announcements, banners, CRM labels,
+// CRM message templates and CRM dashboard widgets. Every change is
+// snapshotted into CmsRevision (entityType 'cmsManagedContent').
+model CmsManagedContent {
+  id          String    @id @default(cuid())
+  contentType String // navigation | footer | seo-meta | announcement | banner | crm-label | crm-template | crm-widget
+  key         String    @default("") // stable key, e.g. 'seo.site-defaults', 'nav.main'
+  section     String    @default("") // grouping, e.g. 'quickLinks' | 'destinations' | 'social'
+  label       String    @default("")
+  data        Json // type-specific payload (href, description, canonical, ogImage, alt, message, level, …)
+  status      String    @default("draft") // draft | published
+  sortOrder   Int       @default(0)
+  publishedAt DateTime?
+  publishedBy String?
+  createdById String    @default("")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([contentType, status, sortOrder])
+  @@index([contentType, key])
+}
 model ContentPublication {
   id             String   @id @default(cuid())
   contentAssetId String

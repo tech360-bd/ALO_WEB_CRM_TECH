@@ -672,7 +672,7 @@ function CourseCard({ course, onShortlist, onCompare, isShortlisted, isCompareCh
 
       {/* Actions */}
       <div className="flex items-center gap-2 pt-1 mt-auto">
-        <Button variant="cta" size="sm" className="flex-1 h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 h-8 text-xs">
           Apply
         </Button>
         <Button
@@ -857,7 +857,7 @@ export default function StudentCourseFinder() {
               className="h-12 pl-12 pr-4 text-base rounded-xl bg-white border-0 shadow-lg focus-visible:ring-2 focus-visible:ring-[#0B5ED7]"
             />
           </div>
-          <Button
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
             variant="brand"
             size="lg"
             className="h-12 px-6 rounded-xl shrink-0"
@@ -944,7 +944,7 @@ export default function StudentCourseFinder() {
                 {/* Mobile Filter Button */}
                 <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
                   <SheetTrigger asChild>
-                    <Button variant="outline" size="sm" className="lg:hidden gap-2">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="lg:hidden gap-2">
                       <SlidersHorizontal className="size-4" />
                       Filters
                       {hasActiveFilters && (

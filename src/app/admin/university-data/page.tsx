@@ -193,7 +193,7 @@ export default function UniversityDataCenterPage() {
                           )}
                         </td>
                         <td className="p-3 text-right">
-                          <Button size="sm" variant="ghost" className="text-gray-300 hover:text-white">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-gray-300 hover:text-white">
                             <Eye className="w-4 h-4 mr-1" />
                             View
                           </Button>
@@ -239,7 +239,7 @@ export default function UniversityDataCenterPage() {
                           </Badge>
                         </td>
                         <td className="p-3 text-right">
-                          <Button size="sm" variant="ghost" className="text-gray-300 hover:text-white">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-gray-300 hover:text-white">
                             <Eye className="w-4 h-4 mr-1" />
                             View
                           </Button>

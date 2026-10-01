@@ -219,9 +219,9 @@ export default function CrmLeadsPage() {
                           <td className="py-3 text-alo-text-muted">{lead.createdAt?.substring(0, 10)}</td>
                           <td className="py-3 text-right">
                             <div className="flex justify-end gap-1">
-                              <Button variant="ghost" size="sm" title="View"><Eye className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="sm" title="Assign"><UserCheck className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="sm" title="Convert"><ArrowRightLeft className="h-4 w-4" /></Button>
+                              <Button disabled title="View — not yet wired (see BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+                              <Button disabled title="Assign — not yet wired (see BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><UserCheck className="h-4 w-4" /></Button>
+                              <Button disabled title="Convert — not yet wired (see BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><ArrowRightLeft className="h-4 w-4" /></Button>
                               <Button variant="ghost" size="sm" className="text-red-500" title="Delete" onClick={() => handleDelete(lead.id)}><Trash2 className="h-4 w-4" /></Button>
                             </div>
                           </td>

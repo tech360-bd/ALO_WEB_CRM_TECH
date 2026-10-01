@@ -765,7 +765,7 @@ function StartNewTest({ students }: { students: Student[] }) {
                 <Input
                   value={guestPhone}
                   onChange={(e) => setGuestPhone(e.target.value)}
-                  placeholder="+8801XXXXXXXXX"
+                  placeholder="+8801805020100"
                 />
               </div>
             </div>

@@ -420,7 +420,7 @@ export default function EmployeeWhatsAppPage() {
                     className="pr-16 h-10 bg-alo-page border-alo-border text-sm"
                   />
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
-                    <Button variant="ghost" size="icon-sm" className="w-7 h-7 text-alo-text-muted">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="w-7 h-7 text-alo-text-muted">
                       <Paperclip className="w-3.5 h-3.5" />
                     </Button>
                     <Button

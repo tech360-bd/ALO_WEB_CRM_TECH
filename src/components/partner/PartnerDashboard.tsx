@@ -114,7 +114,7 @@ function PendingApprovalCard() {
             <Clock className="w-4 h-4 text-amber-600" />
             <p className="text-sm text-amber-700 font-medium">Estimated review time: 24-48 hours</p>
           </div>
-          <Button variant="brand" className="w-full">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" className="w-full">
             <MessageSquare className="w-4 h-4" /> Contact Support
           </Button>
         </CardContent>
@@ -219,7 +219,7 @@ export default function PartnerDashboard() {
             <Building2 className="w-3.5 h-3.5" /> Partner Dashboard
           </p>
         </div>
-        <Button variant="brand" size="sm">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm">
           <Plus className="w-4 h-4" /> Submit New Lead
         </Button>
       </div>
@@ -298,7 +298,7 @@ export default function PartnerDashboard() {
             <CardHeader className="pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text">Recent Leads</CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs text-alo-brand">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">
                   View All <ChevronRight className="w-3.5 h-3.5" />
                 </Button>
               </div>
@@ -336,7 +336,7 @@ export default function PartnerDashboard() {
             <CardHeader className="pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text">Application Tracker</CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs text-alo-brand">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">
                   View All <ChevronRight className="w-3.5 h-3.5" />
                 </Button>
               </div>
@@ -377,16 +377,16 @@ export default function PartnerDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="brand" className="w-full justify-start text-sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" className="w-full justify-start text-sm">
                   <Plus className="w-4 h-4" /> Submit New Lead
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm">
                   <Upload className="w-4 h-4" /> Upload Document
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm">
                   <Eye className="w-4 h-4" /> View Commission
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm">
                   <MessageSquare className="w-4 h-4" /> Message ALO
                 </Button>
               </div>

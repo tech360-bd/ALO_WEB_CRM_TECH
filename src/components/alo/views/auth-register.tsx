@@ -265,7 +265,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
                     id="register-phone"
                     type="tel"
                     autoComplete="tel"
-                    placeholder="+8801XXXXXXXXX"
+                    placeholder="+8801805020100"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="h-11 pl-9"

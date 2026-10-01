@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
@@ -187,8 +187,29 @@ export default function PublicNavbar() {
   const [langItems, setLangItems] = useState(languagePrepItems);
   const { t } = useI18n();
 
+  // Virtual Editor override: published 'navigation' items (section
+  // 'destinations') take precedence over the auto-generated list —
+  // Super Admins curate the destinations menu via /admin/website-cms.
+  const cmsNavApplied = useRef(false);
+  useEffect(() => {
+    fetch('/api/website/cms-content?type=navigation')
+      .then(r => r.json())
+      .then(j => {
+        if (!j?.success || !Array.isArray(j.items)) return;
+        const cmsDests = j.items
+          .filter((i: any) => i.section === 'destinations' && i.label && i.data?.href)
+          .map((i: any) => ({ label: String(i.label), href: String(i.data.href) }));
+        if (cmsDests.length > 0) {
+          cmsNavApplied.current = true;
+          setDestinations(cmsDests);
+        }
+      })
+      .catch(() => { /* keep existing list */ });
+  }, []);
+
   // Load destinations from countries table (status=active) via /api/website/homepage — fallback to DEFAULT_DESTINATIONS
   useEffect(() => {
+    if (cmsNavApplied.current) return; // curated CMS navigation wins
     fetch('/api/website/homepage')
       .then(r => r.json())
       .then(data => {

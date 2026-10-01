@@ -938,9 +938,13 @@ function EnhancedCourseCard({
           </div>
           <div className="flex gap-2">
             <Button size="sm" className="flex-1 h-9 text-xs font-semibold text-white" style={{ backgroundColor: ALO_BLUE }} onClick={() => toast.success(`Application started for "${course.title}" via ALO Education`)}>Apply with ALO</Button>
-            <Button variant="outline" size="sm" className="flex-1 h-9 text-xs" asChild>
-              <a href={course.officialCourseUrl || '#'} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-3 mr-1" />View Details</a>
-            </Button>
+            {course.officialCourseUrl ? (
+              <Button variant="outline" size="sm" className="flex-1 h-9 text-xs" asChild>
+                <a href={course.officialCourseUrl} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-3 mr-1" />View Details</a>
+              </Button>
+            ) : (
+              <Button variant="outline" size="sm" className="flex-1 h-9 text-xs" disabled title="No official course URL on record for this university yet">View Details</Button>
+            )}
           </div>
         </div>
       </CardContent>
@@ -1337,7 +1341,7 @@ export function CourseFinderEnhanced() {
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button size="lg" className="px-8 text-sm font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}>Book a Free Consultation<ArrowRight className="size-4 ml-2" /></Button>
               <Button variant="outline" size="lg" className="px-8 text-sm font-medium" style={{ borderColor: ALO_BLUE, color: ALO_BLUE }} asChild>
-                <a href="https://wa.me/8801XXXXXXXXX" target="_blank" rel="noopener noreferrer"><MessageCircle className="size-4 mr-2" />Chat on WhatsApp</a>
+                <a href="https://wa.me/8801805020100" target="_blank" rel="noopener noreferrer"><MessageCircle className="size-4 mr-2" />Chat on WhatsApp</a>
               </Button>
             </div>
           </div>
@@ -1530,7 +1534,7 @@ export function CourseFinderEnhanced() {
           {/* Mobile Filter Sheet */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button className="lg:hidden fixed bottom-6 right-6 z-40 h-12 rounded-full shadow-lg text-white border-0" style={{ backgroundColor: ALO_BLUE }}><SlidersHorizontal className="size-5" /></Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="lg:hidden fixed bottom-6 right-6 z-40 h-12 rounded-full shadow-lg text-white border-0" style={{ backgroundColor: ALO_BLUE }}><SlidersHorizontal className="size-5" /></Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-80 overflow-y-auto">
               <SheetHeader><SheetTitle>Filters</SheetTitle></SheetHeader>

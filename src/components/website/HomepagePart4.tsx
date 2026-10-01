@@ -672,7 +672,7 @@ function FaqSection() {
               style={{ backgroundColor: `${C.whatsapp}`, color: '#FFFFFF' }}
               asChild
             >
-              <a href="https://wa.me/8801XXXXXXXXX" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/8801805020100" target="_blank" rel="noopener noreferrer">
                 <Phone className="mr-2 h-4 w-4" />
                 Ask on WhatsApp
               </a>

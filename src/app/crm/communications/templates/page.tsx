@@ -70,7 +70,7 @@ export default function TemplatesPage() {
                     <td className="px-3 py-2"><Badge variant="outline" className="text-[10px]">{t.channel}</Badge><div className="text-[11px] text-gray-600">{t.category} • {t.language}</div></td>
                     <td className="px-3 py-2 text-[11px] text-gray-600 max-w-[200px] truncate">{(() => { try { return JSON.parse(t.variables||'[]').join(', ')} catch { return t.variables }})()}</td>
                     <td className="px-3 py-2"><Badge className={`text-[10px] ${t.status === 'active' || t.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' : t.status === 'LOCKED' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>{t.status}</Badge>{t.isLocked && <Lock className="w-3 h-3 inline ml-1 text-amber-600" />}</td>
-                    <td className="px-3 py-2"><Button size="sm" variant="outline" className="h-6 text-[11px]">View/Edit</Button></td>
+                    <td className="px-3 py-2"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-6 text-[11px]">View/Edit</Button></td>
                   </tr>
                 ))}
               </tbody>

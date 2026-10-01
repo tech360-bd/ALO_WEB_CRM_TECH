@@ -206,8 +206,8 @@ export default function AIMarketingDirectorView() {
                   <div className="p-2 bg-white border rounded-lg"><p className="font-semibold">Retry & Errors</p><p className="text-gray-600 mt-1">Duplicate prevention, idempotency, execution locks — no duplicate publishing on retry.</p></div>
                 </div>
                 <div className="flex gap-2 pt-2">
-                  <Button size="sm" className="bg-[#0B5ED7] text-white flex-1 h-8 text-xs"><CheckCircle2 className="w-3 h-3 mr-1" />Approve</Button>
-                  <Button size="sm" variant="outline" className="flex-1 h-8 text-xs"><XCircle className="w-3 h-3 mr-1" />Reject</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[#0B5ED7] text-white flex-1 h-8 text-xs"><CheckCircle2 className="w-3 h-3 mr-1" />Approve</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 h-8 text-xs"><XCircle className="w-3 h-3 mr-1" />Reject</Button>
                 </div>
               </CardContent>
             </Card>

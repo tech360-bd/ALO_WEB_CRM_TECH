@@ -93,8 +93,8 @@ export default function CrmEnglishPrepCounselorView() {
                       <p className="text-[11px] text-slate-500 mt-2 line-clamp-2">{lead.notes || ''}</p>
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <Button size="sm" className="h-7 text-[10px] bg-[#0B5ED7] hover:bg-[#004494] text-white rounded-lg">View</Button>
-                      <Button size="sm" variant="outline" className="h-7 text-[10px] bg-white border-[#E2E8F0] rounded-lg">Contact</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 text-[10px] bg-[#0B5ED7] hover:bg-[#004494] text-white rounded-lg">View</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] bg-white border-[#E2E8F0] rounded-lg">Contact</Button>
                     </div>
                   </div>
                 </Card>

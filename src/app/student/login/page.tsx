@@ -221,7 +221,7 @@ export default function StudentLoginPage() {
                       setEmail('');
                     }
                   }}
-                  placeholder="email@example.com or +8801XXXXXXXXX"
+                  placeholder="email@example.com or +8801805020100"
                   className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0B5ED7] focus:ring-1 focus:ring-[#0B5ED7] text-sm transition-all"
                   required
                 />

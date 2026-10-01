@@ -118,7 +118,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           </div>
           <div>
             <Label className="text-xs font-semibold">Mobile <span className="text-[#F97316]">*</span></Label>
-            <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1 h-10" placeholder="+8801XXXXXXXXX" />
+            <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1 h-10" placeholder="+8801805020100" />
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -411,7 +411,7 @@ export function StudentHelpCenter() {
               WhatsApp: <span className="font-medium text-slate-700">+880 1700-000000</span>
             </p>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white shrink-0">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white shrink-0">
             <Headphones className="size-4 mr-2" />
             Contact Support
           </Button>
@@ -476,12 +476,12 @@ export function StudentSettings() {
             <Label className="text-xs font-medium text-slate-500">Phone</Label>
             <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1XXX-XXXXXX" />
           </div>
-          <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50">
             <Lock className="size-3.5 mr-1.5" />
             Change Password
           </Button>
           <div className="flex justify-end pt-2">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
               Save Changes
             </Button>
           </div>
@@ -517,7 +517,7 @@ export function StudentSettings() {
             </div>
           ))}
           <div className="flex justify-end pt-3">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
               Save Preferences
             </Button>
           </div>
@@ -552,7 +552,7 @@ export function StudentSettings() {
             </div>
           ))}
           <div className="flex justify-end pt-3">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
               Save Privacy
             </Button>
           </div>
@@ -607,7 +607,7 @@ export function StudentSettings() {
             </div>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="sm" className="shrink-0 bg-red-600 hover:bg-red-700 text-white">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="destructive" size="sm" className="shrink-0 bg-red-600 hover:bg-red-700 text-white">
                   <Trash2 className="size-3.5 mr-1.5" />
                   Deactivate Account
                 </Button>
@@ -1000,7 +1000,7 @@ export function StudentRecommendations() {
                             Scholarship
                           </Badge>
                         )}
-                        <Button variant="ghost" size="sm" className="h-7 px-2 text-blue-600 hover:text-blue-700">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 px-2 text-blue-600 hover:text-blue-700">
                           <ArrowUpRight className="size-3.5" />
                         </Button>
                       </div>
@@ -1052,7 +1052,7 @@ export function StudentRecommendations() {
                     <Clock className="size-3" />
                     {sch.deadline}
                   </span>
-                  <Button
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     variant="outline"
                     size="sm"
                     className="h-7 text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-50"

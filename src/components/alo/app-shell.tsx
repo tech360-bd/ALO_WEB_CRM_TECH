@@ -84,7 +84,7 @@ export function AppShell({ view, onViewChange, role, onRoleChange, children }: A
             {/* Mobile menu */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden">
                   <Icon name="Menu" className="size-5" />
                 </Button>
               </SheetTrigger>
@@ -147,7 +147,7 @@ export function AppShell({ view, onViewChange, role, onRoleChange, children }: A
                 ))}
               </SelectContent>
             </Select>
-            <Button variant="ghost" size="icon" className="relative">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative">
               <Icon name="Bell" className="size-5 text-muted-foreground" />
               <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#F97316]" />
             </Button>

@@ -219,7 +219,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
                     </ul>
                   </div>
                   <div className="mt-auto pt-4">
-                    <Button
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="ghost"
                       size="sm"
                       className="h-8 w-full justify-between px-0 text-xs text-[#0B5ED7] hover:bg-transparent hover:text-[#0B5ED7]"

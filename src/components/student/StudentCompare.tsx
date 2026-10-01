@@ -273,10 +273,10 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
       </div>
 
       <div className="flex items-center gap-2 pt-1 mt-auto">
-        <Button variant="cta" size="sm" className="flex-1 h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 h-8 text-xs">
           Apply
         </Button>
-        <Button variant="outline" size="sm" className="h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs">
           <Bookmark className="size-3 fill-amber-500 text-amber-500 mr-1" />
           Saved
         </Button>
@@ -377,7 +377,7 @@ export default function StudentCompare() {
                   <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
                     Browse courses and click Shortlist to save them here. You can compare up to 5 courses side by side.
                   </p>
-                  <Button variant="cta" className="gap-2">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" className="gap-2">
                     Browse Courses
                     <ArrowRight className="size-4" />
                   </Button>
@@ -426,7 +426,7 @@ export default function StudentCompare() {
                     <p className="text-sm text-slate-500">
                       Comparing <span className="font-semibold text-slate-800">{selectedCourses.length}</span> courses
                     </p>
-                    <Button
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="cta"
                       size="lg"
                       className="gap-2"
@@ -550,7 +550,7 @@ export default function StudentCompare() {
                       <ArrowRight className="size-4 rotate-180" />
                       Back to Shortlist
                     </Button>
-                    <Button variant="cta" size="lg" className="gap-2">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="lg" className="gap-2">
                       Apply to Selected ({selectedCourses.length})
                       <ArrowRight className="size-4" />
                     </Button>

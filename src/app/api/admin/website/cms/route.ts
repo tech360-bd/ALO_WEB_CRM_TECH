@@ -8,6 +8,28 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, logAuditAction } from '@/lib/auth-middleware';
+import {
+  sanitizeCmsInput,
+  captureBeforeImage,
+  saveDraft,
+  listRevisions,
+  previewRevision,
+  publishDraft,
+  rollbackTo,
+  getRevision,
+} from '@/lib/cms-revisions';
+
+/** SUPER_ADMIN/ADMIN gate shared by every revision action. */
+async function requireCmsAdmin(auth: any): Promise<NextResponse | null> {
+  const ok =
+    ['SUPER_ADMIN', 'ADMIN'].includes(auth.userType) ||
+    auth.roles.includes('super_admin') ||
+    auth.roles.includes('admin');
+  if (!ok) {
+    return NextResponse.json({ success: false, error: 'Forbidden — SUPER_ADMIN or ADMIN only' }, { status: 403 });
+  }
+  return null;
+}
 
 const ALLOWED_TYPES = [
   'hero-slides',
@@ -81,6 +103,31 @@ export async function GET(request: Request) {
     const status = searchParams.get('status') || '';
     const limit = Math.min(parseInt(searchParams.get('limit') || '200', 10), 500);
     const countryId = searchParams.get('countryId') || '';
+
+    // ── Virtual Editor revision endpoints ──────────────────────
+    const action = searchParams.get('action');
+    if (action === 'revisions') {
+      if (!type || !ALLOWED_TYPES.includes(type as any)) {
+        return NextResponse.json({ success: false, error: 'Valid type required' }, { status: 400 });
+      }
+      const id = searchParams.get('id');
+      if (!id) return NextResponse.json({ success: false, error: 'id query param required' }, { status: 400 });
+      const revisions = await listRevisions(type, id);
+      return NextResponse.json({ success: true, type, id, revisions });
+    }
+    if (action === 'preview') {
+      const revisionId = searchParams.get('revisionId');
+      if (!revisionId) return NextResponse.json({ success: false, error: 'revisionId required' }, { status: 400 });
+      const preview = await previewRevision(revisionId);
+      return NextResponse.json({ success: true, preview });
+    }
+    if (action === 'revision') {
+      const revisionId = searchParams.get('revisionId');
+      if (!revisionId) return NextResponse.json({ success: false, error: 'revisionId required' }, { status: 400 });
+      const revision = await getRevision(revisionId);
+      if (!revision) return NextResponse.json({ success: false, error: 'Revision not found' }, { status: 404 });
+      return NextResponse.json({ success: true, revision });
+    }
 
     if (!type) {
       return NextResponse.json({
@@ -287,11 +334,43 @@ export async function POST(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') as CmsType;
-    const body = await request.json();
+    let body = await request.json();
+
+    // ── Virtual Editor revision actions (draft/publish/rollback) ──
+    const revisionAction = (body as any)?.action;
+    if (revisionAction && ['save-draft', 'publish-draft', 'rollback'].includes(revisionAction)) {
+      const actor = auth.userId || auth.email || 'unknown';
+      try {
+        if (revisionAction === 'save-draft') {
+          const revision = await saveDraft({
+            entityType: type,
+            entityId: (body as any).entityId,
+            data: (body as any).data || {},
+            label: (body as any).label,
+            actor,
+          });
+          await logAuditAction(auth, 'CMS_SAVE_DRAFT', type, (body as any).entityId || '', { revisionId: revision.id }).catch(() => {});
+          return NextResponse.json({ success: true, revision: { id: revision.id, kind: revision.kind, label: revision.label } });
+        }
+        if (revisionAction === 'publish-draft') {
+          const revision = await publishDraft((body as any).revisionId, actor);
+          await logAuditAction(auth, 'CMS_PUBLISH_DRAFT', revision.revision.entityType, revision.revision.entityId, { revisionId: revision.revision.id }).catch(() => {});
+          return NextResponse.json({ success: true, published: true, revisionId: revision.revision.id });
+        }
+        const rollback = await rollbackTo((body as any).revisionId, actor);
+        await logAuditAction(auth, 'CMS_ROLLBACK', rollback.rollbackRecord.entityType, rollback.rollbackRecord.entityId, { revisionId: (body as any).revisionId }).catch(() => {});
+        return NextResponse.json({ success: true, rolledBack: true, rollbackRevisionId: rollback.rollbackRecord.id });
+      } catch (error: any) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+      }
+    }
 
     if (!type || !ALLOWED_TYPES.includes(type as any)) {
       return NextResponse.json({ success: false, error: 'Invalid or missing type' }, { status: 400 });
     }
+
+    // XSS defense-in-depth: sanitize every string in the payload before storage.
+    body = sanitizeCmsInput(body);
 
     let created: any;
 
@@ -626,10 +705,14 @@ export async function PUT(request: Request) {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
 
+    // SECURITY: CMS mutation is SUPER_ADMIN/ADMIN only (same rule as GET/POST).
+    const forbidden = await requireCmsAdmin(auth);
+    if (forbidden) return forbidden;
+
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') as CmsType;
     const id = searchParams.get('id');
-    const body = await request.json();
+    let body = await request.json();
 
     if (!type || !ALLOWED_TYPES.includes(type as any)) {
       return NextResponse.json({ success: false, error: 'Invalid type' }, { status: 400 });
@@ -637,6 +720,11 @@ export async function PUT(request: Request) {
     if (!id) {
       return NextResponse.json({ success: false, error: 'id query param required' }, { status: 400 });
     }
+
+    // Virtual Editor: capture the pre-update state (version history).
+    await captureBeforeImage(type, id, auth.userId || auth.email || 'unknown').catch(() => {});
+    // XSS defense-in-depth: sanitize every string in the payload before storage.
+    body = sanitizeCmsInput(body);
 
     let updated: any;
 
@@ -720,6 +808,10 @@ export async function DELETE(request: Request) {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
 
+    // SECURITY: CMS deletion is SUPER_ADMIN/ADMIN only (same rule as GET/POST).
+    const forbidden = await requireCmsAdmin(auth);
+    if (forbidden) return forbidden;
+
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') as CmsType;
     const id = searchParams.get('id');
@@ -728,6 +820,9 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ success: false, error: 'Invalid type' }, { status: 400 });
     }
     if (!id) return NextResponse.json({ success: false, error: 'id required' }, { status: 400 });
+
+    // Virtual Editor: snapshot the row before deletion so it can be restored.
+    await captureBeforeImage(type, id, auth.userId || auth.email || 'unknown').catch(() => {});
 
     switch (type) {
       case 'hero-slides':

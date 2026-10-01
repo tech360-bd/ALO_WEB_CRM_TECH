@@ -116,7 +116,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
           <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
           <h2 className="font-bold text-lg text-[#0F172A]">Test not found</h2>
           <p className="text-sm text-slate-600 mt-2">The test "{slug}" is not available. Check /language-prep for available tests.</p>
-          <a href="/language-prep" className="mt-4 inline-block"><Button className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl">View All Test Prep →</Button></a>
+          <a href="/language-prep" className="mt-4 inline-block"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl">View All Test Prep →</Button></a>
         </Card>
       </div>
     );
@@ -173,12 +173,12 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <a href="#book-counselling">
-                  <Button className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm">
                     Book Free {test.shortName} Counselling <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </a>
                 <a href="#assessment">
-                  <Button variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl">
                     Start {test.shortName} Assessment
                   </Button>
                 </a>
@@ -216,7 +216,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </div>
 
                 <a href={test.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-5 block">
-                  <Button variant="outline" className="w-full bg-white border-[#E2E8F0] font-semibold h-11 rounded-xl text-xs">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full bg-white border-[#E2E8F0] font-semibold h-11 rounded-xl text-xs">
                     Official Provider: {test.provider} ↗
                   </Button>
                 </a>
@@ -364,8 +364,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </div>
                 <p className="text-xs text-slate-600">Requirement not available in database. Check university course page. — System retrieves English test, Minimum overall, Minimum component scores, Waiver availability, Remarks, Source URL, Last verified — Only if actual course data exists.</p>
                 <div className="mt-4 flex gap-2">
-                  <a href="/course-finder" className="flex-1"><Button className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
-                  <a href={`/language-prep/comparison?tests=${test.slug}`}><Button variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Compare Tests</Button></a>
+                  <a href="/course-finder" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
+                  <a href={`/language-prep/comparison?tests=${test.slug}`}><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Compare Tests</Button></a>
                 </div>
               </Card>
             </section>
@@ -483,7 +483,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   {['ielts','pte-academic','toefl-ibt','duolingo'].filter(s => s !== test.slug).slice(0,3).map(s => (
                     <a key={s} href={`/language-prep/${s}`} className="px-3 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-xs font-semibold hover:border-[#0B5ED7]">{s.toUpperCase()}</a>
                   ))}
-                  <a href="/language-prep/comparison"><Button className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs">Compare English Tests →</Button></a>
+                  <a href="/language-prep/comparison"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs">Compare English Tests →</Button></a>
                 </div>
               </Card>
             </section>
@@ -557,8 +557,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </form>
 
                 <div className="flex flex-wrap justify-center gap-3 mt-6">
-                  <a href="/language-prep#test-discovery"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm">Find My Test</Button></a>
-                  <a href="https://wa.me/8801805020101" target="_blank"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm flex items-center gap-2"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</Button></a>
+                  <a href="/language-prep#test-discovery"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm">Find My Test</Button></a>
+                  <a href="https://wa.me/8801805020101" target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm flex items-center gap-2"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</Button></a>
                 </div>
 
                 <p className="text-[11px] text-blue-200 text-center mt-6">Email: info@aloeducation.com • Lead stored with source language_prep and source_section {slug}_final_cta • Do not create duplicate leads unnecessarily</p>
@@ -585,7 +585,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   ))}
                 </div>
                 <a href="/language-prep" className="block">
-                  <Button className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">View All Test Prep →</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">View All Test Prep →</Button>
                 </a>
               </Card>
 
@@ -594,7 +594,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 <h4 className="text-sm font-bold mb-2">Need Help?</h4>
                 <p className="text-xs text-blue-100 leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
                 <a href="#book-counselling">
-                  <Button className="w-full bg-[#F97316] hover:bg-[#d14315] text-white font-bold h-11 rounded-xl text-xs">Book Free Counselling →</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] hover:bg-[#d14315] text-white font-bold h-11 rounded-xl text-xs">Book Free Counselling →</Button>
                 </a>
                 <p className="text-[10px] text-blue-200 mt-3">WhatsApp: +880 180 502 0101 • Email: info@aloeducation.com</p>
               </Card>

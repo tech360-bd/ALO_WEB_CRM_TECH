@@ -24,7 +24,7 @@ export default function AdminUniversityDataUpdatesPage() {
             <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Pending' ? 'bg-[#0B5ED7] text-white' : ''}`} onClick={()=>setFilter('Pending')}>Pending Approval</Button>
             <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Approved' ? 'bg-[#0B5ED7] text-white' : ''}`} onClick={()=>setFilter('Approved')}>Approved</Button>
             <Button variant="outline" className={`border-[#E2E8F0] h-11 ${filter==='Rejected' ? 'bg-[#0B5ED7] text-white' : ''}`} onClick={()=>setFilter('Rejected')}>Rejected</Button>
-            <Button variant="outline" className="border-[#E2E8F0] h-11">Needs Manual Review</Button>
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] h-11">Needs Manual Review</Button>
           </div>
           <p className="text-xs text-gray-500 mt-3">Weekly schedule exists — via cron job, Official sources only, Changes detected, Old/new values shown, Source URL stored, Evidence stored, Update request created, No automatic publishing, Super Admin approval required, Approved data updates all connected pages — all implemented.</p>
         </div>
@@ -45,10 +45,10 @@ export default function AdminUniversityDataUpdatesPage() {
                     <p className="text-[11px] text-gray-500 mt-3">Source: {u.sourceUrl ? <a href={u.sourceUrl} target="_blank" className="text-[#0B5ED7] underline break-all">{u.sourceUrl}</a> : 'Official source'} • Evidence: {u.evidence||u.evidenceUrl||'Reference stored'}</p>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Button size="sm" className="bg-emerald-600 text-white h-9 text-xs">Approve</Button>
-                    <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs">Reject</Button>
-                    <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs">Edit</Button>
-                    <Button size="sm" className="bg-[#0B5ED7] text-white h-9 text-xs">Approve & Publish</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-emerald-600 text-white h-9 text-xs">Approve</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs">Reject</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-xs">Edit</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[#0B5ED7] text-white h-9 text-xs">Approve & Publish</Button>
                   </div>
                 </div>
               </Card>

@@ -928,7 +928,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                 </Button>
                 <Sheet open={requirementsOpen} onOpenChange={setRequirementsOpen}>
                   <SheetTrigger asChild>
-                    <Button variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-50">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-50">
                       <FileText className="size-4 mr-1.5" />
                       Check Full Requirements
                     </Button>

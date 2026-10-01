@@ -550,7 +550,7 @@ export function CsvImportCenter() {
               <SectionCard title="Sample CSV" icon="FileText">
                 <Collapsible open={showSample} onOpenChange={setShowSample}>
                   <CollapsibleTrigger asChild>
-                    <Button
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="outline"
                       className="h-9 w-full border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
                     >

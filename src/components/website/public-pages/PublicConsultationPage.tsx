@@ -327,7 +327,7 @@ export default function PublicConsultationPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Button className="w-full bg-[#25D366] text-white hover:brightness-110">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#25D366] text-white hover:brightness-110">
                       Chat on WhatsApp
                     </Button>
                   </a>

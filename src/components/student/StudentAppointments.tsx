@@ -246,7 +246,7 @@ export default function StudentAppointments() {
           <p className="mt-1 text-sm text-alo-text-muted">{upcoming.length} upcoming appointment{upcoming.length !== 1 ? 's' : ''}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
-          <DialogTrigger asChild><Button variant="cta" size="lg" className="gap-2"><Plus className="size-4" />Book New Appointment</Button></DialogTrigger>
+          <DialogTrigger asChild><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="lg" className="gap-2"><Plus className="size-4" />Book New Appointment</Button></DialogTrigger>
           <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar">
             <DialogHeader>
               <DialogTitle className="text-alo-text">Book New Appointment</DialogTitle>
@@ -294,7 +294,7 @@ export default function StudentAppointments() {
       <section>
         <Collapsible open={pastExpanded} onOpenChange={setPastExpanded}>
           <CollapsibleTrigger asChild>
-            <button className="mb-4 flex w-full items-center justify-between rounded-lg border border-alo-border/50 px-4 py-3 text-left transition-colors hover:bg-muted/50">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mb-4 flex w-full items-center justify-between rounded-lg border border-alo-border/50 px-4 py-3 text-left transition-colors hover:bg-muted/50">
               <div className="flex items-center gap-2">
                 {pastExpanded ? <ChevronUp className="size-4 text-alo-text-muted" /> : <ChevronDown className="size-4 text-alo-text-muted" />}
                 <h2 className="text-lg font-semibold text-alo-text">Past Appointments</h2>
@@ -379,7 +379,7 @@ function UpcomingAppointmentCard({ appointment, onCancel }: { appointment: Appoi
           {appointment.mode === 'Online' && appointment.meetingLink && (
             <Button variant="cta" size="sm" className="flex-1 gap-1.5" asChild><a href={appointment.meetingLink} target="_blank" rel="noopener noreferrer"><Video className="size-3.5" />Join Meeting</a></Button>
           )}
-          <Button variant="outline" size="sm" className="gap-1.5"><RefreshCw className="size-3.5" />Reschedule</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1.5"><RefreshCw className="size-3.5" />Reschedule</Button>
           <Button variant="ghost" size="sm" className="gap-1.5 text-crm-danger hover:text-crm-danger hover:bg-crm-danger-bg" onClick={onCancel}><XCircle className="size-3.5" />Cancel</Button>
         </div>
         <div className="flex items-center gap-1.5 rounded-md bg-alo-brand-light px-3 py-2"><Bell className="size-3.5 text-alo-brand" /><p className="text-[11px] text-alo-brand">You&apos;ll receive a reminder 1 hour before</p></div>

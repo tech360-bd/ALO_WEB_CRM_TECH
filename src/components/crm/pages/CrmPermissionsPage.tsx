@@ -64,8 +64,8 @@ export default function CrmPermissionsPage() {
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-bold text-gray-900">Permission Matrix</h1><p className="text-gray-500">Configure role-based access control for all system modules</p></div>
         <div className="flex gap-2">
-          <Button variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
-          <Button variant="outline"><Upload className="w-4 h-4 mr-2" />Import</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline"><Upload className="w-4 h-4 mr-2" />Import</Button>
           <Button className="bg-orange-500 hover:bg-orange-600" onClick={handleSave}><Save className="w-4 h-4 mr-2" />{saved ? 'Saved!' : 'Save Changes'}</Button>
         </div>
       </div>

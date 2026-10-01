@@ -1024,7 +1024,7 @@ export function UniversityDirectoryEnhanced() {
             {/* Mobile filter trigger */}
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
-                <Button
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                   variant="outline"
                   size="sm"
                   className="lg:hidden"

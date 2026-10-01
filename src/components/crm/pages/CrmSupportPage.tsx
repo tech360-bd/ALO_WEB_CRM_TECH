@@ -99,10 +99,10 @@ export default function CrmSupportPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-alo-text">Support Tickets</h1>
         <div className="flex gap-2">
-          <Button variant="outline" className="border-alo-border text-alo-text-secondary">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-alo-border text-alo-text-secondary">
             <Download className="mr-2 h-4 w-4" />Export
           </Button>
-          <Button className="bg-alo-brand hover:bg-alo-brand/90 text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-alo-brand hover:bg-alo-brand/90 text-white">
             <Plus className="mr-2 h-4 w-4" />New Ticket
           </Button>
         </div>
@@ -198,7 +198,7 @@ export default function CrmSupportPage() {
                       <td className="py-3 text-alo-text-secondary">{ticket.assignedTo}</td>
                       <td className="py-3 text-alo-text-muted">{ticket.created}</td>
                       <td className="py-3 text-right">
-                        <Button variant="ghost" size="sm" className="text-alo-brand">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-alo-brand">
                           <ArrowUpRight className="h-4 w-4" />
                         </Button>
                       </td>

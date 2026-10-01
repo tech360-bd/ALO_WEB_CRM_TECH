@@ -274,8 +274,8 @@ export default function SocialMediaAutomationView() {
                                 </div>
                                 <p className="text-[11px] text-purple-700">{msg.suggestedReply}</p>
                                 <div className="flex gap-1.5 mt-1.5">
-                                  <Button size="sm" className="h-6 text-[10px] bg-purple-500 hover:bg-purple-600 px-2">Send</Button>
-                                  <Button size="sm" variant="ghost" className="h-6 text-[10px] px-2">Edit</Button>
+                                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-6 text-[10px] bg-purple-500 hover:bg-purple-600 px-2">Send</Button>
+                                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-6 text-[10px] px-2">Edit</Button>
                                 </div>
                               </div>
                             )}
@@ -382,7 +382,7 @@ export default function SocialMediaAutomationView() {
                               )}
                             </td>
                             <td className="py-2.5 text-right">
-                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0"><Eye className="w-3.5 h-3.5" /></Button>
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7 w-7 p-0"><Eye className="w-3.5 h-3.5" /></Button>
                             </td>
                           </tr>
                         );
@@ -420,7 +420,7 @@ export default function SocialMediaAutomationView() {
                           {Object.entries(platformConfig).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}
                         </SelectContent>
                       </Select>
-                      <Button size="sm" className="h-8 text-xs bg-orange-500">Add</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-8 text-xs bg-orange-500">Add</Button>
                       <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setShowAddKeyword(false)}>Cancel</Button>
                     </div>
                   </div>
@@ -469,8 +469,8 @@ export default function SocialMediaAutomationView() {
                           </td>
                           <td className="py-2.5 text-right">
                             <div className="flex justify-end gap-1">
-                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0"><Edit className="w-3 h-3" /></Button>
-                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0"><Trash2 className="w-3 h-3" /></Button>
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7 w-7 p-0"><Edit className="w-3 h-3" /></Button>
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7 w-7 p-0"><Trash2 className="w-3 h-3" /></Button>
                             </div>
                           </td>
                         </tr>
@@ -492,7 +492,7 @@ export default function SocialMediaAutomationView() {
                   <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                     <Send className="w-4 h-4 text-orange-500" /> Auto DM Sequences
                   </CardTitle>
-                  <Button size="sm" className="h-7 text-xs bg-orange-500"><Plus className="w-3.5 h-3.5 mr-1" />New Sequence</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 text-xs bg-orange-500"><Plus className="w-3.5 h-3.5 mr-1" />New Sequence</Button>
                 </div>
               </CardHeader>
               <CardContent>

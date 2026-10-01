@@ -1033,10 +1033,10 @@ function LeadDetailDialog({
                       </div>
                     </div>
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0">
                         <Eye className="h-3.5 w-3.5" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0">
                         <Download className="h-3.5 w-3.5" />
                       </Button>
                     </div>
@@ -1213,7 +1213,7 @@ function DedupPanel({ leads, onClose }: { leads: Lead[]; onClose: () => void }) 
                       <Badge variant="danger" className="text-[10px] mb-1">Duplicate</Badge>
                       <p className="text-sm font-medium">{dup.name}</p>
                       <p className="text-xs text-muted-foreground">{dup.email}</p>
-                      <Button variant="outline" size="sm" className="mt-1 h-6 text-[10px]">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="mt-1 h-6 text-[10px]">
                         <Merge className="h-3 w-3 mr-1" />
                         Merge into Primary
                       </Button>
@@ -1347,11 +1347,11 @@ export default function LeadPipelineView() {
             <Merge className="h-4 w-4 mr-1" />
             Dedup Check
           </Button>
-          <Button variant="outline" size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
             <ClipboardList className="h-4 w-4 mr-1" />
             Follow-up Tasks
           </Button>
-          <Button size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm">
             <UserPlus className="h-4 w-4 mr-1" />
             Add Lead
           </Button>
@@ -1421,7 +1421,7 @@ export default function LeadPipelineView() {
             ))}
           </SelectContent>
         </Select>
-        <Button variant="outline" size="sm" className="shrink-0">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="shrink-0">
           <Filter className="h-4 w-4 mr-1" />
           More Filters
         </Button>

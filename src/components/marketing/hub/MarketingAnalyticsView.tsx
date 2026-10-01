@@ -583,7 +583,7 @@ function ExportButton() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-2">
             <Download className="h-4 w-4" />
             Export
           </Button>

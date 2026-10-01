@@ -418,7 +418,7 @@ export default function AiReplyManagerView() {
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input placeholder="Search conversations..." className="pl-9 w-64" />
                   </div>
-                  <Button variant="outline" size="sm" className="gap-1">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1">
                     <Filter className="h-3.5 w-3.5" /> Filter
                   </Button>
                 </div>
@@ -491,7 +491,7 @@ export default function AiReplyManagerView() {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8">
                                   <Eye className="h-4 w-4 text-purple-500" />
                                 </Button>
                               </TooltipTrigger>
@@ -501,7 +501,7 @@ export default function AiReplyManagerView() {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8">
                                   <ArrowRightLeft className="h-4 w-4 text-amber-500" />
                                 </Button>
                               </TooltipTrigger>
@@ -534,7 +534,7 @@ export default function AiReplyManagerView() {
                 </div>
                 <Dialog open={addRuleOpen} onOpenChange={setAddRuleOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-purple-500 hover:bg-purple-600 gap-1.5">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-purple-500 hover:bg-purple-600 gap-1.5">
                       <Plus className="h-4 w-4" /> Add Rule
                     </Button>
                   </DialogTrigger>
@@ -630,10 +630,10 @@ export default function AiReplyManagerView() {
                         </TableCell>
                         <TableCell className="text-center">
                           <div className="flex items-center justify-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8">
                               <Pencil className="h-4 w-4 text-purple-500" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8">
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
                           </div>
@@ -684,7 +684,7 @@ export default function AiReplyManagerView() {
                         <p className="text-xs text-red-600">Reason: {user.reason}</p>
                         <p className="text-xs text-muted-foreground">Blocked on {user.blockedAt} by {user.blockedBy}</p>
                       </div>
-                      <Button variant="outline" size="sm" className="gap-1 text-green-600 border-green-200 hover:bg-green-50 shrink-0">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-green-600 border-green-200 hover:bg-green-50 shrink-0">
                         <Unlock className="h-3.5 w-3.5" /> Unblock
                       </Button>
                     </div>
@@ -693,7 +693,7 @@ export default function AiReplyManagerView() {
                 <div className="pt-2">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="gap-1 text-red-600 border-red-200 hover:bg-red-50">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-red-600 border-red-200 hover:bg-red-50">
                         <Ban className="h-3.5 w-3.5" /> Block New Number
                       </Button>
                     </DialogTrigger>
@@ -705,7 +705,7 @@ export default function AiReplyManagerView() {
                       <div className="space-y-4 py-2">
                         <div>
                           <Label>Phone Number</Label>
-                          <Input placeholder="+8801XXXXXXXXX" className="mt-1" />
+                          <Input placeholder="+8801805020100" className="mt-1" />
                         </div>
                         <div>
                           <Label>Reason</Label>
@@ -713,8 +713,8 @@ export default function AiReplyManagerView() {
                         </div>
                       </div>
                       <DialogFooter>
-                        <Button variant="outline">Cancel</Button>
-                        <Button variant="destructive" className="gap-1">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline">Cancel</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="destructive" className="gap-1">
                           <Ban className="h-4 w-4" /> Block Number
                         </Button>
                       </DialogFooter>

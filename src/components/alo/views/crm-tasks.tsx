@@ -162,7 +162,7 @@ export function CrmTasks() {
         action={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]">
                 <Icon name="Plus" className="mr-1.5 size-4" /> New Task
               </Button>
             </DialogTrigger>

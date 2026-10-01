@@ -64,8 +64,8 @@ export default function BranchManagerDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><CalendarDays className="w-4 h-4" /> Schedule</Button>
-          <Button variant="brand" size="sm"><UserPlus className="w-4 h-4" /> Assign Leads</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><CalendarDays className="w-4 h-4" /> Schedule</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><UserPlus className="w-4 h-4" /> Assign Leads</Button>
         </div>
       </div>
 
@@ -181,7 +181,7 @@ export default function BranchManagerDashboard() {
                   </div>
                 ))}
               </div>
-              <Button variant="brand" size="sm" className="w-full mt-3 text-xs">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="w-full mt-3 text-xs">
                 Assign All Leads
               </Button>
             </CardContent>

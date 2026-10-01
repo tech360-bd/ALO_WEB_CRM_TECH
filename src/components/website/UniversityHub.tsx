@@ -64,7 +64,7 @@ export default function UniversityHub({ slug }: Props) {
             <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-6 font-bold">Apply Through ALO</Button></Link>
             <Link href="#popular-courses"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">View Courses ({uni.totalCourses || courses.length || 'All'})</Button></Link>
             <Link href="/compare"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Compare University</Button></Link>
-            <a href={website} target="_blank" rel="noopener noreferrer"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6 flex gap-1.5"><Globe className="w-4 h-4" />Official Website</Button></a>
+            <a href={website} target="_blank" rel="noopener noreferrer"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] h-12 px-6 flex gap-1.5"><Globe className="w-4 h-4" />Official Website</Button></a>
           </div>
           {/* Quick stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mt-8 pt-6 border-t border-[#E2E8F0] text-xs">

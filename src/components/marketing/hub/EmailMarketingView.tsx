@@ -43,8 +43,8 @@ export default function EmailMarketingView() {
               <div><label className="text-xs font-semibold">HTML Content (supports {'{{name}}'} personalization)</label><Textarea value={campaign.html} onChange={e=>setCampaign({...campaign, html:e.target.value})} className="mt-1 min-h-[140px] font-mono text-xs" /></div>
               <div className="flex gap-2">
                 <Button onClick={handleSend} disabled={sending} className="bg-[#F97316] text-white">{sending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Campaign</Button>
-                <Button variant="outline" className="h-9"><Eye className="w-4 h-4 mr-2" />Preview</Button>
-                <Button variant="outline" className="h-9"><Palette className="w-4 h-4 mr-2" />Brand Check</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="h-9"><Eye className="w-4 h-4 mr-2" />Preview</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="h-9"><Palette className="w-4 h-4 mr-2" />Brand Check</Button>
               </div>
               {log && <p className="text-xs bg-[#F8FAFC] border rounded-lg p-3 whitespace-pre-wrap">{log}</p>}
               <p className="text-[11px] text-gray-500 flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Enforcement: MarketingConsent (email) + unsubscribe list; bounce handling; rate limits; suppression lists server-enforced.</p>

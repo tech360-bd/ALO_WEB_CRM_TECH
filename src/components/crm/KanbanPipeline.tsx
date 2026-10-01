@@ -44,7 +44,7 @@ function SortableCard({ item, onOpen }: { item: KanbanItem; onOpen?: (id:string)
   return (
     <div ref={setNodeRef} style={style} className="bg-white rounded-xl border border-slate-200 p-3 shadow-sm">
       <div className="flex items-start gap-2">
-        <button {...attributes} {...listeners} className="mt-1 text-slate-400 hover:text-slate-600"><GripVertical className="w-3.5 h-3.5"/></button>
+        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" {...attributes} {...listeners} className="mt-1 text-slate-400 hover:text-slate-600"><GripVertical className="w-3.5 h-3.5"/></button>
         <div className="flex-1 min-w-0 cursor-pointer" onClick={()=> onOpen?.(item.id)}>
           <p className="text-sm font-semibold truncate">{item.title}</p>
           {item.subtitle && <p className="text-xs text-slate-500 truncate">{item.subtitle}</p>}

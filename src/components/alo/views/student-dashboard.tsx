@@ -661,7 +661,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     </div>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <button className="flex size-7 items-center justify-center rounded-full bg-[#e8f0fb] text-[#0B5ED7]">
+                        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex size-7 items-center justify-center rounded-full bg-[#e8f0fb] text-[#0B5ED7]">
                           <Icon name="Info" className="size-3.5" />
                         </button>
                       </TooltipTrigger>

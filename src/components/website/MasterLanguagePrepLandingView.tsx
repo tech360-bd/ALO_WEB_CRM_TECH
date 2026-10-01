@@ -147,17 +147,17 @@ export default function MasterLanguagePrepLandingView() {
               {/* QUICK HERO BUTTONS */}
               <div className="flex flex-wrap gap-4 pt-2">
                 <a href="#book-counseling">
-                  <Button className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2">
                     Book Free Counselling <ArrowRight className="h-4 w-4" />
                   </Button>
                 </a>
                 <a href="#test-discovery">
-                  <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl">
                     Find Your English Test
                   </Button>
                 </a>
                 <a href="#test-cards">
-                  <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl">
                     Compare All 15 Tests
                   </Button>
                 </a>
@@ -361,12 +361,12 @@ export default function MasterLanguagePrepLandingView() {
                 <p className="text-slate-800 leading-relaxed font-medium">{recommendedResult}</p>
                 <div className="pt-2 flex gap-3">
                   <a href="/language-prep/ielts">
-                    <Button size="sm" className="bg-[#0B5ED7] text-white text-xs h-9">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[#0B5ED7] text-white text-xs h-9">
                       Explore IELTS
                     </Button>
                   </a>
                   <a href="/language-prep/pte-academic">
-                    <Button size="sm" variant="outline" className="text-xs h-9 border-[#0B5ED7] text-[#0B5ED7]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="text-xs h-9 border-[#0B5ED7] text-[#0B5ED7]">
                       Explore PTE
                     </Button>
                   </a>
@@ -488,7 +488,7 @@ export default function MasterLanguagePrepLandingView() {
 
                 <div className="pt-4 border-t border-slate-100 flex gap-2">
                   <a href={`/language-prep/${t.slug}`} className="flex-1">
-                    <Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold h-11 rounded-xl">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold h-11 rounded-xl">
                       Explore Modules & Plan →
                     </Button>
                   </a>
@@ -632,12 +632,12 @@ export default function MasterLanguagePrepLandingView() {
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
             <a href="#book-counseling">
-              <Button className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-sm h-12 px-8 rounded-xl shadow-lg">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-sm h-12 px-8 rounded-xl shadow-lg">
                 Book Free Test Counselling →
               </Button>
             </a>
             <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2">
                 <MessageSquare className="h-4 w-4" /> WhatsApp Advisor (+880 180 502 0101)
               </Button>
             </a>
