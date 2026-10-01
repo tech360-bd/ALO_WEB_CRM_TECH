@@ -4,6 +4,14 @@
 -- This migration is GENERATED from prisma/schema.prisma via:
 --   prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script
 --
+--   (One surgical deviation from the generated output, applied 2026-10-01:
+--    in `content_relationships`, the three discriminator columns
+--    sourceType/targetType/relationshipType are VARCHAR(64) instead of the
+--    generated VARCHAR(191). Five VARCHAR(191) utf8mb4 columns in the table's
+--    composite UNIQUE key total 3820 bytes, over MySQL's 3072-byte InnoDB key
+--    limit — `migrate deploy` failed on fresh MySQL 8 with ERROR 1071 until
+--    this was corrected. schema.prisma carries the same @db.VarChar(64).)
+--
 -- WHY A RE-BASELINE WAS NECESSARY
 -- ===============================
 -- The legacy migration chain (preserved verbatim in
@@ -6491,7 +6499,7 @@ CREATE TABLE `related_contents` (
 -- CreateTable
 CREATE TABLE `content_relationships` (
     `id` VARCHAR(191) NOT NULL,
-    `sourceType` VARCHAR(191) NOT NULL,
+    `sourceType` VARCHAR(64) NOT NULL,
     `sourceId` VARCHAR(191) NOT NULL,
     `serviceId` VARCHAR(191) NULL,
     `serviceReverseId` VARCHAR(191) NULL,
@@ -6499,9 +6507,9 @@ CREATE TABLE `content_relationships` (
     `scholarshipReverseId` VARCHAR(191) NULL,
     `resourceId` VARCHAR(191) NULL,
     `resourceReverseId` VARCHAR(191) NULL,
-    `targetType` VARCHAR(191) NOT NULL,
+    `targetType` VARCHAR(64) NOT NULL,
     `targetId` VARCHAR(191) NOT NULL,
-    `relationshipType` VARCHAR(191) NOT NULL DEFAULT 'related',
+    `relationshipType` VARCHAR(64) NOT NULL DEFAULT 'related',
     `status` VARCHAR(191) NOT NULL DEFAULT 'ACTIVE',
     `sortOrder` INTEGER NOT NULL DEFAULT 0,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

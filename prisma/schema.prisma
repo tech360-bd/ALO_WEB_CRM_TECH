@@ -6156,7 +6156,13 @@ model RelatedContent {
 
 model ContentRelationship {
   id               String   @id @default(cuid())
-  sourceType       String   // SERVICE, SCHOLARSHIP, RESOURCE, UNIVERSITY, COURSE, COUNTRY, LANGUAGE_TEST
+  // NOTE: sourceType/targetType/relationshipType are short discriminator
+  // strings (SERVICE, SCHOLARSHIP, UNIVERSITY, "related", ...). They are
+  // VarChar(64) — NOT the default VARCHAR(191) — because they participate in
+  // the 5-column @@unique below: 5 × VARCHAR(191) utf8mb4 = 3820 bytes which
+  // exceeds MySQL's 3072-byte InnoDB key limit and made `migrate deploy`
+  // fail on a fresh MySQL 8 (ERROR 1071). (64+191+64+191+64)×4 = 2292 bytes.
+  sourceType       String   @db.VarChar(64) // SERVICE, SCHOLARSHIP, RESOURCE, UNIVERSITY, COURSE, COUNTRY, LANGUAGE_TEST
   sourceId         String
   serviceId        String?
   serviceReverseId String?
@@ -6164,9 +6170,9 @@ model ContentRelationship {
   scholarshipReverseId String?
   resourceId       String?
   resourceReverseId String?
-  targetType       String
+  targetType       String   @db.VarChar(64)
   targetId         String
-  relationshipType String   @default("related")
+  relationshipType String   @default("related") @db.VarChar(64)
   status           String   @default("ACTIVE")
   sortOrder        Int      @default(0)
   createdAt        DateTime @default(now())

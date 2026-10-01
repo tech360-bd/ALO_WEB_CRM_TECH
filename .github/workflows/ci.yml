@@ -237,8 +237,13 @@ jobs:
         env:
           DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
         run: |
-          set -euo pipefail
-          npx prisma migrate deploy
+          set -uo pipefail
+          npx prisma migrate deploy 2>&1 | tee /tmp/deploy.log # ci-ephemeral-db-only: disposable localhost CI database — never production
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "::error::migrate deploy failed on fresh MySQL 8 — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
           echo "✓ Migration chain applies cleanly to a fresh MySQL 8.4 database"
 
       - name: Migration status must report up to date
@@ -262,8 +267,7 @@ jobs:
             --script > /tmp/drift.sql
           # The generated file contains a comment header only when empty.
           if grep -qvE '^\s*(--.*)?$' /tmp/drift.sql; then
-            echo "::error::Migration chain does NOT reproduce schema.prisma. Drift:"
-            cat /tmp/drift.sql
+            echo "::error::Migration chain does NOT reproduce schema.prisma. Drift: $(head -8 /tmp/drift.sql | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
           echo "✓ Migrations reproduce schema.prisma exactly (empty diff)"
@@ -274,8 +278,16 @@ jobs:
         run: |
           set -euo pipefail
           mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS alo_test_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-          DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npx prisma migrate deploy
-          TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration
+          DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npx prisma migrate deploy 2>&1 | tee /tmp/deploy2.log # ci-ephemeral-db-only: disposable localhost CI database — never production
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+            echo "::error::test-db migrate deploy failed — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy2.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
+          TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+            echo "::error::integration tests failed — $(grep -aE '✖|FAIL|Error|AssertionError' /tmp/integration.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
 
       - name: Production build
         env:
@@ -303,21 +315,29 @@ jobs:
           FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
           PORT: '3100'
         run: |
-          set -euo pipefail
-          node server.js &
+          set -uo pipefail
+          node server.js > /tmp/server.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
           for i in $(seq 1 60); do
             if curl -sf http://127.0.0.1:3100/api/health > /dev/null 2>&1; then break; fi
             sleep 2
           done
+          if ! curl -sf http://127.0.0.1:3100/api/health > /dev/null 2>&1; then
+            echo "::error::standalone server failed to boot — $(grep -aiE 'error|fail|cannot|EADDR' /tmp/server.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
           node scripts/runtime-smoke.mjs --base-url http://127.0.0.1:3100 \
-            --database-url mysql://root:root@127.0.0.1:3306/alo_app_ci
+            --database-url mysql://root:root@127.0.0.1:3306/alo_app_ci 2>&1 | tee /tmp/smoke.log
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+            echo "::error::runtime smoke failed — $(grep -aE '✖|FAIL|Error|error' /tmp/smoke.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
 
       - name: Summary
         if: always()
         run: |
           echo "### MySQL 8 integration result" >> "$GITHUB_STEP_SUMMARY"
           echo "- Job conclusion: \`${{ job.status }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Fresh \`prisma migrate deploy\`, migration↔schema drift check, DB-backed integration tests and a booted-server HTTP smoke test all ran against a disposable MySQL 8.4 service." >> "$GITHUB_STEP_SUMMARY"
+          echo "- Fresh-database migration deploy, migration↔schema drift check, DB-backed integration tests and a booted-server HTTP smoke test all ran against a disposable MySQL 8.4 service." >> "$GITHUB_STEP_SUMMARY"
 

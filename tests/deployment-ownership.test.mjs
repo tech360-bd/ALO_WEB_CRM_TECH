@@ -56,9 +56,23 @@ test('6: every legacy shell boundary refuses all branches BEFORE old overrides/c
 });
 test('7: Actions contain only approved CI/diagnostic commands, never active deployment transport', () => {
   assert.deepEqual(readdirSync('.github/workflows').sort(),['ci.yml','deploy-production.yml','deploy-recovery.yml','health-monitor.yml']);
+  // The ONLY sanctioned exception to the "no migration execution in Actions"
+  // rule: lines explicitly marked as targeting the disposable, localhost-only
+  // CI database (the mysql-integration job's throwaway MySQL 8.4 service).
+  // Such lines must themselves be migration/verification commands, the file
+  // must declare the mysql:8.4 service, and no non-localhost DSN may appear.
+  // Production migration remains a human-owned operation outside Actions.
+  const EPHEMERAL_MARK = '# ci-ephemeral-db-only: disposable localhost CI database — never production';
   for (const file of readdirSync('.github/workflows')) {
     const source=text(`.github/workflows/${file}`);
-    const active=source.split('\n').filter(l=>!l.trim().startsWith('#')).join('\n');
+    const marked=source.split('\n').filter(l=>l.includes(EPHEMERAL_MARK));
+    assert.ok(marked.every(l=>/prisma migrate (deploy|status|diff)|mysql -h 127\.0\.0\.1/.test(l)), `${file}: marked lines must be prisma-migrate/mysql-CLI commands`);
+    if (marked.length>0) {
+      assert.match(source, /image: mysql:8\.4/, 'ephemeral-db commands require the disposable mysql service');
+      const activeForDSN=source.split('\n').filter(l=>!l.trim().startsWith('#')).join('\n');
+      assert.doesNotMatch(activeForDSN, /mysql:\/\/[^@/\n]*@(?!127\.0\.0\.1|localhost)[^/\n]+\//, 'no non-localhost database DSNs allowed');
+    }
+    const active=source.split('\n').filter(l=>!l.trim().startsWith('#') && !l.includes(EPHEMERAL_MARK)).join('\n');
     assert.doesNotMatch(active, /secrets\.|secrets: inherit|environment:|pull_request_target:|workflow_run:|contents: write|id-token: write|self-hosted/);
     assert.doesNotMatch(active, /(?:^|\s)(?:ssh|scp|sftp|lftp|rsync|pm2|systemctl)\s|api\.hostinger|appleboy\/|FTP-Deploy|prisma (?:migrate deploy|db push|db seed)|scripts\/(?:deploy|rollback|restart)\.sh/m);
     const actions=[...active.matchAll(/uses:\s*(\S+)/g)].map(m=>m[1]);
