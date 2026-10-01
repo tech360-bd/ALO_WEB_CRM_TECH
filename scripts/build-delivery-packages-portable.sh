@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# LEGACY / NOT USED FOR CURRENT PRODUCTION
+echo "DISABLED: legacy package layout is not an approved Hostinger artifact. See HOSTINGER-RUNTIME-STANDARD.md." >&2
+exit 1
 # ALO Education — Portable Delivery Package Builder (4 VPS structure)
 # Replaces hardcoded /Users/alaminn/Downloads paths with relative, works on VPS/Linux/Mac
 # Generates 4 zips + SHA256SUMS.txt in ./delivery/

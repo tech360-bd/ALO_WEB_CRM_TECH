@@ -52,8 +52,7 @@ export async function GET(req: NextRequest) {
     // Never leak secret value — only boolean
     appUrl,
     redisMode,
-    healthPort: process.env.HEALTH_PORT || process.env.PORT || "3044",
-    deployDir: process.env.DEPLOY_DIR || "/root/alo-live",
+    healthPort: process.env.PORT || null,
     timestamp: new Date().toISOString(),
     jobs: 15,
     timezone: "Asia/Dhaka",
@@ -95,7 +94,7 @@ export async function POST(req: NextRequest) {
     const hasCronConfigured = !!process.env.ALO_CRON_SECRET && process.env.ALO_CRON_SECRET.length >= 16;
     return NextResponse.json({ 
       error: "Unauthorized — provide Authorization: Bearer $ALO_CRON_SECRET or valid admin session",
-      hint: hasCronConfigured ? "External cron must send Authorization: Bearer $ALO_CRON_SECRET" : "ALO_CRON_SECRET not configured on server — set in VPS /root/alo-live/.env (see docs/ENVIRONMENT_VARIABLES.md)",
+      hint: hasCronConfigured ? "External cron must send Authorization: Bearer $ALO_CRON_SECRET" : "ALO_CRON_SECRET not configured on server — set through the hosting secure environment configuration",
       cronSecretConfigured: hasCronConfigured,
     }, { status: 401 });
   }

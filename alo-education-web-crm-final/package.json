@@ -3,16 +3,16 @@
   "version": "0.3.0",
   "private": true,
   "engines": {
-    "node": ">=22.0.0",
-    "npm": ">=10.0.0"
+    "node": "22.x",
+    "npm": ">=10"
   },
   "prisma": {
     "seed": "tsx prisma/seed-complete.ts"
   },
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' prisma generate && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' next build --webpack && node scripts/prepare-standalone.mjs",
-    "start": "NODE_ENV=production node .next/standalone/server.js",
+    "build": "node -e \"throw new Error('LEGACY / NOT USED FOR CURRENT PRODUCTION')\"",
+    "start": "node -e \"throw new Error('LEGACY / NOT USED FOR CURRENT PRODUCTION')\"",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -119,5 +119,6 @@
   "overrides": {
     "postcss": "8.5.25",
     "sharp": "0.35.3"
-  }
+  },
+  "description": "LEGACY / NOT USED FOR CURRENT PRODUCTION. Use repository root on Hostinger."
 }

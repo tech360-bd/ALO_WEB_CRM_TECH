@@ -1,0 +1,11 @@
+file:///home/user/alo_education_z....ai/scripts/verify-standalone.mjs:11
+    throw new Error(`Standalone verification failed: missing or empty ${relative}`);
+          ^
+
+Error: Standalone verification failed: missing or empty .next/standalone/server.js
+    at file:///home/user/alo_education_z....ai/scripts/verify-standalone.mjs:11:11
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.3

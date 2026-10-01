@@ -4,50 +4,38 @@ import { getAutomationSnapshot, getCollaborationFeed } from '@/lib/automation-an
 import { db } from '@/lib/db';
 import { getGroqProtectionStats } from '@/lib/groq-protection';
 
-// GET /api/workforce/metrics?periodDays=30
-export async function GET(req: Request) {
-  return withAuth(async () => {
-    const url = new URL(req.url);
-    const periodDays = parseInt(url.searchParams.get('periodDays') || '30', 10);
-    const snap = await getAutomationSnapshot(periodDays);
-    const feed = await getCollaborationFeed(20);
-    const groq = getGroqProtectionStats();
-
-    // workforce counts — real DB only, no fabrication
-    const counts = await Promise.all([
-      (db as any).aiEmployee?.count?.().catch(()=>0) || 0,
-      (db as any).aiEmployee?.count?.({ where:{ status:'ACTIVE' } }).catch(()=>0) || 0,
-      (db as any).aiEmployee?.count?.({ where:{ status:'IDLE' } }).catch(()=>0) || 0,
-      (db as any).aiEmployee?.count?.({ where:{ status:'BUSY' } }).catch(()=>0) || 0,
-      (db as any).aiEmployee?.count?.({ where:{ status:'PAUSED' } }).catch(()=>0) || 0,
-      (db as any).aiEmployee?.count?.({ where:{ status:'FAILED' } }).catch(()=>0) || 0,
-      (db as any).agentApprovalQueue?.count?.({ where:{ status:'WAITING_APPROVAL' } }).catch(()=>0) || 0,
-      (db as any).agentApprovalQueue?.count?.({ where:{ status:'ESCALATED' } }).catch(()=>0) || 0,
-      (db as any).agentTask?.count?.({ where:{ status:'QUEUED' } }).catch(()=>0) || 0,
-      (db as any).agentTask?.count?.({ where:{ status:'RUNNING' } }).catch(()=>0) || 0,
-      (db as any).automationEvent?.count?.({ where:{ success:true } }).catch(()=>0) || 0,
-      (db as any).automationEvent?.count?.({ where:{ success:false } }).catch(()=>0) || 0,
+export const GET = withAuth(async req => {
+  const periodDays = Number(new URL(req.url).searchParams.get('periodDays') || '30');
+  if (!Number.isInteger(periodDays) || periodDays < 1 || periodDays > 365) {
+    return NextResponse.json({ success: false, error: 'periodDays must be 1–365' }, { status: 400 });
+  }
+  try {
+    const [automation, collaboration, employees, approvals, tasks, latency] = await Promise.all([
+      getAutomationSnapshot(periodDays), getCollaborationFeed(20),
+      db.aiEmployee.groupBy({ by: ['status'], _count: { _all: true } }),
+      db.agentApprovalQueue.groupBy({ by: ['status'], _count: { _all: true } }),
+      db.agentTask.groupBy({ by: ['status'], _count: { _all: true } }),
+      db.automationEvent.aggregate({ where: { success: true, createdAt: { gte: new Date(Date.now() - periodDays * 86400000) } }, _avg: { durationMs: true } }),
     ]);
-    const [total, active, idle, busy, paused, failed, waitingApproval, escalated, queued, running, successCount, failedCount] = counts;
-
-    // success rate & latency (real)
-    let avgLatency: number | null = null;
-    try {
-      const rows: any[] = await (db as any).automationEvent?.findMany?.({ where:{ success:true }, take:50, orderBy:{ createdAt:'desc' }, select:{ result:true } }).catch(()=>[]) || [];
-      // result JSON may contain durationMs; if not, skip
-      const latencies = rows.map(r=> { try{ const j=typeof r.result==='string'?JSON.parse(r.result):r.result; return j?.durationMs || j?.latencyMs || null; } catch{ return null; }}).filter(Boolean) as number[];
-      if (latencies.length) avgLatency = Math.round(latencies.reduce((a,b)=>a+b,0)/latencies.length);
-    } catch {}
-
+    const count = (rows: Array<{ status: string; _count: { _all: number } }>, ...statuses: string[]) =>
+      rows.filter(row => statuses.includes(row.status.toUpperCase())).reduce((n, row) => n + row._count._all, 0);
     return NextResponse.json({
-      success:true,
-      workforce: { total, active, idle, busy, paused, failed, waitingApproval, escalated, queued, running },
-      queue: { queued, running, success: successCount, failed: failedCount },
-      groq: groq,
-      automation: snap,
-      collaboration: feed,
-      latency: { avgMs: avgLatency },
+      success: true,
+      workforce: {
+        total: employees.reduce((n, row) => n + row._count._all, 0),
+        active: count(employees, 'ACTIVE'), idle: count(employees, 'IDLE'), busy: count(employees, 'BUSY'),
+        paused: count(employees, 'PAUSED'), failed: count(employees, 'FAILED'),
+        waitingApproval: count(approvals, 'PENDING', 'WAITING_APPROVAL'), escalated: count(approvals, 'ESCALATED'),
+        queued: count(tasks, 'PENDING', 'QUEUED'), running: count(tasks, 'RUNNING'),
+      },
+      queue: { queued: count(tasks, 'PENDING', 'QUEUED'), running: count(tasks, 'RUNNING'), success: count(tasks, 'COMPLETED'), failed: count(tasks, 'FAILED') },
+      groq: getGroqProtectionStats(), automation, collaboration,
+      latency: { avgMs: latency._avg.durationMs },
+      caveats: ['Catalog status is not observed worker activity.', 'Historical AutomationEvent success flags have not been reconciled.', 'Groq guard metrics are process-local, not a distributed queue.'],
       generatedAt: new Date().toISOString(),
     });
-  })(req);
-}
+  } catch {
+    console.error('[workforce-metrics] Database measurement unavailable');
+    return NextResponse.json({ success: false, error: 'Workforce measurements unavailable' }, { status: 503 });
+  }
+}, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] });

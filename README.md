@@ -1,3 +1,9 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
+> Deployment ownership update (2026-10-01): GitHub Actions is CI-only. Legacy release/recovery entries are disabled. Hostinger external branch selection remains UNKNOWN. See [DEPLOYMENT_ENTRYPOINT_MATRIX.md](DEPLOYMENT_ENTRYPOINT_MATRIX.md); older release instructions below are historical and must not be executed.
+
+> Deployment notice (2026-10-01): the instructions below are historical. The only production target is managed cPanel Node.js. See the root `CPANEL-DEPLOYMENT-GUIDE.md`; hosting configuration and live verification remain BLOCKED.
+
 # ALO Education — Local Project README
 
 # ALO Education — Web CRM & Consultancy Platform Deployment Guide

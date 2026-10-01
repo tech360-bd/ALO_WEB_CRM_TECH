@@ -1,4 +1,7 @@
 #!/bin/sh
+# LEGACY / NOT USED FOR CURRENT PRODUCTION
+echo "DISABLED: auxiliary Bun worker tooling is not the Hostinger Node 22 runtime" >&2
+exit 1
 
 # 配置项
 DIST_DIR="./mini-services-dist"

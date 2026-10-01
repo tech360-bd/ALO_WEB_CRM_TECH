@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# LEGACY / NOT USED FOR CURRENT PRODUCTION
+raise SystemExit("Disabled historical merge-policy generator; Hostinger is the sole current deployment owner")
 """
 Generate BRANCH-MERGE-LEDGER.csv and BRANCH-MERGE-REPORT.md
 Inventory all arena branches vs main, file-level decisions

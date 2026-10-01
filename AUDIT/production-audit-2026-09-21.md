@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # ALO Education production audit — 2026-09-21
 
 Status: implementation and repository-level verification completed for the reachable scope; live production and third-party runtime verification remain explicitly separated below.

@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # WhatsApp Business Platform — Meta Cloud API Setup (ALO Education)
 
 This guide explains how to obtain and verify the **official Meta WhatsApp Business Platform assets** required before any company number can be marked as **connected**. It does **not** invent phone_number_ids or credentials.

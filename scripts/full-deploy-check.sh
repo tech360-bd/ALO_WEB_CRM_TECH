@@ -1,4 +1,8 @@
 #!/bin/bash
+# LEGACY / NOT USED FOR CURRENT PRODUCTION
+# Historical VPS diagnostics; not a Hostinger readiness check.
+echo "Use node scripts/validate-deployment-config.mjs for repository checks; host runtime remains externally verified." >&2
+exit 1
 # ALO Education — Full Deployment Check Script
 # Usage: bash scripts/full-deploy-check.sh
 # Output: PASS / WARN / FAIL for each check

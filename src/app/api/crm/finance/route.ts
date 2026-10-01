@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuth, logAuditAction } from '@/lib/auth-middleware';
+import { withAuth } from '@/lib/auth-middleware';
+import { writePortalAudit } from '@/lib/transactional-audit';
+import { z } from 'zod';
+
+const financeRoles = ['FINANCE', 'finance', 'finance_officer', 'CEO', 'ceo', 'ADMIN', 'SUPER_ADMIN'];
+const paymentInput = z.object({
+  studentId: z.string().trim().min(1).max(191),
+  description: z.string().max(191).default(''),
+  amount: z.union([z.number(), z.string().regex(/^\d+(?:\.\d+)?$/).transform(Number)]).pipe(z.number().finite().positive()),
+  currency: z.string().regex(/^[A-Z]{3}$/).default('BDT'),
+  // Preserve the established staff contract until financial transitions are approved.
+  // A supplied status is NOT settlement evidence.
+  status: z.string().trim().min(1).max(191).default('pending'),
+  dueDate: z.string().max(191).default(''),
+}).strict();
 
 // ============================================================
 // CRM FINANCE API — AloPayment with summary & payment records
@@ -127,22 +141,13 @@ export async function GET(request: NextRequest) {
         ...(summary ? { summary } : {}),
       });
     } catch (error) {
-      console.error('CRM Finance API error:', error);
-      if (String(error).includes('Unknown table')) {
-        return NextResponse.json({
-          success: true,
-          data: [],
-          total: 0,
-          page: 1,
-          totalPages: 0,
-        });
-      }
+      console.error('CRM Finance API error');
       return NextResponse.json(
         { success: false, error: 'Failed to load finance data' },
         { status: 500 }
       );
     }
-  })(request);
+  }, { requireRoles: financeRoles })(request);
 }
 
 // ============================================================
@@ -151,60 +156,42 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
-      const body = await req.json();
+      const parsed = paymentInput.safeParse(await req.json().catch(() => null));
+      if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid payment record' }, { status: 400 });
+      const { studentId, description, amount, currency, status, dueDate } = parsed.data;
 
-      const {
-        studentId,
-        description = '',
-        amount = 0,
-        currency = 'BDT',
-        status = 'pending',
-        dueDate = '',
-      } = body;
+      const payment = await db.$transaction(async tx => {
+        const payment = await tx.aloPayment.create({
+          data: {
+            studentId,
+            description,
+            amount,
+            currency,
+            status,
+            dueDate,
+          },
+        });
 
-      if (!studentId) {
-        return NextResponse.json(
-          { success: false, error: 'Student ID is required' },
-          { status: 400 }
-        );
-      }
-
-      if (amount <= 0) {
-        return NextResponse.json(
-          { success: false, error: 'Amount must be greater than 0' },
-          { status: 400 }
-        );
-      }
-
-      const payment = await db.aloPayment.create({
-        data: {
+        // Log audit action
+        await writePortalAudit(tx, auth, 'create_payment', 'AloPayment', payment.id, {
           studentId,
-          description,
-          amount: parseFloat(String(amount)),
+          amount: payment.amount,
           currency,
-          status,
-          dueDate,
-        },
-      });
+          description,
+        });
 
-      // Log audit action
-      await logAuditAction(auth, 'create_payment', 'AloPayment', payment.id, {
-        studentId,
-        amount: payment.amount,
-        currency,
-        description,
+        return payment;
       });
-
       return NextResponse.json(
         { success: true, data: payment },
         { status: 201 }
       );
     } catch (error) {
-      console.error('CRM Finance POST error:', error);
+      console.error('CRM Finance POST error');
       return NextResponse.json(
         { success: false, error: 'Failed to create payment record' },
         { status: 500 }
       );
     }
-  })(request);
+  }, { requireRoles: financeRoles })(request);
 }

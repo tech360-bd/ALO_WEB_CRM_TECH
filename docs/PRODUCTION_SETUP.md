@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # Production Setup — ALO Education CRM (https://aloeducation.com :3044)
 
 **Stack:** Next.js 16 standalone, MySQL 8.4, Redis 7, Node 22, Caddy/Nginx, PM2, GitHub Actions `main` → `/root/alo-live` (do NOT assume, verify with workflow DEPLOY_DIR).

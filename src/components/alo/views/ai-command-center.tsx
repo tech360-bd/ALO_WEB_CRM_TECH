@@ -150,7 +150,7 @@ interface WorkforceMetrics {
   workforce: { total:number; active:number; idle:number; busy:number; paused:number; failed:number; waitingApproval:number; escalated:number; queued:number; running:number };
   queue: { queued:number; running:number; success:number; failed:number };
   groq: { concurrency:{ current:number; max:number }; perMinute:{ count:number; limit:number }; queueLength:number; circuitOpen:boolean; totalRequests:number; totalFallbacks:number };
-  automation: { totalEligible:number; automated:number; assisted:number; human:number; escalated:number; automationRate:number; humanRate:number; targetAutomation:number; targetHuman:number; variance:number; verdict:string; period:{ label:string } };
+  automation: { hasData:boolean; totalEligible:number; automated:number; assisted:number; human:number; escalated:number; automationRate:number; humanRate:number; targetAutomation:number; targetHuman:number; variance:number; verdict:string; period:{ label:string } };
   collaboration: Array<{ id:string; at:string; actor:string; action:string; target:string; automated:boolean }>;
   latency: { avgMs:number|null };
 }
@@ -340,7 +340,7 @@ export function AiCommandCenter() {
       <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-br from-blue-50/80 to-slate-50">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm tracking-wide text-[#0057B8]">70% AI + 30% Human — Live from DB (AutomationEvent) · never fabricated</CardTitle>
+            <CardTitle className="text-sm tracking-wide text-[#0057B8]">Automation measurement — database events · 70% target, not a guarantee</CardTitle>
             <Badge variant="outline" className="text-[11px]">{metrics?.automation?.period?.label ?? "Last 30d"} · {metrics ? "live" : metricsErr ? "auth/empty" : "loading"}</Badge>
           </div>
           <CardDescription className="text-xs">AUTOMATION_RATE = AI_AUTOMATED / TOTAL_ELIGIBLE ×100 · TARGET 70% · VARIANCE = ACTUAL−TARGET · Source: AutomationEvent table</CardDescription>
@@ -349,13 +349,13 @@ export function AiCommandCenter() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
             <div className="rounded-xl border bg-white p-3">
               <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Automation Rate</div>
-              <div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-bold text-[#0057B8]">{metrics ? `${metrics.automation.automationRate.toFixed(2)}%` : "—"}</span><span className={`text-xs ${metrics && metrics.automation.variance >= -5 && metrics.automation.variance <= 10 ? "text-emerald-600" : metrics && metrics.automation.variance < -5 ? "text-amber-600" : "text-slate-500"}`}>{metrics ? `Δ ${metrics.automation.variance >=0?"+":""}${metrics.automation.variance.toFixed(2)}%` : ""}</span></div>
+              <div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-bold text-[#0057B8]">{metrics?.automation.hasData ? `${metrics.automation.automationRate.toFixed(2)}%` : "—"}</span><span className={`text-xs ${metrics && metrics.automation.variance >= -5 && metrics.automation.variance <= 10 ? "text-emerald-600" : metrics && metrics.automation.variance < -5 ? "text-amber-600" : "text-slate-500"}`}>{metrics?.automation.hasData ? `Δ ${metrics.automation.variance >=0?"+":""}${metrics.automation.variance.toFixed(2)}%` : ""}</span></div>
               <div className="mt-1 text-[11px] text-muted-foreground">TARGET 70% · {metrics?.automation.verdict ?? ""}</div>
             </div>
             <div className="rounded-xl border bg-white p-3">
               <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Human Rate</div>
               <div className="mt-1 text-2xl font-bold">{metrics ? `${metrics.automation.humanRate.toFixed(2)}%` : "—"}</div>
-              <div className="mt-1 text-[11px] text-muted-foreground">TARGET 30% · 100−auto</div>
+              <div className="mt-1 text-[11px] text-muted-foreground">Successful human events / all events</div>
             </div>
             <div className="rounded-xl border bg-white p-3">
               <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Eligible / Automated</div>

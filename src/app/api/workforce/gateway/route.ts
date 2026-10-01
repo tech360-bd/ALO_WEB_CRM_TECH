@@ -1,39 +1,31 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { withAuth } from '@/lib/auth-middleware';
-import { aiGateway, classify, summarize } from '@/lib/ai-gateway';
+import { aiGateway, classify, summarize, chat } from '@/lib/ai-gateway';
 
-// POST /api/workforce/gateway { op: 'generate'|'classify'|'summarize'|'chat', prompt, ... }
-// Centralized AI Gateway—refuses to expose secrets; all calls are server-side via GROQ_API_KEY.
-export async function POST(req: Request) {
-  return withAuth(async ()=>{
-    const body = await req.json().catch(()=>({}));
-    const op = body.op || 'generate';
-    try {
-      if (op==='generate') {
-        if (!body.prompt) return NextResponse.json({ success:false, error:'prompt required' }, { status:400 });
-        const res = await aiGateway({ prompt: String(body.prompt), systemPrompt: body.systemPrompt, taskType: body.taskType, department: body.department, maxTokens: body.maxTokens, temperature: body.temperature });
-        return NextResponse.json({ success:true, data: { text: res.text, provider: res.provider, model: res.model, usage: res.usage, latencyMs: res.latencyMs, fallbackUsed: res.fallbackUsed } });
-      }
-      if (op==='classify') {
-        const res = await classify(String(body.text||''), body.labels || ['GENERAL','SUPPORT'], { taskType: 'CLASSIFICATION' });
-        return NextResponse.json({ success:true, data: res });
-      }
-      if (op==='summarize') {
-        const res = await summarize(String(body.text||''), body.maxSentences || 3, { taskType: 'SUMMARIZE' });
-        return NextResponse.json({ success:true, data: res });
-      }
-      if (op==='chat') {
-        const { chat } = await import('@/lib/ai-gateway');
-        const res = await chat(body.messages || [], { taskType: 'CHAT' });
-        return NextResponse.json({ success:true, data: { text: res.text, provider: res.provider, model: res.model } });
-      }
-      return NextResponse.json({ success:false, error:'unknown op' }, { status:400 });
-    } catch (e:any) {
-      return NextResponse.json({ success:false, error: e?.message || String(e) }, { status:500 });
-    }
-  })(req);
-}
+const requestSchema = z.discriminatedUnion('op', [
+  z.object({ op: z.literal('generate'), prompt: z.string().min(1).max(16000), systemPrompt: z.string().max(4000).optional(), maxTokens: z.number().int().min(1).max(2000).optional() }).strict(),
+  z.object({ op: z.literal('classify'), text: z.string().min(1).max(8000), labels: z.array(z.string().trim().min(1).max(100)).min(2).max(50) }).strict(),
+  z.object({ op: z.literal('summarize'), text: z.string().min(1).max(16000), maxSentences: z.number().int().min(1).max(20).default(3) }).strict(),
+  z.object({ op: z.literal('chat'), messages: z.array(z.object({ role: z.enum(['system', 'user', 'assistant']), content: z.string().min(1).max(4000) })).min(1).max(20) }).strict(),
+]);
+
+// Arbitrary workforce text/history may contain student or employee data. This
+// browser-facing endpoint cannot downgrade privacy or inject model/endpoint/agent.
+export const POST = withAuth(async req => {
+  const parsed = requestSchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid AI request' }, { status: 400 });
+  const body = parsed.data;
+  try {
+    if (body.op === 'generate') return NextResponse.json({ success: true, data: await aiGateway({ prompt: body.prompt, systemPrompt: body.systemPrompt, maxTokens: body.maxTokens, privateData: true }) });
+    if (body.op === 'classify') return NextResponse.json({ success: true, data: await classify(body.text, body.labels, { privateData: true }) });
+    if (body.op === 'summarize') return NextResponse.json({ success: true, data: await summarize(body.text, body.maxSentences, { privateData: true }) });
+    return NextResponse.json({ success: true, data: await chat(body.messages, { privateData: true }) });
+  } catch {
+    return NextResponse.json({ success: false, error: 'AI request unavailable or rejected by policy. Check server provider configuration and audit records.' }, { status: 503 });
+  }
+}, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] });
 
 export async function GET() {
-  return NextResponse.json({ success:true, gateway:'ALO AI Gateway', ops:['generate','classify','summarize','chat'], note:'All calls protect GROQ_API_KEY server-side; frontend never sees secrets.' });
+  return NextResponse.json({ gateway: 'ALO Education AI Gateway', ops: ['generate', 'classify', 'summarize', 'chat'], privacy: 'local-only workforce requests' });
 }

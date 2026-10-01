@@ -4,8 +4,12 @@ import bcrypt from 'bcryptjs';
 const db = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV !== 'test') throw new Error('Legacy fixture seed requires NODE_ENV=test and an isolated approved test database');
+  const fixturePassword = process.env.TEST_FIXTURE_PASSWORD;
+  if (!fixturePassword || fixturePassword.length < 16) throw new Error('TEST_FIXTURE_PASSWORD must be supplied securely (16+ characters)');
+  if (!process.env.SEED_SUPER_ADMIN_PASSWORD || process.env.SEED_SUPER_ADMIN_PASSWORD.length < 16) throw new Error('SEED_SUPER_ADMIN_PASSWORD must be supplied securely (16+ characters)');
   const email = process.env.SEED_SUPER_ADMIN_EMAIL || 'admin@aloeducation.com';
-  const password = process.env.SEED_SUPER_ADMIN_PASSWORD || 'Admin@123456';
+  const password = process.env.SEED_SUPER_ADMIN_PASSWORD;
   
   console.log('Seeding PortalUser:', email);
   
@@ -40,7 +44,7 @@ async function main() {
     { email: 'employee@test.com', userType: 'EMPLOYEE', role: 'counselor', name: 'Test Employee' },
   ];
   
-  const testPass = await bcrypt.hash('Test@123456', 12);
+  const testPass = await bcrypt.hash(fixturePassword, 12);
   
   for (const u of testUsers) {
     await db.portalUser.upsert({
@@ -62,4 +66,4 @@ async function main() {
   await db.$disconnect();
 }
 
-main().catch(console.error);
+main().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => db.$disconnect());

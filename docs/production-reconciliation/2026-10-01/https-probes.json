@@ -1,0 +1,56 @@
+[
+  {
+    "url": "https://aloeducation.com/",
+    "curlExit": 35,
+    "httpStatus": 0,
+    "remoteIp": "191.101.104.201",
+    "sslVerifyResult": 1,
+    "timeTotal": 0.161848,
+    "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to aloeducation.com:443"
+  },
+  {
+    "url": "https://aloeducation.com/api/health/live",
+    "curlExit": 35,
+    "httpStatus": 0,
+    "remoteIp": "212.1.212.1",
+    "sslVerifyResult": 1,
+    "timeTotal": 0.170339,
+    "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to aloeducation.com:443"
+  },
+  {
+    "url": "https://aloeducation.com/api/health",
+    "curlExit": 35,
+    "httpStatus": 0,
+    "remoteIp": "191.101.104.125",
+    "sslVerifyResult": 1,
+    "timeTotal": 0.127341,
+    "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to aloeducation.com:443"
+  },
+  {
+    "url": "https://aloeducation.com/login",
+    "curlExit": 35,
+    "httpStatus": 0,
+    "remoteIp": "212.1.212.1",
+    "sslVerifyResult": 1,
+    "timeTotal": 0.036658,
+    "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to aloeducation.com:443"
+  },
+  {
+    "url": "https://aloeducation.com/api/agentos/approvals",
+    "curlExit": 35,
+    "httpStatus": 0,
+    "remoteIp": "191.101.104.201",
+    "sslVerifyResult": 1,
+    "timeTotal": 0.114044,
+    "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to aloeducation.com:443"
+  },
+  {
+    "url": "https://aloeducation.com/api/hr/payroll",
+    "curlExit": 35,
+    "httpStatus": 0,
+    "remoteIp": "212.1.212.1",
+    "sslVerifyResult": 1,
+    "timeTotal": 0.087542,
+    "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to aloeducation.com:443"
+  }
+]

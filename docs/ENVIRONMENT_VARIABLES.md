@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # Environment Variables — ALO Education CRM
 
 **Source of truth:** `.env.example` (and `.env.production.example` for VPS). Never commit `.env`, `.env.production`, `.env.local`. Secrets only in the VPS deploy dir's `.env` (intended `/root/alo-github-main-new/.env` — corrected 2026-09-17; the older `/root/alo-live` path is a legacy candidate only) and GitHub Actions Secrets (`DEPLOY_*` — exact names in `docs/DEPLOYMENT.md` §1). **Port:** production `3044` (reverse proxy `127.0.0.1:3044`, `PORT=3044` in `ecosystem.config.cjs`). Dev may run `3000` via override but prod MUST be `3044`.

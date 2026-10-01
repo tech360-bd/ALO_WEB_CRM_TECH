@@ -1,11 +1,10 @@
 # ============================================================================
 # ALO Education — Pull Request Validation (CI)
 #
-# Purpose: prove a PR is safe BEFORE it can reach main (main pushes are gated
-# again by deploy-production.yml's validate-and-build job, which deploys only
-# the exact validated SHA — so checks are not duplicated on main pushes).
+# Purpose: CI only. Hostinger owns production deployment outside Actions.
+# No production credentials, hosting transport, or restart commands are used.
 #
-# Triggers: pull_request targeting main + manual dispatch.
+# Triggers: main/development/arena pushes, PRs, manual dispatch, reusable CI.
 # Never deploys. Uses NO repository secrets, so pull requests from forks are
 # safe (fork PRs get a read-only GITHUB_TOKEN and no secrets by design).
 #
@@ -18,10 +17,14 @@
 name: CI — Pull Request Validation
 
 on:
-  pull_request:
+  push:
     branches:
       - main
+      - development
+      - 'arena/**'
+  pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -56,6 +59,9 @@ jobs:
           set -euo pipefail
           test -f package-lock.json || { echo "::error::package-lock.json missing"; exit 1; }
           npm ci
+
+      - name: Dependency security audit (high and critical block)
+        run: npm audit --audit-level=high
 
       - name: Secret-leak scan (tracked files)
         run: |
@@ -105,6 +111,9 @@ jobs:
           fi
           echo "✓ No secret-shaped strings in tracked files (docs included)"
 
+      - name: Deployment ownership safety tests (no production calls)
+        run: node --test tests/deployment-ownership.test.mjs tests/runtime-standard.test.mjs
+
       - name: Prisma validate
         env:
           # Dummy value ONLY so the CLI can resolve env("DATABASE_URL") during
@@ -120,20 +129,7 @@ jobs:
         run: npx prisma generate
 
       - name: Verify generated Prisma client
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f node_modules/.prisma/client/default.js || {
-            echo "::error::Generated Prisma client entrypoint is missing"
-            exit 1
-          }
-          node <<'NODE'
-          const { PrismaClient } = require('@prisma/client');
-          if (typeof PrismaClient !== 'function') {
-            throw new Error('PrismaClient export is unavailable');
-          }
-          console.log('✓ Generated Prisma client is loadable');
-          NODE
+        run: npm run db:verify-client
 
       - name: Lint
         run: npm run lint
@@ -160,6 +156,9 @@ jobs:
       - name: Tests (blocking; DB-integration files skip-with-reason when no test DATABASE_URL)
         run: npm test
 
+      - name: Integration tests (isolated DB required for persistence tests)
+        run: npm run test:integration
+
       - name: Production build (dummy env, runner validation only)
         env:
           DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
@@ -175,6 +174,7 @@ jobs:
           set -euo pipefail
           npm run build
           test -f .next/standalone/server.js || { echo "::error::standalone server.js missing"; exit 1; }
+          node scripts/verify-standalone.mjs
           echo "✓ Build succeeded"
 
       - name: Summary
@@ -183,4 +183,4 @@ jobs:
           echo "### CI result" >> "$GITHUB_STEP_SUMMARY"
           echo "- Job conclusion: \`${{ job.status }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- This workflow NEVER deploys. Production deployment only happens from main via deploy-production.yml." >> "$GITHUB_STEP_SUMMARY"
+          echo "- This workflow NEVER deploys. Hostinger production branch mapping is external and must be verified separately." >> "$GITHUB_STEP_SUMMARY"

@@ -260,7 +260,7 @@ async function counselWithRag(opts: { text: string; lang: 'bn'|'en'; studentDbId
     const systemEn = `You are ALO Education admission AI counselor. Reply logically, concisely, helpfully in English. Never guarantee admission/visa. Say "needs verification" when unsure. ${studentLine}. Remember history. Advise university/country (UK, Canada, Australia, USA) and next step.`;
     const recent = history.slice(-6).map(h=> `${h.role}: ${h.content}`).join('\n');
     const prompt = `User (${lang}): ${hint}\n\nRecent:\n${recent}\n\nAnswer in ${lang === 'bn' ? 'Bangla' : 'English'} (match user language). Include 1-2 university/country suggestions if inquiry, and clear next step.`;
-    const gw = await aiGateway({ prompt, systemPrompt: lang==='bn'? systemBn : systemEn, taskType: 'COUNSELING', maxTokens: 500, temperature: 0.3 }).catch(()=>null);
+    const gw = await aiGateway({ prompt, systemPrompt: lang==='bn'? systemBn : systemEn, taskType: 'COUNSELING', privateData: true, maxTokens: 500, temperature: 0.3 }).catch(()=>null);
     if (gw && gw.text) return gw.text.slice(0, 1500);
   } catch {}
   // Rule fallback (still logical, multilingual)

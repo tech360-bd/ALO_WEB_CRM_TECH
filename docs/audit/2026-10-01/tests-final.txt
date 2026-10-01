@@ -1,0 +1,79 @@
+
+> alo-education-erp@0.3.0 test
+> vitest run
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /home/user/alo_education_z....ai
+
+ ✓ tests/unit/security-hardening.test.ts (17 tests) 12ms
+ ✓ tests/unit/password-hashing.test.ts (3 tests) 734ms
+     ✓ produces different hashes for same password (salt)  351ms
+ ✓ tests/unit/api-authz-regression.test.ts (11 tests) 308ms
+ ✓ tests/unit/journal-integrity.test.ts (14 tests) 255ms
+ ✓ tests/unit/ai-provider-policy.test.ts (15 tests) 96ms
+ ✓ tests/unit/department-rollout.test.ts (12 tests) 55ms
+ ✓ tests/unit/permissions.test.ts (8 tests) 27ms
+ ✓ tests/unit/workforce-route-security.test.ts (8 tests) 27ms
+ ✓ tests/unit/cron-auth-regression.test.ts (11 tests) 31ms
+ ✓ tests/unit/aston-adapter.test.ts (7 tests) 26ms
+ ✓ tests/unit/eligibility-engine.test.ts (25 tests) 24ms
+ ✓ tests/unit/finance-authz-regression.test.ts (5 tests) 19ms
+ ✓ tests/unit/payroll-route-transaction.test.ts (4 tests) 21ms
+ ✓ tests/unit/tool-permission-boundary.test.ts (7 tests) 17ms
+stderr | tests/unit/workflow-persistence-integrity.test.ts > workflow persistence and idempotency > operation failures persist failure rather than automation success
+[automation-engine] lead_scoring failed: Error: missing lead
+    at /home/user/alo_education_z....ai/tests/unit/workflow-persistence-integrity.test.ts:42:44
+    at file:///home/user/alo_education_z....ai/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///home/user/alo_education_z....ai/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///home/user/alo_education_z....ai/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///home/user/alo_education_z....ai/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///home/user/alo_education_z....ai/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///home/user/alo_education_z....ai/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///home/user/alo_education_z....ai/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64
+
+ ✓ tests/unit/workflow-persistence-integrity.test.ts (6 tests) 15ms
+ ✓ tests/unit/ucc-provider-architecture.test.ts (22 tests) 11ms
+stderr | tests/unit/whatsapp-employee-communication.test.ts > WhatsApp Employee Communication — core safeguards > verifyWhatsAppSignature: dev mode skips when secret missing
+[whatsapp-cloud-api] WHATSAPP_APP_SECRET not set — signature verification skipped (dev mode).
+[whatsapp-cloud-api] WHATSAPP_APP_SECRET is required in production — rejecting webhook.
+
+stderr | tests/unit/whatsapp-employee-communication.test.ts > WhatsApp Employee Communication — core safeguards > verifyWhatsAppSignature: rejects bad signature format
+[whatsapp-cloud-api] WHATSAPP_APP_SECRET is required in production — rejecting webhook.
+[whatsapp-cloud-api] WHATSAPP_APP_SECRET is required in production — rejecting webhook.
+[whatsapp-cloud-api] WHATSAPP_APP_SECRET is required in production — rejecting webhook.
+
+ ✓ tests/unit/whatsapp-employee-communication.test.ts (18 tests) 10ms
+stderr | tests/unit/health-readiness.test.ts > health probes > returns 503 without leaking private exception details
+[readiness] Database probe failed
+
+ ✓ tests/unit/health-readiness.test.ts (3 tests) 11ms
+ ✓ tests/unit/automation-measurement.test.ts (9 tests) 10ms
+ ✓ tests/unit/ucc-webhook-security.test.ts (24 tests) 10ms
+ ✓ tests/unit/proxy-security.test.ts (5 tests) 6ms
+ ✓ tests/unit/deployment-config.test.ts (9 tests) 9ms
+ ✓ tests/integration/visa-security-negative.test.ts (22 tests) 8ms
+ ✓ tests/unit/whatsapp-webhook-handler.test.ts (8 tests) 8ms
+ ✓ tests/unit/data-scope.test.ts (18 tests) 7ms
+ ✓ tests/unit/ai-tool-loop.test.ts (4 tests) 9ms
+ ✓ tests/unit/data-import.test.ts (7 tests) 5ms
+ ✓ tests/unit/auto-upload.test.ts (6 tests) 6ms
+ ✓ tests/unit/standalone-verification.test.ts (5 tests) 203ms
+ ✓ tests/unit/dashboard-alarm-service.test.ts (4 tests) 7ms
+ ✓ tests/unit/test-database-safety.test.ts (8 tests) 7ms
+ ✓ tests/unit/payroll-controls.test.ts (4 tests) 6ms
+ ✓ tests/unit/auth-session-hardening.test.ts (4 tests) 6ms
+ ✓ tests/unit/verification-agent.test.ts (3 tests) 5ms
+ ✓ tests/unit/source-verification.test.ts (4 tests) 5ms
+ ✓ tests/unit/content-validation.test.ts (4 tests) 5ms
+ ✓ tests/unit/country-destination-resolver.test.ts (3 tests) 4ms
+ ↓ tests/integration/consultation-workflow.test.ts (7 tests | 7 skipped)
+
+ Test Files  37 passed | 1 skipped (38)
+      Tests  347 passed | 7 skipped (354)
+   Start at  20:01:24
+   Duration  9.93s (transform 871ms, setup 0ms, import 2.15s, tests 2.02s, environment 4ms)
