@@ -44,17 +44,14 @@ done
 
 echo "Packaging ${#SCOPE[@]} pathspecs from $(git rev-parse HEAD)..."
 rm -f "$OUT"
-# git archive honors pathspecs against the tree; uncommitted NEW files
-# (untracked) are deliberately excluded except the working-tree versions of
-# tracked files. For uncommitted tracked changes we archive a synthetic index.
-GIT_INDEX_FILE=$(mktemp)
-export GIT_INDEX_FILE
-git read-tree HEAD
-git add -A "${SCOPE[@]}" >/dev/null 2>&1 || true
-git write-tree > /tmp/pkg-tree.txt
-TREE=$(cat /tmp/pkg-tree.txt)
-git archive --format=zip -o "$OUT" "$TREE"
-rm -f "$GIT_INDEX_FILE"
+# Require a clean tree so the zip is exactly HEAD content (the git branch is
+# the deployment source of truth; the zip is the portable mirror of it).
+if [ -n "$(git status --porcelain -- "${SCOPE[@]}")" ]; then
+  echo "ERROR: working tree has uncommitted changes in scope — commit first." >&2
+  git status --porcelain -- "${SCOPE[@]}" | head -20 >&2
+  exit 1
+fi
+git archive --format=zip -o "$OUT" HEAD -- "${SCOPE[@]}"
 
 echo "---- package summary ----"
 FILES=$(python3 -c "import zipfile;print(len(zipfile.ZipFile('$OUT').namelist()))")
