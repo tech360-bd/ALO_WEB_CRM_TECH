@@ -157,7 +157,7 @@ export const REMOTION_COMPOSITIONS: RemotionComposition[] = [
     defaultProps: {
       title: "From Dhaka to London: My Journey",
       story: "I applied through ALO Education...",
-      backgroundVideoUrl: "/videos/minecraft-parkour.mp4",
+      backgroundVideoUrl: "", // optional background video; supply a real public/ asset path when used
       voice: "bengali_female",
       subtitles: true,
     },
