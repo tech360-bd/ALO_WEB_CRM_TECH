@@ -36,7 +36,8 @@
     "video:templates": "tsx scripts/list-video-templates.ts",
     "remotion:studio": "npx remotion studio src/lib/video-engine/remotion/entry.tsx",
     "remotion:render": "npx remotion render src/lib/video-engine/remotion/entry.tsx",
-    "db:verify-client": "node scripts/verify-prisma-client.mjs"
+    "db:verify-client": "node scripts/verify-prisma-client.mjs",
+    "audit:env": "node scripts/audit-env-vars.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

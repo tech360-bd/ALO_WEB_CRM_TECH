@@ -114,6 +114,12 @@ jobs:
       - name: Deployment ownership safety tests (no production calls)
         run: node --test tests/deployment-ownership.test.mjs tests/runtime-standard.test.mjs
 
+      - name: Environment variable classification is current
+        # docs/environment-classification.json is derived from the code, so it
+        # must be regenerated whenever a process.env reference is added or
+        # removed. Keeps the documented production contract honest.
+        run: npm run audit:env -- --check
+
       - name: Prisma validate
         env:
           # Dummy value ONLY so the CLI can resolve env("DATABASE_URL") during

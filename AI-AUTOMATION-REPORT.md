@@ -134,7 +134,7 @@ export PRISMA_SCHEMA_ENGINE_BINARY=$PWD/.awf-tmp/fake-engine \
        PRISMA_QUERY_ENGINE_LIBRARY=$PWD/.awf-tmp/fake-engine
 mkdir -p .awf-tmp && printf '#!/bin/sh\nexit 0\n' > .awf-tmp/fake-engine && chmod +x .awf-tmp/fake-engine
 
-DATABASE_URL="mysql://u:p@localhost:3306/alo" npx prisma generate --no-engine
+DATABASE_URL="mysql://USER:PASSWORD@localhost:3306/alo" npx prisma generate --no-engine
 DATABASE_URL="file:$PWD/.awf-tmp/verify.db" \
   npx prisma generate --schema prisma/verification-mirror/schema.sqlite.prisma
 
