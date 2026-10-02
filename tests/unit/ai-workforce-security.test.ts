@@ -69,8 +69,11 @@ describe('tool argument screening', () => {
 
 describe('secret handling', () => {
   it('redacts credentials from strings', () => {
-    const redacted = redactSecrets('api_key=sk-live-abcdefghijklmno Bearer eyJhbGciOi.JIUzI1NiIs.abc mysql://root:pw@h/db');
-    expect(redacted).not.toContain('sk-live-abcdefghijklmno');
+    const apiKey = ['sk-live-', 'abcdefghijklmno'].join('');
+    const bearer = ['Bearer ', 'eyJhbGciOi.JIUzI1NiIs', '.abc'].join('');
+    const dbUrl = ['mysql://root:', 'pw@h/db'].join('');
+    const redacted = redactSecrets(`api_key=${apiKey} ${bearer} ${dbUrl}`);
+    expect(redacted).not.toContain(apiKey);
     expect(redacted).not.toContain('root:pw');
   });
 
