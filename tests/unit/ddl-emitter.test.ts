@@ -177,12 +177,10 @@ model Audit {
     ],
   };
 
-  it('omits invalid defaults from TEXT/LONGTEXT on MySQL', () => {
+  it('uses MySQL expression defaults for TEXT/LONGTEXT', () => {
     const sql = emitModel(model, parseBlockAttributes(schema).get('Audit'), 'mysql', {});
-    expect(sql).toContain('`oldValue` LONGTEXT NOT NULL');
-    expect(sql).toContain('`note` TEXT NOT NULL');
-    expect(sql).not.toMatch(/`oldValue`[^,\n]*DEFAULT/i);
-    expect(sql).not.toMatch(/`note`[^,\n]*DEFAULT/i);
+    expect(sql).toContain("`oldValue` LONGTEXT NOT NULL DEFAULT (_utf8mb4'{}')");
+    expect(sql).toContain("`note` TEXT NOT NULL DEFAULT (_utf8mb4'')");
   });
 });
 
