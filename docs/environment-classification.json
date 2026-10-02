@@ -3,10 +3,10 @@
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
   "filesScanned": 2093,
   "summary": {
-    "UNUSED": 76,
+    "UNUSED": 72,
     "REFERENCED_WITH_FALLBACK": 120,
     "REFERENCED_FAIL_CLOSED": 12,
-    "REFERENCED": 88,
+    "REFERENCED": 92,
     "PUBLIC": 9
   },
   "productionRequired": [
@@ -3719,9 +3719,9 @@
     },
     {
       "name": "SMTP_FROM",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -3730,13 +3730,15 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-service.ts"
+      ]
     },
     {
       "name": "SMTP_HOST",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -3745,13 +3747,15 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-service.ts"
+      ]
     },
     {
       "name": "SMTP_PASSWORD",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -3760,7 +3764,9 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-service.ts"
+      ]
     },
     {
       "name": "SMTP_PORT",
@@ -3781,9 +3787,9 @@
     },
     {
       "name": "SMTP_USER",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -3792,7 +3798,9 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-service.ts"
+      ]
     },
     {
       "name": "STORAGE_POOL_C",

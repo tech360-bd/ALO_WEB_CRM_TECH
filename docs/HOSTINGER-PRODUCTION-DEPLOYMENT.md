@@ -175,6 +175,17 @@ by anyone. Never place a secret in one.
 login is already hard-disabled when `NODE_ENV=production`
 (`src/lib/stores/portal-store.ts`), so the variable has no production purpose.
 
+### Email transport (verified)
+
+The application's only mail sender is `src/lib/email-service.ts` (nodemailer,
+via the `smtp-mailer` npm alias). It reads **SMTP_HOST, SMTP_PORT (default
+587), SMTP_USER, SMTP_PASSWORD, SMTP_FROM**. These are optional for boot:
+without them the app starts and email sending fails explicitly with
+`SMTP_NOT_CONFIGURED` — there is no logging-only or fake-success fallback.
+
+`MAIL_*`, `IMAP_*` and `POP3_*` are **never read** (zero code references,
+destructured reads included) and must not be treated as required.
+
 ---
 
 ## 4. Database migrations

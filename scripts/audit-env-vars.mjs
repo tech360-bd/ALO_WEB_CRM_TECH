@@ -66,6 +66,12 @@ const files = [
 
 const REF_RE = /process\.env\.([A-Z0-9_]+)|process\.env\[['"`]([A-Z0-9_]+)['"`]\]/g;
 
+// Destructured reads (`const { SMTP_HOST: host } = process.env`) are real
+// references too. src/lib/email-service.ts reads the live SMTP credentials
+// exactly this way; without this pattern the audit reported the actual mail
+// transport as UNUSED.
+const DESTRUCT_RE = /\{([^{}]+)\}\s*=\s*process\.env\b/g;
+
 /** name -> { files:Set, failClosed:bool, hasFallback:bool } */
 const refs = new Map();
 
@@ -86,6 +92,23 @@ for (const file of files) {
       const window = lines.slice(i, i + 6).join('\n');
       if (new RegExp(`(throw new Error|process\\.exit\\()[^]{0,200}${name}`).test(window)) entry.failClosed = true;
       if (new RegExp(`${name}[^]{0,200}(throw new Error|process\\.exit\\()`).test(window)) entry.failClosed = true;
+    }
+  }
+  // Destructured references. Scanned on the whole file text so multi-line
+  // destructures count too; each name is re-checked against the same
+  // throw/exit window heuristic used for direct references.
+  for (const m of text.matchAll(DESTRUCT_RE)) {
+    for (const part of m[1].split(',')) {
+      const key = part.split(':')[0].split('=')[0].trim();
+      if (!/^[A-Z][A-Z0-9_]*$/.test(key)) continue;
+      if (!refs.has(key)) refs.set(key, { files: new Set(), failClosed: false, hasFallback: false });
+      const entry = refs.get(key);
+      entry.files.add(rel);
+      if (new RegExp(`${key}\\s*=`).test(part) && part.includes('=')) entry.hasFallback = true;
+      const lineIdx = text.slice(0, m.index).split('\n').length - 1;
+      const window = lines.slice(lineIdx, lineIdx + 6).join('\n');
+      if (new RegExp(`(throw new Error|process\\.exit\\()[^]{0,200}${key}`).test(window)) entry.failClosed = true;
+      if (new RegExp(`${key}[^]{0,200}(throw new Error|process\\.exit\\()`).test(window)) entry.failClosed = true;
     }
   }
 }
