@@ -117,7 +117,7 @@ export default function StudentLoginPage() {
   return (
     <div className="min-h-screen bg-[#0a0f1e] flex">
       {/* Left Panel — Brand */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#0057B8] via-[#0046a0] to-[#002d6b] flex-col justify-between p-12">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#0B5ED7] via-[#0046a0] to-[#002d6b] flex-col justify-between p-12">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
@@ -165,7 +165,7 @@ export default function StudentLoginPage() {
       <div className="flex-1 lg:max-w-md flex flex-col items-center justify-center p-8">
         {/* Mobile Logo */}
         <div className="lg:hidden flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B5ED7] to-[#F97316] flex items-center justify-center">
             <GraduationCap className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -183,7 +183,7 @@ export default function StudentLoginPage() {
             <button
               onClick={() => { setMethod('password'); setError(''); }}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                method === 'password' ? 'bg-[#0057B8] text-white' : 'text-gray-400 hover:text-white'
+                method === 'password' ? 'bg-[#0B5ED7] text-white' : 'text-gray-400 hover:text-white'
               }`}
             >
               Password
@@ -191,7 +191,7 @@ export default function StudentLoginPage() {
             <button
               onClick={() => { setMethod('otp'); setError(''); }}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                method === 'otp' ? 'bg-[#0057B8] text-white' : 'text-gray-400 hover:text-white'
+                method === 'otp' ? 'bg-[#0B5ED7] text-white' : 'text-gray-400 hover:text-white'
               }`}
             >
               OTP / SMS
@@ -221,8 +221,8 @@ export default function StudentLoginPage() {
                       setEmail('');
                     }
                   }}
-                  placeholder="email@example.com or +8801XXXXXXXXX"
-                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0057B8] focus:ring-1 focus:ring-[#0057B8] text-sm transition-all"
+                  placeholder="email@example.com or +8801805020100"
+                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0B5ED7] focus:ring-1 focus:ring-[#0B5ED7] text-sm transition-all"
                   required
                 />
               </div>
@@ -240,7 +240,7 @@ export default function StudentLoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Your password"
-                    className="w-full pl-10 pr-10 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0057B8] focus:ring-1 focus:ring-[#0057B8] text-sm transition-all"
+                    className="w-full pl-10 pr-10 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0B5ED7] focus:ring-1 focus:ring-[#0B5ED7] text-sm transition-all"
                     required
                   />
                   <button
@@ -269,7 +269,7 @@ export default function StudentLoginPage() {
                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="6-digit code"
                     maxLength={6}
-                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0057B8] focus:ring-1 focus:ring-[#0057B8] text-sm font-mono tracking-widest transition-all"
+                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0B5ED7] focus:ring-1 focus:ring-[#0B5ED7] text-sm font-mono tracking-widest transition-all"
                   />
                   <button
                     type="button"
@@ -300,7 +300,7 @@ export default function StudentLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-[#0057B8] to-[#0046a0] hover:from-[#0046a0] hover:to-[#003d82] text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-[#0057B8]/20"
+              className="w-full py-3 bg-gradient-to-r from-[#0B5ED7] to-[#0046a0] hover:from-[#0046a0] hover:to-[#003d82] text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-[#0B5ED7]/20"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

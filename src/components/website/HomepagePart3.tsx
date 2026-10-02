@@ -27,8 +27,8 @@ import {
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
+  blue: '#0B5ED7',
+  orange: '#F97316',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -180,7 +180,7 @@ function ScholarshipsSection() {
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0057B8]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0B5ED7]">
                       <span className="text-base">{sch.flag}</span>
                       {sch.country}
                     </span>
@@ -208,7 +208,7 @@ function ScholarshipsSection() {
                   </p>
 
                   {/* Button */}
-                  <Button
+                  <Link href="/eligibility-check" className="block"><Button
                     className="w-full h-12 rounded-xl text-sm font-semibold"
                     style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
                     asChild
@@ -217,7 +217,7 @@ function ScholarshipsSection() {
                       Check Eligibility
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
-                  </Button>
+                  </Button></Link>
                 </CardContent>
               </Card>
             </motion.div>
@@ -232,7 +232,7 @@ function ScholarshipsSection() {
           viewport={viewportOnce}
           variants={fadeUp}
         >
-          <Button
+          <Link href="/scholarships" className="block"><Button
             className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
             style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
             asChild
@@ -241,7 +241,7 @@ function ScholarshipsSection() {
               Find Scholarships
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-          </Button>
+          </Button></Link>
         </motion.div>
       </div>
     </section>
@@ -368,7 +368,7 @@ function EnglishTestsSection() {
 
                       {/* Buttons */}
                       <div className="flex gap-2 mt-3">
-                        <Button
+                        <Link href="/english-test-prep" className="block"><Button
                           variant="outline"
                           className="flex-1 h-10 rounded-lg text-xs font-medium border-[#E2E8F0]"
                           style={{ color: C.blue }}
@@ -377,8 +377,8 @@ function EnglishTestsSection() {
                           <Link href={`/language-prep/${test.slug || test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
                             Learn More
                           </Link>
-                        </Button>
-                        <Button
+                        </Button></Link>
+                        <Link href="/english-test-prep" className="block"><Button
                           className="flex-1 h-10 rounded-lg text-xs font-medium text-white"
                           style={{ backgroundColor: C.orange }}
                           asChild
@@ -386,7 +386,7 @@ function EnglishTestsSection() {
                           <Link href={`/language-prep/${test.slug || 'ielts'}`}>
                             Start Mock Test
                           </Link>
-                        </Button>
+                        </Button></Link>
                       </div>
                     </CardContent>
                   </Card>
@@ -427,7 +427,7 @@ function EnglishTestsSection() {
               English Test Comparison
             </h3>
             <Link href="/language-prep/comparison">
-              <Button variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#0057B8] text-[#0057B8]">
+              <Button variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#0B5ED7] text-[#0B5ED7]">
                 Full Comparison Matrix <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Button>
             </Link>
@@ -632,7 +632,7 @@ function VisaSupportSection() {
           variants={staggerContainer}
         >
           <motion.div variants={staggerItem}>
-            <Button
+            <Link href="/visa/readiness" className="block"><Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
               style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
@@ -641,10 +641,10 @@ function VisaSupportSection() {
                 Start Visa Readiness Check
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </Button>
+            </Button></Link>
           </motion.div>
           <motion.div variants={staggerItem}>
-            <Button
+            <Link href="/book-consultation" className="block"><Button
               className="h-12 rounded-xl text-sm font-semibold px-8"
               style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
               asChild
@@ -652,7 +652,7 @@ function VisaSupportSection() {
               <Link href="/contact">
                 Book Visa Consultation
               </Link>
-            </Button>
+            </Button></Link>
           </motion.div>
         </motion.div>
       </div>
@@ -786,7 +786,7 @@ function StudentPortalPreview() {
           variants={staggerContainer}
         >
           <motion.div variants={staggerItem}>
-            <Button
+            <Link href="/login" className="block"><Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
               style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
@@ -795,10 +795,10 @@ function StudentPortalPreview() {
                 Student Login
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </Button>
+            </Button></Link>
           </motion.div>
           <motion.div variants={staggerItem}>
-            <Button
+            <Link href="/register" className="block"><Button
               className="h-12 rounded-xl text-sm font-semibold px-8"
               style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
               asChild
@@ -806,7 +806,7 @@ function StudentPortalPreview() {
               <Link href="/student/register">
                 Create Student Account
               </Link>
-            </Button>
+            </Button></Link>
           </motion.div>
         </motion.div>
       </div>
@@ -903,7 +903,7 @@ function PartnerPortalPreview() {
           variants={staggerContainer}
         >
           <motion.div variants={staggerItem}>
-            <Button
+            <Link href="/partner/login" className="block"><Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
               style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
@@ -912,10 +912,10 @@ function PartnerPortalPreview() {
                 Partner Login
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </Button>
+            </Button></Link>
           </motion.div>
           <motion.div variants={staggerItem}>
-            <Button
+            <Link href="/partner/register" className="block"><Button
               className="h-12 rounded-xl text-sm font-semibold px-8"
               style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
               asChild
@@ -923,7 +923,7 @@ function PartnerPortalPreview() {
               <Link href="/partner/register">
                 Become A Partner
               </Link>
-            </Button>
+            </Button></Link>
           </motion.div>
         </motion.div>
       </div>
@@ -1012,7 +1012,7 @@ function AiSupportTools() {
                     </p>
 
                     {/* Try Now button */}
-                    <Button
+                    <Link href="/course-finder" className="block"><Button
                       className="w-full h-10 rounded-lg text-xs font-semibold text-white self-end"
                       style={{ backgroundColor: C.orange }}
                       asChild
@@ -1021,7 +1021,7 @@ function AiSupportTools() {
                         <Sparkles className="mr-1.5 h-3.5 w-3.5" />
                         Try Now
                       </Link>
-                    </Button>
+                    </Button></Link>
                   </CardContent>
                 </Card>
               </motion.div>

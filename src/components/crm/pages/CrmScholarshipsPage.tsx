@@ -62,7 +62,7 @@ export default function CrmScholarshipsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-bold text-gray-900">Scholarships</h1><p className="text-gray-500">Browse and manage scholarship opportunities for students</p></div>
-        <Button className="bg-orange-500 hover:bg-orange-600"><Award className="w-4 h-4 mr-2" />Add Scholarship</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500 hover:bg-orange-600"><Award className="w-4 h-4 mr-2" />Add Scholarship</Button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -117,7 +117,7 @@ export default function CrmScholarshipsPage() {
         </div>
       )}
       {!loading && filtered.length === 0 && <Card><CardContent className="p-12 text-center text-gray-400"><Award className="w-12 h-12 mx-auto mb-3 opacity-30" /><p>No scholarships found</p></CardContent></Card>}
-      {filtered.length > 24 && <div className="text-center py-4"><Button variant="outline">Load More ({filtered.length - 24} remaining)</Button></div>}
+      {filtered.length > 24 && <div className="text-center py-4"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline">Load More ({filtered.length - 24} remaining)</Button></div>}
     </div>
   );
 }

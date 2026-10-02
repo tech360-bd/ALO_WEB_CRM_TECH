@@ -257,7 +257,7 @@ const MOCK_AI_COURSES: AiMatchCourse[] = [
     level: 'Masters',
     subject: 'Computer Science',
     ranking: 84,
-    logoColor: 'bg-[#0057B8]',
+    logoColor: 'bg-[#0B5ED7]',
     admissionChance: {
       level: 'High',
       percentage: 85,
@@ -367,7 +367,7 @@ const MOCK_AI_COURSES: AiMatchCourse[] = [
     level: 'Foundation',
     subject: 'Business',
     ranking: 0,
-    logoColor: 'bg-[#0057B8]',
+    logoColor: 'bg-[#0B5ED7]',
     admissionChance: {
       level: 'High',
       percentage: 98,
@@ -410,7 +410,7 @@ const MOCK_AI_COURSES: AiMatchCourse[] = [
 // ─── Helper Functions ────────────────────────────────────────────────
 function matchScoreColor(score: number): { bg: string; ring: string; text: string; label: string } {
   if (score >= 90) return { bg: 'bg-emerald-500', ring: 'ring-emerald-200', text: 'text-emerald-700', label: 'Excellent Match' };
-  if (score >= 70) return { bg: 'bg-[#0057B8]', ring: 'ring-blue-200', text: 'text-[#0057B8]', label: 'Good Match' };
+  if (score >= 70) return { bg: 'bg-[#0B5ED7]', ring: 'ring-blue-200', text: 'text-[#0B5ED7]', label: 'Good Match' };
   return { bg: 'bg-amber-500', ring: 'ring-amber-200', text: 'text-amber-700', label: 'Fair Match' };
 }
 
@@ -432,7 +432,7 @@ function FitBar({ label, value, maxVal, icon: Icon, description }: {
 }) {
   const max = maxVal || 100;
   const pct = Math.min((value / max) * 100, 100);
-  const color = value >= 90 ? 'bg-emerald-500' : value >= 70 ? 'bg-[#0057B8]' : 'bg-amber-500';
+  const color = value >= 90 ? 'bg-emerald-500' : value >= 70 ? 'bg-[#0B5ED7]' : 'bg-amber-500';
 
   return (
     <div className="space-y-1.5">
@@ -441,7 +441,7 @@ function FitBar({ label, value, maxVal, icon: Icon, description }: {
           <Icon className="size-4 text-slate-400" />
           {label}
         </span>
-        <span className={`text-sm font-bold ${value >= 90 ? 'text-emerald-600' : value >= 70 ? 'text-[#0057B8]' : 'text-amber-600'}`}>
+        <span className={`text-sm font-bold ${value >= 90 ? 'text-emerald-600' : value >= 70 ? 'text-[#0B5ED7]' : 'text-amber-600'}`}>
           {value}%
         </span>
       </div>
@@ -582,14 +582,14 @@ function AiMatchCard({ course }: { course: AiMatchCourse }) {
           <AccordionItem value="why" className="border-b-0">
             <AccordionTrigger className="py-3 text-sm font-semibold text-slate-800 hover:no-underline">
               <span className="flex items-center gap-2">
-                <Info className="size-4 text-[#0057B8]" />
+                <Info className="size-4 text-[#0B5ED7]" />
                 Why This Course?
               </span>
             </AccordionTrigger>
             <AccordionContent>
               <ul className="space-y-2 pl-6">
                 {course.whyThisCourse.map((point, i) => (
-                  <li key={i} className="text-sm text-slate-600 leading-relaxed list-disc marker:text-[#0057B8]">
+                  <li key={i} className="text-sm text-slate-600 leading-relaxed list-disc marker:text-[#0B5ED7]">
                     {point}
                   </li>
                 ))}
@@ -618,7 +618,7 @@ function AiMatchCard({ course }: { course: AiMatchCourse }) {
 
         {/* Actions */}
         <div className="flex items-center gap-3 flex-wrap">
-          <Button variant="cta" className="flex-1 min-w-[120px]">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" className="flex-1 min-w-[120px]">
             Apply Now
           </Button>
           <Button
@@ -661,7 +661,7 @@ export default function StudentAiMatch() {
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Explanation Card ─────────────────────────────────────── */}
-      <section className="bg-gradient-to-r from-[#0057B8] to-[#003d8f] px-4 py-8 md:py-10">
+      <section className="bg-gradient-to-r from-[#0B5ED7] to-[#003d8f] px-4 py-8 md:py-10">
         <div className="max-w-5xl mx-auto">
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 md:p-8">
             <div className="flex items-start gap-4">

@@ -18,8 +18,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#0057B8';
-const ALO_ORANGE = '#E8501A';
+const ALO_BLUE = '#0B5ED7';
+const ALO_ORANGE = '#F97316';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface UniversityData {
@@ -151,15 +151,15 @@ function getTypeBadgeClasses(type: string | null | undefined): string {
 function getLevelBadgeClasses(level: string | undefined): string {
   switch (level?.toLowerCase()) {
     case 'undergraduate': case 'bachelor':
-      return 'bg-[#0057B8]/10 text-[#0057B8]';
+      return 'bg-[#0B5ED7]/10 text-[#0B5ED7]';
     case 'postgraduate': case 'master':
-      return 'bg-[#0057B8]/20 text-[#0057B8]';
+      return 'bg-[#0B5ED7]/20 text-[#0B5ED7]';
     case 'phd': case 'doctorate':
-      return 'bg-[#0057B8]/30 text-[#0057B8]';
+      return 'bg-[#0B5ED7]/30 text-[#0B5ED7]';
     case 'foundation':
       return 'bg-sky-100 text-sky-800';
     case 'diploma': case 'certificate':
-      return 'bg-[#0057B8]/15 text-[#0057B8]';
+      return 'bg-[#0B5ED7]/15 text-[#0B5ED7]';
     default:
       return 'bg-slate-100 text-slate-700';
   }
@@ -293,7 +293,7 @@ function CourseCard({ course }: { course: CourseData }) {
             href={course.officialCourseUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-[#0057B8] hover:underline mt-1"
+            className="inline-flex items-center gap-1 text-xs text-[#0B5ED7] hover:underline mt-1"
           >
             View on Official Website <ExternalLink className="size-3" />
           </a>
@@ -538,7 +538,7 @@ export function UniversityDetailEnhanced({
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500">
           <button
             onClick={onBack}
-            className="hover:text-[#0057B8] transition-colors flex items-center gap-1"
+            className="hover:text-[#0B5ED7] transition-colors flex items-center gap-1"
           >
             <ChevronUp className="size-3 rotate-[-90deg]" />
             Universities
@@ -550,13 +550,13 @@ export function UniversityDetailEnhanced({
 
       {/* ═══ Hero Section ═══ */}
       <section
-        className="relative bg-gradient-to-br from-[#0057B8]/5 via-white to-[#0057B8]/10"
+        className="relative bg-gradient-to-br from-[#0B5ED7]/5 via-white to-[#0B5ED7]/10"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
           {/* Back Button */}
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] transition-colors mb-6"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0B5ED7] transition-colors mb-6"
           >
             <ArrowLeft className="size-4" />
             Back to University Directory
@@ -704,7 +704,7 @@ export function UniversityDetailEnhanced({
       {/* ═══ Eligibility Profile Section ═══ */}
       {eligibilityProfile && (
         <section className="max-w-6xl mx-auto px-4 sm:px-6 mt-6">
-          <Card className="border-[#0057B8]/20 bg-[#0057B8]/5">
+          <Card className="border-[#0B5ED7]/20 bg-[#0B5ED7]/5">
             <CardContent className="p-5">
               <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
                 <Heart className="size-4" style={{ color: ALO_ORANGE }} />
@@ -785,7 +785,7 @@ export function UniversityDetailEnhanced({
                     href={uni.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0057B8]/30 hover:bg-[#0057B8]/5 transition-colors"
+                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0B5ED7]/30 hover:bg-[#0B5ED7]/5 transition-colors"
                   >
                     <Globe className="size-4 text-slate-400" />
                     <div className="min-w-0 flex-1">
@@ -800,7 +800,7 @@ export function UniversityDetailEnhanced({
                     href={uni.admissionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0057B8]/30 hover:bg-[#0057B8]/5 transition-colors"
+                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0B5ED7]/30 hover:bg-[#0B5ED7]/5 transition-colors"
                   >
                     <FileText className="size-4 text-slate-400" />
                     <div className="min-w-0 flex-1">
@@ -815,7 +815,7 @@ export function UniversityDetailEnhanced({
                     href={uni.internationalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0057B8]/30 hover:bg-[#0057B8]/5 transition-colors"
+                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0B5ED7]/30 hover:bg-[#0B5ED7]/5 transition-colors"
                   >
                     <Languages className="size-4 text-slate-400" />
                     <div className="min-w-0 flex-1">
@@ -926,7 +926,7 @@ export function UniversityDetailEnhanced({
                   <p className="text-slate-400 text-sm mt-1">
                     We are continuously adding courses. Check back soon or{' '}
                     <button
-                      className="text-[#0057B8] hover:underline"
+                      className="text-[#0B5ED7] hover:underline"
                       onClick={() => toast.info('Connecting you with a counsellor...')}
                     >
                       speak to a counsellor
@@ -1007,7 +1007,7 @@ export function UniversityDetailEnhanced({
                     </Button>
                     <Button
                       variant="outline"
-                      className="text-[#E8501A] border-[#E8501A]/30 hover:bg-[#E8501A]/5"
+                      className="text-[#F97316] border-[#F97316]/30 hover:bg-[#F97316]/5"
                       onClick={() => toast.info('Connecting you with a counsellor...')}
                     >
                       <MessageCircle className="size-4 mr-2" />
@@ -1086,7 +1086,7 @@ export function UniversityDetailEnhanced({
                                 href={r.sourceUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-[#0057B8] hover:underline mt-2"
+                                className="inline-flex items-center gap-1 text-xs text-[#0B5ED7] hover:underline mt-2"
                               >
                                 View Official Source <ExternalLink className="size-3" />
                               </a>
@@ -1193,7 +1193,7 @@ export function UniversityDetailEnhanced({
       )}
 
       {/* ═══ CTA Section ═══ */}
-      <div className="bg-gradient-to-r from-[#0057B8]/5 via-[#0057B8]/10 to-[#0057B8]/5">
+      <div className="bg-gradient-to-r from-[#0B5ED7]/5 via-[#0B5ED7]/10 to-[#0B5ED7]/5">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
           <div className="text-center mb-6">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">

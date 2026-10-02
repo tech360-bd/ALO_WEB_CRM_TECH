@@ -772,7 +772,7 @@ function ScholarshipCard({
               'Apply'
             )}
           </Button>
-          <Button variant="outline" size="sm" className="gap-1.5">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1.5">
             <ExternalLink className="size-3.5" />
             <span className="hidden sm:inline">Details</span>
           </Button>

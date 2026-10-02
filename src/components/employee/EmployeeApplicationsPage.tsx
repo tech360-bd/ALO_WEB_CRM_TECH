@@ -156,7 +156,7 @@ export default function EmployeeApplicationsPage() {
           <h1 className="text-2xl font-bold text-alo-text">Applications</h1>
           <p className="text-sm text-alo-text-muted mt-1">Track and manage student applications across all stages</p>
         </div>
-        <Button variant="brand" size="sm"><Plus className="w-4 h-4" /> New Application</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Plus className="w-4 h-4" /> New Application</Button>
       </div>
 
       <Card className="bg-white rounded-xl border border-alo-border overflow-hidden">

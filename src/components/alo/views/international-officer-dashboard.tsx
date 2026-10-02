@@ -297,7 +297,7 @@ export function InternationalOfficerDashboard() {
                       </div>
                     </div>
                     <ul className="mt-2 space-y-1">
-                      {m.steps.map((s, j) => (<li key={j} className="text-xs text-[#475569] flex gap-1.5"><span className="text-[#0057B8]">•</span>{s}</li>))}
+                      {m.steps.map((s, j) => (<li key={j} className="text-xs text-[#475569] flex gap-1.5"><span className="text-[#0B5ED7]">•</span>{s}</li>))}
                     </ul>
                   </div>
                 ))}
@@ -359,7 +359,7 @@ export function InternationalOfficerDashboard() {
 
         {/* Research */}
         <TabsContent value="research" className="space-y-4">
-          <SectionCard title="University Research Activities" description="Track research, outreach, agreement negotiations, leveraging UniversityResearchEvidence & DigitalTwin" icon="BookMarked" action={<Button onClick={() => setResearchFormOpen(true)} className="h-9 bg-[#0057B8] text-white hover:bg-[#004494]"><Icon name="Plus" className="size-4" />New Activity</Button>}>
+          <SectionCard title="University Research Activities" description="Track research, outreach, agreement negotiations, leveraging UniversityResearchEvidence & DigitalTwin" icon="BookMarked" action={<Button onClick={() => setResearchFormOpen(true)} className="h-9 bg-[#0B5ED7] text-white hover:bg-[#004494]"><Icon name="Plus" className="size-4" />New Activity</Button>}>
             {researchActivities.length===0 ? <EmptyState icon="FileSearch" title="No research activities" description="Create first university research activity" /> : (
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {researchActivities.map((r) => (
@@ -381,7 +381,7 @@ export function InternationalOfficerDashboard() {
 
         {/* Communications */}
         <TabsContent value="communications" className="space-y-4">
-          <SectionCard title="Partnership Communications" description="Emails, agreements, calls, meetings timeline — integrated with OfficialEmail & UniversityAgreement" icon="Mail" action={<Button onClick={() => setCommFormOpen(true)} className="h-9 bg-[#0057B8] text-white hover:bg-[#004494]"><Icon name="Plus" className="size-4" />Log Communication</Button>}>
+          <SectionCard title="Partnership Communications" description="Emails, agreements, calls, meetings timeline — integrated with OfficialEmail & UniversityAgreement" icon="Mail" action={<Button onClick={() => setCommFormOpen(true)} className="h-9 bg-[#0B5ED7] text-white hover:bg-[#004494]"><Icon name="Plus" className="size-4" />Log Communication</Button>}>
             {communications.length===0 ? <EmptyState icon="Mail" title="No communications logged" description="Start logging partnership emails and meetings" /> : (
               <div className="space-y-2">
                 {communications.map((c) => (
@@ -396,7 +396,7 @@ export function InternationalOfficerDashboard() {
 
         {/* Contacts */}
         <TabsContent value="contacts" className="space-y-4">
-          <SectionCard title="Contact Details" description="B2B contacts for universities, agents, partners — name, organization, email, phone, position, notes, last contacted" icon="Contact" action={<Button onClick={() => setContactFormOpen(true)} className="h-9 bg-[#0057B8] text-white hover:bg-[#004494]"><Icon name="Plus" className="size-4" />Add Contact</Button>}>
+          <SectionCard title="Contact Details" description="B2B contacts for universities, agents, partners — name, organization, email, phone, position, notes, last contacted" icon="Contact" action={<Button onClick={() => setContactFormOpen(true)} className="h-9 bg-[#0B5ED7] text-white hover:bg-[#004494]"><Icon name="Plus" className="size-4" />Add Contact</Button>}>
             {contacts.length===0 ? <EmptyState icon="Contact" title="No contacts" description="Add university contacts to start outreach" /> : (
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {contacts.map((ct) => (
@@ -409,7 +409,7 @@ export function InternationalOfficerDashboard() {
 
         {/* Agreements */}
         <TabsContent value="agreements" className="space-y-4">
-          <SectionCard title="University Agreements" description="Manage partnership agreements — ALO-AGR-XXXXX, status PENDING/ACTIVE, type AGENT/COMMISSION, researchData JSON" icon="FileSignature" action={<Button onClick={() => setAgreementFormOpen(true)} className="h-9 bg-[#0057B8] text-white hover:bg-[#004494]"><Icon name="Plus" className="size-4" />New Agreement</Button>}>
+          <SectionCard title="University Agreements" description="Manage partnership agreements — ALO-AGR-XXXXX, status PENDING/ACTIVE, type AGENT/COMMISSION, researchData JSON" icon="FileSignature" action={<Button onClick={() => setAgreementFormOpen(true)} className="h-9 bg-[#0B5ED7] text-white hover:bg-[#004494]"><Icon name="Plus" className="size-4" />New Agreement</Button>}>
             {agreements.length===0 ? <EmptyState icon="FileSignature" title="No agreements" description="Create agreement request to start partnership" /> : (
               <div className="space-y-2">
                 {agreements.map((a) => (
@@ -468,7 +468,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid gap-1"><Label>Description</Label><Textarea value={researchForm.description} onChange={(e) => setResearchForm({ ...researchForm, description: e.target.value })} rows={3} /></div>
             <div className="grid gap-1"><Label>Next Action</Label><Input value={researchForm.nextAction} onChange={(e) => setResearchForm({ ...researchForm, nextAction: e.target.value })} placeholder="Send email to international office" /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setResearchFormOpen(false)}>Cancel</Button><Button onClick={handleCreateResearch} className="bg-[#0057B8] text-white">Create</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setResearchFormOpen(false)}>Cancel</Button><Button onClick={handleCreateResearch} className="bg-[#0B5ED7] text-white">Create</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -481,7 +481,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid gap-1"><Label>Body</Label><Textarea value={commForm.body} onChange={(e) => setCommForm({ ...commForm, body: e.target.value })} rows={4} /></div>
             <div className="grid grid-cols-2 gap-2"><div className="grid gap-1"><Label>Contact Name</Label><Input value={commForm.contactName} onChange={(e) => setCommForm({ ...commForm, contactName: e.target.value })} /></div><div className="grid gap-1"><Label>Contact Email</Label><Input value={commForm.contactEmail} onChange={(e) => setCommForm({ ...commForm, contactEmail: e.target.value })} /></div></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setCommFormOpen(false)}>Cancel</Button><Button onClick={handleCreateComm} className="bg-[#0057B8] text-white">Log</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setCommFormOpen(false)}>Cancel</Button><Button onClick={handleCreateComm} className="bg-[#0B5ED7] text-white">Log</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -494,7 +494,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid gap-1"><Label>Position</Label><Input value={contactForm.position} onChange={(e) => setContactForm({ ...contactForm, position: e.target.value })} placeholder="International Officer, Partnership Manager" /></div>
             <div className="grid gap-1"><Label>Notes</Label><Textarea value={contactForm.notes} onChange={(e) => setContactForm({ ...contactForm, notes: e.target.value })} rows={2} /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setContactFormOpen(false)}>Cancel</Button><Button onClick={handleCreateContact} className="bg-[#0057B8] text-white">Add Contact</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setContactFormOpen(false)}>Cancel</Button><Button onClick={handleCreateContact} className="bg-[#0B5ED7] text-white">Add Contact</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -506,7 +506,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid grid-cols-2 gap-2"><div className="grid gap-1"><Label>Contact Name</Label><Input value={agreementForm.contactName} onChange={(e) => setAgreementForm({ ...agreementForm, contactName: e.target.value })} /></div><div className="grid gap-1"><Label>Contact Email</Label><Input value={agreementForm.contactEmail} onChange={(e) => setAgreementForm({ ...agreementForm, contactEmail: e.target.value })} /></div></div>
             <div className="grid gap-1"><Label>Notes</Label><Textarea value={agreementForm.notes} onChange={(e) => setAgreementForm({ ...agreementForm, notes: e.target.value })} rows={2} /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setAgreementFormOpen(false)}>Cancel</Button><Button onClick={handleCreateAgreement} className="bg-[#0057B8] text-white">Request Agreement</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setAgreementFormOpen(false)}>Cancel</Button><Button onClick={handleCreateAgreement} className="bg-[#0B5ED7] text-white">Request Agreement</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 

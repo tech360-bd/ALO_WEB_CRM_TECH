@@ -100,7 +100,7 @@ export function CrmInvoices() {
                 variant={filter === f ? "default" : "outline"}
                 className={
                   filter === f
-                    ? "bg-[#0066CC] text-white"
+                    ? "bg-[#0B5ED7] text-white"
                     : "border-[#DCE8F5] text-[#5A7299]"
                 }
                 onClick={() => setFilter(f)}
@@ -165,7 +165,7 @@ export function CrmInvoices() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-7 border-[#DCE8F5] text-xs text-[#0066CC] hover:bg-[#EAF3FF]"
+                              className="h-7 border-[#DCE8F5] text-xs text-[#0B5ED7] hover:bg-[#EAF3FF]"
                               onClick={() => handleDownload(p.id, p.paymentId)}
                             >
                               <Icon name="Download" className="mr-1 size-3" /> Invoice
@@ -203,7 +203,7 @@ export function CrmInvoices() {
                             <td className="px-5 py-3 font-mono text-[#0B2447]">
                               {c.paymentId}
                             </td>
-                            <td className="px-5 py-3 font-semibold text-[#F37021]">
+                            <td className="px-5 py-3 font-semibold text-[#F97316]">
                               {(c.commissionAmount || 0).toLocaleString()} {c.currency || "BDT"}
                             </td>
                             <td className="px-5 py-3">
@@ -212,7 +212,7 @@ export function CrmInvoices() {
                                   c.commissionStatus === "PAID"
                                     ? "bg-emerald-100 text-emerald-700"
                                     : c.commissionStatus === "APPROVED"
-                                    ? "bg-[#EAF3FF] text-[#0066CC]"
+                                    ? "bg-[#EAF3FF] text-[#0B5ED7]"
                                     : "bg-amber-100 text-amber-700"
                                 }
                               >

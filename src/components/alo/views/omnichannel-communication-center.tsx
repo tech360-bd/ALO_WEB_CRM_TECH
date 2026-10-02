@@ -554,28 +554,28 @@ export function OmnichannelCommunicationCenter() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5">
         <div className="overflow-x-auto alo-scroll rounded-xl border border-[#E2E8F0] bg-white p-1.5">
           <TabsList className="h-auto w-max gap-1 bg-transparent">
-            <TabsTrigger value="connected-accounts" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="connected-accounts" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0B5ED7]">
               <Icon name="Link" className="size-3.5 mr-1.5" /> Connected Accounts
             </TabsTrigger>
-            <TabsTrigger value="unified-timeline" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="unified-timeline" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0B5ED7]">
               <Icon name="Layers" className="size-3.5 mr-1.5" /> Unified Timeline
             </TabsTrigger>
-            <TabsTrigger value="phone-calls" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="phone-calls" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0B5ED7]">
               <Icon name="Phone" className="size-3.5 mr-1.5" /> Phone Calls
             </TabsTrigger>
-            <TabsTrigger value="emails" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="emails" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0B5ED7]">
               <Icon name="Mail" className="size-3.5 mr-1.5" /> Emails
             </TabsTrigger>
-            <TabsTrigger value="sms" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="sms" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0B5ED7]">
               <Icon name="MessageSquare" className="size-3.5 mr-1.5" /> SMS
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0B5ED7]">
               <Icon name="Bell" className="size-3.5 mr-1.5" /> Notifications
             </TabsTrigger>
-            <TabsTrigger value="consent" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="consent" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0B5ED7]">
               <Icon name="ShieldCheck" className="size-3.5 mr-1.5" /> Consent Management
             </TabsTrigger>
-            <TabsTrigger value="ai-classification" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="ai-classification" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0B5ED7]">
               <Icon name="Sparkles" className="size-3.5 mr-1.5" /> AI Document Classification
             </TabsTrigger>
           </TabsList>
@@ -622,7 +622,7 @@ export function OmnichannelCommunicationCenter() {
       <SectionCard
         title="Chairman Command Center"
         icon="Crown"
-        className="border-[#0057B8]/20 bg-[#EFF6FF]/40"
+        className="border-[#0B5ED7]/20 bg-[#EFF6FF]/40"
       >
         <p className="body-text text-[#0F172A]">
           Chairman can monitor all official communication accounts, assign channels to branches,
@@ -725,7 +725,7 @@ function ConnectedAccountsTab({
 
       <div className="rounded-xl border border-[#E2E8F0] bg-[#EFF6FF]/30 px-4 py-3">
         <div className="flex items-start gap-2.5">
-          <Icon name="ShieldCheck" className="size-4 mt-0.5 text-[#0057B8] shrink-0" />
+          <Icon name="ShieldCheck" className="size-4 mt-0.5 text-[#0B5ED7] shrink-0" />
           <p className="body-text text-[#0F172A]">
             <strong>Security:</strong> Tokens are encrypted. Passwords are never stored. OAuth 2.0
             only.
@@ -795,7 +795,7 @@ function ConnectedAccountsTab({
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-9 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
+                      className="h-9 border-[#E2E8F0] text-[#0B5ED7] hover:bg-[#EFF6FF]"
                       disabled={busyId === acc.id || isDisconnected}
                       onClick={() => handleAction(acc, "sync")}
                     >
@@ -906,7 +906,7 @@ function ConnectAccountDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="Link" className="size-5 text-[#0057B8]" />
+            <Icon name="Link" className="size-5 text-[#0B5ED7]" />
             Connect Communication Account
           </DialogTitle>
           <DialogDescription>
@@ -1031,7 +1031,7 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
         action={
           <Button
             variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
+            className="h-11 border-[#E2E8F0] text-[#0B5ED7] hover:bg-[#EFF6FF]"
             onClick={() =>
               toast({
                 title: "Timeline exported",
@@ -1083,7 +1083,7 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
           <div className="relative max-h-[40rem] overflow-y-auto alo-scroll pr-2">
             <div className="relative pl-6">
               {/* Vertical connector */}
-              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#0057B8] via-[#2563EB] to-[#E2E8F0]" />
+              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#0B5ED7] via-[#2563EB] to-[#E2E8F0]" />
               <ul className="space-y-5">
                 {filtered.map((ev, idx) => {
                   const meta =
@@ -1281,7 +1281,7 @@ function LogCallDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="PhoneCall" className="size-5 text-[#0057B8]" />
+            <Icon name="PhoneCall" className="size-5 text-[#0B5ED7]" />
             Log Phone Call
           </DialogTitle>
           <DialogDescription>
@@ -1321,7 +1321,7 @@ function LogCallDialog({
             </div>
             <div className="space-y-1.5">
               <Label className="text-[#0F172A]">To *</Label>
-              <Input className="h-11 font-mono" placeholder="+8801XXXXXXXXX" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
+              <Input className="h-11 font-mono" placeholder="+8801805020100" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
             </div>
           </div>
           <div className="space-y-1.5">
@@ -1388,7 +1388,7 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
           </Select>
           <Button
             variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
+            className="h-11 border-[#E2E8F0] text-[#0B5ED7] hover:bg-[#EFF6FF]"
             onClick={() => toast({ title: "Email sync started", description: "Checking for new messages…" })}
           >
             <Icon name="RefreshCw" className="size-4 mr-2" />
@@ -1600,7 +1600,7 @@ function SendSmsDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="Send" className="size-5 text-[#0057B8]" />
+            <Icon name="Send" className="size-5 text-[#0B5ED7]" />
             Send SMS
           </DialogTitle>
           <DialogDescription>
@@ -1610,7 +1610,7 @@ function SendSmsDialog({
         <div className="space-y-3">
           <div className="space-y-1.5">
             <Label className="text-[#0F172A]">Recipient Number *</Label>
-            <Input className="h-11 font-mono" placeholder="+8801XXXXXXXXX" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
+            <Input className="h-11 font-mono" placeholder="+8801805020100" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
           </div>
           <div className="space-y-1.5">
             <Label className="text-[#0F172A]">Message *</Label>
@@ -1729,7 +1729,7 @@ function NotificationsTab({
           </Select>
           <Button
             variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
+            className="h-11 border-[#E2E8F0] text-[#0B5ED7] hover:bg-[#EFF6FF]"
             disabled={busy}
             onClick={markAllRead}
           >
@@ -1751,7 +1751,7 @@ function NotificationsTab({
                   "rounded-xl border px-4 py-3 transition",
                   n.isRead
                     ? "border-[#E2E8F0] bg-white"
-                    : "border-[#0057B8]/30 bg-[#EFF6FF]/40"
+                    : "border-[#0B5ED7]/30 bg-[#EFF6FF]/40"
                 )}
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -1774,7 +1774,7 @@ function NotificationsTab({
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-8 text-[#0057B8] hover:bg-[#EFF6FF]"
+                    className="h-8 text-[#0B5ED7] hover:bg-[#EFF6FF]"
                     onClick={() => markOne(n.id, n.isRead)}
                   >
                     {n.isRead ? "Mark unread" : "Mark read"}
@@ -1957,7 +1957,7 @@ function UpdateConsentDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="ShieldCheck" className="size-5 text-[#0057B8]" />
+            <Icon name="ShieldCheck" className="size-5 text-[#0B5ED7]" />
             Update Consent
           </DialogTitle>
           <DialogDescription>
@@ -2051,7 +2051,7 @@ function AiClassificationTab({
         <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4">
           <div className="flex items-center justify-between">
             <p className="badge-text uppercase tracking-wide text-[#64748B]">Classified</p>
-            <Icon name="Sparkles" className="size-5 text-[#0057B8]" />
+            <Icon name="Sparkles" className="size-5 text-[#0B5ED7]" />
           </div>
           <p className="mt-1 text-3xl font-bold text-[#0F172A] tabular-nums">{classifications.length}</p>
         </div>
@@ -2117,7 +2117,7 @@ function AiClassificationTab({
                   <TableRow key={c.id} className="border-[#E2E8F0]">
                     <TableCell className="font-mono text-xs text-[#0F172A]">{c.documentId}</TableCell>
                     <TableCell>
-                      <Badge className="bg-[#EFF6FF] text-[#0057B8] border border-[#2563EB]/30">
+                      <Badge className="bg-[#EFF6FF] text-[#0B5ED7] border border-[#2563EB]/30">
                         {c.detectedType}
                       </Badge>
                     </TableCell>
@@ -2160,7 +2160,7 @@ function AiClassificationTab({
               key={t.code}
               className="flex items-center gap-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2"
             >
-              <Icon name="FileCheck2" className="size-3.5 text-[#0057B8] shrink-0" />
+              <Icon name="FileCheck2" className="size-3.5 text-[#0B5ED7] shrink-0" />
               <div className="min-w-0">
                 <p className="badge-text font-mono text-[#0F172A] truncate">{t.code}</p>
                 <p className="text-[11px] text-[#64748B] truncate">{t.label}</p>
@@ -2263,7 +2263,7 @@ function RunClassificationDialog({
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="Sparkles" className="size-5 text-[#0057B8]" />
+            <Icon name="Sparkles" className="size-5 text-[#0B5ED7]" />
             Run AI Document Classification
           </DialogTitle>
           <DialogDescription>
@@ -2293,11 +2293,11 @@ function RunClassificationDialog({
           </div>
 
           {result && (
-            <div className="rounded-xl border border-[#0057B8]/30 bg-[#EFF6FF]/40 p-4">
+            <div className="rounded-xl border border-[#0B5ED7]/30 bg-[#EFF6FF]/40 p-4">
               <div className="flex items-center justify-between">
                 <p className="card-title text-[#0F172A]">AI Result</p>
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-[#0057B8] text-white">{result.detectedType}</Badge>
+                  <Badge className="bg-[#0B5ED7] text-white">{result.detectedType}</Badge>
                   <Badge className="bg-emerald-100 text-emerald-700">
                     {Math.round(result.confidence * 100)}% confidence
                   </Badge>

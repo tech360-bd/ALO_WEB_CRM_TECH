@@ -13,7 +13,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  SCHEDULED: "bg-[#EAF3FF] text-[#0066CC]",
+  SCHEDULED: "bg-[#EAF3FF] text-[#0B5ED7]",
   COMPLETED: "bg-emerald-100 text-emerald-700",
   CANCELLED: "bg-rose-100 text-rose-700",
   NO_SHOW: "bg-amber-100 text-amber-700",
@@ -113,8 +113,8 @@ export function CrmAppointments() {
                         <div
                           className={`flex size-9 items-center justify-center rounded-lg text-sm font-bold ${
                             isToday
-                              ? "bg-[#F37021] text-white"
-                              : "bg-[#EAF3FF] text-[#0066CC]"
+                              ? "bg-[#F97316] text-white"
+                              : "bg-[#EAF3FF] text-[#0B5ED7]"
                           }`}
                         >
                           {d.getDate()}
@@ -129,7 +129,7 @@ export function CrmAppointments() {
                             })}
                           </p>
                           {isToday && (
-                            <p className="text-xs font-medium text-[#F37021]">Today</p>
+                            <p className="text-xs font-medium text-[#F97316]">Today</p>
                           )}
                         </div>
                       </div>
@@ -156,7 +156,7 @@ export function CrmAppointments() {
                                 </Badge>
                               </div>
                               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-                                <Badge variant="outline" className="text-[#0066CC]">
+                                <Badge variant="outline" className="text-[#0B5ED7]">
                                   {TYPE_LABELS[a.type] || a.type}
                                 </Badge>
                                 {a.location && (

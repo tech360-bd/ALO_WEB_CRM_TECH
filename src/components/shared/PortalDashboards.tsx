@@ -96,7 +96,7 @@ export function AdmissionsDashboard({ stats }: any) {
         <KpiCard title="Offers" value={stats?.offers ?? 14} icon={GraduationCap} />
         <KpiCard title="Rejected/Correction" value={stats?.rejected ?? 6} trend="down" icon={AlertTriangle} />
       </KpiGrid>
-      <SectionCard title="SLA Breaches" description="Applications past deadline"><DataTableFrame><Table><TableHeader><TableRow><TableHead>Application</TableHead><TableHead>Days Open</TableHead><TableHead>Action</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>APP-821 • UAL</TableCell><TableCell>5 days</TableCell><TableCell><Button size="sm" variant="outline">Open</Button></TableCell></TableRow></TableBody></Table></DataTableFrame></SectionCard>
+      <SectionCard title="SLA Breaches" description="Applications past deadline"><DataTableFrame><Table><TableHeader><TableRow><TableHead>Application</TableHead><TableHead>Days Open</TableHead><TableHead>Action</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>APP-821 • UAL</TableCell><TableCell>5 days</TableCell><TableCell><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline">Open</Button></TableCell></TableRow></TableBody></Table></DataTableFrame></SectionCard>
     </div>
   );
 }
@@ -186,7 +186,7 @@ export function PartnerDashboard({ stats }: any) {
 export function DataDashboard({ stats }: any) {
   return (
     <div className="space-y-6">
-      <PageHeader title="University Data Management" subtitle="Coverage, freshness, validation" actions={<Button className="bg-orange-500"><Plus className="w-4 h-4 mr-1"/> Add University</Button>} />
+      <PageHeader title="University Data Management" subtitle="Coverage, freshness, validation" actions={<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500"><Plus className="w-4 h-4 mr-1"/> Add University</Button>} />
       <KpiGrid>
         <KpiCard title="Universities" value={stats?.unis ?? 342} icon={Building2} />
         <KpiCard title="Courses" value={stats?.courses ?? 12840} icon={BookOpen} />
@@ -264,7 +264,7 @@ export function COODashboard({ stats }: any) {
 export function SuperAdminDashboard({ stats }: any) {
   return (
     <div className="space-y-6">
-      <PageHeader title="System Overview" subtitle="Users, branches, workflows, health" actions={<Button variant="outline"><Settings className="w-4 h-4 mr-1"/> Settings</Button>} />
+      <PageHeader title="System Overview" subtitle="Users, branches, workflows, health" actions={<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline"><Settings className="w-4 h-4 mr-1"/> Settings</Button>} />
       <KpiGrid>
         <KpiCard title="Active Users" value={stats?.users ?? 87} icon={Users} />
         <KpiCard title="Branches" value={stats?.branches ?? 4} icon={Building2} />

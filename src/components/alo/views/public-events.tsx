@@ -108,7 +108,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0066CC]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -117,12 +117,12 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F37021] border border-[#F37021]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
               <Icon name="Calendar" className="mr-1 size-3" />
               Free to Attend
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Events &amp; <span className="text-[#0066CC]">Webinars</span>
+              Events &amp; <span className="text-[#0B5ED7]">Webinars</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Join our free webinars, workshops, info sessions, and in-person events. Learn about study destinations,
@@ -139,7 +139,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             onClick={() => setFilter("upcoming")}
             className={cn(
               "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
-              filter === "upcoming" ? "bg-[#0066CC] text-white" : "border border-[#0066CC]/20 bg-white text-[#0066CC] hover:bg-[#EAF3FF]"
+              filter === "upcoming" ? "bg-[#0B5ED7] text-white" : "border border-[#0B5ED7]/20 bg-white text-[#0B5ED7] hover:bg-[#EAF3FF]"
             )}
           >
             Upcoming Events
@@ -148,7 +148,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             onClick={() => setFilter("all")}
             className={cn(
               "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
-              filter === "all" ? "bg-[#0066CC] text-white" : "border border-[#0066CC]/20 bg-white text-[#0066CC] hover:bg-[#EAF3FF]"
+              filter === "all" ? "bg-[#0B5ED7] text-white" : "border border-[#0B5ED7]/20 bg-white text-[#0B5ED7] hover:bg-[#EAF3FF]"
             )}
           >
             All Events
@@ -158,17 +158,17 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
         {/* Featured */}
         {!loading && featured.length > 0 && (
           <div className="mb-10">
-            <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-[#F37021]">⭐ Featured Events</h2>
+            <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-[#F97316]">⭐ Featured Events</h2>
             <div className="grid gap-5 lg:grid-cols-2">
               {featured.slice(0, 2).map((event) => (
                 <Card
                   key={event.id}
-                  className="alo-card-hover group cursor-pointer rounded-2xl border-2 border-[#F37021]/25 bg-gradient-to-br from-[#FFF3EA]/30 to-white transition-all hover:-translate-y-1 hover:shadow-lg"
+                  className="alo-card-hover group cursor-pointer rounded-2xl border-2 border-[#F97316]/25 bg-gradient-to-br from-[#FFF3EA]/30 to-white transition-all hover:-translate-y-1 hover:shadow-lg"
                   onClick={() => onNavigate("public-events", event.slug)}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between gap-2">
-                      <Badge className="bg-[#F37021] text-white hover:bg-[#F37021]">
+                      <Badge className="bg-[#F97316] text-white hover:bg-[#F97316]">
                         <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="mr-1 size-3" />
                         {EVENT_TYPE_LABELS[event.eventType] || event.eventType}
                       </Badge>
@@ -176,18 +176,18 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
                         Free
                       </span>
                     </div>
-                    <h3 className="mt-3 text-lg font-bold text-[#0B2447] group-hover:text-[#F37021]">{event.title}</h3>
+                    <h3 className="mt-3 text-lg font-bold text-[#0B2447] group-hover:text-[#F97316]">{event.title}</h3>
                     {event.subtitle && (
                       <p className="mt-1 text-sm text-[#5A7299]">{event.subtitle}</p>
                     )}
                     <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{event.description}</p>
                     <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-[#5A7299]">
                       <span className="flex items-center gap-1.5">
-                        <Icon name="Calendar" className="size-3.5 text-[#0066CC]" />
+                        <Icon name="Calendar" className="size-3.5 text-[#0B5ED7]" />
                         {fmtDate(event.eventDate)}
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <Icon name="MapPin" className="size-3.5 text-[#0066CC]" />
+                        <Icon name="MapPin" className="size-3.5 text-[#0B5ED7]" />
                         {event.location}
                       </span>
                     </div>
@@ -218,7 +218,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             title="No events scheduled"
             description="We're planning our next events — check back soon or contact us if you have a topic request."
             action={
-              <Button onClick={() => onNavigate("public-contact")} className="bg-[#0066CC] text-white hover:bg-[#0066CC]/90">
+              <Button onClick={() => onNavigate("public-contact")} className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90">
                 <Icon name="Phone" className="size-4" /> Contact Us
               </Button>
             }
@@ -234,31 +234,31 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
                 <CardContent className="flex flex-1 flex-col p-5">
                   <div className="mb-3 aspect-[16/9] w-full rounded-xl bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
                     <div className="flex h-full items-center justify-center">
-                      <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="size-10 text-[#0066CC]/30" />
+                      <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="size-10 text-[#0B5ED7]/30" />
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-[#EAF3FF] text-[#0066CC]">
+                    <Badge variant="outline" className="bg-[#EAF3FF] text-[#0B5ED7]">
                       {EVENT_TYPE_LABELS[event.eventType] || event.eventType}
                     </Badge>
                     <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
                       {event.isFree ? "Free" : event.price}
                     </span>
                   </div>
-                  <h3 className="mt-2 line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#0066CC]">{event.title}</h3>
+                  <h3 className="mt-2 line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{event.title}</h3>
                   <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{event.description}</p>
                   <div className="mt-auto flex flex-col gap-2 pt-4 text-xs text-[#5A7299]">
                     <span className="flex items-center gap-1.5">
-                      <Icon name="Calendar" className="size-3.5 text-[#0066CC]" />
+                      <Icon name="Calendar" className="size-3.5 text-[#0B5ED7]" />
                       {fmtDate(event.eventDate)}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <Icon name="MapPin" className="size-3.5 text-[#0066CC]" />
+                      <Icon name="MapPin" className="size-3.5 text-[#0B5ED7]" />
                       {event.location}
                     </span>
                     {event.capacity && (
                       <span className="flex items-center gap-1.5">
-                        <Icon name="Users" className="size-3.5 text-[#0066CC]" />
+                        <Icon name="Users" className="size-3.5 text-[#0B5ED7]" />
                         {event.registeredCount} / {event.capacity} registered
                       </span>
                     )}
@@ -372,7 +372,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
             title="Event not found"
             description={error || "We couldn't find that event."}
             action={
-              <Button onClick={() => onNavigate("public-events")} className="bg-[#0066CC] text-white hover:bg-[#0066CC]/90">
+              <Button onClick={() => onNavigate("public-events")} className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90">
                 <Icon name="ArrowLeft" className="size-4" /> Back to Events
               </Button>
             }
@@ -391,7 +391,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0066CC]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6 lg:py-14">
           <Breadcrumb
             items={[
@@ -403,7 +403,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className="bg-[#F37021] text-white hover:bg-[#F37021]">
+                <Badge className="bg-[#F97316] text-white hover:bg-[#F97316]">
                   <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="mr-1 size-3" />
                   {EVENT_TYPE_LABELS[event.eventType] || event.eventType}
                 </Badge>
@@ -426,30 +426,30 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
               <p className="mt-4 text-base leading-relaxed text-[#5A7299]">{event.description}</p>
             </div>
             {/* Register card */}
-            <Card className="rounded-2xl border-2 border-[#0066CC]/15 bg-white alo-shadow">
+            <Card className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-white alo-shadow">
               <CardContent className="p-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#0066CC]">Event details</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#0B5ED7]">Event details</p>
                 <div className="mt-4 space-y-3 text-sm">
                   <div className="flex items-start gap-2.5">
-                    <Icon name="Calendar" className="mt-0.5 size-4 text-[#0066CC]" />
+                    <Icon name="Calendar" className="mt-0.5 size-4 text-[#0B5ED7]" />
                     <div>
                       <p className="font-semibold text-[#0B2447]">{fmtDate(event.eventDate)}</p>
                       <p className="text-xs text-[#5A7299]">{new Date(event.eventDate).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })} (BST)</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
-                    <Icon name="MapPin" className="mt-0.5 size-4 text-[#0066CC]" />
+                    <Icon name="MapPin" className="mt-0.5 size-4 text-[#0B5ED7]" />
                     <p className="font-medium text-[#0B2447]">{event.location}</p>
                   </div>
                   {event.capacity && (
                     <div className="flex items-start gap-2.5">
-                      <Icon name="Users" className="mt-0.5 size-4 text-[#0066CC]" />
+                      <Icon name="Users" className="mt-0.5 size-4 text-[#0B5ED7]" />
                       <p className="font-medium text-[#0B2447]">{event.registeredCount} / {event.capacity} registered</p>
                     </div>
                   )}
                 </div>
                 {!isPast && !registered && (
-                  <Button onClick={register} disabled={registering} className="mt-5 h-12 w-full bg-[#F37021] text-white hover:bg-[#c8451a]">
+                  <Button onClick={register} disabled={registering} className="mt-5 h-12 w-full bg-[#F97316] text-white hover:bg-[#c8451a]">
                     {registering ? (
                       <><Icon name="Loader2" className="size-4 animate-spin" /> Registering...</>
                     ) : (
@@ -484,7 +484,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
               if (block.type === "h2") return <h2 key={idx} className="mt-8 text-2xl font-black text-[#0B2447]">{block.text}</h2>;
               if (block.type === "h3") return <h3 key={idx} className="mt-6 text-xl font-bold text-[#0B2447]">{block.text}</h3>;
               if (block.type === "quote") return (
-                <blockquote key={idx} className="border-l-4 border-[#F37021] bg-[#FFF3EA]/50 px-5 py-4 text-base italic text-[#0B2447]">
+                <blockquote key={idx} className="border-l-4 border-[#F97316] bg-[#FFF3EA]/50 px-5 py-4 text-base italic text-[#0B2447]">
                   {block.text}
                 </blockquote>
               );
@@ -493,7 +493,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
                   <ul key={idx} className="space-y-2">
                     {block.items.map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-[15px] leading-relaxed text-[#0B2447]">
-                        <Icon name="ChevronRight" className="mt-1 size-4 shrink-0 text-[#0066CC]" />
+                        <Icon name="ChevronRight" className="mt-1 size-4 shrink-0 text-[#0B5ED7]" />
                         <span>{item}</span>
                       </li>
                     ))}

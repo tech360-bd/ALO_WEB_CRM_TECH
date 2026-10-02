@@ -334,7 +334,7 @@ export default function PartnerCommissionPage() {
                           {payment.date ? formatDate(payment.date) : '—'}
                         </TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="icon-sm" title="View Details">
+                          <Button disabled title="View Details — not yet wired (see BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm">
                             <Eye className="w-3.5 h-3.5" />
                           </Button>
                         </TableCell>

@@ -201,7 +201,7 @@ export default function PartnerLeadsPage() {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="brand">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand">
               <UserPlus className="w-4 h-4" /> Submit New Lead
             </Button>
           </DialogTrigger>

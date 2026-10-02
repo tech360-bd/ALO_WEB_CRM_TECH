@@ -75,7 +75,7 @@ export default function CrmCommissionsPage() {
                     <td className="py-3"><Badge className={p.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-yellow-100 text-yellow-700'}>{p.status}</Badge></td>
                     <td className="py-3 text-alo-text-muted">{p.createdAt?.substring(0, 10)}</td>
                     <td className="py-3 text-right">
-                      <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
                     </td>
                   </tr>
                 ))}

@@ -374,7 +374,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2"><span className="text-xs font-semibold">{msg.sender}</span><Badge className="text-[10px]">{platform?.name}</Badge>{msg.unread && <span className="w-2 h-2 bg-blue-600 rounded-full" />}<span className="text-[10px] text-gray-400 ml-auto">{msg.time}</span></div>
                         <p className="text-xs text-gray-700 mt-1">{msg.message}</p>
-                        <div className="flex items-center gap-2 mt-2"><Badge className={`text-[10px] ${msg.leadScore > 80 ? 'bg-green-100 text-green-700' : msg.leadScore > 60 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>Lead Score: {msg.leadScore}</Badge><Button size="sm" className="h-6 text-[10px]"><Bot className="w-3 h-3 mr-1" />AI Reply</Button><Button size="sm" variant="ghost" className="h-6 text-[10px]">View</Button></div>
+                        <div className="flex items-center gap-2 mt-2"><Badge className={`text-[10px] ${msg.leadScore > 80 ? 'bg-green-100 text-green-700' : msg.leadScore > 60 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>Lead Score: {msg.leadScore}</Badge><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-6 text-[10px]"><Bot className="w-3 h-3 mr-1" />AI Reply</Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-6 text-[10px]">View</Button></div>
                       </div>
                     </div>
                   );

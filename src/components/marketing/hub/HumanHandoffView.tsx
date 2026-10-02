@@ -250,13 +250,13 @@ export default function HumanHandoffView() {
                         <div className="flex items-center gap-2 shrink-0">
                           {h.status === 'waiting' && (
                             <>
-                              <Button size="sm" className="h-7 text-xs bg-green-600 hover:bg-green-700">
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 text-xs bg-green-600 hover:bg-green-700">
                                 <CheckCircle className="w-3 h-3 mr-1" />Accept
                               </Button>
-                              <Button size="sm" variant="outline" className="h-7 text-xs">
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-xs">
                                 <Eye className="w-3 h-3 mr-1" />View
                               </Button>
-                              <Button size="sm" variant="ghost" className="h-7 text-xs text-orange-600">
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7 text-xs text-orange-600">
                                 <ArrowRight className="w-3 h-3 mr-1" />Escalate
                               </Button>
                             </>
@@ -282,7 +282,7 @@ export default function HumanHandoffView() {
           <div className="mt-4 space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500">{followUpSequences.length} sequences configured</p>
-              <Button size="sm" className="bg-orange-500 hover:bg-orange-600"><Plus className="w-3.5 h-3.5 mr-1" />New Sequence</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-orange-500 hover:bg-orange-600"><Plus className="w-3.5 h-3.5 mr-1" />New Sequence</Button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

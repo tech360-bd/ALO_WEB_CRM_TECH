@@ -160,8 +160,8 @@ export default function EnterpriseUnifiedCommunicationCenter() {
       {/* UCC Top Bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-[#0057B8]/10 rounded-lg">
-            <MessageSquare className="w-6 h-6 text-[#0057B8]" />
+          <div className="p-2 bg-[#0B5ED7]/10 rounded-lg">
+            <MessageSquare className="w-6 h-6 text-[#0B5ED7]" />
           </div>
           <div>
             <h1 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -184,7 +184,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
               onClick={() => setActiveChannel(ch)}
               className={`px-3 py-1.5 rounded-md font-medium capitalize transition ${
                 activeChannel === ch
-                  ? 'bg-white dark:bg-slate-700 text-[#0057B8] dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-slate-700 text-[#0B5ED7] dark:text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -206,7 +206,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                 placeholder="Search conversations, phone, email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#0057B8]"
+                className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
               />
             </div>
           </div>
@@ -224,7 +224,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                     key={conv.id}
                     onClick={() => handleSelectConv(conv)}
                     className={`p-3.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition ${
-                      isSelected ? 'bg-blue-50/70 dark:bg-slate-800 border-l-4 border-[#0057B8]' : ''
+                      isSelected ? 'bg-blue-50/70 dark:bg-slate-800 border-l-4 border-[#0B5ED7]' : ''
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -269,7 +269,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleSendMessage('Here is your course shortlist for Aston University London.')}
-                    className="px-3 py-1 bg-blue-50 text-[#0057B8] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-100"
+                    className="px-3 py-1 bg-blue-50 text-[#0B5ED7] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-100"
                   >
                     + Course Shortlist
                   </button>
@@ -294,7 +294,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                       <div
                         className={`max-w-lg p-3.5 rounded-2xl text-xs space-y-1.5 ${
                           isOutbound
-                            ? 'bg-[#0057B8] text-white rounded-br-none shadow-sm'
+                            ? 'bg-[#0B5ED7] text-white rounded-br-none shadow-sm'
                             : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-none border border-slate-200 dark:border-slate-700 shadow-sm'
                         }`}
                       >
@@ -334,11 +334,11 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0057B8]"
+                    className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0B5ED7]"
                   />
                   <button
                     onClick={() => handleSendMessage()}
-                    className="px-5 py-2.5 bg-[#0057B8] hover:bg-blue-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition"
+                    className="px-5 py-2.5 bg-[#0B5ED7] hover:bg-blue-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition"
                   >
                     <Send className="w-3.5 h-3.5" /> Send
                   </button>
@@ -356,7 +356,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
         <div className="w-80 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex flex-col space-y-4 overflow-y-auto">
           {/* AI Smart Copilot Panel */}
           <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/80 rounded-xl border border-blue-200 dark:border-slate-700 space-y-3">
-            <div className="flex items-center gap-2 font-bold text-xs text-[#0057B8] dark:text-blue-300">
+            <div className="flex items-center gap-2 font-bold text-xs text-[#0B5ED7] dark:text-blue-300">
               <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" /> ALO AI Smart Suggestions
             </div>
 
@@ -401,7 +401,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
               </div>
               <button
                 onClick={() => alert('Form fields pre-filled in CRM Student Profile.')}
-                className="w-full mt-2 py-1.5 bg-[#0057B8] hover:bg-blue-700 text-white font-medium text-xs rounded-lg transition"
+                className="w-full mt-2 py-1.5 bg-[#0B5ED7] hover:bg-blue-700 text-white font-medium text-xs rounded-lg transition"
               >
                 Apply to CRM Profile
               </button>

@@ -384,7 +384,7 @@ function WebhookDisplay({ url }: { url: string }) {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0 shrink-0">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 shrink-0">
             <ExternalLink className="h-3.5 w-3.5" />
           </Button>
         </TooltipTrigger>
@@ -428,7 +428,7 @@ function WorkflowExecutionHistory({
             )}
           </div>
         </div>
-        <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-6 w-6 p-0">
           {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
         </Button>
       </div>
@@ -489,7 +489,7 @@ function WorkflowExecutionHistory({
                   )}
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0">
                         <Eye className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
@@ -688,7 +688,7 @@ export default function N8nWorkflowsView() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
             <ExternalLink className="h-4 w-4 mr-1" />
             Open n8n Editor
           </Button>
@@ -1123,11 +1123,11 @@ export default function N8nWorkflowsView() {
                 )}
                 <Separator />
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="flex-1">
                     <Settings className="h-3.5 w-3.5 mr-1" />
                     Configure
                   </Button>
-                  <Button size="sm" className="flex-1">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1">
                     <ExternalLink className="h-3.5 w-3.5 mr-1" />
                     Open in n8n
                   </Button>

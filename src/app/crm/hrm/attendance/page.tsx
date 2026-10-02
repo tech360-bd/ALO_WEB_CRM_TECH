@@ -30,7 +30,7 @@ export default function HrmAttendancePage() {
           <p className="text-xs text-slate-500">Automatic Attendance • Clock In/Out • Late/Present/Absent/Half-Day/Holiday/Leave • Working Hours • Idle Time</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={()=> clock('clock_in')} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs">Clock In</Button>
+          <Button onClick={()=> clock('clock_in')} className="bg-[#F97316] hover:bg-[#D04010] text-white h-9 text-xs">Clock In</Button>
           <Button onClick={()=> clock('clock_out')} variant="outline" className="h-9 text-xs border-slate-200">Clock Out</Button>
         </div>
       </div>
@@ -81,7 +81,7 @@ export default function HrmAttendancePage() {
 
               <Card className="bg-orange-50 border-orange-100">
                 <CardContent className="p-3 text-xs text-slate-700">
-                  <p className="font-bold text-[#E8501A]">Attendance Calendar</p>
+                  <p className="font-bold text-[#F97316]">Attendance Calendar</p>
                   <p className="mt-1">Calendar view via <code className="bg-white px-1 rounded">?view=calendar&month=YYYY-MM</code> — includes holidays & weekends (Friday). Working hours: 9:00–18:00 Asia/Dhaka, late threshold 15 min, half-day &lt;4h.</p>
                 </CardContent>
               </Card>

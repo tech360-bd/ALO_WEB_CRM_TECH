@@ -305,8 +305,8 @@ export default function CrmCommunicationsPage() {
                         <td className="px-4 py-3 text-xs text-gray-500">{formatTime(item.sentAt)}</td>
                         <td className="px-4 py-3 text-center">
                           <div className="flex items-center justify-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-7 w-7"><Copy className="h-3 w-3" /></Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7"><Eye className="h-3 w-3" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7"><Copy className="h-3 w-3" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7"><Eye className="h-3 w-3" /></Button>
                           </div>
                         </td>
                       </tr>

@@ -1,8 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { authenticateRequest } from "@/lib/auth-middleware";
 
-// CSV Import Center — preview, validate, import
-export async function GET() {
+// CSV Import Center — preview, validate, import (SUPER_ADMIN/ADMIN only)
+async function requireImportAdmin(req: NextRequest) {
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  const role = (auth.userType || auth.roles?.[0] || "").toUpperCase();
+  const ok =
+    role === "SUPER_ADMIN" ||
+    role === "ADMIN" ||
+    (auth.roles || []).includes("super_admin") ||
+    (auth.roles || []).includes("admin");
+  if (!ok) {
+    return NextResponse.json({ error: "Forbidden — SUPER_ADMIN or ADMIN only" }, { status: 403 });
+  }
+  return auth;
+}
+
+export async function GET(req: NextRequest) {
+  const auth = await requireImportAdmin(req);
+  if (auth instanceof NextResponse) return auth;
   const batches = await db.importBatch.findMany({
     include: { _count: { select: { errors: true } } },
     orderBy: { createdAt: "desc" },
@@ -21,8 +39,12 @@ export async function GET() {
 
 // POST — parse and validate CSV (simulated), create import batch
 export async function POST(req: NextRequest) {
+  const auth = await requireImportAdmin(req);
+  if (auth instanceof NextResponse) return auth;
   const body = await req.json();
-  const { type, fileName, csvData, uploadedBy } = body;
+  const { type, fileName, csvData } = body;
+  // Attribution comes from the authenticated session, never the request body.
+  const uploadedBy = auth.userId || auth.email || "system";
 
   // Parse CSV (simple — split by newlines and commas)
   const lines = csvData.split("\n").filter((l: string) => l.trim());

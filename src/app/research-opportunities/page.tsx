@@ -68,7 +68,7 @@ export default function ResearchOpportunitiesPageRoute() {
                 <span>Supervisor: <strong className="text-slate-800">{p.supervisor}</strong></span>
                 <span>Deadline: <strong className="text-slate-800">{p.deadline}</strong></span>
                 <a href="/book-consultation?service=research">
-                  <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-semibold">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-semibold">
                     Request Supervisor Review <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </Button>
                 </a>

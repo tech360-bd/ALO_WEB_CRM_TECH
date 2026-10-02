@@ -282,7 +282,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
             <Button variant="outline" onClick={() => fetchDashboard()} className="h-10">
               <Icon name="RefreshCw" className="mr-2 h-4 w-4" /> Refresh
             </Button>
-            <Button onClick={triggerRun} disabled={triggering} className="h-10 bg-[#0057B8] hover:bg-[#0057B8]/90">
+            <Button onClick={triggerRun} disabled={triggering} className="h-10 bg-[#0B5ED7] hover:bg-[#0B5ED7]/90">
               <Icon name={triggering ? "Loader2" : "Play"} className={`mr-2 h-4 w-4 ${triggering ? "animate-spin" : ""}`} />
               {triggering ? "Running..." : "Trigger Run Now"}
             </Button>
@@ -342,16 +342,16 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-2xl border-2 border-[#E2E8F0] bg-white p-1.5">
-          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">Overview</TabsTrigger>
-          <TabsTrigger value="queue" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">Overview</TabsTrigger>
+          <TabsTrigger value="queue" className="rounded-xl data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">
             Verification Queue {data.queue.pending > 0 && <Badge className="ml-2 bg-amber-100 text-amber-700">{data.queue.pending}</Badge>}
           </TabsTrigger>
-          <TabsTrigger value="conflicts" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+          <TabsTrigger value="conflicts" className="rounded-xl data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">
             Conflicts {data.queue.conflicts > 0 && <Badge className="ml-2 bg-rose-100 text-rose-700">{data.queue.conflicts}</Badge>}
           </TabsTrigger>
-          <TabsTrigger value="sources" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">Official Sources</TabsTrigger>
-          <TabsTrigger value="runs" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">Run History</TabsTrigger>
-          <TabsTrigger value="logs" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">Audit Logs</TabsTrigger>
+          <TabsTrigger value="sources" className="rounded-xl data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">Official Sources</TabsTrigger>
+          <TabsTrigger value="runs" className="rounded-xl data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">Run History</TabsTrigger>
+          <TabsTrigger value="logs" className="rounded-xl data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">Audit Logs</TabsTrigger>
         </TabsList>
 
         {/* OVERVIEW TAB */}
@@ -362,7 +362,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
               {data.lastRun ? (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="font-mono text-sm text-[#0057B8]">{data.lastRun.runId}</div>
+                    <div className="font-mono text-sm text-[#0B5ED7]">{data.lastRun.runId}</div>
                     <Badge className={STATUS_COLORS[data.lastRun.status] || "bg-slate-100"}>{data.lastRun.status}</Badge>
                   </div>
                   <div className="text-xs text-slate-500">Started {timeAgo(data.lastRun.startedAt)} · Completed {data.lastRun.completedAt ? timeAgo(data.lastRun.completedAt) : "in progress"}</div>
@@ -382,7 +382,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                   </div>
                   {data.lastRun.aiReportSummary && (
                     <div className="rounded-lg bg-blue-50 p-3 text-xs text-slate-700">
-                      <div className="mb-1 font-semibold text-[#0057B8]">AI Report Summary</div>
+                      <div className="mb-1 font-semibold text-[#0B5ED7]">AI Report Summary</div>
                       {data.lastRun.aiReportSummary}
                     </div>
                   )}
@@ -570,7 +570,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                             <div className="font-medium text-slate-900">{c.universitySlug || c.courseSlug || c.countrySlug || "—"}</div>
                             <div className="text-slate-500">{c.entityType}</div>
                           </TableCell>
-                          <TableCell className="align-top text-xs font-mono text-[#0057B8]">{c.fieldName}</TableCell>
+                          <TableCell className="align-top text-xs font-mono text-[#0B5ED7]">{c.fieldName}</TableCell>
                           <TableCell className="align-top text-xs max-w-xs">
                             <div className="truncate text-rose-600 line-through" title={c.oldValue || ""}>{c.oldValue || "(none)"}</div>
                             <div className="truncate text-emerald-700" title={c.newValue || ""}>{c.newValue || "(removed)"}</div>
@@ -622,7 +622,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                     <div>
                       <div className="flex items-center gap-2">
                         <Badge className="bg-orange-100 text-orange-700">CONFLICT</Badge>
-                        <span className="font-mono text-sm text-[#0057B8]">{c.fieldName}</span>
+                        <span className="font-mono text-sm text-[#0B5ED7]">{c.fieldName}</span>
                       </div>
                       <div className="mt-1 text-xs text-slate-500">
                         {c.entityType} · {c.universitySlug || c.courseSlug || c.countrySlug} · detected {timeAgo(c.detectedAt)}
@@ -661,7 +661,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                     <TableRow key={s.id}>
                       <TableCell className="align-top">
                         <div className="text-sm font-medium text-slate-900">{s.sourceName}</div>
-                        <a href={s.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[#0057B8] hover:underline">{s.sourceUrl}</a>
+                        <a href={s.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[#0B5ED7] hover:underline">{s.sourceUrl}</a>
                       </TableCell>
                       <TableCell className="align-top">
                         <Badge className="bg-violet-50 text-violet-700 text-xs">{s.sourceType.replace(/_/g, " ")}</Badge>
@@ -708,7 +708,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 <TableBody>
                   {runs.map((r) => (
                     <TableRow key={r.id}>
-                      <TableCell className="font-mono text-xs text-[#0057B8]">{r.runId}</TableCell>
+                      <TableCell className="font-mono text-xs text-[#0B5ED7]">{r.runId}</TableCell>
                       <TableCell><Badge className={STATUS_COLORS[r.status] || "bg-slate-100"}>{r.status}</Badge></TableCell>
                       <TableCell className="text-xs text-slate-500">{timeAgo(r.startedAt)}</TableCell>
                       <TableCell className="text-xs text-slate-500">{r.completedAt ? timeAgo(r.completedAt) : "—"}</TableCell>
@@ -734,7 +734,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 logs.map((l) => (
                   <div key={l.id} className="flex gap-2 py-1 border-b border-slate-100">
                     <span className="text-slate-400 w-32 shrink-0">{new Date(l.createdAt).toISOString().slice(0, 19)}</span>
-                    <span className={`w-12 shrink-0 font-semibold ${l.level === "ERROR" ? "text-rose-600" : l.level === "WARN" ? "text-amber-600" : l.level === "AUDIT" ? "text-[#0057B8]" : "text-slate-600"}`}>{l.level}</span>
+                    <span className={`w-12 shrink-0 font-semibold ${l.level === "ERROR" ? "text-rose-600" : l.level === "WARN" ? "text-amber-600" : l.level === "AUDIT" ? "text-[#0B5ED7]" : "text-slate-600"}`}>{l.level}</span>
                     <span className="text-slate-700">{l.message}</span>
                   </div>
                 ))
@@ -751,7 +751,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Icon name={CHANGE_TYPE_META[selectedChange.changeType]?.icon || "AlertCircle"} className="h-5 w-5 text-[#0057B8]" />
+                  <Icon name={CHANGE_TYPE_META[selectedChange.changeType]?.icon || "AlertCircle"} className="h-5 w-5 text-[#0B5ED7]" />
                   {CHANGE_TYPE_META[selectedChange.changeType]?.label || selectedChange.changeType}
                 </DialogTitle>
               </DialogHeader>
@@ -759,7 +759,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 {/* Source */}
                 <div className="rounded-lg bg-slate-50 p-3 text-xs">
                   <div className="font-semibold text-slate-700">Source</div>
-                  <a href={selectedChange.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:underline break-all">{selectedChange.sourceUrl}</a>
+                  <a href={selectedChange.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] hover:underline break-all">{selectedChange.sourceUrl}</a>
                   {selectedChange.source?.sourceName && <div className="mt-1 text-slate-500">{selectedChange.source.sourceName} (Priority P{selectedChange.source.priority})</div>}
                 </div>
 
@@ -777,7 +777,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
                 {/* AI Analysis */}
                 <div className="rounded-lg bg-blue-50 p-3 text-xs">
-                  <div className="mb-1 font-semibold text-[#0057B8]">AI Explanation</div>
+                  <div className="mb-1 font-semibold text-[#0B5ED7]">AI Explanation</div>
                   <div className="text-slate-700">{selectedChange.aiExplanation}</div>
                   <div className="mt-2 flex items-center gap-4 text-xs text-slate-500">
                     <span>Confidence: <strong className={selectedChange.confidence >= 0.8 ? "text-emerald-600" : selectedChange.confidence >= 0.5 ? "text-amber-600" : "text-rose-600"}>{(selectedChange.confidence * 100).toFixed(0)}%</strong></span>

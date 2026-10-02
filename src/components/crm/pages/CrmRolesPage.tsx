@@ -97,7 +97,7 @@ export default function CrmRolesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Role Management</h1>
           <p className="text-gray-500">Define roles and configure access permissions for {totalUsers} users</p>
         </div>
-        <Button className="bg-orange-500 hover:bg-orange-600"><Plus className="w-4 h-4 mr-2" />Create Role</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500 hover:bg-orange-600"><Plus className="w-4 h-4 mr-2" />Create Role</Button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -128,8 +128,8 @@ export default function CrmRolesPage() {
                 <span>{role.permissions?.length || 0} permissions</span>
               </div>
               <div className="flex gap-1 mt-3">
-                <Button variant="outline" size="sm"><Edit className="w-3.5 h-3.5 mr-1" />Permissions</Button>
-                <Button variant="outline" size="sm"><Users className="w-3.5 h-3.5 mr-1" />Users</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Edit className="w-3.5 h-3.5 mr-1" />Permissions</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Users className="w-3.5 h-3.5 mr-1" />Users</Button>
               </div>
             </CardContent>
           </Card>

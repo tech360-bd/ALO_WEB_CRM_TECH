@@ -726,7 +726,7 @@ export default function StudentMessages() {
               {/* Message input */}
               <div className="shrink-0 border-t border-slate-100 p-3">
                 <div className="flex items-end gap-2">
-                  <Button
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     variant="ghost"
                     size="icon"
                     className="shrink-0 text-slate-400 hover:text-slate-600"

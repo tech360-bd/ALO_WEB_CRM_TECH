@@ -20,13 +20,13 @@ const visaCountries = [
 const VisaSupportPage = () => {
   return (
     <main className="pt-20 pb-16 min-h-screen bg-gray-50">
-      <div className="bg-[#0057B8] text-white py-20">
+      <div className="bg-[#0B5ED7] text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Expert Student Visa Support</h1>
           <p className="text-xl max-w-3xl mx-auto mb-10">
             Join thousands of successful students. With our 98% visa success rate and 2000+ processed applications, your dream of studying abroad is closer than you think.
           </p>
-          <button className="bg-[#E8501A] hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+          <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors">
             Book Free Visa Consultation
           </button>
         </div>
@@ -48,7 +48,7 @@ const VisaSupportPage = () => {
               </div>
               <Link
                 href={`/visa-support/${country.slug}`}
-                className="block text-center w-full bg-blue-50 text-[#0057B8] hover:bg-[#0057B8] hover:text-white font-medium py-2 rounded transition-colors"
+                className="block text-center w-full bg-blue-50 text-[#0B5ED7] hover:bg-[#0B5ED7] hover:text-white font-medium py-2 rounded transition-colors"
               >
                 View Visa Guide
               </Link>

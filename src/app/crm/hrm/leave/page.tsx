@@ -43,7 +43,7 @@ export default function HrmLeavePage() {
             <div><Label className="text-xs">Start Date</Label><Input type="date" value={form.startDate} onChange={e=> setForm({...form, startDate:e.target.value})} className="h-9 text-xs bg-white border-slate-200" /></div>
             <div><Label className="text-xs">End Date</Label><Input type="date" value={form.endDate} onChange={e=> setForm({...form, endDate:e.target.value})} className="h-9 text-xs bg-white border-slate-200" /></div>
             <div><Label className="text-xs">Reason</Label><Input value={form.reason} onChange={e=> setForm({...form, reason:e.target.value})} placeholder="Reason" className="h-9 text-xs bg-white border-slate-200" /></div>
-            <Button onClick={apply} className="w-full bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs">Submit Application</Button>
+            <Button onClick={apply} className="w-full bg-[#F97316] hover:bg-[#D04010] text-white h-9 text-xs">Submit Application</Button>
             {balance && <div className="p-2 bg-slate-50 border rounded text-xs space-y-1"><p className="font-bold">Balance</p><p>Casual: {balance.casualRemaining}/{balance.casualTotal} • Annual: {balance.annualRemaining}/{balance.annualTotal} • Medical: {balance.medicalRemaining}/{balance.medicalTotal}</p><p>Maternity: {balance.maternityRemaining} • Paternity: {balance.paternityRemaining} • LWP: {balance.lwpUsed} • CompOff: {balance.compOffRemaining}</p></div>}
           </CardContent>
         </Card>

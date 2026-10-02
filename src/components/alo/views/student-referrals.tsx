@@ -125,19 +125,19 @@ export function StudentReferrals() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="rounded-2xl border border-[#DCE8F5] bg-gradient-to-br from-[#EAF3FF] to-white">
           <CardContent className="p-4 text-center sm:p-6">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#0066CC] text-white">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#0B5ED7] text-white">
               <Icon name="Gift" className="size-8" />
             </div>
             <p className="mt-4 text-sm font-bold uppercase text-[#5A7299]">
               Your Referral Code
             </p>
-            <p className="mt-2 break-all text-2xl font-black text-[#0066CC]">
+            <p className="mt-2 break-all text-2xl font-black text-[#0B5ED7]">
               {code || "AEFR-XXXXXX"}
             </p>
             <Button
               onClick={copyCode}
               variant="outline"
-              className="mt-4 w-full border-[#0066CC] text-[#0066CC]"
+              className="mt-4 w-full border-[#0B5ED7] text-[#0B5ED7]"
             >
               <Icon name="Copy" className="mr-1.5 size-4" />
               Copy Code
@@ -164,7 +164,7 @@ export function StudentReferrals() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="mt-1"
-                  placeholder="+8801XXXXXXXXX"
+                  placeholder="+8801805020100"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -180,7 +180,7 @@ export function StudentReferrals() {
             <Button
               onClick={handleRefer}
               disabled={submitting}
-              className="mt-4 bg-[#F37021] text-white hover:bg-[#D8590E]"
+              className="mt-4 bg-[#F97316] text-white hover:bg-[#D8590E]"
             >
               <Icon name="Send" className="mr-1.5 size-4" />
               Send Referral

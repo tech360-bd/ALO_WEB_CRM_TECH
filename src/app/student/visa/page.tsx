@@ -60,13 +60,13 @@ export default function StudentVisaReadinessPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Shield className="w-6 h-6 text-[#0057B8]" />
+            <Shield className="w-6 h-6 text-[#0B5ED7]" />
             <span>Visa Readiness & Preparation — Real DB — No Internal Risk Exposed</span>
           </h1>
           <p className="text-gray-400 text-xs mt-1">Track your visa milestones, checklist verification, and practice embassy mock interviews — Student portal view checklist/requested/schedule/approved feedback/safe readiness/next actions/messages/appointments/AI practice NOT internal/risk/sensitive/medical/criminal/refusal analysis/staff comments — student never sees internal</p>
         </div>
         <Link href="/student/visa-interview-practice">
-          <Button className="bg-gradient-to-r from-[#0057B8] to-[#E8501A] hover:opacity-90 text-white flex items-center gap-2 shadow-lg">
+          <Button className="bg-gradient-to-r from-[#0B5ED7] to-[#F97316] hover:opacity-90 text-white flex items-center gap-2 shadow-lg">
             <Sparkles className="w-4 h-4" />
             <span>Practice AI Visa Interview — 9 Types — One Q At A Time</span>
           </Button>
@@ -90,7 +90,7 @@ export default function StudentVisaReadinessPage() {
               {visaCase && <p className="text-[11px] text-slate-400 mt-2">Case: {visaCase.caseCode} • Stage: {visaCase.currentStage} • Destination: {visaCase.destinationCountry} • University: {visaCase.university} • Course: {visaCase.course} • Intake: {visaCase.intake} • API: /api/student-portal/visa — real DB</p>}
             </div>
             <div className="flex-1 max-w-md">
-              <div className="h-3 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[#0057B8] to-[#E8501A] rounded-full transition-all duration-500" style={{ width: `${score}%` }} /></div>
+              <div className="h-3 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[#0B5ED7] to-[#F97316] rounded-full transition-all duration-500" style={{ width: `${score}%` }} /></div>
               <div className="flex justify-between text-[10px] text-gray-400 mt-2"><span>Profile 10% Passport 10% Academic 10% English 10% Offer/CAS 10%</span><span>Funding 15% Bank 10% Study Gap 10% Interview 10% Risk 5%</span></div>
             </div>
           </div>
@@ -129,11 +129,11 @@ export default function StudentVisaReadinessPage() {
         </div>
 
         <div className="space-y-4">
-          <Card className="bg-gradient-to-br from-[#0057B8]/20 to-[#E8501A]/10 border border-[#0057B8]/30 text-white">
+          <Card className="bg-gradient-to-br from-[#0B5ED7]/20 to-[#F97316]/10 border border-[#0B5ED7]/30 text-white">
             <CardContent className="p-5 space-y-4">
-              <div className="flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#E8501A]" /><h3 className="font-bold text-sm">AI Mock Interview Simulator — 9 Types — Real DB</h3></div>
+              <div className="flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#F97316]" /><h3 className="font-bold text-sm">AI Mock Interview Simulator — 9 Types — Real DB</h3></div>
               <p className="text-xs text-gray-300 leading-relaxed">Practice embassy credibility questions in question-by-question mode — AI understands Bangladeshi English accents broken English Banglish pauses incomplete pronunciation non-native patterns — do NOT penalize Bangladeshi accent — evaluate meaning/clarity/consistency/relevance/confidence — Practice 3 days after package store attempts improvement — video/voice reuse existing store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording — AI safety never guarantee approval/success/pretend embassy/confidential/invent requirements/refusal/university/policy/speculation as fact/automatically final decision must show uncertainty/cite source/flag manual verification/recommend human review</p>
-              <Link href="/student/visa-interview-practice" className="block"><Button className="w-full bg-[#0057B8] hover:bg-[#0046a0] text-white text-xs py-2.5 flex items-center justify-center gap-2"><span>Start Practice Session — Real API: /api/visa/ai-interview/start</span><ArrowRight className="w-3.5 h-3.5" /></Button></Link>
+              <Link href="/student/visa-interview-practice" className="block"><Button className="w-full bg-[#0B5ED7] hover:bg-[#0046a0] text-white text-xs py-2.5 flex items-center justify-center gap-2"><span>Start Practice Session — Real API: /api/visa/ai-interview/start</span><ArrowRight className="w-3.5 h-3.5" /></Button></Link>
               {aiSessions.length > 0 && <div className="text-[11px] text-gray-400">Recent AI sessions: {aiSessions.length} — last score {aiSessions[0]?.readinessScore || 0}% — {aiSessions[0]?.interviewType}</div>}
             </CardContent>
           </Card>

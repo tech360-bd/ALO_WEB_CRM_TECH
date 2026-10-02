@@ -450,7 +450,7 @@ export default function CrmInboxPage() {
                   <Reply className="h-4 w-4 mr-1" />
                   Reply
                 </Button>
-                <Button variant="outline">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline">
                   <Archive className="h-4 w-4 mr-1" />
                   Archive
                 </Button>

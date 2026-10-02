@@ -311,13 +311,13 @@ export function EnglishTestView() {
       />
 
       {/* Rules banner */}
-      <Card className="rounded-2xl border-2 border-[#E8501A]/30 bg-[#fdece4]/40">
+      <Card className="rounded-2xl border-2 border-[#F97316]/30 bg-[#fdece4]/40">
         <CardContent className="flex items-start gap-3 pt-5">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#E8501A] text-white">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#F97316] text-white">
             <Icon name="Info" className="size-5" />
           </div>
           <div className="text-sm">
-            <p className="font-semibold text-[#E8501A]">Free Mock Test Policy</p>
+            <p className="font-semibold text-[#F97316]">Free Mock Test Policy</p>
             <p className="mt-1 text-foreground/80">
               ALO registered students get <strong>3 free full mock tests</strong>. Guest
               students get <strong>1 free mock test</strong>. After the free limit, payment
@@ -444,7 +444,7 @@ export function EnglishTestView() {
                           <TableCell>
                             <Badge
                               variant="outline"
-                              className="border-[#0057B8]/30 bg-[#e8f0fb] text-[#0057B8]"
+                              className="border-[#0B5ED7]/30 bg-[#e8f0fb] text-[#0B5ED7]"
                             >
                               {m.testType}
                             </Badge>
@@ -578,7 +578,7 @@ export function EnglishTestView() {
                       <MiniBar
                         value={count}
                         max={maxWeakCount}
-                        color="#E8501A"
+                        color="#F97316"
                       />
                     </div>
                   ))}
@@ -593,9 +593,9 @@ export function EnglishTestView() {
             >
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-2.5 rounded-xl bg-[#e8f0fb] p-3">
-                  <Icon name="Brain" className="mt-0.5 size-4 shrink-0 text-[#0057B8]" />
+                  <Icon name="Brain" className="mt-0.5 size-4 shrink-0 text-[#0B5ED7]" />
                   <p className="text-foreground/80">
-                    <strong className="text-[#0057B8]">AI recommends:</strong> Focus on
+                    <strong className="text-[#0B5ED7]">AI recommends:</strong> Focus on
                     Writing Task 2 structure and Speaking Part 3 fluency — these recur as
                     the top weak areas across recent mock tests.
                   </p>
@@ -699,8 +699,8 @@ function StartNewTest({ students }: { students: Student[] }) {
                 className={cn(
                   "flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3 transition-colors",
                   taker === "student"
-                    ? "border-[#0057B8] bg-[#e8f0fb]"
-                    : "border-border hover:border-[#0057B8]/40"
+                    ? "border-[#0B5ED7] bg-[#e8f0fb]"
+                    : "border-border hover:border-[#0B5ED7]/40"
                 )}
               >
                 <RadioGroupItem id="taker-student" value="student" />
@@ -714,8 +714,8 @@ function StartNewTest({ students }: { students: Student[] }) {
                 className={cn(
                   "flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3 transition-colors",
                   taker === "guest"
-                    ? "border-[#0057B8] bg-[#e8f0fb]"
-                    : "border-border hover:border-[#0057B8]/40"
+                    ? "border-[#0B5ED7] bg-[#e8f0fb]"
+                    : "border-border hover:border-[#0B5ED7]/40"
                 )}
               >
                 <RadioGroupItem id="taker-guest" value="guest" />
@@ -765,7 +765,7 @@ function StartNewTest({ students }: { students: Student[] }) {
                 <Input
                   value={guestPhone}
                   onChange={(e) => setGuestPhone(e.target.value)}
-                  placeholder="+8801XXXXXXXXX"
+                  placeholder="+8801805020100"
                 />
               </div>
             </div>
@@ -773,7 +773,7 @@ function StartNewTest({ students }: { students: Student[] }) {
 
           <Button
             onClick={handleStart}
-            className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+            className="h-12 w-full bg-[#F97316] text-white hover:bg-[#F97316]/90"
           >
             <Icon name="Play" className="size-5" />
             Start Mock Test
@@ -788,9 +788,9 @@ function StartNewTest({ students }: { students: Student[] }) {
         icon="FileText"
         className="lg:col-span-2"
       >
-        <div className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#f7f9fc] p-4">
+        <div className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#f7f9fc] p-4">
           <div className="mb-3 flex items-center justify-between">
-            <Badge className="bg-[#0057B8] text-white">{testType}</Badge>
+            <Badge className="bg-[#0B5ED7] text-white">{testType}</Badge>
             <span className="text-xs text-muted-foreground">~3 hours</span>
           </div>
           <div className="space-y-2">
@@ -799,7 +799,7 @@ function StartNewTest({ students }: { students: Student[] }) {
                 key={s.name}
                 className="flex items-center gap-3 rounded-lg border border-border bg-background p-2.5"
               >
-                <div className="flex size-8 items-center justify-center rounded-md bg-[#e8f0fb] text-[#0057B8]">
+                <div className="flex size-8 items-center justify-center rounded-md bg-[#e8f0fb] text-[#0B5ED7]">
                   <Icon name={s.icon} className="size-4" />
                 </div>
                 <div className="flex-1">
@@ -810,7 +810,7 @@ function StartNewTest({ students }: { students: Student[] }) {
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-lg bg-[#e8f0fb] p-2.5 text-xs text-[#0057B8]">
+          <div className="mt-4 rounded-lg bg-[#e8f0fb] p-2.5 text-xs text-[#0B5ED7]">
             <Icon name="Info" className="mr-1 inline size-3.5" />
             Free-tier eligible for registered students (3 free mocks).
           </div>
@@ -898,7 +898,7 @@ function MockExamDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
             <Icon name="FileText" className="size-5" />
             {testType} — Reading Section (Demo)
           </DialogTitle>
@@ -909,13 +909,13 @@ function MockExamDialog({
         </DialogHeader>
 
         {/* Exam toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-[#0057B8]/20 bg-[#f7f9fc] p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-[#0B5ED7]/20 bg-[#f7f9fc] p-3">
           <div className="flex items-center gap-2 text-sm">
             <Icon
               name="Timer"
               className={cn(
                 "size-4",
-                secondsLeft < 60 ? "text-rose-500" : "text-[#0057B8]"
+                secondsLeft < 60 ? "text-rose-500" : "text-[#0B5ED7]"
               )}
             />
             <span
@@ -1004,7 +1004,7 @@ function MockExamDialog({
             <div className="space-y-4">
               {/* Passage */}
               <div className="rounded-xl border border-border bg-muted/30 p-4">
-                <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#0057B8]">
+                <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#0B5ED7]">
                   <Icon name="BookOpen" className="size-3.5" />
                   Reading Passage
                 </div>
@@ -1018,7 +1018,7 @@ function MockExamDialog({
                 {SAMPLE_QUESTIONS.map((q, i) => (
                   <div key={i} className="rounded-xl border-2 border-border p-3">
                     <p className="mb-2 text-sm font-medium text-foreground">
-                      <span className="text-[#0057B8]">Q{i + 1}.</span> {q.q}
+                      <span className="text-[#0B5ED7]">Q{i + 1}.</span> {q.q}
                     </p>
                     <RadioGroup
                       value={answers[i]?.toString() ?? ""}
@@ -1035,7 +1035,7 @@ function MockExamDialog({
                         <Label
                           key={j}
                           htmlFor={`q-${i}-${j}`}
-                          className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-transparent p-2 text-sm hover:border-[#0057B8]/30 hover:bg-[#e8f0fb]/50"
+                          className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-transparent p-2 text-sm hover:border-[#0B5ED7]/30 hover:bg-[#e8f0fb]/50"
                         >
                           <RadioGroupItem id={`q-${i}-${j}`} value={j.toString()} />
                           <span className="text-foreground/80">{opt}</span>
@@ -1047,8 +1047,8 @@ function MockExamDialog({
               </div>
 
               {/* Writing editor placeholder */}
-              <div className="rounded-xl border-2 border-dashed border-[#0057B8]/30 p-3">
-                <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[#0057B8]">
+              <div className="rounded-xl border-2 border-dashed border-[#0B5ED7]/30 p-3">
+                <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[#0B5ED7]">
                   <span className="flex items-center gap-2">
                     <Icon name="PenLine" className="size-3.5" />
                     Writing Task (placeholder)
@@ -1060,7 +1060,7 @@ function MockExamDialog({
                 <textarea
                   onChange={handleWritingChange}
                   placeholder="Write your essay here… (auto-counted by word count, autosaved every 5s in real exam)"
-                  className="h-20 w-full resize-none rounded-md border border-border bg-background p-2 text-sm outline-none focus:border-[#0057B8]"
+                  className="h-20 w-full resize-none rounded-md border border-border bg-background p-2 text-sm outline-none focus:border-[#0B5ED7]"
                 />
               </div>
             </div>
@@ -1071,7 +1071,7 @@ function MockExamDialog({
           {submitted ? (
             <Button
               onClick={() => onOpenChange(false)}
-              className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+              className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
             >
               Close
             </Button>
@@ -1082,7 +1082,7 @@ function MockExamDialog({
               </Button>
               <Button
                 onClick={handleSubmit}
-                className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="bg-[#F97316] text-white hover:bg-[#F97316]/90"
               >
                 <Icon name="Send" className="size-4" />
                 Submit Test

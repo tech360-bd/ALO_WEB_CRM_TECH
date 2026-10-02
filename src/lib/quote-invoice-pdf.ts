@@ -25,11 +25,11 @@ export function calcTotals(doc: QuoteDoc){
   return { subtotal, tax, total: subtotal + tax, currency: doc.currency };
 }
 
-// In production use pdf-lib + sharp to render branded PDF with ALO logo #F37021
+// In production use pdf-lib + sharp to render branded PDF with ALO logo #F97316
 export async function generateQuotePdf(doc: QuoteDoc): Promise<{ pdfBase64: string; totals: ReturnType<typeof calcTotals> }>{
   const totals = calcTotals(doc);
   // Minimal HTML for preview (real PDF would use pdf-lib)
-  const html = `<!doctype html><html><head><style>body{font-family:Inter, sans-serif;padding:24px;color:#0f172a}h1{color:#F37021}.line{display:flex;justify-content:space-between;border-bottom:1px solid #e2e8f0;padding:6px 0}.tot{font-weight:700}</style></head>
+  const html = `<!doctype html><html><head><style>body{font-family:Inter, sans-serif;padding:24px;color:#0f172a}h1{color:#F97316}.line{display:flex;justify-content:space-between;border-bottom:1px solid #e2e8f0;padding:6px 0}.tot{font-weight:700}</style></head>
   <body><h1>ALO Education — ${doc.type} ${doc.number}</h1>
   <p>${doc.issuer.name} → ${doc.client.name} (${doc.currency})</p>
   ${doc.lines.map(l=> `<div class=line><span>${l.description} ×${l.qty}</span><span>${(l.qty*l.unitPrice).toFixed(2)} ${doc.currency}</span></div>`).join('')}

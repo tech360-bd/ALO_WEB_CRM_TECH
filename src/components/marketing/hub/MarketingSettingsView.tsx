@@ -12,8 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 export default function MarketingSettingsView() {
   const [settings, setSettings] = useState({
     timezone:'Asia/Dhaka',
-    brandOrange:'#F37021',
-    brandBlue:'#0066CC',
+    brandOrange:'#F97316',
+    brandBlue:'#0B5ED7',
     brandAccent:'#FFB347',
     autoPublish:false,
     requireApprovalFor:'medium',
@@ -24,13 +24,13 @@ export default function MarketingSettingsView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Settings className="w-6 h-6 text-[#F37021]" />Marketing Settings</h2>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Settings className="w-6 h-6 text-[#F97316]" />Marketing Settings</h2>
         <p className="text-sm text-gray-500">Brand, permissions, automation policies, timezone, budget limits, consent enforcement — server-enforced.</p>
       </div>
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Palette className="w-4 h-4 text-[#F37021]" />Brand Identity</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Palette className="w-4 h-4 text-[#F97316]" />Brand Identity</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid md:grid-cols-3 gap-3">
                 <div><label className="text-xs font-semibold">ALO Orange</label><Input value={settings.brandOrange} onChange={e=>setSettings({...settings, brandOrange:e.target.value})} className="mt-1 h-9" /></div>
@@ -46,7 +46,7 @@ export default function MarketingSettingsView() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#0066CC]" />Automation & Approval Policies</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#0B5ED7]" />Automation & Approval Policies</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-xs">Allow auto-execution for low-risk (research, drafts)</Label>
@@ -70,7 +70,7 @@ export default function MarketingSettingsView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-[#0066CC]" />Timezone & Scheduling</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-[#0B5ED7]" />Timezone & Scheduling</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div><label className="text-xs font-semibold">Primary Timezone</label><Select value={settings.timezone} onValueChange={v=>setSettings({...settings, timezone:v})}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Asia/Dhaka">Asia/Dhaka (ALO local)</SelectItem><SelectItem value="UTC">UTC</SelectItem></SelectContent></Select></div>
               <p className="text-[11px] text-gray-500">All MarketingCalendar.scheduledAt + cron scheduler are timezone-aware. Jobs have persistent records, idempotency, locks, retries, audit trails — no browser timers.</p>
@@ -80,7 +80,7 @@ export default function MarketingSettingsView() {
             <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Bell className="w-4 h-4 text-amber-600" />Notifications</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <p className="text-gray-600">Failure alerts via in-app + email + WhatsApp (no sensitive leak). Daily/weekly reports scheduled.</p>
-              <Button variant="outline" size="sm" className="h-8 text-xs">Configure Alerts</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs">Configure Alerts</Button>
             </CardContent>
           </Card>
         </div>

@@ -333,7 +333,7 @@ export default function MasterSuperAdminDashboard() {
               <CardTitle className="text-sm font-bold text-slate-900">Employee Control Center</CardTitle>
               <CardDescription className="text-xs text-slate-500">View and manage all ALO employees, switch acting-as role, or grant cross-department permissions.</CardDescription>
             </div>
-            <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white">
               + Add New Employee
             </Button>
           </CardHeader>
@@ -367,7 +367,7 @@ export default function MasterSuperAdminDashboard() {
                       <Button size="sm" variant="ghost" className="h-7 text-xs text-indigo-600 hover:bg-indigo-50" onClick={() => handleStartActingAs(emp.role, emp.name, 'crm-dashboard')}>
                         Act As Role
                       </Button>
-                      <Button size="sm" variant="outline" className="h-7 text-xs border-slate-200">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-xs border-slate-200">
                         Permissions
                       </Button>
                     </TableCell>

@@ -22,7 +22,7 @@ import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCar
 // ============================================================
 // SHARED PUBLIC SHELL
 // ============================================================
-function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8' }: {
+function PublicShell({ title, subtitle, badge, children, heroColor = '#0B5ED7' }: {
   title: string;
   subtitle?: string;
   badge?: string;
@@ -36,7 +36,7 @@ function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8' }
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => setView('website')}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] mb-6 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0B5ED7] mb-6 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </button>
@@ -113,7 +113,7 @@ export function PublicCourseFinderPage() {
       <div className="grid lg:grid-cols-4 gap-6">
         <Card className="p-5 lg:col-span-1 h-fit">
           <h3 className="font-semibold text-[#0F172A] mb-4 flex items-center gap-2">
-            <Search className="h-4 w-4 text-[#0057B8]" /> Filters
+            <Search className="h-4 w-4 text-[#0B5ED7]" /> Filters
           </h3>
           <div className="space-y-4">
             <div>
@@ -182,7 +182,7 @@ export function PublicCourseFinderPage() {
                   >
                     <Card className="p-5 hover:shadow-md transition-shadow h-full">
                       <div className="flex items-start justify-between mb-2">
-                        <Badge variant="secondary" className="bg-blue-50 text-[#0057B8]">
+                        <Badge variant="secondary" className="bg-blue-50 text-[#0B5ED7]">
                           {c.studyLevel || c.programLevel || c.level || 'Course'}
                         </Badge>
                         {(c.yearlyTuition || c.tuitionFee) > 0 && (
@@ -300,7 +300,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
               <div className="text-4xl mb-3">{d.flag}</div>
               <h3 className="text-xl font-bold text-[#0F172A] mb-1">{d.name}</h3>
               <p className="text-sm text-slate-600 mb-3 line-clamp-2">{d.desc}</p>
-              <div className="text-xs text-[#0057B8] font-semibold">{d.topUnis.length}+ top universities</div>
+              <div className="text-xs text-[#0B5ED7] font-semibold">{d.topUnis.length}+ top universities</div>
             </Card>
           ))}
         </div>
@@ -316,21 +316,21 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
     >
       <div className="grid lg:grid-cols-3 gap-6 mb-10">
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
+          <div className="flex items-center gap-2 text-[#0B5ED7] mb-2">
             <GraduationCap className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Avg Tuition</span>
           </div>
           <p className="text-lg font-bold text-[#0F172A]">{data.avgTuition}</p>
         </Card>
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
+          <div className="flex items-center gap-2 text-[#0B5ED7] mb-2">
             <Building2 className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Living Cost</span>
           </div>
           <p className="text-lg font-bold text-[#0F172A]">{data.avgLiving}/yr</p>
         </Card>
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
+          <div className="flex items-center gap-2 text-[#0B5ED7] mb-2">
             <Clock className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Work Rights</span>
           </div>
@@ -341,7 +341,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
       <div className="grid md:grid-cols-2 gap-6 mb-10">
         <Card className="p-6">
           <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
-            <FileText className="h-4 w-4 text-[#0057B8]" /> Visa Information
+            <FileText className="h-4 w-4 text-[#0B5ED7]" /> Visa Information
           </h3>
           <p className="text-sm text-slate-600 mb-2">Visa Type:</p>
           <p className="font-semibold text-[#0F172A] mb-3">{data.visaType}</p>
@@ -350,7 +350,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         </Card>
         <Card className="p-6">
           <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
-            <Globe className="h-4 w-4 text-[#0057B8]" /> Country Info
+            <Globe className="h-4 w-4 text-[#0B5ED7]" /> Country Info
           </h3>
           <p className="text-sm text-slate-600 mb-2">Currency:</p>
           <p className="font-semibold text-[#0F172A] mb-3">{data.currency}</p>
@@ -366,7 +366,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
             <div className="flex items-center gap-3">
               <div
                 className="h-10 w-10 rounded-lg flex items-center justify-center font-bold text-white"
-                style={{ backgroundColor: i === 0 ? '#E8501A' : '#0057B8' }}
+                style={{ backgroundColor: i === 0 ? '#F97316' : '#0B5ED7' }}
               >
                 {i + 1}
               </div>
@@ -379,12 +379,12 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-2xl p-8 text-white text-center">
+      <div className="bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-2xl p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Ready to study in {data.name}?</h3>
         <p className="text-blue-100 mb-5">Get free expert guidance from our counselors</p>
         <Button
           onClick={() => setPublicPage('public-consultation')}
-          className="bg-[#E8501A] text-white hover:brightness-110"
+          className="bg-[#F97316] text-white hover:brightness-110"
         >
           Book Free Consultation
         </Button>
@@ -467,12 +467,12 @@ export function PublicUniversitiesPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div
                     className="h-12 w-12 rounded-xl flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: '#0057B8' }}
+                    style={{ backgroundColor: '#0B5ED7' }}
                   >
                     {u.name?.[0] || 'U'}
                   </div>
                   {u.worldRanking && (
-                    <Badge variant="secondary" className="bg-orange-50 text-[#E8501A]">
+                    <Badge variant="secondary" className="bg-orange-50 text-[#F97316]">
                       Rank #{u.worldRanking}
                     </Badge>
                   )}
@@ -488,7 +488,7 @@ export function PublicUniversitiesPage() {
                 {u.ieltsMin && (
                   <div className="text-xs">
                     <span className="text-slate-500">IELTS min: </span>
-                    <span className="font-semibold text-[#0057B8]">{u.ieltsMin}</span>
+                    <span className="font-semibold text-[#0B5ED7]">{u.ieltsMin}</span>
                   </div>
                 )}
               </Card>
@@ -526,7 +526,7 @@ export function PublicScholarshipsPage() {
       title="Scholarships & Funding Directory"
       badge="100% VERIFIED FUNDING SCHEMES"
       subtitle="Explore fully funded government scholarships, university merit grants, and tuition fee waivers across the UK, USA, Australia, Canada, Germany, Ireland, and New Zealand."
-      heroColor="#E8501A"
+      heroColor="#F97316"
     >
       {loading ? (
         <div className="text-center py-20 text-slate-500 font-medium">Loading verified global scholarships...</div>
@@ -536,10 +536,10 @@ export function PublicScholarshipsPage() {
             const slug = s.slug || (s.title ? s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `scholarship-${i}`);
             return (
               <motion.div key={s.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-                <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-slate-200 hover:border-[#0057B8]">
+                <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-slate-200 hover:border-[#0B5ED7]">
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <Badge className="bg-orange-50 text-[#E8501A] border-orange-200 font-semibold text-[11px]">
+                      <Badge className="bg-orange-50 text-[#F97316] border-orange-200 font-semibold text-[11px]">
                         {s.coverageType || 'Merit Scholarship'}
                       </Badge>
                       <span className="text-xs font-semibold text-slate-500">
@@ -547,7 +547,7 @@ export function PublicScholarshipsPage() {
                       </span>
                     </div>
                     <h3 className="font-bold text-[#0F172A] text-lg mb-2 line-clamp-2">{s.title || s.name}</h3>
-                    <p className="text-xs text-[#0057B8] font-semibold mb-3">{s.provider || 'University Partner'}</p>
+                    <p className="text-xs text-[#0B5ED7] font-semibold mb-3">{s.provider || 'University Partner'}</p>
                     <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{s.description || s.eligibility}</p>
                   </div>
 
@@ -557,7 +557,7 @@ export function PublicScholarshipsPage() {
                     </div>
                     <div className="flex gap-2">
                       <a href={`/scholarships/${slug}`} className="w-full">
-                        <Button className="w-full bg-[#0057B8] text-white hover:bg-[#003d80] text-xs font-semibold py-2">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-semibold py-2">
                           View Full Details & Apply →
                         </Button>
                       </a>
@@ -598,12 +598,12 @@ export function PublicServicesPage() {
       title="Our 10 Comprehensive Services"
       badge="END-TO-END STUDY ABROAD ADVISORY"
       subtitle="We are committed to guiding Bangladeshi students on their journey to study abroad with confidence and success. Explore our 10 comprehensive services designed for every stage of your international education."
-      heroColor="#0057B8"
+      heroColor="#0B5ED7"
     >
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {MASTER_SERVICES_DATA.map((s: any, i: number) => (
           <motion.div key={s.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-            <Card className="bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between overflow-hidden rounded-2xl h-full">
+            <Card className="bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0B5ED7] flex flex-col justify-between overflow-hidden rounded-2xl h-full">
               <div>
                 <div className="h-44 w-full overflow-hidden relative">
                   <img src={s.heroImage} alt={s.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
@@ -622,7 +622,7 @@ export function PublicServicesPage() {
 
               <div className="p-6 pt-0">
                 <a href={`/services/${s.slug}`} className="block w-full">
-                  <Button className="w-full bg-[#0057B8] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
                     Explore Full Service Details & Process →
                   </Button>
                 </a>
@@ -632,11 +632,11 @@ export function PublicServicesPage() {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-2xl p-8 text-white text-center shadow-lg">
+      <div className="bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
         <a href="/eligibility-check">
-          <Button className="bg-[#E8501A] text-white hover:bg-[#d44315] font-bold text-xs px-6 py-3 rounded-xl shadow-md">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs px-6 py-3 rounded-xl shadow-md">
             Book Free Consultation
           </Button>
         </a>
@@ -668,7 +668,7 @@ export function PublicAboutPage() {
 
       <div className="grid md:grid-cols-2 gap-6 mb-12">
         <Card className="p-8 bg-gradient-to-br from-blue-50 to-white border-blue-100">
-          <h3 className="text-xl font-bold text-[#0057B8] mb-3">Our Mission</h3>
+          <h3 className="text-xl font-bold text-[#0B5ED7] mb-3">Our Mission</h3>
           <p className="text-slate-700 leading-relaxed">
             At ALO Education, our mission is simple yet powerful: turning student dreams into global
             opportunities. We strive to be a trusted pathway to world-class education, guiding every
@@ -678,7 +678,7 @@ export function PublicAboutPage() {
           </p>
         </Card>
         <Card className="p-8 bg-gradient-to-br from-orange-50 to-white border-orange-100">
-          <h3 className="text-xl font-bold text-[#E8501A] mb-3">Our Vision</h3>
+          <h3 className="text-xl font-bold text-[#F97316] mb-3">Our Vision</h3>
           <p className="text-slate-700 leading-relaxed">
             The vision of ALO Education is to become a globally recognized education consultancy that
             inspires trust, integrity, and excellence. We aspire to guide students toward courses and
@@ -697,7 +697,7 @@ export function PublicAboutPage() {
           { num: '8,800+', label: 'Courses listed' },
         ].map((stat) => (
           <Card key={stat.label} className="p-6 text-center">
-            <p className="text-3xl font-bold text-[#0057B8] mb-1">{stat.num}</p>
+            <p className="text-3xl font-bold text-[#0B5ED7] mb-1">{stat.num}</p>
             <p className="text-xs text-slate-600">{stat.label}</p>
           </Card>
         ))}
@@ -743,7 +743,7 @@ export function PublicSuccessStoriesPage() {
       title="Success Stories"
       badge="VOICES OF OUR STUDENTS"
       subtitle="Real stories from students who achieved their dreams of studying abroad with ALO Education."
-      heroColor="#E8501A"
+      heroColor="#F97316"
     >
       {loading ? (
         <div className="text-center py-20 text-slate-500">Loading stories...</div>
@@ -753,18 +753,18 @@ export function PublicSuccessStoriesPage() {
             <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
               <Card className="p-7 h-full">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d80] flex items-center justify-center text-white font-bold text-lg shrink-0">
+                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#0B5ED7] to-[#003d80] flex items-center justify-center text-white font-bold text-lg shrink-0">
                     {s.name?.[0] || 'S'}
                   </div>
                   <div>
                     <h3 className="font-bold text-[#0F172A]">{s.name}</h3>
-                    <p className="text-sm text-[#0057B8]">{s.course || s.program}</p>
+                    <p className="text-sm text-[#0B5ED7]">{s.course || s.program}</p>
                     <p className="text-xs text-slate-500">Now studying at {s.university}</p>
                   </div>
                 </div>
                 <div className="flex gap-0.5 mb-3">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-[#E8501A] text-[#E8501A]" />
+                    <Star key={star} className="h-4 w-4 fill-[#F97316] text-[#F97316]" />
                   ))}
                 </div>
                 <p className="text-sm text-slate-700 italic leading-relaxed">"{s.quote || s.testimonial}"</p>
@@ -810,11 +810,11 @@ export function PublicTeamPage() {
         {data.map((m: any, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
             <Card className="p-6 text-center hover:shadow-md transition-shadow h-full">
-              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d80] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[#0B5ED7] to-[#003d80] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
                 {m.name?.[0] || 'A'}
               </div>
               <h3 className="font-bold text-[#0F172A]">{m.name}</h3>
-              <p className="text-sm text-[#0057B8] mb-3">{m.role || m.position}</p>
+              <p className="text-sm text-[#0B5ED7] mb-3">{m.role || m.position}</p>
               <p className="text-xs text-slate-600">{m.bio || m.description}</p>
             </Card>
           </motion.div>
@@ -892,22 +892,22 @@ export function PublicContactPage() {
     >
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         <Card className="p-8">
-          <Phone className="h-8 w-8 text-[#0057B8] mb-4" />
+          <Phone className="h-8 w-8 text-[#0B5ED7] mb-4" />
           <h3 className="font-bold text-[#0F172A] mb-2">Phone</h3>
-          <p className="text-2xl font-bold text-[#0057B8] mb-1">+88 01805020101-10</p>
+          <p className="text-2xl font-bold text-[#0B5ED7] mb-1">+88 01805020101-10</p>
           <p className="text-sm text-slate-600">Sat-Thu: 10 AM - 6 PM</p>
         </Card>
         <Card className="p-8">
-          <Mail className="h-8 w-8 text-[#E8501A] mb-4" />
+          <Mail className="h-8 w-8 text-[#F97316] mb-4" />
           <h3 className="font-bold text-[#0F172A] mb-2">Email</h3>
-          <p className="text-2xl font-bold text-[#E8501A] mb-1">info@aloeducation.com</p>
+          <p className="text-2xl font-bold text-[#F97316] mb-1">info@aloeducation.com</p>
           <p className="text-sm text-slate-600">Available 24/7</p>
         </Card>
       </div>
 
       <Card className="p-8 mb-8">
         <div className="flex items-start gap-4">
-          <MapPin className="h-8 w-8 text-[#0057B8] shrink-0" />
+          <MapPin className="h-8 w-8 text-[#0B5ED7] shrink-0" />
           <div>
             <h3 className="font-bold text-[#0F172A] mb-2">Bangladesh Office</h3>
             <p className="text-slate-700 leading-relaxed">
@@ -927,7 +927,7 @@ export function PublicContactPage() {
             <h3 className="font-bold text-green-900 mb-2">WhatsApp</h3>
             <p className="text-sm text-green-800 mb-4">Quick response on WhatsApp</p>
             <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-              <Button className="bg-[#25D366] text-white hover:brightness-110">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#25D366] text-white hover:brightness-110">
                 Chat Now
               </Button>
             </a>
@@ -1014,7 +1014,7 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
       badge: 'ACCESSIBILITY',
       sections: [
         { h: 'Commitment', p: 'We aim for WCAG 2.1 AA across https://aloeducation.com — semantic HTML, landmarks, skip links, heading hierarchy.' },
-        { h: 'Visual', p: 'Contrast ≥4.5:1 (#0057B8/#E8501A on white), alt text, aria-hidden decorative, zoom 200% without horizontal scroll.' },
+        { h: 'Visual', p: 'Contrast ≥4.5:1 (#0B5ED7/#F97316 on white), alt text, aria-hidden decorative, zoom 200% without horizontal scroll.' },
         { h: 'Keyboard & Screen Reader', p: 'All interactive elements via Tab/Enter/Space, visible focus ring, associated label + aria-describedby errors, NVDA/JAWS conventions.' },
         { h: 'Limitations', p: 'Third-party embeds (Maps/Facebook) may not be fully AA — we provide text address, WhatsApp 01805020100, phone fallbacks.' },
         { h: 'Feedback', p: 'Email info@aloeducation.com with URL + issue. Acknowledge within 2 working days, fix prioritized, review every 6 months.' },
@@ -1029,7 +1029,7 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
           {content.sections.map((s, i) => (
             <div key={i}>
               <h3 className="font-bold text-[#0F172A] mb-2 flex items-center gap-2">
-                <span className="h-6 w-6 rounded-full bg-blue-50 text-[#0057B8] text-xs font-bold flex items-center justify-center">
+                <span className="h-6 w-6 rounded-full bg-blue-50 text-[#0B5ED7] text-xs font-bold flex items-center justify-center">
                   {i + 1}
                 </span>
                 {s.h}
@@ -1064,15 +1064,15 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
       title="Language & Admission Test Preparation"
       badge="ALO STUDY ABROAD LANGUAGE PREPARATION CENTRE"
       subtitle="Prepare for English proficiency and admission tests with ALO Education's certified test coaches, score planners, and direct CRM integration."
-      heroColor="#0057B8"
+      heroColor="#0B5ED7"
     >
       <div className="flex justify-between items-center mb-8 bg-blue-50 p-4 rounded-2xl border border-blue-100">
         <div>
-          <h3 className="font-bold text-[#0057B8] text-base">Comprehensive Test Preparation Directory</h3>
+          <h3 className="font-bold text-[#0B5ED7] text-base">Comprehensive Test Preparation Directory</h3>
           <p className="text-xs text-slate-600">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
         </div>
         <a href="/english-test-prep">
-          <Button className="bg-[#E8501A] text-white hover:bg-[#d44315] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm">
             View All Test Prep →
           </Button>
         </a>
@@ -1080,16 +1080,16 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tests.map((t: any) => (
-          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between">
+          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-slate-200 hover:border-[#0B5ED7] flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <Badge className="bg-orange-50 text-[#E8501A] font-semibold text-[11px]">
+                <Badge className="bg-orange-50 text-[#F97316] font-semibold text-[11px]">
                   {t.logoBadge}
                 </Badge>
                 <span className="text-xs font-semibold text-slate-500">{t.quickInfo.duration}</span>
               </div>
               <h3 className="font-bold text-[#0F172A] text-lg mb-1">{t.name}</h3>
-              <p className="text-xs text-[#0057B8] font-semibold mb-3">{t.officialOwner}</p>
+              <p className="text-xs text-[#0B5ED7] font-semibold mb-3">{t.officialOwner}</p>
               <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{t.overview.whatIsIt}</p>
             </div>
 
@@ -1100,10 +1100,10 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-500 font-medium">Target Score:</span>
-                <span className="font-bold text-[#0057B8]">{t.expectedScore}</span>
+                <span className="font-bold text-[#0B5ED7]">{t.expectedScore}</span>
               </div>
               <a href={`/english-test-prep/${t.slug}`} className="block w-full">
-                <Button className="w-full bg-[#0057B8] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
                   Explore Full Test Prep & Modules →
                 </Button>
               </a>
@@ -1143,7 +1143,7 @@ export function PublicResourcesPage() {
           return (
             <Card key={i} className="p-6 hover:shadow-md transition-shadow">
               <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
-                <Icon className="h-6 w-6 text-[#0057B8]" />
+                <Icon className="h-6 w-6 text-[#0B5ED7]" />
               </div>
               <h3 className="font-bold text-[#0F172A] mb-2">{r.title}</h3>
               <p className="text-sm text-slate-600">{r.desc}</p>
@@ -1174,15 +1174,15 @@ export function PublicVisaReadinessPage() {
             <div className="space-y-2 text-sm">
               <div><span className="text-slate-500">Visa Type: </span><span className="font-semibold">{v.visa}</span></div>
               <div><span className="text-slate-500">Processing Time: </span><span className="font-semibold">{v.processing}</span></div>
-              <div><span className="text-slate-500">Application Fee: </span><span className="font-semibold text-[#E8501A]">{v.fee}</span></div>
+              <div><span className="text-slate-500">Application Fee: </span><span className="font-semibold text-[#F97316]">{v.fee}</span></div>
             </div>
           </Card>
         ))}
       </div>
-      <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003d80] text-white text-center">
+      <Card className="p-8 bg-gradient-to-r from-[#0B5ED7] to-[#003d80] text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Need Visa Help?</h3>
         <p className="text-blue-100 mb-5">Our visa experts will guide you through the entire process</p>
-        <Button className="bg-[#E8501A] text-white hover:brightness-110">Book Visa Consultation</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:brightness-110">Book Visa Consultation</Button>
       </Card>
     </PublicShell>
   );
@@ -1213,11 +1213,11 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-medium">English Language Requirement</p>
-                <p className="text-sm font-semibold text-[#0057B8]">IELTS 6.5 (Min 6.0 components)</p>
+                <p className="text-sm font-semibold text-[#0B5ED7]">IELTS 6.5 (Min 6.0 components)</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-medium">Application Deadline</p>
-                <p className="text-sm font-semibold text-[#E8501A]">Open for Upcoming Intake</p>
+                <p className="text-sm font-semibold text-[#F97316]">Open for Upcoming Intake</p>
               </div>
             </div>
           </Card>
@@ -1234,19 +1234,19 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
         </div>
 
         <div className="space-y-6">
-          <Card className="p-6 border-2 border-[#0057B8]/20 bg-gradient-to-br from-blue-50/30 to-white">
+          <Card className="p-6 border-2 border-[#0B5ED7]/20 bg-gradient-to-br from-blue-50/30 to-white">
             <h3 className="font-bold text-[#0F172A] mb-2 text-lg">Apply for this Course</h3>
             <p className="text-xs text-slate-600 mb-4 leading-relaxed">
               Start your application with ALO Education for full application support and visa counseling.
             </p>
             <div className="space-y-2.5">
               <a href="/eligibility-check" className="block w-full">
-                <Button className="w-full bg-[#E8501A] text-white hover:brightness-110 text-xs py-2.5">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] text-white hover:brightness-110 text-xs py-2.5">
                   Check Your Eligibility
                 </Button>
               </a>
               <a href="/book-consultation" className="block w-full">
-                <Button variant="outline" className="w-full text-xs py-2.5 border-[#0057B8] text-[#0057B8] hover:bg-blue-50">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full text-xs py-2.5 border-[#0B5ED7] text-[#0B5ED7] hover:bg-blue-50">
                   Talk to ALO Counselor
                 </Button>
               </a>
@@ -1277,7 +1277,7 @@ export function PublicComparePage() {
           Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
         </p>
         <div className="pt-4 flex gap-3">
-          <a href="/course-finder"><Button className="bg-[#E8501A] text-white text-xs">Add Courses to Compare</Button></a>
+          <a href="/course-finder"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white text-xs">Add Courses to Compare</Button></a>
         </div>
       </Card>
     </PublicShell>
@@ -1292,7 +1292,7 @@ export function PublicFooter() {
         {/* COL 1: ALO BRAND & SOCIAL */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#0057B8] text-white flex items-center justify-center font-black text-sm">
+            <div className="w-8 h-8 rounded-lg bg-[#0B5ED7] text-white flex items-center justify-center font-black text-sm">
               ALO
             </div>
             <span className="text-white font-black text-lg tracking-tight">ALO Education</span>
@@ -1306,7 +1306,7 @@ export function PublicFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="Facebook"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#0057B8] hover:text-white transition"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#0B5ED7] hover:text-white transition"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             </a>
@@ -1315,7 +1315,7 @@ export function PublicFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#E8501A] hover:text-white transition"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F97316] hover:text-white transition"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             </a>
@@ -1324,7 +1324,7 @@ export function PublicFooter() {
               target="_blank"
               rel="noreferrer"
               aria-label="LinkedIn"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#0057B8] hover:text-white transition"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#0B5ED7] hover:text-white transition"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
             </a>
@@ -1384,11 +1384,11 @@ export function PublicFooter() {
         <div className="flex gap-12 whitespace-nowrap animate-[marquee_25s_linear_infinite] motion-reduce:animate-none">
           {[...Array(16)].map((_, i) => (
             <div key={i} className="flex items-center gap-8 text-xs font-semibold text-slate-500">
-              <span className="flex items-center gap-2 text-[#E8501A] opacity-100 rotate-[-5deg]">
+              <span className="flex items-center gap-2 text-[#F97316] opacity-100 rotate-[-5deg]">
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
                 Admission Success
               </span>
-              <span className="flex items-center gap-2 text-[#0057B8] opacity-70 rotate-[4deg]">
+              <span className="flex items-center gap-2 text-[#0B5ED7] opacity-70 rotate-[4deg]">
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
                 Scholarship Granted
               </span>

@@ -7,8 +7,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const EXTRA_DEPARTMENTS = [
-  { slug: "student-admission", name: "Student Admission", category: "Student Services", description: "Lead qualification, duplicate detection, profile building, counselor assignment, and student onboarding automation", icon: "🎓", color: "#F37021" },
-  { slug: "counseling", name: "Academic Counseling", category: "Student Services", description: "Student counseling workflows, course guidance, university matching, and consultancy session management", icon: "🧑‍🏫", color: "#0066CC" },
+  { slug: "student-admission", name: "Student Admission", category: "Student Services", description: "Lead qualification, duplicate detection, profile building, counselor assignment, and student onboarding automation", icon: "🎓", color: "#F97316" },
+  { slug: "counseling", name: "Academic Counseling", category: "Student Services", description: "Student counseling workflows, course guidance, university matching, and consultancy session management", icon: "🧑‍🏫", color: "#0B5ED7" },
   { slug: "application-processing", name: "Application Processing", category: "Student Services", description: "University application submission, document collection, status tracking, and offer letter management", icon: "📋", color: "#6366F1" },
   { slug: "pre-departure", name: "Pre-Departure Services", category: "Student Services", description: "Pre-departure orientation, travel preparation, banking, insurance, accommodation, and arrival support", icon: "✈️", color: "#059669" },
   { slug: "alumni-engagement", name: "Alumni & Success Stories", category: "Student Services", description: "Alumni network management, success story collection, referral activation, and community building", icon: "🌟", color: "#D97706" },
@@ -16,7 +16,7 @@ const EXTRA_DEPARTMENTS = [
   { slug: "event-management", name: "Events & Webinars", category: "Student Services", description: "Education fair management, webinar hosting, campus visit coordination, and event promotion", icon: "🎪", color: "#7C3AED" },
   { slug: "sms-automation", name: "SMS Automation", category: "Student Services", description: "Bulk SMS campaigns, transactional SMS, OTP delivery, and SMS marketing analytics", icon: "📱", color: "#374151" },
   { slug: "referral-tracking", name: "Referral & Loyalty", category: "Student Services", description: "Student referral program management, loyalty point tracking, reward distribution, and referral analytics", icon: "🔗", color: "#B45309" },
-  { slug: "visa-processing", name: "Visa Processing", category: "Student Services", description: "Student visa application support, document preparation, appointment booking, and outcome tracking", icon: "🛂", color: "#0057B8" },
+  { slug: "visa-processing", name: "Visa Processing", category: "Student Services", description: "Student visa application support, document preparation, appointment booking, and outcome tracking", icon: "🛂", color: "#0B5ED7" },
 ];
 
 async function buildAgentRoles(deptName: string, deptSlug: string) {

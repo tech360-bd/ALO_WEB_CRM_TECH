@@ -139,7 +139,7 @@ export function StudentOffers() {
                         className={cn(
                           "flex size-12 items-center justify-center rounded-xl",
                           isConditional
-                            ? "bg-[#FFF3EA] text-[#F37021]"
+                            ? "bg-[#FFF3EA] text-[#F97316]"
                             : "bg-emerald-100 text-emerald-700"
                         )}
                       >
@@ -156,7 +156,7 @@ export function StudentOffers() {
                     <Badge
                       className={cn(
                         isConditional
-                          ? "bg-[#FFF3EA] text-[#F37021]"
+                          ? "bg-[#FFF3EA] text-[#F97316]"
                           : "bg-emerald-100 text-emerald-700"
                       )}
                     >
@@ -170,7 +170,7 @@ export function StudentOffers() {
                         "mt-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm",
                         daysLeft !== null && daysLeft < 7
                           ? "bg-rose-50 text-rose-700"
-                          : "bg-[#EAF3FF] text-[#0066CC]"
+                          : "bg-[#EAF3FF] text-[#0B5ED7]"
                       )}
                     >
                       <Icon name="CalendarClock" className="size-4" />
@@ -203,7 +203,7 @@ export function StudentOffers() {
                   <div className="mt-4 flex gap-2">
                     <Button
                       onClick={() => respondToOffer(o.id, "ACCEPTED")}
-                      className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
+                      className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
                       size="sm"
                     >
                       <Icon name="Check" className="mr-1 size-4" /> Accept
@@ -211,7 +211,7 @@ export function StudentOffers() {
                     <Button
                       onClick={() => respondToOffer(o.id, "DECLINED")}
                       variant="outline"
-                      className="border-[#F37021] text-[#F37021] hover:bg-[#FFF3EA]"
+                      className="border-[#F97316] text-[#F97316] hover:bg-[#FFF3EA]"
                       size="sm"
                     >
                       <Icon name="X" className="mr-1 size-4" /> Decline

@@ -120,7 +120,7 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
                   <span className="text-[11px] text-slate-400">Intake: {primaryIntake?.intakeMonth || 'Sept / Jan'}</span>
                   <Link
                     href={`/eligibility-check?courseId=${course.id}`}
-                    className="text-xs bg-[#0057B8] hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-xl flex items-center gap-1"
+                    className="text-xs bg-[#0B5ED7] hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-xl flex items-center gap-1"
                   >
                     Check Eligibility <ArrowRight className="w-3 h-3" />
                   </Link>

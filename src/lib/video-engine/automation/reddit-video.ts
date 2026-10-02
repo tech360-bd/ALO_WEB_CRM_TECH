@@ -108,7 +108,7 @@ async function createALOStyleVideo(
       remotionComposition: req.source === "faq_db" ? "FAQShort" : "SuccessStoryRedditStyle",
       voice: req.voice,
       language: req.language,
-      backgroundVideoUrl: req.backgroundVideoUrl || "/videos/minecraft-parkour.mp4 (or campus B-roll)",
+      backgroundVideoUrl: req.backgroundVideoUrl || "", // must be a real public/ asset path supplied by the caller (e.g. campus B-roll)
       tts: "ElevenLabs or Azure TTS",
       subtitles: "Remotion + VideoCaptioner",
       approvalRequired: true,

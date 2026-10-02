@@ -27,7 +27,7 @@ export default function Error({
         )}
         <Button
           onClick={reset}
-          className="mt-6 bg-[#0066CC] text-white hover:bg-[#0052a3]"
+          className="mt-6 bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
         >
           <Icon name="RefreshCw" className="mr-2 size-4" />
           Try Again

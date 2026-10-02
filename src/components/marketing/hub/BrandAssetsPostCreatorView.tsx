@@ -125,7 +125,7 @@ export default function BrandAssetsPostCreatorView() {
   const [selectedBrandColor, setSelectedBrandColor] = useState("primary");
 
   const brandColors = [
-    { key: "primary", label: "Primary Orange", hex: "#E8501A", tw: "bg-[#E8501A]" },
+    { key: "primary", label: "Primary Orange", hex: "#F97316", tw: "bg-[#F97316]" },
     { key: "white", label: "White Background", hex: "#FFFFFF", tw: "bg-white border border-gray-200" },
     { key: "blue", label: "Professional Blue", hex: "#1E40AF", tw: "bg-[#1E40AF]" },
     { key: "dark", label: "Dark Gray", hex: "#374151", tw: "bg-gray-700" },
@@ -180,7 +180,7 @@ export default function BrandAssetsPostCreatorView() {
       caption: `🎓 Study at ${aiCountry || "Top Universities"} with ALO Education! ${aiTopic ? `Learn about ${aiTopic}` : "Discover world-class programs"} and take the first step toward your international education journey.`,
       hashtags: "#ALOEducation #StudyAbroad #InternationalEducation #Scholarship #IELTS #StudentLife #Bangladesh #EducationConsultant",
       cta: "Book your FREE consultation today! Visit alo.edu.bd or call +8801700000000",
-      imagePrompt: `Professional education marketing image featuring students celebrating with graduation caps, university campus background, ALO Education branding in orange (#E8501A), modern and inspiring visual suitable for ${aiPlatform}`,
+      imagePrompt: `Professional education marketing image featuring students celebrating with graduation caps, university campus background, ALO Education branding in orange (#F97316), modern and inspiring visual suitable for ${aiPlatform}`,
       videoScript: `[0:00] Hook: "Want to study abroad but don't know where to start?"\n[0:03] Introduce ALO Education services\n[0:08] Highlight key benefits and success stories\n[0:12] Show student testimonials\n[0:15] CTA: "Book your free consultation now!"`,
     });
   };
@@ -202,7 +202,7 @@ export default function BrandAssetsPostCreatorView() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Palette className="h-7 w-7 text-[#E8501A]" />
+            <Palette className="h-7 w-7 text-[#F97316]" />
             Brand Assets & Post Creator
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -210,7 +210,7 @@ export default function BrandAssetsPostCreatorView() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1.5">
             <Download className="h-4 w-4" /> Export Brand Kit
           </Button>
         </div>
@@ -221,7 +221,7 @@ export default function BrandAssetsPostCreatorView() {
       {/* Stats Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Posts Created", value: "248", icon: FileEdit, color: "text-[#E8501A] bg-orange-50" },
+          { label: "Total Posts Created", value: "248", icon: FileEdit, color: "text-[#F97316] bg-orange-50" },
           { label: "Approved Templates", value: "37", icon: LayoutGrid, color: "text-green-600 bg-green-50" },
           { label: "Scheduled Posts", value: "12", icon: CalendarDays, color: "text-blue-600 bg-blue-50" },
           { label: "AI Generations", value: "89", icon: Sparkles, color: "text-purple-600 bg-purple-50" },
@@ -268,7 +268,7 @@ export default function BrandAssetsPostCreatorView() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <ImagePlus className="h-5 w-5 text-[#E8501A]" />
+                  <ImagePlus className="h-5 w-5 text-[#F97316]" />
                   Logo Management
                 </CardTitle>
                 <CardDescription>Upload and manage ALO Education logos for all platforms.</CardDescription>
@@ -277,17 +277,17 @@ export default function BrandAssetsPostCreatorView() {
                 {/* Current Logo Preview */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-lg border bg-muted/30">
                   <div className="w-24 h-24 rounded-lg bg-white border flex items-center justify-center shadow-sm">
-                    <span className="text-2xl font-bold text-[#E8501A]">ALO</span>
+                    <span className="text-2xl font-bold text-[#F97316]">ALO</span>
                   </div>
                   <div className="text-center sm:text-left space-y-1">
                     <p className="font-medium text-sm">ALO Education Logo</p>
                     <p className="text-xs text-muted-foreground">Primary logo (Horizontal) • PNG, SVG</p>
                     <p className="text-xs text-muted-foreground">Last updated: Feb 10, 2025</p>
                     <div className="flex gap-2 mt-2 justify-center sm:justify-start">
-                      <Button variant="outline" size="sm" className="gap-1 text-xs">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-xs">
                         <Eye className="h-3 w-3" /> Preview
                       </Button>
-                      <Button variant="outline" size="sm" className="gap-1 text-xs">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-xs">
                         <Download className="h-3 w-3" /> Download
                       </Button>
                     </div>
@@ -295,11 +295,11 @@ export default function BrandAssetsPostCreatorView() {
                 </div>
 
                 {/* Upload Area */}
-                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-[#E8501A] hover:bg-orange-50/30 transition-colors cursor-pointer">
+                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-[#F97316] hover:bg-orange-50/30 transition-colors cursor-pointer">
                   <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                   <p className="text-sm font-medium">Drop logo files here or click to upload</p>
                   <p className="text-xs text-muted-foreground mt-1">PNG, SVG, or JPG up to 5MB</p>
-                  <Button variant="outline" size="sm" className="mt-3 gap-1 text-xs text-[#E8501A] border-orange-200">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
                     <Upload className="h-3 w-3" /> Choose Files
                   </Button>
                 </div>
@@ -312,14 +312,14 @@ export default function BrandAssetsPostCreatorView() {
                       <div key={variant} className="flex flex-col items-center gap-1.5 p-3 rounded-lg border bg-white">
                         <div className="w-12 h-12 rounded bg-muted flex items-center justify-center">
                           {variant === "Icon Only" ? (
-                            <span className="text-lg font-bold text-[#E8501A]">A</span>
+                            <span className="text-lg font-bold text-[#F97316]">A</span>
                           ) : variant === "Vertical/Stacked" ? (
                             <div className="text-center">
-                              <span className="text-xs font-bold text-[#E8501A] block">ALO</span>
+                              <span className="text-xs font-bold text-[#F97316] block">ALO</span>
                               <span className="text-[6px] text-gray-600 block">Education</span>
                             </div>
                           ) : (
-                            <span className="text-[8px] font-bold text-[#E8501A]">ALO Edu</span>
+                            <span className="text-[8px] font-bold text-[#F97316]">ALO Edu</span>
                           )}
                         </div>
                         <span className="text-xs text-muted-foreground">{variant}</span>
@@ -334,7 +334,7 @@ export default function BrandAssetsPostCreatorView() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Palette className="h-5 w-5 text-[#E8501A]" />
+                  <Palette className="h-5 w-5 text-[#F97316]" />
                   Brand Colors
                 </CardTitle>
                 <CardDescription>Official ALO Education color palette.</CardDescription>
@@ -345,7 +345,7 @@ export default function BrandAssetsPostCreatorView() {
                     <div
                       key={color.key}
                       className={`cursor-pointer rounded-lg border-2 p-3 transition-all ${
-                        selectedBrandColor === color.key ? "border-[#E8501A] shadow-md" : "border-transparent"
+                        selectedBrandColor === color.key ? "border-[#F97316] shadow-md" : "border-transparent"
                       }`}
                       onClick={() => setSelectedBrandColor(color.key)}
                     >
@@ -361,9 +361,9 @@ export default function BrandAssetsPostCreatorView() {
                 <div>
                   <Label className="text-sm font-medium">Custom Color Picker</Label>
                   <div className="flex items-center gap-3 mt-2">
-                    <Input type="color" defaultValue="#E8501A" className="w-12 h-10 p-1 cursor-pointer" />
-                    <Input defaultValue="#E8501A" className="flex-1 font-mono text-sm" placeholder="#000000" />
-                    <Button variant="outline" size="sm">Apply</Button>
+                    <Input type="color" defaultValue="#F97316" className="w-12 h-10 p-1 cursor-pointer" />
+                    <Input defaultValue="#F97316" className="flex-1 font-mono text-sm" placeholder="#000000" />
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">Apply</Button>
                   </div>
                 </div>
               </CardContent>
@@ -373,7 +373,7 @@ export default function BrandAssetsPostCreatorView() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Layers className="h-5 w-5 text-[#E8501A]" />
+                  <Layers className="h-5 w-5 text-[#F97316]" />
                   Approved Layouts
                 </CardTitle>
                 <CardDescription>Pre-approved post layout templates for consistent branding.</CardDescription>
@@ -388,9 +388,9 @@ export default function BrandAssetsPostCreatorView() {
                     { name: "Portrait", ratio: "1080×1350", desc: "Instagram Portrait" },
                     { name: "Carousel Card", ratio: "1080×1080", desc: "Multi-slide" },
                   ].map((layout) => (
-                    <div key={layout.name} className="border rounded-lg p-3 hover:border-[#E8501A] hover:bg-orange-50/30 transition-colors cursor-pointer">
-                      <div className="w-full aspect-video rounded bg-gradient-to-br from-[#E8501A]/20 to-orange-100 flex items-center justify-center mb-2">
-                        <Square className="h-6 w-6 text-[#E8501A]" />
+                    <div key={layout.name} className="border rounded-lg p-3 hover:border-[#F97316] hover:bg-orange-50/30 transition-colors cursor-pointer">
+                      <div className="w-full aspect-video rounded bg-gradient-to-br from-[#F97316]/20 to-orange-100 flex items-center justify-center mb-2">
+                        <Square className="h-6 w-6 text-[#F97316]" />
                       </div>
                       <p className="text-xs font-medium truncate">{layout.name}</p>
                       <p className="text-xs text-muted-foreground">{layout.ratio}</p>
@@ -404,7 +404,7 @@ export default function BrandAssetsPostCreatorView() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Type className="h-5 w-5 text-[#E8501A]" />
+                  <Type className="h-5 w-5 text-[#F97316]" />
                   Font Settings
                 </CardTitle>
                 <CardDescription>Typography configuration for brand consistency.</CardDescription>
@@ -447,7 +447,7 @@ export default function BrandAssetsPostCreatorView() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <FileEdit className="h-5 w-5 text-[#E8501A]" />
+                    <FileEdit className="h-5 w-5 text-[#F97316]" />
                     Post Configuration
                   </CardTitle>
                   <CardDescription>Select platform, content type, and category for your post.</CardDescription>
@@ -461,7 +461,7 @@ export default function BrandAssetsPostCreatorView() {
                         <Button
                           key={name}
                           variant={platform === name ? "default" : "outline"}
-                          className={`flex-col h-auto py-2.5 gap-1 text-xs ${platform === name ? "bg-[#E8501A] hover:bg-[#E8501A]/90 text-white" : ""}`}
+                          className={`flex-col h-auto py-2.5 gap-1 text-xs ${platform === name ? "bg-[#F97316] hover:bg-[#F97316]/90 text-white" : ""}`}
                           onClick={() => setPlatform(name)}
                         >
                           <Icon className="h-5 w-5" />
@@ -485,7 +485,7 @@ export default function BrandAssetsPostCreatorView() {
                         <Button
                           key={type.value}
                           variant={contentType === type.value ? "default" : "outline"}
-                          className={`flex-col h-auto py-2.5 gap-1 text-xs ${contentType === type.value ? "bg-[#E8501A] hover:bg-[#E8501A]/90 text-white" : ""}`}
+                          className={`flex-col h-auto py-2.5 gap-1 text-xs ${contentType === type.value ? "bg-[#F97316] hover:bg-[#F97316]/90 text-white" : ""}`}
                           onClick={() => setContentType(type.value)}
                         >
                           <type.icon className="h-4 w-4" />
@@ -530,7 +530,7 @@ export default function BrandAssetsPostCreatorView() {
                     <div className="w-full bg-gray-200 rounded-full h-1.5">
                       <div
                         className={`h-1.5 rounded-full transition-all ${
-                          charCount > maxCharMap[platform] * 0.9 ? "bg-red-500" : charCount > maxCharMap[platform] * 0.7 ? "bg-amber-500" : "bg-[#E8501A]"
+                          charCount > maxCharMap[platform] * 0.9 ? "bg-red-500" : charCount > maxCharMap[platform] * 0.7 ? "bg-amber-500" : "bg-[#F97316]"
                         }`}
                         style={{ width: `${Math.min((charCount / maxCharMap[platform]) * 100, 100)}%` }}
                       />
@@ -548,7 +548,7 @@ export default function BrandAssetsPostCreatorView() {
                         value={hashtags}
                         onChange={(e) => setHashtags(e.target.value)}
                       />
-                      <Button variant="outline" className="gap-1 text-xs shrink-0 text-[#E8501A] border-orange-200">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="gap-1 text-xs shrink-0 text-[#F97316] border-orange-200">
                         <Sparkles className="h-3.5 w-3.5" /> Generate
                       </Button>
                     </div>
@@ -610,13 +610,13 @@ export default function BrandAssetsPostCreatorView() {
                   {/* Media Upload */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Media Upload</Label>
-                    <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-[#E8501A] hover:bg-orange-50/30 transition-colors cursor-pointer">
+                    <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-[#F97316] hover:bg-orange-50/30 transition-colors cursor-pointer">
                       <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                       <p className="text-sm font-medium">Upload images, videos, or documents</p>
                       <p className="text-xs text-muted-foreground mt-1">
                         {contentType === "Video" ? "MP4, MOV up to 100MB" : contentType === "Carousel" ? "Multiple images up to 10" : "PNG, JPG, GIF up to 10MB"}
                       </p>
-                      <Button variant="outline" size="sm" className="mt-3 gap-1 text-xs text-[#E8501A] border-orange-200">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
                         <Upload className="h-3 w-3" /> Choose Files
                       </Button>
                     </div>
@@ -625,7 +625,7 @@ export default function BrandAssetsPostCreatorView() {
                   {/* Logo Watermark */}
                   <div className="flex items-center justify-between p-3 rounded-lg border bg-white">
                     <div className="flex items-center gap-2">
-                      <div className={`p-1.5 rounded ${logoWatermark ? "bg-[#E8501A] text-white" : "bg-muted text-muted-foreground"}`}>
+                      <div className={`p-1.5 rounded ${logoWatermark ? "bg-[#F97316] text-white" : "bg-muted text-muted-foreground"}`}>
                         <Check className="h-4 w-4" />
                       </div>
                       <div>
@@ -644,7 +644,7 @@ export default function BrandAssetsPostCreatorView() {
               <Card className="sticky top-6">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Eye className="h-5 w-5 text-[#E8501A]" />
+                    <Eye className="h-5 w-5 text-[#F97316]" />
                     Preview
                   </CardTitle>
                   <CardDescription>Live preview of your post.</CardDescription>
@@ -652,7 +652,7 @@ export default function BrandAssetsPostCreatorView() {
                 <CardContent className="space-y-4">
                   {/* Platform label */}
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-orange-50 text-[#E8501A] border-orange-200">
+                    <Badge variant="outline" className="bg-orange-50 text-[#F97316] border-orange-200">
                       {(() => { const PIcon = platformIcons[platform] || Globe; return <PIcon className="h-3 w-3 mr-1" />; })()}
                       {platform}
                     </Badge>
@@ -663,7 +663,7 @@ export default function BrandAssetsPostCreatorView() {
                   {/* Post preview mockup */}
                   <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
                     <div className="p-3 flex items-center gap-2 border-b">
-                      <div className="w-8 h-8 rounded-full bg-[#E8501A] flex items-center justify-center text-white text-xs font-bold">ALO</div>
+                      <div className="w-8 h-8 rounded-full bg-[#F97316] flex items-center justify-center text-white text-xs font-bold">ALO</div>
                       <div>
                         <p className="text-xs font-semibold">ALO Education</p>
                         <p className="text-[10px] text-muted-foreground">Sponsored • {scheduleDate || "Now"}</p>
@@ -672,7 +672,7 @@ export default function BrandAssetsPostCreatorView() {
                     {contentType !== "Text" && (
                       <div className="aspect-square bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
                         <div className="text-center">
-                          <ImageIcon className="h-10 w-10 mx-auto text-[#E8501A]/40 mb-1" />
+                          <ImageIcon className="h-10 w-10 mx-auto text-[#F97316]/40 mb-1" />
                           <p className="text-xs text-gray-400">Media preview</p>
                         </div>
                       </div>
@@ -686,7 +686,7 @@ export default function BrandAssetsPostCreatorView() {
                       )}
                       {ctaType && (
                         <div className="bg-gray-100 rounded-md px-3 py-1.5 inline-block">
-                          <span className="text-[10px] font-semibold text-[#E8501A]">{ctaType}</span>
+                          <span className="text-[10px] font-semibold text-[#F97316]">{ctaType}</span>
                         </div>
                       )}
                       {landingLink && (
@@ -696,7 +696,7 @@ export default function BrandAssetsPostCreatorView() {
                     {logoWatermark && (
                       <div className="absolute bottom-2 right-2">
                         <div className="w-6 h-6 rounded bg-white border flex items-center justify-center">
-                          <span className="text-[6px] font-bold text-[#E8501A]">ALO</span>
+                          <span className="text-[6px] font-bold text-[#F97316]">ALO</span>
                         </div>
                       </div>
                     )}
@@ -704,14 +704,14 @@ export default function BrandAssetsPostCreatorView() {
 
                   {/* Action Buttons */}
                   <div className="space-y-2">
-                    <Button className="w-full bg-[#E8501A] hover:bg-[#E8501A]/90 gap-1.5">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5">
                       <Send className="h-4 w-4" /> Submit for Approval
                     </Button>
                     <div className="grid grid-cols-2 gap-2">
-                      <Button variant="outline" size="sm" className="gap-1">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1">
                         <Eye className="h-3.5 w-3.5" /> Preview
                       </Button>
-                      <Button variant="outline" size="sm" className="gap-1">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1">
                         <Save className="h-3.5 w-3.5" /> Save Draft
                       </Button>
                     </div>
@@ -845,10 +845,10 @@ export default function BrandAssetsPostCreatorView() {
                           Generated Caption
                         </CardTitle>
                         <div className="flex gap-1">
-                          <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                             <Copy className="h-3.5 w-3.5" />
                           </Button>
                         </div>
@@ -867,7 +867,7 @@ export default function BrandAssetsPostCreatorView() {
                           <Hash className="h-4 w-4 text-purple-500" />
                           Generated Hashtags
                         </CardTitle>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                           <Copy className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -905,7 +905,7 @@ export default function BrandAssetsPostCreatorView() {
                           <ImageIcon className="h-4 w-4 text-purple-500" />
                           Image Generation Prompt
                         </CardTitle>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                           <Copy className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -923,7 +923,7 @@ export default function BrandAssetsPostCreatorView() {
                           <Video className="h-4 w-4 text-purple-500" />
                           Video Script
                         </CardTitle>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7">
                           <Copy className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -935,10 +935,10 @@ export default function BrandAssetsPostCreatorView() {
 
                   {/* Submit Approval */}
                   <div className="flex gap-3">
-                    <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 gap-1.5 flex-1">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5 flex-1">
                       <Send className="h-4 w-4" /> Submit for Approval
                     </Button>
-                    <Button variant="outline" className="gap-1.5">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="gap-1.5">
                       <Pencil className="h-4 w-4" /> Edit in Creator
                     </Button>
                   </div>
@@ -981,7 +981,7 @@ export default function BrandAssetsPostCreatorView() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <LayoutGrid className="h-5 w-5 text-[#E8501A]" />
+                    <LayoutGrid className="h-5 w-5 text-[#F97316]" />
                     Template Library
                   </CardTitle>
                   <CardDescription>Saved post templates for quick reuse across platforms.</CardDescription>
@@ -997,7 +997,7 @@ export default function BrandAssetsPostCreatorView() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 gap-1.5">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#F97316]/90 gap-1.5">
                     <Plus className="h-4 w-4" /> New Template
                   </Button>
                 </div>
@@ -1014,7 +1014,7 @@ export default function BrandAssetsPostCreatorView() {
                         {/* Template preview card header */}
                         <div className="p-3 border-b bg-gradient-to-r from-orange-50 to-amber-50">
                           <div className="flex items-center justify-between mb-2">
-                            <Badge variant="outline" className="text-xs bg-white border-orange-200 text-[#E8501A]">
+                            <Badge variant="outline" className="text-xs bg-white border-orange-200 text-[#F97316]">
                               <PIcon className="h-3 w-3 mr-1" />
                               {template.platform}
                             </Badge>
@@ -1045,13 +1045,13 @@ export default function BrandAssetsPostCreatorView() {
 
                         {/* Template actions */}
                         <div className="px-3 pb-3 flex items-center gap-2">
-                          <Button variant="outline" size="sm" className="flex-1 gap-1 text-xs text-[#E8501A] border-orange-200 hover:bg-orange-50">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="flex-1 gap-1 text-xs text-[#F97316] border-orange-200 hover:bg-orange-50">
                             <Copy className="h-3 w-3" /> Use
                           </Button>
-                          <Button variant="outline" size="sm" className="gap-1 text-xs">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-xs">
                             <Pencil className="h-3 w-3" />
                           </Button>
-                          <Button variant="outline" size="sm" className="gap-1 text-xs text-red-500 border-red-200 hover:bg-red-50">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1 text-xs text-red-500 border-red-200 hover:bg-red-50">
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
@@ -1064,7 +1064,7 @@ export default function BrandAssetsPostCreatorView() {
                 <div className="text-center py-12">
                   <LayoutGrid className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
                   <p className="text-sm font-medium text-muted-foreground">No templates found for this category</p>
-                  <Button variant="outline" className="mt-3 gap-1 text-xs text-[#E8501A] border-orange-200">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="mt-3 gap-1 text-xs text-[#F97316] border-orange-200">
                     <Plus className="h-3 w-3" /> Create Template
                   </Button>
                 </div>

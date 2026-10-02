@@ -21,8 +21,8 @@ export default function BlogIndexPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           {/* HERO BANNER */}
-          <div className="bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl p-8 md:p-12 text-white mb-12 shadow-xl">
-            <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1 mb-4 uppercase">
+          <div className="bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-3xl p-8 md:p-12 text-white mb-12 shadow-xl">
+            <Badge className="bg-[#F97316] text-white font-bold text-xs px-3 py-1 mb-4 uppercase">
               ALO EDUCATION KNOWLEDGE HUB
             </Badge>
             <h1 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">
@@ -36,16 +36,16 @@ export default function BlogIndexPage() {
           {/* BLOG GRID */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {blogs.map((b) => (
-              <Card key={b.id} className="p-6 bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between">
+              <Card key={b.id} className="p-6 bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0B5ED7] flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <Badge className="bg-blue-50 text-[#0057B8] font-bold text-[11px]">
+                    <Badge className="bg-blue-50 text-[#0B5ED7] font-bold text-[11px]">
                       {b.category}
                     </Badge>
                     <span className="text-xs text-slate-400 font-medium">{b.readTime}</span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-[#0F172A] mb-2 line-clamp-2 hover:text-[#0057B8] transition-colors">
+                  <h3 className="text-lg font-bold text-[#0F172A] mb-2 line-clamp-2 hover:text-[#0B5ED7] transition-colors">
                     {b.title}
                   </h3>
 
@@ -60,7 +60,7 @@ export default function BlogIndexPage() {
                     <span>{b.publishedAt}</span>
                   </div>
                   <a href={`/resources/blogs/${b.slug}`} className="block w-full">
-                    <Button className="w-full bg-[#0057B8] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
                       Read Full Article <ArrowRight className="h-4 w-4" />
                     </Button>
                   </a>

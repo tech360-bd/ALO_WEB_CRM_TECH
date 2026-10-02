@@ -19,8 +19,8 @@ import {
 import { cn } from '@/lib/utils';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#0057B8';
-const ALO_ORANGE = '#E8501A';
+const ALO_BLUE = '#0B5ED7';
+const ALO_ORANGE = '#F97316';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const QUALIFICATIONS = ['SSC', 'HSC', 'Bachelor', 'Master', 'Other'] as const;

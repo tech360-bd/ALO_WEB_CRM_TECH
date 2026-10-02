@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -85,35 +87,35 @@ export default function DashboardCommunicationWidget({
         {/* Role Specific Action Quick Bar */}
         {role === 'STUDENT' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
+            <Link href="/student/help" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
               <MessageSquare className="w-3.5 h-3.5 mr-1" /> Reply Counselor
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-blue-700 border-blue-100 bg-blue-50/50">
+            </Button></Link>
+            <Link href="/student/documents" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-blue-700 border-blue-100 bg-blue-50/50">
               <FileCheck className="w-3.5 h-3.5 mr-1" /> Upload Doc Request
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
+            </Button></Link>
+            <Link href="/student/appointments" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
               <Clock className="w-3.5 h-3.5 mr-1" /> Book Appointment
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-purple-700 border-purple-100 bg-purple-50/50">
+            </Button></Link>
+            <Link href="/student/dashboard" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-purple-700 border-purple-100 bg-purple-50/50">
               <Sparkles className="w-3.5 h-3.5 mr-1" /> AI Advisor Chat
-            </Button>
+            </Button></Link>
           </div>
         )}
 
         {role === 'PARTNER' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
+            <Link href="/partner/messages" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
               <MessageSquare className="w-3.5 h-3.5 mr-1" /> Message Support
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
+            </Button></Link>
+            <Link href="/partner/documents" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
               <FileCheck className="w-3.5 h-3.5 mr-1" /> Missing Doc Upload
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-amber-700 border-amber-100 bg-amber-50/50">
+            </Button></Link>
+            <Link href="/partner/commission" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-amber-700 border-amber-100 bg-amber-50/50">
               <DollarSign className="w-3.5 h-3.5 mr-1" /> Commission Updates
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-purple-700 border-purple-100 bg-purple-50/50">
+            </Button></Link>
+            <Link href="/partner/leads" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-purple-700 border-purple-100 bg-purple-50/50">
               <AlertCircle className="w-3.5 h-3.5 mr-1" /> Urgent Follow-up
-            </Button>
+            </Button></Link>
           </div>
         )}
 
@@ -130,15 +132,15 @@ export default function DashboardCommunicationWidget({
 
         {role === 'FRONT_DESK' && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
+            <Link href="/crm/ucc" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
               <PhoneCall className="w-3.5 h-3.5 mr-1" /> Log Call Outcome
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
+            </Button></Link>
+            <Link href="/employee/leads" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
               <PlusCircle className="w-3.5 h-3.5 mr-1" /> Quick Lead Creation
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs h-8 justify-start text-rose-700 border-rose-100 bg-rose-50/50">
+            </Button></Link>
+            <Link href="/crm/ucc" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-rose-700 border-rose-100 bg-rose-50/50">
               <PhoneMissed className="w-3.5 h-3.5 mr-1" /> Missed Call Queue (2)
-            </Button>
+            </Button></Link>
           </div>
         )}
 

@@ -149,7 +149,7 @@ export default function AdminLanguageTestsView() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8F0] shadow-sm">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0057B8] text-white flex items-center justify-center"><BookOpen className="w-5 h-5" /></div>
+            <div className="w-10 h-10 rounded-xl bg-[#0B5ED7] text-white flex items-center justify-center"><BookOpen className="w-5 h-5" /></div>
             <div>
               <h1 className="text-xl font-extrabold tracking-tight">Language Tests Admin — CRUD</h1>
               <p className="text-xs text-slate-500 mt-0.5">Manage 15 tests: IELTS, PTE, TOEFL, Duolingo, OIETC, Oxford ELLT, LanguageCert, Kaplan, OET, GRE, GMAT, SAT, ACT, MOI + SEO + Sources + Publish • Super Admin full access</p>
@@ -161,7 +161,7 @@ export default function AdminLanguageTestsView() {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <Input placeholder="Search tests..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 h-9 rounded-xl border-[#E2E8F0] text-xs w-48" />
           </div>
-          <Button onClick={handleNew} className="bg-[#0057B8] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs"><Plus className="w-4 h-4 mr-1" /> New Test</Button>
+          <Button onClick={handleNew} className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs"><Plus className="w-4 h-4 mr-1" /> New Test</Button>
         </div>
       </div>
 
@@ -174,12 +174,12 @@ export default function AdminLanguageTestsView() {
           ) : (
             <div className="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
               {filteredTests.map((t: any) => (
-                <Card key={t.id || t.slug} className={`p-4 bg-white border rounded-2xl hover:border-[#0057B8]/30 transition cursor-pointer ${activeTest?.slug === t.slug ? 'border-[#0057B8] ring-1 ring-[#0057B8]/20' : 'border-[#E2E8F0]'}`} onClick={() => handleEdit(t)}>
+                <Card key={t.id || t.slug} className={`p-4 bg-white border rounded-2xl hover:border-[#0B5ED7]/30 transition cursor-pointer ${activeTest?.slug === t.slug ? 'border-[#0B5ED7] ring-1 ring-[#0B5ED7]/20' : 'border-[#E2E8F0]'}`} onClick={() => handleEdit(t)}>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-bold text-sm">{t.name}</h3>
-                        {t.isPopular && <Badge className="bg-[#E8501A] text-white text-[9px]">Popular</Badge>}
+                        {t.isPopular && <Badge className="bg-[#F97316] text-white text-[9px]">Popular</Badge>}
                         {t.verificationStatus === 'verified' ? <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[9px]">Verified</Badge> : <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-[9px]">{t.verificationStatus || 'pending'}</Badge>}
                       </div>
                       <p className="text-[11px] text-slate-500 font-mono mt-1">/{t.slug} • {t.provider}</p>
@@ -189,7 +189,7 @@ export default function AdminLanguageTestsView() {
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0]">{t.durationDisplay || 'Duration N/A'}</span>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0"><Edit className="w-3.5 h-3.5" /></Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0"><Edit className="w-3.5 h-3.5" /></Button>
                   </div>
                 </Card>
               ))}
@@ -212,7 +212,7 @@ export default function AdminLanguageTestsView() {
                 <h3 className="font-bold text-sm">{activeTest ? `Edit ${activeTest.name}` : 'Create New Test'}</h3>
                 <div className="flex gap-2">
                   <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} className="h-8 text-xs">Cancel</Button>
-                  <Button type="submit" className="bg-[#0057B8] hover:bg-[#004494] text-white font-bold h-8 rounded-xl text-xs"><Save className="w-3.5 h-3.5 mr-1" /> Save Test</Button>
+                  <Button type="submit" className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-8 rounded-xl text-xs"><Save className="w-3.5 h-3.5 mr-1" /> Save Test</Button>
                 </div>
               </div>
 
@@ -223,7 +223,7 @@ export default function AdminLanguageTestsView() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-semibold flex items-center gap-1 transition ${activeTab === tab.id ? 'bg-[#0057B8] text-white' : 'bg-white border border-[#E2E8F0] text-slate-600 hover:border-[#0057B8]'}`}
+                    className={`px-3 py-1.5 rounded-full text-[11px] font-semibold flex items-center gap-1 transition ${activeTab === tab.id ? 'bg-[#0B5ED7] text-white' : 'bg-white border border-[#E2E8F0] text-slate-600 hover:border-[#0B5ED7]'}`}
                   >
                     <tab.icon className="w-3 h-3" /> {tab.label}
                   </button>
@@ -376,7 +376,7 @@ export default function AdminLanguageTestsView() {
 
               <div className="p-4 border-t border-[#E2E8F0] bg-[#F8FAFC] flex justify-end gap-2">
                 <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} className="h-9 rounded-xl text-xs">Cancel</Button>
-                <Button type="submit" className="bg-[#0057B8] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs"><Save className="w-4 h-4 mr-1" /> Save Test</Button>
+                <Button type="submit" className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs"><Save className="w-4 h-4 mr-1" /> Save Test</Button>
               </div>
             </form>
           ) : (
@@ -384,7 +384,7 @@ export default function AdminLanguageTestsView() {
               <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
               <h3 className="font-bold text-sm">Select a test to edit its 13 tabs</h3>
               <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">Basic / Format / Modules / Scoring / Acceptance / Requirements / Prep / FAQs / Resources / Success / SEO / Sources / Publish — Super Admin full access, source verification every factual field.</p>
-              <Button onClick={handleNew} className="mt-4 bg-[#0057B8] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs"><Plus className="w-4 h-4 mr-1" /> Create New Test</Button>
+              <Button onClick={handleNew} className="mt-4 bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs"><Plus className="w-4 h-4 mr-1" /> Create New Test</Button>
             </div>
           )}
         </div>

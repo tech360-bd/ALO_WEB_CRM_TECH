@@ -60,4 +60,43 @@ describe("proxy API exposure policy", () => {
     expect(isPublicApiRequest("/api/authentication", "GET")).toBe(false);
     expect(isPublicApiRequest("/api/administer", "GET")).toBe(false);
   });
+
+  it("keeps staff/partner API prefixes role-restricted while preserving the public lead capture", () => {
+    // Public lead capture must remain anonymous-accessible despite /api/crm being role-gated.
+    expect(isPublicApiRequest("/api/crm/leads/public", "POST")).toBe(true);
+    // Staff CRM surface is no longer "any authenticated token".
+    for (const path of [
+      "/api/crm/tasks",
+      "/api/crm/appointments",
+      "/api/crm/users",
+      "/api/crm/settings",
+      "/api/crm/partners",
+      "/api/crm/inbox",
+      "/api/crm/hrm",
+    ]) {
+      expect(isPublicApiRequest(path, "GET"), path).toBe(false);
+      expect(isPublicApiRequest(path, "POST"), path).toBe(false);
+    }
+    // Employee, partner, application and marketing surfaces.
+    for (const path of [
+      "/api/employee/tasks",
+      "/api/employee-access/audit-logs",
+      "/api/partner/referrals",
+      "/api/partner/settings",
+      "/api/applications",
+      "/api/documents",
+      "/api/social/posts",
+      "/api/app-manager/b2b-providers",
+      "/api/international-officer/agreements",
+      "/api/knowledge-sharing",
+      "/api/unified-communication",
+      "/api/interview",
+    ]) {
+      expect(isPublicApiRequest(path, "GET"), path).toBe(false);
+      expect(isPublicApiRequest(path, "POST"), path).toBe(false);
+    }
+    // Boundary safety: the /api/partner rule must not shadow other partner prefixes.
+    expect(isPublicApiRequest("/api/partner-admin/seat-requests", "GET")).toBe(false);
+    expect(isPublicApiRequest("/api/partner-packages", "GET")).toBe(false);
+  });
 });

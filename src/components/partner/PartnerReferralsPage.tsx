@@ -112,7 +112,7 @@ export default function PartnerReferralsPage() {
     <div className="space-y-6 p-1">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div><h1 className="text-2xl font-bold text-alo-text">Referral Tracking</h1><p className="text-sm text-alo-text-muted mt-0.5">Track and manage your referrals and earned commissions</p></div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}><DialogTrigger asChild><Button variant="brand"><UserPlus className="w-4 h-4" /> Add Referral</Button></DialogTrigger>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}><DialogTrigger asChild><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand"><UserPlus className="w-4 h-4" /> Add Referral</Button></DialogTrigger>
           <DialogContent className="sm:max-w-lg"><DialogHeader><DialogTitle className="text-alo-text">Add New Referral</DialogTitle></DialogHeader>
             <div className="space-y-4 pt-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

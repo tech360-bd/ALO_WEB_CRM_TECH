@@ -9,6 +9,7 @@ import {
   CheckCircle, ChevronRight, ChevronDown, Shield, Zap, Send, Sparkles, UserCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useI18n } from '@/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -17,7 +18,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 
-const C = { blue: '#0057B8', orange: '#E8501A', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
+const C = { blue: '#0B5ED7', orange: '#F97316', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
 /* ═══════════════════════════════════════════════════════════════ TYPES ═══ */
 interface HeroCountry { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity: string; heroIntake: string; heroSubtitle: string; universityCount?: number; courseCount?: number; scholarshipCount?: number; }
@@ -26,9 +27,9 @@ interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; en
 
 /* ═══════════════════════════════════════════════════════════════ FALLBACKS ═══ */
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'united-kingdom', flag: '🇬🇧', accentColor: '#0057B8', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'World-Class Education in the Heart of Europe', universityCount: 42, courseCount: 1200, scholarshipCount: 35 },
+  { id: '1', name: 'United Kingdom', slug: 'united-kingdom', flag: '🇬🇧', accentColor: '#0B5ED7', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'World-Class Education in the Heart of Europe', universityCount: 42, courseCount: 1200, scholarshipCount: 35 },
   { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#3B82F6', heroImage: '/images/hero-banners/USA slide Banner.webp', heroCity: 'New York', heroIntake: 'Aug 2025 / Jan 2026', heroSubtitle: 'Top Universities & Endless Career Opportunities', universityCount: 50, courseCount: 1500, scholarshipCount: 40 },
-  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#E8501A', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroIntake: 'Sep 2025 / Jan 2026 / May 2026', heroSubtitle: 'Immigration-Friendly Pathways to Your Future', universityCount: 35, courseCount: 950, scholarshipCount: 28 },
+  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F97316', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroIntake: 'Sep 2025 / Jan 2026 / May 2026', heroSubtitle: 'Immigration-Friendly Pathways to Your Future', universityCount: 35, courseCount: 950, scholarshipCount: 28 },
   { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/hero-banners/Australia slide Banner.webp', heroCity: 'Sydney', heroIntake: 'Feb 2026 / Jul 2026', heroSubtitle: 'Quality Education & Post-Study Work Rights', universityCount: 30, courseCount: 800, scholarshipCount: 22 },
   { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/hero-banners/New Zealand slide Banner.webp', heroCity: 'Auckland', heroIntake: 'Feb 2026 / Jul 2026', heroSubtitle: 'Safe, Peaceful & Work While You Study', universityCount: 15, courseCount: 300, scholarshipCount: 12 },
   { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/hero-banners/Europe slide Banner.webp', heroCity: 'Dublin', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'Stay Back Visa & Growing Tech Hub', universityCount: 20, courseCount: 400, scholarshipCount: 15 },
@@ -78,6 +79,7 @@ function AnimatedCounter({ target, duration = 1.5 }: { target: number; duration?
 
 /* ═══════════════════════════════════════════════════════════════ HERO ═══ */
 function HeroSection() {
+  const { t } = useI18n();
   const { data } = useHomepageData();
   const slides = data?.heroSlides?.length ? data.heroSlides : FALLBACK_COUNTRIES;
   const [current, setCurrent] = useState(0);
@@ -139,7 +141,7 @@ function HeroSection() {
                 </motion.div>
               </AnimatePresence>
               <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-tight" style={{ color: C.text, fontFamily: 'system-ui, sans-serif' }}>
-                Your Future Starts Here
+                {t('hero.title')}
               </h1>
               <AnimatePresence mode="wait">
                 <motion.h2 key={slide.name} initial={reduceMotion ? false as any : { opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? undefined as any : { opacity: 0, x: 20 }} transition={{ duration: reduceMotion ? 0 : 0.4 }} className="text-2xl sm:text-3xl lg:text-4xl font-bold" style={{ color: slide.accentColor }} aria-live="polite">
@@ -147,17 +149,17 @@ function HeroSection() {
                 </motion.h2>
               </AnimatePresence>
               <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-base text-[#64748B] leading-relaxed max-w-lg">
-                Honest, verified guidance for Bangladeshi students — from course match to visa decision.
+                {t('hero.subtitle')}
               </motion.p>
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-wrap gap-3">
-                <a href="/book-consultation"><Button className="min-h-[48px] h-12 rounded-xl px-6 font-semibold text-white" style={{ backgroundColor: C.orange }}>Book Free Consultation <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
-                <a href={`/course-finder?country=${slide.slug}`}><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold border-2" style={{ borderColor: C.blue, color: C.blue }}>Find Courses</Button></a>
-                <a href="/eligibility-check"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: C.border, color: C.text }}>Check Eligibility</Button></a>
-                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: '#25D366', color: '#25D366' }}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button></a>
+                <a href="/book-consultation"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold text-white" style={{ backgroundColor: C.orange }}>{t('cta.bookConsultation')} <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
+                <a href={`/course-finder?country=${slide.slug}`}><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold border-2" style={{ borderColor: C.blue, color: C.blue }}>{t('cta.findCourse')}</Button></a>
+                <a href="/eligibility-check"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: C.border, color: C.text }}>{t('cta.checkEligibility')}</Button></a>
+                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: '#25D366', color: '#25D366' }}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button></a>
               </motion.div>
               {/* 3-button high-conversion hero placement — branded CTAs: AI Agent / WhatsApp AI / Facebook */}
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="pt-2">
-                <p className="text-[11px] font-semibold tracking-widest uppercase text-[#0057B8]/70 mb-2.5">Get Instant Help — choose your channel</p>
+                <p className="text-[11px] font-semibold tracking-widest uppercase text-[#0B5ED7]/70 mb-2.5">Get Instant Help — choose your channel</p>
                 <WebsiteActionButtons variant="hero" />
               </motion.div>
             </div>
@@ -254,7 +256,7 @@ function CourseFinderSection() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-10">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20 mb-4">Smart Course Finder</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0B5ED7] border border-[#0B5ED7]/20 mb-4">Smart Course Finder</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Search from thousands of courses across top universities worldwide</motion.p>
         </motion.div>
@@ -286,7 +288,7 @@ function CourseFinderSection() {
           </div>
           <div className="mt-4 flex justify-center">
             <a href="/eligibility-check">
-              <Button variant="outline" className="min-h-[48px] h-12 rounded-xl font-semibold border-2 px-8" style={{ borderColor: C.blue, color: C.blue }}>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl font-semibold border-2 px-8" style={{ borderColor: C.blue, color: C.blue }}>
                 <Sparkles className="mr-2 h-4 w-4" /> AI Course Match
               </Button>
             </a>
@@ -299,6 +301,7 @@ function CourseFinderSection() {
 
 /* ═══════════════════════════════════════════════════════════════ DESTINATIONS ═══ */
 function DestinationsSection() {
+  const { t } = useI18n();
   const { data } = useHomepageData();
   const allCountries = data?.countries?.length ? data.countries : FALLBACK_DESTINATIONS;
   const main7 = allCountries.slice(0, 7);
@@ -309,7 +312,7 @@ function DestinationsSection() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20 mb-4">Explore the World</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0B5ED7] border border-[#0B5ED7]/20 mb-4">Explore the World</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Popular Study Destinations</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Discover world-class education opportunities across top study destinations</motion.p>
         </motion.div>
@@ -339,8 +342,8 @@ function DestinationsSection() {
                   </div>
                   {d.visaType && <Badge variant="outline" className="text-xs w-fit" style={{ borderColor: d.accentColor, color: d.accentColor }}>{d.visaType}</Badge>}
                   <div className="flex gap-2 pt-1">
-                    <a href={`/destinations/${d.slug}`} className="flex-1"><Button variant="outline" size="sm" className="w-full h-10 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>View Guide</Button></a>
-                    <a href={`/course-finder?country=${d.slug}`} className="flex-1"><Button size="sm" className="w-full h-10 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>Find Courses</Button></a>
+                    <a href={`/destinations/${d.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full h-10 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>View Guide</Button></a>
+                    <a href={`/course-finder?country=${d.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="w-full h-10 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>{t('cta.findCourse')}</Button></a>
                   </div>
                 </CardContent>
               </Card>
@@ -385,7 +388,7 @@ function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div variants={slideFromLeft} className="space-y-6">
-            <Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20">About ALO Education</Badge>
+            <Badge className="bg-blue-50 text-[#0B5ED7] border border-[#0B5ED7]/20">About ALO Education</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Who We Are</h2>
             <div className="space-y-4 text-[#64748B] leading-relaxed">
               <p>In February 2023, <strong style={{ color: C.text }}>Taslima Akter</strong> founded ALO Education with a vision to connect ambitious Bangladeshi students with world-class education opportunities abroad. Her personal experience navigating the complexities of international admissions inspired her to create a platform built on trust, transparency, and genuine care for every student&apos;s future.</p>
@@ -434,7 +437,7 @@ function MissionVisionValues() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-24" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[#E8501A] border border-[#E8501A]/20 mb-4">Our Purpose</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[#F97316] border border-[#F97316]/20 mb-4">Our Purpose</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Our Commitment to Your Study-Abroad Dream</motion.h2>
         </motion.div>
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-3 gap-8">

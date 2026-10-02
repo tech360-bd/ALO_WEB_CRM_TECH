@@ -35,7 +35,7 @@ export default function ResourcesHubPage() {
       <main className="flex-1 pt-20 pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm mb-12">
-            <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs px-3 py-1 mb-4 uppercase">ALO Knowledge & Guidance Hub</Badge>
+            <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-xs px-3 py-1 mb-4 uppercase">ALO Knowledge & Guidance Hub</Badge>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Study Abroad Resources Hub</h1>
             <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Explore high-quality guides, official visa checklists, scholarship application strategies, and language test prep modules tailored for Bangladeshi students. DB-driven, verified, actionable — clear + complete + structured + verified + actionable information.</p>
             <div className="flex gap-2 mt-4">
@@ -48,7 +48,7 @@ export default function ResourcesHubPage() {
           <Card className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm mb-8">
             <div className="flex gap-3">
               <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search resources — blogs, visa guides, scholarships, application tips..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" /></div>
-              <Button className="bg-[#0057B8] text-white h-11">Search Resources</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] text-white h-11">Search Resources</Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {categories.slice(0, 8).map((cat: any) => <Badge key={cat.id} variant="outline" className="border-[#E2E8F0] text-[11px]">{cat.name} ({cat.resourceCount || 0})</Badge>)}
@@ -60,16 +60,16 @@ export default function ResourcesHubPage() {
             {RESOURCE_SECTIONS.map((sec, idx) => {
               const Icon = sec.icon;
               return (
-                <Card key={idx} className="p-6 bg-white hover:shadow-md transition-all border-[#E2E8F0] hover:border-[#0057B8] flex flex-col justify-between rounded-2xl">
+                <Card key={idx} className="p-6 bg-white hover:shadow-md transition-all border-[#E2E8F0] hover:border-[#0B5ED7] flex flex-col justify-between rounded-2xl">
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-4">
-                      <div className="h-12 w-12 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#0057B8] flex items-center justify-center"><Icon className="h-6 w-6" /></div>
+                      <div className="h-12 w-12 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#0B5ED7] flex items-center justify-center"><Icon className="h-6 w-6" /></div>
                       <Badge className="bg-[#F8FAFC] text-gray-700 border-[#E2E8F0] text-[10px] font-bold">{sec.count}</Badge>
                     </div>
                     <h3 className="text-lg font-bold text-[#0F172A] mb-2">{sec.title}</h3>
                     <p className="text-xs text-gray-600 mb-4 leading-relaxed">{sec.desc}</p>
                   </div>
-                  <Link href={sec.href} className="block w-full"><Button className="w-full bg-[#0057B8] text-white hover:bg-[#004494] text-xs font-bold h-11 rounded-xl flex items-center justify-center gap-1.5">Open Resource <ArrowRight className="h-4 w-4" /></Button></Link>
+                  <Link href={sec.href} className="block w-full"><Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#004494] text-xs font-bold h-11 rounded-xl flex items-center justify-center gap-1.5">Open Resource <ArrowRight className="h-4 w-4" /></Button></Link>
                 </Card>
               );
             })}
@@ -86,10 +86,10 @@ export default function ResourcesHubPage() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {resources.slice(0, 3).map((b: any) => (
                   <Card key={b.id} className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl">
-                    <Badge className="bg-white border-[#E2E8F0] text-[#0057B8] text-[10px] font-bold mb-2">{b.category?.name || 'Resource'}</Badge>
+                    <Badge className="bg-white border-[#E2E8F0] text-[#0B5ED7] text-[10px] font-bold mb-2">{b.category?.name || 'Resource'}</Badge>
                     <h3 className="font-bold text-sm text-[#0F172A] mb-2 line-clamp-2">{b.title}</h3>
                     <p className="text-xs text-gray-600 mb-4 line-clamp-2">{b.excerpt || b.summary || ''}</p>
-                    <Link href={`/resources/${b.slug}`} className="text-xs font-bold text-[#0057B8] hover:underline flex items-center gap-1">Read Article <ArrowRight className="h-3.5 w-3.5" /></Link>
+                    <Link href={`/resources/${b.slug}`} className="text-xs font-bold text-[#0B5ED7] hover:underline flex items-center gap-1">Read Article <ArrowRight className="h-3.5 w-3.5" /></Link>
                   </Card>
                 ))}
               </div>

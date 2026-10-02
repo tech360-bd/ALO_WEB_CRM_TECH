@@ -61,12 +61,12 @@ export default function WebsiteActionButtons({ variant = 'header', onOpenAI, cla
       <div className={`flex items-center gap-2 flex-wrap ${className}`} aria-label="ALO quick contact actions">
         <button
           onClick={handleAI}
-          className="inline-flex items-center gap-1.5 bg-[#0057B8] text-white px-3.5 py-2 rounded-full text-xs font-bold hover:bg-[#004494] hover:scale-[1.02] transition-all shadow-sm border border-white"
+          className="inline-flex items-center gap-1.5 bg-[#0B5ED7] text-white px-3.5 py-2 rounded-full text-xs font-bold hover:bg-[#004494] hover:scale-[1.02] transition-all shadow-sm border border-white"
           aria-label="Chat with AI Agent"
         >
           <Bot className="w-3.5 h-3.5" />
           <span>Chat with AI Agent</span>
-          <span className="bg-[#E8501A] text-white text-[9px] px-1 py-0 rounded font-bold">24/7</span>
+          <span className="bg-[#F97316] text-white text-[9px] px-1 py-0 rounded font-bold">24/7</span>
         </button>
         <button
           onClick={handleWhatsApp}
@@ -94,13 +94,13 @@ export default function WebsiteActionButtons({ variant = 'header', onOpenAI, cla
       <div className={`flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 ${className}`} aria-label="ALO high conversion actions">
         <button
           onClick={handleAI}
-          className="group inline-flex items-center gap-2.5 bg-[#0057B8] text-white px-5 py-3 rounded-xl text-sm font-bold hover:bg-[#004494] hover:shadow-lg hover:scale-[1.02] transition-all shadow-md border-2 border-white"
+          className="group inline-flex items-center gap-2.5 bg-[#0B5ED7] text-white px-5 py-3 rounded-xl text-sm font-bold hover:bg-[#004494] hover:shadow-lg hover:scale-[1.02] transition-all shadow-md border-2 border-white"
         >
           <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
             <Bot className="w-4 h-4" />
           </div>
           <span>Chat with AI Agent</span>
-          <Badge className="bg-[#E8501A] text-white text-[10px] px-1.5 ml-1">24/7</Badge>
+          <Badge className="bg-[#F97316] text-white text-[10px] px-1.5 ml-1">24/7</Badge>
         </button>
         <button
           onClick={handleWhatsApp}
@@ -130,21 +130,21 @@ export default function WebsiteActionButtons({ variant = 'header', onOpenAI, cla
   if (variant === 'footer') {
     return (
       <div className={`space-y-3 ${className}`}>
-        <h4 className="font-bold text-[#0057B8] text-sm uppercase tracking-wider flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-[#E8501A]" />
+        <h4 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-[#F97316]" />
           Get Instant Help
         </h4>
         <p className="text-xs text-slate-600 leading-relaxed">
           24/7 AI support + Senior Counselor <span className="font-bold text-[#0F172A]">Al Aminn • 01805020101</span> • Office: Barek Mansion-02, Lift-05, 58/9 Box Culvert Road, Panthapath, Dhaka-1205 (Opposite Bashundhara City)
           {' • '}
-          <a href={MAP_URL} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:text-[#E8501A] underline font-medium">
+          <a href={MAP_URL} target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] hover:text-[#F97316] underline font-medium">
             Google Maps
           </a>
         </p>
         <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={handleAI}
-            className="flex-1 inline-flex items-center justify-center gap-2 bg-[#0057B8] text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#004494] hover:scale-[1.01] transition-all shadow-sm"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-[#0B5ED7] text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#004494] hover:scale-[1.01] transition-all shadow-sm"
           >
             <Bot className="w-4 h-4" />
             Chat with AI Agent
@@ -177,7 +177,7 @@ export default function WebsiteActionButtons({ variant = 'header', onOpenAI, cla
   // compact (mobile)
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
-      <button onClick={handleAI} className="inline-flex items-center gap-1.5 bg-[#0057B8] text-white px-3 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-[#004494] transition-colors">
+      <button onClick={handleAI} className="inline-flex items-center gap-1.5 bg-[#0B5ED7] text-white px-3 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-[#004494] transition-colors">
         <Bot className="w-3.5 h-3.5" /> AI Agent
       </button>
       <button onClick={handleWhatsApp} className="inline-flex items-center gap-1.5 bg-[#25D366] text-white px-3 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-[#20bd5a] transition-colors">

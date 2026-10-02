@@ -20,7 +20,7 @@ async function main() {
       name: "ALO Education Logo",
       value: "/logo.svg",
       mimeType: "image/svg+xml",
-      value: JSON.stringify({ colors: ["#0057B8", "#E8501A", "#FFFFFF"], dimensions: "200x48" }),
+      value: JSON.stringify({ colors: ["#0B5ED7", "#F97316", "#FFFFFF"], dimensions: "200x48" }),
       status: true,
       uploadedBy: "system",
     },
@@ -29,7 +29,7 @@ async function main() {
     data: {
       assetType: "COLOR_PALETTE",
       name: "ALO Brand Colors",
-      value: JSON.stringify({ primary: "#0057B8", cta: "#E8501A", background: "#FFFFFF", text: "#0F172A" }),
+      value: JSON.stringify({ primary: "#0B5ED7", cta: "#F97316", background: "#FFFFFF", text: "#0F172A" }),
       status: true,
     },
   });

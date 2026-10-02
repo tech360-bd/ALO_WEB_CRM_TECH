@@ -70,7 +70,7 @@ export default function StudentEnglishPrepProfile() {
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <div className="w-8 h-8 border-2 border-[#0057B8] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <div className="w-8 h-8 border-2 border-[#0B5ED7] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm text-slate-500">Loading your English prep profile...</p>
       </div>
     );
@@ -79,7 +79,7 @@ export default function StudentEnglishPrepProfile() {
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#0057B8] text-white flex items-center justify-center"><BookOpen className="w-5 h-5" /></div>
+        <div className="w-10 h-10 rounded-xl bg-[#0B5ED7] text-white flex items-center justify-center"><BookOpen className="w-5 h-5" /></div>
         <div>
           <h1 className="text-xl font-extrabold text-[#0F172A]">My English Prep — Student Portal</h1>
           <p className="text-xs text-slate-500">Store preferred_test, current_score, target_score, test_date, preparation_status — DB-driven, no fake</p>
@@ -88,7 +88,7 @@ export default function StudentEnglishPrepProfile() {
 
       <div className="grid md:grid-cols-3 gap-4">
         <Card className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
-          <div className="flex items-center gap-2 mb-2"><Target className="w-4 h-4 text-[#0057B8]" /><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Current → Target</span></div>
+          <div className="flex items-center gap-2 mb-2"><Target className="w-4 h-4 text-[#0B5ED7]" /><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Current → Target</span></div>
           <p className="text-lg font-black text-[#0F172A]">{formData.currentScore || '—'} → {formData.targetScore || '—'}</p>
           <p className="text-[11px] text-slate-500 mt-1">Gap: {formData.currentScore && formData.targetScore ? (parseFloat(formData.targetScore) - parseFloat(formData.currentScore)).toFixed(1) : '—'}</p>
         </Card>
@@ -159,7 +159,7 @@ export default function StudentEnglishPrepProfile() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-[#0057B8] hover:bg-[#004494] text-white font-bold h-11 rounded-xl">Save English Prep Profile</Button>
+          <Button type="submit" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl">Save English Prep Profile</Button>
         </form>
 
         {profile && (
@@ -172,12 +172,12 @@ export default function StudentEnglishPrepProfile() {
         )}
       </Card>
 
-      <Card className="p-5 bg-gradient-to-br from-[#0057B8] to-[#004494] text-white border-0 rounded-2xl">
+      <Card className="p-5 bg-gradient-to-br from-[#0B5ED7] to-[#004494] text-white border-0 rounded-2xl">
         <h4 className="font-bold text-sm">Need Help Choosing Test?</h4>
         <p className="text-xs text-blue-100 mt-1 leading-relaxed">Tell us your destination, university and course — our counselor can help you understand relevant English requirement.</p>
         <div className="flex gap-2 mt-3">
-          <a href="/language-prep" className="flex-1"><Button className="w-full bg-white text-[#0057B8] hover:bg-slate-50 font-bold h-9 rounded-xl text-xs">Explore Test Prep →</Button></a>
-          <a href="/language-prep/comparison"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-9 rounded-xl text-xs">Compare Tests</Button></a>
+          <a href="/language-prep" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-white text-[#0B5ED7] hover:bg-slate-50 font-bold h-9 rounded-xl text-xs">Explore Test Prep →</Button></a>
+          <a href="/language-prep/comparison"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-9 rounded-xl text-xs">Compare Tests</Button></a>
         </div>
       </Card>
     </div>

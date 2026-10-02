@@ -98,7 +98,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e8f0fb] to-white p-4">
         <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-[#E2E8F0] text-center">
           <div className="animate-pulse">
-            <div className="h-12 w-12 bg-[#0057B8]/20 rounded-full mx-auto mb-4" />
+            <div className="h-12 w-12 bg-[#0B5ED7]/20 rounded-full mx-auto mb-4" />
             <div className="h-4 bg-slate-200 rounded w-3/4 mx-auto mb-2" />
             <div className="h-3 bg-slate-100 rounded w-1/2 mx-auto" />
           </div>
@@ -154,21 +154,21 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           {/* Multi-channel: show Google/Facebook links if available */}
           {(invitation.googleReviewUrl || invitation.facebookRecommendUrl) && (
             <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 mb-4 text-left">
-              <div className="text-sm font-semibold text-[#0057B8] mb-2">Optional: Also share on these platforms</div>
+              <div className="text-sm font-semibold text-[#0B5ED7] mb-2">Optional: Also share on these platforms</div>
               <p className="text-xs text-slate-600 mb-3">
                 You can optionally share your experience on Google and Facebook. Clicking a link opens the official platform — you submit the review yourself. We never post on your behalf.
               </p>
               <div className="flex flex-wrap gap-2">
                 {invitation.googleReviewUrl && (
                   <a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
                       <Icon name="Star" className="h-4 w-4 mr-1" /> Google Reviews
                     </Button>
                   </a>
                 )}
                 {invitation.facebookRecommendUrl && (
                   <a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
                       <Icon name="ThumbsUp" className="h-4 w-4 mr-1" /> Facebook
                     </Button>
                   </a>
@@ -191,7 +191,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
         {/* Header */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 mb-3">
-            <div className="h-10 w-10 rounded-xl bg-[#F37021] flex items-center justify-center text-white font-bold text-lg">A</div>
+            <div className="h-10 w-10 rounded-xl bg-[#F97316] flex items-center justify-center text-white font-bold text-lg">A</div>
             <div className="text-left">
               <div className="font-bold text-slate-900">ALO Education</div>
               <div className="text-xs text-slate-500">Study Abroad Consultants</div>
@@ -228,7 +228,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
                 >
                   <Icon
                     name="Star"
-                    className={`h-8 w-8 ${(hoverRating || rating) >= star ? "fill-[#F37021] text-[#F37021]" : "text-slate-300"}`}
+                    className={`h-8 w-8 ${(hoverRating || rating) >= star ? "fill-[#F97316] text-[#F97316]" : "text-slate-300"}`}
                   />
                 </button>
               ))}
@@ -276,7 +276,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
 
           {/* AI notice */}
           <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 text-xs text-slate-600">
-            <Icon name="Info" className="h-4 w-4 inline mr-1 text-[#0057B8]" />
+            <Icon name="Info" className="h-4 w-4 inline mr-1 text-[#0B5ED7]" />
             Your review will be checked by our AI system for spam and inappropriate content. We never modify your words — the review is published as you wrote it (after moderation).
           </div>
 
@@ -284,7 +284,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           <Button
             onClick={submit}
             disabled={submitting || rating === 0 || reviewText.trim().length < 10}
-            className="w-full h-12 bg-[#F37021] hover:bg-[#F37021]/90 text-white"
+            className="w-full h-12 bg-[#F97316] hover:bg-[#F97316]/90 text-white"
           >
             {submitting ? (
               <><Icon name="Loader2" className="h-4 w-4 mr-2 animate-spin" /> Submitting...</>
@@ -303,14 +303,14 @@ export function PublicReviewSubmit({ token }: { token: string }) {
               <div className="flex flex-wrap gap-2">
                 {invitation.googleReviewUrl && (
                   <a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
                       <Icon name="Star" className="h-4 w-4 mr-1" /> Google Reviews
                     </Button>
                   </a>
                 )}
                 {invitation.facebookRecommendUrl && (
                   <a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8]">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#0B5ED7] text-[#0B5ED7]">
                       <Icon name="ThumbsUp" className="h-4 w-4 mr-1" /> Facebook
                     </Button>
                   </a>

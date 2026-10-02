@@ -115,7 +115,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0066CC]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -124,12 +124,12 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F37021] border border-[#F37021]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
               <Icon name="Plane" className="mr-1 size-3" />
               Verified Weekly
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Visa Support &amp; <span className="text-[#0066CC]">Guidance</span>
+              Visa Support &amp; <span className="text-[#0B5ED7]">Guidance</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Your visa is the most critical step of your study-abroad journey. Our visa officers have handled
@@ -137,11 +137,11 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
               we monitor 25 government sources weekly so our advice is always current.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#F37021] px-6 text-white hover:bg-[#c8451a]">
+              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#F97316] px-6 text-white hover:bg-[#c8451a]">
                 <Icon name="CalendarCheck" className="size-4" />
                 Book Visa Consultation
               </Button>
-              <Button onClick={() => onNavigate("public-services", "visa-support")} variant="outline" className="h-12 border-[#0066CC]/30 bg-white px-6 text-[#0066CC] hover:bg-[#EAF3FF]">
+              <Button onClick={() => onNavigate("public-services", "visa-support")} variant="outline" className="h-12 border-[#0B5ED7]/30 bg-white px-6 text-[#0B5ED7] hover:bg-[#EAF3FF]">
                 <Icon name="Briefcase" className="size-4" />
                 View Visa Service
               </Button>
@@ -154,15 +154,15 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
       <section>
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#F37021]">Our Visa Services</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Our Visa Services</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Everything you need for a successful visa</h2>
             <p className="mt-2 text-sm text-[#5A7299]">All free for ALO students.</p>
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {VISA_SERVICES.map((s) => (
-              <Card key={s.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0066CC]/30">
+              <Card key={s.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0B5ED7]/30">
                 <CardContent className="p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0066CC]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0B5ED7]">
                     <Icon name={s.icon} className="size-5" />
                   </div>
                   <h4 className="mt-3 text-sm font-bold text-[#0B2447]">{s.title}</h4>
@@ -178,7 +178,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
       <section className="bg-[#F7FAFE]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#0066CC]">Country-Specific Guidance</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#0B5ED7]">Country-Specific Guidance</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Visa requirements by destination</h2>
             <p className="mt-2 text-sm text-[#5A7299]">Click any country for full requirements, or visit our country pages.</p>
           </div>
@@ -186,43 +186,43 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
             {COUNTRY_GUIDANCE.map((c) => (
               <Card
                 key={c.slug}
-                className="alo-card-hover group flex cursor-pointer flex-col rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0066CC]/30"
+                className="alo-card-hover group flex cursor-pointer flex-col rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0B5ED7]/30"
                 onClick={() => onNavigate("public-country", c.slug)}
               >
                 <CardContent className="flex flex-1 flex-col p-5">
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{c.flag}</span>
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate text-base font-bold text-[#0B2447] group-hover:text-[#0066CC]">{c.name}</h3>
+                      <h3 className="truncate text-base font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{c.name}</h3>
                       <p className="text-xs text-[#5A7299]">{c.visaType}</p>
                     </div>
                   </div>
                   <div className="mt-4 space-y-2 text-xs text-[#5A7299]">
                     <div className="flex items-start gap-2">
-                      <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[#0066CC]" />
+                      <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
                       <span>{c.processingTime}</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Icon name="DollarSign" className="mt-0.5 size-3.5 shrink-0 text-[#0066CC]" />
+                      <Icon name="DollarSign" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
                       <span>{c.fee}</span>
                     </div>
                   </div>
                   <div className="mt-3 border-t border-[#E2E8F0] pt-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#F37021]">Key facts</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#F97316]">Key facts</p>
                     <ul className="mt-1.5 space-y-1">
                       {c.keyFacts.map((f, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-xs text-[#5A7299]">
-                          <Icon name="ChevronRight" className="mt-0.5 size-3 shrink-0 text-[#0066CC]" />
+                          <Icon name="ChevronRight" className="mt-0.5 size-3 shrink-0 text-[#0B5ED7]" />
                           <span>{f}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                   <div className="mt-auto pt-4">
-                    <Button
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-full justify-between px-0 text-xs text-[#0066CC] hover:bg-transparent hover:text-[#0066CC]"
+                      className="h-8 w-full justify-between px-0 text-xs text-[#0B5ED7] hover:bg-transparent hover:text-[#0B5ED7]"
                     >
                       View country page
                       <Icon name="ArrowRight" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -239,7 +239,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
       <section>
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#F37021]">Refusal Prevention</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Refusal Prevention</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Top 8 reasons Bangladeshi visas get refused</h2>
             <p className="mt-2 text-sm text-[#5A7299]">And how ALO helps you avoid each one.</p>
           </div>
@@ -284,7 +284,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
                 We'll review your profile, recommend the right destination, and outline a clear path to visa approval.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#F37021] px-6 text-white hover:bg-[#c8451a]">
+                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#F97316] px-6 text-white hover:bg-[#c8451a]">
                   <Icon name="CalendarCheck" className="size-4" />
                   Book Consultation
                 </Button>

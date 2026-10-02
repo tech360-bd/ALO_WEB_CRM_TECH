@@ -85,7 +85,7 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" className="border-[#E2E8F0]" onClick={() => fetchApps()}><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></Button>
-          <Link href="/application-manager/create"><Button className="bg-[#0057B8] text-white">Create Application</Button></Link>
+          <Link href="/application-manager/create"><Button className="bg-[#0B5ED7] text-white">Create Application</Button></Link>
         </div>
       </div>
 
@@ -140,7 +140,7 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
               </select>
             </div>
             <div className="col-span-6 md:col-span-2">
-              <Button className="w-full bg-[#0057B8] text-white" onClick={() => fetchApps(1)}>Apply Filters</Button>
+              <Button className="w-full bg-[#0B5ED7] text-white" onClick={() => fetchApps(1)}>Apply Filters</Button>
             </div>
           </div>
 
@@ -170,9 +170,9 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
       <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /><p className="text-sm text-gray-500 mt-2">Loading real database records...</p></div>
+            <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0B5ED7]" /><p className="text-sm text-gray-500 mt-2">Loading real database records...</p></div>
           ) : error ? (
-            <div className="p-8 text-center space-y-3"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto" /><p className="text-sm text-gray-600">{error}</p><Button size="sm" onClick={() => fetchApps()} className="bg-[#0057B8] text-white">Retry</Button></div>
+            <div className="p-8 text-center space-y-3"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto" /><p className="text-sm text-gray-600">{error}</p><Button size="sm" onClick={() => fetchApps()} className="bg-[#0B5ED7] text-white">Retry</Button></div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[1400px]">
@@ -206,7 +206,7 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
                     apps.map(app => (
                       <tr key={app.id} className="border-b border-[#E2E8F0]/60 hover:bg-[#F8FAFC]">
                         <td className="p-3"><input type="checkbox" checked={selected.includes(app.id)} onChange={e => setSelected(e.target.checked ? [...selected, app.id] : selected.filter(id => id !== app.id))} /></td>
-                        <td className="p-3 font-mono text-xs text-[#0057B8]">{app.applicationCode || app.id.substring(0, 8)}</td>
+                        <td className="p-3 font-mono text-xs text-[#0B5ED7]">{app.applicationCode || app.id.substring(0, 8)}</td>
                         <td className="p-3 font-mono text-xs">{app.studentId?.substring(0, 8) || '-'}</td>
                         <td className="p-3 font-medium text-[#0F172A]">{app.studentId?.substring(0, 12) || 'Student'}</td>
                         <td className="p-3">{app.country || '-'}</td>
@@ -223,7 +223,7 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
                         <td className="p-3"><Badge className="bg-cyan-50 text-cyan-700 border-cyan-200 text-[10px]">{app.casI20CoeStatus || 'NOT_STARTED'}</Badge></td>
                         <td className="p-3 text-xs">{app.deadlineDate ? new Date(app.deadlineDate).toLocaleDateString() : app.deadline || '-'}</td>
                         <td className="p-3 text-xs">{new Date(app.updatedAt).toLocaleDateString()}</td>
-                        <td className="p-3 text-right"><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="text-[#0057B8]"><Eye className="w-4 h-4" /></Button></Link></td>
+                        <td className="p-3 text-right"><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="text-[#0B5ED7]"><Eye className="w-4 h-4" /></Button></Link></td>
                       </tr>
                     ))
                   )}

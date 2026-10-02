@@ -63,8 +63,8 @@ export default function PartnerManagerDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Award className="w-4 h-4" /> Training</Button>
-          <Button variant="brand" size="sm"><Plus className="w-4 h-4" /> Add Partner</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Award className="w-4 h-4" /> Training</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Plus className="w-4 h-4" /> Add Partner</Button>
         </div>
       </div>
 
@@ -186,8 +186,8 @@ export default function PartnerManagerDashboard() {
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{p.location} · Submitted: {p.submitted}</p>
                     <div className="flex gap-1 mt-1.5">
-                      <Button variant="brand" size="sm" className="text-[10px] h-6 px-2">Approve</Button>
-                      <Button variant="outline" size="sm" className="text-[10px] h-6 px-2">Review</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[10px] h-6 px-2">Approve</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[10px] h-6 px-2">Review</Button>
                     </div>
                   </div>
                 ))}

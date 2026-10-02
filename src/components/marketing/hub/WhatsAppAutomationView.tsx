@@ -473,13 +473,13 @@ function InboxTab({
             </div>
           </div>
           <div className="flex items-center gap-1.5">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-alo-text-muted hover:text-green-600">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7 text-alo-text-muted hover:text-green-600">
               <Phone className="w-3.5 h-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-alo-text-muted hover:text-green-600">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7 text-alo-text-muted hover:text-green-600">
               <Search className="w-3.5 h-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-alo-text-muted hover:text-green-600">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-7 w-7 text-alo-text-muted hover:text-green-600">
               <MoreVertical className="w-3.5 h-3.5" />
             </Button>
           </div>
@@ -541,7 +541,7 @@ function InboxTab({
 
         <div className="px-4 py-2.5 bg-white border-t border-alo-border shrink-0">
           <div className="flex items-center gap-2 max-w-2xl mx-auto">
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-alo-text-muted shrink-0">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8 text-alo-text-muted shrink-0">
               <Paperclip className="w-4 h-4" />
             </Button>
             <Input
@@ -550,10 +550,10 @@ function InboxTab({
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
             />
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-alo-text-muted shrink-0">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8 text-alo-text-muted shrink-0">
               <Mic className="w-4 h-4" />
             </Button>
-            <Button size="icon" className="h-8 w-8 bg-green-600 hover:bg-green-700 text-white shrink-0">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="icon" className="h-8 w-8 bg-green-600 hover:bg-green-700 text-white shrink-0">
               <Send className="w-3.5 h-3.5" />
             </Button>
           </div>
@@ -649,16 +649,16 @@ function InboxTab({
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-alo-text-muted mb-2">Quick Actions</p>
               <div className="space-y-1.5">
-                <Button variant="outline" size="sm" className="w-full justify-start h-7 text-[11px] border-alo-border">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full justify-start h-7 text-[11px] border-alo-border">
                   <Eye className="w-3 h-3 mr-1.5" /> View Full Profile
                 </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start h-7 text-[11px] border-alo-border">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full justify-start h-7 text-[11px] border-alo-border">
                   <UserCheck className="w-3 h-3 mr-1.5" /> Assign to Me
                 </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start h-7 text-[11px] border-alo-border">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full justify-start h-7 text-[11px] border-alo-border">
                   <Upload className="w-3 h-3 mr-1.5" /> Request Documents
                 </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start h-7 text-[11px] border-red-200 text-red-600 hover:bg-red-50">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full justify-start h-7 text-[11px] border-red-200 text-red-600 hover:bg-red-50">
                   <AlertTriangle className="w-3 h-3 mr-1.5" /> Escalate Issue
                 </Button>
               </div>
@@ -973,7 +973,7 @@ function DocumentUploadsTab() {
               These documents could not be matched to any student record. A sender phone number may not be registered in the system.
               Please review and manually assign to the correct student or create a new lead.
             </p>
-            <Button variant="outline" size="sm" className="mt-2 h-7 text-[11px] border-orange-300 text-orange-700 hover:bg-orange-100">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="mt-2 h-7 text-[11px] border-orange-300 text-orange-700 hover:bg-orange-100">
               <ArrowUpRight className="w-3 h-3 mr-1" /> Review Orphan Documents
             </Button>
           </div>
@@ -999,7 +999,7 @@ function DocumentUploadsTab() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="sm" className="h-7 text-[11px] border-alo-border">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 text-[11px] border-alo-border">
                 <Download className="w-3 h-3 mr-1" /> Export
               </Button>
             </div>
@@ -1046,7 +1046,7 @@ function DocumentUploadsTab() {
                     </TableCell>
                     <TableCell className="text-[10px] text-alo-text-muted py-2.5">{doc.timestamp}</TableCell>
                     <TableCell className="py-2.5">
-                      <Button variant="ghost" size="icon" className="h-6 w-6 text-alo-text-muted">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-6 w-6 text-alo-text-muted">
                         <Eye className="w-3 h-3" />
                       </Button>
                     </TableCell>

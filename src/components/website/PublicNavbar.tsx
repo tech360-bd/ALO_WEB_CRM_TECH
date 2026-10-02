@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
@@ -28,6 +28,8 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
+import LanguageToggle from '@/components/website/LanguageToggle';
+import { useI18n } from '@/i18n';
 
 /* ------------------------------------------------------------------ */
 /*  DATA (defaults – overridden by API when available)                 */
@@ -109,7 +111,7 @@ function MobileLink({ href, label, icon: Icon, onClick }: {
       onClick={onClick}
       className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 transition-colors"
     >
-      {Icon && <Icon className="h-4 w-4 text-[#0057B8]" />}
+      {Icon && <Icon className="h-4 w-4 text-[#0B5ED7]" />}
       {label}
     </Link>
   );
@@ -183,9 +185,31 @@ export default function PublicNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [destinations, setDestinations] = useState(DEFAULT_DESTINATIONS);
   const [langItems, setLangItems] = useState(languagePrepItems);
+  const { t } = useI18n();
+
+  // Virtual Editor override: published 'navigation' items (section
+  // 'destinations') take precedence over the auto-generated list —
+  // Super Admins curate the destinations menu via /admin/website-cms.
+  const cmsNavApplied = useRef(false);
+  useEffect(() => {
+    fetch('/api/website/cms-content?type=navigation')
+      .then(r => r.json())
+      .then(j => {
+        if (!j?.success || !Array.isArray(j.items)) return;
+        const cmsDests = j.items
+          .filter((i: any) => i.section === 'destinations' && i.label && i.data?.href)
+          .map((i: any) => ({ label: String(i.label), href: String(i.data.href) }));
+        if (cmsDests.length > 0) {
+          cmsNavApplied.current = true;
+          setDestinations(cmsDests);
+        }
+      })
+      .catch(() => { /* keep existing list */ });
+  }, []);
 
   // Load destinations from countries table (status=active) via /api/website/homepage — fallback to DEFAULT_DESTINATIONS
   useEffect(() => {
+    if (cmsNavApplied.current) return; // curated CMS navigation wins
     fetch('/api/website/homepage')
       .then(r => r.json())
       .then(data => {
@@ -252,11 +276,14 @@ export default function PublicNavbar() {
       <div className="hidden md:flex w-full bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 sm:px-6 lg:px-8 py-2 items-center justify-between">
         <div className="text-[11px] text-slate-600 flex items-center gap-2">
           <span className="hidden lg:inline">✈️ 24/7 Student Support • Office: Barek Mansion-02, Panthapath, Dhaka</span>
-          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:text-[#E8501A] underline font-medium">Maps</a>
+          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] hover:text-[#F97316] underline font-medium">Maps</a>
           <span className="text-slate-300">|</span>
           <span className="font-medium text-[#0F172A]">Senior Counselor Al Aminn: 01805020101</span>
         </div>
-        <WebsiteActionButtons variant="header" />
+        <div className="flex items-center gap-3">
+          <WebsiteActionButtons variant="header" />
+          <LanguageToggle compact />
+        </div>
       </div>
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* LOGO */}
@@ -265,15 +292,15 @@ export default function PublicNavbar() {
             <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-9 w-auto" />
           </motion.div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-[#0057B8] leading-tight">ALO Education</span>
-            <span className="text-[11px] italic text-[#E8501A] font-medium -mt-0.5" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
+            <span className="text-lg font-bold text-[#0B5ED7] leading-tight">ALO Education</span>
+            <span className="text-[11px] italic text-[#F97316] font-medium -mt-0.5" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
           </div>
         </Link>
 
         {/* DESKTOP NAV */}
         <div className="hidden lg:flex items-center gap-1">
           <DropdownTrigger
-            label="Destinations"
+            label={t('nav.destinations')}
             isOpen={openDropdown === 'destinations'}
             onToggle={() => handleToggle('destinations')}
             onMouseEnter={() => handleDesktopEnter('destinations')}
@@ -287,7 +314,7 @@ export default function PublicNavbar() {
           </DropdownTrigger>
 
           <DropdownTrigger
-            label="Language Prep"
+            label={t('nav.languagePrep')}
             isOpen={openDropdown === 'language-prep'}
             onToggle={() => handleToggle('language-prep')}
             onMouseEnter={() => handleDesktopEnter('language-prep')}
@@ -301,7 +328,7 @@ export default function PublicNavbar() {
           </DropdownTrigger>
 
           <DropdownTrigger
-            label="Resources"
+            label={t('nav.resources')}
             isOpen={openDropdown === 'resources'}
             onToggle={() => handleToggle('resources')}
             onMouseEnter={() => handleDesktopEnter('resources')}
@@ -326,7 +353,7 @@ export default function PublicNavbar() {
                 const Icon = p.icon;
                 return (
                   <Link key={p.href} href={p.href} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition-colors">
-                    <Icon className="h-4 w-4 text-[#0057B8]" />
+                    <Icon className="h-4 w-4 text-[#0B5ED7]" />
                     {p.label}
                   </Link>
                 );
@@ -336,19 +363,19 @@ export default function PublicNavbar() {
 
           <Link href="/course-finder" className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
             <Search className="h-4 w-4" />
-            Course Finder
+            {t('nav.courseFinder')}
           </Link>
 
           <Link href="/services" className="px-3 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
-            Services
+            {t('nav.services')}
           </Link>
         </div>
 
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-3">
           <Link href="/book-consultation" className="hidden lg:block">
-            <Button className="bg-[#E8501A] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
-              Book Free Consultation
+            <Button className="bg-[#F97316] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
+              {t('cta.bookConsultation')}
             </Button>
           </Link>
 
@@ -368,8 +395,8 @@ export default function PublicNavbar() {
                     <Link href="/" onClick={closeMobile} className="flex items-center gap-2">
                       <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-7 w-auto" />
                       <div className="flex flex-col">
-                        <span className="text-base font-bold text-[#0057B8] leading-tight">ALO Education</span>
-                        <span className="text-[10px] italic text-[#E8501A] font-medium" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
+                        <span className="text-base font-bold text-[#0B5ED7] leading-tight">ALO Education</span>
+                        <span className="text-[10px] italic text-[#F97316] font-medium" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
                       </div>
                     </Link>
                     <Button variant="ghost" size="icon" onClick={closeMobile} aria-label="Close navigation menu">
@@ -378,13 +405,13 @@ export default function PublicNavbar() {
                   </div>
 
                   <div className="px-4 py-4 flex flex-col gap-2">
-                    <MobileLink href="/course-finder" label="Course Finder" icon={Search} onClick={closeMobile} />
-                    <MobileLink href="/services" label="Services" onClick={closeMobile} />
+                    <MobileLink href="/course-finder" label={t('nav.courseFinder')} icon={Search} onClick={closeMobile} />
+                    <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
 
                     <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value="destinations" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Destinations
+                          {t('nav.destinations')}
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="flex flex-col gap-0.5 pl-4">
@@ -397,7 +424,7 @@ export default function PublicNavbar() {
 
                       <AccordionItem value="language-prep" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Language Prep
+                          {t('nav.languagePrep')}
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="grid grid-cols-1 gap-0.5 pl-4">
@@ -410,7 +437,7 @@ export default function PublicNavbar() {
 
                       <AccordionItem value="resources" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Resources
+                          {t('nav.resources')}
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="flex flex-col gap-0.5 pl-4">
@@ -436,16 +463,17 @@ export default function PublicNavbar() {
                     </Accordion>
 
                     <div className="mt-4 pt-4 border-t border-[#E2E8F0] space-y-3">
+                      <LanguageToggle />
                       <Link href="/book-consultation" onClick={closeMobile} className="block">
-                        <Button className="w-full bg-[#E8501A] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
-                          Book Free Consultation
+                        <Button className="w-full bg-[#F97316] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
+                          {t('cta.bookConsultation')}
                         </Button>
                       </Link>
                       {/* Mobile 3-button compact placement — high-conversion, no overlap with nav */}
                       <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 space-y-2">
-                        <p className="text-[11px] font-bold uppercase tracking-widest text-[#0057B8]">Get Instant Help</p>
+                        <p className="text-[11px] font-bold uppercase tracking-widest text-[#0B5ED7]">Get Instant Help</p>
                         <WebsiteActionButtons variant="compact" className="justify-start" />
-                        <p className="text-[11px] text-slate-500 leading-snug">Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0057B8] underline">Maps</a> • Al Aminn 01805020101</p>
+                        <p className="text-[11px] text-slate-500 leading-snug">Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] underline">Maps</a> • Al Aminn 01805020101</p>
                       </div>
                     </div>
                   </div>

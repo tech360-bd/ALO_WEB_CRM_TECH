@@ -70,13 +70,13 @@ const CHANNEL_META: Record<
   { label: string; icon: string; color: string; bg: string; text: string }
 > = {
   WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "#16a34a", bg: "bg-green-50", text: "text-green-700" },
-  SMS: { label: "SMS", icon: "MessageSquare", color: "#0057B8", bg: "bg-[#e8f0fb]", text: "text-[#0057B8]" },
+  SMS: { label: "SMS", icon: "MessageSquare", color: "#0B5ED7", bg: "bg-[#e8f0fb]", text: "text-[#0B5ED7]" },
   EMAIL: { label: "Email", icon: "Mail", color: "#7c3aed", bg: "bg-violet-50", text: "text-violet-700" },
-  WEBSITE_CHAT: { label: "Website Chat", icon: "Globe", color: "#0057B8", bg: "bg-[#e8f0fb]", text: "text-[#0057B8]" },
+  WEBSITE_CHAT: { label: "Website Chat", icon: "Globe", color: "#0B5ED7", bg: "bg-[#e8f0fb]", text: "text-[#0B5ED7]" },
   FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-blue-50", text: "text-blue-700" },
   INSTAGRAM: { label: "Instagram", icon: "Instagram", color: "#e1306c", bg: "bg-pink-50", text: "text-pink-700" },
   MESSENGER: { label: "Messenger", icon: "Send", color: "#0084ff", bg: "bg-sky-50", text: "text-sky-700" },
-  PORTAL: { label: "Portal", icon: "LayoutDashboard", color: "#E8501A", bg: "bg-[#fdece4]", text: "text-[#E8501A]" },
+  PORTAL: { label: "Portal", icon: "LayoutDashboard", color: "#F97316", bg: "bg-[#fdece4]", text: "text-[#F97316]" },
 };
 
 function channelMeta(c: string) {
@@ -279,7 +279,7 @@ export function UnifiedInbox() {
         icon="Inbox"
         subtitle="All channels — WhatsApp, SMS, email, social — in one place. SLA: 30 min first response."
         action={
-          <Button onClick={loadData} variant="outline" className="h-10 border-[#0057B8]/20 text-[#0057B8]">
+          <Button onClick={loadData} variant="outline" className="h-10 border-[#0B5ED7]/20 text-[#0B5ED7]">
             <Icon name="RefreshCw" className="size-4" />
             Refresh
           </Button>
@@ -319,13 +319,13 @@ export function UnifiedInbox() {
       </div>
 
       {/* SLA rule banner */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]">
+      <Card className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#e8f0fb]">
         <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-start">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
             <Icon name="Timer" className="size-5" />
           </div>
           <div className="space-y-1.5">
-            <p className="text-sm font-semibold text-[#0057B8]">SLA escalation ladder</p>
+            <p className="text-sm font-semibold text-[#0B5ED7]">SLA escalation ladder</p>
             <p className="text-sm text-foreground/80 leading-relaxed">
               <span className="font-semibold">First response target: 30 min</span> → warning at 30 min → escalate to <span className="font-semibold">Branch Manager</span> at 40 min → escalate to <span className="font-semibold">Admin</span> at 50 min. After office hours, the AI auto-replies immediately and creates a morning task for the counselor.
             </p>
@@ -343,7 +343,7 @@ export function UnifiedInbox() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* ---------- LEFT: Conversation list ---------- */}
         <div className="lg:col-span-1">
-          <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+          <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
             <CardContent className="p-4">
               {/* Channel filter */}
               <div className="mb-3 flex flex-wrap gap-1.5">
@@ -356,8 +356,8 @@ export function UnifiedInbox() {
                       className={cn(
                         "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
                         active
-                          ? "bg-[#0057B8] text-white"
-                          : "bg-[#e8f0fb] text-[#0057B8] hover:bg-[#0057B8]/10"
+                          ? "bg-[#0B5ED7] text-white"
+                          : "bg-[#e8f0fb] text-[#0B5ED7] hover:bg-[#0B5ED7]/10"
                       )}
                     >
                       {c === "ALL" ? "All" : channelMeta(c).label}
@@ -381,13 +381,13 @@ export function UnifiedInbox() {
                 <span>
                   {filtered.length} conversation{filtered.length === 1 ? "" : "s"} · {totalMessages} message{totalMessages === 1 ? "" : "s"}
                 </span>
-                <span className="font-medium text-[#0057B8]">Most recent first</span>
+                <span className="font-medium text-[#0B5ED7]">Most recent first</span>
               </div>
 
               {/* Conversation list */}
               <div className="max-h-[calc(100vh-20rem)] space-y-1.5 overflow-y-auto alo-scroll pr-1">
                 {filtered.length === 0 ? (
-                  <div className="rounded-xl border-2 border-dashed border-[#0057B8]/20 px-4 py-8 text-center">
+                  <div className="rounded-xl border-2 border-dashed border-[#0B5ED7]/20 px-4 py-8 text-center">
                     <Icon name="Inbox" className="mx-auto size-6 text-muted-foreground" />
                     <p className="mt-2 text-sm font-medium">No conversations match</p>
                     <p className="text-xs text-muted-foreground">Try a different channel or search.</p>
@@ -408,8 +408,8 @@ export function UnifiedInbox() {
                         className={cn(
                           "flex w-full items-start gap-3 rounded-xl border-2 p-3 text-left transition-colors",
                           isSel
-                            ? "border-[#0057B8] bg-[#e8f0fb]"
-                            : "border-transparent hover:border-[#0057B8]/20 hover:bg-muted/40"
+                            ? "border-[#0B5ED7] bg-[#e8f0fb]"
+                            : "border-transparent hover:border-[#0B5ED7]/20 hover:bg-muted/40"
                         )}
                       >
                         <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", meta.bg, meta.text)}>
@@ -456,7 +456,7 @@ export function UnifiedInbox() {
         {/* ---------- RIGHT: Active conversation ---------- */}
         <div className="lg:col-span-2">
           {!selected ? (
-            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+            <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
               <CardContent className="pt-6">
                 <EmptyState
                   icon="MessagesSquare"
@@ -484,19 +484,19 @@ export function UnifiedInbox() {
       </div>
 
       {/* Document auto-upload simulation */}
-      <Card className="rounded-2xl border-2 border-[#E8501A]/25 bg-[#fdece4]/60">
+      <Card className="rounded-2xl border-2 border-[#F97316]/25 bg-[#fdece4]/60">
         <CardContent className="flex flex-col gap-4 pt-5 lg:flex-row lg:items-start">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#E8501A] text-white">
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#F97316] text-white">
             <Icon name="FileScan" className="size-5" />
           </div>
           <div className="flex-1 space-y-3">
             <div>
-              <p className="text-sm font-semibold text-[#E8501A]">Documents received via chat auto-upload</p>
+              <p className="text-sm font-semibold text-[#F97316]">Documents received via chat auto-upload</p>
               <p className="mt-1 text-sm text-foreground/80">
                 When a student sends a document via WhatsApp, it is automatically classified and uploaded to their profile. Counselors can <span className="font-semibold">view</span> but cannot <span className="font-semibold">delete</span> — archive requests go to the Application Team.
               </p>
             </div>
-            <div className="flex flex-col gap-3 rounded-xl border-2 border-[#E8501A]/20 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 rounded-xl border-2 border-[#F97316]/20 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-green-50 text-green-700">
                   <Icon name="FileText" className="size-5" />
@@ -504,14 +504,14 @@ export function UnifiedInbox() {
                 <div>
                   <p className="text-sm font-semibold">passport_scan.pdf</p>
                   <p className="text-xs text-muted-foreground">
-                    From {selected?.studentName || "Tania Akter"} · WhatsApp · auto-classified as <span className="font-medium text-[#0057B8]">Passport</span>
+                    From {selected?.studentName || "Tania Akter"} · WhatsApp · auto-classified as <span className="font-medium text-[#0B5ED7]">Passport</span>
                   </p>
                 </div>
               </div>
               <Button
                 size="sm"
                 variant="outline"
-                className="border-[#0057B8]/30 text-[#0057B8]"
+                className="border-[#0B5ED7]/30 text-[#0B5ED7]"
                 onClick={() => toast({ title: "Opening Document Hub", description: "Redirecting to the student's document vault." })}
               >
                 <Icon name="FolderLock" className="size-4" />
@@ -562,7 +562,7 @@ function ActiveConversation({
   }, [conv.key, conv.messages.length]);
 
   return (
-    <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+    <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
       <CardContent className="p-0">
         {/* Header */}
         <div className="flex flex-col gap-3 border-b border-border/60 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -579,7 +579,7 @@ function ActiveConversation({
                   {meta.label}
                 </Badge>
                 {conv.studentId && (
-                  <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">
+                  <Badge variant="outline" className="border-[#0B5ED7]/30 text-[#0B5ED7]">
                     Student ID matched
                   </Badge>
                 )}
@@ -601,7 +601,7 @@ function ActiveConversation({
               <Icon name="Timer" className="size-3.5" />
               {firstAt ? (slaOver ? `${slaMins}m · over SLA` : `${slaMins}m since first msg`) : "No SLA"}
             </div>
-            <Button size="sm" variant="outline" className="border-[#0057B8]/30 text-[#0057B8]" onClick={onViewStudent}>
+            <Button size="sm" variant="outline" className="border-[#0B5ED7]/30 text-[#0B5ED7]" onClick={onViewStudent}>
               <Icon name="Orbit" className="size-4" />
               View Student 360
             </Button>
@@ -622,7 +622,7 @@ function ActiveConversation({
                     "max-w-[80%] rounded-2xl px-3.5 py-2.5 shadow-sm",
                     inbound
                       ? "rounded-bl-sm bg-white text-foreground border border-border/60"
-                      : "rounded-br-sm bg-[#0057B8] text-white"
+                      : "rounded-br-sm bg-[#0B5ED7] text-white"
                   )}
                 >
                   <p className="whitespace-pre-wrap text-sm leading-relaxed">{m.body}</p>
@@ -654,7 +654,7 @@ function ActiveConversation({
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap items-center gap-2">
             <Select onValueChange={onTemplate}>
-              <SelectTrigger className="h-9 w-full max-w-[260px] border-[#0057B8]/20 text-xs text-[#0057B8]">
+              <SelectTrigger className="h-9 w-full max-w-[260px] border-[#0B5ED7]/20 text-xs text-[#0B5ED7]">
                 <SelectValue placeholder="Quick reply templates..." />
               </SelectTrigger>
               <SelectContent>
@@ -668,7 +668,7 @@ function ActiveConversation({
             <Button
               variant="outline"
               size="sm"
-              className="h-9 border-[#E8501A]/40 text-[#E8501A] hover:bg-[#E8501A]/5"
+              className="h-9 border-[#F97316]/40 text-[#F97316] hover:bg-[#F97316]/5"
               onClick={onAiSuggest}
               disabled={suggesting}
             >
@@ -691,12 +691,12 @@ function ActiveConversation({
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Type a reply, use a template, or click AI Suggest..."
             rows={4}
-            className="resize-none border-[#0057B8]/20"
+            className="resize-none border-[#0B5ED7]/20"
           />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Icon name="ShieldCheck" className="size-3.5 text-[#0057B8]" />
+              <Icon name="ShieldCheck" className="size-3.5 text-[#0B5ED7]" />
               Replies are logged to the student timeline. AI-assisted replies are marked.
             </p>
             <div className="flex items-center gap-2">
@@ -712,7 +712,7 @@ function ActiveConversation({
                 Clear
               </Button>
               <Button
-                className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#E8501A]/90"
+                className="h-12 bg-[#F97316] px-6 text-white hover:bg-[#F97316]/90"
                 onClick={onSend}
                 disabled={sending || !replyText.trim()}
               >

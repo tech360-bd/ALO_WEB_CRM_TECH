@@ -57,6 +57,17 @@ const nextConfig: NextConfig = {
       // their metadata, canonical URL, route-level loading/error states, and
       // dynamic content.
       { source: "/book-appointment", destination: "/book-consultation" },
+      // Spec-named IA aliases: the specification's /consultation and
+      // /test-preparation paths map onto the existing implementations.
+      { source: "/consultation", destination: "/book-consultation" },
+      { source: "/test-preparation", destination: "/english-test-prep" },
+      { source: "/test-preparation/:slug", destination: "/english-test-prep/:slug" },
+      // Portal roots without their own page.tsx map to their canonical
+      // dashboard so direct URL access never 404s (no-404 acceptance gate).
+      { source: "/super-admin", destination: "/super-admin/dashboard" },
+      { source: "/counselor", destination: "/counselor/dashboard" },
+      { source: "/application-manager", destination: "/application-manager/applications" },
+      { source: "/visa", destination: "/visa/readiness" },
       { source: "/staff/login", destination: "/employee/login" },
       { source: "/admin", destination: "/admin/login" },
       { source: "/admin/students", destination: "/admin/crm-command" },

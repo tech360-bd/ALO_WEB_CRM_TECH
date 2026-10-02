@@ -107,9 +107,9 @@ export default function CrmApplicationsPage() {
                     <td className="py-3 text-alo-text-muted">{app.updatedAt?.substring(0, 10)}</td>
                     <td className="py-3 text-right">
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm"><ArrowUpRight className="h-4 w-4" /></Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><ArrowUpRight className="h-4 w-4" /></Button>
                       </div>
                     </td>
                   </tr>

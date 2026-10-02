@@ -32,8 +32,8 @@ export const REMOTION_COMPOSITIONS: RemotionComposition[] = [
       courses: ["Business", "Engineering", "Computer Science"],
       logoUrl: "/brand/alo-logo.png",
       images: [],
-      primaryColor: "#E8501A",
-      secondaryColor: "#0057B8",
+      primaryColor: "#F97316",
+      secondaryColor: "#0B5ED7",
       studentName: "",
       cta: "Apply for 2027 Intake",
     },
@@ -157,7 +157,7 @@ export const REMOTION_COMPOSITIONS: RemotionComposition[] = [
     defaultProps: {
       title: "From Dhaka to London: My Journey",
       story: "I applied through ALO Education...",
-      backgroundVideoUrl: "/videos/minecraft-parkour.mp4",
+      backgroundVideoUrl: "", // optional background video; supply a real public/ asset path when used
       voice: "bengali_female",
       subtitles: true,
     },
@@ -189,7 +189,7 @@ export const REMOTION_COMPOSITIONS: RemotionComposition[] = [
     defaultProps: {
       texts: ["Study in UK", "2027 Intake Open", "Scholarships Available"],
       animation: "typewriter",
-      backgroundColor: "#0057B8",
+      backgroundColor: "#0B5ED7",
       textColor: "#FFFFFF",
     },
   },
@@ -299,7 +299,7 @@ export async function generateRemotionCompositionFromPrompt(
   const compositionCode = `
 import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 
-export const ${compositionId}: React.FC<any> = ({ title = "${prompt.description.slice(0, 50)}", primaryColor = "#E8501A" }) => {
+export const ${compositionId}: React.FC<any> = ({ title = "${prompt.description.slice(0, 50)}", primaryColor = "#F97316" }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   
@@ -307,7 +307,7 @@ export const ${compositionId}: React.FC<any> = ({ title = "${prompt.description.
   const titleScale = spring({ frame, fps, config: { damping: 100 } });
   
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0057B8", justifyContent: "center", alignItems: "center" }}>
+    <AbsoluteFill style={{ backgroundColor: "#0B5ED7", justifyContent: "center", alignItems: "center" }}>
       <Sequence from={0} durationInFrames={${(prompt.durationSec || 30) * 30}}>
         <div style={{ opacity: titleOpacity, transform: \`scale(\${titleScale})\`, color: "white", fontSize: 80, fontWeight: 800, textAlign: "center", padding: 40 }}>
           {title}

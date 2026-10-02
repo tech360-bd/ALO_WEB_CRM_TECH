@@ -603,15 +603,15 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
 
         {/* Actions */}
         <div className="flex items-center gap-2 pt-1 border-t border-border/40 mt-1">
-          <Button variant="ghost" size="sm" className="gap-1.5 text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5 text-xs h-8">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5 text-xs h-8">
             <Eye className="size-3.5" />
             View
           </Button>
-          <Button variant="ghost" size="sm" className="gap-1.5 text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5 text-xs h-8">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5 text-xs h-8">
             <Download className="size-3.5" />
             Download
           </Button>
-          <Button variant="ghost" size="sm" className="gap-1.5 text-[#C2410C] hover:text-[#C2410C] hover:bg-orange-50 text-xs h-8">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[#C2410C] hover:text-[#C2410C] hover:bg-orange-50 text-xs h-8">
             <RefreshCw className="size-3.5" />
             Replace
           </Button>
@@ -969,13 +969,13 @@ export default function StudentDocuments() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-0.5">
-                        <Button variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]">
                           <Eye className="size-4" />
                         </Button>
-                        <Button variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]">
                           <Download className="size-4" />
                         </Button>
-                        <Button variant="ghost" size="icon-sm" className="text-[#C2410C]/60 hover:text-[#C2410C]">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#C2410C]/60 hover:text-[#C2410C]">
                           <RefreshCw className="size-4" />
                         </Button>
                       </div>

@@ -104,10 +104,10 @@ export default function CrmAdminDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
             <BarChart3 className="w-4 h-4" /> Reports
           </Button>
-          <Button variant="brand" size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm">
             <Plus className="w-4 h-4" /> Quick Add
           </Button>
         </div>
@@ -241,7 +241,7 @@ export default function CrmAdminDashboard() {
             <CardHeader className="pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text">Recent Activity</CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs text-alo-brand">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">
                   View All <ChevronRight className="w-3.5 h-3.5" />
                 </Button>
               </div>
@@ -276,16 +276,16 @@ export default function CrmAdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="brand" className="w-full justify-start text-sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" className="w-full justify-start text-sm">
                   <UserPlus className="w-4 h-4" /> Create Employee
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm">
                   <UserCog className="w-4 h-4" /> Manage Roles
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm">
                   <ScrollText className="w-4 h-4" /> View Audit Logs
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm">
                   <Settings className="w-4 h-4" /> System Settings
                 </Button>
               </div>
@@ -346,7 +346,7 @@ export default function CrmAdminDashboard() {
                         {style.badge}
                         <p className="text-xs text-alo-text truncate">{alert.message}</p>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-[11px] text-alo-brand shrink-0 ml-2">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-[11px] text-alo-brand shrink-0 ml-2">
                         {alert.action}
                       </Button>
                     </div>

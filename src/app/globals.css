@@ -4,7 +4,7 @@
 
 /* ============================================================
    ALO EDUCATION DESIGN SYSTEM — Design Tokens
-   Brand: #0057B8 / #2563EB / #C2410C
+   Brand: #0B5ED7 / #2563EB / #C2410C
    ============================================================ */
 
 @theme inline {
@@ -49,12 +49,15 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  /* --- ALO Brand Tokens --- */
+  /* --- ALO Brand Tokens (official palette: BLUE #0B5ED7, DEEP #073B8C,
+         ORANGE #F97316, LIGHT ORANGE #FFEDD5) --- */
   --color-alo-brand: var(--alo-brand);
+  --color-alo-brand-deep: var(--alo-brand-deep);
   --color-alo-brand-light: var(--alo-brand-light);
   --color-alo-cta: var(--alo-cta);
   --color-alo-cta-hover: var(--alo-cta-hover);
   --color-alo-cta-accent: var(--alo-cta-accent);
+  --color-alo-cta-light: var(--alo-cta-light);
 
   /* --- CRM Semantic Tokens --- */
   --color-crm-success: var(--crm-success);
@@ -120,11 +123,13 @@
   --ring: #2563EB;
 
   /* ALO Official Brand Tokens */
-  --alo-brand: #0066CC;
+  --alo-brand: #0B5ED7;
+  --alo-brand-deep: #073B8C;
   --alo-brand-light: #EFF6FF;
-  --alo-cta: #F37021;
-  --alo-cta-hover: #D95C0E;
+  --alo-cta: #F97316;
+  --alo-cta-hover: #EA580C;
   --alo-cta-accent: #FFB347;
+  --alo-cta-light: #FFEDD5;
 
   /* CRM Semantic */
   --crm-success: #22C55E;
@@ -145,8 +150,8 @@
   --alo-border: #E5E7EB;
 
   /* Charts */
-  --chart-1: #0066CC;
-  --chart-2: #F37021;
+  --chart-1: #0B5ED7;
+  --chart-2: #F97316;
   --chart-3: #FFB347;
   --chart-4: #22C55E;
   --chart-5: #EF4444;
@@ -154,12 +159,12 @@
   /* Sidebar */
   --sidebar: #FFFFFF;
   --sidebar-foreground: #000000;
-  --sidebar-primary: #0066CC;
+  --sidebar-primary: #0B5ED7;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #EFF6FF;
-  --sidebar-accent-foreground: #0066CC;
+  --sidebar-accent-foreground: #0B5ED7;
   --sidebar-border: #E5E7EB;
-  --sidebar-ring: #0066CC;
+  --sidebar-ring: #0B5ED7;
 }
 
 /* ============================================================
@@ -193,10 +198,12 @@
 
   /* ALO Brand Dark */
   --alo-brand: #60A5FA;
+  --alo-brand-deep: #93C5FD;
   --alo-brand-light: #1E3A5F;
   --alo-cta: #FB923C;
   --alo-cta-hover: #F97316;
   --alo-cta-accent: #FB923C;
+  --alo-cta-light: #431407;
 
   /* CRM Semantic Dark */
   --crm-success: #4ADE80;
@@ -366,4 +373,15 @@
 .dark .skeleton-shimmer {
   background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
   background-size: 200% 100%;
+}
+/* ============================================================
+   BILINGUAL (English + বাংলা) TYPE SUPPORT
+   System font chain for Bengali — no external font download
+   required; devices without a Bengali font fall back to their
+   default script font.
+   ============================================================ */
+:lang(bn),
+html[lang="bn"] body {
+  font-family: var(--font-inter), "Noto Sans Bengali", "Hind Siliguri",
+    "SolaimanLipi", "Kalpurush", "Vrinda", "Bangla", sans-serif;
 }

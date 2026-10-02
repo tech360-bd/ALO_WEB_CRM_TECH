@@ -62,7 +62,7 @@ export default function RolesManagementPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <Shield className="w-8 h-8 text-[#0066CC]" />
+            <Shield className="w-8 h-8 text-[#0B5ED7]" />
             Role-Based Access Control (RBAC)
           </h1>
           <p className="text-gray-500 mt-2">Manage enterprise roles, permissions, and acting-as capabilities.</p>
@@ -101,7 +101,7 @@ export default function RolesManagementPage() {
                           disabled={role.isSystem}
                           className={`inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
                             isGranted
-                              ? "bg-[#0066CC]/10 text-[#0066CC] hover:bg-[#0066CC]/20"
+                              ? "bg-[#0B5ED7]/10 text-[#0B5ED7] hover:bg-[#0B5ED7]/20"
                               : "bg-gray-100 text-gray-400 hover:bg-gray-200"
                           } ${role.isSystem ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                           title={role.isSystem ? "System roles cannot be modified" : "Click to toggle"}

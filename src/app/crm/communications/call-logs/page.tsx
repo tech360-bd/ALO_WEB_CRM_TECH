@@ -26,7 +26,7 @@ export default function CallLogsPage() {
 
   return (
     <div className="p-4 lg:p-6 bg-[#F8FAFC] min-h-screen space-y-4">
-      <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Phone className="w-5 h-5 text-[#0057B8]" /> Call Log — Front Desk & Counselor</h1>
+      <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Phone className="w-5 h-5 text-[#0B5ED7]" /> Call Log — Front Desk & Counselor</h1>
       <p className="text-xs text-gray-500">Call ID • Lead/student/partner/application • Caller • Receiver • Phone • Call type inbound/outbound/missed • Call outcome • Duration • Recording link placeholder • Next follow-up • Note • Created by/at</p>
 
       <Card className="border border-gray-200"><CardHeader className="pb-2"><CardTitle className="text-sm">Log Call — Front desk can create lead from phone call, log walk-in, schedule consultation, assign counselor</CardTitle></CardHeader>
@@ -40,7 +40,7 @@ export default function CallLogsPage() {
             <Input type="number" placeholder="Duration (seconds)" value={form.durationSeconds} onChange={e => setForm(s => ({ ...s, durationSeconds: parseInt(e.target.value)||0 }))} />
           </div>
           <Textarea placeholder="Note — outcome details, next follow-up" value={form.note} onChange={e => setForm(s => ({ ...s, note: e.target.value }))} className="min-h-[60px]" />
-          <Button size="sm" className="bg-[#0057B8]" onClick={create}><Phone className="w-4 h-4 mr-1" /> Save Call Log</Button>
+          <Button size="sm" className="bg-[#0B5ED7]" onClick={create}><Phone className="w-4 h-4 mr-1" /> Save Call Log</Button>
         </CardContent>
       </Card>
 
