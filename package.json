@@ -15,6 +15,10 @@
     "build": "node scripts/assert-node22.cjs && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' prisma generate && npm run db:verify-client && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' next build --webpack && node scripts/prepare-standalone.mjs",
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint .",
+    "awf:mirror": "node scripts/ai-workforce/mirror-schema.mjs",
+    "awf:ddl": "node scripts/ai-workforce/emit-ddl.mjs --dialect sqlite --schema prisma/verification-mirror/schema.sqlite.prisma --client @prisma/client --out .awf-tmp/verify-schema.sql",
+    "awf:verify": "ALO_DB_DRIVER=sqlite DATABASE_URL=\"file:$PWD/.awf-tmp/verify.db\" tsx scripts/ai-workforce/run-verification.ts",
+    "awf:audit": "ALO_DB_DRIVER=sqlite DATABASE_URL=\"file:$PWD/.awf-tmp/verify.db\" tsx scripts/ai-workforce/audit-independent.ts",
     "typecheck": "npm run db:verify-client && tsc --noEmit",
     "test": "vitest run",
     "test:integration": "vitest run tests/integration",
@@ -32,7 +36,8 @@
     "video:templates": "tsx scripts/list-video-templates.ts",
     "remotion:studio": "npx remotion studio src/lib/video-engine/remotion/entry.tsx",
     "remotion:render": "npx remotion render src/lib/video-engine/remotion/entry.tsx",
-    "db:verify-client": "node scripts/verify-prisma-client.mjs"
+    "db:verify-client": "node scripts/verify-prisma-client.mjs",
+    "audit:env": "node scripts/audit-env-vars.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
@@ -134,7 +139,9 @@
     "youtube-dl-exec": "^3.0.5"
   },
   "devDependencies": {
+    "@libsql/client": "^0.18.0",
     "@playwright/test": "^1.62.0",
+    "@prisma/adapter-libsql": "^6.19.3",
     "@types/nodemailer": "8.0.2",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9",
