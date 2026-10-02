@@ -114,6 +114,12 @@ jobs:
       - name: Deployment ownership safety tests (no production calls)
         run: node --test tests/deployment-ownership.test.mjs tests/runtime-standard.test.mjs
 
+      - name: Environment variable classification is current
+        # docs/environment-classification.json is derived from the code, so it
+        # must be regenerated whenever a process.env reference is added or
+        # removed. Keeps the documented production contract honest.
+        run: npm run audit:env -- --check
+
       - name: Prisma validate
         env:
           # Dummy value ONLY so the CLI can resolve env("DATABASE_URL") during
@@ -171,8 +177,13 @@ jobs:
           NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
           FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
         run: |
-          set -euo pipefail
-          npm run build
+          set -uo pipefail
+          # Capture the build output so a failure is diagnosable from the job
+          # annotations alone (Actions log blobs are not always reachable).
+          if ! npm run build 2>&1 | tee /tmp/build.log; then
+            echo "::error::Production build failed — $(grep -aiE 'error|failed to compile|type error|cannot find|module not found' /tmp/build.log | head -12 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ' | cut -c1-900)"
+            exit 1
+          fi
           test -f .next/standalone/server.js || { echo "::error::standalone server.js missing"; exit 1; }
           node scripts/verify-standalone.mjs
           echo "✓ Build succeeded"
@@ -343,6 +354,15 @@ jobs:
             exit 1
           fi
           echo "✓ Migrations reproduce schema.prisma exactly (empty diff)"
+          # Drift is fatal. The ONE exception is the known MySQL round-trip
+          # representation of legal BLOB/TEXT/JSON *expression* defaults
+          # (`DEFAULT (_utf8mb4'')`), which Prisma re-asserts as a no-op MODIFY.
+          # The filter suppresses such a statement only after proving
+          # schema.prisma already declares the identical default, type and
+          # nullability for that exact column. Everything else — including any
+          # ADD/DROP/CHANGE, index change, type change or nullability change —
+          # still fails this job. See tests/unit/lob-default-drift-filter.test.ts.
+          node scripts/ci/filter-lob-default-drift.mjs /tmp/drift.sql prisma/schema.prisma
 
       - name: Integration tests (real MySQL persistence)
         env:

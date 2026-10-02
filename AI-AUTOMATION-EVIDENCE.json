@@ -1,8 +1,8 @@
 {
   "product": "ALO Education — AI Builder & AI Workforce",
-  "generatedAt": "2026-10-02T10:54:38.822Z",
-  "startedAt": "2026-10-02T10:54:34.264Z",
-  "durationMs": 4558,
+  "generatedAt": "2026-10-02T20:13:23.794Z",
+  "startedAt": "2026-10-02T20:13:18.058Z",
+  "durationMs": 5736,
   "environment": {
     "databaseDriver": "sqlite (verification mirror of prisma/schema.prisma)",
     "nodeVersion": "v22.22.3",
@@ -391,9 +391,9 @@
       "workflow": "new-lead-processing",
       "status": "COMPLETED",
       "runCodes": [
-        "AWF-LEADQUALIF-MUQUJ0S3-0246DC"
+        "AWF-LEADQUALIF-MUREHKBX-52091F"
       ],
-      "durationMs": 81,
+      "durationMs": 109,
       "steps": [
         {
           "key": "qualify",
@@ -414,10 +414,10 @@
       "workflow": "student-course-matching",
       "status": "COMPLETED",
       "runCodes": [
-        "AWF-STUDENTPRO-MUQUJ0UJ-5F0626",
-        "AWF-COURSEMATC-MUQUJ0VR-01FDDC"
+        "AWF-STUDENTPRO-MUREHKFE-E891F0",
+        "AWF-COURSEMATC-MUREHKGV-F82028"
       ],
-      "durationMs": 106,
+      "durationMs": 133,
       "steps": [
         {
           "key": "profile",
@@ -443,9 +443,9 @@
       "workflow": "application-processing",
       "status": "COMPLETED",
       "runCodes": [
-        "AWF-APPLICATIO-MUQUJ0XS-2507AE"
+        "AWF-APPLICATIO-MUREHKJE-9DAE87"
       ],
-      "durationMs": 78,
+      "durationMs": 79,
       "steps": [
         {
           "key": "readiness",
@@ -466,10 +466,10 @@
       "workflow": "content-publishing",
       "status": "AWAITING_APPROVAL",
       "runCodes": [
-        "AWF-CONTENTWRI-MUQUJ106-00EA6D",
-        "AWF-QAVALIDATO-MUQUJ11X-96058A"
+        "AWF-CONTENTWRI-MUREHKLX-2F170E",
+        "AWF-QAVALIDATO-MUREHKNX-2F2C1C"
       ],
-      "durationMs": 96,
+      "durationMs": 115,
       "steps": [
         {
           "key": "draft",
@@ -483,7 +483,7 @@
         }
       ],
       "databaseEffects": {
-        "contentAssetId": "cmuquj11200c93fnzhcat8npy",
+        "contentAssetId": "cmurehkmu00c9d0nzge250i6p",
         "draftStatusAfterPublish": "COMPLETED/PUBLISHED",
         "publicationRows": 1,
         "qaPassed": 75
@@ -496,10 +496,10 @@
       "workflow": "crm-operations-review",
       "status": "COMPLETED",
       "runCodes": [
-        "AWF-CRMDATAQUA-MUQUJ15P-5390EB",
-        "AWF-OPERATIONS-MUQUJ16Z-22646C"
+        "AWF-CRMDATAQUA-MUREHKSQ-8F533B",
+        "AWF-OPERATIONS-MUREHKUA-837DCA"
       ],
-      "durationMs": 90,
+      "durationMs": 104,
       "steps": [
         {
           "key": "audit",
@@ -616,7 +616,7 @@
         "observed": "ok=false, decision=UNSAFE_ARGUMENTS",
         "evidence": {
           "decision": "UNSAFE_ARGUMENTS",
-          "toolCallId": "cmuquj29200lz3fnzo2wxn54b"
+          "toolCallId": "cmurehm8n00lzd0nz3mmn1j9o"
         }
       },
       {
@@ -848,7 +848,7 @@
       "automated": 17,
       "hasData": true
     },
-    "measuredAt": "2026-10-02T10:54:38.750Z"
+    "measuredAt": "2026-10-02T20:13:23.708Z"
   },
   "telemetry": {
     "agents": {
@@ -872,7 +872,7 @@
         "awaitingApproval": 6,
         "running": 0,
         "successRate": 96.97,
-        "avgDurationMs": 45,
+        "avgDurationMs": 58,
         "fallbackRuns": 0
       },
       "last24h": {
@@ -882,7 +882,7 @@
         "awaitingApproval": 6,
         "running": 0,
         "successRate": 96.97,
-        "avgDurationMs": 45,
+        "avgDurationMs": 58,
         "fallbackRuns": 0
       },
       "last7d": {
@@ -892,7 +892,7 @@
         "awaitingApproval": 6,
         "running": 0,
         "successRate": 96.97,
-        "avgDurationMs": 45,
+        "avgDurationMs": 58,
         "fallbackRuns": 0
       },
       "production": {
@@ -902,7 +902,7 @@
         "awaitingApproval": 5,
         "running": 0,
         "successRate": 100,
-        "avgDurationMs": 49,
+        "avgDurationMs": 63,
         "fallbackRuns": 0
       }
     },
@@ -935,7 +935,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 46,
+        "avgDurationMs": 59,
         "lastRunAt": null
       },
       {
@@ -947,7 +947,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 38,
+        "avgDurationMs": 49,
         "lastRunAt": null
       },
       {
@@ -959,7 +959,7 @@
         "failed": 0,
         "awaitingApproval": 2,
         "successRate": 0,
-        "avgDurationMs": 46,
+        "avgDurationMs": 54,
         "lastRunAt": null
       },
       {
@@ -971,7 +971,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 49,
+        "avgDurationMs": 65,
         "lastRunAt": null
       },
       {
@@ -983,7 +983,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 39,
+        "avgDurationMs": 38,
         "lastRunAt": null
       },
       {
@@ -995,7 +995,7 @@
         "failed": 1,
         "awaitingApproval": 4,
         "successRate": 90.91,
-        "avgDurationMs": 57,
+        "avgDurationMs": 75,
         "lastRunAt": null
       },
       {
@@ -1007,7 +1007,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 30,
+        "avgDurationMs": 35,
         "lastRunAt": null
       },
       {
@@ -1019,7 +1019,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 18,
+        "avgDurationMs": 24,
         "lastRunAt": null
       },
       {
@@ -1031,7 +1031,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 33,
+        "avgDurationMs": 39,
         "lastRunAt": null
       },
       {
@@ -1043,7 +1043,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 30,
+        "avgDurationMs": 32,
         "lastRunAt": null
       },
       {
@@ -1055,7 +1055,7 @@
         "failed": 0,
         "awaitingApproval": 0,
         "successRate": 100,
-        "avgDurationMs": 32,
+        "avgDurationMs": 40,
         "lastRunAt": null
       }
     ]

@@ -1,6 +1,6 @@
 {
   "audit": "ALO AI Workforce — independent verification pass",
-  "generatedAt": "2026-10-02T10:54:39.807Z",
+  "generatedAt": "2026-10-02T20:13:24.709Z",
   "method": "Claims re-derived from the database and the source tree without trusting the evidence file",
   "total": 18,
   "confirmed": 18,
