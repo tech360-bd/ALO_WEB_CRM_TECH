@@ -27,11 +27,15 @@ function migrationDirs(): string[] {
 }
 
 function applySql(state: SqlState, sql: string, dir: string, violations: string[]): void {
-  for (const m of sql.matchAll(/CREATE TABLE `(\w+)` \(([\s\S]*?)\n\)/g)) {
-    const table = m[1];
-    if (state.has(table)) violations.push(`${dir}: CREATE TABLE ${table} duplicates an earlier CREATE`);
-    const cols = new Set<string>();
-    for (const line of m[2].split('\n')) {
+  // `CREATE TABLE IF NOT EXISTS` is valid MySQL and is used by the additive
+  // reconciliation migrations, which intentionally re-declare tables that may
+  // already exist on databases shaped by an earlier `prisma db push`.
+  for (const m of sql.matchAll(/CREATE TABLE (IF NOT EXISTS )?`(\w+)` \(([\s\S]*?)\n\)/g)) {
+    const idempotent = Boolean(m[1]);
+    const table = m[2];
+    if (state.has(table) && !idempotent) violations.push(`${dir}: CREATE TABLE ${table} duplicates an earlier CREATE`);
+    const cols = new Set<string>(state.get(table) ?? []);
+    for (const line of m[3].split('\n')) {
       const cm = line.match(/^\s*`(\w+)`\s+/);
       if (cm && !/(PRIMARY KEY|UNIQUE INDEX|INDEX|FOREIGN KEY|CONSTRAINT)/.test(line)) cols.add(cm[1]);
     }

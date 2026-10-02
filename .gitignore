@@ -246,3 +246,6 @@ _reference_repos/*
 
 !docs/BRANCH-MERGE-LEDGER.csv
 !docs/BRANCH-MERGE-*.csv
+
+# ALO AI Workforce offline verification scratch (fake engine, sqlite mirror db, generated DDL)
+.awf-tmp/
