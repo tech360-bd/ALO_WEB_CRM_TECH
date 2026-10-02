@@ -185,10 +185,27 @@ if (invokedDirectly) {
   }
 
   if (real.length > 0) {
-    console.error(`::error::Migration chain does NOT reproduce schema.prisma — ${real.length} of ${total} drift statement(s) are real.`);
-    for (const r of real.slice(0, 10)) {
-      console.error(`  ✖ ${r.reason}`);
-      console.error(`    ${r.statement.slice(0, 300)}`);
+    // Emitted as a single `::error::` workflow command so the full finding is
+    // visible in the job annotations, not only in the raw log (which is not
+    // always retrievable). `%0A` is the workflow-command newline escape.
+    const lines = [
+      `Migration chain does NOT reproduce schema.prisma — ${real.length} of ${total} drift statement(s) are real.`,
+      '',
+    ];
+    for (const r of real.slice(0, 40)) {
+      lines.push(`* ${r.reason}`);
+      lines.push(`  ${r.statement.slice(0, 400)}`);
+    }
+    if (real.length > 40) lines.push(`...and ${real.length - 40} more.`);
+    const encoded = lines
+      .join('\n')
+      .replace(/%/g, '%25')
+      .replace(/\r/g, '%0D')
+      .replace(/\n/g, '%0A');
+    console.error(`::error::${encoded}`);
+    for (const r of real) {
+      console.error(`  x ${r.reason}`);
+      console.error(`    ${r.statement.slice(0, 400)}`);
     }
     process.exit(1);
   }
