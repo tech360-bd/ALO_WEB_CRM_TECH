@@ -663,8 +663,8 @@ model Application {
   // Audit
   createdBy          String?  @default("")
   updatedBy          String?  @default("")
-  notes              String   @default("") @db.Text
-  internalNotes      String   @default("") @db.Text
+  notes              String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  internalNotes      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -714,8 +714,8 @@ model StudentDocument {
   status          String    @default("not_uploaded")
   version         Int       @default(1)
   previousVersionId String @default("")
-  rejectionReason String    @default("") @db.Text
-  reviewerNote    String    @default("") @db.Text
+  rejectionReason String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  reviewerNote    String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   reviewedBy      String    @default("")
   reviewedAt      DateTime?
   archivedAt      DateTime?
@@ -911,7 +911,7 @@ model AiInterviewSession {
   status         String    @default("in_progress")
   readinessScore Float     @default(0)
   riskLevel      String    @default("needs_practice")
-  transcript     String    @default("[]") @db.LongText
+  transcript     String    @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
   startedAt      DateTime  @default(now())
   completedAt    DateTime?
   audioUrl       String    @default("")
@@ -928,13 +928,13 @@ model AiInterviewAnswer {
   id         String   @id @default(cuid())
   sessionId  String
   question   String   @db.Text
-  answer     String   @default("") @db.Text
-  followUp   String   @default("") @db.Text
+  answer     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  followUp   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   score      Float    @default(0)
-  feedback   String   @default("") @db.Text
+  feedback   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   audioUrl   String   @default("")
   videoUrl   String   @default("")
-  transcript String   @default("") @db.Text
+  transcript String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -958,7 +958,7 @@ model AiInterviewResult {
   visaRisk             Float    @default(0)
   overallReadiness     Float    @default(0)
   verdict              String   @default("needs_practice")
-  finalFeedback        String   @default("") @db.Text
+  finalFeedback        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
@@ -1289,10 +1289,10 @@ model VisaFundingReview {
   sourceOfFund            String   @default("")
   hasBankStatement        Boolean  @default(false)
   hasSolvencyCert         Boolean  @default(false)
-  sourceOfFundExplanation String   @default("") @db.Text
+  sourceOfFundExplanation String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   riskWarning             String   @default("none")
   tuitionDeposit          String   @default("")
-  livingCostPlan          String   @default("") @db.Text
+  livingCostPlan          String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   dependents              String   @default("[]")
   sponsorDocuments        String   @default("[]")
   createdAt               DateTime @default(now())
@@ -1309,16 +1309,16 @@ model VisaStudyGapReview {
   gapDurationMonths  Int       @default(0)
   gapFrom            String    @default("")
   gapTo              String    @default("")
-  gapPurpose         String    @default("") @db.Text
-  workExpDuringGap   String    @default("") @db.Text
+  gapPurpose         String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  workExpDuringGap   String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   explanationClarity String    @default("clear")
   riskFlag           String    @default("low")
   supportingDocuments String   @default("[]")
-  employmentDetails  String    @default("") @db.Text
-  trainingDetails    String    @default("") @db.Text
-  familyReason       String    @default("") @db.Text
-  medicalReason      String    @default("") @db.Text
-  visaReason         String    @default("") @db.Text
+  employmentDetails  String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  trainingDetails    String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  familyReason       String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  medicalReason      String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  visaReason         String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
@@ -1333,12 +1333,12 @@ model VisaRefusalReview {
   refusalCountry     String   @default("")
   visaType           String   @default("")
   refusalDate        String   @default("")
-  refusalReason      String   @default("") @db.Text
+  refusalReason      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   refusalLetterUrl   String   @default("")
-  previousApplication String  @default("") @db.Text
-  improvementPlan    String   @default("") @db.Text
-  newExplanation     String   @default("") @db.Text
-  officerNote        String   @default("") @db.Text
+  previousApplication String  @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  improvementPlan    String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  newExplanation     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  officerNote        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   previousRefusalCount Int    @default(0)
   humanReviewStatus  String   @default("pending")
   createdAt          DateTime @default(now())
@@ -1352,13 +1352,13 @@ model VisaSensitiveReview {
   caseId                  String   @unique
   studentId               String
   seriousMedicalCondition Boolean  @default(false)
-  medicalExplanation      String   @default("") @db.Text
+  medicalExplanation      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   medicalDocumentUrl      String   @default("")
   criminalOffense         Boolean  @default(false)
-  criminalExplanation     String   @default("") @db.Text
+  criminalExplanation     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   criminalDocumentUrl     String   @default("")
-  officerInternalNote     String   @default("") @db.Text
-  studentSafeNote         String   @default("") @db.Text
+  officerInternalNote     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  studentSafeNote         String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   humanReviewRequired     Boolean  @default(true)
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
@@ -1386,7 +1386,7 @@ model VisaTask {
   studentId   String
   taskType    String    @default("document_request")
   title       String
-  description String    @default("") @db.Text
+  description String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   assignedTo  String    @default("")
   priority    String    @default("medium")
   createdBy   String    @default("")
@@ -1409,7 +1409,7 @@ model VisaReport {
   generatedBy      String
   generatedByName  String   @default("")
   filters          String   @default("{}")
-  data             String   @default("{}") @db.LongText
+  data             String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   fileUrl          String   @default("")
   format           String   @default("json")
   status           String   @default("ready")
@@ -1636,9 +1636,9 @@ model CrmUniversity {
   tuitionRange                       String   @default("")
   scholarships                       Boolean  @default(false)
   description                        String   @default("")
-  overview                           String   @default("") @db.Text // Alias for spec
-  publicDescription                  String   @default("") @db.Text
-  partnerDescription                 String   @default("") @db.Text
+  overview                           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text // Alias for spec
+  publicDescription                  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  partnerDescription                 String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   internationalStudentUrl            String   @default("") // Alias
   applicationUrl                     String   @default("") // Alias
   scholarshipUrl                     String   @default("") // Alias
@@ -1647,7 +1647,7 @@ model CrmUniversity {
   officialTuitionFeeUrl              String   @default("")
   officialScholarshipUrl             String   @default("")
   contactEmail                       String   @default("")
-  admissionNotes                     String   @default("") @db.Text
+  admissionNotes                     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   heroImageSourceUrl                 String   @default("")
   mediaUsagePermissionStatus         String   @default("not_requested")
   internationalStudentSupportSummary String?   @default("")
@@ -1692,7 +1692,7 @@ model CrmCourse {
   courseTitle               String
   name                      String   @default("") // Alias for spec
   slug                      String   @default("")
-  description               String   @default("") @db.Text // Alias
+  description               String   @default(dbgenerated("(_utf8mb4'')")) @db.Text // Alias
   qualification             String   @default("")
   studyLevel                String   @default("")
   programLevel              String   @default("")
@@ -1724,8 +1724,8 @@ model CrmCourse {
   minScholarship            Float    @default(0)
   maxScholarship            Float    @default(0)
   deadline                  String   @default("")
-  rankingNote               String   @default("") @db.Text
-  careerOutcomes            String   @default("") @db.Text
+  rankingNote               String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  careerOutcomes            String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   highDemand                Boolean  @default(false)
   fastOffer                 Boolean  @default(false)
   highAcceptance            Boolean  @default(false)
@@ -2077,8 +2077,8 @@ model CrmAuditLog {
   targetCollection String   @default("")
   targetId         String   @default("")
   batchId          String   @default("")
-  beforeData       String   @default("{}") @db.LongText
-  afterData        String   @default("{}") @db.LongText
+  beforeData       String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  afterData        String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   ipAddress        String   @default("")
   createdAt        DateTime @default(now())
 }
@@ -2941,7 +2941,7 @@ model PortalAuditLog {
   entityId    String   @default("")
   ipAddress   String   @default("")
   userAgent   String   @default("")
-  metadata    String   @default("{}") @db.LongText
+  metadata    String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   createdAt   DateTime @default(now())
 
   // No FK relation — actorUserId may be "public", "system", or a real userId.
@@ -3320,14 +3320,14 @@ model Country {
   capital          String    @default("")
   heroTitle        String    @default("")
   heroSubtitle     String    @default("")
-  overview         String    @default("") @db.Text
-  description      String    @default("") @db.Text
-  visaOverview     String    @default("") @db.Text // Alias for spec visa_overview
+  overview         String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  description      String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  visaOverview     String    @default(dbgenerated("(_utf8mb4'')")) @db.Text // Alias for spec visa_overview
   visaType         String    @default("")
-  workRights       String    @default("") @db.Text // Alias for spec work_rights
-  costOfLiving     String    @default("") @db.Text // Alias for spec cost_of_living
+  workRights       String    @default(dbgenerated("(_utf8mb4'')")) @db.Text // Alias for spec work_rights
+  costOfLiving     String    @default(dbgenerated("(_utf8mb4'')")) @db.Text // Alias for spec cost_of_living
   livingCost       String    @default("")
-  whyStudySummary  String    @default("") @db.Text
+  whyStudySummary  String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   popularIntakes   String    @default("[]")
   studyLevels      String    @default("[]")
   status           String    @default("active")
@@ -3342,10 +3342,10 @@ model Country {
   heroCity         String    @default("")
   heroIntake       String    @default("")
   seoTitle         String    @default("")
-  seoDescription   String    @default("") @db.Text
+  seoDescription   String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   canonicalUrl     String    @default("")
   ogTitle          String    @default("")
-  ogDescription    String    @default("") @db.Text
+  ogDescription    String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   lastVerifiedAt   DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
@@ -5086,8 +5086,8 @@ model EmployeeAuditLog {
   targetType   String   @default("")
   entityId     String   @default("")
   targetId     String   @default("")
-  oldValue     String   @default("{}") @db.LongText
-  newValue     String   @default("{}") @db.LongText
+  oldValue     String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  newValue     String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   reason       String   @default("")
   approvalId   String   @default("")
   ipAddress    String   @default("")
@@ -5146,8 +5146,8 @@ model EnglishPrepTest {
   name             String
   slug             String   @unique
   shortName        String   @default("")
-  shortDescription String   @default("") @db.Text
-  longDescription  String   @default("") @db.LongText
+  shortDescription String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  longDescription  String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
   testType         String   @default("english_proficiency") // english_proficiency, academic, moi_guidance
   provider         String   @default("")
   logo             String   @default("")
@@ -5160,8 +5160,8 @@ model EnglishPrepTest {
   resultTimeline   String   @default("") // e.g. 48 hours, 3-5 days or "Check current provider information"
   costSummary      String   @default("") // e.g. BDT 23k or "Check current provider information"
   validitySummary  String   @default("") // 2 years
-  bestFor          String   @default("") @db.Text
-  acceptanceSummary String  @default("") @db.Text
+  bestFor          String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  acceptanceSummary String  @default(dbgenerated("(_utf8mb4'')")) @db.Text
   difficultyLevel  String   @default("")
   status           String   @default("active") // active, draft, archived
   isPopular        Boolean  @default(false)
@@ -5173,7 +5173,7 @@ model EnglishPrepTest {
   verificationStatus String @default("pending") // verified, pending, needs_review
   lastVerifiedAt   DateTime?
   seoTitle         String   @default("")
-  seoDescription   String   @default("") @db.Text
+  seoDescription   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -5198,11 +5198,11 @@ model EnglishPrepModule {
   slug             String   @default("")
   durationMinutes  Int      @default(0)
   durationDisplay  String   @default("")
-  description      String   @default("") @db.Text
-  skillsAssessed   String   @default("") @db.Text
-  questionFormat   String   @default("") @db.Text
-  preparationTips  String   @default("") @db.Text
-  commonChallenges String   @default("") @db.Text
+  description      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  skillsAssessed   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  questionFormat   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  preparationTips  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  commonChallenges String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   sortOrder        Int      @default(0)
   status           String   @default("active")
   sourceUrl        String   @default("")
@@ -5224,7 +5224,7 @@ model EnglishPrepAcceptance {
   countryName      String   @default("")
   countrySlug      String   @default("")
   acceptanceType   String   @default("university") // university, visa, professional, general
-  summary          String   @default("") @db.Text
+  summary          String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   minimumNote      String   @default("")
   sourceUrl        String   @default("")
   sourceName       String   @default("")
@@ -5253,9 +5253,9 @@ model EnglishPrepRequirement {
   courseName             String   @default("")
   studyLevel             String   @default("") // Foundation, Bachelor, Master etc
   minimumScore           String   @default("")
-  componentRequirements  String   @default("") @db.Text
+  componentRequirements  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   waiverAvailable        Boolean  @default(false)
-  remarks                String   @default("") @db.Text
+  remarks                String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   sourceUrl              String   @default("")
   sourceName             String   @default("")
   verifiedBy             String   @default("")
@@ -5298,7 +5298,7 @@ model EnglishPrepResource {
   id          String   @id @default(cuid())
   testId      String
   title       String
-  description String   @default("") @db.Text
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   resourceType String  @default("guide") // guide, mock_test, practice, video, article, official_link
   resourceUrl String   @default("")
   isExternal  Boolean  @default(false)
@@ -5328,7 +5328,7 @@ model EnglishPrepSuccessStory {
   previousScore String   @default("")
   finalScore    String   @default("")
   destination   String   @default("")
-  testimonial   String   @default("") @db.Text
+  testimonial   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   photo         String   @default("")
   consentStatus String   @default("pending") // pending, approved, rejected
   status        String   @default("draft") // draft, published, archived
@@ -5367,7 +5367,7 @@ model LanguagePrepLead {
   sourceSection      String   @default("")
   status             String   @default("new") // new, contacted, qualified, converted, closed
   assignedCounselorId String  @default("")
-  notes              String   @default("") @db.Text
+  notes              String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -5394,7 +5394,7 @@ model StudentEnglishPrepProfile {
   weakestModule     String   @default("")
   strongestModule   String   @default("")
   recommendedTest   String   @default("")
-  counselorRecommendation String @default("") @db.Text
+  counselorRecommendation String @default(dbgenerated("(_utf8mb4'')")) @db.Text
   upcomingMock      DateTime?
   lastMockScore     String   @default("")
   createdAt         DateTime @default(now())
@@ -5409,7 +5409,7 @@ model EnglishTestComparison {
   id          String   @id @default(cuid())
   testIds     String   @default("[]") // JSON array
   title       String   @default("")
-  description String   @default("") @db.Text
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   isDefault   Boolean  @default(false)
   status      String   @default("active")
   createdAt   DateTime @default(now())
@@ -5433,16 +5433,16 @@ model B2bProvider {
   email             String   @default("")
   phone             String   @default("")
   portalUrl         String   @default("")
-  loginNote         String   @default("") @db.Text // Encrypted / protected — never expose in normal API
+  loginNote         String   @default(dbgenerated("(_utf8mb4'')")) @db.Text // Encrypted / protected — never expose in normal API
   agreementFile     String   @default("")
-  commissionRule    String   @default("") @db.Text
-  paymentCondition  String   @default("") @db.Text
+  commissionRule    String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  paymentCondition  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   claimStage        String   @default("") // e.g. NOT_CLAIMED, CLAIM_SUBMITTED, CLAIM_APPROVED, PAID
   status            String   @default("ACTIVE")
   createdBy         String   @default("")
   approvedBy        String   @default("")
   lastReviewedAt    DateTime?
-  internalNote      String   @default("") @db.Text
+  internalNote      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -5469,7 +5469,7 @@ model B2bApplication {
   b2bCommissionAmount  Float    @default(0)
   b2bPaymentCondition  String   @default("")
   b2bClaimStage        String   @default("NOT_CLAIMED")
-  b2bInternalNote      String   @default("") @db.Text
+  b2bInternalNote      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   b2bAttachments       String   @default("[]") // JSON
   lastFollowupAt       DateTime?
   nextFollowupAt       DateTime?
@@ -5497,7 +5497,7 @@ model ApplicationStatusLog {
   safeStatus  String   @default("")
   changedBy   String   @default("")
   visibility  String   @default("public_safe") // public_safe, internal, b2b_confidential
-  note        String   @default("") @db.Text
+  note        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt   DateTime @default(now())
 
   application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
@@ -5515,7 +5515,7 @@ model ApplicationComment {
   role              String   @default("APPLICATION_TEAM") // STUDENT, PARTNER, COUNSELOR, APPLICATION_TEAM, APPLICATION_MANAGER, SUPER_ADMIN, FINANCE, VISA_OFFICER, etc
   commentType       String   @default("GENERAL") // STUDENT_VISIBLE, PARTNER_VISIBLE, COUNSELOR_VISIBLE, APPLICATION_TEAM_INTERNAL, B2B_CONFIDENTIAL, UNIVERSITY, FINANCE, VISA_HANDOVER
   visibility        String   @default("internal") // student_visible, partner_visible, counselor_visible, internal, b2b_confidential, finance, visa_handover
-  commentText       String   @default("") @db.Text
+  commentText       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   attachmentPath    String   @default("")
   isB2bConfidential Boolean  @default(false)
   createdAt         DateTime @default(now())
@@ -5540,7 +5540,7 @@ model ApplicationDocument {
   fileUrl       String   @default("")
   status        String   @default("PENDING") // REQUIRED, UPLOADED, MISSING, REJECTED, EXPIRED, UNDER_REVIEW, VERIFIED, LOCKED, REQUEST_AGAIN
   reviewerId    String   @default("")
-  reviewerNote  String   @default("") @db.Text
+  reviewerNote  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   visibility    String   @default("internal") // student_visible, partner_visible, internal, b2b_confidential
   version       Int      @default(1)
   isB2bConfidential Boolean @default(false)
@@ -5565,7 +5565,7 @@ model ApplicationDeadline {
   status        String   @default("PENDING") // PENDING, DUE_TODAY, DUE_IN_3_DAYS, DUE_IN_7_DAYS, OVERDUE, COMPLETED
   assignedTo    String   @default("")
   reminderSent  Boolean  @default(false)
-  note          String   @default("") @db.Text
+  note          String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -5582,7 +5582,7 @@ model ApplicationTask {
   id              String   @id @default(cuid())
   applicationId   String
   taskTitle       String
-  taskDescription String   @default("") @db.Text
+  taskDescription String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   assignedTo      String   @default("")
   assignedToName  String   @default("")
   priority        String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
@@ -5609,7 +5609,7 @@ model ApplicationNotification {
   recipientId   String   @default("")
   channel       String   @default("portal") // portal, email, sms, whatsapp, push
   templateName  String   @default("")
-  message       String   @default("") @db.Text
+  message       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   status        String   @default("PENDING") // PENDING, SENT, DELIVERED, READ, FAILED
   sentAt        DateTime?
   createdAt     DateTime @default(now())
@@ -5628,14 +5628,14 @@ model ApplicationOffer {
   applicationId    String   @unique
   offerStatus      String   @default("DECISION_PENDING") // DECISION_PENDING, CONDITIONAL_OFFER, UNCONDITIONAL_OFFER, REJECTED, DEFERRED, WITHDRAWN, MORE_DOCUMENTS_REQUESTED, INTERVIEW_REQUIRED, APPLICATION_FEE_PENDING, DEPOSIT_REQUIRED
   offerLetterUrl   String   @default("")
-  offerConditions  String   @default("") @db.Text
+  offerConditions  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   conditionDeadline DateTime?
   scholarship      String   @default("")
   scholarshipAmount Float   @default(0)
   depositAmount    Float    @default(0)
   depositDeadline  DateTime?
   decisionDate     DateTime?
-  decisionNote     String   @default("") @db.Text
+  decisionNote     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   studentNotified  Boolean  @default(false)
   partnerNotified  Boolean  @default(false)
   createdAt        DateTime @default(now())
@@ -5662,7 +5662,7 @@ model ApplicationCasI20Coe {
   receivedDate      DateTime?
   referenceNumber   String   @default("")
   fileUrl           String   @default("")
-  conditionNote     String   @default("") @db.Text
+  conditionNote     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   nextStep          String   @default("")
   visaHandoverStatus String  @default("NOT_READY")
   createdAt         DateTime @default(now())
@@ -5689,7 +5689,7 @@ model ApplicationFinance {
   partnerCommission Float    @default(0)
   b2bCommission     Float    @default(0)
   b2bCommissionStatus String @default("NOT_CLAIMED")
-  financeNote       String   @default("") @db.Text
+  financeNote       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -5704,13 +5704,13 @@ model AuditLog {
   action       String
   resource     String   @default("")
   resourceId   String   @default("")
-  details      String   @default("{}") @db.Text
+  details      String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   ipAddress    String   @default("")
   userAgent    String   @default("")
   actorRole    String   @default("")
   studentId    String   @default("")
-  beforeValue  String   @default("{}") @db.Text
-  afterValue   String   @default("{}") @db.Text
+  beforeValue  String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  afterValue   String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   createdAt    DateTime @default(now())
 
   @@index([userId])
@@ -5730,61 +5730,61 @@ model Service {
   id                  String   @id @default(cuid())
   slug                String   @unique
   title               String
-  shortDescription    String   @default("") @db.Text
-  description         String   @default("") @db.LongText // For compatibility with existing API expecting description
-  longDescription     String   @default("") @db.LongText
-  content             String   @default("") @db.LongText // For compatibility
+  shortDescription    String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  description         String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText // For compatibility with existing API expecting description
+  longDescription     String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  content             String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText // For compatibility
   icon                String   @default("")
   heroImage           String   @default("")
   heroTitle           String   @default("")
   heroSubtitle        String   @default("")
   // Compatibility fields for existing API
-  eligibility         String   @default("") @db.Text
-  requirements        String   @default("") @db.Text
-  documents           String   @default("") @db.Text
+  eligibility         String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  requirements        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  documents           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   faqEnabled          Boolean  @default(true)
   ctaLabel            String   @default("")
   ctaUrl              String   @default("")
   // 19 sections per spec
-  whatIs              String   @default("") @db.LongText
-  whyNeeded           String   @default("") @db.LongText
-  whoIsFor            String   @default("") @db.Text
-  whatAloDoes         String   @default("") @db.LongText
-  processSteps        String   @default("[]") @db.Text // JSON
-  requiredInfo        String   @default("[]") @db.Text
-  documentsNeeded     String   @default("[]") @db.Text
-  timeline            String   @default("") @db.Text
-  whatStudentsReceive String   @default("[]") @db.Text
-  whatNotGuaranteed   String   @default("") @db.Text
-  commonMistakes      String   @default("[]") @db.Text
+  whatIs              String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  whyNeeded           String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  whoIsFor            String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  whatAloDoes         String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  processSteps        String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text // JSON
+  requiredInfo        String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  documentsNeeded     String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  timeline            String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  whatStudentsReceive String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  whatNotGuaranteed   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  commonMistakes      String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
   // Visa guidance specific
-  documentPreparation String   @default("") @db.Text
-  checklist           String   @default("[]") @db.Text
-  financialGuidance   String   @default("") @db.Text
-  credibilityPrep     String   @default("") @db.Text
-  documentConsistency String   @default("") @db.Text
-  applicationReview   String   @default("") @db.Text
-  refusalRiskPrep     String   @default("") @db.Text
-  officialDisclaimer  String   @default("") @db.Text
+  documentPreparation String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  checklist           String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  financialGuidance   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  credibilityPrep     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  documentConsistency String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  applicationReview   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  refusalRiskPrep     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  officialDisclaimer  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   // Scholarship guidance
-  findingScholarships String   @default("") @db.Text
-  eligibilityReview   String   @default("") @db.Text
-  deadlineTracking    String   @default("") @db.Text
-  statementSupport    String   @default("") @db.Text
+  findingScholarships String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  eligibilityReview   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  deadlineTracking    String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  statementSupport    String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   // Course matching
-  profileAssessment   String   @default("") @db.Text
-  academicMatching    String   @default("") @db.Text
-  englishMatching     String   @default("") @db.Text
-  budgetMatching      String   @default("") @db.Text
-  destinationMatching String   @default("") @db.Text
-  intakeMatching      String   @default("") @db.Text
-  careerGoalMatching  String   @default("") @db.Text
+  profileAssessment   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  academicMatching    String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  englishMatching     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  budgetMatching      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  destinationMatching String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  intakeMatching      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  careerGoalMatching  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   // SEO
   seoTitle            String   @default("")
-  seoDescription      String   @default("") @db.Text
+  seoDescription      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   canonicalUrl        String   @default("")
   ogTitle             String   @default("")
-  ogDescription       String   @default("") @db.Text
+  ogDescription       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   // Source verification
   sourceUrl           String   @default("")
   sourceName          String   @default("")
@@ -5834,7 +5834,7 @@ model ResourceCategory {
   id          String   @id @default(cuid())
   name        String
   slug        String   @unique
-  description String   @default("") @db.Text
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   icon        String   @default("")
   sortOrder   Int      @default(0)
   status      String   @default("active")
@@ -5853,20 +5853,20 @@ model Resource {
   categoryId          String?
   slug                String   @unique
   title               String
-  summary             String   @default("") @db.Text
-  excerpt             String   @default("") @db.Text // Compatibility
-  keyTakeaways        String   @default("[]") @db.Text // JSON
-  detailedExplanation String   @default("") @db.LongText
-  whoAppliesTo        String   @default("") @db.Text
-  requirements        String   @default("") @db.Text
-  processSteps        String   @default("[]") @db.Text // JSON
-  documents           String   @default("[]") @db.Text
-  timeline            String   @default("") @db.Text
-  fees                String   @default("") @db.Text // only if verified
-  deadlines           String   @default("") @db.Text
-  commonMistakes      String   @default("[]") @db.Text
-  aloGuidance         String   @default("") @db.LongText
-  officialSources     String   @default("[]") @db.Text // JSON array of {sourceName, sourceUrl}
+  summary             String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  excerpt             String   @default(dbgenerated("(_utf8mb4'')")) @db.Text // Compatibility
+  keyTakeaways        String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text // JSON
+  detailedExplanation String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  whoAppliesTo        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  requirements        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  processSteps        String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text // JSON
+  documents           String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  timeline            String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  fees                String   @default(dbgenerated("(_utf8mb4'')")) @db.Text // only if verified
+  deadlines           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  commonMistakes      String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  aloGuidance         String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  officialSources     String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text // JSON array of {sourceName, sourceUrl}
   sourceUrl           String   @default("") // Compatibility
   sourceName          String   @default("")
   lastVerifiedAt      DateTime?
@@ -5880,13 +5880,13 @@ model Resource {
   authorId            String   @default("")
   // SEO
   seoTitle            String   @default("")
-  seoDescription      String   @default("") @db.Text
+  seoDescription      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   canonicalUrl        String   @default("")
   ogTitle             String   @default("")
-  ogDescription       String   @default("") @db.Text
+  ogDescription       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   imageUrl            String   @default("")
   // Content
-  content             String   @default("") @db.LongText
+  content             String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
   tags                String   @default("[]") // JSON
   status              String   @default("active") // active, draft, archived, PUBLISHED
   sortOrder           Int      @default(0)
@@ -5943,39 +5943,39 @@ model Scholarship {
   currency                String   @default("")
   fundingCurrency         String   @default("")
   fundingType             String   @default("") // tuition_waiver, full_funding, partial, living_stipend, etc
-  coverage                String   @default("") @db.Text // Compatibility
-  documentsRequired       String   @default("[]") @db.Text // Compatibility
-  eligibility             String   @default("") @db.Text
+  coverage                String   @default(dbgenerated("(_utf8mb4'')")) @db.Text // Compatibility
+  documentsRequired       String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text // Compatibility
+  eligibility             String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   deadline                String   @default("")
   deadlineDate            DateTime?
   openingDate             DateTime?
   closingDate             DateTime?
   // Detail sections per spec 29 items
-  overview                String   @default("") @db.LongText
-  whoCanApply             String   @default("") @db.Text
-  academicRequirements    String   @default("") @db.Text
-  englishRequirements     String   @default("") @db.Text
-  nationalityRequirements String   @default("") @db.Text
-  courseEligibility       String   @default("") @db.Text
-  universityEligibility   String   @default("") @db.Text
-  whatCovers              String   @default("") @db.Text
-  whatNotCovers           String   @default("") @db.Text
-  minimumRequirements     String   @default("") @db.Text
-  requiredDocuments       String   @default("[]") @db.Text
-  howToApply              String   @default("") @db.LongText
-  applicationSteps        String   @default("[]") @db.Text
-  selectionProcess        String   @default("") @db.Text
+  overview                String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  whoCanApply             String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  academicRequirements    String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  englishRequirements     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  nationalityRequirements String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  courseEligibility       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  universityEligibility   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  whatCovers              String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  whatNotCovers           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  minimumRequirements     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  requiredDocuments       String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  howToApply              String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  applicationSteps        String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  selectionProcess        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   resultTimeline          String   @default("") // only if officially available
-  renewalConditions       String   @default("") @db.Text
-  commonMistakes          String   @default("[]") @db.Text
-  howAloHelps             String   @default("") @db.Text
+  renewalConditions       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  commonMistakes          String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  howAloHelps             String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   officialSourceUrl       String   @default("")
   officialSourceName      String   @default("")
   verificationStatus      String   @default("pending")
   lastVerifiedAt          DateTime?
   // SEO
   seoTitle                String   @default("")
-  seoDescription          String   @default("") @db.Text
+  seoDescription          String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   canonicalUrl            String   @default("")
   // Visibility
   status                  String   @default("active") // active, draft, archived, CLOSED, PUBLISHED
@@ -6074,7 +6074,7 @@ model OfficialSource {
   lastVerifiedAt   DateTime?
   verifiedBy       String   @default("")
   httpStatus       Int      @default(0)
-  notes            String   @default("") @db.Text
+  notes            String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -6117,10 +6117,10 @@ model WeeklyUpdateRequest {
   targetId     String
   targetName   String
   fieldName    String
-  oldValue     String   @default("") @db.Text
-  newValue     String   @default("") @db.Text
+  oldValue     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  newValue     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   sourceUrl    String   @default("")
-  evidence     String   @default("") @db.Text
+  evidence     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   aiConfidence Float    @default(0.9)
   status       String   @default("PENDING_REVIEW") // PENDING_REVIEW, APPROVED, REJECTED, EDITED, MERGED
   reviewedBy   String   @default("")
@@ -6156,7 +6156,13 @@ model RelatedContent {
 
 model ContentRelationship {
   id               String   @id @default(cuid())
-  sourceType       String   // SERVICE, SCHOLARSHIP, RESOURCE, UNIVERSITY, COURSE, COUNTRY, LANGUAGE_TEST
+  // NOTE: sourceType/targetType/relationshipType are short discriminator
+  // strings (SERVICE, SCHOLARSHIP, UNIVERSITY, "related", ...). They are
+  // VarChar(64) — NOT the default VARCHAR(191) — because they participate in
+  // the 5-column @@unique below: 5 × VARCHAR(191) utf8mb4 = 3820 bytes which
+  // exceeds MySQL's 3072-byte InnoDB key limit and made `migrate deploy`
+  // fail on a fresh MySQL 8 (ERROR 1071). (64+191+64+191+64)×4 = 2292 bytes.
+  sourceType       String   @db.VarChar(64) // SERVICE, SCHOLARSHIP, RESOURCE, UNIVERSITY, COURSE, COUNTRY, LANGUAGE_TEST
   sourceId         String
   serviceId        String?
   serviceReverseId String?
@@ -6164,9 +6170,9 @@ model ContentRelationship {
   scholarshipReverseId String?
   resourceId       String?
   resourceReverseId String?
-  targetType       String
+  targetType       String   @db.VarChar(64)
   targetId         String
-  relationshipType String   @default("related")
+  relationshipType String   @default("related") @db.VarChar(64)
   status           String   @default("ACTIVE")
   sortOrder        Int      @default(0)
   createdAt        DateTime @default(now())
@@ -6306,14 +6312,14 @@ model EntryRequirement {
   id                    String   @id @default(cuid())
   courseId              String
   qualificationLevel    String   @default("") // Foundation, Bachelor, Masters, MBA, PhD
-  academicRequirement   String   @default("") @db.Text
+  academicRequirement   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   minGpa                Float    @default(0)
   gpaScale              String   @default("4.0") // 4.0, 5.0, 100%, etc
   backlogAllowed        Int      @default(0)
   workExperienceRequired Boolean @default(false)
   portfolioRequired     Boolean  @default(false)
   interviewRequired     Boolean  @default(false)
-  remarks               String   @default("") @db.Text
+  remarks               String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   sourceUrl             String   @default("")
   lastVerifiedAt        DateTime?
   createdAt             DateTime @default(now())
@@ -6337,7 +6343,7 @@ model EnglishRequirement {
   speakingScore   Float    @default(0)
   noBandLessThan  Float    @default(0)
   waiverAvailable Boolean  @default(false)
-  remarks         String   @default("") @db.Text
+  remarks         String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   sourceUrl       String   @default("")
   lastVerifiedAt  DateTime?
   createdAt       DateTime @default(now())
@@ -6403,7 +6409,7 @@ model SourceLog {
   checkedAt          DateTime @default(now())
   checkedBy          String   @default("system")
   verificationStatus String   @default("pending") // verified, needs_review, expired, unverified
-  notes              String   @default("") @db.Text
+  notes              String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt          DateTime @default(now())
 
   @@index([entityType, entityId])
@@ -6417,10 +6423,10 @@ model UpdateRequest {
   entityType   String    // university, course, scholarship, country
   entityId     String
   fieldName    String
-  oldValue     String    @default("") @db.Text
-  newValue     String    @default("") @db.Text
+  oldValue     String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  newValue     String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   sourceUrl    String    @default("")
-  evidence     String    @default("") @db.Text
+  evidence     String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   confidence   Float     @default(0.9)
   status       String    @default("Pending") // Pending, Approved, Rejected, Edited, Needs Manual Review
   detectedAt   DateTime  @default(now())
@@ -8208,8 +8214,8 @@ model EmployeeHR {
   passportExpiry       String   @default("")
   tinNumber            String   @default("")
   drivingLicense       String   @default("")
-  presentAddress       String   @default("") @db.Text
-  permanentAddress     String   @default("") @db.Text
+  presentAddress       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  permanentAddress     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   emergencyContactName String   @default("")
   emergencyContactPhone String  @default("")
   emergencyRelation    String   @default("")
@@ -9564,9 +9570,9 @@ model AgentAuditLog {
   agentId String
   action String
   actorId String @default("system")
-  before String @default("") @db.LongText
-  after String @default("") @db.LongText
-  metadata String @default("{}") @db.LongText
+  before String @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  after String @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  metadata String @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   ipAddress String @default("")
   agent AgentDefinition @relation(fields: [agentId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -9598,7 +9604,7 @@ model HrmEmployeeExperience {
   fromDate    String   @default("") // YYYY-MM-DD
   toDate      String   @default("")
   isCurrent   Boolean  @default(false)
-  description String   @default("") @db.Text
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   certificatePath String @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -9684,7 +9690,7 @@ model HrmNotice {
   noticePeriodDays    Int       @default(90)
   lastWorkingDay      String    // YYYY-MM-DD
   remainingDays       Int       @default(90)
-  reason              String    @default("") @db.Text
+  reason              String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   handoverChecklist   String    @default("[]") // JSON
   assetReturnStatus   String    @default("PENDING")
   clearanceStatus     String    @default("PENDING")
@@ -9706,7 +9712,7 @@ model HrmExit {
   exitType              String    // RESIGNATION, TERMINATION, ABSCONDING
   exitDate              String
   exitInterviewDate     String    @default("")
-  exitInterviewNotes    String    @default("") @db.Text
+  exitInterviewNotes    String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   exitInterviewConducted Boolean  @default(false)
   clearanceStatus       String    @default("PENDING")
   clearanceChecklist    String    @default("[]")
@@ -9765,8 +9771,8 @@ model HrmAuditLog {
   action      String   // CREATE, UPDATE, DELETE, VIEW, APPROVE, REJECT, PAYROLL_GENERATE etc
   entityType  String   // EmployeeHR, Attendance, Leave, Payroll, Device, Document etc
   entityId    String   @default("")
-  oldValue    String   @default("{}") @db.LongText
-  newValue    String   @default("{}") @db.LongText
+  oldValue    String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  newValue    String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   ipAddress   String   @default("")
   userAgent   String   @default("")
   createdAt   DateTime @default(now())
@@ -9984,7 +9990,7 @@ model StudentSession {
 model VideoProject {
   id              String   @id @default(cuid())
   title           String
-  description     String   @default("") @db.Text
+  description     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   category        String   @default("promo") // promo, course_explainer, testimonial, etc
   providerId      String   @default("remotion") // remotion, cogvideo, hunyuan, ltx, etc (VideoProviderId)
   templateId      String?  // Remotion composition id
@@ -9993,18 +9999,18 @@ model VideoProject {
   platform        String   @default("facebook")
   durationSec     Int      @default(30)
   language        String   @default("english")
-  script          String   @default("") @db.Text
-  voiceoverScript String   @default("") @db.Text
-  scenes          String   @default("[]") @db.LongText // JSON VideoScene[]
-  assets          String   @default("[]") @db.LongText // JSON VideoAssetRef[]
+  script          String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  voiceoverScript String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  scenes          String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText // JSON VideoScene[]
+  assets          String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText // JSON VideoAssetRef[]
   brandOverlay    Boolean  @default(true)
   subtitle        Boolean  @default(true)
-  thumbnailConcept String  @default("") @db.Text
-  prompt          String   @default("") @db.Text // For AI providers
-  negativePrompt  String   @default("") @db.Text
+  thumbnailConcept String  @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  prompt          String   @default(dbgenerated("(_utf8mb4'')")) @db.Text // For AI providers
+  negativePrompt  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   referenceImageUrl String @default("")
   audioUrl        String   @default("")
-  metadata        String   @default("{}") @db.LongText
+  metadata        String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   status          String   @default("draft") // draft, queued, rendering, pending_approval, approved, published, failed
   progress        Int      @default(0)
   outputUrl       String   @default("")
@@ -10012,7 +10018,7 @@ model VideoProject {
   subtitleUrl     String   @default("")
   durationActualSec Int    @default(0)
   renderJobId     String   @default("")
-  providerResponse String  @default("{}") @db.LongText
+  providerResponse String  @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   createdById     String
   approvedById    String?
   approvedAt      DateTime?
@@ -10037,13 +10043,13 @@ model VideoEngineJob {
   jobType       String   @default("render") // render, caption, talking_head, edit, download, manim
   status        String   @default("queued")
   progress      Int      @default(0)
-  logs          String   @default("[]") @db.LongText // JSON string[]
+  logs          String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText // JSON string[]
   outputUrl     String   @default("")
   thumbnailUrl  String   @default("")
   subtitleUrl   String   @default("")
-  error         String   @default("") @db.Text
-  inputPayload  String   @default("{}") @db.LongText
-  outputPayload String   @default("{}") @db.LongText
+  error         String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  inputPayload  String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  outputPayload String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   providerJobId String   @default("")
   costUSD       Float    @default(0)
   durationSec   Int      @default(0)
@@ -10065,16 +10071,16 @@ model VideoTemplate {
   id              String   @id @default(cuid())
   templateId      String   @unique // e.g., UniversityPromo, CourseExplainer
   name            String
-  description     String   @default("") @db.Text
+  description     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   category        String   @default("promo")
   providerId      String   @default("remotion")
   durationFrames  Int      @default(900)
   fps             Int      @default(30)
   width           Int      @default(1920)
   height          Int      @default(1080)
-  defaultProps    String   @default("{}") @db.LongText
+  defaultProps    String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   thumbnailUrl    String   @default("")
-  code            String   @default("") @db.LongText // TSX code for Remotion or Python for Manim
+  code            String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText // TSX code for Remotion or Python for Manim
   isSystem        Boolean  @default(true)
   isActive        Boolean  @default(true)
   usageCount      Int      @default(0)
@@ -10095,7 +10101,7 @@ model VideoProviderConfig {
   apiUrl          String   @default("")
   apiKey          String   @default("")
   localPath       String   @default("")
-  extraConfig     String   @default("{}") @db.LongText
+  extraConfig     String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   vramRequiredGB  Int      @default(0)
   status          String   @default("not_configured") // online, offline, degraded, not_configured
   lastCheckedAt   DateTime?
@@ -10120,7 +10126,7 @@ model VideoAsset {
   height          Int      @default(0)
   format          String   @default("")
   providerId      String   @default("")
-  metadata        String   @default("{}") @db.LongText
+  metadata        String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   createdById     String   @default("")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -10142,8 +10148,8 @@ model VideoCaption {
   vttUrl          String   @default("")
   assUrl          String   @default("")
   txtUrl          String   @default("")
-  segments        String   @default("[]") @db.LongText // JSON CaptionSegment[]
-  translated      String   @default("{}") @db.LongText // JSON map
+  segments        String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText // JSON CaptionSegment[]
+  translated      String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText // JSON map
   providerId      String   @default("videocaptioner")
   status          String   @default("completed")
   createdAt       DateTime @default(now())
@@ -10164,10 +10170,10 @@ model VideoRecording {
   outputUrl       String   @default("")
   durationSec     Int      @default(0)
   transcriptUrl   String   @default("")
-  summary         String   @default("") @db.Text
-  chapters        String   @default("[]") @db.LongText
-  actionItems     String   @default("[]") @db.LongText
-  complianceChecks String  @default("[]") @db.LongText
+  summary         String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  chapters        String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  actionItems     String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  complianceChecks String  @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
   status          String   @default("completed")
   consentGiven    Boolean  @default(false)
   createdAt       DateTime @default(now())
@@ -10415,4 +10421,409 @@ model VerifiedMetric {
 
   @@index([status])
   @@index([metric, status])
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACCOUNTING — real double-entry ledger (2026-10-01)
+//
+// Replaces the legacy journal adapter that persisted journals as JSON inside
+// CrmAuditLog rows. Money is stored as INTEGER CENTS (never Float) and every
+// entry is created inside a Prisma transaction with service-level balance
+// enforcement; see src/lib/accounting/ledger.ts.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model ChartOfAccount {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  type        String   // ASSET | LIABILITY | EQUITY | REVENUE | EXPENSE
+  subType     String?  // e.g. CURRENT_ASSET, FIXED_ASSET, OPERATING_REVENUE
+  parentCode  String?
+  isPostable  Boolean  @default(true) // only leaf accounts accept journal lines
+  isActive    Boolean  @default(true)
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lines JournalLine[] @relation("ChartOfAccountLines")
+
+  @@index([type])
+  @@index([isActive])
+}
+
+model FiscalPeriod {
+  id          String    @id @default(cuid())
+  name        String    @unique // e.g. "2026-10"
+  startDate   DateTime
+  endDate     DateTime
+  status      String    @default("OPEN") // OPEN | CLOSED
+  closedById  String?
+  closedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([startDate, endDate])
+}
+
+model JournalEntry {
+  id           String   @id // deterministic (je_<uuid> or je_inv_<invoiceId>) for idempotency
+  entryDate    DateTime
+  memo         String
+  source       String   @default("manual") // finance.invoice | procurement.bill | payroll.run | asset.depreciation | reversal | manual
+  sourceRefId  String?  // business identifier for source-level idempotency
+  status       String   @default("POSTED") // POSTED | REVERSED
+  reversalOfId String?
+  reversedById String?
+  currency     String   @default("BDT")
+  totalDebit   Int // cents; service-enforced equal to totalCredit
+  totalCredit  Int // cents
+  actorId      String
+  postedAt     DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  lines JournalLine[]
+
+  @@unique([source, sourceRefId])
+  @@index([entryDate])
+  @@index([status])
+  @@index([source])
+  @@index([reversalOfId])
+}
+
+model JournalLine {
+  id          String       @id @default(cuid())
+  entryId     String
+  accountCode String
+  accountName String // denormalized at posting time for immutable history
+  debit       Int          @default(0) // cents, non-negative
+  credit      Int          @default(0) // cents, non-negative
+  entityId    String?
+  entityType  String?
+  entry       JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  account     ChartOfAccount @relation("ChartOfAccountLines", fields: [accountCode], references: [code])
+
+  @@index([accountCode])
+  @@index([entityType, entityId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PROCUREMENT — vendor master, purchase requests, purchase orders, vendor
+// invoices (2026-10-01). Approval-gated workflow that posts to the real
+// accounting ledger. Money is INTEGER CENTS.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Vendor {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  name          String
+  legalName     String   @default("")
+  taxId         String   @default("")
+  category      String   @default("general") // general | it | marketing | travel | facilities | professional
+  email         String   @default("")
+  phone         String   @default("")
+  address       String   @default("")
+  country       String   @default("Bangladesh")
+  paymentTerms  String   @default("NET-30") // NET-7 | NET-15 | NET-30 | NET-60 | PREPAID
+  bankDetails   String   @default("") // encrypted at rest by the storage layer; never rendered raw
+  rating        Float    @default(0) // 0..5 vendor performance
+  status        String   @default("ACTIVE") // ACTIVE | SUSPENDED | BLACKLISTED
+  notes         String   @default("")
+  createdById   String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  purchaseOrders  PurchaseOrder[]
+  vendorInvoices  VendorInvoice[]
+
+  @@index([status])
+  @@index([category])
+  @@index([name])
+}
+
+model PurchaseRequest {
+  id              String    @id @default(cuid())
+  prNumber        String    @unique
+  title           String
+  description     String    @default("")
+  requestedById   String
+  departmentId    String    @default("")
+  currency        String    @default("BDT")
+  amount          Int // cents; sum of lines, service-verified
+  status          String    @default("DRAFT") // DRAFT | SUBMITTED | APPROVED | REJECTED | CONVERTED | CANCELLED
+  neededBy        DateTime?
+  decidedById     String?
+  decidedAt       DateTime?
+  rejectionReason String    @default("")
+  convertedPoId   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  lines           PurchaseRequestLine[]
+  purchaseOrder   PurchaseOrder?
+
+  @@index([status])
+  @@index([requestedById])
+  @@index([createdAt])
+}
+
+model PurchaseRequestLine {
+  id          String   @id @default(cuid())
+  requestId   String
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Int      @default(0) // cents
+  amount      Int      @default(0) // cents; quantity * unitPrice, service-verified
+  request     PurchaseRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+}
+
+model PurchaseOrder {
+  id                String    @id @default(cuid())
+  poNumber          String    @unique
+  requestId         String?   @unique
+  vendorId          String
+  orderDate         DateTime  @default(now())
+  expectedDelivery  DateTime?
+  currency          String    @default("BDT")
+  subtotal          Int       @default(0) // cents
+  taxTotal          Int       @default(0) // cents
+  total             Int       @default(0) // cents; subtotal + taxTotal, service-verified
+  status            String    @default("DRAFT") // DRAFT | PENDING_APPROVAL | APPROVED | SENT | PARTIALLY_RECEIVED | RECEIVED | CANCELLED
+  approvedById      String?
+  approvedAt        DateTime?
+  rejectionReason   String    @default("")
+  notes             String    @default("")
+  journalEntryId    String?   // AP posting once approved
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  vendor    Vendor            @relation(fields: [vendorId], references: [id])
+  request   PurchaseRequest?  @relation(fields: [requestId], references: [id])
+  lines     PurchaseOrderLine[]
+  invoices  VendorInvoice[]
+
+  @@index([vendorId])
+  @@index([status])
+  @@index([orderDate])
+}
+
+model PurchaseOrderLine {
+  id               String   @id @default(cuid())
+  orderId          String
+  description      String
+  quantity         Int      @default(1)
+  unitPrice        Int      @default(0) // cents
+  amount           Int      @default(0) // cents
+  receivedQuantity Int      @default(0)
+  order            PurchaseOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+model VendorInvoice {
+  id            String    @id @default(cuid())
+  invoiceNumber String
+  vendorId      String
+  poId          String?
+  invoiceDate   DateTime
+  dueDate       DateTime?
+  currency      String    @default("BDT")
+  subtotal      Int       @default(0) // cents
+  taxTotal      Int       @default(0) // cents
+  total         Int       @default(0) // cents
+  amountPaid    Int       @default(0) // cents
+  status        String    @default("RECEIVED") // RECEIVED | MATCHED | APPROVED | PARTIALLY_PAID | PAID | DISPUTED
+  matchedById   String?
+  matchedAt     DateTime?
+  disputeReason String    @default("")
+  journalEntryId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  vendor Vendor         @relation(fields: [vendorId], references: [id])
+  po     PurchaseOrder? @relation(fields: [poId], references: [id])
+
+  @@unique([vendorId, invoiceNumber])
+  @@index([status])
+  @@index([poId])
+  @@index([invoiceDate])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ASSET MANAGEMENT — fixed assets, assignment history, maintenance,
+// straight-line depreciation posted to the accounting ledger (2026-10-01).
+// Money is INTEGER CENTS.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model FixedAsset {
+  id                String    @id @default(cuid())
+  assetTag          String    @unique
+  name              String
+  category          String    @default("IT") // IT | FURNITURE | VEHICLE | EQUIPMENT | BUILDING
+  description       String    @default("")
+  serialNumber      String    @default("")
+  purchaseDate      DateTime
+  purchaseCost      Int // cents
+  currency          String    @default("BDT")
+  salvageValue      Int       @default(0) // cents
+  usefulLifeMonths  Int       @default(36)
+  vendorId          String?
+  location          String    @default("")
+  departmentId      String    @default("")
+  assignedToId      String?   // employee id when IN_USE
+  status            String    @default("IN_STORAGE") // IN_USE | IN_STORAGE | MAINTENANCE | RETIRED | DISPOSED
+  disposalDate      DateTime?
+  disposalAmount    Int?      // cents
+  accumulatedDepreciation Int @default(0) // cents; denormalized from DepreciationEntry
+  notes             String    @default("")
+  createdById       String    @default("")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  assignments  AssetAssignment[]
+  maintenance   AssetMaintenance[]
+  depreciation  DepreciationEntry[]
+
+  @@index([status])
+  @@index([category])
+  @@index([assignedToId])
+}
+
+model AssetAssignment {
+  id           String    @id @default(cuid())
+  assetId      String
+  assignedToId String // employee id
+  assignedAt   DateTime  @default(now())
+  returnedAt   DateTime?
+  conditionOut String    @default("GOOD") // GOOD | FAIR | POOR
+  conditionIn  String?
+  notes        String    @default("")
+  asset        FixedAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@index([assignedToId])
+}
+
+model AssetMaintenance {
+  id             String    @id @default(cuid())
+  assetId        String
+  maintenanceDate DateTime
+  type           String    @default("PREVENTIVE") // PREVENTIVE | REPAIR | INSPECTION | UPGRADE
+  cost           Int       @default(0) // cents
+  description    String    @default("")
+  performedBy    String    @default("")
+  nextDueAt      DateTime?
+  asset          FixedAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@index([nextDueAt])
+}
+
+model DepreciationEntry {
+  id                String   @id @default(cuid())
+  assetId           String
+  period            String // YYYY-MM
+  depreciationAmount Int // cents
+  accumulatedAfter  Int // cents; running total after this entry
+  journalEntryId    String? // DR 5200 / CR 1510 posting
+  createdAt         DateTime @default(now())
+
+  asset FixedAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, period])
+  @@index([period])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AI MODEL REGISTRY — versioned models with evaluation gates, department
+// assignment, deployment promotion and rollback (2026-10-01). Implements the
+// department-specialized AI system objective with persisted evidence.
+// ═══════════════════════════════════════════════════════════════════════════
+
+model AiModel {
+  id               String   @id @default(cuid())
+  modelCode        String   @unique // e.g. alo-admissions-v1
+  name             String
+  taskType         String   @default("general") // counseling | matching | verification | content | analysis | general
+  description      String   @default("")
+  status           String   @default("REGISTERED") // REGISTERED | EVALUATING | STAGING | PRODUCTION | RETIRED
+  currentVersionId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  versions    AiModelVersion[]
+  deployments AiModelDeployment[] @relation("AiModelDeployments")
+  departments AiModelDepartmentAssignment[]
+
+  @@index([status])
+  @@index([taskType])
+}
+
+model AiModelVersion {
+  id              String   @id @default(cuid())
+  modelId         String
+  version         Int      @default(1)
+  adapterType     String   @default("PROMPT") // PROMPT | RAG | FINE_TUNE | LORA | ROUTER | ENSEMBLE
+  baseModel       String   @default("")
+  datasetVersion  String   @default("")
+  trainingNotes   String   @default("")
+  artifactRef     String   @default("") // storage reference; never a public URL
+  status          String   @default("DRAFT") // DRAFT | EVALUATED | PRODUCTION | RETIRED
+  createdById     String   @default("")
+  createdAt       DateTime @default(now())
+
+  model        AiModel            @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  evaluations  AiModelEvaluation[]
+  deployments  AiModelDeployment[]
+
+  @@unique([modelId, version])
+  @@index([status])
+}
+
+model AiModelEvaluation {
+  id             String   @id @default(cuid())
+  versionId      String
+  benchmark      String // e.g. admissions-qa-v3
+  score          Float // 0..100
+  datasetVersion String   @default("")
+  passed         Boolean  @default(false)
+  details        String   @default("{}") // JSON metrics snapshot
+  evaluatedAt    DateTime @default(now())
+
+  version AiModelVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@index([versionId])
+  @@index([benchmark])
+}
+
+model AiModelDeployment {
+  id              String    @id @default(cuid())
+  versionId       String
+  modelId         String
+  environment     String    @default("STAGING") // STAGING | PRODUCTION
+  status          String    @default("ACTIVE") // ACTIVE | ROLLED_BACK
+  activatedAt     DateTime  @default(now())
+  activatedById   String
+  rolledBackAt    DateTime?
+  rollbackReason  String    @default("")
+  notes           String    @default("")
+
+  version AiModelVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  model   AiModel        @relation("AiModelDeployments", fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([versionId])
+  @@index([environment, status])
+}
+
+model AiModelDepartmentAssignment {
+  id          String   @id @default(cuid())
+  modelId     String
+  departmentId String
+  assignedAt  DateTime @default(now())
+
+  model AiModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@unique([modelId, departmentId])
+  @@index([departmentId])
 }

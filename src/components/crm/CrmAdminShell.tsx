@@ -56,6 +56,8 @@ import {
   ShieldCheck,
   GitCompare,
   AlertTriangle,
+  BookOpenCheck,
+  Truck,
 } from 'lucide-react';
 
 // ============================================================
@@ -127,6 +129,8 @@ const navGroups: NavGroup[] = [
     title: 'Business',
     items: [
       { icon: Wallet, label: 'Finance', view: 'crm-finance' },
+      { icon: BookOpenCheck, label: 'Accounting', view: 'crm-accounting' },
+      { icon: Truck, label: 'Procurement & Assets', view: 'crm-procurement' },
       { icon: Megaphone, label: 'Marketing', view: 'crm-marketing' },
       { icon: UserCog, label: 'HRM', view: 'crm-hrm' },
       { icon: Bot, label: 'AI Operations', view: 'crm-ai-command' },
