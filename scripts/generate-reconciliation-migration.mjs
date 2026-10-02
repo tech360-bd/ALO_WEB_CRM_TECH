@@ -119,14 +119,24 @@ function sqlDefault(f) {
   if (f.default === undefined) return null;
   const d = f.default.trim();
   if (d === 'autoincrement()') return 'AUTO_INCREMENT';
-  if (/^cuid\(\)$/.test(d) || /^uuid\(\)$/.test(d)) return null; // client-generated
+  if (/^cuid\\(\\)$/.test(d) || /^uuid\\(\\)$/.test(d)) return null; // client-generated
   if (d === 'now()') return 'CURRENT_TIMESTAMP(3)';
-  if (d === 'dbgenerated()') return null;
-  if (/^-?\d+(\.\d+)?$/.test(d)) return d;
+  if (d === 'dbgenerated()') {
+    // MySQL rejects DEFAULT values on TEXT/LONGTEXT/JSON/GEOMETRY.
+    // Prisma uses dbgenerated(...) in the schema for portable server defaults,
+    // but the reconciliation migration is intentionally additive and must
+    // apply cleanly on MySQL 8+. Omit these defaults for LOB-like columns.
+    return null;
+  }
+  if (/^-?\\d+(\\.\\d+)?$/.test(d)) return d;
   if (d === 'true') return 'true';
   if (d === 'false') return 'false';
   if (/^".*"$/.test(d)) return `'${d.slice(1, -1).replace(/'/g, "''")}'`; // string literal -> single-quoted SQL
   return null; // expressions (enum lists etc.) — client-side
+}
+
+function mysqlAllowsDefault(type) {
+  return !/^(TEXT|TINYTEXT|MEDIUMTEXT|LONGTEXT|JSON|GEOMETRY)$/.test(type);
 }
 
 function fkAction(rel, kind) {
@@ -185,7 +195,7 @@ function tableDDL(model) {
     const dflt = sqlDefault(f);
     let col = '    `' + f.name + '` ' + type;
     if (!f.optional) col += ' NOT NULL';
-    if (dflt !== null && dflt !== 'AUTO_INCREMENT') col += ' DEFAULT ' + dflt;
+    if (dflt !== null && dflt !== 'AUTO_INCREMENT' && mysqlAllowsDefault(type)) col += ' DEFAULT ' + dflt;
     if (dflt === 'AUTO_INCREMENT') col += ' AUTO_INCREMENT';
     cols.push(col);
     if (f.id) keys.push('    PRIMARY KEY (`' + f.name + '`)');
