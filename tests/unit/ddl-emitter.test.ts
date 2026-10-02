@@ -1,4 +1,6 @@
 /**
+ * MySQL 8.4 regression coverage: LOB defaults use expression syntax.
+
  * Regression tests for scripts/ai-workforce/emit-ddl.mjs.
  *
  * Context: the verification-mirror Prisma Client is generated with
