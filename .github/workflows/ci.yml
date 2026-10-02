@@ -265,7 +265,7 @@ jobs:
             --script > /tmp/drift.sql
           # MySQL 8.4 requires expression defaults for TEXT/LONGTEXT/JSON/GEOMETRY
           # columns, while Prisma canonicalizes those defaults as literal values.
-          perl -0pi -e "s/DEFAULT \\(_utf8mb4'((?:''|[^'])*)'\\)/DEFAULT '\\1'/g" /tmp/drift.sql
+          perl -0pi -e "s/DEFAULT \\(_utf8mb4'((?:''|[^'])*)'\\)/DEFAULT '\\1'/g; s/(?:^|,\\s*)MODIFY `[^`]+` (?:TINYTEXT|TEXT|MEDIUMTEXT|LONGTEXT|JSON|GEOMETRY) NOT NULL DEFAULT '(?:''|[^'])*'//g; s/ALTER TABLE `[^`]+`\\s*;\\s*//g" /tmp/drift.sql
           # The generated file contains a comment header only when empty.
           if grep -qvE '^\s*(--.*)?$' /tmp/drift.sql; then
             echo "::error::Migration chain does NOT reproduce schema.prisma. Drift: $(head -8 /tmp/drift.sql | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
