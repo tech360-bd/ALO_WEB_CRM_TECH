@@ -135,8 +135,15 @@ function sqlDefault(f) {
   return null; // expressions (enum lists etc.) — client-side
 }
 
-function mysqlAllowsDefault(type) {
-  return !/^(TEXT|TINYTEXT|MEDIUMTEXT|LONGTEXT|JSON|GEOMETRY)$/.test(type);
+const MYSQL_LOB_TYPES = /^(TEXT|TINYTEXT|MEDIUMTEXT|LONGTEXT|JSON|GEOMETRY)$/;
+
+function mysqlDefaultClause(type, dflt) {
+  if (dflt === null || dflt === 'AUTO_INCREMENT') return null;
+  if (!MYSQL_LOB_TYPES.test(type)) return 'DEFAULT ' + dflt;
+  // MySQL 8.x permits expression defaults for LOB/JSON columns, but rejects
+  // bare literal defaults. Keep the schema default while using the legal form.
+  if (/^'.*'$/.test(dflt)) return 'DEFAULT (_utf8mb4' + dflt + ')';
+  return 'DEFAULT (' + dflt + ')';
 }
 
 function fkAction(rel, kind) {
@@ -195,7 +202,8 @@ function tableDDL(model) {
     const dflt = sqlDefault(f);
     let col = '    `' + f.name + '` ' + type;
     if (!f.optional) col += ' NOT NULL';
-    if (dflt !== null && dflt !== 'AUTO_INCREMENT' && mysqlAllowsDefault(type)) col += ' DEFAULT ' + dflt;
+    const defaultSql = mysqlDefaultClause(type, dflt);
+    if (defaultSql) col += ' ' + defaultSql;
     if (dflt === 'AUTO_INCREMENT') col += ' AUTO_INCREMENT';
     cols.push(col);
     if (f.id) keys.push('    PRIMARY KEY (`' + f.name + '`)');
