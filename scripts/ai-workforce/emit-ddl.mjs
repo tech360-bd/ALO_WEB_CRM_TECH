@@ -46,6 +46,11 @@ export function parseBlockAttributes(schemaText) {
     const [, name, body] = match;
     const indexes = [];
     const uniques = [];
+    // Field-level `@unique` parsed from the schema text rather than read from
+    // DMMF `field.isUnique`: that flag is absent from clients generated with
+    // `engineType = "client"` (query-compiler builds), which would silently
+    // drop every single-column UNIQUE constraint from the emitted DDL.
+    const fieldUniques = [];
     let compositeId = null;
     for (const line of body.split('\n')) {
       const trimmed = line.trim();
@@ -56,8 +61,11 @@ export function parseBlockAttributes(schemaText) {
       if (uniq) uniques.push(uniq[1].split(',').map((f) => f.trim()));
       const cid = trimmed.match(/^@@id\(\[([^\]]+)\]/);
       if (cid) compositeId = cid[1].split(',').map((f) => f.trim());
+      if (trimmed.startsWith('@@')) continue;
+      const fieldDecl = trimmed.match(/^(\w+)\s+\S+/);
+      if (fieldDecl && /(^|\s)@unique(\s|\(|$)/.test(trimmed)) fieldUniques.push(fieldDecl[1]);
     }
-    result.set(name, { indexes, uniques, compositeId });
+    result.set(name, { indexes, uniques, fieldUniques, compositeId });
   }
   return result;
 }
@@ -95,9 +103,37 @@ const SQLITE_TYPES = {
   Decimal: () => 'DECIMAL',
   Boolean: () => 'BOOLEAN',
   DateTime: () => 'DATETIME',
-  Json: () => 'JSONB',
+  // The SQLite verification mirror declares MySQL `Json` columns as `String`,
+  // so they must land on a TEXT-affinity column for the mirror Prisma Client
+  // to read them back as strings.
+  Json: () => 'TEXT',
   Bytes: () => 'BLOB',
 };
+
+/**
+ * Guard against a degraded DMMF.
+ *
+ * Clients generated with `engineType = "client"` (the query-compiler build used
+ * by the SQLite verification mirror) ship a *minimal* datamodel: scalar fields
+ * carry only `name`/`kind`/`type`, with `isId`, `isRequired`, `isUnique`,
+ * `hasDefaultValue` and `nativeType` all absent. Emitting DDL from that produces
+ * tables with no primary keys, no NOT NULL and no defaults — which still
+ * "applies" cleanly and only explodes later at the first upsert. Fail loudly
+ * instead, and make callers point `--client` at a full-metadata client.
+ */
+export function assertFullDmmf(dmmf, clientPath) {
+  const model = dmmf?.datamodel?.models?.find((m) => m.fields?.some((f) => f.kind === 'scalar'));
+  if (!model) throw new Error(`DMMF from ${clientPath} contains no scalar fields.`);
+  const field = model.fields.find((f) => f.kind === 'scalar');
+  const missing = ['isRequired', 'isId', 'isUnique', 'hasDefaultValue'].filter((k) => !(k in field));
+  if (missing.length > 0) {
+    throw new Error(
+      `DMMF from "${clientPath}" is degraded: scalar fields are missing [${missing.join(', ')}]. ` +
+        'This happens with `engineType = "client"` (query-compiler) clients. ' +
+        'Point --client at a client generated with the default engine type (e.g. @prisma/client).',
+    );
+  }
+}
 
 function literal(value, dialect) {
   if (typeof value === 'string') return `'${value.replace(/'/g, "''")}'`;
@@ -153,8 +189,23 @@ export function emitModel(model, attrs, dialect, options = {}) {
     cols.push(`    ${parts.join(' ')}`);
   }
 
-  const singleUnique = scalars.filter((f) => f.isUnique).map((f) => [f.dbName || f.name]);
-  const uniques = [...singleUnique, ...(attrs?.uniques || [])];
+  const byName = new Map(scalars.map((f) => [f.name, f]));
+  const singleUniqueNames = new Set([
+    ...scalars.filter((f) => f.isUnique).map((f) => f.name),
+    ...(attrs?.fieldUniques || []).filter((n) => byName.has(n)),
+  ]);
+  const singleUnique = [...singleUniqueNames].map((n) => [byName.get(n).dbName || n]);
+  // De-duplicate by column tuple: a field declared `@unique` *and* repeated in
+  // a single-column `@@unique([...])` would otherwise emit the same index name
+  // twice, which MySQL rejects outright.
+  const uniques = [];
+  const seenUnique = new Set();
+  for (const parts of [...singleUnique, ...(attrs?.uniques || [])]) {
+    const key = parts.join('\u0000');
+    if (seenUnique.has(key)) continue;
+    seenUnique.add(key);
+    uniques.push(parts);
+  }
   const idField = model.fields.find((f) => f.isId);
 
   const trailing = [];
@@ -209,6 +260,7 @@ export function emitAll({ dmmf, schemaText, dialect, filter, relaxNotNull }) {
 if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) {
   const args = parseArgs(process.argv.slice(2));
   const { Prisma } = require(args.client);
+  assertFullDmmf(Prisma.dmmf, args.client);
   const schemaText = readFileSync(args.schema, 'utf8');
   const prefix = args.prefix;
   const sql = emitAll({

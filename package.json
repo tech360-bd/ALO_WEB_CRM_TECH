@@ -16,7 +16,7 @@
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint .",
     "awf:mirror": "node scripts/ai-workforce/mirror-schema.mjs",
-    "awf:ddl": "node scripts/ai-workforce/emit-ddl.mjs --dialect sqlite --schema prisma/verification-mirror/schema.sqlite.prisma --client $PWD/node_modules/.prisma-sqlite/client --out .awf-tmp/verify-schema.sql",
+    "awf:ddl": "node scripts/ai-workforce/emit-ddl.mjs --dialect sqlite --schema prisma/verification-mirror/schema.sqlite.prisma --client @prisma/client --out .awf-tmp/verify-schema.sql",
     "awf:verify": "ALO_DB_DRIVER=sqlite DATABASE_URL=\"file:$PWD/.awf-tmp/verify.db\" tsx scripts/ai-workforce/run-verification.ts",
     "awf:audit": "ALO_DB_DRIVER=sqlite DATABASE_URL=\"file:$PWD/.awf-tmp/verify.db\" tsx scripts/ai-workforce/audit-independent.ts",
     "typecheck": "npm run db:verify-client && tsc --noEmit",
@@ -138,7 +138,9 @@
     "youtube-dl-exec": "^3.0.5"
   },
   "devDependencies": {
+    "@libsql/client": "^0.18.0",
     "@playwright/test": "^1.62.0",
+    "@prisma/adapter-libsql": "^6.19.3",
     "@types/nodemailer": "8.0.2",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9",

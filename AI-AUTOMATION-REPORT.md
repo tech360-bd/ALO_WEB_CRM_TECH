@@ -122,6 +122,30 @@ Harness: `scripts/ai-workforce/run-verification.ts` (fixtures → install → 5 
 ── verification PASSED ──
 ```
 
+Reproduce it end-to-end from a clean checkout (no network beyond npm, no MySQL, no AI key):
+
+```bash
+npm install
+
+# Prisma's engine binaries are not downloadable in every environment; the DDL is
+# derived from the DMMF instead, so it cannot drift from the schema.
+export PRISMA_SCHEMA_ENGINE_BINARY=$PWD/.awf-tmp/fake-engine \
+       PRISMA_QUERY_ENGINE_BINARY=$PWD/.awf-tmp/fake-engine \
+       PRISMA_QUERY_ENGINE_LIBRARY=$PWD/.awf-tmp/fake-engine
+mkdir -p .awf-tmp && printf '#!/bin/sh\nexit 0\n' > .awf-tmp/fake-engine && chmod +x .awf-tmp/fake-engine
+
+DATABASE_URL="mysql://u:p@localhost:3306/alo" npx prisma generate --no-engine
+DATABASE_URL="file:$PWD/.awf-tmp/verify.db" \
+  npx prisma generate --schema prisma/verification-mirror/schema.sqlite.prisma
+
+npm run awf:ddl                                   # DMMF → 1626 SQLite statements
+rm -f .awf-tmp/verify.db
+node scripts/ai-workforce/apply-sqlite-ddl.mjs    # → 524 tables, 0 failures
+
+npm run awf:verify                                # exits 0 only if 5/5 workflows + 20/20 security
+npm run awf:audit                                 # exits 1 on any defect
+```
+
 ### 3.1 End-to-end workflow effects (verified in the database)
 
 | Workflow | Result | Persisted effect |
@@ -220,6 +244,11 @@ It checks: deployed-agent counts, gate completeness (approver + deployer + passi
 | 5 | Task-ledger rows stored a run **code** where a run **id** was expected, so measured tasks could not be joined back to their execution (found by the independent audit, not the harness) | `workflow-engine.ts` | Ledger now stores the real `AwfRun.id`; audit check A6 passes |
 | 6 | Counsellors could not trigger the lead/application workflows they own | `rbac.ts` | `awf.workflow.trigger` added to the COUNSELOR capability set |
 | 7 | `content.seo_review` was advertised as a deterministic task with no implementation | `deterministic-engine.ts` | Removed from the task union (SEO review is part of `content.draft`) |
+| 8 | DDL emitted from a query-compiler client silently lost **every primary key, NOT NULL, default and single-column UNIQUE**. The DDL still applied cleanly (524 tables, 0 failures) and only failed later at the first `upsert` with `SQLITE_ERROR: ON CONFLICT clause does not match any PRIMARY KEY or UNIQUE constraint` | `scripts/ai-workforce/emit-ddl.mjs` | Root cause: clients generated with `engineType = "client"` ship a **minimal DMMF** (scalars carry only `name`/`kind`/`type`). The emitter now (a) reads the DMMF from a full-metadata client, (b) parses field-level `@unique` from the schema text, and (c) `assertFullDmmf()` aborts loudly on a degraded DMMF instead of emitting a broken schema |
+| 9 | A `@@unique([x])` single-column index is *also* reported as `field.isUnique` by Prisma, so the emitter produced two indexes with the same name (`MarketingUserAccess.userId`, `HrmPayrollRun.monthYear`, `DocumentChecklist.applicationId`). Masked in SQLite by `IF NOT EXISTS`; MySQL rejects a duplicate index name outright | `scripts/ai-workforce/emit-ddl.mjs` | Unique indexes are de-duplicated by column tuple before emission. The committed `20261002040000_ai_workforce` MySQL migration was checked and is unaffected (15/15 unique constraints, no duplicates) |
+| 10 | The SQLite verification harness depended on `@libsql/client` and `@prisma/adapter-libsql` being installed ad hoc — a clean `npm install` could not reproduce the verification | `package.json` | Both pinned as devDependencies (`@prisma/adapter-libsql` matched to client `6.19.3`) |
+
+Defects 8–10 were found by re-running the **entire** verification from a clean `npm install` in a fresh sandbox rather than trusting the previous green run. Defect 9 was surfaced by the new regression test, not by the harness.
 
 ---
 
@@ -228,10 +257,13 @@ It checks: deployed-agent counts, gate completeness (approver + deployer + passi
 | Gate | Command | Result |
 | --- | --- | --- |
 | TypeScript (whole project) | `npx tsc --noEmit -p tsconfig.json` | **0 errors** |
-| Unit tests | `npx vitest run tests/unit` | **59 files, 581 tests, all passing** (includes 61 new AI Workforce tests) |
+| Unit tests | `npx vitest run tests/unit` | **60 files, 603 tests, all passing** (includes 83 new AI Workforce tests) |
 | Prisma schema | `npx prisma validate` / `format` | clean, 524 models |
 | Prisma client parity | `node scripts/verify-prisma-client.mjs` | 524/524 |
 | Migration chain | `npx vitest run tests/unit/migration-order.test.ts` | green, now including the 23 `Awf*` tables |
+| DDL emitter | `npx vitest run tests/unit/ddl-emitter.test.ts` | green, 22 tests guarding defects 8 and 9 |
+
+> `tsc` needs `NODE_OPTIONS=--max-old-space-size=3200` on a 3.9 GB machine. A larger heap lets V8 grow past physical RAM and the process is OOM-killed (exit 137).
 
 ---
 
