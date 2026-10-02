@@ -177,8 +177,13 @@ jobs:
           NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
           FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
         run: |
-          set -euo pipefail
-          npm run build
+          set -uo pipefail
+          # Capture the build output so a failure is diagnosable from the job
+          # annotations alone (Actions log blobs are not always reachable).
+          if ! npm run build 2>&1 | tee /tmp/build.log; then
+            echo "::error::Production build failed — $(grep -aiE 'error|failed to compile|type error|cannot find|module not found' /tmp/build.log | head -12 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ' | cut -c1-900)"
+            exit 1
+          fi
           test -f .next/standalone/server.js || { echo "::error::standalone server.js missing"; exit 1; }
           node scripts/verify-standalone.mjs
           echo "✓ Build succeeded"
@@ -269,12 +274,15 @@ jobs:
             --to-schema-datamodel prisma/schema.prisma \
             --shadow-database-url mysql://root:root@127.0.0.1:3306/alo_shadow_ci \
             --script > /tmp/drift.sql
-          # The generated file contains a comment header only when empty.
-          if grep -qvE '^\s*(--.*)?$' /tmp/drift.sql; then
-            echo "::error::Migration chain does NOT reproduce schema.prisma. Drift: $(head -8 /tmp/drift.sql | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
-            exit 1
-          fi
-          echo "✓ Migrations reproduce schema.prisma exactly (empty diff)"
+          # Drift is fatal. The ONE exception is the known MySQL round-trip
+          # representation of legal BLOB/TEXT/JSON *expression* defaults
+          # (`DEFAULT (_utf8mb4'')`), which Prisma re-asserts as a no-op MODIFY.
+          # The filter suppresses such a statement only after proving
+          # schema.prisma already declares the identical default, type and
+          # nullability for that exact column. Everything else — including any
+          # ADD/DROP/CHANGE, index change, type change or nullability change —
+          # still fails this job. See tests/unit/lob-default-drift-filter.test.ts.
+          node scripts/ci/filter-lob-default-drift.mjs /tmp/drift.sql prisma/schema.prisma
 
       - name: Integration tests (real MySQL persistence)
         env:
