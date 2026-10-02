@@ -304,7 +304,7 @@ observed from the repository or from CI.
 | --- | --- | --- |
 | Production site is not passing its public health check | The scheduled `Health & Dependency Monitor` workflow, which runs `scripts/production-smoke.mjs https://aloeducation.com` from GitHub's network, has failed **every day from 2026-09-18 through 2026-10-02** (15+ consecutive runs). | Hostinger / operator |
 | Hostinger → GitHub auto-deployment unconfirmed | Not observable from the repository. | Operator |
-| Credentials in git history | Git history contains non-placeholder database password strings, and the CI secret scanner's own comment records that a real production DB password previously survived in `OPERATIONS-BOOK.md` and `documentation/CPANEL-DEPLOYMENT-GUIDE.md`. History must not be rewritten, so **those credentials must be treated as compromised and rotated.** | Operator |
+| Credentials in git history | **Verified 2026-10-02:** commit `5cc4e6b6` (2026-09-11) committed a real, non-placeholder database `DATABASE_URL` (user `user_edu`, host `127.0.0.1:3306`, db `db_education`) into `documentation/CPANEL-DEPLOYMENT-GUIDE.md`. The value was scrubbed by `05c1e1f0` (2026-09-18) but remains recoverable from public history. The current tree is clean under the full CI secret-scanner logic (re-verified 2026-10-02 over every tracked file, docs included). History must not be rewritten, so **that database password is compromised and must be rotated.** | Operator |
 
 ---
 
