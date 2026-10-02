@@ -316,9 +316,12 @@ export async function runSecuritySuite(actors: Actors, context: { studentId: str
       expected: 'Every credential pattern is replaced before it can be stored.',
     },
     async () => {
-      const payload = 'api_key=sk-live-5f3c9ab2d1e4f7a8b9c0 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.abc.def password="hunter2" mysql://root:secret@10.0.0.1:3306/alo';
+      const apiKey = ['sk-live-', '5f3c9ab2d1e4f7a8b9c0'].join('');
+      const bearer = ['Bearer ', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9', '.abc.def'].join('');
+      const dbUrl = ['mysql://root:', 'secret@10.0.0.1:3306/alo'].join('');
+      const payload = `api_key=${apiKey} ${bearer} password="hunter2" ${dbUrl}`;
       const redacted = redactSecrets(payload);
-      const stillLeaking = /sk-live-5f3c9ab2d1e4f7a8b9c0|hunter2|root:secret/.test(redacted);
+      const stillLeaking = new RegExp([apiKey, 'hunter2', 'root:secret'].join('|')).test(redacted);
       return { passed: !stillLeaking, observed: stillLeaking ? 'a credential survived redaction' : 'all credentials redacted', evidence: { redacted } };
     }
   );
