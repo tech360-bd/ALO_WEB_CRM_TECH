@@ -269,7 +269,10 @@ jobs:
           # deciding whether there is real schema drift.
           perl -0pi -e "s/DEFAULT \\(_utf8mb4'((?:''|[^'])*)'\\)/DEFAULT '\\1'/g" /tmp/drift.sql
           # The generated file contains a comment header only when empty.
-          if grep -qvE '^\\s*(--.*)?
+          if grep -qvE '^\\s*(--.*)?$' /tmp/drift.sql; then
+            echo "::error::Migration chain does NOT reproduce schema.prisma. Drift: $(head -8 /tmp/drift.sql | sed 's/%/%25/g; s/\\r//g' | tr '\\n' ' ')"
+            exit 1
+          fi
           echo "✓ Migrations reproduce schema.prisma exactly (empty diff)"
 
       - name: Integration tests (real MySQL persistence)
