@@ -1,4 +1,6 @@
 /**
+ * MySQL 8.4 regression coverage: LOB defaults use expression syntax.
+
  * Regression tests for scripts/ai-workforce/emit-ddl.mjs.
  *
  * Context: the verification-mirror Prisma Client is generated with
@@ -156,6 +158,31 @@ describe('emit-ddl: sqlite output', () => {
     const out = emitModel(model, parseBlockAttributes(schema).get('W'), 'sqlite', { relaxNotNull: true });
     const occurrences = out.split('\n').filter((l: string) => l.includes('"W_a_key"')).length;
     expect(occurrences).toBe(1);
+  });
+});
+
+describe('emit-ddl: mysql LOB defaults', () => {
+  const schema = `
+model Audit {
+  id       String @id
+  oldValue String @default(dbgenerated("(\\_utf8mb4'{}')")) @db.LongText
+  note     String @default(dbgenerated("(\\_utf8mb4'')")) @db.Text
+}
+`;
+  const model = {
+    name: 'Audit',
+    dbName: null,
+    fields: [
+      { name: 'id', kind: 'scalar', type: 'String', isList: false, isRequired: true, isId: true, isUnique: false, hasDefaultValue: false, nativeType: ['String', []] },
+      { name: 'oldValue', kind: 'scalar', type: 'String', isList: false, isRequired: true, isId: false, isUnique: false, hasDefaultValue: true, default: { name: 'dbgenerated', args: ["(_utf8mb4'{}')"] }, nativeType: ['LongText', []] },
+      { name: 'note', kind: 'scalar', type: 'String', isList: false, isRequired: true, isId: false, isUnique: false, hasDefaultValue: true, default: { name: 'dbgenerated', args: ["(_utf8mb4'')"] }, nativeType: ['Text', []] },
+    ],
+  };
+
+  it('uses MySQL expression defaults for TEXT/LONGTEXT', () => {
+    const sql = emitModel(model, parseBlockAttributes(schema).get('Audit'), 'mysql', {});
+    expect(sql).toContain("`oldValue` LONGTEXT NOT NULL DEFAULT (_utf8mb4'{}')");
+    expect(sql).toContain("`note` TEXT NOT NULL DEFAULT (_utf8mb4'')");
   });
 });
 
