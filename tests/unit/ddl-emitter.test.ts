@@ -159,6 +159,33 @@ describe('emit-ddl: sqlite output', () => {
   });
 });
 
+describe('emit-ddl: mysql LOB defaults', () => {
+  const schema = `
+model Audit {
+  id       String @id
+  oldValue String @default(dbgenerated("(\\_utf8mb4'{}')")) @db.LongText
+  note     String @default(dbgenerated("(\\_utf8mb4'')")) @db.Text
+}
+`;
+  const model = {
+    name: 'Audit',
+    dbName: null,
+    fields: [
+      { name: 'id', kind: 'scalar', type: 'String', isList: false, isRequired: true, isId: true, isUnique: false, hasDefaultValue: false, nativeType: ['String', []] },
+      { name: 'oldValue', kind: 'scalar', type: 'String', isList: false, isRequired: true, isId: false, isUnique: false, hasDefaultValue: true, default: { name: 'dbgenerated', args: ["(_utf8mb4'{}')"] }, nativeType: ['LongText', []] },
+      { name: 'note', kind: 'scalar', type: 'String', isList: false, isRequired: true, isId: false, isUnique: false, hasDefaultValue: true, default: { name: 'dbgenerated', args: ["(_utf8mb4'')"] }, nativeType: ['Text', []] },
+    ],
+  };
+
+  it('omits invalid defaults from TEXT/LONGTEXT on MySQL', () => {
+    const sql = emitModel(model, parseBlockAttributes(schema).get('Audit'), 'mysql', {});
+    expect(sql).toContain('`oldValue` LONGTEXT NOT NULL');
+    expect(sql).toContain('`note` TEXT NOT NULL');
+    expect(sql).not.toMatch(/`oldValue`[^,\n]*DEFAULT/i);
+    expect(sql).not.toMatch(/`note`[^,\n]*DEFAULT/i);
+  });
+});
+
 describe('emit-ddl: mysql output', () => {
   const attrs = parseBlockAttributes(SCHEMA).get('Widget');
   const sql = emitModel(widgetModel, attrs, 'mysql', {});
