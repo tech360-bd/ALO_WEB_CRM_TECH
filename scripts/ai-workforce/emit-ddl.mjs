@@ -91,8 +91,9 @@ const MYSQL_TYPES = {
   Bytes: () => 'LONGBLOB',
 };
 
-/** MySQL rejects literal DEFAULTs on BLOB/TEXT columns; Prisma emits the
- *  `(_utf8mb4'…')` expression form for them, which this mirrors exactly. */
+/** MySQL 8.x does not permit defaults on TEXT/LONGTEXT/BLOB/JSON/GEOMETRY
+ *  columns. Keep this rule explicit in the emitter so generated MySQL DDL cannot
+ *  reproduce the reconciliation-migration failure (error 1101). */
 const MYSQL_TEXT_TYPES = new Set(['TEXT', 'LONGTEXT', 'MEDIUMTEXT', 'TINYTEXT']);
 
 const SQLITE_TYPES = {
