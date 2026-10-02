@@ -1,5 +1,5 @@
 /**
- * MySQL 8.4 regression coverage: LOB defaults use expression syntax.
+ * MySQL 8.4 regression coverage: LOB defaults use expression syntax. Push-gate validation.
 
  * Regression tests for scripts/ai-workforce/emit-ddl.mjs.
  *
