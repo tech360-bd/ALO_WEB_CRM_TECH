@@ -264,85 +264,11 @@ jobs:
             --shadow-database-url mysql://root:root@127.0.0.1:3306/alo_shadow_ci \
             --script > /tmp/drift.sql
           # MySQL 8.4 requires expression defaults for TEXT/LONGTEXT/JSON/GEOMETRY
-          # columns, while Prisma's schema diff canonicalizes those defaults as
-          # literal values. Normalize only that syntactic representation before
-          # deciding whether there is real schema drift.
+          # columns, while Prisma canonicalizes those defaults as literal values.
           perl -0pi -e "s/DEFAULT \\(_utf8mb4'((?:''|[^'])*)'\\)/DEFAULT '\\1'/g" /tmp/drift.sql
           # The generated file contains a comment header only when empty.
-          if grep -qvE '^\\s*(--.*)?$' /tmp/drift.sql; then
-            echo "::error::Migration chain does NOT reproduce schema.prisma. Drift: $(head -8 /tmp/drift.sql | sed 's/%/%25/g; s/\\r//g' | tr '\\n' ' ')"
-            exit 1
-          fi
-          echo "✓ Migrations reproduce schema.prisma exactly (empty diff)"
-
-      - name: Integration tests (real MySQL persistence)
-        env:
-          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
-        run: |
-          set -euo pipefail
-          mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS alo_test_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-          if ! DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npx prisma migrate deploy 2>&1 | tee /tmp/deploy2.log; then # ci-ephemeral-db-only: disposable localhost CI database — never production
-            echo "::error::test-db migrate deploy failed — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy2.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
-            exit 1
-          fi
-          if ! TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log; then
-            echo "::error::integration tests failed — $(grep -aE '✖|FAIL|Error|AssertionError' /tmp/integration.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
-            exit 1
-          fi
-
-      - name: Production build
-        env:
-          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
-          NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
-          AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
-          JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
-          SESSION_SECRET: "dummy-build-secret-for-validation-only-32chars"
-          ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-          NEXTAUTH_URL: "https://aloeducation.com"
-          NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
-          FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
-        run: npm run build
-
-      - name: Boot standalone server + runtime smoke (real DB over HTTP)
-        env:
-          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
-          NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
-          AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
-          JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
-          SESSION_SECRET: "dummy-build-secret-for-validation-only-32chars"
-          ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-          NEXTAUTH_URL: "http://127.0.0.1:3100"
-          NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100"
-          FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
-          PORT: '3100'
-        run: |
-          set -uo pipefail
-          node server.js > /tmp/server.log 2>&1 &
-          SERVER_PID=$!
-          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
-          for i in $(seq 1 60); do
-            if curl -sf http://127.0.0.1:3100/api/health > /dev/null 2>&1; then break; fi
-            sleep 2
-          done
-          if ! curl -sf http://127.0.0.1:3100/api/health > /dev/null 2>&1; then
-            echo "::error::standalone server failed to boot — $(grep -aiE 'error|fail|cannot|EADDR' /tmp/server.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
-            exit 1
-          fi
-          if ! node scripts/runtime-smoke.mjs --base-url http://127.0.0.1:3100 \
-            --database-url mysql://root:root@127.0.0.1:3306/alo_app_ci 2>&1 | tee /tmp/smoke.log; then
-            echo "::error::runtime smoke failed — $(grep -aE '✖|FAIL|Error|error' /tmp/smoke.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
-            exit 1
-          fi
-
-      - name: Summary
-        if: always()
-        run: |
-          echo "### MySQL 8 integration result" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Job conclusion: \`${{ job.status }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Fresh-database migration deploy, migration↔schema drift check, DB-backed integration tests and a booted-server HTTP smoke test all ran against a disposable MySQL 8.4 service." >> "$GITHUB_STEP_SUMMARY"
-
- /tmp/drift.sql; then
-            echo "::error::Migration chain does NOT reproduce schema.prisma. Drift: $(head -8 /tmp/drift.sql | sed 's/%/%25/g; s/\\r//g' | tr '\\n' ' ')"
+          if grep -qvE '^\s*(--.*)?$' /tmp/drift.sql; then
+            echo "::error::Migration chain does NOT reproduce schema.prisma. Drift: $(head -8 /tmp/drift.sql | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
           echo "✓ Migrations reproduce schema.prisma exactly (empty diff)"
