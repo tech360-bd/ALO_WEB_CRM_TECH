@@ -343,7 +343,22 @@ jobs:
           fi
           if ! node scripts/runtime-smoke.mjs --base-url http://127.0.0.1:3100 \
             --database-url mysql://root:root@127.0.0.1:3306/alo_app_ci 2>&1 | tee /tmp/smoke.log; then
-            echo "::error::runtime smoke failed — $(grep -aE '✖|FAIL|Error|error' /tmp/smoke.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            # Job-log blobs are not reachable from restricted sandboxes; fold the
+            # decisive evidence into check-run annotations instead (<=50 total).
+            echo "::error::runtime smoke failed"
+            # Replay the exact lead POST with curl to expose responder headers
+            # (server:, set-cookie, auth headers) — server still up until step exit.
+            curl -si -X POST http://127.0.0.1:3100/api/website/lead \
+              -H 'content-type: application/json' \
+              -d '{"name":"Diag","phone":"+8801700000001","email":"diag@smoke.invalid","preferredCountry":"United Kingdom"}' 2>/dev/null | head -14 | while IFS= read -r line; do
+              echo "::error::lead-replay: $(echo "$line" | sed 's/%/%25/g; s/\r//g')"
+            done
+            grep -aE '✓|✖|FAIL|Error|error|body\(400\)' /tmp/smoke.log | head -20 | while IFS= read -r line; do
+              echo "::error::smoke-log: $(echo "$line" | sed 's/%/%25/g; s/\r//g')"
+            done
+            grep -aiE 'lead|prisma|error|warn|unauthor' /tmp/server.log | tail -12 | while IFS= read -r line; do
+              echo "::error::server-log: $(echo "$line" | sed 's/%/%25/g; s/\r//g')"
+            done
             exit 1
           fi
 
