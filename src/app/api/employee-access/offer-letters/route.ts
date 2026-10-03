@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { analyzePostOfferRequirements, checkPostOfferGate } from '@/lib/applications/post-offer-requirements';
 
 // ============================================================================
 // /api/employee-access/offer-letters
@@ -20,11 +21,30 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const applicationId = searchParams.get('applicationId');
+    // POST-OFFER REQUIREMENT SYSTEM (spec): after offer approval, analyze
+    // conditions and categorize MANDATORY / RECOMMENDED / OPTIONAL requirements.
+    const withRequirements = searchParams.get('withRequirements') === 'true';
 
     const where: any = {};
     if (applicationId) where.applicationId = applicationId;
 
     const offers = await db.applicationOffer.findMany({ where, orderBy: { createdAt: 'desc' } }).catch(() => []);
+
+    if (withRequirements) {
+      const enriched = offers.map((o: any) => {
+        const requirements = analyzePostOfferRequirements(
+          typeof o.conditions === 'string' ? (() => { try { const p = JSON.parse(o.conditions); return Array.isArray(p) ? p : o.conditions; } catch { return o.conditions; } })() : o.conditions,
+        );
+        const completed = Array.isArray(o.conditionsCompleted) ? o.conditionsCompleted : [];
+        return {
+          ...o,
+          postOfferRequirements: requirements,
+          visaGate: checkPostOfferGate(requirements, completed, 'visa'),
+          paymentGate: checkPostOfferGate(requirements, completed, 'payment'),
+        };
+      });
+      return NextResponse.json({ success: true, offers: enriched });
+    }
 
     return NextResponse.json({ success: true, offers });
   } catch (error: any) {

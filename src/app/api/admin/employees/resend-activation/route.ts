@@ -107,7 +107,12 @@ async function handlePost(request: Request, auth: any) {
       employee.email,
       employee.name,
       employee.employeeProfile?.employeeId || 'ALO-EMP-ACTIVE',
-      tokenRaw
+      tokenRaw,
+      {
+        designation: employee.employeeProfile?.designation || undefined,
+        companyEmail: employee.email,
+        expiryHours: 48,
+      }
     );
 
     if (!emailResult.success) {
