@@ -4402,6 +4402,7 @@ model WhatsAppContact {
   @@index([studentId])
   @@index([leadId])
   @@index([normalizedPhone])
+  @@index([countryCode])
 }
 
 model WhatsAppMessageArchive {
