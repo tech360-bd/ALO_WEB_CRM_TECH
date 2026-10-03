@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2093,
+  "filesScanned": 2098,
   "summary": {
     "UNUSED": 72,
     "REFERENCED_WITH_FALLBACK": 120,
     "REFERENCED_FAIL_CLOSED": 12,
-    "REFERENCED": 92,
+    "REFERENCED": 94,
     "PUBLIC": 9
   },
   "productionRequired": [
@@ -4028,6 +4028,34 @@
       ],
       "sampleReferences": [
         "src/lib/research/structured-extractor.ts"
+      ]
+    },
+    {
+      "name": "TRANSLATION_API_KEY",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/app/api/crm/ucc/ai-assistant/route.ts"
+      ]
+    },
+    {
+      "name": "TRANSLATION_PROVIDER",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/app/api/crm/ucc/ai-assistant/route.ts"
       ]
     },
     {

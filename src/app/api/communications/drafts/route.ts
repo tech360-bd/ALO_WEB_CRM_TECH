@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { validateDraftMode } from "@/lib/communication/approval-modes";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "channel and draftBody are required" }, { status: 400 });
     }
 
+    // §130/§175 — only the four documented approval modes; high-risk content
+    // (payment/visa/immigration/legal/financial evidence or HIGH/CRITICAL)
+    // can never be registered for auto-send.
+    const decision = validateDraftMode({ mode, riskLevel, riskFlags });
+    if (!decision.ok) {
+      return NextResponse.json({ error: decision.error }, { status: 422 });
+    }
+
     const draft = await db.communicationDraft.create({
       data: {
         channel,
@@ -64,12 +73,19 @@ export async function POST(req: NextRequest) {
         aiReasoning,
         riskLevel: riskLevel || "LOW",
         riskFlags: typeof riskFlags === "string" ? riskFlags : JSON.stringify(riskFlags || []),
-        mode: mode || "AI_DRAFT_HUMAN_SEND",
+        mode: decision.mode,
         status: "DRAFT",
         createdBy,
       },
     });
-    return NextResponse.json({ draft }, { status: 201 });
+    return NextResponse.json(
+      {
+        draft,
+        requiresHumanReview: decision.requiresHumanReview,
+        displayLabel: "AI GENERATED DRAFT",
+      },
+      { status: 201 },
+    );
   } catch (error: any) {
     return NextResponse.json({ error: error?.message || "Failed to create draft" }, { status: 500 });
   }
