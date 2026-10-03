@@ -2,6 +2,7 @@ import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { withAuth, AuthContext } from "@/lib/auth-middleware";
+import { SPEC_SERVICES } from "@/lib/website/spec-services";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -37,7 +38,33 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ services, total: services.length });
+    // Spec: the directory always offers the 14 canonical services — DB rows
+    // win; catalog records fill any gap so no card on /services is ever dead.
+    const dbSlugs = new Set(services.map((s) => s.slug));
+    const catalog = SPEC_SERVICES.filter((s) => !dbSlugs.has(s.slug)).map((s, i) => ({
+      id: `spec_${s.slug}`,
+      slug: s.slug,
+      title: s.title,
+      shortDescription: s.shortDescription,
+      icon: s.icon,
+      heroImage: '',
+      ctaLabel: 'Book Free Consultation',
+      ctaUrl: '/book-consultation',
+      status: 'PUBLISHED',
+      sortOrder: 1000 + i,
+      faqEnabled: true,
+      verificationStatus: 'pending',
+      lastVerifiedAt: null,
+      updatedAt: null,
+    }));
+
+    // DB items first (by sortOrder), then the 14-spec guaranteed set.
+    const merged = [
+      ...services,
+      ...catalog,
+    ];
+
+    return NextResponse.json({ services: merged.slice(0, limit), total: merged.length });
   } catch (err: any) {
     console.error("[services.list] error:", err);
     return NextResponse.json({ error: "Failed to list services" }, { status: 500 });

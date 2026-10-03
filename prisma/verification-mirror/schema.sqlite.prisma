@@ -6008,6 +6008,8 @@ model Scholarship {
   courseSlug           String?
   studyLevel           String?
   subject              String?
+  scholarshipType      String    @default("") // merit_based, need_based, athletic, country_specific, university_specific, other (spec §15 filters)
+  intake               String    @default("") // e.g. "September 2027" (spec §15 filters)
   applicationMethod    String?
   applicationUrl       String?
   decisionDate         String?
@@ -6023,6 +6025,7 @@ model Scholarship {
   @@index([universitySlug])
   @@index([countrySlug])
   @@index([studyLevel])
+  @@index([scholarshipType])
   @@map("scholarships")
 }
 
