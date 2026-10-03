@@ -263,18 +263,24 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                   <p className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
                     <span>Channel: <strong className="capitalize">{selectedConv.channel}</strong></span>
                     <span>•</span>
-                    <span>Auto ID: <strong className="text-emerald-600 dark:text-emerald-400">Matched Student Profile</strong></span>
+                    {selectedConv.studentId ? (
+                      <span>Auto ID: <strong className="text-emerald-600 dark:text-emerald-400">Matched Student Profile · {selectedConv.studentId}</strong></span>
+                    ) : selectedConv.leadId ? (
+                      <span>Auto ID: <strong className="text-amber-600 dark:text-amber-400">Matched Lead · {selectedConv.leadId}</strong></span>
+                    ) : (
+                      <span>Auto ID: <strong className="text-slate-500 dark:text-slate-400">No record matched — resolve contact match first</strong></span>
+                    )}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handleSendMessage('Here is your course shortlist for Aston University London.')}
+                    onClick={() => handleSendMessage('Thank you for your message. A counselor is reviewing your case and will reply with the verified details shortly.')}
                     className="px-3 py-1 bg-blue-50 text-[#0B5ED7] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-100"
                   >
-                    + Course Shortlist
+                    + Acknowledge
                   </button>
                   <button
-                    onClick={() => handleSendMessage('Please upload your IELTS test report copy.', 'https://aloeducation.com/sample-passport.pdf', 'Passport_Copy.pdf')}
+                    onClick={() => handleSendMessage('Please upload the documents requested in your document checklist so we can proceed with your application.')}
                     className="px-3 py-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-medium rounded-lg hover:bg-emerald-100"
                   >
                     + Request Document
