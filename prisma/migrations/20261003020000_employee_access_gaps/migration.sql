@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `WhatsAppContact` (
 
 SET @api_studentId := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'studentId') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN studentId VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN studentId VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_studentId FROM @api_studentId; EXECUTE stmt_api_studentId; DEALLOCATE PREPARE stmt_api_studentId;
 
 SET @api_paymentType := (SELECT IF(
@@ -61,72 +61,72 @@ PREPARE stmt_api_paymentType FROM @api_paymentType; EXECUTE stmt_api_paymentType
 
 SET @api_deadline := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'deadline') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN deadline VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN deadline VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_deadline FROM @api_deadline; EXECUTE stmt_api_deadline; DEALLOCATE PREPARE stmt_api_deadline;
 
 SET @api_universityName := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'universityName') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN universityName VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN universityName VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_universityName FROM @api_universityName; EXECUTE stmt_api_universityName; DEALLOCATE PREPARE stmt_api_universityName;
 
 SET @api_bankName := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'bankName') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN bankName VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN bankName VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_bankName FROM @api_bankName; EXECUTE stmt_api_bankName; DEALLOCATE PREPARE stmt_api_bankName;
 
 SET @api_accountName := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'accountName') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN accountName VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN accountName VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_accountName FROM @api_accountName; EXECUTE stmt_api_accountName; DEALLOCATE PREPARE stmt_api_accountName;
 
 SET @api_accountNumberMasked := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'accountNumberMasked') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN accountNumberMasked VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN accountNumberMasked VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_accountNumberMasked FROM @api_accountNumberMasked; EXECUTE stmt_api_accountNumberMasked; DEALLOCATE PREPARE stmt_api_accountNumberMasked;
 
 SET @api_swiftCode := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'swiftCode') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN swiftCode VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN swiftCode VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_swiftCode FROM @api_swiftCode; EXECUTE stmt_api_swiftCode; DEALLOCATE PREPARE stmt_api_swiftCode;
 
 SET @api_iban := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'iban') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN iban VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN iban VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_iban FROM @api_iban; EXECUTE stmt_api_iban; DEALLOCATE PREPARE stmt_api_iban;
 
 SET @api_paymentReference := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'paymentReference') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN paymentReference VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN paymentReference VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_paymentReference FROM @api_paymentReference; EXECUTE stmt_api_paymentReference; DEALLOCATE PREPARE stmt_api_paymentReference;
 
 SET @api_invoiceUrl := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'invoiceUrl') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN invoiceUrl VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN invoiceUrl VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_invoiceUrl FROM @api_invoiceUrl; EXECUTE stmt_api_invoiceUrl; DEALLOCATE PREPARE stmt_api_invoiceUrl;
 
 SET @api_paymentLink := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'paymentLink') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN paymentLink VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN paymentLink VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_paymentLink FROM @api_paymentLink; EXECUTE stmt_api_paymentLink; DEALLOCATE PREPARE stmt_api_paymentLink;
 
 SET @api_paymentMethod := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'paymentMethod') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN paymentMethod VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN paymentMethod VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_paymentMethod FROM @api_paymentMethod; EXECUTE stmt_api_paymentMethod; DEALLOCATE PREPARE stmt_api_paymentMethod;
 
 SET @api_requiredDocuments := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'requiredDocuments') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN requiredDocuments VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN requiredDocuments VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_requiredDocuments FROM @api_requiredDocuments; EXECUTE stmt_api_requiredDocuments; DEALLOCATE PREPARE stmt_api_requiredDocuments;
 
 SET @api_preparedBy := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'preparedBy') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN preparedBy VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN preparedBy VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_preparedBy FROM @api_preparedBy; EXECUTE stmt_api_preparedBy; DEALLOCATE PREPARE stmt_api_preparedBy;
 
 SET @api_verifiedBy := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ApplicationPaymentInstruction' AND COLUMN_NAME = 'verifiedBy') = 0,
-    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN verifiedBy VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE ApplicationPaymentInstruction ADD COLUMN verifiedBy VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_api_verifiedBy FROM @api_verifiedBy; EXECUTE stmt_api_verifiedBy; DEALLOCATE PREPARE stmt_api_verifiedBy;
 
 SET @api_verifiedAt := (SELECT IF(
@@ -143,32 +143,32 @@ PREPARE stmt_api_idx_status FROM @api_idx_status; EXECUTE stmt_api_idx_status; D
 
 SET @off_universityName := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'application_offers' AND COLUMN_NAME = 'universityName') = 0,
-    'ALTER TABLE application_offers ADD COLUMN universityName VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE application_offers ADD COLUMN universityName VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_off_universityName FROM @off_universityName; EXECUTE stmt_off_universityName; DEALLOCATE PREPARE stmt_off_universityName;
 
 SET @off_courseName := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'application_offers' AND COLUMN_NAME = 'courseName') = 0,
-    'ALTER TABLE application_offers ADD COLUMN courseName VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE application_offers ADD COLUMN courseName VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_off_courseName FROM @off_courseName; EXECUTE stmt_off_courseName; DEALLOCATE PREPARE stmt_off_courseName;
 
 SET @off_campus := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'application_offers' AND COLUMN_NAME = 'campus') = 0,
-    'ALTER TABLE application_offers ADD COLUMN campus VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE application_offers ADD COLUMN campus VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_off_campus FROM @off_campus; EXECUTE stmt_off_campus; DEALLOCATE PREPARE stmt_off_campus;
 
 SET @off_intake := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'application_offers' AND COLUMN_NAME = 'intake') = 0,
-    'ALTER TABLE application_offers ADD COLUMN intake VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE application_offers ADD COLUMN intake VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_off_intake FROM @off_intake; EXECUTE stmt_off_intake; DEALLOCATE PREPARE stmt_off_intake;
 
 SET @off_receivedSource := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'application_offers' AND COLUMN_NAME = 'receivedSource') = 0,
-    'ALTER TABLE application_offers ADD COLUMN receivedSource VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE application_offers ADD COLUMN receivedSource VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_off_receivedSource FROM @off_receivedSource; EXECUTE stmt_off_receivedSource; DEALLOCATE PREPARE stmt_off_receivedSource;
 
 SET @off_receivedBy := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'application_offers' AND COLUMN_NAME = 'receivedBy') = 0,
-    'ALTER TABLE application_offers ADD COLUMN receivedBy VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE application_offers ADD COLUMN receivedBy VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_off_receivedBy FROM @off_receivedBy; EXECUTE stmt_off_receivedBy; DEALLOCATE PREPARE stmt_off_receivedBy;
 
 SET @off_receivedAt := (SELECT IF(
@@ -183,9 +183,31 @@ PREPARE stmt_off_documentVersion FROM @off_documentVersion; EXECUTE stmt_off_doc
 
 SET @off_createdBy := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'application_offers' AND COLUMN_NAME = 'createdBy') = 0,
-    'ALTER TABLE application_offers ADD COLUMN createdBy VARCHAR(191) NOT NULL DEFAULT '''''', 'SELECT 1'));
+    'ALTER TABLE application_offers ADD COLUMN createdBy VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_off_createdBy FROM @off_createdBy; EXECUTE stmt_off_createdBy; DEALLOCATE PREPARE stmt_off_createdBy;
 
+CREATE TABLE IF NOT EXISTS `WhatsAppContact` (
+    `id` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `normalizedPhone` VARCHAR(191) NOT NULL,
+    `countryCode` VARCHAR(191) NOT NULL DEFAULT '',
+    `externalContactId` VARCHAR(191) NOT NULL DEFAULT '',
+    `displayName` VARCHAR(191) NOT NULL DEFAULT '',
+    `profileName` VARCHAR(191) NOT NULL DEFAULT '',
+    `studentId` VARCHAR(191) NOT NULL DEFAULT '',
+    `leadId` VARCHAR(191) NOT NULL DEFAULT '',
+    `partnerId` VARCHAR(191) NOT NULL DEFAULT '',
+    `firstContactAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `lastContactAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `source` VARCHAR(191) NOT NULL DEFAULT 'WHATSAPP',
+    `isBlocked` BOOLEAN NOT NULL DEFAULT false,
+    `isOptedOut` BOOLEAN NOT NULL DEFAULT false,
+    `optedOutAt` DATETIME(3) NULL,
+    `optOutReason` VARCHAR(191) NOT NULL DEFAULT '',
+    `tags` VARCHAR(191) NOT NULL DEFAULT '[]',
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS `ApplicationPaymentInstruction` (
     `id` VARCHAR(191) NOT NULL,
     `applicationId` VARCHAR(191) NOT NULL,
