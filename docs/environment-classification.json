@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2098,
+  "filesScanned": 2100,
   "summary": {
     "UNUSED": 72,
-    "REFERENCED_WITH_FALLBACK": 120,
+    "REFERENCED_WITH_FALLBACK": 122,
     "REFERENCED_FAIL_CLOSED": 12,
-    "REFERENCED": 94,
+    "REFERENCED": 92,
     "PUBLIC": 9
   },
   "productionRequired": [
@@ -4369,11 +4369,11 @@
     },
     {
       "name": "WHATSAPP_ACCESS_TOKEN",
-      "classification": "REFERENCED",
+      "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 3,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -4383,7 +4383,7 @@
       "sampleReferences": [
         "src/app/api/whatsapp/webhook/route.ts",
         "src/lib/whatsapp-cloud-api.ts",
-        "src/lib/whatsapp-webhook-handler.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
@@ -4437,11 +4437,11 @@
     },
     {
       "name": "WHATSAPP_BUSINESS_PHONE",
-      "classification": "REFERENCED",
+      "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -4449,6 +4449,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/app/api/crm/ucc/conversations/[id]/reply/route.ts",
         "src/lib/whatsapp-cloud-api.ts"
       ]
     },
@@ -4471,7 +4472,7 @@
       "name": "WHATSAPP_PHONE_NUMBER_ID",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 4,
+      "referenceCount": 5,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -4490,7 +4491,7 @@
       "name": "WHATSAPP_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 3,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -4502,7 +4503,7 @@
       "sampleReferences": [
         "src/app/api/whatsapp/send/route.ts",
         "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-webhook-handler.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {

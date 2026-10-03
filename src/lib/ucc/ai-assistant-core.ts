@@ -90,6 +90,16 @@ export interface ConversationSummary {
   attachmentCount: number;
   awaitingResponse: boolean;
   linked: { studentId?: string; leadId?: string };
+  /** §165 — who is responsible for this conversation right now. */
+  responsibleEmployee: string; // user/employee id, or "Unassigned"
+  /**
+   * §165 — missing information explicitly derivable from the record.
+   * Never guessed: only surfaced when the absence is observable
+   * (e.g. no student/lead link, no phone number on record).
+   */
+  missingInformation: string[];
+  /** §165 — a deadline is shown only when one exists on the linked record; otherwise null (never invented). */
+  deadline: string | null;
   nextAction: string;
   basisNote: string;
 }
@@ -148,6 +158,18 @@ export function summarizeConversation(
         : "No student/lead matched yet.",
   );
 
+  // §165 — responsible employee + missing information + deadline,
+  // each derived from observable record state, never invented.
+  const responsibleEmployee = conversation.assignedToUserId || "Unassigned";
+  const missingInformation: string[] = [];
+  if (!conversation.studentId && !conversation.leadId) {
+    missingInformation.push("Identity link missing — contact match unresolved (no student or lead record).");
+  }
+  if (!conversation.participantPhone && !conversation.participantEmail) {
+    missingInformation.push("No phone or email on record for this participant.");
+  }
+  const deadline: string | null = null; // conversation record has no deadline field — shown as null, never invented
+
   return {
     summary: parts.join(" "),
     openIssues,
@@ -159,6 +181,9 @@ export function summarizeConversation(
       studentId: conversation.studentId || undefined,
       leadId: conversation.leadId || undefined,
     },
+    responsibleEmployee,
+    missingInformation,
+    deadline,
     nextAction: awaitingResponse
       ? "Reply to the participant's last inbound message (draft from an approved template if useful)."
       : FAILSAFE_NEXT_ACTION,

@@ -6622,10 +6622,17 @@ model CommunicationAttachment {
   fileSizeBytes       Int      @default(0)
   matchReviewRequired Boolean  @default(false)
   whatsappMsgRef      String?
+  applicationId       String   @default("")
+  documentId          String   @default("")
+  senderContact       String   @default("")
+  recipientContact    String   @default("")
+  deliveryStatus      String   @default("")
   createdAt           DateTime @default(now())
 
   @@index([messageId])
   @@index([threadId])
+  @@index([studentId])
+  @@index([applicationId])
 }
 
 model CommunicationSlaEvent {
@@ -6638,10 +6645,13 @@ model CommunicationSlaEvent {
   slaMinutes    Int       @default(30)
   receivedAt    DateTime  @default(now())
   slaDueAt      DateTime?
-  slaStatus     String    @default("normal")
-  escalatedAt   DateTime?
-  resolvedAt    DateTime?
-  createdAt     DateTime  @default(now())
+  slaStatus       String    @default("normal")
+  assignedAt      DateTime?
+  firstViewedAt   DateTime?
+  firstResponseAt DateTime?
+  escalatedAt     DateTime?
+  resolvedAt      DateTime?
+  createdAt       DateTime  @default(now())
 
   @@index([threadId])
   @@index([counselorId])

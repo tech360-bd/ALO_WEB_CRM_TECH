@@ -172,7 +172,9 @@ export async function POST(request: Request) {
               },
             });
 
-            // Create SLA event for new thread
+            // Create SLA event for new thread (§150 — precise timestamps:
+            // received + assigned at intake; first-viewed / first-response
+            // resolvedAt are recorded by the inbox and reply seams).
             await db.communicationSlaEvent.create({
               data: {
                 threadId: thread.id,
@@ -182,6 +184,7 @@ export async function POST(request: Request) {
                 priority,
                 slaMinutes,
                 receivedAt: new Date(),
+                assignedAt: assignedCounselorId ? new Date() : null,
                 slaDueAt,
                 slaStatus: 'normal',
               },
@@ -226,6 +229,10 @@ export async function POST(request: Request) {
           });
 
           // 8. Handle file/document attachments
+          // §131 Attachment Storage — file_name, file_type, file_size, sender,
+          // recipient, delivery_status are stored for EVERY attachment;
+          // student/application/document ids are filled once the counselor
+          // maps the file to a requirement slot (match review / doc upload).
           if (isFile) {
             const mediaObj = message[messageType] || {};
             await db.communicationAttachment.create({
@@ -233,12 +240,17 @@ export async function POST(request: Request) {
                 messageId: savedMsg.id,
                 threadId: thread.id,
                 studentId: matchedStudentId,
+                applicationId: '',
+                documentId: '',
                 channel: 'whatsapp',
                 direction: 'inbound',
                 providerFileId: mediaObj.id || '',
                 fileName: mediaObj.filename || `${messageType}_${Date.now()}`,
                 fileType: messageType,
                 fileSizeBytes: mediaObj.file_size || 0,
+                senderContact: senderPhone,
+                recipientContact: value.metadata?.display_phone_number || value.metadata?.phone_number_id || '',
+                deliveryStatus: 'delivered',
                 matchReviewRequired: true, // Counselor must confirm which doc slot
                 whatsappMsgRef: providerMsgId,
               },
