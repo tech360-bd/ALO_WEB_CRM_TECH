@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { sourceUrl, sourceTitle = "", sourceType = "official_university", targetType = "", targetId = "", targetSlug = "", dataSection = "", verificationStatus = "pending", notes = "" } = body as any;
+    const { sourceUrl, sourceTitle = "", sourceName = "", sourceType = "official_university", entityType = "", targetType = "", targetId = "", targetSlug = "", dataSection = "", verificationStatus = "pending", notes = "" } = body as any;
     if (!sourceUrl || !/^https?:\/\//i.test(String(sourceUrl))) {
       return NextResponse.json({ error: "A valid official source URL (https://…) is required" }, { status: 400 });
     }
@@ -54,8 +54,11 @@ export async function POST(req: NextRequest) {
     const source = await db.officialSource.create({
       data: {
         sourceUrl: String(sourceUrl),
-        sourceTitle: String(sourceTitle || ""),
+        sourceTitle: String(sourceTitle || sourceName || ""),
+        sourceName: String(sourceName || sourceTitle || "Official source"),
         sourceType: String(sourceType || "official_university"),
+        // entity discipline (spec §48): canonical authority class of the source
+        entityType: ["UNIVERSITY", "COURSE", "COUNTRY", "GOVERNMENT", "AUTHORITY"].includes(String(entityType)) ? String(entityType) : "AUTHORITY",
         targetType: String(targetType || ""),
         targetId: String(targetId || ""),
         targetSlug: String(targetSlug || ""),
@@ -67,13 +70,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await contentAuditLog({
+    await contentAuditLog.create({ data: {
       userId: (session.user as any).id,
       action: "OFFICIAL_SOURCE_ADDED",
       resource: "OfficialSource",
       resourceId: source.id,
       details: { targetType: source.targetType, targetSlug: source.targetSlug, sourceUrl: source.sourceUrl },
-    });
+    } });
 
     return NextResponse.json({ source }, { status: 201 });
   } catch (err: any) {

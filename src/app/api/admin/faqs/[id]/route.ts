@@ -38,13 +38,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       },
     });
 
-    await contentAuditLog({
+    await contentAuditLog.create({ data: {
       userId: (session.user as any).id,
       action: "FAQ_UPDATED",
       resource: "UnifiedFaq",
       resourceId: id,
       details: { before: { status: before.status }, after: { status: faq.status } },
-    });
+    } });
 
     return NextResponse.json({ faq });
   } catch (err: any) {
@@ -61,13 +61,13 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (!before) return NextResponse.json({ error: "FAQ not found" }, { status: 404 });
     await db.unifiedFaq.delete({ where: { id } });
 
-    await contentAuditLog({
+    await contentAuditLog.create({ data: {
       userId: (session.user as any).id,
       action: "FAQ_DELETED",
       resource: "UnifiedFaq",
       resourceId: id,
       details: { question: before.question.slice(0, 80) },
-    });
+    } });
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

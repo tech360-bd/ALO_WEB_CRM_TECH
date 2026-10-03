@@ -55,13 +55,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await contentAuditLog({
+    await contentAuditLog.create({ data: {
       userId: (session.user as any).id,
       action: "FAQ_CREATED",
       resource: "UnifiedFaq",
       resourceId: faq.id,
       details: { targetType: faq.targetType, targetSlug: faq.targetSlug },
-    });
+    } });
 
     return NextResponse.json({ faq }, { status: 201 });
   } catch (err: any) {

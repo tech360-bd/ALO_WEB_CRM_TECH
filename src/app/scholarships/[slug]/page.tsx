@@ -52,7 +52,7 @@ export default async function ScholarshipDetailPage({
       '@type': 'Grant',
       name: scholarship.title,
       description: scholarship.description,
-      funder: { '@type': 'Organization', name: scholarship.university || 'Scholarship provider' },
+      funder: { '@type': 'Organization', name: scholarship.provider || 'Scholarship provider' },
       url: `https://aloeducation.com/scholarships/${scholarship.slug}`,
     },
     {

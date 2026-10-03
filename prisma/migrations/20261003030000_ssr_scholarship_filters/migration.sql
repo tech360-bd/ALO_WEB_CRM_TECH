@@ -6,18 +6,18 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 
 SET @sch_scholarshipType := (SELECT IF(
-    (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Scholarship' AND COLUMN_NAME = 'scholarshipType') = 0,
-    'ALTER TABLE Scholarship ADD COLUMN scholarshipType VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
+    (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'scholarships' AND COLUMN_NAME = 'scholarshipType') = 0,
+    'ALTER TABLE scholarships ADD COLUMN scholarshipType VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_sch_scholarshipType FROM @sch_scholarshipType; EXECUTE stmt_sch_scholarshipType; DEALLOCATE PREPARE stmt_sch_scholarshipType;
 
 SET @sch_intake := (SELECT IF(
-    (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Scholarship' AND COLUMN_NAME = 'intake') = 0,
-    'ALTER TABLE Scholarship ADD COLUMN intake VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
+    (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'scholarships' AND COLUMN_NAME = 'intake') = 0,
+    'ALTER TABLE scholarships ADD COLUMN intake VARCHAR(191) NOT NULL DEFAULT ''''', 'SELECT 1'));
 PREPARE stmt_sch_intake FROM @sch_intake; EXECUTE stmt_sch_intake; DEALLOCATE PREPARE stmt_sch_intake;
 
 SET @sch_idx_type := (SELECT IF(
-    (SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Scholarship' AND INDEX_NAME = 'Scholarship_scholarshipType_idx') = 0,
-    'CREATE INDEX Scholarship_scholarshipType_idx ON Scholarship (scholarshipType)', 'SELECT 1'));
+    (SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'scholarships' AND INDEX_NAME = 'Scholarship_scholarshipType_idx') = 0,
+    'CREATE INDEX Scholarship_scholarshipType_idx ON scholarships (scholarshipType)', 'SELECT 1'));
 PREPARE stmt_sch_idx_type FROM @sch_idx_type; EXECUTE stmt_sch_idx_type; DEALLOCATE PREPARE stmt_sch_idx_type;
 
 -- ─────────────────────────────────────────────────────────────────────────
