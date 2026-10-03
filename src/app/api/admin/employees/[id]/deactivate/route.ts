@@ -102,8 +102,10 @@ async function handlePost(req: Request, auth: AuthContext, context?: any) {
         await db.employeeReassignment.create({
           data: {
             fromEmployeeId: employee.id, toEmployeeId: reassignTo,
+            employeeId: employee.id,
             entityType: 'student', entityId: s.id,
-            reason, assignedBy: auth.userId,
+            reason, assignedBy: auth.userId, createdBy: auth.userId,
+            assignedStudents: JSON.stringify([s.id]),
           },
         }).catch(() => null);
         reassigned++;

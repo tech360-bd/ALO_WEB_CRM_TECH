@@ -54,11 +54,11 @@ async function handlePost(req: Request, auth: AuthContext) {
     await db.auditLog.create({
       data: {
         action: 'SERVICE_DECLARATION_GENERATED',
-        entityType: 'application',
-        entityId: String(body.applicationNumber || 'unknown'),
-        actorId: auth.userId,
-        actorName: auth.name || 'staff',
-        description: internalNote,
+        resource: 'application',
+        resourceId: String(body.applicationNumber || 'unknown'),
+        userId: auth.userId,
+        actorRole: auth.roles?.[0] || 'staff',
+        details: internalNote,
       },
     }).catch(() => null);
 
