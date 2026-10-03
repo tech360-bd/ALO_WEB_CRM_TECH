@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
+import { deriveCountryCode } from '@/lib/access-control/object-scope';
 import {
   normalizePhoneE164 as normalizePhone,
   classifyIntent,
@@ -129,6 +130,33 @@ export async function POST(request: Request) {
               }
             }
           }
+
+          // 4b. Contact identity registry (spec: communicate identity uses
+          // phone_normalized + country_code + external_contact_id; a new
+          // identity is created for unknown numbers — but NEVER a duplicate
+          // Student record; uncertain matches stay in the human match review).
+          const waId = value.contacts?.[0]?.wa_id || senderPhone;
+          const waNormalized = (senderPhone || '').replace(/[^0-9]/g, '');
+          await db.whatsAppContact.upsert({
+            where: { normalizedPhone: waNormalized },
+            create: {
+              phone: senderPhone,
+              normalizedPhone: waNormalized,
+              countryCode: deriveCountryCode(waNormalized),
+              externalContactId: waId,
+              displayName: value.contacts?.[0]?.profile?.name || '',
+              profileName: value.contacts?.[0]?.profile?.name || '',
+              studentId: matchedStudentId || '',
+              leadId: matchedLeadId || '',
+              source: 'WHATSAPP',
+              lastContactAt: new Date(),
+            },
+            update: {
+              lastContactAt: new Date(),
+              ...(matchedStudentId ? { studentId: matchedStudentId } : {}),
+              ...(matchedLeadId ? { leadId: matchedLeadId } : {}),
+            },
+          }).catch(() => null);
 
           // 5. Find or create thread for this phone/contact
           let thread = await db.communicationThread.findFirst({

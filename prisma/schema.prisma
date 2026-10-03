@@ -4376,9 +4376,11 @@ model WhatsAppNumberAssignmentAudit {
 }
 
 model WhatsAppContact {
-  id              String    @id @default(cuid())
+  id              String    @id @default(cuid())  
   phone           String    @unique
   normalizedPhone String    @unique
+  countryCode     String    @default("") // spec: country_code e.g. '880'
+  externalContactId String   @default("") // spec: external_contact_id (WhatsApp wa_id)
   displayName     String    @default("")
   profileName     String    @default("")
   studentId       String    @default("")
@@ -5643,11 +5645,20 @@ model ApplicationOffer {
 
   application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   offerType   String      @default("")
-  status      String      @default("PENDING")
+  status      String      @default("PENDING") // PENDING, VERIFIED, REJECTED, SUPERSEDED
   offerDate   String      @default("")
   expiryDate  String      @default("")
   conditions  String      @default("")
   notes       String      @default("")
+  universityName String   @default("") // spec provenance: University
+  courseName  String      @default("") // spec: Program
+  campus      String      @default("") // spec: Campus
+  intake      String      @default("") // spec: Intake
+  receivedSource String   @default("") // University Portal | University Email | Agent Portal | API | Upload | Other Authorized Source
+  receivedBy  String      @default("") // spec: Received By — provenance never lost
+  receivedAt  DateTime?
+  documentVersion Int     @default(1)  // spec: Version
+  createdBy   String      @default("") // audit provenance
 
   @@index([applicationId])
   @@map("application_offers")
@@ -9853,15 +9864,33 @@ model HrmHrPolicy {
 model ApplicationPaymentInstruction {
   id            String   @id @default(cuid())
   applicationId String
+  studentId     String   @default("")
+  paymentType   String   @default("tuition")
   amount        Float    @default(0)
   currency      String   @default("BDT")
   instruction   String   @default("")
+  deadline      String   @default("") // spec: Deadline
   dueDate       String   @default("")
-  status        String   @default("PENDING")
+  universityName String  @default("")
+  bankName      String   @default("")
+  accountName   String   @default("")
+  accountNumberMasked String @default("") // never store raw account number
+  swiftCode     String   @default("")
+  iban          String   @default("") // where applicable
+  paymentReference String @default("")
+  invoiceUrl    String   @default("")
+  paymentLink   String   @default("")
+  paymentMethod String   @default("")
+  requiredDocuments String @default("") // required supporting documents
+  preparedBy    String   @default("")
+  verifiedBy    String   @default("")
+  verifiedAt    DateTime?
+  status        String   @default("PENDING") // PENDING | PREPARED | VERIFIED | PAID | REJECTED
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@index([applicationId])
+  @@index([status])
 }
 
 model ApplicationSerial {
