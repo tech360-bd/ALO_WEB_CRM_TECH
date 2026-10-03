@@ -17,7 +17,7 @@ PREPARE stmt_sch_intake FROM @sch_intake; EXECUTE stmt_sch_intake; DEALLOCATE PR
 
 SET @sch_idx_type := (SELECT IF(
     (SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'scholarships' AND INDEX_NAME = 'Scholarship_scholarshipType_idx') = 0,
-    'CREATE INDEX Scholarship_scholarshipType_idx ON scholarships (scholarshipType)', 'SELECT 1'));
+    'CREATE INDEX scholarships_scholarshipType_idx ON scholarships (scholarshipType)', 'SELECT 1'));
 PREPARE stmt_sch_idx_type FROM @sch_idx_type; EXECUTE stmt_sch_idx_type; DEALLOCATE PREPARE stmt_sch_idx_type;
 
 -- ─────────────────────────────────────────────────────────────────────────
