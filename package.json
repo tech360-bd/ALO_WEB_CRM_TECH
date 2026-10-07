@@ -7,12 +7,9 @@
     "npm": ">=10"
   },
   "packageManager": "npm@10.9.2",
-  "prisma": {
-    "seed": "tsx prisma/seed-complete.ts"
-  },
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "node scripts/assert-node22.cjs && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' prisma generate && npm run db:verify-client && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' next build --webpack && node scripts/prepare-standalone.mjs",
+    "build": "node scripts/assert-node22.cjs && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' prisma generate && npm run db:verify-client && SKIP_CMS_DB=1 RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' next build --webpack && node scripts/prepare-standalone.mjs",
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint .",
     "awf:mirror": "node scripts/ai-workforce/mirror-schema.mjs",
@@ -37,6 +34,7 @@
     "remotion:studio": "npx remotion studio src/lib/video-engine/remotion/entry.tsx",
     "remotion:render": "npx remotion render src/lib/video-engine/remotion/entry.tsx",
     "db:verify-client": "node scripts/verify-prisma-client.mjs",
+    "db:diagnose": "node scripts/db-diagnose.mjs",
     "audit:env": "node scripts/audit-env-vars.mjs"
   },
   "dependencies": {
@@ -102,7 +100,7 @@
     "js-yaml": "^5.2.2",
     "lucide-react": "^0.525.0",
     "mysql2": "^3.24.4",
-    "next": "16.3.6",
+    "next": "16.4.0",
     "next-auth": "^4.24.11",
     "next-intl": "^4.3.4",
     "next-themes": "^0.4.6",
@@ -116,7 +114,7 @@
     "react-resizable-panels": "^3.0.3",
     "react-syntax-highlighter": "^16.1.1",
     "recharts": "^2.15.4",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "smtp-mailer": "npm:nodemailer@10.0.13",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
@@ -145,12 +143,13 @@
     "@types/nodemailer": "8.0.2",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9",
-    "eslint-config-next": "16.3.6",
+    "eslint-config-next": "16.4.0",
     "vitest": "^4.1.10"
   },
   "overrides": {
     "postcss": "8.5.25",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
+    "source-map-js": "1.2.2",
     "@prisma/config": {
       "deepmerge-ts": "8.0.0"
     }

@@ -976,7 +976,7 @@
       "name": "DATABASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 4,
+      "referenceCount": 5,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -987,8 +987,8 @@
       ],
       "sampleReferences": [
         "prisma/seed-university-data.ts",
-        "scripts/runtime-smoke.mjs",
-        "scripts/seed-direct-mysql.js"
+        "scripts/db-diagnose.mjs",
+        "scripts/runtime-smoke.mjs"
       ]
     },
     {
@@ -3043,7 +3043,7 @@
       "name": "NODE_ENV",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 26,
+      "referenceCount": 27,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3053,9 +3053,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "scripts/db-diagnose.mjs",
         "scripts/seed-all-portal-users.ts",
-        "scripts/seed-portal-admin.ts",
-        "server.js"
+        "scripts/seed-portal-admin.ts"
       ]
     },
     {

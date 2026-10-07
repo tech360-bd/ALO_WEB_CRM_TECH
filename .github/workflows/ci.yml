@@ -41,6 +41,19 @@ jobs:
     name: Lint · Typecheck · Tests · Prisma · Build
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: alo_quality_ci
+        ports:
+          - '3306:3306'
+        options: >-
+          --health-cmd="mysqladmin ping -proot -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=30
     steps:
       - name: Checkout PR commit
         # actions/checkout v7.0.1 — pinned to immutable SHA
@@ -126,16 +139,14 @@ jobs:
 
       - name: Prisma validate
         env:
-          # Dummy value ONLY so the CLI can resolve env("DATABASE_URL") during
-          # schema validation. No connection is made. Scoped to this step so the
-          # Tests step still sees NO DATABASE_URL (DB-integration files then
-          # self-skip with reason instead of hitting a dummy server).
-          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
+          # Use only the disposable MySQL service declared for this CI job.
+          # Scoped to this step; no Hostinger or repository secret is available.
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/alo_quality_ci"
         run: npx prisma validate
 
       - name: Prisma generate (needed for typecheck)
         env:
-          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/alo_quality_ci"
         run: npx prisma generate
 
       - name: Verify generated Prisma client
@@ -169,9 +180,8 @@ jobs:
       - name: Integration tests (isolated DB required for persistence tests)
         run: npm run test:integration
 
-      - name: Production build (dummy env, runner validation only)
+      - name: Production build (no database connection at build time)
         env:
-          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
           NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
           AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
           JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"

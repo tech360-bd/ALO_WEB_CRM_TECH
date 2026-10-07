@@ -4,6 +4,10 @@ import Link from 'next/link';
 import { BookOpen, Calendar, DollarSign, Clock, Search, ArrowRight } from 'lucide-react';
 import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
+import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -37,7 +41,11 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
       intakeFees: true,
       requirements: true,
     },
-  }).catch(() => []);
+  }).catch((error) => throwSanitizedDatabaseFailure(
+    'destination-courses',
+    error,
+    'DESTINATION_DATA_UNAVAILABLE',
+  ));
 
   return (
     <div className="bg-slate-50 min-h-screen py-12 text-slate-900">

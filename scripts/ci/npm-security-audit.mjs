@@ -23,6 +23,26 @@
 // ============================================================================
 import { execFileSync } from 'node:child_process';
 
+const WAIVED_ADVISORIES = new Map([
+  [1240992, {
+    packageName: 'braces',
+    url: 'https://github.com/advisories/GHSA-vfj7-8cjw-p6xm',
+    severity: 'high',
+    affectedRange: '<=3.0.3',
+  }],
+]);
+
+function isNarrowlyWaived(packageName, advisory) {
+  const waiver = WAIVED_ADVISORIES.get(advisory.source);
+  return Boolean(
+    waiver &&
+    packageName === waiver.packageName &&
+    advisory.url === waiver.url &&
+    advisory.severity === waiver.severity &&
+    advisory.range === waiver.affectedRange,
+  );
+}
+
 const WAIVED_ADVISORY_IDS = new Set([
   1240992, // GHSA-vfj7-8cjw-p6xm — see waiver policy above
 ]);
@@ -53,6 +73,7 @@ for (const [pkg, info] of Object.entries(vulnerabilities)) {
   const remaining = [];
   for (const via of vias) {
     if (typeof via === 'object' && via !== null) {
+      if (isNarrowlyWaived(pkg, via)) {
       if (WAIVED_ADVISORY_IDS.has(via.source)) {
         waivedSeen.add(via.source);
         continue; // waived
