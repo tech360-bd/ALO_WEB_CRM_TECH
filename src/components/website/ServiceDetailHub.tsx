@@ -8,6 +8,8 @@ import { CheckCircle2, Clock, FileText, Globe, GraduationCap, Shield, Users, Awa
 import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
 import FaqAccordion from './FaqAccordion';
+import RelatedQuestions from './RelatedQuestions';
+import { SPEC_SERVICES } from '@/lib/website/spec-services';
 
 interface Props {
   slug: string;
@@ -53,6 +55,9 @@ export default function ServiceDetailHub({ slug }: Props) {
           <p className="text-base md:text-lg text-blue-100 max-w-3xl leading-relaxed">{service.heroSubtitle || service.shortDescription || service.longDescription?.substring(0, 200) || ''}</p>
           <div className="flex flex-wrap gap-3 mt-6">
             <Link href="/book-consultation"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-6 font-bold">Book Free Consultation</Button></Link>
+            {(service.hasStartApplication || slug.includes('application') || slug.includes('course')) && (
+              <Link href="/register"><Button className="bg-white text-[#0B5ED7] hover:bg-blue-50 h-12 px-6 font-bold">Start Application</Button></Link>
+            )}
             <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
           </div>
           <p className="text-xs text-blue-200 mt-4">Source: {service.sourceUrl ? <a href={service.sourceUrl} target="_blank" className="underline">{service.sourceUrl}</a> : 'ALO Editorial'} • Last verified: {service.lastVerifiedAt ? new Date(service.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'} • Status: {service.verificationStatus || 'pending'}</p>
@@ -81,6 +86,20 @@ export default function ServiceDetailHub({ slug }: Props) {
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4" />Documents Needed</h4><ul className="text-xs text-gray-600 list-disc list-inside space-y-1">{(docs.length > 0 ? docs : ['Passport', 'Academic Certificates', 'Transcripts', 'English Test Score', 'CV', 'SOP']).map((d:any, i:number)=><li key={i}>{typeof d === 'string' ? d : d.title || JSON.stringify(d)}</li>)}</ul></Card>
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Calendar className="w-4 h-4" />Timeline</h4><p className="text-xs text-gray-600">{service.timeline || '6-12 months before intake recommended. September intake applications typically Jan-Mar.'}</p></Card>
             </div>
+
+            {/* Eligibility / Requirements + Fees (spec §7) — fees only when publicly approved */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
+                <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Shield className="w-4 h-4 text-[#0B5ED7]" />Eligibility / Requirements</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">{service.eligibility || 'Open to students at any stage. Your counselor confirms service-specific requirements (e.g., document readiness for Document Checking, an offer letter for Interview Preparation) during the Initial Consultation.'}</p>
+              </Card>
+              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
+                <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-[#0B5ED7]" />Fees</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">{service.fees || 'Contact ALO for current service pricing.'} <span className="text-gray-500">Fees are confirmed in writing before any engagement — ALO never invents or hides pricing.</span></p>
+              </Card>
+            </div>
+            {/* Processing-time disclaimer (spec §7): shown whenever a timeline is displayed */}
+            <p className="text-[11px] text-gray-500 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Processing times vary by institution, country, intake and applicant circumstances. Confirm your individual timeline with an ALO counselor.</p>
 
             {/* 10. What Students Receive + 11. What ALO Does Not Guarantee + 12. Common Mistakes */}
             <div className="grid md:grid-cols-3 gap-4">
@@ -134,17 +153,74 @@ export default function ServiceDetailHub({ slug }: Props) {
               </Card>
             )}
 
+            {/* English Test Preparation (spec §8): direct connection to the Language Preparation system */}
+            {service.slug === 'english-test-preparation' && (
+              <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
+                <h3 className="font-bold text-[#0F172A] mb-3">English Tests We Prepare You For</h3>
+                <div className="grid sm:grid-cols-3 gap-3 text-xs mb-4">
+                  {['IELTS', 'IELTS UKVI', 'PTE Academic', 'TOEFL iBT', 'Duolingo English Test', 'OET', 'Other supported tests'].map((t) => (
+                    <div key={t} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 font-semibold text-[#0F172A]">{t}</div>
+                  ))}
+                </div>
+                <Link href="/language-prep" className="inline-flex items-center gap-1 text-sm font-bold text-[#0B5ED7] hover:underline">Open the Language Preparation system — modules, practice and level diagnosis <ArrowRight className="w-4 h-4" /></Link>
+              </Card>
+            )}
+
+            {/* Scholarship Guidance (spec §8): direct link to the Scholarships directory */}
+            {service.slug === 'scholarship-guidance' && (
+              <Card className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl">
+                <p className="text-xs text-gray-700">Ready to explore? Browse the verified directory: <Link href="/scholarships" className="font-bold text-[#0B5ED7] hover:underline">/scholarships — verified scholarships only</Link></p>
+              </Card>
+            )}
+
+            {/* Visa Guidance (spec §8): mandatory currency disclaimer */}
+            {service.slug === 'visa-guidance' && (
+              <p className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-3">Visa rules can change. Current requirements must be verified against official government and visa-authority sources before submission.</p>
+            )}
+
             {/* 13. FAQ + 14-17 Related */}
             <FaqAccordion targetType="service" targetSlug={service.slug} title={`FAQs about ${title}`} limit={12} />
+
+            {/* Related Questions (spec §10): You May Also Want to Know — 5-8 contextual Q&A */}
+            <RelatedQuestions type="service" context={service.slug} title="You May Also Want to Know" count={6} />
+
             <RelatedContentEngine sourceType="service" sourceId={service.id} sourceSlug={service.slug} title="Related Resources, Services, Courses, Countries, Scholarships" />
 
-            {/* 18-19 CTA */}
+            {/* Related Services (spec §11): same advisory family, never random */}
+            {(() => {
+              const me = SPEC_SERVICES.find((s) => s.slug === service.slug);
+              const siblings = me
+                ? SPEC_SERVICES.filter((s) => s.category === me.category && s.slug !== me.slug).slice(0, 3)
+                : SPEC_SERVICES.slice(0, 3);
+              return (
+                <section aria-label="Related Services">
+                  <h2 className="text-xl font-bold text-[#0F172A] mb-4">Related Services</h2>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    {siblings.map((s) => (
+                      <Link key={s.slug} href={`/services/${s.slug}`} className="group">
+                        <Card className="p-5 h-full bg-white border-[#E2E8F0] rounded-2xl hover:border-[#0B5ED7] hover:shadow-md transition-all">
+                          <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px] mb-2">{s.category}</Badge>
+                          <h3 className="font-bold text-sm text-[#0F172A] group-hover:text-[#0B5ED7]">{s.title}</h3>
+                          <p className="text-xs text-gray-600 mt-1.5 line-clamp-2">{s.shortDescription}</p>
+                          <span className="text-xs font-bold text-[#0B5ED7] mt-2 inline-flex items-center gap-1">View details <ArrowRight className="w-3 h-3" /></span>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              );
+            })()}
+
+            {/* Final CTA (spec §12): Ready to Take the Next Step? */}
             <Card className="p-8 bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-3xl text-white text-center">
-              <h3 className="text-2xl font-bold mb-2">Book Consultation for {title}</h3>
-              <p className="text-sm text-blue-100 mb-6">Contact counselor — move from information → eligibility → application</p>
+              <h3 className="text-2xl font-bold mb-2">Ready to Take the Next Step?</h3>
+              <p className="text-sm text-blue-100 mb-6">Consultation is free — move from information to eligibility to application with an ALO counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/book-consultation"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold">Book Consultation</Button></Link>
-                <Link href="/contact"><Button variant="outline" className="bg-white text-[#0B5ED7] hover:bg-blue-50 h-12 px-8 font-bold">Contact Counselor</Button></Link>
+                <Link href="/book-consultation"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
+                <Link href="/course-finder"><Button className="bg-white text-[#0B5ED7] hover:bg-blue-50 h-12 px-6 font-bold">Start Course Finder</Button></Link>
+                <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
+                <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
+                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button className="bg-emerald-500 text-white hover:bg-emerald-600 h-12 px-6 font-bold">WhatsApp: +880 180 502 0101</Button></a>
               </div>
             </Card>
           </div>

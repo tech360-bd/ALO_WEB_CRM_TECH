@@ -84,7 +84,7 @@ async function main() {
   // 2. Public consultation workflow persists to the real database.
   let leadId = null;
   await check('POST /api/website/lead → success', async () => {
-    const { status, body } = await json('POST', '/api/website/lead', {
+    const { status, body, text } = await json('POST', '/api/website/lead', {
       name: 'Runtime Smoke Test',
       phone: '+8801700000000',
       email: smokeEmail,
@@ -95,7 +95,13 @@ async function main() {
       source: 'runtime-smoke',
       sourceSection: 'smoke',
     });
-    expect(status === 200 || status === 201, `unexpected status ${status}`);
+    // Route returns 200 (NextResponse.json default); 201 also accepted for
+    // forward compatibility. On mismatch, surface the response body so CI
+    // annotations reveal which layer answered (app auth, edge guard, …).
+    expect(
+      status === 200 || status === 201,
+      `unexpected status ${status}; body(400): ${String(text).slice(0, 400).replace(/\s+/g, ' ')}`,
+    );
     expect(body?.success === true || body?.leadId || body?.lead?.id,
       `lead response missing success/lead id: ${JSON.stringify(body)?.slice(0, 200)}`);
     leadId = body?.leadId || body?.lead?.id || null;

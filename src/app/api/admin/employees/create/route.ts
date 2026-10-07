@@ -134,7 +134,11 @@ async function handlePost(request: Request, auth: any) {
     });
 
     // Send activation email
-    const emailResult = await sendActivationEmail(companyEmail, fullName, employeeCode, tokenRaw);
+    const emailResult = await sendActivationEmail(companyEmail, fullName, employeeCode, tokenRaw, {
+      designation,
+      companyEmail,
+      expiryHours: 48,
+    });
 
     // --- Return employee info (DO NOT return token hash) ---
     return NextResponse.json({

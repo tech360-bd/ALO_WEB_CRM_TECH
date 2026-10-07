@@ -4376,9 +4376,11 @@ model WhatsAppNumberAssignmentAudit {
 }
 
 model WhatsAppContact {
-  id              String    @id @default(cuid())
+  id              String    @id @default(cuid())  
   phone           String    @unique
   normalizedPhone String    @unique
+  countryCode     String    @default("") // spec: country_code e.g. '880'
+  externalContactId String   @default("") // spec: external_contact_id (WhatsApp wa_id)
   displayName     String    @default("")
   profileName     String    @default("")
   studentId       String    @default("")
@@ -4398,6 +4400,7 @@ model WhatsAppContact {
   @@index([studentId])
   @@index([leadId])
   @@index([normalizedPhone])
+  @@index([countryCode])
 }
 
 model WhatsAppMessageArchive {
@@ -5643,11 +5646,20 @@ model ApplicationOffer {
 
   application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   offerType   String      @default("")
-  status      String      @default("PENDING")
+  status      String      @default("PENDING") // PENDING, VERIFIED, REJECTED, SUPERSEDED
   offerDate   String      @default("")
   expiryDate  String      @default("")
   conditions  String      @default("")
   notes       String      @default("")
+  universityName String   @default("") // spec provenance: University
+  courseName  String      @default("") // spec: Program
+  campus      String      @default("") // spec: Campus
+  intake      String      @default("") // spec: Intake
+  receivedSource String   @default("") // University Portal | University Email | Agent Portal | API | Upload | Other Authorized Source
+  receivedBy  String      @default("") // spec: Received By — provenance never lost
+  receivedAt  DateTime?
+  documentVersion Int     @default(1)  // spec: Version
+  createdBy   String      @default("") // audit provenance
 
   @@index([applicationId])
   @@map("application_offers")
@@ -5994,6 +6006,8 @@ model Scholarship {
   courseSlug           String?
   studyLevel           String?
   subject              String?
+  scholarshipType      String    @default("") // merit_based, need_based, athletic, country_specific, university_specific, other (spec §15 filters)
+  intake               String    @default("") // e.g. "September 2027" (spec §15 filters)
   applicationMethod    String?
   applicationUrl       String?               @db.Text
   decisionDate         String?
@@ -6009,6 +6023,7 @@ model Scholarship {
   @@index([universitySlug])
   @@index([countrySlug])
   @@index([studyLevel])
+  @@index([scholarshipType])
   @@map("scholarships")
 }
 
@@ -6622,10 +6637,17 @@ model CommunicationAttachment {
   fileSizeBytes       Int      @default(0)
   matchReviewRequired Boolean  @default(false)
   whatsappMsgRef      String?
+  applicationId       String   @default("")
+  documentId          String   @default("")
+  senderContact       String   @default("")
+  recipientContact    String   @default("")
+  deliveryStatus      String   @default("")
   createdAt           DateTime @default(now())
 
   @@index([messageId])
   @@index([threadId])
+  @@index([studentId])
+  @@index([applicationId])
 }
 
 model CommunicationSlaEvent {
@@ -6638,10 +6660,13 @@ model CommunicationSlaEvent {
   slaMinutes    Int       @default(30)
   receivedAt    DateTime  @default(now())
   slaDueAt      DateTime?
-  slaStatus     String    @default("normal")
-  escalatedAt   DateTime?
-  resolvedAt    DateTime?
-  createdAt     DateTime  @default(now())
+  slaStatus       String    @default("normal")
+  assignedAt      DateTime?
+  firstViewedAt   DateTime?
+  firstResponseAt DateTime?
+  escalatedAt     DateTime?
+  resolvedAt      DateTime?
+  createdAt       DateTime  @default(now())
 
   @@index([threadId])
   @@index([counselorId])
@@ -9843,15 +9868,33 @@ model HrmHrPolicy {
 model ApplicationPaymentInstruction {
   id            String   @id @default(cuid())
   applicationId String
+  studentId     String   @default("")
+  paymentType   String   @default("tuition")
   amount        Float    @default(0)
   currency      String   @default("BDT")
   instruction   String   @default("")
+  deadline      String   @default("") // spec: Deadline
   dueDate       String   @default("")
-  status        String   @default("PENDING")
+  universityName String  @default("")
+  bankName      String   @default("")
+  accountName   String   @default("")
+  accountNumberMasked String @default("") // never store raw account number
+  swiftCode     String   @default("")
+  iban          String   @default("") // where applicable
+  paymentReference String @default("")
+  invoiceUrl    String   @default("")
+  paymentLink   String   @default("")
+  paymentMethod String   @default("")
+  requiredDocuments String @default("") // required supporting documents
+  preparedBy    String   @default("")
+  verifiedBy    String   @default("")
+  verifiedAt    DateTime?
+  status        String   @default("PENDING") // PENDING | PREPARED | VERIFIED | PAID | REJECTED
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@index([applicationId])
+  @@index([status])
 }
 
 model ApplicationSerial {
@@ -10882,7 +10925,7 @@ model AwfDepartment {
   id          String   @id @default(cuid())
   slug        String   @unique
   name        String
-  description String   @default("") @db.Text
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   isActive    Boolean  @default(true)
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
@@ -10898,10 +10941,10 @@ model AwfAgent {
   id               String    @id @default(cuid())
   slug             String    @unique
   name             String
-  description      String    @default("") @db.Text
+  description      String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   departmentId     String
   role             String    @default("SPECIALIST")
-  purpose          String    @default("") @db.Text
+  purpose          String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   // Lifecycle: DRAFT VALIDATED TESTED APPROVED DEPLOYING ACTIVE PAUSED DISABLED ARCHIVED
   status           String    @default("DRAFT")
   currentVersionId String?
@@ -10909,7 +10952,7 @@ model AwfAgent {
   latestVersionNo  Int       @default(0)
   ownerUserId      String    @default("")
   // Roles permitted to invoke this agent (JSON array of role strings)
-  allowedRoles     String    @default("[\"SUPER_ADMIN\",\"ADMIN\"]") @db.Text
+  allowedRoles     String    @default(dbgenerated("(_utf8mb4'[\"SUPER_ADMIN\",\"ADMIN\"]')")) @db.Text
   isProtected      Boolean   @default(false)
   lastRunAt        DateTime?
   createdById      String    @default("")
@@ -10933,24 +10976,24 @@ model AwfAgentVersion {
   agentId            String
   versionNo          Int
   // Full immutable configuration snapshot (JSON)
-  config             String    @default("{}") @db.LongText
-  systemInstructions String    @default("") @db.LongText
-  capabilities       String    @default("[]") @db.Text
-  tools              String    @default("[]") @db.Text
-  skills             String    @default("[]") @db.Text
-  modelPolicy        String    @default("{}") @db.Text
-  memoryPolicy       String    @default("{}") @db.Text
-  fallbackPolicy     String    @default("{}") @db.Text
-  approvalPolicy     String    @default("{}") @db.Text
-  securityPolicy     String    @default("{}") @db.Text
-  permissions        String    @default("{}") @db.Text
-  outputSchema       String    @default("{}") @db.Text
-  changeReason       String    @default("") @db.Text
+  config             String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  systemInstructions String    @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  capabilities       String    @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  tools              String    @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  skills             String    @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  modelPolicy        String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  memoryPolicy       String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  fallbackPolicy     String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  approvalPolicy     String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  securityPolicy     String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  permissions        String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  outputSchema       String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  changeReason       String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   configHash         String    @default("")
   // DRAFT | VALIDATED | VALIDATION_FAILED | TESTED | TEST_FAILED | APPROVED | DEPLOYED | ROLLED_BACK | ARCHIVED
   state              String    @default("DRAFT")
-  validationReport   String    @default("{}") @db.LongText
-  testReport         String    @default("{}") @db.LongText
+  validationReport   String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  testReport         String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   approvedById       String    @default("")
   approvedAt         DateTime?
   deployedById       String    @default("")
@@ -10970,9 +11013,9 @@ model AwfPromptVersion {
   id           String    @id @default(cuid())
   versionId    String
   agentSlug    String
-  previousText String    @default("") @db.LongText
-  newText      String    @default("") @db.LongText
-  reason       String    @default("") @db.Text
+  previousText String    @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  newText      String    @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  reason       String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   authorId     String    @default("")
   approvedById String    @default("")
   approvedAt   DateTime?
@@ -10988,10 +11031,10 @@ model AwfSkill {
   id           String    @id @default(cuid())
   slug         String    @unique
   name         String
-  description  String    @default("") @db.Text
+  description  String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   handlerKey   String    @default("")
-  inputSchema  String    @default("{}") @db.Text
-  outputSchema String    @default("{}") @db.Text
+  inputSchema  String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  outputSchema String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   permission   String    @default("SKILL_READ")
   version      Int       @default(1)
   status       String    @default("ACTIVE")
@@ -11024,11 +11067,11 @@ model AwfTool {
   id               String   @id @default(cuid())
   slug             String   @unique
   name             String
-  description      String   @default("") @db.Text
+  description      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   handlerKey       String   @default("")
   category         String   @default("GENERAL")
-  inputSchema      String   @default("{}") @db.Text
-  outputSchema     String   @default("{}") @db.Text
+  inputSchema      String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  outputSchema     String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   // TOOL_READ | TOOL_WRITE | TOOL_EXTERNAL_SEND | TOOL_FINANCE | TOOL_ADMIN
   permission       String   @default("TOOL_READ")
   riskLevel        String   @default("LOW")
@@ -11072,13 +11115,13 @@ model AwfWorkflow {
   id           String   @id @default(cuid())
   slug         String   @unique
   name         String
-  description  String   @default("") @db.Text
+  description  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   departmentId String?
   triggerType  String   @default("MANUAL")
   triggerEvent String   @default("")
   // Full definition: steps, conditions, agent/tool assignments, approvals,
   // retries, fallback, timeout, success/failure conditions (JSON)
-  definition   String   @default("{}") @db.LongText
+  definition   String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   version      Int      @default(1)
   status       String   @default("DRAFT")
   eligible     Boolean  @default(true)
@@ -11119,11 +11162,11 @@ model AwfRun {
   status             String    @default("QUEUED")
   toolCallCount      Int       @default(0)
   fallbackUsed       Boolean   @default(false)
-  fallbackChain      String    @default("[]") @db.Text
+  fallbackChain      String    @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
   retryCount         Int       @default(0)
   approvalRequired   Boolean   @default(false)
   errorCategory      String    @default("")
-  errorMessage       String    @default("") @db.Text
+  errorMessage       String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   entityType         String    @default("")
   entityId           String    @default("")
   // AUTOMATED | AI_ASSISTED | PENDING_APPROVAL | HUMAN | ESCALATED | NOT_ELIGIBLE
@@ -11131,8 +11174,8 @@ model AwfRun {
   // ELIGIBLE_ROUTINE | HUMAN_REQUIRED | SAFETY_APPROVAL
   automationCategory String    @default("ELIGIBLE_ROUTINE")
   humanIntervened    Boolean   @default(false)
-  input              String    @default("{}") @db.LongText
-  output             String    @default("{}") @db.LongText
+  input              String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  output             String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   correlationId      String    @default("")
   idempotencyKey     String?   @unique
   createdAt          DateTime  @default(now())
@@ -11163,10 +11206,10 @@ model AwfRunStep {
   startedAt    DateTime  @default(now())
   endedAt      DateTime?
   durationMs   Int       @default(0)
-  input        String    @default("{}") @db.LongText
-  output       String    @default("{}") @db.LongText
-  note         String    @default("") @db.Text
-  errorMessage String    @default("") @db.Text
+  input        String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  output       String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  note         String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  errorMessage String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
 
   run AwfRun @relation(fields: [runId], references: [id], onDelete: Cascade)
 
@@ -11183,9 +11226,9 @@ model AwfToolCall {
   mode          String   @default("PRODUCTION")
   status        String   @default("REQUESTED")
   decision      String   @default("")
-  args          String   @default("{}") @db.LongText
-  result        String   @default("{}") @db.LongText
-  errorMessage  String   @default("") @db.Text
+  args          String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  result        String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  errorMessage  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   durationMs    Int      @default(0)
   approvalId    String?
   mutationCount Int      @default(0)
@@ -11206,8 +11249,8 @@ model AwfApproval {
   toolSlug         String    @default("")
   action           String
   riskLevel        String    @default("HIGH")
-  reason           String    @default("") @db.Text
-  payload          String    @default("{}") @db.LongText
+  reason           String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  payload          String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   entityType       String    @default("")
   entityId         String    @default("")
   requestedById    String    @default("")
@@ -11216,10 +11259,10 @@ model AwfApproval {
   status           String    @default("PENDING")
   decidedById      String    @default("")
   decidedAt        DateTime?
-  decisionNote     String    @default("") @db.Text
+  decisionNote     String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   consumedAt       DateTime?
   consumedRunId    String    @default("")
-  resultSummary    String    @default("") @db.Text
+  resultSummary    String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   expiresAt        DateTime?
   createdAt        DateTime  @default(now())
 
@@ -11238,7 +11281,7 @@ model AwfMemory {
   ownerKey        String
   agentSlug       String    @default("")
   key             String
-  value           String    @default("") @db.LongText
+  value           String    @default(dbgenerated("(_utf8mb4'')")) @db.LongText
   // PUBLIC | INTERNAL | CONFIDENTIAL | RESTRICTED
   confidentiality String    @default("INTERNAL")
   approved        Boolean   @default(false)
@@ -11262,7 +11305,7 @@ model AwfKnowledgeSource {
   sourceUrl       String   @default("")
   department      String   @default("")
   confidentiality String   @default("INTERNAL")
-  allowedRoles    String   @default("[\"SUPER_ADMIN\",\"ADMIN\"]") @db.Text
+  allowedRoles    String   @default(dbgenerated("(_utf8mb4'[\"SUPER_ADMIN\",\"ADMIN\"]')")) @db.Text
   version         Int      @default(1)
   freshnessAt     DateTime @default(now())
   status          String   @default("ACTIVE")
@@ -11279,11 +11322,11 @@ model AwfKnowledgeChunk {
   id         String   @id @default(cuid())
   sourceId   String
   chunkIndex Int      @default(0)
-  content    String   @default("") @db.LongText
+  content    String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
   tokens     Int      @default(0)
   // Deterministic lexical index (JSON term -> frequency) used by ALO retrieval
-  termIndex  String   @default("{}") @db.LongText
-  citation   String   @default("") @db.Text
+  termIndex  String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  citation   String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt  DateTime @default(now())
 
   source AwfKnowledgeSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
@@ -11298,10 +11341,10 @@ model AwfAuditLog {
   action        String
   objectType    String   @default("")
   objectId      String   @default("")
-  before        String   @default("{}") @db.LongText
-  after         String   @default("{}") @db.LongText
+  before        String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  after         String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   result        String   @default("SUCCESS")
-  reason        String   @default("") @db.Text
+  reason        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   correlationId String   @default("")
   ipAddress     String   @default("")
   createdAt     DateTime @default(now())
@@ -11316,14 +11359,14 @@ model AwfEvent {
   eventKey    String    @unique
   eventType   String
   source      String    @default("")
-  payload     String    @default("{}") @db.LongText
+  payload     String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   entityType  String    @default("")
   entityId    String    @default("")
   // RECEIVED | PROCESSING | PROCESSED | DUPLICATE | FAILED | SKIPPED
   status      String    @default("RECEIVED")
   runId       String    @default("")
   attempts    Int       @default(0)
-  lastError   String    @default("") @db.Text
+  lastError   String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   processedAt DateTime?
   createdAt   DateTime  @default(now())
 
@@ -11335,9 +11378,9 @@ model AwfTestCase {
   id          String   @id @default(cuid())
   agentId     String
   name        String
-  description String   @default("") @db.Text
-  input       String   @default("{}") @db.LongText
-  expectation String   @default("{}") @db.LongText
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  input       String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  expectation String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   critical    Boolean  @default(true)
   status      String   @default("ACTIVE")
   createdById String   @default("")
@@ -11356,7 +11399,7 @@ model AwfTestResult {
   versionId  String   @default("")
   runId      String   @default("")
   passed     Boolean  @default(false)
-  details    String   @default("{}") @db.LongText
+  details    String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   durationMs Int      @default(0)
   createdAt  DateTime @default(now())
 
@@ -11389,8 +11432,8 @@ model AwfModelRuntime {
   failureCount        Int       @default(0)
   consecutiveFailures Int       @default(0)
   queueDepth          Int       @default(0)
-  lastError           String    @default("") @db.Text
-  notes               String    @default("") @db.Text
+  lastError           String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  notes               String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
@@ -11404,8 +11447,8 @@ model AwfImprovementProposal {
   proposedBy   String    @default("")
   runId        String    @default("")
   title        String
-  rationale    String    @default("") @db.Text
-  diff         String    @default("{}") @db.LongText
+  rationale    String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  diff         String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   status       String    @default("PENDING")
   reviewedById String    @default("")
   reviewedAt   DateTime?

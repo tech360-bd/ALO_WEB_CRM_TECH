@@ -100,3 +100,26 @@ describe("proxy API exposure policy", () => {
     expect(isPublicApiRequest("/api/partner-packages", "GET")).toBe(false);
   });
 });
+
+describe("proxy public consultation workflow", () => {
+  it("allows anonymous POST to the public consultation lead endpoint", () => {
+    expect(isPublicApiRequest("/api/website/lead", "POST")).toBe(true);
+  });
+
+  it("still protects neighbouring endpoints and sensitive prefixes", () => {
+    // PUBLIC_API_WRITE_ROUTES is method-agnostic (any of POST/PUT/PATCH/DELETE
+    // passes the proxy); the lead route's own withAuth/405 guards govern the
+    // non-POST methods, exactly like the pre-existing /api/leads entry.
+    expect(isPublicApiRequest("/api/crm/leads", "POST")).toBe(false);
+    expect(isPublicApiRequest("/api/crm/leads", "GET")).toBe(false);
+    expect(isPublicApiRequest("/api/crm/leads/public", "POST")).toBe(true);
+    expect(isPublicApiRequest("/api/admin/student-benefits", "GET")).toBe(false);
+    expect(isPublicApiRequest("/api/website/leads", "POST")).toBe(false);
+  });
+
+  it("keeps website reads public but leaves write methods unlisted endpoints closed", () => {
+    expect(isPublicApiRequest("/api/website/homepage", "GET")).toBe(true);
+    expect(isPublicApiRequest("/api/website/search-log", "POST")).toBe(true);
+    expect(isPublicApiRequest("/api/website/unlisted", "POST")).toBe(false);
+  });
+});

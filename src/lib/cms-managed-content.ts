@@ -14,6 +14,7 @@
 // unsanitized HTML/JS.
 // ═══════════════════════════════════════════════════════════════
 import { db } from '@/lib/db';
+import { getSafeDatabaseErrorCode } from '@/lib/safe-db-error';
 import {
   sanitizeCmsInput,
   captureBeforeImage,
@@ -218,14 +219,20 @@ export async function getSiteSeoDefaults(): Promise<{
   ogDescription?: string;
   ogImage?: string;
 } | null> {
-  // explicit opt-out (build-time prerender without a database)
+  // npm run build sets this only for the build process. Static metadata uses
+  // compiled defaults; production requests may read the live CMS at runtime.
   if (process.env.SKIP_CMS_DB === '1') return null;
+
+  let timeout: ReturnType<typeof setTimeout> | undefined;
   try {
-    // never let a slow/unreachable database stall metadata generation
     const rows = await Promise.race([
       getPublishedContent('seo-meta', 'site-defaults'),
-      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('seo timeout')), 2500)),
-    ]);
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(() => reject(Object.assign(new Error('CMS metadata read timed out'), { code: 'CMS_TIMEOUT' })), 2500);
+      }),
+    ]).finally(() => {
+      if (timeout) clearTimeout(timeout);
+    });
     const row = rows[0];
     if (!row) return null;
     const d = (row.data ?? {}) as Record<string, unknown>;
@@ -238,7 +245,11 @@ export async function getSiteSeoDefaults(): Promise<{
       ogDescription: str(d.ogDescription),
       ogImage: str(d.ogImage),
     };
-  } catch {
+  } catch (error) {
+    // This helper intentionally falls back to compiled metadata, but records a
+    // sanitized diagnostic so a database outage is visible in server logs.
+    const code = getSafeDatabaseErrorCode(error);
+    console.error('[cms-seo] Published site SEO unavailable; using compiled defaults.', { code });
     return null;
   }
 }

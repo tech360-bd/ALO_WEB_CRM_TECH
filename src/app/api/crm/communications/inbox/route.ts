@@ -194,7 +194,26 @@ export async function POST(request: NextRequest) {
           where: { id: threadId },
           data: { assignedToId: assigneeId || '', assignedToName: assigneeName || '' },
         });
+        // §150 — record when the conversation was assigned; keep the FIRST
+        // assignment timestamp (later re-assignment must not rewrite history).
+        await db.communicationSlaEvent.updateMany({
+          where: { threadId, assignedAt: null },
+          data: {
+            assignedAt: new Date(),
+            counselorId: assigneeId || '',
+            counselorName: assigneeName || '',
+          },
+        }).catch(() => {});
         return NextResponse.json({ success: true, message: 'Thread reassigned' });
+      }
+
+      if (action === 'view') {
+        // §150 — record when the conversation was FIRST opened by staff.
+        await db.communicationSlaEvent.updateMany({
+          where: { threadId, firstViewedAt: null },
+          data: { firstViewedAt: new Date() },
+        }).catch(() => {});
+        return NextResponse.json({ success: true, message: 'First view recorded' });
       }
 
       if (action === 'create_task' && taskData) {

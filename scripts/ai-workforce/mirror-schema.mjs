@@ -33,11 +33,19 @@ export function mirrorSchema(source, { clientOutput } = {}) {
   );
 
   // 2. generator — SQLite mirror is always generated without engines because
-  //    the harness connects through a driver adapter.
+  //    the harness connects through a driver adapter. Emit the full block the
+  //    verification harness requires: custom output, queryCompiler +
+  //    driverAdapters preview features and engineType "client". Regeneration
+  //    must reproduce the committed mirror, not silently degrade it.
   out = out.replace(/generator\s+client\s*\{[\s\S]*?\}/m, () => {
-    const lines = ['generator client {', '  provider = "prisma-client-js"'];
-    if (clientOutput) lines.push(`  output   = "${clientOutput}"`);
-    lines.push('}');
+    const lines = [
+      'generator client {',
+      '  provider = "prisma-client-js"',
+      `  output   = "${clientOutput ?? '../../node_modules/.prisma-sqlite/client'}"`,
+      '  previewFeatures = ["queryCompiler", "driverAdapters"]',
+      '  engineType      = "client"',
+      '}',
+    ];
     return lines.join('\n');
   });
 
@@ -46,8 +54,15 @@ export function mirrorSchema(source, { clientOutput } = {}) {
   out = out.replace(/\s+@db\.VarChar\(\d+\)/g, '');
   out = out.replace(/\s+@db\.Char\(\d+\)/g, '');
 
-  // 4. dbgenerated MySQL literal defaults -> portable literals
-  out = out.replace(/dbgenerated\("\(_utf8mb4'([\s\S]*?)'\)"\)/g, (_m, value) => `"${value.replace(/"/g, '\\"')}"`);
+  // 4. dbgenerated MySQL literal defaults -> portable literals.
+  // Reduce the Prisma source-string escapes in the captured value first
+  // (\" is the file-level escape of "), then re-escape for the Prisma string
+  // being written. Without the reduction, quoted defaults such as
+  // (_utf8mb4'[\"SUPER_ADMIN\"]') were mirrored with doubled backslashes,
+  // changing the default value the mirror actually stores.
+  out = out.replace(/dbgenerated\("\(_utf8mb4'([\s\S]*?)'\)"\)/g, (_m, value) =>
+    `"${value.replace(/\\"/g, '"').replace(/"/g, '\\"')}"`,
+  );
 
   // 5. Json columns -> String (Prisma SQLite has no Json scalar)
   out = out.replace(/^(\s+\w+\s+)Json(\??)(\s*)$/gm, (_m, head, optional, tail) => `${head}String${optional}${tail}`);

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/alo/shared";
 
 export default function Error({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -20,11 +19,6 @@ export default function Error({
         <p className="mt-2 text-sm text-[#5A7299]">
           An unexpected error occurred. Please try again.
         </p>
-        {error?.message && (
-          <p className="mt-4 rounded-lg bg-rose-50 p-3 text-xs text-rose-700">
-            {error.message}
-          </p>
-        )}
         <Button
           onClick={reset}
           className="mt-6 bg-[#0B5ED7] text-white hover:bg-[#0052a3]"

@@ -326,3 +326,139 @@ export async function canAccessPartnerResource(
 
   return true;
 }
+
+// ============================================================================
+// FEATURE ACCESS ENGINE — object-level helpers mandated by the spec:
+//   canAccessApplication(user_id, application_id)
+//   canAccessDocument(user_id, document_id)
+//   canSendCommunication(user_id, channel, target_id)
+// Decision logic is pure in @/lib/access-control/object-scope; these wrappers
+// only fetch the record facts. Every sensitive controller MUST use these
+// checks — decisions never trust client-provided role/scope/ownership.
+// ============================================================================
+
+import {
+  evaluateObjectScope,
+  channelFeatureKey,
+  isCommunicationChannel,
+} from "@/lib/access-control/object-scope";
+
+/** Resolve the counselor assignment behind an application id. */
+async function applicationAssignee(applicationId: string): Promise<string> {
+  const app = await db.application.findUnique({
+    where: { id: applicationId },
+    select: { studentId: true },
+  }).catch(() => null);
+  if (!app?.studentId) return "";
+  const student = await db.student.findUnique({
+    where: { id: app.studentId },
+    select: { counselorId: true },
+  }).catch(() => null);
+  return student?.counselorId || "";
+}
+
+// — canAccessApplication(user_id, application_id) —
+export async function canAccessApplication(
+  userId: string,
+  applicationId: string,
+  userRoles: string[] = []
+): Promise<{ allowed: boolean; reason: string }> {
+  if (!applicationId) return { allowed: false, reason: "applicationId required" };
+  const assignee = await applicationAssignee(applicationId);
+  const rule = await db.featureAccessRule.findFirst({
+    where: { ownerId: userId, featureKey: { in: ["applications", "application", "application.view"] }, isEnabled: true },
+  }).catch(() => null);
+  const decision = evaluateObjectScope({
+    roles: userRoles,
+    isAssigned: !!assignee && assignee === userId,
+    hasExplicitRule: !!rule,
+  });
+  await db.crmAuditLog.create({
+    data: {
+      actorUserId: userId,
+      actorRole: userRoles.join(","),
+      action: decision.allowed ? "APPLICATION_ACCESS_GRANTED" : "APPLICATION_ACCESS_DENIED",
+      targetCollection: "Application",
+      targetId: applicationId,
+    },
+  }).catch(() => null);
+  return decision;
+}
+
+// — canAccessDocument(user_id, document_id) —
+export async function canAccessDocument(
+  userId: string,
+  documentId: string,
+  userRoles: string[] = []
+): Promise<{ allowed: boolean; reason: string }> {
+  if (!documentId) return { allowed: false, reason: "documentId required" };
+
+  // Application documents scope through their application/counselor assignment.
+  const appDoc = await db.applicationDocument.findUnique({
+    where: { id: documentId },
+    select: { applicationId: true },
+  }).catch(() => null);
+  if (appDoc) {
+    const assignee = await applicationAssignee(appDoc.applicationId);
+    const rule = await db.featureAccessRule.findFirst({
+      where: { ownerId: userId, featureKey: { in: ["documents", "document", "document.manage"] }, isEnabled: true },
+    }).catch(() => null);
+    return evaluateObjectScope({
+      roles: userRoles,
+      isAssigned: !!assignee && assignee === userId,
+      hasExplicitRule: !!rule,
+    });
+  }
+
+  // Employee documents scope to the employee themself (OWN) or explicit HR rule.
+  const empDoc = await db.employeeDocument.findUnique({
+    where: { id: documentId },
+    select: { employeeId: true },
+  }).catch(() => null);
+  if (empDoc) {
+    const hrRule = await db.featureAccessRule.findFirst({
+      where: { ownerId: userId, featureKey: { in: ["hr.documents", "employee_documents", "employees"] }, isEnabled: true },
+    }).catch(() => null);
+    return evaluateObjectScope({
+      roles: userRoles,
+      isOwner: empDoc.employeeId === userId,
+      hasExplicitRule: !!hrRule,
+    });
+  }
+
+  return { allowed: false, reason: "Document not found" };
+}
+
+// — canSendCommunication(user_id, channel, target_id) —
+export async function canSendCommunication(
+  userId: string,
+  channel: string,
+  targetId: string,
+  userRoles: string[] = []
+): Promise<{ allowed: boolean; reason: string }> {
+  if (!isCommunicationChannel(channel)) {
+    return { allowed: false, reason: `Unsupported channel '${channel}'` };
+  }
+  const featureAllowed = await canAccessFeature(userId, channelFeatureKey(channel), userRoles);
+  if (featureAllowed) return { allowed: true, reason: "Channel feature rule enabled" };
+
+  // Thread-assignment scope: the counselor the conversation is assigned to.
+  const thread = await db.communicationThread.findFirst({
+    where: { id: targetId },
+    select: { assignedToId: true },
+  }).catch(() => null);
+  if (thread) {
+    return evaluateObjectScope({ roles: userRoles, isAssigned: thread.assignedToId === userId });
+  }
+
+  // Student scope: the student's assigned counselor.
+  const student = await db.student.findUnique({
+    where: { id: targetId },
+    select: { counselorId: true },
+  }).catch(() => null);
+  if (student) {
+    return evaluateObjectScope({ roles: userRoles, isAssigned: student.counselorId === userId });
+  }
+
+  return evaluateObjectScope({ roles: userRoles });
+}
