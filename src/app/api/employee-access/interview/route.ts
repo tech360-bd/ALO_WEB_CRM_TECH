@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { attachInterviewHonesty, INTERVIEW_DISCLAIMERS } from '@/lib/interview/honesty';
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,14 +19,15 @@ export async function GET(req: NextRequest) {
     const interviews = await (db as any).visaInterview.findMany({ where, orderBy: { scheduledAt: 'desc' } }).catch(() => []);
     const preps = await (db as any).interviewPrep.findMany({ where, orderBy: { createdAt: 'desc' } }).catch(() => []);
 
-    return NextResponse.json({
+    return NextResponse.json(attachInterviewHonesty({
       success: true,
       interviews,
       preps,
       workflow: ['research','prep','practice','scoring','recording','human_final_review'],
       note: 'AI may score draft, but human final review required — AI cannot finalize high-risk',
       guidanceLabeled: 'Bank guidance must be labeled clearly',
-    });
+      mandatoryDisclaimers: [...INTERVIEW_DISCLAIMERS],
+    }));
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
@@ -72,7 +74,11 @@ export async function POST(req: NextRequest) {
 
     await logAuditAction(auth, 'INTERVIEW_SCHEDULED', 'VisaInterview', interview.id, { applicationId, type });
 
-    return NextResponse.json({ success: true, data: interview, message: 'Interview prep created — AI scoring is draft only, human final review required' });
+    return NextResponse.json(attachInterviewHonesty({
+      success: true,
+      data: interview,
+      message: 'Interview prep created — AI scoring is draft only, human final review required',
+    }));
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

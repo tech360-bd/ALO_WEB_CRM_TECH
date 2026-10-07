@@ -365,3 +365,48 @@ function safeJson(s: string): Record<string, unknown> | null {
     return null;
   }
 }
+
+// ============================================================================
+// §131 — outbound attachment send (PDF / image / audio / video) via the
+// official WhatsApp Cloud API media-by-link. Transport only: persistence
+// (UccMessage + CommunicationAttachment) is the caller's job. Pure payload /
+// validation logic lives in ./whatsapp-media (fully unit-testable).
+// ============================================================================
+
+import {
+  WHATSAPP_MEDIA_TYPES,
+  buildWhatsAppMediaPayload,
+  validateWhatsAppMediaRequest,
+  whatsappCloudConfigError,
+  type SendWhatsAppMediaParams,
+  type WhatsAppMediaType,
+} from "@/lib/whatsapp-media";
+
+export { WHATSAPP_MEDIA_TYPES, buildWhatsAppMediaPayload, validateWhatsAppMediaRequest };
+export type { SendWhatsAppMediaParams, WhatsAppMediaType };
+
+export async function sendWhatsAppMedia(params: SendWhatsAppMediaParams): Promise<{ messageId: string | null; success: boolean; error?: string }> {
+  const invalid = validateWhatsAppMediaRequest(params);
+  if (!invalid.ok) return { messageId: null, success: false, error: invalid.error };
+  const configError = whatsappCloudConfigError();
+  if (configError) return { messageId: null, success: false, error: configError };
+  const toNormalized = normalizePhone(params.to);
+  if (!toNormalized) {
+    return { messageId: null, success: false, error: "Invalid recipient phone" };
+  }
+  try {
+    const res = await fetch(`https://graph.facebook.com/v20.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify(buildWhatsAppMediaPayload(toNormalized, params)),
+    });
+    const json = await res.json().catch(() => ({}));
+    const messageId = json?.messages?.[0]?.id || null;
+    if (!messageId) {
+      return { messageId: null, success: false, error: json?.error?.message || `Cloud API returned ${res.status}` };
+    }
+    return { messageId, success: true };
+  } catch (err: any) {
+    return { messageId: null, success: false, error: err?.message || "Network error sending media" };
+  }
+}

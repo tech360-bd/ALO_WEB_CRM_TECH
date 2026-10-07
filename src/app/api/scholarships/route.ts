@@ -14,16 +14,28 @@ export async function GET(req: Request) {
     const search = searchParams.get('search') || '';
     const featured = searchParams.get('featured');
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200);
+    // §15 filters
+    const studyLevel = searchParams.get('studyLevel') || '';
+    const subject = searchParams.get('subject') || '';
+    const scholarshipType = searchParams.get('scholarshipType') || '';
+    const intake = searchParams.get('intake') || '';
+    const applicationOpen = searchParams.get('applicationOpen') === 'true';
 
     // Build where for new Scholarship model
     const where: any = { status: 'active' };
     if (country) where.country = { contains: country };
     if (universityId) where.universityId = universityId;
     if (fundingType) where.fundingType = fundingType;
+    if (studyLevel) where.studyLevel = studyLevel;
+    if (subject) where.subject = { contains: subject };
+    if (scholarshipType) where.scholarshipType = scholarshipType;
+    if (intake) where.intake = { contains: intake };
+    if (applicationOpen) where.deadlineDate = { gte: new Date() };
     if (featured === 'true') where.isFeatured = true;
     if (search) {
       where.OR = [
         { name: { contains: search } },
+        { university: { contains: search } },
         { overview: { contains: search } },
         { eligibility: { contains: search } },
       ];
@@ -57,6 +69,15 @@ export async function GET(req: Request) {
           status: true,
           isFeatured: true,
           sortOrder: true,
+          // §15/§16 additions
+          studyLevel: true,
+          subject: true,
+          scholarshipType: true,
+          intake: true,
+          applicationMethod: true,
+          fundingAmountNumber: true,
+          nationalityRequirements: true,
+          openingDate: true,
         },
       }).catch(() => []),
       db.crmScholarship.findMany({

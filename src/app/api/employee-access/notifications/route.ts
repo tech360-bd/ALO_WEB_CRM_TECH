@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { EMPLOYEE_NOTIFICATION_EVENTS, SUPER_ADMIN_NOTIFY_RULES, PARTNER_SUPER_ADMIN_NOTIFY_RULES } from '@/lib/notifications/employee-events';
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,7 +27,12 @@ export async function GET(req: NextRequest) {
         reminders: slaReminders,
         note: 'SLA reminder/warning/escalation — auto-reminder before breach, warning at 80%, escalation at 100% to senior',
       },
-      noSensitiveLeak: 'Notification in-app/email/WhatsApp/SMS — no sensitive data leak, permission-checked',
+      notificationEvents: [...EMPLOYEE_NOTIFICATION_EVENTS],
+      notifyRules: {
+        superAdmin: [...SUPER_ADMIN_NOTIFY_RULES],
+        partnerSuperAdmin: [...PARTNER_SUPER_ADMIN_NOTIFY_RULES],
+      },
+      leakPolicy: 'Notifications never include sensitive values (salary/NID/bank) — enforced by buildSafeEmployeeNotification leak guard',
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

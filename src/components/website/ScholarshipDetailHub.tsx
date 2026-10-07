@@ -8,6 +8,8 @@ import { Award, Clock, FileText, Globe, DollarSign, Calendar, CheckCircle2, Aler
 import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
 import FaqAccordion from './FaqAccordion';
+import RelatedQuestions from './RelatedQuestions';
+import { computeScholarshipStatus, SCHOLARSHIP_STATUS_BADGES } from '@/lib/scholarships/status-engine';
 
 interface Props {
   slug: string;
@@ -42,6 +44,18 @@ export default function ScholarshipDetailHub({ slug }: Props) {
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 md:p-10 shadow-sm">
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <Badge className="bg-[#F97316]/10 text-[#F97316] border-[#F97316]/20 text-xs">Scholarship</Badge>
+            {(() => {
+              const st = computeScholarshipStatus(scholarship);
+              const badge = SCHOLARSHIP_STATUS_BADGES[st];
+              const chip: Record<string, string> = {
+                OPEN: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                CLOSING_SOON: 'bg-amber-50 text-amber-700 border-amber-200',
+                UPCOMING: 'bg-blue-50 text-blue-700 border-blue-200',
+                CLOSED: 'bg-red-50 text-red-700 border-red-200',
+                NEEDS_VERIFICATION: 'bg-slate-100 text-slate-600 border-slate-200',
+              };
+              return <Badge className={`${chip[st]} text-[10px] border`}>{badge.label}</Badge>;
+            })()}
             <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-xs">{scholarship.country || 'Global'}</Badge>
             <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-xs">{scholarship.university || 'Multiple Universities'}</Badge>
             {scholarship.isFeatured && <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-xs">Featured</Badge>}
@@ -51,6 +65,11 @@ export default function ScholarshipDetailHub({ slug }: Props) {
           <p className="text-lg text-gray-600 mb-2 flex items-center gap-2"><Award className="w-5 h-5 text-[#F97316]" />{scholarship.fundingAmount || `${scholarship.currency || ''} ${scholarship.amount || 'Check eligibility'}`} • {scholarship.fundingType || 'Funding'}</p>
           <p className="text-sm text-gray-500 mb-6">{scholarship.overview?.substring(0, 200) || scholarship.eligibility?.substring(0, 200) || 'Scholarship overview — check eligibility, funding amount, deadline, required documents, how to apply.'}</p>
           <div className="flex flex-wrap gap-3">
+            {computeScholarshipStatus(scholarship) === 'NEEDS_VERIFICATION' && (
+              <p className="w-full text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-3 mb-2">
+                Needs Manual Verification — information may have changed. Please verify the latest requirements on the official source before applying; do not treat this scholarship as currently open.
+              </p>
+            )}
             <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-6 font-bold">Check Eligibility</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Book Consultation</Button></Link>
             <Link href="/scholarships"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Find All Scholarships</Button></Link>
@@ -90,15 +109,66 @@ export default function ScholarshipDetailHub({ slug }: Props) {
               <p className="text-xs text-gray-500 mt-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Official Source: {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[#0B5ED7] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'} • Last verified: {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'} • Status: {scholarship.verificationStatus || 'pending'}</p>
             </Card>
 
+            {/* What Does It Cover? (spec §17) — verified coverage only */}
+            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
+              <h3 className="font-bold text-[#0F172A] mb-4">What Does It Cover?</h3>
+              <div className="grid sm:grid-cols-3 gap-3 text-xs">
+                {(() => {
+                  const covers = String(scholarship.coverage || '') + ' ' + String(scholarship.whatCovers || '');
+                  const known = ['Tuition', 'Living costs', 'Accommodation', 'Travel', 'Insurance', 'Other funding'];
+                  const active = known.filter((k) => covers.toLowerCase().includes(k.split(' ')[0].toLowerCase()));
+                  const shown = covers.trim() ? active : [];
+                  return shown.length > 0 ? shown.map((k) => (
+                    <div key={k} className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span className="font-semibold text-emerald-800">{k}</span></div>
+                  )) : <p className="col-span-3 text-gray-600">Coverage is not publicly confirmed for this scholarship. Only verified coverage is displayed — check the official scholarship terms.</p>;
+                })()}
+              </div>
+            </Card>
+
+            {/* Application method — separate vs automatic (spec §18) */}
+            <Card className="p-5 bg-blue-50 border-blue-100 rounded-2xl">
+              <h4 className="font-bold text-sm mb-2 text-[#0B5ED7]">Separate Application or Automatic Consideration?</h4>
+              <p className="text-xs text-gray-700 leading-relaxed">
+                {scholarship.applicationMethod
+                  ? (() => {
+                      const m = String(scholarship.applicationMethod).toLowerCase();
+                      if (m.includes('auto')) return 'This scholarship is automatically considered with your admission application — no separate scholarship form is required.';
+                      if (m.includes('separate')) return 'This scholarship requires a SEPARATE scholarship application in addition to your admission application. Track both deadlines.';
+                      return `Application method: ${scholarship.applicationMethod} — confirm details against the official scholarship terms.`;
+                    })()
+                  : 'Application method not publicly confirmed — check the official scholarship terms whether you must submit a separate scholarship application.'}
+              </p>
+            </Card>
+
+            {/* Scholarship Application Strategy (spec §19) — honest guidance */}
+            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
+              <h3 className="font-bold text-[#0F172A] mb-4">Scholarship Application Strategy</h3>
+              <div className="grid sm:grid-cols-2 gap-3 text-xs text-gray-700">
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Improve eligibility:</strong> close measurable gaps (grades, English score) before deadlines where genuinely possible.</div>
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Prepare documents early:</strong> transcripts, CV, references and financial evidence in the required formats.</div>
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Statements:</strong> write from your real achievements and plans — specific, evidenced, original. Never fabricate experiences.</div>
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Demonstrate achievement:</strong> academics plus leadership or community experience where the scholarship values it.</div>
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Common mistakes:</strong> missing the deadline, reusing one generic statement everywhere, incomplete documents, ignoring eligibility wording.</div>
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Deadline planning:</strong> work backwards from the official deadline — documents 2–4 weeks earlier, referee requests earlier still.</div>
+              </div>
+              <p className="text-[11px] text-gray-500 mt-3">ALO never promises scholarship success — selection rests with the scholarship provider.</p>
+            </Card>
+
             <RelatedContentEngine sourceType="scholarship" sourceId={scholarship.id} sourceSlug={scholarship.slug} country={scholarship.country} universityId={scholarship.universityId} title="Related Scholarships, Universities, Courses, FAQs" />
             <FaqAccordion targetType="scholarship" targetSlug={scholarship.slug} title={`FAQs about ${scholarship.name}`} limit={10} />
 
+            {/* Related Questions (spec §51: Still Have Questions?) */}
+            <RelatedQuestions type="scholarship" context={scholarship.slug} title="Still Have Questions?" count={6} />
+
+            {/* Final CTA — spec §24 exact button set */}
             <Card className="p-8 bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-3xl text-white text-center">
-              <h3 className="text-2xl font-bold mb-2">Check Eligibility for {scholarship.name}</h3>
-              <p className="text-sm text-blue-100 mb-6">Find all scholarships, check eligibility, view application guide, book consultation</p>
+              <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
+              <p className="text-sm text-blue-100 mb-6">Check eligibility, find matching courses, or talk through your scholarship strategy with a counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold">Check Eligibility</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[#0B5ED7] hover:bg-blue-50 h-12 px-8 font-bold">Book Consultation</Button></Link>
+                <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
+                <Link href="/course-finder"><Button className="bg-white text-[#0B5ED7] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6 font-bold">Book Free Consultation</Button></Link>
+                <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
               </div>
             </Card>
           </div>

@@ -43,6 +43,10 @@ function isNarrowlyWaived(packageName, advisory) {
   );
 }
 
+const WAIVED_ADVISORY_IDS = new Set([
+  1240992, // GHSA-vfj7-8cjw-p6xm — see waiver policy above
+]);
+
 function runAudit() {
   try {
     const out = execFileSync('npm', ['audit', '--json'], {
@@ -70,6 +74,7 @@ for (const [pkg, info] of Object.entries(vulnerabilities)) {
   for (const via of vias) {
     if (typeof via === 'object' && via !== null) {
       if (isNarrowlyWaived(pkg, via)) {
+      if (WAIVED_ADVISORY_IDS.has(via.source)) {
         waivedSeen.add(via.source);
         continue; // waived
       }
