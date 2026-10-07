@@ -1,18 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { logAuditAction } from '@/lib/auth-middleware';
+import { requirePartnerContext, requirePartnerSuperAdmin } from '@/lib/partner-tenant-guard';
 import { getQuota } from '@/lib/access-check-engine';
+
+/** Partner-side roles a Partner Super Admin is allowed to grant (§6). */
+const ASSIGNABLE_PARTNER_ROLES = [
+  'PARTNER_COUNSELOR',
+  'PARTNER_APPLICATION_ASSISTANT',
+  'PARTNER_MARKETING_ASSISTANT',
+  'PARTNER_DOCUMENT_ASSISTANT',
+  'PARTNER_VIEWER',
+];
 
 // GET: List users in partner tenant
 export async function GET(req: NextRequest) {
+  const ctx = await requirePartnerContext(req);
+  if (ctx instanceof NextResponse) return ctx;
+  const partnerId = ctx.partnerId;
+
   try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-
-    const partnerId = (auth as any).partnerId || (auth as any).branch;
-    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
-
     const users = await db.portalUser.findMany({
       where: {
         partnerProfile: { partnerId },
@@ -24,6 +31,7 @@ export async function GET(req: NextRequest) {
         userType: true,
         status: true,
         createdAt: true,
+        partnerProfile: { select: { partnerRole: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -44,82 +52,127 @@ export async function GET(req: NextRequest) {
 
 // POST: Create partner employee within seat limit
 export async function POST(req: NextRequest) {
-  try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
+  // Only the Partner Super Admin may create users in the tenant (§6).
+  const ctx = await requirePartnerSuperAdmin(req);
+  if (ctx instanceof NextResponse) return ctx;
+  const partnerId = ctx.partnerId;
 
-    const partnerId = (auth as any).partnerId || (auth as any).branch;
-    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
-    const body = await req.json();
-    const { name, email } = body;
+  try {
+    const body = await req.json().catch(() => ({}));
+    const name = typeof body?.name === 'string' ? body.name.trim() : '';
+    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const requestedRole = String(body?.partnerRole || 'PARTNER_COUNSELOR').toUpperCase();
 
     if (!name || !email) {
-      return NextResponse.json({ error: 'Name and email are required.' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Name and email are required.' }, { status: 400 });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ success: false, error: 'A valid email address is required.' }, { status: 400 });
+    }
+    // A Partner Super Admin can only create partner-side roles, never ALO
+    // roles and never a second Partner Super Admin (§6).
+    if (!ASSIGNABLE_PARTNER_ROLES.includes(requestedRole)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'You can only create partner roles within your ALO-approved package.',
+          assignableRoles: ASSIGNABLE_PARTNER_ROLES,
+        },
+        { status: 403 },
+      );
     }
 
-    // 1. Enforce Partner Max User Seat Limit (Default = 3)
     const seatLimit = await getQuota('PARTNER', partnerId, 'user_seats');
-    const currentUsers = await db.portalUser.count({
-      where: { partnerProfile: { partnerId } },
-    });
 
-    if (currentUsers >= seatLimit) {
-      return NextResponse.json({
-        error: 'Your current partner user limit has been reached. Please request additional seats from ALO Education.',
-        currentCount: currentUsers,
-        seatLimit,
-      }, { status: 403 });
-    }
-
-    // 2. Check for duplicate email
+    // Duplicate check before attempting creation, for a clear error message.
     const existing = await db.portalUser.findUnique({ where: { email } });
     if (existing) {
-      return NextResponse.json({ error: 'A user with this email already exists.' }, { status: 409 });
+      return NextResponse.json(
+        { success: false, error: 'A user with this email already exists.' },
+        { status: 409 },
+      );
     }
 
-    // 3. Create portal user and partner profile
-    const newUser = await db.portalUser.create({
-      data: {
-        name,
-        email,
-        userType: 'PARTNER',
-        status: 'active',
-        passwordHash: '$2b$10$temporaryhashforpartnercreateduser',
-        partnerProfile: {
-          create: {
-            partnerId,
-            companyName: 'Partner Branch',
-            contactPerson: name,
-            approvalStatus: 'approved',
-          },
-        },
-      },
-    });
+    // The seat count is re-read and enforced INSIDE the transaction so two
+    // concurrent creations cannot both observe the last free seat and exceed
+    // the partner's limit.
+    let created;
+    try {
+      created = await db.$transaction(async (tx: any) => {
+        const currentUsers = await tx.portalUser.count({
+          where: { partnerProfile: { partnerId } },
+        });
 
-    // 4. Create Audit Log
-    await db.crmAuditLog.create({
-      data: {
-        actorUserId: auth.userId,
-        actorRole: 'PARTNER_SUPER_ADMIN',
-        action: 'PARTNER_USER_CREATED',
-        targetCollection: 'PortalUser',
-        targetId: newUser.id,
-        afterData: JSON.stringify({ name, email, userType: 'PARTNER', partnerId }),
-      },
-    }).catch(() => null);
+        if (currentUsers >= seatLimit) {
+          throw Object.assign(new Error('SEAT_LIMIT_REACHED'), {
+            code: 'SEAT_LIMIT_REACHED',
+            currentCount: currentUsers,
+          });
+        }
+
+        return await tx.portalUser.create({
+          data: {
+            name,
+            email,
+            userType: 'PARTNER',
+            // Account is inactive until the invited user sets a password via
+            // the activation flow. No password is ever issued in plaintext.
+            status: 'pending_activation',
+            passwordHash: '',
+            partnerProfile: {
+              create: {
+                partnerId,
+                partnerRole: requestedRole,
+                companyName: body?.companyName || '',
+                contactPerson: name,
+                approvalStatus: 'approved',
+              },
+            },
+          },
+          select: { id: true, name: true, email: true, status: true, createdAt: true },
+        });
+      });
+    } catch (txError: any) {
+      if (txError?.code === 'SEAT_LIMIT_REACHED') {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'Your current partner user limit has been reached. Please request additional seats from ALO Education.',
+            currentCount: txError.currentCount,
+            seatLimit,
+          },
+          { status: 403 },
+        );
+      }
+      throw txError;
+    }
+
+    const currentCount = await db.portalUser.count({ where: { partnerProfile: { partnerId } } });
+
+    await logAuditAction(ctx, 'PARTNER_USER_CREATED', 'PortalUser', created.id, {
+      partnerId,
+      email,
+      name,
+      partnerRole: requestedRole,
+      seatLimit,
+      seatsUsedAfter: currentCount,
+    });
 
     return NextResponse.json({
       success: true,
-      message: 'Partner employee user created successfully.',
-      user: { id: newUser.id, name: newUser.name, email: newUser.email },
+      message: 'Partner user created. An activation invitation is required before they can sign in.',
+      user: { ...created, partnerRole: requestedRole },
       seatUsage: {
-        current: currentUsers + 1,
+        current: currentCount,
         limit: seatLimit,
-        available: Math.max(0, seatLimit - (currentUsers + 1)),
+        available: Math.max(0, seatLimit - currentCount),
       },
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to create partner user', details: error.message }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { success: false, error: 'Failed to create partner user.' },
+      { status: 500 },
+    );
   }
 }
