@@ -1,5 +1,26 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 import { ALL_400_UNIVERSITIES, slugify } from '@/lib/all-universities';
+import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
+
+// The sitemap contains live CMS/CRM records. Serve it at request time rather
+// than querying production MySQL during `next build` or silently omitting rows.
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+type SitemapRow = { slug: string; updatedAt: Date | null };
+
+async function getDatabaseSitemapEntries() {
+  const { db } = await import('@/lib/db');
+  try {
+    return await Promise.all([
+      db.blogPost.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 5000 }),
+      db.coursePage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED' }, take: 5000 }),
+      db.scholarship.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 2000 }),
+    ]);
+  } catch (error) {
+    throwSanitizedDatabaseFailure('sitemap', error, 'SITEMAP_DATABASE_UNAVAILABLE');
+  }
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
@@ -36,39 +57,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...infoRoutes,
   ];
 
-  const allUnis = ALL_400_UNIVERSITIES;
-  const universityRoutes: MetadataRoute.Sitemap = allUnis.map((uni) => ({
+  const universityRoutes: MetadataRoute.Sitemap = ALL_400_UNIVERSITIES.map((uni) => ({
     url: `${baseUrl}/universities/${slugify(uni.name)}`,
     lastModified: new Date(),
     changeFrequency: 'weekly',
     priority: 0.8,
   }));
 
-  // Dynamic routes from DB (blogs, courses, scholarships, resources) — best-effort, sandbox-safe
-  let dynamicRoutes: MetadataRoute.Sitemap = [];
-  try {
-    // Lazy import to avoid build-time DB requirement in sandbox without DATABASE_URL
-    const { db } = await import('@/lib/db');
-    const [blogs, courses, scholarships] = await Promise.all([
-      db.blogPost.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 5000 }).catch(() => [] as any[]),
-      db.coursePage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED' }, take: 5000 }).catch(() => [] as any[]),
-      db.scholarship.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 2000 }).catch(() => [] as any[]),
-    ]);
-    const map = (rows: any[], prefix: string, weekly = true): MetadataRoute.Sitemap =>
-      rows.filter((r: any) => r?.slug).map((r: any) => ({
-        url: `${baseUrl}${prefix}/${r.slug}`,
-        lastModified: r.updatedAt ? new Date(r.updatedAt) : new Date(),
-        changeFrequency: weekly ? 'weekly' : 'daily',
-        priority: 0.7,
-      }));
-    dynamicRoutes = [
-      ...map(blogs as any, '/blog'),
-      ...map(courses as any, '/courses'),
-      ...map(scholarships as any, '/scholarships'),
-    ];
-  } catch {
-    // DB unavailable during static build — keep static + university routes only (no crash)
-  }
+  // Query only on request. On failure, emit a sanitized server diagnostic and
+  // fail the sitemap request instead of omitting database-backed entries.
+  const [blogs, courses, scholarships] = await getDatabaseSitemapEntries();
+
+  const map = (rows: SitemapRow[], prefix: string): MetadataRoute.Sitemap => rows
+    .filter((row) => Boolean(row.slug))
+    .map((row) => ({
+      url: `${baseUrl}${prefix}/${row.slug}`,
+      lastModified: row.updatedAt ? new Date(row.updatedAt) : new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }));
+  const dynamicRoutes = [
+    ...map(blogs, '/blog'),
+    ...map(courses, '/courses'),
+    ...map(scholarships, '/scholarships'),
+  ];
 
   return [...staticRoutes, ...universityRoutes, ...dynamicRoutes];
 }
