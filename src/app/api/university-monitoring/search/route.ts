@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireMonitoringViewer } from "@/lib/university-monitoring-auth";
 
 // GET /api/university-monitoring/search?q=...
 // Knowledge Center integration: search verified university/course data.
 // Only returns APPROVED + VERIFIED records — never pending/unverified data.
 export async function GET(req: NextRequest) {
+  // Employee Knowledge Center search. Authenticated staff only; the result
+  // set is additionally restricted to APPROVED + VERIFIED records below, so
+  // no unapproved detected change can ever be surfaced as fact.
+  const guard = await requireMonitoringViewer(req);
+  if (!guard.ok) return guard.response;
+
   const q = req.nextUrl.searchParams.get("q");
   if (!q || q.trim().length < 2) {
     return NextResponse.json({ error: "Query must be at least 2 characters" }, { status: 400 });
