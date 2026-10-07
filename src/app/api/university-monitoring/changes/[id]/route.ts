@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireMonitoringAdmin, requireMonitoringViewer } from "@/lib/university-monitoring-auth";
+import { syncApprovedChange } from "@/lib/university-monitoring-sync";
 
 // GET /api/university-monitoring/changes/[id]
 // Returns full detail for a single change record (for the compare dialog).
+// Staff-only: the record may contain an unapproved, unverified detected value.
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const guard = await requireMonitoringViewer(req);
+  if (!guard.ok) return guard.response;
+
   const { id } = await params;
   const change = await db.dataChange.findUnique({
     where: { id },
@@ -45,14 +51,23 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 // PATCH /api/university-monitoring/changes/[id]
 // Super Admin action: APPROVE | REJECT | REQUEST_RECHECK | MARK_VERIFIED
-// Body: { action, notes?, performedBy }  — performedBy is the user ID or email
+// Body: { action, notes? }
+//
+// SECURITY: the acting user is taken from the authenticated session, NOT from
+// the request body. Previously this route was unauthenticated and trusted a
+// client-supplied `performedBy`, so any anonymous caller could approve a change
+// into the production database and have it audit-logged as the Super Admin.
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const body = await req.json();
-  const { action, notes, performedBy } = body as { action: string; notes?: string; performedBy: string };
+  const guard = await requireMonitoringAdmin(req);
+  if (!guard.ok) return guard.response;
+  const actor = guard.actor;
 
-  if (!action || !performedBy) {
-    return NextResponse.json({ error: "action and performedBy are required" }, { status: 400 });
+  const { id } = await params;
+  const body = await req.json().catch(() => ({}));
+  const { action, notes } = body as { action?: string; notes?: string };
+
+  if (!action) {
+    return NextResponse.json({ error: "action is required" }, { status: 400 });
   }
 
   const change = await db.dataChange.findUnique({
@@ -66,13 +81,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: `Invalid action. Must be one of: ${validActions.join(", ")}` }, { status: 400 });
   }
 
-  // Resolve performedBy to a valid User.id (it may be an email or a user ID)
-  let userId = performedBy;
-  if (performedBy.includes("@")) {
-    const user = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
-    if (user) userId = user.id;
-    else userId = "system"; // fallback — AuditLog.userId is optional
+  // Terminal states must not be silently re-approved/re-rejected.
+  if ((change.status === "APPROVED" || change.status === "REJECTED") && action !== "REQUEST_RECHECK") {
+    return NextResponse.json(
+      { error: `Change is already ${change.status} and cannot be ${action.toLowerCase()}d again.` },
+      { status: 409 },
+    );
   }
+
+  // Authenticated session identity — always a real User.id.
+  const userId = actor.userId;
 
   // Use a transaction so the change status, audit log, and queue update are atomic
   const result = await db.$transaction(async (tx) => {
@@ -84,7 +102,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         performedBy: userId,
         performedAt: new Date(),
         notes: notes || null,
-        metadata: JSON.stringify({ source: "super-admin-ui", timestamp: new Date().toISOString() }),
+        metadata: JSON.stringify({
+          source: "super-admin-ui",
+          timestamp: new Date().toISOString(),
+          actorEmail: actor.email,
+          actorUserType: actor.userType,
+        }),
       },
     });
 
@@ -132,6 +155,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     // 4. If APPROVE — apply the change to production data and audit-log it
     if (action === "APPROVE" || action === "MARK_VERIFIED") {
+      // Historical versioning FIRST: capture the pre-change value so the old
+      // value is never destroyed (spec: "Never destroy the old value").
+      await recordHistory(tx, updated, userId, approval.id);
       await applyChangeToProduction(tx, updated);
       // Audit log entry — use userId (resolved to a valid User.id, or null for "system")
       await tx.auditLog.create({
@@ -156,11 +182,56 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return { updated, approval };
   });
 
+  // 5. Post-commit CRM / public-website / Knowledge Center synchronisation.
+  //    Runs after the transaction so caches are never invalidated for a write
+  //    that then rolled back.
+  let sync: Awaited<ReturnType<typeof syncApprovedChange>> | null = null;
+  if (action === "APPROVE" || action === "MARK_VERIFIED") {
+    sync = await syncApprovedChange(result.updated);
+  }
+
   return NextResponse.json({
     change: result.updated,
     approval: result.approval,
+    sync,
     message: `Change ${action.toLowerCase()}d successfully${action === "APPROVE" || action === "MARK_VERIFIED" ? " and applied to production" : ""}`,
   });
+}
+
+// Capture the CURRENT (pre-change) production value into the append-only
+// history tables before the approved change overwrites it. Combined with
+// DataChange (which keeps oldValue/newValue/source/detectedAt) this gives the
+// searchable, permanent audit trail the spec requires:
+//   OLD = 36,000 / NEW = 38,000 / SOURCE = official URL / DETECTED / APPROVED_BY / APPROVED_AT
+async function recordHistory(tx: any, change: any, userId: string, approvalId: string) {
+  const common = {
+    fieldName: change.fieldName,
+    oldValue: change.oldValue ?? null,
+    newValue: change.newValue ?? null,
+    changeId: change.id,
+    changeType: change.changeType,
+    sourceUrl: change.sourceUrl,
+    detectedAt: change.detectedAt,
+    approvedBy: userId,
+    approvedAt: new Date(),
+    approvalId,
+  };
+
+  if (change.entityType === "UNIVERSITY" && change.universitySlug) {
+    await tx.universityHistory.create({ data: { universitySlug: change.universitySlug, ...common } });
+  } else if (change.entityType === "COURSE" && change.courseSlug) {
+    await tx.courseHistory.create({
+      data: { courseSlug: change.courseSlug, universitySlug: change.universitySlug ?? null, ...common },
+    });
+  } else if (change.entityType === "SCHOLARSHIP") {
+    await tx.scholarshipHistory.create({
+      data: {
+        scholarshipSlug: change.courseSlug || change.universitySlug || change.id,
+        universitySlug: change.universitySlug ?? null,
+        ...common,
+      },
+    });
+  }
 }
 
 // Apply an approved change to the production database.

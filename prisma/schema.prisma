@@ -8858,6 +8858,86 @@ model MarketingUserAccess {
   @@index([status])
 }
 
+// ============================================================
+// Historical versioning for approved university/course/scholarship changes.
+//
+// DataChange records every DETECTED change (including rejected ones). These
+// three tables are the append-only record of changes that were APPROVED by a
+// Super Admin and therefore actually mutated production data. Keeping them
+// separate makes "what did this course's tuition look like over time, and who
+// signed it off" a single indexed query, and guarantees the previous value is
+// never destroyed by the overwrite.
+// ============================================================
+
+model UniversityHistory {
+  id             String   @id @default(cuid())
+  universitySlug String
+  fieldName      String
+  oldValue       String? // value before the approved change (NULL = field did not exist)
+  newValue       String? // value written to production
+  changeId       String // DataChange.id that produced this version
+  changeType     String
+  sourceUrl      String // official evidence URL
+  detectedAt     DateTime
+  approvedBy     String // User.id of the approving Super Admin
+  approvedAt     DateTime @default(now())
+  approvalId     String // ApprovalAction.id
+  createdAt      DateTime @default(now())
+
+  @@index([universitySlug])
+  @@index([fieldName])
+  @@index([changeId])
+  @@index([approvedAt])
+  @@index([universitySlug, fieldName])
+}
+
+model CourseHistory {
+  id             String   @id @default(cuid())
+  courseSlug     String
+  universitySlug String?
+  fieldName      String
+  oldValue       String?
+  newValue       String?
+  changeId       String
+  changeType     String
+  sourceUrl      String
+  detectedAt     DateTime
+  approvedBy     String
+  approvedAt     DateTime @default(now())
+  approvalId     String
+  createdAt      DateTime @default(now())
+
+  @@index([courseSlug])
+  @@index([universitySlug])
+  @@index([fieldName])
+  @@index([changeId])
+  @@index([approvedAt])
+  @@index([courseSlug, fieldName])
+}
+
+model ScholarshipHistory {
+  id              String   @id @default(cuid())
+  scholarshipSlug String
+  universitySlug  String?
+  fieldName       String
+  oldValue        String?
+  newValue        String?
+  changeId        String
+  changeType      String
+  sourceUrl       String
+  detectedAt      DateTime
+  approvedBy      String
+  approvedAt      DateTime @default(now())
+  approvalId      String
+  createdAt       DateTime @default(now())
+
+  @@index([scholarshipSlug])
+  @@index([universitySlug])
+  @@index([fieldName])
+  @@index([changeId])
+  @@index([approvedAt])
+}
+
 model MonitoringJob {
   id                 String    @id @default(cuid())
   jobId              String    @unique // stable identifier e.g. "university-monitor-7d"

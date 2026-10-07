@@ -113,7 +113,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
   const fetchDashboard = React.useCallback(async () => {
     try {
-      const res = await fetch("/api/university-monitoring/dashboard");
+      const res = await fetch("/api/university-monitoring/dashboard", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load dashboard");
       const json = await res.json();
       setData(json);
@@ -132,7 +132,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
       if (changeFilter.impact) params.set("impact", changeFilter.impact);
       if (changeFilter.changeType) params.set("changeType", changeFilter.changeType);
       if (changeFilter.q) params.set("q", changeFilter.q);
-      const res = await fetch(`/api/university-monitoring/changes?${params}`);
+      const res = await fetch(`/api/university-monitoring/changes?${params}`, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load changes");
       const json = await res.json();
       setChanges(json.changes);
@@ -146,7 +146,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
   const fetchConflicts = React.useCallback(async () => {
     try {
-      const res = await fetch("/api/university-monitoring/conflicts");
+      const res = await fetch("/api/university-monitoring/conflicts", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load conflicts");
       const json = await res.json();
       setConflicts(json.conflicts);
@@ -157,7 +157,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
   const fetchSources = React.useCallback(async () => {
     try {
-      const res = await fetch("/api/university-monitoring/sources?limit=200");
+      const res = await fetch("/api/university-monitoring/sources?limit=200", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load sources");
       const json = await res.json();
       setSources(json.sources);
@@ -168,7 +168,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
   const fetchRuns = React.useCallback(async () => {
     try {
-      const res = await fetch("/api/university-monitoring/runs");
+      const res = await fetch("/api/university-monitoring/runs", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load runs");
       const json = await res.json();
       setRuns(json.runs);
@@ -179,7 +179,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
   const fetchLogs = React.useCallback(async () => {
     try {
-      const res = await fetch("/api/university-monitoring/logs?limit=100");
+      const res = await fetch("/api/university-monitoring/logs?limit=100", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load logs");
       const json = await res.json();
       setLogs(json.logs);
@@ -201,7 +201,8 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
       const res = await fetch("/api/university-monitoring/trigger", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ performedBy: "superadmin@aloedu.com", scope: "verified-only", limit: 30 }),
+        credentials: "include",
+        body: JSON.stringify({ scope: "verified-only", limit: 30 }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Trigger failed");
@@ -223,7 +224,8 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
       const res = await fetch(`/api/university-monitoring/changes/${changeId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, notes: actionNotes, performedBy: "superadmin@aloedu.com" }),
+        credentials: "include",
+        body: JSON.stringify({ action, notes: actionNotes }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Action failed");
@@ -249,7 +251,8 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
       const res = await fetch("/api/university-monitoring/recheck", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ changeId, performedBy: "superadmin@aloedu.com" }),
+        credentials: "include",
+        body: JSON.stringify({ changeId }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Recheck failed");
