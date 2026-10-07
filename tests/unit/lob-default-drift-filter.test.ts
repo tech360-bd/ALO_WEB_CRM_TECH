@@ -24,6 +24,15 @@ model Renamed {
 
   @@map("renamed_table")
 }
+
+model AwfAgent {
+  id           String @id
+  description  String @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  purpose      String @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  allowedRoles String @default(dbgenerated("(_utf8mb4'[\\"SUPER_ADMIN\\",\\"ADMIN\\"]')")) @db.Text
+  config       String @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  title        String @db.VarChar(191)
+}
 `;
 
 const tables = parseSchema(SCHEMA);
@@ -68,6 +77,42 @@ describe('benign suppression (the one allowed normalisation)', () => {
     const s = "ALTER TABLE `renamed_table` MODIFY `other_col` TEXT NOT NULL DEFAULT (_utf8mb4'')";
     expect(classifyStatement(s, tables).benign).toBe(true);
   });
+
+  // Prisma's migrate diff was observed (CI drift step, run 37075102871) to
+  // render the same no-op re-assertion in literal-canonicalized form for some
+  // tables and in expression form for others. Both must be suppressed, but
+  // only when the literal content matches schema.prisma byte-for-byte.
+  it('suppresses the literal-canonicalized empty default', () => {
+    const s = "ALTER TABLE `AwfAgent` MODIFY `description` TEXT NOT NULL DEFAULT ''";
+    expect(classifyStatement(s, tables).benign).toBe(true);
+  });
+
+  it('suppresses the literal-canonicalized JSON object default', () => {
+    const s = "ALTER TABLE `AwfAgent` MODIFY `config` LONGTEXT NOT NULL DEFAULT '{}'";
+    expect(classifyStatement(s, tables).benign).toBe(true);
+  });
+
+  it('suppresses the literal-canonicalized default with escaped quotes (the exact CI finding)', () => {
+    // Exact SQL text Prisma's diff emitted for AwfAgent/AwfKnowledgeSource
+    // allowedRoles in CI run 37075102871: the renderer SQL-escapes double
+    // quotes as \"; schema.prisma stores the same content bare after its own
+    // Prisma-level escapes are reduced.
+    const s = 'ALTER TABLE `AwfAgent` MODIFY `allowedRoles` TEXT NOT NULL DEFAULT \'[\\"SUPER_ADMIN\\",\\"ADMIN\\"]\'';
+    expect(classifyStatement(s, tables).benign).toBe(true);
+  });
+
+  it('suppresses the expression-form default with escaped quotes', () => {
+    const s = 'ALTER TABLE `AwfAgent` MODIFY `allowedRoles` TEXT NOT NULL DEFAULT (_utf8mb4\'[\\"SUPER_ADMIN\\",\\"ADMIN\\"]\')';
+    expect(classifyStatement(s, tables).benign).toBe(true);
+  });
+
+  it('suppresses a multi-clause literal-canonicalized re-assertion (the exact CI finding)', () => {
+    const s =
+      "ALTER TABLE `AwfAgent` MODIFY `description` TEXT NOT NULL DEFAULT '',\n" +
+      "    MODIFY `purpose` TEXT NOT NULL DEFAULT '',\n" +
+      '    MODIFY `allowedRoles` TEXT NOT NULL DEFAULT \'[\\"SUPER_ADMIN\\",\\"ADMIN\\"]\'';
+    expect(classifyStatement(s, tables).benign).toBe(true);
+  });
 });
 
 describe('real drift stays fatal', () => {
@@ -85,7 +130,15 @@ describe('real drift stays fatal', () => {
     ['CREATE INDEX', 'CREATE INDEX `idx` ON `AgentAuditLog`(`title`)'],
     ['DROP INDEX', 'DROP INDEX `idx` ON `AgentAuditLog`'],
     ['a mixed statement with one real clause', "ALTER TABLE `AgentAuditLog` MODIFY `before` LONGTEXT NOT NULL DEFAULT (_utf8mb4''), DROP COLUMN `after`"],
-    ['a literal (illegal) default', "ALTER TABLE `AgentAuditLog` MODIFY `before` LONGTEXT NOT NULL DEFAULT ''"],
+    // Literal-canonicalized form (Prisma renders the schema-side default as a
+    // quoted literal for some tables — observed in CI run 37075102871). It is
+    // benign ONLY when the literal content matches the schema declaration
+    // exactly. Every mismatch below must stay fatal:
+    ['a literal default whose content differs from schema', "ALTER TABLE `AgentAuditLog` MODIFY `before` LONGTEXT NOT NULL DEFAULT 'CHANGED'"],
+    ['a literal default added to a field with no dbgenerated default', "ALTER TABLE `AgentAuditLog` MODIFY `note` TEXT NOT NULL DEFAULT ''"],
+    ['a literal-form nullability change', "ALTER TABLE `AgentAuditLog` MODIFY `before` LONGTEXT NULL DEFAULT ''"],
+    ['a literal-form type change', "ALTER TABLE `AgentAuditLog` MODIFY `before` TEXT NOT NULL DEFAULT ''"],
+    ['a literal-form non-LOB column', "ALTER TABLE `AwfAgent` MODIFY `title` VARCHAR(191) NOT NULL DEFAULT ''"],
   ];
 
   it.each(cases)('keeps %s fatal', (_label, statement) => {

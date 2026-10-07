@@ -14,11 +14,22 @@
  * MySQL stores that expression in its own normalised form. When
  * `prisma migrate diff --from-migrations --to-schema-datamodel` compares the
  * shadow database against schema.prisma, the round-tripped representation does
- * not match textually, so Prisma emits a no-op re-assertion:
+ * not match textually, so Prisma emits a no-op re-assertion.
  *
+ * That re-assertion has been observed in BOTH renderings of the same default
+ * (different tables in the very same diff output, e.g. CI drift step):
+ *
+ *     -- expression form
  *     ALTER TABLE `AgentAuditLog` MODIFY `before` LONGTEXT NOT NULL DEFAULT (_utf8mb4'');
+ *     -- literal-canonicalized form
+ *     ALTER TABLE `AwfAgent` MODIFY `description` TEXT NOT NULL DEFAULT '';
  *
- * That is the single known false positive. Everything else is real drift.
+ * Both are the same false positive: the statement re-asserts, with no other
+ * change to the column, the exact default schema.prisma itself declares via
+ * `@default(dbgenerated("(_utf8mb4'X')"))`. In the literal form the quoted
+ * content must match X byte-for-byte (SQL escapes included), so a default
+ * whose content differs from the schema declaration is still real drift.
+ * Everything else is real drift.
  *
  * WHAT THIS DOES *NOT* DO
  * -----------------------
@@ -118,10 +129,17 @@ export function classifyStatement(statement, tables) {
   if (clauses.length === 0) return { benign: false, reason: 'no clauses parsed' };
 
   for (const clause of clauses) {
-    const m = clause.match(/^MODIFY\s+`(\w+)`\s+(\w+)\s*(NOT NULL|NULL)?\s*DEFAULT\s+\((_utf8mb4'(?:[^']|'')*')\)$/i);
+    // Two renderings of the same no-op re-assertion exist (see header):
+    //   expression form:           DEFAULT (_utf8mb4'...')
+    //   literal-canonicalized form: DEFAULT '...'
+    const exprMatch = clause.match(/^MODIFY\s+`(\w+)`\s+(\w+)\s*(NOT NULL|NULL)?\s*DEFAULT\s+\((_utf8mb4'(?:[^']|'')*')\)$/i);
+    const litMatch = exprMatch
+      ? null
+      : clause.match(/^MODIFY\s+`(\w+)`\s+(\w+)\s*(NOT NULL|NULL)?\s*DEFAULT\s+'((?:[^']|'')*)'$/i);
+    const m = exprMatch ?? litMatch;
     if (!m) return { benign: false, reason: `clause is not a pure LOB expression-default re-assertion: ${clause}` };
 
-    const [, column, sqlType, nullability, expr] = m;
+    const [, column, sqlType, nullability, payload] = m;
     if (!LOB_TYPES.has(sqlType.toUpperCase())) {
       return { benign: false, reason: `\`${column}\` is ${sqlType}, not a BLOB/TEXT/JSON type` };
     }
@@ -129,7 +147,16 @@ export function classifyStatement(statement, tables) {
     const field = columns.get(column);
     if (!field) return { benign: false, reason: `column \`${table}\`.\`${column}\` not found in schema.prisma` };
 
-    const wanted = `(${expr})`;
+    // The schema declaration the re-assertion must match byte-for-byte:
+    //   expression form          -> (_utf8mb4'X')
+    //   literal-canonicalized    -> content X inside (_utf8mb4'X')
+    // Prisma's diff renderer SQL-escapes double quotes in the payload as \"
+    // (observed in CI), while parseSchema reduces the schema file's Prisma
+    // string escapes to the unescaped form — normalize the payload the same
+    // way before comparing. Any content, nullability or type difference
+    // still fails closed as real drift.
+    const normalized = payload.replace(/\\"/g, '"');
+    const wanted = exprMatch ? `(${normalized})` : `(_utf8mb4'${normalized}')`;
     if (field.dbgenerated !== wanted) {
       return {
         benign: false,

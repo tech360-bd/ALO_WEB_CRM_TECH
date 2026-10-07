@@ -175,6 +175,17 @@ by anyone. Never place a secret in one.
 login is already hard-disabled when `NODE_ENV=production`
 (`src/lib/stores/portal-store.ts`), so the variable has no production purpose.
 
+### Email transport (verified)
+
+The application's only mail sender is `src/lib/email-service.ts` (nodemailer,
+via the `smtp-mailer` npm alias). It reads **SMTP_HOST, SMTP_PORT (default
+587), SMTP_USER, SMTP_PASSWORD, SMTP_FROM**. These are optional for boot:
+without them the app starts and email sending fails explicitly with
+`SMTP_NOT_CONFIGURED` — there is no logging-only or fake-success fallback.
+
+`MAIL_*`, `IMAP_*` and `POP3_*` are **never read** (zero code references,
+destructured reads included) and must not be treated as required.
+
 ---
 
 ## 4. Database migrations
@@ -304,7 +315,7 @@ observed from the repository or from CI.
 | --- | --- | --- |
 | Production site is not passing its public health check | The scheduled `Health & Dependency Monitor` workflow, which runs `scripts/production-smoke.mjs https://aloeducation.com` from GitHub's network, has failed **every day from 2026-09-18 through 2026-10-02** (15+ consecutive runs). | Hostinger / operator |
 | Hostinger → GitHub auto-deployment unconfirmed | Not observable from the repository. | Operator |
-| Credentials in git history | Git history contains non-placeholder database password strings, and the CI secret scanner's own comment records that a real production DB password previously survived in `OPERATIONS-BOOK.md` and `documentation/CPANEL-DEPLOYMENT-GUIDE.md`. History must not be rewritten, so **those credentials must be treated as compromised and rotated.** | Operator |
+| Credentials in git history | **Verified 2026-10-02:** commit `5cc4e6b6` (2026-09-11) committed a real, non-placeholder database `DATABASE_URL` (user `user_edu`, host `127.0.0.1:3306`, db `db_education`) into `documentation/CPANEL-DEPLOYMENT-GUIDE.md`. The value was scrubbed by `05c1e1f0` (2026-09-18) but remains recoverable from public history. The current tree is clean under the full CI secret-scanner logic (re-verified 2026-10-02 over every tracked file, docs included). History must not be rewritten, so **that database password is compromised and must be rotated.** | Operator |
 
 ---
 

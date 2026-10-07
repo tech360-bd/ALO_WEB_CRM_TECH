@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { validateRecordingConsent } from "@/lib/communication/call-consent";
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +55,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `outcome must be one of: ${validOutcomes.join(", ")}` }, { status: 400 });
     }
 
+    // §144 — a recording may only be stored when consent was recorded: the
+    // boolean must be true AND the internal note must state what the caller
+    // was told. The guard also produces the machine-readable consent marker
+    // (retention/RBAC/audit line) appended to the internal note.
+    const consentCheck = validateRecordingConsent({
+      recordingPath,
+      recordingConsent: consentRecorded,
+      consentText: internalNote,
+      retentionDays: body.recordingRetentionDays,
+    });
+    if (!consentCheck.ok) {
+      return NextResponse.json({ error: consentCheck.error }, { status: 422 });
+    }
+    const effectiveInternalNote = consentCheck.noteMarker
+      ? `${internalNote ? `${internalNote}\n` : ""}${consentCheck.noteMarker}`
+      : internalNote;
+
     // If callLogId is provided, link to existing PhoneCallLog and pull duration if missing
     let resolvedCallLogId: string | null = callLogId || null;
     let resolvedDuration = typeof duration === "number" ? duration : 0;
@@ -76,7 +94,7 @@ export async function POST(req: NextRequest) {
         outcome,
         summary,
         studentVisibleNote,
-        internalNote,
+        internalNote: effectiveInternalNote,
         nextAction,
         followUpAt: followUpAt ? new Date(followUpAt) : null,
         consentRecorded: typeof consentRecorded === "boolean" ? consentRecorded : false,

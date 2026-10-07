@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
+import { deriveCountryCode } from '@/lib/access-control/object-scope';
 import {
   normalizePhoneE164 as normalizePhone,
   classifyIntent,
@@ -130,6 +131,33 @@ export async function POST(request: Request) {
             }
           }
 
+          // 4b. Contact identity registry (spec: communicate identity uses
+          // phone_normalized + country_code + external_contact_id; a new
+          // identity is created for unknown numbers — but NEVER a duplicate
+          // Student record; uncertain matches stay in the human match review).
+          const waId = value.contacts?.[0]?.wa_id || senderPhone;
+          const waNormalized = (senderPhone || '').replace(/[^0-9]/g, '');
+          await db.whatsAppContact.upsert({
+            where: { normalizedPhone: waNormalized },
+            create: {
+              phone: senderPhone,
+              normalizedPhone: waNormalized,
+              countryCode: deriveCountryCode(waNormalized),
+              externalContactId: waId,
+              displayName: value.contacts?.[0]?.profile?.name || '',
+              profileName: value.contacts?.[0]?.profile?.name || '',
+              studentId: matchedStudentId || '',
+              leadId: matchedLeadId || '',
+              source: 'WHATSAPP',
+              lastContactAt: new Date(),
+            },
+            update: {
+              lastContactAt: new Date(),
+              ...(matchedStudentId ? { studentId: matchedStudentId } : {}),
+              ...(matchedLeadId ? { leadId: matchedLeadId } : {}),
+            },
+          }).catch(() => null);
+
           // 5. Find or create thread for this phone/contact
           let thread = await db.communicationThread.findFirst({
             where: {
@@ -172,7 +200,9 @@ export async function POST(request: Request) {
               },
             });
 
-            // Create SLA event for new thread
+            // Create SLA event for new thread (§150 — precise timestamps:
+            // received + assigned at intake; first-viewed / first-response
+            // resolvedAt are recorded by the inbox and reply seams).
             await db.communicationSlaEvent.create({
               data: {
                 threadId: thread.id,
@@ -182,6 +212,7 @@ export async function POST(request: Request) {
                 priority,
                 slaMinutes,
                 receivedAt: new Date(),
+                assignedAt: assignedCounselorId ? new Date() : null,
                 slaDueAt,
                 slaStatus: 'normal',
               },
@@ -226,6 +257,10 @@ export async function POST(request: Request) {
           });
 
           // 8. Handle file/document attachments
+          // §131 Attachment Storage — file_name, file_type, file_size, sender,
+          // recipient, delivery_status are stored for EVERY attachment;
+          // student/application/document ids are filled once the counselor
+          // maps the file to a requirement slot (match review / doc upload).
           if (isFile) {
             const mediaObj = message[messageType] || {};
             await db.communicationAttachment.create({
@@ -233,12 +268,17 @@ export async function POST(request: Request) {
                 messageId: savedMsg.id,
                 threadId: thread.id,
                 studentId: matchedStudentId,
+                applicationId: '',
+                documentId: '',
                 channel: 'whatsapp',
                 direction: 'inbound',
                 providerFileId: mediaObj.id || '',
                 fileName: mediaObj.filename || `${messageType}_${Date.now()}`,
                 fileType: messageType,
                 fileSizeBytes: mediaObj.file_size || 0,
+                senderContact: senderPhone,
+                recipientContact: value.metadata?.display_phone_number || value.metadata?.phone_number_id || '',
+                deliveryStatus: 'delivered',
                 matchReviewRequired: true, // Counselor must confirm which doc slot
                 whatsappMsgRef: providerMsgId,
               },

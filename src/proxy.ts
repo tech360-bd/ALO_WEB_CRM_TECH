@@ -146,6 +146,12 @@ const PUBLIC_API_WRITE_ROUTES = [
   "/api/language-prep/leads",
   "/api/referrals/track",
   "/api/website/search-log",
+  // Public consultation booking (homepage consultation form and public
+  // consultation pages POST here). The route implements the documented
+  // public 10-step consultation workflow with 30-day duplicate suppression;
+  // staff-facing GET/PUT on the same path stay behind the route handler's
+  // own withAuth checks.
+  "/api/website/lead",
 ];
 
 const SENSITIVE_API_ROUTES: Record<string, string[]> = {
