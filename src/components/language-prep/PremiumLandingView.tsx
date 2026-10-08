@@ -175,21 +175,15 @@ export default function PremiumLanguagePrepLandingView() {
               </p>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <a href="#book-counselling">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm">
+                <Button asChild className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
                     Book Free Counselling <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </a>
-                <a href="#test-discovery">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white">
+                  </a></Button>
+                <Button asChild variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white"><a href="#test-discovery">
                     Find Your English Test
-                  </Button>
-                </a>
-                <a href="#assessment">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white">
+                  </a></Button>
+                <Button asChild variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white"><a href="#assessment">
                     Take Free Assessment
-                  </Button>
-                </a>
+                  </a></Button>
               </div>
 
               {/* Hero Quick Actions */}
@@ -409,12 +403,8 @@ export default function PremiumLanguagePrepLandingView() {
                   </div>
 
                   <div className="mt-5 flex gap-2">
-                    <a href={`/language-prep/${recommended.primary?.slug}`} className="flex-1">
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">Explore {recommended.primary?.name} →</Button>
-                    </a>
-                    <a href="#book-counselling">
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] bg-white font-semibold h-11 rounded-xl text-xs">Book Counselling</Button>
-                    </a>
+                    <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs"><a href={`/language-prep/${recommended.primary?.slug}`} className="flex-1">Explore {recommended.primary?.name} →</a></Button>
+                    <Button asChild variant="outline" className="border-[#E2E8F0] bg-white font-semibold h-11 rounded-xl text-xs"><a href="#book-counselling">Book Counselling</a></Button>
                   </div>
 
                   <p className="text-[10px] text-slate-500 mt-3 leading-relaxed">Next: {recommended.next} — Acceptance varies by university, course and visa route. Check official provider information.</p>
@@ -557,9 +547,7 @@ export default function PremiumLanguagePrepLandingView() {
                 <AlertCircle className="w-3.5 h-3.5" /> MOI Guidance is guidance resource, not incorrectly represented as English proficiency test. Do not hardcode price/result time unless verified — Check current provider information.
               </p>
             </div>
-            <a href="/language-prep/comparison">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] font-semibold text-sm h-11 rounded-xl">Compare All Tests →</Button>
-            </a>
+            <Button asChild variant="outline" className="bg-white border-[#E2E8F0] font-semibold text-sm h-11 rounded-xl"><a href="/language-prep/comparison">Compare All Tests →</a></Button>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -612,12 +600,8 @@ export default function PremiumLanguagePrepLandingView() {
                 </div>
 
                 <div className="mt-5 pt-4 border-t border-[#E2E8F0] flex gap-2">
-                  <a href={`/language-prep/${t.slug}`} className="flex-1">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-10 rounded-xl text-xs">Learn More</Button>
-                  </a>
-                  <a href={`/language-prep/comparison?tests=${t.slug}`}>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] font-semibold h-10 rounded-xl text-xs px-3">Compare</Button>
-                  </a>
+                  <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-10 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
+                  <Button asChild variant="outline" className="bg-white border-[#E2E8F0] font-semibold h-10 rounded-xl text-xs px-3"><a href={`/language-prep/comparison?tests=${t.slug}`}>Compare</a></Button>
                 </div>
 
                 <p className="text-[9px] text-slate-400 mt-2 text-center">Source: {t.sourceName} • Verified: {t.lastVerifiedAt || 'Check official'} • Acceptance varies</p>
@@ -683,9 +667,7 @@ export default function PremiumLanguagePrepLandingView() {
           </div>
 
           <div className="text-center mt-8">
-            <a href="/language-prep/comparison">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold h-11 rounded-xl shadow-sm">View Full Comparison →</Button>
-            </a>
+            <Button asChild className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold h-11 rounded-xl shadow-sm"><a href="/language-prep/comparison">View Full Comparison →</a></Button>
           </div>
         </div>
       </section>
@@ -809,8 +791,8 @@ export default function PremiumLanguagePrepLandingView() {
                     </div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <a href="/course-finder" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
-                    <a href="#book-counselling"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Book Counselling</Button></a>
+                    <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs"><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
+                    <Button asChild variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs"><a href="#book-counselling">Book Counselling</a></Button>
                   </div>
                 </Card>
               )}
@@ -981,17 +963,11 @@ export default function PremiumLanguagePrepLandingView() {
                 Tell us your destination, university and study plan. Our team can help you understand the relevant English requirement and preparation route.
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <a href="#book-counselling">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-8 rounded-xl shadow-lg">Book Free Counselling →</Button>
-                </a>
-                <a href="#test-discovery">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl">Find My Test</Button>
-                </a>
-                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2">
+                <Button asChild className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counselling">Book Free Counselling →</a></Button>
+                <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl"><a href="#test-discovery">Find My Test</a></Button>
+                <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
                     <MessageSquare className="w-4 h-4" /> Chat with Counselor
-                  </Button>
-                </a>
+                  </a></Button>
               </div>
               <div className="flex flex-wrap justify-center gap-6 pt-6 text-xs text-blue-200 border-t border-white/20">
                 <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> WhatsApp: +880 180 502 0101</span>

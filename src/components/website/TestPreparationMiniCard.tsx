@@ -46,11 +46,9 @@ export function TestPreparationMiniCard({
           Find the right test for your university and destination. Acceptance varies by university, course and visa route.
         </p>
 
-        <a href="/language-prep" className="block w-full">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-white border border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white font-bold h-11 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
+        <Button asChild className="w-full bg-white border border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white font-bold h-11 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all"><a href="/language-prep" className="block w-full">
             View All Test Prep <ArrowRight className="w-3.5 h-3.5" />
-          </Button>
-        </a>
+          </a></Button>
       </Card>
     );
   }
@@ -98,11 +96,9 @@ export function TestPreparationMiniCard({
         <span className="text-[10px] font-semibold bg-blue-50 text-[#2563EB] border border-blue-100 px-2.5 py-1 rounded-full">TOEFL</span>
       </div>
 
-      <a href="/language-prep" className="block w-full">
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold h-11 rounded-xl flex items-center justify-center gap-1.5 shadow-sm">
+      <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold h-11 rounded-xl flex items-center justify-center gap-1.5 shadow-sm"><a href="/language-prep" className="block w-full">
           View All Test Prep <ArrowRight className="h-3.5 w-3.5" />
-        </Button>
-      </a>
+        </a></Button>
 
       <p className="text-[9px] text-slate-400 text-center mt-2.5">White card • Blue accent • Premium design • Route: /language-prep</p>
     </Card>

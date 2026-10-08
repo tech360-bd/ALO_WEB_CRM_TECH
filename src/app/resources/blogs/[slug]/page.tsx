@@ -185,11 +185,9 @@ export default async function BlogDetailPage({
                 <p className="text-xs text-blue-100 mb-4 leading-relaxed">
                   Book a 1-on-1 session with ALO Education's senior study abroad advisors to evaluate your admission & visa profile.
                 </p>
-                <a href="/eligibility-check" className="block w-full">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs py-3 rounded-xl shadow-md">
+                <Button asChild className="w-full bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs py-3 rounded-xl shadow-md"><a href="/eligibility-check" className="block w-full">
                     Check Eligibility Free →
-                  </Button>
-                </a>
+                  </a></Button>
               </Card>
 
               {/* TAGS */}

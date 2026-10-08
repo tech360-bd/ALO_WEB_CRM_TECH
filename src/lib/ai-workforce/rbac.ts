@@ -50,13 +50,13 @@ const ROLE_CAPABILITIES: Record<AloRole, AwfCapability[]> = {
     'awf.agent.read', 'awf.agent.create', 'awf.agent.edit', 'awf.agent.validate', 'awf.agent.test',
     'awf.agent.approve', 'awf.agent.deploy', 'awf.agent.rollback', 'awf.agent.disable',
     'awf.tool.read', 'awf.tool.grant', 'awf.skill.read', 'awf.workflow.read', 'awf.workflow.manage',
-    'awf.workflow.trigger', 'awf.run.read.all', 'awf.run.execute', 'awf.run.simulate',
+    'awf.workflow.trigger', 'awf.run.read.all', 'awf.run.read.own', 'awf.run.execute', 'awf.run.simulate',
     'awf.approval.read', 'awf.approval.decide', 'awf.memory.read', 'awf.memory.write',
     'awf.dashboard.read', 'awf.health.read', 'awf.audit.read', 'awf.knowledge.manage',
   ],
   MANAGER: [
     'awf.agent.read', 'awf.tool.read', 'awf.skill.read', 'awf.workflow.read', 'awf.workflow.trigger',
-    'awf.run.read.all', 'awf.run.execute', 'awf.run.simulate', 'awf.approval.read', 'awf.approval.decide',
+    'awf.run.read.all', 'awf.run.read.own', 'awf.run.execute', 'awf.run.simulate', 'awf.approval.read', 'awf.approval.decide',
     'awf.memory.read', 'awf.dashboard.read', 'awf.health.read',
   ],
   COUNSELOR: [

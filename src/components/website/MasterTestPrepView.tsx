@@ -116,16 +116,12 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-2">
-                  <a href="#crm-lead-form">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-sm px-7 py-3.5 shadow-lg rounded-xl">
+                  <Button asChild className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-sm px-7 py-3.5 shadow-lg rounded-xl"><a href="#crm-lead-form">
                       Book Free Counseling
-                    </Button>
-                  </a>
-                  <a href="#crm-lead-form">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm px-6 py-3.5 rounded-xl">
+                    </a></Button>
+                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm px-6 py-3.5 rounded-xl"><a href="#crm-lead-form">
                       Take Free Assessment
-                    </Button>
-                  </a>
+                    </a></Button>
                 </div>
 
                 {/* COUNTRY BADGES */}
@@ -156,11 +152,9 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                     ))}
                   </div>
                   <div className="mt-6 pt-4 border-t border-slate-100">
-                    <a href="#crm-lead-form">
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] font-bold text-xs py-3 rounded-xl">
+                    <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] font-bold text-xs py-3 rounded-xl"><a href="#crm-lead-form">
                         Connect with Score Planner →
-                      </Button>
-                    </a>
+                      </a></Button>
                   </div>
                 </Card>
               </div>

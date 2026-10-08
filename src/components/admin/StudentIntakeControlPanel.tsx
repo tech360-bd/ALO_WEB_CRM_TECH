@@ -75,7 +75,7 @@ export default function StudentIntakeControlPanel() {
         <div className="flex gap-2">
           <Link href="/super-admin/dashboard"><Button variant="outline" className="h-8 text-[11px] border-[#E2E8F0]">Super-Admin Dashboard</Button></Link>
           <Link href="/admin/ai-command-center"><Button variant="outline" className="h-8 text-[11px] border-[#E2E8F0]">AI Command Center</Button></Link>
-          <a href="/admin/document-security"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="h-8 text-[11px] border-[#E2E8F0]">Auto-create Docs</Button></a>
+          <Button asChild variant="outline" className="h-8 text-[11px] border-[#E2E8F0]"><a href="/admin/document-security">Document Security</a></Button>
         </div>
       </CardContent>
     </Card>

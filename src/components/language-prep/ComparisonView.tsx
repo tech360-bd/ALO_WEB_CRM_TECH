@@ -141,7 +141,7 @@ export default function ComparisonView() {
                     <div className="col-span-2"><span className="text-slate-500 block">Best For</span><span className="font-medium">{t.bestFor}</span></div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <a href={`/language-prep/${t.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs">Learn More</Button></a>
+                    <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
                     <a href={t.officialUrl} target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-9 rounded-xl text-xs">Official ↗</Button></a>
                   </div>
                 </Card>

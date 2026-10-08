@@ -557,7 +557,10 @@ export async function seedAiWorkforce(actor: ActorContext, options: { runTests?:
         continue;
       }
     } else {
-      await db.awfAgentVersion.update({ where: { id: version.id }, data: { state: 'TESTED' } });
+      // Installation without tests may create/validate a version, but cannot
+      // claim it was tested or move it through approval into production.
+      failures.push({ agent: seed.slug, stage: 'TEST', detail: 'Tests were skipped; version remains validated and was not deployed.' });
+      continue;
     }
 
     try {
