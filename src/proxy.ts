@@ -65,6 +65,9 @@ const PUBLIC_ROUTES = [
   "/employee/activate",
   "/admin/login",
   "/portal/login",
+  // Offline fallback page. The service worker precaches it, so it must be
+  // reachable without a session or the PWA offline shell cannot be cached.
+  "/offline",
   "/account-suspended",
   "/account-pending",
   "/unauthorized",

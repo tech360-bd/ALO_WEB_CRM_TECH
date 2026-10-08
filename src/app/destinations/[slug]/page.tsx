@@ -15,16 +15,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!country) {
     return {
       title: 'Destination Guide | ALO Education Bangladesh',
-      description: 'Explore study abroad destinations with ALO Education — premium, DB-driven, country-specific, verified.',
+      description: 'Explore study abroad destinations with ALO Education: country-specific courses, universities, visa guidance and scholarships.',
     };
   }
 
   return {
     title: country.seoTitle,
-    description: country.seoDescription + ' Premium 10x country page system — white background #FFFFFF, no dark overlay, country-specific courses/universities/visa rules/work rights/post-study/entry requirements/scholarships/cities/FAQs — DB-driven, verified, actionable.',
+    description: country.seoDescription + ' Courses, universities, visa guidance, work rights, scholarships and FAQs for this destination, with sources shown.',
     alternates: { canonical: country.canonicalUrl },
     openGraph: {
-      title: country.name + ' Study Guide — Premium 10x',
+      title: country.name + ' Study Guide',
       description: country.seoDescription,
       url: country.canonicalUrl,
       type: 'website',

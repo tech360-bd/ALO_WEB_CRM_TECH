@@ -13,6 +13,9 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
+import { submitLanguagePrepLead } from '@/lib/language-prep/submit-lead';
+import { EnglishExamCard } from '@/components/website/EnglishExamCta';
+import { isEnglishProficiencyTestSlug } from '@/lib/english-exam';
 
 interface TestDetailProps {
   slug: string;
@@ -73,28 +76,24 @@ export default function TestDetailView({ slug }: TestDetailProps) {
       toast.error('Name and phone required');
       return;
     }
-    try {
-      await fetch('/api/language-prep/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: leadForm.name,
-          phone: leadForm.phone,
-          email: leadForm.email,
-          countryName: leadForm.targetCountry,
-          testName: test?.name || slug,
-          testId: test?.id || '',
-          currentScore: leadForm.currentScore || scorePlanner.current,
-          targetScore: leadForm.targetScore || scorePlanner.target || test?.scoringSystem,
-          source: 'language_prep',
-          sourceSection: `${slug}_${section}`,
-          notes: `Test detail lead for ${test?.name} — Current: ${leadForm.currentScore}, Target: ${leadForm.targetScore}`,
-        }),
-      });
+    const result = await submitLanguagePrepLead({
+      name: leadForm.name,
+      phone: leadForm.phone,
+      email: leadForm.email,
+      countryName: leadForm.targetCountry,
+      testName: test?.name || slug,
+      testId: test?.id || '',
+      currentScore: leadForm.currentScore || scorePlanner.current,
+      targetScore: leadForm.targetScore || scorePlanner.target || test?.scoringSystem,
+      source: 'language_prep',
+      sourceSection: `${slug}_${section}`,
+      notes: `Test detail lead for ${test?.name} — Current: ${leadForm.currentScore}, Target: ${leadForm.targetScore}`,
+    });
+    if (result.ok) {
       toast.success('Counselling booked! Our team will contact you.');
       setLeadForm({ name: '', phone: '', email: '', targetCountry: 'UK', currentScore: '', targetScore: '' });
-    } catch {
-      toast.success('Request received!');
+    } else {
+      toast.error(result.message);
     }
   };
 
@@ -103,7 +102,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-slate-600">Loading {slug} preparation guide — database-driven...</p>
+          <p className="text-sm text-slate-600">Loading preparation guide…</p>
         </div>
       </div>
     );
@@ -116,7 +115,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
           <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
           <h2 className="font-bold text-lg text-[#0F172A]">Test not found</h2>
           <p className="text-sm text-slate-600 mt-2">The test "{slug}" is not available. Check /language-prep for available tests.</p>
-          <a href="/language-prep" className="mt-4 inline-block"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl">View All Test Prep →</Button></a>
+          <Button asChild className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl"><a href="/language-prep" className="mt-4 inline-block">View All Test Prep →</a></Button>
         </Card>
       </div>
     );
@@ -172,16 +171,12 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               )}
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <a href="#book-counselling">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm">
+                <Button asChild className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
                     Book Free {test.shortName} Counselling <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </a>
-                <a href="#assessment">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl">
+                  </a></Button>
+                <Button asChild variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl"><a href="#assessment">
                     Start {test.shortName} Assessment
-                  </Button>
-                </a>
+                  </a></Button>
               </div>
 
               <p className="text-[11px] text-slate-500 leading-relaxed max-w-2xl">
@@ -215,11 +210,9 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   <p className="text-[10px] text-amber-700 mt-2 p-2 rounded-lg bg-amber-50 border border-amber-100">Acceptance varies by university, course and visa route. Check university-specific acceptance.</p>
                 </div>
 
-                <a href={test.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-5 block">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full bg-white border-[#E2E8F0] font-semibold h-11 rounded-xl text-xs">
+                <Button asChild variant="outline" className="w-full bg-white border-[#E2E8F0] font-semibold h-11 rounded-xl text-xs"><a href={test.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-5 block">
                     Official Provider: {test.provider} ↗
-                  </Button>
-                </a>
+                  </a></Button>
               </Card>
             </div>
           </div>
@@ -324,7 +317,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     : `Overall score and component scores explained. How scoring works: ${test.scoringSystem}. For ${test.name}, ${test.scoringSystem === 'Band 0-9 (0.5 increments)' ? 'each module scored 0-9, overall average of four modules rounded to nearest 0.5.' : 'check official provider guidance for detailed scoring methodology.'}`}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-3 p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                  Source: {test.sourceName} — <a href={test.sourceUrl} target="_blank" className="text-[#2563EB] hover:underline">{test.sourceUrl}</a> — If official scoring data stored, use database, otherwise See official test provider guidance.
+                  Source: {test.sourceName} — <a href={test.sourceUrl} target="_blank" className="text-[#2563EB] hover:underline">{test.sourceUrl}</a>
                 </p>
               </Card>
             </section>
@@ -364,8 +357,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </div>
                 <p className="text-xs text-slate-600">Requirement not available in database. Check university course page. — System retrieves English test, Minimum overall, Minimum component scores, Waiver availability, Remarks, Source URL, Last verified — Only if actual course data exists.</p>
                 <div className="mt-4 flex gap-2">
-                  <a href="/course-finder" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
-                  <a href={`/language-prep/comparison?tests=${test.slug}`}><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Compare Tests</Button></a>
+                  <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs"><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
+                  <Button asChild variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs"><a href={`/language-prep/comparison?tests=${test.slug}`}>Compare Tests</a></Button>
                 </div>
               </Card>
             </section>
@@ -395,7 +388,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   { step: '02', title: 'Target Score', desc: 'Set realistic target based on course requirement' },
                   { step: '03', title: 'Study Plan', desc: 'Custom plan with daily milestones and materials' },
                   { step: '04', title: 'Module Training', desc: `Intensive training on ${test.name} modules and question types` },
-                  { step: '05', title: 'Mock Tests', desc: 'Timed mocks under exam conditions with progress tracking' },
+                  { step: '05', title: 'Practice Tests', desc: 'Practise the format and timing before the real exam' },
                   { step: '06', title: 'Feedback', desc: 'Expert feedback on writing and speaking with improvement plan' },
                   { step: '07', title: 'Final Assessment', desc: 'Final validation of readiness for target score' },
                   { step: '08', title: 'Exam Readiness', desc: 'Booking guidance, exam day tips and university requirement check' },
@@ -419,7 +412,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   { title: 'Free Initial Assessment', desc: 'Diagnostic test to evaluate baseline' },
                   { title: 'Target Band Planning', desc: `Set realistic ${test.shortName} target based on course` },
                   ...modules.slice(0, 4).map((m: any) => ({ title: `${m.moduleName} Preparation`, desc: m.preparationTips?.slice(0,80) || `Focused ${m.moduleName} strategy` })),
-                  { title: 'Mock Tests', desc: 'Exam readiness under timed conditions' },
+                  { title: 'Practice Tests', desc: 'Get familiar with the format and timing' },
                   { title: 'Exam Readiness', desc: 'Final validation and booking guidance' },
                   { title: 'University Requirement Guidance', desc: 'Check requirements before booking your test' },
                 ].slice(0,9).map((c: any, i: number) => (
@@ -483,7 +476,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   {['ielts','pte-academic','toefl-ibt','duolingo'].filter(s => s !== test.slug).slice(0,3).map(s => (
                     <a key={s} href={`/language-prep/${s}`} className="px-3 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-xs font-semibold hover:border-[#2563EB]">{s.toUpperCase()}</a>
                   ))}
-                  <a href="/language-prep/comparison"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs">Compare English Tests →</Button></a>
+                  <Button asChild className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs"><a href="/language-prep/comparison">Compare English Tests →</a></Button>
                 </div>
               </Card>
             </section>
@@ -491,7 +484,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
             {/* Success Stories */}
             <section>
               <h2 className="text-2xl font-extrabold text-[#0F172A] mb-2">Student Success Stories — {test.name}</h2>
-              <p className="text-xs text-slate-500 mb-4">Only approved real records with consent_status=approved and status=published — Never fabricate scores</p>
+              <p className="text-xs text-slate-500 mb-4">Student stories appear here once they are approved for publication.</p>
               {successStories.length === 0 ? (
                 <Card className="p-8 bg-[#F8FAFC] border border-dashed border-[#E2E8F0] rounded-3xl text-center">
                   <Trophy className="w-8 h-8 text-slate-300 mx-auto mb-2" />
@@ -557,8 +550,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </form>
 
                 <div className="flex flex-wrap justify-center gap-3 mt-6">
-                  <a href="/language-prep#test-discovery"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm">Find My Test</Button></a>
-                  <a href="https://wa.me/8801805020101" target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm flex items-center gap-2"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</Button></a>
+                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm"><a href="/language-prep#test-discovery">Find My Test</a></Button>
+                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</a></Button>
                 </div>
 
                 <p className="text-[11px] text-blue-200 text-center mt-6">Email: info@aloeducation.com • Lead stored with source language_prep and source_section {slug}_final_cta • Do not create duplicate leads unnecessarily</p>
@@ -584,18 +577,14 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     </a>
                   ))}
                 </div>
-                <a href="/language-prep" className="block">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">View All Test Prep →</Button>
-                </a>
+                <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs"><a href="/language-prep" className="block">View All Test Prep →</a></Button>
               </Card>
 
               {/* Need Help widget */}
               <Card className="p-5 bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white border-0 shadow-lg rounded-2xl">
                 <h4 className="text-sm font-bold mb-2">Need Help?</h4>
                 <p className="text-xs text-blue-100 leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
-                <a href="#book-counselling">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] hover:bg-[#d14315] text-white font-bold h-11 rounded-xl text-xs">Book Free Counselling →</Button>
-                </a>
+                <Button asChild className="w-full bg-[#F97316] hover:bg-[#d14315] text-white font-bold h-11 rounded-xl text-xs"><a href="#book-counselling">Book Free Counselling →</a></Button>
                 <p className="text-[10px] text-blue-200 mt-3">WhatsApp: +880 180 502 0101 • Email: info@aloeducation.com</p>
               </Card>
 
@@ -613,29 +602,27 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </div>
               </Card>
 
-              {/* Practice Tools sidebar */}
+              {/* Preparation links. The real-exam CTA is shown only for English-proficiency tests. */}
               <Card className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
-                <h4 className="font-bold text-sm text-[#0F172A] mb-3">Practice Tools</h4>
+                <h4 className="font-bold text-sm text-[#0F172A] mb-3">Preparation</h4>
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <a href={`/language-prep/${test.slug}#mock`} className="p-2.5 rounded-xl bg-blue-50 border border-blue-100 text-[#2563EB] font-semibold text-center hover:bg-blue-100 transition">Mock Test</a>
-                  <a href="#book-counselling" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Speaking</a>
-                  <a href="#book-counselling" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Writing</a>
-                  <a href="/language-prep#test-discovery" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Assessment</a>
+                  <a href="/language-prep/comparison" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Compare tests</a>
+                  <a href="/language-prep#test-discovery" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Find your test</a>
+                  <a href="#book-counselling" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Speaking &amp; writing help</a>
+                  <a href="/book-consultation" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Book counselling</a>
                 </div>
-                <p className="text-[10px] text-slate-500 mt-3">If tool not implemented: Coming Soon or connect to existing implementation</p>
               </Card>
+              {isEnglishProficiencyTestSlug(slug) && <EnglishExamCard location="language_prep_detail" testName={test.name} />}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer verification note */}
+      {/* Footer note */}
       <section className="py-8 bg-[#F8FAFC] border-t border-[#E2E8F0]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-[11px] text-slate-500 leading-relaxed max-w-4xl mx-auto">
-            Every factual test information supports source_url, source_name, last_verified_at, verified_by, verification_status. If not verified: Check official provider information. 
-            Acceptance varies by university, course and visa route. Visa or immigration requirements vary by country and route. 
-            {isMoi ? 'MOI Guidance is guidance resource, not incorrectly represented as English proficiency test.' : `No fake ${test.name} scores or acceptance claims.`} No fake testimonials, pricing, result timelines, requirements, scholarships.
+            Test information is taken from official provider sources where available. Acceptance varies by university, course and visa route. Check the official provider for the latest details.{isMoi ? ' MOI is a guidance resource, not an English proficiency test.' : ''}
           </p>
         </div>
       </section>

@@ -15,6 +15,8 @@ import {
 import { toast } from 'sonner';
 import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
+import { submitLanguagePrepLead } from '@/lib/language-prep/submit-lead';
+import { PrepVsExamSplit } from '@/components/website/EnglishExamCta';
 
 // Premium Language Prep Landing — White-first, no dark overlay, excellent typography
 
@@ -90,29 +92,24 @@ export default function PremiumLanguagePrepLandingView() {
       return;
     }
     setSubmitting(true);
-    try {
-      await fetch('/api/language-prep/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: leadForm.name,
-          phone: leadForm.phone,
-          email: leadForm.email,
-          countryName: leadForm.destination,
-          testName: leadForm.test,
-          targetScore: leadForm.targetScore,
-          currentLevel: leadForm.currentLevel,
-          source: 'language_prep',
-          sourceSection,
-          notes: `Landing lead — Destination: ${leadForm.destination}, Current: ${leadForm.currentLevel}`,
-        }),
-      });
+    const result = await submitLanguagePrepLead({
+      name: leadForm.name,
+      phone: leadForm.phone,
+      email: leadForm.email,
+      countryName: leadForm.destination,
+      testName: leadForm.test,
+      targetScore: leadForm.targetScore,
+      currentLevel: leadForm.currentLevel,
+      source: 'language_prep',
+      sourceSection,
+      notes: `Landing lead — Destination: ${leadForm.destination}, Current: ${leadForm.currentLevel}`,
+    });
+    setSubmitting(false);
+    if (result.ok) {
       toast.success('Consultation booked! Our counselor will contact you shortly.');
       setLeadForm({ name: '', phone: '', email: '', test: 'IELTS', targetScore: '7.0', destination: 'UK', currentLevel: 'Intermediate' });
-    } catch {
-      toast.success('Request received!');
-    } finally {
-      setSubmitting(false);
+    } else {
+      toast.error(result.message);
     }
   };
 
@@ -122,7 +119,7 @@ export default function PremiumLanguagePrepLandingView() {
     { q: 'Which test is suitable for my destination?', a: 'UK: IELTS Academic / IELTS UKVI / PTE Academic / PTE UKVI / Oxford ELLT / LanguageCert SELT. Australia: PTE Academic, IELTS Academic. USA: TOEFL iBT, Duolingo, IELTS. Canada: IELTS, PTE, TOEFL. Ireland: IELTS, Duolingo, PTE. New Zealand: IELTS, PTE. Dubai/UAE: IELTS, TOEFL, PTE. Europe: IELTS, TOEFL, PTE. Acceptance varies by university, course and visa route.' },
     { q: 'How long does preparation take?', a: 'Depends on current level and target: Band 5.0→6.0: 6-8 weeks (10-15 hrs/week), 6.0→6.5: 4-8 weeks, 6.5→7.0: 8-12 weeks, 7.0→7.5: 12+ weeks. PTE similar: 50→58: 4-6 weeks, 58→65: 6-8 weeks. ALO free assessment sets realistic timeline.' },
     { q: 'How does ALO help me prepare?', a: 'ALO provides free initial assessment, target score planning based on course requirement, structured study materials, timed mock tests under exam conditions, writing feedback, speaking practice with certified coaches, score strategy focusing on weakest modules, and university-specific requirement guidance. Book free counselling.' },
-    { q: 'Can I practice with mock tests?', a: 'Yes, ALO offers mock tests under exam-style conditions. If a tool is not yet implemented, it shows as Coming Soon and connects to existing implementation. Check Practice Tools section for available mocks.' },
+    { q: 'Can I practice with mock tests?', a: 'The preparation guides on this site explain each test\u2019s format, timing and scoring. To sit a real English test, use the "Take the English Test" link on this page. It opens the English Test Platform.' },
     { q: 'Can I compare English tests?', a: 'Yes, use our Test Comparison table to compare duration, format, scoring, typical result timeline, acceptance, best for and preparation style. Desktop shows full table, mobile scrollable cards.' },
     { q: 'Can I speak with a counselor?', a: 'Yes, book free counselling via hero CTA, final CTA, or side widgets. Our team helps understand relevant English requirement and preparation route. WhatsApp +880 180 502 0101, Email info@aloeducation.com. Lead stored with source language_prep and source_section.' },
     { q: 'What is IELTS for UKVI?', a: 'IELTS for UKVI is a Secure English Language Test (SELT) approved by UKVI. Content, format and scoring identical to standard IELTS but delivered under UKVI security with video recording and UKVI reference number. Required for certain UK visa routes like Foundation and below-degree. Check UKVI guidance.' },
@@ -175,21 +172,15 @@ export default function PremiumLanguagePrepLandingView() {
               </p>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <a href="#book-counselling">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm">
+                <Button asChild className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
                     Book Free Counselling <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </a>
-                <a href="#test-discovery">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white">
+                  </a></Button>
+                <Button asChild variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white"><a href="#test-discovery">
                     Find Your English Test
-                  </Button>
-                </a>
-                <a href="#assessment">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white">
+                  </a></Button>
+                <Button asChild variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white"><a href="#test-discovery">
                     Take Free Assessment
-                  </Button>
-                </a>
+                  </a></Button>
               </div>
 
               {/* Hero Quick Actions */}
@@ -239,9 +230,9 @@ export default function PremiumLanguagePrepLandingView() {
                     <p className="text-[11px] text-slate-500">Weakest: Writing</p>
                   </div>
                   <div className="p-3.5 rounded-2xl bg-orange-50 border border-orange-100">
-                    <p className="text-[10px] uppercase font-bold text-orange-700 tracking-wider">Mock Tests</p>
-                    <p className="text-lg font-extrabold text-[#F97316] mt-1">3 Completed</p>
-                    <p className="text-[11px] text-orange-700">Next: Sat 10 AM</p>
+                    <p className="text-[10px] uppercase font-bold text-orange-700 tracking-wider">Practice</p>
+                    <p className="text-lg font-extrabold text-[#F97316] mt-1">Guides</p>
+                    <p className="text-[11px] text-orange-700">Choose your test</p>
                   </div>
                 </div>
 
@@ -307,6 +298,18 @@ export default function PremiumLanguagePrepLandingView() {
               </Card>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ============ 1b. PREPARATION vs REAL EXAM — clearly separated ============ */}
+      <section className="bg-white px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <PrepVsExamSplit
+            location="language_prep_hub"
+            prepHref="#test-discovery"
+            prepTitle="Prepare with ALO Education"
+            prepCta="Find the right test"
+          />
         </div>
       </section>
 
@@ -409,12 +412,8 @@ export default function PremiumLanguagePrepLandingView() {
                   </div>
 
                   <div className="mt-5 flex gap-2">
-                    <a href={`/language-prep/${recommended.primary?.slug}`} className="flex-1">
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">Explore {recommended.primary?.name} →</Button>
-                    </a>
-                    <a href="#book-counselling">
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] bg-white font-semibold h-11 rounded-xl text-xs">Book Counselling</Button>
-                    </a>
+                    <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs"><a href={`/language-prep/${recommended.primary?.slug}`} className="flex-1">Explore {recommended.primary?.name} →</a></Button>
+                    <Button asChild variant="outline" className="border-[#E2E8F0] bg-white font-semibold h-11 rounded-xl text-xs"><a href="#book-counselling">Book Counselling</a></Button>
                   </div>
 
                   <p className="text-[10px] text-slate-500 mt-3 leading-relaxed">Next: {recommended.next} — Acceptance varies by university, course and visa route. Check official provider information.</p>
@@ -557,9 +556,7 @@ export default function PremiumLanguagePrepLandingView() {
                 <AlertCircle className="w-3.5 h-3.5" /> MOI Guidance is guidance resource, not incorrectly represented as English proficiency test. Do not hardcode price/result time unless verified — Check current provider information.
               </p>
             </div>
-            <a href="/language-prep/comparison">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] font-semibold text-sm h-11 rounded-xl">Compare All Tests →</Button>
-            </a>
+            <Button asChild variant="outline" className="bg-white border-[#E2E8F0] font-semibold text-sm h-11 rounded-xl"><a href="/language-prep/comparison">Compare All Tests →</a></Button>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -612,12 +609,8 @@ export default function PremiumLanguagePrepLandingView() {
                 </div>
 
                 <div className="mt-5 pt-4 border-t border-[#E2E8F0] flex gap-2">
-                  <a href={`/language-prep/${t.slug}`} className="flex-1">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-10 rounded-xl text-xs">Learn More</Button>
-                  </a>
-                  <a href={`/language-prep/comparison?tests=${t.slug}`}>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] font-semibold h-10 rounded-xl text-xs px-3">Compare</Button>
-                  </a>
+                  <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-10 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
+                  <Button asChild variant="outline" className="bg-white border-[#E2E8F0] font-semibold h-10 rounded-xl text-xs px-3"><a href={`/language-prep/comparison?tests=${t.slug}`}>Compare</a></Button>
                 </div>
 
                 <p className="text-[9px] text-slate-400 mt-2 text-center">Source: {t.sourceName} • Verified: {t.lastVerifiedAt || 'Check official'} • Acceptance varies</p>
@@ -632,7 +625,7 @@ export default function PremiumLanguagePrepLandingView() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
             <h2 className="text-3xl font-extrabold text-[#0F172A]">Compare English Tests</h2>
-            <p className="text-sm text-slate-600 mt-2">Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats. No fake data.</p>
+            <p className="text-sm text-slate-600 mt-2">Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats.</p>
           </div>
 
           {/* Desktop table */}
@@ -683,9 +676,7 @@ export default function PremiumLanguagePrepLandingView() {
           </div>
 
           <div className="text-center mt-8">
-            <a href="/language-prep/comparison">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold h-11 rounded-xl shadow-sm">View Full Comparison →</Button>
-            </a>
+            <Button asChild className="bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold h-11 rounded-xl shadow-sm"><a href="/language-prep/comparison">View Full Comparison →</a></Button>
           </div>
         </div>
       </section>
@@ -734,7 +725,7 @@ export default function PremiumLanguagePrepLandingView() {
             </div>
 
             <p className="text-[11px] text-slate-500 mt-6 p-3 rounded-xl bg-amber-50 border border-amber-100">
-              Acceptance varies by university, course and visa route. For UK, check SELT requirements. For Australia/Canada, check DHA/IRCC guidance. Always verify via source_url and last_verified_at. MOI Guidance is guidance resource, not a test.
+              Acceptance varies by university, course and visa route. For UK, check SELT requirements. For Australia/Canada, check DHA/IRCC guidance. Always check the official source for the latest information. MOI is a guidance resource, not an English test.
             </p>
           </Card>
         </div>
@@ -789,7 +780,7 @@ export default function PremiumLanguagePrepLandingView() {
                     <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="text-sm font-bold text-amber-900">Requirement not available in database. Check university course page.</p>
-                      <p className="text-xs text-amber-800 mt-2">We do not invent requirements. Please check official course page for verified English test, minimum overall, component scores, waiver and remarks.</p>
+                      <p className="text-xs text-amber-800 mt-2">Requirements change often. Check the official course page for the current English test and minimum scores.</p>
                       <p className="text-[11px] text-amber-700 mt-3">Acceptance varies by university, course and visa route. Source verification required.</p>
                     </div>
                   </div>
@@ -809,8 +800,8 @@ export default function PremiumLanguagePrepLandingView() {
                     </div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <a href="/course-finder" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
-                    <a href="#book-counselling"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Book Counselling</Button></a>
+                    <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs"><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
+                    <Button asChild variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs"><a href="#book-counselling">Book Counselling</a></Button>
                   </div>
                 </Card>
               )}
@@ -837,7 +828,7 @@ export default function PremiumLanguagePrepLandingView() {
                 { step: '03', title: 'Diagnostic Test', desc: 'Detailed diagnostic review identifying specific weaknesses in writing task response, reading True/False/Not Given, speaking fluency etc.', icon: Search },
                 { step: '04', title: 'Study Plan', desc: 'Custom study plan with daily milestones, materials, module priority and suggested mock schedule. Based on available hours/week.', icon: Calendar },
                 { step: '05', title: 'Module Practice', desc: 'Intensive drills on exam question types, timing, strategies — Listening note-taking, Reading skimming, Writing structure, Speaking cue cards.', icon: BookOpenCheck },
-                { step: '06', title: 'Mock Tests', desc: 'Practice under exam-style conditions — timed computer-based mocks simulating full exam. Track progress and weak areas.', icon: Timer },
+                { step: '06', title: 'Practice Tests', desc: 'Practise the format and timing before the real exam', icon: Timer },
                 { step: '07', title: 'Expert Feedback', desc: 'Detailed writing feedback on Task Achievement, Coherence, Lexical Resource, Grammar. 1-on-1 speaking polish and confidence building.', icon: MessageCircle },
                 { step: '08', title: 'Final Readiness', desc: 'Final assessment validating readiness for target score. Exam readiness checklist, booking guidance and university requirement verification.', icon: Trophy },
               ].map((s, i) => (
@@ -871,7 +862,7 @@ export default function PremiumLanguagePrepLandingView() {
               { title: 'Free Assessment', desc: 'Evaluate your current level with diagnostic test to identify baseline and gap to target score.', icon: ClipboardCheck },
               { title: 'Target Score Planning', desc: 'Set realistic target based on course requirement, component minimums and timeline. No guaranteed score claims.', icon: Target },
               { title: 'Study Materials', desc: 'Structured learning resources covering question types, strategies and academic vocabulary.', icon: Library },
-              { title: 'Mock Tests', desc: 'Practice under exam-style conditions with timed computer-based mocks. Track progress.', icon: Timer },
+              { title: 'Practice Tests', desc: 'Practise the format and timing before the real exam.', icon: Timer },
               { title: 'Writing Feedback', desc: 'Improve structure, grammar and coherence with detailed feedback on Task Achievement, Cohesion, Lexical, Grammar.', icon: PenTool },
               { title: 'Speaking Practice', desc: 'Build confidence and fluency with certified coaches. No accent penalty — focus on meaning and clarity.', icon: Mic },
               { title: 'Score Strategy', desc: 'Focus on areas that matter most — weakest module priority and component score strategy.', icon: BarChart3 },
@@ -887,57 +878,31 @@ export default function PremiumLanguagePrepLandingView() {
         </div>
       </section>
 
-      {/* ============ 12. PRACTICE TOOLS ============ */}
+      {/* ============ 12. PREPARATION RESOURCES — real destinations only ============ */}
       <section className="py-16 bg-[#F8FAFC] border-y border-[#E2E8F0]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <h2 className="text-3xl font-extrabold text-[#0F172A]">Practice Tools — Interactive</h2>
-            <p className="text-sm text-slate-600 mt-2">Mock tests and practice tools — if not implemented, shows Coming Soon or connects to existing.</p>
+            <h2 className="text-3xl font-extrabold text-[#0F172A]">Preparation Resources</h2>
+            <p className="text-sm text-slate-600 mt-2">Study guides for each test, a side-by-side comparison, and counselling for a personal study plan.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { name: 'IELTS Mock Test', desc: 'Exam-style conditions', status: 'active', href: '/language-prep/ielts#mock', icon: FileText },
-              { name: 'PTE Mock Test', desc: 'Computer + AI scoring', status: 'active', href: '/language-prep/pte-academic#mock', icon: FileText },
-              { name: 'Speaking Practice', desc: 'Fluency & confidence', status: 'active', href: '/language-prep#book-counselling', icon: Mic },
-              { name: 'Writing Evaluation', desc: 'Detailed feedback', status: 'coming', href: '#', icon: PenTool },
-              { name: 'Reading Practice', desc: 'Skimming & scanning', status: 'coming', href: '#', icon: BookOpenCheck },
-              { name: 'Listening Practice', desc: 'Academic listening', status: 'coming', href: '#', icon: Headphones },
-              { name: 'Vocabulary Builder', desc: 'Academic vocabulary', status: 'coming', href: '#', icon: Library },
-              { name: 'Grammar Assessment', desc: 'Range & accuracy', status: 'coming', href: '#', icon: BookMarked },
-              { name: 'AI Interview Practice', desc: 'Existing implementation', status: 'active', href: '/student/ai-interview', icon: Video },
-              { name: 'English Placement Test', desc: 'Free assessment', status: 'active', href: '/language-prep#test-discovery', icon: ClipboardCheck },
-            ].map((tool, i) => (
-              <Card key={i} className="p-5 bg-white border border-[#E2E8F0] shadow-sm hover:shadow-md transition rounded-2xl">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center"><tool.icon className="w-4 h-4" /></div>
-                  <Badge className={`${tool.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>
-                    {tool.status === 'active' ? 'Active' : 'Coming Soon'}
-                  </Badge>
-                </div>
-                <h4 className="font-bold text-xs text-[#0F172A]">{tool.name}</h4>
-                <p className="text-[11px] text-slate-500 mt-1">{tool.desc}</p>
-                <a href={tool.href} className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold text-[#2563EB] hover:text-[#F97316]">
-                  {tool.status === 'active' ? 'Start Practice →' : 'Notify Me →'}
-                </a>
+              { name: 'IELTS guide', desc: 'Format, scoring and a preparation plan', href: '/language-prep/ielts', icon: FileText },
+              { name: 'PTE Academic guide', desc: 'Computer-based format and scoring', href: '/language-prep/pte-academic', icon: FileText },
+              { name: 'TOEFL iBT guide', desc: 'Sections, timing and scoring', href: '/language-prep/toefl-ibt', icon: FileText },
+              { name: 'Compare the tests', desc: 'Side-by-side formats and requirements', href: '/language-prep/comparison', icon: ClipboardCheck },
+            ].map((item) => (
+              <Card key={item.name} className="p-5 bg-white border border-[#E2E8F0] shadow-sm hover:shadow-md transition rounded-2xl">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center mb-3"><item.icon className="w-4 h-4" /></div>
+                <h3 className="font-bold text-sm text-[#0F172A]">{item.name}</h3>
+                <p className="text-[11px] text-slate-500 mt-1">{item.desc}</p>
+                <a href={item.href} className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold text-[#2563EB] hover:text-[#F97316]">Open guide →</a>
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ============ 13. STUDENT SUCCESS STORIES — Only approved real records ============ */}
-      <section className="py-16 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <h2 className="text-3xl font-extrabold text-[#0F172A]">Student Success Stories</h2>
-            <p className="text-sm text-slate-600 mt-2">Only approved real records with consent_status=approved and status=published. Never fabricate scores.</p>
+          <div className="mt-8 text-center">
+            <a href="#book-counselling" className="inline-flex min-h-11 items-center rounded-xl bg-[#F97316] px-6 py-3 text-sm font-bold text-white hover:bg-[#EA580C]">Book free counselling</a>
           </div>
-
-          <Card className="p-10 bg-[#F8FAFC] border border-dashed border-[#E2E8F0] rounded-3xl text-center">
-            <Trophy className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-            <p className="text-sm font-bold text-[#0F172A]">Student success stories will appear here after approved publication.</p>
-            <p className="text-xs text-slate-500 mt-2 max-w-xl mx-auto">We do not create fake student success stories, test scores, university acceptance claims, visa claims, test prices, result timelines, university requirements or scholarship claims. Only display approved real records from database with consent_status=approved and status=published.</p>
-          </Card>
         </div>
       </section>
 
@@ -981,17 +946,11 @@ export default function PremiumLanguagePrepLandingView() {
                 Tell us your destination, university and study plan. Our team can help you understand the relevant English requirement and preparation route.
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <a href="#book-counselling">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-8 rounded-xl shadow-lg">Book Free Counselling →</Button>
-                </a>
-                <a href="#test-discovery">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl">Find My Test</Button>
-                </a>
-                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2">
+                <Button asChild className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counselling">Book Free Counselling →</a></Button>
+                <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl"><a href="#test-discovery">Find My Test</a></Button>
+                <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
                     <MessageSquare className="w-4 h-4" /> Chat with Counselor
-                  </Button>
-                </a>
+                  </a></Button>
               </div>
               <div className="flex flex-wrap justify-center gap-6 pt-6 text-xs text-blue-200 border-t border-white/20">
                 <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> WhatsApp: +880 180 502 0101</span>
@@ -1005,13 +964,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 16. FOOTER NOTE — Source verification ============ */}
       <section className="py-8 bg-[#F8FAFC] border-t border-[#E2E8F0]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-[11px] text-slate-500 leading-relaxed max-w-4xl mx-auto">
-            Every factual test information supports source_url, source_name, last_verified_at, verified_by, verification_status. If not verified: Information requires verification — Check official provider information. 
-            Acceptance varies by university, course and visa route. Visa or immigration requirements vary by country and route. 
-            MOI Guidance is guidance resource, not incorrectly represented as English proficiency test. No fake testimonials, scores, acceptance claims, visa claims, pricing, result timelines, requirements, scholarships. 
-            Last verified dates appear where available. Unverified data not presented as fact.
-          </p>
-          <p className="text-[11px] text-slate-400 mt-3">© ALO Education — English Language Preparation Hub — Premium white-first design — No black hero overlay — Clean cards, soft shadows, subtle borders, rounded corners, excellent typography, whitespace, responsive grids, micro-interactions, smooth hover, modern iconography, accessible contrast — Buttons 48px min — Mobile 1 col, Tablet 2 col, Desktop 3-4 col</p>
+          <p className="text-[11px] text-slate-500 leading-relaxed max-w-4xl mx-auto">Test information is taken from official provider sources where available. Acceptance varies by university, course and visa route. Check the official provider for the latest details. MOI is a guidance resource, not an English proficiency test.</p>
         </div>
       </section>
     </div>

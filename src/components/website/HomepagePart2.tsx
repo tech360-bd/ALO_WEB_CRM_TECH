@@ -552,11 +552,9 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
                           View Details
                         </Button>
                       </Link>
-                        <Link href="/book-consultation">
-                        <Button className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}>
+                        <Button asChild className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}><Link href="/book-consultation">
                           Apply
-                        </Button>
-                      </Link>
+                        </Link></Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -565,12 +563,10 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
             </motion.div>
           )}
           <div className="text-center mt-10">
-            <Link href="/course-finder">
-            <Button className="h-12 px-8 rounded-full text-white font-medium" style={{ background: C.blue }}>
+            <Button asChild className="h-12 px-8 rounded-full text-white font-medium" style={{ background: C.blue }}><Link href="/course-finder">
               Explore Full Course Finder
               <ArrowRight size={16} className="ml-2" />
-            </Button>
-            </Link>
+            </Link></Button>
           </div>
         </motion.div>
       </div>
@@ -626,12 +622,10 @@ function TrustedUniversitiesSection({ universities }: { universities: UniItem[] 
           </motion.div>
         )}
         <div className="text-center mt-10">
-          <Link href="/course-finder">
-          <Button variant="outline" className="h-12 px-8 rounded-full font-medium" style={{ borderColor: C.blue, color: C.blue }}>
+          <Button asChild variant="outline" className="h-12 px-8 rounded-full font-medium" style={{ borderColor: C.blue, color: C.blue }}><Link href="/course-finder">
             View University Directory
             <ArrowRight size={16} className="ml-2" />
-          </Button>
-          </Link>
+          </Link></Button>
         </div>
       </div>
     </section>

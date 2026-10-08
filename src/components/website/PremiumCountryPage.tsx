@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { CountryDestinationData } from '@/lib/country-destinations-data';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
+import { EnglishExamButton } from '@/components/website/EnglishExamCta';
+import { isEnglishProficiencyTestSlug } from '@/lib/english-exam';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePortalStore } from '@/lib/stores/portal-store';
 
@@ -176,7 +178,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] h-12 px-8 font-semibold rounded-xl">Check Eligibility</Button></Link>
                 <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[#E2E8F0] text-[#2563EB] hover:bg-blue-50 h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
               </div>
-              <p className="text-[11px] text-gray-500">Last Verified: {countryData.lastVerifiedAt} • Source: Official • Status: Verified • No fake statistics</p>
+              <p className="text-[11px] text-gray-500">Last Verified: {countryData.lastVerifiedAt}</p>
             </div>
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-[2rem] overflow-hidden border border-[#E2E8F0] shadow-xl bg-[#F8FAFC] aspect-[4/3]">
@@ -309,7 +311,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Popular Courses in {countryData.name} — Dynamic from DB</h2>
-            <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[#E2E8F0] h-11 text-xs">Find More Courses — /course-finder?country={countryData.name}</Button></Link>
+            <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[#E2E8F0] h-11 text-xs">Find more courses</Button></Link>
           </div>
           {linkedCourses.length === 0 ? (
             <Card className="p-12 bg-white border-[#E2E8F0] rounded-2xl text-center"><GraduationCap className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No courses found for {countryData.name} — real DB, no fake static course cards. Load courses dynamically from existing courses table filter country_id.</p><p className="text-xs text-gray-500 mt-2">Information not currently verified. Please check with an ALO Education counselor.</p></Card>
@@ -328,10 +330,10 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                       <span>English: {c.ieltsMin ? `IELTS ${c.ieltsMin}` : 'Check course'}</span>
                     </div>
                     {c.scholarships && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] mt-2">Scholarship Available</Badge>}
-                    <p className="text-[10px] text-gray-400 mt-2">Last Verified: {c.lastVerifiedAt || countryData.lastVerifiedAt} • Source: Official • No fake data</p>
+                    <p className="text-[10px] text-gray-400 mt-2">Last Verified: {c.lastVerifiedAt || countryData.lastVerifiedAt}</p>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <Link href={`/course/${c.slug || c.courseId}`} className="block"><Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] h-11 text-xs font-bold">View Course — Real Link</Button></Link>
+                    <Link href={`/course/${c.slug || c.courseId}`} className="block"><Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] h-11 text-xs font-bold">View course</Button></Link>
                     <div className="grid grid-cols-2 gap-2">
                       <Link href={`/compare?course=${c.courseId}`}><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-9 text-[11px]">Compare</Button></Link>
                       <Link href="/eligibility-check"><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-9 text-[11px]">Apply</Button></Link>
@@ -366,11 +368,11 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                       <p>Popular subjects: Business, Computer Science, Engineering — check DB</p>
                       <p>Available intakes: September, January — actual available intakes from course_intakes</p>
                       <p>Scholarship: {u.scholarships ? 'Available' : 'Check with counselor'} • English: IELTS {u.ieltsMin || 'Check'}</p>
-                      <p className="text-[10px] text-gray-400">Last Verified: {u.lastVerifiedAt || countryData.lastVerifiedAt} • Source: Official • No fake logos — text-based identity if legally approved logo not available</p>
+                      <p className="text-[10px] text-gray-400">Last Verified: {u.lastVerifiedAt || countryData.lastVerifiedAt} identity if legally approved logo not available</p>
                     </div>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <Link href={`/universities/${u.slug || u.universityId}`} className="block"><Button className="w-full bg-[#2563EB] text-white h-11 text-xs font-bold">View University — Real Link</Button></Link>
+                    <Link href={`/universities/${u.slug || u.universityId}`} className="block"><Button className="w-full bg-[#2563EB] text-white h-11 text-xs font-bold">View university</Button></Link>
                     <div className="grid grid-cols-2 gap-2">
                       <Link href={`/course-finder?university=${u.universityId}`}><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-9 text-[11px]">View Courses</Button></Link>
                       <Link href="/eligibility-check"><Button variant="outline" size="sm" className="w-full bg-[#F97316]/10 border-[#F97316]/20 text-[#F97316] h-9 text-[11px]">Apply Through ALO</Button></Link>
@@ -412,7 +414,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                     <div><span className="text-gray-500">First-Year Cost:</span><p className="font-black text-[#2563EB] text-sm">{totalCostForeign} foreign • ৳ {totalCostBdt.toLocaleString()} BDT</p></div>
                     <div><span className="text-gray-500">Initial Budget:</span><p className="font-bold">Tuition - Deposit + Living = Estimate</p></div>
                   </div>
-                  <p className="text-[11px] text-gray-500">Every financial figure must have source + last verified date — if unavailable Check with counselor — do NOT invent numbers</p>
+                  <p className="text-[11px] text-gray-500">Figures show their source and last verified date. Where a figure is unavailable, check with a counsellor.</p>
                 </div>
               </Card>
             </div>
@@ -458,7 +460,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                     <div className="space-y-3">
                       <h4 className="font-bold text-sm flex items-center gap-2 text-[#2563EB]"><GraduationCap className="w-4 h-4"/>{req.level}</h4>
                       <div><p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Academic Requirement</p><p className="text-sm font-semibold text-[#0F172A] mt-1">{req.academic || 'Requirement information is currently being verified. Please check with an ALO Education counselor.'}</p></div>
-                      <div><p className="text-[11px] font-bold text-gray-500 uppercase">Remarks</p><p className="text-xs text-gray-600 mt-1">Only show levels that actually exist for {countryData.name} — do not invent requirements.</p></div>
+                      <div><p className="text-[11px] font-bold text-gray-500 uppercase">Remarks</p><p className="text-xs text-gray-600 mt-1">Requirements shown are the ones recorded for {countryData.name}. Check the official source for the latest rules.</p></div>
                     </div>
                     <div className="space-y-3">
                       <p className="text-[11px] font-bold text-gray-500 uppercase">English Requirement</p>
@@ -487,7 +489,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
       <section className="py-16 bg-[#F8FAFC] border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">English Test Requirements — {countryData.name} — Only Relevant Tests</h2>
-          <p className="text-sm text-gray-600">Show only relevant tests for the country and connected universities — IELTS/IELTS UKVI/PTE Academic/TOEFL iBT/Duolingo/OIETC/ELLT/Oxford ELLT/LanguageCert/OET/MOI — every test card Test name/Accepted for/Score range if verified/Result time if verified/Learn More/Start Mock Test — every Learn More opens real test detail page.</p>
+          <p className="text-sm text-gray-600">English tests accepted for {countryData.name}, with links to full preparation guides.</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {countryData.englishTests.map((test, i) => (
               <Card key={i} className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm hover:shadow-md transition-all h-full flex flex-col justify-between">
@@ -495,11 +497,11 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                   <Badge className="bg-blue-50 text-[#2563EB] border-blue-100 text-[10px] mb-2">{test.name}</Badge>
                   <p className="text-xs font-semibold text-[#0F172A]">Accepted for: {test.accepted}</p>
                   <p className="text-xs text-gray-600 mt-1">{test.note}</p>
-                  <p className="text-[10px] text-gray-400 mt-2">Source: <a href={test.sourceUrl} target="_blank" className="text-[#2563EB] underline">{test.sourceUrl}</a> • Score range if verified, Result time if verified — do not invent</p>
+                  <p className="text-[10px] text-gray-400 mt-2">Source: <a href={test.sourceUrl} target="_blank" className="text-[#2563EB] underline">{test.sourceUrl}</a></p>
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <Link href={`/language-prep/${test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex-1"><Button size="sm" className="w-full bg-[#2563EB] text-white h-9 text-[11px]">Learn More — Real Page</Button></Link>
-                  <Link href="/student/mock-tests" className="flex-1"><Button size="sm" variant="outline" className="w-full border-[#E2E8F0] h-9 text-[11px]">Start Mock Test</Button></Link>
+                  <Link href={`/language-prep/${test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex-1"><Button size="sm" className="w-full bg-[#2563EB] text-white h-9 text-[11px]">Learn more</Button></Link>
+                  {isEnglishProficiencyTestSlug(test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')) && (<EnglishExamButton location="country_page" className="flex h-9 flex-1 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 text-[11px] font-semibold text-emerald-800 hover:bg-emerald-100">Take the English Test</EnglishExamButton>)}
                 </div>
               </Card>
             ))}
@@ -606,7 +608,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <div><p className="text-gray-500 font-semibold">Course-level Conditions</p><p className="text-sm font-semibold mt-1">{rule.condition}</p></div>
                 <div><p className="text-gray-500 font-semibold">Post-study Route</p><p className="text-sm font-bold text-emerald-700 mt-1">{rule.postStudyRoute}</p><p className="text-[10px] text-gray-400 mt-1">Source: <a href={rule.sourceUrl} target="_blank" className="text-[#2563EB] underline">Official Government</a> • Last verified: {countryData.lastVerifiedAt}</p></div>
               </div>
-              <p className="text-[11px] text-gray-500 mt-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">If source is missing: Check with counselor — Do NOT invent work-hour numbers — Disclaimer: Visa and work rules can change. Always verify final conditions with official government sources and ALO staff before making decisions.</p>
+              <p className="text-[11px] text-gray-500 mt-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Work-hour rules can change. Check the official source for the current limits. Always verify final conditions with official government sources and ALO staff before making decisions.</p>
             </Card>
           ))}
         </div>
@@ -621,7 +623,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               {linkedScholarships.slice(0,6).map((s:any)=>(
                 <Card key={s.id} className="p-5 bg-white border-[#E2E8F0] hover:border-[#2563EB] rounded-2xl h-full flex flex-col justify-between">
                   <div><Badge className="bg-[#F97316]/10 text-[#F97316] border-[#F97316]/20 text-[10px] mb-2">Scholarship</Badge><h4 className="font-bold text-sm">{s.scholarshipName || s.name}</h4><p className="text-xs text-gray-500 mt-1">{s.university?.name || s.university || ''} • Amount: {s.scholarshipAmount ? `${s.scholarshipCurrency} ${s.scholarshipAmount}` : s.amount ? `${s.currency} ${s.amount}` : 'Check eligibility'} • Type: {s.coverageType || s.fundingType || 'Tuition waiver'} • Eligibility: {s.eligibility?.substring(0,60) || 'Check'} • Deadline: {s.deadline || 'Check official'} • Last verified: {s.lastVerifiedAt || s.lastCheckedAt || countryData.lastVerifiedAt} • Source: {s.officialScholarshipUrl ? <a href={s.officialScholarshipUrl} target="_blank" className="text-[#2563EB] underline">Official</a> : 'Check'}</p></div>
-                  <div className="flex gap-2 mt-4"><Link href={`/scholarships/${s.slug || s.id}`} className="flex-1"><Button size="sm" className="w-full bg-[#2563EB] text-white h-9 text-[11px]">View Scholarship — Real Link</Button></Link><Link href="/eligibility-check" className="flex-1"><Button size="sm" variant="outline" className="w-full border-[#E2E8F0] h-9 text-[11px]">Check Eligibility</Button></Link></div>
+                  <div className="flex gap-2 mt-4"><Link href={`/scholarships/${s.slug || s.id}`} className="flex-1"><Button size="sm" className="w-full bg-[#2563EB] text-white h-9 text-[11px]">View scholarship</Button></Link><Link href="/eligibility-check" className="flex-1"><Button size="sm" variant="outline" className="w-full border-[#E2E8F0] h-9 text-[11px]">Check Eligibility</Button></Link></div>
                 </Card>
               ))}
             </div>
@@ -649,7 +651,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                   <p className="text-[10px] text-gray-400 mt-2">Last verified: {countryData.lastVerifiedAt} • Do not use same image for every city — country-specific city images</p>
                 </div>
                 <div className="p-5 pt-0">
-                  <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}&city=${encodeURIComponent(city.name)}`} className="block"><Button className="w-full bg-white border border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white h-11 text-xs font-bold">Explore {city.name} Courses — Real Link</Button></Link>
+                  <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}&city=${encodeURIComponent(city.name)}`} className="block"><Button className="w-full bg-white border border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white h-11 text-xs font-bold">Explore {city.name} courses</Button></Link>
                 </div>
               </Card>
             ))}
@@ -703,7 +705,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                   <AccordionContent className="text-sm text-gray-700 leading-relaxed pb-4">
                     <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4">
                       {faq.answer}
-                      <p className="text-[11px] text-gray-500 mt-3 border-t border-[#E2E8F0] pt-2">If answer depends on changing rules: show source + verification date — Source: Official Government • Last verified: {countryData.lastVerifiedAt} • Verified by ALO Compliance Team • No fake visa success claims</p>
+                      <p className="text-[11px] text-gray-500 mt-3 border-t border-[#E2E8F0] pt-2">Source: Official government guidance • Last verified: {countryData.lastVerifiedAt}</p>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
@@ -723,7 +725,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <Link href="/eligibility-check"><Button className="bg-[#2563EB] text-white hover:bg-[#1D4ED8] h-12 px-8 font-bold rounded-xl">Check Eligibility</Button></Link>
               <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
               <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[#E2E8F0] h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
-              <a href="https://wa.me/8801805020101" target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-[#25D366]/10 border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white h-12 px-8 font-bold rounded-xl">WhatsApp 01805020101</Button></a>
+              <Button asChild variant="outline" className="bg-[#25D366]/10 border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white h-12 px-8 font-bold rounded-xl"><a href="https://wa.me/8801805020101" target="_blank">WhatsApp 01805020101</a></Button>
             </div>
           </div>
 
@@ -765,7 +767,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <Badge className="bg-white border-[#E2E8F0] text-[10px] mb-2">{source.section}</Badge>
                 <p className="text-sm font-bold text-[#0F172A]">{source.sourceName}</p>
                 <p className="text-xs mt-1"><a href={source.sourceUrl} target="_blank" className="text-[#2563EB] underline break-all">{source.sourceUrl}</a></p>
-                <p className="text-[11px] text-gray-500 mt-2">Last verified: {source.lastVerifiedAt} • Verified by ALO Compliance Team • Status: Verified • No fake visa success claims</p>
+                <p className="text-[11px] text-gray-500 mt-2">Last verified: {source.lastVerifiedAt}</p>
               </Card>
             ))}
             {countryData.sources.length === 0 && <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl col-span-3 text-center"><p className="text-sm text-gray-600">Data pending verification — Check with counselor — Do NOT guess — every financial figure must have source + last verified date.</p></Card>}
@@ -783,16 +785,6 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
       {/* 25. LINK INTEGRITY — Critical */}
       <section className="py-8 bg-[#FFFFFF] border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] text-gray-500 text-center">Link Integrity — Every card with CTA must have working link — Verify Country → Course Finder (/course-finder?country={'{country}'}) Country → University (/universities/:slug) Country → Course (/course/:slug) Country → Scholarship (/scholarships/:slug) Country → City (filtered) Country → Service (/services/:slug) Country → English Test (/language-prep/:slug) Country → Consultation (/book-consultation) Country → Eligibility Checker (/eligibility-check) — No dead buttons, No #, No fake links — all links verified with real working destinations.</p>
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
-            <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button size="sm" className="bg-[#2563EB] text-white h-9 text-[11px]">Country → Course Finder ✓</Button></Link>
-            <Link href={`/universities?country=${encodeURIComponent(countryData.name)}`}><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-[11px]">Country → University ✓</Button></Link>
-            <Link href={`/scholarships?country=${encodeURIComponent(countryData.name)}`}><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-[11px]">Country → Scholarship ✓</Button></Link>
-            <Link href="/services/visa-guidance"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-[11px]">Country → Service ✓</Button></Link>
-            <Link href="/language-prep/ielts"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-[11px]">Country → English Test ✓</Button></Link>
-            <Link href="/book-consultation"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-[11px]">Country → Consultation ✓</Button></Link>
-            <Link href="/eligibility-check"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9 text-[11px]">Country → Eligibility Checker ✓</Button></Link>
-          </div>
         </div>
       </section>
     </div>

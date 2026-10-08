@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { EnglishExamBanner } from '@/components/website/EnglishExamCta';
 
 const C = { blue: '#2563EB', orange: '#F97316', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
@@ -454,35 +455,13 @@ function MissionVisionValues() {
   );
 }
 
-/* ═════════════════════════════════════════════ ENGLISH TEST PROMOTION ═══ */
-function EnglishTestPromotion() {
-  return (
-    <section className="bg-white px-4 py-8 sm:px-6" aria-labelledby="english-test-promotion-title">
-      <a
-        href="https://english.aloeducation.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-5 rounded-2xl bg-emerald-700 px-6 py-6 text-white shadow-lg transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300 sm:flex-row sm:items-center sm:px-8"
-      >
-        <div>
-          <p id="english-test-promotion-title" className="text-xl font-bold sm:text-2xl">আপনি কি ইংরেজি পরীক্ষা দিতে চান?</p>
-          <p className="mt-2 text-sm text-emerald-50 sm:text-base">ALO Education Student ID ব্যবহার করলে ৩টি Mock Test FREE</p>
-        </div>
-        <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-emerald-800">
-          English Test শুরু করুন <span aria-hidden="true" className="ml-2">→</span>
-        </span>
-      </a>
-    </section>
-  );
-}
-
 /* ═══════════════════════════════════════════════════════════════ EXPORT ═══ */
 export default function HomepagePart1() {
   return (
     <>
       <HeroSection />
       <CourseFinderSection />
-      <EnglishTestPromotion />
+      <EnglishExamBanner location="homepage_banner" />
       <DestinationsSection />
       <AboutSection />
       <MissionVisionValues />

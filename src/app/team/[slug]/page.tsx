@@ -59,8 +59,8 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ slu
               <div className="h-48 w-48 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d80] flex items-center justify-center text-white font-bold text-6xl shadow-lg mb-6">
                 {member.name[0]}
               </div>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#003d80] text-white flex gap-2">
-                <Mail className="h-4 w-4" /> Contact {member.name.split(' ')[0]}
+              <Button asChild className="w-full bg-[#2563EB] hover:bg-[#003d80] text-white flex gap-2">
+                <Link href="/contact"><Mail className="h-4 w-4" /> Contact {member.name.split(' ')[0]}</Link>
               </Button>
             </div>
 

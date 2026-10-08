@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -94,9 +95,9 @@ export default function EventsPage() {
                 <p className="text-sm font-medium text-gray-600">Speakers: {event.speakers}</p>
               </div>
               <div className="p-6 pt-0 mt-auto">
-                <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded transition-colors">
+                <Link href="/book-consultation" className="block w-full bg-[#F97316] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded text-center transition-colors">
                   Register Now
-                </button>
+                </Link>
               </div>
             </div>
           ))}

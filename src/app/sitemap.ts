@@ -41,7 +41,7 @@ const STATIC_PATHS: Array<[string, MetadataRoute.Sitemap[number]['changeFrequenc
   ['/compare', 'weekly', 0.7], ['/book-consultation', 'weekly', 0.7], ['/visa-support', 'weekly', 0.7],
   ['/application-guide', 'monthly', 0.6], ['/application-process', 'monthly', 0.6],
   ['/admission-requirements', 'monthly', 0.6], ['/english-test-prep', 'weekly', 0.7],
-  ['/english-tests', 'weekly', 0.7], ['/news', 'daily', 0.6], ['/events', 'daily', 0.6],
+['/news', 'daily', 0.6], ['/events', 'daily', 0.6],
   ['/success-stories', 'monthly', 0.6], ['/team', 'monthly', 0.5], ['/faqs', 'monthly', 0.5],
   ['/privacy-policy', 'monthly', 0.3], ['/terms', 'monthly', 0.3], ['/cookies', 'monthly', 0.3],
   ['/communication-policy', 'monthly', 0.3], ['/lead-data-usage-policy', 'monthly', 0.3],

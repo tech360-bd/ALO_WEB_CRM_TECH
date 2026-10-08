@@ -18,13 +18,13 @@ export async function generateMetadata({
   if (!scholarship) {
     return {
       title: 'Scholarship Details | ALO Education',
-      description: 'Explore global study abroad scholarships and funding opportunities. Complete scholarship detail with 29 sections — DB-driven, verified, actionable.',
+      description: 'Explore global study abroad scholarships and funding opportunities. Scholarship details, eligibility, deadlines and source verification.',
     };
   }
 
   return {
     title: `${scholarship.title} | How, When, What & Benefits | ALO Education`,
-    description: scholarship.description + ' Complete scholarship detail page with 29 sections per spec — DB-driven, related content, FAQ, source verification.',
+    description: scholarship.description + ' Eligibility, deadlines, related content, FAQs and source verification.',
     alternates: {
       canonical: `https://aloeducation.com/scholarships/${scholarship.slug}`,
     },

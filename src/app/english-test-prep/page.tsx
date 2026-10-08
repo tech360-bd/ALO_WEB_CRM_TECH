@@ -5,11 +5,12 @@ import { MASTER_TEST_PREP_DATA } from '@/lib/test-prep-data';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PrepVsExamSplit } from '@/components/website/EnglishExamCta';
 import { BookOpen, CheckCircle2, Clock, DollarSign, Globe, GraduationCap, ShieldCheck } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'English Language & Admission Test Prep Hub | ALO Education',
-  description: 'Authoritative preparation guides, score score requirements, fee comparisons, and university matching for IELTS, PTE Academic, Duolingo, TOEFL iBT, OIETC, GRE, GMAT, and SAT.',
+  description: 'Authoritative preparation guides, score requirements, fee comparisons, and university matching for IELTS, PTE Academic, Duolingo, TOEFL iBT, OIETC, GRE, GMAT, and SAT.',
   alternates: { canonical: 'https://aloeducation.com/english-test-prep' },
 };
 
@@ -39,8 +40,18 @@ export default function TestPrepDirectoryPage() {
             </div>
           </div>
 
+          {/* PREPARATION vs REAL EXAM — clearly separated */}
+          <div className="mb-16">
+            <PrepVsExamSplit
+              location="english_test_prep_hub"
+              prepHref="#prep-cards"
+              prepTitle="Prepare with ALO Education"
+              prepCta="Browse preparation guides"
+            />
+          </div>
+
           {/* GRID OF TEST PREP CARDS */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+          <div id="prep-cards" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {tests.map((t) => (
               <Card key={t.id} className="p-6 bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#2563EB] flex flex-col justify-between">
                 <div>
@@ -65,11 +76,9 @@ export default function TestPrepDirectoryPage() {
                     <span className="text-slate-500 font-medium">Target Score:</span>
                     <span className="font-bold text-[#2563EB]">{t.expectedScore}</span>
                   </div>
-                  <a href={`/english-test-prep/${t.slug}`} className="block w-full">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
+                  <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
                       Explore Full Test Prep & Modules →
-                    </Button>
-                  </a>
+                    </a></Button>
                 </div>
               </Card>
             ))}

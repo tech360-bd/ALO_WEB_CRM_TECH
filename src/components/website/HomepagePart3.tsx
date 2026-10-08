@@ -22,6 +22,7 @@ import {
   ArrowRight, AlertTriangle, Zap,
   type LucideIcon,
 } from 'lucide-react';
+import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 
 /* ═══════════════════════════════════════════════════════════════
    BRAND COLORS
@@ -208,16 +209,16 @@ function ScholarshipsSection() {
                   </p>
 
                   {/* Button */}
-                  <Link href="/eligibility-check" className="block"><Button
+                  <Button
                     className="w-full h-12 rounded-xl text-sm font-semibold"
                     style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
                     asChild
                   >
-                    <Link href="/scholarships">
+                    <Link href="/eligibility-check">
                       Check Eligibility
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
-                  </Button></Link>
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
@@ -232,7 +233,7 @@ function ScholarshipsSection() {
           viewport={viewportOnce}
           variants={fadeUp}
         >
-          <Link href="/scholarships" className="block"><Button
+          <Button
             className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
             style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
             asChild
@@ -241,7 +242,7 @@ function ScholarshipsSection() {
               Find Scholarships
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-          </Button></Link>
+          </Button>
         </motion.div>
       </div>
     </section>
@@ -368,7 +369,7 @@ function EnglishTestsSection() {
 
                       {/* Buttons */}
                       <div className="flex gap-2 mt-3">
-                        <Link href="/english-test-prep" className="block"><Button
+                        <Button
                           variant="outline"
                           className="flex-1 h-10 rounded-lg text-xs font-medium border-[#E2E8F0]"
                           style={{ color: C.blue }}
@@ -377,8 +378,8 @@ function EnglishTestsSection() {
                           <Link href={`/language-prep/${test.slug || test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
                             Learn More
                           </Link>
-                        </Button></Link>
-                        <Link href="/english-test-prep" className="block"><Button
+                        </Button>
+                        <Button
                           className="flex-1 h-10 rounded-lg text-xs font-medium text-white"
                           style={{ backgroundColor: C.orange }}
                           asChild
@@ -386,7 +387,7 @@ function EnglishTestsSection() {
                           <Link href={`/language-prep/${test.slug || 'ielts'}`}>
                             Start Mock Test
                           </Link>
-                        </Button></Link>
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -426,11 +427,9 @@ function EnglishTestsSection() {
             <h3 className="text-xl md:text-2xl font-bold" style={{ color: C.text }}>
               English Test Comparison
             </h3>
-            <Link href="/language-prep/comparison">
-              <Button variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#2563EB] text-[#2563EB]">
+            <Button asChild variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#2563EB] text-[#2563EB]"><Link href="/language-prep/comparison">
                 Full Comparison Matrix <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-              </Button>
-            </Link>
+              </Link></Button>
           </div>
           <div className="rounded-2xl border shadow-sm overflow-hidden bg-white" style={{ borderColor: C.border }}>
             <Table>
@@ -472,24 +471,29 @@ function EnglishTestsSection() {
           viewport={viewportOnce}
           variants={staggerContainer}
         >
+          <motion.div variants={staggerItem}>
+            <EnglishExamButton
+              location="homepage_english_tests"
+              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[#F97316] px-6 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
+            >
+              Take the English Test
+              <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </EnglishExamButton>
+          </motion.div>
           {[
-            { label: 'Take Free English Placement Test', variant: 'primary' as const, href: '/language-prep/placement-test' },
-            { label: 'Start IELTS Mock', variant: 'secondary' as const, href: '/language-prep/ielts' },
-            { label: 'Start PTE Mock', variant: 'secondary' as const, href: '/language-prep/pte-academic' },
-            { label: 'English Test Comparison', variant: 'secondary' as const, href: '/language-prep/comparison' },
+            { label: 'Prepare for IELTS', href: '/language-prep/ielts' },
+            { label: 'Prepare for PTE Academic', href: '/language-prep/pte-academic' },
+            { label: 'Compare English tests', href: '/language-prep/comparison' },
           ].map((cta, i) => (
             <motion.div key={i} variants={staggerItem}>
               <Button
                 className="h-12 min-h-[48px] rounded-xl text-sm font-semibold px-6"
-                style={cta.variant === 'primary'
-                  ? { backgroundColor: C.orange, color: '#FFFFFF' }
-                  : { backgroundColor: '#FFFFFF', borderColor: C.border, color: C.text }}
-                variant={cta.variant === 'primary' ? 'default' : 'outline'}
+                style={{ backgroundColor: '#FFFFFF', borderColor: C.border, color: C.text }}
+                variant="outline"
                 asChild
               >
-                <Link href={cta.href || '#'}>
+                <Link href={cta.href}>
                   {cta.label}
-                  {cta.variant === 'primary' && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Link>
               </Button>
             </motion.div>
@@ -632,7 +636,7 @@ function VisaSupportSection() {
           variants={staggerContainer}
         >
           <motion.div variants={staggerItem}>
-            <Link href="/visa/readiness" className="block"><Button
+            <Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
               style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
@@ -641,10 +645,10 @@ function VisaSupportSection() {
                 Start Visa Readiness Check
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </Button></Link>
+            </Button>
           </motion.div>
           <motion.div variants={staggerItem}>
-            <Link href="/book-consultation" className="block"><Button
+            <Button
               className="h-12 rounded-xl text-sm font-semibold px-8"
               style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
               asChild
@@ -652,7 +656,7 @@ function VisaSupportSection() {
               <Link href="/contact">
                 Book Visa Consultation
               </Link>
-            </Button></Link>
+            </Button>
           </motion.div>
         </motion.div>
       </div>
@@ -907,7 +911,7 @@ function PartnerPortalPreview() {
           variants={staggerContainer}
         >
           <motion.div variants={staggerItem}>
-            <Link href="/partner/login" className="block"><Button
+            <Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
               style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
@@ -916,10 +920,10 @@ function PartnerPortalPreview() {
                 Partner Login
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </Button></Link>
+            </Button>
           </motion.div>
           <motion.div variants={staggerItem}>
-            <Link href="/partner/register" className="block"><Button
+            <Button
               className="h-12 rounded-xl text-sm font-semibold px-8"
               style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
               asChild
@@ -927,7 +931,7 @@ function PartnerPortalPreview() {
               <Link href="/partner/register">
                 Become A Partner
               </Link>
-            </Button></Link>
+            </Button>
           </motion.div>
         </motion.div>
       </div>
@@ -1016,7 +1020,7 @@ function AiSupportTools() {
                     </p>
 
                     {/* Try Now button */}
-                    <Link href="/course-finder" className="block"><Button
+                    <Button
                       className="w-full h-10 rounded-lg text-xs font-semibold text-white self-end"
                       style={{ backgroundColor: C.orange }}
                       asChild
@@ -1025,7 +1029,7 @@ function AiSupportTools() {
                         <Sparkles className="mr-1.5 h-3.5 w-3.5" />
                         Try Now
                       </Link>
-                    </Button></Link>
+                    </Button>
                   </CardContent>
                 </Card>
               </motion.div>
