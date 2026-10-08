@@ -42,6 +42,13 @@ export function useStudentResource<T>(path: string, deps: unknown[] = []): Resou
   }, []);
 
   useEffect(() => {
+    // A dynamic route can render before its params resolve. Stay in a loading
+    // state rather than issuing a request to the page's own URL.
+    if (!path) {
+      setState('idle');
+      return;
+    }
+
     const controller = new AbortController();
     setState('loading');
     setError(null);
@@ -99,12 +106,15 @@ export function PortalCard({
   title,
   description,
   action,
+  icon,
   children,
   className,
 }: {
   title?: string;
   description?: string;
   action?: React.ReactNode;
+  /** Optional leading icon rendered inside the card heading. */
+  icon?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -113,7 +123,12 @@ export function PortalCard({
       {(title || action) && (
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
           <div className="min-w-0">
-            {title && <h2 className="text-[14px] font-semibold text-slate-900">{title}</h2>}
+            {title && (
+              <h2 className="flex items-center text-[14px] font-semibold text-slate-900">
+                {icon}
+                {title}
+              </h2>
+            )}
             {description && <p className="mt-0.5 text-[12px] text-slate-500">{description}</p>}
           </div>
           {action}
@@ -121,6 +136,15 @@ export function PortalCard({
       )}
       {children}
     </section>
+  );
+}
+
+/** Heading for a section rendered inside a PortalCard without its own title. */
+export function PortalSectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="flex items-center border-b border-slate-200 px-5 py-4 text-[14px] font-semibold text-slate-900">
+      {children}
+    </h2>
   );
 }
 
