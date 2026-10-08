@@ -1,86 +1,95 @@
 import type { MetadataRoute } from 'next';
-import { ALL_400_UNIVERSITIES, slugify } from '@/lib/all-universities';
-import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
 
-// The sitemap contains live CMS/CRM records. Serve it at request time rather
-// than querying production MySQL during `next build` or silently omitting rows.
+// Sitemap data is requested at runtime so published CMS records appear without
+// a rebuild. If MySQL is temporarily unavailable, public static routes are
+// still returned as valid XML; the server logs only a sanitized diagnostic.
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 type SitemapRow = { slug: string; updatedAt: Date | null };
+type DatabaseEntries = {
+  blogs: SitemapRow[];
+  courses: SitemapRow[];
+  scholarships: SitemapRow[];
+  universities: SitemapRow[];
+};
 
-async function getDatabaseSitemapEntries() {
+async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
   const { db } = await import('@/lib/db');
   try {
-    return await Promise.all([
+    const [blogs, courses, scholarships, universities] = await Promise.all([
       db.blogPost.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 5000 }),
       db.coursePage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED' }, take: 5000 }),
       db.scholarship.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 2000 }),
+      db.universityPage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED' }, take: 5000 }),
     ]);
+    return { blogs, courses, scholarships, universities };
   } catch (error) {
-    throwSanitizedDatabaseFailure('sitemap', error, 'SITEMAP_DATABASE_UNAVAILABLE');
+    const code = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : undefined;
+    console.error('[sitemap] Database operation failed; serving static fallback.', { code });
+    return null;
   }
 }
 
+const STATIC_PATHS: Array<[string, MetadataRoute.Sitemap[number]['changeFrequency'], number]> = [
+  ['', 'daily', 1.0],
+  ['/about', 'monthly', 0.6], ['/contact', 'monthly', 0.6],
+  ['/universities', 'daily', 0.9], ['/courses', 'daily', 0.9], ['/course-finder', 'daily', 0.9],
+  ['/destinations', 'weekly', 0.8], ['/scholarships', 'weekly', 0.8], ['/services', 'weekly', 0.8],
+  ['/resources', 'weekly', 0.8], ['/blog', 'daily', 0.9], ['/language-prep', 'weekly', 0.8],
+  ['/language-prep/comparison', 'weekly', 0.7], ['/eligibility-check', 'weekly', 0.8],
+  ['/compare', 'weekly', 0.7], ['/book-consultation', 'weekly', 0.7], ['/visa-support', 'weekly', 0.7],
+  ['/application-guide', 'monthly', 0.6], ['/application-process', 'monthly', 0.6],
+  ['/admission-requirements', 'monthly', 0.6], ['/english-test-prep', 'weekly', 0.7],
+  ['/english-tests', 'weekly', 0.7], ['/news', 'daily', 0.6], ['/events', 'daily', 0.6],
+  ['/success-stories', 'monthly', 0.6], ['/team', 'monthly', 0.5], ['/faqs', 'monthly', 0.5],
+  ['/privacy-policy', 'monthly', 0.3], ['/terms', 'monthly', 0.3], ['/cookies', 'monthly', 0.3],
+  ['/communication-policy', 'monthly', 0.3], ['/lead-data-usage-policy', 'monthly', 0.3],
+  ['/user-guide', 'monthly', 0.3], ['/accessibility', 'monthly', 0.3],
+];
+
+const DESTINATION_SLUGS = [
+  'uk', 'canada', 'australia', 'usa', 'ireland', 'new-zealand', 'dubai', 'germany', 'malaysia',
+  'netherlands', 'cyprus', 'sweden', 'south-korea', 'malta', 'brazil', 'russia', 'india', 'china', 'south-africa',
+];
+const LANGUAGE_PREP_SLUGS = [
+  'ielts', 'ielts-ukvi', 'pte-academic', 'toefl-ibt', 'duolingo', 'oietc', 'oxford-ellt',
+  'languagecert', 'kaplan', 'oet', 'gre', 'gmat', 'sat', 'act', 'moi',
+];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
-
-  const legalRoutes = ['/privacy-policy','/terms','/cookies','/communication-policy','/lead-data-usage-policy','/user-guide','/accessibility'].map(p=>({ url: `${baseUrl}${p}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.3 }));
-  const infoRoutes: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    ...legalRoutes,
-  ];
-  const destSlugs = ['uk','canada','australia','usa','ireland','new-zealand','dubai','germany','malaysia','netherlands','cyprus','sweden','south-korea','malta','brazil','russia','india','china','south-africa'];
-  const destinationRoutes: MetadataRoute.Sitemap = destSlugs.map((s)=>({ url: `${baseUrl}/destinations/${s}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 }));
-  const langPrepSlugs = ['ielts','ielts-ukvi','pte-academic','toefl-ibt','duolingo','oietc','oxford-ellt','languagecert','kaplan','oet','gre','gmat','sat','act','moi'];
-  const languagePrepRoutes: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/language-prep`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
-    { url: `${baseUrl}/language-prep/comparison`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
-    ...langPrepSlugs.map((s)=>({ url: `${baseUrl}/language-prep/${s}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 })),
-  ];
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
-    { url: `${baseUrl}/universities`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    { url: `${baseUrl}/course-finder`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    { url: `${baseUrl}/services`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/scholarships`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/resources`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/eligibility-check`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/eligibility-checker`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/compare`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/destinations`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    ...destinationRoutes,
-    ...languagePrepRoutes,
-    { url: `${baseUrl}/book-consultation`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    ...infoRoutes,
+  const now = new Date();
+  const staticEntries: MetadataRoute.Sitemap = [
+    ...STATIC_PATHS.map(([path, changeFrequency, priority]) => ({
+      url: `${baseUrl}${path}`, lastModified: now, changeFrequency, priority,
+    })),
+    ...DESTINATION_SLUGS.map((slug) => ({
+      url: `${baseUrl}/destinations/${slug}`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.7,
+    })),
+    ...LANGUAGE_PREP_SLUGS.map((slug) => ({
+      url: `${baseUrl}/language-prep/${slug}`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.7,
+    })),
   ];
 
-  const universityRoutes: MetadataRoute.Sitemap = ALL_400_UNIVERSITIES.map((uni) => ({
-    url: `${baseUrl}/universities/${slugify(uni.name)}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }));
-
-  // Query only on request. On failure, emit a sanitized server diagnostic and
-  // fail the sitemap request instead of omitting database-backed entries.
-  const [blogs, courses, scholarships] = await getDatabaseSitemapEntries();
-
-  const map = (rows: SitemapRow[], prefix: string): MetadataRoute.Sitemap => rows
+  const databaseEntries = await getDatabaseSitemapEntries();
+  const mapRows = (rows: SitemapRow[], prefix: string): MetadataRoute.Sitemap => rows
     .filter((row) => Boolean(row.slug))
     .map((row) => ({
-      url: `${baseUrl}${prefix}/${row.slug}`,
-      lastModified: row.updatedAt ? new Date(row.updatedAt) : new Date(),
+      url: `${baseUrl}${prefix}/${encodeURIComponent(row.slug)}`,
+      lastModified: row.updatedAt ? new Date(row.updatedAt) : now,
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }));
-  const dynamicRoutes = [
-    ...map(blogs, '/blog'),
-    ...map(courses, '/courses'),
-    ...map(scholarships, '/scholarships'),
-  ];
 
-  return [...staticRoutes, ...universityRoutes, ...dynamicRoutes];
+  const dynamicEntries = databaseEntries ? [
+    ...mapRows(databaseEntries.blogs, '/blog'),
+    ...mapRows(databaseEntries.courses, '/courses'),
+    ...mapRows(databaseEntries.scholarships, '/scholarships'),
+    ...mapRows(databaseEntries.universities, '/universities'),
+  ] : [];
+
+  // CMS datasets can contain duplicate slugs or collide with a static route.
+  // Deduplicate by canonical URL so crawlers receive one entry per page.
+  return [...new Map([...staticEntries, ...dynamicEntries].map((entry) => [entry.url, entry])).values()];
 }

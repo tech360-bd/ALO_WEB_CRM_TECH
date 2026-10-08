@@ -54,6 +54,7 @@ export async function DELETE(req: NextRequest) {
     await db.courseComparisonList.update({ where: { id: existing.id }, data: { courseIds: JSON.stringify(nextIds) } });
     return NextResponse.json({ success: true, removed: nextIds.length !== ids.length });
   } catch (e: any) {
-    return NextResponse.json({ success: false, error: e?.message || 'Unable to update comparison' }, { status: 500 });
+    console.error('[api/course-finder/compare] error', e);
+    return NextResponse.json({ success: false, error: 'Unable to update comparison' }, { status: 500 });
   }
 }

@@ -172,8 +172,9 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: result });
   } catch (error: any) {
+    console.error('[api/courses/[slug]] error', error);
     return NextResponse.json(
-      { success: false, error: error?.message || 'Failed to fetch course details' },
+      { success: false, error: 'Failed to fetch course details' },
       { status: 500 }
     );
   }

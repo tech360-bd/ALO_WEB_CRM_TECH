@@ -57,7 +57,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ success: true, courses: safe, data: safe, total: safe.length });
   } catch (e: any) {
+    // Log full diagnostics server-side; never echo raw driver/Prisma messages
+    // (they contain DB usernames/hosts) to the public client.
     console.error('[api/courses] error', e);
-    return NextResponse.json({ success: false, error: e?.message || 'Failed to load courses' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to load courses' }, { status: 500 });
   }
 }
