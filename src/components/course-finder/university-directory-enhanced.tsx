@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Search, Building2, MapPin, Globe, Trophy, ExternalLink,
   BookOpen, SearchX, SlidersHorizontal, ArrowUpDown, ChevronLeft,
@@ -682,6 +683,7 @@ const DEFAULT_FILTERS: FilterState = {
 
 // ─── Main Component ─────────────────────────────────────────────────────────────
 export function UniversityDirectoryEnhanced() {
+  const router = useRouter();
   const [universities, setUniversities] = useState<UniversityCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -818,8 +820,8 @@ export function UniversityDirectoryEnhanced() {
 
   // Handle view university
   const handleViewUniversity = useCallback((slug: string) => {
-    window.location.href = `/universities/${slug}`;
-  }, []);
+    router.push(`/universities/${slug}`);
+  }, [router]);
 
   // Handle view courses
   const handleViewCourses = useCallback((slug: string) => {

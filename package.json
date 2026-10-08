@@ -18,7 +18,7 @@
     "awf:audit": "ALO_DB_DRIVER=sqlite DATABASE_URL=\"file:$PWD/.awf-tmp/verify.db\" tsx scripts/ai-workforce/audit-independent.ts",
     "typecheck": "npm run db:verify-client && tsc --noEmit",
     "test": "vitest run",
-    "test:integration": "vitest run tests/integration",
+    "test:integration": "node scripts/run-integration-tests.mjs",
     "test:e2e": "playwright test",
     "db:format": "prisma format",
     "db:validate": "prisma validate",

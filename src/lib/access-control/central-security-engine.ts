@@ -125,6 +125,8 @@ export async function validateRequestAccess(
       where: {
         employeeId: emp.id,
         permissionKey: featureKey,
+        isActive: true,
+        active: true,
         expiresAt: { gt: new Date() },
       },
     });

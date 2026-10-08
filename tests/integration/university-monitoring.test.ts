@@ -2,15 +2,17 @@
 // ALO Education — University & Course Monitoring: integration tests
 // ============================================================
 //
-// These tests run against a REAL relational database (the SQLite mirror of the
-// production MySQL schema — same models, same fields, same constraints), not
-// mocks. Every assertion performs an action and then queries the database to
-// verify the resulting rows.
+// These tests run against a REAL isolated relational database, not mocks.
+// Every assertion performs an action and then queries the database to verify
+// the resulting rows. Configure TEST_DATABASE_URL to point only at a disposable
+// test database (the test runner maps it to DATABASE_URL for this process).
 //
 // Run with:
-//   ALO_DB_DRIVER=sqlite DATABASE_URL="file:$PWD/.awf-tmp/verify.db" \
-//     npx vitest run tests/integration/university-monitoring.test.ts
+//   TEST_DATABASE_URL=mysql://.../alo_test_ci npm run test:integration
 //
+// SQLite is supported only when the generated verification mirror client is
+// available and ALO_DB_DRIVER=sqlite is explicitly set.
+
 // Covered (mapped to the spec's TESTING REQUIREMENT list):
 //   • Scheduler tests            — lock acquire/release, nextRunAt persistence
 //   • Duplicate prevention test  — concurrent runs cannot both acquire the lock
@@ -23,15 +25,27 @@
 //   • Conflict test              — DataConflict lifecycle
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { db } from '@/lib/db';
-import {
+
+// The suite uses real persistence, so it is loaded only when the runner has
+// explicitly received a disposable TEST_DATABASE_URL. Otherwise it is skipped
+// without initializing Prisma or any DB-backed service modules.
+const integrationDescribe = process.env.TEST_DATABASE_URL ? describe : describe.skip;
+if (!process.env.TEST_DATABASE_URL) {
+  console.warn('[integration] university-monitoring tests skipped: TEST_DATABASE_URL is not set.');
+}
+const testModules = process.env.TEST_DATABASE_URL
+  ? await Promise.all([import('@/lib/db'), import('@/lib/university-monitoring-runner')])
+  : [];
+const db = testModules[0]?.db as typeof import('@/lib/db').db;
+const monitoring = (testModules[1] ?? {}) as typeof import('@/lib/university-monitoring-runner');
+const {
   ensureMonitoringJob,
   computeNextRunAt,
   reclaimExpiredLock,
   isDue,
   MONITORING_JOB_ID,
   MONITORING_INTERVAL_DAYS,
-} from '@/lib/university-monitoring-runner';
+} = monitoring;
 
 const SUFFIX = `test-${Date.now().toString(36)}`;
 const UNI_SLUG = `alo-itest-uni-${SUFFIX}`;
@@ -134,7 +148,7 @@ afterAll(async () => {
 // ------------------------------------------------------------------
 // Scheduler
 // ------------------------------------------------------------------
-describe('Scheduler: 7-day job configuration and persistence', () => {
+integrationDescribe('Scheduler: 7-day job configuration and persistence', () => {
   it('creates the monitoring job with a stable id (idempotent across restarts)', async () => {
     const a = await ensureMonitoringJob();
     const b = await ensureMonitoringJob();
@@ -184,7 +198,7 @@ describe('Scheduler: 7-day job configuration and persistence', () => {
 // ------------------------------------------------------------------
 // Duplicate execution prevention
 // ------------------------------------------------------------------
-describe('Duplicate prevention: concurrent run locking', () => {
+integrationDescribe('Duplicate prevention: concurrent run locking', () => {
   it('only one of two concurrent lock attempts succeeds', async () => {
     const job = await ensureMonitoringJob();
     await db.monitoringJob.update({
@@ -265,7 +279,7 @@ describe('Duplicate prevention: concurrent run locking', () => {
 // ------------------------------------------------------------------
 // Change detection record shape
 // ------------------------------------------------------------------
-describe('Change detection: evidence is recorded with every change', () => {
+integrationDescribe('Change detection: evidence is recorded with every change', () => {
   it('stores old value, new value, source URL, detection time, impact and confidence', async () => {
     const run = await db.verificationRun.create({
       data: { jobId: (await ensureMonitoringJob()).id, runId: `VR-detect-${SUFFIX}`, status: 'COMPLETED' },
@@ -336,7 +350,7 @@ describe('Change detection: evidence is recorded with every change', () => {
 // ------------------------------------------------------------------
 // Approval / rejection / history / audit
 // ------------------------------------------------------------------
-describe('Approval workflow: approve applies, rejects do not, history is preserved', () => {
+integrationDescribe('Approval workflow: approve applies, rejects do not, history is preserved', () => {
   async function makeChange(newValue: string) {
     const run = await db.verificationRun.create({
       data: { jobId: (await ensureMonitoringJob()).id, runId: `VR-ap-${SUFFIX}-${Math.random().toString(36).slice(2, 7)}`, status: 'COMPLETED' },
@@ -494,7 +508,7 @@ describe('Approval workflow: approve applies, rejects do not, history is preserv
 // ------------------------------------------------------------------
 // Source failure handling
 // ------------------------------------------------------------------
-describe('Error handling: source failures never delete verified data', () => {
+integrationDescribe('Error handling: source failures never delete verified data', () => {
   it('records consecutive failures on the source but preserves the entity', async () => {
     await db.officialSource.update({
       where: { id: sourceId },
@@ -520,7 +534,7 @@ describe('Error handling: source failures never delete verified data', () => {
 // ------------------------------------------------------------------
 // Conflicts
 // ------------------------------------------------------------------
-describe('Conflict detection: disagreeing official sources escalate to Super Admin', () => {
+integrationDescribe('Conflict detection: disagreeing official sources escalate to Super Admin', () => {
   it('creates a PENDING conflict and resolves it with attribution', async () => {
     const conflict = await db.dataConflict.create({
       data: {
@@ -560,7 +574,7 @@ describe('Conflict detection: disagreeing official sources escalate to Super Adm
 // ------------------------------------------------------------------
 // Student-facing data safety
 // ------------------------------------------------------------------
-describe('AI answer safety: student-facing queries only see approved + verified data', () => {
+integrationDescribe('AI answer safety: student-facing queries only see approved + verified data', () => {
   it('excludes records that are not both VERIFIED and PUBLISHED', async () => {
     const draftSlug = `alo-itest-draft-${SUFFIX}`;
     await db.universityPage.create({

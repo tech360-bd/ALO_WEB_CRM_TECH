@@ -170,9 +170,12 @@ interface N8nWorkflow {
   id: string;
   name: string;
   description?: string | null;
-  webhookUrl: string;
   triggerType: string;
   isActive: boolean;
+  reportedIsActive?: boolean;
+  hasStoredEndpoint?: boolean;
+  hasStoredSecret?: boolean;
+  status?: string;
   lastTriggeredAt?: string | null;
   triggerCount: number;
   createdAt: string;
@@ -1981,12 +1984,12 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
   const { toast } = useToast();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
-  const [triggering, setTriggering] = React.useState<string | null>(null);
-  const [form, setForm] = React.useState({ name: "", description: "", webhookUrl: "", triggerType: "LEAD_CREATED" });
+  const [clearingId, setClearingId] = React.useState<string | null>(null);
+  const [form, setForm] = React.useState({ name: "", description: "", triggerType: "LEAD_CREATED" });
 
-  const createWorkflow = async () => {
-    if (!form.name.trim() || !form.webhookUrl.trim()) {
-      toast({ title: "Name and webhook URL required", variant: "destructive" });
+  const createWorkflowPlaceholder = async () => {
+    if (!form.name.trim()) {
+      toast({ title: "Workflow name required", variant: "destructive" });
       return;
     }
     setSaving(true);
@@ -1994,70 +1997,37 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
       const res = await fetch("/api/marketing/n8n-workflows", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, createdBy: CURRENT_EMPLOYEE_ID }),
+        body: JSON.stringify(form),
       });
-      const json = await res.json();
-      if (json.workflow) {
-        toast({ title: "Workflow created", description: json.message });
-        setCreateOpen(false);
-        setForm({ name: "", description: "", webhookUrl: "", triggerType: "LEAD_CREATED" });
-        onDataChanged();
-      } else {
-        throw new Error(json.error);
-      }
-    } catch {
-      toast({ title: "Failed to create workflow", variant: "destructive" });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.workflow) throw new Error(json?.error || "Placeholder could not be created.");
+      toast({ title: "Placeholder created", description: json.message });
+      setCreateOpen(false);
+      setForm({ name: "", description: "", triggerType: "LEAD_CREATED" });
+      onDataChanged();
+    } catch (error) {
+      toast({ title: "Unable to create placeholder", description: error instanceof Error ? error.message : "Please retry.", variant: "destructive" });
     } finally {
       setSaving(false);
     }
   };
 
-  const toggleWorkflow = async (w: N8nWorkflow) => {
-    try {
-      await fetch("/api/marketing/n8n-workflows", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: w.id, isActive: !w.isActive }),
-      });
-      toast({
-        title: w.isActive ? "Workflow deactivated" : "Workflow activated",
-        description: `"${w.name}" is now ${w.isActive ? "off" : "on"}.`,
-      });
-      onDataChanged();
-    } catch {
-      toast({ title: "Toggle failed", variant: "destructive" });
-    }
-  };
-
-  const triggerWorkflow = async (w: N8nWorkflow) => {
-    setTriggering(w.id);
+  const clearLocalConfiguration = async (workflow: N8nWorkflow) => {
+    setClearingId(workflow.id);
     try {
       const res = await fetch("/api/marketing/n8n-workflows", {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: w.id, payload: { triggeredAt: new Date().toISOString(), source: "marketing-dashboard" } }),
+        body: JSON.stringify({ id: workflow.id, isActive: false }),
       });
-      const json = await res.json();
-      if (json.success) {
-        toast({ title: "Workflow triggered", description: json.message });
-        onDataChanged();
-      } else {
-        throw new Error(json.error);
-      }
-    } catch {
-      toast({ title: "Trigger failed", variant: "destructive" });
+      const json = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(json?.error || "Local configuration could not be cleared.");
+      toast({ title: "Local configuration cleared", description: json.message });
+      onDataChanged();
+    } catch (error) {
+      toast({ title: "Could not clear local configuration", description: error instanceof Error ? error.message : "Please retry.", variant: "destructive" });
     } finally {
-      setTriggering(null);
-    }
-  };
-
-  const maskUrl = (url: string) => {
-    if (!url) return "—";
-    try {
-      const u = new URL(url);
-      return `${u.protocol}//${u.host}/****`;
-    } catch {
-      return url.slice(0, 20) + "****";
+      setClearingId(null);
     }
   };
 
@@ -2065,110 +2035,89 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-[#0B5ED7]">n8n Workflow Automation</h2>
-          <p className="text-xs text-muted-foreground">Control marketing automations without server access. Toggle, trigger, and monitor workflows.</p>
+          <h2 className="text-lg font-bold text-[#0B5ED7]">n8n Workflow Configuration</h2>
+          <p className="text-xs text-muted-foreground">Saved records are placeholders only. External endpoints and workflow execution are not configured or verified.</p>
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
-              <Icon name="Plus" className="size-4" /> Add Workflow
+            <Button className="h-12 bg-[#F97316] text-white hover:bg-[#F97316]/90">
+              <Icon name="Plus" className="size-4" /> Add placeholder
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle className="text-[#0B5ED7]">Add n8n Workflow</DialogTitle>
-              <DialogDescription>Register an existing n8n webhook so it can be triggered and toggled from this dashboard.</DialogDescription>
+              <DialogTitle className="text-[#0B5ED7]">Add workflow placeholder</DialogTitle>
+              <DialogDescription>Create a local inactive record only. Do not enter a webhook URL or secret; this will not connect to n8n.</DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-2">
               <div className="space-y-1.5">
                 <Label htmlFor="wfName">Workflow Name *</Label>
-                <Input id="wfName" placeholder="Lead Welcome Email Sequence" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                <Input id="wfName" maxLength={120} placeholder="Lead follow-up (planned)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="wfDesc">Description</Label>
-                <Textarea id="wfDesc" placeholder="Sends welcome email + WhatsApp message when a new lead is created." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                <Textarea id="wfDesc" maxLength={1000} placeholder="Describe the intended workflow without personal data." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="wfUrl">Webhook URL *</Label>
-                <Input id="wfUrl" placeholder="https://n8n.alo-education.com/webhook/lead-created" value={form.webhookUrl} onChange={(e) => setForm({ ...form, webhookUrl: e.target.value })} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Trigger Type</Label>
-                <Select value={form.triggerType} onValueChange={(v) => setForm({ ...form, triggerType: v })}>
+                <Label>Planned Trigger Type</Label>
+                <Select value={form.triggerType} onValueChange={(triggerType) => setForm({ ...form, triggerType })}>
                   <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {TRIGGER_TYPES.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                    {TRIGGER_TYPES.map((trigger) => <SelectItem key={trigger.value} value={trigger.value}>{trigger.label}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" className="h-11" onClick={() => setCreateOpen(false)}>Cancel</Button>
-              <Button className="h-11 bg-[#F97316] text-white hover:bg-[#F97316]/90" disabled={saving} onClick={createWorkflow}>
-                {saving ? "Creating..." : "Create Workflow"}
+              <Button className="h-11 bg-[#F97316] text-white hover:bg-[#F97316]/90" disabled={saving} onClick={createWorkflowPlaceholder}>
+                {saving ? "Saving..." : "Save placeholder"}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      <SectionCard title="Workflows" icon="Workflow" description={`${workflows.length} registered n8n workflows`}>
+      <SectionCard title="Workflow configuration records" icon="Workflow" description={`${workflows.length} stored records; execution status is not verified`}>
         {workflows.length === 0 ? (
-          <EmptyState icon="Workflow" title="No workflows registered" description="Add your first n8n webhook to enable trigger-and-toggle control from this dashboard." />
+          <EmptyState icon="Workflow" title="No workflow records" description="A placeholder records intent only; it does not connect to or execute n8n." />
         ) : (
           <div className="space-y-3">
-            {workflows.map((w) => (
-              <div key={w.id} className="rounded-xl border-2 border-[#E2E8F0] bg-white p-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-bold text-foreground">{w.name}</p>
-                      <Badge className={cn("hover:bg-current", TRIGGER_TYPE_BADGE[w.triggerType] || "bg-slate-100 text-slate-700")}>
-                        {TRIGGER_TYPES.find((t) => t.value === w.triggerType)?.label || w.triggerType}
-                      </Badge>
-                      <div className="flex items-center gap-1.5">
-                        <Switch checked={w.isActive} onCheckedChange={() => toggleWorkflow(w)} />
-                        <span className={cn("text-[11px] font-semibold", w.isActive ? "text-emerald-600" : "text-slate-500")}>
-                          {w.isActive ? "Active" : "Paused"}
-                        </span>
+            {workflows.map((workflow) => {
+              const hasLocalConfiguration = Boolean(workflow.hasStoredEndpoint || workflow.hasStoredSecret || workflow.reportedIsActive);
+              return (
+                <div key={workflow.id} className="rounded-xl border-2 border-[#E2E8F0] bg-white p-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-bold text-foreground">{workflow.name}</p>
+                        <Badge className={cn("hover:bg-current", TRIGGER_TYPE_BADGE[workflow.triggerType] || "bg-slate-100 text-slate-700")}>
+                          {TRIGGER_TYPES.find((trigger) => trigger.value === workflow.triggerType)?.label || workflow.triggerType}
+                        </Badge>
+                        <Badge variant="outline">NOT VERIFIED</Badge>
                       </div>
+                      {workflow.description && <p className="mt-1 text-xs text-muted-foreground">{workflow.description}</p>}
+                      <p className="mt-2 text-[11px] text-muted-foreground">
+                        External workflow: not verified. Stored endpoint: {workflow.hasStoredEndpoint ? "present (value hidden)" : "none"}; stored secret: {workflow.hasStoredSecret ? "present (value hidden)" : "none"}. Historical active/trigger counters are unverified.
+                      </p>
                     </div>
-                    {w.description && <p className="mt-1 text-xs text-muted-foreground">{w.description}</p>}
-                    <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Icon name="Link" className="size-3" />
-                        <span className="font-mono">{maskUrl(w.webhookUrl)}</span>
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Icon name="Zap" className="size-3" />
-                        Triggered <span className="font-semibold text-[#0B5ED7]">{w.triggerCount}</span> times
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Icon name="Clock" className="size-3" />
-                        Last: {w.lastTriggeredAt ? timeAgo(w.lastTriggeredAt) : "never"}
-                      </span>
-                    </div>
+                    {hasLocalConfiguration && (
+                      <Button size="sm" variant="outline" disabled={clearingId === workflow.id} onClick={() => clearLocalConfiguration(workflow)}>
+                        {clearingId === workflow.id ? "Clearing..." : "Clear local config"}
+                      </Button>
+                    )}
                   </div>
-                  <Button
-                    size="sm"
-                    className="h-9 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
-                    disabled={!w.isActive || triggering === w.id}
-                    onClick={() => triggerWorkflow(w)}
-                  >
-                    <Icon name={triggering === w.id ? "Loader2" : "Play"} className={cn("size-3.5", triggering === w.id && "animate-spin")} />
-                    {triggering === w.id ? "Triggering..." : "Trigger Now"}
-                  </Button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </SectionCard>
 
-      <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3">
-        <Icon name="Server" className="mt-0.5 size-4 shrink-0 text-[#0B5ED7]" />
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-[#0B5ED7]">No server access required:</span> Daily workflow control (toggle on/off, trigger manually, view stats) is fully available from this dashboard. Engineering team handles webhook deployment and n8n instance maintenance.
+      <div className="flex items-start gap-3 rounded-2xl border-2 border-amber-200 bg-amber-50 px-4 py-3">
+        <Icon name="ShieldAlert" className="mt-0.5 size-4 shrink-0 text-amber-700" />
+        <p className="text-xs leading-relaxed text-amber-900">
+          n8n execution is intentionally unavailable. No webhook was called, no external workflow was disabled by local cleanup, and no execution counter is treated as verified evidence.
         </p>
       </div>
     </div>

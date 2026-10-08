@@ -37,9 +37,11 @@ describe('portal and student session hardening', () => {
   it('has per-IP/email portal throttling and student failure throttling', () => {
     const portal = readFileSync('src/app/api/portal-auth/login/route.ts', 'utf8');
     const student = readFileSync('src/app/api/student/auth/login/route.ts', 'utf8');
-    expect(portal).toContain('LOGIN_MAX_FAILURES');
-    expect(portal).toContain('429');
-    expect(student).toContain('rateLimits');
+    expect(portal).toContain('loginAttempt.count');
+    expect(portal).toContain('failureCount >= 5');
+    expect(portal).toContain('status: 429');
+    expect(student).toContain('loginAttempt.count');
     expect(student).toContain('Too many failed attempts');
+    expect(student).toContain('status: 429');
   });
 });

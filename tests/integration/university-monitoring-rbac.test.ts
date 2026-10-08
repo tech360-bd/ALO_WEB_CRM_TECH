@@ -17,11 +17,19 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import {
-  authorizeMonitoringAdmin,
-  authorizeMonitoringViewer,
-} from '@/lib/university-monitoring-auth';
+
+// These tests use real sessions and database-backed authorization. Skip before
+// importing the DB client when no disposable test database was requested.
+const integrationDescribe = process.env.TEST_DATABASE_URL ? describe : describe.skip;
+if (!process.env.TEST_DATABASE_URL) {
+  console.warn('[integration] university-monitoring RBAC tests skipped: TEST_DATABASE_URL is not set.');
+}
+const testModules = process.env.TEST_DATABASE_URL
+  ? await Promise.all([import('@/lib/db'), import('@/lib/university-monitoring-auth')])
+  : [];
+const db = testModules[0]?.db as typeof import('@/lib/db').db;
+const monitoringAuth = (testModules[1] ?? {}) as typeof import('@/lib/university-monitoring-auth');
+const { authorizeMonitoringAdmin, authorizeMonitoringViewer } = monitoringAuth;
 
 const SUFFIX = `rbac-${Date.now().toString(36)}`;
 
@@ -93,7 +101,7 @@ afterAll(async () => {
   await db.portalUser.deleteMany({ where: { id: { in: made } } }).catch(() => undefined);
 });
 
-describe('Authentication: anonymous access is rejected', () => {
+integrationDescribe('Authentication: anonymous access is rejected', () => {
   it('denies an unauthenticated caller the Super Admin actions', async () => {
     const result = await authorizeMonitoringAdmin(anonymousReq());
     expect(result.ok).toBe(false);
@@ -110,7 +118,7 @@ describe('Authentication: anonymous access is rejected', () => {
   });
 });
 
-describe('RBAC: privileged monitoring actions are Super Admin only', () => {
+integrationDescribe('RBAC: privileged monitoring actions are Super Admin only', () => {
   it('allows SUPER_ADMIN and returns the session-derived actor', async () => {
     const result = await authorizeMonitoringAdmin(reqWithSession(superAdmin.token));
     expect(result.ok).toBe(true);
@@ -140,7 +148,7 @@ describe('RBAC: privileged monitoring actions are Super Admin only', () => {
   });
 });
 
-describe('RBAC: read access is staff-only (queue exposes unapproved data)', () => {
+integrationDescribe('RBAC: read access is staff-only (queue exposes unapproved data)', () => {
   it('allows EMPLOYEE to view monitoring data', async () => {
     const result = await authorizeMonitoringViewer(reqWithSession(employee.token));
     expect(result.ok).toBe(true);
@@ -165,7 +173,7 @@ describe('RBAC: read access is staff-only (queue exposes unapproved data)', () =
   });
 });
 
-describe('Session integrity', () => {
+integrationDescribe('Session integrity', () => {
   it('rejects a revoked session', async () => {
     const victim = await makeUser('SUPER_ADMIN', 'super_admin', 'revoked');
     await db.portalSession.update({

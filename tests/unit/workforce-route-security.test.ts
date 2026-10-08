@@ -15,7 +15,7 @@ const req = (body: unknown) => new Request('http://localhost/api/workforce/appro
 beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(getServerSession).mockResolvedValue({ user: { id: 'admin' } });
-  vi.mocked(db.user.findUnique).mockResolvedValue({ id: 'admin', email: 'admin@example.com', name: 'Admin', role: 'ADMIN', permissions: '[]', status: 'ACTIVE' });
+  vi.mocked(db.user.findUnique).mockResolvedValue({ id: 'admin', email: 'admin@example.com', name: 'Admin', role: 'ADMIN', permissions: '[]', status: 'ACTIVE', emailVerified: true });
   vi.mocked(db.$transaction).mockImplementation(async callback => callback(db));
   vi.mocked(db.agentApprovalQueue.findUnique).mockResolvedValue({ id: 'approval', agentId: 'agent', status: 'pending' });
   vi.mocked(db.agentApprovalQueue.updateMany).mockResolvedValue({ count: 1 });
@@ -26,7 +26,7 @@ describe('real auth middleware on workforce routes', () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
     expect((await approvalPOST(req({}))).status).toBe(401);
     vi.mocked(getServerSession).mockResolvedValue({ user: { id: 'student' } });
-    vi.mocked(db.user.findUnique).mockResolvedValue({ id: 'student', role: 'STUDENT', status: 'ACTIVE', permissions: '[]' });
+    vi.mocked(db.user.findUnique).mockResolvedValue({ id: 'student', role: 'STUDENT', status: 'ACTIVE', emailVerified: true, permissions: '[]' });
     expect((await approvalPOST(req({ id: 'approval', decision: 'APPROVE' }))).status).toBe(403);
     expect((await approvalGET(new Request('http://localhost/api/workforce/approval'))).status).toBe(403);
     expect((await orchestratePOST(req({ workflow: 'lead_scoring', actionType: 'LEAD_SCORING', department: 'dept' }))).status).toBe(403);

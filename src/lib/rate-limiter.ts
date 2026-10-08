@@ -17,6 +17,7 @@ const DEFAULT_LIMITS: Record<string, RateLimitConfig> = {
   whatsapp_send: { windowMs: 60 * 1000, max: 30 },
   document: { windowMs: 60 * 1000, max: 50 },
   admin_settings: { windowMs: 60 * 1000, max: 30 },
+  lead_create: { windowMs: 60 * 1000, max: 5 },
   webhook: { windowMs: 60 * 1000, max: 100 }, // Allow high for WhatsApp traffic
 };
 

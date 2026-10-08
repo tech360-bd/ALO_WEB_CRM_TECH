@@ -12,7 +12,11 @@ import { POST as forgot } from '@/app/api/portal-auth/forgot-password/route';
 const request = (body: unknown) => new Request('https://example.com/api', { method: 'POST', body: JSON.stringify(body) });
 beforeEach(() => {
   vi.resetAllMocks();
-  db.portalUser.findUnique.mockResolvedValue({ id: 'employee', userType: 'EMPLOYEE', status: 'pending_activation', name: 'Employee', email: 'employee@example.com' });
+  db.portalUser.findUnique.mockResolvedValue({
+    id: 'employee', userType: 'EMPLOYEE', status: 'pending_activation',
+    firstLoginRequired: true, name: 'Employee', email: 'employee@example.com',
+    employeeProfile: { employeeId: 'ALO-EMP-TEST-1', designation: 'Counselor' },
+  });
   db.$transaction.mockImplementation(async callback => callback(Object.fromEntries(Object.entries(db).filter(([key]) => key !== '$transaction'))));
   db.employeeActivationToken.updateMany.mockResolvedValue({ count: 1 });
   db.employeeActivationToken.create.mockResolvedValue({ id: 'activation' });
@@ -28,7 +32,7 @@ describe('email consumer responses', () => {
   it('does not send or report success when transactional audit fails', async () => {
     db.portalAuditLog.create.mockRejectedValue(new Error('audit unavailable'));
     const response = await resend(request({ employeeId: 'employee' }));
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(503);
     expect(sendActivationEmail).not.toHaveBeenCalled();
   });
   it('resend reports success only after successful submission', async () => {

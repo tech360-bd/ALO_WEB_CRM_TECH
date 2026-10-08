@@ -7,7 +7,13 @@
  * key optional), the output contracts, the pipeline template resolver, the
  * lifecycle state machine and the test-expectation DSL.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// The tests below exercise pure AI-workforce behavior; the runner module also
+// imports database-backed handlers, so keep Prisma initialization out of this
+// unit-test boundary rather than requiring a live database.
+vi.mock('@/lib/db', () => ({ db: {} }));
+
 import { runDeterministic, listDeterministicTasks } from '@/lib/ai-workforce/deterministic-engine';
 import { getOutputSchema, OUTPUT_SCHEMAS } from '@/lib/ai-workforce/output-schemas';
 import { resolveTemplate } from '@/lib/ai-workforce/runner';

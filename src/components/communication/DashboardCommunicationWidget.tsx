@@ -2,13 +2,11 @@
 
 import Link from 'next/link';
 
-import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  MessageSquare, Mail, PhoneCall, PhoneMissed, Sparkles, Clock, AlertCircle,
-  FileCheck, ShieldCheck, DollarSign, Share2, Filter, Send, UserCheck, PlusCircle, CheckCircle2
+  MessageSquare, PhoneCall, FileCheck, Clock, AlertCircle, DollarSign, PlusCircle,
 } from 'lucide-react';
 
 export type DashboardRoleType =
@@ -26,53 +24,49 @@ export type DashboardRoleType =
 
 interface DashboardCommunicationWidgetProps {
   role: DashboardRoleType;
-  unreadCount?: number;
-  slaOverdueCount?: number;
+  unreadCount?: number | null;
+  slaOverdueCount?: number | null;
   onNavigateToInbox?: () => void;
+}
+
+function getRoleTitle(role: DashboardRoleType): string {
+  switch (role) {
+    case 'STUDENT': return 'My Messages & Support';
+    case 'PARTNER': return 'Partner Communication';
+    case 'B2B_SUPER_ADMIN': return 'Company Communication';
+    case 'STAFF_CRM': return 'Staff Communication';
+    case 'COUNSELOR': return 'Assigned Student & Lead Messages';
+    case 'APPLICATION_MANAGER': return 'Application Communication';
+    case 'VISA_OFFICER': return 'Visa Case Communication';
+    case 'MARKETING_MANAGER': return 'Marketing Inbox';
+    case 'FINANCE': return 'Finance Communication';
+    case 'FRONT_DESK': return 'Front Desk Communication';
+    case 'SUPER_ADMIN': return 'Communication Center';
+    default: return 'Communication Desk';
+  }
 }
 
 export default function DashboardCommunicationWidget({
   role,
-  unreadCount = 3,
-  slaOverdueCount = 1,
+  unreadCount = null,
+  slaOverdueCount = null,
   onNavigateToInbox,
 }: DashboardCommunicationWidgetProps) {
-  const [activeTab, setActiveTab] = useState('inbox');
-
-  const getRoleTitle = () => {
-    switch (role) {
-      case 'STUDENT': return 'My Messages & Support Chat';
-      case 'PARTNER': return 'Partner Agency Communication Hub';
-      case 'B2B_SUPER_ADMIN': return 'Company Communication & Quota Center';
-      case 'STAFF_CRM': return 'Unified Staff Communication Desk';
-      case 'COUNSELOR': return 'Assigned Student & Lead Messages';
-      case 'APPLICATION_MANAGER': return 'Application & University Communication Queue';
-      case 'VISA_OFFICER': return 'Visa File & Financial Proof Messages';
-      case 'MARKETING_MANAGER': return 'Social Inbox & Lead Capture Queue';
-      case 'FINANCE': return 'Payment & Commission Message Queue';
-      case 'FRONT_DESK': return 'Front Desk Call Logs & Enquiries';
-      case 'SUPER_ADMIN': return 'Master Enterprise Communication Center';
-      default: return 'Communication Desk';
-    }
-  };
-
   return (
     <Card className="border border-indigo-100 shadow-sm bg-white rounded-xl">
-      <CardHeader className="pb-3 border-b border-gray-100 flex flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-indigo-600" />
-          <CardTitle className="text-sm font-bold text-gray-900">{getRoleTitle()}</CardTitle>
+      <CardHeader className="pb-3 border-b border-gray-100 flex flex-row items-center justify-between gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <MessageSquare className="w-5 h-5 text-indigo-600 shrink-0" />
+          <CardTitle className="text-sm font-bold text-gray-900">{getRoleTitle(role)}</CardTitle>
         </div>
 
-        <div className="flex items-center gap-2">
-          {unreadCount > 0 && (
-            <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[10px]">
-              {unreadCount} Unread
-            </Badge>
-          )}
-          {slaOverdueCount > 0 && role !== 'STUDENT' && (
-            <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]">
-              {slaOverdueCount} SLA Overdue
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Badge variant="outline" className="text-[10px]">
+            {unreadCount == null ? 'Unread total unavailable' : `${Math.max(0, unreadCount)} unread`}
+          </Badge>
+          {role !== 'STUDENT' && (
+            <Badge variant="outline" className="text-[10px]">
+              {slaOverdueCount == null ? 'SLA total unavailable' : `${Math.max(0, slaOverdueCount)} SLA overdue`}
             </Badge>
           )}
           {onNavigateToInbox && (
@@ -84,20 +78,16 @@ export default function DashboardCommunicationWidget({
       </CardHeader>
 
       <CardContent className="p-4 space-y-3">
-        {/* Role Specific Action Quick Bar */}
         {role === 'STUDENT' && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             <Link href="/student/help" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
-              <MessageSquare className="w-3.5 h-3.5 mr-1" /> Reply Counselor
+              <MessageSquare className="w-3.5 h-3.5 mr-1" /> Contact Support
             </Button></Link>
             <Link href="/student/documents" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-blue-700 border-blue-100 bg-blue-50/50">
-              <FileCheck className="w-3.5 h-3.5 mr-1" /> Upload Doc Request
+              <FileCheck className="w-3.5 h-3.5 mr-1" /> My Documents
             </Button></Link>
             <Link href="/student/appointments" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
-              <Clock className="w-3.5 h-3.5 mr-1" /> Book Appointment
-            </Button></Link>
-            <Link href="/student/dashboard" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-purple-700 border-purple-100 bg-purple-50/50">
-              <Sparkles className="w-3.5 h-3.5 mr-1" /> AI Advisor Chat
+              <Clock className="w-3.5 h-3.5 mr-1" /> Appointments
             </Button></Link>
           </div>
         )}
@@ -105,75 +95,40 @@ export default function DashboardCommunicationWidget({
         {role === 'PARTNER' && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <Link href="/partner/messages" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
-              <MessageSquare className="w-3.5 h-3.5 mr-1" /> Message Support
+              <MessageSquare className="w-3.5 h-3.5 mr-1" /> Messages
             </Button></Link>
             <Link href="/partner/documents" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
-              <FileCheck className="w-3.5 h-3.5 mr-1" /> Missing Doc Upload
+              <FileCheck className="w-3.5 h-3.5 mr-1" /> Documents
             </Button></Link>
             <Link href="/partner/commission" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-amber-700 border-amber-100 bg-amber-50/50">
-              <DollarSign className="w-3.5 h-3.5 mr-1" /> Commission Updates
+              <DollarSign className="w-3.5 h-3.5 mr-1" /> Commission
             </Button></Link>
             <Link href="/partner/leads" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-purple-700 border-purple-100 bg-purple-50/50">
-              <AlertCircle className="w-3.5 h-3.5 mr-1" /> Urgent Follow-up
+              <AlertCircle className="w-3.5 h-3.5 mr-1" /> Leads
             </Button></Link>
           </div>
         )}
 
         {role === 'APPLICATION_MANAGER' && (
-          <div className="flex flex-wrap gap-2 text-xs">
-            <Badge className="bg-amber-100 text-amber-900 border-amber-200">
-              🔒 B2B Confidential Route Active
-            </Badge>
-            <Badge className="bg-blue-50 text-blue-700 border-blue-200">
-              University CAS/I-20 Pending: 4
-            </Badge>
-          </div>
+          <p className="text-xs text-slate-600">
+            Application access is checked for each record. Open the authorized inbox to review current items.
+          </p>
         )}
 
         {role === 'FRONT_DESK' && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <Link href="/crm/ucc" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-indigo-700 border-indigo-100 bg-indigo-50/50">
-              <PhoneCall className="w-3.5 h-3.5 mr-1" /> Log Call Outcome
+              <PhoneCall className="w-3.5 h-3.5 mr-1" /> Communication Center
             </Button></Link>
             <Link href="/employee/leads" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-emerald-700 border-emerald-100 bg-emerald-50/50">
-              <PlusCircle className="w-3.5 h-3.5 mr-1" /> Quick Lead Creation
-            </Button></Link>
-            <Link href="/crm/ucc" className="block"><Button size="sm" variant="outline" className="text-xs h-8 justify-start text-rose-700 border-rose-100 bg-rose-50/50">
-              <PhoneMissed className="w-3.5 h-3.5 mr-1" /> Missed Call Queue (2)
+              <PlusCircle className="w-3.5 h-3.5 mr-1" /> Lead Workspace
             </Button></Link>
           </div>
         )}
 
-        {/* Message Feed Sample */}
-        <div className="space-y-2 pt-1">
-          <div className="bg-gray-50 hover:bg-indigo-50/40 border border-gray-100 rounded-lg p-2.5 flex items-start justify-between gap-3 transition-colors">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-900">WhatsApp Lead Inquiry</span>
-                <Badge variant="outline" className="text-[9px] bg-green-50 text-green-700 border-green-200">WhatsApp</Badge>
-                <span className="text-[10px] text-gray-400">10m ago</span>
-              </div>
-              <p className="text-xs text-gray-600 truncate mt-0.5">
-                Interested in UK Masters in Data Science with 50% scholarship...
-              </p>
-            </div>
-            <Badge className="text-[10px] bg-indigo-50 text-indigo-700 border-indigo-200">New</Badge>
-          </div>
-
-          <div className="bg-gray-50 hover:bg-indigo-50/40 border border-gray-100 rounded-lg p-2.5 flex items-start justify-between gap-3 transition-colors">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-900">Document Upload Notification</span>
-                <Badge variant="outline" className="text-[9px] bg-blue-50 text-blue-700 border-blue-200">Portal</Badge>
-                <span className="text-[10px] text-gray-400">25m ago</span>
-              </div>
-              <p className="text-xs text-gray-600 truncate mt-0.5">
-                Student uploaded passport scan for verification.
-              </p>
-            </div>
-            <Badge className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-200">Verified</Badge>
-          </div>
-        </div>
+        <p className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600" role="status">
+          Counts come from this dashboard's authorized scope when available. Message content and external provider delivery confirmations are not shown here; use the authorized inbox for message-level review.
+        </p>
       </CardContent>
     </Card>
   );

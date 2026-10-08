@@ -63,6 +63,7 @@ interface DocRow {
   reviewedAt: string | null;
   uploadedAt: string | null;
   reviewedById: string | null;
+  downloadUrl?: string;
   student?: { studentId: string; fullName: string } | null;
 }
 
@@ -129,9 +130,9 @@ export function DocumentHub() {
     studentId: "",
     category: "",
     name: "",
-    fileName: "",
     required: true,
   });
+  const [uploadFile, setUploadFile] = React.useState<File | null>(null);
   const [uploadSaving, setUploadSaving] = React.useState(false);
 
   const fetchDocs = React.useCallback(async () => {
@@ -242,45 +243,32 @@ export function DocumentHub() {
   };
 
   const submitUpload = async () => {
-    if (!uploadForm.studentId || !uploadForm.category) {
-      toast({
-        title: "Missing fields",
-        description: "Please select a student and a document category.",
-      });
+    if (!uploadForm.studentId || !uploadForm.category || !uploadFile) {
+      toast({ title: "Missing fields", description: "Select a student, category, and actual file to upload." });
       return;
     }
     setUploadSaving(true);
     try {
       const categoryLabel = CATEGORY_LABELS[uploadForm.category] || uploadForm.category;
-      const fileName = uploadForm.fileName.trim() || `${uploadForm.category.toLowerCase()}.pdf`;
-      const res = await fetch("/api/documents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId: uploadForm.studentId,
-          category: uploadForm.category,
-          name: uploadForm.name.trim() || categoryLabel,
-          fileName,
-          fileType: "application/pdf",
-          fileSize: 480000,
-          required: uploadForm.required,
-        }),
-      });
-      if (!res.ok) throw new Error("upload failed");
-      const data = await res.json();
-      if (data.document) {
-        setDocs((prev) => [data.document, ...prev]);
-      }
-      toast({
-        title: "Document uploaded",
-        description: data.message || `${categoryLabel} uploaded and queued for review.`,
-      });
+      const form = new FormData();
+      form.append("studentId", uploadForm.studentId);
+      form.append("category", uploadForm.category);
+      form.append("name", uploadForm.name.trim() || categoryLabel);
+      form.append("file", uploadFile);
+      form.append("required", String(uploadForm.required));
+      const res = await fetch("/api/documents", { method: "POST", body: form });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.document) throw new Error(data?.error || "The document was not saved.");
+      await fetchDocs();
+      toast({ title: "Document uploaded", description: data.message || `${categoryLabel} was stored privately and queued for review.` });
       setUploadOpen(false);
-      setUploadForm({ studentId: "", category: "", name: "", fileName: "", required: true });
-    } catch {
+      setUploadForm({ studentId: "", category: "", name: "", required: true });
+      setUploadFile(null);
+    } catch (error) {
       toast({
         title: "Upload failed",
-        description: "Could not upload the document. Try again.",
+        description: error instanceof Error ? error.message : "Could not upload the document. No success was recorded.",
+        variant: "destructive",
       });
     } finally {
       setUploadSaving(false);
@@ -503,16 +491,17 @@ export function DocumentHub() {
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  disabled
+                                  disabled={!d.downloadUrl}
+                                  onClick={() => d.downloadUrl && window.location.assign(d.downloadUrl)}
                                   className="size-8 text-muted-foreground"
-                                  aria-label="Download (disabled)"
+                                  aria-label="Download document"
                                 >
                                   <Icon name="Download" className="size-4" />
                                 </Button>
                               </span>
                             </TooltipTrigger>
                             <TooltipContent side="top">
-                              <span className="text-xs">Private route — permission required</span>
+                              <span className="text-xs">Download from private storage with access checks</span>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -687,23 +676,17 @@ export function DocumentHub() {
 
             <div className="space-y-1.5">
               <Label htmlFor="doc-file" className="text-sm font-semibold text-[#0B5ED7]">
-                File name (simulated)
+                Document file
               </Label>
-              <div className="relative">
-                <Icon
-                  name="Paperclip"
-                  className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                  id="doc-file"
-                  value={uploadForm.fileName}
-                  onChange={(e) => setUploadForm((f) => ({ ...f, fileName: e.target.value }))}
-                  placeholder="passport.pdf"
-                  className="h-10 pl-9 border-[#0B5ED7]/20"
-                />
-              </div>
+              <Input
+                id="doc-file"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                className="border-[#0B5ED7]/20"
+              />
               <p className="text-[11px] text-muted-foreground">
-                In production this is replaced by an encrypted upload to private storage.
+                {uploadFile ? `${uploadFile.name} · ${(uploadFile.size / 1024).toFixed(0)} KB` : "PDF or image, maximum 20 MB. File bytes are uploaded to private storage."}
               </p>
             </div>
 

@@ -52,21 +52,13 @@ export default function InboxPage() {
     const activeThread = conversations.find(c => c.id === activeThreadId);
     if (!activeThread) return;
 
-    // find the recipient contact from the first message in the thread
-    // Assuming messages were fetched
-    const recipientContact = messages.find(m => m.direction === 'inbound')?.senderContact || 'unknown';
-
     try {
-      const res = await fetch("/api/crm/ucc/conversations", {
+      const res = await fetch(`/api/crm/ucc/conversations/${activeThreadId}/reply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          threadId: activeThreadId,
-          content: input,
-          recipientContact
-        })
+        body: JSON.stringify({ content: input, messageType: 'text' })
       });
       const json = await res.json();
       if (json.success) {
