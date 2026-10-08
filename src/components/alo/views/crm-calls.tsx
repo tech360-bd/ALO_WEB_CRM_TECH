@@ -110,7 +110,7 @@ export function CrmCalls() {
                             className={
                               c.direction === "OUTBOUND"
                                 ? "bg-[#FFF3EA] text-[#F97316]"
-                                : "bg-[#EAF3FF] text-[#0B5ED7]"
+                                : "bg-[#EAF3FF] text-[#2563EB]"
                             }
                           >
                             <Icon

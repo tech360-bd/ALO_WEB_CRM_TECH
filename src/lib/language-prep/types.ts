@@ -171,7 +171,7 @@ export interface StudentEnglishPrepProfile {
 
 export const BRANDING = {
   bg: '#FFFFFF',
-  primaryBlue: '#0B5ED7',
+  primaryBlue: '#2563EB',
   ctaOrange: '#F97316',
   text: '#0F172A',
   softBg: '#F8FAFC',

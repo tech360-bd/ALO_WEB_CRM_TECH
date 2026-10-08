@@ -13,7 +13,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  SCHEDULED: "bg-[#EAF3FF] text-[#0B5ED7]",
+  SCHEDULED: "bg-[#EAF3FF] text-[#2563EB]",
   COMPLETED: "bg-emerald-100 text-emerald-700",
   CANCELLED: "bg-rose-100 text-rose-700",
   NO_SHOW: "bg-amber-100 text-amber-700",
@@ -114,7 +114,7 @@ export function CrmAppointments() {
                           className={`flex size-9 items-center justify-center rounded-lg text-sm font-bold ${
                             isToday
                               ? "bg-[#F97316] text-white"
-                              : "bg-[#EAF3FF] text-[#0B5ED7]"
+                              : "bg-[#EAF3FF] text-[#2563EB]"
                           }`}
                         >
                           {d.getDate()}
@@ -156,7 +156,7 @@ export function CrmAppointments() {
                                 </Badge>
                               </div>
                               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-                                <Badge variant="outline" className="text-[#0B5ED7]">
+                                <Badge variant="outline" className="text-[#2563EB]">
                                   {TYPE_LABELS[a.type] || a.type}
                                 </Badge>
                                 {a.location && (

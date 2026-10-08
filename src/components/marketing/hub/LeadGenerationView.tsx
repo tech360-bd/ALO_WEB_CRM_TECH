@@ -20,14 +20,14 @@ export default function LeadGenerationView() {
           <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Target className="w-6 h-6 text-[#F97316]" />Lead Generation</h2>
           <p className="text-sm text-gray-500">Campaign attribution, source tracking (Facebook/Instagram/WhatsApp/Website), auto-creation, duplicate detection, segmentation, scoring, counselor assignment via CRM rules.</p>
         </div>
-        <Badge className="bg-[#0B5ED7] text-white">Attribution • Scoring • Routing</Badge>
+        <Badge className="bg-[#2563EB] text-white">Attribution • Scoring • Routing</Badge>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 space-y-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0B5ED7]" />Generated Leads (MarketingLead)</CardTitle>
+              <CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#2563EB]" />Generated Leads (MarketingLead)</CardTitle>
               <div className="flex gap-2">
                 <Input placeholder="Filter by source/destination" value={filter} onChange={e=>setFilter(e.target.value)} className="h-8 text-xs w-48" />
                 <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs"><Filter className="w-3 h-3 mr-1" />Filter</Button>
@@ -71,7 +71,7 @@ export default function LeadGenerationView() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Globe className="w-4 h-4 text-[#0B5ED7]" />Source Tracking</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Globe className="w-4 h-4 text-[#2563EB]" />Source Tracking</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <p className="text-gray-600">Every lead has <code>source, sourceDetail, campaignId</code>. Attribution preserved through CRM.</p>
               <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs"><Download className="w-3 h-3 mr-1" />Export CSV</Button>

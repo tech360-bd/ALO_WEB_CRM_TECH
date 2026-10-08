@@ -63,7 +63,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               </h1>
               <div className="flex flex-wrap items-center gap-6 text-gray-300 text-sm md:text-base">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#0B5ED7] font-bold text-lg">
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#2563EB] font-bold text-lg">
                     {post.author.charAt(0)}
                   </div>
                   <span className="font-medium text-white">{post.author}</span>
@@ -89,15 +89,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <article className="lg:w-2/3 bg-white p-6 md:p-12 rounded-3xl shadow-sm border border-gray-100">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-8 pb-8 border-b border-gray-100">
-              <Link href="/" className="hover:text-[#0B5ED7] transition-colors">Home</Link>
+              <Link href="/" className="hover:text-[#2563EB] transition-colors">Home</Link>
               <span>/</span>
-              <Link href="/blog" className="hover:text-[#0B5ED7] transition-colors">Blog</Link>
+              <Link href="/blog" className="hover:text-[#2563EB] transition-colors">Blog</Link>
               <span>/</span>
               <span className="text-gray-900 font-medium truncate max-w-[200px] md:max-w-md">{post.title}</span>
             </div>
 
             <div 
-              className="prose prose-lg prose-blue max-w-none prose-headings:text-[#0B5ED7] prose-a:text-[#F97316] prose-img:rounded-2xl"
+              className="prose prose-lg prose-blue max-w-none prose-headings:text-[#2563EB] prose-a:text-[#F97316] prose-img:rounded-2xl"
               dangerouslySetInnerHTML={{ __html: post.contentHtml }}
             />
             
@@ -148,7 +148,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   </h3>
                   <ul className="space-y-4">
                     {post.tableOfContents.map((item, index) => (
-                      <li key={index} className="text-gray-600 text-sm hover:text-[#0B5ED7] transition-colors cursor-pointer border-l-2 border-transparent hover:border-[#0B5ED7] pl-3">
+                      <li key={index} className="text-gray-600 text-sm hover:text-[#2563EB] transition-colors cursor-pointer border-l-2 border-transparent hover:border-[#2563EB] pl-3">
                         {item}
                       </li>
                     ))}
@@ -157,7 +157,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               )}
 
               {/* CTA Widget */}
-              <div className="bg-gradient-to-br from-[#0B5ED7] to-blue-900 p-8 rounded-3xl text-white shadow-lg text-center relative overflow-hidden">
+              <div className="bg-gradient-to-br from-[#2563EB] to-blue-900 p-8 rounded-3xl text-white shadow-lg text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-10 -mb-10"></div>
                 

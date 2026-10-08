@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-md px-2.5 py-0.5 text-badge whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none transition-[color,box-shadow] overflow-hidden font-medium",
+  "inline-flex h-6 items-center justify-center rounded-pill px-2.5 text-badge whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none transition-colors overflow-hidden",
   {
     variants: {
       variant: {
@@ -29,6 +29,9 @@ const badgeVariants = cva(
           "bg-alo-brand-light text-alo-brand border border-alo-brand/20 dark:bg-alo-brand/10 dark:text-alo-brand dark:border-alo-brand/30",
         cta:
           "bg-alo-cta/10 text-alo-cta border border-alo-cta/20",
+        /* AI / automation only */
+        ai:
+          "bg-alo-ai-soft text-alo-ai border border-alo-ai/20",
         /* Subtle */
         muted:
           "bg-muted text-muted-foreground border border-transparent",

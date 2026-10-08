@@ -31,7 +31,7 @@ export default function CrmHrmHubPage() {
           <p className="text-xs text-slate-500">Enterprise Employee HR System — integrated inside CRM • White / Orange • Asia/Dhaka</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className="bg-blue-50 text-[#0B5ED7] border-blue-200 capitalize text-xs">{roleStr.replace(/_/g,' ')}</Badge>
+          <Badge className="bg-blue-50 text-[#2563EB] border-blue-200 capitalize text-xs">{roleStr.replace(/_/g,' ')}</Badge>
           <Link href="/crm/hrm/profile"><Button size="sm" className="bg-[#F97316] hover:bg-[#D04010] text-white h-8 text-xs">My HR Profile</Button></Link>
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function CrmHrmHubPage() {
         </TabsContent>
         <TabsContent value="anniversary" className="mt-3">
           <Card className="bg-white border-slate-200"><CardContent className="p-4 text-sm text-slate-600">
-            {analytics?.upcomingWorkAnniversary?.length ? analytics.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{a.fullName}</span><span className="text-xs bg-blue-50 text-[#0B5ED7] px-2 py-0.5 rounded">{a.years} years • {a.joiningDate}</span></div>) : <span className="text-xs text-slate-400">No work anniversaries in next 30 days</span>}
+            {analytics?.upcomingWorkAnniversary?.length ? analytics.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{a.fullName}</span><span className="text-xs bg-blue-50 text-[#2563EB] px-2 py-0.5 rounded">{a.years} years • {a.joiningDate}</span></div>) : <span className="text-xs text-slate-400">No work anniversaries in next 30 days</span>}
           </CardContent></Card>
         </TabsContent>
         <TabsContent value="confirmation" className="mt-3">

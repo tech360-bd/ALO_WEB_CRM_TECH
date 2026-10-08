@@ -7,7 +7,7 @@ export interface BrandKit {
   phone: string;
   whatsapp: string;
   website: string;
-  primary: string; // #0B5ED7
+  primary: string; // #2563EB
   cta: string; // #F97316
 }
 
@@ -19,7 +19,7 @@ export async function getBrandKit(): Promise<BrandKit> {
     phone: "+8809611-123456",
     whatsapp: "+8801712345678",
     website: "https://alo-education.com",
-    primary: "#0B5ED7",
+    primary: "#2563EB",
     cta: "#F97316",
   };
   try {

@@ -5,59 +5,60 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] cursor-pointer select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-sm font-semibold leading-none transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-alo-brand focus-visible:ring-offset-2 cursor-pointer select-none",
   {
     variants: {
       variant: {
-        /* Primary — SaaS Blue #2563EB */
+        /* PRIMARY ACTION — ALO Orange #F97316 (hover #EA580C, active #C2410C) */
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:bg-primary/80",
-        /* Brand Blue — #0B5ED7 */
+          "bg-alo-cta text-white shadow-sm hover:bg-alo-cta-hover active:bg-alo-cta-active",
+        /* Information / navigation / system actions — ALO Blue #2563EB */
         brand:
-          "bg-alo-brand text-white shadow-sm hover:bg-alo-brand/90 active:bg-alo-brand/80",
-        /* Legacy CRM alias retained for backwards compatibility. */
+          "bg-alo-brand text-white shadow-sm hover:bg-alo-brand-hover active:bg-alo-brand-hover",
+        /* Legacy alias of `brand` — kept so existing call sites stay valid. */
         alo:
-          "bg-alo-brand text-white shadow-sm hover:bg-alo-brand/90 active:bg-alo-brand/80",
-        /* CTA Orange — #C2410C accessible with white text */
+          "bg-alo-brand text-white shadow-sm hover:bg-alo-brand-hover active:bg-alo-brand-hover",
+        /* Legacy alias of `default` (orange primary). */
         cta:
-          "bg-alo-cta text-white shadow-sm hover:bg-alo-cta-hover active:bg-alo-cta-hover/90",
-        /* Outline */
+          "bg-alo-cta text-white shadow-sm hover:bg-alo-cta-hover active:bg-alo-cta-active",
+        /* SECONDARY — white, strong border, navy text */
         outline:
-          "border border-border bg-white text-foreground shadow-sm hover:bg-secondary hover:text-secondary-foreground dark:bg-card dark:border-border dark:hover:bg-secondary",
-        /* Ghost */
+          "border border-alo-border-strong bg-white text-alo-navy shadow-sm hover:bg-alo-page dark:bg-card dark:text-foreground dark:hover:bg-secondary",
+        /* Ghost — toolbar / tertiary actions */
         ghost:
-          "hover:bg-secondary hover:text-secondary-foreground dark:hover:bg-secondary",
-        /* Link */
+          "text-alo-navy hover:bg-secondary dark:hover:bg-secondary",
+        /* Link — inline text action (blue) */
         link:
-          "text-primary underline-offset-4 hover:underline p-0 h-auto",
-        /* CRM Success */
+          "text-alo-brand underline-offset-4 hover:text-alo-brand-hover hover:underline p-0 h-auto",
+        /* SUCCESS — use sparingly (completed / verified) */
         success:
-          "bg-crm-success text-white shadow-sm hover:bg-crm-success/90 active:bg-crm-success/80",
-        /* CRM Danger */
-        danger:
-          "bg-crm-danger text-white shadow-sm hover:bg-crm-danger/90 active:bg-crm-danger/80",
+          "bg-alo-success text-white shadow-sm hover:bg-alo-success-dark active:bg-alo-success-dark",
         /* Secondary muted */
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        /* Destructive */
+        /* DANGER — destructive operations only */
         destructive:
-          "bg-destructive text-white shadow-sm hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        /* Brand Outline */
+          "bg-alo-error text-white shadow-sm hover:bg-red-700 active:bg-red-800 focus-visible:ring-alo-error/30 dark:bg-destructive/60",
+        /* Danger (CRM alias) */
+        danger:
+          "bg-alo-error text-white shadow-sm hover:bg-red-700 active:bg-red-800",
+        /* Brand outline (blue information action) */
         "brand-outline":
-          "border-2 border-alo-brand text-alo-brand bg-transparent hover:bg-alo-brand-light",
-        /* CTA Outline */
+          "border border-alo-brand text-alo-brand bg-white hover:bg-alo-brand-light",
+        /* CTA outline (orange secondary primary) */
         "cta-outline":
-          "border-2 border-alo-cta text-alo-cta bg-transparent hover:bg-alo-cta/5",
+          "border border-alo-cta text-alo-cta-active bg-white hover:bg-alo-cta-soft",
       },
       size: {
-        xs: "h-7 rounded-md gap-1 px-2 text-xs has-[>svg]:px-1.5",
-        sm: "h-8 rounded-md gap-1.5 px-3 text-[13px] has-[>svg]:px-2.5",
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        lg: "h-11 rounded-lg px-6 text-[15px] has-[>svg]:px-4",
-        xl: "h-12 rounded-lg px-8 text-base has-[>svg]:px-5",
-        icon: "size-9",
-        "icon-sm": "size-8",
-        "icon-lg": "size-11",
+        /* Height scale: 32 (inline) · 40 (CRM dense / input-height) · 44 (default) · 48–52 (large CTA) */
+        xs: "h-8 rounded-md gap-1 px-2.5 text-xs has-[>svg]:px-2",
+        sm: "h-10 rounded-button gap-1.5 px-3.5 text-[13px] has-[>svg]:px-3",
+        default: "h-11 px-5 py-2.5 has-[>svg]:px-4",
+        lg: "h-12 rounded-button px-6 text-[15px] has-[>svg]:px-5",
+        xl: "h-[52px] rounded-button px-7 text-[15px] has-[>svg]:px-6",
+        icon: "size-11",
+        "icon-sm": "size-10",
+        "icon-lg": "size-12",
       },
     },
     defaultVariants: {

@@ -69,7 +69,7 @@ export default function EventsPage() {
 
   return (
     <main className="pt-20 pb-16 min-h-screen bg-gray-50">
-      <div className="bg-[#0B5ED7] py-16 text-white text-center">
+      <div className="bg-[#2563EB] py-16 text-white text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">Events & Webinars</h1>
         <p className="text-xl max-w-2xl mx-auto opacity-90">
           Connect with university representatives, gain visa insights, and plan your study abroad journey.
@@ -82,7 +82,7 @@ export default function EventsPage() {
           {upcomingEvents.map(event => (
             <div key={event.id} className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col">
               <div className="p-6 flex-grow">
-                <span className="inline-block px-3 py-1 bg-blue-100 text-[#0B5ED7] text-xs font-bold rounded-full mb-4">
+                <span className="inline-block px-3 py-1 bg-blue-100 text-[#2563EB] text-xs font-bold rounded-full mb-4">
                   {event.type}
                 </span>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">{event.title}</h3>

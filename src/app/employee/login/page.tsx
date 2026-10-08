@@ -56,7 +56,7 @@ export default function EmployeeLoginPage() {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl border-slate-200 bg-white">
         <CardHeader className="text-center pb-2">
-          <div className="mx-auto w-12 h-12 rounded-xl bg-[#0B5ED7]/10 text-[#0B5ED7] flex items-center justify-center mb-3">
+          <div className="mx-auto w-12 h-12 rounded-xl bg-[#2563EB]/10 text-[#2563EB] flex items-center justify-center mb-3">
             <Briefcase className="h-6 w-6" />
           </div>
           <CardTitle className="text-2xl font-bold text-slate-900">Staff & Counselor Portal</CardTitle>
@@ -92,7 +92,7 @@ export default function EmployeeLoginPage() {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <Label htmlFor="emp-pass" className="text-xs font-medium text-slate-700">Password</Label>
-                <Link href="/forgot-password" className="text-xs text-[#0B5ED7] hover:underline">Forgot password?</Link>
+                <Link href="/forgot-password" className="text-xs text-[#2563EB] hover:underline">Forgot password?</Link>
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -118,7 +118,7 @@ export default function EmployeeLoginPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-[#0B5ED7] hover:bg-[#004694] text-white font-semibold text-sm rounded-lg"
+              className="w-full h-11 bg-[#2563EB] hover:bg-[#004694] text-white font-semibold text-sm rounded-lg"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -135,7 +135,7 @@ export default function EmployeeLoginPage() {
           <div className="mt-6 pt-4 border-t border-slate-100 text-center">
             <p className="text-xs text-slate-500">
               Need administrator access?{' '}
-              <Link href="/admin/login" className="text-[#0B5ED7] font-semibold hover:underline">
+              <Link href="/admin/login" className="text-[#2563EB] font-semibold hover:underline">
                 Admin Console
               </Link>
             </p>

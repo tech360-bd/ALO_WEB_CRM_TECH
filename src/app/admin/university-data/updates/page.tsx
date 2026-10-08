@@ -131,7 +131,7 @@ export default function UniversityUpdatesCenter() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B5ED7] to-[#F97316] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#F97316] flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -145,7 +145,7 @@ export default function UniversityUpdatesCenter() {
           <Button
             onClick={handleRunScan}
             disabled={scanning}
-            className="bg-[#0B5ED7] hover:bg-[#0046a0] text-white flex items-center gap-2"
+            className="bg-[#2563EB] hover:bg-[#0046a0] text-white flex items-center gap-2"
           >
             {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
             <span>Run On-Demand Scan</span>

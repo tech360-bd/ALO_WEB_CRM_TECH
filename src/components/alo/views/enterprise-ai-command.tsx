@@ -652,7 +652,7 @@ export function EnterpriseAiCommand() {
             <div className="space-y-3">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-[#0B5ED7]">
+                  <p className="text-3xl font-bold text-[#2563EB]">
                     {Math.round((summary.dccCertified / summary.totalDepartments) * 100)}%
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -721,17 +721,17 @@ export function EnterpriseAiCommand() {
                     <div key={d.id} className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2 truncate">
-                          <span className="flex size-5 items-center justify-center rounded bg-[#e8f0fb] text-[10px] font-bold text-[#0B5ED7]">
+                          <span className="flex size-5 items-center justify-center rounded bg-[#e8f0fb] text-[10px] font-bold text-[#2563EB]">
                             {idx + 1}
                           </span>
                           <span className="truncate font-medium">{d.name}</span>
                           <span className="font-mono text-[10px] text-muted-foreground">{d.deptCode}</span>
                         </span>
-                        <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-[#0B5ED7]">
+                        <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-[#2563EB]">
                           {fmt(d.jobs)} jobs
                         </span>
                       </div>
-                      <MiniBar value={d.jobs} max={maxDeptJobs} color="#0B5ED7" />
+                      <MiniBar value={d.jobs} max={maxDeptJobs} color="#2563EB" />
                     </div>
                   ))}
                 </div>
@@ -766,7 +766,7 @@ export function EnterpriseAiCommand() {
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[#0B5ED7] shadow-sm">
+                          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[#2563EB] shadow-sm">
                             <Icon name={meta.icon} className="size-4" />
                           </div>
                           <div className="min-w-0">
@@ -841,7 +841,7 @@ export function EnterpriseAiCommand() {
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {DCC_CRITERIA.map((c) => (
                   <div key={c.key} className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/20 p-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[#e8f0fb] text-[#0B5ED7]">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[#e8f0fb] text-[#2563EB]">
                       <Icon name={c.icon} className="size-3.5" />
                     </div>
                     <div className="min-w-0">
@@ -934,7 +934,7 @@ export function EnterpriseAiCommand() {
                     {filteredDepartments.map((d) => (
                       <TableRow key={d.id} className="hover:bg-muted/30">
                         <TableCell>
-                          <span className="font-mono text-xs font-semibold text-[#0B5ED7]">{d.deptCode}</span>
+                          <span className="font-mono text-xs font-semibold text-[#2563EB]">{d.deptCode}</span>
                         </TableCell>
                         <TableCell>
                           <div className="font-medium text-foreground">{d.name}</div>
@@ -992,14 +992,14 @@ export function EnterpriseAiCommand() {
           </SectionCard>
 
           {/* DCC explanation */}
-          <Card className="rounded-2xl border-2 border-[#0B5ED7]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+          <Card className="rounded-2xl border-2 border-[#2563EB]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
                   <Icon name="BadgeCheck" className="size-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-bold text-[#0B5ED7]">
+                  <h3 className="text-base font-bold text-[#2563EB]">
                     Department Capability Certification (DCC)
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
@@ -1010,7 +1010,7 @@ export function EnterpriseAiCommand() {
                     {DCC_CRITERIA.map((c) => (
                       <div key={c.key} className="flex items-center justify-between rounded-lg border border-border/60 bg-white px-3 py-1.5">
                         <span className="text-xs font-medium text-foreground">{c.label}</span>
-                        <span className="font-mono text-xs font-semibold text-[#0B5ED7]">{c.threshold}</span>
+                        <span className="font-mono text-xs font-semibold text-[#2563EB]">{c.threshold}</span>
                       </div>
                     ))}
                   </div>
@@ -1055,7 +1055,7 @@ export function EnterpriseAiCommand() {
                       <CardContent className="pt-5">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7]">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
                               <Icon name={meta.icon} className="size-5" />
                             </div>
                             <div className="min-w-0">
@@ -1147,7 +1147,7 @@ export function EnterpriseAiCommand() {
                       value={(count / summary.totalRules) * 100}
                       className="h-2"
                       indicatorColor={
-                        type === "BLOCK" ? "#f43f5e" : type === "WARN" ? "#f59e0b" : type === "LOG" ? "#0B5ED7" : "#F97316"
+                        type === "BLOCK" ? "#f43f5e" : type === "WARN" ? "#f59e0b" : type === "LOG" ? "#2563EB" : "#F97316"
                       }
                     />
                   </div>
@@ -1203,7 +1203,7 @@ export function EnterpriseAiCommand() {
                   {SAMPLE_RULES.map((r) => (
                     <TableRow key={r.ruleCode} className="hover:bg-muted/30">
                       <TableCell>
-                        <span className="font-mono text-xs font-semibold text-[#0B5ED7]">{r.ruleCode}</span>
+                        <span className="font-mono text-xs font-semibold text-[#2563EB]">{r.ruleCode}</span>
                       </TableCell>
                       <TableCell className="font-medium text-foreground">{r.title}</TableCell>
                       <TableCell>
@@ -1274,7 +1274,7 @@ export function EnterpriseAiCommand() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <Icon name={cap.icon} className="size-3.5 text-[#0B5ED7]" />
+                      <Icon name={cap.icon} className="size-3.5 text-[#2563EB]" />
                       <p className="truncate text-sm font-semibold text-foreground">{cap.title}</p>
                     </div>
                     <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-700">{cap.engine}</p>
@@ -1285,14 +1285,14 @@ export function EnterpriseAiCommand() {
             </div>
           </SectionCard>
 
-          <Card className="rounded-2xl border-2 border-[#0B5ED7]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+          <Card className="rounded-2xl border-2 border-[#2563EB]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
                   <Icon name="Sparkles" className="size-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#0B5ED7]">Why this stack matters</h3>
+                  <h3 className="text-base font-bold text-[#2563EB]">Why this stack matters</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     The Enterprise AI Command Center is not a chatbot. It is a complete autonomous AI organisation — 100
                     departments, 2,000 AI employees, 20 enterprise engines, 500+ constitutional rules, and a Department
@@ -1312,11 +1312,11 @@ export function EnterpriseAiCommand() {
       <Dialog open={dccOpen} onOpenChange={(o) => { setDccOpen(o); if (!o) { setDccResult(null); setDccTarget(null); } }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
+            <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
               <Icon name="BadgeCheck" className="size-5" />
               DCC Certification Check
               {dccTarget && (
-                <span className="ml-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-xs font-semibold text-[#0B5ED7]">
+                <span className="ml-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-xs font-semibold text-[#2563EB]">
                   {dccTarget.deptCode}
                 </span>
               )}

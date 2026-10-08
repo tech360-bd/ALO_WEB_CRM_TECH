@@ -146,7 +146,7 @@ export default function ScholarshipsListing() {
               ['International students', internationalOnly, setInternationalOnly],
             ].map(([label, val, set]: any) => (
               <label key={label} className="inline-flex items-center gap-1.5 cursor-pointer select-none min-h-[32px]">
-                <input type="checkbox" checked={val} onChange={(e) => set(e.target.checked)} className="w-3.5 h-3.5 accent-[#0B5ED7]" />
+                <input type="checkbox" checked={val} onChange={(e) => set(e.target.checked)} className="w-3.5 h-3.5 accent-[#2563EB]" />
                 <span className="text-gray-700">{label}</span>
               </label>
             ))}
@@ -163,7 +163,7 @@ export default function ScholarshipsListing() {
                 const st = computeScholarshipStatus(s);
                 const badge = SCHOLARSHIP_STATUS_BADGES[st];
                 return (
-                  <Card key={s.id} className="p-6 bg-white border-[#E2E8F0] hover:border-[#0B5ED7] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                  <Card key={s.id} className="p-6 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
                         <Badge className="bg-[#F97316]/10 text-[#F97316] border-[#F97316]/20 text-[10px]">{s.scholarshipType ? String(s.scholarshipType).replace(/_/g, ' ') : (s.fundingType || 'Scholarship')}</Badge>
@@ -180,7 +180,7 @@ export default function ScholarshipsListing() {
                       </div>
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-2">
-                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#004494] h-11 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] h-11 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
                       <Link href="/eligibility-check" aria-label={`Check eligibility for ${s.name}`}><Button variant="outline" className="w-full border-[#E2E8F0] h-11 text-xs">Check Eligibility</Button></Link>
                     </div>
                   </Card>
@@ -191,12 +191,12 @@ export default function ScholarshipsListing() {
         )}
 
         {/* Final CTA — spec §24 */}
-        <Card className="p-8 bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-3xl text-white text-center">
+        <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-3xl text-white text-center">
           <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
           <p className="text-sm text-blue-100 mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
-            <Link href="/course-finder"><Button className="bg-white text-[#0B5ED7] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
+            <Link href="/course-finder"><Button className="bg-white text-[#2563EB] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Book Free Consultation</Button></Link>
           </div>
         </Card>

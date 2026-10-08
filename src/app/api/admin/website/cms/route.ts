@@ -384,7 +384,7 @@ export async function POST(request: Request) {
             subtitle: body.subtitle || '',
             imageUrl: body.imageUrl || body.heroImage || '',
             imageAlt: body.imageAlt || '',
-            accentColor: body.accentColor || '#0B5ED7',
+            accentColor: body.accentColor || '#2563EB',
             popularCity: body.popularCity || body.heroCity || '',
             popularIntake: body.popularIntake || body.heroIntake || '',
             universityCountLabel: body.universityCountLabel || '',
@@ -525,7 +525,7 @@ export async function POST(request: Request) {
             seoDescription: body.seoDescription || '',
             status: body.status || 'active',
             sortOrder: body.sortOrder ?? 0,
-            accentColor: body.accentColor || '#0B5ED7',
+            accentColor: body.accentColor || '#2563EB',
             lastVerifiedAt: new Date(),
           },
           create: {
@@ -554,7 +554,7 @@ export async function POST(request: Request) {
             seoDescription: body.seoDescription || '',
             status: body.status || 'active',
             sortOrder: body.sortOrder ?? 0,
-            accentColor: body.accentColor || '#0B5ED7',
+            accentColor: body.accentColor || '#2563EB',
             lastVerifiedAt: new Date(),
           }
         });

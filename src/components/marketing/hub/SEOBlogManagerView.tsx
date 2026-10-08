@@ -29,7 +29,7 @@ export default function SEOBlogManagerView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Globe className="w-6 h-6 text-[#0B5ED7]" />SEO & Blog Manager</h2>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Globe className="w-6 h-6 text-[#2563EB]" />SEO & Blog Manager</h2>
         <p className="text-sm text-gray-500">Keyword research, intent analysis, competitor research, briefs, title/description, blog generation, internal linking, technical SEO, structured data, landing optimization — for UK/USA/Australia/Canada/NZ/Ireland/Germany/France/Italy/Netherlands/Dubai/S.Korea/Malta/Cyprus.</p>
       </div>
       <div className="grid lg:grid-cols-12 gap-6">
@@ -47,7 +47,7 @@ export default function SEOBlogManagerView() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4 text-[#0B5ED7]" />Blog Generation & Optimization</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4 text-[#2563EB]" />Blog Generation & Optimization</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-3">
               <div className="grid md:grid-cols-2 gap-3">
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Link2 className="w-3 h-3" />Internal Linking</p><p className="text-gray-600 mt-1">Recommend links to /destinations/uk, /course-finder, /scholarships, /language-prep/ielts</p></div>

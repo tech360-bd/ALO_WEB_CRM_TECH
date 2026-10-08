@@ -205,7 +205,7 @@ export default function CrmHRMPage() {
             <ArrowRight className="w-4 h-4 text-[#F97316]" /> Work Reassignment
           </Button>
           <a href="/admin/access-control-center">
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] hover:bg-[#004088] text-white text-xs font-bold gap-2">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#004088] text-white text-xs font-bold gap-2">
               <ShieldCheck className="w-4 h-4" /> Control Center
             </Button>
           </a>
@@ -216,7 +216,7 @@ export default function CrmHRMPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-4 bg-white border border-slate-200 rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0B5ED7] flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#2563EB] flex items-center justify-center font-bold">
               <Users className="w-5 h-5" />
             </div>
             <div>
@@ -367,7 +367,7 @@ export default function CrmHRMPage() {
                 <Button
                   onClick={handleGeneratePayroll}
                   disabled={payrollLoading}
-                  className="bg-[#0B5ED7] hover:bg-[#004088] text-white text-xs font-bold px-4 py-2 rounded-xl"
+                  className="bg-[#2563EB] hover:bg-[#004088] text-white text-xs font-bold px-4 py-2 rounded-xl"
                 >
                   {payrollLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : '1. Prepare AI Draft Payroll'}
                 </Button>
@@ -387,7 +387,7 @@ export default function CrmHRMPage() {
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900">Payroll Cycle: {currentPayroll.monthYear}</span>
-                  <Badge className="bg-blue-100 text-[#0B5ED7] font-bold uppercase">{currentPayroll.status}</Badge>
+                  <Badge className="bg-blue-100 text-[#2563EB] font-bold uppercase">{currentPayroll.status}</Badge>
                 </div>
                 <div className="grid grid-cols-3 gap-3 pt-2 font-mono">
                   <div>Gross Payroll: <strong className="text-slate-900">৳{currentPayroll.totalGross?.toLocaleString()}</strong></div>

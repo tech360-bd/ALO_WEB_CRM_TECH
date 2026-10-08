@@ -93,7 +93,7 @@ export default function UniversitiesListing() {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
-          <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-xs mb-4">ALO university directory</Badge>
+          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-4">ALO university directory</Badge>
           <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Universities & Course Information</h1>
           <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse the university records available in ALO’s database. Open an information page to review courses with listed intakes from January 2027 through January 2028, recorded course and institution codes, eligibility status, and available source evidence.</p>
           <div className="flex flex-wrap gap-2 mt-4">
@@ -153,10 +153,10 @@ export default function UniversitiesListing() {
                 const ranking = university.worldRanking || university.ranking || 0;
                 return (
                 <Link key={university.id} href={`/universities/${university.slug || university.id}`} className="block h-full">
-                  <Card className="p-6 bg-white border-[#E2E8F0] hover:border-[#0B5ED7] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                  <Card className="p-6 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
-                        <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-[10px]">{university.country}</Badge>
+                        <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-[10px]">{university.country}</Badge>
                         {ranking > 0 ? <span className="text-[11px] text-gray-500">{university.rankingProvider || 'Ranking'} {university.rankingYear || ''} #{ranking}</span> : <span className="text-[11px] text-gray-500">Ranking not recorded</span>}
                       </div>
                       <h2 className="font-bold text-[#0F172A] mb-1 line-clamp-2">{university.name}</h2>
@@ -166,7 +166,7 @@ export default function UniversitiesListing() {
                         <div className="flex justify-between gap-2"><span className="text-gray-500">Last verified</span><span className="font-medium">{university.lastVerifiedAt ? new Date(university.lastVerifiedAt).toLocaleDateString() : 'Not recorded'}</span></div>
                       </div>
                     </div>
-                    <span className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-[#0B5ED7] text-white h-11 text-xs font-bold">
+                    <span className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-[#2563EB] text-white h-11 text-xs font-bold">
                       View University Information <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </span>
                   </Card>

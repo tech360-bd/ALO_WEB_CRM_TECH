@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     const caption = `🎓 Study in the ${targetCountry} — September 2026 Intake open at ${targetUniv}! Full scholarship guidance & visa support available for Bangladeshi students. Apply now with ALO Education!`;
     const hashtags = `#StudyIn${targetCountry.replace(/\s+/g, '')} #StudyAbroad #ALOEducation #${targetUniv.replace(/\s+/g, '')} #HigherEducation`;
-    const imagePrompt = `Professional study abroad promotional banner for ${targetUniv}, ${targetCountry}, featuring happy international student, ALO Education logo, brand colors primary orange #F97316 and professional blue accent #0B5ED7.`;
+    const imagePrompt = `Professional study abroad promotional banner for ${targetUniv}, ${targetCountry}, featuring happy international student, ALO Education logo, brand colors primary orange #F97316 and professional blue accent #2563EB.`;
     const videoScript = `[0-5s]: Are you dreaming of studying at ${targetUniv} in the ${targetCountry}? [5-15s]: Applications are now open for September 2026 intake. Get up to £5,000 scholarship guidance and 100% free counseling! [15-30s]: Apply today through ALO Education partner network. Link in bio!`;
 
     const mReq = await db.partnerMarketingRequest.create({

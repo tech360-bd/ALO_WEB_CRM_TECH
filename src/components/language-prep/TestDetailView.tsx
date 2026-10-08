@@ -102,7 +102,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-[#0B5ED7] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm text-slate-600">Loading {slug} preparation guide — database-driven...</p>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
           <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
           <h2 className="font-bold text-lg text-[#0F172A]">Test not found</h2>
           <p className="text-sm text-slate-600 mt-2">The test "{slug}" is not available. Check /language-prep for available tests.</p>
-          <a href="/language-prep" className="mt-4 inline-block"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl">View All Test Prep →</Button></a>
+          <a href="/language-prep" className="mt-4 inline-block"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl">View All Test Prep →</Button></a>
         </Card>
       </div>
     );
@@ -136,24 +136,24 @@ export default function TestDetailView({ slug }: TestDetailProps) {
         
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
-            <a href="/" className="hover:text-[#0B5ED7]">Home</a>
+            <a href="/" className="hover:text-[#2563EB]">Home</a>
             <span>›</span>
-            <a href="/language-prep" className="hover:text-[#0B5ED7]">Language Prep</a>
+            <a href="/language-prep" className="hover:text-[#2563EB]">Language Prep</a>
             <span>›</span>
-            <span className="text-[#0B5ED7] font-bold">{test.name}</span>
+            <span className="text-[#2563EB] font-bold">{test.name}</span>
           </nav>
 
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             <div className="lg:col-span-8 space-y-5">
               <div className="flex flex-wrap items-center gap-2.5">
-                <Badge className="bg-[#0B5ED7] text-white font-bold text-[11px] px-3 py-1">{test.name}</Badge>
+                <Badge className="bg-[#2563EB] text-white font-bold text-[11px] px-3 py-1">{test.name}</Badge>
                 {test.testType !== 'moi_guidance' && <Badge className="bg-white border border-[#E2E8F0] text-[#0F172A] font-semibold text-[11px]">{test.format}</Badge>}
                 {test.isPopular && <Badge className="bg-[#F97316] text-white font-bold text-[11px]">Popular</Badge>}
                 {isMoi && <Badge className="bg-amber-50 text-amber-700 border-amber-200 font-bold text-[11px]">Guidance Resource — Not a test</Badge>}
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.1] text-[#0F172A]">
-                {test.name} <span className="text-[#0B5ED7]">Preparation</span>
+                {test.name} <span className="text-[#2563EB]">Preparation</span>
               </h1>
 
               <p className="text-base sm:text-lg font-medium text-slate-700 leading-relaxed">
@@ -167,7 +167,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   <span className="px-3 py-1.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A]">Academic</span>
                   <span className="px-3 py-1.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A]">Paper</span>
                   <span className="px-3 py-1.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A]">Computer</span>
-                  {test.slug === 'ielts-ukvi' && <span className="px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold text-[#0B5ED7]">UKVI SELT</span>}
+                  {test.slug === 'ielts-ukvi' && <span className="px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold text-[#2563EB]">UKVI SELT</span>}
                 </div>
               )}
 
@@ -185,7 +185,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               </div>
 
               <p className="text-[11px] text-slate-500 leading-relaxed max-w-2xl">
-                Source: {test.sourceName} • <a href={test.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] hover:underline">{test.sourceUrl}</a> • Last verified: {test.lastVerifiedAt || 'Information requires verification'} • Verified by: {test.verifiedBy} • {test.verificationStatus}
+                Source: {test.sourceName} • <a href={test.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#2563EB] hover:underline">{test.sourceUrl}</a> • Last verified: {test.lastVerifiedAt || 'Information requires verification'} • Verified by: {test.verifiedBy} • {test.verificationStatus}
               </p>
             </div>
 
@@ -193,7 +193,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
             <div className="lg:col-span-4">
               <Card className="p-6 bg-white border border-[#E2E8F0] shadow-lg rounded-3xl sticky top-24">
                 <h3 className="font-bold text-sm text-[#0F172A] mb-4 flex items-center gap-2">
-                  <Award className="w-4 h-4 text-[#0B5ED7]" /> {test.name} Overview
+                  <Award className="w-4 h-4 text-[#2563EB]" /> {test.name} Overview
                 </h3>
                 <div className="space-y-3 text-xs">
                   <div className="flex justify-between p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]"><span className="text-slate-500">Duration</span><span className="font-bold text-[#0F172A]">{test.durationDisplay}</span></div>
@@ -240,16 +240,16 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   <h4 className="font-bold text-xs uppercase tracking-wider text-slate-500 mb-2">Test Details</h4>
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between"><span className="text-slate-500">Provider:</span><span className="font-semibold">{test.provider}</span></div>
-                    <div className="flex justify-between"><span className="text-slate-500">Official URL:</span><a href={test.officialUrl} target="_blank" className="font-semibold text-[#0B5ED7] hover:underline truncate max-w-[150px]">{test.officialUrl}</a></div>
+                    <div className="flex justify-between"><span className="text-slate-500">Official URL:</span><a href={test.officialUrl} target="_blank" className="font-semibold text-[#2563EB] hover:underline truncate max-w-[150px]">{test.officialUrl}</a></div>
                     <div className="flex justify-between"><span className="text-slate-500">Validity:</span><span className="font-semibold">{test.validitySummary}</span></div>
                     <div className="flex justify-between"><span className="text-slate-500">Difficulty:</span><span className="font-semibold">{test.difficultyLevel}</span></div>
                   </div>
                 </Card>
                 <Card className="p-5 bg-blue-50 border border-blue-100 rounded-2xl">
-                  <h4 className="font-bold text-xs uppercase tracking-wider text-[#0B5ED7] mb-2">Source Verification</h4>
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-[#2563EB] mb-2">Source Verification</h4>
                   <div className="space-y-2 text-xs">
                     <div><span className="text-slate-500">Source:</span><p className="font-semibold text-[#0F172A]">{test.sourceName}</p></div>
-                    <div><span className="text-slate-500">URL:</span><a href={test.sourceUrl} target="_blank" className="font-semibold text-[#0B5ED7] hover:underline break-all">{test.sourceUrl}</a></div>
+                    <div><span className="text-slate-500">URL:</span><a href={test.sourceUrl} target="_blank" className="font-semibold text-[#2563EB] hover:underline break-all">{test.sourceUrl}</a></div>
                     <div><span className="text-slate-500">Last Verified:</span><p className="font-semibold">{test.lastVerifiedAt || 'Information requires verification'}</p></div>
                     <div><span className="text-slate-500">Verified By:</span><p className="font-semibold">{test.verifiedBy}</p></div>
                   </div>
@@ -262,9 +262,9 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               <h2 className="text-2xl font-extrabold text-[#0F172A] mb-6">{test.name} Modules — {modules.length} modules</h2>
               <div className="grid sm:grid-cols-2 gap-5">
                 {modules.map((mod: any, i: number) => (
-                  <Card key={mod.id || i} className="p-6 bg-white border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-[#0B5ED7]/20 transition rounded-3xl">
+                  <Card key={mod.id || i} className="p-6 bg-white border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-[#2563EB]/20 transition rounded-3xl">
                     <div className="flex items-center justify-between mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0B5ED7] flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center">
                         {mod.moduleName?.toLowerCase().includes('listen') ? <Headphones className="w-5 h-5" /> :
                          mod.moduleName?.toLowerCase().includes('read') ? <BookOpenCheck className="w-5 h-5" /> :
                          mod.moduleName?.toLowerCase().includes('writ') ? <PenTool className="w-5 h-5" /> :
@@ -294,7 +294,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                         <p className="text-[11px] text-emerald-800 mt-1">{mod.preparationTips}</p>
                       </div>
                     </div>
-                    <a href="#book-counselling" className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#0B5ED7] hover:text-[#F97316]">
+                    <a href="#book-counselling" className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#2563EB] hover:text-[#F97316]">
                       Practice {mod.moduleName} →
                     </a>
                   </Card>
@@ -302,7 +302,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               </div>
               {modules.length === 0 && (
                 <Card className="p-8 bg-[#F8FAFC] border border-dashed border-[#E2E8F0] rounded-3xl text-center">
-                  <p className="text-sm text-slate-500">Module details not available — See official test provider guidance: <a href={test.officialUrl} target="_blank" className="text-[#0B5ED7] hover:underline">{test.officialUrl}</a></p>
+                  <p className="text-sm text-slate-500">Module details not available — See official test provider guidance: <a href={test.officialUrl} target="_blank" className="text-[#2563EB] hover:underline">{test.officialUrl}</a></p>
                 </Card>
               )}
             </section>
@@ -312,7 +312,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               <h2 className="text-2xl font-extrabold text-[#0F172A] mb-2">{test.name} Score System</h2>
               <Card className="p-6 bg-white border border-[#E2E8F0] rounded-3xl">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#0B5ED7] text-white font-black flex items-center justify-center">{test.scoringSystem?.split(' ')[0] || '0-9'}</div>
+                  <div className="w-12 h-12 rounded-2xl bg-[#2563EB] text-white font-black flex items-center justify-center">{test.scoringSystem?.split(' ')[0] || '0-9'}</div>
                   <div>
                     <h3 className="font-bold text-sm text-[#0F172A]">{test.scoringSystem}</h3>
                     <p className="text-xs text-slate-500">{test.validitySummary}</p>
@@ -324,7 +324,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     : `Overall score and component scores explained. How scoring works: ${test.scoringSystem}. For ${test.name}, ${test.scoringSystem === 'Band 0-9 (0.5 increments)' ? 'each module scored 0-9, overall average of four modules rounded to nearest 0.5.' : 'check official provider guidance for detailed scoring methodology.'}`}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-3 p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                  Source: {test.sourceName} — <a href={test.sourceUrl} target="_blank" className="text-[#0B5ED7] hover:underline">{test.sourceUrl}</a> — If official scoring data stored, use database, otherwise See official test provider guidance.
+                  Source: {test.sourceName} — <a href={test.sourceUrl} target="_blank" className="text-[#2563EB] hover:underline">{test.sourceUrl}</a> — If official scoring data stored, use database, otherwise See official test provider guidance.
                 </p>
               </Card>
             </section>
@@ -346,7 +346,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                       <p className="text-[11px] text-slate-600 leading-relaxed">
                         {acc ? acc.summary : `Check university-specific acceptance for ${test.name} in ${c.name}. Acceptance varies by university, course and visa route.`}
                       </p>
-                      {acc?.sourceUrl && <a href={acc.sourceUrl} target="_blank" className="text-[10px] text-[#0B5ED7] hover:underline mt-2 inline-block">Source: {acc.sourceName || acc.sourceUrl} • Verified: {acc.lastVerifiedAt || 'Check official'}</a>}
+                      {acc?.sourceUrl && <a href={acc.sourceUrl} target="_blank" className="text-[10px] text-[#2563EB] hover:underline mt-2 inline-block">Source: {acc.sourceName || acc.sourceUrl} • Verified: {acc.lastVerifiedAt || 'Check official'}</a>}
                     </Card>
                   );
                 })}
@@ -364,7 +364,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </div>
                 <p className="text-xs text-slate-600">Requirement not available in database. Check university course page. — System retrieves English test, Minimum overall, Minimum component scores, Waiver availability, Remarks, Source URL, Last verified — Only if actual course data exists.</p>
                 <div className="mt-4 flex gap-2">
-                  <a href="/course-finder" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
+                  <a href="/course-finder" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
                   <a href={`/language-prep/comparison?tests=${test.slug}`}><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Compare Tests</Button></a>
                 </div>
               </Card>
@@ -402,7 +402,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 ].map((s, i) => (
                   <Card key={i} className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="w-8 h-8 rounded-xl bg-[#0B5ED7] text-white font-black text-xs flex items-center justify-center">{s.step}</span>
+                      <span className="w-8 h-8 rounded-xl bg-[#2563EB] text-white font-black text-xs flex items-center justify-center">{s.step}</span>
                       <h4 className="font-bold text-sm text-[#0F172A]">{s.title}</h4>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">{s.desc}</p>
@@ -424,7 +424,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   { title: 'University Requirement Guidance', desc: 'Check requirements before booking your test' },
                 ].slice(0,9).map((c: any, i: number) => (
                   <Card key={i} className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
-                    <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0B5ED7] flex items-center justify-center mb-3"><BookOpen className="w-4 h-4" /></div>
+                    <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center mb-3"><BookOpen className="w-4 h-4" /></div>
                     <h4 className="font-bold text-xs text-[#0F172A]">{c.title}</h4>
                     <p className="text-[11px] text-slate-600 mt-1.5 leading-relaxed">{c.desc}</p>
                   </Card>
@@ -457,12 +457,12 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     </select>
                   </div>
                 </div>
-                <Button onClick={handleScorePlanner} className="w-full mt-4 bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl">Calculate Plan</Button>
+                <Button onClick={handleScorePlanner} className="w-full mt-4 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl">Calculate Plan</Button>
 
                 {plannerResult && (
                   <div className="mt-5 p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2 text-xs">
                     <div className="flex justify-between"><span className="text-slate-500">Target Gap:</span><span className="font-bold">{plannerResult.gap}</span></div>
-                    <div className="flex justify-between"><span className="text-slate-500">Estimated Weeks:</span><span className="font-bold text-[#0B5ED7]">{plannerResult.weeks} weeks</span></div>
+                    <div className="flex justify-between"><span className="text-slate-500">Estimated Weeks:</span><span className="font-bold text-[#2563EB]">{plannerResult.weeks} weeks</span></div>
                     <div><span className="text-slate-500">Priority:</span><p className="font-medium mt-1">{plannerResult.priority}</p></div>
                     <div><span className="text-slate-500">Schedule:</span><p className="font-medium mt-1">{plannerResult.schedule}</p></div>
                     <p className="text-[10px] text-amber-700 p-2 rounded-lg bg-amber-50 border border-amber-100 mt-2">{plannerResult.note}</p>
@@ -481,9 +481,9 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {['ielts','pte-academic','toefl-ibt','duolingo'].filter(s => s !== test.slug).slice(0,3).map(s => (
-                    <a key={s} href={`/language-prep/${s}`} className="px-3 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-xs font-semibold hover:border-[#0B5ED7]">{s.toUpperCase()}</a>
+                    <a key={s} href={`/language-prep/${s}`} className="px-3 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-xs font-semibold hover:border-[#2563EB]">{s.toUpperCase()}</a>
                   ))}
-                  <a href="/language-prep/comparison"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs">Compare English Tests →</Button></a>
+                  <a href="/language-prep/comparison"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs">Compare English Tests →</Button></a>
                 </div>
               </Card>
             </section>
@@ -521,12 +521,12 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   <Card key={faq.id || idx} className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden">
                     <button onClick={() => setOpenFaq(openFaq === idx ? null : idx)} className="w-full p-5 text-left flex justify-between items-start gap-4">
                       <span className="font-bold text-sm text-[#0F172A] leading-relaxed">{faq.question}</span>
-                      <ChevronDown className={`w-4 h-4 text-[#0B5ED7] shrink-0 transition-transform ${openFaq === idx ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 text-[#2563EB] shrink-0 transition-transform ${openFaq === idx ? 'rotate-180' : ''}`} />
                     </button>
                     {openFaq === idx && (
                       <div className="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-[#E2E8F0] bg-[#F8FAFC]/50 pt-4">
                         {faq.answer}
-                        {faq.sourceUrl && <p className="text-[11px] text-slate-500 mt-3">Source: <a href={faq.sourceUrl} target="_blank" className="text-[#0B5ED7] hover:underline">{faq.sourceUrl}</a></p>}
+                        {faq.sourceUrl && <p className="text-[11px] text-slate-500 mt-3">Source: <a href={faq.sourceUrl} target="_blank" className="text-[#2563EB] hover:underline">{faq.sourceUrl}</a></p>}
                       </div>
                     )}
                   </Card>
@@ -536,7 +536,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Final CTA */}
             <section id="book-counselling">
-              <Card className="p-8 bg-gradient-to-br from-[#0B5ED7] to-[#004494] text-white border-0 shadow-xl rounded-3xl">
+              <Card className="p-8 bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white border-0 shadow-xl rounded-3xl">
                 <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center">Not Sure Which English Test You Need?</h2>
                 <p className="text-sm text-blue-100 text-center max-w-2xl mx-auto mt-3 leading-relaxed">
                   Tell us your destination, university and study plan. Our team can help you understand the relevant English requirement and preparation route.
@@ -570,27 +570,27 @@ export default function TestDetailView({ slug }: TestDetailProps) {
           <div className="lg:col-span-4 space-y-6">
             <div className="sticky top-24 space-y-6">
               {/* Test Preparation widget */}
-              <Card className="p-5 bg-white border border-[#0B5ED7]/20 shadow-md rounded-2xl">
+              <Card className="p-5 bg-white border border-[#2563EB]/20 shadow-md rounded-2xl">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0B5ED7] flex items-center justify-center"><BookOpen className="w-4 h-4" /></div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B5ED7]">Test Preparation</span>
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#2563EB] flex items-center justify-center"><BookOpen className="w-4 h-4" /></div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#2563EB]">Test Preparation</span>
                 </div>
                 <h4 className="text-sm font-bold text-[#0F172A] mb-2">Explore other tests</h4>
                 <div className="space-y-1.5 mb-4">
                   {['ielts','pte-academic','toefl-ibt','duolingo','oet','oietc'].filter(s => s !== test.slug).slice(0,5).map(s => (
-                    <a key={s} href={`/language-prep/${s}`} className="flex items-center justify-between p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] hover:border-[#0B5ED7]/20 hover:bg-white transition text-xs">
+                    <a key={s} href={`/language-prep/${s}`} className="flex items-center justify-between p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] hover:border-[#2563EB]/20 hover:bg-white transition text-xs">
                       <span className="font-semibold text-[#0F172A]">{s.replace('-', ' ').toUpperCase()}</span>
                       <ArrowRight className="w-3 h-3 text-slate-400" />
                     </a>
                   ))}
                 </div>
                 <a href="/language-prep" className="block">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-11 rounded-xl text-xs">View All Test Prep →</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">View All Test Prep →</Button>
                 </a>
               </Card>
 
               {/* Need Help widget */}
-              <Card className="p-5 bg-gradient-to-br from-[#0B5ED7] to-[#004494] text-white border-0 shadow-lg rounded-2xl">
+              <Card className="p-5 bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white border-0 shadow-lg rounded-2xl">
                 <h4 className="text-sm font-bold mb-2">Need Help?</h4>
                 <p className="text-xs text-blue-100 leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
                 <a href="#book-counselling">
@@ -604,10 +604,10 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 <h4 className="font-bold text-sm text-[#0F172A] mb-3">Resources — {resources.length}</h4>
                 <div className="space-y-2">
                   {resources.slice(0,6).map((r: any, i: number) => (
-                    <a key={i} href={r.resourceUrl} target={r.isExternal ? '_blank' : '_self'} className="block p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] hover:bg-white hover:border-[#0B5ED7]/20 transition">
+                    <a key={i} href={r.resourceUrl} target={r.isExternal ? '_blank' : '_self'} className="block p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] hover:bg-white hover:border-[#2563EB]/20 transition">
                       <p className="text-xs font-semibold text-[#0F172A]">{r.title}</p>
                       <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">{r.description}</p>
-                      <span className="text-[10px] text-[#0B5ED7] font-bold mt-1 inline-block">{r.resourceType} {r.isExternal ? '↗' : '→'}</span>
+                      <span className="text-[10px] text-[#2563EB] font-bold mt-1 inline-block">{r.resourceType} {r.isExternal ? '↗' : '→'}</span>
                     </a>
                   ))}
                 </div>
@@ -617,10 +617,10 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               <Card className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
                 <h4 className="font-bold text-sm text-[#0F172A] mb-3">Practice Tools</h4>
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <a href={`/language-prep/${test.slug}#mock`} className="p-2.5 rounded-xl bg-blue-50 border border-blue-100 text-[#0B5ED7] font-semibold text-center hover:bg-blue-100 transition">Mock Test</a>
-                  <a href="#book-counselling" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#0B5ED7] transition">Speaking</a>
-                  <a href="#book-counselling" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#0B5ED7] transition">Writing</a>
-                  <a href="/language-prep#test-discovery" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#0B5ED7] transition">Assessment</a>
+                  <a href={`/language-prep/${test.slug}#mock`} className="p-2.5 rounded-xl bg-blue-50 border border-blue-100 text-[#2563EB] font-semibold text-center hover:bg-blue-100 transition">Mock Test</a>
+                  <a href="#book-counselling" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Speaking</a>
+                  <a href="#book-counselling" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Writing</a>
+                  <a href="/language-prep#test-discovery" className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] font-semibold text-center hover:border-[#2563EB] transition">Assessment</a>
                 </div>
                 <p className="text-[10px] text-slate-500 mt-3">If tool not implemented: Coming Soon or connect to existing implementation</p>
               </Card>

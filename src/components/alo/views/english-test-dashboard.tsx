@@ -62,7 +62,7 @@ const TEST_TYPES: {
   icon: string;
   accent: string;
 }[] = [
-  { slug: "ielts", name: "IELTS", modules: "Listening · Reading · Writing · Speaking", freeInfo: "3 free for ALO students, 1 for guests", icon: "BookOpen", accent: "bg-[#e8f0fb] text-[#0B5ED7]" },
+  { slug: "ielts", name: "IELTS", modules: "Listening · Reading · Writing · Speaking", freeInfo: "3 free for ALO students, 1 for guests", icon: "BookOpen", accent: "bg-[#e8f0fb] text-[#2563EB]" },
   { slug: "pte", name: "PTE Academic", modules: "Speaking & Writing · Reading · Listening", freeInfo: "3 free for ALO students, 1 for guests", icon: "Mic", accent: "bg-violet-50 text-violet-600" },
   { slug: "toefl", name: "TOEFL", modules: "Reading · Listening · Speaking · Writing", freeInfo: "3 free for ALO students, 1 for guests", icon: "Headphones", accent: "bg-emerald-50 text-emerald-600" },
   { slug: "duolingo", name: "Duolingo (DET)", modules: "Literacy · Comprehension · Conversation · Production", freeInfo: "3 free for ALO students, 1 for guests", icon: "Sparkles", accent: "bg-amber-50 text-amber-600" },
@@ -128,8 +128,8 @@ const TEST_TYPE_INFO: Record<string, { countries: string; requirement: string; d
 };
 
 const TEST_BADGE_COLORS: Record<string, string> = {
-  IELTS: "bg-[#e8f0fb] text-[#0B5ED7]",
-  "IELTS UKVI": "bg-[#e8f0fb] text-[#0B5ED7]",
+  IELTS: "bg-[#e8f0fb] text-[#2563EB]",
+  "IELTS UKVI": "bg-[#e8f0fb] text-[#2563EB]",
   PTE: "bg-violet-100 text-violet-700",
   TOEFL: "bg-emerald-100 text-emerald-700",
   "DET / Duolingo": "bg-amber-100 text-amber-700",
@@ -380,19 +380,19 @@ export function EnglishTestDashboard() {
 
       {/* AI practice cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Card className="overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/20 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+        <Card className="overflow-hidden rounded-2xl border-2 border-[#2563EB]/20 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
           <CardContent className="flex items-start gap-4 pt-5">
             <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-alo-gradient text-white alo-shadow">
               <Icon name="Mic" className="size-6" />
             </div>
             <div className="flex-1">
-              <p className="text-base font-bold text-[#0B5ED7]">AI Speaking Practice</p>
+              <p className="text-base font-bold text-[#2563EB]">AI Speaking Practice</p>
               <p className="mt-1 text-sm text-foreground/80">
                 Practice speaking with AI — get instant feedback on fluency, pronunciation, and coherence. Cue cards,
                 Part 1/2/3 prompts, and recorded playback.
               </p>
               <Button
-                className="mt-3 h-10 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+                className="mt-3 h-10 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
                 onClick={handleSpeakingPractice}
               >
                 <Icon name="Mic" className="size-4" />
@@ -583,14 +583,14 @@ export function EnglishTestDashboard() {
           >
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {TEST_TYPES.map((t) => (
-                <Card key={t.slug} className="flex flex-col rounded-2xl border-2 border-[#0B5ED7]/15 transition-all hover:border-[#0B5ED7]/40 hover:shadow-lg">
+                <Card key={t.slug} className="flex flex-col rounded-2xl border-2 border-[#2563EB]/15 transition-all hover:border-[#2563EB]/40 hover:shadow-lg">
                   <CardContent className="flex flex-1 flex-col pt-5">
                     <div className="flex items-start gap-3">
                       <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", t.accent)}>
                         <Icon name={t.icon} className="size-5" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="font-bold text-[#0B5ED7]">{t.name}</p>
+                        <p className="font-bold text-[#2563EB]">{t.name}</p>
                         <p className="mt-0.5 text-xs text-muted-foreground">{t.freeInfo}</p>
                       </div>
                     </div>
@@ -611,8 +611,8 @@ export function EnglishTestDashboard() {
               ))}
             </div>
 
-            <div className="mt-6 rounded-xl border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 p-4">
-              <p className="flex items-center gap-2 text-sm font-semibold text-[#0B5ED7]">
+            <div className="mt-6 rounded-xl border border-[#2563EB]/15 bg-[#e8f0fb]/40 p-4">
+              <p className="flex items-center gap-2 text-sm font-semibold text-[#2563EB]">
                 <Icon name="Info" className="size-4" />
                 What to expect in the exam UI
               </p>
@@ -629,7 +629,7 @@ export function EnglishTestDashboard() {
                   { icon: "ShieldCheck", label: "Audit-logged attempts" },
                 ].map((f) => (
                   <div key={f.label} className="flex items-center gap-2">
-                    <Icon name={f.icon} className="size-3.5 text-[#0B5ED7]" />
+                    <Icon name={f.icon} className="size-3.5 text-[#2563EB]" />
                     <span>{f.label}</span>
                   </div>
                 ))}
@@ -679,14 +679,14 @@ export function EnglishTestDashboard() {
               </SectionCard>
 
               {/* AI recommendations */}
-              <Card className="overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/25 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+              <Card className="overflow-hidden rounded-2xl border-2 border-[#2563EB]/25 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
                 <CardContent className="pt-5">
                   <div className="flex items-start gap-3">
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-alo-gradient text-white alo-shadow">
                       <Icon name="Sparkles" className="size-5" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-base font-bold text-[#0B5ED7]">AI Recommendation</p>
+                      <p className="text-base font-bold text-[#2563EB]">AI Recommendation</p>
                       <p className="mt-2 text-sm leading-relaxed text-foreground/90">
                         Based on your last {mockTests.length} mock{mockTests.length > 1 ? "s" : ""}, your biggest gaps
                         are <strong>{weakAreaCounts.slice(0, 3).map(([a]) => a).join(", ")}</strong>. Focus on{" "}
@@ -698,7 +698,7 @@ export function EnglishTestDashboard() {
                       <div className="mt-3 flex flex-wrap gap-2">
                         <Button
                           size="sm"
-                          className="h-9 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+                          className="h-9 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
                           onClick={handleSpeakingPractice}
                         >
                           <Icon name="Mic" className="size-3.5" />
@@ -766,7 +766,7 @@ export function EnglishTestDashboard() {
                   <div className="mt-4 border-t border-border/60 pt-4">
                     <div className="mb-2 flex items-center justify-between text-xs">
                       <span className="font-medium text-muted-foreground">Weekly progress</span>
-                      <span className="font-semibold tabular-nums text-[#0B5ED7]">
+                      <span className="font-semibold tabular-nums text-[#2563EB]">
                         {studyPlan.filter((i) => checklist[i.id]).length} / {studyPlan.length} done
                       </span>
                     </div>
@@ -792,14 +792,14 @@ export function EnglishTestDashboard() {
               {TEST_TYPES.map((t) => {
                 const info = TEST_TYPE_INFO[t.name];
                 return (
-                  <Card key={t.slug} className="flex flex-col rounded-2xl border-2 border-[#0B5ED7]/15 transition-all hover:border-[#0B5ED7]/40 hover:shadow-lg">
+                  <Card key={t.slug} className="flex flex-col rounded-2xl border-2 border-[#2563EB]/15 transition-all hover:border-[#2563EB]/40 hover:shadow-lg">
                     <CardContent className="flex flex-1 flex-col pt-5">
                       <div className="flex items-start gap-3">
                         <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", t.accent)}>
                           <Icon name={t.icon} className="size-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="font-bold text-[#0B5ED7]">{t.name}</p>
+                          <p className="font-bold text-[#2563EB]">{t.name}</p>
                           <p className="mt-0.5 text-xs text-muted-foreground">{t.freeInfo}</p>
                         </div>
                       </div>
@@ -808,13 +808,13 @@ export function EnglishTestDashboard() {
                       </p>
                       <div className="mt-3 space-y-1.5 text-xs">
                         <div className="flex items-start gap-1.5">
-                          <Icon name="Globe" className="mt-0.5 size-3 shrink-0 text-[#0B5ED7]" />
+                          <Icon name="Globe" className="mt-0.5 size-3 shrink-0 text-[#2563EB]" />
                           <span className="text-muted-foreground">
                             <span className="font-semibold text-foreground">Accepted:</span> {info?.countries || "—"}
                           </span>
                         </div>
                         <div className="flex items-start gap-1.5">
-                          <Icon name="ClipboardCheck" className="mt-0.5 size-3 shrink-0 text-[#0B5ED7]" />
+                          <Icon name="ClipboardCheck" className="mt-0.5 size-3 shrink-0 text-[#2563EB]" />
                           <span className="text-muted-foreground">
                             <span className="font-semibold text-foreground">Typical:</span> {info?.requirement || "—"}
                           </span>
@@ -823,7 +823,7 @@ export function EnglishTestDashboard() {
                       <div className="mt-auto flex gap-2 pt-4">
                         <Button
                           variant="outline"
-                          className="flex-1 h-9 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                          className="flex-1 h-9 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
                           onClick={() => handleLearnMore(t.slug, t.name)}
                         >
                           <Icon name="BookOpen" className="size-3.5" />
@@ -847,13 +847,13 @@ export function EnglishTestDashboard() {
       </Tabs>
 
       {/* Note */}
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/30">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/30">
         <CardContent className="flex items-start gap-3 pt-5">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
             <Icon name="Info" className="size-5" />
           </div>
           <div className="text-sm">
-            <p className="font-semibold text-[#0B5ED7]">English Test-only student</p>
+            <p className="font-semibold text-[#2563EB]">English Test-only student</p>
             <p className="mt-1 text-foreground/80">
               This portal is for students taking English tests only (no full admission counseling). Need help choosing a
               test, preparing for university applications, or booking the official exam? Contact your ALO counselor or

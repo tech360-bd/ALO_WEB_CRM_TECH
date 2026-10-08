@@ -189,14 +189,14 @@ const subNavGroups: SubNavGroup[] = [
     title: 'Campaign & Content',
     items: [
       { icon: Megaphone, label: '3. Campaign Manager', view: 'campaign-manager' },
-      { icon: Palette, label: '4. AI Content Studio', view: 'content-studio', badge: 'NEW', badgeColor: 'bg-[#0B5ED7]' },
+      { icon: Palette, label: '4. AI Content Studio', view: 'content-studio', badge: 'NEW', badgeColor: 'bg-[#2563EB]' },
       { icon: Image, label: '5. AI Video Studio', view: 'video-studio' },
     ],
   },
   {
     title: 'Channels',
     items: [
-      { icon: Share2, label: '6. Social Media Manager', view: 'social-media', badge: '12', badgeColor: 'bg-[#0B5ED7]' },
+      { icon: Share2, label: '6. Social Media Manager', view: 'social-media', badge: '12', badgeColor: 'bg-[#2563EB]' },
       { icon: Target, label: '7. Advertising Manager', view: 'advertising', badge: 'NEW', badgeColor: 'bg-[#F97316]' },
       { icon: MessageCircle, label: '8. WhatsApp Marketing', view: 'whatsapp-marketing', badge: '8', badgeColor: 'bg-emerald-500' },
       { icon: MessageCircle, label: '9. SMS Marketing', view: 'sms-marketing' },

@@ -94,7 +94,7 @@ Your ALO Education employee account (${employeeCode}) is ready. Open this one-ti
 The link expires in ${expiryHours} hours. Contact ALO IT / HR Admin if you did not expect this message.`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; rounded: 8px;">
-        <h2 style="color: #0B5ED7;">Activate your ALO Education employee account</h2>
+        <h2 style="color: #2563EB;">Activate your ALO Education employee account</h2>
         <p>Hello <strong>${safeName}</strong>,</p>
         <p>Your ALO Education employee account has been created:</p>
         <table style="border-collapse: collapse; font-size: 14px; margin: 12px 0;">
@@ -126,7 +126,7 @@ export async function sendPasswordResetEmail(to: string, resetToken: string) {
     subject: `ALO Education Password Reset Request`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; rounded: 8px;">
-        <h2 style="color: #0B5ED7;">Password Reset Request</h2>
+        <h2 style="color: #2563EB;">Password Reset Request</h2>
         <p>We received a request to reset your password for ALO Education Web_CRM.</p>
         <p style="margin: 24px 0;">
           <a href="${safeResetUrl}" style="background-color: #F97316; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Reset Password</a>

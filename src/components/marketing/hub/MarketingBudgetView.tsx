@@ -40,14 +40,14 @@ export default function MarketingBudgetView() {
 
       <div className="grid md:grid-cols-3 gap-4">
         <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Total Approved</p><p className="text-2xl font-bold text-emerald-600">৳{totalApproved.toLocaleString()}</p><p className="text-[11px] text-gray-400">MarketingCampaign where status=active</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Total Proposed</p><p className="text-2xl font-bold text-[#0B5ED7]">৳{totalProposed.toLocaleString()}</p><p className="text-[11px] text-gray-400">All campaigns + drafts</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Total Proposed</p><p className="text-2xl font-bold text-[#2563EB]">৳{totalProposed.toLocaleString()}</p><p className="text-[11px] text-gray-400">All campaigns + drafts</p></CardContent></Card>
         <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Cost per Lead (avg)</p><p className="text-2xl font-bold text-[#F97316]">৳ —</p><p className="text-[11px] text-gray-400">MarketingCampaignSource.cost/leads (real)</p></CardContent></Card>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#0B5ED7]" />Allocate Budget (Requires Approval)</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#2563EB]" />Allocate Budget (Requires Approval)</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid md:grid-cols-3 gap-3">
                 <Input value={newBudget.campaign} onChange={e=>setNewBudget({...newBudget, campaign:e.target.value})} placeholder="Campaign name" className="h-9" />

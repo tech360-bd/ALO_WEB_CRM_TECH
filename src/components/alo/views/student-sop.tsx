@@ -180,7 +180,7 @@ export function StudentSop() {
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
+                className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
               >
                 Save Draft
               </Button>

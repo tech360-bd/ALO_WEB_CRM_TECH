@@ -16,9 +16,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
+import Link from 'next/link';
 
-const C = { blue: '#0B5ED7', orange: '#F97316', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
+const C = { blue: '#2563EB', orange: '#F97316', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
 /* ═══════════════════════════════════════════════════════════════ TYPES ═══ */
 interface HeroCountry { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity: string; heroIntake: string; heroSubtitle: string; universityCount?: number; courseCount?: number; scholarshipCount?: number; }
@@ -27,7 +27,7 @@ interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; en
 
 /* ═══════════════════════════════════════════════════════════════ FALLBACKS ═══ */
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'united-kingdom', flag: '🇬🇧', accentColor: '#0B5ED7', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'World-Class Education in the Heart of Europe', universityCount: 42, courseCount: 1200, scholarshipCount: 35 },
+  { id: '1', name: 'United Kingdom', slug: 'united-kingdom', flag: '🇬🇧', accentColor: '#2563EB', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'World-Class Education in the Heart of Europe', universityCount: 42, courseCount: 1200, scholarshipCount: 35 },
   { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#3B82F6', heroImage: '/images/hero-banners/USA slide Banner.webp', heroCity: 'New York', heroIntake: 'Aug 2025 / Jan 2026', heroSubtitle: 'Top Universities & Endless Career Opportunities', universityCount: 50, courseCount: 1500, scholarshipCount: 40 },
   { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F97316', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroIntake: 'Sep 2025 / Jan 2026 / May 2026', heroSubtitle: 'Immigration-Friendly Pathways to Your Future', universityCount: 35, courseCount: 950, scholarshipCount: 28 },
   { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/hero-banners/Australia slide Banner.webp', heroCity: 'Sydney', heroIntake: 'Feb 2026 / Jul 2026', heroSubtitle: 'Quality Education & Post-Study Work Rights', universityCount: 30, courseCount: 800, scholarshipCount: 22 },
@@ -64,19 +64,6 @@ function useHomepageData() {
   return { data, loading };
 }
 
-function AnimatedCounter({ target, duration = 1.5 }: { target: number; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
-  useEffect(() => {
-    if (started.current) return;
-    const el = ref.current; if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting && !started.current) { started.current = true; const t0 = performance.now(); const step = (now: number) => { const p = Math.min((now - t0) / (duration * 1000), 1); setCount(Math.floor(p * target)); if (p < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); } }, { threshold: 0.3 });
-    obs.observe(el); return () => obs.disconnect();
-  }, [target, duration]);
-  return <span ref={ref}>{count.toLocaleString()}</span>;
-}
-
 /* ═══════════════════════════════════════════════════════════════ HERO ═══ */
 function HeroSection() {
   const { t } = useI18n();
@@ -110,122 +97,111 @@ function HeroSection() {
   const slide = slides[current];
   const go = (i: number) => setCurrent(i);
 
+  // Hero = eyebrow, H1, supporting text, primary + secondary CTA, ONE image.
+  // No stats cards, process strips, country pills or AI/WhatsApp/Facebook
+  // controls over the image (the corner FloatingActionWidget owns those).
   return (
-    <section className="relative w-full h-[90vh] min-h-[600px] max-h-[950px] overflow-hidden bg-white" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <AnimatePresence mode="wait">
-        <motion.div key={slide.name} initial={reduceMotion ? false as any : { opacity: 0 }} animate={{ opacity: 1 }} exit={reduceMotion ? undefined as any : { opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.8 }} className="absolute inset-0">
-          {slide.heroImage && !imgErrors.has(slide.name) ? (
-            <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:block">
-              <Image src={slide.heroImage} alt={slide.name} fill className="object-cover object-center" onError={() => setImgErrors(prev => new Set([...prev, slide.name]))} />
-            </div>
-          ) : (
-            <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${slide.accentColor}15, ${slide.accentColor}08)` }}>
-              <div className="text-center">
-                <span className="text-8xl block mb-4">{slide.flag}</span>
-                <span className="text-3xl font-bold" style={{ color: slide.accentColor }}>{slide.name}</span>
-              </div>
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+    <section
+      aria-label="Featured study destinations"
+      className="relative w-full bg-white"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-12 sm:px-6 md:py-16 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-20 lg:min-h-[600px]">
+        <div className="space-y-6 lg:col-span-6">
+          <AnimatePresence mode="wait">
+            <motion.div key={`eyebrow-${slide.name}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: reduceMotion ? 0 : 0.3 }}>
+              <Badge variant="brand" className="gap-2 px-3 py-1 text-xs">
+                <span aria-hidden="true">{slide.flag}</span>
+                {slide.name}
+              </Badge>
+            </motion.div>
+          </AnimatePresence>
 
-      <div className="relative z-10 h-full flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            <div className="space-y-6 max-w-xl">
-              <AnimatePresence mode="wait">
-                <motion.div key={slide.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }}>
-                  <Badge className="bg-white text-sm font-medium px-4 py-1.5 rounded-full shadow-sm border border-[#E2E8F0]" style={{ color: slide.accentColor }}>
-                    {slide.flag} {slide.name}
-                  </Badge>
-                </motion.div>
-              </AnimatePresence>
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-tight" style={{ color: C.text, fontFamily: 'system-ui, sans-serif' }}>
-                {t('hero.title')}
-              </h1>
-              <AnimatePresence mode="wait">
-                <motion.h2 key={slide.name} initial={reduceMotion ? false as any : { opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? undefined as any : { opacity: 0, x: 20 }} transition={{ duration: reduceMotion ? 0 : 0.4 }} className="text-2xl sm:text-3xl lg:text-4xl font-bold" style={{ color: slide.accentColor }} aria-live="polite">
-                  Study Abroad in {slide.name}
-                </motion.h2>
-              </AnimatePresence>
-              <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-base text-[#64748B] leading-relaxed max-w-lg">
-                {t('hero.subtitle')}
-              </motion.p>
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-wrap gap-3">
-                <a href="/book-consultation"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold text-white" style={{ backgroundColor: C.orange }}>{t('cta.bookConsultation')} <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
-                <a href={`/course-finder?country=${slide.slug}`}><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-6 font-semibold border-2" style={{ borderColor: C.blue, color: C.blue }}>{t('cta.findCourse')}</Button></a>
-                <a href="/eligibility-check"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: C.border, color: C.text }}>{t('cta.checkEligibility')}</Button></a>
-                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl px-5 font-semibold" style={{ borderColor: '#25D366', color: '#25D366' }}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button></a>
-              </motion.div>
-              {/* 3-button high-conversion hero placement — branded CTAs: AI Agent / WhatsApp AI / Facebook */}
-              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="pt-2">
-                <p className="text-[11px] font-semibold tracking-widest uppercase text-[#0B5ED7]/70 mb-2.5">Get Instant Help — choose your channel</p>
-                <WebsiteActionButtons variant="hero" />
-              </motion.div>
-            </div>
+          <h1 className="text-[2rem] font-bold leading-[1.15] tracking-tight text-alo-navy-dark md:text-h1">
+            {t('hero.title')}
+          </h1>
 
-            <div className="hidden lg:block">
-              <AnimatePresence mode="wait">
-                <motion.div key={slide.name} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.5 }} className="space-y-4">
-                  <div className="bg-white rounded-2xl shadow-xl border border-[#E2E8F0] p-5 space-y-4">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: slide.accentColor }} />
-                      <h3 className="text-lg font-bold" style={{ color: slide.accentColor }}>{slide.heroSubtitle}</h3>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        { icon: GraduationCap, label: 'Universities', value: slide.universityCount },
-                        { icon: BookOpen, label: 'Courses', value: slide.courseCount },
-                        { icon: Award, label: 'Scholarships', value: slide.scholarshipCount },
-                      ].map(s => (
-                        <div key={s.label} className="text-center p-3 rounded-xl" style={{ backgroundColor: `${slide.accentColor}08` }}>
-                          <s.icon className="h-5 w-5 mx-auto mb-1" style={{ color: slide.accentColor }} />
-                          <div className="text-xl font-bold" style={{ color: slide.accentColor }}>{s.value && s.value > 0 ? <><AnimatedCounter target={s.value} />+</> : '—'}</div>
-                          <div className="text-xs text-[#64748B]">{s.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-[#64748B]">
-                      <MapPin className="h-4 w-4" style={{ color: slide.accentColor }} />
-                      <span>Popular city: <strong style={{ color: C.text }}>{slide.heroCity}</strong></span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-[#64748B]">
-                      <Calendar className="h-4 w-4" style={{ color: slide.accentColor }} />
-                      <span>Next intake: <strong style={{ color: C.text }}>{slide.heroIntake}</strong></span>
-                    </div>
-                  </div>
-                  <div className="bg-white rounded-2xl shadow-lg border border-[#E2E8F0] p-4 flex items-center gap-4">
-                    {[
-                      { icon: MessageCircle, label: 'Counseling' },
-                      { icon: FileTextIcon, label: 'Apply' },
-                      { icon: Shield, label: 'Visa' },
-                    ].map((s, i) => {
-                      const Icon: React.ElementType = s.icon;
-                      return (
-                      <div key={s.label} className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: i === 2 ? `${C.orange}15` : `${C.blue}15` }}>
-                          <Icon className="h-4 w-4" style={{ color: i === 2 ? C.orange : C.blue }} />
-                        </div>
-                        <span className="text-xs font-medium text-[#64748B]">{s.label}</span>
-                        {i < 2 && <ChevronRight className="h-3 w-3 text-[#CBD5E1]" />}
-                      </div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={`sub-${slide.name}`}
+              initial={reduceMotion ? false as const : { opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, x: 12 }}
+              transition={{ duration: reduceMotion ? 0 : 0.3 }}
+              className="text-lg font-semibold text-alo-brand"
+              aria-live="polite"
+            >
+              Study Abroad in {slide.name}
+            </motion.p>
+          </AnimatePresence>
+
+          <p className="max-w-xl text-lg leading-relaxed text-alo-text-secondary">
+            {t('hero.subtitle')}
+          </p>
+
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+            <Button asChild size="lg" variant="default" className="h-12 px-6">
+              <Link href="/book-consultation">
+                {t('cta.bookConsultation')}
+                <ArrowRight aria-hidden="true" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="h-12 px-6">
+              <Link href={`/course-finder?country=${encodeURIComponent(slide.slug)}`}>
+                {t('cta.findCourse')}
+              </Link>
+            </Button>
           </div>
         </div>
-      </div>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 flex-wrap justify-center px-4" role="tablist" aria-label="Hero destinations">
-        {slides.map((s, i) => (
-          <button key={s.id} onClick={() => go(i)} role="tab" aria-selected={i===current} aria-label={`View ${s.name}`} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all min-h-[32px]" style={{ backgroundColor: i === current ? s.accentColor : '#F1F5F9', color: i === current ? '#FFFFFF' : '#64748B' }}>
-            <span aria-hidden>{s.flag}</span>
-            <span className="hidden sm:inline">{s.name}</span>
-          </button>
-        ))}
+        <div className="lg:col-span-6">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-feature border border-alo-border bg-alo-page">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={slide.name}
+                initial={reduceMotion ? false as const : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.6 }}
+                className="absolute inset-0"
+              >
+                {slide.heroImage && !imgErrors.has(slide.name) ? (
+                  <Image
+                    src={slide.heroImage}
+                    alt={`${slide.name} study destination`}
+                    fill
+                    priority={current === 0}
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover object-center"
+                    onError={() => setImgErrors(prev => new Set([...prev, slide.name]))}
+                  />
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-3" style={{ backgroundColor: `${slide.accentColor}14` }}>
+                    <span className="text-7xl" aria-hidden="true">{slide.flag}</span>
+                    <span className="text-2xl font-bold" style={{ color: slide.accentColor }}>{slide.name}</span>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {slides.length > 1 && (
+            <div className="mt-4 flex items-center justify-center gap-2" role="tablist" aria-label="Choose a destination to feature">
+              {slides.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === current}
+                  aria-label={`Show ${s.name}`}
+                  onClick={() => go(i)}
+                  className={`h-2.5 rounded-pill transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-brand focus-visible:ring-offset-2 ${i === current ? 'w-8 bg-alo-brand' : 'w-2.5 bg-alo-border-strong hover:bg-alo-text-muted'}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -256,7 +232,7 @@ function CourseFinderSection() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-10">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0B5ED7] border border-[#0B5ED7]/20 mb-4">Smart Course Finder</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#2563EB] border border-[#2563EB]/20 mb-4">Smart Course Finder</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Search from thousands of courses across top universities worldwide</motion.p>
         </motion.div>
@@ -312,7 +288,7 @@ function DestinationsSection() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0B5ED7] border border-[#0B5ED7]/20 mb-4">Explore the World</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#2563EB] border border-[#2563EB]/20 mb-4">Explore the World</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Popular Study Destinations</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Discover world-class education opportunities across top study destinations</motion.p>
         </motion.div>
@@ -388,7 +364,7 @@ function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div variants={slideFromLeft} className="space-y-6">
-            <Badge className="bg-blue-50 text-[#0B5ED7] border border-[#0B5ED7]/20">About ALO Education</Badge>
+            <Badge className="bg-blue-50 text-[#2563EB] border border-[#2563EB]/20">About ALO Education</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Who We Are</h2>
             <div className="space-y-4 text-[#64748B] leading-relaxed">
               <p>In February 2023, <strong style={{ color: C.text }}>Taslima Akter</strong> founded ALO Education with a vision to connect ambitious Bangladeshi students with world-class education opportunities abroad. Her personal experience navigating the complexities of international admissions inspired her to create a platform built on trust, transparency, and genuine care for every student&apos;s future.</p>

@@ -335,7 +335,7 @@ const CONSENT_LABEL: Record<string, string> = {
 };
 
 const ACCESS_LEVEL_BADGE: Record<string, string> = {
-  FULL: "bg-[#0B5ED7] text-white",
+  FULL: "bg-[#2563EB] text-white",
   LIMITED: "bg-[#fdece4] text-[#F97316]",
   NONE: "bg-slate-100 text-slate-600",
 };
@@ -474,7 +474,7 @@ export function MarketingDashboard() {
             </Badge>
             <Button
               variant="outline"
-              className="h-12 border-[#0B5ED7]/30 text-[#0B5ED7]"
+              className="h-12 border-[#2563EB]/30 text-[#2563EB]"
               onClick={() => {
                 loadAll();
                 toast({ title: "Refreshed", description: "Marketing dashboard re-synced." });
@@ -590,11 +590,11 @@ export function MarketingDashboard() {
       <Card className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC]">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7]">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
               <Icon name="ShieldCheck" className="size-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-bold text-[#0B5ED7]">CRM Timeline & Audit Trail</h3>
+              <h3 className="text-sm font-bold text-[#2563EB]">CRM Timeline & Audit Trail</h3>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                 Every comment, DM, WhatsApp, email, SMS, chat, document, call note, task, appointment, campaign, and reply saves to the CRM timeline with:{" "}
                 <span className="font-medium text-foreground">
@@ -697,7 +697,7 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
             className={cn(
               "h-9",
               platformFilter === p
-                ? "bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+                ? "bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
                 : "border-[#E2E8F0] text-slate-600 hover:bg-[#F8FAFC]",
             )}
             onClick={() => setPlatformFilter(p)}
@@ -725,7 +725,7 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
           <Card className="rounded-2xl border-2 border-[#E2E8F0] lg:col-span-1">
             <CardContent className="p-0">
               <div className="border-b border-[#E2E8F0] px-4 py-3">
-                <p className="text-sm font-semibold text-[#0B5ED7]">Conversations ({conversations.length})</p>
+                <p className="text-sm font-semibold text-[#2563EB]">Conversations ({conversations.length})</p>
               </div>
               <ScrollArea className="h-[560px]">
                 <div className="divide-y divide-[#E2E8F0]">
@@ -803,7 +803,7 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
                           const isOutbound = m.direction === "OUTBOUND";
                           return (
                             <div key={m.id} className={cn("flex", isOutbound ? "justify-end" : "justify-start")}>
-                              <div className={cn("max-w-[78%] rounded-2xl px-3.5 py-2", isOutbound ? "bg-[#0B5ED7] text-white" : "bg-[#F1F5F9] text-foreground")}>
+                              <div className={cn("max-w-[78%] rounded-2xl px-3.5 py-2", isOutbound ? "bg-[#2563EB] text-white" : "bg-[#F1F5F9] text-foreground")}>
                                 <p className="text-sm leading-relaxed">{m.messageText || "(media)"}</p>
                                 <div className={cn("mt-1 flex items-center gap-2 text-[10px]", isOutbound ? "text-white/70" : "text-muted-foreground")}>
                                   <span>{isOutbound ? "ALO Education" : m.senderName}</span>
@@ -848,7 +848,7 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
                         onClick={() => sendReply(true)}
                         disabled={sending}
                         variant="outline"
-                        className="h-10 border-[#0B5ED7]/30 text-[#0B5ED7]"
+                        className="h-10 border-[#2563EB]/30 text-[#2563EB]"
                       >
                         <Icon name="Sparkles" className="size-4" /> Use AI Draft
                       </Button>
@@ -967,14 +967,14 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
     { icon: "UserPlus", label: "Create Lead", color: "bg-orange-100 text-orange-700" },
     { icon: "UserCheck", label: "Assign Counselor", color: "bg-amber-100 text-amber-700" },
     { icon: "Link", label: "Send Portal Link", color: "bg-cyan-100 text-cyan-700" },
-    { icon: "Database", label: "Save to CRM Timeline", color: "bg-[#0B5ED7] text-white" },
+    { icon: "Database", label: "Save to CRM Timeline", color: "bg-[#2563EB] text-white" },
   ];
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-[#0B5ED7]">Comment & Keyword Automation</h2>
+          <h2 className="text-lg font-bold text-[#2563EB]">Comment & Keyword Automation</h2>
           <p className="text-xs text-muted-foreground">
             When a comment or message contains a keyword (e.g., "IELTS", "UK Visa", "Scholarship"), the system auto-replies, sends a DM, creates a lead, and assigns a counselor.
           </p>
@@ -987,7 +987,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
           </DialogTrigger>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle className="text-[#0B5ED7]">Add Keyword Trigger</DialogTitle>
+              <DialogTitle className="text-[#2563EB]">Add Keyword Trigger</DialogTitle>
               <DialogDescription>
                 Configure an automated response for comments and messages containing this keyword.
               </DialogDescription>
@@ -1072,9 +1072,9 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
       </div>
 
       {/* Spec 8 default triggers — one-click seed */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#eef4ff] px-4 py-3">
-        <div><p className="text-sm font-bold text-[#0B5ED7]">Spec 8 Keyword Triggers</p><p className="text-[11px] text-muted-foreground">Study Abroad • IELTS • Visa • UK • Canada • Australia • Scholarship • Apply — auto-reply + DM + lead + portal link</p></div>
-        <Button size="sm" className="h-9 bg-[#0B5ED7] text-white" onClick={seedDefaults}><Icon name="Zap" className="size-3.5"/> Seed 8 Defaults</Button>
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[#2563EB]/20 bg-[#eef4ff] px-4 py-3">
+        <div><p className="text-sm font-bold text-[#2563EB]">Spec 8 Keyword Triggers</p><p className="text-[11px] text-muted-foreground">Study Abroad • IELTS • Visa • UK • Canada • Australia • Scholarship • Apply — auto-reply + DM + lead + portal link</p></div>
+        <Button size="sm" className="h-9 bg-[#2563EB] text-white" onClick={seedDefaults}><Icon name="Zap" className="size-3.5"/> Seed 8 Defaults</Button>
       </div>
 
       {/* Flow visualization */}
@@ -1115,7 +1115,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
                 {triggers.map((t) => (
                   <TableRow key={t.id}>
                     <TableCell>
-                      <Badge className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]">{t.keyword}</Badge>
+                      <Badge className="bg-[#2563EB] text-white hover:bg-[#2563EB]">{t.keyword}</Badge>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{t.keywordType}</TableCell>
                     <TableCell>
@@ -1125,7 +1125,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
                       <p className="truncate text-xs text-foreground" title={t.autoReplyText}>{t.autoReplyText}</p>
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm font-semibold tabular-nums text-[#0B5ED7]">{t.triggerCount}</span>
+                      <span className="text-sm font-semibold tabular-nums text-[#2563EB]">{t.triggerCount}</span>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -1311,7 +1311,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-[#0B5ED7]">Campaign Posts & Approval System</h2>
+          <h2 className="text-lg font-bold text-[#2563EB]">Campaign Posts & Approval System</h2>
           <p className="text-xs text-muted-foreground">Create, approve, schedule, and publish posts across all official social channels.</p>
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -1322,7 +1322,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
           </DialogTrigger>
           <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-[#0B5ED7]">Create Campaign Post</DialogTitle>
+              <DialogTitle className="text-[#2563EB]">Create Campaign Post</DialogTitle>
               <DialogDescription>
                 Fill in post details. ALO logo and brand colors will be applied automatically. Post starts as a draft.
               </DialogDescription>
@@ -1453,7 +1453,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                       <TableCell>
                         <div className="flex flex-wrap justify-end gap-1.5">
                           {p.approvalStatus === "DRAFT" && (
-                            <Button size="sm" className="h-8 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" disabled={saving} onClick={() => patchPost(p.id, "submit_approval")}>
+                            <Button size="sm" className="h-8 bg-[#2563EB] text-white hover:bg-[#2563EB]/90" disabled={saving} onClick={() => patchPost(p.id, "submit_approval")}>
                               <Icon name="Send" className="size-3" /> Submit
                             </Button>
                           )}
@@ -1469,7 +1469,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                           )}
                           {p.approvalStatus === "APPROVED" && (
                             <>
-                              <Button size="sm" variant="outline" className="h-8 border-[#0B5ED7]/30 text-[#0B5ED7]" onClick={() => { setScheduleTarget(p); setScheduleDate(""); }}>
+                              <Button size="sm" variant="outline" className="h-8 border-[#2563EB]/30 text-[#2563EB]" onClick={() => { setScheduleTarget(p); setScheduleDate(""); }}>
                                 <Icon name="Calendar" className="size-3" /> Schedule
                               </Button>
                               <Button size="sm" className="h-8 bg-[#F97316] text-white hover:bg-[#F97316]/90" disabled={saving} onClick={() => patchPost(p.id, "publish")}>
@@ -1505,9 +1505,9 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
 
       {/* Approval workflow note */}
       <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3">
-        <Icon name="Info" className="mt-0.5 size-4 shrink-0 text-[#0B5ED7]" />
+        <Icon name="Info" className="mt-0.5 size-4 shrink-0 text-[#2563EB]" />
         <p className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-[#0B5ED7]">Approval workflow:</span> Nothing posts automatically. Marketing Manager or Super Admin must approve before publishing. All approvals, rejections, schedules, and publishes are audit-logged with employee ID and timestamp.
+          <span className="font-semibold text-[#2563EB]">Approval workflow:</span> Nothing posts automatically. Marketing Manager or Super Admin must approve before publishing. All approvals, rejections, schedules, and publishes are audit-logged with employee ID and timestamp.
         </p>
       </div>
 
@@ -1549,7 +1549,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
       <Dialog open={!!scheduleTarget} onOpenChange={(o) => !o && setScheduleTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-[#0B5ED7]">Schedule Post</DialogTitle>
+            <DialogTitle className="text-[#2563EB]">Schedule Post</DialogTitle>
             <DialogDescription>Pick a date and time to auto-publish this post.</DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
@@ -1564,7 +1564,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
           <DialogFooter>
             <Button variant="outline" className="h-11" onClick={() => setScheduleTarget(null)}>Cancel</Button>
             <Button
-              className="h-11 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+              className="h-11 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
               disabled={saving || !scheduleDate}
               onClick={() => {
                 if (scheduleTarget) {
@@ -1594,7 +1594,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
 
   const logo = data?.logo;
   const logoExists = data?.logoExists ?? false;
-  const brandColors = data?.brandColors || { primary: "#0B5ED7", cta: "#F97316", background: "#FFFFFF", text: "#0F172A" };
+  const brandColors = data?.brandColors || { primary: "#2563EB", cta: "#F97316", background: "#FFFFFF", text: "#0F172A" };
   const assets = data?.assets || [];
   const otherAssets = assets.filter((a) => a.type !== "LOGO");
 
@@ -1651,7 +1651,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
                 )}
               </div>
               <div className="flex-1">
-                <p className="text-sm font-bold text-[#0B5ED7]">ALO Education Logo</p>
+                <p className="text-sm font-bold text-[#2563EB]">ALO Education Logo</p>
                 {logoExists ? (
                   <>
                     <p className="text-xs text-muted-foreground">{logo?.name}</p>
@@ -1672,7 +1672,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="text-[#0B5ED7]">Upload ALO Logo</DialogTitle>
+                    <DialogTitle className="text-[#2563EB]">Upload ALO Logo</DialogTitle>
                     <DialogDescription>
                       Provide a CDN URL for the logo. The previous logo (if any) will be archived. Recommended: PNG, transparent background, min 512×512px.
                     </DialogDescription>
@@ -1702,7 +1702,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
         {/* Brand colors */}
         <Card className="rounded-2xl border-2 border-[#E2E8F0]">
           <CardContent className="pt-6">
-            <p className="text-sm font-bold text-[#0B5ED7]">Brand Colors</p>
+            <p className="text-sm font-bold text-[#2563EB]">Brand Colors</p>
             <div className="mt-3 grid grid-cols-2 gap-3">
               {colorSwatches.map((c) => (
                 <div key={c.label} className="overflow-hidden rounded-xl border border-[#E2E8F0]">
@@ -1730,7 +1730,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {otherAssets.map((a) => (
               <div key={a.id} className="flex items-center gap-3 rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
                   <Icon name={a.type === "TEMPLATE" ? "LayoutTemplate" : a.type === "FONT" ? "Type" : a.type === "IMAGE" ? "Image" : "File"} className="size-4" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -1746,7 +1746,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
       <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3">
         <Icon name="Palette" className="mt-0.5 size-4 shrink-0 text-[#F97316]" />
         <p className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-[#F97316]">Brand compliance:</span> Every generated image, video, reel, and post must use the ALO logo, brand colors (blue #0B5ED7, orange #F97316), and approved layout. AI-generated content is auto-checked for brand consistency before approval.
+          <span className="font-semibold text-[#F97316]">Brand compliance:</span> Every generated image, video, reel, and post must use the ALO logo, brand colors (blue #2563EB, orange #F97316), and approved layout. AI-generated content is auto-checked for brand consistency before approval.
         </p>
       </div>
     </div>
@@ -1842,7 +1842,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-[#0B5ED7]">AI Auto-Reply</p>
+                <p className="text-sm font-bold text-[#2563EB]">AI Auto-Reply</p>
                 <p className="text-xs text-muted-foreground">Master switch for all AI replies</p>
               </div>
               <Switch checked={aiOn} onCheckedChange={(v) => { setAiOn(v); toast({ title: v ? "AI replies enabled" : "AI replies disabled", description: v ? "AI will draft replies for review." : "All replies require manual drafting." }); }} />
@@ -1853,7 +1853,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-[#0B5ED7]">After-Hours Auto-Reply</p>
+                <p className="text-sm font-bold text-[#2563EB]">After-Hours Auto-Reply</p>
                 <p className="text-xs text-muted-foreground">Auto-respond outside office hours</p>
               </div>
               <Switch checked={afterHours} onCheckedChange={(v) => { setAfterHours(v); toast({ title: v ? "After-hours AI on" : "After-hours AI off", description: v ? "AI handles first response 6PM-9AM." : "Messages will queue until office hours." }); }} />
@@ -1862,7 +1862,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
         </Card>
         <Card className="rounded-2xl border-2 border-[#E2E8F0]">
           <CardContent className="pt-6">
-            <p className="text-sm font-bold text-[#0B5ED7]">Office Hours</p>
+            <p className="text-sm font-bold text-[#2563EB]">Office Hours</p>
             <p className="mt-1 text-2xl font-bold text-foreground tabular-nums">9:00 AM — 6:00 PM</p>
             <p className="text-xs text-muted-foreground">Sunday–Friday (Bangladesh time)</p>
           </CardContent>
@@ -1875,7 +1875,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
           {ruleReplies.map((r) => (
             <div key={r.trigger} className="flex flex-col gap-1 rounded-xl border border-[#E2E8F0] bg-white p-3 sm:flex-row sm:items-center sm:gap-4">
               <div className="shrink-0 sm:w-48">
-                <Badge className="bg-[#e8f0fb] text-[#0B5ED7] hover:bg-[#e8f0fb]">{r.trigger}</Badge>
+                <Badge className="bg-[#e8f0fb] text-[#2563EB] hover:bg-[#e8f0fb]">{r.trigger}</Badge>
               </div>
               <p className="flex-1 text-xs text-foreground">{r.reply}</p>
               <Badge variant="outline" className="border-emerald-200 text-emerald-700">No AI cost</Badge>
@@ -1921,7 +1921,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
                   <Button size="sm" className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => approveDraft(conv, msg)}>
                     <Icon name="Check" className="size-3" /> Approve & Send
                   </Button>
-                  <Button size="sm" variant="outline" className="h-8 border-[#0B5ED7]/30 text-[#0B5ED7]" onClick={() => editDraft(conv, msg)}>
+                  <Button size="sm" variant="outline" className="h-8 border-[#2563EB]/30 text-[#2563EB]" onClick={() => editDraft(conv, msg)}>
                     <Icon name="Pencil" className="size-3" /> Edit & Send
                   </Button>
                   <Button size="sm" variant="outline" className="h-8 border-red-300 text-red-600" onClick={() => rejectDraft(conv)}>
@@ -1956,7 +1956,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
                     <p className="text-[11px] text-muted-foreground">{conv.platform} · {reason}</p>
                   </div>
                 </div>
-                <Button size="sm" className="h-8 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" onClick={() => assignCounselor(conv)}>
+                <Button size="sm" className="h-8 bg-[#2563EB] text-white hover:bg-[#2563EB]/90" onClick={() => assignCounselor(conv)}>
                   <Icon name="UserCheck" className="size-3" /> Assign to Counselor
                 </Button>
               </div>
@@ -2035,7 +2035,7 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-[#0B5ED7]">n8n Workflow Configuration</h2>
+          <h2 className="text-lg font-bold text-[#2563EB]">n8n Workflow Configuration</h2>
           <p className="text-xs text-muted-foreground">Saved records are placeholders only. External endpoints and workflow execution are not configured or verified.</p>
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -2046,7 +2046,7 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
           </DialogTrigger>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle className="text-[#0B5ED7]">Add workflow placeholder</DialogTitle>
+              <DialogTitle className="text-[#2563EB]">Add workflow placeholder</DialogTitle>
               <DialogDescription>Create a local inactive record only. Do not enter a webhook URL or secret; this will not connect to n8n.</DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-2">
@@ -2139,7 +2139,7 @@ function LeadOutreachTab({ outreach }: { outreach: LeadOutreach[] }) {
         <Card className="rounded-2xl border-2 border-[#E2E8F0]">
           <CardContent className="py-4">
             <p className="text-[11px] font-medium uppercase text-muted-foreground">Total Records</p>
-            <p className="mt-1 text-2xl font-bold text-[#0B5ED7]">{outreach.length}</p>
+            <p className="mt-1 text-2xl font-bold text-[#2563EB]">{outreach.length}</p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-2 border-[#E2E8F0]">
@@ -2167,7 +2167,7 @@ function LeadOutreachTab({ outreach }: { outreach: LeadOutreach[] }) {
         icon="Megaphone"
         description="All lead outreach with source, channel, and consent tracking"
         action={
-          <Button size="sm" variant="outline" className="h-9 border-[#0B5ED7]/30 text-[#0B5ED7]" onClick={() => toast({ title: "Add outreach", description: "Use the CRM to add new outreach records with consent capture." })}>
+          <Button size="sm" variant="outline" className="h-9 border-[#2563EB]/30 text-[#2563EB]" onClick={() => toast({ title: "Add outreach", description: "Use the CRM to add new outreach records with consent capture." })}>
             <Icon name="Plus" className="size-3.5" /> Add Outreach
           </Button>
         }
@@ -2319,7 +2319,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
         <Card className="rounded-2xl border-2 border-[#E2E8F0]">
           <CardContent className="py-4">
             <p className="text-[11px] font-medium uppercase text-muted-foreground">Marketing Manager</p>
-            <p className="mt-1 text-2xl font-bold text-[#0B5ED7]">{managers.length}</p>
+            <p className="mt-1 text-2xl font-bold text-[#2563EB]">{managers.length}</p>
             <p className="text-[11px] text-muted-foreground">Full access</p>
           </CardContent>
         </Card>
@@ -2351,15 +2351,15 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
         ) : (
           <div className="space-y-2">
             {managers.map((m) => (
-              <div key={m.id} className="flex items-center gap-3 rounded-xl border-2 border-[#0B5ED7]/20 bg-[#e8f0fb] p-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-[#0B5ED7] text-white">
+              <div key={m.id} className="flex items-center gap-3 rounded-xl border-2 border-[#2563EB]/20 bg-[#e8f0fb] p-3">
+                <div className="flex size-10 items-center justify-center rounded-full bg-[#2563EB] text-white">
                   <Icon name="Crown" className="size-5" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-bold text-foreground">{m.user.name}</p>
                   <p className="text-[11px] text-muted-foreground">{m.user.email} · {m.user.role}</p>
                 </div>
-                <Badge className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]">FULL ACCESS</Badge>
+                <Badge className="bg-[#2563EB] text-white hover:bg-[#2563EB]">FULL ACCESS</Badge>
               </div>
             ))}
           </div>
@@ -2380,7 +2380,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
             </DialogTrigger>
             <DialogContent className="max-w-lg">
               <DialogHeader>
-                <DialogTitle className="text-[#0B5ED7]">Approve Marketing User</DialogTitle>
+                <DialogTitle className="text-[#2563EB]">Approve Marketing User</DialogTitle>
                 <DialogDescription>
                   Grant LIMITED access to official social media tools. {slotsRemaining} of {maxApproved} slots remaining.
                 </DialogDescription>
@@ -2401,7 +2401,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
                   </Select>
                 </div>
                 <div className="space-y-2 rounded-xl bg-[#F8FAFC] p-3">
-                  <p className="text-xs font-semibold text-[#0B5ED7]">Permissions</p>
+                  <p className="text-xs font-semibold text-[#2563EB]">Permissions</p>
                   {Object.keys(permLabels).map((key) => (
                     <label key={key} className="flex items-center gap-2 text-sm">
                       <Checkbox
@@ -2465,9 +2465,9 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
       </SectionCard>
 
       <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3">
-        <Icon name="Lock" className="mt-0.5 size-4 shrink-0 text-[#0B5ED7]" />
+        <Icon name="Lock" className="mt-0.5 size-4 shrink-0 text-[#2563EB]" />
         <p className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-[#0B5ED7]">Access policy:</span> Maximum 3 approved marketing users can use official social media tools. Other employees cannot access company official Facebook, Instagram, Messenger, or social campaign controls. Marketing Manager and Super Admin can approve, edit permissions, or revoke access at any time.
+          <span className="font-semibold text-[#2563EB]">Access policy:</span> Maximum 3 approved marketing users can use official social media tools. Other employees cannot access company official Facebook, Instagram, Messenger, or social campaign controls. Marketing Manager and Super Admin can approve, edit permissions, or revoke access at any time.
         </p>
       </div>
     </div>
@@ -2479,7 +2479,7 @@ function BrandKitEditor({ data, onDataChanged }: { data: BrandAssetsResponse | n
   const [saving, setSaving] = React.useState(false);
   const kit = (data as any)?.brandKit as any || {};
   const logo = (data as any)?.logo as any;
-  const [form, setForm] = React.useState({ logoUrl: "", logoName: "", address: "", phone: "", whatsapp: "", website: "", primary: "#0B5ED7", cta: "#F97316" });
+  const [form, setForm] = React.useState({ logoUrl: "", logoName: "", address: "", phone: "", whatsapp: "", website: "", primary: "#2563EB", cta: "#F97316" });
   React.useEffect(()=> {
     setForm({
       logoUrl: kit.logoUrl || logo?.fileUrl || "",
@@ -2488,7 +2488,7 @@ function BrandKitEditor({ data, onDataChanged }: { data: BrandAssetsResponse | n
       phone: kit.phone || "+8809611-123456",
       whatsapp: kit.whatsapp || "+8801712345678",
       website: kit.website || "https://alo-education.com",
-      primary: kit.primary || "#0B5ED7",
+      primary: kit.primary || "#2563EB",
       cta: kit.cta || "#F97316",
     });
   }, [JSON.stringify(kit), logo?.fileUrl]);
@@ -2503,11 +2503,11 @@ function BrandKitEditor({ data, onDataChanged }: { data: BrandAssetsResponse | n
     } catch { toast({ title:"Save failed", variant:"destructive"});} finally { setSaving(false); }
   };
   return (
-    <Card className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#eef4ff]">
+    <Card className="rounded-2xl border-2 border-[#2563EB]/20 bg-[#eef4ff]">
       <CardContent className="pt-6 space-y-4">
         <div className="flex items-center justify-between">
-          <div><p className="text-sm font-bold text-[#0B5ED7] flex items-center gap-2"><Icon name="BadgeCheck" className="size-4"/> Education Partner Brand Kit — Logo / Address / Phone / WhatsApp</p><p className="text-[11px] text-muted-foreground">এখানে আপলোড করা তথ্য দিয়ে সব ইমেজ/ভিডিওতে প্রফেশনাল overlay হবে (logo bottom-right 8%, footer bar + phone/WhatsApp/website)।</p></div>
-          <Button className="h-10 bg-[#0B5ED7] text-white" disabled={saving} onClick={saveKit}><Icon name={saving?"Loader2":"Save"} className={saving?"size-4 animate-spin":"size-4"}/>{saving?"Saving...":"Save Brand Kit"}</Button>
+          <div><p className="text-sm font-bold text-[#2563EB] flex items-center gap-2"><Icon name="BadgeCheck" className="size-4"/> Education Partner Brand Kit — Logo / Address / Phone / WhatsApp</p><p className="text-[11px] text-muted-foreground">এখানে আপলোড করা তথ্য দিয়ে সব ইমেজ/ভিডিওতে প্রফেশনাল overlay হবে (logo bottom-right 8%, footer bar + phone/WhatsApp/website)।</p></div>
+          <Button className="h-10 bg-[#2563EB] text-white" disabled={saving} onClick={saveKit}><Icon name={saving?"Loader2":"Save"} className={saving?"size-4 animate-spin":"size-4"}/>{saving?"Saving...":"Save Brand Kit"}</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1.5"><Label>Logo URL *</Label><Input value={form.logoUrl} onChange={e=> setForm({...form, logoUrl:e.target.value})} placeholder="https://cdn.alo-education.com/logo.png"/></div>
@@ -2516,7 +2516,7 @@ function BrandKitEditor({ data, onDataChanged }: { data: BrandAssetsResponse | n
           <div className="space-y-1.5"><Label>Phone</Label><Input value={form.phone} onChange={e=> setForm({...form, phone:e.target.value})} placeholder="+8809611-123456"/></div>
           <div className="space-y-1.5"><Label>WhatsApp</Label><Input value={form.whatsapp} onChange={e=> setForm({...form, whatsapp:e.target.value})} placeholder="+8801712345678"/></div>
           <div className="space-y-1.5"><Label>Website</Label><Input value={form.website} onChange={e=> setForm({...form, website:e.target.value})} placeholder="https://alo-education.com"/></div>
-          <div className="space-y-1.5"><Label>Primary #0B5ED7</Label><Input value={form.primary} onChange={e=> setForm({...form, primary:e.target.value})}/></div>
+          <div className="space-y-1.5"><Label>Primary #2563EB</Label><Input value={form.primary} onChange={e=> setForm({...form, primary:e.target.value})}/></div>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground"><Icon name="Info" className="size-3"/><span>Overlay: 1080×1080/1350/628/1920 সব সাইজে logo + ফুটারে phone • WhatsApp • website (BLOG এ address সহ)। Provider key সেট না থাকলে placeholder image + prompt save হবে, পরে real gen করবে।</span></div>
       </CardContent>
@@ -2549,7 +2549,7 @@ function LibraryRepostTab() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h2 className="text-lg font-bold text-[#0B5ED7] flex items-center gap-2"><Icon name="Library" className="size-5"/> Marketing Library — Counselor Repost Hub</h2><p className="text-xs text-muted-foreground">Approved image/video/post — কাউন্সেলর বা যেকোনো এমপ্লয়ি এখানে দেখে নিজের অফিসিয়াল সোশ্যালে 1-click পোস্ট করতে পারবে। Brand Kit (logo/address/phone/WhatsApp) auto-retained।</p></div>
+        <div><h2 className="text-lg font-bold text-[#2563EB] flex items-center gap-2"><Icon name="Library" className="size-5"/> Marketing Library — Counselor Repost Hub</h2><p className="text-xs text-muted-foreground">Approved image/video/post — কাউন্সেলর বা যেকোনো এমপ্লয়ি এখানে দেখে নিজের অফিসিয়াল সোশ্যালে 1-click পোস্ট করতে পারবে। Brand Kit (logo/address/phone/WhatsApp) auto-retained।</p></div>
         <div className="flex items-center gap-2"><Input placeholder="Search library..." value={q} onChange={e=> setQ(e.target.value)} className="h-9 w-48"/><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3"/> Refresh</Button></div>
       </div>
       {loading ? <LoadingGrid count={3}/> : posts.length===0 ? <EmptyState icon="Library" title="No approved posts yet" description="Marketing Manager approved করলে এখানে দেখা যাবে — তখন Counselor 1-click repost করতে পারবে।"/> : (
@@ -2562,7 +2562,7 @@ function LibraryRepostTab() {
                 <p className="text-xs text-muted-foreground line-clamp-2">{p.caption?.slice(0,120)}</p>
                 <div className="flex flex-wrap gap-1.5 pt-2">
                   {["FACEBOOK","INSTAGRAM","LINKEDIN"].map(pl=>(
-                    <Button key={pl} size="sm" className="h-8 bg-[#0B5ED7] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Repost to {pl}</Button>
+                    <Button key={pl} size="sm" className="h-8 bg-[#2563EB] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Repost to {pl}</Button>
                   ))}
                 </div>
                 <p className="text-[10px] text-muted-foreground">Brand: {p.brandAssetApplied? "✓ Applied":"—"} • {fmtDate(p.approvedAt||p.createdAt)}</p>
@@ -2571,7 +2571,7 @@ function LibraryRepostTab() {
           ))}
         </div>
       )}
-      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#0B5ED7]">Note:</span> এই Library Marketing Manager dashboard ছাড়াও প্রতিটি Employee dashboard-এ “Marketing Library” নামে দেখানো হবে — UnifiedEmployeeDashboard এ ট্যাব হিসেবে অ্যাড করতে বললে 1 টার্নে করে দেব।</div>
+      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#2563EB]">Note:</span> এই Library Marketing Manager dashboard ছাড়াও প্রতিটি Employee dashboard-এ “Marketing Library” নামে দেখানো হবে — UnifiedEmployeeDashboard এ ট্যাব হিসেবে অ্যাড করতে বললে 1 টার্নে করে দেব।</div>
     </div>
   );
 }
@@ -2600,7 +2600,7 @@ function AnalyticsTab() {
   const { inbox, posts, leads, outreach, triggers, workflows } = data;
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[#0B5ED7] flex items-center gap-2"><Icon name="BarChart3" className="size-5"/> Marketing Analytics — 360°</h2><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button></div>
+      <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[#2563EB] flex items-center gap-2"><Icon name="BarChart3" className="size-5"/> Marketing Analytics — 360°</h2><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button></div>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         <StatCard label="Leads Total" value={leads.total} icon="Users" accent="blue" hint={`${leads.hot} hot • ${leads.followUpOverdue} overdue`} />
         <StatCard label="Conversion" value={`${leads.conversionRate}%`} icon="TrendingUp" accent="emerald" hint={`${leads.byStatus?.converted || 0} converted`} />
@@ -2611,7 +2611,7 @@ function AnalyticsTab() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <SectionCard title="Inbox by Platform" icon="Inbox">
-          <div className="space-y-2">{Object.entries(inbox.byPlatform || {}).map(([k,v]: any) => (<div key={k} className="flex items-center justify-between"><span className="text-xs font-medium">{k}</span><div className="flex items-center gap-2"><MiniBar value={Number(v)} max={Math.max(1, ...Object.values(inbox.byPlatform||{}) as number[])} color="#0B5ED7" /><span className="text-sm font-bold tabular-nums">{String(v)}</span></div></div>))}</div>
+          <div className="space-y-2">{Object.entries(inbox.byPlatform || {}).map(([k,v]: any) => (<div key={k} className="flex items-center justify-between"><span className="text-xs font-medium">{k}</span><div className="flex items-center gap-2"><MiniBar value={Number(v)} max={Math.max(1, ...Object.values(inbox.byPlatform||{}) as number[])} color="#2563EB" /><span className="text-sm font-bold tabular-nums">{String(v)}</span></div></div>))}</div>
         </SectionCard>
         <SectionCard title="Leads by Status (Pipeline)" icon="GitBranch">
           <div className="space-y-2">{Object.entries(leads.byStatus || {}).map(([k,v]: any) => (<div key={k} className="flex items-center justify-between"><Badge variant="outline" className="capitalize">{k}</Badge><span className="text-sm font-bold">{String(v)}</span></div>))}</div>
@@ -2627,12 +2627,12 @@ function AnalyticsTab() {
         <SectionCard title="Outreach & Automations" icon="Zap">
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div className="rounded-xl bg-[#F8FAFC] p-3"><p className="text-muted-foreground">Outreach Opted-In</p><p className="text-2xl font-bold text-emerald-600">{outreach.optedIn}</p><p className="text-[11px] text-muted-foreground">vs {outreach.optedOut} opted-out • {outreach.total} total</p></div>
-            <div className="rounded-xl bg-[#F8FAFC] p-3"><p className="text-muted-foreground">Keyword Triggers</p><p className="text-2xl font-bold text-[#0B5ED7]">{triggers.active}/{triggers.total}</p><p className="text-[11px] text-muted-foreground">{triggers.totalFires} fires • {workflows.active}/{workflows.total} workflows</p></div>
+            <div className="rounded-xl bg-[#F8FAFC] p-3"><p className="text-muted-foreground">Keyword Triggers</p><p className="text-2xl font-bold text-[#2563EB]">{triggers.active}/{triggers.total}</p><p className="text-[11px] text-muted-foreground">{triggers.totalFires} fires • {workflows.active}/{workflows.total} workflows</p></div>
             <div className="rounded-xl bg-[#F8FAFC] p-3 col-span-2"><p className="text-muted-foreground">Pending Approvals</p><p className="text-2xl font-bold text-amber-600">{posts.pendingApproval}</p><p className="text-[11px] text-muted-foreground">Manager/SA must approve before publish — audit-logged</p></div>
           </div>
         </SectionCard>
       </div>
-      <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3"><Icon name="Info" className="size-4 text-[#0B5ED7] mt-0.5"/><p className="text-xs text-muted-foreground"><span className="font-semibold text-[#0B5ED7]">Tip:</span> Use Lead Pipeline tab to move leads (new → contacted → qualified → assigned → converted) and assign counselor + follow-up date — all audit-logged.</p></div>
+      <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3"><Icon name="Info" className="size-4 text-[#2563EB] mt-0.5"/><p className="text-xs text-muted-foreground"><span className="font-semibold text-[#2563EB]">Tip:</span> Use Lead Pipeline tab to move leads (new → contacted → qualified → assigned → converted) and assign counselor + follow-up date — all audit-logged.</p></div>
     </div>
   );
 }
@@ -2667,7 +2667,7 @@ function LeadPipelineTab() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h2 className="text-lg font-bold text-[#0B5ED7] flex items-center gap-2"><Icon name="GitBranch" className="size-5"/> Lead Pipeline — Kanban + Assignment</h2><p className="text-xs text-muted-foreground">Drag not needed — use Move buttons. Counselor assignment & follow-up calendar are SLA-tracked (40→20→10).</p></div>
+        <div><h2 className="text-lg font-bold text-[#2563EB] flex items-center gap-2"><Icon name="GitBranch" className="size-5"/> Lead Pipeline — Kanban + Assignment</h2><p className="text-xs text-muted-foreground">Drag not needed — use Move buttons. Counselor assignment & follow-up calendar are SLA-tracked (40→20→10).</p></div>
         <div className="flex items-center gap-2">
           <Select value={filter} onValueChange={setFilter}><SelectTrigger className="h-9 w-36"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All Stages</SelectItem>{STAGES.map(s=><SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}</SelectContent></Select>
           <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
@@ -2684,14 +2684,14 @@ function LeadPipelineTab() {
                   <div key={l.id} className="rounded-xl border border-[#E2E8F0] bg-white p-3">
                     <p className="text-sm font-semibold">{l.name || "Unknown"} {l.hotLead ? <Badge className="ml-1 bg-orange-100 text-orange-700 text-[10px]">HOT</Badge>:null}</p>
                     <p className="text-[11px] text-muted-foreground">{l.phone || l.email || l.id.slice(0,8)} • {l.destination || "—"} • Score {l.score||0}</p>
-                    {l.counselorName ? <p className="text-[11px]"><span className="font-semibold text-[#0B5ED7]">Counselor:</span> {l.counselorName}</p>:null}
+                    {l.counselorName ? <p className="text-[11px]"><span className="font-semibold text-[#2563EB]">Counselor:</span> {l.counselorName}</p>:null}
                     {l.followUpDueAt ? <p className="text-[11px]"><Icon name="Calendar" className="inline size-3"/> {fmtDate(l.followUpDueAt)} {new Date(l.followUpDueAt) < new Date() && !l.followUpDone ? <Badge className="bg-red-100 text-red-700 ml-1">OVERDUE</Badge>:null}</p>:null}
                     <p className="text-[10px] text-muted-foreground">{l.source || "UNKNOWN"} • {timeAgo(l.createdAt)}</p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {STAGES.filter(s=>s!==stage).slice(0,3).map(ns=>(
                         <Button key={ns} size="sm" variant="outline" className="h-7 text-[10px] capitalize" onClick={()=> move(l, ns)}>{ns}</Button>
                       ))}
-                      <Button size="sm" className="h-7 bg-[#0B5ED7] text-white text-[10px]" onClick={()=> { setAssignOpen(l); setCounselor(l.counselorName||""); }}><Icon name="UserPlus" className="size-3"/> Assign</Button>
+                      <Button size="sm" className="h-7 bg-[#2563EB] text-white text-[10px]" onClick={()=> { setAssignOpen(l); setCounselor(l.counselorName||""); }}><Icon name="UserPlus" className="size-3"/> Assign</Button>
                       <a href={`https://alo-education.com/lead-form?leadId=${l.id}`} target="_blank" rel="noopener noreferrer" className="text-[10px] underline text-[#F97316]">Portal Link</a>
                     </div>
                   </div>
@@ -2708,10 +2708,10 @@ function LeadPipelineTab() {
             <div className="space-y-1.5"><Label>Counselor Name / ID</Label><Input value={counselor} onChange={e=> setCounselor(e.target.value)} placeholder="e.g., counselor.rahim@alo-education.com"/></div>
             <div className="space-y-1.5"><Label>Follow-up Date</Label><Input type="datetime-local" value={followUp} onChange={e=> setFollowUp(e.target.value)} /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={()=> setAssignOpen(null)}>Cancel</Button><Button className="bg-[#0B5ED7] text-white" onClick={assign}>Save Assignment</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={()=> setAssignOpen(null)}>Cancel</Button><Button className="bg-[#2563EB] text-white" onClick={assign}>Save Assignment</Button></DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#0B5ED7]">Dedup:</span> Phone/email/socialUserId/WhatsApp are deduped on lead creation. Student ID AE-YYYY000001 auto-generated. All moves, assigns, follow-ups are audit-logged.</div>
+      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#2563EB]">Dedup:</span> Phone/email/socialUserId/WhatsApp are deduped on lead creation. Student ID AE-YYYY000001 auto-generated. All moves, assigns, follow-ups are audit-logged.</div>
     </div>
   );
 }
@@ -2730,7 +2730,7 @@ function CalendarTab() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h2 className="text-lg font-bold text-[#0B5ED7] flex items-center gap-2"><Icon name="CalendarDays" className="size-5"/> Content Calendar — Schedule & Publish</h2><p className="text-xs text-muted-foreground">Campaign posts + marketing calendar merged. Schedule from Campaign Posts tab or here.</p></div>
+        <div><h2 className="text-lg font-bold text-[#2563EB] flex items-center gap-2"><Icon name="CalendarDays" className="size-5"/> Content Calendar — Schedule & Publish</h2><p className="text-xs text-muted-foreground">Campaign posts + marketing calendar merged. Schedule from Campaign Posts tab or here.</p></div>
         <div className="flex items-center gap-2">
           <Select value={filter} onValueChange={setFilter}><SelectTrigger className="h-9 w-36"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All</SelectItem><SelectItem value="scheduled">Scheduled</SelectItem><SelectItem value="published">Published</SelectItem><SelectItem value="approved">Approved</SelectItem></SelectContent></Select>
           <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
@@ -2754,7 +2754,7 @@ function CalendarTab() {
           </Table>
         </div>
       )}
-      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#0B5ED7]">Sizing:</span> SQUARE 1080×1080, PORTRAIT 1080×1350, LANDSCAPE 1200×628, STORY 1080×1920 — overlay auto-applied with brand kit. Calendar items can be rescheduled via PATCH /api/marketing/calendar .</div>
+      <div className="rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-muted-foreground"><span className="font-semibold text-[#2563EB]">Sizing:</span> SQUARE 1080×1080, PORTRAIT 1080×1350, LANDSCAPE 1200×628, STORY 1080×1920 — overlay auto-applied with brand kit. Calendar items can be rescheduled via PATCH /api/marketing/calendar .</div>
     </div>
   );
 }
@@ -2771,7 +2771,7 @@ function AuditLogsTab() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h2 className="text-lg font-bold text-[#0B5ED7] flex items-center gap-2"><Icon name="ScrollText" className="size-5"/> Audit Logs — Full CRM Timeline</h2><p className="text-xs text-muted-foreground">Every comment, DM, WhatsApp, email, SMS, lead, campaign, assignment & publish — channel, messageId, conversationId, leadId/studentId, AI/human, timestamp</p></div>
+        <div><h2 className="text-lg font-bold text-[#2563EB] flex items-center gap-2"><Icon name="ScrollText" className="size-5"/> Audit Logs — Full CRM Timeline</h2><p className="text-xs text-muted-foreground">Every comment, DM, WhatsApp, email, SMS, lead, campaign, assignment & publish — channel, messageId, conversationId, leadId/studentId, AI/human, timestamp</p></div>
         <div className="flex items-center gap-2">
           <Select value={resource} onValueChange={setResource}><SelectTrigger className="h-9 w-44"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All Resources</SelectItem><SelectItem value="CampaignPost">CampaignPost</SelectItem><SelectItem value="MarketingLead">MarketingLead</SelectItem><SelectItem value="SocialInboxMessage">SocialInbox</SelectItem><SelectItem value="KeywordTrigger">KeywordTrigger</SelectItem><SelectItem value="BrandAsset">BrandAsset</SelectItem></SelectContent></Select>
           <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
@@ -2781,7 +2781,7 @@ function AuditLogsTab() {
         <div className="space-y-2">
           {logs.map((l:any)=>(
             <div key={l.id} className="flex gap-3 rounded-xl border border-[#E2E8F0] bg-white p-3">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]"><Icon name="ScrollText" className="size-4"/></div>
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]"><Icon name="ScrollText" className="size-4"/></div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">{l.action} <span className="font-normal text-muted-foreground">on</span> {l.resource} <span className="font-mono text-[11px] text-muted-foreground">{l.resourceId?.slice(0,12)}</span></p>
                 <p className="text-[11px] text-muted-foreground truncate">{l.details ? (typeof l.details==="string"? l.details.slice(0,180): JSON.stringify(l.details).slice(0,180)) : "—"}</p>
@@ -2815,7 +2815,7 @@ function WhatsAppCard() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-[#0B5ED7]">WhatsApp Automation — 24/7</h3>
+                <h3 className="text-base font-bold text-[#2563EB]">WhatsApp Automation — 24/7</h3>
                 <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
                   <span className="mr-1 size-1.5 animate-pulse rounded-full bg-emerald-500" /> AI Agent Active
                 </Badge>
@@ -2838,8 +2838,8 @@ function WhatsAppCard() {
           {/* Office hours */}
           <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3">
             <div className="flex items-center gap-2">
-              <Icon name="Clock" className="size-4 text-[#0B5ED7]" />
-              <p className="text-xs font-semibold text-[#0B5ED7]">Office Hours</p>
+              <Icon name="Clock" className="size-4 text-[#2563EB]" />
+              <p className="text-xs font-semibold text-[#2563EB]">Office Hours</p>
             </div>
             <p className="mt-2 text-sm font-bold text-foreground">9 AM – 6 PM</p>
             <p className="text-[11px] text-muted-foreground">Employee handles chat</p>
@@ -2852,8 +2852,8 @@ function WhatsAppCard() {
           {/* SLA */}
           <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 md:col-span-2">
             <div className="flex items-center gap-2">
-              <Icon name="Timer" className="size-4 text-[#0B5ED7]" />
-              <p className="text-xs font-semibold text-[#0B5ED7]">Response SLA & Escalation</p>
+              <Icon name="Timer" className="size-4 text-[#2563EB]" />
+              <p className="text-xs font-semibold text-[#2563EB]">Response SLA & Escalation</p>
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               {slaSteps.map((s, idx) => (
@@ -2874,8 +2874,8 @@ function WhatsAppCard() {
           {/* Document auto-upload */}
           <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3">
             <div className="flex items-center gap-2">
-              <Icon name="FileCheck2" className="size-4 text-[#0B5ED7]" />
-              <p className="text-xs font-semibold text-[#0B5ED7]">Document Auto-Detect</p>
+              <Icon name="FileCheck2" className="size-4 text-[#2563EB]" />
+              <p className="text-xs font-semibold text-[#2563EB]">Document Auto-Detect</p>
             </div>
             <p className="mt-2 text-[11px] text-muted-foreground">
               WhatsApp documents (passport, IELTS, transcripts) auto-detect type and save to student profile.

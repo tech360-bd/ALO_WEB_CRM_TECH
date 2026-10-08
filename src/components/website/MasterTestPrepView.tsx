@@ -80,7 +80,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
         {/* ============================================================ */}
         {/* 1. HERO SECTION */}
         {/* ============================================================ */}
-        <section className="bg-gradient-to-br from-[#0B5ED7] via-[#004494] to-[#002d62] text-white py-16 md:py-20 relative overflow-hidden">
+        <section className="bg-gradient-to-br from-[#2563EB] via-[#1D4ED8] to-[#002d62] text-white py-16 md:py-20 relative overflow-hidden">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             {/* BREADCRUMB */}
             <nav className="flex items-center gap-2 text-xs text-blue-200 mb-6 font-medium">
@@ -151,13 +151,13 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                     {test.quickFacts.map((q, idx) => (
                       <div key={idx} className="flex justify-between items-center p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                         <span className="text-slate-500 font-semibold">{q.label}</span>
-                        <span className="font-bold text-[#0B5ED7] text-right">{q.value}</span>
+                        <span className="font-bold text-[#2563EB] text-right">{q.value}</span>
                       </div>
                     ))}
                   </div>
                   <div className="mt-6 pt-4 border-t border-slate-100">
                     <a href="#crm-lead-form">
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#004494] font-bold text-xs py-3 rounded-xl">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] font-bold text-xs py-3 rounded-xl">
                         Connect with Score Planner →
                       </Button>
                     </a>
@@ -174,14 +174,14 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
         <section className="py-16 bg-slate-50">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <Badge className="bg-blue-50 text-[#0B5ED7] border-blue-200 font-bold text-xs mb-2">SECTION 02</Badge>
+              <Badge className="bg-blue-50 text-[#2563EB] border-blue-200 font-bold text-xs mb-2">SECTION 02</Badge>
               <h2 className="text-3xl font-extrabold text-[#0F172A]">Comprehensive Test Overview</h2>
               <p className="text-sm text-slate-600 mt-2">Everything you need to know about history, purpose, and global recognition.</p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card className="p-6 bg-white border-slate-200">
-                <div className="h-10 w-10 rounded-xl bg-blue-50 text-[#0B5ED7] flex items-center justify-center font-bold mb-4">01</div>
+                <div className="h-10 w-10 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center font-bold mb-4">01</div>
                 <h3 className="font-bold text-lg text-[#0F172A] mb-2">What is {test.shortName}?</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">{test.overview.whatIsIt}</p>
               </Card>
@@ -231,7 +231,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 text-xs">
               <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-                <Clock className="h-6 w-6 text-[#0B5ED7] mb-2" />
+                <Clock className="h-6 w-6 text-[#2563EB] mb-2" />
                 <span className="text-slate-500 font-medium">Test Duration</span>
                 <p className="text-base font-bold text-slate-900 mt-1">{test.quickInfo.duration}</p>
               </div>
@@ -263,7 +263,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
         <section className="py-16 bg-slate-50">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <Badge className="bg-blue-50 text-[#0B5ED7] border-blue-200 font-bold text-xs mb-2">SECTION 04</Badge>
+              <Badge className="bg-blue-50 text-[#2563EB] border-blue-200 font-bold text-xs mb-2">SECTION 04</Badge>
               <h2 className="text-3xl font-extrabold text-[#0F172A]">Why Choose {test.name}?</h2>
             </div>
 
@@ -334,14 +334,14 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
         <section className="py-16 bg-slate-50">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <Badge className="bg-blue-50 text-[#0B5ED7] border-blue-200 font-bold text-xs mb-2">SECTION 07</Badge>
+              <Badge className="bg-blue-50 text-[#2563EB] border-blue-200 font-bold text-xs mb-2">SECTION 07</Badge>
               <h2 className="text-3xl font-extrabold text-[#0F172A]">Minimum & Competitive Score Benchmarks</h2>
             </div>
 
             <div className="overflow-x-auto bg-white rounded-2xl border border-slate-200 shadow-sm">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="bg-[#0B5ED7] text-white">
+                  <tr className="bg-[#2563EB] text-white">
                     <th className="p-4 font-bold">Country</th>
                     <th className="p-4 font-bold">Sample University</th>
                     <th className="p-4 font-bold">Course Level</th>
@@ -357,7 +357,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                       <td className="p-4 text-slate-700">{row.university}</td>
                       <td className="p-4 text-slate-600">{row.courseLevel}</td>
                       <td className="p-4 font-semibold text-amber-600">{row.minimumScore}</td>
-                      <td className="p-4 font-semibold text-[#0B5ED7]">{row.competitiveScore}</td>
+                      <td className="p-4 font-semibold text-[#2563EB]">{row.competitiveScore}</td>
                       <td className="p-4 font-bold text-[#F97316]">{row.scholarshipScore}</td>
                     </tr>
                   ))}
@@ -385,7 +385,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                     onClick={() => setActiveModuleTab(i)}
                     className={`w-full text-left p-4 rounded-xl font-bold text-sm transition-all flex items-center justify-between border ${
                       activeModuleTab === i
-                        ? 'bg-[#0B5ED7] text-white border-[#0B5ED7] shadow-md'
+                        ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-md'
                         : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
@@ -410,7 +410,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
 
                     <div className="grid sm:grid-cols-2 gap-6 text-xs mb-6">
                       <div>
-                        <h4 className="font-bold text-[#0B5ED7] mb-2">Question Types:</h4>
+                        <h4 className="font-bold text-[#2563EB] mb-2">Question Types:</h4>
                         <ul className="space-y-1 text-slate-600 list-disc list-inside">
                           {test.moduleDetails[activeModuleTab].questionTypes.map((q, idx) => (
                             <li key={idx}>{q}</li>
@@ -439,7 +439,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
         <section className="py-16 bg-slate-50">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <Badge className="bg-blue-50 text-[#0B5ED7] border-blue-200 font-bold text-xs mb-2">SECTION 11</Badge>
+              <Badge className="bg-blue-50 text-[#2563EB] border-blue-200 font-bold text-xs mb-2">SECTION 11</Badge>
               <h2 className="text-3xl font-extrabold text-[#0F172A]">Scoring System & CEFR Mapping</h2>
             </div>
 
@@ -447,7 +447,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
               {test.scoringSystem.map((row, i) => (
                 <div key={i} className="p-5 rounded-2xl bg-white border border-slate-200 flex flex-wrap md:flex-nowrap items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-xl bg-[#0B5ED7] text-white flex items-center justify-center font-black text-sm shrink-0">
+                    <div className="h-12 w-12 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-black text-sm shrink-0">
                       {row.scoreBand}
                     </div>
                     <div>
@@ -479,7 +479,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
               {test.countryFees.map((f, i) => (
                 <div key={i} className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                   <span className="text-slate-500 font-medium">{f.country}</span>
-                  <p className="text-lg font-black text-[#0B5ED7] mt-1">{f.currencyFee}</p>
+                  <p className="text-lg font-black text-[#2563EB] mt-1">{f.currencyFee}</p>
                   <p className="text-[11px] text-slate-500 mt-0.5">{f.bdtEquivalent}</p>
                 </div>
               ))}
@@ -493,7 +493,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
         <section className="py-16 bg-slate-50">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <Badge className="bg-blue-50 text-[#0B5ED7] border-blue-200 font-bold text-xs mb-2">SECTION 13</Badge>
+              <Badge className="bg-blue-50 text-[#2563EB] border-blue-200 font-bold text-xs mb-2">SECTION 13</Badge>
               <h2 className="text-3xl font-extrabold text-[#0F172A]">Step-by-Step Official Booking Process</h2>
             </div>
 
@@ -512,7 +512,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
         {/* ============================================================ */}
         {/* 20 & 28. ALO EDUCATION PREPARATION SUPPORT & CRM INTEGRATION */}
         {/* ============================================================ */}
-        <section id="crm-lead-form" className="py-16 bg-gradient-to-br from-[#0B5ED7] to-[#003d80] text-white">
+        <section id="crm-lead-form" className="py-16 bg-gradient-to-br from-[#2563EB] to-[#003d80] text-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-12 gap-12 items-center">
               <div className="lg:col-span-7 space-y-6">
@@ -646,7 +646,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
               {test.faqs.map((faq, i) => (
                 <div key={i} className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
                   <h3 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2">
-                    <HelpCircle className="h-4 w-4 text-[#0B5ED7] shrink-0" /> {faq.question}
+                    <HelpCircle className="h-4 w-4 text-[#2563EB] shrink-0" /> {faq.question}
                   </h3>
                   <p className="text-slate-600 leading-relaxed pl-6">{faq.answer}</p>
                 </div>

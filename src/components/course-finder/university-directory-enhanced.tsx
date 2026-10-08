@@ -32,7 +32,7 @@ import { toast } from 'sonner';
 // usePortalStore no longer needed - public pages use real routes
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#0B5ED7';
+const ALO_BLUE = '#2563EB';
 const ALO_ORANGE = '#F97316';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -140,7 +140,7 @@ function formatDate(iso: string | null | undefined): string {
 // ─── Skeletons ─────────────────────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
-    <div className="bg-gradient-to-br from-[#0B5ED7] to-[#003A7D] text-white">
+    <div className="bg-gradient-to-br from-[#2563EB] to-[#003A7D] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <Skeleton className="h-8 w-72 mb-4 bg-white/20" />
         <Skeleton className="h-5 w-96 mb-8 bg-white/15" />
@@ -525,7 +525,7 @@ function UniversityCard({
               </span>
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-slate-900 text-sm leading-snug truncate group-hover:text-[#0B5ED7] transition-colors">
+              <h3 className="font-semibold text-slate-900 text-sm leading-snug truncate group-hover:text-[#2563EB] transition-colors">
                 {flag} {uni.officialName || uni.name}
               </h3>
               <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
@@ -946,7 +946,7 @@ export function UniversityDirectoryEnhanced() {
   return (
     <div className="min-h-screen bg-white">
       {/* ═══ HERO SECTION ═══ */}
-      <div className="bg-gradient-to-br from-[#0B5ED7] to-[#003A7D] text-white">
+      <div className="bg-gradient-to-br from-[#2563EB] to-[#003A7D] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* Title */}
           <div className="flex items-center gap-2.5 mb-3">

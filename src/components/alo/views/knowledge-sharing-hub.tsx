@@ -234,7 +234,7 @@ export function KnowledgeSharingHub() {
         subtitle={`Share information, updates, and insights — accessible from every dashboard. Anyone can upload, everyone can learn. ${total} posts shared.`}
         icon="Share2"
         action={
-          <Button onClick={() => setCreateOpen(true)} className="h-10 bg-[#0B5ED7] text-white hover:bg-[#004494]">
+          <Button onClick={() => setCreateOpen(true)} className="h-10 bg-[#2563EB] text-white hover:bg-[#1D4ED8]">
             <Icon name="Plus" className="size-4" />
             Share Knowledge
           </Button>
@@ -267,9 +267,9 @@ export function KnowledgeSharingHub() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button onClick={() => setCategoryFilter("all")} className={cn("rounded-full px-3 py-1 text-xs font-medium", categoryFilter === "all" ? "bg-[#0B5ED7] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>All</button>
+            <button onClick={() => setCategoryFilter("all")} className={cn("rounded-full px-3 py-1 text-xs font-medium", categoryFilter === "all" ? "bg-[#2563EB] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>All</button>
             {CATEGORIES.map((c) => (
-              <button key={c.value} onClick={() => setCategoryFilter(c.value)} className={cn("inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium", categoryFilter === c.value ? "bg-[#0B5ED7] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>
+              <button key={c.value} onClick={() => setCategoryFilter(c.value)} className={cn("inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium", categoryFilter === c.value ? "bg-[#2563EB] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>
                 <Icon name={c.icon} className="size-3" />{c.label} {stats[c.value] ? `(${stats[c.value]})` : ""}
               </button>
             ))}
@@ -314,7 +314,7 @@ export function KnowledgeSharingHub() {
                         <span className="inline-flex items-center gap-1"><Icon name="MessageCircle" className="size-3.5" />{post._count?.comments ?? 0}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" className="h-7 text-[#0B5ED7]" onClick={(e) => { e.stopPropagation(); handleUpvote(post.id); }} disabled={upvoting === post.id}>
+                        <Button size="sm" variant="ghost" className="h-7 text-[#2563EB]" onClick={(e) => { e.stopPropagation(); handleUpvote(post.id); }} disabled={upvoting === post.id}>
                           <Icon name="ThumbsUp" className="size-3.5" />
                         </Button>
                       </div>
@@ -338,7 +338,7 @@ export function KnowledgeSharingHub() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Icon name={categoryMeta(selectedPost.category).icon} className="size-5 text-[#0B5ED7]" />
+                  <Icon name={categoryMeta(selectedPost.category).icon} className="size-5 text-[#2563EB]" />
                   {selectedPost.title}
                 </DialogTitle>
                 <DialogDescription className="flex flex-wrap gap-2 mt-2">
@@ -385,7 +385,7 @@ export function KnowledgeSharingHub() {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Icon name="Share2" className="size-5 text-[#0B5ED7]" />Share Knowledge</DialogTitle>
+            <DialogTitle className="flex items-center gap-2"><Icon name="Share2" className="size-5 text-[#2563EB]" />Share Knowledge</DialogTitle>
             <DialogDescription>Share information, updates, or insights that others can view and utilize. Anyone (student, partner, employee) can upload.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
@@ -420,7 +420,7 @@ export function KnowledgeSharingHub() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={creating} className="h-10">Cancel</Button>
-            <Button onClick={handleCreate} disabled={creating} className="h-10 bg-[#0B5ED7] text-white hover:bg-[#004494]">{creating ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Share2" className="size-4" />}{creating ? "Sharing…" : "Share Knowledge"}</Button>
+            <Button onClick={handleCreate} disabled={creating} className="h-10 bg-[#2563EB] text-white hover:bg-[#1D4ED8]">{creating ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Share2" className="size-4" />}{creating ? "Sharing…" : "Share Knowledge"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

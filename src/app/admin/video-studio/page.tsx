@@ -133,7 +133,7 @@ export default function VideoStudioPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#0B5ED7] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#2563EB] rounded-xl flex items-center justify-center">
               <Video className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -207,7 +207,7 @@ export default function VideoStudioPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-xl flex items-center gap-2 transition ${activeTab === tab.id ? 'bg-[#0B5ED7] text-white font-bold' : 'bg-white text-slate-600 border hover:bg-slate-50'}`}
+              className={`px-4 py-2 rounded-xl flex items-center gap-2 transition ${activeTab === tab.id ? 'bg-[#2563EB] text-white font-bold' : 'bg-white text-slate-600 border hover:bg-slate-50'}`}
             >
               <Icon className="w-4 h-4" /> {tab.label}
             </button>
@@ -238,7 +238,7 @@ export default function VideoStudioPage() {
               <div className="p-3 bg-slate-50 rounded-xl border">
                 <h3 className="font-bold text-sm">n8n Video Workflows</h3>
                 <p className="text-xs text-slate-600 mt-1">7 pre-built: lead→video, approval→publish, counseling pipeline, FAQ batch, etc.</p>
-                <Button onClick={() => setActiveTab('automation')} className="mt-2 w-full text-xs bg-[#0B5ED7] text-white rounded-xl">View Workflows</Button>
+                <Button onClick={() => setActiveTab('automation')} className="mt-2 w-full text-xs bg-[#2563EB] text-white rounded-xl">View Workflows</Button>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border">
                 <h3 className="font-bold text-sm">Remotion Templates</h3>
@@ -276,7 +276,7 @@ export default function VideoStudioPage() {
               <label className="text-xs font-bold">Prompt / Title</label>
               <textarea value={prompt} onChange={e => setPrompt(e.target.value)} rows={3} className="w-full p-2.5 border rounded-xl text-sm" placeholder="University promo title..." />
 
-              <Button onClick={() => handleRender('remotion')} disabled={rendering} className="w-full bg-[#0B5ED7] text-white rounded-xl">
+              <Button onClick={() => handleRender('remotion')} disabled={rendering} className="w-full bg-[#2563EB] text-white rounded-xl">
                 {rendering ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                 Render Remotion Video
               </Button>
@@ -433,7 +433,7 @@ export default function VideoStudioPage() {
           </p>
           <div className="mt-6 flex justify-center gap-2">
             <Button onClick={() => setActiveTab('overview')} variant="outline" className="text-xs rounded-xl">Back to Overview</Button>
-            <Button onClick={fetchData} className="text-xs bg-[#0B5ED7] text-white rounded-xl"><RefreshCw className="w-4 h-4 mr-1.5" /> Refresh Health</Button>
+            <Button onClick={fetchData} className="text-xs bg-[#2563EB] text-white rounded-xl"><RefreshCw className="w-4 h-4 mr-1.5" /> Refresh Health</Button>
           </div>
         </Card>
       )}

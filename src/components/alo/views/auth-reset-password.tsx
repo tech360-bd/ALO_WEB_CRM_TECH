@@ -157,13 +157,13 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
               <Icon name="GraduationCap" className="size-7" />
             </div>
             <div className="text-left">
-              <p className="text-lg font-bold leading-tight text-[#0B5ED7]">ALO Education</p>
+              <p className="text-lg font-bold leading-tight text-[#2563EB]">ALO Education</p>
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 Study Abroad, Done Right
               </p>
             </div>
           </button>
-          <h1 className="text-2xl font-bold text-[#0B5ED7] sm:text-3xl">Reset Your Password</h1>
+          <h1 className="text-2xl font-bold text-[#2563EB] sm:text-3xl">Reset Your Password</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {step === "request" && "Enter your email to receive a reset link"}
             {step === "reset" && "Enter your reset token and new password"}
@@ -174,9 +174,9 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
         {/* Stepper */}
         <div className="mb-6 flex items-center justify-center gap-2">
           <StepDot active={step === "request"} done={step !== "request"} label="1" />
-          <div className={`h-0.5 w-8 ${step !== "request" ? "bg-[#0B5ED7]" : "bg-[#E2E8F0]"}`} />
+          <div className={`h-0.5 w-8 ${step !== "request" ? "bg-[#2563EB]" : "bg-[#E2E8F0]"}`} />
           <StepDot active={step === "reset"} done={step === "success"} label="2" />
-          <div className={`h-0.5 w-8 ${step === "success" ? "bg-[#0B5ED7]" : "bg-[#E2E8F0]"}`} />
+          <div className={`h-0.5 w-8 ${step === "success" ? "bg-[#2563EB]" : "bg-[#E2E8F0]"}`} />
           <StepDot active={step === "success"} done={step === "success"} label="3" />
         </div>
 
@@ -241,7 +241,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                   <button
                     type="button"
                     onClick={() => onNavigate("auth-login")}
-                    className="font-semibold text-[#0B5ED7] hover:underline"
+                    className="font-semibold text-[#2563EB] hover:underline"
                   >
                     Sign In
                   </button>
@@ -430,7 +430,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
 
             {/* Security note */}
             {step !== "success" && (
-              <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0B5ED7]">
+              <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#2563EB]">
                 <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0" />
                 <span>
                   Reset tokens are single-use, hashed (SHA-256), and expire after 1 hour. All
@@ -458,9 +458,9 @@ function StepDot({ active, done, label }: { active: boolean; done: boolean; labe
     <div
       className={`flex size-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-colors ${
         done
-          ? "border-[#0B5ED7] bg-[#0B5ED7] text-white"
+          ? "border-[#2563EB] bg-[#2563EB] text-white"
           : active
-            ? "border-[#0B5ED7] bg-white text-[#0B5ED7]"
+            ? "border-[#2563EB] bg-white text-[#2563EB]"
             : "border-[#E2E8F0] bg-white text-muted-foreground"
       }`}
       aria-label={`Step ${label}`}

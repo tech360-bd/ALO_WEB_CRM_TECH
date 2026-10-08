@@ -34,7 +34,7 @@ export default function BroadcastsPage() {
   return (
     <div className="p-4 lg:p-6 bg-[#F8FAFC] min-h-screen space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Megaphone className="w-5 h-5 text-[#0B5ED7]" /> Broadcast System</h1>
+        <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Megaphone className="w-5 h-5 text-[#2563EB]" /> Broadcast System</h1>
         <p className="text-xs text-gray-500">WhatsApp/SMS/Email/Portal announcement — Student/Partner/Marketing campaign — Requires approval by Marketing Manager or Super Admin — Mass {'>'}100 requires Super Admin — Opt-out respected — No SMTP password visible</p>
       </div>
 

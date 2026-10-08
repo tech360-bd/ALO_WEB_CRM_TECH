@@ -53,7 +53,7 @@ export default function EmailMarketingView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0B5ED7]" />Segmentation & Journeys</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#2563EB]" />Segmentation & Journeys</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-3">
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Segments</p><p className="text-gray-600 mt-1">UK interest, HSC 2025, IELTS pending, Hot leads — via MarketingLead.destination/level/status.</p></div>
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Automated Journeys</p><p className="text-gray-600 mt-1">Welcome → Nurture (Day 3,7) → Deadline reminder — MarketingCalendar scheduledAt with idempotency.</p></div>

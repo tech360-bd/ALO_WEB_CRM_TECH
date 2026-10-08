@@ -47,13 +47,13 @@ export default function ResourcesCategoryListing({ categorySlug, categoryName, i
     <div className="min-h-screen bg-white">
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-8">
         <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-[#0B5ED7]">Home</Link><span>›</span>
-          <Link href="/resources" className="hover:text-[#0B5ED7]">Resources</Link><span>›</span>
-          <span className="text-[#0B5ED7] font-bold">{categoryName}</span>
+          <Link href="/" className="hover:text-[#2563EB]">Home</Link><span>›</span>
+          <Link href="/resources" className="hover:text-[#2563EB]">Resources</Link><span>›</span>
+          <span className="text-[#2563EB] font-bold">{categoryName}</span>
         </nav>
 
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 shadow-sm">
-          <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-xs px-3 py-1 mb-3">{categoryName}</Badge>
+          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs px-3 py-1 mb-3">{categoryName}</Badge>
           <h1 className="text-3xl md:text-4xl font-bold text-[#0F172A] mb-2">{categoryName} — ALO Education</h1>
           <p className="text-sm md:text-base text-gray-600 max-w-3xl">{intro || `Practical ${categoryName.toLowerCase()} guidance — database-driven, verified where time-sensitive.`}</p>
         </div>
@@ -75,22 +75,22 @@ export default function ResourcesCategoryListing({ categorySlug, categoryName, i
             <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-sm text-gray-600">No {categoryName.toLowerCase()} articles published yet.</p>
             <p className="text-xs text-gray-500 mt-2">ALO publishes only complete, verified articles — check other categories or return soon.</p>
-            <Link href="/resources"><Button className="mt-4 bg-[#0B5ED7] text-white h-11 px-6">Browse All Resources</Button></Link>
+            <Link href="/resources"><Button className="mt-4 bg-[#2563EB] text-white h-11 px-6">Browse All Resources</Button></Link>
           </Card>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map((b: any) => (
-              <Card key={b.id} className="p-5 bg-white border-[#E2E8F0] rounded-2xl hover:border-[#0B5ED7] hover:shadow-md transition-all flex flex-col justify-between">
+              <Card key={b.id} className="p-5 bg-white border-[#E2E8F0] rounded-2xl hover:border-[#2563EB] hover:shadow-md transition-all flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-[10px]">{b.category?.name || categoryName}</Badge>
+                    <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-[10px]">{b.category?.name || categoryName}</Badge>
                     <span className="text-[10px] text-gray-400 flex items-center gap-1"><Clock className="w-3 h-3" />{b.readingTime || 5} min</span>
                   </div>
                   <h3 className="font-bold text-sm text-[#0F172A] mb-2 line-clamp-2">{b.title}</h3>
                   <p className="text-xs text-gray-600 mb-3 line-clamp-3">{b.excerpt || b.summary || ''}</p>
                   <p className="text-[10px] text-gray-500">Updated: {b.publishedAt ? new Date(b.publishedAt).toLocaleDateString() : '—'}{b.lastVerifiedAt ? ` • Last verified: ${new Date(b.lastVerifiedAt).toLocaleDateString()}` : ''} • ALO Editorial Team</p>
                 </div>
-                <Link href={`/resources/${categorySlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#004494] text-xs font-bold h-11 rounded-xl mt-4">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                <Link href={`/resources/${categorySlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] text-xs font-bold h-11 rounded-xl mt-4">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
               </Card>
             ))}
           </div>

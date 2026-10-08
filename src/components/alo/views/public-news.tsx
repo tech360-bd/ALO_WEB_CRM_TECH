@@ -42,7 +42,7 @@ const CATEGORIES = ["All", "Announcement", "University Update", "Immigration Upd
 
 const CATEGORY_COLORS: Record<string, string> = {
   Announcement: "bg-[#FFF3EA] text-[#F97316]",
-  "University Update": "bg-[#EAF3FF] text-[#0B5ED7]",
+  "University Update": "bg-[#EAF3FF] text-[#2563EB]",
   "Immigration Update": "bg-red-50 text-red-700",
   "Scholarship Update": "bg-emerald-50 text-emerald-700",
   "Country Update": "bg-violet-50 text-violet-700",
@@ -94,7 +94,7 @@ function NewsList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -103,12 +103,12 @@ function NewsList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#EAF3FF] text-[#0B5ED7] border border-[#0B5ED7]/20 hover:bg-[#EAF3FF]">
+            <Badge className="bg-[#EAF3FF] text-[#2563EB] border border-[#2563EB]/20 hover:bg-[#EAF3FF]">
               <Icon name="Newspaper" className="mr-1 size-3" />
               Updated Weekly
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Latest <span className="text-[#0B5ED7]">News</span>
+              Latest <span className="text-[#2563EB]">News</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Real, verified news about visa policies, university updates, scholarship announcements, and immigration
@@ -128,8 +128,8 @@ function NewsList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
               className={cn(
                 "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
                 category === c
-                  ? "bg-[#0B5ED7] text-white"
-                  : "border border-[#0B5ED7]/20 bg-white text-[#0B5ED7] hover:bg-[#EAF3FF]"
+                  ? "bg-[#2563EB] text-white"
+                  : "border border-[#2563EB]/20 bg-white text-[#2563EB] hover:bg-[#EAF3FF]"
               )}
             >
               {c}
@@ -181,7 +181,7 @@ function NewsList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
             title="No news articles available"
             description="Check back soon — we publish new immigration and university updates weekly."
             action={
-              <Button onClick={() => onNavigate("public-resources")} className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90">
+              <Button onClick={() => onNavigate("public-resources")} className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
                 <Icon name="BookOpen" className="size-4" /> Browse Resources
               </Button>
             }
@@ -204,7 +204,7 @@ function NewsList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
                       <Badge variant="outline" className="bg-white text-[#0B2447]">{article.country}</Badge>
                     )}
                   </div>
-                  <h3 className="mt-2 line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{article.title}</h3>
+                  <h3 className="mt-2 line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#2563EB]">{article.title}</h3>
                   <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{article.excerpt}</p>
                   <div className="mt-auto flex items-center gap-2 pt-4 text-xs text-[#5A7299]">
                     <Icon name="Calendar" className="size-3" />
@@ -296,7 +296,7 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
             title="Article not found"
             description={error || "We couldn't find that article."}
             action={
-              <Button onClick={() => onNavigate("public-news")} className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90">
+              <Button onClick={() => onNavigate("public-news")} className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
                 <Icon name="ArrowLeft" className="size-4" /> Back to News
               </Button>
             }
@@ -312,7 +312,7 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
 
   return (
     <div className="bg-white">
-      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-white">
+      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-white">
         <div className="mx-auto max-w-3xl px-4 py-10 lg:px-6 lg:py-14">
           <Breadcrumb
             items={[
@@ -366,7 +366,7 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
                 <ul key={idx} className="space-y-2">
                   {block.items.map((item, i) => (
                     <li key={i} className="flex items-start gap-2 text-[15px] leading-relaxed text-[#0B2447]">
-                      <Icon name="ChevronRight" className="mt-1 size-4 shrink-0 text-[#0B5ED7]" />
+                      <Icon name="ChevronRight" className="mt-1 size-4 shrink-0 text-[#2563EB]" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -384,7 +384,7 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
         </div>
 
         {/* CTA */}
-        <div className="mt-8 rounded-2xl border-2 border-[#0B5ED7]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
+        <div className="mt-8 rounded-2xl border-2 border-[#2563EB]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-base font-bold text-[#0B2447]">Have questions about this update?</p>
@@ -399,7 +399,7 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
       </article>
 
       {related.length > 0 && (
-        <section className="border-t border-[#0B5ED7]/10 bg-[#F7FAFE]">
+        <section className="border-t border-[#2563EB]/10 bg-[#F7FAFE]">
           <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6 lg:py-14">
             <h2 className="text-xl font-black text-[#0B2447]">Related news</h2>
             <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -414,7 +414,7 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
                       <Badge className={cn(CATEGORY_COLORS[r.category] || "bg-slate-100 text-slate-700")}>{r.category}</Badge>
                       <span className="text-xs text-[#5A7299]">{fmtDate(r.publishedAt)}</span>
                     </div>
-                    <h3 className="mt-2 line-clamp-2 text-sm font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{r.title}</h3>
+                    <h3 className="mt-2 line-clamp-2 text-sm font-bold text-[#0B2447] group-hover:text-[#2563EB]">{r.title}</h3>
                     <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-[#5A7299]">{r.excerpt}</p>
                   </CardContent>
                 </Card>

@@ -125,19 +125,19 @@ export function StudentReferrals() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="rounded-2xl border border-[#DCE8F5] bg-gradient-to-br from-[#EAF3FF] to-white">
           <CardContent className="p-4 text-center sm:p-6">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#0B5ED7] text-white">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#2563EB] text-white">
               <Icon name="Gift" className="size-8" />
             </div>
             <p className="mt-4 text-sm font-bold uppercase text-[#5A7299]">
               Your Referral Code
             </p>
-            <p className="mt-2 break-all text-2xl font-black text-[#0B5ED7]">
+            <p className="mt-2 break-all text-2xl font-black text-[#2563EB]">
               {code || "AEFR-XXXXXX"}
             </p>
             <Button
               onClick={copyCode}
               variant="outline"
-              className="mt-4 w-full border-[#0B5ED7] text-[#0B5ED7]"
+              className="mt-4 w-full border-[#2563EB] text-[#2563EB]"
             >
               <Icon name="Copy" className="mr-1.5 size-4" />
               Copy Code

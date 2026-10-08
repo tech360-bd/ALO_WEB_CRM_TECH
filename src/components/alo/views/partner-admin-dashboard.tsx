@@ -241,7 +241,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ROLE_BADGE_COLORS: Record<string, string> = {
   PARTNER_SUPER_ADMIN: "bg-[#F97316]/15 text-[#F97316]",
-  PARTNER_COUNSELOR: "bg-[#0B5ED7]/15 text-[#0B5ED7]",
+  PARTNER_COUNSELOR: "bg-[#2563EB]/15 text-[#2563EB]",
   PARTNER_APPLICATION_ASSISTANT: "bg-violet-100 text-violet-700",
   PARTNER_MARKETING_ASSISTANT: "bg-amber-100 text-amber-700",
   PARTNER_DOCUMENT_ASSISTANT: "bg-emerald-100 text-emerald-700",
@@ -294,7 +294,7 @@ const MARKETING_STATUS_COLORS: Record<string, string> = {
   APPROVED: "bg-emerald-100 text-emerald-700",
   REJECTED: "bg-rose-100 text-rose-700",
   SCHEDULED: "bg-sky-100 text-sky-700",
-  PUBLISHED: "bg-[#0B5ED7]/15 text-[#0B5ED7]",
+  PUBLISHED: "bg-[#2563EB]/15 text-[#2563EB]",
 };
 
 const FINAL_STAGES = new Set(["VISA_REFUSED", "ENROLLED", "CANCELLED"]);
@@ -406,7 +406,7 @@ function CreateUserDialog({
     <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if (!o) reset(); }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
+          <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
             <Icon name="UserPlus" className="size-5" />
             Create Partner User
           </DialogTitle>
@@ -569,7 +569,7 @@ function GenerateVoucherDialog({
     <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if (!o) reset(); }}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
+          <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
             <Icon name="Ticket" className="size-5" />
             Generate Mock Test Vouchers
           </DialogTitle>
@@ -593,8 +593,8 @@ function GenerateVoucherDialog({
             </div>
             <div className="space-y-2">
               {createdVouchers.map((v) => (
-                <div key={v.id} className="flex items-center justify-between gap-3 rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-3 py-2">
-                  <code className="font-mono text-sm font-bold text-[#0B5ED7]">{v.voucherCode}</code>
+                <div key={v.id} className="flex items-center justify-between gap-3 rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2">
+                  <code className="font-mono text-sm font-bold text-[#2563EB]">{v.voucherCode}</code>
                   <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">{v.testType}</Badge>
                 </div>
               ))}
@@ -656,9 +656,9 @@ function GenerateVoucherDialog({
                   <Input id="gv-count" type="number" min={1} max={10} value={count} onChange={(e) => setCount(e.target.value)} />
                 </div>
               </div>
-              <div className="rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
+              <div className="rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
                 <p className="flex items-start gap-2">
-                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                   <span>
                     Each eligible student gets <strong>3 English mock vouchers</strong> + 1 interview prep + 1 speaking practice + 1 document checklist + 1 application guidance benefit.
                   </span>
@@ -755,7 +755,7 @@ function RequestSeatDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
+          <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
             <Icon name="Armchair" className="size-5" />
             Request Extra Seats
           </DialogTitle>
@@ -784,9 +784,9 @@ function RequestSeatDialog({
               placeholder="e.g. We are scaling our counseling team for September intake and need 2 more counselor seats to handle the lead volume."
             />
           </div>
-          <div className="rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
+          <div className="rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
             <p className="flex items-start gap-2">
-              <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+              <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
               <span>ALO Super Admin will review and approve/reject your request. New seats become available immediately upon approval.</span>
             </p>
           </div>
@@ -977,7 +977,7 @@ export function PartnerAdminDashboard() {
           <StatCard label="Interview Prep Usage" value={kpis.interviewPrepUsage} icon="Mic" accent="amber" />
           <StatCard label="English Mock Vouchers" value={kpis.englishMockVouchersUsed} icon="GraduationCap" accent="emerald" />
           <StatCard label="Pending ALO Approvals" value={kpis.pendingAloApprovals} icon="Clock" accent="rose" />
-          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/20">
+          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#2563EB]/20">
             <CardContent className="pt-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -992,7 +992,7 @@ export function PartnerAdminDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/20">
+          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#2563EB]/20">
             <CardContent className="pt-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -1065,9 +1065,9 @@ export function PartnerAdminDashboard() {
                     <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Used Seats</p>
                     <p className="mt-1 text-2xl font-bold tabular-nums text-[#F97316]">{usedSeats}</p>
                   </div>
-                  <div className="rounded-xl border-2 border-[#0B5ED7]/20 bg-[#e8f0fb]/40 px-4 py-3">
+                  <div className="rounded-xl border-2 border-[#2563EB]/20 bg-[#e8f0fb]/40 px-4 py-3">
                     <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Max Seats</p>
-                    <p className="mt-1 text-2xl font-bold tabular-nums text-[#0B5ED7]">{maxSeats}</p>
+                    <p className="mt-1 text-2xl font-bold tabular-nums text-[#2563EB]">{maxSeats}</p>
                   </div>
                 </div>
                 <div className="mt-4 space-y-2">
@@ -1077,7 +1077,7 @@ export function PartnerAdminDashboard() {
                   </div>
                   <Progress value={seatPct} className="h-2.5" />
                   <p className="flex items-start gap-2 text-xs text-muted-foreground">
-                    <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+                    <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                     <span>Default limit: <strong>1 Partner Super Admin + 2 Partner Employees = 3</strong>. Request extra seats if needed.</span>
                   </p>
                 </div>
@@ -1192,13 +1192,13 @@ export function PartnerAdminDashboard() {
                           const stage = stages.length > 0 ? stages[0] : "COUNSELING";
                           return (
                             <TableRow key={s.id}>
-                              <TableCell className="font-mono text-xs font-semibold text-[#0B5ED7]">{s.studentId}</TableCell>
+                              <TableCell className="font-mono text-xs font-semibold text-[#2563EB]">{s.studentId}</TableCell>
                               <TableCell className="font-medium">{s.fullName}</TableCell>
                               <TableCell className="hidden text-xs text-muted-foreground md:table-cell">{s.email}</TableCell>
                               <TableCell className="hidden text-xs text-muted-foreground lg:table-cell">{s.mobile || "—"}</TableCell>
                               <TableCell className="text-center font-semibold tabular-nums">{s.applications?.length ?? 0}</TableCell>
                               <TableCell>
-                                <Badge variant="outline" className="border-[#0B5ED7]/20 text-[#0B5ED7]">
+                                <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
                                   {stageLabel(stage)}
                                 </Badge>
                               </TableCell>
@@ -1238,11 +1238,11 @@ export function PartnerAdminDashboard() {
                       <TableBody>
                         {leads.map((l) => (
                           <TableRow key={l.id}>
-                            <TableCell className="font-mono text-xs font-semibold text-[#0B5ED7]">{l.leadId || l.id.slice(-6).toUpperCase()}</TableCell>
+                            <TableCell className="font-mono text-xs font-semibold text-[#2563EB]">{l.leadId || l.id.slice(-6).toUpperCase()}</TableCell>
                             <TableCell className="font-medium">{l.fullName}</TableCell>
                             <TableCell className="text-xs">{l.phone}</TableCell>
                             <TableCell className="hidden md:table-cell">
-                              <Badge variant="outline" className="border-[#0B5ED7]/20 text-[#0B5ED7]">
+                              <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
                                 {l.preferredCountry || "—"}
                               </Badge>
                             </TableCell>
@@ -1278,7 +1278,7 @@ export function PartnerAdminDashboard() {
                       <span>{imageLimit > 0 ? Math.round((imagesUsed / imageLimit) * 100) : 0}% used</span>
                     </div>
                     <p className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <Icon name="Sparkles" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+                      <Icon name="Sparkles" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                       <span>Each AI image generation consumes 1 image credit. Quota resets on the 1st of each month.</span>
                     </p>
                   </div>
@@ -1305,7 +1305,7 @@ export function PartnerAdminDashboard() {
 
               <SectionCard title="Publishing & Approval" icon="ShieldCheck" description="Compliance status for this partner">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="flex items-center justify-between rounded-xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-3">
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Auto-Publish</p>
                       <p className="mt-0.5 text-sm font-semibold text-foreground">
@@ -1316,7 +1316,7 @@ export function PartnerAdminDashboard() {
                       {marketingQuota?.autoPublishAllowed ? "ON" : "OFF"}
                     </Badge>
                   </div>
-                  <div className="flex items-center justify-between rounded-xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-3">
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Requires ALO Approval</p>
                       <p className="mt-0.5 text-sm font-semibold text-foreground">
@@ -1361,7 +1361,7 @@ export function PartnerAdminDashboard() {
                   <ScrollArea className="max-h-96">
                     <div className="space-y-2">
                       {marketingRequests.slice(0, 5).map((r) => (
-                        <div key={r.id} className="flex flex-col gap-2 rounded-xl border border-[#0B5ED7]/15 bg-white px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+                        <div key={r.id} className="flex flex-col gap-2 rounded-xl border border-[#2563EB]/15 bg-white px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                           <div className="min-w-0">
                             <p className="truncate text-sm font-semibold text-foreground">{r.idea}</p>
                             <p className="mt-0.5 text-xs text-muted-foreground">
@@ -1386,10 +1386,10 @@ export function PartnerAdminDashboard() {
           {loading ? <LoadingGrid count={4} /> : (
             <>
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                <Card className="rounded-2xl border-2 border-[#0B5ED7]/20">
+                <Card className="rounded-2xl border-2 border-[#2563EB]/20">
                   <CardContent className="pt-5">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total Vouchers</p>
-                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-[#0B5ED7]">{voucherSummary.total}</p>
+                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-[#2563EB]">{voucherSummary.total}</p>
                   </CardContent>
                 </Card>
                 <Card className="rounded-2xl border-2 border-emerald-200">
@@ -1451,7 +1451,7 @@ export function PartnerAdminDashboard() {
                         {vouchers.map((v) => (
                           <TableRow key={v.id}>
                             <TableCell>
-                              <code className="font-mono text-xs font-bold text-[#0B5ED7]">{v.voucherCode}</code>
+                              <code className="font-mono text-xs font-bold text-[#2563EB]">{v.voucherCode}</code>
                             </TableCell>
                             <TableCell className="text-sm">
                               {v.student?.fullName || "—"}
@@ -1460,7 +1460,7 @@ export function PartnerAdminDashboard() {
                               )}
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="border-[#0B5ED7]/20 text-[#0B5ED7]">{v.testType}</Badge>
+                              <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">{v.testType}</Badge>
                             </TableCell>
                             <TableCell>
                               <Badge className={VOUCHER_STATUS_COLORS[v.status] ?? "bg-slate-100 text-slate-700"}>
@@ -1536,8 +1536,8 @@ export function PartnerAdminDashboard() {
                     </Table>
                   </div>
                 )}
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
-                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
+                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                   <p>
                     Vouchers only for students with <strong>active ALO application</strong>. No application, no voucher. Each eligible student gets{" "}
                     <strong>3 English mock vouchers</strong> + 1 interview prep + 1 speaking practice + 1 document checklist + 1 application guidance.
@@ -1563,9 +1563,9 @@ export function PartnerAdminDashboard() {
                   </Button>
                 }>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <div className="rounded-xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-4 py-3">
+                  <div className="rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-3">
                     <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Current Limit</p>
-                    <p className="mt-1 text-2xl font-bold tabular-nums text-[#0B5ED7]">{maxSeats}</p>
+                    <p className="mt-1 text-2xl font-bold tabular-nums text-[#2563EB]">{maxSeats}</p>
                   </div>
                   <div className="rounded-xl border-2 border-amber-200 bg-amber-50/40 px-4 py-3">
                     <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Pending Requests</p>
@@ -1652,8 +1652,8 @@ export function PartnerAdminDashboard() {
                     </Table>
                   </div>
                 )}
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
-                  <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
+                  <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                   <p>
                     Approve/Reject actions are available to <strong>ALO Super Admin</strong>. Approved seats become immediately available for new user creation.
                   </p>
@@ -1713,7 +1713,7 @@ export function PartnerAdminDashboard() {
                         {socialAccounts.map((a) => (
                           <TableRow key={a.id}>
                             <TableCell>
-                              <Badge variant="outline" className="border-[#0B5ED7]/20 text-[#0B5ED7]">
+                              <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
                                 {SOCIAL_PLATFORM_LABELS[a.platform] ?? a.platform}
                               </Badge>
                             </TableCell>

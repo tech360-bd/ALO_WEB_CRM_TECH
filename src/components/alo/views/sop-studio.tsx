@@ -100,7 +100,7 @@ const STATUS_LABELS: Record<string, string> = {
 const STATUS_COLORS: Record<string, string> = {
   DRAFT: "bg-slate-100 text-slate-700",
   STUDENT_REVIEW: "bg-amber-100 text-amber-700",
-  COUNSELOR_REVIEW: "bg-[#e8f0fb] text-[#0B5ED7]",
+  COUNSELOR_REVIEW: "bg-[#e8f0fb] text-[#2563EB]",
   APPROVED: "bg-emerald-100 text-emerald-700",
   SENT: "bg-violet-100 text-violet-700",
 };
@@ -312,13 +312,13 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
             <Icon name="FileText" className="size-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#0B5ED7] sm:text-2xl">SOP / CV Studio</h1>
+            <h1 className="text-xl font-bold text-[#2563EB] sm:text-2xl">SOP / CV Studio</h1>
             <p className="text-sm text-muted-foreground">Generate original, personalized documents with AI. Originality-first, review-required.</p>
           </div>
         </div>
         <Button
           variant="outline"
-          className="h-10 border-[#0B5ED7]/20 text-[#0B5ED7]"
+          className="h-10 border-[#2563EB]/20 text-[#2563EB]"
           onClick={() => onNavigate("counselor-student-360")}
         >
           <Icon name="Orbit" className="size-4" />
@@ -385,11 +385,11 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
       {/* Tabs: SOP | CV */}
       <Tabs value={tab} onValueChange={(v) => setTab(v as "sop" | "cv")}>
         <TabsList className="h-10 bg-[#e8f0fb]">
-          <TabsTrigger value="sop" className="data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7]">
+          <TabsTrigger value="sop" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
             <Icon name="FileText" className="size-4" />
             SOP / Statement
           </TabsTrigger>
-          <TabsTrigger value="cv" className="data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7]">
+          <TabsTrigger value="cv" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
             <Icon name="Briefcase" className="size-4" />
             CV Builder
           </TabsTrigger>
@@ -404,9 +404,9 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                 <div className="space-y-3.5">
                   {/* Document type */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#0B5ED7]">Document type</Label>
+                    <Label className="text-xs font-semibold text-[#2563EB]">Document type</Label>
                     <Select value={docType} onValueChange={setDocType}>
-                      <SelectTrigger className="h-10 border-[#0B5ED7]/20">
+                      <SelectTrigger className="h-10 border-[#2563EB]/20">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -421,9 +421,9 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
 
                   {/* Student */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#0B5ED7]">Student</Label>
+                    <Label className="text-xs font-semibold text-[#2563EB]">Student</Label>
                     <Select value={studentId} onValueChange={onStudentSelect}>
-                      <SelectTrigger className="h-10 border-[#0B5ED7]/20">
+                      <SelectTrigger className="h-10 border-[#2563EB]/20">
                         <SelectValue placeholder={studentsLoading ? "Loading students..." : "Select student"} />
                       </SelectTrigger>
                       <SelectContent>
@@ -444,12 +444,12 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                   {/* University / Course */}
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold text-[#0B5ED7]">University</Label>
-                      <Input value={university} onChange={(e) => setUniversity(e.target.value)} placeholder="e.g. University of Manchester" className="h-10 border-[#0B5ED7]/20" />
+                      <Label className="text-xs font-semibold text-[#2563EB]">University</Label>
+                      <Input value={university} onChange={(e) => setUniversity(e.target.value)} placeholder="e.g. University of Manchester" className="h-10 border-[#2563EB]/20" />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-semibold text-[#0B5ED7]">Course</Label>
-                      <Input value={course} onChange={(e) => setCourse(e.target.value)} placeholder="e.g. MSc Computer Science" className="h-10 border-[#0B5ED7]/20" />
+                      <Label className="text-xs font-semibold text-[#2563EB]">Course</Label>
+                      <Input value={course} onChange={(e) => setCourse(e.target.value)} placeholder="e.g. MSc Computer Science" className="h-10 border-[#2563EB]/20" />
                     </div>
                   </div>
 
@@ -458,8 +458,8 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                   <FieldTextarea label="Work experience" value={workExp} onChange={setWorkExp} placeholder="Roles, companies, durations, achievements..." />
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#0B5ED7]">English score</Label>
-                    <Input value={englishScore} onChange={(e) => setEnglishScore(e.target.value)} placeholder="e.g. IELTS 6.5 overall (L:7 R:6 W:6 S:6)" className="h-10 border-[#0B5ED7]/20" />
+                    <Label className="text-xs font-semibold text-[#2563EB]">English score</Label>
+                    <Input value={englishScore} onChange={(e) => setEnglishScore(e.target.value)} placeholder="e.g. IELTS 6.5 overall (L:7 R:6 W:6 S:6)" className="h-10 border-[#2563EB]/20" />
                   </div>
 
                   <FieldTextarea label="Future goals" value={futureGoals} onChange={setFutureGoals} placeholder="Short-term and long-term career plans..." />
@@ -495,7 +495,7 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
             {/* RIGHT: Generated document + review */}
             <div className="lg:col-span-2">
               {!sopResult ? (
-                <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+                <Card className="rounded-2xl border-2 border-[#2563EB]/15">
                   <CardContent className="pt-6">
                     {generating ? (
                       <div className="flex flex-col items-center justify-center py-10 text-center">
@@ -505,11 +505,11 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                             <Icon name="Sparkles" className="size-9 animate-pulse" />
                           </div>
                         </div>
-                        <p className="mt-5 text-base font-semibold text-[#0B5ED7]">AI is writing your draft...</p>
+                        <p className="mt-5 text-base font-semibold text-[#2563EB]">AI is writing your draft...</p>
                         <p className="mt-1 text-sm text-muted-foreground">Structuring the narrative · Connecting academic background to course · Reviewing originality</p>
                         <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5">
                           {["Opening", "Academic", "Experience", "Why course", "Goals", "Conclusion"].map((s, i) => (
-                            <span key={s} className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-2.5 py-1 text-[10px] font-medium text-[#0B5ED7]" style={{ animationDelay: `${i * 200}ms` }}>
+                            <span key={s} className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-2.5 py-1 text-[10px] font-medium text-[#2563EB]" style={{ animationDelay: `${i * 200}ms` }}>
                               <Icon name="Loader2" className="size-3 animate-spin" />
                               {s}
                             </span>
@@ -553,9 +553,9 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
               <SectionCard title="CV builder" icon="Briefcase" description="Auto-fills from student profile. Honest, structured, one page.">
                 <div className="space-y-3.5">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#0B5ED7]">Template</Label>
+                    <Label className="text-xs font-semibold text-[#2563EB]">Template</Label>
                     <Select value={cvTemplate} onValueChange={setCvTemplate}>
-                      <SelectTrigger className="h-10 border-[#0B5ED7]/20">
+                      <SelectTrigger className="h-10 border-[#2563EB]/20">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -569,9 +569,9 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#0B5ED7]">Student</Label>
+                    <Label className="text-xs font-semibold text-[#2563EB]">Student</Label>
                     <Select value={studentId} onValueChange={onStudentSelect}>
-                      <SelectTrigger className="h-10 border-[#0B5ED7]/20">
+                      <SelectTrigger className="h-10 border-[#2563EB]/20">
                         <SelectValue placeholder={studentsLoading ? "Loading students..." : "Select student"} />
                       </SelectTrigger>
                       <SelectContent>
@@ -613,14 +613,14 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
 
             <div className="lg:col-span-2">
               {!cvResult ? (
-                <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+                <Card className="rounded-2xl border-2 border-[#2563EB]/15">
                   <CardContent className="pt-6">
                     {cvGenerating ? (
                       <div className="flex flex-col items-center justify-center py-12 text-center">
                         <div className="flex size-16 items-center justify-center rounded-2xl bg-[#F97316] text-white">
                           <Icon name="Loader2" className="size-8 animate-spin" />
                         </div>
-                        <p className="mt-4 text-base font-semibold text-[#0B5ED7]">Building your CV...</p>
+                        <p className="mt-4 text-base font-semibold text-[#2563EB]">Building your CV...</p>
                         <p className="mt-1 text-sm text-muted-foreground">Formatting sections · Polishing bullets · Ensuring one-page fit</p>
                       </div>
                     ) : (
@@ -649,13 +649,13 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
 function FieldTextarea({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs font-semibold text-[#0B5ED7]">{label}</Label>
+      <Label className="text-xs font-semibold text-[#2563EB]">{label}</Label>
       <Textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={2}
-        className="resize-none border-[#0B5ED7]/20 text-sm"
+        className="resize-none border-[#2563EB]/20 text-sm"
       />
     </div>
   );
@@ -696,12 +696,12 @@ function SopResultView({
   return (
     <div className="space-y-4">
       {/* Document header */}
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/20">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/20">
         <CardContent className="p-4">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-base font-bold text-[#0B5ED7]">
+                <h3 className="text-base font-bold text-[#2563EB]">
                   {DOC_TYPE_LABEL[docType] || docType}
                 </h3>
                 <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", STATUS_COLORS[status] || "bg-slate-100 text-slate-700")}>
@@ -729,7 +729,7 @@ function SopResultView({
             </div>
             <div className="w-full max-w-[220px] space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-medium text-[#0B5ED7]">Originality score</span>
+                <span className="font-medium text-[#2563EB]">Originality score</span>
                 <span className="font-bold text-foreground">{originalityScore}%</span>
               </div>
               <Progress value={originalityScore} className="h-2" />
@@ -740,10 +740,10 @@ function SopResultView({
       </Card>
 
       {/* Document content */}
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
         <CardContent className="p-0">
           <div className="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
-            <p className="text-xs font-semibold text-[#0B5ED7]">Document preview</p>
+            <p className="text-xs font-semibold text-[#2563EB]">Document preview</p>
             <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-700">
               <Icon name="Lightbulb" className="size-3" />
               [verify: ...] markers need student input
@@ -772,13 +772,13 @@ function SopResultView({
               key={i}
               className={cn(
                 "flex cursor-pointer items-start gap-2.5 rounded-xl border-2 p-3 transition-colors",
-                checklistDone[i] ? "border-emerald-300 bg-emerald-50" : "border-border/60 hover:border-[#0B5ED7]/30"
+                checklistDone[i] ? "border-emerald-300 bg-emerald-50" : "border-border/60 hover:border-[#2563EB]/30"
               )}
             >
               <Checkbox
                 checked={!!checklistDone[i]}
                 onCheckedChange={(v) => setChecklistDone((prev) => ({ ...prev, [i]: !!v }))}
-                className="mt-0.5 data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]"
+                className="mt-0.5 data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
               />
               <span className={cn("text-sm", checklistDone[i] ? "text-emerald-800 line-through" : "text-foreground")}>
                 {item}
@@ -789,7 +789,7 @@ function SopResultView({
       </SectionCard>
 
       {/* Action buttons */}
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
         <CardContent className="space-y-4 pt-5">
           <div className="flex flex-wrap gap-2">
             <Button
@@ -805,7 +805,7 @@ function SopResultView({
             </Button>
             <Button
               variant="outline"
-              className="h-12 border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#0B5ED7]/5"
+              className="h-12 border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB]/5"
               onClick={() => {
                 setStatus("COUNSELOR_REVIEW");
                 toast({ title: "Marked as counselor reviewed", description: "Your sign-off is recorded on the timeline." });
@@ -850,9 +850,9 @@ function SopResultView({
           {/* Version + originality notes */}
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="flex items-start gap-2 rounded-xl bg-[#e8f0fb] p-3">
-              <Icon name="History" className="mt-0.5 size-4 shrink-0 text-[#0B5ED7]" />
+              <Icon name="History" className="mt-0.5 size-4 shrink-0 text-[#2563EB]" />
               <div>
-                <p className="text-xs font-semibold text-[#0B5ED7]">Version history</p>
+                <p className="text-xs font-semibold text-[#2563EB]">Version history</p>
                 <p className="text-xs text-foreground/80">
                   Version {result.draft?.version ?? 1} · Created {result.draft?.createdAt ? timeAgo(result.draft.createdAt) : "just now"} · AI-generated · All versions saved to timeline.
                 </p>
@@ -870,7 +870,7 @@ function SopResultView({
           <div className="flex items-center justify-end">
             <Button
               variant="link"
-              className="h-8 p-0 text-xs text-[#0B5ED7]"
+              className="h-8 p-0 text-xs text-[#2563EB]"
               onClick={() => onNavigate("counselor-student-360")}
             >
               Open Student 360 to view all drafts →
@@ -888,11 +888,11 @@ function CvResultView({ result, studentId }: { result: CvDraftResponse; studentI
 
   return (
     <div className="space-y-4">
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/20">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/20">
         <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-[#0B5ED7]">CV Draft</h3>
+              <h3 className="text-base font-bold text-[#2563EB]">CV Draft</h3>
               <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", STATUS_COLORS[status] || "bg-slate-100 text-slate-700")}>
                 {STATUS_LABELS[status] || status}
               </span>
@@ -938,10 +938,10 @@ function CvResultView({ result, studentId }: { result: CvDraftResponse; studentI
         </CardContent>
       </Card>
 
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
         <CardContent className="p-0">
           <div className="border-b border-border/60 px-4 py-2.5">
-            <p className="text-xs font-semibold text-[#0B5ED7]">CV preview</p>
+            <p className="text-xs font-semibold text-[#2563EB]">CV preview</p>
           </div>
           <div className="max-h-[28rem] overflow-y-auto alo-scroll whitespace-pre-wrap px-5 py-4 text-sm leading-relaxed text-foreground">
             {renderContentWithVerify(result.content)}

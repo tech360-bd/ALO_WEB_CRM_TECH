@@ -179,13 +179,13 @@ export function ManagedContentManager() {
           <h2 className="text-2xl font-bold text-slate-900">Site-Wide &amp; CRM Content</h2>
           <p className="text-sm text-slate-600 mt-1">Navigation, footer, SEO, announcements, banners and CRM content — draft → publish → rollback, fully revision-tracked.</p>
         </div>
-        <button onClick={openCreate} className="px-4 py-2 bg-[#0B5ED7] hover:bg-[#004494] text-white rounded-lg text-sm font-semibold">+ New {activeType}</button>
+        <button onClick={openCreate} className="px-4 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg text-sm font-semibold">+ New {activeType}</button>
       </div>
 
       <div className="flex flex-wrap gap-2">
         {MANAGED_TYPES.map((t) => (
           <button key={t.key} onClick={() => setActiveType(t.key)}
-            className={`px-3 py-2 rounded-xl text-sm font-medium border transition ${activeType === t.key ? "bg-[#0B5ED7] text-white border-[#0B5ED7]" : "bg-white hover:bg-slate-50 border-slate-200"}`}>
+            className={`px-3 py-2 rounded-xl text-sm font-medium border transition ${activeType === t.key ? "bg-[#2563EB] text-white border-[#2563EB]" : "bg-white hover:bg-slate-50 border-slate-200"}`}>
             {t.icon} {t.label}
           </button>
         ))}
@@ -262,7 +262,7 @@ export function ManagedContentManager() {
             </div>
             <div className="p-4 border-t bg-slate-50 flex justify-end gap-2">
               <button onClick={() => setShowForm(false)} className="px-4 py-2 bg-white border rounded-xl text-sm">Cancel</button>
-              <button onClick={handleSave} disabled={busy} className="px-5 py-2 bg-[#0B5ED7] hover:bg-[#004494] disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save</button>
+              <button onClick={handleSave} disabled={busy} className="px-5 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save</button>
             </div>
           </div>
         </div>

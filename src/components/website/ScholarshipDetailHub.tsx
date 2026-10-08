@@ -32,13 +32,13 @@ export default function ScholarshipDetailHub({ slug }: Props) {
   }, [slug]);
 
   if (loading) return <div className="p-12 text-center"><div className="h-64 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse max-w-7xl mx-auto" /></div>;
-  if (error || !scholarship) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><Link href="/scholarships"><Button className="mt-4 bg-[#0B5ED7] text-white h-11">Browse Scholarships</Button></Link></Card></div>;
+  if (error || !scholarship) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><Link href="/scholarships"><Button className="mt-4 bg-[#2563EB] text-white h-11">Browse Scholarships</Button></Link></Card></div>;
 
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
         <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium">
-          <Link href="/" className="hover:text-[#0B5ED7]">Home</Link><span>›</span><Link href="/scholarships" className="hover:text-[#0B5ED7]">Scholarships</Link><span>›</span><span className="text-[#0B5ED7] font-bold">{scholarship.name}</span>
+          <Link href="/" className="hover:text-[#2563EB]">Home</Link><span>›</span><Link href="/scholarships" className="hover:text-[#2563EB]">Scholarships</Link><span>›</span><span className="text-[#2563EB] font-bold">{scholarship.name}</span>
         </nav>
 
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 md:p-10 shadow-sm">
@@ -104,9 +104,9 @@ export default function ScholarshipDetailHub({ slug }: Props) {
                 <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500">Result Timeline</p><p className="font-semibold">{scholarship.resultTimeline || 'Check current provider information — do NOT fabricate result time'}</p></div>
                 <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500">Renewal Conditions</p><p className="font-semibold">{scholarship.renewalConditions || 'Check official source for renewal'}</p></div>
                 <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500">Common Mistakes</p><p className="font-semibold">{scholarship.commonMistakes ? (typeof scholarship.commonMistakes === 'string' ? (()=>{try{return JSON.parse(scholarship.commonMistakes).join(', ')}catch{return scholarship.commonMistakes}})() : scholarship.commonMistakes.join(', ')) : 'Missing deadline, incomplete documents, weak essays'}</p></div>
-                <div className="bg-blue-50 border-blue-100 rounded-xl p-3"><p className="text-gray-500">How ALO Can Help</p><p className="font-semibold text-[#0B5ED7]">{scholarship.howAloHelps || 'ALO provides finding scholarships, eligibility review, deadline tracking, document preparation, statement support — do NOT guarantee scholarship awards'}</p></div>
+                <div className="bg-blue-50 border-blue-100 rounded-xl p-3"><p className="text-gray-500">How ALO Can Help</p><p className="font-semibold text-[#2563EB]">{scholarship.howAloHelps || 'ALO provides finding scholarships, eligibility review, deadline tracking, document preparation, statement support — do NOT guarantee scholarship awards'}</p></div>
               </div>
-              <p className="text-xs text-gray-500 mt-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Official Source: {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[#0B5ED7] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'} • Last verified: {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'} • Status: {scholarship.verificationStatus || 'pending'}</p>
+              <p className="text-xs text-gray-500 mt-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Official Source: {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[#2563EB] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'} • Last verified: {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'} • Status: {scholarship.verificationStatus || 'pending'}</p>
             </Card>
 
             {/* What Does It Cover? (spec §17) — verified coverage only */}
@@ -127,7 +127,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
 
             {/* Application method — separate vs automatic (spec §18) */}
             <Card className="p-5 bg-blue-50 border-blue-100 rounded-2xl">
-              <h4 className="font-bold text-sm mb-2 text-[#0B5ED7]">Separate Application or Automatic Consideration?</h4>
+              <h4 className="font-bold text-sm mb-2 text-[#2563EB]">Separate Application or Automatic Consideration?</h4>
               <p className="text-xs text-gray-700 leading-relaxed">
                 {scholarship.applicationMethod
                   ? (() => {
@@ -161,12 +161,12 @@ export default function ScholarshipDetailHub({ slug }: Props) {
             <RelatedQuestions type="scholarship" context={scholarship.slug} title="Still Have Questions?" count={6} />
 
             {/* Final CTA — spec §24 exact button set */}
-            <Card className="p-8 bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-3xl text-white text-center">
+            <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
               <p className="text-sm text-blue-100 mb-6">Check eligibility, find matching courses, or talk through your scholarship strategy with a counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
-                <Link href="/course-finder"><Button className="bg-white text-[#0B5ED7] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
+                <Link href="/course-finder"><Button className="bg-white text-[#2563EB] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
                 <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6 font-bold">Book Free Consultation</Button></Link>
                 <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
               </div>
@@ -174,7 +174,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
           </div>
           <div className="space-y-6">
             <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/eligibility-check" className="block"><Button className="w-full bg-[#F97316] text-white h-11">Check Eligibility</Button></Link><Link href="/book-consultation" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-11">Book Consultation</Button></Link><Link href="/scholarships" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-11">Find All Scholarships</Button></Link></div></Card>
-            <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Source & Verification</h3><div className="space-y-2 text-xs"><p><strong>Official URL:</strong> {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[#0B5ED7] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'}</p><p><strong>Status:</strong> <Badge className={`${scholarship.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{scholarship.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'}</p></div></Card>
+            <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Source & Verification</h3><div className="space-y-2 text-xs"><p><strong>Official URL:</strong> {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[#2563EB] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'}</p><p><strong>Status:</strong> <Badge className={`${scholarship.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{scholarship.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'}</p></div></Card>
           </div>
         </div>
       </div>

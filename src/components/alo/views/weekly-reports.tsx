@@ -149,7 +149,7 @@ function MetricTile({
   value: any;
 }) {
   const accentMap: Record<string, string> = {
-    blue: "bg-[#e8f0fb] text-[#0B5ED7]",
+    blue: "bg-[#e8f0fb] text-[#2563EB]",
     orange: "bg-[#fdece4] text-[#F97316]",
     emerald: "bg-emerald-50 text-emerald-600",
     amber: "bg-amber-50 text-amber-600",
@@ -159,7 +159,7 @@ function MetricTile({
   const isEmpty = value === undefined || value === null || value === "";
 
   return (
-    <div className="rounded-xl border border-[#0B5ED7]/10 bg-white p-3">
+    <div className="rounded-xl border border-[#2563EB]/10 bg-white p-3">
       <div className="flex items-center gap-2">
         <div
           className={cn(
@@ -185,17 +185,17 @@ function ReportCard({ report }: { report: WeeklyReport }) {
   const summary = report.summary || {};
 
   return (
-    <Card className="overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/15">
+    <Card className="overflow-hidden rounded-2xl border-2 border-[#2563EB]/15">
       <CardHeader className="flex-row items-center justify-between space-y-0 bg-[#e8f0fb]/40">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-[#2563EB] text-white">
             <Icon
               name={TABS.find((t) => t.key === report.type)?.icon || "BarChart3"}
               className="size-5"
             />
           </div>
           <div>
-            <CardTitle className="text-sm text-[#0B5ED7]">
+            <CardTitle className="text-sm text-[#2563EB]">
               {fmtDate(report.periodStart)} → {fmtDate(report.periodEnd)}
             </CardTitle>
             <CardDescription className="text-xs">
@@ -338,7 +338,7 @@ export function WeeklyReports() {
             <TabsTrigger
               key={t.key}
               value={t.key}
-              className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0B5ED7] data-[state=active]:shadow-sm"
+              className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#2563EB] data-[state=active]:shadow-sm"
             >
               <Icon name={t.icon} className="mr-1.5 size-3.5" />
               <span className="hidden sm:inline">{t.label}</span>

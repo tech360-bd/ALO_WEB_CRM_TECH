@@ -128,7 +128,7 @@ export default async function CountryVisaPage({ params }: { params: Promise<{ co
 
   return (
     <main className="pt-20 pb-16 min-h-screen bg-gray-50">
-      <div className="bg-[#0B5ED7] text-white py-16">
+      <div className="bg-[#2563EB] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="text-6xl mb-4">{data.flag}</div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{data.name} Student Visa Guide</h1>
@@ -183,7 +183,7 @@ export default async function CountryVisaPage({ params }: { params: Promise<{ co
             <button className="w-full bg-[#F97316] hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg transition-colors mb-4">
               Book Visa Consultation
             </button>
-            <Link href="/visa-support" className="block text-center text-[#0B5ED7] hover:underline text-sm font-medium">
+            <Link href="/visa-support" className="block text-center text-[#2563EB] hover:underline text-sm font-medium">
               &larr; Back to all countries
             </Link>
           </div>

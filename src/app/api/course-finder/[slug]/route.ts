@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 
 // ============================================================
 // UNIVERSITY DETAIL + COURSE DETAIL API (by slug)
-// Brand: ALO Education — Blue #0B5ED7, Orange #F97316
+// Brand: ALO Education — Blue #2563EB, Orange #F97316
 // ============================================================
 
 export async function GET(

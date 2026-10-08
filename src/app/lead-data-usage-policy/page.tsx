@@ -18,20 +18,20 @@ export default function LeadDataUsagePolicyPage() {
 
         <Card className="p-6 sm:p-8 space-y-6">
           <section>
-            <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><Database className="h-4 w-4 text-[#0B5ED7]" /> What we collect</h2>
+            <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><Database className="h-4 w-4 text-[#2563EB]" /> What we collect</h2>
             <p className="text-sm text-slate-700 leading-relaxed mt-2"><code>Lead.leadId = AE-YYYY000001</code> + name, phone, email, preferredCountry/Course/Level/Intake, budget, englishTest, cgpa, source/sourceDetail, utm, notes, rawSubmission. On WhatsApp/Facebook we also store matched <code>LeadOutreach</code> + <code>CommunicationThread</code>. Minimal data principle — only fields needed for counseling.</p>
           </section>
           <section>
-            <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><Shield className="h-4 w-4 text-[#0B5ED7]" /> Lawful basis & purpose</h2>
+            <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><Shield className="h-4 w-4 text-[#2563EB]" /> Lawful basis & purpose</h2>
             <p className="text-sm text-slate-700 leading-relaxed mt-2">Consent (you submitted form/messaged us) + Legitimate interest (provide requested counseling). Purposes: contact attempt (3/7/14/21/25/30 day follow-ups), counselor assignment, course shortlisting, application/visa processing, analytics. No selling to third parties. B2B TYPE1 inbound: partner provides student — visibility follows privacy settings; TYPE2 outbound: ALO submits with attribution.</p>
           </section>
           <section>
-            <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><UserCheck className="h-4 w-4 text-[#0B5ED7]" /> Lifecycle & retention</h2>
+            <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><UserCheck className="h-4 w-4 text-[#2563EB]" /> Lifecycle & retention</h2>
             <p className="text-sm text-slate-700 leading-relaxed mt-2"><strong>New Lead → Contact Attempted → Contacted → Consultation Booked/Completed → Qualified → Student Profile Created → ... → Enrolled → Closed</strong> (25 stages). Retention: active leads 24 months, closed 7 years for audit/tax, then anonymized. Backups encrypted, private pools outside <code>public_html</code> (see <code>StoragePool</code>).</p>
           </section>
           <section>
-            <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><Clock className="h-4 w-4 text-[#0B5ED7]" /> Your rights</h2>
-            <p className="text-sm text-slate-700 leading-relaxed mt-2">Access, correction, deletion, export, withdraw consent. Email <a href="mailto:info@aloeducation.com" className="text-[#0B5ED7] underline">info@aloeducation.com</a> with Student/Lead ID. Deletion uses soft-delete + <code>HrmAuditLog</code> + <code>AloAuditLog</code>. Response within 30 days. Personal data access is logged (<code>SensitiveDataRevealLog</code>).</p>
+            <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><Clock className="h-4 w-4 text-[#2563EB]" /> Your rights</h2>
+            <p className="text-sm text-slate-700 leading-relaxed mt-2">Access, correction, deletion, export, withdraw consent. Email <a href="mailto:info@aloeducation.com" className="text-[#2563EB] underline">info@aloeducation.com</a> with Student/Lead ID. Deletion uses soft-delete + <code>HrmAuditLog</code> + <code>AloAuditLog</code>. Response within 30 days. Personal data access is logged (<code>SensitiveDataRevealLog</code>).</p>
           </section>
           <p className="text-xs text-slate-500 pt-4 border-t">See also Privacy Policy & Communication Policy • DPO: info@aloeducation.com • Barek Mansion-02, Panthapath, Dhaka</p>
         </Card>

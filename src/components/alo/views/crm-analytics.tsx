@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Icon, PageHeader, EmptyState, StatCard, MiniBar } from "@/components/alo/shared";
 
 const STATUS_COLORS: Record<string, string> = {
-  NEW: "bg-[#EAF3FF] text-[#0B5ED7]",
+  NEW: "bg-[#EAF3FF] text-[#2563EB]",
   CONTACTED: "bg-amber-100 text-amber-700",
   QUALIFIED: "bg-violet-100 text-violet-700",
   CONVERTED: "bg-emerald-100 text-emerald-700",
@@ -121,7 +121,7 @@ export function CrmAnalytics() {
         <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0B5ED7]">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#2563EB]">
                 <Icon name="Filter" className="size-4" />
               </div>
               <h3 className="font-bold text-[#0B2447]">Lead Pipeline</h3>
@@ -140,7 +140,7 @@ export function CrmAnalytics() {
                   <MiniBar
                     value={count as number}
                     max={maxStatus}
-                    color="#0B5ED7"
+                    color="#2563EB"
                   />
                 </div>
               ))}
@@ -226,7 +226,7 @@ export function CrmAnalytics() {
               </div>
               <div className="rounded-lg bg-[#F7FAFE] p-3">
                 <p className="text-xs text-[#5A7299]">Leads Generated</p>
-                <p className="mt-1 text-lg font-bold text-[#0B5ED7]">
+                <p className="mt-1 text-lg font-bold text-[#2563EB]">
                   {stats.marketing?.totalLeadsFromCampaigns || 0}
                 </p>
               </div>
@@ -239,7 +239,7 @@ export function CrmAnalytics() {
             </div>
             <div className="mt-3 rounded-lg border border-[#DCE8F5] bg-[#EAF3FF] p-3">
               <p className="text-xs text-[#5A7299]">Campaign Conversion Rate</p>
-              <p className="mt-1 text-2xl font-bold text-[#0B5ED7]">
+              <p className="mt-1 text-2xl font-bold text-[#2563EB]">
                 {stats.marketing?.conversionRate || 0}%
               </p>
             </div>

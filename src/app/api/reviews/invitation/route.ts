@@ -1,6 +1,5 @@
-```ts
 import { createHash, randomBytes } from 'node:crypto';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
 
@@ -120,7 +119,6 @@ export const POST = withAuth(
         await tx.portalAuditLog.create({
           data: {
             actorUserId: auth.actorUserId,
-            userId: auth.userId,
             action: 'REVIEW_INVITATION_CREATED',
             entityType: 'ReviewInvitation',
             entityId: created.id,
@@ -156,7 +154,7 @@ export const POST = withAuth(
 // GET /api/reviews/invitation
 // Lists all review invitations for the Marketing dashboard.
 export const GET = withAuth(
-  async (req: NextRequest) => {
+  async (req) => {
     try {
       const url = new URL(req.url);
 
@@ -254,4 +252,3 @@ export const GET = withAuth(
   },
   { requireRoles: REVIEW_ROLES },
 );
-```

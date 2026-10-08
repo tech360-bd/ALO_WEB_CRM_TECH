@@ -25,8 +25,8 @@ export default function LanguageToggle({ compact = false }: { compact?: boolean 
           aria-pressed={locale === l}
           className={
             locale === l
-              ? 'rounded-full bg-[#0B5ED7] px-3 py-1 text-[11px] font-bold text-white'
-              : 'rounded-full px-3 py-1 text-[11px] font-semibold text-slate-600 hover:text-[#0B5ED7]'
+              ? 'rounded-full bg-[#2563EB] px-3 py-1 text-[11px] font-bold text-white'
+              : 'rounded-full px-3 py-1 text-[11px] font-semibold text-slate-600 hover:text-[#2563EB]'
           }
         >
           {LOCALE_LABELS[l]}

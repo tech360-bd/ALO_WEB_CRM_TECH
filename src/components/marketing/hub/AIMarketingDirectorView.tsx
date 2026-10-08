@@ -123,13 +123,13 @@ export default function AIMarketingDirectorView() {
 
       <Card className="border-[#FFB347]/40 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm flex items-center gap-2"><Bot className="w-4 h-4 text-[#0B5ED7]" /> Give Campaign Instruction</CardTitle>
+          <CardTitle className="text-sm flex items-center gap-2"><Bot className="w-4 h-4 text-[#2563EB]" /> Give Campaign Instruction</CardTitle>
           <CardDescription className="text-xs">Example: &quot;Create January 2027 UK campaign for Bangladeshi HSC students...&quot; — Supports English &amp; Bangla (টার্গেট বাংলাদেশি শিক্ষার্থী)</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid md:grid-cols-4 gap-3">
             <div className="md:col-span-3">
-              <Textarea value={instruction} onChange={e=>setInstruction(e.target.value)} rows={4} placeholder="Describe campaign objective, audience, channels, timeline..." className="min-h-[100px] border-[#0B5ED7]/20 focus:border-[#F97316]" />
+              <Textarea value={instruction} onChange={e=>setInstruction(e.target.value)} rows={4} placeholder="Describe campaign objective, audience, channels, timeline..." className="min-h-[100px] border-[#2563EB]/20 focus:border-[#F97316]" />
             </div>
             <div className="space-y-3">
               <div>
@@ -161,7 +161,7 @@ export default function AIMarketingDirectorView() {
         <div className="grid lg:grid-cols-12 gap-6">
           <div className="lg:col-span-7 space-y-4">
             <Card>
-              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Target className="w-4 h-4 text-[#0B5ED7]" /> Current Objective</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Target className="w-4 h-4 text-[#2563EB]" /> Current Objective</CardTitle></CardHeader>
               <CardContent className="text-sm text-gray-700 leading-relaxed">{plan.objective}</CardContent>
             </Card>
             <Card>
@@ -169,7 +169,7 @@ export default function AIMarketingDirectorView() {
               <CardContent className="space-y-3">
                 <div><p className="text-xs font-bold text-gray-500 uppercase">Target Audience</p><p className="text-sm mt-1">{plan.targetAudience}</p></div>
                 <div><p className="text-xs font-bold text-gray-500 uppercase">Strategy</p><p className="text-sm mt-1 leading-relaxed">{plan.strategy}</p></div>
-                <div><p className="text-xs font-bold text-gray-500 uppercase">Channels</p><div className="flex flex-wrap gap-2 mt-1">{plan.channels.map(c=><Badge key={c} className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20">{c}</Badge>)}</div></div>
+                <div><p className="text-xs font-bold text-gray-500 uppercase">Channels</p><div className="flex flex-wrap gap-2 mt-1">{plan.channels.map(c=><Badge key={c} className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20">{c}</Badge>)}</div></div>
                 <Separator />
                 <div className="space-y-2">
                   {plan.campaignPlan.map((p,i)=><div key={i} className="p-3 bg-[#F8FAFC] border rounded-xl">
@@ -180,7 +180,7 @@ export default function AIMarketingDirectorView() {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Calendar className="w-4 h-4 text-[#0B5ED7]" /> Scheduled Activities</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Calendar className="w-4 h-4 text-[#2563EB]" /> Scheduled Activities</CardTitle></CardHeader>
               <CardContent className="space-y-2">
                 {plan.schedules.map((s,i)=><div key={i} className="flex items-center justify-between p-2 bg-white border rounded-lg text-xs"><span className="font-semibold">{s.date}</span><Badge variant="outline" className="text-[11px]">{s.platform}</Badge><span className="text-gray-600 truncate ml-2">{s.content}</span></div>)}
               </CardContent>
@@ -206,7 +206,7 @@ export default function AIMarketingDirectorView() {
                   <div className="p-2 bg-white border rounded-lg"><p className="font-semibold">Retry & Errors</p><p className="text-gray-600 mt-1">Duplicate prevention, idempotency, execution locks — no duplicate publishing on retry.</p></div>
                 </div>
                 <div className="flex gap-2 pt-2">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[#0B5ED7] text-white flex-1 h-8 text-xs"><CheckCircle2 className="w-3 h-3 mr-1" />Approve</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[#2563EB] text-white flex-1 h-8 text-xs"><CheckCircle2 className="w-3 h-3 mr-1" />Approve</Button>
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 h-8 text-xs"><XCircle className="w-3 h-3 mr-1" />Reject</Button>
                 </div>
               </CardContent>

@@ -42,7 +42,7 @@ export const UniversityPromo: React.FC<UniversityPromoProps> = ({
   logoUrl = "/brand/alo-logo.png",
   images = [],
   primaryColor = "#F97316",
-  secondaryColor = "#0B5ED7",
+  secondaryColor = "#2563EB",
   studentName = "",
   cta = "Apply for 2027 Intake",
   brand,

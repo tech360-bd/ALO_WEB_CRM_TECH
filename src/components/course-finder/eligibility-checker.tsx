@@ -20,7 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#0B5ED7';
+const ALO_BLUE = '#2563EB';
 const ALO_ORANGE = '#F97316';
 
 // ─── Constants ────────────────────────────────────────────────────────────────

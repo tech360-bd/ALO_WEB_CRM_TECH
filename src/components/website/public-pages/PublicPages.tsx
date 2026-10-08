@@ -22,7 +22,7 @@ import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCar
 // ============================================================
 // SHARED PUBLIC SHELL
 // ============================================================
-function PublicShell({ title, subtitle, badge, children, heroColor = '#0B5ED7' }: {
+function PublicShell({ title, subtitle, badge, children, heroColor = '#2563EB' }: {
   title: string;
   subtitle?: string;
   badge?: string;
@@ -36,7 +36,7 @@ function PublicShell({ title, subtitle, badge, children, heroColor = '#0B5ED7' }
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => setView('website')}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0B5ED7] mb-6 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#2563EB] mb-6 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </button>
@@ -113,7 +113,7 @@ export function PublicCourseFinderPage() {
       <div className="grid lg:grid-cols-4 gap-6">
         <Card className="p-5 lg:col-span-1 h-fit">
           <h3 className="font-semibold text-[#0F172A] mb-4 flex items-center gap-2">
-            <Search className="h-4 w-4 text-[#0B5ED7]" /> Filters
+            <Search className="h-4 w-4 text-[#2563EB]" /> Filters
           </h3>
           <div className="space-y-4">
             <div>
@@ -182,7 +182,7 @@ export function PublicCourseFinderPage() {
                   >
                     <Card className="p-5 hover:shadow-md transition-shadow h-full">
                       <div className="flex items-start justify-between mb-2">
-                        <Badge variant="secondary" className="bg-blue-50 text-[#0B5ED7]">
+                        <Badge variant="secondary" className="bg-blue-50 text-[#2563EB]">
                           {c.studyLevel || c.programLevel || c.level || 'Course'}
                         </Badge>
                         {(c.yearlyTuition || c.tuitionFee) > 0 && (
@@ -300,7 +300,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
               <div className="text-4xl mb-3">{d.flag}</div>
               <h3 className="text-xl font-bold text-[#0F172A] mb-1">{d.name}</h3>
               <p className="text-sm text-slate-600 mb-3 line-clamp-2">{d.desc}</p>
-              <div className="text-xs text-[#0B5ED7] font-semibold">{d.topUnis.length}+ top universities</div>
+              <div className="text-xs text-[#2563EB] font-semibold">{d.topUnis.length}+ top universities</div>
             </Card>
           ))}
         </div>
@@ -316,21 +316,21 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
     >
       <div className="grid lg:grid-cols-3 gap-6 mb-10">
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0B5ED7] mb-2">
+          <div className="flex items-center gap-2 text-[#2563EB] mb-2">
             <GraduationCap className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Avg Tuition</span>
           </div>
           <p className="text-lg font-bold text-[#0F172A]">{data.avgTuition}</p>
         </Card>
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0B5ED7] mb-2">
+          <div className="flex items-center gap-2 text-[#2563EB] mb-2">
             <Building2 className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Living Cost</span>
           </div>
           <p className="text-lg font-bold text-[#0F172A]">{data.avgLiving}/yr</p>
         </Card>
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0B5ED7] mb-2">
+          <div className="flex items-center gap-2 text-[#2563EB] mb-2">
             <Clock className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Work Rights</span>
           </div>
@@ -341,7 +341,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
       <div className="grid md:grid-cols-2 gap-6 mb-10">
         <Card className="p-6">
           <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
-            <FileText className="h-4 w-4 text-[#0B5ED7]" /> Visa Information
+            <FileText className="h-4 w-4 text-[#2563EB]" /> Visa Information
           </h3>
           <p className="text-sm text-slate-600 mb-2">Visa Type:</p>
           <p className="font-semibold text-[#0F172A] mb-3">{data.visaType}</p>
@@ -350,7 +350,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         </Card>
         <Card className="p-6">
           <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
-            <Globe className="h-4 w-4 text-[#0B5ED7]" /> Country Info
+            <Globe className="h-4 w-4 text-[#2563EB]" /> Country Info
           </h3>
           <p className="text-sm text-slate-600 mb-2">Currency:</p>
           <p className="font-semibold text-[#0F172A] mb-3">{data.currency}</p>
@@ -366,7 +366,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
             <div className="flex items-center gap-3">
               <div
                 className="h-10 w-10 rounded-lg flex items-center justify-center font-bold text-white"
-                style={{ backgroundColor: i === 0 ? '#F97316' : '#0B5ED7' }}
+                style={{ backgroundColor: i === 0 ? '#F97316' : '#2563EB' }}
               >
                 {i + 1}
               </div>
@@ -379,7 +379,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-2xl p-8 text-white text-center">
+      <div className="bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-2xl p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Ready to study in {data.name}?</h3>
         <p className="text-blue-100 mb-5">Get free expert guidance from our counselors</p>
         <Button
@@ -467,7 +467,7 @@ export function PublicUniversitiesPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div
                     className="h-12 w-12 rounded-xl flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: '#0B5ED7' }}
+                    style={{ backgroundColor: '#2563EB' }}
                   >
                     {u.name?.[0] || 'U'}
                   </div>
@@ -488,7 +488,7 @@ export function PublicUniversitiesPage() {
                 {u.ieltsMin && (
                   <div className="text-xs">
                     <span className="text-slate-500">IELTS min: </span>
-                    <span className="font-semibold text-[#0B5ED7]">{u.ieltsMin}</span>
+                    <span className="font-semibold text-[#2563EB]">{u.ieltsMin}</span>
                   </div>
                 )}
               </Card>
@@ -536,7 +536,7 @@ export function PublicScholarshipsPage() {
             const slug = s.slug || (s.title ? s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `scholarship-${i}`);
             return (
               <motion.div key={s.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-                <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-slate-200 hover:border-[#0B5ED7]">
+                <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-slate-200 hover:border-[#2563EB]">
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3">
                       <Badge className="bg-orange-50 text-[#F97316] border-orange-200 font-semibold text-[11px]">
@@ -547,7 +547,7 @@ export function PublicScholarshipsPage() {
                       </span>
                     </div>
                     <h3 className="font-bold text-[#0F172A] text-lg mb-2 line-clamp-2">{s.title || s.name}</h3>
-                    <p className="text-xs text-[#0B5ED7] font-semibold mb-3">{s.provider || 'University Partner'}</p>
+                    <p className="text-xs text-[#2563EB] font-semibold mb-3">{s.provider || 'University Partner'}</p>
                     <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{s.description || s.eligibility}</p>
                   </div>
 
@@ -557,7 +557,7 @@ export function PublicScholarshipsPage() {
                     </div>
                     <div className="flex gap-2">
                       <a href={`/scholarships/${slug}`} className="w-full">
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-semibold py-2">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-semibold py-2">
                           View Full Details & Apply →
                         </Button>
                       </a>
@@ -598,12 +598,12 @@ export function PublicServicesPage() {
       title="Our 10 Comprehensive Services"
       badge="END-TO-END STUDY ABROAD ADVISORY"
       subtitle="We are committed to guiding Bangladeshi students on their journey to study abroad with confidence and success. Explore our 10 comprehensive services designed for every stage of your international education."
-      heroColor="#0B5ED7"
+      heroColor="#2563EB"
     >
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {MASTER_SERVICES_DATA.map((s: any, i: number) => (
           <motion.div key={s.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-            <Card className="bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0B5ED7] flex flex-col justify-between overflow-hidden rounded-2xl h-full">
+            <Card className="bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#2563EB] flex flex-col justify-between overflow-hidden rounded-2xl h-full">
               <div>
                 <div className="h-44 w-full overflow-hidden relative">
                   <img src={s.heroImage} alt={s.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
@@ -622,7 +622,7 @@ export function PublicServicesPage() {
 
               <div className="p-6 pt-0">
                 <a href={`/services/${s.slug}`} className="block w-full">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
                     Explore Full Service Details & Process →
                   </Button>
                 </a>
@@ -632,7 +632,7 @@ export function PublicServicesPage() {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-[#0B5ED7] to-[#003d80] rounded-2xl p-8 text-white text-center shadow-lg">
+      <div className="bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
         <a href="/eligibility-check">
@@ -668,7 +668,7 @@ export function PublicAboutPage() {
 
       <div className="grid md:grid-cols-2 gap-6 mb-12">
         <Card className="p-8 bg-gradient-to-br from-blue-50 to-white border-blue-100">
-          <h3 className="text-xl font-bold text-[#0B5ED7] mb-3">Our Mission</h3>
+          <h3 className="text-xl font-bold text-[#2563EB] mb-3">Our Mission</h3>
           <p className="text-slate-700 leading-relaxed">
             At ALO Education, our mission is simple yet powerful: turning student dreams into global
             opportunities. We strive to be a trusted pathway to world-class education, guiding every
@@ -697,7 +697,7 @@ export function PublicAboutPage() {
           { num: '8,800+', label: 'Courses listed' },
         ].map((stat) => (
           <Card key={stat.label} className="p-6 text-center">
-            <p className="text-3xl font-bold text-[#0B5ED7] mb-1">{stat.num}</p>
+            <p className="text-3xl font-bold text-[#2563EB] mb-1">{stat.num}</p>
             <p className="text-xs text-slate-600">{stat.label}</p>
           </Card>
         ))}
@@ -753,12 +753,12 @@ export function PublicSuccessStoriesPage() {
             <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
               <Card className="p-7 h-full">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#0B5ED7] to-[#003d80] flex items-center justify-center text-white font-bold text-lg shrink-0">
+                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d80] flex items-center justify-center text-white font-bold text-lg shrink-0">
                     {s.name?.[0] || 'S'}
                   </div>
                   <div>
                     <h3 className="font-bold text-[#0F172A]">{s.name}</h3>
-                    <p className="text-sm text-[#0B5ED7]">{s.course || s.program}</p>
+                    <p className="text-sm text-[#2563EB]">{s.course || s.program}</p>
                     <p className="text-xs text-slate-500">Now studying at {s.university}</p>
                   </div>
                 </div>
@@ -810,11 +810,11 @@ export function PublicTeamPage() {
         {data.map((m: any, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
             <Card className="p-6 text-center hover:shadow-md transition-shadow h-full">
-              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[#0B5ED7] to-[#003d80] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d80] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
                 {m.name?.[0] || 'A'}
               </div>
               <h3 className="font-bold text-[#0F172A]">{m.name}</h3>
-              <p className="text-sm text-[#0B5ED7] mb-3">{m.role || m.position}</p>
+              <p className="text-sm text-[#2563EB] mb-3">{m.role || m.position}</p>
               <p className="text-xs text-slate-600">{m.bio || m.description}</p>
             </Card>
           </motion.div>
@@ -892,9 +892,9 @@ export function PublicContactPage() {
     >
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         <Card className="p-8">
-          <Phone className="h-8 w-8 text-[#0B5ED7] mb-4" />
+          <Phone className="h-8 w-8 text-[#2563EB] mb-4" />
           <h3 className="font-bold text-[#0F172A] mb-2">Phone</h3>
-          <p className="text-2xl font-bold text-[#0B5ED7] mb-1">+88 01805020101-10</p>
+          <p className="text-2xl font-bold text-[#2563EB] mb-1">+88 01805020101-10</p>
           <p className="text-sm text-slate-600">Sat-Thu: 10 AM - 6 PM</p>
         </Card>
         <Card className="p-8">
@@ -907,7 +907,7 @@ export function PublicContactPage() {
 
       <Card className="p-8 mb-8">
         <div className="flex items-start gap-4">
-          <MapPin className="h-8 w-8 text-[#0B5ED7] shrink-0" />
+          <MapPin className="h-8 w-8 text-[#2563EB] shrink-0" />
           <div>
             <h3 className="font-bold text-[#0F172A] mb-2">Bangladesh Office</h3>
             <p className="text-slate-700 leading-relaxed">
@@ -1014,7 +1014,7 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
       badge: 'ACCESSIBILITY',
       sections: [
         { h: 'Commitment', p: 'We aim for WCAG 2.1 AA across https://aloeducation.com — semantic HTML, landmarks, skip links, heading hierarchy.' },
-        { h: 'Visual', p: 'Contrast ≥4.5:1 (#0B5ED7/#F97316 on white), alt text, aria-hidden decorative, zoom 200% without horizontal scroll.' },
+        { h: 'Visual', p: 'Contrast ≥4.5:1 (#2563EB/#F97316 on white), alt text, aria-hidden decorative, zoom 200% without horizontal scroll.' },
         { h: 'Keyboard & Screen Reader', p: 'All interactive elements via Tab/Enter/Space, visible focus ring, associated label + aria-describedby errors, NVDA/JAWS conventions.' },
         { h: 'Limitations', p: 'Third-party embeds (Maps/Facebook) may not be fully AA — we provide text address, WhatsApp 01805020100, phone fallbacks.' },
         { h: 'Feedback', p: 'Email info@aloeducation.com with URL + issue. Acknowledge within 2 working days, fix prioritized, review every 6 months.' },
@@ -1029,7 +1029,7 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
           {content.sections.map((s, i) => (
             <div key={i}>
               <h3 className="font-bold text-[#0F172A] mb-2 flex items-center gap-2">
-                <span className="h-6 w-6 rounded-full bg-blue-50 text-[#0B5ED7] text-xs font-bold flex items-center justify-center">
+                <span className="h-6 w-6 rounded-full bg-blue-50 text-[#2563EB] text-xs font-bold flex items-center justify-center">
                   {i + 1}
                 </span>
                 {s.h}
@@ -1064,11 +1064,11 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
       title="Language & Admission Test Preparation"
       badge="ALO STUDY ABROAD LANGUAGE PREPARATION CENTRE"
       subtitle="Prepare for English proficiency and admission tests with ALO Education's certified test coaches, score planners, and direct CRM integration."
-      heroColor="#0B5ED7"
+      heroColor="#2563EB"
     >
       <div className="flex justify-between items-center mb-8 bg-blue-50 p-4 rounded-2xl border border-blue-100">
         <div>
-          <h3 className="font-bold text-[#0B5ED7] text-base">Comprehensive Test Preparation Directory</h3>
+          <h3 className="font-bold text-[#2563EB] text-base">Comprehensive Test Preparation Directory</h3>
           <p className="text-xs text-slate-600">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
         </div>
         <a href="/english-test-prep">
@@ -1080,7 +1080,7 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tests.map((t: any) => (
-          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-slate-200 hover:border-[#0B5ED7] flex flex-col justify-between">
+          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-slate-200 hover:border-[#2563EB] flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
                 <Badge className="bg-orange-50 text-[#F97316] font-semibold text-[11px]">
@@ -1089,7 +1089,7 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
                 <span className="text-xs font-semibold text-slate-500">{t.quickInfo.duration}</span>
               </div>
               <h3 className="font-bold text-[#0F172A] text-lg mb-1">{t.name}</h3>
-              <p className="text-xs text-[#0B5ED7] font-semibold mb-3">{t.officialOwner}</p>
+              <p className="text-xs text-[#2563EB] font-semibold mb-3">{t.officialOwner}</p>
               <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{t.overview.whatIsIt}</p>
             </div>
 
@@ -1100,10 +1100,10 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-500 font-medium">Target Score:</span>
-                <span className="font-bold text-[#0B5ED7]">{t.expectedScore}</span>
+                <span className="font-bold text-[#2563EB]">{t.expectedScore}</span>
               </div>
               <a href={`/english-test-prep/${t.slug}`} className="block w-full">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
                   Explore Full Test Prep & Modules →
                 </Button>
               </a>
@@ -1143,7 +1143,7 @@ export function PublicResourcesPage() {
           return (
             <Card key={i} className="p-6 hover:shadow-md transition-shadow">
               <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
-                <Icon className="h-6 w-6 text-[#0B5ED7]" />
+                <Icon className="h-6 w-6 text-[#2563EB]" />
               </div>
               <h3 className="font-bold text-[#0F172A] mb-2">{r.title}</h3>
               <p className="text-sm text-slate-600">{r.desc}</p>
@@ -1179,7 +1179,7 @@ export function PublicVisaReadinessPage() {
           </Card>
         ))}
       </div>
-      <Card className="p-8 bg-gradient-to-r from-[#0B5ED7] to-[#003d80] text-white text-center">
+      <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Need Visa Help?</h3>
         <p className="text-blue-100 mb-5">Our visa experts will guide you through the entire process</p>
         <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:brightness-110">Book Visa Consultation</Button>
@@ -1213,7 +1213,7 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-medium">English Language Requirement</p>
-                <p className="text-sm font-semibold text-[#0B5ED7]">IELTS 6.5 (Min 6.0 components)</p>
+                <p className="text-sm font-semibold text-[#2563EB]">IELTS 6.5 (Min 6.0 components)</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-medium">Application Deadline</p>
@@ -1234,7 +1234,7 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
         </div>
 
         <div className="space-y-6">
-          <Card className="p-6 border-2 border-[#0B5ED7]/20 bg-gradient-to-br from-blue-50/30 to-white">
+          <Card className="p-6 border-2 border-[#2563EB]/20 bg-gradient-to-br from-blue-50/30 to-white">
             <h3 className="font-bold text-[#0F172A] mb-2 text-lg">Apply for this Course</h3>
             <p className="text-xs text-slate-600 mb-4 leading-relaxed">
               Start your application with ALO Education for full application support and visa counseling.
@@ -1246,7 +1246,7 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
                 </Button>
               </a>
               <a href="/book-consultation" className="block w-full">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full text-xs py-2.5 border-[#0B5ED7] text-[#0B5ED7] hover:bg-blue-50">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full text-xs py-2.5 border-[#2563EB] text-[#2563EB] hover:bg-blue-50">
                   Talk to ALO Counselor
                 </Button>
               </a>
@@ -1281,139 +1281,5 @@ export function PublicComparePage() {
         </div>
       </Card>
     </PublicShell>
-  );
-}
-
-export function PublicFooter() {
-  return (
-    <footer className="w-full bg-[#0F172A] text-slate-300 pt-16 border-t border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-xs">
-        
-        {/* COL 1: ALO BRAND & SOCIAL */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#0B5ED7] text-white flex items-center justify-center font-black text-sm">
-              ALO
-            </div>
-            <span className="text-white font-black text-lg tracking-tight">ALO Education</span>
-          </div>
-          <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-            From your ambition to admission, we’re with you all the way.
-          </p>
-          <div className="flex items-center gap-3 pt-2">
-            <a
-              href="https://facebook.com/aloeducation"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Facebook"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#0B5ED7] hover:text-white transition"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </a>
-            <a
-              href="https://instagram.com/aloeducation"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F97316] hover:text-white transition"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            </a>
-            <a
-              href="https://linkedin.com/company/aloeducation"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#0B5ED7] hover:text-white transition"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-            </a>
-            <a
-              href="https://youtube.com/@aloeducation"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="YouTube"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-red-600 hover:text-white transition"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            </a>
-          </div>
-        </div>
-
-        {/* COL 2: DESTINATIONS */}
-        <div className="space-y-3">
-          <h4 className="text-white font-bold text-sm tracking-wider uppercase">Destinations</h4>
-          <ul className="space-y-2 text-slate-400">
-            <li><a href="/destinations/uk" className="hover:text-white transition">United Kingdom</a></li>
-            <li><a href="/destinations/usa" className="hover:text-white transition">United States</a></li>
-            <li><a href="/destinations/australia" className="hover:text-white transition">Australia</a></li>
-            <li><a href="/destinations/canada" className="hover:text-white transition">Canada</a></li>
-            <li><a href="/destinations/new-zealand" className="hover:text-white transition">New Zealand</a></li>
-            <li><a href="/destinations/ireland" className="hover:text-white transition">Europe & Ireland</a></li>
-          </ul>
-        </div>
-
-        {/* COL 3: QUICK LINKS */}
-        <div className="space-y-3">
-          <h4 className="text-white font-bold text-sm tracking-wider uppercase">Quick Links</h4>
-          <ul className="space-y-2 text-slate-400">
-            <li><a href="/course-finder" className="hover:text-white transition">Course Finder</a></li>
-            <li><a href="/services" className="hover:text-white transition">Services</a></li>
-            <li><a href="/language-prep" className="hover:text-white transition">English Test Prep</a></li>
-            <li><a href="/blog" className="hover:text-white transition">Blogs & Insights</a></li>
-            <li><a href="/scholarships" className="hover:text-white transition">Scholarships</a></li>
-          </ul>
-        </div>
-
-        {/* COL 4: COMPANY */}
-        <div className="space-y-3">
-          <h4 className="text-white font-bold text-sm tracking-wider uppercase">Company</h4>
-          <ul className="space-y-2 text-slate-400">
-            <li><a href="/about" className="hover:text-white transition">About Us</a></li>
-            <li><a href="/team" className="hover:text-white transition">Expert Team</a></li>
-            <li><a href="/contact" className="hover:text-white transition">Find Us</a></li>
-            <li><a href="/contact" className="hover:text-white transition">Contact Us</a></li>
-            <li><a href="/privacy-policy" className="hover:text-white transition">Privacy Policy</a></li>
-          </ul>
-        </div>
-
-      </div>
-
-      {/* GRADUATION CAP ANIMATION STRIP */}
-      <div className="w-full overflow-hidden py-6 mt-12 border-t border-slate-800 bg-[#0a101d] relative">
-        <div className="flex gap-12 whitespace-nowrap animate-[marquee_25s_linear_infinite] motion-reduce:animate-none">
-          {[...Array(16)].map((_, i) => (
-            <div key={i} className="flex items-center gap-8 text-xs font-semibold text-slate-500">
-              <span className="flex items-center gap-2 text-[#F97316] opacity-100 rotate-[-5deg]">
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
-                Admission Success
-              </span>
-              <span className="flex items-center gap-2 text-[#0B5ED7] opacity-70 rotate-[4deg]">
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
-                Scholarship Granted
-              </span>
-              <span className="flex items-center gap-2 text-slate-400 opacity-40 rotate-[-2deg]">
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
-                Visa Decision Approved
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* BOTTOM FOOTER BAR (#F5F5F5) */}
-      <div className="w-full bg-[#F5F5F5] text-slate-700 py-4 px-4 text-xs border-t border-slate-200">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
-          <div>
-            © {new Date().getFullYear()} ALO Education. All Rights Reserved.
-          </div>
-          <div className="flex items-center gap-6 text-[11px] font-semibold text-slate-600">
-            <a href="/terms" className="hover:text-slate-900 transition">Terms of Service</a>
-            <a href="/privacy-policy" className="hover:text-slate-900 transition">Privacy Policy</a>
-            <a href="/cookies" className="hover:text-slate-900 transition">Cookie Policy</a>
-          </div>
-        </div>
-      </div>
-    </footer>
   );
 }

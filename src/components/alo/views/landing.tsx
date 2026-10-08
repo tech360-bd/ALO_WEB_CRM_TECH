@@ -213,18 +213,18 @@ export function LandingView({ onNavigate }: LandingViewProps) {
   return (
     <div className="space-y-16 pb-8">
       {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden rounded-3xl border-2 border-[#0B5ED7]/10 bg-alo-hero">
+      <section className="relative overflow-hidden rounded-3xl border-2 border-[#2563EB]/10 bg-alo-hero">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(0,87,184,0.08),transparent_55%),radial-gradient(circle_at_85%_25%,rgba(232,80,26,0.07),transparent_50%)]" />
         <div className="relative px-6 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
           <div className="mx-auto max-w-4xl text-center">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#0B5ED7]/20 bg-white/80 px-4 py-1.5 text-xs font-semibold text-[#0B5ED7] backdrop-blur">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#2563EB]/20 bg-white/80 px-4 py-1.5 text-xs font-semibold text-[#2563EB] backdrop-blur">
               <span className="relative flex size-2">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#F97316] opacity-75" />
                 <span className="relative inline-flex size-2 rounded-full bg-[#F97316]" />
               </span>
               Trusted by 500+ Bangladeshi students
             </div>
-            <h1 className="text-4xl font-black leading-tight tracking-tight text-[#0B5ED7] sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-black leading-tight tracking-tight text-[#2563EB] sm:text-5xl lg:text-6xl">
               Your Complete Study Abroad Journey,
               <span className="block text-[#F97316]">From First Hello to Final Visa</span>
             </h1>
@@ -244,7 +244,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
               <Button
                 onClick={() => onNavigate("student-dashboard")}
                 variant="outline"
-                className="h-12 w-full border-[#0B5ED7] px-8 text-base font-semibold text-[#0B5ED7] hover:bg-[#e8f0fb] sm:w-auto"
+                className="h-12 w-full border-[#2563EB] px-8 text-base font-semibold text-[#2563EB] hover:bg-[#e8f0fb] sm:w-auto"
               >
                 <Icon name="Compass" className="size-5" />
                 Explore the System
@@ -257,13 +257,13 @@ export function LandingView({ onNavigate }: LandingViewProps) {
             {HERO_STATS.map((s) => (
               <div
                 key={s.label}
-                className="flex items-center gap-3 rounded-2xl border-2 border-[#0B5ED7]/15 bg-white/90 p-3 backdrop-blur sm:p-4"
+                className="flex items-center gap-3 rounded-2xl border-2 border-[#2563EB]/15 bg-white/90 p-3 backdrop-blur sm:p-4"
               >
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7] sm:size-10">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB] sm:size-10">
                   <Icon name={s.icon} className="size-4 sm:size-5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-lg font-black leading-none text-[#0B5ED7] sm:text-xl">{s.value}</p>
+                  <p className="text-lg font-black leading-none text-[#2563EB] sm:text-xl">{s.value}</p>
                   <p className="mt-0.5 truncate text-[11px] font-medium text-muted-foreground sm:text-xs">
                     {s.label}
                   </p>
@@ -280,7 +280,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
           <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">
             Omnichannel Lead Capture
           </p>
-          <h2 className="mt-1 text-2xl font-bold text-[#0B5ED7] sm:text-3xl">
+          <h2 className="mt-1 text-2xl font-bold text-[#2563EB] sm:text-3xl">
             Leads come from everywhere
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
@@ -292,7 +292,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
           {LEAD_SOURCES.map((src) => (
             <div
               key={src.value}
-              className="inline-flex items-center gap-2 rounded-full border-2 border-[#0B5ED7]/15 bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0B5ED7] shadow-sm transition-colors hover:border-[#0B5ED7]/40 hover:bg-[#e8f0fb] sm:text-sm"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-[#2563EB]/15 bg-white px-3.5 py-1.5 text-xs font-semibold text-[#2563EB] shadow-sm transition-colors hover:border-[#2563EB]/40 hover:bg-[#e8f0fb] sm:text-sm"
             >
               <Icon name={SOURCE_ICON[src.value] || "Circle"} className="size-3.5" />
               {src.label}
@@ -305,7 +305,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
       <section>
         <div className="mb-8 text-center">
           <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">End-to-End Workflow</p>
-          <h2 className="mt-1 text-2xl font-bold text-[#0B5ED7] sm:text-3xl">
+          <h2 className="mt-1 text-2xl font-bold text-[#2563EB] sm:text-3xl">
             From Lead to Visa — One Workflow
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
@@ -313,27 +313,27 @@ export function LandingView({ onNavigate }: LandingViewProps) {
             tracked.
           </p>
         </div>
-        <Card className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-white">
+        <Card className="rounded-2xl border-2 border-[#2563EB]/15 bg-white">
           <CardContent className="pt-6">
             {/* Desktop: horizontal */}
             <div className="hidden lg:block">
               <div className="relative grid grid-cols-10 gap-1">
                 {/* connecting line */}
-                <div className="absolute left-[5%] right-[5%] top-5 h-0.5 -translate-y-1/2 bg-gradient-to-r from-[#0B5ED7]/30 via-[#0B5ED7]/30 to-[#F97316]/30" />
+                <div className="absolute left-[5%] right-[5%] top-5 h-0.5 -translate-y-1/2 bg-gradient-to-r from-[#2563EB]/30 via-[#2563EB]/30 to-[#F97316]/30" />
                 {JOURNEY_STEPS.map((step, i) => (
                   <div key={step.label} className="relative flex flex-col items-center text-center">
                     <div
                       className={`relative z-10 flex size-10 items-center justify-center rounded-full text-sm font-black text-white shadow-md ${
                         i === 0
-                          ? "bg-[#0B5ED7]"
+                          ? "bg-[#2563EB]"
                           : i === JOURNEY_STEPS.length - 1
                           ? "bg-[#F97316]"
-                          : "bg-[#0B5ED7]/80"
+                          : "bg-[#2563EB]/80"
                       }`}
                     >
                       {i + 1}
                     </div>
-                    <p className="mt-2 text-xs font-bold text-[#0B5ED7]">{step.label}</p>
+                    <p className="mt-2 text-xs font-bold text-[#2563EB]">{step.label}</p>
                     <p className="mt-0.5 text-[10px] leading-tight text-muted-foreground">
                       {step.detail}
                     </p>
@@ -347,23 +347,23 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                 <div key={step.label} className="relative flex gap-3 pb-3">
                   {/* vertical connector */}
                   {i < JOURNEY_STEPS.length - 1 && (
-                    <div className="absolute left-5 top-10 h-[calc(100%-1.5rem)] w-0.5 bg-[#0B5ED7]/20" />
+                    <div className="absolute left-5 top-10 h-[calc(100%-1.5rem)] w-0.5 bg-[#2563EB]/20" />
                   )}
                   <div
                     className={`relative z-10 flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-black text-white shadow-md ${
                       i === 0
-                        ? "bg-[#0B5ED7]"
+                        ? "bg-[#2563EB]"
                         : i === JOURNEY_STEPS.length - 1
                         ? "bg-[#F97316]"
-                        : "bg-[#0B5ED7]/80"
+                        : "bg-[#2563EB]/80"
                     }`}
                   >
                     {i + 1}
                   </div>
                   <div className="flex-1 pt-1">
                     <div className="flex items-center gap-2">
-                      <Icon name={step.icon} className="size-4 text-[#0B5ED7]" />
-                      <p className="text-sm font-bold text-[#0B5ED7]">{step.label}</p>
+                      <Icon name={step.icon} className="size-4 text-[#2563EB]" />
+                      <p className="text-sm font-bold text-[#2563EB]">{step.label}</p>
                     </div>
                     <p className="mt-0.5 text-xs text-muted-foreground">{step.detail}</p>
                   </div>
@@ -378,7 +378,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
       <section>
         <div className="mb-8 text-center">
           <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Platform Capabilities</p>
-          <h2 className="mt-1 text-2xl font-bold text-[#0B5ED7] sm:text-3xl">
+          <h2 className="mt-1 text-2xl font-bold text-[#2563EB] sm:text-3xl">
             One system for the entire journey
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
@@ -390,12 +390,12 @@ export function LandingView({ onNavigate }: LandingViewProps) {
             <button
               key={f.title}
               onClick={() => onNavigate(f.view)}
-              className="group flex h-full flex-col rounded-2xl border-2 border-[#0B5ED7]/20 bg-white p-6 text-left transition-all hover:-translate-y-0.5 hover:border-[#0B5ED7] hover:shadow-lg"
+              className="group flex h-full flex-col rounded-2xl border-2 border-[#2563EB]/20 bg-white p-6 text-left transition-all hover:-translate-y-0.5 hover:border-[#2563EB] hover:shadow-lg"
             >
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-[#e8f0fb] text-[#0B5ED7] transition-colors group-hover:bg-[#0B5ED7] group-hover:text-white">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-[#e8f0fb] text-[#2563EB] transition-colors group-hover:bg-[#2563EB] group-hover:text-white">
                 <Icon name={f.icon} className="size-6" />
               </div>
-              <h3 className="mt-4 text-lg font-bold text-[#0B5ED7]">{f.title}</h3>
+              <h3 className="mt-4 text-lg font-bold text-[#2563EB]">{f.title}</h3>
               <p className="mt-1.5 flex-1 text-sm text-muted-foreground">{f.desc}</p>
               <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#F97316]">
                 Explore module
@@ -411,7 +411,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
 
       {/* ===== LEAD CAPTURE FORM ===== */}
       <section ref={leadFormRef} id="lead-form" className="scroll-mt-20">
-        <Card className="overflow-hidden rounded-3xl border-2 border-[#0B5ED7]/15 bg-white">
+        <Card className="overflow-hidden rounded-3xl border-2 border-[#2563EB]/15 bg-white">
           <div className="grid grid-cols-1 lg:grid-cols-5">
             {/* Left info panel */}
             <div className="bg-alo-gradient p-6 text-white sm:p-8 lg:col-span-2">
@@ -456,11 +456,11 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                       className="size-9"
                     />
                   </div>
-                  <h3 className="mt-4 text-xl font-bold text-[#0B5ED7]">
+                  <h3 className="mt-4 text-xl font-bold text-[#2563EB]">
                     {result.duplicate ? "We already have your details" : "Welcome aboard!"}
                   </h3>
                   <p className="mt-2 max-w-md text-sm text-muted-foreground">{result.message}</p>
-                  <div className="mt-4 inline-flex items-center gap-2 rounded-lg border-2 border-[#0B5ED7]/15 bg-[#e8f0fb] px-4 py-2 text-sm font-semibold text-[#0B5ED7]">
+                  <div className="mt-4 inline-flex items-center gap-2 rounded-lg border-2 border-[#2563EB]/15 bg-[#e8f0fb] px-4 py-2 text-sm font-semibold text-[#2563EB]">
                     <Icon name="Hash" className="size-4" />
                     Lead ID: <span className="font-mono">{result.leadId}</span>
                   </div>
@@ -468,7 +468,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                     <Button
                       onClick={() => onNavigate("student-dashboard")}
                       variant="outline"
-                      className="h-11 border-[#0B5ED7] text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                      className="h-11 border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]"
                     >
                       <Icon name="LayoutDashboard" className="size-4" />
                       Open Student Dashboard
@@ -481,8 +481,8 @@ export function LandingView({ onNavigate }: LandingViewProps) {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="flex items-center gap-2">
-                    <Icon name="FileText" className="size-5 text-[#0B5ED7]" />
-                    <h3 className="text-lg font-bold text-[#0B5ED7]">Lead Capture Form</h3>
+                    <Icon name="FileText" className="size-5 text-[#2563EB]" />
+                    <h3 className="text-lg font-bold text-[#2563EB]">Lead Capture Form</h3>
                   </div>
 
                   {result?.ok === false && (
@@ -494,7 +494,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                      <Label htmlFor="fullName" className="text-sm font-semibold text-[#0B5ED7]">
+                      <Label htmlFor="fullName" className="text-sm font-semibold text-[#2563EB]">
                         Full Name <span className="text-[#F97316]">*</span>
                       </Label>
                       <Input
@@ -508,7 +508,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                       {errors.fullName && <FieldError msg={errors.fullName} />}
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="email" className="text-sm font-semibold text-[#0B5ED7]">
+                      <Label htmlFor="email" className="text-sm font-semibold text-[#2563EB]">
                         Email
                       </Label>
                       <Input
@@ -526,7 +526,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                      <Label htmlFor="phone" className="text-sm font-semibold text-[#0B5ED7]">
+                      <Label htmlFor="phone" className="text-sm font-semibold text-[#2563EB]">
                         Mobile (with country code) <span className="text-[#F97316]">*</span>
                       </Label>
                       <Input
@@ -540,7 +540,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                       {errors.phone && <FieldError msg={errors.phone} />}
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="altPhone" className="text-sm font-semibold text-[#0B5ED7]">
+                      <Label htmlFor="altPhone" className="text-sm font-semibold text-[#2563EB]">
                         Alternative Mobile
                       </Label>
                       <Input
@@ -556,13 +556,13 @@ export function LandingView({ onNavigate }: LandingViewProps) {
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                      <Label className="text-sm font-semibold text-[#0B5ED7]">Lead Source</Label>
+                      <Label className="text-sm font-semibold text-[#2563EB]">Lead Source</Label>
                       <Select
                         value={form.source}
                         onValueChange={(v) => update("source", v)}
                         disabled={submitting}
                       >
-                        <SelectTrigger className="h-11 w-full border-[#0B5ED7]/20 focus:ring-[#0B5ED7]/30">
+                        <SelectTrigger className="h-11 w-full border-[#2563EB]/20 focus:ring-[#2563EB]/30">
                           <SelectValue placeholder="How did you hear about us?" />
                         </SelectTrigger>
                         <SelectContent>
@@ -575,7 +575,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                       </Select>
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-sm font-semibold text-[#0B5ED7]">
+                      <Label className="text-sm font-semibold text-[#2563EB]">
                         Preferred Destination
                       </Label>
                       <Select
@@ -583,7 +583,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                         onValueChange={(v) => update("preferredCountry", v)}
                         disabled={submitting}
                       >
-                        <SelectTrigger className="h-11 w-full border-[#0B5ED7]/20 focus:ring-[#0B5ED7]/30">
+                        <SelectTrigger className="h-11 w-full border-[#2563EB]/20 focus:ring-[#2563EB]/30">
                           <SelectValue placeholder="Choose a country" />
                         </SelectTrigger>
                         <SelectContent>
@@ -598,7 +598,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="preferredCourse" className="text-sm font-semibold text-[#0B5ED7]">
+                    <Label htmlFor="preferredCourse" className="text-sm font-semibold text-[#2563EB]">
                       Preferred Course / Field
                     </Label>
                     <Input
@@ -612,7 +612,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="notes" className="text-sm font-semibold text-[#0B5ED7]">
+                    <Label htmlFor="notes" className="text-sm font-semibold text-[#2563EB]">
                       Notes (optional)
                     </Label>
                     <Textarea
@@ -620,20 +620,20 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                       value={form.notes}
                       onChange={(e) => update("notes", e.target.value)}
                       placeholder="Tell us about your study plans, intake preference, budget, scholarships..."
-                      className="min-h-[88px] border-[#0B5ED7]/20 focus:ring-[#0B5ED7]/30"
+                      className="min-h-[88px] border-[#2563EB]/20 focus:ring-[#2563EB]/30"
                       disabled={submitting}
                     />
                   </div>
 
                   <label
                     htmlFor="whatsappConfirm"
-                    className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-3 py-2.5"
+                    className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2.5"
                   >
                     <Checkbox
                       id="whatsappConfirm"
                       checked={form.whatsappConfirm}
                       onCheckedChange={(v) => update("whatsappConfirm", v === true)}
-                      className="border-[#0B5ED7]/40 data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]"
+                      className="border-[#2563EB]/40 data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
                       disabled={submitting}
                     />
                     <span className="text-sm text-foreground">
@@ -663,7 +663,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                   </Button>
 
                   <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-                    <Icon name="ShieldCheck" className="size-3.5 text-[#0B5ED7]" />
+                    <Icon name="ShieldCheck" className="size-3.5 text-[#2563EB]" />
                     Your data is private &amp; secure. RBAC protected. Audit-logged.
                   </p>
                 </form>
@@ -675,13 +675,13 @@ export function LandingView({ onNavigate }: LandingViewProps) {
 
       {/* ===== FOOTER CTA ===== */}
       <section>
-        <Card className="overflow-hidden rounded-3xl border-2 border-[#0B5ED7]/15 bg-white">
+        <Card className="overflow-hidden rounded-3xl border-2 border-[#2563EB]/15 bg-white">
           <CardContent className="relative overflow-hidden px-6 py-10 sm:px-10 sm:py-12">
             <div className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-[#F97316]/10" />
-            <div className="pointer-events-none absolute -bottom-12 -left-12 size-48 rounded-full bg-[#0B5ED7]/10" />
+            <div className="pointer-events-none absolute -bottom-12 -left-12 size-48 rounded-full bg-[#2563EB]/10" />
             <div className="relative flex flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left">
               <div>
-                <h2 className="text-2xl font-black text-[#0B5ED7] sm:text-3xl">Ready to begin?</h2>
+                <h2 className="text-2xl font-black text-[#2563EB] sm:text-3xl">Ready to begin?</h2>
                 <p className="mt-1.5 max-w-xl text-sm text-muted-foreground">
                   Submit your details once and unlock the full ALO Education experience —
                   documents, applications, mock tests, and AI interview practice, all in one place.
@@ -716,7 +716,7 @@ const SOURCE_ICON: Record<string, string> = {
 };
 
 function inputCls(err?: string) {
-  return `h-11 ${err ? "border-red-400 focus-visible:ring-red-200" : "border-[#0B5ED7]/20 focus:ring-[#0B5ED7]/30"}`;
+  return `h-11 ${err ? "border-red-400 focus-visible:ring-red-200" : "border-[#2563EB]/20 focus:ring-[#2563EB]/30"}`;
 }
 
 function FieldError({ msg }: { msg: string }) {
