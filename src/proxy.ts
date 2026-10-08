@@ -30,6 +30,8 @@ const PUBLIC_ROUTES = [
   "/team",
   "/faqs",
   "/book-consultation",
+  // One-time, token-gated student review submission (token is hashed server-side).
+  "/review",
   "/language-prep",
   "/visa-support",
   "/application-guide",
