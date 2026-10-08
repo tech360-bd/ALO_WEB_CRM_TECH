@@ -191,8 +191,8 @@ const DEFAULT_FAQS: FaqItem[] = [
     answer: 'The full process typically takes 3–6 months from initial consultation to enrollment. We recommend starting at least 6 months before your intended intake for the best university options.',
   },
   {
-    question: 'What is the visa success rate with ALO Education?',
-    answer: 'Our visa approval rate is above 95%. Our dedicated visa specialists thoroughly prepare each application, conduct mock interviews, and ensure all documentation meets requirements.',
+    question: 'How do you support the visa application?',
+    answer: 'Our visa specialists build a document checklist for your specific country, review every file before submission, and run mock credibility interviews. We do not publish an approval-rate figure, because visa decisions are made solely by the issuing government and no agency can guarantee an outcome. Current official requirements and fees are linked on each destination page.',
   },
   {
     question: 'Can I work while studying abroad?',
@@ -240,7 +240,7 @@ const DEFAULT_FAQS: FaqItem[] = [
   },
   {
     question: 'What makes ALO Education different from other agencies?',
-    answer: 'We combine 12+ years of expertise with cutting-edge AI tools, personalized counseling, and a 95%+ success rate. We are committed to transparency, no hidden fees, and genuine care for every student\'s future.',
+    answer: 'We combine AI-assisted tools with named human counselors, so course matching and drafting are fast but every recommendation is reviewed by a person. Fees and timelines are stated upfront with no hidden charges, and we do not quote success-rate figures we cannot substantiate. Our focus is the right course for your career, not the highest commission.',
   },
 ];
 
