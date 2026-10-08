@@ -257,8 +257,8 @@ export function SocialDashboard() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Disconnect failed");
       toast({
-        title: "Account disconnected",
-        description: `OAuth tokens revoked. ${acc.accountName} now requires re-configuration.`,
+        title: "Local access disabled",
+        description: `Local permissions were cleared for ${acc.accountName}. Provider-side token revocation was not performed or verified.`,
       });
       void fetchAll();
     } catch (e: any) {

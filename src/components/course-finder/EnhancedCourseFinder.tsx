@@ -132,7 +132,7 @@ export default function EnhancedCourseFinder() {
                         <p className="text-xs text-gray-600 flex items-center gap-1 mb-2"><Building2 className="w-3 h-3" />{c.universityName} • {c.city || ''}, {c.country}</p>
                         <div className="flex flex-wrap gap-2 text-[11px] text-gray-500">
                           <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{c.durationMonths ? `${Math.round(c.durationMonths/12*10)/10}y` : 'Check duration'}</span>
-                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{c.intakeMonth || c.intakeName || 'Sep, Jan'}</span>
+                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{c.intakeMonth || c.intakeName || 'Intake not recorded'}</span>
                           <span className="flex items-center gap-1"><Globe className="w-3 h-3" />{c.country}</span>
                         </div>
                         {c.scholarships && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] mt-2"><Award className="w-3 h-3 mr-1" />Scholarship Available</Badge>}

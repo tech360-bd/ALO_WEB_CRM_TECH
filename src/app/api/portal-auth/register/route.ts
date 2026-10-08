@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import bcrypt from 'bcryptjs';
+import { getRequestIp, issueEmailOtp } from '@/lib/auth/email-otp';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -69,12 +70,9 @@ export async function POST(request: Request) {
       where: { email: normalizedEmail },
     });
 
-    if (existingUser) {
+    if (existingUser || await db.user.findUnique({ where: { email: normalizedEmail }, select: { id: true } })) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "An account with this email already exists.",
-        },
+        { success: false, error: "An account with this email already exists." },
         { status: 409 }
       );
     }
@@ -85,7 +83,7 @@ export async function POST(request: Request) {
 
     if (portalType === "student") {
       userType = "STUDENT";
-      status = "active";
+      status = "pending_verification";
     } else if (portalType === "partner") {
       userType = "PARTNER";
       status = "pending";
@@ -329,19 +327,22 @@ export async function POST(request: Request) {
       });
     }
 
-    const message =
-      portalType === "partner"
-        ? "Account created successfully. Your account is pending admin approval."
-        : "Account created successfully";
+    const issued = await issueEmailOtp({ userId: user.id, email: normalizedEmail, ipAddress: getRequestIp(request) });
+    if (!issued.ok) {
+      return NextResponse.json({
+        success: false,
+        accountCreated: true,
+        error: issued.reason === 'rate_limited'
+          ? 'Verification email limit reached. Try again later.'
+          : 'Account created but verification email could not be delivered. Retry after email service is available.',
+      }, { status: issued.reason === 'rate_limited' ? 429 : 503 });
+    }
 
-    return NextResponse.json(
-      {
-        success: true,
-        user,
-        message,
-      },
-      { status: 201 }
-    );
+    const message = portalType === "partner"
+      ? "Verification email sent. Verify your address; partner access still requires separate admin approval."
+      : "Verification email sent. Verify your address before signing in.";
+
+    return NextResponse.json({ success: true, requireVerification: true, user, message }, { status: 201 });
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(

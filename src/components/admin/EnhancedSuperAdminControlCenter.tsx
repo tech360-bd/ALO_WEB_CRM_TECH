@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   ShieldCheck, Users, Building2, Globe, FileText, AlertTriangle, CheckCircle2, Lock, Search, Bot, Key, Award, GraduationCap, Briefcase, DollarSign, BookOpen, MessageSquare, ShieldAlert, Cpu, Database, Eye, UserCheck, LogOut, ArrowRight, RefreshCw
 } from 'lucide-react';
@@ -30,6 +31,7 @@ interface Metrics {
 }
 
 export default function EnhancedSuperAdminControlCenter() {
+  const router = useRouter();
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -191,7 +193,7 @@ export default function EnhancedSuperAdminControlCenter() {
 
   return (
     <div className="space-y-6 bg-[#F8FAFC] min-h-screen p-4 lg:p-6 text-[#0F172A] font-sans">
-      <DashboardCommunicationWidget role="SUPER_ADMIN" unreadCount={12} slaOverdueCount={3} onNavigateToInbox={() => window.location.href='/crm/communications/inbox'} />
+      <DashboardCommunicationWidget role="SUPER_ADMIN" unreadCount={null} slaOverdueCount={null} onNavigateToInbox={() => router.push('/crm/communications/inbox')} />
       {/* ACTING-AS BANNER — Secure, Visible, Time-Limited — Real Actor + Effective Identity + Reason + Expiry + Exit */}
       {actingAs && (
         <Card className="bg-amber-500 text-[#0F172A] border-amber-600 rounded-2xl shadow-md">

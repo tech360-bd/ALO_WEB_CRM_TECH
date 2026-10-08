@@ -14,6 +14,7 @@ export interface AuthContext {
   permissions: string[];
   sessionId: string;
   branch?: string;
+  partnerId?: string;
 
   // Actor info for audit logs (especially when actingAs is used)
   actorUserId: string;
@@ -62,9 +63,9 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     }
 
     const user = await db.user.findUnique({ where: { id: nextAuthUser.id } });
-    if (!user || user.status !== 'ACTIVE') {
+    if (!user || user.status !== 'ACTIVE' || !user.emailVerified) {
       return NextResponse.json(
-        { success: false, error: 'Account is not active.' },
+        { success: false, error: 'Account is not active or email is not verified.' },
         { status: 403 }
       );
     }
@@ -78,6 +79,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       roles: [role, role.toLowerCase()],
       permissions: JSON.parse(user.permissions || '[]'),
       sessionId: `nextauth:${user.id}`,
+      partnerId: user.partnerId || undefined,
       actorUserId: user.id,
       actorEmail: user.email,
       actorName: user.name || user.email,
@@ -103,6 +105,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
               },
             },
           },
+          partnerProfile: { select: { id: true, partnerId: true, approvalStatus: true } },
         },
       },
     },
@@ -131,16 +134,21 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     );
   }
 
-  // Check if user is active
-  if (session.user.status !== 'active') {
+  // Every database-backed session is revalidated against current account and
+  // email-verification state; revocation/status changes take effect immediately.
+  if (session.user.status.toLowerCase() !== 'active' || !session.user.emailVerified) {
     return NextResponse.json(
-      { success: false, error: 'Account is not active.', error_code: `account_${session.user.status}` },
+      { success: false, error: 'Account is not active or email is not verified.', error_code: `account_${session.user.status}` },
       { status: 403 }
     );
+  }
+  if (session.user.userType === 'PARTNER' && !['approved', 'active'].includes((session.user.partnerProfile?.approvalStatus || '').toLowerCase())) {
+    return NextResponse.json({ success: false, error: 'Partner account approval is required.' }, { status: 403 });
   }
 
   // Base user (Actor) info
   let actingUserId = session.user.id;
+  let actingPartnerId = session.user.partnerProfile?.partnerId;
   let actingEmail = session.user.email;
   let actingName = session.user.name;
   let actingUserType = session.user.userType;
@@ -168,6 +176,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       const actingAsUser = await db.portalUser.findUnique({
         where: { id: actingAsUserId },
         include: {
+          partnerProfile: { select: { id: true, partnerId: true, approvalStatus: true } },
           roles: {
             include: {
               role: {
@@ -184,9 +193,10 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
         },
       });
 
-      if (!actingAsUser || actingAsUser.status !== 'active') {
+      if (!actingAsUser || actingAsUser.status.toLowerCase() !== 'active' || !actingAsUser.emailVerified ||
+        (actingAsUser.userType === 'PARTNER' && !['approved', 'active'].includes((actingAsUser.partnerProfile?.approvalStatus || '').toLowerCase()))) {
         return NextResponse.json(
-          { success: false, error: 'Acting-as target not found or inactive' },
+          { success: false, error: 'Acting-as target not found, inactive, or not approved' },
           { status: 404 }
         ) as any;
       }
@@ -210,6 +220,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       actingEmail = actingAsUser.email;
       actingName = actingAsUser.name;
       actingUserType = actingAsUser.userType;
+      actingPartnerId = actingAsUser.partnerProfile?.partnerId;
       roles = actingAsUser.roles.map(ur => ur.role.name);
       permissions = actingAsUser.roles.flatMap(ur =>
         ur.role.permissions
@@ -227,6 +238,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     roles,
     permissions,
     sessionId: session.id,
+    partnerId: actingPartnerId,
     actorUserId: session.user.id,
     actorEmail: session.user.email,
     actorName: session.user.name,
@@ -388,13 +400,15 @@ export async function getOptionalAuth(request: Request): Promise<AuthContext | n
                 },
               },
             },
+            partnerProfile: { select: { id: true, partnerId: true, approvalStatus: true } },
           },
         },
       },
     });
-    if (!session || session.revokedAt || new Date() > session.expiresAt || session.user.status !== 'active') {
+    if (!session || session.revokedAt || new Date() > session.expiresAt || session.user.status.toLowerCase() !== 'active' || !session.user.emailVerified) {
       return null;
     }
+    if (session.user.userType === 'PARTNER' && !['approved', 'active'].includes((session.user.partnerProfile?.approvalStatus || '').toLowerCase())) return null;
     return {
       userId: session.user.id,
       email: session.user.email,
@@ -405,6 +419,7 @@ export async function getOptionalAuth(request: Request): Promise<AuthContext | n
         ur.role.permissions.filter((rp) => rp.granted).map((rp) => rp.permission.id)
       ),
       sessionId: session.id,
+      partnerId: session.user.partnerProfile?.partnerId,
       actorUserId: session.user.id,
       actorEmail: session.user.email,
       actorName: session.user.name || '',

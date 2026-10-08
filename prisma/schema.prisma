@@ -24,8 +24,9 @@ model User {
   marketingCreatedLeads      MarketingLead[]       @relation("LeadCreator")
   marketingReviewedApprovals MarketingApproval[]   @relation("ApprovalReviewer")
   phone                      String?
-  passwordHash               String                @default("")
-  status                     String                @default("ACTIVE")
+  passwordHash   String                @default("")
+  emailVerified  Boolean               @default(false)
+  status         String                @default("ACTIVE")
   mustChangePwd              Boolean               @default(false)
   lastLoginAt                DateTime?
   partnerId                  String?
@@ -711,6 +712,10 @@ model StudentDocument {
   category          String
   fileName          String    @default("")
   fileUrl           String    @default("")
+  storagePath       String?
+  mimeType          String?
+  fileHash          String?
+  fileSize          Int       @default(0)
   status            String    @default("not_uploaded")
   version           Int       @default(1)
   previousVersionId String    @default("")
@@ -760,7 +765,7 @@ model Appointment {
   studentId   String
   title       String
   type        String   @default("counseling")
-  status      String   @default("scheduled")
+  status      String   @default("REQUESTED")
   scheduledAt DateTime
   meetLink    String   @default("")
   notes       String   @default("")
@@ -2896,6 +2901,9 @@ model LoginAttempt {
   createdAt     DateTime @default(now())
 
   user PortalUser? @relation(fields: [userId], references: [id])
+
+  @@index([ipAddress, success, createdAt])
+  @@index([email, success, createdAt])
 }
 
 model OtpCode {
@@ -2903,6 +2911,7 @@ model OtpCode {
   userId     String?
   phone      String    @default("")
   email      String    @default("")
+  ipAddress  String    @default("")
   code       String    @default("")
   codeHash   String    @default("")
   used       Boolean   @default(false)
@@ -2917,6 +2926,8 @@ model OtpCode {
   @@index([email])
   @@index([phone])
   @@index([code])
+  @@index([ipAddress, createdAt])
+  @@index([email, purpose, createdAt])
 }
 
 model PasswordResetToken {
@@ -3156,6 +3167,9 @@ model PortalStudentDocument {
   name             String
   category         String   @default("other")
   fileName         String   @default("")
+  storagePath      String?
+  mimeType         String?
+  fileHash         String?
   fileSize         Int      @default(0)
   status           String   @default("pending")
   rejectionReason  String   @default("")
@@ -8158,6 +8172,8 @@ model Document {
   fileSize        Int?
   // Security: no public URL. Stored path only, accessed via private download route with permission check.
   storagePath     String?
+  mimeType        String?
+  fileHash        String?
   status          String    @default("PENDING") // PENDING, UPLOADED, UNDER_REVIEW, APPROVED, REJECTED
   rejectionReason String?
   reviewedById    String?

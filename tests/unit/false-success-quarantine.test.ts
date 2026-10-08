@@ -12,7 +12,7 @@ beforeEach(() => {
   vi.resetAllMocks(); vi.stubEnv('NODE_ENV', 'production');
   vi.stubEnv('ALO_CRON_SECRET', 'isolated-unit-test-cron-secret');
   getServerSession.mockResolvedValue({ user: { id: 'staff-1' } });
-  db.user.findUnique.mockResolvedValue({ id: 'staff-1', role: 'SUPER_ADMIN', status: 'ACTIVE', permissions: '[]' });
+  db.user.findUnique.mockResolvedValue({ id: 'staff-1', role: 'SUPER_ADMIN', status: 'ACTIVE', emailVerified: true, permissions: '[]' });
   db.crmCourse.findMany.mockResolvedValue([{ universityId: 'unit-university', courseId: 'unit-course', courseTitle: 'Unit course', officialUrl: 'https://example.com', university: { country: 'UK' } }]);
   db.fileMetadata.create.mockRejectedValue(new Error('offline'));
 });

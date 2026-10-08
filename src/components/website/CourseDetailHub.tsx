@@ -70,7 +70,7 @@ export default function CourseDetailHub({ slug }: Props) {
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">App Fee</p><p className="font-bold">{course.appFeeAmount ? `${course.appFeeAmount}` : 'Check official'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Duration</p><p className="font-bold">{course.durationMonths ? `${course.durationMonths} months` : 'Check'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">IELTS</p><p className="font-bold text-[#0B5ED7]">{req.ieltsOverall ? `${req.ieltsOverall} (min ${req.ieltsMinBand || '6.0'})` : 'Check course'}</p></div>
-            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Intakes</p><p className="font-bold">{intakes.length > 0 ? intakes.map((i:any)=> `${i.intakeMonth} ${i.intakeYear}`).join(', ') : 'Sep, Jan'}</p></div>
+            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Intakes</p><p className="font-bold">{intakes.length > 0 ? intakes.map((i:any)=> `${i.intakeMonth} ${i.intakeYear}`).join(', ') : 'No intake records'}</p></div>
           </div>
         </div>
 

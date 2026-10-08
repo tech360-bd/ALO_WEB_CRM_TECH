@@ -64,6 +64,9 @@ export default function EmployeeOmnichannelInbox() {
   const [activeChannel, setActiveChannel] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [messageInput, setMessageInput] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedApplicationId, setSelectedApplicationId] = useState('');
+  const [sendError, setSendError] = useState('');
   const [isInternalNote, setIsInternalNote] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -73,6 +76,7 @@ export default function EmployeeOmnichannelInbox() {
   const [officeOpen, setOfficeOpen] = useState<boolean | null>(null);
   const [creatingLead, setCreatingLead] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ── Data fetchers ──────────────────────────────────────────
   const fetchConversations = useCallback(async () => {
@@ -108,12 +112,23 @@ export default function EmployeeOmnichannelInbox() {
   const selectConversation = async (conv: any) => {
     setSelectedConv(conv);
     setMessages([]);
+    setSelectedFile(null);
+    setSelectedApplicationId('');
+    setSendError('');
     setShowAi(false);
     setAiSuggestions([]);
     try {
       const res = await fetch(`/api/crm/ucc/conversations?id=${conv.id}`);
       const data = await res.json();
-      if (data.success && data.messages) setMessages(data.messages);
+      if (data.success && data.messages) {
+        setMessages(data.messages);
+        setSelectedApplicationId((current) => data.applications?.some((application: any) => application.id === current)
+          ? current
+          : data.applications?.[0]?.id || '');
+        setSelectedConv((current: any) => current?.id === conv.id
+          ? { ...current, ...data.conversation, applications: data.applications || [] }
+          : current);
+      }
     } catch {}
 
     // Fetch AI suggestions
@@ -134,21 +149,51 @@ export default function EmployeeOmnichannelInbox() {
   };
 
   const sendMessage = async () => {
-    if (!selectedConv || !messageInput.trim() || sending) return;
+    if (!selectedConv || (!messageInput.trim() && !selectedFile) || sending) return;
     setSending(true);
+    setSendError('');
     try {
+      let attachmentId: string | undefined;
+      if (selectedFile) {
+        if (isInternalNote) throw new Error('Internal notes cannot include attachments.');
+        if (selectedConv.channel !== 'whatsapp') throw new Error('Private document sending is currently available only on WhatsApp.');
+        const form = new FormData();
+        form.append('file', selectedFile);
+        form.append('conversationId', selectedConv.id);
+        if (selectedConv.studentId) form.append('studentId', selectedConv.studentId);
+        if (selectedApplicationId) form.append('applicationId', selectedApplicationId);
+        const uploadResponse = await fetch('/api/crm/ucc/documents/upload', { method: 'POST', body: form });
+        const uploadData = await uploadResponse.json().catch(() => ({}));
+        if (!uploadResponse.ok || !uploadData.success || !uploadData.attachment?.id) {
+          throw new Error(uploadData.error || 'Private document upload failed.');
+        }
+        attachmentId = uploadData.attachment.id;
+      }
+
       const res = await fetch(`/api/crm/ucc/conversations/${selectedConv.id}/reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: messageInput, isInternalNote }),
+        body: JSON.stringify({
+          content: messageInput,
+          isInternalNote,
+          ...(attachmentId ? { attachment: { attachmentId, caption: messageInput } } : {}),
+        }),
       });
-      const data = await res.json();
-      if (data.success) {
-        setMessages((prev) => [...prev, data.message]);
-        setMessageInput('');
-      }
-    } catch {}
-    setSending(false);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) throw new Error(data.error || 'Reply could not be sent.');
+      setMessageInput('');
+      setSelectedFile(null);
+      const [detailResponse] = await Promise.all([
+        fetch(`/api/crm/ucc/conversations?id=${encodeURIComponent(selectedConv.id)}`),
+        fetchConversations(),
+      ]);
+      const detail = await detailResponse.json().catch(() => ({}));
+      if (detail.success) setMessages(detail.messages || []);
+    } catch (error: any) {
+      setSendError(error?.message || 'Reply could not be sent.');
+    } finally {
+      setSending(false);
+    }
   };
 
   const createLead = async () => {
@@ -426,6 +471,16 @@ export default function EmployeeOmnichannelInbox() {
                             : 'bg-white border border-[#E2E8F0] text-[#0F172A] rounded-bl-none shadow-sm'
                         }`}>
                           {msg.content}
+                          {msg.attachments?.map((attachment: any) => (
+                            <a
+                              key={attachment.id}
+                              href={`/api/crm/ucc/documents/${encodeURIComponent(attachment.id)}/download`}
+                              className="mt-2 flex items-center gap-2 rounded-lg bg-black/10 px-2 py-1.5 underline underline-offset-2"
+                            >
+                              <Paperclip className="w-3 h-3" />
+                              <span className="truncate">{attachment.fileName}</span>
+                            </a>
+                          ))}
                         </div>
                         <div className={`text-[9px] text-slate-400 ${msg.direction === 'outbound' ? 'text-right' : 'text-left'}`}>
                           {msg.senderName} • {new Date(msg.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -465,6 +520,38 @@ export default function EmployeeOmnichannelInbox() {
 
             {/* Reply Box */}
             <div className="p-4 bg-white border-t border-[#E2E8F0]">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                className="hidden"
+                onChange={(event) => {
+                  setSelectedFile(event.currentTarget.files?.[0] || null);
+                  event.currentTarget.value = '';
+                }}
+              />
+              {selectedConv.studentId && selectedConv.applications?.length > 0 && (
+                <select
+                  aria-label="Link the document to an application"
+                  value={selectedApplicationId}
+                  onChange={(event) => setSelectedApplicationId(event.target.value)}
+                  className="mb-2 max-w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[10px] text-slate-700"
+                >
+                  <option value="">Choose related application</option>
+                  {selectedConv.applications.map((application: any) => (
+                    <option key={application.id} value={application.id}>
+                      {application.isB2bConfidential ? '[B2B confidential] ' : ''}{application.applicationCode || application.id} · {application.universityName} · {application.courseName}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {selectedFile && (
+                <div className="mb-2 flex items-center justify-between gap-2 text-[10px] text-slate-600">
+                  <span className="truncate">Private attachment: {selectedFile.name}</span>
+                  <button type="button" onClick={() => setSelectedFile(null)} className="text-rose-600 hover:underline">Remove</button>
+                </div>
+              )}
+              {sendError && <p role="alert" className="mb-2 text-[10px] text-rose-600">{sendError}</p>}
               <div className="flex items-center gap-2 mb-2">
                 <button
                   onClick={() => setIsInternalNote(false)}
@@ -475,7 +562,7 @@ export default function EmployeeOmnichannelInbox() {
                   Reply to Customer
                 </button>
                 <button
-                  onClick={() => setIsInternalNote(true)}
+                  onClick={() => { setIsInternalNote(true); setSelectedFile(null); }}
                   className={`text-[10px] font-semibold px-3 py-1 rounded-full transition flex items-center gap-1 ${
                     isInternalNote ? 'bg-amber-500 text-white' : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500'
                   }`}
@@ -489,6 +576,16 @@ export default function EmployeeOmnichannelInbox() {
                 )}
               </div>
               <div className="flex gap-2">
+                <button
+                  type="button"
+                  aria-label="Attach private document"
+                  disabled={isInternalNote || selectedConv.channel !== 'whatsapp' || sending}
+                  title="Upload a private PDF/JPEG/PNG and send it via WhatsApp"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="h-10 w-10 self-end flex items-center justify-center rounded-xl border border-[#E2E8F0] text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+                >
+                  <Paperclip className="w-4 h-4" />
+                </button>
                 <textarea
                   rows={2}
                   placeholder={isInternalNote ? 'Add an internal staff note...' : 'Type your reply to the customer...'}
@@ -503,7 +600,7 @@ export default function EmployeeOmnichannelInbox() {
                 />
                 <button
                   onClick={sendMessage}
-                  disabled={!messageInput.trim() || sending}
+                  disabled={(!messageInput.trim() && !selectedFile) || sending}
                   className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[#0B5ED7] hover:bg-blue-700 disabled:opacity-40 text-white transition shadow-sm"
                 >
                   {sending ? (
@@ -598,7 +695,12 @@ export default function EmployeeOmnichannelInbox() {
 
           {/* Actions */}
           <div className="p-4 space-y-2 border-t border-[#E2E8F0]">
-            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button
+              disabled={selectedConv.channel !== 'whatsapp' || isInternalNote || sending}
+              title={selectedConv.channel === 'whatsapp' ? 'Choose a private PDF/JPEG/PNG to send with your reply' : 'Document sending is currently available only on WhatsApp'}
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition disabled:opacity-40"
+            >
               <Paperclip className="w-3 h-3" /> Upload Document
             </button>
             <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">

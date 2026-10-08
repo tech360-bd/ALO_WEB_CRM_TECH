@@ -1,125 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
-import { getQuota } from '@/lib/access-check-engine';
+import { authenticateRequest } from '@/lib/auth-middleware';
+import type { AuthContext } from '@/lib/auth-middleware';
 
-// GET: List users in partner tenant
+async function authenticatedPartner(req: NextRequest): Promise<AuthContext | NextResponse> {
+  const result = await authenticateRequest(req);
+  if (result instanceof NextResponse) return result;
+  if (result.userType !== 'PARTNER' || !result.partnerId) {
+    return NextResponse.json({ success: false, error: 'Approved partner identity is required.' }, { status: 403 });
+  }
+  return result;
+}
+
 export async function GET(req: NextRequest) {
   try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-
-    const partnerId = (auth as any).partnerId || (auth as any).branch;
-    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
+    const auth = await authenticatedPartner(req);
+    if (auth instanceof NextResponse) return auth;
+    const partner = await db.partnerProfile.findFirst({
+      where: { userId: auth.userId, partnerId: auth.partnerId, approvalStatus: { in: ['approved', 'active'] } },
+      select: { id: true, partnerId: true },
+    });
+    if (!partner) return NextResponse.json({ success: false, error: 'Partner tenant not found.' }, { status: 403 });
 
     const users = await db.portalUser.findMany({
-      where: {
-        partnerProfile: { partnerId },
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        userType: true,
-        status: true,
-        createdAt: true,
-      },
+      where: { partnerProfile: { partnerId: partner.partnerId } },
+      select: { id: true, name: true, email: true, userType: true, status: true, createdAt: true },
       orderBy: { createdAt: 'desc' },
     });
-
-    const seatLimit = await getQuota('PARTNER', partnerId, 'user_seats');
-
-    return NextResponse.json({
-      success: true,
-      partnerId,
-      seatLimit,
-      currentCount: users.length,
-      users,
-    });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to fetch partner users', details: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, partnerId: partner.partnerId, currentCount: users.length, users });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Partner users are temporarily unavailable.' }, { status: 503 });
   }
 }
 
-// POST: Create partner employee within seat limit
 export async function POST(req: NextRequest) {
-  try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-
-    const partnerId = (auth as any).partnerId || (auth as any).branch;
-    if (!partnerId) return NextResponse.json({ success: false, error: 'Partner identity required' }, { status: 403 });
-    const body = await req.json();
-    const { name, email } = body;
-
-    if (!name || !email) {
-      return NextResponse.json({ error: 'Name and email are required.' }, { status: 400 });
-    }
-
-    // 1. Enforce Partner Max User Seat Limit (Default = 3)
-    const seatLimit = await getQuota('PARTNER', partnerId, 'user_seats');
-    const currentUsers = await db.portalUser.count({
-      where: { partnerProfile: { partnerId } },
-    });
-
-    if (currentUsers >= seatLimit) {
-      return NextResponse.json({
-        error: 'Your current partner user limit has been reached. Please request additional seats from ALO Education.',
-        currentCount: currentUsers,
-        seatLimit,
-      }, { status: 403 });
-    }
-
-    // 2. Check for duplicate email
-    const existing = await db.portalUser.findUnique({ where: { email } });
-    if (existing) {
-      return NextResponse.json({ error: 'A user with this email already exists.' }, { status: 409 });
-    }
-
-    // 3. Create portal user and partner profile
-    const newUser = await db.portalUser.create({
-      data: {
-        name,
-        email,
-        userType: 'PARTNER',
-        status: 'active',
-        passwordHash: '$2b$10$temporaryhashforpartnercreateduser',
-        partnerProfile: {
-          create: {
-            partnerId,
-            companyName: 'Partner Branch',
-            contactPerson: name,
-            approvalStatus: 'approved',
-          },
-        },
-      },
-    });
-
-    // 4. Create Audit Log
-    await db.crmAuditLog.create({
-      data: {
-        actorUserId: auth.userId,
-        actorRole: 'PARTNER_SUPER_ADMIN',
-        action: 'PARTNER_USER_CREATED',
-        targetCollection: 'PortalUser',
-        targetId: newUser.id,
-        afterData: JSON.stringify({ name, email, userType: 'PARTNER', partnerId }),
-      },
-    }).catch(() => null);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Partner employee user created successfully.',
-      user: { id: newUser.id, name: newUser.name, email: newUser.email },
-      seatUsage: {
-        current: currentUsers + 1,
-        limit: seatLimit,
-        available: Math.max(0, seatLimit - (currentUsers + 1)),
-      },
-    });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to create partner user', details: error.message }, { status: 500 });
-  }
+  const auth = await authenticatedPartner(req);
+  if (auth instanceof NextResponse) return auth;
+  // PartnerProfile.partnerId is currently a one-user/one-profile relation and
+  // no secure membership/invitation model exists. Do not create shared-tenant
+  // users with a fabricated password or duplicate tenant ID.
+  return NextResponse.json({
+    success: false,
+    error: 'Additional partner seats are not supported until tenant membership and secure invitations are configured.',
+  }, { status: 501 });
 }

@@ -104,6 +104,7 @@ type EmployeeDocument = {
 
 type Employee = {
   id: string;
+  userId?: string;
   employeeCode: string;
   fullName: string;
   companyEmail: string;
@@ -169,8 +170,6 @@ const PROFILE_STATUS_OPTIONS = [
 ];
 
 const ROLE_OPTIONS = [
-  { value: "SUPER_ADMIN", label: "Super Admin" },
-  { value: "ADMIN", label: "Admin" },
   { value: "HR_MANAGER", label: "HR Manager" },
   { value: "FINANCE", label: "Finance" },
   { value: "COUNSELOR", label: "Counselor" },
@@ -178,7 +177,9 @@ const ROLE_OPTIONS = [
   { value: "VISA_OFFICER", label: "Visa Officer" },
   { value: "MARKETING_MANAGER", label: "Marketing Manager" },
   { value: "MARKETING", label: "Marketing" },
-  { value: "PARTNER", label: "Partner" },
+  { value: "FRONT_DESK", label: "Front Desk" },
+  { value: "BRANCH_MANAGER", label: "Branch Manager" },
+  { value: "SUPPORT_STAFF", label: "Support Staff" },
   { value: "STAFF", label: "Staff" },
 ];
 
@@ -256,11 +257,11 @@ export function EmployeeManagement() {
   const [createOpen, setCreateOpen] = React.useState(false);
   const [creating, setCreating] = React.useState(false);
   const [createResult, setCreateResult] = React.useState<{
-    activationLink: string;
     message: string;
-    emailPreview: { subject: string; body: string };
+    emailSent: boolean;
     employeeCode: string;
     companyEmail: string;
+    userId: string;
   } | null>(null);
 
   // ----- Load ------------------------------------------------------------
@@ -363,10 +364,10 @@ export function EmployeeManagement() {
 
   const handleResendActivation = async (emp: Employee) => {
     try {
-      const res = await fetch(`/api/employees/activate`, {
-        method: "PATCH",
+      const res = await fetch(`/api/admin/employees/resend-activation`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ employeeId: emp.id, requestedById: SUPER_ADMIN_ID }),
+        body: JSON.stringify({ employeeId: emp.userId }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
@@ -381,7 +382,7 @@ export function EmployeeManagement() {
   };
 
   const handleToggleStatus = async (emp: Employee) => {
-    const next = emp.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
+    const next = emp.status.toLowerCase() === "active" ? "suspended" : "active";
     try {
       const res = await fetch(`/api/employees/${emp.id}`, {
         method: "PATCH",
@@ -390,8 +391,8 @@ export function EmployeeManagement() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       toast({
-        title: next === "SUSPENDED" ? "Employee suspended" : "Employee reactivated",
-        description: `${emp.fullName} (${emp.employeeCode}) is now ${next.toLowerCase()}.`,
+        title: next === "suspended" ? "Employee suspended" : "Employee reactivated",
+        description: `${emp.fullName} (${emp.employeeCode}) is now ${next}.`,
       });
       load();
     } catch (e: unknown) {
@@ -422,15 +423,16 @@ export function EmployeeManagement() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
       setCreateResult({
-        activationLink: json.activationLink,
+        userId: json.employee.id,
         message: json.message,
-        emailPreview: json.emailPreview,
+        emailSent: Boolean(json.emailSent),
         employeeCode: json.employee.employeeCode,
         companyEmail: json.employee.companyEmail,
       });
       toast({
-        title: "Employee account created",
-        description: `${json.employee.employeeCode} — activation email sent to ${json.employee.companyEmail}.`,
+        title: json.emailSent ? "Employee account created" : "Employee created; email not sent",
+        description: json.message,
+        variant: json.emailSent ? undefined : "destructive",
       });
       load();
     } catch (e: unknown) {
@@ -439,13 +441,6 @@ export function EmployeeManagement() {
     } finally {
       setCreating(false);
     }
-  };
-
-  const copyActivationLink = (link: string) => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(link).catch(() => {});
-    }
-    toast({ title: "Link copied", description: "Activation link copied to clipboard." });
   };
 
   // ----- Render ----------------------------------------------------------
@@ -769,7 +764,7 @@ export function EmployeeManagement() {
               Create Employee Account
             </DialogTitle>
             <DialogDescription>
-              An activation email will be sent. The employee must set a password within 7 days.
+              An activation email will be attempted. The employee must set a password within 48 hours.
             </DialogDescription>
           </DialogHeader>
 
@@ -777,13 +772,11 @@ export function EmployeeManagement() {
             <CreateEmployeeSuccess
               result={createResult}
               onClose={() => { setCreateOpen(false); setCreateResult(null); }}
-              onResend={() =>
-                toast({
-                  title: "Activation email queued",
-                  description: `A new link will be sent to ${createResult.companyEmail}.`,
-                })
-              }
-              onCopy={() => copyActivationLink(createResult.activationLink)}
+              onResend={() => handleResendActivation({
+                id: '', userId: createResult.userId, employeeCode: createResult.employeeCode,
+                fullName: '', companyEmail: createResult.companyEmail, designation: '',
+                joiningDate: '', employmentType: '', profileStatus: '', status: '', role: '',
+              })}
             />
           ) : (
             <form action={handleCreateEmployee} className="flex max-h-[60vh] flex-col overflow-hidden">
@@ -1288,18 +1281,15 @@ function CreateEmployeeSuccess({
   result,
   onClose,
   onResend,
-  onCopy,
 }: {
   result: {
-    activationLink: string;
     message: string;
-    emailPreview: { subject: string; body: string };
+    emailSent: boolean;
     employeeCode: string;
     companyEmail: string;
   };
   onClose: () => void;
   onResend: () => void;
-  onCopy: () => void;
 }) {
   return (
     <div className="flex max-h-[70vh] flex-col overflow-hidden">
@@ -1318,32 +1308,10 @@ function CreateEmployeeSuccess({
           </div>
         </div>
 
-        <div className="mt-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Activation Link
-          </p>
-          <div className="mt-1.5 flex items-center gap-2 rounded-lg border-2 border-[#0B5ED7]/20 bg-[#e8f0fb]/40 p-2.5">
-            <code className="flex-1 truncate font-mono text-xs text-[#0B5ED7]">{result.activationLink}</code>
-            <Button size="sm" className="h-8 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90" onClick={onCopy}>
-              <Icon name="Copy" className="size-3.5" />
-              Copy
-            </Button>
-          </div>
-          <p className="mt-1 text-[10px] text-muted-foreground">
-            Link expires in 7 days. After that, HR must resend.
-          </p>
-        </div>
-
-        <div className="mt-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Email Preview
-          </p>
-          <div className="mt-1.5 rounded-lg border border-border/60 bg-muted/30 p-3">
-            <p className="text-xs font-semibold text-foreground">{result.emailPreview.subject}</p>
-            <pre className="mt-2 whitespace-pre-wrap text-[11px] leading-relaxed text-foreground/80">
-{result.emailPreview.body}
-            </pre>
-          </div>
+        <div className={`mt-4 rounded-lg border p-3 text-sm ${result.emailSent ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
+          {result.emailSent
+            ? 'The activation email was accepted by SMTP. This does not confirm inbox delivery.'
+            : 'SMTP did not accept the activation email. Correct the email configuration and use the authenticated resend action.'}
         </div>
 
         <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5 text-xs text-foreground/80">

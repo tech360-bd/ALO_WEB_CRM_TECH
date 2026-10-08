@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,7 @@ import AICommandingCenter from './AICommandingCenter';
 import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 export default function MasterSuperAdminDashboard() {
+  const router = useRouter();
   const { user, token, setView } = usePortalStore();
 
   // Acting-As State
@@ -99,7 +101,7 @@ export default function MasterSuperAdminDashboard() {
 
   return (
     <div className="space-y-6 bg-slate-50/50 min-h-screen p-4 lg:p-6 text-slate-900 font-sans">
-      <DashboardCommunicationWidget role="SUPER_ADMIN" unreadCount={18} slaOverdueCount={4} onNavigateToInbox={() => window.location.href='/crm/communications/inbox'} />
+      <DashboardCommunicationWidget role="SUPER_ADMIN" unreadCount={null} slaOverdueCount={null} onNavigateToInbox={() => router.push('/crm/communications/inbox')} />
       {/* ACTING-AS BANNER */}
       {actingAsRole && (
         <div className="bg-amber-500 text-slate-950 p-3.5 rounded-xl shadow-md flex items-center justify-between font-bold text-xs border border-amber-600">

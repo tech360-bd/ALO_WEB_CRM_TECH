@@ -121,7 +121,7 @@ export default function RegisterPage() {
       portalType: selectedPortal,
     });
 
-    if (success && !isStudent) {
+    if (success && !isStudent && usePortalStore.getState().currentView !== 'verify-otp') {
       setRegistrationSuccess(true);
     }
   };

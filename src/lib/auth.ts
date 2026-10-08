@@ -21,17 +21,29 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+      async authorize(credentials, request) {
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const email = credentials.email.toLowerCase().trim();
+        const headers = request?.headers || {};
+        const forwarded = headers['x-forwarded-for'];
+        const ipAddress = String(forwarded || headers['x-real-ip'] || 'unknown').split(',')[0].trim().slice(0, 191) || 'unknown';
+        const userAgent = String(headers['user-agent'] || '').slice(0, 512);
+        const cutoff = new Date(Date.now() - 15 * 60 * 1000);
+        const failures = await db.loginAttempt.count({
+          where: { success: false, createdAt: { gte: cutoff }, OR: [{ email }, ...(ipAddress === 'unknown' ? [] : [{ ipAddress }])] },
+        });
+        if (failures >= 5) return null;
+
+        const user = await db.user.findUnique({ where: { email } });
+        if (!user) {
+          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: 'user_not_found' } });
           return null;
         }
-
-        const user = await db.user.findUnique({
-          where: { email: credentials.email.toLowerCase() },
-        });
-
-        if (!user) return null;
-        if (user.status !== "ACTIVE") return null;
+        if (user.status !== "ACTIVE" || !user.emailVerified) {
+          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: user.status !== 'ACTIVE' ? 'account_inactive' : 'email_not_verified' } });
+          return null;
+        }
 
         // Passwords must always be verified against a real bcrypt hash. Legacy
         // placeholder passwords are rejected rather than accepted globally.
@@ -42,7 +54,12 @@ export const authOptions: NextAuthOptions = {
           isValid = false;
         }
 
-        if (!isValid) return null;
+        if (!isValid) {
+          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: 'wrong_password' } });
+          return null;
+        }
+
+        await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: true } });
 
         // Update last login
         await db.user.update({

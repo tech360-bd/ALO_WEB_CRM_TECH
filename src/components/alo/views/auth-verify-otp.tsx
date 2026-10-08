@@ -29,7 +29,8 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
   const [resending, setResending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [verified, setVerified] = React.useState(false);
-  const [devOtp, setDevOtp] = React.useState<string | null>(null);
+  const [approvalRequired, setApprovalRequired] = React.useState(false);
+  const [portalVerification, setPortalVerification] = React.useState(false);
   const [countdown, setCountdown] = React.useState(RESEND_COUNTDOWN);
 
   // AuthRegister stashes the email on `window.__aloOtpEmail` before calling
@@ -38,11 +39,17 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
   // initialEmail — so a side-channel is required to pass context.)
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      const ctx = (window as any).__aloOtpEmail;
-      if (typeof ctx === "string" && ctx) {
-        setEmail(ctx);
-        // Clear after consuming so it doesn't leak across mounts
-        (window as any).__aloOtpEmail = undefined;
+      const portalEmail = localStorage.getItem('portal_otp_email');
+      const portalType = localStorage.getItem('portal_otp_type');
+      if (portalEmail && portalType) {
+        setEmail(portalEmail);
+        setPortalVerification(true);
+      } else {
+        const ctx = (window as any).__aloOtpEmail;
+        if (typeof ctx === "string" && ctx) {
+          setEmail(ctx);
+          (window as any).__aloOtpEmail = undefined;
+        }
       }
     }
   }, []);
@@ -77,10 +84,11 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/verify-otp", {
+      const endpoint = portalVerification ? "/api/portal-auth/verify-otp" : "/api/auth/verify-otp";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), otp }),
+        body: JSON.stringify({ email: email.trim().toLowerCase(), otp, type: "email_verification" }),
       });
       const data = await res.json();
 
@@ -90,10 +98,17 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
         return;
       }
 
+      setApprovalRequired(Boolean(data.approvalRequired));
       setVerified(true);
+      if (portalVerification) {
+        localStorage.removeItem('portal_otp_email');
+        localStorage.removeItem('portal_otp_type');
+      }
       toast({
         title: "Email verified!",
-        description: "Your account is now active. You can sign in.",
+        description: data.approvalRequired
+          ? "Your email is verified. Partner access still requires staff approval."
+          : "Your email is verified. You can now sign in.",
       });
       setLoading(false);
     } catch {
@@ -113,7 +128,8 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
 
     setResending(true);
     try {
-      const res = await fetch("/api/auth/verify-otp", {
+      const endpoint = portalVerification ? "/api/portal-auth/verify-otp" : "/api/auth/verify-otp";
+      const res = await fetch(endpoint, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
@@ -130,13 +146,6 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
         title: "OTP resent",
         description: data?.message || "A new 6-digit code has been sent to your email.",
       });
-      if (data?.otp) {
-        setDevOtp(data.otp);
-        toast({
-          title: "Dev mode",
-          description: `Your new OTP is ${data.otp}`,
-        });
-      }
       setOtp("");
       setCountdown(RESEND_COUNTDOWN);
       setResending(false);
@@ -177,10 +186,11 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                   <Icon name="CheckCircle2" className="size-9 text-emerald-600" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-[#0B5ED7]">Email Verified!</h1>
+                  <h1 className="text-2xl font-bold text-[#0B5ED7]">{approvalRequired ? "Email verified — approval pending" : "Email Verified!"}</h1>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Your email address has been verified successfully. Your account is now active
-                    and you can sign in.
+                    {approvalRequired
+                      ? "Your email address is verified. Partner access remains pending separate staff approval."
+                      : "Your email address has been verified successfully. You can now sign in."}
                   </p>
                 </div>
                 <Button
@@ -289,14 +299,6 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                   Code expires in 10 minutes
                 </p>
               </div>
-
-              {/* Dev hint */}
-              {devOtp && (
-                <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-center text-xs text-amber-800">
-                  <span className="font-semibold">Dev mode:</span> Your OTP is{" "}
-                  <code className="font-mono font-bold">{devOtp}</code>
-                </div>
-              )}
 
               {/* Error */}
               {error && (

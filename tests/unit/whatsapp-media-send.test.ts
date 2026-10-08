@@ -2,6 +2,7 @@
 import { describe, it, expect } from "vitest";
 import {
   buildWhatsAppMediaPayload,
+  buildWhatsAppUploadedMediaPayload,
   validateWhatsAppMediaRequest,
   whatsappCloudConfigError,
   WHATSAPP_MEDIA_TYPES,
@@ -37,6 +38,29 @@ describe("buildWhatsAppMediaPayload (official Cloud API media-by-link)", () => {
 
   it("exposes exactly the 4 official media types", () => {
     expect(WHATSAPP_MEDIA_TYPES).toEqual(["document", "image", "audio", "video"]);
+  });
+});
+
+describe("buildWhatsAppUploadedMediaPayload (private bytes uploaded to the official Cloud API)", () => {
+  it("builds a private PDF message using a provider media ID, never a public file URL", () => {
+    const payload = buildWhatsAppUploadedMediaPayload("8801712345678", {
+      mediaType: "document",
+      mediaId: "provider-media-123",
+      fileName: "offer.pdf",
+      caption: "Your offer letter",
+    });
+    expect(payload.type).toBe("document");
+    const document = payload.document as Record<string, unknown>;
+    expect(document).toEqual({ id: "provider-media-123", filename: "offer.pdf", caption: "Your offer letter" });
+    expect(document).not.toHaveProperty("link");
+  });
+
+  it("builds a private image message without a filename", () => {
+    const payload = buildWhatsAppUploadedMediaPayload("8801712345678", {
+      mediaType: "image",
+      mediaId: "provider-media-456",
+    });
+    expect(payload.image).toEqual({ id: "provider-media-456" });
   });
 });
 

@@ -44,6 +44,7 @@ const PUBLIC_ROUTES = [
   "/partner/login",
   "/partner/register",
   "/employee/login",
+  "/employee/activate",
   "/admin/login",
   "/portal/login",
   "/account-suspended",
@@ -87,13 +88,11 @@ const PUBLIC_API_READ_ROUTES = [
   "/api/website",
   "/api/search",
   "/api/chat",
-  "/api/stats",
   "/api/blog",
   "/api/news",
   "/api/events",
   "/api/faqs",
   "/api/reviews/submit",
-  "/api/reviews/invitation",
   "/api/whatsapp/status",
   "/api/facebook/auth",
   "/api/facebook/callback",
@@ -129,7 +128,6 @@ const PUBLIC_API_WRITE_ROUTES = [
   "/api/ai/student-intake",
   "/api/events",
   "/api/reviews/submit",
-  "/api/reviews/invitation",
   "/api/reviews/feedback",
   "/api/whatsapp/status",
   "/api/whatsapp/webhook",
@@ -256,7 +254,7 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/employee": ["SUPER_ADMIN", "ADMIN", "EMPLOYEE", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "VISA_INTERVIEW_OFFICER", "BRANCH_MANAGER", "FRONT_DESK", "SUPPORT_STAFF", "MARKETING_MANAGER", "MARKETING", "FINANCE", "HR_MANAGER", "ENGLISH_TRAINER"],
   "/api/partner": ["SUPER_ADMIN", "ADMIN", "PARTNER"],
   "/api/applications": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "BRANCH_MANAGER"],
-  "/api/documents": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "FRONT_DESK", "PARTNER"],
+  "/api/documents": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "FRONT_DESK", "PARTNER", "STUDENT"],
   "/api/social": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
   "/api/app-manager": ["SUPER_ADMIN", "ADMIN", "APPLICATION_TEAM"],
   "/api/international-officer": ["SUPER_ADMIN", "ADMIN", "INTERNATIONAL_OFFICER"],
@@ -271,9 +269,10 @@ export function isPublicApiRequest(pathname: string, method: string): boolean {
   const isRead = normalizedMethod === "GET" || normalizedMethod === "HEAD";
   const matchedSensitive = Object.keys(SENSITIVE_API_ROUTES).some((prefix) => matchesPath(pathname, prefix));
 
-  // The public lead-capture endpoint stays public even though the /api/crm
-  // prefix is now role-restricted (anonymous visitors submit leads).
+  // Explicit bearer-capability/token flows that are intentionally public.
+  // Handlers must still validate and consume their respective token.
   if (pathname === "/api/crm/leads/public") return true;
+  if (pathname === "/api/employee/activate" && normalizedMethod === "POST") return true;
 
   // NextAuth's catch-all is public, but the custom password-change handler is
   // explicitly excluded from this rule.

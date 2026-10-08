@@ -56,7 +56,7 @@ export async function wacrmBroadcast(opts: {
   for (const r of opts.recipients.slice(0, 500)) { // cap per wacrm rate limit pattern
     try {
       // Reuse existing whatsapp-cloud-api send (handles graph token, phone normalization, status persist)
-      const r2 = await sendWhatsAppMessage({ to: r.phone, body: opts.message.replace('{{name}}', r.name || ''), templateName: opts.templateName } as any).catch((e:any)=> ({ success: false, error: e?.message || 'send failed' })) as any;
+      const r2 = await sendWhatsAppMessage({ to: r.phone, text: opts.message.replace('{{name}}', r.name || ''), templateName: opts.templateName }).catch((e:any)=> ({ success: false, error: e?.message || 'send failed' })) as any;
 
       // wacrm #535: persist Meta failure reason (error_code/title) — here we fold into CrmAuditLog
       if (r2?.success && r2.messageId) {

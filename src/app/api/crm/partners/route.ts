@@ -2,37 +2,47 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, logAuditAction } from '@/lib/auth-middleware';
 
+const PARTNER_MANAGEMENT_ROLES = ['partner_manager', 'super_admin', 'admin', 'ceo', 'branch_manager'];
+const APPROVAL_STATES = new Set(['pending', 'approved', 'rejected', 'suspended', 'terminated']);
+
 export async function GET(request: NextRequest) {
-  return withAuth(async (req, auth) => {
+  return withAuth(async (req) => {
     try {
       const { searchParams } = new URL(req.url);
-      const status = searchParams.get('status') || '';
-      const city = searchParams.get('city') || '';
-      const search = searchParams.get('search') || '';
-      const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-      const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
+      const status = (searchParams.get('status') || '').toLowerCase();
+      const city = (searchParams.get('city') || '').trim().slice(0, 100);
+      const search = (searchParams.get('search') || '').trim().slice(0, 191);
+      const page = Math.max(1, Math.min(100_000, Number.parseInt(searchParams.get('page') || '1', 10) || 1));
+      const limit = Math.min(100, Math.max(1, Number.parseInt(searchParams.get('limit') || '20', 10) || 20));
+      if (status && !APPROVAL_STATES.has(status)) {
+        return NextResponse.json({ success: false, error: 'Invalid partner status.' }, { status: 400 });
+      }
 
-      const where: Record<string, unknown> = {};
-      if (status) where.approvalStatus = status;
+      const where: any = {};
+      if (status === 'active') where.approvalStatus = { in: ['approved', 'active'] };
+      else if (status) where.approvalStatus = status;
       if (city) where.city = { contains: city };
       if (search) where.OR = [
         { companyName: { contains: search } },
         { contactPerson: { contains: search } },
       ];
 
-      const [partners, partnerTotal] = await Promise.all([
+      const [partners, partnerTotal, leads, leadTotal] = await Promise.all([
         db.partnerProfile.findMany({
-          where, orderBy: { createdAt: 'desc' },
-          skip: (page - 1) * limit, take: limit,
+          where,
+          select: {
+            id: true, userId: true, partnerId: true, companyName: true, contactPerson: true,
+            businessType: true, city: true, address: true, approvalStatus: true,
+            totalLeads: true, activeStudents: true, commissionPending: true, commissionPaid: true,
+            createdAt: true, updatedAt: true,
+            user: { select: { email: true, status: true, emailVerified: true } },
+          },
+          orderBy: { createdAt: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
         }),
         db.partnerProfile.count({ where }),
-      ]);
-
-      const [leads, leadTotal] = await Promise.all([
-        db.partnerLead.findMany({
-          orderBy: { createdAt: 'desc' },
-          skip: (page - 1) * limit, take: limit,
-        }),
+        db.partnerLead.findMany({ orderBy: { createdAt: 'desc' }, skip: (page - 1) * limit, take: limit }),
         db.partnerLead.count(),
       ]);
 
@@ -40,63 +50,89 @@ export async function GET(request: NextRequest) {
         success: true,
         data: { partners, leads },
         total: { partners: partnerTotal, leads: leadTotal },
-        page, totalPages: Math.ceil((partnerTotal + leadTotal) / limit),
+        page,
+        totalPages: Math.ceil(partnerTotal / limit),
       });
-    } catch (error) {
-      console.error('Partners GET error:', error);
-      if (String(error).includes('Unknown table')) {
-        return NextResponse.json({ success: true, data: { partners: [], leads: [] }, total: { partners: 0, leads: 0 }, page: 1, totalPages: 0 });
-      }
-      return NextResponse.json({ success: false, error: 'Failed to load partners' }, { status: 500 });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Partner data is temporarily unavailable.' }, { status: 503 });
     }
-  })(request);
+  }, { requireRoles: PARTNER_MANAGEMENT_ROLES })(request);
 }
 
+// Partner self-registration is intentionally the only public account-creation
+// path. Staff approve the resulting, email-verified profile using PUT below.
 export async function POST(request: NextRequest) {
-  return withAuth(async (req, auth) => {
-    try {
-      const body = await req.json();
-      const { companyName, contactPerson, businessType, city, address } = body;
-      if (!companyName) {
-        return NextResponse.json({ success: false, error: 'companyName required' }, { status: 400 });
-      }
-      const partner = await db.partnerProfile.create({
-        data: {
-          userId: auth.userId, partnerId: 'PTR-' + Date.now(),
-          companyName, contactPerson: contactPerson || '',
-          businessType: businessType || '', city: city || '',
-          address: address || '', approvalStatus: 'pending',
-        },
-      });
-      await logAuditAction(auth, 'create_partner', 'PartnerProfile', partner.id, { companyName });
-      return NextResponse.json({ success: true, data: partner }, { status: 201 });
-    } catch (error) {
-      console.error('Partners POST error:', error);
-      return NextResponse.json({ success: false, error: 'Failed to create partner' }, { status: 500 });
-    }
-  })(request);
+  return withAuth(async () => NextResponse.json({
+    success: false,
+    error: 'Create a partner account through the registration and email-verification workflow first.',
+  }, { status: 405 }), { requireRoles: PARTNER_MANAGEMENT_ROLES })(request);
 }
 
 export async function PUT(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
-      const body = await req.json();
-      const { id, approvalStatus, companyName, contactPerson, city, businessType } = body;
-      if (!id) return NextResponse.json({ success: false, error: 'id required' }, { status: 400 });
-      const existing = await db.partnerProfile.findUnique({ where: { id } });
-      if (!existing) return NextResponse.json({ success: false, error: 'Partner not found' }, { status: 404 });
-      const updateData: Record<string, unknown> = {};
-      if (approvalStatus) updateData.approvalStatus = approvalStatus;
-      if (companyName) updateData.companyName = companyName;
-      if (contactPerson) updateData.contactPerson = contactPerson;
-      if (city) updateData.city = city;
-      if (businessType) updateData.businessType = businessType;
-      const partner = await db.partnerProfile.update({ where: { id }, data: updateData });
-      await logAuditAction(auth, 'update_partner', 'PartnerProfile', id, { before: existing.approvalStatus, after: updateData });
-      return NextResponse.json({ success: true, data: partner });
-    } catch (error) {
-      console.error('Partners PUT error:', error);
-      return NextResponse.json({ success: false, error: 'Failed to update partner' }, { status: 500 });
+      const body = await req.json().catch(() => null);
+      const id = typeof body?.id === 'string' ? body.id.trim() : '';
+      if (!id) return NextResponse.json({ success: false, error: 'Partner id is required.' }, { status: 400 });
+
+      const existing = await db.partnerProfile.findUnique({
+        where: { id },
+        include: { user: { select: { id: true, email: true, status: true, emailVerified: true } } },
+      });
+      if (!existing) return NextResponse.json({ success: false, error: 'Partner not found.' }, { status: 404 });
+
+      const approvalStatus = typeof body?.approvalStatus === 'string' ? body.approvalStatus.toLowerCase() : undefined;
+      if (approvalStatus && !APPROVAL_STATES.has(approvalStatus)) {
+        return NextResponse.json({ success: false, error: 'Invalid partner status.' }, { status: 400 });
+      }
+      const updates: Record<string, string> = {};
+      for (const field of ['companyName', 'contactPerson', 'city', 'businessType', 'address'] as const) {
+        if (body?.[field] !== undefined) {
+          if (typeof body[field] !== 'string' || body[field].length > 500) {
+            return NextResponse.json({ success: false, error: `Invalid ${field}.` }, { status: 400 });
+          }
+          updates[field] = body[field].trim();
+        }
+      }
+
+      if (approvalStatus === 'approved' && !existing.user.emailVerified) {
+        return NextResponse.json({ success: false, error: 'The partner must verify their email before approval.' }, { status: 409 });
+      }
+      const nextUserStatus = approvalStatus === 'approved'
+        ? 'active'
+        : approvalStatus === 'pending'
+          ? 'pending'
+          : approvalStatus === 'suspended'
+            ? 'suspended'
+            : approvalStatus === 'rejected' || approvalStatus === 'terminated'
+              ? 'blocked'
+              : undefined;
+
+      const result = await db.$transaction(async (tx) => {
+        const partner = await tx.partnerProfile.update({
+          where: { id },
+          data: { ...updates, ...(approvalStatus ? { approvalStatus } : {}) },
+        });
+        if (nextUserStatus) {
+          await tx.portalUser.update({ where: { id: existing.user.id }, data: { status: nextUserStatus } });
+          if (nextUserStatus !== 'active') {
+            await tx.portalSession.updateMany({
+              where: { userId: existing.user.id, revokedAt: null },
+              data: { revokedAt: new Date() },
+            });
+          }
+        }
+        return partner;
+      });
+
+      await logAuditAction(auth, approvalStatus ? 'partner_approval_status_changed' : 'partner_profile_updated', 'PartnerProfile', id, {
+        previousStatus: existing.approvalStatus,
+        nextStatus: approvalStatus || existing.approvalStatus,
+        fields: Object.keys(updates),
+      });
+      return NextResponse.json({ success: true, data: result });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Partner update could not be completed.' }, { status: 503 });
     }
-  })(request);
+  }, { requireRoles: PARTNER_MANAGEMENT_ROLES })(request);
 }
