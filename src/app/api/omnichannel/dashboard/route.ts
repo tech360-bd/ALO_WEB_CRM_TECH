@@ -27,8 +27,9 @@ export async function GET() {
   ]);
 
   // SLA compliance = responded / total * 100
-  const slaTotal = slaEvents.length;
-  const slaResponded = slaEvents.filter((e) => e.eventType === "RESPONDED" || e.responseAt).length;
+  const slaEventList = Array.isArray(slaEvents) ? slaEvents : [];
+  const slaTotal = slaEventList.length;
+  const slaResponded = slaEventList.filter((e) => e.eventType === "RESPONDED" || e.responseAt).length;
   const slaCompliance = slaTotal > 0 ? Math.round((slaResponded / slaTotal) * 100) : 100;
 
   const stats = {
