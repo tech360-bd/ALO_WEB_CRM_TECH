@@ -5,6 +5,9 @@ const mocks = vi.hoisted(() => ({
   courses: vi.fn(),
   scholarships: vi.fn(),
   universities: vi.fn(),
+  crmCourses: vi.fn(),
+  crmUniversities: vi.fn(),
+  guides: vi.fn(),
 }));
 vi.mock('@/lib/db', () => ({
   db: {
@@ -12,6 +15,9 @@ vi.mock('@/lib/db', () => ({
     coursePage: { findMany: mocks.courses },
     scholarship: { findMany: mocks.scholarships },
     universityPage: { findMany: mocks.universities },
+    crmCourse: { findMany: mocks.crmCourses },
+    crmUniversity: { findMany: mocks.crmUniversities },
+    contentAsset: { findMany: mocks.guides },
   },
 }));
 
@@ -24,6 +30,9 @@ describe('database-backed sitemap generation', () => {
     mocks.courses.mockResolvedValue([]);
     mocks.scholarships.mockResolvedValue([]);
     mocks.universities.mockResolvedValue([]);
+    mocks.crmCourses.mockResolvedValue([]);
+    mocks.crmUniversities.mockResolvedValue([]);
+    mocks.guides.mockResolvedValue([]);
   });
 
   it('is intentionally rendered at request time', () => {

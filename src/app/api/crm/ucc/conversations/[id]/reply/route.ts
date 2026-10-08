@@ -202,12 +202,15 @@ export async function POST(
       });
       if (!mediaSend.success || !mediaSend.messageId) {
         const sendError = mediaSend.error || 'The provider did not confirm the media message.';
-        await db.uccMessage.update({
-          where: { id: pendingMessage.id },
-          data: {
-            status: 'failed',
-            metadata: JSON.stringify({ attemptedAt: new Date().toISOString(), attachmentId: privateAttachment.id, providerMediaId: mediaSend.providerMediaId, sendError, senderEmail: auth.email }),
-          },
+        await db.$transaction(async (tx) => {
+          await tx.uccMessage.update({
+            where: { id: pendingMessage.id },
+            data: {
+              status: 'failed',
+              metadata: JSON.stringify({ attemptedAt: new Date().toISOString(), attachmentId: privateAttachment.id, providerMediaId: mediaSend.providerMediaId, sendError, senderEmail: auth.email }),
+            },
+          });
+          await tx.uccAttachment.updateMany({ where: { id: privateAttachment.id, messageId: pendingMessage.id }, data: { messageId: null } });
         });
         await logAuditAction(auth, 'ATTACHMENT_SEND_FAILED', 'UccConversation', id, { messageId: pendingMessage.id, attachmentId: privateAttachment.id, sendError });
         return NextResponse.json(
@@ -217,36 +220,42 @@ export async function POST(
       }
 
       const providerStatus = await latestProviderStatus(mediaSend.messageId);
-      const message = await db.$transaction(async (tx) => {
-        const sentMessage = await tx.uccMessage.update({
-          where: { id: pendingMessage.id },
-          data: {
-            status: providerStatus?.status || 'sent',
-            metadata: JSON.stringify({
-              sentAt: new Date().toISOString(),
-              attachmentId: privateAttachment.id,
-              providerMessageId: mediaSend.messageId,
-              providerMediaId: mediaSend.providerMediaId,
-              deliveryStatus: providerStatus?.status || 'sent',
-              ...(providerStatus?.statusTimestamp ? { providerStatusAt: providerStatus.statusTimestamp.toISOString() } : {}),
-              ...(providerStatus?.errorMessage ? { providerError: providerStatus.errorMessage } : {}),
-              senderEmail: auth.email,
-            }),
-          },
+      let message: any;
+      try {
+        message = await db.$transaction(async (tx) => {
+          const sentMessage = await tx.uccMessage.update({
+            where: { id: pendingMessage.id },
+            data: {
+              status: providerStatus?.status || 'sent',
+              metadata: JSON.stringify({
+                sentAt: new Date().toISOString(),
+                attachmentId: privateAttachment.id,
+                providerMessageId: mediaSend.messageId,
+                providerMediaId: mediaSend.providerMediaId,
+                deliveryStatus: providerStatus?.status || 'sent',
+                ...(providerStatus?.statusTimestamp ? { providerStatusAt: providerStatus.statusTimestamp.toISOString() } : {}),
+                ...(providerStatus?.errorMessage ? { providerError: providerStatus.errorMessage } : {}),
+                senderEmail: auth.email,
+              }),
+            },
+          });
+          await tx.uccConversation.update({
+            where: { id },
+            data: { lastMessageText: (caption || `[Private document: ${privateAttachment.fileName}]`).slice(0, 200), lastMessageAt: new Date() },
+          });
+          return sentMessage;
         });
-        await tx.uccConversation.update({
-          where: { id },
-          data: { lastMessageText: (caption || `[Private document: ${privateAttachment.fileName}]`).slice(0, 200), lastMessageAt: new Date() },
-        });
-        return sentMessage;
-      });
+      } catch {
+        await logAuditAction(auth, 'ATTACHMENT_SEND_PERSISTENCE_WARNING', 'UccConversation', id, { messageId: pendingMessage.id, attachmentId: privateAttachment.id, providerMessageId: mediaSend.messageId }).catch(() => {});
+        return NextResponse.json({ success: true, sent: true, persistenceWarning: true, providerMessageId: mediaSend.messageId, message: { ...pendingMessage, status: 'sent' }, attachment: { id: privateAttachment.id, fileName: privateAttachment.fileName, fileUrl: `/api/crm/ucc/documents/${privateAttachment.id}/download` } }, { status: 202 });
+      }
       await logAuditAction(auth, 'ATTACHMENT_SENT', 'UccConversation', id, {
         messageId: message.id,
         attachmentId: privateAttachment.id,
         channel: conversation.channel,
         providerMessageId: mediaSend.messageId,
-      });
-      return NextResponse.json({ success: true, message, attachment: { id: privateAttachment.id, fileName: privateAttachment.fileName, fileUrl: `/api/crm/ucc/documents/${privateAttachment.id}/download` } });
+      }).catch(() => {});
+      return NextResponse.json({ success: true, message, providerMessageId: mediaSend.messageId, attachment: { id: privateAttachment.id, fileName: privateAttachment.fileName, fileUrl: `/api/crm/ucc/documents/${privateAttachment.id}/download` } });
     }
 
     if (!isInternalNote && conversation.channel !== 'whatsapp') {
@@ -287,44 +296,52 @@ export async function POST(
 
     const direction = isInternalNote ? 'internal_note' : 'outbound';
     const providerStatus = await latestProviderStatus(waTextSend?.messageId);
-
-    const message = await db.uccMessage.create({
-      data: {
-        conversationId: id,
-        direction,
-        senderId: auth.userId,
-        senderName: auth.name || auth.email || 'Staff',
-        senderRole: 'employee',
-        channel: conversation.channel,
-        content,
-        messageType: isInternalNote ? 'text' : messageType,
-        status: isInternalNote ? 'sent' : (providerStatus?.status || (waTextSend?.success ? 'sent' : 'failed')),
-        aiGenerated,
-        aiApproved: aiGenerated ? aiApproved : true,
-        metadata: JSON.stringify({
-          sentAt: new Date().toISOString(),
-          isInternalNote,
-          senderEmail: auth.email,
-          ...(waTextSend?.messageId ? { providerMessageId: waTextSend.messageId, deliveryStatus: providerStatus?.status || 'sent' } : {}),
-          ...(providerStatus?.statusTimestamp ? { providerStatusAt: providerStatus.statusTimestamp.toISOString() } : {}),
-          ...(providerStatus?.errorMessage ? { providerError: providerStatus.errorMessage } : {}),
-          ...(waTextSend?.statusRecorded !== undefined ? { statusRecorded: waTextSend.statusRecorded } : {}),
-        }),
-      },
-    });
-
-    await db.uccConversation.update({
-      where: { id },
-      data: { lastMessageText: content.trim().substring(0, 200), lastMessageAt: new Date() },
-    });
+    let message: any;
+    try {
+      message = await db.uccMessage.create({
+        data: {
+          conversationId: id,
+          direction,
+          senderId: auth.userId,
+          senderName: auth.name || auth.email || 'Staff',
+          senderRole: 'employee',
+          channel: conversation.channel,
+          content,
+          messageType: isInternalNote ? 'text' : messageType,
+          status: isInternalNote ? 'sent' : (providerStatus?.status || (waTextSend?.success ? 'sent' : 'failed')),
+          aiGenerated,
+          aiApproved: aiGenerated ? aiApproved : true,
+          metadata: JSON.stringify({
+            sentAt: new Date().toISOString(),
+            isInternalNote,
+            senderEmail: auth.email,
+            ...(waTextSend?.messageId ? { providerMessageId: waTextSend.messageId, deliveryStatus: providerStatus?.status || 'sent' } : {}),
+            ...(providerStatus?.statusTimestamp ? { providerStatusAt: providerStatus.statusTimestamp.toISOString() } : {}),
+            ...(providerStatus?.errorMessage ? { providerError: providerStatus.errorMessage } : {}),
+            ...(waTextSend?.statusRecorded !== undefined ? { statusRecorded: waTextSend.statusRecorded } : {}),
+          }),
+        },
+      });
+      await db.uccConversation.update({
+        where: { id },
+        data: { lastMessageText: content.trim().substring(0, 200), lastMessageAt: new Date() },
+      });
+    } catch (error) {
+      if (waTextSend?.success && waTextSend.messageId) {
+        await logAuditAction(auth, 'REPLY_SEND_PERSISTENCE_WARNING', 'UccConversation', id, { providerMessageId: waTextSend.messageId, error: error instanceof Error ? error.message : 'unknown' }).catch(() => {});
+        return NextResponse.json({ success: true, sent: true, persistenceWarning: true, providerMessageId: waTextSend.messageId, message: null }, { status: 202 });
+      }
+      throw error;
+    }
 
     await logAuditAction(auth, isInternalNote ? 'INTERNAL_NOTE_ADDED' : 'REPLY_SENT', 'UccConversation', id, {
       messageId: message.id,
       channel: conversation.channel,
       aiGenerated,
-    });
+      ...(waTextSend?.messageId ? { providerMessageId: waTextSend.messageId } : {}),
+    }).catch(() => {});
 
-    return NextResponse.json({ success: true, message });
+    return NextResponse.json({ success: true, message, ...(waTextSend?.messageId ? { providerMessageId: waTextSend.messageId } : {}) });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
