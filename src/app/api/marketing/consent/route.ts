@@ -1,8 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { grantConsent } from "@/lib/marketing-consent";
+import { db } from '@/lib/db';
+import { withAuth } from '@/lib/auth-middleware';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+async function handleGet() {
+  try {
+    const [count, optedOut] = await Promise.all([
+      db.communicationConsent.count({ where: { consentGiven: true, optedOutAt: null } }),
+      db.communicationConsent.count({ where: { optedOutAt: { not: null } } }),
+    ]);
+    return NextResponse.json({ success: true, count, optedOut });
+  } catch (error) {
+    console.error('[marketing/consent] Consent summary query failed.', {
+      code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : undefined,
+    });
+    return NextResponse.json({ error: 'Consent summary is temporarily unavailable.' }, { status: 503 });
+  }
+}
+
+export const GET = withAuth(handleGet, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'MARKETING', 'MARKETING_MANAGER'] });
 
 // POST /api/marketing/consent
 // Public — visitor grants marketing consent (e.g. via footer form or modal).
@@ -47,11 +66,10 @@ export async function POST(req: NextRequest) {
       medium: typeof medium === "string" ? medium : undefined,
     });
     return NextResponse.json({ ok: true, consent: result });
-  } catch (err: unknown) {
-    const e = err as { message?: string };
-    return NextResponse.json(
-      { error: e?.message || "Failed to grant consent" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    console.error('[marketing/consent] Consent write failed.', {
+      code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : undefined,
+    });
+    return NextResponse.json({ error: 'Failed to grant consent.' }, { status: 500 });
   }
 }

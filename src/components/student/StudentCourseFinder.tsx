@@ -1038,7 +1038,7 @@ export default function StudentCourseFinder() {
                   <PaginationContent>
                     <PaginationItem>
                       <PaginationPrevious
-                        href="#"
+                        href={`?page=${Math.max(1, currentPage - 1)}`}
                         aria-disabled={currentPage === 1}
                         onClick={(e) => { e.preventDefault(); if (currentPage > 1) setCurrentPage((p) => p - 1); }}
                         className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
@@ -1047,7 +1047,7 @@ export default function StudentCourseFinder() {
                     {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
                       <PaginationItem key={pageNumber}>
                         <PaginationLink
-                          href="#"
+                          href={`?page=${pageNumber}`}
                           isActive={pageNumber === currentPage}
                           aria-label={`Go to page ${pageNumber}`}
                           onClick={(e) => { e.preventDefault(); setCurrentPage(pageNumber); }}
@@ -1059,7 +1059,7 @@ export default function StudentCourseFinder() {
                     ))}
                     <PaginationItem>
                       <PaginationNext
-                        href="#"
+                        href={`?page=${Math.min(totalPages, currentPage + 1)}`}
                         aria-disabled={currentPage === totalPages}
                         onClick={(e) => { e.preventDefault(); if (currentPage < totalPages) setCurrentPage((p) => p + 1); }}
                         className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}

@@ -50,7 +50,7 @@ function ActivationForm() {
       <section className="rounded-xl border border-emerald-200 bg-white p-6 shadow-sm">
         <h2 className="text-xl font-semibold text-emerald-800">Account activated</h2>
         <p className="mt-2 text-slate-600">Your password is set. You can now sign in to the employee portal.</p>
-        <a className="mt-5 inline-flex rounded-md bg-blue-700 px-4 py-2 font-medium text-white hover:bg-blue-800" href="/employee-login">Go to employee login</a>
+        <a className="mt-5 inline-flex rounded-md bg-blue-700 px-4 py-2 font-medium text-white hover:bg-blue-800" href="/employee/login">Go to employee login</a>
       </section>
     );
   }

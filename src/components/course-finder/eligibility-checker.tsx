@@ -801,7 +801,7 @@ function ResultCard({ result }: { result: EligibilityResult }) {
           </div>
           {result.slug && (
             <a
-              href={`/course-finder/${result.slug}`}
+              href={`/courses/${result.slug}`}
               className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
               title="View course details"
             >

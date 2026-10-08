@@ -1,18 +1,7 @@
-'use client';
+import { permanentRedirect } from 'next/navigation';
 
-// Canonical eligibility-checker route. The engine component is shared with
-// /eligibility-check (the historically-linked route) — both render
-// src/components/course-finder/eligibility-checker-enhanced.tsx. Keep this
-// page as the stable canonical URL; do not fork the component.
-
-import { EligibilityCheckerEnhanced } from '@/components/course-finder/eligibility-checker-enhanced';
-
-export default function EligibilityCheckerPage() {
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <main className="flex-1 pt-16">
-        <EligibilityCheckerEnhanced />
-      </main>
-    </div>
-  );
+// Legacy alias retained for inbound links. /eligibility-check is the canonical
+// route used by the navbar, homepage, sitemap and related public content.
+export default function LegacyEligibilityCheckerPage() {
+  permanentRedirect('/eligibility-check');
 }

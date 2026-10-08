@@ -81,8 +81,8 @@ export default function EnhancedSuperAdminControlCenter() {
       setSecurityEvents(secRes.events || secRes.data || []);
 
       // Fetch AI jobs real
-      const aiRes = await fetch('/api/agentos/jobs?limit=10', { headers }).then(r => r.json()).catch(() => ({ jobs: [] }));
-      setAiJobs(aiRes.jobs || aiRes.data || []);
+      const aiRes = await fetch('/api/agentos/tasks?limit=10', { headers }).then(r => r.json()).catch(() => []);
+      setAiJobs(Array.isArray(aiRes) ? aiRes : aiRes.tasks || aiRes.data || []);
 
       setMetrics({
         activeStudents: 0, // Will be fetched from student table if available

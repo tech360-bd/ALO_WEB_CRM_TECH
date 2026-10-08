@@ -35,13 +35,13 @@ import { useI18n } from '@/i18n';
 /* ------------------------------------------------------------------ */
 
 const DEFAULT_DESTINATIONS = [
-  { label: 'United Kingdom', href: '/destinations/united-kingdom' },
+  { label: 'United Kingdom', href: '/destinations/uk' },
   { label: 'United States', href: '/destinations/usa' },
   { label: 'Canada', href: '/destinations/canada' },
   { label: 'Australia', href: '/destinations/australia' },
   { label: 'Ireland', href: '/destinations/ireland' },
   { label: 'New Zealand', href: '/destinations/new-zealand' },
-  { label: 'Dubai / UAE', href: '/destinations/dubai-uae' },
+  { label: 'Dubai / UAE', href: '/destinations/dubai' },
   { label: 'More Countries', href: '/destinations' },
 ];
 
@@ -134,8 +134,11 @@ function DropdownTrigger({ label, isOpen, onToggle, onMouseEnter, onMouseLeave, 
   return (
     <div className={`relative ${className}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <button
+        type="button"
         onClick={onToggle}
-        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[#000000] rounded-lg hover:bg-slate-50 transition-colors"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[#000000] rounded-lg hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
       >
         {label}
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
