@@ -279,7 +279,7 @@ const CAPABILITIES: { title: string; engine: string; icon: string; description: 
   { title: "50,000+ Prompt Templates", engine: "Prompt Library", icon: "FileText", description: "Approximately 500 prompt templates per department — system, user, few-shot, chain-of-thought, RAG & function-calling." },
   { title: "Enterprise Knowledge Graph", engine: "Knowledge Graph Engine", icon: "Network", description: "Unified entity graph linking students, courses, universities, countries, documents, and outcomes." },
   { title: "Enterprise RAG", engine: "Retrieval Augmented Generation", icon: "Database", description: "Vector-indexed retrieval across SOPs, prompts, university data, visa rules, and historical cases." },
-  { title: "Multi-Agent Collaboration", engine: "Multi-Agent Engine", icon: "Bot", description: "Agents hand off tasks, share context, and orchestrate multi-step workflows across 100 departments." },
+  { title: "Multi-Agent Collaboration", engine: "Multi-Agent Engine", icon: "Bot", description: "Agents hand off tasks, share context, and orchestrate multi-step workflows across registered departments." },
   { title: "Memory Engine", engine: "Memory Engine", icon: "Brain", description: "Short-term, long-term, and episodic memory for every AI employee — context preserved across sessions." },
   { title: "Planning Engine", engine: "Planning Engine", icon: "Map", description: "Goal decomposition, task sequencing, and dependency-aware plan generation for complex workflows." },
   { title: "Reflection Engine", engine: "Reflection Engine", icon: "RefreshCw", description: "Self-evaluation of outputs, identification of weaknesses, and iterative improvement before delivery." },
@@ -296,7 +296,7 @@ const CAPABILITIES: { title: string; engine: string; icon: string; description: 
   { title: "API Gateway", engine: "API Gateway Engine", icon: "Plug", description: "Unified, rate-limited, authenticated entry point for all AI service consumers." },
   { title: "MCP Integration Layer", engine: "MCP Integration Engine", icon: "Cable", description: "Model Context Protocol integration — standardised tool & context injection across agents." },
   { title: "Enterprise Data Lake", engine: "Data Lake Engine", icon: "DatabaseZap", description: "Centralised, governed storage for raw, curated, and gold-tier AI telemetry and training data." },
-  { title: "Enterprise Identity & RBAC", engine: "Identity & RBAC Engine", icon: "Fingerprint", description: "Role-based access control across 100 departments, 2,000 agents, and every engine." },
+  { title: "Enterprise Identity & RBAC", engine: "Identity & RBAC Engine", icon: "Fingerprint", description: "Role-based access control across every department, agent, and engine." },
   { title: "Department Capability Certification (DCC)", engine: "DCC Framework", icon: "BadgeCheck", description: "A department may create new AI agents only when it passes all 9 DCC criteria — guaranteeing self-sufficient, self-improving operation." },
 ];
 
@@ -473,23 +473,29 @@ export function EnterpriseAiCommand() {
   const engines = data?.engines ?? [];
   const dccCriteria = data?.dccCriteria;
 
-  // Stats — derive total jobs (estimate: 50 jobs per AI employee avg) & avg success rate (95%)
-  const totalJobs = summary ? summary.totalEmployees * 50 : 0;
-  const avgSuccessRate = 95;
+  // Stats — derived only from fields the API actually returns.
+  // (Previously this invented "50 jobs per employee" and a hard-coded 95%
+  // success rate; neither exists in the data, so both are gone.)
 
-  // Top 5 departments by jobs processed (estimate using employee count × 50)
+  // Top 5 departments by real AI employee count (not an estimated job volume).
   const topDepartments = React.useMemo(() => {
     return [...departments]
-      .map((d) => ({ ...d, jobs: d.aiEmployeeCount * 50 }))
-      .sort((a, b) => b.jobs - a.jobs)
+      .sort((a, b) => b.aiEmployeeCount - a.aiEmployeeCount)
       .slice(0, 5);
   }, [departments]);
-  const maxDeptJobs = topDepartments[0]?.jobs || 1;
+  const maxDeptEmployees = topDepartments[0]?.aiEmployeeCount || 1;
 
-  // AI employee distribution — derive from departments (assume avg split: 80% active, 12% idle, 8% training)
-  const activeEmployees = Math.round((summary?.totalEmployees ?? 0) * 0.8);
-  const idleEmployees = Math.round((summary?.totalEmployees ?? 0) * 0.12);
-  const trainingEmployees = (summary?.totalEmployees ?? 0) - activeEmployees - idleEmployees;
+  // Engine distribution — counted from actual engine status values.
+  const engineByStatus = React.useMemo(() => {
+    const counts = { ACTIVE: 0, IDLE: 0, MAINTENANCE: 0, OTHER: 0 };
+    for (const engine of engines) {
+      const key = (engine.status || '').toUpperCase();
+      if (key in counts) counts[key as 'ACTIVE'] += 1;
+      else counts.OTHER += 1;
+    }
+    return counts;
+  }, [engines]);
+  const engineTotal = engines.length;
 
   // Filtered departments for table
   const filteredDepartments = React.useMemo(() => {
@@ -586,10 +592,10 @@ export function EnterpriseAiCommand() {
       {/* Enterprise Scale Stats (12 cards)                                    */}
       {/* ------------------------------------------------------------------- */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-        <StatCard label="Departments" value={fmt(summary.totalDepartments)} icon="Building2" accent="blue" hint="100 enterprise departments" />
-        <StatCard label="AI Employees" value={fmt(summary.totalEmployees)} icon="Users" accent="violet" hint="~20 per department" />
-        <StatCard label="Skills" value={fmt(summary.totalSkills)} icon="Zap" accent="emerald" hint="~100 per department" />
-        <StatCard label="Prompt Templates" value={fmt(summary.totalPrompts)} icon="FileText" accent="orange" hint="~500 per department" />
+        <StatCard label="Departments" value={fmt(summary.totalDepartments)} icon="Building2" accent="blue" hint="Registered with the platform" />
+        <StatCard label="AI Employees" value={fmt(summary.totalEmployees)} icon="Users" accent="violet" hint="Across all departments" />
+        <StatCard label="Skills" value={fmt(summary.totalSkills)} icon="Zap" accent="emerald" hint="Across all departments" />
+        <StatCard label="Prompt Templates" value={fmt(summary.totalPrompts)} icon="FileText" accent="orange" hint="Across all departments" />
         <StatCard label="Constitutional Rules" value={`${fmt(summary.totalRules)}+`} icon="Shield" accent="rose" hint="Governance Engine" />
         <StatCard label="SOPs" value={`${fmt(summary.totalSops)}+`} icon="BookOpen" accent="amber" hint="Standard procedures" />
         <StatCard
@@ -620,8 +626,8 @@ export function EnterpriseAiCommand() {
           accent="emerald"
           hint="All systems green"
         />
-        <StatCard label="Total Jobs" value={fmt(totalJobs)} icon="Activity" accent="blue" hint="Processed by AI employees" />
-        <StatCard label="Avg Success Rate" value={`${avgSuccessRate}%`} icon="TrendingUp" accent="blue" hint="Across all agents" />
+        <StatCard label="Idle Engines" value={fmt(engineByStatus.IDLE)} icon="Activity" accent="amber" hint="Registered but not running" />
+        <StatCard label="Engines in Maintenance" value={fmt(engineByStatus.MAINTENANCE)} icon="TrendingUp" accent="rose" hint="Taken offline for work" />
       </div>
 
       {/* ------------------------------------------------------------------- */}
@@ -679,17 +685,18 @@ export function EnterpriseAiCommand() {
           {/* AI employee distribution + Top departments */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <SectionCard
-              title="AI Employee Distribution"
-              description={`${fmt(summary.totalEmployees)} AI employees across 100 departments`}
+              title="Engine Status Distribution"
+              description={`${fmt(engineTotal)} engines registered with the platform`}
               icon="Users"
             >
               <div className="space-y-3">
                 {[
-                  { label: "Active", value: activeEmployees, color: "#10b981", icon: "CircleDot" },
-                  { label: "Idle", value: idleEmployees, color: "#f59e0b", icon: "Circle" },
-                  { label: "Training", value: trainingEmployees, color: "#8b5cf6", icon: "GraduationCap" },
+                  { label: "Active", value: engineByStatus.ACTIVE, color: "#10b981", icon: "CircleDot" },
+                  { label: "Idle", value: engineByStatus.IDLE, color: "#f59e0b", icon: "Circle" },
+                  { label: "Maintenance", value: engineByStatus.MAINTENANCE, color: "#8b5cf6", icon: "GraduationCap" },
+                  { label: "Other / unreported", value: engineByStatus.OTHER, color: "#94a3b8", icon: "Circle" },
                 ].map((row) => {
-                  const pctVal = summary.totalEmployees > 0 ? (row.value / summary.totalEmployees) * 100 : 0;
+                  const pctVal = engineTotal > 0 ? (row.value / engineTotal) * 100 : 0;
                   return (
                     <div key={row.label} className="space-y-1.5">
                       <div className="flex items-center justify-between text-sm">
@@ -709,8 +716,8 @@ export function EnterpriseAiCommand() {
             </SectionCard>
 
             <SectionCard
-              title="Top Departments by Jobs Processed"
-              description="Estimated throughput across all departments"
+              title="Top Departments by AI Employees"
+              description="Actual AI employee counts per department"
               icon="BarChart3"
             >
               {topDepartments.length === 0 ? (
@@ -728,10 +735,10 @@ export function EnterpriseAiCommand() {
                           <span className="font-mono text-[10px] text-muted-foreground">{d.deptCode}</span>
                         </span>
                         <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-[#2563EB]">
-                          {fmt(d.jobs)} jobs
+                          {fmt(d.aiEmployeeCount)} employees
                         </span>
                       </div>
-                      <MiniBar value={d.jobs} max={maxDeptJobs} color="#2563EB" />
+                      <MiniBar value={d.aiEmployeeCount} max={maxDeptEmployees} color="#2563EB" />
                     </div>
                   ))}
                 </div>
@@ -742,7 +749,7 @@ export function EnterpriseAiCommand() {
           {/* 20 engine status cards */}
           <SectionCard
             title="Enterprise Engine Status"
-            description="All 20 enterprise engines — health, status, and key metrics"
+            description="Every registered enterprise engine — health, status, and key metrics"
             icon="Cpu"
           >
             {engines.length === 0 ? (

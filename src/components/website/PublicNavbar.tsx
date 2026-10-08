@@ -70,7 +70,7 @@ const resourceItems = [
   { label: 'Blogs', href: '/blog' },
   { label: 'Articles', href: '/resources/articles' },
   { label: 'Scholarships by Country', href: '/scholarships' },
-  { label: 'Visa Guides', href: '/visa-support' },
+  { label: 'Visa Guides', href: '/visa' },
   { label: 'Success Stories', href: '/success-stories' },
   { label: 'Application Tips', href: '/application-process' },
   { label: 'Pre-Departure Guides', href: '/resources/pre-departure' },
@@ -83,6 +83,17 @@ const portalItems = [
   { label: 'Student Portal', href: '/student/login', icon: GraduationCap },
   { label: 'Partner Portal', href: '/partner/login', icon: LayoutGrid },
   { label: 'Employee Portal', href: '/employee/login', icon: LogIn },
+];
+
+// Planning tools. Each runs on deterministic rules over verified data; none of
+// them promise an admission, award or visa outcome.
+const AI_TOOL_ITEMS = [
+  { label: 'Course Match', href: '/ai/course-match' },
+  { label: 'Scholarship Match', href: '/ai/scholarship-match' },
+  { label: 'Visa Coach', href: '/ai/visa-coach' },
+  { label: 'SOP Helper', href: '/ai/sop-helper' },
+  { label: 'CV Helper', href: '/ai/cv-helper' },
+  { label: 'Eligibility Check', href: '/eligibility-check' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -354,6 +365,20 @@ export default function PublicNavbar() {
           </DropdownTrigger>
 
           <DropdownTrigger
+            label="AI Tools"
+            isOpen={openDropdown === 'ai-tools'}
+            onToggle={() => handleToggle('ai-tools')}
+            onMouseEnter={() => handleDesktopEnter('ai-tools')}
+            onMouseLeave={handleDesktopLeave}
+          >
+            <div className="flex flex-col gap-1 w-[260px]">
+              {AI_TOOL_ITEMS.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+            </div>
+          </DropdownTrigger>
+
+          <DropdownTrigger
             label="Portals"
             isOpen={openDropdown === 'portals'}
             onToggle={() => handleToggle('portals')}
@@ -447,6 +472,19 @@ export default function PublicNavbar() {
                         <AccordionContent className="pb-1">
                           <div className="grid grid-cols-1 gap-0.5 pl-4">
                             {langItems.map((item) => (
+                              <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+
+                      <AccordionItem value="ai-tools" className="border-b-0">
+                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
+                          AI Tools
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-1">
+                          <div className="flex flex-col gap-0.5 pl-4">
+                            {AI_TOOL_ITEMS.map((item) => (
                               <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
                             ))}
                           </div>

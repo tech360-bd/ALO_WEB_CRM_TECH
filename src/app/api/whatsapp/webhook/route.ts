@@ -1010,16 +1010,9 @@ export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("hub.verify_token");
   const challenge = req.nextUrl.searchParams.get("hub.challenge");
 
-  // Support both WHATSAPP_VERIFY_TOKEN and WHATSAPP_APP_SECRET as verify token
-  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || process.env.WHATSAPP_APP_SECRET;
-
-  if (mode === "subscribe" && token === verifyToken) {
-    return new NextResponse(challenge, { status: 200 });
-  }
-
-  // Also support direct challenge param for testing
-  if (challenge) {
-    return new NextResponse(challenge, { status: 200 });
+  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || '';
+  if (mode === "subscribe" && verifyToken && token && challenge && safeEqual(token, verifyToken)) {
+    return new NextResponse(challenge, { status: 200, headers: { 'Cache-Control': 'no-store' } });
   }
 
   return NextResponse.json({ error: "Invalid verification" }, { status: 403 });

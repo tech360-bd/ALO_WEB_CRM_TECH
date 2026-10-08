@@ -961,7 +961,7 @@ export default function BrandAssetsPostCreatorView() {
                     { tip: "Include the target audience (undergrad, masters, professionals).", icon: GraduationCap },
                     { tip: "Specify any deadlines or urgent timelines for urgency tone.", icon: Timer },
                     { tip: "Mention scholarship names or intake seasons for accuracy.", icon: Trophy },
-                    { tip: "Add key selling points like visa success rate or IELTS support.", icon: Star },
+                    { tip: "Only include claims you can substantiate. Do not state visa success rates, approval odds, or student outcome figures.", icon: Star },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-2 p-2.5 rounded-lg bg-purple-50/50 border border-purple-100">
                       <item.icon className="h-4 w-4 text-purple-500 mt-0.5 shrink-0" />

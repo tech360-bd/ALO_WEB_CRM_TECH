@@ -1,3 +1,4 @@
+import { ingestWhatsAppMedia } from "@/lib/whatsapp-media-ingestion";
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
@@ -141,7 +142,14 @@ export async function POST(request: Request) {
           const existingMsg = await db.communicationMessage.findFirst({
             where: { content: providerMsgId },
           }).catch(() => null);
-          if (existingMsg) continue; // Already processed
+          if (existingMsg) {
+            if (isFile && message[messageType]?.id) await ingestWhatsAppMedia({
+              providerMessageId: providerMsgId, mediaId: message[messageType].id, senderPhone: message.from,
+              senderName: value.contacts?.[0]?.profile?.name, fileName: message[messageType].filename,
+              phoneNumberId: value.metadata?.phone_number_id,
+            });
+            continue;
+          }
 
           // 3. PHONE DEDUPLICATION & CONTACT MATCHING
           let matchedStudentId = '';
@@ -321,19 +329,22 @@ export async function POST(request: Request) {
           // maps the file to a requirement slot (match review / doc upload).
           if (isFile) {
             const mediaObj = message[messageType] || {};
+            const ingested = await ingestWhatsAppMedia({ providerMessageId: providerMsgId, mediaId: mediaObj.id,
+              senderPhone: message.from, senderName: value.contacts?.[0]?.profile?.name, fileName: mediaObj.filename,
+              phoneNumberId: value.metadata?.phone_number_id });
             await db.communicationAttachment.create({
               data: {
                 messageId: savedMsg.id,
                 threadId: thread.id,
                 studentId: matchedStudentId,
                 applicationId: '',
-                documentId: '',
+                documentId: ingested.documentId || '',
                 channel: 'whatsapp',
                 direction: 'inbound',
                 providerFileId: mediaObj.id || '',
                 fileName: mediaObj.filename || `${messageType}_${Date.now()}`,
                 fileType: messageType,
-                fileSizeBytes: mediaObj.file_size || 0,
+                fileSizeBytes: ingested.fileSize || 0,
                 senderContact: senderPhone,
                 recipientContact: value.metadata?.display_phone_number || value.metadata?.phone_number_id || '',
                 deliveryStatus: 'delivered',

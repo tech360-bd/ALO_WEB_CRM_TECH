@@ -1,15 +1,15 @@
 {
-  "auditBase": "9e504ad2",
-  "files": 5760,
-  "activeSourceFiles": 1883,
-  "textScanned": 5411,
-  "metadataOnly": 349,
-  "pages": 368,
-  "apiFiles": 820,
-  "apiMethods": 1325,
-  "forms": 42,
-  "actions": 4965,
-  "querySites": 4863,
+  "auditBase": "HEAD",
+  "files": 2623,
+  "activeSourceFiles": 2108,
+  "textScanned": 2502,
+  "metadataOnly": 121,
+  "pages": 392,
+  "apiFiles": 892,
+  "apiMethods": 1442,
+  "forms": 56,
+  "actions": 5219,
+  "querySites": 5514,
   "serverActionDirectives": 0,
-  "riskSignals": 7726
+  "riskSignals": 6320
 }

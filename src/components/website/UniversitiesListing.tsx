@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, MapPin, Building2, ArrowRight, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface UniversityListingItem {
   id: string;
@@ -92,14 +93,17 @@ export default function UniversitiesListing() {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
-        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
+        <div className="overflow-hidden rounded-3xl border border-[#E2E8F0] bg-white shadow-sm">
+          <div className="relative h-52 sm:h-72"><Image src="/images/hero/study-abroad-hero.png" alt="International students exploring their study options" fill sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover" priority /></div>
+          <div className="p-6 sm:p-8 md:p-12">
           <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-4">ALO university directory</Badge>
           <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Universities & Course Information</h1>
           <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse the university records available in ALO’s database. Open an information page to review courses with listed intakes from January 2027 through January 2028, recorded course and institution codes, eligibility status, and available source evidence.</p>
           <div className="flex flex-wrap gap-2 mt-4">
-            <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">Server-paginated directory</Badge>
-            <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">Database records only</Badge>
+            <Badge className="bg-[#F8FAFC] text-slate-700 border-[#E2E8F0] text-[10px]">Server-paginated directory</Badge>
+            <Badge className="bg-[#F8FAFC] text-slate-700 border-[#E2E8F0] text-[10px]">Database records only</Badge>
             <Badge className="bg-amber-50 text-amber-800 border-amber-200 text-[10px]">Directory completeness not independently verified</Badge>
+          </div>
           </div>
         </div>
 

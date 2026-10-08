@@ -139,7 +139,7 @@ export default function CrmEnglishPrepCounselorView() {
               <a href="/course-finder" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Course Finder</a>
               <a href="/destinations" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Destinations</a>
               <a href="/scholarships" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Scholarships</a>
-              <a href="/visa-support" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Visa Support</a>
+              <a href="/visa" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Visa Support</a>
             </div>
           </Card>
         </div>

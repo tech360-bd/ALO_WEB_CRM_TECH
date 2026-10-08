@@ -9,6 +9,7 @@ import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
 import FaqAccordion from './FaqAccordion';
 import TestPreparationMiniCard from './TestPreparationMiniCard';
+import Image from 'next/image';
 import { getCountryDestination } from '@/lib/country-destinations-data';
 
 interface Props {
@@ -81,7 +82,15 @@ export default function UniversityHub({ slug }: Props) {
   const lastCourseNumber = Math.min(coursePage * (intakeWindow?.pageSize || 12), courseTotal);
   const scholarships = uni.scholarshipList || uni.scholarshipRecords || [];
   const rankings = uni.rankings || uni.rankingRecords || [];
-  const campusList: string[] = Array.isArray(uni.campuses) ? uni.campuses.filter((campus: unknown): campus is string => typeof campus === 'string' && campus.trim().length > 0) : [];
+  const campusList: string[] = (() => {
+    let campuses: unknown = uni.campuses;
+    if (typeof campuses === 'string') {
+      try { campuses = JSON.parse(campuses); } catch { return []; }
+    }
+    return Array.isArray(campuses)
+      ? campuses.filter((campus: unknown): campus is string => typeof campus === 'string' && campus.trim().length > 0)
+      : [];
+  })();
   const tuition = uni.tuitionRange || null;
   const ieltsMin = Number(uni.ieltsMin) > 0 ? Number(uni.ieltsMin) : null;
   const countryGuideSlug = getCountryDestination(String(country || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'))?.slug || null;
@@ -90,12 +99,17 @@ export default function UniversityHub({ slug }: Props) {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs text-gray-500 font-medium">
           <Link href="/" className="hover:text-[#2563EB]">Home</Link><span>›</span><Link href="/universities" className="hover:text-[#2563EB]">Universities</Link><span>›</span><span className="text-gray-700">{country}</span><span>›</span><span className="text-[#2563EB] font-bold">{name}</span>
         </nav>
 
         {/* 1. University Header */}
-        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 md:p-10 shadow-sm">
+        <div className="overflow-hidden rounded-3xl border border-[#E2E8F0] bg-white shadow-sm">
+          <div className="relative h-52 sm:h-72">
+            <Image src="/images/hero/study-abroad-hero.png" alt="Students planning their international education" fill sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover" priority />
+          </div>
+          <div className="p-6 md:p-10">
+          <p className="mb-3 text-xs font-semibold tracking-wide text-slate-500">ALO university reference: {uni.universityId || uni.id || 'Not recorded'}</p>
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <Badge className={`${uni.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-xs`}>
               {uni.verificationStatus === 'VERIFIED' ? 'Verified university record' : `Verification: ${uni.verificationStatus || 'not verified'}`}
@@ -121,6 +135,7 @@ export default function UniversityHub({ slug }: Props) {
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Scholarships</p><p className="font-bold text-emerald-600">{uni.scholarships ? 'Availability recorded' : 'Not recorded'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Jan 2027–Jan 2028 courses</p><p className="font-bold">{courseLoading ? 'Loading…' : courseTotal}</p></div>
           </div>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -140,7 +155,7 @@ export default function UniversityHub({ slug }: Props) {
             </div>
 
             {/* 5. Official Website + 6. International Student Info */}
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2"><Globe className="w-5 h-5 text-[#2563EB]" />Official Website & International Student Information</h3><div className="grid sm:grid-cols-2 gap-4 text-sm"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Official Website</p><a href={website} target="_blank" className="text-[#2563EB] font-semibold underline break-all">{website}</a></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">International Admissions</p>{uni.officialInternationalAdmissionsUrl ? <a href={uni.officialInternationalAdmissionsUrl} target="_blank" className="text-[#2563EB] underline">View Admissions Page</a> : <span className="text-xs">Information not currently verified. Please check with an ALO Education counselor.</span>}</div></div><p className="text-xs text-gray-500 mt-3">International Student Support: {uni.internationalStudentSupportSummary || 'Information not currently verified. Please check with an ALO Education counselor.'}</p></Card>
+            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2"><Globe className="w-5 h-5 text-[#2563EB]" />Official Website & International Student Information</h3><div className="grid sm:grid-cols-2 gap-4 text-sm"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Official Website</p>{website ? <a href={website} target="_blank" rel="noopener noreferrer" className="text-[#2563EB] font-semibold underline break-all">{website}</a> : <span className="text-xs text-gray-500">Official website URL is not recorded.</span>}</div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">International Admissions</p>{uni.officialInternationalAdmissionsUrl ? <a href={uni.officialInternationalAdmissionsUrl} target="_blank" className="text-[#2563EB] underline">View Admissions Page</a> : <span className="text-xs">Information not currently verified. Please check with an ALO Education counselor.</span>}</div></div><p className="text-xs text-gray-500 mt-3">International Student Support: {uni.internationalStudentSupportSummary || 'Information not currently verified. Please check with an ALO Education counselor.'}</p></Card>
 
             {/* Verified record summary */}
             <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">What this record confirms</h3><ul className="space-y-2 text-sm text-gray-700">{rankings.length > 0 ? <li>• {rankings.length} ranking record{rankings.length === 1 ? '' : 's'} are recorded and displayed with their available source metadata.</li> : <li>• No ranking record is currently available in the published university profile.</li>}{courseTotal > 0 ? <li>• {courseTotal} active, published, source-verified course record{courseTotal === 1 ? '' : 's'} with explicit international eligibility have a source-verified intake in the displayed January 2027–January 2028 window.</li> : <li>• No matching source-verified international course/intake record was returned for this period; this does not establish that no courses exist.</li>}{scholarships.length > 0 ? <li>• {scholarships.length} active, verified scholarship record{scholarships.length === 1 ? '' : 's'} are linked to this profile.</li> : <li>• No verified scholarship records are linked to this profile.</li>}</ul><p className="mt-3 text-[10px] text-slate-500">These are database coverage facts, not a promotional ranking or a claim of complete institutional coverage.</p></Card>

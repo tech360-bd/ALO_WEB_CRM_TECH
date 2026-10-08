@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { POST as uploadUccDocumentBytes } from '@/app/api/crm/ucc/documents/upload/route';
 import { authenticateRequest } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
 import { readPrivateFile } from '@/lib/storage/private-file-store';
@@ -35,7 +36,7 @@ function metadataOf(value: string) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function linkStoredInboundAttachment(request: NextRequest) {
   const auth = await authenticateRequest(request);
   if (auth instanceof NextResponse) return auth;
   if (!canUseUccDocuments(auth)) return NextResponse.json({ success: false, error: 'WhatsApp document access is not permitted.' }, { status: 403 });
@@ -87,6 +88,11 @@ export async function POST(request: NextRequest) {
   const privateMetadata = metadataOf(attachment.ocrExtractedData);
   const storagePath = typeof privateMetadata.storagePath === 'string' ? privateMetadata.storagePath : '';
   const fileHash = typeof privateMetadata.fileHash === 'string' ? privateMetadata.fileHash : '';
+  const trustedWhatsAppSource = ['whatsapp', 'WHATSAPP_CLOUD_API'].includes(String(privateMetadata.source || ''));
+  const hasProviderMediaId = [privateMetadata.mediaId, privateMetadata.providerMediaId].some((value) => typeof value === 'string' && value.trim().length > 0);
+  if (!trustedWhatsAppSource || !hasProviderMediaId) {
+    return NextResponse.json({ success: false, error: 'Only media stored by the verified WhatsApp webhook can be linked.' }, { status: 403 });
+  }
   if (!storagePath || !/^[a-f0-9]{64}$/i.test(fileHash)) {
     return NextResponse.json({ success: false, error: 'The attachment has no verified private file and cannot be linked.' }, { status: 410 });
   }
@@ -151,4 +157,14 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ success: false, error: 'WhatsApp document could not be linked to the student profile.' }, { status: 503 });
   }
+}
+
+/** Preserve both safe pathways: staff multipart uploads are delegated to the
+ * shared UCC byte-ingestion endpoint, while JSON only links an already-stored,
+ * signature-verified inbound WhatsApp attachment. */
+export async function POST(request: NextRequest) {
+  const contentType = request.headers.get('content-type')?.toLowerCase() || '';
+  if (contentType.startsWith('multipart/form-data')) return uploadUccDocumentBytes(request);
+  if (contentType.includes('application/json')) return linkStoredInboundAttachment(request);
+  return NextResponse.json({ success: false, error: 'Submit a real multipart file or link a stored WhatsApp attachment.' }, { status: 415 });
 }

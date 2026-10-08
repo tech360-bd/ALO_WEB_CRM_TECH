@@ -14,10 +14,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
-  Building2, MapPin, Phone, Mail, Globe, Briefcase,
-  Pencil, Save, X, ShieldCheck, Calendar, User, Loader2, CheckCircle2
+  Building2, MapPin, Phone, Mail, Briefcase, Pencil, Save, X,
+  ShieldCheck, User, Loader2, CheckCircle2, AlertTriangle,
 } from 'lucide-react';
 
+/**
+ * Only fields that actually exist on `PartnerProfile` (plus the portal user's
+ * own contact details, which the API persists onto `PortalUser`) are modelled
+ * here. Nothing is invented as a placeholder: when no profile row exists the
+ * page renders an explicit empty state instead of sample data.
+ */
 interface ProfileData {
   companyName: string;
   contactPerson: string;
@@ -26,79 +32,93 @@ interface ProfileData {
   businessType: string;
   city: string;
   address: string;
-  website: string;
-  description: string;
-  establishedYear: string;
   partnerId: string;
   approvalStatus: string;
   totalLeads: number;
   activeStudents: number;
+  studentCount: number | null;
+  applicationCount: number | null;
 }
 
-const mockProfile: ProfileData = {
-  companyName: 'Global Education Consultancy',
-  contactPerson: 'Karim Uddin',
-  email: 'partner@alo.edu.bd',
-  phone: '+880 1712-345678',
-  businessType: 'Education Consultancy',
-  city: 'Dhaka',
-  address: 'House 42, Road 11, Banani, Dhaka 1213',
-  website: 'www.globaledu.com.bd',
-  description: 'Leading education consultancy helping Bangladeshi students study abroad in top universities across the UK, USA, Canada, and Australia with a 95% visa success rate.',
-  establishedYear: '2018',
-  partnerId: 'AEP-2025-0042',
-  approvalStatus: 'active',
-  totalLeads: 24,
-  activeStudents: 12,
+const EMPTY_PROFILE: ProfileData = {
+  companyName: '',
+  contactPerson: '',
+  email: '',
+  phone: '',
+  businessType: '',
+  city: '',
+  address: '',
+  partnerId: '',
+  approvalStatus: '',
+  totalLeads: 0,
+  activeStudents: 0,
+  studentCount: null,
+  applicationCount: null,
 };
 
 export default function PartnerProfilePage() {
   const { user } = usePortalStore();
-  const [profile, setProfile] = useState<ProfileData>(mockProfile);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [form, setForm] = useState<ProfileData>(EMPTY_PROFILE);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState<ProfileData>(mockProfile);
   const [saved, setSaved] = useState(false);
+  const [loadError, setLoadError] = useState('');
+  const [noProfile, setNoProfile] = useState(false);
+
+  const authHeaders = useCallback((): HeadersInit => {
+    const token = usePortalStore.getState().token;
+    return token
+      ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+      : { 'Content-Type': 'application/json' };
+  }, []);
 
   const fetchProfile = useCallback(async () => {
     setLoading(true);
+    setLoadError('');
+    setNoProfile(false);
     try {
-      const token = usePortalStore.getState().token;
-      const headers: HeadersInit = token
-        ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-        : { 'Content-Type': 'application/json' };
-      const res = await fetch(`/api/partner/profile?partnerId=${user?.id || ''}`, { headers });
-      const data = await res.json();
-      if (data.success && data.profile) {
-        const p = data.profile;
-        const merged: ProfileData = {
-          companyName: p.companyName || mockProfile.companyName,
-          contactPerson: p.contactPerson || mockProfile.contactPerson,
-          email: user?.email || mockProfile.email,
-          phone: user?.phone || mockProfile.phone,
-          businessType: p.businessType || mockProfile.businessType,
-          city: p.city || mockProfile.city,
-          address: p.address || mockProfile.address,
-          website: p.website || mockProfile.website,
-          description: p.description || mockProfile.description,
-          establishedYear: p.establishedYear || mockProfile.establishedYear,
-          partnerId: p.partnerId || mockProfile.partnerId,
-          approvalStatus: p.approvalStatus || mockProfile.approvalStatus,
-          totalLeads: p.totalLeads ?? mockProfile.totalLeads,
-          activeStudents: p.activeStudents ?? mockProfile.activeStudents,
-        };
-        setProfile(merged);
-        setForm(merged);
+      const res = await fetch('/api/partner/profile', { headers: authHeaders(), cache: 'no-store' });
+      const data = await res.json().catch(() => null);
+
+      if (res.status === 404) {
+        // A genuine "no profile row yet" state — never filled with sample data.
+        setNoProfile(true);
+        setProfile(null);
+        return;
       }
-    } catch {
-      // fallback to mock data
+      if (!res.ok || !data?.success || !data.profile) {
+        throw new Error(data?.error || 'Partner profile could not be loaded.');
+      }
+
+      const p = data.profile;
+      const loaded: ProfileData = {
+        companyName: p.companyName || '',
+        contactPerson: p.contactPerson || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
+        businessType: p.businessType || '',
+        city: p.city || '',
+        address: p.address || '',
+        partnerId: p.partnerId || '',
+        approvalStatus: p.approvalStatus || '',
+        totalLeads: p.totalLeads ?? 0,
+        activeStudents: p.activeStudents ?? 0,
+        studentCount: typeof p.studentCount === 'number' ? p.studentCount : null,
+        applicationCount: typeof p.applicationCount === 'number' ? p.applicationCount : null,
+      };
+      setProfile(loaded);
+      setForm(loaded);
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : 'Partner profile could not be loaded.');
+      setProfile(null);
     } finally {
       setLoading(false);
     }
-  }, [user?.id, user?.email, user?.phone]);
+  }, [user?.email, user?.phone, authHeaders]);
 
-  useEffect(() => { fetchProfile(); }, [fetchProfile]);
+  useEffect(() => { void fetchProfile(); }, [fetchProfile]);
 
   const handleSave = async () => {
     if (!form.companyName.trim()) {
@@ -112,36 +132,28 @@ export default function PartnerProfilePage() {
     setSaving(true);
     setSaved(false);
     try {
-      const token = usePortalStore.getState().token;
-      const headers: HeadersInit = token
-        ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-        : { 'Content-Type': 'application/json' };
       const res = await fetch('/api/partner/profile', {
         method: 'PUT',
-        headers,
+        headers: authHeaders(),
         body: JSON.stringify({
-          partnerId: user?.id || form.partnerId,
-          companyName: form.companyName,
-          contactPerson: form.contactPerson,
-          email: form.email,
-          phone: form.phone,
+          companyName: form.companyName.trim(),
+          contactPerson: form.contactPerson.trim(),
+          email: form.email.trim() || undefined,
+          phone: form.phone.trim() || undefined,
           businessType: form.businessType,
-          city: form.city,
-          address: form.address,
-          website: form.website,
-          description: form.description,
-          establishedYear: form.establishedYear,
+          city: form.city.trim(),
+          address: form.address.trim(),
         }),
       });
-      const data = await res.json();
-      if (data.success) {
-        setProfile(form);
-        setEditing(false);
-        setSaved(true);
-        toast.success('Profile updated successfully');
-      } else {
-        toast.error(data.error || 'Failed to update profile');
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        toast.error(data?.error || 'Failed to update profile');
+        return;
       }
+      setProfile((prev) => (prev ? { ...prev, ...form } : form));
+      setEditing(false);
+      setSaved(true);
+      toast.success('Profile updated successfully');
     } catch {
       toast.error('Network error. Please check your connection and try again.');
     } finally {
@@ -150,7 +162,7 @@ export default function PartnerProfilePage() {
     }
   };
 
-  const handleCancel = () => { setForm(profile); setEditing(false); };
+  const handleCancel = () => { if (profile) setForm(profile); setEditing(false); };
 
   if (loading) {
     return (
@@ -158,16 +170,54 @@ export default function PartnerProfilePage() {
         <Skeleton className="h-8 w-64" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <Skeleton className="h-[480px] w-full rounded-xl" />
+            <Skeleton className="h-[420px] w-full rounded-xl" />
           </div>
           <div className="space-y-6">
             <Skeleton className="h-64 w-full rounded-xl" />
-            <Skeleton className="h-48 w-full rounded-xl" />
           </div>
         </div>
       </div>
     );
   }
+
+  if (loadError) {
+    return (
+      <div className="p-1">
+        <Card className="bg-white rounded-xl border border-destructive/30">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 shrink-0 text-destructive mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-alo-text">Profile could not be loaded</p>
+                <p className="text-sm text-alo-text-secondary mt-1">{loadError}</p>
+                <Button variant="outline" className="mt-3" onClick={() => void fetchProfile()}>Try again</Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (noProfile || !profile) {
+    return (
+      <div className="p-1">
+        <Card className="bg-white rounded-xl border border-alo-border">
+          <CardContent className="p-8 text-center">
+            <Building2 className="w-8 h-8 mx-auto text-alo-text-muted" />
+            <p className="text-sm font-semibold text-alo-text mt-3">No partner profile is linked to this account</p>
+            <p className="text-sm text-alo-text-secondary mt-1 max-w-md mx-auto">
+              A partner record has not been created for your account yet. Contact your ALO Education account manager to have
+              one set up, then reload this page.
+            </p>
+            <Button variant="outline" className="mt-4" onClick={() => void fetchProfile()}>Reload</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const statusActive = profile.approvalStatus === 'active';
 
   return (
     <div className="space-y-6 p-1">
@@ -175,10 +225,12 @@ export default function PartnerProfilePage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <Badge variant="muted" className="text-[11px] font-mono">{profile.partnerId}</Badge>
-            <Badge variant={profile.approvalStatus === 'active' ? 'success' : 'warning'} className="text-[11px]">
-              <ShieldCheck className="w-3 h-3 mr-1" />{profile.approvalStatus === 'active' ? 'Active' : 'Pending'}
-            </Badge>
+            <Badge variant="muted" className="text-[11px] font-mono">{profile.partnerId || '—'}</Badge>
+            {profile.approvalStatus && (
+              <Badge variant={statusActive ? 'success' : 'warning'} className="text-[11px]">
+                <ShieldCheck className="w-3 h-3 mr-1" />{statusActive ? 'Active' : 'Pending'}
+              </Badge>
+            )}
           </div>
           <h1 className="text-2xl font-bold text-alo-text">Company Profile</h1>
           <p className="text-sm text-alo-text-muted mt-0.5">Manage your partner organization details</p>
@@ -227,7 +279,7 @@ export default function PartnerProfilePage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="businessType">Business Type</Label>
-                    <Select value={form.businessType} onValueChange={(v) => setForm({ ...form, businessType: v })}>
+                    <Select value={form.businessType || undefined} onValueChange={(v) => setForm({ ...form, businessType: v })}>
                       <SelectTrigger id="businessType"><SelectValue placeholder="Select type" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Education Consultancy">Education Consultancy</SelectItem>
@@ -246,18 +298,6 @@ export default function PartnerProfilePage() {
                     <Label htmlFor="address">Address</Label>
                     <Textarea id="address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Enter full address" rows={2} />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="website">Website</Label>
-                    <Input id="website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="www.example.com" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="establishedYear">Established Year</Label>
-                    <Input id="establishedYear" value={form.establishedYear} onChange={(e) => setForm({ ...form, establishedYear: e.target.value })} placeholder="e.g. 2020" />
-                  </div>
-                  <div className="sm:col-span-2 space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea id="description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description of your organization" rows={3} />
-                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -270,24 +310,10 @@ export default function PartnerProfilePage() {
                   <div className="sm:col-span-2">
                     <InfoRow icon={MapPin} label="Address" value={profile.address} />
                   </div>
-                  <InfoRow icon={Globe} label="Website" value={profile.website} />
-                  <InfoRow icon={Calendar} label="Established" value={profile.establishedYear} />
                 </div>
               )}
             </CardContent>
           </Card>
-
-          {/* Description Card (view mode only) */}
-          {!editing && profile.description && (
-            <Card className="bg-white rounded-xl border border-alo-border">
-              <CardHeader>
-                <CardTitle className="text-base font-semibold text-alo-text">About</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-alo-text-secondary leading-relaxed">{profile.description}</p>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Success Banner */}
           {saved && (
@@ -305,18 +331,34 @@ export default function PartnerProfilePage() {
               <CardTitle className="text-base font-semibold text-alo-text">Partner Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <StatItem label="Partner ID" value={profile.partnerId} mono />
+              <StatItem label="Partner ID" value={profile.partnerId || '—'} mono />
               <Separator />
               <StatItem label="Total Leads" value={String(profile.totalLeads)} />
               <Separator />
               <StatItem label="Active Students" value={String(profile.activeStudents)} />
-              <Separator />
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-alo-text-secondary">Status</span>
-                <Badge variant={profile.approvalStatus === 'active' ? 'success' : 'warning'} className="text-xs">
-                  {profile.approvalStatus === 'active' ? 'Approved & Active' : 'Pending Review'}
-                </Badge>
-              </div>
+              {profile.studentCount !== null && (
+                <>
+                  <Separator />
+                  <StatItem label="Lead Records" value={String(profile.studentCount)} />
+                </>
+              )}
+              {profile.applicationCount !== null && (
+                <>
+                  <Separator />
+                  <StatItem label="Applications" value={String(profile.applicationCount)} />
+                </>
+              )}
+              {profile.approvalStatus && (
+                <>
+                  <Separator />
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-alo-text-secondary">Status</span>
+                    <Badge variant={statusActive ? 'success' : 'warning'} className="text-xs">
+                      {statusActive ? 'Approved & Active' : 'Pending Review'}
+                    </Badge>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -325,7 +367,7 @@ export default function PartnerProfilePage() {
               <CardTitle className="text-base font-semibold text-alo-text">Account Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <StatItem label="Account Email" value={user?.email || profile.email} />
+              <StatItem label="Account Email" value={user?.email || profile.email || '—'} />
               <Separator />
               <StatItem label="User ID" value={user?.id || '—'} mono />
               <Separator />
