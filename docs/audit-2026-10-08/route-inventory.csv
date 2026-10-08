@@ -1077,7 +1077,7 @@ Route,Type,Public,Authentication,ExpectedStatus,Exists,RepositoryAudit,LiveRunti
 /destinations/[slug]/universities,PAGE,YES,NONE,200,YES,SOURCE AUDITED,NOT VERIFIED
 /destinations/[slug]/visa-guide,PAGE,YES,NONE,200,YES,SOURCE AUDITED,NOT VERIFIED
 /eligibility-check,PAGE,YES,NONE,200,YES,SOURCE AUDITED,NOT VERIFIED
-/eligibility-checker,PAGE,NO,REQUIRED,308 -> /eligibility-check,YES,SOURCE AUDITED,NOT VERIFIED
+/eligibility-checker,PAGE,YES,NONE,308 -> /eligibility-check,YES,SOURCE AUDITED,NOT VERIFIED
 /employee,PAGE,NO,REQUIRED,401/403 or login redirect,YES,SOURCE AUDITED,NOT VERIFIED
 /employee/activate,PAGE,YES,NONE,200,YES,SOURCE AUDITED,NOT VERIFIED
 /employee/application-dashboard,PAGE,NO,REQUIRED,401/403 or login redirect,YES,SOURCE AUDITED,NOT VERIFIED

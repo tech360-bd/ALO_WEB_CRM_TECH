@@ -109,6 +109,7 @@ describe("proxy public marketing page exposure (2026-10-08 production regression
   it("keeps public marketing/SEO pages reachable without a session", () => {
     for (const path of [
       "/eligibility-check",
+      "/eligibility-checker",
       "/english-test-prep",
       "/english-test-prep/ielts",
       "/english-tests/ielts",

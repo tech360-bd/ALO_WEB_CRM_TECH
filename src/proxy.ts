@@ -41,6 +41,9 @@ const PUBLIC_ROUTES = [
   // missing from this list — breaking the public funnel (homepage "Check
   // Eligibility" CTA, navbar "Application Tips", English-test prep hub, etc.).
   "/eligibility-check",
+  // Legacy public alias; the page permanently redirects to the canonical
+  // /eligibility-check route. It must pass the proxy for that redirect to run.
+  "/eligibility-checker",
   "/english-test-prep",
   "/english-tests",
   "/news",
