@@ -11,8 +11,8 @@ const ci = text('.github/workflows/ci.yml');
 const noticeFiles = ['.github/workflows/deploy-production.yml', '.github/workflows/deploy-recovery.yml'];
 const predicate = "github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'";
 const manifests = JSON.parse(text('docs/deployment-ownership/quarantined-entrypoints.json'));
-test('1: Arena pushes and PRs can run CI, which includes safety tests', () => {
-  assert.match(ci, /on:\n  push:\n    branches:\n      - main\n      - development\n      - 'arena\/\*\*'\n  pull_request:/);
+test('1: Integration pushes and PRs run CI without duplicate arena push jobs', () => {
+  assert.match(ci, /on:\n  push:\n    branches:\n      - main\n      - development\n  pull_request:/);
   assert.ok(ci.includes('node --test tests/deployment-ownership.test.mjs'));
   for (const command of ['npm ci', 'npx prisma validate', 'npx prisma generate', 'npm run lint', 'npm run typecheck', 'npm test', 'npm run build']) assert.ok(ci.includes(command));
 });

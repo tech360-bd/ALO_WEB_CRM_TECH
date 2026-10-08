@@ -5,6 +5,10 @@
   "summary": {
     "UNUSED": 81,
     "REFERENCED_WITH_FALLBACK": 124,
+  "filesScanned": 2158,
+  "summary": {
+    "UNUSED": 73,
+    "REFERENCED_WITH_FALLBACK": 123,
     "REFERENCED_FAIL_CLOSED": 14,
     "REFERENCED": 91,
     "PUBLIC": 8
