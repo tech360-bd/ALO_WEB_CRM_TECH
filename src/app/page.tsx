@@ -543,7 +543,7 @@ function HomePageContent() {
 
     let entry = pathToViewMap[pathname];
 
-    if (!entry && pParam) {
+    if ((!entry || pathname === '/') && pParam) {
       const pParamMap: Record<string, { view: PortalView; portal?: 'student' | 'partner' | 'employee' | 'admin' }> = {
         'consultation': { view: 'public-consultation' },
         'contact': { view: 'public-contact' },
@@ -588,7 +588,7 @@ function HomePageContent() {
     }
   }, [searchParams]);
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || currentView === 'website' || currentView.startsWith('public-')) {
     return <PublicView view={currentView} />;
   }
 

@@ -3117,9 +3117,19 @@ model EmployeeActivationToken {
 // ==========================================
 
 model PartnerProfile {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  partnerId         String   @unique
+  id     String @id @default(cuid())
+  userId String @unique
+  // partnerId is the TENANT key, not a per-user key.
+  //
+  // This was `@unique`, which made it physically impossible for more than one
+  // user to belong to the same partner company — so the Starter package
+  // ("1 Partner Super Admin + 2 Employees = 3 seats") could never work: the
+  // second user creation always failed with a unique-constraint error, and
+  // every seat-limit query could return at most 1. It is now an index.
+  partnerId String
+  // Role of this user WITHIN the partner tenant. Only PARTNER_SUPER_ADMIN may
+  // manage users, request seats, approve marketing and connect social accounts.
+  partnerRole       String   @default("PARTNER_SUPER_ADMIN") // PARTNER_SUPER_ADMIN | PARTNER_COUNSELOR | PARTNER_APPLICATION_ASSISTANT | PARTNER_MARKETING_ASSISTANT | PARTNER_DOCUMENT_ASSISTANT | PARTNER_VIEWER
   companyName       String   @default("")
   contactPerson     String   @default("")
   businessType      String   @default("")
@@ -3134,6 +3144,9 @@ model PartnerProfile {
   updatedAt         DateTime @updatedAt
 
   user PortalUser @relation(fields: [userId], references: [id])
+
+  @@index([partnerId])
+  @@index([partnerId, partnerRole])
 }
 
 // ==========================================
@@ -3760,8 +3773,16 @@ model PartnerPackageAssignment {
   startsAt   DateTime  @default(now())
   expiresAt  DateTime?
   status     String    @default("active")
+  // Seat limit granted on top of the package default after ALO Education
+  // approves an extra-seat request. Null means "use the package's maxUsers".
+  // Without this, approving a seat request had no effect on the actual limit.
+  seatOverride Int?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+
+  @@index([partnerId])
+  @@index([partnerId, status])
+  @@index([packageId])
 }
 
 // ==========================================
@@ -3813,6 +3834,10 @@ model PartnerUserSeatRequest {
   reviewNote          String   @default("")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([partnerId, status])
+  @@index([status, createdAt])
 }
 
 // ==========================================
@@ -11576,4 +11601,84 @@ model AwfTaskLedger {
   @@index([workflowSlug])
   @@index([outcome])
   @@index([eligible])
+}
+
+// ─── Email marketing core (SMTP outbox) ─────────────────────────────────────
+// Every marketing send is an EmailOutboxItem claimed by the cron worker
+// (/api/cron/email-outbox). An item is marked SENT only after SMTP accepts it.
+// Design notes: docs/email-marketing/README.md
+
+model EmailCampaign {
+  id                String    @id @default(cuid())
+  name              String    @db.VarChar(160)
+  subject           String    @db.VarChar(255)
+  html              String    @db.LongText
+  text              String?   @db.LongText
+  // draft | queued | sending | paused | sent | cancelled
+  status            String    @default("draft") @db.VarChar(20)
+  testMode          Boolean   @default(false)
+  broadcastId       String?   @unique @db.VarChar(64)
+  consentAttestedBy String?   @db.VarChar(64)
+  consentAttestedAt DateTime?
+  // Operator's short description of how the list was collected (manual lists only)
+  consentBasis      String?   @db.VarChar(200)
+  recipientCount    Int       @default(0)
+  queuedAt          DateTime?
+  completedAt       DateTime?
+  lastErrorCode     String?   @db.VarChar(64)
+  createdById       String?   @db.VarChar(64)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  outbox            EmailOutboxItem[]
+  events            EmailEvent[]
+
+  @@index([status, createdAt])
+}
+
+model EmailOutboxItem {
+  id            String        @id @default(cuid())
+  campaignId    String
+  campaign      EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  email         String        @db.VarChar(254)
+  // JSON object of plain strings: first_name, last_name, company
+  recipientVars String?       @db.Text
+  // draft | queued | sending | sent | failed | suppressed | skipped
+  status        String        @default("draft") @db.VarChar(20)
+  attempts      Int           @default(0)
+  nextAttemptAt DateTime      @default(now())
+  lockedAt      DateTime?
+  lockToken     String?       @db.VarChar(64)
+  lastErrorCode String?       @db.VarChar(64)
+  smtpMessageId String?       @db.VarChar(255)
+  sentAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([campaignId, email])
+  @@index([status, nextAttemptAt])
+  @@index([campaignId, status])
+  @@index([email])
+}
+
+model EmailSuppression {
+  id        String   @id @default(cuid())
+  email     String   @unique @db.VarChar(254)
+  // unsubscribed | hard_bounce | complaint | manual
+  reason    String   @db.VarChar(32)
+  source    String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+}
+
+model EmailEvent {
+  id         String         @id @default(cuid())
+  campaignId String?
+  campaign   EmailCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  email      String         @db.VarChar(254)
+  // sent | soft_failure | hard_failure | failed | suppressed | unsubscribed | auth_failure | cap_reached
+  type       String         @db.VarChar(32)
+  code       String?        @db.VarChar(64)
+  createdAt  DateTime       @default(now())
+
+  @@index([campaignId, type, createdAt])
+  @@index([type, createdAt])
 }

@@ -25,6 +25,8 @@ export const MARKETING_PERMISSIONS = [
   'marketing.agentos.approve',
   'marketing.seo.generate',
   'marketing.seo.publish_approve',
+  'marketing.email.view',
+  'marketing.email.manage',
 ] as const;
 
 export type MarketingPermission = (typeof MARKETING_PERMISSIONS)[number];
@@ -36,6 +38,7 @@ const ROLE_PERMISSIONS: Record<UserRole, MarketingPermission[]> = {
   ),
   marketing_staff: [
     'marketing.dashboard.view',
+    'marketing.email.view',
     'marketing.content.generate',
     'marketing.content.edit',
     'marketing.asset.upload',

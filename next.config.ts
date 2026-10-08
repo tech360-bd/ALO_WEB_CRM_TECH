@@ -64,6 +64,7 @@ const nextConfig: NextConfig = {
   // has started rendering, so the legacy URLs would not return a real 308.
   async redirects() {
     return [
+      { source: "/courses", destination: "/course-finder", permanent: true },
       // Legacy alias. /eligibility-check is the canonical route.
       { source: "/eligibility-checker", destination: "/eligibility-check", permanent: true },
 
@@ -113,7 +114,7 @@ const nextConfig: NextConfig = {
       { source: "/admin/tasks", destination: "/admin/crm-command" },
       { source: "/portal", destination: "/portal/login" },
       { source: "/auth/login", destination: "/login" },
-      { source: "/course-finder/saved", destination: "/?p=saved-courses" },
+      { source: "/course-finder/saved", destination: "/student/saved" },
       // Spec-named marketing IA aliases. The implementations already exist
       // under their canonical CRM paths; these keep the specification's URLs
       // working without duplicating a second dashboard.
@@ -122,9 +123,9 @@ const nextConfig: NextConfig = {
       { source: "/crm/social-inbox", destination: "/crm/communications/social-inbox" },
       { source: "/crm/ai-command-center", destination: "/admin/ai-command-center" },
 
+
     ];
   },
 };
 
 export default nextConfig;
-

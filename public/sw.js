@@ -1,164 +1,59 @@
-// ALO Education — PWA Service Worker — Web-based yet native app-like on mobile
-// Version: 1.0.0 — 2026-09-16
-// Features: offline shell, cache-first for static, network-first for API, background sync, push notification ready
-
-const CACHE_VERSION = 'alo-education-v1-20260916';
-const STATIC_CACHE = `${CACHE_VERSION}-static`;
-const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
+// Cache only public assets. Never cache API data, documents or portal HTML.
+const STATIC_CACHE = 'alo-education-v2-20261009-static';
 const OFFLINE_URL = '/offline';
+const STATIC_ASSETS = [OFFLINE_URL, '/manifest.json', '/icons/icon-192x192.png', '/icons/icon-512x512.png'];
 
-const STATIC_ASSETS = [
-  '/',
-  '/offline',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
-];
-
-// Install — cache static shell
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => {
-      return cache.addAll(STATIC_ASSETS.map(url => new Request(url, { cache: 'reload' }))).catch(() => {
-        // Fail silently if offline page not available — don't block install
-        return cache.addAll(['/','/manifest.json']);
-      });
-    }).then(() => self.skipWaiting())
-  );
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(STATIC_CACHE).then(async cache => {
+    await Promise.allSettled(STATIC_ASSETS.map(url => cache.add(new Request(url, { cache: 'reload' }))));
+    await self.skipWaiting();
+  }));
 });
-
-// Activate — clean old caches
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter(k => k.startsWith('alo-education-v') && k !== STATIC_CACHE && k !== DYNAMIC_CACHE).map(k => caches.delete(k))
-      );
-    }).then(() => self.clients.claim())
-  );
+self.addEventListener('activate', event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(
+    keys.filter(key => key.startsWith('alo-education-v') && key !== STATIC_CACHE).map(key => caches.delete(key)),
+  )).then(() => self.clients.claim()));
 });
-
-// Fetch — strategy
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   const req = event.request;
   const url = new URL(req.url);
-
-  // Skip non-GET, chrome extensions, etc
-  if (req.method !== 'GET') return;
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
-
-  // API — network first, fallback to cache, then offline
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(req).then((res) => {
-        // Cache successful GET API responses for offline use (short-lived)
-        if (res.ok && req.method === 'GET') {
-          const clone = res.clone();
-          caches.open(DYNAMIC_CACHE).then(cache => cache.put(req, clone)).catch(()=>{});
-        }
-        return res;
-      }).catch(() => {
-        return caches.match(req).then(cached => cached || Response.json({ error: 'Offline — cached data unavailable', offline: true }, { status: 503 }));
-      })
-    );
-    return;
-  }
-
-  // Static assets — cache first
-  if (url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|webp|ico|woff2?)$/)) {
-    event.respondWith(
-      caches.match(req).then(cached => {
-        if (cached) {
-          // Update in background
-          fetch(req).then(res => {
-            if (res.ok) caches.open(STATIC_CACHE).then(c => c.put(req, res)).catch(()=>{});
-          }).catch(()=>{});
-          return cached;
-        }
-        return fetch(req).then(res => {
-          if (res.ok) {
-            const clone = res.clone();
-            caches.open(STATIC_CACHE).then(c => c.put(req, clone)).catch(()=>{});
-          }
-          return res;
-        }).catch(() => cached);
-      })
-    );
-    return;
-  }
-
-  // Navigation — network first, fallback to cache, then offline page
+  if (req.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
   if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req).then(res => {
-        const clone = res.clone();
-        caches.open(DYNAMIC_CACHE).then(c => c.put(req, clone)).catch(()=>{});
-        return res;
-      }).catch(() => {
-        return caches.match(req).then(cached => cached || caches.match(OFFLINE_URL).then(off => off || caches.match('/')));
-      })
-    );
+    event.respondWith(fetch(req).catch(async () =>
+      (await caches.match(OFFLINE_URL)) || new Response('You are offline. Reconnect to continue.', { status: 503 }),
+    ));
     return;
   }
-
-  // Default — network first with cache fallback
-  event.respondWith(
-    fetch(req).then(res => {
-      if (res.ok) {
-        const clone = res.clone();
-        caches.open(DYNAMIC_CACHE).then(c => c.put(req, clone)).catch(()=>{});
+  const immutable = url.pathname.startsWith('/_next/static/');
+  const publicAsset = /^\/(images|icons)\//.test(url.pathname) || STATIC_ASSETS.includes(url.pathname);
+  if (!immutable && !publicAsset) return;
+  event.respondWith((async () => {
+    const cache = await caches.open(STATIC_CACHE);
+    const cached = await cache.match(req);
+    if (immutable && cached) return cached;
+    try {
+      const response = await fetch(req);
+      if (response.ok && response.type !== 'opaque' && !/private|no-store/i.test(response.headers.get('Cache-Control') || '')) {
+        await cache.put(req, response.clone());
       }
-      return res;
-    }).catch(() => caches.match(req))
-  );
+      return response;
+    } catch { return cached || new Response('Asset unavailable offline', { status: 503 }); }
+  })());
 });
-
-// Background Sync — for offline lead creation, messages, etc
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'alo-sync-leads') {
-    event.waitUntil(syncLeads());
-  }
-  if (event.tag === 'alo-sync-messages') {
-    event.waitUntil(syncMessages());
-  }
+self.addEventListener('push', event => {
+  let data = { title: 'ALO Education', body: 'You have a new notification', url: '/' };
+  try { data = { ...data, ...event.data?.json() }; } catch { /* readable defaults */ }
+  event.waitUntil(self.registration.showNotification(data.title, {
+    body: data.body, icon: '/icons/icon-192x192.png', badge: '/icons/icon-72x72.png', data: { url: data.url },
+  }));
 });
-
-async function syncLeads() {
-  // Placeholder — real implementation would read IndexedDB queue and POST to /api/crm/leads
-  console.log('[SW] Background sync leads');
-}
-
-async function syncMessages() {
-  console.log('[SW] Background sync messages');
-}
-
-// Push Notifications — ready for future
-self.addEventListener('push', (event) => {
-  const data = event.data ? event.data.json() : { title: 'ALO Education', body: 'New update available' };
-  event.waitUntil(
-    self.registration.showNotification(data.title || 'ALO Education', {
-      body: data.body || 'You have a new notification',
-      icon: '/icons/icon-192x192.png',
-      badge: '/icons/icon-72x72.png',
-      data: { url: data.url || '/' }
-    })
-  );
-});
-
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener('notificationclick', event => {
   event.notification.close();
-  event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(list => {
-      const url = event.notification.data.url || '/';
-      for (const client of list) {
-        if (client.url.includes(url) && 'focus' in client) return client.focus();
-      }
-      if (clients.openWindow) return clients.openWindow(url);
-    })
-  );
+  const target = new URL(event.notification.data?.url || '/', self.location.origin);
+  if (target.origin !== self.location.origin) target.href = self.location.origin;
+  event.waitUntil(self.clients.matchAll({ type: 'window' }).then(async windows => {
+    const existing = windows.find(client => client.url === target.href);
+    return existing ? existing.focus() : self.clients.openWindow(target.href);
+  }));
 });
-
-// Message — skip waiting
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
-});
+self.addEventListener('message', event => { if (event.data?.type === 'SKIP_WAITING') self.skipWaiting(); });

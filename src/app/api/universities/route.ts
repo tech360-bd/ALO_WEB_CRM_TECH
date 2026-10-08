@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { getOptionalAuth } from '@/lib/auth-middleware';
 
 // Public GET /api/universities — proxies to approved, verified CrmUniversity (Part 46)
 // Query: ?search=&country=&status=&limit=50
@@ -11,10 +12,16 @@ export async function GET(req: NextRequest) {
     const search = req.nextUrl.searchParams.get('search') || '';
     const country = req.nextUrl.searchParams.get('country') || '';
     const status = req.nextUrl.searchParams.get('status') || 'active';
-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10) || 50, 100);
+    const limit = Math.max(1, Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10) || 50, 100));
+    const auth = await getOptionalAuth(req);
+    const privileged = auth?.roles.some(role => ['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(role));
 
     const where: any = {};
-    if (status !== 'all') where.status = status;
+    if (!privileged) {
+      where.status = 'active';
+      where.verificationStatus = 'VERIFIED';
+      where.publicationStatus = { in: ['published', 'PUBLISHED'] };
+    } else if (status !== 'all') where.status = status;
     if (search) where.OR = [{ name: { contains: search } }, { city: { contains: search } }, { country: { contains: search } }];
     if (country && country !== 'all') where.country = { contains: country };
 

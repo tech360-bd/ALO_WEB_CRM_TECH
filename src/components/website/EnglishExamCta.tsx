@@ -60,17 +60,20 @@ export function EnglishExamButton({ location, label, className, children, onNavi
 export function EnglishExamBanner({ location = 'homepage_banner' }: { location?: EnglishExamCtaLocation }) {
   return (
     <section aria-labelledby="english-exam-banner-title" className="bg-white px-4 py-8 sm:px-6">
-      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-5 rounded-2xl bg-[#2563EB] px-6 py-6 text-white shadow-lg sm:flex-row sm:items-center sm:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-5 rounded-2xl bg-emerald-800 px-6 py-6 text-white shadow-lg sm:flex-row sm:items-center sm:px-8">
         <div className="max-w-3xl">
           <h2 id="english-exam-banner-title" className="text-xl font-bold sm:text-2xl">
             {COPY.bn.question}
           </h2>
-          <p className="mt-1 text-sm font-medium text-blue-50 sm:text-base">{COPY.en.question}</p>
-          <p className="mt-2 text-xs text-blue-100">{COPY.en.leaving}</p>
+          <p className="mt-1 text-sm font-medium text-emerald-50 sm:text-base">{COPY.en.question}</p>
+          <p className="mt-3 text-sm leading-relaxed text-emerald-50">{COPY.bn.promotion}</p>
+          <p className="mt-1 text-xs leading-relaxed text-emerald-100">{COPY.en.promotion}</p>
+          <Link href="/student/english-test" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">Open student English-test page →</Link>
+          <p className="mt-2 text-xs text-emerald-100">{COPY.en.leaving}</p>
         </div>
         <EnglishExamButton
           location={location}
-          className="inline-flex min-h-11 shrink-0 flex-col items-center justify-center rounded-xl bg-[#F97316] px-6 py-3 text-center text-white shadow-sm transition hover:bg-[#EA580C] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
+          className="inline-flex min-h-11 shrink-0 flex-col items-center justify-center rounded-xl bg-white px-6 py-3 text-center text-emerald-900 shadow-sm transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300"
         >
           <span className="text-base font-bold">{COPY.bn.button}</span>
           <span className="text-xs font-semibold">

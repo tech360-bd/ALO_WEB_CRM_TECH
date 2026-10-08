@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { authenticateUnified } from "@/lib/unified-auth";
+import { authenticateUnified, type UnifiedAuthContext } from "@/lib/unified-auth";
+import { canViewUccB2B } from "@/lib/ucc/document-access";
 
 // ============================================================
 // SECURITY FIX (2026-09-28): this route had NO authentication at all.
@@ -24,22 +25,27 @@ import { authenticateUnified } from "@/lib/unified-auth";
 // students requires a privileged staff session.
 // ============================================================
 
-async function enrich(student: Awaited<ReturnType<typeof db.student.findUnique>>) {
+async function enrich(student: Awaited<ReturnType<typeof db.student.findUnique>>, auth?: UnifiedAuthContext) {
   if (!student) return null;
   const [applications, visaCases, timelineEvents] = await Promise.all([
     db.application.findMany({ where: { studentId: student.id } }),
     db.visaCase.findMany({ where: { studentId: student.id } }),
     db.timelineEvent.findMany({ where: { studentId: student.id }, take: 20, orderBy: { createdAt: "desc" } }),
   ]);
-  return { ...student, applications, visaCases, timelineEvents };
+  const canSeeB2b = auth?.type === 'student' || (auth?.type === 'portal' && canViewUccB2B(auth.data));
+  return {
+    ...student,
+    applications: canSeeB2b ? applications : applications.filter((application) => !application.isB2bConfidential),
+    hasB2bConfidentialApplications: applications.some((application) => application.isB2bConfidential),
+    canManageB2bDocuments: auth?.type === 'portal' && canViewUccB2B(auth.data),
+    visaCases,
+    timelineEvents,
+  };
 }
 
 function isPrivileged(roles: string[], userType: string): boolean {
-  return (
-    userType === "ADMIN" ||
-    userType === "SUPER_ADMIN" ||
-    roles.some((r) => ["super_admin", "admin", "SUPER_ADMIN", "ADMIN", "counselor", "hr_manager"].includes(r))
-  );
+  const normalized = new Set([userType, ...roles].map((role) => role.toUpperCase()));
+  return normalized.has('ADMIN') || normalized.has('SUPER_ADMIN');
 }
 
 export async function GET(req: NextRequest) {
@@ -60,7 +66,7 @@ export async function GET(req: NextRequest) {
         if (!own) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }
       const student = await db.student.findUnique({ where: { id: authRes.data.studentId } });
-      const enriched = await enrich(student);
+      const enriched = await enrich(student, authRes);
       return enriched ? NextResponse.json({ student: enriched }) : NextResponse.json({ error: "Not found" }, { status: 404 });
     }
     // Portal/staff caller resolving a student by linked userId — only a
@@ -71,7 +77,7 @@ export async function GET(req: NextRequest) {
       }
     }
     const student = await db.student.findFirst({ where: { userId } });
-    const enriched = await enrich(student);
+    const enriched = await enrich(student, authRes);
     return enriched ? NextResponse.json({ student: enriched }) : NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
@@ -93,7 +99,7 @@ export async function GET(req: NextRequest) {
       where: { id },
       include: { documents: { orderBy: { category: "asc" } }, interviewSessions: { orderBy: { startedAt: "desc" } }, payments: true, studentNotifications: { take: 5, orderBy: { createdAt: "desc" } } },
     });
-    const enriched = await enrich(student);
+    const enriched = await enrich(student, authRes);
     return enriched ? NextResponse.json({ student: enriched }) : NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
@@ -103,6 +109,6 @@ export async function GET(req: NextRequest) {
   }
 
   const students = await db.student.findMany({ include: { documents: { orderBy: { category: "asc" } }, interviewSessions: { take: 1 }, payments: true }, orderBy: { createdAt: "desc" } });
-  const enriched = await Promise.all(students.map((student) => enrich(student)));
+  const enriched = await Promise.all(students.map((student) => enrich(student, authRes)));
   return NextResponse.json({ students: enriched });
 }
