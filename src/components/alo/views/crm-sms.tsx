@@ -147,7 +147,7 @@ export function CrmSms() {
                           key={m.id}
                           className={`rounded-2xl px-3 py-2 text-sm ${
                             m.direction === "OUTBOUND"
-                              ? "ml-auto max-w-[75%] bg-[#0B5ED7] text-white"
+                              ? "ml-auto max-w-[75%] bg-[#2563EB] text-white"
                               : "max-w-[75%] bg-white text-[#0B2447]"
                           }`}
                         >
@@ -177,7 +177,7 @@ export function CrmSms() {
                         <Button
                           onClick={handleSend}
                           disabled={sending || !reply.trim()}
-                          className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
+                          className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
                         >
                           <Icon name="Send" className="size-4" />
                         </Button>

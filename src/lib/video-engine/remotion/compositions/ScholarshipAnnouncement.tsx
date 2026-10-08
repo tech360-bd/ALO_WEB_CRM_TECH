@@ -11,7 +11,7 @@ export const ScholarshipAnnouncement: React.FC<any> = ({ title = "£10,000 Schol
         <h1 style={{ fontSize: 80, fontWeight: 900 }}>{amount}</h1>
         <h2 style={{ fontSize: 48, fontWeight: 700 }}>{university}</h2>
         <p style={{ fontSize: 24, marginTop: 20 }}>{eligibility} • Deadline: {deadline}</p>
-        <div style={{ backgroundColor: "#0B5ED7", color: "white", padding: "12px 24px", borderRadius: 999, display: "inline-block", marginTop: 20, fontWeight: 800 }}>{cta}</div>
+        <div style={{ backgroundColor: "#2563EB", color: "white", padding: "12px 24px", borderRadius: 999, display: "inline-block", marginTop: 20, fontWeight: 800 }}>{cta}</div>
       </div>
     </AbsoluteFill>
   );

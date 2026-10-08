@@ -187,7 +187,7 @@ export function LegalLayout({
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-white">
+      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-white">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -196,7 +196,7 @@ export function LegalLayout({
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#EAF3FF] text-[#0B5ED7] border border-[#0B5ED7]/20 hover:bg-[#EAF3FF]">
+            <Badge className="bg-[#EAF3FF] text-[#2563EB] border border-[#2563EB]/20 hover:bg-[#EAF3FF]">
               <Icon name={icon} className="mr-1 size-3" />
               Legal Document
             </Badge>
@@ -213,7 +213,7 @@ export function LegalLayout({
         {children}
 
         {/* Contact CTA */}
-        <div className="mt-12 rounded-2xl border-2 border-[#0B5ED7]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
+        <div className="mt-12 rounded-2xl border-2 border-[#2563EB]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-base font-bold text-[#0B2447]">Questions about this policy?</p>

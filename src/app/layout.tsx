@@ -19,7 +19,7 @@ export const viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: "cover",
-  themeColor: "#0B5ED7",
+  themeColor: "#2563EB",
 };
 
 // Root metadata is generated at request/build time. Site-wide SEO
@@ -86,7 +86,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "mobile-web-app-capable": "yes",
       "apple-mobile-web-app-capable": "yes",
       "apple-mobile-web-app-status-bar-style": "black-translucent",
-      "msapplication-TileColor": "#0B5ED7",
+      "msapplication-TileColor": "#2563EB",
       "msapplication-TileImage": "/icons/icon-144x144.png",
     },
   };
@@ -112,8 +112,7 @@ export default function RootLayout({
           <PublicLayoutWrapper>
             {children}
           </PublicLayoutWrapper>
-          {/* Single global floating contact widget (replaces the old duplicate
-              PublicCommunicationBar stack + fake chat). */}
+          {/* Single global floating contact widget — the only AI / WhatsApp / Facebook control. */}
           <FloatingActionWidget />
           <PwaRegister />
           <Toaster />

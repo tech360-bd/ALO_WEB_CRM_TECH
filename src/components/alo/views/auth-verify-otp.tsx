@@ -171,7 +171,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                 <Icon name="GraduationCap" className="size-7" />
               </div>
               <div className="text-left">
-                <p className="text-lg font-bold leading-tight text-[#0B5ED7]">ALO Education</p>
+                <p className="text-lg font-bold leading-tight text-[#2563EB]">ALO Education</p>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   Study Abroad, Done Right
                 </p>
@@ -186,7 +186,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                   <Icon name="CheckCircle2" className="size-9 text-emerald-600" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-[#0B5ED7]">{approvalRequired ? "Email verified — approval pending" : "Email Verified!"}</h1>
+                  <h1 className="text-2xl font-bold text-[#2563EB]">{approvalRequired ? "Email verified — approval pending" : "Email Verified!"}</h1>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {approvalRequired
                       ? "Your email address is verified. Partner access remains pending separate staff approval."
@@ -232,13 +232,13 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
               <Icon name="GraduationCap" className="size-7" />
             </div>
             <div className="text-left">
-              <p className="text-lg font-bold leading-tight text-[#0B5ED7]">ALO Education</p>
+              <p className="text-lg font-bold leading-tight text-[#2563EB]">ALO Education</p>
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 Study Abroad, Done Right
               </p>
             </div>
           </button>
-          <h1 className="text-2xl font-bold text-[#0B5ED7] sm:text-3xl">Verify Your Email</h1>
+          <h1 className="text-2xl font-bold text-[#2563EB] sm:text-3xl">Verify Your Email</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Enter the 6-digit code we sent to your email address
           </p>
@@ -338,7 +338,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                     type="button"
                     onClick={handleResend}
                     disabled={resending}
-                    className="font-semibold text-[#0B5ED7] hover:underline disabled:opacity-60"
+                    className="font-semibold text-[#2563EB] hover:underline disabled:opacity-60"
                   >
                     {resending ? "Sending..." : "Resend OTP"}
                   </button>
@@ -360,7 +360,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
             </form>
 
             {/* Security note */}
-            <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0B5ED7]">
+            <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#2563EB]">
               <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0" />
               <span>
                 OTPs are single-use, expire after 10 minutes, and are audit-logged. Never share

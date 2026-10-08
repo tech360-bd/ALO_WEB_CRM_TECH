@@ -3,16 +3,30 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
-   ALO EDUCATION DESIGN SYSTEM — Design Tokens
-   Brand: #0B5ED7 / #2563EB / #C2410C
+   ALO EDUCATION DESIGN SYSTEM — single source of design tokens
+   ------------------------------------------------------------
+   Every colour, radius, shadow and control height used by the
+   public website, CRM, portals and AI Command Center must come
+   from the variables below. Components reference the Tailwind
+   utilities generated from @theme (bg-alo-cta, text-alo-navy,
+   rounded-button, shadow-card, ...). Do not add new hex values
+   inside components — add a token here first.
+
+   Hierarchy: Navy = structure · Orange = ALO primary action ·
+   Blue = navigation / information / links · Green = success /
+   WhatsApp · Purple = AI · Red = destructive / error · Yellow =
+   warning · Gray = neutral.
    ============================================================ */
 
 @theme inline {
+  /* --- Font: one family across the product (Inter when loaded,
+         system UI fallback otherwise) --- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-geist-mono);
+
   /* --- Core semantic tokens --- */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-geist-mono);
 
   /* --- Sidebar tokens --- */
   --color-sidebar-ring: var(--sidebar-ring);
@@ -24,7 +38,7 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
 
-  /* --- Chart tokens --- */
+  /* --- Chart tokens (max five series: orange, blue, green, purple, yellow) --- */
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -49,17 +63,33 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  /* --- ALO Brand Tokens (official palette: BLUE #0B5ED7, DEEP #073B8C,
-         ORANGE #F97316, LIGHT ORANGE #FFEDD5) --- */
+  /* --- ALO brand palette (spec: Orange primary action, Navy structure,
+         Blue information, Green success, Purple AI) --- */
+  --color-alo-navy: var(--alo-navy);
+  --color-alo-navy-dark: var(--alo-navy-dark);
   --color-alo-brand: var(--alo-brand);
+  --color-alo-brand-hover: var(--alo-brand-hover);
   --color-alo-brand-deep: var(--alo-brand-deep);
   --color-alo-brand-light: var(--alo-brand-light);
+  --color-alo-brand-border: var(--alo-brand-border);
   --color-alo-cta: var(--alo-cta);
   --color-alo-cta-hover: var(--alo-cta-hover);
+  --color-alo-cta-active: var(--alo-cta-active);
   --color-alo-cta-accent: var(--alo-cta-accent);
   --color-alo-cta-light: var(--alo-cta-light);
+  --color-alo-cta-soft: var(--alo-cta-soft);
+  --color-alo-success: var(--alo-success);
+  --color-alo-success-dark: var(--alo-success-dark);
+  --color-alo-success-soft: var(--alo-success-soft);
+  --color-alo-whatsapp: var(--alo-whatsapp);
+  --color-alo-error: var(--alo-error);
+  --color-alo-error-soft: var(--alo-error-soft);
+  --color-alo-warning: var(--alo-warning);
+  --color-alo-warning-soft: var(--alo-warning-soft);
+  --color-alo-ai: var(--alo-ai);
+  --color-alo-ai-soft: var(--alo-ai-soft);
 
-  /* --- CRM Semantic Tokens --- */
+  /* --- CRM semantic status tokens (same meaning everywhere) --- */
   --color-crm-success: var(--crm-success);
   --color-crm-success-bg: var(--crm-success-bg);
   --color-crm-success-text: var(--crm-success-text);
@@ -70,105 +100,162 @@
   --color-crm-danger-bg: var(--crm-danger-bg);
   --color-crm-danger-text: var(--crm-danger-text);
 
-  /* --- Neutral Tokens --- */
+  /* --- Neutral tokens --- */
   --color-alo-page: var(--alo-page);
+  --color-alo-surface-muted: var(--alo-surface-muted);
   --color-alo-text: var(--alo-text);
   --color-alo-text-secondary: var(--alo-text-secondary);
   --color-alo-text-muted: var(--alo-text-muted);
   --color-alo-border: var(--alo-border);
+  --color-alo-border-strong: var(--alo-border-strong);
+  --color-alo-placeholder: var(--alo-placeholder);
 
-  /* --- Radius tokens --- */
+  /* --- Radius scale: sm 6 · input 8 · button 10 · card 12–16 · feature 20 · pill --- */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: 16px;
+  --radius-input: 8px;
+  --radius-button: 10px;
+  --radius-feature: 20px;
+  --radius-pill: 999px;
+
+  /* --- Shadow scale: restrained by design --- */
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 20px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 4px 20px rgba(15, 23, 42, 0.06);
+  --shadow-xl: 0 20px 50px rgba(15, 23, 42, 0.16);
+
+  /* --- Typography scale (desktop) --- */
+  --text-display: 3rem;
+  --text-display--line-height: 1.1;
+  --text-h1: 2.5rem;
+  --text-h1--line-height: 1.15;
+  --text-h2: 2rem;
+  --text-h2--line-height: 1.2;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.25;
+  --text-h4: 1.25rem;
+  --text-h4--line-height: 1.3;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+  --text-crm-title: 1.75rem;
+  --text-crm-title--line-height: 2.25rem;
+  --text-crm-section: 1.25rem;
+  --text-crm-section--line-height: 1.75rem;
 }
 
 /* ============================================================
-   LIGHT MODE — ALO Brand Colors
+   LIGHT MODE — ALO design tokens (spec v1)
    ============================================================ */
 :root {
-  --radius: 0.5rem;
+  /* 10px base radius → sm 6 · md/input 8 · lg/button 10 · xl 14 */
+  --radius: 0.625rem;
 
-  /* Page & Surface */
+  /* Page & surface */
   --background: #F8FAFC;
-  --foreground: #0F172A;
+  --foreground: #111827;
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  --card-foreground: #111827;
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
+  --popover-foreground: #111827;
 
-  /* Primary — SaaS Blue #2563EB */
+  /* Primary (selected states, focus, links) — ALO Blue */
   --primary: #2563EB;
   --primary-foreground: #FFFFFF;
 
-  /* Secondary */
+  /* Secondary / muted surfaces */
   --secondary: #F1F5F9;
   --secondary-foreground: #0F172A;
-
-  /* Muted */
   --muted: #F1F5F9;
   --muted-foreground: #64748B;
 
-  /* Accent */
+  /* Accent (blue soft) */
   --accent: #EFF6FF;
-  --accent-foreground: #1E40AF;
+  --accent-foreground: #1D4ED8;
 
   /* Destructive */
   --destructive: #DC2626;
 
-  /* Border & Input */
+  /* Border & input */
   --border: #E2E8F0;
-  --input: #E2E8F0;
+  --input: #CBD5E1;
   --ring: #2563EB;
 
-  /* ALO Official Brand Tokens */
-  --alo-brand: #0B5ED7;
-  --alo-brand-deep: #073B8C;
+  /* ── Brand ─────────────────────────────────────────────── */
+  /* Navy — structure / headings */
+  --alo-navy: #0F172A;
+  --alo-navy-dark: #111827;
+  /* Blue — navigation / information / links */
+  --alo-brand: #2563EB;
+  --alo-brand-hover: #1D4ED8;
+  --alo-brand-deep: #1D4ED8;
   --alo-brand-light: #EFF6FF;
+  --alo-brand-border: #BFDBFE;
+  /* Orange — ALO primary action */
   --alo-cta: #F97316;
   --alo-cta-hover: #EA580C;
-  --alo-cta-accent: #FFB347;
+  --alo-cta-active: #C2410C;
+  --alo-cta-accent: #F97316;
   --alo-cta-light: #FFEDD5;
+  --alo-cta-soft: #FFF7ED;
+  /* Green — success / WhatsApp */
+  --alo-success: #16A34A;
+  --alo-success-dark: #15803D;
+  --alo-success-soft: #F0FDF4;
+  --alo-whatsapp: #25D366;
+  /* Red — destructive / error only */
+  --alo-error: #DC2626;
+  --alo-error-soft: #FEF2F2;
+  /* Yellow/amber — warning / pending */
+  --alo-warning: #D97706;
+  --alo-warning-soft: #FFFBEB;
+  /* Purple — AI only */
+  --alo-ai: #7C3AED;
+  --alo-ai-soft: #F5F3FF;
 
-  /* CRM Semantic */
-  --crm-success: #22C55E;
-  --crm-success-bg: #DCFCE7;
+  /* CRM semantic status (same meaning on every surface) */
+  --crm-success: #16A34A;
+  --crm-success-bg: #F0FDF4;
   --crm-success-text: #15803D;
-  --crm-warning: #F59E0B;
-  --crm-warning-bg: #FEF3C7;
+  --crm-warning: #D97706;
+  --crm-warning-bg: #FFFBEB;
   --crm-warning-text: #B45309;
-  --crm-danger: #EF4444;
-  --crm-danger-bg: #FEE2E2;
+  --crm-danger: #DC2626;
+  --crm-danger-bg: #FEF2F2;
   --crm-danger-text: #B91C1C;
 
-  /* Neutral */
+  /* Neutrals */
   --alo-page: #F8FAFC;
-  --alo-text: #000000;
-  --alo-text-secondary: #555555;
+  --alo-surface-muted: #F1F5F9;
+  --alo-text: #111827;
+  --alo-text-secondary: #475569;
   --alo-text-muted: #64748B;
-  --alo-border: #E5E7EB;
+  --alo-border: #E2E8F0;
+  --alo-border-strong: #CBD5E1;
+  --alo-placeholder: #94A3B8;
 
-  /* Charts */
-  --chart-1: #0B5ED7;
+  /* Charts — max five series, no rainbow */
+  --chart-1: #2563EB;
   --chart-2: #F97316;
-  --chart-3: #FFB347;
-  --chart-4: #22C55E;
-  --chart-5: #EF4444;
+  --chart-3: #16A34A;
+  --chart-4: #7C3AED;
+  --chart-5: #D97706;
 
-  /* Sidebar */
+  /* Sidebar (CRM / portals) */
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #0B5ED7;
+  --sidebar-foreground: #111827;
+  --sidebar-primary: #2563EB;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #EFF6FF;
-  --sidebar-accent-foreground: #0B5ED7;
-  --sidebar-border: #E5E7EB;
-  --sidebar-ring: #0B5ED7;
+  --sidebar-accent-foreground: #1D4ED8;
+  --sidebar-border: #E2E8F0;
+  --sidebar-ring: #2563EB;
 }
 
 /* ============================================================
-   DARK MODE — ALO Dark Tokens
+   DARK MODE — ALO dark tokens (same roles, lifted for contrast)
    ============================================================ */
 .dark {
   --background: #0F172A;
@@ -193,19 +280,35 @@
   --destructive: #F87171;
 
   --border: #334155;
-  --input: #334155;
+  --input: #475569;
   --ring: #60A5FA;
 
-  /* ALO Brand Dark */
+  /* Brand (dark) */
+  --alo-navy: #F1F5F9;
+  --alo-navy-dark: #F8FAFC;
   --alo-brand: #60A5FA;
+  --alo-brand-hover: #93C5FD;
   --alo-brand-deep: #93C5FD;
   --alo-brand-light: #1E3A5F;
+  --alo-brand-border: #1E40AF;
   --alo-cta: #FB923C;
   --alo-cta-hover: #F97316;
+  --alo-cta-active: #EA580C;
   --alo-cta-accent: #FB923C;
   --alo-cta-light: #431407;
+  --alo-cta-soft: #431407;
+  --alo-success: #4ADE80;
+  --alo-success-dark: #86EFAC;
+  --alo-success-soft: #14532D;
+  --alo-whatsapp: #25D366;
+  --alo-error: #F87171;
+  --alo-error-soft: #7F1D1D;
+  --alo-warning: #FCD34D;
+  --alo-warning-soft: #713F12;
+  --alo-ai: #A78BFA;
+  --alo-ai-soft: #2E1065;
 
-  /* CRM Semantic Dark */
+  /* CRM semantic (dark) */
   --crm-success: #4ADE80;
   --crm-success-bg: #14532D;
   --crm-success-text: #86EFAC;
@@ -216,21 +319,24 @@
   --crm-danger-bg: #7F1D1D;
   --crm-danger-text: #FCA5A5;
 
-  /* Neutral Dark */
+  /* Neutrals (dark) */
   --alo-page: #0F172A;
+  --alo-surface-muted: #1E293B;
   --alo-text: #F1F5F9;
   --alo-text-secondary: #CBD5E1;
   --alo-text-muted: #94A3B8;
   --alo-border: #334155;
+  --alo-border-strong: #475569;
+  --alo-placeholder: #64748B;
 
-  /* Charts Dark */
+  /* Charts (dark) */
   --chart-1: #60A5FA;
-  --chart-2: #93C5FD;
-  --chart-3: #38BDF8;
-  --chart-4: #4ADE80;
-  --chart-5: #FB923C;
+  --chart-2: #FB923C;
+  --chart-3: #4ADE80;
+  --chart-4: #A78BFA;
+  --chart-5: #FCD34D;
 
-  /* Sidebar Dark */
+  /* Sidebar (dark) */
   --sidebar: #1E293B;
   --sidebar-foreground: #F1F5F9;
   --sidebar-primary: #60A5FA;

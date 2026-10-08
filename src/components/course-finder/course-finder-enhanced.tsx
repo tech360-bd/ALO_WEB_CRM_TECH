@@ -31,7 +31,7 @@ import { toast } from 'sonner';
 // ============================================================
 // ALO BRAND COLORS
 // ============================================================
-const ALO_BLUE = '#0B5ED7';
+const ALO_BLUE = '#2563EB';
 const ALO_ORANGE = '#F97316';
 
 // ============================================================
@@ -182,11 +182,11 @@ const DEFAULT_FILTERS: Filters = {
 // ============================================================
 function getLevelBadgeClasses(level: string): string {
   const l = level?.toLowerCase();
-  if (l?.includes('bachelor') || l?.includes('undergraduate')) return 'bg-[#0B5ED7]/10 text-[#0B5ED7]';
-  if (l?.includes('master') || l?.includes('postgraduate') || l?.includes('mres') || l?.includes('mphil')) return 'bg-[#0B5ED7]/20 text-[#0B5ED7]';
-  if (l?.includes('phd') || l?.includes('doctorate')) return 'bg-[#0B5ED7]/30 text-[#0B5ED7]';
+  if (l?.includes('bachelor') || l?.includes('undergraduate')) return 'bg-[#2563EB]/10 text-[#2563EB]';
+  if (l?.includes('master') || l?.includes('postgraduate') || l?.includes('mres') || l?.includes('mphil')) return 'bg-[#2563EB]/20 text-[#2563EB]';
+  if (l?.includes('phd') || l?.includes('doctorate')) return 'bg-[#2563EB]/30 text-[#2563EB]';
   if (l?.includes('foundation') || l?.includes('international year')) return 'bg-sky-100 text-sky-800';
-  return 'bg-[#0B5ED7]/10 text-[#0B5ED7]';
+  return 'bg-[#2563EB]/10 text-[#2563EB]';
 }
 
 function formatDate(iso: string): string {
@@ -374,8 +374,8 @@ function EntryOptions({ onSelect }: { onSelect: (option: 'profile' | 'manual' | 
       id: 'profile' as const,
       title: 'Find Courses Matched to My Profile',
       description: 'Enter your academic background, English test scores, and preferences. Our eligibility engine will match you with the best courses and show your chances.',
-      icon: GraduationCap, borderColor: ALO_BLUE, bgColor: '#0B5ED708', iconColor: ALO_BLUE,
-      tag: 'Smart Matching', tagBg: '#0B5ED715', tagColor: ALO_BLUE,
+      icon: GraduationCap, borderColor: ALO_BLUE, bgColor: '#2563EB08', iconColor: ALO_BLUE,
+      tag: 'Smart Matching', tagBg: '#2563EB15', tagColor: ALO_BLUE,
     },
     {
       id: 'manual' as const,
@@ -693,7 +693,7 @@ function FilterSidebar({
         <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
           {countries.length > 0 ? countries.map((c) => (
             <label key={c.name} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox checked={filters.countries.includes(c.name)} onCheckedChange={() => toggleArrayFilter('countries', c.name)} className="data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]" />
+              <Checkbox checked={filters.countries.includes(c.name)} onCheckedChange={() => toggleArrayFilter('countries', c.name)} className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]" />
               <span className="text-sm text-slate-600 group-hover:text-slate-900 flex-1">{c.name}</span>
               <span className="text-xs text-slate-400">{c.count}</span>
             </label>
@@ -709,7 +709,7 @@ function FilterSidebar({
           <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
             {cities.map((city) => (
               <label key={city} className="flex items-center gap-2 cursor-pointer group">
-                <Checkbox checked={filters.cities.includes(city)} onCheckedChange={() => toggleArrayFilter('cities', city)} className="data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]" />
+                <Checkbox checked={filters.cities.includes(city)} onCheckedChange={() => toggleArrayFilter('cities', city)} className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]" />
                 <span className="text-sm text-slate-600 group-hover:text-slate-900">{city}</span>
               </label>
             ))}
@@ -724,7 +724,7 @@ function FilterSidebar({
         <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
           {studyLevels.length > 0 ? studyLevels.map((l) => (
             <label key={l.name} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox checked={filters.studyLevels.includes(l.name)} onCheckedChange={() => toggleArrayFilter('studyLevels', l.name)} className="data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]" />
+              <Checkbox checked={filters.studyLevels.includes(l.name)} onCheckedChange={() => toggleArrayFilter('studyLevels', l.name)} className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]" />
               <span className="text-sm text-slate-600 group-hover:text-slate-900 flex-1">{l.name}</span>
               <span className="text-xs text-slate-400">{l.count}</span>
             </label>
@@ -765,7 +765,7 @@ function FilterSidebar({
         <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
           {ALL_MONTHS.map((m) => (
             <label key={m} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox checked={filters.intakeMonths.includes(m)} onCheckedChange={() => toggleArrayFilter('intakeMonths', m)} className="data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]" />
+              <Checkbox checked={filters.intakeMonths.includes(m)} onCheckedChange={() => toggleArrayFilter('intakeMonths', m)} className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]" />
               <span className="text-sm text-slate-600 group-hover:text-slate-900">{m}</span>
             </label>
           ))}
@@ -789,7 +789,7 @@ function FilterSidebar({
       <div className="space-y-2">
         <h4 className="text-sm font-medium text-slate-700">Tuition Fee (GBP/yr)</h4>
         <div className="px-1">
-          <Slider min={0} max={100000} step={1000} value={filters.tuitionRange} onValueChange={(v) => onFiltersChange({ ...filters, tuitionRange: v as [number, number] })} className="[&_[data-slot=slider-range]]:bg-[#0B5ED7] [&_[data-slot=slider-thumb]]:border-[#0B5ED7]" />
+          <Slider min={0} max={100000} step={1000} value={filters.tuitionRange} onValueChange={(v) => onFiltersChange({ ...filters, tuitionRange: v as [number, number] })} className="[&_[data-slot=slider-range]]:bg-[#2563EB] [&_[data-slot=slider-thumb]]:border-[#2563EB]" />
           <div className="flex justify-between mt-1.5 text-xs text-slate-500">
             <span>£{filters.tuitionRange[0].toLocaleString()}</span>
             <span>£{filters.tuitionRange[1].toLocaleString()}</span>
@@ -810,7 +810,7 @@ function FilterSidebar({
         </Select>
         <div className="px-1 mt-2">
           <Label className="text-xs text-slate-500">Min Score: {filters.englishMinScore > 0 ? filters.englishMinScore : 'Any'}</Label>
-          <Slider min={0} max={9} step={0.5} value={[filters.englishMinScore]} onValueChange={(v) => onFiltersChange({ ...filters, englishMinScore: v[0] })} className="[&_[data-slot=slider-range]]:bg-[#0B5ED7] [&_[data-slot=slider-thumb]]:border-[#0B5ED7]" />
+          <Slider min={0} max={9} step={0.5} value={[filters.englishMinScore]} onValueChange={(v) => onFiltersChange({ ...filters, englishMinScore: v[0] })} className="[&_[data-slot=slider-range]]:bg-[#2563EB] [&_[data-slot=slider-thumb]]:border-[#2563EB]" />
         </div>
       </div>
       <Separator />
@@ -818,7 +818,7 @@ function FilterSidebar({
       {/* Scholarship */}
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium text-slate-700">Scholarship Only</h4>
-        <Switch checked={filters.scholarshipOnly} onCheckedChange={(v) => onFiltersChange({ ...filters, scholarshipOnly: v })} className="data-[state=checked]:bg-[#0B5ED7]" />
+        <Switch checked={filters.scholarshipOnly} onCheckedChange={(v) => onFiltersChange({ ...filters, scholarshipOnly: v })} className="data-[state=checked]:bg-[#2563EB]" />
       </div>
       <Separator />
 
@@ -827,7 +827,7 @@ function FilterSidebar({
         <h4 className="text-sm font-medium text-slate-700">Delivery Mode</h4>
         {DELIVERY_MODES.map((mode) => (
           <label key={mode} className="flex items-center gap-2 cursor-pointer group">
-            <Checkbox checked={filters.deliveryMode === mode} onCheckedChange={(checked) => onFiltersChange({ ...filters, deliveryMode: checked ? mode : '' })} className="data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]" />
+            <Checkbox checked={filters.deliveryMode === mode} onCheckedChange={(checked) => onFiltersChange({ ...filters, deliveryMode: checked ? mode : '' })} className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]" />
             <span className="text-sm text-slate-600 group-hover:text-slate-900">{mode}</span>
           </label>
         ))}
@@ -1036,7 +1036,7 @@ function CounsellorForm({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
-      <button onClick={onBack} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0B5ED7] mb-6 transition-colors">
+      <button onClick={onBack} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#2563EB] mb-6 transition-colors">
         <ArrowLeft className="h-4 w-4" />Back to Course Finder
       </button>
       <Card>
@@ -1381,7 +1381,7 @@ export function CourseFinderEnhanced() {
       <div className="min-h-screen bg-white">
         <HeroSection keyword={heroKeyword} onKeywordChange={setHeroKeyword} country={heroCountry} onCountryChange={setHeroCountry} studyLevel={heroStudyLevel} onStudyLevelChange={setHeroStudyLevel} intake={heroIntake} onIntakeChange={setHeroIntake} onSearch={handleHeroSearch} onCounsellor={() => setView('counsellor')} studyLevels={filterOptions.studyLevels} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <button onClick={() => setView('landing')} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0B5ED7] mb-6 transition-colors">
+          <button onClick={() => setView('landing')} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#2563EB] mb-6 transition-colors">
             <ArrowLeft className="h-4 w-4" />Back to options
           </button>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Profile-Based Eligibility Check</h2>
@@ -1441,7 +1441,7 @@ export function CourseFinderEnhanced() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <button onClick={() => setView('profile')} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0B5ED7] mb-2 transition-colors"><ArrowLeft className="h-4 w-4" />Back to profile</button>
+              <button onClick={() => setView('profile')} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#2563EB] mb-2 transition-colors"><ArrowLeft className="h-4 w-4" />Back to profile</button>
               <h2 className="text-xl font-bold text-slate-900">Eligibility Results</h2>
               <p className="text-sm text-slate-500">Courses matched to your profile, sorted by match score.</p>
             </div>
@@ -1470,7 +1470,7 @@ export function CourseFinderEnhanced() {
             </div>
           ) : filteredEligibilityResults.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#0B5ED710' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
+              <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#2563EB10' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
               <h3 className="text-lg font-semibold text-slate-700">No results in this category</h3>
               <p className="text-sm text-slate-500 mt-1">Try a different eligibility filter or adjust your profile.</p>
               <div className="flex gap-2 mt-4">
@@ -1560,7 +1560,7 @@ export function CourseFinderEnhanced() {
                 {loading && <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">{Array.from({ length: 6 }).map((_, i) => <CourseCardSkeleton key={i} />)}</div>}
                 {!loading && courses.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#0B5ED710' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#2563EB10' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
                     <h3 className="text-lg font-semibold text-slate-700">No courses match your criteria</h3>
                     <p className="text-sm text-slate-500 mt-1 max-w-md">Try adjusting filters or speak with an ALO Education counsellor.</p>
                     <div className="flex gap-2 mt-4">
@@ -1585,7 +1585,7 @@ export function CourseFinderEnhanced() {
                 {loading && <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">{Array.from({ length: 6 }).map((_, i) => <UniversityCardSkeleton key={i} />)}</div>}
                 {!loading && universities.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#0B5ED710' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#2563EB10' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
                     <h3 className="text-lg font-semibold text-slate-700">No universities match your criteria</h3>
                     <p className="text-sm text-slate-500 mt-1 max-w-md">Try adjusting filters or speak with an ALO Education counsellor.</p>
                   </div>
@@ -1611,7 +1611,7 @@ export function CourseFinderEnhanced() {
             {/* Compare Tab */}
             {activeTab === 'compare' && (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#0B5ED710' }}><GitCompare className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
+                <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#2563EB10' }}><GitCompare className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
                 <h3 className="text-lg font-semibold text-slate-700">Compare Courses Side by Side</h3>
                 <p className="text-sm text-slate-500 mt-2 max-w-md">Add courses or universities to compare using the &quot;Compare&quot; buttons on course or university cards. You can compare up to 3 items at once.</p>
               </div>

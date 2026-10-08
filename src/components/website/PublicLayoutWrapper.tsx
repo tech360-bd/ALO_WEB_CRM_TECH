@@ -36,7 +36,7 @@ function CmsAnnouncements() {
   const top = visible[0];
   const level = top.data?.level === 'urgent' ? 'error' : top.data?.level === 'warning' ? 'warning' : 'info';
   const styles: Record<string, string> = {
-    info: 'bg-[#0B5ED7] text-white',
+    info: 'bg-[#2563EB] text-white',
     warning: 'bg-amber-500 text-white',
     error: 'bg-red-600 text-white',
   };
@@ -98,15 +98,14 @@ export default function PublicLayoutWrapper({
   children: React.ReactNode;
 }) {
   const isAuthenticated = usePortalStore((s) => s.isAuthenticated);
-  const currentView = usePortalStore((s) => s.currentView);
-  // HomepagePart4 already includes its own FooterSection to avoid duplicate footer on the homepage.
-  const isHomepage = currentView === 'website';
+  // One navbar and one footer for every public page. The homepage no longer
+  // renders its own footer (HomepagePart4 used to duplicate this one).
   return (
     <>
       {!isAuthenticated && <CmsAnnouncements />}
       {!isAuthenticated && <PublicNavbar />}
       {children}
-      {!isAuthenticated && !isHomepage && <PublicFooter />}
+      {!isAuthenticated && <PublicFooter />}
       {!isAuthenticated && <CmsBanner />}
     </>
   );

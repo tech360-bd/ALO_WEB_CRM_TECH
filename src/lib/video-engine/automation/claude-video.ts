@@ -42,7 +42,7 @@ Requirements:
 - Use Remotion primitives: AbsoluteFill, Sequence, useCurrentFrame, interpolate, spring, useVideoConfig
 - Duration: ${req.durationSec || 30} seconds at 30fps = ${(req.durationSec || 30) * 30} frames
 - Aspect ratio: ${req.aspectRatio || "16:9"} → ${req.aspectRatio === "9:16" ? "1080x1920" : req.aspectRatio === "1:1" ? "1080x1080" : "1920x1080"}
-- Brand colors: primary #F97316 (orange), secondary #0B5ED7 (blue), white #FFFFFF
+- Brand colors: primary #F97316 (orange), secondary #2563EB (blue), white #FFFFFF
 - Language: ${req.language || "english"}
 - Include brand logo if includeBrand true: /brand/alo-logo.png
 - Category: ${req.category || "promo"}
@@ -64,7 +64,7 @@ export const ${compositionId}: React.FC<{ title: string }> = ({ title }) => {
   const { fps } = useVideoConfig();
   const opacity = interpolate(frame, [0, 20], [0, 1]);
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0B5ED7", justifyContent: "center", alignItems: "center" }}>
+    <AbsoluteFill style={{ backgroundColor: "#2563EB", justifyContent: "center", alignItems: "center" }}>
       <div style={{ opacity, color: "white", fontSize: 80, fontWeight: 800 }}>{title}</div>
     </AbsoluteFill>
   );
@@ -98,9 +98,9 @@ export const ${compositionId}: React.FC<{
   const subtitleOpacity = interpolate(frame, [20, 40], [0, 1], { extrapolateRight: "clamp" });
   
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0B5ED7", justifyContent: "center", alignItems: "center", fontFamily: "Inter, sans-serif" }}>
+    <AbsoluteFill style={{ backgroundColor: "#2563EB", justifyContent: "center", alignItems: "center", fontFamily: "Inter, sans-serif" }}>
       {/* Background gradient */}
-      <AbsoluteFill style={{ background: \`linear-gradient(135deg, #0B5ED7 0%, #003d85 100%)\` }} />
+      <AbsoluteFill style={{ background: \`linear-gradient(135deg, #2563EB 0%, #003d85 100%)\` }} />
       
       {/* Logo */}
       ${req.includeBrand ? `<Img src="/brand/alo-logo.png" style={{ position: "absolute", top: 40, left: 40, width: 120, height: 120, objectFit: "contain" }} />` : ""}

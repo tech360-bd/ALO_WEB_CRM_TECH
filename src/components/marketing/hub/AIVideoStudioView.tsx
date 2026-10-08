@@ -44,8 +44,8 @@ export default function AIVideoStudioView() {
         <p className="text-sm text-gray-500">Scripts, storyboards, voiceover (Bangla/English/mixed), subtitles, thumbnails, aspect ratios (9:16,1:1,16:9), storage & versioning. Respects provider availability — no text substitute for video file.</p>
       </div>
 
-      <Card className="border-[#0B5ED7]/20">
-        <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clapperboard className="w-4 h-4 text-[#0B5ED7]" /> Video Generation</CardTitle></CardHeader>
+      <Card className="border-[#2563EB]/20">
+        <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clapperboard className="w-4 h-4 text-[#2563EB]" /> Video Generation</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="grid md:grid-cols-2 gap-3">
             <div><label className="text-xs font-semibold">Title</label><Input value={title} onChange={e=>setTitle(e.target.value)} className="mt-1" /></div>
@@ -57,7 +57,7 @@ export default function AIVideoStudioView() {
           </div>
           <Button onClick={handleScript} disabled={loading || !title.trim()} className="bg-[#F97316] hover:bg-[#d85f1b] text-white">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate Script</Button>
           <div className="flex gap-2 text-[11px]">
-            <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7]">Aspect: {aspect}</Badge>
+            <Badge className="bg-[#2563EB]/10 text-[#2563EB]">Aspect: {aspect}</Badge>
             <Badge className="bg-[#FFB347]/20 text-[#0F172A]">Brand overlay: ALO Orange</Badge>
             <Badge variant="outline">Voiceover: {language}</Badge>
           </div>
@@ -72,7 +72,7 @@ export default function AIVideoStudioView() {
           </Card>
           <div className="space-y-4">
             <Card>
-              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Subtitles className="w-4 h-4 text-[#0B5ED7]" /> Subtitles & Thumbnail</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Subtitles className="w-4 h-4 text-[#2563EB]" /> Subtitles & Thumbnail</CardTitle></CardHeader>
               <CardContent className="space-y-3">
                 <div><p className="text-xs font-semibold">Subtitles/CC</p><p className="text-xs bg-white border rounded-lg p-3 mt-1">{result.subtitle || 'Auto-generated subtitles will appear here.'}</p></div>
                 <div><p className="text-xs font-semibold flex items-center gap-1"><ImageIcon className="w-3 h-3" /> Thumbnail Concept</p><p className="text-xs bg-[#FFB347]/10 border border-[#FFB347]/30 rounded-lg p-3 mt-1">{result.thumbnailConcept || 'ALO Orange #F97316 bold text + campus visual + scholarship badge, 1280x720, CTR-optimized'}</p></div>

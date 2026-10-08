@@ -96,8 +96,8 @@ export default function AICommandCenterDashboard() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Card className="p-4 bg-white border border-slate-200 rounded-xl space-y-1 shadow-sm">
           <span className="text-[11px] font-semibold text-slate-500 uppercase">Legacy departments</span>
-          <p className="text-2xl font-black text-[#0B5ED7]">{health?.totalDepartments ?? '—'}</p>
-          <span className="text-[10px] text-[#0B5ED7] font-semibold">Active organizational units in this registry</span>
+          <p className="text-2xl font-black text-[#2563EB]">{health?.totalDepartments ?? '—'}</p>
+          <span className="text-[10px] text-[#2563EB] font-semibold">Active organizational units in this registry</span>
         </Card>
         <Card className="p-4 bg-white border border-slate-200 rounded-xl space-y-1 shadow-sm">
           <span className="text-[11px] font-semibold text-slate-500 uppercase">Legacy agent definitions</span>
@@ -131,7 +131,7 @@ export default function AICommandCenterDashboard() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-xl flex items-center gap-2 shrink-0 transition ${
-                isActive ? 'bg-[#0B5ED7] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                isActive ? 'bg-[#2563EB] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
             >
               <Icon className="w-4 h-4" /> {tab.label}
@@ -161,7 +161,7 @@ export default function AICommandCenterDashboard() {
         <Card className="p-6 bg-white border border-slate-200 rounded-2xl space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-[#0B5ED7]" /> AI Enterprise Departments
+              <Building2 className="w-5 h-5 text-[#2563EB]" /> AI Enterprise Departments
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
@@ -171,7 +171,7 @@ export default function AICommandCenterDashboard() {
                   <span className="font-bold text-slate-900 flex items-center gap-1.5">
                     {d.icon} {d.name}
                   </span>
-                  <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] text-[9px]">{d._count?.agents || 0} AGENTS</Badge>
+                  <Badge className="bg-[#2563EB]/10 text-[#2563EB] text-[9px]">{d._count?.agents || 0} AGENTS</Badge>
                 </div>
                 <p className="text-[10px] text-slate-500 line-clamp-2">{d.description}</p>
                 <p className="text-[9px] font-semibold" style={{ color: d.color }}>Category: {d.category}</p>

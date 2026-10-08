@@ -27,7 +27,7 @@ import {
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#0B5ED7',
+  blue: '#2563EB',
   orange: '#F97316',
   text: '#0F172A',
   textSoft: '#64748B',
@@ -180,7 +180,7 @@ function ScholarshipsSection() {
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0B5ED7]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#2563EB]">
                       <span className="text-base">{sch.flag}</span>
                       {sch.country}
                     </span>
@@ -427,7 +427,7 @@ function EnglishTestsSection() {
               English Test Comparison
             </h3>
             <Link href="/language-prep/comparison">
-              <Button variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#0B5ED7] text-[#0B5ED7]">
+              <Button variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#2563EB] text-[#2563EB]">
                 Full Comparison Matrix <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Button>
             </Link>

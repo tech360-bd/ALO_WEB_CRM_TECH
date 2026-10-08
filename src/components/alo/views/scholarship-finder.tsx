@@ -223,7 +223,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
   return (
     <div className="bg-white pb-32">
       {/* Hero + Breadcrumb */}
-      <div className="border-b border-[#0B5ED7]/10 bg-gradient-to-b from-[#e8f0fb]/60 to-white">
+      <div className="border-b border-[#2563EB]/10 bg-gradient-to-b from-[#e8f0fb]/60 to-white">
         <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
           <Breadcrumb
             items={[
@@ -243,7 +243,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
 
       <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
         {/* Filter bar */}
-        <Card className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-white alo-shadow">
+        <Card className="rounded-2xl border-2 border-[#2563EB]/15 bg-white alo-shadow">
           <CardContent className="p-5 lg:p-6">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-1.5">
@@ -401,7 +401,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                 return (
                   <Card
                     key={`${s.name}-${i}`}
-                    className="flex flex-col rounded-2xl border-2 border-[#0B5ED7]/15 transition-all hover:border-[#0B5ED7]/40 hover:shadow-lg"
+                    className="flex flex-col rounded-2xl border-2 border-[#2563EB]/15 transition-all hover:border-[#2563EB]/40 hover:shadow-lg"
                   >
                     <CardContent className="flex flex-1 flex-col pt-5">
                       {/* Country + flag */}
@@ -409,7 +409,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                         <span className="text-lg leading-none" aria-hidden>
                           {s.flag || "🌍"}
                         </span>
-                        <Badge variant="outline" className="border-[#0B5ED7]/20 text-[#0B5ED7]">
+                        <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
                           {s.country || "Global"}
                         </Badge>
                         {dl.near && !dl.overdue && (
@@ -427,7 +427,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                       </div>
 
                       {/* Name */}
-                      <h3 className="mt-3 line-clamp-2 text-base font-bold leading-snug text-[#0B5ED7]">
+                      <h3 className="mt-3 line-clamp-2 text-base font-bold leading-snug text-[#2563EB]">
                         {s.name || "Untitled Scholarship"}
                       </h3>
 
@@ -466,7 +466,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                             href={s.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="ml-auto inline-flex items-center gap-0.5 font-medium text-[#0B5ED7] hover:underline"
+                            className="ml-auto inline-flex items-center gap-0.5 font-medium text-[#2563EB] hover:underline"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Icon name="ExternalLink" className="size-3" />
@@ -479,7 +479,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                       <div className="mt-auto flex gap-2 pt-4">
                         <Button
                           variant="outline"
-                          className="flex-1 h-10 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                          className="flex-1 h-10 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
                           onClick={() => handleCheckEligibility(s)}
                         >
                           <Icon name="ClipboardCheck" className="size-4" />
@@ -528,7 +528,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
             </CardContent>
           </Card>
           <p className="mt-3 text-center text-xs text-muted-foreground">
-            Prefer to submit details now? Visit our <button className="font-medium text-[#0B5ED7] hover:underline" onClick={() => onNavigate("public-home")}>lead form</button> and an ALO counselor will contact you within 24 hours.
+            Prefer to submit details now? Visit our <button className="font-medium text-[#2563EB] hover:underline" onClick={() => onNavigate("public-home")}>lead form</button> and an ALO counselor will contact you within 24 hours.
           </p>
         </div>
 

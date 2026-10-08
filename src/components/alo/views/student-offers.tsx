@@ -170,7 +170,7 @@ export function StudentOffers() {
                         "mt-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm",
                         daysLeft !== null && daysLeft < 7
                           ? "bg-rose-50 text-rose-700"
-                          : "bg-[#EAF3FF] text-[#0B5ED7]"
+                          : "bg-[#EAF3FF] text-[#2563EB]"
                       )}
                     >
                       <Icon name="CalendarClock" className="size-4" />
@@ -203,7 +203,7 @@ export function StudentOffers() {
                   <div className="mt-4 flex gap-2">
                     <Button
                       onClick={() => respondToOffer(o.id, "ACCEPTED")}
-                      className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
+                      className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
                       size="sm"
                     >
                       <Icon name="Check" className="mr-1 size-4" /> Accept

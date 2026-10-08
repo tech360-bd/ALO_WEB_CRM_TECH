@@ -10,7 +10,7 @@ export default function SettingsPage() {
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-12 lg:col-span-6">
           <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
-            <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm flex items-center gap-2"><Shield className="w-4 h-4 text-[#0B5ED7]" />Permissions — Existing Naming Verified</CardTitle></CardHeader>
+            <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm flex items-center gap-2"><Shield className="w-4 h-4 text-[#2563EB]" />Permissions — Existing Naming Verified</CardTitle></CardHeader>
             <CardContent className="p-4 space-y-2 text-xs">
               {['application.view','application.create','application.update','application.delete','application.review_documents','application.submit','application.manage_offer','application.manage_cas_i20_coe','application.manage_deadlines','application.view_b2b','application.manage_b2b','application.view_b2b_commission','application.manage_b2b_providers','application.view_reports','application.export','application.internal_comments'].map(p=>(
                 <div key={p} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-2.5 flex items-center justify-between"><span className="font-mono text-[#0F172A]">{p}</span><Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">VERIFIED</Badge></div>
@@ -30,7 +30,7 @@ export default function SettingsPage() {
         </div>
         <div className="col-span-12">
           <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
-            <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm flex items-center gap-2"><FileCheck className="w-4 h-4 text-[#0B5ED7]" />Safe Status Mapping — 30+ Internal Stages → 8 Safe Statuses</CardTitle></CardHeader>
+            <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm flex items-center gap-2"><FileCheck className="w-4 h-4 text-[#2563EB]" />Safe Status Mapping — 30+ Internal Stages → 8 Safe Statuses</CardTitle></CardHeader>
             <CardContent className="p-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                 {[

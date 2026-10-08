@@ -43,7 +43,7 @@ export default function IntegrationsView() {
               <Card key={i.id} className={isConnected ? 'border-emerald-200 bg-emerald-50/30' : isPending ? 'border-amber-200 bg-amber-50/30' : 'border-gray-200'}>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    {i.id==='meta' ? <Globe className="w-4 h-4 text-blue-600" /> : i.id==='whatsapp' ? <MessageSquare className="w-4 h-4 text-emerald-600" /> : i.id==='email' ? <Mail className="w-4 h-4 text-blue-600" /> : i.id==='sms' ? <Smartphone className="w-4 h-4 text-[#F97316]" /> : <Webhook className="w-4 h-4 text-[#0B5ED7]" />}
+                    {i.id==='meta' ? <Globe className="w-4 h-4 text-blue-600" /> : i.id==='whatsapp' ? <MessageSquare className="w-4 h-4 text-emerald-600" /> : i.id==='email' ? <Mail className="w-4 h-4 text-blue-600" /> : i.id==='sms' ? <Smartphone className="w-4 h-4 text-[#F97316]" /> : <Webhook className="w-4 h-4 text-[#2563EB]" />}
                     {i.name}
                   </CardTitle>
                   <Badge className={isConnected ? 'bg-emerald-100 text-emerald-700 border-emerald-200 w-fit mt-1' : isPending ? 'bg-amber-100 text-amber-700 border-amber-200 w-fit mt-1' : 'bg-gray-100 text-gray-600 border-gray-200 w-fit mt-1'}>

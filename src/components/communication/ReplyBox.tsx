@@ -70,7 +70,7 @@ export default function ReplyBox({
       <Textarea value={body} onChange={e => setBody(e.target.value)} placeholder={`Write message linked to ${entityType} #${entityId} — will be saved to timeline with visibility ${visibility}...`} className="min-h-[80px] text-xs bg-white" />
       <div className="flex items-center justify-between">
         <span className="text-[10px] text-gray-400 flex items-center gap-1"><Paperclip className="w-3 h-3" /> Attachment placeholder (stored as path) • Every message saved to timeline + audit</span>
-        <Button size="sm" className="h-8 bg-[#0B5ED7] hover:bg-[#004a9e] text-xs" onClick={handleSend} disabled={loading || !body.trim()}><Send className="w-3.5 h-3.5 mr-1" /> Send & Log</Button>
+        <Button size="sm" className="h-8 bg-[#2563EB] hover:bg-[#004a9e] text-xs" onClick={handleSend} disabled={loading || !body.trim()}><Send className="w-3.5 h-3.5 mr-1" /> Send & Log</Button>
       </div>
     </div>
   );

@@ -225,7 +225,7 @@ export default function StudentMigrationCenter() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B5ED7] to-[#F97316] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#F97316] flex items-center justify-center">
               <Database className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -238,7 +238,7 @@ export default function StudentMigrationCenter() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => { setActiveTab('upload'); setMessage(null); }}
-            className="bg-[#0B5ED7] hover:bg-[#0046a0] text-white flex items-center gap-2"
+            className="bg-[#2563EB] hover:bg-[#0046a0] text-white flex items-center gap-2"
           >
             <Upload className="w-4 h-4" />
             <span>New Import</span>
@@ -268,7 +268,7 @@ export default function StudentMigrationCenter() {
         <button
           onClick={() => setActiveTab('batches')}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'batches' ? 'border-[#0B5ED7] text-white' : 'border-transparent text-gray-400 hover:text-white'
+            activeTab === 'batches' ? 'border-[#2563EB] text-white' : 'border-transparent text-gray-400 hover:text-white'
           }`}
         >
           Import Batches ({batches.length})
@@ -276,7 +276,7 @@ export default function StudentMigrationCenter() {
         <button
           onClick={() => setActiveTab('upload')}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'upload' ? 'border-[#0B5ED7] text-white' : 'border-transparent text-gray-400 hover:text-white'
+            activeTab === 'upload' ? 'border-[#2563EB] text-white' : 'border-transparent text-gray-400 hover:text-white'
           }`}
         >
           Upload & Map
@@ -285,7 +285,7 @@ export default function StudentMigrationCenter() {
           <button
             onClick={() => setActiveTab('preview')}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-              activeTab === 'preview' ? 'border-[#0B5ED7] text-white' : 'border-transparent text-gray-400 hover:text-white'
+              activeTab === 'preview' ? 'border-[#2563EB] text-white' : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
             Batch Preview: {selectedBatch.fileName || selectedBatch.id}
@@ -456,7 +456,7 @@ export default function StudentMigrationCenter() {
 
               <div>
                 <label className="block text-xs font-medium text-gray-300 mb-2">Select CSV or Excel File</label>
-                <div className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-[#0B5ED7] transition-colors cursor-pointer bg-white/5">
+                <div className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-[#2563EB] transition-colors cursor-pointer bg-white/5">
                   <input
                     type="file"
                     accept=".csv,.xlsx"
@@ -491,7 +491,7 @@ export default function StudentMigrationCenter() {
               <Button
                 type="submit"
                 disabled={!file || uploading}
-                className="w-full bg-[#0B5ED7] hover:bg-[#0046a0] text-white py-3"
+                className="w-full bg-[#2563EB] hover:bg-[#0046a0] text-white py-3"
               >
                 {uploading ? (
                   <span className="flex items-center gap-2">

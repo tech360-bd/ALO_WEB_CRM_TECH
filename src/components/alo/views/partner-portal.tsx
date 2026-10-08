@@ -222,7 +222,7 @@ export function PartnerPortal() {
           </CardContent>
         </Card>
       ) : partner ? (
-        <Card className="overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/20 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+        <Card className="overflow-hidden rounded-2xl border-2 border-[#2563EB]/20 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
           <CardContent className="pt-6">
             <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
@@ -231,7 +231,7 @@ export function PartnerPortal() {
                 </div>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-xl font-bold text-[#0B5ED7]">{partner.name}</h2>
+                    <h2 className="text-xl font-bold text-[#2563EB]">{partner.name}</h2>
                     <Badge className="bg-[#F97316]/10 text-[#F97316] hover:bg-[#F97316]/10">
                       <Icon name="Handshake" className="mr-1 size-3" />
                       Partner
@@ -264,13 +264,13 @@ export function PartnerPortal() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
-                <div className="rounded-xl border border-[#0B5ED7]/15 bg-white/80 px-4 py-3">
+                <div className="rounded-xl border border-[#2563EB]/15 bg-white/80 px-4 py-3">
                   <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Total Referrals</p>
-                  <p className="mt-0.5 text-xl font-bold tabular-nums text-[#0B5ED7]">{metrics?.totalReferrals ?? 0}</p>
+                  <p className="mt-0.5 text-xl font-bold tabular-nums text-[#2563EB]">{metrics?.totalReferrals ?? 0}</p>
                 </div>
-                <div className="rounded-xl border border-[#0B5ED7]/15 bg-white/80 px-4 py-3">
+                <div className="rounded-xl border border-[#2563EB]/15 bg-white/80 px-4 py-3">
                   <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Conversion Rate</p>
-                  <p className="mt-0.5 text-xl font-bold tabular-nums text-[#0B5ED7]">{metrics?.conversionRate ?? 0}%</p>
+                  <p className="mt-0.5 text-xl font-bold tabular-nums text-[#2563EB]">{metrics?.conversionRate ?? 0}%</p>
                 </div>
                 <div className="rounded-xl border border-[#F97316]/20 bg-white/80 px-4 py-3 md:col-span-2 lg:col-span-1">
                   <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Active Applications</p>
@@ -372,8 +372,8 @@ export function PartnerPortal() {
               </div>
             </div>
           </div>
-          <div className="mt-4 flex items-start gap-2 rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
-            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+          <div className="mt-4 flex items-start gap-2 rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
+            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
             <p>
               Commission amounts are blurred by default in privacy mode. Click <strong>Reveal</strong> on any field to
               view (PIN required, action is audit-logged). {privacyOn ? "Privacy is currently ON." : "Privacy is OFF."}
@@ -445,12 +445,12 @@ export function PartnerPortal() {
                       const stage = latestStage(stages);
                       return (
                         <TableRow key={s.id}>
-                          <TableCell className="font-mono text-xs font-semibold text-[#0B5ED7]">{s.studentId}</TableCell>
+                          <TableCell className="font-mono text-xs font-semibold text-[#2563EB]">{s.studentId}</TableCell>
                           <TableCell className="font-medium">{s.fullName}</TableCell>
                           <TableCell className="hidden text-xs text-muted-foreground md:table-cell">{s.email}</TableCell>
                           <TableCell className="hidden text-xs text-muted-foreground lg:table-cell">{s.mobile || "—"}</TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="border-[#0B5ED7]/20 text-[#0B5ED7]">
+                            <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
                               {s.studyDestination || "—"}
                             </Badge>
                           </TableCell>
@@ -510,12 +510,12 @@ export function PartnerPortal() {
                   <TableBody>
                     {leads.map((l) => (
                       <TableRow key={l.id}>
-                        <TableCell className="font-mono text-xs font-semibold text-[#0B5ED7]">{l.leadId}</TableCell>
+                        <TableCell className="font-mono text-xs font-semibold text-[#2563EB]">{l.leadId}</TableCell>
                         <TableCell className="font-medium">{l.fullName}</TableCell>
                         <TableCell className="text-xs text-muted-foreground">{l.phone}</TableCell>
                         <TableCell className="hidden md:table-cell">
                           {l.preferredCountry ? (
-                            <Badge variant="outline" className="border-[#0B5ED7]/20 text-[#0B5ED7]">
+                            <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
                               {l.preferredCountry}
                             </Badge>
                           ) : (
@@ -581,7 +581,7 @@ export function PartnerPortal() {
                   <TableBody>
                     {commission.items.map((p) => (
                       <TableRow key={p.id}>
-                        <TableCell className="font-mono text-xs font-semibold text-[#0B5ED7]">{p.paymentId}</TableCell>
+                        <TableCell className="font-mono text-xs font-semibold text-[#2563EB]">{p.paymentId}</TableCell>
                         <TableCell className="font-medium">
                           {p.student?.fullName || "—"}
                           {p.student?.studentId && (
@@ -633,18 +633,18 @@ export function PartnerPortal() {
       </Tabs>
 
       {/* Partner data note */}
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/30">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/30">
         <CardContent className="flex items-start gap-3 pt-5">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
             <Icon name="ShieldCheck" className="size-5" />
           </div>
           <div className="text-sm">
-            <p className="font-semibold text-[#0B5ED7]">Data access & privacy</p>
+            <p className="font-semibold text-[#2563EB]">Data access & privacy</p>
             <p className="mt-1 text-foreground/80">
               Partners can only see their own referred students. Student data is unified — the same profile appears in
               Student Portal, Counselor Portal, and Partner Portal based on permission. Any access to commission
               amounts is audit-logged for compliance. Questions about a payment? Email{" "}
-              <span className="font-medium text-[#0B5ED7]">finance@alo-education.com</span>.
+              <span className="font-medium text-[#2563EB]">finance@alo-education.com</span>.
             </p>
           </div>
         </CardContent>

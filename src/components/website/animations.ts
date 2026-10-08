@@ -7,7 +7,7 @@ import { Variants, Transition } from 'framer-motion';
 
 /* ── Brand Colors ──────────────────────────────────────────── */
 export const BRAND = {
-  blue: '#0B5ED7',      // Education Blue
+  blue: '#2563EB',      // Education Blue
   orange: '#F97316',     // ALO Orange (primary CTA)
   sunshine: '#FFB347',   // Sunshine Accent
   text: '#0F172A',       // Neutral Dark
@@ -193,7 +193,7 @@ export const viewportRepeat = {
 
 /* ── Gradient helpers ───────────────────────────────────────── */
 export const gradients = {
-  blue: 'linear-gradient(135deg, #0B5ED7 0%, #0EA5E9 100%)',
+  blue: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
   orange: 'linear-gradient(135deg, #F97316 0%, #FFB347 100%)',
   blueLight: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)',
   softBlue: 'linear-gradient(180deg, #FFFFFF 0%, #F0F7FF 100%)',

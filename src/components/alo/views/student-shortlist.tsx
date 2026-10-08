@@ -126,7 +126,7 @@ export function StudentShortlist() {
                     <h3 className="font-bold text-[#0B2447]">{c.name || c.title || "Course"}</h3>
                     <p className="text-sm text-[#5A7299]">{c.university || "—"}</p>
                   </div>
-                  <Badge className={cn("bg-[#EAF3FF] text-[#0B5ED7]")}>{c.country || "—"}</Badge>
+                  <Badge className={cn("bg-[#EAF3FF] text-[#2563EB]")}>{c.country || "—"}</Badge>
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-2 text-xs">

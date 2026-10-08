@@ -76,7 +76,7 @@ export default function StudentVisaChecklistPage() {
                     <td className="p-3">{item.isRequired ? <Badge className="bg-rose-500/20 text-rose-300 border-rose-500/30 text-[10px]">Required</Badge> : <Badge variant="outline" className="text-gray-400 text-[10px]">Optional</Badge>}</td>
                     <td className="p-3"><Badge className={item.status === 'APPROVED' || item.status === 'approved' || item.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]' : item.status === 'UPLOADED' || item.status === 'uploaded' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30 text-[10px]' : 'bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]'}>{(item.status || 'NOT_UPLOADED').toUpperCase()}</Badge></td>
                     <td className="p-3 text-xs text-gray-300 max-w-xs">{item.note || item.reason || 'Ensure high-resolution scan in PDF format — supportive/clear/professional/actionable — student-safe feedback'}</td>
-                    <td className="p-3 text-right"><Link href="/student/documents"><Button size="sm" className="bg-[#0B5ED7] hover:bg-[#0046a0] text-white text-xs h-7"><Upload className="w-3 h-3 mr-1" /> Upload — Replacement Previous Versions Remain Auditable Officer Cannot Silently Delete History</Button></Link></td>
+                    <td className="p-3 text-right"><Link href="/student/documents"><Button size="sm" className="bg-[#2563EB] hover:bg-[#0046a0] text-white text-xs h-7"><Upload className="w-3 h-3 mr-1" /> Upload — Replacement Previous Versions Remain Auditable Officer Cannot Silently Delete History</Button></Link></td>
                   </tr>
                 ))}
               </tbody>

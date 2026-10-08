@@ -234,7 +234,7 @@ export default function MarketingAutomationDashboard() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-xl flex items-center gap-2 shrink-0 transition ${
-                isActive ? 'bg-[#0B5ED7] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                isActive ? 'bg-[#2563EB] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
             >
               <Icon className="w-4 h-4" /> {tab.label}
@@ -336,7 +336,7 @@ export default function MarketingAutomationDashboard() {
               <Button
                 onClick={handleLogoUpload}
                 disabled={uploadingLogo}
-                className="bg-[#0B5ED7] hover:bg-blue-700 text-white text-xs rounded-xl px-5 mx-auto flex items-center gap-1.5"
+                className="bg-[#2563EB] hover:bg-blue-700 text-white text-xs rounded-xl px-5 mx-auto flex items-center gap-1.5"
               >
                 {uploadingLogo ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                 {uploadingLogo ? 'Configuring Logo...' : 'Upload & Save Official Logo'}
@@ -364,10 +364,10 @@ export default function MarketingAutomationDashboard() {
 
                 <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[#0B5ED7]" />
+                    <div className="w-8 h-8 rounded-lg bg-[#2563EB]" />
                     <span className="font-semibold text-slate-800">Professional Blue Accent</span>
                   </div>
-                  <code className="font-mono text-slate-600">#0B5ED7</code>
+                  <code className="font-mono text-slate-600">#2563EB</code>
                 </div>
               </div>
             </div>
@@ -413,7 +413,7 @@ export default function MarketingAutomationDashboard() {
                     onChange={(e) => setCommentKeyword(e.target.value)}
                     className="flex-1 px-3 py-2 text-xs border border-slate-300 rounded-xl"
                   />
-                  <Button onClick={handleTestCommentAutomation} className="bg-[#0B5ED7] text-white text-xs rounded-xl px-4">
+                  <Button onClick={handleTestCommentAutomation} className="bg-[#2563EB] text-white text-xs rounded-xl px-4">
                     Create Draft
                   </Button>
                 </div>

@@ -219,7 +219,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
                 <Button className="bg-[#F97316] text-white hover:bg-[#F97316]/90 h-11" onClick={() => onNavigate("public-courses")}>
                   <Icon name="BookOpen" className="size-4" /> All courses
                 </Button>
-                <Button variant="outline" className="border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb] h-11" onClick={() => onNavigate("public-universities")}>
+                <Button variant="outline" className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-11" onClick={() => onNavigate("public-universities")}>
                   <Icon name="Building2" className="size-4" /> All universities
                 </Button>
               </div>
@@ -244,11 +244,11 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
       />
 
       {/* 2. Hero */}
-      <section className="mt-5 overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/15 bg-gradient-to-br from-[#e8f0fb]/60 via-white to-white">
+      <section className="mt-5 overflow-hidden rounded-2xl border-2 border-[#2563EB]/15 bg-gradient-to-br from-[#e8f0fb]/60 via-white to-white">
         <div className="p-5 lg:p-7">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className="bg-[#e8f0fb] text-[#0B5ED7] hover:bg-[#e8f0fb]">{course.level}</Badge>
-            <Badge variant="outline" className="border-[#0B5ED7]/30 text-[#0B5ED7]">{course.subject}</Badge>
+            <Badge className="bg-[#e8f0fb] text-[#2563EB] hover:bg-[#e8f0fb]">{course.level}</Badge>
+            <Badge variant="outline" className="border-[#2563EB]/30 text-[#2563EB]">{course.subject}</Badge>
             {course.scholarship && (
               <Badge className="bg-[#fdece4] text-[#F97316] hover:bg-[#fdece4]">
                 <Icon name="Award" className="mr-1 size-3" /> Scholarship
@@ -259,11 +259,11 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
               Verified {course.lastVerifiedAt ? fmtDate(course.lastVerifiedAt) : "recently"}
             </span>
           </div>
-          <h1 className="mt-3 text-2xl font-black text-[#0B5ED7] sm:text-3xl lg:text-4xl">{course.name}</h1>
+          <h1 className="mt-3 text-2xl font-black text-[#2563EB] sm:text-3xl lg:text-4xl">{course.name}</h1>
           <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <button
               onClick={() => onNavigate("public-university", course.university.slug)}
-              className="inline-flex items-center gap-1.5 font-semibold text-[#0B5ED7] hover:underline"
+              className="inline-flex items-center gap-1.5 font-semibold text-[#2563EB] hover:underline"
             >
               <Icon name="Building2" className="size-4" />
               {course.university.name}
@@ -280,7 +280,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             </Button>
             <Button
               variant="outline"
-              className="border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb] h-12"
+              className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-12"
               onClick={() => onNavigate("public-university", course.university.slug)}
             >
               <Icon name="Building2" className="size-4" /> View University
@@ -314,7 +314,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
           <InfoRow label="Subject" value={course.subject} />
           <InfoRow label="Duration" value={course.duration} />
           <InfoRow label="Intake" value={course.intake} />
-          <InfoRow label="Tuition" value={<span className="font-bold text-[#0B5ED7]">{course.tuition}</span>} />
+          <InfoRow label="Tuition" value={<span className="font-bold text-[#2563EB]">{course.tuition}</span>} />
           <InfoRow label="Scholarship" value={course.scholarship || "Ask counselor"} />
           <InfoRow label="Deadline" value={course.deadline || "Rolling"} />
           <InfoRow label="Last verified" value={course.lastVerifiedAt ? fmtDate(course.lastVerifiedAt) : "Recently"} />
@@ -329,14 +329,14 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
       {/* 5. Entry Requirements */}
       <SectionCard title="Entry Requirements" icon="ListChecks" className="mt-6">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-[#0B5ED7]/10 bg-[#f7f9fc] p-4">
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#0B5ED7]">
+          <div className="rounded-xl border border-[#2563EB]/10 bg-[#f7f9fc] p-4">
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#2563EB]">
               <Icon name="GraduationCap" className="size-3.5" /> Academic requirement
             </p>
             <p className="mt-2 text-sm text-foreground">{course.academicRequirement || "Confirm with counselor"}</p>
           </div>
-          <div className="rounded-xl border border-[#0B5ED7]/10 bg-[#f7f9fc] p-4">
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#0B5ED7]">
+          <div className="rounded-xl border border-[#2563EB]/10 bg-[#f7f9fc] p-4">
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#2563EB]">
               <Icon name="Languages" className="size-3.5" /> English requirement
             </p>
             <p className="mt-2 text-sm text-foreground">{course.englishRequirement || "IELTS / PTE / TOEFL accepted"}</p>
@@ -364,7 +364,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         <div className="mt-4 flex flex-wrap gap-2">
           <Button
             variant="outline"
-            className="border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb] h-11"
+            className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-11"
             onClick={() => onNavigate("public-exams")}
           >
             <Icon name="GraduationCap" className="size-4" /> Take Free English Test
@@ -385,9 +385,9 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
       {/* 7. Tuition and Scholarship */}
       <SectionCard title="Tuition & Scholarship" icon="Wallet" className="mt-6">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl border-2 border-[#0B5ED7]/15 p-4">
+          <div className="rounded-2xl border-2 border-[#2563EB]/15 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tuition</p>
-            <p className="mt-1 text-2xl font-black text-[#0B5ED7]">{course.tuition}</p>
+            <p className="mt-1 text-2xl font-black text-[#2563EB]">{course.tuition}</p>
             <p className="mt-1 text-xs text-muted-foreground">For {course.duration} · {course.level}</p>
           </div>
           <div className="rounded-2xl border-2 border-[#F97316]/15 bg-[#fdece4]/30 p-4">
@@ -413,8 +413,8 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         ) : (
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
             {modules.map((m, i) => (
-              <div key={i} className="flex items-start gap-2.5 rounded-xl border border-[#0B5ED7]/10 p-3 transition-colors hover:border-[#0B5ED7]/30 hover:bg-[#e8f0fb]/20">
-                <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-xs font-bold text-[#0B5ED7]">
+              <div key={i} className="flex items-start gap-2.5 rounded-xl border border-[#2563EB]/10 p-3 transition-colors hover:border-[#2563EB]/30 hover:bg-[#e8f0fb]/20">
+                <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-xs font-bold text-[#2563EB]">
                   {i + 1}
                 </div>
                 <p className="text-sm font-medium text-foreground">{m}</p>
@@ -437,7 +437,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
           <>
             <div className="flex flex-wrap gap-2">
               {careerOutcomes.map((c, i) => (
-                <span key={i} className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f0fb] px-3 py-1.5 text-xs font-semibold text-[#0B5ED7]">
+                <span key={i} className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f0fb] px-3 py-1.5 text-xs font-semibold text-[#2563EB]">
                   <Icon name="Briefcase" className="size-3" />
                   {c}
                 </span>
@@ -461,7 +461,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
           <Button
             variant="outline"
             size="sm"
-            className="border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb] h-9"
+            className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-9"
             onClick={() => onNavigate("student-dashboard")}
           >
             <Icon name="Upload" className="size-4" /> Upload in Portal
@@ -473,7 +473,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         ) : (
           <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {documents.map((d, i) => (
-              <li key={i} className="flex items-start gap-2.5 rounded-xl border border-[#0B5ED7]/10 p-3">
+              <li key={i} className="flex items-start gap-2.5 rounded-xl border border-[#2563EB]/10 p-3">
                 <Icon name={d.required ? "CircleCheck" : "CircleDashed"} className={cn("mt-0.5 size-4 shrink-0", d.required ? "text-[#F97316]" : "text-muted-foreground")} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
@@ -481,7 +481,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
                     <Badge className={cn("text-[10px]", d.required ? "bg-[#fdece4] text-[#F97316] hover:bg-[#fdece4]" : "bg-slate-100 text-slate-600 hover:bg-slate-100")}>
                       {d.required ? "Required" : "Optional"}
                     </Badge>
-                    <Badge variant="outline" className="border-[#0B5ED7]/20 text-[10px] text-muted-foreground">{d.category}</Badge>
+                    <Badge variant="outline" className="border-[#2563EB]/20 text-[10px] text-muted-foreground">{d.category}</Badge>
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">{d.explanation}</p>
                 </div>
@@ -506,10 +506,10 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
               <button
                 key={s.slug}
                 onClick={() => onNavigate("public-course", s.slug)}
-                className="group flex h-full flex-col items-start gap-2 rounded-2xl border-2 border-[#0B5ED7]/10 p-4 text-left transition-all hover:border-[#0B5ED7]/40 hover:bg-[#e8f0fb]/30"
+                className="group flex h-full flex-col items-start gap-2 rounded-2xl border-2 border-[#2563EB]/10 p-4 text-left transition-all hover:border-[#2563EB]/40 hover:bg-[#e8f0fb]/30"
               >
-                <Badge className="bg-[#e8f0fb] text-[#0B5ED7] hover:bg-[#e8f0fb]">{s.level}</Badge>
-                <p className="text-sm font-bold text-[#0B5ED7] line-clamp-2">{s.name}</p>
+                <Badge className="bg-[#e8f0fb] text-[#2563EB] hover:bg-[#e8f0fb]">{s.level}</Badge>
+                <p className="text-sm font-bold text-[#2563EB] line-clamp-2">{s.name}</p>
                 <p className="mt-auto flex items-center gap-1 text-xs text-muted-foreground">
                   <Icon name="Building2" className="size-3" />
                   <span className="line-clamp-1">{s.university.name}</span>
@@ -537,13 +537,13 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <button
             onClick={() => onNavigate("public-university", course.university.slug)}
-            className="group flex items-start gap-3 rounded-2xl border-2 border-[#0B5ED7]/15 p-4 text-left transition-all hover:border-[#0B5ED7]/40 hover:bg-[#e8f0fb]/30"
+            className="group flex items-start gap-3 rounded-2xl border-2 border-[#2563EB]/15 p-4 text-left transition-all hover:border-[#2563EB]/40 hover:bg-[#e8f0fb]/30"
           >
             <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-alo-gradient text-white alo-shadow">
               <Icon name="Building2" className="size-6" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-[#0B5ED7]">{course.university.name}</p>
+              <p className="text-sm font-bold text-[#2563EB]">{course.university.name}</p>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                 <Icon name="MapPin" className="size-3" /> {course.city} · {course.country.flag} {course.country.name}
               </p>
@@ -558,13 +558,13 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
 
           <button
             onClick={() => onNavigate("public-universities")}
-            className="group flex items-start gap-3 rounded-2xl border-2 border-dashed border-[#0B5ED7]/15 p-4 text-left transition-all hover:border-[#0B5ED7]/40 hover:bg-[#e8f0fb]/30"
+            className="group flex items-start gap-3 rounded-2xl border-2 border-dashed border-[#2563EB]/15 p-4 text-left transition-all hover:border-[#2563EB]/40 hover:bg-[#e8f0fb]/30"
           >
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7]">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
               <Icon name="Globe" className="size-6" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-[#0B5ED7]">More universities in {course.country.name}</p>
+              <p className="text-sm font-bold text-[#2563EB]">More universities in {course.country.name}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 Compare {course.country.flag} {course.country.name} universities — tuition, scholarships, intakes, and entry requirements side by side.
               </p>
@@ -584,7 +584,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         className="mt-6 scroll-mt-20"
       >
         <div id="eligibility" className="-mt-12 pt-12" />
-        <div className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-[#f7f9fc] p-4">
+        <div className="rounded-2xl border-2 border-[#2563EB]/15 bg-[#f7f9fc] p-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <div>
               <Label className="text-xs font-semibold">Highest qualification</Label>
@@ -621,7 +621,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
           </Button>
 
           {eligResult && (
-            <div className="mt-4 rounded-xl border border-[#0B5ED7]/15 bg-white p-4">
+            <div className="mt-4 rounded-xl border border-[#2563EB]/15 bg-white p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold", STATUS_TONE[eligResult.status] || STATUS_TONE.NEEDS_COUNSELOR_REVIEW)}>
                   <Icon name="Sparkles" className="size-3" />
@@ -643,25 +643,25 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
               )}
               {eligResult.recommendedDocuments && eligResult.recommendedDocuments.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-xs font-semibold text-[#0B5ED7]">Recommended documents</p>
-                  <ul className="mt-1 space-y-1">{eligResult.recommendedDocuments.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><Icon name="FileText" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />{s}</li>)}</ul>
+                  <p className="text-xs font-semibold text-[#2563EB]">Recommended documents</p>
+                  <ul className="mt-1 space-y-1">{eligResult.recommendedDocuments.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><Icon name="FileText" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />{s}</li>)}</ul>
                 </div>
               )}
               {eligResult.recommendedNextSteps && eligResult.recommendedNextSteps.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-xs font-semibold text-[#0B5ED7]">Recommended next steps</p>
-                  <ol className="mt-1 space-y-1">{eligResult.recommendedNextSteps.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><span className="font-bold text-[#0B5ED7]">{i + 1}.</span><span>{s}</span></li>)}</ol>
+                  <p className="text-xs font-semibold text-[#2563EB]">Recommended next steps</p>
+                  <ol className="mt-1 space-y-1">{eligResult.recommendedNextSteps.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><span className="font-bold text-[#2563EB]">{i + 1}.</span><span>{s}</span></li>)}</ol>
                 </div>
               )}
               {eligResult.englishTestAdvice && (
-                <p className="mt-3 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0B5ED7]"><span className="font-semibold">English test advice:</span> {eligResult.englishTestAdvice}</p>
+                <p className="mt-3 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#2563EB]"><span className="font-semibold">English test advice:</span> {eligResult.englishTestAdvice}</p>
               )}
               {eligResult.visaRiskNote && (
                 <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800"><span className="font-semibold">Visa risk note:</span> {eligResult.visaRiskNote}</p>
               )}
               <Button
                 variant="outline"
-                className="mt-4 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb] h-10"
+                className="mt-4 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-10"
                 onClick={() => scrollToId("apply")}
               >
                 <Icon name="Send" className="size-4" /> Talk to a counselor
@@ -684,14 +684,14 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         >
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {APPLY_FLOW.map((s) => (
-              <div key={s.step} className="relative rounded-2xl border-2 border-[#0B5ED7]/10 p-4">
+              <div key={s.step} className="relative rounded-2xl border-2 border-[#2563EB]/10 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex size-10 items-center justify-center rounded-xl bg-alo-gradient text-white alo-shadow">
                     <Icon name={s.icon} className="size-5" />
                   </div>
-                  <span className="text-2xl font-black text-[#0B5ED7]/15">{s.step}</span>
+                  <span className="text-2xl font-black text-[#2563EB]/15">{s.step}</span>
                 </div>
-                <p className="mt-3 text-sm font-bold text-[#0B5ED7]">{s.title}</p>
+                <p className="mt-3 text-sm font-bold text-[#2563EB]">{s.title}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{s.detail}</p>
               </div>
             ))}
@@ -717,7 +717,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((f, i) => (
               <AccordionItem key={i} value={`faq-${i}`}>
-                <AccordionTrigger className="text-left text-sm font-semibold text-[#0B5ED7] hover:no-underline">
+                <AccordionTrigger className="text-left text-sm font-semibold text-[#2563EB] hover:no-underline">
                   {f.q}
                 </AccordionTrigger>
                 <AccordionContent className="text-sm text-muted-foreground">{f.a}</AccordionContent>
@@ -732,7 +732,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         <div className="overflow-hidden rounded-2xl border-2 border-[#F97316]/30 bg-gradient-to-br from-[#fdece4]/60 via-white to-white p-5 lg:p-7">
           <div className="flex flex-col items-start gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="min-w-0 flex-1">
-              <h3 className="text-xl font-black text-[#0B5ED7] sm:text-2xl">
+              <h3 className="text-xl font-black text-[#2563EB] sm:text-2xl">
                 Ready to apply for {course.name}?
               </h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -748,7 +748,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
               </Button>
               <Button
                 variant="outline"
-                className="border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb] h-12"
+                className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-12"
                 onClick={() => onNavigate("public-courses")}
               >
                 <Icon name="BookOpen" className="size-4" /> Browse more courses

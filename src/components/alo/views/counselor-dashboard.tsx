@@ -348,7 +348,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
       {/* ============================================================ */}
       {/* HEADER BAR                                                    */}
       {/* ============================================================ */}
-      <Card className="overflow-hidden rounded-2xl border-2 border-[#0B5ED7]/20 bg-gradient-to-br from-[#e8f0fb] to-white">
+      <Card className="overflow-hidden rounded-2xl border-2 border-[#2563EB]/20 bg-gradient-to-br from-[#e8f0fb] to-white">
         <CardContent className="pt-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Left: identity */}
@@ -358,11 +358,11 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-xl font-bold text-[#0B5ED7] sm:text-2xl">{counselor.name}</h1>
-                  <Badge variant="outline" className="border-[#0B5ED7]/30 bg-white font-mono text-[#0B5ED7]">
+                  <h1 className="text-xl font-bold text-[#2563EB] sm:text-2xl">{counselor.name}</h1>
+                  <Badge variant="outline" className="border-[#2563EB]/30 bg-white font-mono text-[#2563EB]">
                     {hr?.employeeId ?? "—"}
                   </Badge>
-                  <Badge className="bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90">
+                  <Badge className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
                     {counselor.role?.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) ?? "Counselor"}
                   </Badge>
                 </div>
@@ -415,7 +415,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => onNavigate("unified-inbox")}
-                      className="relative flex size-9 items-center justify-center rounded-lg border border-[#0B5ED7]/20 bg-white text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                      className="relative flex size-9 items-center justify-center rounded-lg border border-[#2563EB]/20 bg-white text-[#2563EB] hover:bg-[#e8f0fb]"
                       aria-label="Notifications"
                     >
                       <Icon name="Bell" className="size-4" />
@@ -437,7 +437,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                   })
                 }
                 variant="outline"
-                className="h-9 rounded-lg border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                className="h-9 rounded-lg border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
               >
                 <Icon name="Shield" className="mr-1.5 size-4" />
                 <span className="hidden sm:inline">Screen Safe</span>
@@ -484,7 +484,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                className="text-[#2563EB] hover:bg-[#e8f0fb]"
                 onClick={() => toast({ title: "Full task list", description: "Open the unified inbox to see all assigned tasks." })}
               >
                 View all <Icon name="ArrowRight" className="ml-1 size-3.5" />
@@ -563,14 +563,14 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               <div className="space-y-3">
                 {appointments.map((a) => (
                   <div key={a.id} className="flex items-start gap-3 rounded-xl border border-border/60 p-3">
-                    <div className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+                    <div className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
                       <span className="text-[10px] font-medium uppercase">{new Date(a.scheduledAt).toLocaleDateString("en-GB", { month: "short" })}</span>
                       <span className="text-base font-bold leading-none">{new Date(a.scheduledAt).getDate()}</span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-semibold text-foreground">{a.title}</span>
-                        <Badge variant="outline" className="text-[10px] text-[#0B5ED7]">
+                        <Badge variant="outline" className="text-[10px] text-[#2563EB]">
                           {APPT_TYPE_LABELS[a.type] ?? a.type}
                         </Badge>
                       </div>
@@ -640,7 +640,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                          className="h-7 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
                           onClick={() => onNavigate("unified-inbox")}
                         >
                           Respond <Icon name="ArrowRight" className="ml-1 size-3" />
@@ -715,7 +715,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
             <div className="space-y-4">
               {/* Profile summary */}
               <div className="rounded-xl bg-[#e8f0fb]/60 p-3">
-                <p className="text-sm font-bold text-[#0B5ED7]">{counselor.name}</p>
+                <p className="text-sm font-bold text-[#2563EB]">{counselor.name}</p>
                 <p className="text-xs text-muted-foreground">{hr?.designation ?? "Counselor"} · {hr?.department ?? "Student Success"}</p>
                 <div className="mt-2 grid grid-cols-2 gap-1 text-xs">
                   <div>
@@ -783,7 +783,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
 
               <Button
                 variant="outline"
-                className="h-10 w-full rounded-xl border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                className="h-10 w-full rounded-xl border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
                 onClick={() =>
                   toast({
                     title: "HR profile",
@@ -824,9 +824,9 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                 <div className="flex items-center justify-between rounded-xl bg-[#e8f0fb]/60 p-3">
                   <div>
                     <p className="text-xs text-muted-foreground">Overall score</p>
-                    <p className="text-2xl font-bold text-[#0B5ED7]">{(performance.score ?? 0).toFixed(1)}<span className="text-sm text-muted-foreground">/100</span></p>
+                    <p className="text-2xl font-bold text-[#2563EB]">{(performance.score ?? 0).toFixed(1)}<span className="text-sm text-muted-foreground">/100</span></p>
                   </div>
-                  <div className="flex size-12 items-center justify-center rounded-full bg-[#0B5ED7] text-white">
+                  <div className="flex size-12 items-center justify-center rounded-full bg-[#2563EB] text-white">
                     <Icon name="Award" className="size-6" />
                   </div>
                 </div>
@@ -835,7 +835,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                     <span className="text-muted-foreground">Leads handled</span>
                     <span className="font-semibold text-foreground">{performance.leadsHandled ?? 0}</span>
                   </div>
-                  <MiniBar value={performance.leadsHandled ?? 0} max={Math.max(50, performance.leadsHandled ?? 0)} color="#0B5ED7" />
+                  <MiniBar value={performance.leadsHandled ?? 0} max={Math.max(50, performance.leadsHandled ?? 0)} color="#2563EB" />
                 </div>
                 <div>
                   <div className="mb-1 flex justify-between text-xs">
@@ -894,9 +894,9 @@ function QuickActionButton({ icon, label, onClick }: { icon: string; label: stri
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1.5 rounded-xl border-2 border-[#0B5ED7]/15 bg-white p-3 text-center transition-all hover:border-[#0B5ED7]/40 hover:bg-[#e8f0fb]/50"
+      className="flex flex-col items-center gap-1.5 rounded-xl border-2 border-[#2563EB]/15 bg-white p-3 text-center transition-all hover:border-[#2563EB]/40 hover:bg-[#e8f0fb]/50"
     >
-      <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+      <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
         <Icon name={icon} className="size-4" />
       </div>
       <span className="text-xs font-semibold text-foreground">{label}</span>

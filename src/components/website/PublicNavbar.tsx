@@ -27,7 +27,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 import LanguageToggle from '@/components/website/LanguageToggle';
 import { useI18n } from '@/i18n';
 
@@ -111,7 +110,7 @@ function MobileLink({ href, label, icon: Icon, onClick }: {
       onClick={onClick}
       className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 transition-colors"
     >
-      {Icon && <Icon className="h-4 w-4 text-[#0B5ED7]" />}
+      {Icon && <Icon className="h-4 w-4 text-[#2563EB]" />}
       {label}
     </Link>
   );
@@ -272,16 +271,16 @@ export default function PublicNavbar() {
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-sm"
     >
-      {/* Branded top contact bar — header/topbar placement for 3 high-conversion buttons */}
-      <div className="hidden md:flex w-full bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 sm:px-6 lg:px-8 py-2 items-center justify-between">
-        <div className="text-[11px] text-slate-600 flex items-center gap-2">
-          <span className="hidden lg:inline">✈️ 24/7 Student Support • Office: Barek Mansion-02, Panthapath, Dhaka</span>
-          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] hover:text-[#F97316] underline font-medium">Maps</a>
-          <span className="text-slate-300">|</span>
-          <span className="font-medium text-[#0F172A]">Senior Counselor Al Aminn: 01805020101</span>
+      {/* Utility bar — contact details as plain links only. The AI / WhatsApp /
+          Facebook controls live in the single corner FloatingActionWidget. */}
+      <div className="hidden md:flex w-full bg-alo-page border-b border-alo-border px-4 sm:px-6 lg:px-8 py-2 items-center justify-between">
+        <div className="text-xs text-alo-text-secondary flex items-center gap-2">
+          <span className="hidden lg:inline">Office: Barek Mansion-02, Panthapath, Dhaka</span>
+          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-alo-brand hover:text-alo-brand-hover underline underline-offset-2 font-medium">Maps</a>
+          <span className="text-alo-border-strong" aria-hidden="true">|</span>
+          <a href="tel:+8801805020101" className="font-medium text-alo-navy hover:text-alo-brand">Senior Counselor Al Aminn: 01805020101</a>
         </div>
         <div className="flex items-center gap-3">
-          <WebsiteActionButtons variant="header" />
           <LanguageToggle compact />
         </div>
       </div>
@@ -292,7 +291,7 @@ export default function PublicNavbar() {
             <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-9 w-auto" />
           </motion.div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-[#0B5ED7] leading-tight">ALO Education</span>
+            <span className="text-lg font-bold text-[#2563EB] leading-tight">ALO Education</span>
             <span className="text-[11px] italic text-[#F97316] font-medium -mt-0.5" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
           </div>
         </Link>
@@ -353,7 +352,7 @@ export default function PublicNavbar() {
                 const Icon = p.icon;
                 return (
                   <Link key={p.href} href={p.href} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition-colors">
-                    <Icon className="h-4 w-4 text-[#0B5ED7]" />
+                    <Icon className="h-4 w-4 text-[#2563EB]" />
                     {p.label}
                   </Link>
                 );
@@ -395,7 +394,7 @@ export default function PublicNavbar() {
                     <Link href="/" onClick={closeMobile} className="flex items-center gap-2">
                       <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-7 w-auto" />
                       <div className="flex flex-col">
-                        <span className="text-base font-bold text-[#0B5ED7] leading-tight">ALO Education</span>
+                        <span className="text-base font-bold text-[#2563EB] leading-tight">ALO Education</span>
                         <span className="text-[10px] italic text-[#F97316] font-medium" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
                       </div>
                     </Link>
@@ -469,12 +468,12 @@ export default function PublicNavbar() {
                           {t('cta.bookConsultation')}
                         </Button>
                       </Link>
-                      {/* Mobile 3-button compact placement — high-conversion, no overlap with nav */}
-                      <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 space-y-2">
-                        <p className="text-[11px] font-bold uppercase tracking-widest text-[#0B5ED7]">Get Instant Help</p>
-                        <WebsiteActionButtons variant="compact" className="justify-start" />
-                        <p className="text-[11px] text-slate-500 leading-snug">Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0B5ED7] underline">Maps</a> • Al Aminn 01805020101</p>
-                      </div>
+                      {/* Contact details as text — chat / WhatsApp live in the corner widget. */}
+                      <p className="text-xs text-alo-text-muted leading-snug">
+                        Office: Barek Mansion-02, Panthapath •{' '}
+                        <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-alo-brand underline">Maps</a>
+                        {' '}• <a href="tel:+8801805020101" className="text-alo-brand underline">Al Aminn 01805020101</a>
+                      </p>
                     </div>
                   </div>
                 </SheetContent>

@@ -65,7 +65,7 @@ export default function EnhancedCourseFinder() {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-6">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
-          <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-xs mb-4">Course Finder — Same Underlying DB</Badge>
+          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-4">Course Finder — Same Underlying DB</Badge>
           <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Find Your Perfect Course</h1>
           <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Search from verified universities and courses across UK, USA, Canada, Australia, Ireland, New Zealand, Germany, Dubai. Public users can search course, university, country, city, campus, study level, subject, discipline, intake, tuition, scholarship, application fee, deposit, English test, IELTS, PTE, TOEFL, Duolingo, MOI, duration, deadline — public fields only, commission/internal notes blocked at DB/API/service layer.</p>
           <div className="flex flex-wrap gap-2 mt-4">
@@ -78,7 +78,7 @@ export default function EnhancedCourseFinder() {
 
         <div className="grid lg:grid-cols-4 gap-6">
           <Card className="p-5 lg:col-span-1 h-fit bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-            <h3 className="font-semibold text-sm text-[#0F172A] mb-4 flex items-center gap-2"><Filter className="w-4 h-4 text-[#0B5ED7]" />Filters — Public Fields Only</h3>
+            <h3 className="font-semibold text-sm text-[#0F172A] mb-4 flex items-center gap-2"><Filter className="w-4 h-4 text-[#2563EB]" />Filters — Public Fields Only</h3>
             <div className="space-y-4">
               <div><label className="text-xs font-medium text-gray-600 mb-1.5 block">Search Course/University</label><div className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} placeholder="Course, university..." className="pl-9 bg-white border-[#E2E8F0] h-11" /></div></div>
               <div className="grid grid-cols-2 gap-3">
@@ -107,7 +107,7 @@ export default function EnhancedCourseFinder() {
               <div><label className="text-xs font-medium text-gray-600 mb-1 block">English Test</label><select value={filters.englishTest} onChange={e => setFilters({ ...filters, englishTest: e.target.value })} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm h-11"><option value="">All Tests</option><option value="ielts">IELTS</option><option value="pte">PTE Academic</option><option value="toefl">TOEFL iBT</option><option value="duolingo">Duolingo</option><option value="moi">MOI</option></select></div>
               <div><label className="text-xs font-medium text-gray-600 mb-1 block">IELTS Min</label><Input value={filters.ieltsMin} onChange={e => setFilters({ ...filters, ieltsMin: e.target.value })} placeholder="6.0, 6.5..." className="bg-white border-[#E2E8F0] h-11 text-sm" /></div>
               <div><label className="text-xs font-medium text-gray-600 mb-1 block">Deadline</label><select value={filters.deadline} onChange={e => setFilters({ ...filters, deadline: e.target.value })} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm h-11"><option value="">Any Deadline</option><option value="rolling">Rolling</option><option value="upcoming">Upcoming</option></select></div>
-              <Button onClick={() => fetchCourses(1)} className="w-full bg-[#0B5ED7] text-white h-12 font-bold">Apply Filters — Real DB</Button>
+              <Button onClick={() => fetchCourses(1)} className="w-full bg-[#2563EB] text-white h-12 font-bold">Apply Filters — Real DB</Button>
               <Button variant="outline" onClick={() => setFilters({ search: '', country: '', city: '', campus: '', studyLevel: '', subject: '', discipline: '', intake: '', tuitionMin: '', tuitionMax: '', scholarship: 'all', appFee: 'all', deposit: 'all', englishTest: '', ieltsMin: '', duration: '', deadline: '' })} className="w-full border-[#E2E8F0] h-11">Clear All Filters</Button>
               <TestPreparationMiniCard compact contextTitle="Prepare for English proficiency tests for this course" />
               <p className="text-[11px] text-gray-500 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Public cannot see: commission, internal notes, partner information, staff notes, internal risk notes, university contracts, private financial information — blocked at DB/API/service layer.</p>
@@ -122,10 +122,10 @@ export default function EnhancedCourseFinder() {
                 <p className="text-sm text-gray-500">{total} courses found — DB-driven, verified, public fields only</p>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {courses.map((c: any) => (
-                    <Card key={c.courseId || c.id} className="p-5 bg-white border-[#E2E8F0] hover:border-[#0B5ED7] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                    <Card key={c.courseId || c.id} className="p-5 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-[10px]">{c.studyLevel || 'Course'}</Badge>
+                          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-[10px]">{c.studyLevel || 'Course'}</Badge>
                           {c.yearlyTuition ? <span className="text-xs font-bold text-[#0F172A]">{c.tuitionCurrency} {c.yearlyTuition}/yr</span> : <span className="text-[11px] text-gray-500">Check official source for tuition</span>}
                         </div>
                         <h3 className="font-bold text-sm text-[#0F172A] line-clamp-2 mb-1">{c.courseTitle}</h3>
@@ -136,10 +136,10 @@ export default function EnhancedCourseFinder() {
                           <span className="flex items-center gap-1"><Globe className="w-3 h-3" />{c.country}</span>
                         </div>
                         {c.scholarships && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] mt-2"><Award className="w-3 h-3 mr-1" />Scholarship Available</Badge>}
-                        <p className="text-[10px] text-gray-500 mt-2">Source: {c.courseSourceUrl ? <a href={c.courseSourceUrl} target="_blank" className="text-[#0B5ED7] underline">Official</a> : 'Information not currently verified.'} • Last verified: {c.courseLastVerifiedAt ? new Date(c.courseLastVerifiedAt).toLocaleDateString() : 'Not verified'}</p>
+                        <p className="text-[10px] text-gray-500 mt-2">Source: {c.courseSourceUrl ? <a href={c.courseSourceUrl} target="_blank" className="text-[#2563EB] underline">Official</a> : 'Information not currently verified.'} • Last verified: {c.courseLastVerifiedAt ? new Date(c.courseLastVerifiedAt).toLocaleDateString() : 'Not verified'}</p>
                       </div>
                       <div className="mt-4 space-y-2">
-                        <Link href={`/course/${c.slug || c.courseId}`} className="block"><Button className="w-full bg-[#0B5ED7] text-white hover:bg-[#004494] h-11 text-xs font-bold">View Course Details</Button></Link>
+                        <Link href={`/course/${c.slug || c.courseId}`} className="block"><Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] h-11 text-xs font-bold">View Course Details</Button></Link>
                         <div className="grid grid-cols-3 gap-2">
                           <Button variant="outline" size="sm" className="h-9 text-[11px] border-[#E2E8F0]"><BookmarkPlus className="w-3 h-3 mr-1" />Save</Button>
                           <Button variant="outline" size="sm" className="h-9 text-[11px] border-[#E2E8F0]"><GitCompare className="w-3 h-3 mr-1" />Compare</Button>

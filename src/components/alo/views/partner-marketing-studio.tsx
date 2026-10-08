@@ -156,7 +156,7 @@ const MARKETING_STATUS_COLORS: Record<string, string> = {
   APPROVED: "bg-emerald-100 text-emerald-700",
   REJECTED: "bg-rose-100 text-rose-700",
   SCHEDULED: "bg-sky-100 text-sky-700",
-  PUBLISHED: "bg-[#0B5ED7]/15 text-[#0B5ED7]",
+  PUBLISHED: "bg-[#2563EB]/15 text-[#2563EB]",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -235,11 +235,11 @@ function QuotaBar({ label, used, limit, icon, hint }: { label: string; used: num
   const remaining = Math.max(0, limit - used);
   const color = quotaColor(pct);
   return (
-    <Card className="rounded-2xl border-2 border-[#0B5ED7]/20">
+    <Card className="rounded-2xl border-2 border-[#2563EB]/20">
       <CardContent className="pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7]">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
               <Icon name={icon} className="size-5" />
             </div>
             <div>
@@ -310,14 +310,14 @@ function AiContentCard({
   action?: React.ReactNode;
 }) {
   return (
-    <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+    <Card className="rounded-2xl border-2 border-[#2563EB]/15">
       <CardContent className="pt-4">
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
               <Icon name={icon} className="size-3.5" />
             </div>
-            <p className="text-sm font-semibold text-[#0B5ED7]">{title}</p>
+            <p className="text-sm font-semibold text-[#2563EB]">{title}</p>
           </div>
           {action}
         </div>
@@ -372,7 +372,7 @@ function ScheduleDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
+          <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
             <Icon name="CalendarClock" className="size-5" />
             Schedule Campaign
           </DialogTitle>
@@ -676,8 +676,8 @@ export function PartnerMarketingStudio() {
             <QuotaBar label="Image Quota" icon="Image" used={imagesUsed} limit={imageLimit} hint="AI marketing visuals" />
             <QuotaBar label="Video Quota" icon="Video" used={videosUsed} limit={videoLimit} hint={`Max ${videoDurationLimit}s per video`} />
           </div>
-          <div className="flex items-start gap-2 rounded-xl border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-4 py-2.5 text-xs text-foreground/80">
-            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+          <div className="flex items-start gap-2 rounded-xl border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-2.5 text-xs text-foreground/80">
+            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
             <p>
               <strong>Video max duration: {videoDurationLimit} seconds.</strong> Quota resets monthly on the 1st. Color coding: green &lt;60%, amber 60-80%, red &gt;80%.
               {requiresAloApproval && " ALO approval is required before publishing."}
@@ -692,7 +692,7 @@ export function PartnerMarketingStudio() {
           <div className="flex min-w-[760px] items-center gap-1 overflow-x-auto pb-2">
             {WORKFLOW_STEPS.map((step, i) => (
               <React.Fragment key={step.label}>
-                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#0B5ED7]/15 bg-white px-3 py-2.5">
+                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#2563EB]/15 bg-white px-3 py-2.5">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-alo-gradient text-white">
                     <Icon name={step.icon} className="size-4" />
                   </div>
@@ -700,7 +700,7 @@ export function PartnerMarketingStudio() {
                   <span className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 {i < WORKFLOW_STEPS.length - 1 && (
-                  <Icon name="ChevronRight" className="size-4 shrink-0 text-[#0B5ED7]/40" />
+                  <Icon name="ChevronRight" className="size-4 shrink-0 text-[#2563EB]/40" />
                 )}
               </React.Fragment>
             ))}
@@ -711,10 +711,10 @@ export function PartnerMarketingStudio() {
       {/* Compliance rules card */}
       <SectionCard title="Compliance Rules" description="All AI content must follow ALO Education brand guidelines" icon="ShieldCheck">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div className="rounded-xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-4 py-3">
+          <div className="rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Icon name="Sparkles" className="size-4 text-[#0B5ED7]" />
-              <p className="text-sm font-semibold text-[#0B5ED7]">AI Content MUST</p>
+              <Icon name="Sparkles" className="size-4 text-[#2563EB]" />
+              <p className="text-sm font-semibold text-[#2563EB]">AI Content MUST</p>
             </div>
             <ul className="mt-2 space-y-1 text-xs text-foreground/85">
               <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Follow ALO brand voice: professional, encouraging, student-focused</li>
@@ -897,7 +897,7 @@ export function PartnerMarketingStudio() {
                         {[0, 1, 2].map((i) => (
                           <span
                             key={i}
-                            className="size-2 rounded-full bg-[#0B5ED7]"
+                            className="size-2 rounded-full bg-[#2563EB]"
                             style={{ animation: `pulse 1s ease-in-out ${i * 0.15}s infinite` }}
                           />
                         ))}
@@ -917,18 +917,18 @@ export function PartnerMarketingStudio() {
                         content={currentRequest.instagramCaption}
                         action={<CopyButton text={currentRequest.instagramCaption || ""} label="Instagram caption" />}
                       />
-                      <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+                      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
                         <CardContent className="pt-4">
                           <div className="mb-2 flex items-center gap-2">
-                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
                               <Icon name="Hash" className="size-3.5" />
                             </div>
-                            <p className="text-sm font-semibold text-[#0B5ED7]">Hashtags</p>
+                            <p className="text-sm font-semibold text-[#2563EB]">Hashtags</p>
                           </div>
                           {hashtags.length > 0 ? (
                             <div className="flex flex-wrap gap-1.5">
                               {hashtags.map((h, i) => (
-                                <Badge key={i} variant="outline" className="border-[#0B5ED7]/20 bg-[#e8f0fb]/40 font-mono text-[#0B5ED7]">
+                                <Badge key={i} variant="outline" className="border-[#2563EB]/20 bg-[#e8f0fb]/40 font-mono text-[#2563EB]">
                                   {h}
                                 </Badge>
                               ))}
@@ -947,7 +947,7 @@ export function PartnerMarketingStudio() {
                             <CopyButton text={currentRequest.imagePrompt || ""} label="Image prompt" />
                             <Button
                               size="sm"
-                              className="h-7 bg-[#0B5ED7] px-2 text-xs text-white hover:bg-[#0B5ED7]/90"
+                              className="h-7 bg-[#2563EB] px-2 text-xs text-white hover:bg-[#2563EB]/90"
                               disabled={assetLoading === "generate_image"}
                               onClick={() => runAssetAction("generate_image")}
                             >
@@ -969,7 +969,7 @@ export function PartnerMarketingStudio() {
                             <CopyButton text={currentRequest.videoPrompt || ""} label="Video prompt" />
                             <Button
                               size="sm"
-                              className="h-7 bg-[#0B5ED7] px-2 text-xs text-white hover:bg-[#0B5ED7]/90"
+                              className="h-7 bg-[#2563EB] px-2 text-xs text-white hover:bg-[#2563EB]/90"
                               disabled={assetLoading === "generate_video"}
                               onClick={() => runAssetAction("generate_video")}
                             >
@@ -1077,7 +1077,7 @@ export function PartnerMarketingStudio() {
                             </p>
                           )}
                           {currentRequest.publishedUrl && (
-                            <p className="mt-2 flex items-center gap-1.5 text-xs text-[#0B5ED7]">
+                            <p className="mt-2 flex items-center gap-1.5 text-xs text-[#2563EB]">
                               <Icon name="ExternalLink" className="size-3" />
                               <span>Published at <code className="font-mono">{currentRequest.publishedUrl}</code></span>
                             </p>
@@ -1159,7 +1159,7 @@ export function PartnerMarketingStudio() {
                             )}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="border-[#0B5ED7]/20 text-[#0B5ED7]">
+                            <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
                               {PLATFORM_LABELS[r.platform] ?? r.platform}
                             </Badge>
                           </TableCell>
@@ -1209,7 +1209,7 @@ export function PartnerMarketingStudio() {
                   const label = pf === "FACEBOOK" ? "Facebook" : "Instagram";
                   const icon = pf === "FACEBOOK" ? "Facebook" : "Instagram";
                   return (
-                    <Card key={pf} className="rounded-2xl border-2 border-[#0B5ED7]/20">
+                    <Card key={pf} className="rounded-2xl border-2 border-[#2563EB]/20">
                       <CardContent className="pt-5">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3">
@@ -1217,7 +1217,7 @@ export function PartnerMarketingStudio() {
                               <Icon name={icon} className="size-6" />
                             </div>
                             <div>
-                              <p className="text-sm font-bold text-[#0B5ED7]">{label}</p>
+                              <p className="text-sm font-bold text-[#2563EB]">{label}</p>
                               <p className="text-xs text-muted-foreground">
                                 {acct ? acct.accountName : "Not connected"}
                               </p>
@@ -1228,7 +1228,7 @@ export function PartnerMarketingStudio() {
                           </Badge>
                         </div>
                         {acct ? (
-                          <div className="mt-4 space-y-2 border-t border-[#0B5ED7]/10 pt-3">
+                          <div className="mt-4 space-y-2 border-t border-[#2563EB]/10 pt-3">
                             <div className="flex items-center justify-between text-xs">
                               <span className="text-muted-foreground">Token (masked)</span>
                               <code className="font-mono text-muted-foreground">{maskToken(acct.accessTokenMasked)}</code>
@@ -1272,19 +1272,19 @@ export function PartnerMarketingStudio() {
 
               <SectionCard title="Security & Compliance" description="How we protect your social account tokens" icon="ShieldCheck">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <div className="rounded-xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-4 py-3">
+                  <div className="rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Icon name="Lock" className="size-4 text-[#0B5ED7]" />
-                      <p className="text-sm font-semibold text-[#0B5ED7]">Token Encryption</p>
+                      <Icon name="Lock" className="size-4 text-[#2563EB]" />
+                      <p className="text-sm font-semibold text-[#2563EB]">Token Encryption</p>
                     </div>
                     <p className="mt-1.5 text-xs text-foreground/80">
                       Tokens are AES-256 encrypted at rest. Only the last 2 characters are visible in the UI; full token views are audit-logged.
                     </p>
                   </div>
-                  <div className="rounded-xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-4 py-3">
+                  <div className="rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Icon name="ShieldCheck" className="size-4 text-[#0B5ED7]" />
-                      <p className="text-sm font-semibold text-[#0B5ED7]">ALO Approval Required</p>
+                      <Icon name="ShieldCheck" className="size-4 text-[#2563EB]" />
+                      <p className="text-sm font-semibold text-[#2563EB]">ALO Approval Required</p>
                     </div>
                     <p className="mt-1.5 text-xs text-foreground/80">
                       Social media posting requires ALO approval. Auto-publish is <strong>{autoPublishAllowed ? "ENABLED" : "DISABLED"}</strong> for your package.

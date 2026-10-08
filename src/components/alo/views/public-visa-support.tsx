@@ -115,7 +115,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -129,7 +129,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
               Verified Weekly
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Visa Support &amp; <span className="text-[#0B5ED7]">Guidance</span>
+              Visa Support &amp; <span className="text-[#2563EB]">Guidance</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Your visa is the most critical step of your study-abroad journey. Our visa officers have handled
@@ -141,7 +141,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
                 <Icon name="CalendarCheck" className="size-4" />
                 Book Visa Consultation
               </Button>
-              <Button onClick={() => onNavigate("public-services", "visa-support")} variant="outline" className="h-12 border-[#0B5ED7]/30 bg-white px-6 text-[#0B5ED7] hover:bg-[#EAF3FF]">
+              <Button onClick={() => onNavigate("public-services", "visa-support")} variant="outline" className="h-12 border-[#2563EB]/30 bg-white px-6 text-[#2563EB] hover:bg-[#EAF3FF]">
                 <Icon name="Briefcase" className="size-4" />
                 View Visa Service
               </Button>
@@ -160,9 +160,9 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {VISA_SERVICES.map((s) => (
-              <Card key={s.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0B5ED7]/30">
+              <Card key={s.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30">
                 <CardContent className="p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0B5ED7]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#2563EB]">
                     <Icon name={s.icon} className="size-5" />
                   </div>
                   <h4 className="mt-3 text-sm font-bold text-[#0B2447]">{s.title}</h4>
@@ -178,7 +178,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
       <section className="bg-[#F7FAFE]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#0B5ED7]">Country-Specific Guidance</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">Country-Specific Guidance</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Visa requirements by destination</h2>
             <p className="mt-2 text-sm text-[#5A7299]">Click any country for full requirements, or visit our country pages.</p>
           </div>
@@ -186,24 +186,24 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
             {COUNTRY_GUIDANCE.map((c) => (
               <Card
                 key={c.slug}
-                className="alo-card-hover group flex cursor-pointer flex-col rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0B5ED7]/30"
+                className="alo-card-hover group flex cursor-pointer flex-col rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30"
                 onClick={() => onNavigate("public-country", c.slug)}
               >
                 <CardContent className="flex flex-1 flex-col p-5">
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{c.flag}</span>
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate text-base font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{c.name}</h3>
+                      <h3 className="truncate text-base font-bold text-[#0B2447] group-hover:text-[#2563EB]">{c.name}</h3>
                       <p className="text-xs text-[#5A7299]">{c.visaType}</p>
                     </div>
                   </div>
                   <div className="mt-4 space-y-2 text-xs text-[#5A7299]">
                     <div className="flex items-start gap-2">
-                      <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+                      <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                       <span>{c.processingTime}</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Icon name="DollarSign" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+                      <Icon name="DollarSign" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                       <span>{c.fee}</span>
                     </div>
                   </div>
@@ -212,7 +212,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
                     <ul className="mt-1.5 space-y-1">
                       {c.keyFacts.map((f, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-xs text-[#5A7299]">
-                          <Icon name="ChevronRight" className="mt-0.5 size-3 shrink-0 text-[#0B5ED7]" />
+                          <Icon name="ChevronRight" className="mt-0.5 size-3 shrink-0 text-[#2563EB]" />
                           <span>{f}</span>
                         </li>
                       ))}
@@ -222,7 +222,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-full justify-between px-0 text-xs text-[#0B5ED7] hover:bg-transparent hover:text-[#0B5ED7]"
+                      className="h-8 w-full justify-between px-0 text-xs text-[#2563EB] hover:bg-transparent hover:text-[#2563EB]"
                     >
                       View country page
                       <Icon name="ArrowRight" className="size-3.5 transition-transform group-hover:translate-x-0.5" />

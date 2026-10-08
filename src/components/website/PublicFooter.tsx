@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Youtube, GraduationCap, MapPin, Phone, Mail, Clock } from 'lucide-react';
 import React from 'react';
-import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
 
 const destinations = [
   { label: 'United Kingdom', href: '/destinations/uk' },
@@ -77,7 +76,7 @@ const GraduationCapStrip = () => {
       </div>
 
       {/* Layer 2 - Medium - Blue */}
-      <div className="absolute inset-0 flex items-center cap-layer-2 opacity-70 text-[#0B5ED7]">
+      <div className="absolute inset-0 flex items-center cap-layer-2 opacity-70 text-[#2563EB]">
         <GraduationCap className="w-10 h-10 mx-20" />
         <GraduationCap className="w-8 h-8 mx-40" />
         <GraduationCap className="w-12 h-12 mx-16" />
@@ -137,10 +136,6 @@ export default function PublicFooter() {
   const { destinations: destLinks, quickLinks: quickL, companyLinks: companyL } = cmsLinks;
   return (
     <footer className="w-full bg-white pt-8 mt-auto border-t border-slate-100">
-      {/* Footer contact 3-button placement — Get Instant Help banner with office address + map */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <WebsiteActionButtons variant="footer" />
-      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-6">
           
@@ -149,7 +144,7 @@ export default function PublicFooter() {
             <Link href="/" className="flex items-center gap-2 group">
               <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-10 w-auto" />
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-[#0B5ED7] leading-tight">ALO Education</span>
+                <span className="text-xl font-bold text-[#2563EB] leading-tight">ALO Education</span>
               </div>
             </Link>
             <p className="text-[#64748B] text-sm leading-relaxed max-w-xs">
@@ -164,11 +159,11 @@ export default function PublicFooter() {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
-                <a href="tel:+8801805020101" className="hover:text-[#0B5ED7] transition-colors font-medium">+880 1805 020101</a>
+                <a href="tel:+8801805020101" className="hover:text-[#2563EB] transition-colors font-medium">+880 1805 020101</a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
-                <a href="mailto:info@aloeducation.com" className="hover:text-[#0B5ED7] transition-colors font-medium">info@aloeducation.com</a>
+                <a href="mailto:info@aloeducation.com" className="hover:text-[#2563EB] transition-colors font-medium">info@aloeducation.com</a>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
@@ -177,7 +172,7 @@ export default function PublicFooter() {
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center gap-4 text-[#0B5ED7]">
+            <div className="flex items-center gap-4 text-[#2563EB]">
               <a href="https://facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[#F97316] transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
@@ -195,7 +190,7 @@ export default function PublicFooter() {
 
           {/* Column 2: Destinations */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Destinations</h3>
+            <h3 className="font-bold text-[#2563EB] text-sm uppercase tracking-wider">Destinations</h3>
             <ul className="flex flex-col gap-2">
               {destLinks.map((link) => (
                 <li key={link.label}>
@@ -209,7 +204,7 @@ export default function PublicFooter() {
 
           {/* Column 3: Quick Links */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Study Abroad</h3>
+            <h3 className="font-bold text-[#2563EB] text-sm uppercase tracking-wider">Study Abroad</h3>
             <ul className="flex flex-col gap-2">
               {quickL.map((link) => (
                 <li key={link.label}>
@@ -223,7 +218,7 @@ export default function PublicFooter() {
 
           {/* Column 4: Company */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#0B5ED7] text-sm uppercase tracking-wider">Company</h3>
+            <h3 className="font-bold text-[#2563EB] text-sm uppercase tracking-wider">Company</h3>
             <ul className="flex flex-col gap-2">
               {companyL.map((link) => (
                 <li key={link.label}>

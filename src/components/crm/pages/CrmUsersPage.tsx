@@ -140,7 +140,7 @@ export default function CrmUsersPage() {
         <div><h1 className="text-2xl font-bold text-gray-900">User Management — Real DB</h1><p className="text-gray-500 text-sm">Manage all system users and their access — real PortalUser + Employee data, audit logged, RBAC protected, mobile PWA ready</p></div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={fetchUsers} className="text-xs">🔄 Refresh Real Data</Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0B5ED7] hover:bg-[#004494] text-xs"><Plus className="w-4 h-4 mr-1" />Invite User</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#1D4ED8] text-xs"><Plus className="w-4 h-4 mr-1" />Invite User</Button>
         </div>
       </div>
 

@@ -27,7 +27,7 @@ export function PublicPartners({ onNavigate }: Props) {
                 { icon: "Bell", title: "Notifications", desc: "Stay updated on application status changes and deadlines" },
               ].map((feature) => (
                 <div key={feature.title} className="flex items-start gap-3 rounded-xl border border-[#DCE8F5] bg-[#F7FAFE] p-4">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0B5ED7]">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#2563EB]">
                     <Icon name={feature.icon} className="size-5" />
                   </div>
                   <div>

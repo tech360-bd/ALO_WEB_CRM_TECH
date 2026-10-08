@@ -255,7 +255,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Icon name="MessageSquare" className="h-5 w-5 text-[#0B5ED7]" />
+                  <Icon name="MessageSquare" className="h-5 w-5 text-[#2563EB]" />
                   Review by {selectedReview.studentName}
                 </DialogTitle>
               </DialogHeader>
@@ -342,7 +342,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
               <Input className="h-10" value={inviteForm.facebookRecommendUrl} onChange={(e) => setInviteForm({ ...inviteForm, facebookRecommendUrl: e.target.value })} placeholder="https://facebook.com/aloeducation/reviews" />
             </div>
             <div className="rounded-lg bg-blue-50 p-2 text-xs text-slate-600">
-              <Icon name="Info" className="h-3 w-3 inline mr-1 text-[#0B5ED7]" />
+              <Icon name="Info" className="h-3 w-3 inline mr-1 text-[#2563EB]" />
               The student will receive a unique link. They submit the review themselves — we never post on their behalf.
             </div>
           </div>

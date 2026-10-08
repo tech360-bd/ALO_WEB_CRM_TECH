@@ -38,7 +38,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         
         <Link 
           href="/news" 
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#0B5ED7] mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#2563EB] mb-8 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back to all news
         </Link>
@@ -108,18 +108,18 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
             <h3 className="text-2xl font-bold text-[#0F172A] mb-6">Related News & Articles</h3>
             <div className="grid md:grid-cols-3 gap-6">
               {relatedNews.map((rel) => (
-                <Card key={rel.slug} className="p-5 flex flex-col justify-between border border-slate-200 hover:border-[#0B5ED7] transition-colors">
+                <Card key={rel.slug} className="p-5 flex flex-col justify-between border border-slate-200 hover:border-[#2563EB] transition-colors">
                   <div>
                     <Badge variant="secondary" className="mb-2 text-xs">
                       {rel.category}
                     </Badge>
-                    <h4 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2 hover:text-[#0B5ED7]">
+                    <h4 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2 hover:text-[#2563EB]">
                       <Link href={`/news/${rel.slug}`}>
                         {rel.title}
                       </Link>
                     </h4>
                   </div>
-                  <Link href={`/news/${rel.slug}`} className="text-xs text-[#0B5ED7] font-semibold mt-4">
+                  <Link href={`/news/${rel.slug}`} className="text-xs text-[#2563EB] font-semibold mt-4">
                     Read article →
                   </Link>
                 </Card>

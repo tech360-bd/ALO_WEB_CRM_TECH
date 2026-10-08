@@ -46,7 +46,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -60,7 +60,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
               12-Step Journey
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Your Study Abroad <span className="text-[#0B5ED7]">Journey</span>
+              Your Study Abroad <span className="text-[#2563EB]">Journey</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               From your first counseling session to your first day at university — here's the complete 12-step
@@ -71,7 +71,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                 <Icon name="CalendarCheck" className="size-4" />
                 Start Your Journey
               </Button>
-              <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-[#0B5ED7]/30 bg-white px-6 text-[#0B5ED7] hover:bg-[#EAF3FF]">
+              <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-[#2563EB]/30 bg-white px-6 text-[#2563EB] hover:bg-[#EAF3FF]">
                 <Icon name="Briefcase" className="size-4" />
                 View All Services
               </Button>
@@ -90,7 +90,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
 
         <div className="relative mt-12">
           {/* Vertical line for desktop */}
-          <div className="absolute left-6 top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#0B5ED7] via-[#F97316] to-[#0B5ED7] hidden lg:block" />
+          <div className="absolute left-6 top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#2563EB] via-[#F97316] to-[#2563EB] hidden lg:block" />
 
           <div className="space-y-6 lg:space-y-0">
             {STEPS.map((step, idx) => (
@@ -100,7 +100,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                   <div className="flex justify-center lg:justify-end">
                     <div className={cn(
                       "relative z-10 flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-black text-white",
-                      step.num <= 4 ? "bg-[#0B5ED7]" : step.num <= 8 ? "bg-alo-gradient" : "bg-[#F97316]"
+                      step.num <= 4 ? "bg-[#2563EB]" : step.num <= 8 ? "bg-alo-gradient" : "bg-[#F97316]"
                     )}>
                       {step.num}
                     </div>
@@ -109,7 +109,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                   {/* Card */}
                   <Card className={cn(
                     "alo-card-hover rounded-2xl border bg-white transition-all hover:shadow-lg",
-                    step.num <= 4 ? "border-[#0B5ED7]/20" : step.num <= 8 ? "border-[#0B5ED7]/15" : "border-[#F97316]/20"
+                    step.num <= 4 ? "border-[#2563EB]/20" : step.num <= 8 ? "border-[#2563EB]/15" : "border-[#F97316]/20"
                   )}>
                     <CardContent className="p-5">
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -117,7 +117,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                           <div className="flex items-center gap-2.5">
                             <div className={cn(
                               "flex size-9 items-center justify-center rounded-xl",
-                              step.num <= 4 ? "bg-[#EAF3FF] text-[#0B5ED7]" : step.num <= 8 ? "bg-[#EAF3FF] text-[#0B5ED7]" : "bg-[#FFF3EA] text-[#F97316]"
+                              step.num <= 4 ? "bg-[#EAF3FF] text-[#2563EB]" : step.num <= 8 ? "bg-[#EAF3FF] text-[#2563EB]" : "bg-[#FFF3EA] text-[#F97316]"
                             )}>
                               <Icon name={step.icon} className="size-5" />
                             </div>
@@ -134,7 +134,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                             {step.serviceSlug && (
                               <button
                                 onClick={() => onNavigate("public-services", step.serviceSlug!)}
-                                className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B5ED7] hover:underline"
+                                className="inline-flex items-center gap-1 text-xs font-semibold text-[#2563EB] hover:underline"
                               >
                                 {step.serviceLabel}
                                 <Icon name="ArrowRight" className="size-3" />
@@ -159,8 +159,8 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
             icon="Lightbulb"
           >
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="rounded-xl border border-[#0B5ED7]/15 bg-[#EAF3FF]/40 p-4">
-                <Icon name="Calendar" className="size-5 text-[#0B5ED7]" />
+              <div className="rounded-xl border border-[#2563EB]/15 bg-[#EAF3FF]/40 p-4">
+                <Icon name="Calendar" className="size-5 text-[#2563EB]" />
                 <h4 className="mt-2 text-sm font-bold text-[#0B2447]">Plan 12 months ahead</h4>
                 <p className="mt-1 text-xs leading-relaxed text-[#5A7299]">Top universities have deadlines 8-10 months before intake. Don't start late.</p>
               </div>
@@ -169,8 +169,8 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                 <h4 className="mt-2 text-sm font-bold text-[#0B2447]">Avoid visa refusals</h4>
                 <p className="mt-1 text-xs leading-relaxed text-[#5A7299]">Most refusals happen when students rush visa applications. Give yourself 8+ weeks.</p>
               </div>
-              <div className="rounded-xl border border-[#0B5ED7]/15 bg-[#EAF3FF]/40 p-4">
-                <Icon name="DollarSign" className="size-5 text-[#0B5ED7]" />
+              <div className="rounded-xl border border-[#2563EB]/15 bg-[#EAF3FF]/40 p-4">
+                <Icon name="DollarSign" className="size-5 text-[#2563EB]" />
                 <h4 className="mt-2 text-sm font-bold text-[#0B2447]">Stagger your expenses</h4>
                 <p className="mt-1 text-xs leading-relaxed text-[#5A7299]">Application fees, deposits, visa fees, flights — spread across 6-12 months helps cash flow.</p>
               </div>

@@ -20,7 +20,7 @@ const visaCountries = [
 const VisaSupportPage = () => {
   return (
     <main className="pt-20 pb-16 min-h-screen bg-gray-50">
-      <div className="bg-[#0B5ED7] text-white py-20">
+      <div className="bg-[#2563EB] text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Expert Student Visa Support</h1>
           <p className="text-xl max-w-3xl mx-auto mb-10">
@@ -48,7 +48,7 @@ const VisaSupportPage = () => {
               </div>
               <Link
                 href={`/visa-support/${country.slug}`}
-                className="block text-center w-full bg-blue-50 text-[#0B5ED7] hover:bg-[#0B5ED7] hover:text-white font-medium py-2 rounded transition-colors"
+                className="block text-center w-full bg-blue-50 text-[#2563EB] hover:bg-[#2563EB] hover:text-white font-medium py-2 rounded transition-colors"
               >
                 View Visa Guide
               </Link>
