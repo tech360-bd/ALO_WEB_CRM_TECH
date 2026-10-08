@@ -47,8 +47,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     return NextResponse.json({
       success: true,
-      downloadUrl: doc.filePath,
-      fileName: doc.fileName,
+      downloadUrl: doc.filePath ?? "",
+      fileName: doc.fileName ?? "document",
       status: doc.status,
     });
   } catch (error: any) {
