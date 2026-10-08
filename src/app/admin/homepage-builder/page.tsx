@@ -24,14 +24,10 @@ export default function AdminHomepageBuilderPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <a href="/" target="_blank" rel="noopener noreferrer">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-10 rounded-xl text-xs flex items-center gap-1.5 border-slate-300">
+            <Button asChild variant="outline" size="sm" className="h-10 rounded-xl text-xs flex items-center gap-1.5 border-slate-300"><a href="/" target="_blank" rel="noopener noreferrer">
                 <Eye className="h-4 w-4 text-[#2563EB]" /> Live Preview
-              </Button>
-            </a>
-            <a href="/admin/master-command">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-10 rounded-xl text-xs bg-[#2563EB] hover:bg-[#1D4ED8]">Master Command Center</Button>
-            </a>
+              </a></Button>
+            <Button asChild size="sm" className="h-10 rounded-xl text-xs bg-[#2563EB] hover:bg-[#1D4ED8]"><a href="/admin/master-command">Master Command Center</a></Button>
           </div>
         </div>
 

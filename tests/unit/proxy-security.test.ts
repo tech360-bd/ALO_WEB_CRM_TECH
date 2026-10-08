@@ -118,6 +118,8 @@ describe("proxy public marketing page exposure (2026-10-08 production regression
       "/events",
       "/compare",
       "/application-process",
+      "/student-journey",
+      "/research-opportunities",
       "/admission-requirements",
     ]) {
       expect(isPublicPageRequest(path), path).toBe(true);

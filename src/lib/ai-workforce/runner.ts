@@ -125,30 +125,6 @@ export async function runAgent(params: RunAgentParams): Promise<RunAgentResult> 
   const started = Date.now();
   const correlationId = params.correlationId || randomUUID();
 
-  // ── Idempotency (§21): the same key never executes twice. ──
-  if (params.idempotencyKey) {
-    const existing = await db.awfRun.findUnique({ where: { idempotencyKey: params.idempotencyKey } });
-    if (existing) {
-      return {
-        runId: existing.id,
-        runCode: existing.runCode,
-        status: existing.status as RunAgentResult['status'],
-        output: safeParse(existing.output),
-        steps: [],
-        automation: {
-          eligible: existing.automationCategory === 'ELIGIBLE_ROUTINE',
-          mode: existing.automationMode,
-          category: existing.automationCategory,
-        },
-        runtimeKeys: existing.runtimeKey ? [existing.runtimeKey] : [],
-        fallbackUsed: Boolean(existing.fallbackChain && existing.fallbackChain !== '[]'),
-        humanReviewRequired: existing.status === 'AWAITING_APPROVAL',
-        durationMs: existing.durationMs || 0,
-        reused: true,
-      };
-    }
-  }
-
   const agent = await db.awfAgent.findUnique({ where: { slug: params.agentSlug } });
   if (!agent) throw new Error(`AWF_AGENT_UNKNOWN: ${params.agentSlug}`);
 
@@ -167,6 +143,37 @@ export async function runAgent(params: RunAgentParams): Promise<RunAgentResult> 
   }
   if (params.mode === 'PRODUCTION' && agent.status !== 'ACTIVE') {
     throw new Error(`AWF_AGENT_NOT_ACTIVE: ${agent.slug} is ${agent.status}`);
+  }
+
+  // ── Idempotency (§21): the same key never executes twice. ──
+  if (params.idempotencyKey) {
+    const existing = await db.awfRun.findUnique({ where: { idempotencyKey: params.idempotencyKey } });
+    if (existing) {
+      // A client-supplied key is not a capability to read another actor's run.
+      if (existing.actorUserId !== params.actor.userId || existing.agentId !== agent.id || existing.mode !== params.mode) {
+        throw new Error('AWF_IDEMPOTENCY_CONFLICT');
+      }
+      if (!['COMPLETED', 'FAILED', 'AWAITING_APPROVAL'].includes(existing.status)) {
+        throw new Error('AWF_RUN_IN_PROGRESS');
+      }
+      return {
+        runId: existing.id,
+        runCode: existing.runCode,
+        status: existing.status as RunAgentResult['status'],
+        output: safeParse(existing.output),
+        steps: [],
+        automation: {
+          eligible: existing.automationCategory === 'ELIGIBLE_ROUTINE',
+          mode: existing.automationMode,
+          category: existing.automationCategory,
+        },
+        runtimeKeys: existing.runtimeKey ? [existing.runtimeKey] : [],
+        fallbackUsed: Boolean(existing.fallbackUsed),
+        humanReviewRequired: existing.status === 'AWAITING_APPROVAL',
+        durationMs: existing.durationMs || 0,
+        reused: true,
+      };
+    }
   }
 
   const versionId = agent.activeVersionId;
@@ -354,7 +361,7 @@ export async function runAgent(params: RunAgentParams): Promise<RunAgentResult> 
       fallbackChain: JSON.stringify(fallbackChain),
       toolCallCount,
       approvalRequired: humanReviewRequired,
-      humanIntervened: humanReviewRequired,
+      humanIntervened: false,
       automationMode,
       automationCategory,
     },
@@ -368,9 +375,9 @@ export async function runAgent(params: RunAgentParams): Promise<RunAgentResult> 
       entityType: String(params.input.entityType || ''),
       entityId: String(params.input.studentId || params.input.leadId || params.input.applicationId || ''),
       eligible,
-      outcome: status === 'COMPLETED' ? 'AGENT_COMPLETED' : status === 'AWAITING_APPROVAL' ? 'HUMAN_APPROVED' : 'FAILED',
+      outcome: status === 'COMPLETED' ? 'AGENT_COMPLETED' : status === 'AWAITING_APPROVAL' ? 'PENDING' : 'FAILED',
       runId: run.id,
-      humanTouches: humanReviewRequired ? 1 : 0,
+      humanTouches: 0,
       durationMs,
       substantive: status !== 'FAILED',
     });

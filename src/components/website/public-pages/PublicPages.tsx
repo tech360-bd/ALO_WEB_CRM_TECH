@@ -556,11 +556,9 @@ export function PublicScholarshipsPage() {
                       Award: {s.awardAmount || s.amount || 'Varies by degree'}
                     </div>
                     <div className="flex gap-2">
-                      <a href={`/scholarships/${slug}`} className="w-full">
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-semibold py-2">
+                      <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-semibold py-2"><a href={`/scholarships/${slug}`} className="w-full">
                           View Full Details & Apply →
-                        </Button>
-                      </a>
+                        </a></Button>
                     </div>
                   </div>
                 </Card>
@@ -621,11 +619,9 @@ export function PublicServicesPage() {
               </div>
 
               <div className="p-6 pt-0">
-                <a href={`/services/${s.slug}`} className="block w-full">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5">
+                <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5"><a href={`/services/${s.slug}`} className="block w-full">
                     Explore Full Service Details & Process →
-                  </Button>
-                </a>
+                  </a></Button>
               </div>
             </Card>
           </motion.div>
@@ -635,11 +631,9 @@ export function PublicServicesPage() {
       <div className="bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
-        <a href="/eligibility-check">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs px-6 py-3 rounded-xl shadow-md">
+        <Button asChild className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/book-consultation">
             Book Free Consultation
-          </Button>
-        </a>
+          </a></Button>
       </div>
     </PublicShell>
   );
@@ -926,11 +920,9 @@ export function PublicContactPage() {
           <div className="flex-1">
             <h3 className="font-bold text-green-900 mb-2">WhatsApp</h3>
             <p className="text-sm text-green-800 mb-4">Quick response on WhatsApp</p>
-            <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#25D366] text-white hover:brightness-110">
+            <Button asChild className="bg-[#25D366] text-white hover:brightness-110"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
                 Chat Now
-              </Button>
-            </a>
+              </a></Button>
           </div>
         </div>
       </Card>
@@ -1071,11 +1063,9 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
           <h3 className="font-bold text-[#2563EB] text-base">Comprehensive Test Preparation Directory</h3>
           <p className="text-xs text-slate-600">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
         </div>
-        <a href="/english-test-prep">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:bg-[#EA580C] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm">
+        <Button asChild className="bg-[#F97316] text-white hover:bg-[#EA580C] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
             View All Test Prep →
-          </Button>
-        </a>
+          </a></Button>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1102,11 +1092,9 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
                 <span className="text-slate-500 font-medium">Target Score:</span>
                 <span className="font-bold text-[#2563EB]">{t.expectedScore}</span>
               </div>
-              <a href={`/english-test-prep/${t.slug}`} className="block w-full">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
+              <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
                   Explore Full Test Prep & Modules →
-                </Button>
-              </a>
+                </a></Button>
             </div>
           </Card>
         ))}
@@ -1240,16 +1228,12 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
               Start your application with ALO Education for full application support and visa counseling.
             </p>
             <div className="space-y-2.5">
-              <a href="/eligibility-check" className="block w-full">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] text-white hover:brightness-110 text-xs py-2.5">
+              <Button asChild className="w-full bg-[#F97316] text-white hover:brightness-110 text-xs py-2.5"><a href="/eligibility-check" className="block w-full">
                   Check Your Eligibility
-                </Button>
-              </a>
-              <a href="/book-consultation" className="block w-full">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full text-xs py-2.5 border-[#2563EB] text-[#2563EB] hover:bg-blue-50">
+                </a></Button>
+              <Button asChild variant="outline" className="w-full text-xs py-2.5 border-[#2563EB] text-[#2563EB] hover:bg-blue-50"><a href="/book-consultation" className="block w-full">
                   Talk to ALO Counselor
-                </Button>
-              </a>
+                </a></Button>
             </div>
           </Card>
 
@@ -1277,7 +1261,7 @@ export function PublicComparePage() {
           Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
         </p>
         <div className="pt-4 flex gap-3">
-          <a href="/course-finder"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white text-xs">Add Courses to Compare</Button></a>
+          <Button asChild className="bg-[#F97316] text-white text-xs"><a href="/course-finder">Add Courses to Compare</a></Button>
         </div>
       </Card>
     </PublicShell>

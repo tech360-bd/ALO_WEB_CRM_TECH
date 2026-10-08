@@ -35,6 +35,8 @@ const PUBLIC_ROUTES = [
   "/language-prep",
   "/visa-support",
   "/application-guide",
+  "/student-journey",
+  "/research-opportunities",
   // Public marketing/SEO pages linked from the navbar, homepage CTAs and
   // sitemap. Production verification (2026-10-08, commit 61eca94) showed these
   // redirected anonymous visitors to /login?callbackUrl=... because they were

@@ -116,7 +116,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
           <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
           <h2 className="font-bold text-lg text-[#0F172A]">Test not found</h2>
           <p className="text-sm text-slate-600 mt-2">The test "{slug}" is not available. Check /language-prep for available tests.</p>
-          <a href="/language-prep" className="mt-4 inline-block"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl">View All Test Prep →</Button></a>
+          <Button asChild className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl"><a href="/language-prep" className="mt-4 inline-block">View All Test Prep →</a></Button>
         </Card>
       </div>
     );
@@ -172,16 +172,12 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               )}
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <a href="#book-counselling">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm">
+                <Button asChild className="bg-[#F97316] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
                     Book Free {test.shortName} Counselling <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </a>
-                <a href="#assessment">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl">
+                  </a></Button>
+                <Button asChild variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl"><a href="#assessment">
                     Start {test.shortName} Assessment
-                  </Button>
-                </a>
+                  </a></Button>
               </div>
 
               <p className="text-[11px] text-slate-500 leading-relaxed max-w-2xl">
@@ -364,8 +360,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </div>
                 <p className="text-xs text-slate-600">Requirement not available in database. Check university course page. — System retrieves English test, Minimum overall, Minimum component scores, Waiver availability, Remarks, Source URL, Last verified — Only if actual course data exists.</p>
                 <div className="mt-4 flex gap-2">
-                  <a href="/course-finder" className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">Find Matching Courses</Button></a>
-                  <a href={`/language-prep/comparison?tests=${test.slug}`}><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs">Compare Tests</Button></a>
+                  <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs"><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
+                  <Button asChild variant="outline" className="bg-white border-[#E2E8F0] h-11 rounded-xl text-xs"><a href={`/language-prep/comparison?tests=${test.slug}`}>Compare Tests</a></Button>
                 </div>
               </Card>
             </section>
@@ -483,7 +479,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   {['ielts','pte-academic','toefl-ibt','duolingo'].filter(s => s !== test.slug).slice(0,3).map(s => (
                     <a key={s} href={`/language-prep/${s}`} className="px-3 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-xs font-semibold hover:border-[#2563EB]">{s.toUpperCase()}</a>
                   ))}
-                  <a href="/language-prep/comparison"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs">Compare English Tests →</Button></a>
+                  <Button asChild className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs"><a href="/language-prep/comparison">Compare English Tests →</a></Button>
                 </div>
               </Card>
             </section>
@@ -557,8 +553,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </form>
 
                 <div className="flex flex-wrap justify-center gap-3 mt-6">
-                  <a href="/language-prep#test-discovery"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm">Find My Test</Button></a>
-                  <a href="https://wa.me/8801805020101" target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm flex items-center gap-2"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</Button></a>
+                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm"><a href="/language-prep#test-discovery">Find My Test</a></Button>
+                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</a></Button>
                 </div>
 
                 <p className="text-[11px] text-blue-200 text-center mt-6">Email: info@aloeducation.com • Lead stored with source language_prep and source_section {slug}_final_cta • Do not create duplicate leads unnecessarily</p>
@@ -584,18 +580,14 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     </a>
                   ))}
                 </div>
-                <a href="/language-prep" className="block">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs">View All Test Prep →</Button>
-                </a>
+                <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-11 rounded-xl text-xs"><a href="/language-prep" className="block">View All Test Prep →</a></Button>
               </Card>
 
               {/* Need Help widget */}
               <Card className="p-5 bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white border-0 shadow-lg rounded-2xl">
                 <h4 className="text-sm font-bold mb-2">Need Help?</h4>
                 <p className="text-xs text-blue-100 leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
-                <a href="#book-counselling">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#F97316] hover:bg-[#d14315] text-white font-bold h-11 rounded-xl text-xs">Book Free Counselling →</Button>
-                </a>
+                <Button asChild className="w-full bg-[#F97316] hover:bg-[#d14315] text-white font-bold h-11 rounded-xl text-xs"><a href="#book-counselling">Book Free Counselling →</a></Button>
                 <p className="text-[10px] text-blue-200 mt-3">WhatsApp: +880 180 502 0101 • Email: info@aloeducation.com</p>
               </Card>
 

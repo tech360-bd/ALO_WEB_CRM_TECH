@@ -10,7 +10,9 @@ export async function GET(request: Request) {
   const admission = await guard(request, 'awf.run.read.own');
   if (isGuardFailure(admission)) return admission;
   const url = new URL(request.url);
-  const take = Math.min(Number(url.searchParams.get('take') || 50), 200);
+  const requestedTake = Number(url.searchParams.get('take') || 50);
+  if (!Number.isInteger(requestedTake) || requestedTake < 1) return fail('take must be a positive integer', 422);
+  const take = Math.min(requestedTake, 200);
   const seesEverything = can(admission.actor.role, 'awf.run.read.all');
   try {
     const runs = await db.awfRun.findMany({
