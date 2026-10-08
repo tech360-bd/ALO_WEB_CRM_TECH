@@ -8889,11 +8889,11 @@ model UniversityHistory {
   id             String   @id @default(cuid())
   universitySlug String
   fieldName      String
-  oldValue       String? // value before the approved change (NULL = field did not exist)
-  newValue       String? // value written to production
+  oldValue       String?  @db.Text // value before the approved change (NULL = field did not exist)
+  newValue       String?  @db.Text // value written to production
   changeId       String // DataChange.id that produced this version
   changeType     String
-  sourceUrl      String // official evidence URL
+  sourceUrl      String   @db.Text // official evidence URL
   detectedAt     DateTime
   approvedBy     String // User.id of the approving Super Admin
   approvedAt     DateTime @default(now())
@@ -8912,11 +8912,11 @@ model CourseHistory {
   courseSlug     String
   universitySlug String?
   fieldName      String
-  oldValue       String?
-  newValue       String?
+  oldValue       String?  @db.Text
+  newValue       String?  @db.Text
   changeId       String
   changeType     String
-  sourceUrl      String
+  sourceUrl      String   @db.Text
   detectedAt     DateTime
   approvedBy     String
   approvedAt     DateTime @default(now())
@@ -8936,11 +8936,11 @@ model ScholarshipHistory {
   scholarshipSlug String
   universitySlug  String?
   fieldName       String
-  oldValue        String?
-  newValue        String?
+  oldValue        String?  @db.Text
+  newValue        String?  @db.Text
   changeId        String
   changeType      String
-  sourceUrl       String
+  sourceUrl       String   @db.Text
   detectedAt      DateTime
   approvedBy      String
   approvedAt      DateTime @default(now())
