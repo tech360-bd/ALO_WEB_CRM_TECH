@@ -135,6 +135,53 @@ describe('prisma migration chain (re-baselined 2026-10-01)', () => {
     expect(missingColumns).toEqual([]);
   });
 
+  it('keeps history value and evidence URL fields as TEXT in Prisma and the migration', () => {
+    const schema = readFileSync(schemaPath, 'utf8');
+    const migration = readFileSync(join(migrationsDir, '20261007010000_university_monitoring_history', 'migration.sql'), 'utf8');
+    const newline = String.fromCharCode(10);
+
+    for (const table of ['UniversityHistory', 'CourseHistory', 'ScholarshipHistory']) {
+      const modelText = schema.split('model ' + table + ' {')[1];
+      const modelBody = modelText?.split(newline + '}')[0];
+      const tableText = migration.split('CREATE TABLE IF NOT EXISTS `' + table + '` (')[1];
+      const tableBody = tableText?.split(newline + ')')[0];
+      expect(modelBody, `${table} Prisma model`).toBeDefined();
+      expect(tableBody, `${table} migration table`).toBeDefined();
+
+      for (const column of ['oldValue', 'newValue']) {
+        const field = modelBody?.split(newline).find((line) => line.trimStart().startsWith(column + ' '));
+        expect(field, `${table}.${column}`).toContain('@db.Text');
+        expect(tableBody).toContain('`' + column + '` TEXT NULL');
+      }
+
+      const sourceUrl = modelBody?.split(newline).find((line) => line.trimStart().startsWith('sourceUrl '));
+      expect(sourceUrl, `${table}.sourceUrl`).toContain('@db.Text');
+      expect(tableBody).toContain('`sourceUrl` TEXT NOT NULL');
+    }
+  });
+
+  it('stores the monitoring job description as TEXT for long operator guidance', () => {
+    const schema = readFileSync(schemaPath, 'utf8');
+    const modelText = schema.split('model MonitoringJob {')[1];
+    const modelBody = modelText?.split(String.fromCharCode(10) + '}')[0];
+    const description = modelBody?.split(String.fromCharCode(10)).find((line) => line.trimStart().startsWith('description '));
+    const migration = readFileSync(join(migrationsDir, '20261008020000_monitoring_job_description_text', 'migration.sql'), 'utf8');
+
+    expect(description).toContain('@db.Text');
+    expect(migration).toContain('ALTER TABLE `MonitoringJob` MODIFY `description` TEXT NULL;');
+  });
+
+  it('stores complete conflict evidence in long text while preserving its default', () => {
+    const schema = readFileSync(schemaPath, 'utf8');
+    const modelText = schema.split('model DataConflict {')[1];
+    const modelBody = modelText?.split(String.fromCharCode(10) + '}')[0];
+    const field = modelBody?.split(String.fromCharCode(10)).find((line) => line.trimStart().startsWith('conflictingValues '));
+    const migration = readFileSync(join(migrationsDir, '20261008030000_data_conflict_values_longtext', 'migration.sql'), 'utf8');
+
+    expect(field).toContain('@db.LongText');
+    expect(migration).toContain("MODIFY `conflictingValues` LONGTEXT NOT NULL DEFAULT (_utf8mb4'[]')");
+  });
+
   it('0_init is unedited Prisma-generated SQL (regenerated header intact)', () => {
     const init = readFileSync(join(migrationsDir, '0_init', 'migration.sql'), 'utf8');
     expect(init).toContain('prisma migrate diff --from-empty --to-schema-datamodel');

@@ -14,12 +14,18 @@ export function testDatabaseUrl(env: NodeJS.ProcessEnv = process.env): string | 
   if (url.protocol !== 'mysql:' || !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname) || !/^alo_test_[a-z0-9_]+$/.test(schema)) {
     throw new Error('Tests require local MySQL and an isolated alo_test_* database');
   }
-  if (env.DATABASE_URL) {
-    const application = new URL(env.DATABASE_URL);
-    const applicationSchema = decodeURIComponent(application.pathname.slice(1));
-    if (applicationSchema === schema) {
-      throw new Error('Test database must not share the application database name');
-    }
+  // The integration runner deliberately maps DATABASE_URL to TEST_DATABASE_URL
+  // for DB-backed Prisma clients. Preserve the original app schema separately so
+  // this guard still checks the pre-override target instead of rejecting its
+  // own isolated test connection.
+  const hasOriginalApplicationSchema = Object.prototype.hasOwnProperty.call(env, 'ALO_APPLICATION_DATABASE_SCHEMA');
+  const applicationSchema = hasOriginalApplicationSchema
+    ? env.ALO_APPLICATION_DATABASE_SCHEMA
+    : env.DATABASE_URL
+      ? decodeURIComponent(new URL(env.DATABASE_URL).pathname.slice(1))
+      : undefined;
+  if (applicationSchema === schema) {
+    throw new Error('Test database must not share the application database name');
   }
   return url.href;
 }

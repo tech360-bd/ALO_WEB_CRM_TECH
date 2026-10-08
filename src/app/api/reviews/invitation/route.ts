@@ -24,8 +24,6 @@ export const POST = withAuth(async (req, auth) => {
     const expiresDays = Number.isInteger(body.expiresDays) ? Math.min(90, Math.max(1, body.expiresDays)) : 30;
     const rawToken = randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + expiresDays * 24 * 60 * 60 * 1000);
-    const staffUser = await db.user.findUnique({ where: { id: auth.userId }, select: { id: true } });
-
     const invitation = await db.$transaction(async (tx) => {
       const created = await tx.reviewInvitation.create({
         data: {
@@ -44,13 +42,14 @@ export const POST = withAuth(async (req, auth) => {
         },
         select: { id: true, studentName: true, studentEmail: true, country: true, serviceType: true, status: true, sentAt: true, expiresAt: true },
       });
-      await tx.auditLog.create({
+      await tx.portalAuditLog.create({
         data: {
+          actorUserId: auth.actorUserId,
           userId: staffUser?.id ?? undefined,
           action: 'REVIEW_INVITATION_CREATED',
-          resource: 'ReviewInvitation',
-          resourceId: created.id,
-          details: JSON.stringify({ expiresAt, createdBy: auth.userId }),
+          entityType: 'ReviewInvitation',
+          entityId: created.id,
+          metadata: JSON.stringify({ expiresAt, createdBy: auth.userId }),
         },
       });
       return created;

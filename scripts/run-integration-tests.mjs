@@ -26,8 +26,17 @@ if (!existsSync(vitestPath)) {
 }
 
 // Never inherit a potentially different DATABASE_URL: integration tests must
-// use only the explicitly named disposable test database. Do not print it.
-const env = { ...process.env, DATABASE_URL: testDatabaseUrl };
+// use only the explicitly named disposable test database. Preserve just the
+// original schema name for the test helper's isolation check; do not expose or
+// print the original URL/credentials to the integration process.
+const applicationDatabaseSchema = process.env.DATABASE_URL
+  ? decodeURIComponent(new URL(process.env.DATABASE_URL).pathname.slice(1))
+  : '';
+const env = {
+  ...process.env,
+  DATABASE_URL: testDatabaseUrl,
+  ALO_APPLICATION_DATABASE_SCHEMA: applicationDatabaseSchema,
+};
 const result = spawnSync(process.execPath, [vitestPath, 'run', 'tests/integration'], {
   cwd: projectRoot,
   env,

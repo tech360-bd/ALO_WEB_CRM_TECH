@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2100,
+  "filesScanned": 2146,
   "summary": {
-    "UNUSED": 72,
+    "UNUSED": 73,
     "REFERENCED_WITH_FALLBACK": 122,
-    "REFERENCED_FAIL_CLOSED": 12,
-    "REFERENCED": 92,
+    "REFERENCED_FAIL_CLOSED": 14,
+    "REFERENCED": 91,
     "PUBLIC": 9
   },
   "productionRequired": [
@@ -266,7 +266,7 @@
       "name": "ALO_DB_DRIVER",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 2,
+      "referenceCount": 3,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -274,6 +274,7 @@
       "declaredIn": [],
       "sampleReferences": [
         "scripts/ai-workforce/run-verification.ts",
+        "scripts/run-integration-tests.mjs",
         "src/lib/db.ts"
       ]
     },
@@ -976,7 +977,7 @@
       "name": "DATABASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 5,
+      "referenceCount": 6,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -988,7 +989,7 @@
       "sampleReferences": [
         "prisma/seed-university-data.ts",
         "scripts/db-diagnose.mjs",
-        "scripts/runtime-smoke.mjs"
+        "scripts/run-integration-tests.mjs"
       ]
     },
     {
@@ -1357,10 +1358,10 @@
     },
     {
       "name": "FILE_SIGN_SECRET",
-      "classification": "REFERENCED_FAIL_CLOSED",
-      "referenced": true,
-      "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": true,
       "productionRequiredReason": "Signs secure download URLs. src/app/api/employee-access/secure-download/route.ts throws in production when shorter than 32 characters.",
@@ -1368,9 +1369,7 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": [
-        "src/app/api/employee-access/secure-download/route.ts"
-      ]
+      "sampleReferences": []
     },
     {
       "name": "FIRECRAWL_API_KEY",
@@ -2762,10 +2761,10 @@
     },
     {
       "name": "NEXTAUTH_SECRET",
-      "classification": "REFERENCED",
+      "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 3,
-      "failsClosedWhenMissing": false,
+      "referenceCount": 4,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": true,
       "productionRequiredReason": "next-auth v4 session token signing. src/app/api/portal-auth/login/route.ts returns WITHOUT setting the session cookie when absent, so login silently yields no session.",
@@ -2776,15 +2775,15 @@
       "sampleReferences": [
         "src/app/api/portal-auth/login/route.ts",
         "src/app/api/student/auth/login/route.ts",
-        "src/proxy.ts"
+        "src/lib/auth/email-otp.ts"
       ]
     },
     {
       "name": "NEXTAUTH_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 6,
-      "failsClosedWhenMissing": false,
+      "referenceCount": 5,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
       "productionRequiredReason": "next-auth v4 absolute callback/redirect base. Must equal the public origin in production.",
@@ -2794,8 +2793,8 @@
       ],
       "sampleReferences": [
         "src/app/api/crm/ucc/oauth/callback/route.ts",
-        "src/app/api/crm/ucc/oauth/start/route.ts",
-        "src/app/api/portal-auth/login/route.ts"
+        "src/app/api/portal-auth/login/route.ts",
+        "src/app/api/portal-auth/logout/route.ts"
       ]
     },
     {
@@ -2896,7 +2895,7 @@
       "classification": "PUBLIC",
       "referenced": true,
       "referenceCount": 6,
-      "failsClosedWhenMissing": false,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
       "productionRequiredReason": "Public origin baked into the client bundle at build time; wrong value breaks absolute links and CORS-sensitive calls.",
@@ -3043,7 +3042,7 @@
       "name": "NODE_ENV",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 27,
+      "referenceCount": 25,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3155,6 +3154,20 @@
         ".env.production.example"
       ],
       "sampleReferences": []
+    },
+    {
+      "name": "OTP_PEPPER",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/auth/email-otp.ts"
+      ]
     },
     {
       "name": "PINTEREST_APP_ID",
@@ -3804,10 +3817,10 @@
     },
     {
       "name": "STORAGE_POOL_C",
-      "classification": "REFERENCED",
+      "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 2,
-      "failsClosedWhenMissing": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -3816,8 +3829,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/documents/upload/route.ts",
-        "src/app/api/documents/auto-upload/route.ts"
+        "src/lib/storage/private-file-store.ts"
       ]
     },
     {
@@ -3936,6 +3948,20 @@
       "declaredIn": [],
       "sampleReferences": [
         "src/app/api/crm/ucc/phone/route.ts"
+      ]
+    },
+    {
+      "name": "TEST_DATABASE_URL",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/run-integration-tests.mjs"
       ]
     },
     {
@@ -4437,11 +4463,11 @@
     },
     {
       "name": "WHATSAPP_BUSINESS_PHONE",
-      "classification": "REFERENCED_WITH_FALLBACK",
+      "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 2,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": true,
+      "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -4449,7 +4475,6 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/conversations/[id]/reply/route.ts",
         "src/lib/whatsapp-cloud-api.ts"
       ]
     },
@@ -4491,7 +4516,7 @@
       "name": "WHATSAPP_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 4,
+      "referenceCount": 5,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -4503,7 +4528,7 @@
       "sampleReferences": [
         "src/app/api/whatsapp/send/route.ts",
         "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-media.ts"
+        "src/lib/whatsapp-cloud-api.ts"
       ]
     },
     {
