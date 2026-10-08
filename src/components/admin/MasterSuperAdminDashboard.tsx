@@ -7,403 +7,562 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
-  ShieldCheck, Lock, Users, Package, Award, Sparkles, AlertCircle, CheckCircle2,
-  Sliders, Database, Key, Search, Globe, Building2, UserCheck, Eye, LogOut,
-  RefreshCw, FileText, AlertTriangle, ShieldAlert, Cpu, Bot, CheckSquare, XCircle, ArrowUpRight
+  ShieldCheck, Users, Key, Search, Building2, UserCheck,
+  RefreshCw, AlertTriangle, ShieldAlert, Bot, CheckSquare, Info,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AgentRegistry from '@/components/crm/agentos/AgentRegistry';
 import AICommandingCenter from './AICommandingCenter';
 import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
+// ============================================================
+// Types — mirror the real contracts
+// ============================================================
+
+// GET /api/admin/dashboard/metrics
+interface AdminMetrics {
+  activeStudents: number;
+  totalLeads: number;
+  totalPartners: number;
+  visaCases: number;
+  unreadMessages: number;
+}
+
+// GET /api/employees → Employee
+interface EmployeeRow {
+  id: string;
+  employeeId: string;
+  name: string;
+  email: string;
+  branch: string;
+  department: string;
+  designation: string;
+  role: string;
+  status: string;
+  isOnline: boolean;
+  lastLoginAt: string | null;
+  joinedAt: string;
+}
+
+// GET /api/admin/security/lockdown
+interface LockdownState {
+  active: boolean;
+  reason: string;
+  activatedBy: string;
+  activatedAt: string | null;
+  deactivatedAt: string | null;
+}
+
+interface LoadState {
+  loading: boolean;
+  error: string | null;
+}
+
+function formatTimestamp(value?: string | null): string {
+  if (!value) return 'Not recorded';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
+
 export default function MasterSuperAdminDashboard() {
   const router = useRouter();
-  const { user, token, setView } = usePortalStore();
+  const { setView } = usePortalStore();
 
-  // Acting-As State
+  const [activeTab, setActiveTab] = useState<'employees' | 'ai-command'>('employees');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
+  const [metricsState, setMetricsState] = useState<LoadState>({ loading: true, error: null });
+
+  const [employees, setEmployees] = useState<EmployeeRow[]>([]);
+  const [employeeState, setEmployeeState] = useState<LoadState>({ loading: true, error: null });
+
+  const [lockdown, setLockdown] = useState<LockdownState | null>(null);
+  const [lockdownReason, setLockdownReason] = useState('');
+  const [lockdownBusy, setLockdownBusy] = useState(false);
+
   const [actingAsRole, setActingAsRole] = useState<string | null>(null);
   const [actingAsName, setActingAsName] = useState<string | null>(null);
+  const [actingAsSessionId, setActingAsSessionId] = useState<string | null>(null);
+  const [actingAsReason, setActingAsReason] = useState('');
+  const [actingAsBusy, setActingAsBusy] = useState(false);
 
-  // Active Tab View State
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'employees' | 'permissions' | 'branches' | 'countries' | 'ai-command' | 'approval' | 'security' | 'reports' | 'audit' | 'settings'
-  >('overview');
+  const loadMetrics = useCallback(async () => {
+    setMetricsState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/admin/dashboard/metrics');
+      if (!response.ok) throw new Error(`Could not load metrics (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (!payload?.success) throw new Error(payload?.error || 'Metrics are unavailable');
+      setMetrics(payload.data);
+      setMetricsState({ loading: false, error: null });
+    } catch (error) {
+      setMetrics(null);
+      setMetricsState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load metrics',
+      });
+    }
+  }, []);
 
-  // Search State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [lockdownActive, setLockdownActive] = useState(false);
+  const loadEmployees = useCallback(async () => {
+    setEmployeeState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/employees');
+      if (!response.ok) throw new Error(`Could not load employees (HTTP ${response.status})`);
+      const payload = await response.json();
+      setEmployees(Array.isArray(payload?.employees) ? payload.employees : []);
+      setEmployeeState({ loading: false, error: null });
+    } catch (error) {
+      setEmployees([]);
+      setEmployeeState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load employees',
+      });
+    }
+  }, []);
 
-  // Data States
-  const [metrics, setMetrics] = useState({
-    totalStudents: 1420,
-    newStudentsToday: 18,
-    englishOnlyStudents: 310,
-    totalLeadsToday: 64,
-    unassignedLeads: 9,
-    activeApps: 480,
-    submittedApps: 210,
-    offerStageApps: 140,
-    visaStageApps: 95,
-    activePartners: 38,
-    pendingPartners: 4,
-    totalEmployees: 42,
-    activeEmployeesToday: 35,
-    suspendedEmployees: 2,
-    counselorFollowupsDue: 28,
-    marketingLeadsToday: 42,
-    pendingSocialReplies: 14,
-    visaCases: 95,
-    highRiskVisaCases: 6,
-    mockTestsToday: 24,
-    financePendingInvoices: 12,
-    hrLeaveRequests: 3,
-    aiJobsRunning: 8,
-    aiPendingApprovals: 5,
-  });
+  const loadLockdown = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/security/lockdown');
+      if (!response.ok) return;
+      const payload = await response.json();
+      if (payload?.success) setLockdown(payload.lockdown);
+    } catch {
+      // Lockdown state is advisory here; failure to read it must not block the page.
+    }
+  }, []);
 
-  // Mock Employee List
-  const [employees, setEmployees] = useState([
-    { id: 'emp-1', code: 'ALO-EMP-20250001', name: 'Al Aminn', role: 'Senior Counselor', dept: 'Counseling', branch: 'Dhaka Main', status: 'active', activity: 'Active (2m ago)' },
-    { id: 'emp-2', code: 'ALO-EMP-20250002', name: 'Rafiqul Islam', role: 'Marketing Manager', dept: 'Marketing', branch: 'Dhaka Main', status: 'active', activity: 'Active (5m ago)' },
-    { id: 'emp-3', code: 'ALO-EMP-20250003', name: 'Nusrat Jahan', role: 'Visa Officer', dept: 'Visa & Compliance', branch: 'Dhaka Main', status: 'active', activity: 'Active (12m ago)' },
-    { id: 'emp-4', code: 'ALO-EMP-20250004', name: 'Siddiqur Rahman', role: 'Application Manager', dept: 'Applications', branch: 'Sylhet Branch', status: 'active', activity: 'Active (1h ago)' },
-    { id: 'emp-5', code: 'ALO-EMP-20250005', name: 'Tanjila Ahmed', role: 'Finance Officer', dept: 'Finance', branch: 'Dhaka Main', status: 'active', activity: 'Active (30m ago)' },
-  ]);
+  useEffect(() => {
+    void loadMetrics();
+    void loadEmployees();
+    void loadLockdown();
+  }, [loadMetrics, loadEmployees, loadLockdown]);
 
-  // Start Acting-As Mode
-  const handleStartActingAs = (role: string, name: string, targetView: any) => {
-    setActingAsRole(role);
-    setActingAsName(name);
-    toast.info(`SUPER_ADMIN now acting as ${role} (${name}). All actions audited.`);
-    setView(targetView);
+  const refreshAll = async () => {
+    await Promise.all([loadMetrics(), loadEmployees(), loadLockdown()]);
   };
 
-  // Exit Acting-As Mode
-  const handleExitActingAs = () => {
-    setActingAsRole(null);
-    setActingAsName(null);
-    toast.success('Exited Acting-As mode. Returned to Super Admin Control.');
-    setView('crm-dashboard');
-  };
-
-  // Toggle Emergency Lockdown
-  const handleToggleLockdown = () => {
-    const nextState = !lockdownActive;
-    setLockdownActive(nextState);
-    if (nextState) {
-      toast.error('EMERGENCY LOCKDOWN ACTIVATED! Non-admin access restricted.', { duration: 5000 });
-    } else {
-      toast.success('Emergency lockdown disengaged. System operating normally.');
+  // Emergency lockdown is a real, audited operation: the route requires a
+  // reason when activating and records the administrator who did it.
+  const handleToggleLockdown = async () => {
+    const activating = !lockdown?.active;
+    if (activating && !lockdownReason.trim()) {
+      toast.error('A reason is required to activate the emergency lockdown.');
+      return;
+    }
+    setLockdownBusy(true);
+    try {
+      const response = await fetch('/api/admin/security/lockdown', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: activating, reason: lockdownReason.trim() }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.success) {
+        toast.error(payload?.error || `Could not update lockdown (HTTP ${response.status})`);
+        return;
+      }
+      setLockdown(payload.lockdown);
+      if (activating) setLockdownReason('');
+      toast[activating ? 'error' : 'success'](
+        activating
+          ? 'Emergency lockdown activated. Recorded in the audit trail.'
+          : 'Emergency lockdown disengaged.',
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not update lockdown');
+    } finally {
+      setLockdownBusy(false);
     }
   };
 
+  // Acting-As opens a real short-lived session and writes an audit event.
+  const handleStartActingAs = async (employee: EmployeeRow) => {
+    if (!actingAsReason.trim()) {
+      toast.error('A reason is required before acting as another role.');
+      return;
+    }
+    setActingAsBusy(true);
+    try {
+      const sessionId = `sa-${Date.now()}`;
+      const response = await fetch('/api/portal-auth/acting-as/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetRole: employee.role,
+          targetName: employee.name,
+          reason: actingAsReason.trim(),
+          sessionId,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload?.success === false) {
+        toast.error(payload?.error || `Could not start acting-as session (HTTP ${response.status})`);
+        return;
+      }
+      setActingAsRole(employee.role);
+      setActingAsName(employee.name);
+      setActingAsSessionId(sessionId);
+      setActingAsReason('');
+      toast.info(`Acting as ${employee.designation || employee.role}. Audited; expires in 30 minutes.`);
+      setView('crm-dashboard');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not start acting-as session');
+    } finally {
+      setActingAsBusy(false);
+    }
+  };
+
+  const handleExitActingAs = async () => {
+    setActingAsBusy(true);
+    try {
+      await fetch('/api/portal-auth/acting-as/stop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: actingAsSessionId }),
+      });
+    } catch {
+      // Ending the session locally is still correct even if the call fails;
+      // the server-side session expires on its own after 30 minutes.
+    } finally {
+      setActingAsRole(null);
+      setActingAsName(null);
+      setActingAsSessionId(null);
+      setActingAsBusy(false);
+      toast.success('Exited acting-as mode.');
+      setView('crm-dashboard');
+    }
+  };
+
+  const filteredEmployees = employees.filter((employee) => {
+    const term = searchQuery.trim().toLowerCase();
+    if (!term) return true;
+    return [employee.name, employee.employeeId, employee.designation, employee.department, employee.branch]
+      .some((value) => String(value || '').toLowerCase().includes(term));
+  });
+
+  const kpis: Array<{ label: string; value: number | string }> = metrics
+    ? [
+      { label: 'Active students', value: metrics.activeStudents },
+      { label: 'Total leads', value: metrics.totalLeads },
+      { label: 'Partner organisations', value: metrics.totalPartners },
+      { label: 'Visa cases', value: metrics.visaCases },
+      { label: 'Unread inbound messages', value: metrics.unreadMessages },
+    ]
+    : [];
+
   return (
-    <div className="space-y-6 bg-slate-50/50 min-h-screen p-4 lg:p-6 text-slate-900 font-sans">
-      <DashboardCommunicationWidget role="SUPER_ADMIN" unreadCount={null} slaOverdueCount={null} onNavigateToInbox={() => router.push('/crm/communications/inbox')} />
-      {/* ACTING-AS BANNER */}
+    <div className="bg-slate-50/50 min-h-screen space-y-6 p-4 font-sans text-slate-900 lg:p-6">
+      <DashboardCommunicationWidget
+        role="SUPER_ADMIN"
+        unreadCount={null}
+        slaOverdueCount={null}
+        onNavigateToInbox={() => router.push('/crm/communications/inbox')}
+      />
+
+      {/* ── ACTING-AS BANNER ── */}
       {actingAsRole && (
-        <div className="bg-amber-500 text-slate-950 p-3.5 rounded-xl shadow-md flex items-center justify-between font-bold text-xs border border-amber-600">
+        <div className="flex items-center justify-between rounded-xl border border-amber-600 bg-amber-500 p-3.5 text-xs font-bold text-slate-950 shadow-md">
           <div className="flex items-center gap-2">
-            <UserCheck className="w-4 h-4 text-slate-950 animate-bounce" />
-            <span>Super Admin Acting As: <strong>{actingAsRole}</strong> ({actingAsName}) — Audit Logging Enabled</span>
+            <UserCheck className="h-4 w-4 text-slate-950" />
+            <span>
+              Acting as: <strong>{actingAsRole}</strong> ({actingAsName}) — session expires in 30 minutes
+            </span>
           </div>
-          <Button size="sm" className="h-7 text-xs bg-slate-950 hover:bg-slate-900 text-amber-400 font-semibold" onClick={handleExitActingAs}>
-            Exit Acting-As Mode
+          <Button
+            size="sm"
+            className="h-7 bg-slate-950 text-xs font-semibold text-amber-400 hover:bg-slate-900"
+            onClick={() => void handleExitActingAs()}
+            disabled={actingAsBusy}
+          >
+            Exit acting-as mode
           </Button>
         </div>
       )}
 
-      {/* SUPER ADMIN HEADER */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-slate-900 text-white p-5 rounded-2xl shadow-lg border border-slate-800">
+      {/* ── HEADER ── */}
+      <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900 p-5 text-white shadow-lg lg:flex-row lg:items-center lg:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-orange-500" />
-            <h1 className="text-xl font-extrabold tracking-tight text-white">Welcome back, Super Admin</h1>
-            <Badge className="bg-orange-500 text-white font-mono text-[10px]">SUPER_ADMIN</Badge>
+            <ShieldCheck className="h-6 w-6 text-orange-500" />
+            <h1 className="text-xl font-extrabold tracking-tight text-white">Super Admin Control</h1>
+            <Badge className="bg-orange-500 font-mono text-[10px] text-white">SUPER_ADMIN</Badge>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Central Operating Brain • {metrics.totalStudents} Active Students • {metrics.activeApps} Applications • {metrics.activeEmployeesToday}/{metrics.totalEmployees} Employees Active
+          <p className="mt-1 text-xs text-slate-400">
+            {metrics
+              ? `${metrics.activeStudents} students · ${metrics.totalLeads} leads · ${metrics.visaCases} visa cases`
+              : metricsState.loading
+                ? 'Loading platform counts…'
+                : 'Platform counts unavailable'}
           </p>
         </div>
 
-        {/* Global Search & Lockdown */}
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
             <input
               type="text"
-              placeholder="Global Search (Student, ID, App...)"
+              placeholder="Filter employees by name, ID or department"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 pl-8 pr-3 bg-slate-800 text-xs text-white placeholder-slate-400 rounded-lg border border-slate-700 focus:outline-none focus:border-orange-500 w-48 sm:w-64"
+              onChange={(event) => setSearchQuery(event.target.value)}
+              className="h-8 w-48 rounded-lg border border-slate-700 bg-slate-800 pl-8 pr-3 text-xs text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none sm:w-64"
             />
           </div>
 
           <Button
+            variant="outline"
             size="sm"
-            className={`h-8 text-xs font-bold ${lockdownActive ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-slate-800 hover:bg-slate-700 text-orange-400 border border-slate-700'}`}
-            onClick={handleToggleLockdown}
+            className="h-8 border-slate-200 bg-white text-xs"
+            onClick={() => void refreshAll()}
           >
-            <ShieldAlert className="w-3.5 h-3.5 mr-1" />
-            {lockdownActive ? 'Lockdown ACTIVE' : 'Emergency Lockdown'}
+            <RefreshCw
+              className={`mr-1 h-3.5 w-3.5 ${metricsState.loading || employeeState.loading ? 'animate-spin' : ''}`}
+            />
+            Refresh
+          </Button>
+
+          <Button
+            size="sm"
+            className={`h-8 text-xs font-bold ${
+              lockdown?.active
+                ? 'bg-red-600 text-white hover:bg-red-700'
+                : 'border border-slate-700 bg-slate-800 text-orange-400 hover:bg-slate-700'
+            }`}
+            onClick={() => setActiveTab('employees')}
+          >
+            <ShieldAlert className="mr-1 h-3.5 w-3.5" />
+            {lockdown?.active ? 'Lockdown ACTIVE' : 'Emergency lockdown'}
           </Button>
         </div>
       </div>
 
-      {/* QUICK ACTIONS BAR */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-        <Button variant="outline" size="sm" className="h-8 text-xs bg-white border-slate-200" onClick={() => setActiveTab('employees')}>
-          <Users className="w-3.5 h-3.5 mr-1 text-indigo-600" /> Employee Control
-        </Button>
-        <Button variant="outline" size="sm" className="h-8 text-xs bg-white border-slate-200" onClick={() => setActiveTab('permissions')}>
-          <Key className="w-3.5 h-3.5 mr-1 text-purple-600" /> Permission Matrix
-        </Button>
-        <Button variant="outline" size="sm" className="h-8 text-xs bg-white border-slate-200" onClick={() => setActiveTab('ai-command')}>
-          <Bot className="w-3.5 h-3.5 mr-1 text-orange-600" /> AI Command Center (2000 Agents)
-        </Button>
-        <Button variant="outline" size="sm" className="h-8 text-xs bg-white border-slate-200" onClick={() => setActiveTab('branches')}>
-          <Building2 className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Branch Control
-        </Button>
-        <Button variant="outline" size="sm" className="h-8 text-xs bg-white border-slate-200" onClick={() => setActiveTab('countries')}>
-          <Globe className="w-3.5 h-3.5 mr-1 text-blue-600" /> Country Operations
-        </Button>
-        <Button variant="outline" size="sm" className="h-8 text-xs bg-white border-slate-200" onClick={() => setActiveTab('approval')}>
-          <CheckSquare className="w-3.5 h-3.5 mr-1 text-amber-600" /> Approval Center ({metrics.aiPendingApprovals})
-        </Button>
-        <Button variant="outline" size="sm" className="h-8 text-xs bg-white border-slate-200" onClick={() => setActiveTab('reports')}>
-          <FileText className="w-3.5 h-3.5 mr-1 text-teal-600" /> Global Reports
-        </Button>
-      </div>
-
-      {/* 12 TOP KPI CARDS GRID */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        <Card className="bg-white border-slate-200 shadow-2xs hover:border-slate-300 transition-all">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">1. Total Students</p>
-            <p className="text-xl font-bold text-slate-900 mt-0.5">{metrics.totalStudents}</p>
-            <p className="text-[10px] text-emerald-600 font-semibold mt-1">+{metrics.newStudentsToday} today • {metrics.englishOnlyStudents} English-only</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">2. Total Leads</p>
-            <p className="text-xl font-bold text-indigo-600 mt-0.5">{metrics.totalLeadsToday}</p>
-            <p className="text-[10px] text-amber-600 font-semibold mt-1">{metrics.unassignedLeads} unassigned</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">3. Active Applications</p>
-            <p className="text-xl font-bold text-slate-900 mt-0.5">{metrics.activeApps}</p>
-            <p className="text-[10px] text-slate-500 mt-1">{metrics.submittedApps} submitted • {metrics.visaStageApps} visa stage</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">4. Partner Network</p>
-            <p className="text-xl font-bold text-purple-600 mt-0.5">{metrics.activePartners}</p>
-            <p className="text-[10px] text-amber-600 font-semibold mt-1">{metrics.pendingPartners} pending approvals</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">5. Employees</p>
-            <p className="text-xl font-bold text-slate-900 mt-0.5">{metrics.totalEmployees}</p>
-            <p className="text-[10px] text-emerald-600 font-semibold mt-1">{metrics.activeEmployeesToday} active today</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">6. Counselor Performance</p>
-            <p className="text-xl font-bold text-teal-600 mt-0.5">84.2%</p>
-            <p className="text-[10px] text-amber-600 font-semibold mt-1">{metrics.counselorFollowupsDue} follow-ups due</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">7. Marketing Performance</p>
-            <p className="text-xl font-bold text-indigo-600 mt-0.5">3.4x ROI</p>
-            <p className="text-[10px] text-slate-500 mt-1">{metrics.marketingLeadsToday} leads today</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">8. Visa Operations</p>
-            <p className="text-xl font-bold text-blue-600 mt-0.5">{metrics.visaCases}</p>
-            <p className="text-[10px] text-red-600 font-semibold mt-1">{metrics.highRiskVisaCases} high-risk reviews</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">9. English Test System</p>
-            <p className="text-xl font-bold text-slate-900 mt-0.5">{metrics.mockTestsToday}</p>
-            <p className="text-[10px] text-emerald-600 font-semibold mt-1">Mocks taken today</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">10. Finance</p>
-            <p className="text-xl font-bold text-emerald-600 mt-0.5">৳12.4M</p>
-            <p className="text-[10px] text-slate-500 mt-1">{metrics.financePendingInvoices} invoices pending</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">11. HR &amp; Attendance</p>
-            <p className="text-xl font-bold text-slate-900 mt-0.5">94% Present</p>
-            <p className="text-[10px] text-amber-600 font-semibold mt-1">{metrics.hrLeaveRequests} leave requests</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-2xs">
-          <CardContent className="p-3.5">
-            <p className="text-[11px] font-medium text-slate-500">12. AI Command Center</p>
-            <p className="text-xl font-bold text-orange-600 mt-0.5">{metrics.aiJobsRunning} Jobs</p>
-            <p className="text-[10px] text-purple-600 font-semibold mt-1">2000 Agents Ready</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* DASHBOARD LAUNCHER GRID (Access Every Role Dashboard) */}
-      <Card className="bg-white border-slate-200 shadow-xs">
-        <CardHeader className="pb-3 border-b border-slate-100">
-          <CardTitle className="text-sm font-bold text-slate-900 flex items-center justify-between">
-            <span>Role Dashboard Launcher (Super Admin Passwordless Access)</span>
-            <Badge className="bg-slate-100 text-slate-700 text-[10px]">14 Dashboards Available</Badge>
-          </CardTitle>
+      {/* ── LOCKDOWN PANEL ── */}
+      <Card className="border-slate-200 bg-white">
+        <CardHeader className="border-b border-slate-100 pb-3">
+          <CardTitle className="text-sm font-bold text-slate-900">Emergency lockdown</CardTitle>
           <CardDescription className="text-xs text-slate-500">
-            Open any employee role dashboard directly. Actions are logged as <code className="text-indigo-600 font-mono">SUPER_ADMIN acting_as ROLE</code> without revealing passwords.
+            Restricts non-administrator access. Activating requires a reason and is written to the
+            audit trail with the administrator who did it.
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2.5">
-            <Button variant="outline" className="h-16 flex-col items-center justify-center p-2 text-xs bg-slate-50 hover:bg-slate-100 border-slate-200" onClick={() => handleStartActingAs('Counselor', 'Al Aminn', 'crm-dashboard')}>
-              <span className="font-bold text-slate-800">Counselor</span>
-              <span className="text-[9px] text-slate-500 mt-0.5">Leads &amp; Students</span>
-            </Button>
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className={lockdown?.active ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}>
+              {lockdown?.active ? 'ACTIVE' : 'INACTIVE'}
+            </Badge>
+            {lockdown?.active && (
+              <span className="text-xs text-slate-600">
+                Reason: {lockdown.reason || 'Not recorded'} · activated {formatTimestamp(lockdown.activatedAt)}
+              </span>
+            )}
+            {lockdown?.deactivatedAt && (
+              <span className="text-xs text-slate-500">
+                Last disengaged {formatTimestamp(lockdown.deactivatedAt)}
+              </span>
+            )}
+          </div>
 
-            <Button variant="outline" className="h-16 flex-col items-center justify-center p-2 text-xs bg-indigo-50/50 hover:bg-indigo-100/50 border-indigo-200" onClick={() => handleStartActingAs('Marketing Manager', 'Rafiqul Islam', 'crm-marketing')}>
-              <span className="font-bold text-indigo-900">Marketing Manager</span>
-              <span className="text-[9px] text-indigo-600 mt-0.5">Social &amp; Campaigns</span>
-            </Button>
-
-            <Button variant="outline" className="h-16 flex-col items-center justify-center p-2 text-xs bg-blue-50/50 hover:bg-blue-100/50 border-blue-200" onClick={() => handleStartActingAs('Visa Officer', 'Nusrat Jahan', 'crm-visa-dashboard')}>
-              <span className="font-bold text-blue-900">Visa Officer</span>
-              <span className="text-[9px] text-blue-600 mt-0.5">Cases &amp; Mock Studio</span>
-            </Button>
-
-            <Button variant="outline" className="h-16 flex-col items-center justify-center p-2 text-xs bg-emerald-50/50 hover:bg-emerald-100/50 border-emerald-200" onClick={() => handleStartActingAs('Application Team', 'Siddiqur Rahman', 'crm-applications')}>
-              <span className="font-bold text-emerald-900">Application Team</span>
-              <span className="text-[9px] text-emerald-600 mt-0.5">Uni Applications</span>
-            </Button>
-
-            <Button variant="outline" className="h-16 flex-col items-center justify-center p-2 text-xs bg-purple-50/50 hover:bg-purple-100/50 border-purple-200" onClick={() => handleStartActingAs('Finance Officer', 'Tanjila Ahmed', 'crm-finance')}>
-              <span className="font-bold text-purple-900">Finance Officer</span>
-              <span className="text-[9px] text-purple-600 mt-0.5">Invoices &amp; Comms</span>
-            </Button>
-
-            <Button variant="outline" className="h-16 flex-col items-center justify-center p-2 text-xs bg-amber-50/50 hover:bg-amber-100/50 border-amber-200" onClick={() => handleStartActingAs('HR Manager', 'HR Lead', 'crm-hrm')}>
-              <span className="font-bold text-amber-900">HR Manager</span>
-              <span className="text-[9px] text-amber-600 mt-0.5">Staff &amp; Payroll</span>
-            </Button>
-
-            <Button variant="outline" className="h-16 flex-col items-center justify-center p-2 text-xs bg-orange-50/50 hover:bg-orange-100/50 border-orange-200" onClick={() => handleStartActingAs('Branch Manager', 'Dhaka Lead', 'crm-dashboard')}>
-              <span className="font-bold text-orange-900">Branch Manager</span>
-              <span className="text-[9px] text-orange-600 mt-0.5">Branch Ops</span>
+          <div className="flex flex-wrap items-start gap-2">
+            <Textarea
+              value={lockdownReason}
+              onChange={(event) => setLockdownReason(event.target.value)}
+              placeholder={lockdown?.active ? 'Reason to record on disengaging (optional)' : 'Reason for activating (required)'}
+              className="max-w-lg text-sm"
+              rows={2}
+            />
+            <Button
+              size="sm"
+              variant={lockdown?.active ? 'outline' : 'destructive'}
+              onClick={() => void handleToggleLockdown()}
+              disabled={lockdownBusy}
+            >
+              {lockdownBusy
+                ? 'Working…'
+                : lockdown?.active
+                  ? 'Disengage lockdown'
+                  : 'Activate lockdown'}
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* SECTION TABS: EMPLOYEE CONTROL / PERMISSIONS / AI COMMAND */}
-      {activeTab === 'employees' && (
-        <Card className="bg-white border-slate-200 shadow-xs">
-          <CardHeader className="pb-3 border-b border-slate-100 flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-sm font-bold text-slate-900">Employee Control Center</CardTitle>
-              <CardDescription className="text-xs text-slate-500">View and manage all ALO employees, switch acting-as role, or grant cross-department permissions.</CardDescription>
-            </div>
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white">
-              + Add New Employee
-            </Button>
-          </CardHeader>
+      {/* ── QUICK ACTIONS ── */}
+      <div className="scrollbar-none flex items-center gap-2 overflow-x-auto pb-2">
+        <Button variant="outline" size="sm" className="h-8 border-slate-200 bg-white text-xs" onClick={() => setActiveTab('employees')}>
+          <Users className="mr-1 h-3.5 w-3.5 text-indigo-600" /> Employee control
+        </Button>
+        <Button variant="outline" size="sm" className="h-8 border-slate-200 bg-white text-xs" onClick={() => setActiveTab('ai-command')}>
+          <Bot className="mr-1 h-3.5 w-3.5 text-orange-600" /> AI Command Center
+        </Button>
+      </div>
 
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader className="bg-slate-50">
-                <TableRow>
-                  <TableHead className="text-xs font-semibold">Employee ID / Name</TableHead>
-                  <TableHead className="text-xs font-semibold">Designation</TableHead>
-                  <TableHead className="text-xs font-semibold">Department</TableHead>
-                  <TableHead className="text-xs font-semibold">Branch</TableHead>
-                  <TableHead className="text-xs font-semibold">Status</TableHead>
-                  <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {employees.map((emp) => (
-                  <TableRow key={emp.id}>
-                    <TableCell>
-                      <div className="font-bold text-xs text-slate-900">{emp.name}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">{emp.code}</div>
-                    </TableCell>
-                    <TableCell><Badge variant="outline" className="text-[10px] bg-slate-50">{emp.role}</Badge></TableCell>
-                    <TableCell className="text-xs text-slate-600">{emp.dept}</TableCell>
-                    <TableCell className="text-xs text-slate-600">{emp.branch}</TableCell>
-                    <TableCell>
-                      <Badge className="bg-emerald-100 text-emerald-800 text-[10px]">{emp.status.toUpperCase()}</Badge>
-                    </TableCell>
-                    <TableCell className="text-right space-x-1">
-                      <Button size="sm" variant="ghost" className="h-7 text-xs text-indigo-600 hover:bg-indigo-50" onClick={() => handleStartActingAs(emp.role, emp.name, 'crm-dashboard')}>
-                        Act As Role
-                      </Button>
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-xs border-slate-200">
-                        Permissions
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+      {/* ── KPI CARDS ── */}
+      {metricsState.error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+              <p className="font-medium">{metricsState.error}</p>
+              <button type="button" className="mt-1 underline underline-offset-2" onClick={() => void loadMetrics()}>
+                Try again
+              </button>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {/* AI COMMAND CENTER (2000 PROTECTED AGENT NETWORK INTEGRATION) */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        {kpis.map((kpi) => (
+          <Card key={kpi.label} className="border-slate-200 bg-white shadow-2xs">
+            <CardContent className="p-3.5">
+              <p className="text-[11px] font-medium text-slate-500">{kpi.label}</p>
+              <p className="mt-0.5 text-xl font-bold text-slate-900">{kpi.value}</p>
+            </CardContent>
+          </Card>
+        ))}
+        {metricsState.loading && kpis.length === 0 && (
+          <Card className="border-slate-200 bg-white">
+            <CardContent className="p-3.5 text-xs text-slate-500">Loading counts…</CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* ── EMPLOYEE CONTROL ── */}
+      {activeTab === 'employees' && (
+        <Card className="border-slate-200 bg-white shadow-xs">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <CardTitle className="text-sm font-bold text-slate-900">Employee control center</CardTitle>
+              <CardDescription className="text-xs text-slate-500">
+                Employees on record, and the acting-as sessions available to you.
+              </CardDescription>
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-0">
+            {employeeState.error && (
+              <div className="flex items-start gap-2 p-4 text-sm text-red-700">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">{employeeState.error}</p>
+                  <button
+                    type="button"
+                    className="mt-1 underline underline-offset-2"
+                    onClick={() => void loadEmployees()}
+                  >
+                    Try again
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {employeeState.loading ? (
+              <p className="py-10 text-center text-sm text-slate-500">Loading employees…</p>
+            ) : filteredEmployees.length === 0 && !employeeState.error ? (
+              <p className="py-10 text-center text-sm text-slate-500">
+                {employees.length === 0
+                  ? 'No employee record has been created yet.'
+                  : 'No employee matches that filter.'}
+              </p>
+            ) : (
+              <Table>
+                <TableHeader className="bg-slate-50">
+                  <TableRow>
+                    <TableHead className="text-xs font-semibold">Employee ID / Name</TableHead>
+                    <TableHead className="text-xs font-semibold">Designation</TableHead>
+                    <TableHead className="text-xs font-semibold">Department</TableHead>
+                    <TableHead className="text-xs font-semibold">Branch</TableHead>
+                    <TableHead className="text-xs font-semibold">Status</TableHead>
+                    <TableHead className="text-right text-xs font-semibold">Acting as</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredEmployees.map((employee) => (
+                    <TableRow key={employee.id}>
+                      <TableCell>
+                        <div className="text-xs font-bold text-slate-900">
+                          {employee.name || 'Unnamed employee'}
+                        </div>
+                        <div className="font-mono text-[10px] text-slate-400">{employee.employeeId}</div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-slate-50 text-[10px]">
+                          {employee.designation || employee.role || 'Unspecified'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs text-slate-600">
+                        {employee.department || '—'}
+                      </TableCell>
+                      <TableCell className="text-xs text-slate-600">
+                        {employee.branch || '—'}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={`text-[10px] ${
+                            employee.status === 'active'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {(employee.status || 'unknown').toUpperCase()}
+                        </Badge>
+                        {employee.isOnline ? (
+                          <Badge className="ml-1 bg-sky-100 text-sky-700 text-[10px]">Online</Badge>
+                        ) : null}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {actingAsName === employee.name ? (
+                          <span className="text-[10px] text-amber-700">In session</span>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs text-indigo-600 hover:bg-indigo-50"
+                            disabled={actingAsBusy || Boolean(actingAsName)}
+                            onClick={() => {
+                              setActingAsReason(
+                                `Reviewing work as ${employee.designation || employee.role}`,
+                              );
+                              void handleStartActingAs(employee);
+                            }}
+                          >
+                            Act as role
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ── AI COMMAND CENTER ── */}
       {activeTab === 'ai-command' && (
         <div className="space-y-4">
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
             <Button
               size="sm"
               variant="outline"
-              className="h-8 text-xs bg-white border-slate-200"
+              className="h-8 border-slate-200 bg-white text-xs"
               onClick={() => {
-                const showReg = document.getElementById('agent-registry-container');
-                const showCmd = document.getElementById('ai-command-container');
-                if (showReg && showCmd) {
-                  if (showReg.classList.contains('hidden')) {
-                    showReg.classList.remove('hidden');
-                    showCmd.classList.add('hidden');
-                  } else {
-                    showReg.classList.add('hidden');
-                    showCmd.classList.remove('hidden');
-                  }
+                const registry = document.getElementById('agent-registry-container');
+                const console_ = document.getElementById('ai-command-container');
+                if (registry && console_) {
+                  const showRegistry = registry.classList.contains('hidden');
+                  registry.classList.toggle('hidden', !showRegistry);
+                  console_.classList.toggle('hidden', showRegistry);
                 }
               }}
             >
-              Toggle Agent Registry / Chat Console
+              Toggle agent registry / chat console
             </Button>
           </div>
           <div id="ai-command-container">
@@ -414,6 +573,18 @@ export default function MasterSuperAdminDashboard() {
           </div>
         </div>
       )}
+
+      <Card className="border-slate-200 bg-white">
+        <CardContent className="flex items-start gap-2 p-4 text-xs text-slate-500">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            The five counts above are the only platform figures this API exposes, and each is a
+            live database count. Per-department breakdowns, daily-new figures, follow-up and
+            invoice queues, and an agent total are not shown because nothing on this platform
+            measures them. Acting-as sessions last 30 minutes and are recorded in the audit trail.
+          </span>
+        </CardContent>
+      </Card>
     </div>
   );
 }
