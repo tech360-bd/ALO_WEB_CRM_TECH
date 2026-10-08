@@ -478,6 +478,19 @@ export default function PublicNavbar() {
                         </AccordionContent>
                       </AccordionItem>
 
+                      <AccordionItem value="ai-tools" className="border-b-0">
+                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
+                          AI Tools
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-1">
+                          <div className="flex flex-col gap-0.5 pl-4">
+                            {AI_TOOL_ITEMS.map((item) => (
+                              <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+
                       <AccordionItem value="resources" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
                           {t('nav.resources')}
