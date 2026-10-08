@@ -94,23 +94,68 @@ import { toast } from 'sonner';
 /*  1. STUDENT REFERRALS                                               */
 /* ================================================================== */
 
-const REFERRAL_HISTORY = [
-  { name: 'Karim Hossain', date: '2025-09-15', status: 'Converted' as const, reward: '৳5,000' },
-  { name: 'Fatima Begum', date: '2025-09-28', status: 'Pending' as const, reward: '—' },
-  { name: 'Tanvir Ahmed', date: '2025-10-02', status: 'Not Eligible' as const, reward: '—' },
-];
+// Real Referral rows, per GET /api/student/referrals.
+interface ReferralRow {
+  id: string;
+  referralCode: string;
+  referredName: string | null;
+  status: string;
+  source: string | null;
+  rewardOffered: string | null;
+  rewardStatus: string | null;
+  createdAt: string;
+}
 
 const STATUS_STYLES: Record<string, string> = {
-  Converted: 'bg-emerald-50 text-emerald-700',
-  Pending: 'bg-amber-50 text-amber-700',
-  'Not Eligible': 'bg-slate-100 text-slate-500',
+  PENDING: 'bg-amber-50 text-amber-700',
+  QUALIFIED: 'bg-blue-50 text-blue-700',
+  CONSULTATION_DONE: 'bg-blue-50 text-blue-700',
+  APPLICATION_SUBMITTED: 'bg-indigo-50 text-indigo-700',
+  ENROLLED: 'bg-emerald-50 text-emerald-700',
+  REWARDED: 'bg-emerald-50 text-emerald-700',
 };
+
+function formatDate(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString();
+}
 
 export function StudentReferrals() {
   const [copied, setCopied] = useState(false);
-  const referralCode = 'RAHIM-AE-2025';
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referrals, setReferrals] = useState<ReferralRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/student/referrals');
+        if (!response.ok) throw new Error(`Could not load referrals (HTTP ${response.status})`);
+        const payload = await response.json();
+        if (cancelled) return;
+        setReferralCode(payload?.referralCode || null);
+        setReferrals(Array.isArray(payload?.referrals) ? payload.referrals : []);
+        setLoadError(null);
+      } catch (error) {
+        if (cancelled) return;
+        setReferralCode(null);
+        setReferrals([]);
+        setLoadError(error instanceof Error ? error.message : 'Could not load referrals');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleCopy = async () => {
+    if (!referralCode) return;
     try {
       await navigator.clipboard.writeText(referralCode);
       setCopied(true);
@@ -122,12 +167,14 @@ export function StudentReferrals() {
   };
 
   const handleShareWhatsApp = () => {
-    const text = `Study abroad with ALO Education! Use my referral code: ${referralCode} to get special benefits. Register now at aloeducation.com`;
+    if (!referralCode) return;
+    const text = `Study abroad with ALO Education! Use my referral code: ${referralCode} when you register at aloeducation.com`;
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
 
   const handleShareEmail = () => {
+    if (!referralCode) return;
     const subject = 'Study Abroad with ALO Education';
     const body = `Hi!\n\nI'm using ALO Education to plan my study abroad journey. You can too — use my referral code ${referralCode} when you register.\n\naloeducation.com`;
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -149,10 +196,11 @@ export function StudentReferrals() {
           <p className="text-sm font-medium text-slate-700 mb-3">Your Referral Code</p>
           <div className="flex items-center gap-3">
             <div className="flex-1 bg-white rounded-lg border border-blue-200 px-4 py-3 font-mono text-lg font-bold text-slate-900 tracking-wider">
-              {referralCode}
+              {loading ? 'Loading…' : referralCode || 'No referral code issued yet'}
             </div>
             <Button
               onClick={handleCopy}
+              disabled={!referralCode}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               {copied ? <Check className="size-4 mr-1.5" /> : <Copy className="size-4 mr-1.5" />}
@@ -162,6 +210,7 @@ export function StudentReferrals() {
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <Button
               variant="outline"
+              disabled={!referralCode}
               className="flex-1 border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800"
               onClick={handleShareWhatsApp}
             >
@@ -172,6 +221,7 @@ export function StudentReferrals() {
             </Button>
             <Button
               variant="outline"
+              disabled={!referralCode}
               className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800"
               onClick={handleShareEmail}
             >
@@ -182,12 +232,35 @@ export function StudentReferrals() {
         </CardContent>
       </Card>
 
-      {/* Stats */}
+      {/* Stats — derived from the real referral records */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Referred', value: '3', icon: Users, color: 'text-blue-600' },
-          { label: 'Converted', value: '1', icon: CheckCircle2, color: 'text-emerald-600' },
-          { label: 'Earned', value: '৳5,000', icon: Gift, color: 'text-orange-600' },
+          {
+            label: 'Total referred',
+            value: loading ? '…' : String(referrals.length),
+            icon: Users,
+            color: 'text-blue-600',
+          },
+          {
+            label: 'Enrolled',
+            value: loading
+              ? '…'
+              : String(
+                referrals.filter((referral) =>
+                  ['ENROLLED', 'REWARDED'].includes(referral.status),
+                ).length,
+              ),
+            icon: CheckCircle2,
+            color: 'text-emerald-600',
+          },
+          {
+            label: 'Rewards awarded',
+            value: loading
+              ? '…'
+              : String(referrals.filter((referral) => referral.rewardStatus === 'AWARDED').length),
+            icon: Gift,
+            color: 'text-orange-600',
+          },
         ].map((stat) => (
           <Card key={stat.label}>
             <CardContent className="p-4 text-center">
@@ -205,30 +278,57 @@ export function StudentReferrals() {
           <CardTitle className="text-base font-semibold text-slate-900">Referral History</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Reward</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {REFERRAL_HISTORY.map((r, i) => (
-                <TableRow key={i}>
-                  <TableCell className="font-medium text-slate-900">{r.name}</TableCell>
-                  <TableCell className="text-slate-500">{r.date}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className={cn('text-xs font-medium', STATUS_STYLES[r.status])}>
-                      {r.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right font-semibold text-slate-900">{r.reward}</TableCell>
+          {loadError && (
+            <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{loadError}</p>
+          )}
+          {loading ? (
+            <p className="py-8 text-center text-sm text-slate-500">Loading referrals…</p>
+          ) : referrals.length === 0 && !loadError ? (
+            <p className="py-8 text-center text-sm text-slate-500">
+              You have not referred anyone yet. Share your code to get started.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Referred</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Reward</TableHead>
+                  <TableHead className="text-right">Source</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {referrals.map((referral) => (
+                  <TableRow key={referral.id}>
+                    <TableCell className="font-medium text-slate-900">
+                      {referral.referredName || 'Name not provided'}
+                    </TableCell>
+                    <TableCell className="text-slate-500">{formatDate(referral.createdAt)}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          'text-xs font-medium',
+                          STATUS_STYLES[referral.status] || 'bg-slate-100 text-slate-500',
+                        )}
+                      >
+                        {(referral.status || 'UNKNOWN').replace(/_/g, ' ')}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-slate-700">
+                      {referral.rewardOffered
+                        ? `${referral.rewardOffered}${referral.rewardStatus ? ` · ${referral.rewardStatus}` : ''}`
+                        : 'None recorded'}
+                    </TableCell>
+                    <TableCell className="text-right text-slate-500">
+                      {referral.source || '—'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
@@ -255,7 +355,7 @@ export function StudentReferrals() {
               {
                 step: '3',
                 title: 'Earn Reward',
-                desc: 'Once they successfully enroll, you earn ৳5,000!',
+                desc: 'Once they enrol, your referral record moves to enrolled and any agreed reward is tracked.',
                 icon: Gift,
               },
             ].map((item) => (
@@ -280,10 +380,11 @@ export function StudentReferrals() {
           <div>
             <p className="text-sm font-semibold text-slate-900">Referral Rules</p>
             <p className="text-xs text-slate-600 mt-1">
-              Earn ৳5,000 for each successful enrollment through your referral. The reward is credited
-              to your account once your referral completes their first semester. Referral codes are
-              valid for 6 months from the date of sharing. ALO Education reserves the right to modify
-              the referral program terms.
+              Each referral you make is recorded against your code with its current status. Any
+              reward is shown per referral only when one has been agreed and recorded on that
+              record — reward amounts, eligibility conditions and expiry periods are set by your
+              counsellor and are not stated here. Contact your counsellor for the current referral
+              programme terms.
             </p>
           </div>
         </CardContent>
