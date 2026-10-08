@@ -1,517 +1,466 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
-import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { toast } from 'sonner';
 import {
-  Search, Send, Phone, Mail, Paperclip, Smile,
-  MessageCircle, MoreVertical, Check, CheckCheck,
-  MapPin, Tag, UserCircle, Clock, ChevronDown, Zap, Users,
+  MessageCircle, Send, RefreshCw, AlertTriangle, Inbox, Clock, Info,
+  Search, Smartphone,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Converted' | 'Lost';
+// ============================================================
+// Types — mirror GET /api/employee/messages
+// ============================================================
 
-interface WhatsAppMessage {
+// CommunicationThread rows assigned to the signed-in employee
+interface Thread {
   id: string;
-  text: string;
-  sentAt: string;
-  isMine: boolean;
-  status?: 'sent' | 'delivered' | 'read';
+  threadCode?: string;
+  studentId?: string | null;
+  channel?: string;
+  subject?: string;
+  intent?: string;
+  priority?: string;
+  status?: string;
+  lastMessageAt?: string;
+  lastMessagePreview?: string;
+  unreadCount?: number;
+  isAiHandled?: boolean;
+  slaStatus?: string;
 }
 
-interface Contact {
+// CommunicationMessage rows for the selected thread
+interface Message {
   id: string;
-  name: string;
-  phone: string;
-  email: string;
-  leadStatus: LeadStatus;
-  destination: string;
-  tags: string[];
-  online: boolean;
-  lastSeen: string;
-  lastMessage: string;
-  lastTime: string;
-  unread: number;
-  messages: WhatsAppMessage[];
+  threadId: string;
+  senderType: string;
+  senderName?: string;
+  content: string;
+  isInternal?: boolean;
+  isAiGenerated?: boolean;
+  isRead?: boolean;
+  createdAt: string;
 }
 
-const quickReplies = [
-  'Hi! Thank you for reaching out to ALO Education.',
-  'Please share your academic documents so I can evaluate your profile.',
-  'I have a few university options that match your profile. Can we schedule a call?',
-  'Your application has been submitted successfully!',
-  'Please let me know a convenient time for your counseling session.',
-  'I will follow up with the university and get back to you shortly.',
-];
+interface LoadState {
+  loading: boolean;
+  error: string | null;
+}
 
-const mockContacts: Contact[] = [
-  {
-    id: '1', name: 'Rahim Uddin', phone: '+880 1612-345678', email: 'rahim@email.com',
-    leadStatus: 'Qualified', destination: 'UK', tags: ['IELTS', 'MSc CS'], online: true, lastSeen: 'Online',
-    lastMessage: 'Thanks for the university list! I will review tonight.', lastTime: '10:30 AM', unread: 2,
-    messages: [
-      { id: 'm1', text: 'Salam Rahim! How is your IELTS preparation going?', sentAt: '10:00 AM', isMine: true, status: 'read' },
-      { id: 'm2', text: 'Going well Alhamdulillah. I scored 7.5 in mock test!', sentAt: '10:05 AM', isMine: false },
-      { id: 'm3', text: 'That\'s excellent! With that score, you\'re eligible for University of Manchester, Leeds, and Sheffield. Let me share the details.', sentAt: '10:10 AM', isMine: true, status: 'read' },
-      { id: 'm4', text: 'I have shortlisted 3 programs for you. Please check the brochure I just shared.', sentAt: '10:15 AM', isMine: true, status: 'delivered' },
-      { id: 'm5', text: 'Thanks for the university list! I will review tonight.', sentAt: '10:30 AM', isMine: false },
-    ],
-  },
-  {
-    id: '2', name: 'Fatima Akter', phone: '+880 1812-234567', email: 'fatima@email.com',
-    leadStatus: 'Contacted', destination: 'Australia', tags: ['MBA', 'Feb 2025'], online: false, lastSeen: '2:15 PM',
-    lastMessage: 'I will send the bank statement by tomorrow InshaAllah.', lastTime: '9:45 AM', unread: 1,
-    messages: [
-      { id: 'm6', text: 'Hi Fatima! Your University of Melbourne application is progressing well. We need the bank statement to proceed.', sentAt: '9:20 AM', isMine: true, status: 'read' },
-      { id: 'm7', text: 'How much do we need to show?', sentAt: '9:30 AM', isMine: false },
-      { id: 'm8', text: 'AUD 65,000 for one year\'s tuition + living expenses. I\'ll send the requirement document.', sentAt: '9:35 AM', isMine: true, status: 'read' },
-      { id: 'm9', text: 'I will send the bank statement by tomorrow InshaAllah.', sentAt: '9:45 AM', isMine: false },
-    ],
-  },
-  {
-    id: '3', name: 'Tanvir Ahmed', phone: '+880 1712-987654', email: 'tanvir@email.com',
-    leadStatus: 'Converted', destination: 'UK', tags: ['CAS', 'Visa'], online: true, lastSeen: 'Online',
-    lastMessage: 'Alhamdulillah! My visa got approved! 🎉', lastTime: 'Yesterday', unread: 0,
-    messages: [
-      { id: 'm10', text: 'Great news Tanvir! Your CAS has been issued by University of Leeds.', sentAt: '3:00 PM', isMine: true, status: 'read' },
-      { id: 'm11', text: 'JazakAllah Khair! When can we apply for the visa?', sentAt: '3:10 PM', isMine: false },
-      { id: 'm12', text: 'We can submit the visa application this week. Please prepare your documents.', sentAt: '3:15 PM', isMine: true, status: 'read' },
-      { id: 'm13', text: 'Alhamdulillah! My visa got approved! 🎉', sentAt: 'Yesterday', isMine: false },
-      { id: 'm14', text: 'Mabrook Tanvir! Congratulations! 🎉 We\'ll help with pre-departure orientation.', sentAt: 'Yesterday', isMine: true, status: 'read' },
-    ],
-  },
-  {
-    id: '4', name: 'Nusrat Jahan', phone: '+880 1912-456789', email: 'nusrat@email.com',
-    leadStatus: 'New', destination: 'USA', tags: ['GRE', 'MS Data Sci'], online: false, lastSeen: '5:00 PM',
-    lastMessage: 'Hi, I am interested in studying Data Science in the USA.', lastTime: 'Yesterday', unread: 3,
-    messages: [
-      { id: 'm15', text: 'Hi, I am interested in studying Data Science in the USA.', sentAt: 'Yesterday', isMine: false },
-      { id: 'm16', text: 'Can you share my GRE score? It\'s 320.', sentAt: 'Yesterday', isMine: false },
-      { id: 'm17', text: 'I have a 3.8 GPA in CSE from BUET.', sentAt: 'Yesterday', isMine: false },
-    ],
-  },
-  {
-    id: '5', name: 'Imran Hossain', phone: '+880 1512-567890', email: 'imran@email.com',
-    leadStatus: 'Qualified', destination: 'Canada', tags: ['Diploma', 'Seneca'], online: false, lastSeen: '11:30 AM',
-    lastMessage: 'When does the Winter 2025 semester start?', lastTime: 'Monday', unread: 0,
-    messages: [
-      { id: 'm18', text: 'Hi Imran! Following up on your Seneca College application.', sentAt: '11:00 AM', isMine: true, status: 'read' },
-      { id: 'm19', text: 'Yes! I got the offer letter last week.', sentAt: '11:10 AM', isMine: false },
-      { id: 'm20', text: 'When does the Winter 2025 semester start?', sentAt: '11:30 AM', isMine: false },
-      { id: 'm21', text: 'Winter intake starts January 6, 2025. We should start the visa process ASAP.', sentAt: '11:35 AM', isMine: true, status: 'read' },
-    ],
-  },
-  {
-    id: '6', name: 'Mim Akhter', phone: '+880 1612-666666', email: 'mim@email.com',
-    leadStatus: 'New', destination: 'Germany', tags: ['MS AI', 'Tuition Free'], online: true, lastSeen: 'Online',
-    lastMessage: 'Is it really tuition-free? 😊', lastTime: 'Monday', unread: 1,
-    messages: [
-      { id: 'm22', text: 'Hello Mim! I saw your inquiry about studying in Germany. How can I help?', sentAt: 'Monday', isMine: true, status: 'delivered' },
-      { id: 'm23', text: 'Is it really tuition-free? 😊', sentAt: 'Monday', isMine: false },
-    ],
-  },
-  {
-    id: '7', name: 'Sajib Rahman', phone: '+880 1612-678901', email: 'sajib@email.com',
-    leadStatus: 'Contacted', destination: 'UK', tags: ['MA Marketing', 'IELTS 7.0'], online: false, lastSeen: 'Sunday',
-    lastMessage: 'I uploaded the SOP draft to the portal.', lastTime: 'Sunday', unread: 0,
-    messages: [
-      { id: 'm24', text: 'Hi Sajib, your SOP review is done. A few suggestions have been added.', sentAt: 'Sunday', isMine: true, status: 'read' },
-      { id: 'm25', text: 'I uploaded the SOP draft to the portal.', sentAt: 'Sunday', isMine: false },
-      { id: 'm26', text: 'Perfect! I\'ll review it today and get back to you by evening.', sentAt: 'Sunday', isMine: true, status: 'delivered' },
-    ],
-  },
-  {
-    id: '8', name: 'Arif Islam', phone: '+880 1712-890123', email: 'arif@email.com',
-    leadStatus: 'Lost', destination: 'Germany', tags: ['Deferred'], online: false, lastSeen: 'Jan 8',
-    lastMessage: 'I decided to defer to Summer 2025 due to personal reasons.', lastTime: 'Jan 8', unread: 0,
-    messages: [
-      { id: 'm27', text: 'Arif, I noticed you haven\'t been responding. Is everything okay?', sentAt: 'Jan 5', isMine: true, status: 'read' },
-      { id: 'm28', text: 'I decided to defer to Summer 2025 due to personal reasons.', sentAt: 'Jan 8', isMine: false },
-      { id: 'm29', text: 'No problem at all. I\'ll mark your file for Summer 2025. We\'ll reconnect in March.', sentAt: 'Jan 8', isMine: true, status: 'read' },
-    ],
-  },
-];
-
-const statusColors: Record<LeadStatus, string> = {
-  New: 'bg-blue-100 text-blue-700',
-  Contacted: 'bg-amber-100 text-amber-700',
-  Qualified: 'bg-purple-100 text-purple-700',
-  Converted: 'bg-emerald-100 text-emerald-700',
-  Lost: 'bg-red-100 text-red-600',
+const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
+  high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
+  urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
+  medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
+  low: { label: 'Low', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
+  normal: { label: 'Normal', cls: 'bg-gray-100 text-gray-600 border-gray-200' },
 };
 
+function priorityBadge(priority?: string) {
+  const key = (priority || 'normal').toLowerCase();
+  const meta = PRIORITY_CONFIG[key] || PRIORITY_CONFIG.normal;
+  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+}
+
+function formatTimestamp(value?: string | null): string {
+  if (!value) return 'Not recorded';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
+
 export default function EmployeeWhatsAppPage() {
-  const { setView } = usePortalStore();
-  const [loading, setLoading] = useState(true);
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [totalUnread, setTotalUnread] = useState(0);
+  const [threadState, setThreadState] = useState<LoadState>({ loading: true, error: null });
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [messageState, setMessageState] = useState<LoadState>({ loading: false, error: null });
+
   const [search, setSearch] = useState('');
-  const [messageInput, setMessageInput] = useState('');
-  const [showQuickReplies, setShowQuickReplies] = useState(false);
-  const [showContactInfo, setShowContactInfo] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [draft, setDraft] = useState('');
+  const [sending, setSending] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  const selectedContact = contacts.find((c) => c.id === selectedContactId) || null;
+  const loadThreads = useCallback(async () => {
+    setThreadState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/employee/messages?limit=50');
+      if (!response.ok) throw new Error(`Could not load WhatsApp conversations (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (!payload?.success) throw new Error(payload?.error || 'Conversations are unavailable');
+      const rows: Thread[] = Array.isArray(payload.data?.threads) ? payload.data.threads : [];
+      setThreads(rows.filter((thread) => (thread.channel || '').toLowerCase() === 'whatsapp'));
+      setTotalUnread(Number(payload.data?.totalUnread) || 0);
+      setThreadState({ loading: false, error: null });
+    } catch (error) {
+      setThreads([]);
+      setThreadState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load WhatsApp conversations',
+      });
+    }
+  }, []);
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setContacts(mockContacts);
-      setSelectedContactId('1');
-      setLoading(false);
-    }, 600);
-    return () => clearTimeout(t);
+  const loadMessages = useCallback(async (threadId: string) => {
+    setMessageState({ loading: true, error: null });
+    try {
+      const response = await fetch(
+        `/api/employee/messages?threadId=${encodeURIComponent(threadId)}&limit=50`,
+      );
+      if (!response.ok) throw new Error(`Could not load this conversation (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (!payload?.success) throw new Error(payload?.error || 'This conversation is unavailable');
+      setMessages(Array.isArray(payload.data?.messages) ? payload.data.messages : []);
+      setMessageState({ loading: false, error: null });
+    } catch (error) {
+      setMessages([]);
+      setMessageState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load this conversation',
+      });
+    }
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [selectedContact?.messages.length]);
+    void loadThreads();
+  }, [loadThreads]);
 
-  const filteredContacts = contacts.filter((c) => {
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return c.name.toLowerCase().includes(q) || c.phone.includes(q);
-  });
+  useEffect(() => {
+    if (!selectedId) {
+      setMessages([]);
+      return;
+    }
+    void loadMessages(selectedId);
+  }, [selectedId, loadMessages]);
 
-  const handleSend = () => {
-    if (!messageInput.trim() || !selectedContactId) return;
-    const newMsg: WhatsAppMessage = {
-      id: `m-${Date.now()}`,
-      text: messageInput.trim(),
-      sentAt: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-      isMine: true,
-      status: 'sent',
+  const selectedThread = useMemo(
+    () => threads.find((thread) => thread.id === selectedId) || null,
+    [threads, selectedId],
+  );
+
+  const filteredThreads = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return threads;
+    return threads.filter((thread) =>
+      [thread.threadCode, thread.studentId, thread.subject, thread.lastMessagePreview]
+        .some((value) => String(value || '').toLowerCase().includes(term)),
+    );
+  }, [threads, search]);
+
+  // Mark incoming unread messages read once the conversation is open.
+  useEffect(() => {
+    if (!selectedId || messages.length === 0) return;
+    const unreadIncoming = messages
+      .filter((message) => message.senderType !== 'counselor' && message.isRead === false)
+      .map((message) => message.id);
+    if (unreadIncoming.length === 0) return;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        await fetch('/api/employee/messages', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ threadId: selectedId, messageIds: unreadIncoming }),
+        });
+        if (!cancelled) await loadThreads();
+      } catch {
+        // Read receipts are best-effort.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
     };
-    setContacts((prev) =>
-      prev.map((c) =>
-        c.id === selectedContactId
-          ? { ...c, messages: [...c.messages, newMsg], lastMessage: newMsg.text, lastTime: 'Just now' }
-          : c
-      )
-    );
-    setMessageInput('');
-    setShowQuickReplies(false);
-    toast.success('Message sent');
-  };
+  }, [selectedId, messages, loadThreads]);
 
-  const handleQuickReply = (text: string) => {
-    setMessageInput(text);
-    setShowQuickReplies(false);
+  const sendMessage = async () => {
+    if (!selectedId) return;
+    const content = draft.trim();
+    if (!content) {
+      setActionError('Write a message before sending.');
+      return;
+    }
+    setSending(true);
+    setActionError(null);
+    try {
+      const response = await fetch('/api/employee/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ threadId: selectedId, content }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload?.success === false) {
+        setActionError(payload?.error || `Could not send the message (HTTP ${response.status})`);
+        return;
+      }
+      setDraft('');
+      await loadMessages(selectedId);
+      await loadThreads();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Could not send the message');
+    } finally {
+      setSending(false);
+    }
   };
-
-  if (loading) {
-    return (
-      <div className="flex gap-0 h-[calc(100vh-3.5rem)]">
-        <div className="w-80 border-r border-alo-border bg-white p-4 space-y-3 hidden md:block">
-          <Skeleton className="h-9 w-full" />
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-lg" />
-          ))}
-        </div>
-        <div className="flex-1 p-6 space-y-4">
-          <Skeleton className="h-12 w-full" />
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className={cn('h-12 w-3/4 rounded-xl', i % 2 === 0 ? 'ml-auto w-2/3' : '')} />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="flex gap-0 h-[calc(100vh-3.5rem)]">
-      {/* Left panel - Conversation list */}
-      <div className="w-80 border-r border-alo-border bg-white flex flex-col shrink-0 hidden md:flex">
-        <div className="p-3 border-b border-alo-border">
-          <div className="flex items-center gap-2 mb-3">
-            <MessageCircle className="w-5 h-5 text-green-600" />
-            <h2 className="font-semibold text-alo-text">WhatsApp</h2>
-            <Badge variant="secondary" className="ml-auto text-[11px] bg-green-100 text-green-700">
-              {contacts.reduce((a, c) => a + c.unread, 0)} unread
-            </Badge>
-          </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-alo-text-muted" />
-            <Input
-              placeholder="Search contacts..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-9 bg-alo-page border-alo-border text-sm"
-            />
-          </div>
+    <div className="min-h-screen space-y-4 bg-alo-page p-4 lg:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-alo-text flex items-center gap-2 text-2xl font-bold">
+            <Smartphone className="text-alo-brand h-6 w-6" />
+            WhatsApp
+          </h1>
+          <p className="text-alo-text-muted mt-1 text-sm">
+            WhatsApp conversations assigned to you
+            {totalUnread > 0 ? ` · ${totalUnread} unread` : ''}
+          </p>
         </div>
-        <ScrollArea className="flex-1">
-          {filteredContacts.map((contact) => (
-            <button
-              key={contact.id}
-              onClick={() => {
-                setSelectedContactId(contact.id);
-                setContacts((prev) =>
-                  prev.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c))
-                );
-              }}
-              className={cn(
-                'w-full flex items-start gap-3 px-3 py-3 text-left transition-colors border-b border-alo-border/50',
-                selectedContactId === contact.id
-                  ? 'bg-green-50'
-                  : 'hover:bg-alo-page/50'
-              )}
-            >
-              <div className="relative shrink-0">
-                <Avatar className="w-10 h-10">
-                  <AvatarFallback className="bg-green-100 text-green-700 text-xs font-semibold">
-                    {contact.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-                {contact.online && (
-                  <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <span className={cn('text-sm font-medium truncate', selectedContactId === contact.id ? 'text-green-800' : 'text-alo-text')}>
-                    {contact.name}
-                  </span>
-                  <span className="text-[10px] text-alo-text-muted shrink-0 ml-2">{contact.lastTime}</span>
-                </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <p className="text-xs text-alo-text-secondary truncate flex-1">
-                    {selectedContactId === contact.id && contact.messages.length > 0
-                      ? (contact.messages[contact.messages.length - 1].isMine ? 'You: ' : '') + contact.lastMessage
-                      : contact.lastMessage}
-                  </p>
-                  {contact.unread > 0 && (
-                    <span className="w-5 h-5 rounded-full bg-green-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">
-                      {contact.unread}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </button>
-          ))}
-          {filteredContacts.length === 0 && (
-            <div className="py-8 text-center">
-              <p className="text-sm text-alo-text-secondary">No conversations found</p>
-            </div>
-          )}
-        </ScrollArea>
+        <Button variant="outline" size="sm" onClick={() => void loadThreads()}>
+          <RefreshCw className={`mr-1 h-4 w-4 ${threadState.loading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
 
-      {/* Center - Message thread */}
-      <div className="flex-1 flex flex-col bg-alo-page min-w-0">
-        {selectedContact ? (
-          <>
-            {/* Chat header */}
-            <div className="h-14 bg-white border-b border-alo-border flex items-center px-4 gap-3 shrink-0">
-              <div className="relative">
-                <Avatar className="w-9 h-9">
-                  <AvatarFallback className="bg-green-100 text-green-700 text-xs font-semibold">
-                    {selectedContact.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-                {selectedContact.online && (
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-white" />
-                )}
+      {actionError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p className="font-medium">{actionError}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="grid gap-4 lg:grid-cols-12">
+        {/* ── Conversation list ── */}
+        <Card className="lg:col-span-4">
+          <CardHeader className="space-y-3">
+            <CardTitle className="text-base">Conversations ({threads.length})</CardTitle>
+            <div className="relative">
+              <Search className="text-alo-text-muted absolute left-2.5 top-2.5 h-4 w-4" />
+              <Input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search thread, student or preview"
+                className="pl-8"
+              />
+            </div>
+          </CardHeader>
+          <CardContent>
+            {threadState.error && (
+              <div className="bg-destructive/10 text-destructive mb-3 flex items-start gap-2 rounded-lg p-3 text-sm">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">{threadState.error}</p>
+                  <button
+                    type="button"
+                    className="mt-1 underline underline-offset-2"
+                    onClick={() => void loadThreads()}
+                  >
+                    Try again
+                  </button>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-alo-text">{selectedContact.name}</p>
-                <p className="text-[11px] text-alo-text-muted">
-                  {selectedContact.online ? (
-                    <span className="text-green-600">Online</span>
-                  ) : (
-                    'Last seen ' + selectedContact.lastSeen
-                  )}
+            )}
+
+            {threadState.loading ? (
+              <p className="text-alo-text-muted py-10 text-center text-sm">
+                Loading conversations…
+              </p>
+            ) : filteredThreads.length === 0 && !threadState.error ? (
+              <div className="text-alo-text-muted flex flex-col items-center gap-2 py-12 text-center">
+                <Inbox className="h-8 w-8 opacity-30" />
+                <p className="text-sm">
+                  {threads.length === 0
+                    ? 'No WhatsApp conversation is assigned to you yet.'
+                    : 'No conversation matches that search.'}
                 </p>
               </div>
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="md:hidden"
-                  onClick={() => setShowContactInfo(true)}
-                >
-                  <MoreVertical className="w-4 h-4 text-alo-text-secondary" />
-                </Button>
-                <Button variant="ghost" size="icon-sm" onClick={() => setShowContactInfo(!showContactInfo)} className="hidden lg:flex">
-                  <UserCircle className="w-4 h-4 text-alo-text-secondary" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Messages area */}
-            <ScrollArea className="flex-1 p-4">
-              <div className="max-w-2xl mx-auto space-y-2">
-                {selectedContact.messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={cn('flex', msg.isMine ? 'justify-end' : 'justify-start')}
-                  >
-                    <div
+            ) : (
+              <ScrollArea className="max-h-[600px] pr-2">
+                <div className="space-y-2">
+                  {filteredThreads.map((thread) => (
+                    <button
+                      key={thread.id}
+                      type="button"
+                      onClick={() => setSelectedId(thread.id)}
                       className={cn(
-                        'max-w-[75%] px-3 py-2 rounded-xl text-sm leading-relaxed',
-                        msg.isMine
-                          ? 'bg-[#25D366] text-white rounded-br-sm'
-                          : 'bg-white text-alo-text border border-alo-border rounded-bl-sm'
+                        'w-full rounded-lg border p-3 text-left transition-colors',
+                        selectedId === thread.id ? 'border-alo-brand bg-muted/60' : 'hover:bg-muted/40',
                       )}
                     >
-                      <p>{msg.text}</p>
-                      <div className={cn(
-                        'flex items-center gap-1 mt-1 justify-end',
-                        msg.isMine ? 'text-green-100' : 'text-alo-text-muted'
-                      )}>
-                        <span className="text-[10px]">{msg.sentAt}</span>
-                        {msg.isMine && msg.status === 'read' && <CheckCheck className="w-3 h-3" />}
-                        {msg.isMine && msg.status === 'delivered' && <CheckCheck className="w-3 h-3" />}
-                        {msg.isMine && msg.status === 'sent' && <Check className="w-3 h-3" />}
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="truncate font-medium">
+                          {thread.subject || thread.lastMessagePreview || thread.threadCode || 'Untitled conversation'}
+                        </p>
+                        {thread.unreadCount && thread.unreadCount > 0 ? (
+                          <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[10px]">
+                            {thread.unreadCount}
+                          </Badge>
+                        ) : null}
                       </div>
-                    </div>
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea>
+                      <p className="text-alo-text-muted mt-1 text-xs">
+                        {thread.threadCode || 'No thread code'}
+                        {thread.studentId ? ` · Student ${thread.studentId}` : ''}
+                      </p>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                        {priorityBadge(thread.priority)}
+                        <span className="text-alo-text-muted flex items-center gap-1 text-[10px]">
+                          <Clock className="h-3 w-3" />
+                          {formatTimestamp(thread.lastMessageAt)}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
+          </CardContent>
+        </Card>
 
-            {/* Message input */}
-            <div className="bg-white border-t border-alo-border p-3 shrink-0">
-              <div className="max-w-2xl mx-auto flex items-end gap-2">
-                <div className="relative">
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => setShowQuickReplies(!showQuickReplies)}
-                    className="text-alo-text-muted"
-                  >
-                    <Zap className="w-4 h-4" />
-                  </Button>
-                  {showQuickReplies && (
-                    <div className="absolute bottom-full left-0 mb-2 w-72 bg-white rounded-xl shadow-lg border border-alo-border z-10 overflow-hidden">
-                      <div className="px-3 py-2 bg-alo-page border-b border-alo-border">
-                        <p className="text-xs font-semibold text-alo-text">Quick Replies</p>
-                      </div>
-                      <ScrollArea className="max-h-60">
-                        {quickReplies.map((reply, i) => (
-                          <button
-                            key={i}
-                            onClick={() => handleQuickReply(reply)}
-                            className="w-full text-left px-3 py-2 text-xs text-alo-text-secondary hover:bg-green-50 hover:text-green-700 transition-colors border-b border-alo-border/50 last:border-0"
-                          >
-                            {reply}
-                          </button>
-                        ))}
-                      </ScrollArea>
-                    </div>
+        {/* ── Selected conversation ── */}
+        <Card className="lg:col-span-8">
+          <CardHeader>
+            <CardTitle className="text-base">
+              {selectedThread
+                ? selectedThread.subject || selectedThread.threadCode || 'Conversation'
+                : 'No conversation selected'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!selectedThread ? (
+              <p className="text-alo-text-muted py-12 text-center text-sm">
+                Select a conversation to read its messages and reply.
+              </p>
+            ) : (
+              <>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div>
+                    <p className="text-alo-text-muted text-xs">Student</p>
+                    <p className="text-sm">{selectedThread.studentId || 'Not linked'}</p>
+                  </div>
+                  <div>
+                    <p className="text-alo-text-muted text-xs">Intent</p>
+                    <p className="text-sm">{selectedThread.intent || 'general'}</p>
+                  </div>
+                  <div>
+                    <p className="text-alo-text-muted text-xs">SLA</p>
+                    <p className="text-sm">{selectedThread.slaStatus || 'none'}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  <Badge variant="outline" className="text-[10px]">
+                    Status: {selectedThread.status || 'unknown'}
+                  </Badge>
+                  {selectedThread.isAiHandled ? (
+                    <Badge variant="outline" className="bg-violet-100 text-violet-700 text-[10px]">
+                      AI was handling
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-[10px]">Human handling</Badge>
                   )}
                 </div>
-                <div className="flex-1 relative">
-                  <Input
-                    placeholder="Type a message..."
-                    value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-                    className="pr-16 h-10 bg-alo-page border-alo-border text-sm"
-                  />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="w-7 h-7 text-alo-text-muted">
-                      <Paperclip className="w-3.5 h-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      className="w-7 h-7 text-green-600"
-                      onClick={handleSend}
-                      disabled={!messageInput.trim()}
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                    </Button>
+
+                {messageState.error && (
+                  <div className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-sm">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <div>
+                      <p className="font-medium">{messageState.error}</p>
+                      <button
+                        type="button"
+                        className="mt-1 underline underline-offset-2"
+                        onClick={() => void loadMessages(selectedThread.id)}
+                      >
+                        Try again
+                      </button>
+                    </div>
                   </div>
+                )}
+
+                <div className="max-h-[400px] space-y-3 overflow-y-auto rounded-lg border p-3">
+                  {messageState.loading ? (
+                    <p className="text-alo-text-muted py-8 text-center text-sm">
+                      Loading messages…
+                    </p>
+                  ) : messages.length === 0 && !messageState.error ? (
+                    <p className="text-alo-text-muted py-8 text-center text-sm">
+                      No message has been recorded in this conversation yet.
+                    </p>
+                  ) : (
+                    messages.map((message) => {
+                      const mine = message.senderType === 'counselor';
+                      return (
+                        <div
+                          key={message.id}
+                          className={cn(
+                            'max-w-[85%] rounded-lg border p-3 text-sm',
+                            mine ? 'bg-primary/5 ml-auto' : 'bg-muted/40',
+                          )}
+                        >
+                          <div className="mb-1 flex flex-wrap items-center gap-2">
+                            <span className="text-xs font-medium">
+                              {message.senderName || (mine ? 'You' : 'Student')}
+                            </span>
+                            {message.isInternal ? (
+                              <Badge variant="outline" className="text-[10px]">Internal</Badge>
+                            ) : null}
+                            {message.isAiGenerated ? (
+                              <Badge variant="outline" className="text-[10px]">AI drafted</Badge>
+                            ) : null}
+                            <span className="text-alo-text-muted text-[10px]">
+                              {formatTimestamp(message.createdAt)}
+                            </span>
+                          </div>
+                          <p className="whitespace-pre-wrap">{message.content}</p>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
-                <MessageCircle className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-alo-text">WhatsApp Conversations</h3>
-              <p className="text-sm text-alo-text-muted mt-1">Select a contact to start chatting</p>
-            </div>
-          </div>
-        )}
+
+                <div>
+                  <label htmlFor="wa-draft" className="text-alo-text-muted text-xs">
+                    Reply
+                  </label>
+                  <Textarea
+                    id="wa-draft"
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    placeholder="Write your message"
+                    className="mt-1 text-sm"
+                    rows={4}
+                  />
+                </div>
+
+                <Button size="sm" onClick={() => void sendMessage()} disabled={sending}>
+                  <Send className="mr-1 h-4 w-4" />
+                  {sending ? 'Sending…' : 'Send message'}
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Right panel - Contact info sidebar */}
-      {selectedContact && showContactInfo && (
-        <div className="w-72 border-l border-alo-border bg-white p-4 space-y-4 shrink-0 hidden lg:block overflow-y-auto">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-alo-text">Contact Info</h3>
-            <Button variant="ghost" size="icon-sm" onClick={() => setShowContactInfo(false)}>
-              <MoreVertical className="w-4 h-4 text-alo-text-muted" />
-            </Button>
-          </div>
-          <div className="text-center">
-            <Avatar className="w-16 h-16 mx-auto mb-2">
-              <AvatarFallback className="bg-green-100 text-green-700 text-lg font-semibold">
-                {selectedContact.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-              </AvatarFallback>
-            </Avatar>
-            <p className="font-semibold text-alo-text">{selectedContact.name}</p>
-            <p className={cn('text-xs font-medium px-2 py-0.5 rounded-full inline-block mt-1', statusColors[selectedContact.leadStatus])}>
-              {selectedContact.leadStatus}
-            </p>
-          </div>
-          <Separator />
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm">
-              <Phone className="w-4 h-4 text-alo-text-muted" />
-              <span className="text-alo-text-secondary">{selectedContact.phone}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Mail className="w-4 h-4 text-alo-text-muted" />
-              <span className="text-alo-text-secondary">{selectedContact.email}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <MapPin className="w-4 h-4 text-alo-text-muted" />
-              <span className="text-alo-text-secondary">{selectedContact.destination}</span>
-            </div>
-          </div>
-          <Separator />
-          <div>
-            <p className="text-xs font-semibold text-alo-text mb-2 flex items-center gap-1">
-              <Tag className="w-3 h-3" /> Tags
-            </p>
-            <div className="flex flex-wrap gap-1">
-              {selectedContact.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-[10px] bg-alo-page">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          </div>
-          <Separator />
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full text-xs"
-            onClick={() => {
-              setView('employee-leads');
-              toast.info('Opening lead details for ' + selectedContact.name);
-            }}
-          >
-            <Users className="w-3.5 h-3.5" /> View Lead Details
-          </Button>
-        </div>
-      )}
+      <Card>
+        <CardContent className="text-alo-text-muted flex items-start gap-2 p-4 text-xs">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Contact names, phone numbers, email addresses, lead status, destination and online
+            presence are not shown: the communication thread stores none of them. Eligibility and
+            fee figures are never asserted here — check a course record and its verified source
+            before quoting anything to a student.
+          </span>
+        </CardContent>
+      </Card>
     </div>
   );
 }
