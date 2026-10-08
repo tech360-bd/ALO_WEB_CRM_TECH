@@ -1,284 +1,325 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
-import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 import {
-  Bell, Mail, FileText, Clock, Shield, CheckCheck,
-  Trash2, Search, Inbox, Filter,
-  CheckCircle, MessageSquare, AlertTriangle, CalendarDays,
+  Bell, CheckCircle, Mail, FileText, Clock, Shield, RefreshCw,
+  AlertTriangle, BellOff, Info, CheckCheck,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-type NotificationType = 'task' | 'message' | 'application' | 'deadline' | 'system';
-type NotificationGroup = 'Today' | 'Yesterday' | 'This Week' | 'Earlier';
+// ============================================================
+// Types — mirror GET /api/employee/notifications
+// ============================================================
 
-interface Notification {
+interface NotificationRow {
   id: string;
-  type: NotificationType;
+  studentId: string;
   title: string;
-  description: string;
-  timeAgo: string;
+  message: string;
+  type: string;
   isRead: boolean;
-  group: NotificationGroup;
-  actionUrl?: string;
+  actionUrl: string;
+  createdAt: string;
 }
 
-const typeConfig: Record<NotificationType, { icon: React.ElementType; color: string; bg: string }> = {
+interface LoadState {
+  loading: boolean;
+  error: string | null;
+}
+
+// Icons keyed by the `type` the record actually carries. Anything the
+// platform has not emitted falls through to a neutral bell.
+const TYPE_ICONS: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
   task: { icon: CheckCircle, color: 'text-blue-600', bg: 'bg-blue-100' },
   message: { icon: Mail, color: 'text-emerald-600', bg: 'bg-emerald-100' },
   application: { icon: FileText, color: 'text-purple-600', bg: 'bg-purple-100' },
   deadline: { icon: Clock, color: 'text-red-600', bg: 'bg-red-100' },
   system: { icon: Shield, color: 'text-amber-600', bg: 'bg-amber-100' },
+  info: { icon: Bell, color: 'text-slate-600', bg: 'bg-slate-100' },
 };
 
-const initialNotifications: Notification[] = [
-  // Today
-  { id: 'n1', type: 'message', title: 'New message from Rahim Uddin', description: 'Sent via WhatsApp: "Thanks for the university list!"', timeAgo: '10 min ago', isRead: false, group: 'Today' },
-  { id: 'n2', type: 'task', title: 'Follow-up task assigned', description: 'You have been assigned to follow up with Mim Akhter regarding Germany MS programs.', timeAgo: '32 min ago', isRead: false, group: 'Today' },
-  { id: 'n3', type: 'application', title: 'Application submitted successfully', description: 'Fatima Akter\'s application to University of Melbourne has been submitted.', timeAgo: '1h ago', isRead: false, group: 'Today' },
-  { id: 'n4', type: 'deadline', title: 'Deadline approaching: UK Jan Intake', description: 'January 2025 UK intake application deadline is in 3 days.', timeAgo: '2h ago', isRead: false, group: 'Today' },
-  // Yesterday
-  { id: 'n5', type: 'message', title: 'Reply from Fatima Akter', description: '"I will send the bank statement by tomorrow InshaAllah."', timeAgo: 'Yesterday', isRead: true, group: 'Yesterday' },
-  { id: 'n6', type: 'system', title: 'System maintenance completed', description: 'The ALO Education platform was updated to version 2.4.1.', timeAgo: 'Yesterday', isRead: true, group: 'Yesterday' },
-  { id: 'n7', type: 'task', title: 'Document verification pending', description: 'Lina Tabassum\'s passport copy needs verification before submission.', timeAgo: 'Yesterday', isRead: false, group: 'Yesterday' },
-  { id: 'n8', type: 'application', title: 'CAS received for Tanvir Ahmed', description: 'University of Leeds has issued the CAS for Tanvir\'s MSc program.', timeAgo: 'Yesterday', isRead: true, group: 'Yesterday' },
-  // This Week
-  { id: 'n9', type: 'deadline', title: 'Scholarship deadline reminder', description: 'Australia Awards scholarship deadline is January 18th. 3 applications pending.', timeAgo: '2 days ago', isRead: true, group: 'This Week' },
-  { id: 'n10', type: 'task', title: 'Weekly report due', description: 'Your weekly counseling report is due by Friday 5:00 PM.', timeAgo: '3 days ago', isRead: true, group: 'This Week' },
-  { id: 'n11', type: 'message', title: 'New inquiry from Nusrat Jahan', description: 'Interested in studying Data Science in the USA. GRE score: 320.', timeAgo: '3 days ago', isRead: true, group: 'This Week' },
-  { id: 'n12', type: 'application', title: 'Offer letter received', description: 'Imran Hossain received an offer from Seneca College for Diploma in Business Management.', timeAgo: '4 days ago', isRead: true, group: 'This Week' },
-  // Earlier
-  { id: 'n13', type: 'system', title: 'New policy update', description: 'Employee leave policy has been updated. Please review the changes in the HR portal.', timeAgo: '1 week ago', isRead: true, group: 'Earlier' },
-  { id: 'n14', type: 'deadline', title: 'Monthly targets completed', description: 'Congratulations! You have met your monthly lead conversion target for December.', timeAgo: '2 weeks ago', isRead: true, group: 'Earlier' },
-  { id: 'n15', type: 'task', title: 'Performance review scheduled', description: 'Your Q4 performance review is scheduled for January 30th at 2:00 PM.', timeAgo: '2 weeks ago', isRead: true, group: 'Earlier' },
-];
+const DEFAULT_ICON = { icon: Bell, color: 'text-slate-600', bg: 'bg-slate-100' };
 
-const groups: NotificationGroup[] = ['Today', 'Yesterday', 'This Week', 'Earlier'];
+function startOfToday(): number {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now.getTime();
+}
+
+// Buckets derived from each record's own timestamp.
+function groupOf(createdAt: string): 'Today' | 'Yesterday' | 'Earlier' | null {
+  const date = new Date(createdAt);
+  if (Number.isNaN(date.getTime())) return null;
+  const todayStart = startOfToday();
+  const time = date.getTime();
+  if (time >= todayStart) return 'Today';
+  if (time >= todayStart - 24 * 60 * 60 * 1000) return 'Yesterday';
+  return 'Earlier';
+}
+
+const GROUPS = ['Today', 'Yesterday', 'Earlier'] as const;
+
+function formatTimestamp(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
 
 export default function EmployeeNotificationsPage() {
-  const { setView } = usePortalStore();
-  const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [filter, setFilter] = useState<'all' | 'unread' | 'tasks' | 'messages'>('all');
-  const [search, setSearch] = useState('');
+  const [notifications, setNotifications] = useState<NotificationRow[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [state, setState] = useState<LoadState>({ loading: true, error: null });
+  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setNotifications(initialNotifications);
-      setLoading(false);
-    }, 500);
-    return () => clearTimeout(t);
+  const load = useCallback(async () => {
+    setState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/employee/notifications');
+      if (!response.ok) throw new Error(`Could not load notifications (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (payload?.success === false) throw new Error(payload?.error || 'Notifications are unavailable');
+      setNotifications(Array.isArray(payload?.notifications) ? payload.notifications : []);
+      setUnreadCount(Number(payload?.unreadCount) || 0);
+      setState({ loading: false, error: null });
+    } catch (error) {
+      setNotifications([]);
+      setUnreadCount(0);
+      setState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load notifications',
+      });
+    }
   }, []);
 
-  const filteredNotifications = useMemo(() => {
-    let list = notifications;
-    if (search) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (n) => n.title.toLowerCase().includes(q) || n.description.toLowerCase().includes(q)
-      );
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const markRead = async (notificationId: string) => {
+    setBusy(true);
+    try {
+      const response = await fetch('/api/employee/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationId }),
+      });
+      if (!response.ok) return;
+      await load();
+    } catch {
+      // Marking one notification read is best-effort; the list still shows
+      // its true state on the next load.
+    } finally {
+      setBusy(false);
     }
-    if (filter === 'unread') list = list.filter((n) => !n.isRead);
-    if (filter === 'tasks') list = list.filter((n) => n.type === 'task');
-    if (filter === 'messages') list = list.filter((n) => n.type === 'message');
-    return list;
-  }, [notifications, filter, search]);
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-  const taskCount = notifications.filter((n) => n.type === 'task').length;
-  const messageCount = notifications.filter((n) => n.type === 'message').length;
-
-  const handleMarkRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
   };
 
-  const handleMarkAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-    toast.success('All notifications marked as read');
+  const markAllRead = async () => {
+    setBusy(true);
+    try {
+      const response = await fetch('/api/employee/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ markAllRead: true }),
+      });
+      if (!response.ok) return;
+      await load();
+    } catch {
+      // Same reasoning as markRead.
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-    toast.success('Notification deleted');
-  };
+  const visible = useMemo(
+    () => notifications.filter((notification) => filter === 'all' || !notification.isRead),
+    [notifications, filter],
+  );
 
-  const filterTabs: { key: 'all' | 'unread' | 'tasks' | 'messages'; label: string; count?: number }[] = [
-    { key: 'all', label: 'All', count: notifications.length },
-    { key: 'unread', label: 'Unread', count: unreadCount },
-    { key: 'tasks', label: 'Tasks', count: taskCount },
-    { key: 'messages', label: 'Messages', count: messageCount },
-  ];
-
-  if (loading) {
-    return (
-      <div className="space-y-6 p-4 lg:p-6">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-10 w-full" />
-        {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 rounded-xl" />
-        ))}
-      </div>
-    );
-  }
-
-  const groupedNotifications = groups.map((group) => ({
-    group,
-    items: filteredNotifications.filter((n) => n.group === group),
-  })).filter((g) => g.items.length > 0);
+  const grouped = useMemo(() => {
+    const buckets = new Map<string, NotificationRow[]>();
+    visible.forEach((notification) => {
+      const group = groupOf(notification.createdAt);
+      if (!group) return;
+      if (!buckets.has(group)) buckets.set(group, []);
+      buckets.get(group)!.push(notification);
+    });
+    return GROUPS.map((group) => ({ group, items: buckets.get(group) || [] }))
+      .filter((entry) => entry.items.length > 0);
+  }, [visible]);
 
   return (
-    <div className="space-y-4 p-4 lg:p-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-alo-text">Notifications</h1>
-          <p className="text-sm text-alo-text-muted mt-1">
-            Stay updated on your tasks, messages, and alerts
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+            <Bell className="h-6 w-6 text-primary" />
+            Notifications
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            {unreadCount > 0
+              ? `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`
+              : 'Nothing is unread'}
           </p>
         </div>
-        {unreadCount > 0 && (
-          <Button variant="outline" size="sm" onClick={handleMarkAllRead} className="text-xs">
-            <CheckCheck className="w-3.5 h-3.5 mr-1" /> Mark all read
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant={filter === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('all')}
+          >
+            All ({notifications.length})
           </Button>
-        )}
+          <Button
+            variant={filter === 'unread' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('unread')}
+          >
+            Unread ({unreadCount})
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void markAllRead()}
+            disabled={busy || unreadCount === 0}
+          >
+            <CheckCheck className="mr-1 h-4 w-4" />
+            Mark all read
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => void load()}>
+            <RefreshCw className={`mr-1 h-4 w-4 ${state.loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
       </div>
 
-      {/* Search + Filters */}
-      <Card className="rounded-xl border border-alo-border">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-alo-text-muted" />
-              <Input
-                placeholder="Search notifications..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 h-9 bg-alo-page border-alo-border text-sm"
-              />
+      {state.error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+              <p className="font-medium">{state.error}</p>
+              <button
+                type="button"
+                className="mt-1 underline underline-offset-2"
+                onClick={() => void load()}
+              >
+                Try again
+              </button>
             </div>
-            <div className="flex items-center gap-1 bg-alo-page rounded-lg p-0.5">
-              {filterTabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setFilter(tab.key)}
-                  className={cn(
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all',
-                    filter === tab.key
-                      ? 'bg-white shadow-sm text-alo-brand'
-                      : 'text-alo-text-muted hover:text-alo-text'
-                  )}
-                >
-                  {tab.label}
-                  {tab.count !== undefined && tab.count > 0 && (
-                    <span className={cn(
-                      'text-[10px] px-1.5 py-0.5 rounded-full font-medium',
-                      filter === tab.key ? 'bg-alo-brand-light text-alo-brand' : 'bg-white text-alo-text-muted'
-                    )}>
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {state.loading ? (
+        <Card>
+          <CardContent className="text-muted-foreground py-12 text-center text-sm">
+            Loading notifications…
+          </CardContent>
+        </Card>
+      ) : visible.length === 0 && !state.error ? (
+        <Card>
+          <CardContent className="text-muted-foreground flex flex-col items-center gap-2 py-14 text-center">
+            <BellOff className="h-8 w-8 opacity-30" />
+            <p className="text-sm">
+              {notifications.length === 0
+                ? 'No notification has been raised yet.'
+                : 'No unread notification. Everything is up to date.'}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-5">
+          {grouped.map(({ group, items }) => (
+            <div key={group} className="space-y-2">
+              <h2 className="text-muted-foreground text-xs font-semibold uppercase tracking-wide">
+                {group}
+              </h2>
+              <div className="space-y-2">
+                {items.map((notification) => {
+                  const meta = TYPE_ICONS[notification.type] || DEFAULT_ICON;
+                  const Icon = meta.icon;
+                  return (
+                    <Card
+                      key={notification.id}
+                      className={cn(
+                        'transition-colors',
+                        notification.isRead ? 'bg-white' : 'border-primary/40 bg-primary/[0.03]',
+                      )}
+                    >
+                      <CardContent className="flex items-start gap-3 p-4">
+                        <span className={cn('rounded-full p-2', meta.bg)}>
+                          <Icon className={cn('h-4 w-4', meta.color)} />
+                        </span>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-sm font-medium">
+                              {notification.title || 'Untitled notification'}
+                            </p>
+                            <Badge variant="outline" className="text-[10px]">
+                              {notification.type || 'info'}
+                            </Badge>
+                            {!notification.isRead ? (
+                              <Badge className="bg-blue-100 text-blue-700 text-[10px]">Unread</Badge>
+                            ) : null}
+                          </div>
+
+                          {notification.message ? (
+                            <p className="text-muted-foreground mt-1 text-sm whitespace-pre-wrap">
+                              {notification.message}
+                            </p>
+                          ) : null}
+
+                          <p className="text-muted-foreground mt-1.5 text-[11px]">
+                            {formatTimestamp(notification.createdAt)}
+                            {notification.studentId ? ` · Student ${notification.studentId}` : ''}
+                          </p>
+
+                          {notification.actionUrl ? (
+                            <a
+                              href={notification.actionUrl}
+                              className="mt-2 inline-block text-sm underline underline-offset-2"
+                            >
+                              Open
+                            </a>
+                          ) : null}
+                        </div>
+
+                        {!notification.isRead && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => void markRead(notification.id)}
+                            disabled={busy}
+                          >
+                            Mark read
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          ))}
+        </div>
+      )}
+
+      <Card>
+        <CardContent className="text-muted-foreground flex items-start gap-2 pt-6 text-xs">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Grouping is computed from each record&apos;s own timestamp, and the type badge shows
+            the type stored on the record. Nothing here is inferred: if the platform has not
+            raised a notification, the list is empty.
+          </span>
         </CardContent>
       </Card>
-
-      {/* Notification groups */}
-      <div className="space-y-6">
-        {groupedNotifications.map(({ group, items }) => (
-          <div key={group}>
-            <div className="flex items-center gap-2 mb-3">
-              <h2 className="text-xs font-semibold text-alo-text-muted uppercase tracking-wide">{group}</h2>
-              <div className="flex-1 border-t border-alo-border" />
-              <span className="text-[11px] text-alo-text-muted">{items.length} notification{items.length !== 1 ? 's' : ''}</span>
-            </div>
-            <div className="space-y-2">
-              {items.map((notif) => {
-                const cfg = typeConfig[notif.type];
-                const Icon = cfg.icon;
-                return (
-                  <Card
-                    key={notif.id}
-                    className={cn(
-                      'rounded-xl border border-alo-border transition-all cursor-pointer hover:shadow-sm',
-                      !notif.isRead && 'bg-alo-brand-light/30 border-alo-brand/20'
-                    )}
-                    onClick={() => handleMarkRead(notif.id)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        {/* Unread indicator */}
-                        <div className="flex flex-col items-center gap-1 shrink-0 mt-0.5">
-                          {!notif.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-alo-brand shrink-0" />
-                          )}
-                          {notif.isRead && <span className="w-2 h-2 shrink-0" />}
-                          <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center mt-0.5', cfg.bg)}>
-                            <Icon className={cn('w-4 h-4', cfg.color)} />
-                          </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <p className={cn(
-                              'text-sm truncate',
-                              !notif.isRead ? 'font-semibold text-alo-text' : 'font-medium text-alo-text-secondary'
-                            )}>
-                              {notif.title}
-                            </p>
-                            <span className="text-[11px] text-alo-text-muted shrink-0">{notif.timeAgo}</span>
-                          </div>
-                          <p className="text-xs text-alo-text-secondary mt-0.5 line-clamp-2">{notif.description}</p>
-                        </div>
-                        <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-                          {!notif.isRead && (
-                            <Button variant="ghost" size="icon-sm" onClick={() => handleMarkRead(notif.id)} className="text-alo-text-muted">
-                              <CheckCheck className="w-3.5 h-3.5" />
-                            </Button>
-                          )}
-                          <Button variant="ghost" size="icon-sm" onClick={() => handleDelete(notif.id)} className="text-alo-text-muted hover:text-red-500">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-
-        {groupedNotifications.length === 0 && (
-          <div className="py-16 text-center">
-            <Inbox className="w-12 h-12 text-alo-text-muted/40 mx-auto mb-3" />
-            <h3 className="text-sm font-semibold text-alo-text">No notifications</h3>
-            <p className="text-xs text-alo-text-muted mt-1">
-              {filter !== 'all' ? 'No notifications match your current filter' : 'You\'re all caught up!'}
-            </p>
-            {filter !== 'all' && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-3 text-xs"
-                onClick={() => setFilter('all')}
-              >
-                View all notifications
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
