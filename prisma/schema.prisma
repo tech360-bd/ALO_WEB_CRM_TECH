@@ -3117,9 +3117,19 @@ model EmployeeActivationToken {
 // ==========================================
 
 model PartnerProfile {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  partnerId         String   @unique
+  id     String @id @default(cuid())
+  userId String @unique
+  // partnerId is the TENANT key, not a per-user key.
+  //
+  // This was `@unique`, which made it physically impossible for more than one
+  // user to belong to the same partner company — so the Starter package
+  // ("1 Partner Super Admin + 2 Employees = 3 seats") could never work: the
+  // second user creation always failed with a unique-constraint error, and
+  // every seat-limit query could return at most 1. It is now an index.
+  partnerId String
+  // Role of this user WITHIN the partner tenant. Only PARTNER_SUPER_ADMIN may
+  // manage users, request seats, approve marketing and connect social accounts.
+  partnerRole       String   @default("PARTNER_SUPER_ADMIN") // PARTNER_SUPER_ADMIN | PARTNER_COUNSELOR | PARTNER_APPLICATION_ASSISTANT | PARTNER_MARKETING_ASSISTANT | PARTNER_DOCUMENT_ASSISTANT | PARTNER_VIEWER
   companyName       String   @default("")
   contactPerson     String   @default("")
   businessType      String   @default("")
@@ -3134,6 +3144,9 @@ model PartnerProfile {
   updatedAt         DateTime @updatedAt
 
   user PortalUser @relation(fields: [userId], references: [id])
+
+  @@index([partnerId])
+  @@index([partnerId, partnerRole])
 }
 
 // ==========================================
@@ -3760,8 +3773,16 @@ model PartnerPackageAssignment {
   startsAt   DateTime  @default(now())
   expiresAt  DateTime?
   status     String    @default("active")
+  // Seat limit granted on top of the package default after ALO Education
+  // approves an extra-seat request. Null means "use the package's maxUsers".
+  // Without this, approving a seat request had no effect on the actual limit.
+  seatOverride Int?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+
+  @@index([partnerId])
+  @@index([partnerId, status])
+  @@index([packageId])
 }
 
 // ==========================================
@@ -3813,6 +3834,10 @@ model PartnerUserSeatRequest {
   reviewNote          String   @default("")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([partnerId, status])
+  @@index([status, createdAt])
 }
 
 // ==========================================

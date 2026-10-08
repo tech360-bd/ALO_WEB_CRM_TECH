@@ -8,7 +8,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'no
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 const root = process.cwd();
-const auditBase = '9e504ad2'; // Existing repository before this audit; avoid recursive indexing of generated outputs.
+const auditBase = process.env.AUDIT_BASE || 'HEAD'; // Audit the current checkout; an explicit ref can compare a previous release.
 const listed = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', auditBase], { encoding: 'utf8', maxBuffer: 20e6 }).split('\0').filter(Boolean);
 const additions = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { encoding: 'utf8', maxBuffer: 20e6 }).split('\0').filter(p => /^(src|tests|scripts)\//.test(p));
 const paths = [...new Set([...listed, ...additions])].filter(p => existsSync(p) && statSync(p).isFile()).sort();
