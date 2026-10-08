@@ -18,6 +18,7 @@ import {
 
 import { usePortalStore } from '@/lib/stores/portal-store';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
+import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
 
 // ============================================================
 // SHARED PUBLIC SHELL
@@ -1143,33 +1144,115 @@ export function PublicResourcesPage() {
   );
 }
 
+/**
+ * Visa readiness overview.
+ *
+ * Rebuilt on COUNTRY_DESTINATIONS: the previous version hard-coded visa fees
+ * (£490, $350, CA$150, A$710) and processing windows with no source and no
+ * verification date, which the data policy does not allow. Those figures are
+ * gone rather than re-cited, because the verified dataset does not carry a
+ * fee or processing-time field to cite.
+ *
+ * Only destinations that actually hold a visa record are listed; anything else
+ * says so explicitly instead of being padded out.
+ */
 export function PublicVisaReadinessPage() {
+  const destinations = Object.values(COUNTRY_DESTINATIONS)
+    .filter((country) => Array.isArray(country.visaSteps) && country.visaSteps.length > 0)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const unverifiedCount = Object.keys(COUNTRY_DESTINATIONS).length - destinations.length;
+
   return (
     <PublicShell
       title="Visa Readiness"
       badge="VISA PREPARATION"
-      subtitle="Comprehensive visa preparation support for all major study destinations."
+      subtitle="Verified student visa routes by destination, each with the official source it was checked against."
     >
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        {[
-          { country: '🇬🇧 UK', visa: 'Student Visa (Tier 4)', processing: '3-15 working days', fee: '£490' },
-          { country: '🇺🇸 USA', visa: 'F-1 Student Visa', processing: '3-30 working days', fee: '$350' },
-          { country: '🇨🇦 Canada', visa: 'Study Permit', processing: '4-8 weeks', fee: 'CA$150' },
-          { country: '🇦🇺 Australia', visa: 'Subclass 500', processing: '2-4 weeks', fee: 'A$710' },
-        ].map((v, i) => (
-          <Card key={i} className="p-6">
-            <h3 className="text-2xl mb-2">{v.country}</h3>
-            <div className="space-y-2 text-sm">
-              <div><span className="text-slate-500">Visa Type: </span><span className="font-semibold">{v.visa}</span></div>
-              <div><span className="text-slate-500">Processing Time: </span><span className="font-semibold">{v.processing}</span></div>
-              <div><span className="text-slate-500">Application Fee: </span><span className="font-semibold text-[#F97316]">{v.fee}</span></div>
-            </div>
-          </Card>
-        ))}
-      </div>
+      {destinations.length === 0 ? (
+        <Card className="p-8 text-center">
+          <h3 className="text-lg font-bold text-slate-900 mb-2">Visa information is currently being verified</h3>
+          <p className="text-sm text-slate-600">
+            We only publish visa guidance once it has been checked against an official source. Talk to a counselor
+            about your destination in the meantime.
+          </p>
+        </Card>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {destinations.map((country) => {
+            const visaSources = country.sources.filter((source) =>
+              /visa|immigration|entry/i.test(source.section) || /visa|immigration|entry/i.test(source.sourceName)
+            );
+            return (
+              <Card key={country.slug} className="p-6">
+                <h3 className="text-xl font-bold mb-1 text-slate-900">{country.name}</h3>
+                <p className="text-xs text-slate-500 mb-4">
+                  {country.lastVerifiedAt
+                    ? `Verified ${country.lastVerifiedAt}`
+                    : 'Verification date not recorded'}
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <span className="text-slate-500">Visa route: </span>
+                    <span className="font-semibold">{country.visaType}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Steps recorded: </span>
+                    <span className="font-semibold">{country.visaSteps.length}</span>
+                  </div>
+                  {country.workRights && (
+                    <div>
+                      <span className="text-slate-500">Work rights: </span>
+                      <span className="font-semibold">{country.workRights}</span>
+                    </div>
+                  )}
+                </div>
+                {visaSources.length > 0 && (
+                  <div className="mt-4 pt-3 border-t border-slate-100">
+                    <p className="text-xs font-semibold text-slate-500 mb-1.5">Official sources</p>
+                    <ul className="space-y-1">
+                      {visaSources.slice(0, 3).map((source) => (
+                        <li key={source.sourceUrl} className="text-xs">
+                          <a
+                            href={source.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#2563EB] hover:underline"
+                          >
+                            {source.sourceName}
+                          </a>
+                          <span className="text-slate-400"> · checked {source.lastVerifiedAt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <a
+                  href={`/destinations/${country.slug}`}
+                  className="mt-4 inline-block text-sm font-semibold text-[#2563EB] hover:underline"
+                >
+                  View full {country.name} guide
+                </a>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {unverifiedCount > 0 && (
+        <p className="text-xs text-slate-500 mb-6">
+          {unverifiedCount} other destination{unverifiedCount === 1 ? '' : 's'} we work with{' '}
+          {unverifiedCount === 1 ? 'is' : 'are'} not listed here yet because the visa information has not been
+          verified against an official source.
+        </p>
+      )}
+
       <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Need Visa Help?</h3>
-        <p className="text-blue-100 mb-5">Our visa experts will guide you through the entire process</p>
+        <p className="text-blue-100 mb-5">
+          Fees, processing times and document rules change and differ by nationality. A counselor checks the current
+          requirements for your case against the official source.
+        </p>
         <Button asChild className="bg-[#F97316] text-white hover:brightness-110">
           <a href="/book-consultation">Book Visa Consultation</a>
         </Button>
