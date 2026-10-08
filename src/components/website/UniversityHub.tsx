@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Globe, GraduationCap, Award, Users, Building2, Clock, FileText, Shield, BookOpen, DollarSign, Calendar, CheckCircle2, AlertTriangle, ArrowRight, Star, Briefcase, Home } from 'lucide-react';
+import { MapPin, Globe, GraduationCap, Award, Users, Building2, Clock, FileText, Shield, BookOpen, DollarSign, Calendar, CheckCircle2, AlertTriangle, ArrowRight, Star, Briefcase, Home, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
 import FaqAccordion from './FaqAccordion';
@@ -18,26 +18,66 @@ export default function UniversityHub({ slug }: Props) {
   const [uni, setUni] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [courseListing, setCourseListing] = useState<any>(null);
+  const [courseLoading, setCourseLoading] = useState(true);
+  const [coursePage, setCoursePage] = useState(1);
 
   useEffect(() => {
-    fetch(`/api/universities/${encodeURIComponent(slug)}`)
-      .then(r => {
+    const controller = new AbortController();
+    setLoading(true);
+    setError(null);
+    fetch(`/api/universities/${encodeURIComponent(slug)}`, { signal: controller.signal })
+      .then(async r => {
         if (!r.ok) throw new Error(`Failed ${r.status}`);
         return r.json();
       })
       .then(d => setUni(d.data || d.university))
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
+      .catch((e) => {
+        if (e.name !== 'AbortError') setError(e.message);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, [slug]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setCourseLoading(true);
+    const params = new URLSearchParams({
+      intakeWindow: '2027-01:2028-01',
+      coursePage: String(coursePage),
+      courseLimit: '12',
+    });
+    fetch(`/api/universities/${encodeURIComponent(slug)}?${params.toString()}`, { signal: controller.signal })
+      .then(async r => {
+        const data = await r.json();
+        if (!r.ok || data.success === false) throw new Error(data.error || `Failed ${r.status}`);
+        return data;
+      })
+      .then(d => setCourseListing(d.data || d.university || null))
+      .catch((e) => {
+        if (e.name !== 'AbortError') setCourseListing({ error: e.message, popularCourses: [], intakeWindow: null });
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setCourseLoading(false);
+      });
+    return () => controller.abort();
+  }, [slug, coursePage]);
 
   if (loading) return <div className="p-12 text-center"><div className="h-64 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse max-w-7xl mx-auto" /></div>;
   if (error || !uni) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><p className="text-xs text-gray-500 mt-2">{error || 'University not found'}</p><Link href="/universities"><Button className="mt-4 bg-[#0B5ED7] text-white h-11">Browse Universities</Button></Link></Card></div>;
 
   const name = uni.name;
-  const country = uni.country || 'United Kingdom';
-  const city = uni.city || 'Main Campus';
-  const website = uni.website || uni.officialUrl || '#';
-  const courses = uni.popularCourses || uni.courses || [];
+  const country = uni.country || 'Country not recorded';
+  const city = uni.city || 'City not recorded';
+  const website = uni.website || uni.officialUrl || '';
+  const courses = courseListing?.popularCourses || [];
+  const intakeWindow = courseListing?.intakeWindow;
+  const courseTotal = intakeWindow?.totalCourses ?? 0;
+  const courseTotalPages = intakeWindow?.totalPages ?? 0;
+  const firstCourseNumber = courseTotal === 0 ? 0 : (coursePage - 1) * (intakeWindow?.pageSize || 12) + 1;
+  const lastCourseNumber = Math.min(coursePage * (intakeWindow?.pageSize || 12), courseTotal);
   const scholarships = uni.scholarshipList || uni.scholarshipRecords || [];
   const rankings = uni.rankings || uni.rankingRecords || [];
   const tuition = uni.tuitionRange || 'Check official source';
@@ -54,17 +94,18 @@ export default function UniversityHub({ slug }: Props) {
         {/* 1. University Header */}
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 md:p-10 shadow-sm">
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-xs">Verified Partner University</Badge>
-            {uni.worldRanking && <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[#0F172A] text-xs">QS Rank #{uni.worldRanking}</Badge>}
-            {uni.verificationStatus && <Badge className={`${uni.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{uni.verificationStatus} {uni.lastVerifiedAt ? `• ${new Date(uni.lastVerifiedAt).toLocaleDateString()}` : ''}</Badge>}
+            <Badge className={`${uni.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-xs`}>
+              {uni.verificationStatus === 'VERIFIED' ? 'Verified university record' : `Verification: ${uni.verificationStatus || 'not verified'}`}
+            </Badge>
+            {uni.worldRanking > 0 && <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[#0F172A] text-xs">World ranking recorded: #{uni.worldRanking}</Badge>}
           </div>
           <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-3">{name}</h1>
           <p className="text-lg text-gray-600 flex items-center gap-2 mb-6"><MapPin className="w-5 h-5 text-[#F97316]" />{city}, {country} {uni.founded ? `• Established ${uni.founded}` : ''}</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-6 font-bold">Apply Through ALO</Button></Link>
-            <Link href="#popular-courses"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">View Courses ({uni.totalCourses || courses.length || 'All'})</Button></Link>
+            <Link href="#popular-courses"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">View Jan 2027–Jan 2028 Courses ({courseTotal})</Button></Link>
             <Link href="/compare"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Compare University</Button></Link>
-            <a href={website} target="_blank" rel="noopener noreferrer"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[#E2E8F0] h-12 px-6 flex gap-1.5"><Globe className="w-4 h-4" />Official Website</Button></a>
+            {website ? <a href={website} target="_blank" rel="noopener noreferrer"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6 flex gap-1.5"><Globe className="w-4 h-4" />Official Website</Button></a> : <Button variant="outline" disabled title="No official website URL is recorded" className="border-[#E2E8F0] h-12 px-6 flex gap-1.5"><Globe className="w-4 h-4" />Official website not recorded</Button>}
           </div>
           {/* Quick stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mt-8 pt-6 border-t border-[#E2E8F0] text-xs">
@@ -73,9 +114,9 @@ export default function UniversityHub({ slug }: Props) {
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Type</p><p className="font-bold">{uni.type || 'University'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">IELTS Min</p><p className="font-bold text-[#0B5ED7]">{ieltsMin}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Tuition</p><p className="font-bold">{tuition}</p></div>
-            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Int Students</p><p className="font-bold">{uni.intlStudents || uni.students || 'Available'}</p></div>
+            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">International student count</p><p className="font-bold">{uni.intlStudents || 'Not recorded'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Scholarships</p><p className="font-bold text-emerald-600">{uni.scholarships ? 'Available' : 'Check'}</p></div>
-            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Courses</p><p className="font-bold">{uni.totalCourses || courses.length || '100+'}</p></div>
+            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Jan 2027–Jan 2028 courses</p><p className="font-bold">{courseLoading ? 'Loading…' : courseTotal}</p></div>
           </div>
         </div>
 
@@ -101,24 +142,79 @@ export default function UniversityHub({ slug }: Props) {
             {/* 7. Why Students Choose */}
             <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Why Students Choose {name}</h3><ul className="space-y-2 text-sm text-gray-700 list-disc list-inside"><li>Ranked institution with global recognition {rankings[0] ? `(Ranking: ${rankings[0].rankingTitle} ${rankings[0].rank} ${rankings[0].rankingYear})` : ''}</li><li>Wide range of courses across Business, Engineering, Computer Science, Health</li><li>Scholarships available for eligible international students</li><li>Post-study work rights per destination country policy</li><li>Official source verified where available</li></ul></Card>
 
-            {/* 8. Popular Courses */}
+            {/* 8. Complete intake-window course listing */}
             <Card id="popular-courses" className="p-6 md:p-8 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-              <h2 className="text-2xl font-bold text-[#0F172A] mb-6 flex items-center gap-2"><GraduationCap className="w-6 h-6 text-[#0B5ED7]" />Popular Courses at {name}</h2>
-              {courses.length === 0 ? <p className="text-sm text-gray-500">Information not currently verified. Please check with an ALO Education counselor.</p> : (
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {courses.slice(0, 8).map((c:any)=>(
-                    <Link key={c.courseId || c.id} href={`/course/${c.slug || c.courseId}`}>
-                      <Card className="p-4 bg-[#F8FAFC] border-[#E2E8F0] hover:border-[#0B5ED7] hover:shadow-sm transition-all rounded-xl h-full">
-                        <Badge className="bg-white border-[#E2E8F0] text-[10px] mb-2">{c.studyLevel}</Badge>
-                        <h4 className="font-semibold text-sm text-[#0F172A] line-clamp-2">{c.courseTitle}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{c.qualification || ''} • {c.durationMonths ? `${Math.round(c.durationMonths/12*10)/10} years` : 'Check duration'}</p>
-                        <p className="text-xs font-semibold text-[#0B5ED7] mt-2">{c.tuitionFee ? `${c.currency || 'GBP'} ${c.tuitionFee}` : 'Check official source for tuition'} {c.currency ? '' : ''}</p>
-                      </Card>
-                    </Link>
-                  ))}
+              <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><GraduationCap className="w-6 h-6 text-[#0B5ED7]" />Courses with intakes: January 2027 – January 2028</h2>
+                  <p className="text-xs text-gray-600 mt-2">All matching active, published course records are paginated; no popular-course top-N limit is applied. Eligibility and intake-source status are shown per record.</p>
+                </div>
+                <Badge className="bg-slate-50 text-slate-700 border-slate-200">Institution code on file: {uni.universityCode?.trim() || 'Not recorded'}</Badge>
+              </div>
+              {intakeWindow && (
+                <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-950" role="status">
+                  <p className="font-semibold">Code coverage is not certified by the stored text fields.</p>
+                  <p className="mt-1">{intakeWindow.courseCodesRecorded} of {intakeWindow.totalCourses} listed course records have a non-empty course-code field; {intakeWindow.courseCodesMissing} have none. This is a field-presence count, not proof that every official code is present, active, or international-student applicable.</p>
                 </div>
               )}
-              <Link href={`/course-finder?university=${uni.universityId}`}><Button variant="outline" className="mt-6 border-[#E2E8F0] w-full h-11">View All {uni.totalCourses || courses.length} Courses at {name} →</Button></Link>
+              {courseLoading && courses.length === 0 ? (
+                <p className="text-sm text-gray-500" role="status">Loading approved course records and their recorded intake data…</p>
+              ) : courseListing?.error ? (
+                <p className="text-sm text-red-700" role="alert">Course data could not be loaded. {courseListing.error}</p>
+              ) : courses.length === 0 ? (
+                <p className="text-sm text-gray-600">No approved, verified course record with a matching intake was returned for this period. This may indicate a data-coverage gap; it does not establish that the university has no courses.</p>
+              ) : (
+                <div className={`grid sm:grid-cols-2 gap-4 ${courseLoading ? 'opacity-60' : ''}`} aria-busy={courseLoading}>
+                  {courses.map((c: any) => {
+                    // Keep the fee/intake record after the basic intake row so its source and verification metadata win when both models contain the same month.
+                    const allIntakes = [...(c.courseIntakes || []), ...(c.intakes || [])];
+                    const uniqueIntakes = Array.from(new Map(allIntakes.map((intake: any) => [`${intake.intakeYear}-${String(intake.intakeMonth).toLowerCase()}`, intake])).values());
+                    const eligibility = String(c.internationalEligibility || 'not_verified').trim();
+                    const eligibilityLabel = !eligibility || eligibility.toLowerCase() === 'not_verified' ? 'Not verified' : eligibility;
+                    return (
+                      <Card key={c.courseId || c.id} className="p-4 bg-[#F8FAFC] border-[#E2E8F0] rounded-xl h-full">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <Badge className="bg-white border-[#E2E8F0] text-[10px]">{c.studyLevel || 'Course level not recorded'}</Badge>
+                          <Badge className={`${c.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{c.verificationStatus || 'NEEDS_REVIEW'}</Badge>
+                        </div>
+                        <h3 className="font-semibold text-sm text-[#0F172A]">{c.courseTitle}</h3>
+                        <p className="text-xs text-gray-600 mt-1">{c.qualification || 'Qualification not recorded'} • {c.durationMonths ? `${Math.round(c.durationMonths / 12 * 10) / 10} years` : 'Duration not recorded'}</p>
+                        <dl className="grid grid-cols-1 gap-1 mt-3 text-xs">
+                          <div><dt className="inline font-semibold">Course code on file:</dt><dd className="inline ml-1">{c.courseCode?.trim() || 'Not recorded'}</dd></div>
+                          <div><dt className="inline font-semibold">International-student eligibility:</dt><dd className="inline ml-1">{eligibilityLabel}</dd></div>
+                        </dl>
+                        <div className="mt-3">
+                          <p className="text-xs font-semibold text-gray-700">Intakes in the requested window</p>
+                          {uniqueIntakes.length ? (
+                            <ul className="mt-1 space-y-1 text-xs text-gray-600">
+                              {uniqueIntakes.map((intake: any, index: number) => (
+                                <li key={`${intake.intakeYear}-${intake.intakeMonth}-${index}`}>
+                                  {intake.intakeMonth} {intake.intakeYear} — status: {intake.status || 'not recorded'}{intake.verificationStatus ? ` • verification: ${intake.verificationStatus}` : ' • intake verification not recorded'}
+                                  {intake.intakeSourceUrl && <a href={intake.intakeSourceUrl} target="_blank" rel="noopener noreferrer" className="ml-1 text-[#0B5ED7] underline">source</a>}
+                                  {!intake.intakeSourceUrl && intake.feeSourceUrl && <a href={intake.feeSourceUrl} target="_blank" rel="noopener noreferrer" className="ml-1 text-[#0B5ED7] underline">source</a>}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : <p className="text-xs text-gray-500 mt-1">Intake details not recorded.</p>}
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-3">Course source: {c.sourceUrl || c.officialUrl || 'Not recorded'}{c.lastVerifiedAt ? ` • Last checked ${new Date(c.lastVerifiedAt).toLocaleDateString()}` : ' • Verification date not recorded'}</p>
+                        <Link href={`/course/${c.slug || c.courseId}`} className="mt-3 inline-flex text-xs font-semibold text-[#0B5ED7] underline">View course details →</Link>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+              {courseTotal > 0 && (
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
+                  <p className="text-xs text-gray-600">Showing {firstCourseNumber}–{lastCourseNumber} of {courseTotal} matching course records</p>
+                  <div className="flex items-center gap-2">
+                    <Button type="button" variant="outline" disabled={coursePage <= 1 || courseLoading} onClick={() => setCoursePage((current) => Math.max(1, current - 1))} aria-label="Previous course page"><ChevronLeft className="size-4" />Previous</Button>
+                    <span className="text-xs text-gray-600">Page {coursePage} of {courseTotalPages}</span>
+                    <Button type="button" variant="outline" disabled={coursePage >= courseTotalPages || courseLoading} onClick={() => setCoursePage((current) => Math.min(courseTotalPages, current + 1))} aria-label="Next course page">Next<ChevronRight className="size-4" /></Button>
+                  </div>
+                </div>
+              )}
+              <p className="text-[11px] text-gray-500 mt-4">This page reports only records currently present and approved in ALO’s database. Missing code or eligibility data is explicitly marked; complete jurisdiction-wide official-code coverage has not been independently established.</p>
             </Card>
 
             {/* 9. Entry Requirements + 10. English Requirements */}
@@ -131,7 +227,7 @@ export default function UniversityHub({ slug }: Props) {
             <div className="grid md:grid-cols-3 gap-4">
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#0B5ED7]" />Tuition Fees</h4><p className="text-lg font-bold text-[#0F172A]">{tuition}</p><p className="text-xs text-gray-500 mt-1">Official Tuition Fee URL: {uni.officialTuitionFeeUrl ? <a href={uni.officialTuitionFeeUrl} target="_blank" className="text-[#0B5ED7] underline">View</a> : 'Information not currently verified.'}</p></Card>
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2"><Award className="w-4 h-4 text-[#F97316]" />Scholarships</h4><p className="text-sm font-semibold">{scholarships.length > 0 ? `${scholarships.length} scholarships available` : 'Scholarships available for eligible students'}</p><p className="text-xs text-gray-500 mt-1">{scholarships.slice(0,2).map((s:any)=> s.scholarshipName || s.name).join(', ') || 'Check scholarship directory'}</p><Link href={`/scholarships?university=${uni.universityId}`} className="text-xs text-[#0B5ED7] underline mt-2 inline-block">View Scholarships →</Link></Card>
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-emerald-600" />Intakes</h4><p className="text-sm">September, January — selected courses May</p><p className="text-xs text-gray-500 mt-1">Check course intake fees for verified deadlines</p></Card>
+              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-emerald-600" />Intakes</h4><p className="text-sm">January 2027 – January 2028</p><p className="text-xs text-gray-500 mt-1">{courseLoading ? 'Loading matching intake records…' : `${courseTotal} matching course records with a recorded intake in this window.`}</p></Card>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">

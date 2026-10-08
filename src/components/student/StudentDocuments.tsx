@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Dialog,
@@ -99,6 +97,7 @@ interface StudentDocument {
   rejectionReason: string | null;
   usedInApplications: string[];
   fileType: string;
+  downloadUrl?: string;
 }
 
 const DOCUMENT_TYPES = [
@@ -146,155 +145,6 @@ const CATEGORY_ICONS: Record<DocumentCategory, React.ElementType> = {
 };
 
 /* ================================================================== */
-/*  MOCK DATA                                                          */
-/* ================================================================== */
-
-const MOCK_DOCUMENTS: StudentDocument[] = [
-  {
-    id: 'doc-001',
-    name: 'Passport (Rahim Uddin)',
-    type: 'Passport',
-    category: 'Identity',
-    status: 'Approved',
-    fileSize: '1.2 MB',
-    uploadedDate: 'Jun 15, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 16, 2025',
-    rejectionReason: null,
-    usedInApplications: ['University of Aberdeen — MSc IB', 'University of Leeds — MSc DS', 'University of Glasgow — MSc CS'],
-    fileType: 'PDF',
-  },
-  {
-    id: 'doc-002',
-    name: 'Passport Photo',
-    type: 'Photo',
-    category: 'Identity',
-    status: 'Approved',
-    fileSize: '245 KB',
-    uploadedDate: 'Jun 15, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 16, 2025',
-    rejectionReason: null,
-    usedInApplications: ['University of Aberdeen — MSc IB', 'University of Leeds — MSc DS'],
-    fileType: 'JPG',
-  },
-  {
-    id: 'doc-003',
-    name: 'National ID Card',
-    type: 'NID/Birth Certificate',
-    category: 'Identity',
-    status: 'Approved',
-    fileSize: '890 KB',
-    uploadedDate: 'Jun 15, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 16, 2025',
-    rejectionReason: null,
-    usedInApplications: [],
-    fileType: 'PDF',
-  },
-  {
-    id: 'doc-004',
-    name: 'SSC Certificate',
-    type: 'SSC Certificate',
-    category: 'Academic',
-    status: 'Approved',
-    fileSize: '1.5 MB',
-    uploadedDate: 'Jun 16, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 17, 2025',
-    rejectionReason: null,
-    usedInApplications: ['University of Glasgow — MSc CS'],
-    fileType: 'PDF',
-  },
-  {
-    id: 'doc-005',
-    name: 'SSC Transcript',
-    type: 'SSC Transcript',
-    category: 'Academic',
-    status: 'Approved',
-    fileSize: '780 KB',
-    uploadedDate: 'Jun 16, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 17, 2025',
-    rejectionReason: null,
-    usedInApplications: ['University of Glasgow — MSc CS'],
-    fileType: 'PDF',
-  },
-  {
-    id: 'doc-006',
-    name: 'HSC Certificate',
-    type: 'HSC Certificate',
-    category: 'Academic',
-    status: 'Rejected',
-    fileSize: '2.1 MB',
-    uploadedDate: 'Jun 17, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 18, 2025',
-    rejectionReason: 'Image is blurry. Please upload a clear scan of the original certificate.',
-    usedInApplications: [],
-    fileType: 'JPG',
-  },
-  {
-    id: 'doc-007',
-    name: 'HSC Transcript',
-    type: 'HSC Transcript',
-    category: 'Academic',
-    status: 'Approved',
-    fileSize: '920 KB',
-    uploadedDate: 'Jun 17, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 18, 2025',
-    rejectionReason: null,
-    usedInApplications: ['University of Glasgow — MSc CS'],
-    fileType: 'PDF',
-  },
-  {
-    id: 'doc-008',
-    name: 'Bachelor Transcript — BSc CSE',
-    type: 'Bachelor Transcript',
-    category: 'Academic',
-    status: 'Approved',
-    fileSize: '1.8 MB',
-    uploadedDate: 'Jun 18, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 19, 2025',
-    rejectionReason: null,
-    usedInApplications: ['University of Aberdeen — MSc IB', 'University of Leeds — MSc DS', 'University of Glasgow — MSc CS'],
-    fileType: 'PDF',
-  },
-  {
-    id: 'doc-009',
-    name: 'IELTS Academic Certificate',
-    type: 'IELTS/PTE/TOEFL/DET Certificate',
-    category: 'English Test',
-    status: 'Approved',
-    fileSize: '560 KB',
-    uploadedDate: 'Jun 19, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 19, 2025',
-    rejectionReason: null,
-    usedInApplications: ['University of Aberdeen — MSc IB', 'University of Glasgow — MSc CS'],
-    fileType: 'PDF',
-  },
-  {
-    id: 'doc-010',
-    name: 'Statement of Purpose — MSc IB',
-    type: 'SOP',
-    category: 'Application',
-    status: 'Approved',
-    fileSize: '340 KB',
-    uploadedDate: 'Jun 20, 2025',
-    reviewedBy: 'Sarah Mitchell',
-    reviewedDate: 'Jun 21, 2025',
-    rejectionReason: null,
-    usedInApplications: ['University of Aberdeen — MSc IB'],
-    fileType: 'PDF',
-  },
-];
-
-const TOTAL_REQUIRED = 18;
-
-/* ================================================================== */
 /*  HELPERS                                                            */
 /* ================================================================== */
 
@@ -340,13 +190,17 @@ function getDocStatusConfig(status: DocumentStatus) {
 function UploadDialog({
   open,
   onOpenChange,
+  onUploaded,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onUploaded: () => Promise<void>;
 }) {
   const [docType, setDocType] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -361,9 +215,10 @@ function UploadDialog({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      setUploadedFile(file.name);
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) {
+      setFile(droppedFile);
+      setError('');
     }
   };
 
@@ -372,32 +227,50 @@ function UploadDialog({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploadedFile(file.name);
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setError('');
     }
   };
 
   const handleSubmit = async () => {
-    const token = usePortalStore.getState().token;
-    if (token && docType && uploadedFile) {
-      try {
-        await fetch('/api/student-portal/documents', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ category: docType, fileName: uploadedFile }),
-        });
-      } catch { /* silent fail – dialog still closes */ }
+    if (!docType || !file) {
+      setError('Choose a document type and a file before uploading.');
+      return;
     }
-    setDocType('');
-    setUploadedFile(null);
-    onOpenChange(false);
+    setBusy(true);
+    setError('');
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      form.append('documentType', docType);
+      const response = await fetch('/api/student/documents', {
+        method: 'POST',
+        credentials: 'include',
+        body: form,
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.success) {
+        setError(result?.error || 'Upload failed. No file was saved.');
+        return;
+      }
+      await onUploaded();
+      setDocType('');
+      setFile(null);
+      onOpenChange(false);
+    } catch {
+      setError('Upload service is unavailable. No success was recorded.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleClose = (open: boolean) => {
     if (!open) {
       setDocType('');
-      setUploadedFile(null);
+      setFile(null);
+      setError('');
     }
     onOpenChange(open);
   };
@@ -442,7 +315,7 @@ function UploadDialog({
                 'flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 cursor-pointer transition-colors',
                 isDragging
                   ? 'border-[#C2410C] bg-orange-50/50'
-                  : uploadedFile
+                  : file
                     ? 'border-emerald-300 bg-emerald-50/30'
                     : 'border-[#0F172A]/15 bg-[#0F172A]/[0.01] hover:border-[#0F172A]/30 hover:bg-[#0F172A]/[0.02]'
               )}
@@ -451,15 +324,15 @@ function UploadDialog({
                 ref={fileInputRef}
                 type="file"
                 className="hidden"
-                accept=".pdf,.jpg,.jpeg,.png"
+                accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
                 onChange={handleFileChange}
               />
-              {uploadedFile ? (
+              {file ? (
                 <>
                   <CheckCircle2 className="size-10 text-emerald-500" />
                   <div className="text-center">
-                    <p className="text-sm font-medium text-emerald-700">{uploadedFile}</p>
-                    <p className="text-xs text-emerald-600/70 mt-0.5">Click or drag to replace</p>
+                    <p className="text-sm font-medium text-emerald-700">{file.name}</p>
+                    <p className="text-xs text-emerald-600/70 mt-0.5">Click or drag to replace the file</p>
                   </div>
                 </>
               ) : (
@@ -469,19 +342,21 @@ function UploadDialog({
                     <p className="text-sm font-medium text-[#0F172A]/70">
                       {isDragging ? 'Drop your file here' : 'Drag files here or click to browse'}
                     </p>
-                    <p className="text-xs text-[#0F172A]/40 mt-1">PDF, JPG, PNG up to 10MB</p>
+                    <p className="text-xs text-[#0F172A]/40 mt-1">PDF, JPG, PNG, GIF, or WEBP up to 20MB</p>
                   </div>
                 </>
               )}
             </div>
           </div>
 
+          {error && <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+
           {/* File type validation note */}
           <div className="flex items-start gap-2 rounded-lg bg-blue-50/50 border border-blue-100 px-3 py-2.5">
             <AlertTriangle className="size-4 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-xs text-blue-700 leading-relaxed">
               <span className="font-semibold">File requirements: </span>
-              Accepted formats are PDF, JPG, and PNG. Maximum file size is 10MB. Ensure all text is clearly readable.
+              Accepted formats are PDF, JPG, PNG, GIF, and WEBP. Maximum file size is 20MB. Ensure all text is clearly readable.
             </p>
           </div>
         </div>
@@ -493,10 +368,10 @@ function UploadDialog({
           <Button
             variant="cta"
             onClick={handleSubmit}
-            disabled={!docType || !uploadedFile}
+            disabled={!docType || !file || busy}
           >
             <Upload className="size-4" />
-            Upload Document
+            {busy ? 'Uploading…' : 'Upload Document'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -607,7 +482,7 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
             <Eye className="size-3.5" />
             View
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5 text-xs h-8">
+          <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="sm" className="gap-1.5 text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5 text-xs h-8">
             <Download className="size-3.5" />
             Download
           </Button>
@@ -626,55 +501,64 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
 /* ================================================================== */
 
 export default function StudentDocuments() {
-  const { token } = usePortalStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<DocumentCategory | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<DocumentStatus | 'all'>('all');
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [uploadOpen, setUploadOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [apiDocs, setApiDocs] = useState<StudentDocument[] | null>(null);
+  const [loadError, setLoadError] = useState('');
+  const [apiDocs, setApiDocs] = useState<StudentDocument[]>([]);
 
-  useEffect(() => {
-    async function loadDocs() {
-      if (!token) { setLoading(false); return; }
-      try {
-        const res = await fetch('/api/student-portal/documents', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const json = await res.json();
-        if (json.success && json.data && json.data.length > 0) {
-          const mapped = json.data.map((d: Record<string, unknown>) => ({
-            id: d.id as string,
-            name: (d.name as string) || 'Document',
-            type: (d.category as string) || 'Other',
-            category: (['Identity','Academic','English Test','Application','Financial','Visa'].includes(d.category as string) ? d.category : 'Application') as DocumentCategory,
-            status: (d.status === 'approved' ? 'Approved' : d.status === 'rejected' ? 'Rejected' : d.status === 'pending_review' ? 'Needs Review' : 'Pending') as DocumentStatus,
-            fileSize: d.fileSize ? `${(Number(d.fileSize) / 1024).toFixed(0)} KB` : '—',
-            uploadedDate: d.uploadedAt ? new Date(d.uploadedAt as string).toLocaleDateString() : '—',
-            reviewedBy: null,
-            reviewedDate: null,
-            rejectionReason: (d.rejectionReason as string) || null,
-            usedInApplications: [] as string[],
-            fileType: d.fileName ? ((d.fileName as string).split('.').pop() || 'PDF').toUpperCase() : 'PDF',
-          }));
-          setApiDocs(mapped);
-        }
-      } catch { /* fallback to mock */ }
+  const loadDocs = useCallback(async () => {
+    setLoading(true);
+    setLoadError('');
+    try {
+      const res = await fetch('/api/student/documents', {
+        credentials: 'include',
+        cache: 'no-store',
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success || !Array.isArray(json.data)) throw new Error('Documents could not be loaded. Please try again later.');
+      const mapped = json.data.map((d: Record<string, unknown>) => {
+        const rawCategory = String(d.category || 'Other');
+        const category = (Object.entries(CATEGORY_DOCUMENTS).find(([, names]) => names.includes(rawCategory))?.[0] || 'Application') as DocumentCategory;
+        const dateValue = d.uploadedAt || d.createdAt;
+        return {
+          id: String(d.id),
+          name: String(d.name || d.fileName || 'Document'),
+          type: rawCategory,
+          category,
+          status: (d.status === 'approved' ? 'Approved' : d.status === 'rejected' ? 'Rejected' : d.status === 'needs_review' ? 'Needs Review' : 'Pending') as DocumentStatus,
+          fileSize: d.fileSize ? `${(Number(d.fileSize) / 1024).toFixed(0)} KB` : '—',
+          uploadedDate: dateValue ? new Date(dateValue as string).toLocaleDateString() : '—',
+          reviewedBy: (d.reviewedBy as string) || null,
+          reviewedDate: d.reviewedAt ? new Date(d.reviewedAt as string).toLocaleDateString() : null,
+          rejectionReason: (d.rejectionReason as string) || null,
+          usedInApplications: [] as string[],
+          fileType: d.fileName ? (String(d.fileName).split('.').pop() || 'PDF').toUpperCase() : 'PDF',
+          downloadUrl: String(d.downloadUrl || ''),
+        };
+      });
+      setApiDocs(mapped);
+    } catch (error) {
+      setApiDocs([]);
+      setLoadError(error instanceof Error ? error.message : 'Documents could not be loaded. Please try again later.');
+    } finally {
       setLoading(false);
     }
-    loadDocs();
-  }, [token]);
+  }, []);
 
-  const documents = (apiDocs && apiDocs.length > 0) ? apiDocs : MOCK_DOCUMENTS;
+  useEffect(() => { void loadDocs(); }, [loadDocs]);
+
+  const documents = apiDocs;
 
   // Stats
   const uploadedCount = documents.length;
   const pendingCount = documents.filter((d) => d.status === 'Pending').length;
   const rejectedCount = documents.filter((d) => d.status === 'Rejected').length;
+  const approvedCount = documents.filter((d) => d.status === 'Approved').length;
   const needsReviewCount = documents.filter((d) => d.status === 'Needs Review').length;
-  const missingCount = Math.max(0, TOTAL_REQUIRED - uploadedCount);
-  const progressPercent = Math.round((uploadedCount / TOTAL_REQUIRED) * 100);
 
   // Filtered documents
   const filtered = useMemo(() => {
@@ -695,7 +579,7 @@ export default function StudentDocuments() {
       );
     }
     return result;
-  }, [categoryFilter, statusFilter, searchQuery]);
+  }, [documents, categoryFilter, statusFilter, searchQuery]);
 
   // Category tab counts
   const categoryCounts = useMemo(() => {
@@ -708,12 +592,7 @@ export default function StudentDocuments() {
 
   const categories: Array<DocumentCategory | 'all'> = [
     'all',
-    'Identity',
-    'Academic',
-    'English Test',
-    'Application',
-    'Financial',
-    'Visa',
+    ...(Object.keys(CATEGORY_DOCUMENTS) as DocumentCategory[]).filter((category) => (categoryCounts[category] || 0) > 0),
   ];
 
   if (loading) {
@@ -738,47 +617,30 @@ export default function StudentDocuments() {
             {uploadedCount}
           </Badge>
         </div>
-        <Button variant="cta" size="default" onClick={() => setUploadOpen(true)} className="gap-2">
+        <Button variant="cta" size="default" onClick={() => setUploadOpen(true)} disabled={!!loadError} className="gap-2" title={loadError ? 'Document service is unavailable' : undefined}>
           <Upload className="size-4" />
           Upload Document
         </Button>
       </div>
 
-      {/* Progress Summary */}
+      {loadError && (
+        <Card role="alert" className="border-red-200 bg-red-50/70">
+          <CardContent className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4">
+            <p className="text-sm text-red-700">{loadError}</p>
+            <Button variant="outline" size="sm" onClick={() => { void loadDocs(); }}>Retry</Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Live document summary — counts come only from the authenticated API response. */}
       <Card className="border-border/60">
         <CardContent className="p-5">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            {/* Progress Circle / Bar */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-[#0F172A]">
-                  {uploadedCount} of {TOTAL_REQUIRED} required documents uploaded
-                </span>
-                <span className="text-sm font-bold text-[#0F172A]">{progressPercent}%</span>
-              </div>
-              <Progress
-                value={progressPercent}
-                className="h-3 [&>div]:bg-[#C2410C]"
-              />
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3">
-                <span className="inline-flex items-center gap-1.5 text-xs text-[#0F172A]/50">
-                  <Clock className="size-3 text-gray-400" />
-                  <span className="font-medium text-[#0F172A]">{pendingCount} pending review</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs text-[#0F172A]/50">
-                  <XCircle className="size-3 text-red-400" />
-                  <span className="font-medium text-red-600">{rejectedCount} rejected</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs text-[#0F172A]/50">
-                  <AlertTriangle className="size-3 text-amber-400" />
-                  <span className="font-medium text-amber-600">{needsReviewCount} needs review</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs text-[#0F172A]/50">
-                  <HelpCircle className="size-3 text-[#0F172A]/30" />
-                  <span className="font-medium text-[#0F172A]/70">{missingCount} missing</span>
-                </span>
-              </div>
-            </div>
+          <p className="text-sm font-semibold text-[#0F172A]">{uploadedCount} documents in your vault</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs">
+            <span className="inline-flex items-center gap-1.5 text-[#0F172A]/70"><CheckCircle2 className="size-3 text-emerald-500" />{approvedCount} approved</span>
+            <span className="inline-flex items-center gap-1.5 text-[#0F172A]/70"><Clock className="size-3 text-gray-400" />{pendingCount} pending</span>
+            <span className="inline-flex items-center gap-1.5 text-red-600"><XCircle className="size-3 text-red-400" />{rejectedCount} rejected</span>
+            {needsReviewCount > 0 && <span className="inline-flex items-center gap-1.5 text-amber-600"><AlertTriangle className="size-3 text-amber-400" />{needsReviewCount} needs review</span>}
           </div>
         </CardContent>
       </Card>
@@ -874,11 +736,11 @@ export default function StudentDocuments() {
             <Search className="size-8 text-[#0F172A]/20 mb-3" />
             <h3 className="text-base font-semibold text-[#0F172A] mb-1">No documents found</h3>
             <p className="text-sm text-[#0F172A]/50 mb-4">
-              {documents.length === 0
-                ? 'Upload your first document to get started'
+              {loadError ? 'Your document list is unavailable. Resolve the sign-in or service issue before uploading.' : documents.length === 0
+                ? 'No documents have been uploaded to your profile yet.'
                 : 'Try adjusting your search or filters'}
             </p>
-            {documents.length === 0 && (
+            {documents.length === 0 && !loadError && (
               <Button variant="cta" size="sm" onClick={() => setUploadOpen(true)} className="gap-2">
                 <Upload className="size-4" />
                 Upload Document
@@ -972,7 +834,7 @@ export default function StudentDocuments() {
                         <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]">
                           <Eye className="size-4" />
                         </Button>
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]">
+                        <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]" aria-label="Download document">
                           <Download className="size-4" />
                         </Button>
                         <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#C2410C]/60 hover:text-[#C2410C]">
@@ -989,7 +851,7 @@ export default function StudentDocuments() {
       )}
 
       {/* Upload Dialog */}
-      <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
+      <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} onUploaded={loadDocs} />
     </div>
   );
 }

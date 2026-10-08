@@ -1,42 +1,147 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
+import { canViewUccB2B } from '@/lib/ucc/document-access';
 
-export async function GET(req: NextRequest) {
+const ADMIN_ROLES = new Set(['SUPER_ADMIN', 'ADMIN']);
+const DASHBOARD_ROLES = new Set([
+  'COUNSELOR', 'SENIOR_COUNSELOR', 'APPLICATION_TEAM', 'APPLICATION_MANAGER',
+  'VISA_OFFICER', 'VISA_INTERVIEW_OFFICER', 'FINANCE', 'MARKETING',
+  'MARKETING_MANAGER', 'HR_MANAGER', 'BRANCH_MANAGER', 'COUNTRY_MANAGER',
+  'OFFICE_MANAGER', 'FRONT_DESK', 'SUPPORT_STAFF', 'PARTNER_MANAGER',
+  'CEO', 'DIRECTOR',
+]);
+const EMPTY_SCOPE = { id: { in: [] as string[] } };
+
+function normalizeRole(role: string): string {
+  return role.trim().replace(/[\s-]+/g, '_').toUpperCase();
+}
+
+function uniqueIds(values: Array<string | null | undefined>): string[] {
+  return [...new Set(values.map((value) => value?.trim()).filter((value): value is string => Boolean(value)))];
+}
+
+function parseDestinationFocus(value: string | null | undefined): string[] {
+  if (!value) return [];
   try {
-    const authResult = await authenticateRequest(req);
+    const parsed: unknown = JSON.parse(value);
+    if (!Array.isArray(parsed)) return [];
+    return uniqueIds(parsed.filter((item): item is string => typeof item === 'string'));
+  } catch {
+    return [];
+  }
+}
+
+function dhakaDate(): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Dhaka', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const authResult = await authenticateRequest(request);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
+    const actorRoles = new Set([auth.userType, ...auth.roles].map(normalizeRole));
+    const isAdmin = [...actorRoles].some((role) => ADMIN_ROLES.has(role));
 
-    // RBAC: Only employees (non-student/partner) may access employee dashboards
-    const blockedTypes = ['STUDENT','student','PARTNER','partner'];
-    if (blockedTypes.includes(auth.userType) || auth.roles?.some((r:string)=> blockedTypes.includes(r))) {
-      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
-    }
-    // Allow super_admin/admin bypass, otherwise require employee-like role
-    const allowedRoles = ['COUNSELOR','SENIOR_COUNSELOR','APPLICATION_TEAM','APPLICATION_MANAGER','VISA_OFFICER','VISA_INTERVIEW_OFFICER','FINANCE','MARKETING','MARKETING_MANAGER','HR_MANAGER','BRANCH_MANAGER','COUNTRY_MANAGER','OFFICE_MANAGER','FRONT_DESK','SUPPORT_STAFF','PARTNER_MANAGER','ADMIN','SUPER_ADMIN','CEO','DIRECTOR'];
-    const hasEmployeeRole = auth.roles?.some((r:string)=> allowedRoles.includes(r.toUpperCase())) || ['ADMIN','SUPER_ADMIN'].includes(auth.userType);
-    if (!hasEmployeeRole && !auth.roles.includes('super_admin') && !auth.roles.includes('admin')) {
-      // still allow if userType is EMPLOYEE generic
-      if (!String(auth.userType).toUpperCase().includes('EMPLOYEE') && auth.userType !== 'EMPLOYEE') {
-        // Check portalUser userType contains EMPLOYEE
-        if (!auth.roles.length) {
-          return NextResponse.json({ success:false, error:'Insufficient employee role' }, { status:403 });
-        }
-      }
+    if (['STUDENT', 'PARTNER'].includes(normalizeRole(auth.userType)) && !isAdmin) {
+      return NextResponse.json({ success: false, error: 'Employee dashboard access is not permitted.' }, { status: 403 });
     }
 
-    const { searchParams } = new URL(req.url);
-    const roleParam = searchParams.get('role');
-    const userRole = (roleParam || (auth.roles && auth.roles[0]) || 'COUNSELOR').toUpperCase();
-    const userId = auth.userId;
-    const branch = (auth as any).branch || 'Dhaka Main Branch';
-    const country = (auth as any).country || 'United Kingdom';
+    const employee = await db.employee.findUnique({
+      where: { userId: auth.userId },
+      select: {
+        id: true, userId: true, employeeId: true, status: true, role: true,
+        branch: true, destinationFocus: true,
+      },
+    });
+    if (!isAdmin && (!employee || employee.status.toLowerCase() !== 'active')) {
+      return NextResponse.json({ success: false, error: 'An active employee record is required.' }, { status: 403 });
+    }
 
-    // 1. Common database counts
+    const url = new URL(request.url);
+    const requestedRole = normalizeRole(url.searchParams.get('role') || '');
+    if (requestedRole && !DASHBOARD_ROLES.has(requestedRole) && !ADMIN_ROLES.has(requestedRole)) {
+      return NextResponse.json({ success: false, error: 'Unsupported dashboard role.' }, { status: 400 });
+    }
+    if (requestedRole && !isAdmin && !actorRoles.has(requestedRole) && normalizeRole(employee?.role || '') !== requestedRole) {
+      return NextResponse.json({ success: false, error: 'The requested dashboard role is not assigned to this account.' }, { status: 403 });
+    }
+
+    const employeeRole = normalizeRole(employee?.role || '');
+    const userRole = requestedRole || (DASHBOARD_ROLES.has(employeeRole)
+      ? employeeRole
+      : [...actorRoles].find((role) => DASHBOARD_ROLES.has(role)) || (isAdmin ? 'ADMIN' : ''));
+    if (!userRole || (!isAdmin && !DASHBOARD_ROLES.has(userRole))) {
+      return NextResponse.json({ success: false, error: 'No authorized employee dashboard role is assigned.' }, { status: 403 });
+    }
+
+    const ownIds = uniqueIds([auth.userId, employee?.id, employee?.userId, employee?.employeeId]);
+    let scopedEmployees: Array<{ id: string; userId: string; employeeId: string }> = employee
+      ? [{ id: employee.id, userId: employee.userId, employeeId: employee.employeeId }]
+      : [];
+    const isBranchRole = ['HR_MANAGER', 'BRANCH_MANAGER', 'OFFICE_MANAGER'].includes(userRole);
+    if (!isAdmin && isBranchRole && employee?.branch.trim()) {
+      scopedEmployees = await db.employee.findMany({
+        where: { branch: employee.branch, status: { in: ['active', 'ACTIVE'] } },
+        select: { id: true, userId: true, employeeId: true },
+      });
+    }
+    const scopeIds = isAdmin
+      ? ownIds
+      : uniqueIds(scopedEmployees.flatMap((item) => [item.id, item.userId, item.employeeId]));
+    const branchEmployeeIds = isAdmin ? [] : uniqueIds(scopedEmployees.map((item) => item.id));
+    const destinationCountries = parseDestinationFocus(employee?.destinationFocus);
+    if (!isAdmin && ['HR_MANAGER', 'BRANCH_MANAGER', 'OFFICE_MANAGER'].includes(userRole) && !employee?.branch.trim()) {
+      return NextResponse.json({ success: false, error: 'A branch scope is not assigned to this employee.' }, { status: 403 });
+    }
+    if (!isAdmin && userRole === 'COUNTRY_MANAGER' && destinationCountries.length === 0) {
+      return NextResponse.json({ success: false, error: 'A destination scope is not assigned to this employee.' }, { status: 403 });
+    }
+    const today = dhakaDate();
+    const now = new Date();
+    const dhakaDayStart = new Date(`${today}T00:00:00+06:00`);
+    const dhakaDayEnd = new Date(`${today}T23:59:59.999+06:00`);
+
+    let leadWhere: any = isAdmin ? {} : { counselorId: { in: scopeIds } };
+    let studentWhere: any = isAdmin ? {} : { counselorId: { in: scopeIds } };
+    let applicationWhere: any = isAdmin ? {} : { counselorId: { in: scopeIds } };
+    let visaCaseWhere: any = isAdmin ? {} : { counselorId: { in: scopeIds } };
+    const threadWhere: any = { assignedToId: { in: ownIds }, status: { notIn: ['closed', 'CLOSED'] } };
+
+    if (!isAdmin && ['APPLICATION_TEAM', 'APPLICATION_MANAGER'].includes(userRole)) {
+      applicationWhere = {
+        OR: [
+          { appTeamOfficerId: { in: ownIds } },
+          { applicationOfficer: { in: ownIds } },
+        ],
+      };
+      studentWhere = EMPTY_SCOPE;
+      visaCaseWhere = EMPTY_SCOPE;
+    } else if (!isAdmin && ['VISA_OFFICER', 'VISA_INTERVIEW_OFFICER'].includes(userRole)) {
+      visaCaseWhere = { visaOfficerId: { in: ownIds } };
+      applicationWhere = { visaOfficerId: { in: ownIds } };
+      studentWhere = EMPTY_SCOPE;
+    } else if (!isAdmin && userRole === 'COUNTRY_MANAGER') {
+      leadWhere = destinationCountries.length ? { destination: { in: destinationCountries } } : EMPTY_SCOPE;
+      studentWhere = EMPTY_SCOPE;
+      applicationWhere = destinationCountries.length ? { country: { in: destinationCountries } } : EMPTY_SCOPE;
+      visaCaseWhere = destinationCountries.length ? { destinationCountry: { in: destinationCountries } } : EMPTY_SCOPE;
+    } else if (!isAdmin && ['FINANCE', 'SUPPORT_STAFF'].includes(userRole)) {
+      leadWhere = EMPTY_SCOPE;
+      studentWhere = EMPTY_SCOPE;
+      applicationWhere = EMPTY_SCOPE;
+      visaCaseWhere = EMPTY_SCOPE;
+    }
+
+    if (!isAdmin && !canViewUccB2B(auth) && ['APPLICATION_TEAM', 'APPLICATION_MANAGER', 'COUNSELOR', 'SENIOR_COUNSELOR'].includes(userRole)) {
+      applicationWhere = { AND: [applicationWhere, { isB2bConfidential: false }] };
+    }
+
     const [
       totalLeads,
-      assignedLeads,
       hotLeads,
       totalStudents,
       activeStudents,
@@ -45,197 +150,226 @@ export async function GET(req: NextRequest) {
       offersReceived,
       visaCasesCount,
       pendingTasksCount,
-      unreadNotifsCount,
-      unreadMessagesCount,
+      unreadPortalNotifications,
+      unreadHrmNotifications,
+      unreadMessagesAggregate,
+      slaOverdueCount,
+      slaBreachesCount,
+      followUpsDue,
+      overdueFollowUps,
     ] = await Promise.all([
-      db.marketingLead.count().catch(() => 0),
-      db.marketingLead.count({ where: { counselorId: userId } }).catch(() => 0),
-      db.marketingLead.count({ where: { hotLead: true } }).catch(() => 0),
-      db.student.count().catch(() => 0),
-      db.student.count({ where: { counselorId: userId } }).catch(() => 0),
-      db.application.count({ where: { stage: { notIn: ['enrolled', 'cancelled', 'rejected'] } } }).catch(() => 0),
-      db.application.count({ where: { stage: 'submitted' } }).catch(() => 0),
-      db.application.count({ where: { stage: 'offer_received' } }).catch(() => 0),
-      db.visaCase.count().catch(() => 0),
-      db.counselorTask.count({ where: { employeeId: userId, status: 'pending' } }).catch(() => 0),
-      db.notification.count({ where: { isRead: false } }).catch(() => 0),
-      db.communicationThread.count({ where: { unreadCount: { gt: 0 } } }).catch(() => 0),
+      db.marketingLead.count({ where: leadWhere }),
+      db.marketingLead.count({ where: { ...leadWhere, hotLead: true } }),
+      db.student.count({ where: studentWhere }),
+      db.student.count({ where: { ...studentWhere, status: { in: ['active', 'ACTIVE'] } } }),
+      db.application.count({ where: { ...applicationWhere, stage: { notIn: ['enrolled', 'cancelled', 'rejected', 'ENROLLED', 'CANCELLED', 'REJECTED'] } } }),
+      db.application.count({ where: { ...applicationWhere, safeStatus: { in: ['SUBMITTED', 'submitted'] } } }),
+      db.application.count({ where: { ...applicationWhere, offerStatus: { in: ['CONDITIONAL_OFFER', 'UNCONDITIONAL_OFFER', 'conditional_offer', 'unconditional_offer'] } } }),
+      db.visaCase.count({ where: visaCaseWhere }),
+      db.counselorTask.count({ where: { employeeId: { in: ownIds }, status: { in: ['pending', 'PENDING', 'in_progress', 'IN_PROGRESS'] } } }),
+      db.portalNotification.count({ where: { userId: auth.userId, isRead: false } }),
+      db.hrmNotification.count({ where: { recipientId: { in: ownIds }, isRead: false } }),
+      db.communicationThread.aggregate({ where: threadWhere, _sum: { unreadCount: true } }),
+      db.communicationThread.count({ where: { assignedToId: { in: ownIds }, slaDueAt: { lt: now }, status: { notIn: ['closed', 'CLOSED', 'resolved', 'RESOLVED'] } } }),
+      db.slaEvent.count({ where: { counselorId: { in: ownIds }, escalatedAt: { not: null }, resolvedAt: null } }),
+      db.marketingLead.count({ where: { ...leadWhere, followUpDone: false, followUpDueAt: { gte: now, lte: dhakaDayEnd } } }),
+      db.marketingLead.count({ where: { ...leadWhere, followUpDone: false, followUpDueAt: { lt: now } } }),
     ]);
 
-    // 2. Fetch Recent Activities / Records based on role
-    let roleSpecificData: any = {};
-
+    const unreadMessagesCount = unreadMessagesAggregate._sum.unreadCount ?? 0;
+    const roleSpecificData: Record<string, unknown> = {};
     if (userRole.includes('COUNSELOR')) {
-      const myStudents = await db.student.findMany({
-        where: { counselorId: userId },
-        take: 5,
-        orderBy: { createdAt: 'desc' },
-        select: { id: true, studentId: true, name: true, email: true, phone: true, currentCountry: true, journeyStage: true },
-      }).catch(() => []);
+      const [myStudents, myLeads, assignedLeads, convertedLeads, appointmentStudents] = await Promise.all([
+        db.student.findMany({
+          where: studentWhere,
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+          select: { id: true, studentId: true, name: true, email: true, phone: true, currentCountry: true, journeyStage: true },
+        }),
+        db.marketingLead.findMany({
+          where: leadWhere,
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+          select: { id: true, name: true, phone: true, email: true, destination: true, status: true, createdAt: true },
+        }),
+        db.marketingLead.count({ where: leadWhere }),
+        db.marketingLead.count({ where: { ...leadWhere, convertedAt: { not: null } } }),
+        db.student.findMany({ where: studentWhere, select: { id: true, studentId: true } }),
+      ]);
+      roleSpecificData.myStudents = myStudents.map((student) => ({
+        ...student, fullName: student.name, studentCode: student.studentId,
+        currentStage: student.journeyStage,
+      }));
+      roleSpecificData.myLeads = myLeads;
+      roleSpecificData.followUpsDue = followUpsDue;
+      roleSpecificData.overdueFollowUps = overdueFollowUps;
+      roleSpecificData.conversionRate = assignedLeads > 0
+        ? `${((convertedLeads / assignedLeads) * 100).toFixed(1)}%`
+        : null;
+      const scopedStudentIds = uniqueIds(appointmentStudents.flatMap((student) => [student.id, student.studentId]));
+      roleSpecificData.appointmentsToday = scopedStudentIds.length
+        ? await db.appointment.count({
+          where: {
+            studentId: { in: scopedStudentIds },
+            scheduledAt: { gte: new Date(`${today}T00:00:00+06:00`), lt: new Date(`${today}T23:59:59.999+06:00`) },
+            status: { in: ['scheduled', 'confirmed', 'SCHEDULED', 'CONFIRMED'] },
+          },
+        })
+        : 0;
+    }
 
-      const myLeads = await db.marketingLead.findMany({
-        where: { counselorId: userId },
-        take: 5,
-        orderBy: { createdAt: 'desc' },
-      }).catch(() => []);
-
-      const counselorTasksDue = await db.counselorTask.count({ where: { employeeId: userId, status: 'pending', dueDate: { not: '' } } }).catch(()=>0);
-      const overdueTasks = await db.counselorTask.count({ where: { employeeId: userId, status: 'pending', dueDate: { lt: new Date().toISOString() } } }).catch(()=>0);
-      const conversionRateCalc = assignedLeads > 0 ? ((activeStudents / assignedLeads) * 100).toFixed(1) + '%' : '0%';
-      roleSpecificData = {
-        myStudents: myStudents.map(s => ({ ...s, fullName: s.name, studentCode: s.studentId, targetCountry: s.currentCountry, currentStage: s.journeyStage })),
-        myLeads,
-        followUpsDue: counselorTasksDue,
-        overdueFollowUps: overdueTasks,
-        conversionRate: conversionRateCalc,
-      };
-    } else if (userRole.includes('APPLICATION')) {
-      const recentApps = await db.application.findMany({
+    if (userRole.includes('APPLICATION')) {
+      const recentApplications = await db.application.findMany({
+        where: applicationWhere,
         take: 10,
         orderBy: { updatedAt: 'desc' },
         select: {
-          id: true,
-          applicationId: true,
-          studentId: true,
-          universityName: true,
-          courseName: true,
-          country: true,
-          intake: true,
-          stage: true,
-          safeStatus: true,
-          updatedAt: true,
+          id: true, applicationId: true, studentId: true, universityName: true,
+          courseName: true, country: true, intake: true, stage: true,
+          safeStatus: true, updatedAt: true,
         },
-      }).catch(() => []);
-
-      roleSpecificData = {
-        recentApplications: recentApps,
-        draftCount: await db.application.count({ where: { stage: 'draft' } }).catch(() => 0),
-        reviewCount: await db.application.count({ where: { stage: 'under_review' } }).catch(() => 0),
-        offerCount: offersReceived,
-        casCount: await db.application.count({ where: { stage: 'cas_issued' } }).catch(() => 0),
-      };
-    } else if (userRole.includes('VISA')) {
-      const recentVisaCases = await db.visaCase.findMany({
-        take: 10,
-        orderBy: { updatedAt: 'desc' },
-      }).catch(() => []);
-
-      roleSpecificData = {
-        recentVisaCases,
-        visaReadyCount: await db.visaCase.count({ where: { readinessScore: { gte: 85 } } }).catch(() => 0),
-        highRiskCount: await db.visaCase.count({ where: { riskLevel: 'HIGH' } }).catch(() => 0),
-        interviewsScheduled: 4,
-      };
-    } else if (userRole.includes('FINANCE')) {
-      const pendingPaymentsCount = await db.employeePayroll.count({ where: { status: 'pending' } }).catch(()=>0);
-      const commissionPendingCount = await db.employeeCommission.count({ where: { status: 'pending' } }).catch(()=>0);
-      roleSpecificData = {
-        todaysReceipts: pendingPaymentsCount >0 ? `BDT ${(pendingPaymentsCount*15000).toLocaleString()}` : 'BDT 0',
-        pendingPayments: pendingPaymentsCount,
-        outstandingInvoices: pendingPaymentsCount,
-        partnerCommissionPending: commissionPendingCount >0 ? `BDT ${(commissionPendingCount*10000).toLocaleString()}` : 'BDT 0',
-        commissionApproved: 'BDT 0',
-        monthlyRevenue: 'BDT 0',
-      };
-    } else if (userRole.includes('HR')) {
-      const totalEmployees = await db.employee.count().catch(() => 0);
-      const activeEmployees = await db.employee.count({ where: { status: 'active' } }).catch(()=> totalEmployees);
-      const pendingProfiles = await db.employeeHRProfile.count({ where: { employeeId: { contains: '' } } }).catch(()=>0);
-      const leaveRequestsToday = await db.leaveRequest.count({ where: { status: 'PENDING' } }).catch(()=>0);
-      const attendancePresent = await db.employeeAttendance.count({ where: { status: 'present', date: new Date().toISOString().slice(0,10) } }).catch(()=>0);
-      const attendanceLate = await db.employeeAttendance.count({ where: { status: 'late', date: new Date().toISOString().slice(0,10) } }).catch(()=>0);
-
-      roleSpecificData = {
-        totalEmployees: totalEmployees,
-        activeEmployees: activeEmployees,
-        pendingProfiles: pendingProfiles,
-        leaveRequestsToday: leaveRequestsToday,
-        attendancePresent: attendancePresent,
-        attendanceLate: attendanceLate,
-      };
-    } else if (userRole.includes('MARKETING')) {
-      const campaigns = await db.marketingCampaign.findMany({ take: 5, orderBy: { createdAt: 'desc' } }).catch(() => []);
-      roleSpecificData = {
-        activeCampaigns: campaigns.length,
-        totalLeadsGenerated: totalLeads,
-        topChannel: 'Meta Ads',
-        socialInquiriesToday: 18,
-        recentCampaigns: campaigns,
-      };
-    } else if (userRole.includes('PARTNER')) {
-      const totalPartners = await db.partnerProfile.count().catch(() => 0);
-      const pendingSeats = await db.partnerUserSeatRequest.count({ where: { status: 'pending' } }).catch(() => 0);
-      roleSpecificData = {
-        totalPartners: totalPartners,
-        activePartners: totalPartners,
-        pendingSeatRequests: pendingSeats,
-        partnerLeadsCount: totalLeads,
-      };
-    } else if (userRole.includes('BRANCH')) {
-      roleSpecificData = {
-        branchName: branch,
-        branchStudents: activeStudents,
-        branchLeads: assignedLeads,
-        branchApplications: activeApplications,
-        branchCounselors: 4,
-      };
-    } else if (userRole.includes('COUNTRY')) {
-      const cStudents = await db.portalStudentProfile.count({ where: { preferredCountry: country } }).catch(()=>0);
-      const cApps = await db.application.count({ where: { country: country } }).catch(()=>0);
-      const cOffers = await db.application.count({ where: { country: country, offerStatus: 'CONDITIONAL_OFFER' } }).catch(()=>0);
-      const cVisaReady = await db.visaCase.count({ where: { destinationCountry: country, readinessScore: { gte: 80 } } }).catch(()=>0);
-      roleSpecificData = {
-        countryName: country,
-        countryStudents: cStudents,
-        countryApplications: cApps,
-        countryOffers: cOffers,
-        countryVisaReady: cVisaReady,
-      };
-    } else if (userRole.includes('FRONT_DESK')) {
-      const appointmentsTodayCount = await db.appointment.count({ where: { scheduledAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
-      const unassignedLeadsCount = await db.marketingLead.count({ where: { counselorId: null } }).catch(()=>0);
-      const walkIns = await db.leadForm.count({ where: { source: 'walk-in', createdAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
-      roleSpecificData = {
-        walkInsToday: walkIns,
-        appointmentsToday: appointmentsTodayCount,
-        unassignedLeads: unassignedLeadsCount,
-        callInquiries: unassignedLeadsCount,
-      };
-    } else if (userRole.includes('SUPPORT')) {
-      const openTicketsCount = await db.communicationThread.count({ where: { status: 'open' } }).catch(()=>0);
-      const resolvedTodayCount = await db.communicationThread.count({ where: { status: 'resolved', updatedAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }).catch(()=>0);
-      const urgentTicketsCount = await db.communicationThread.count({ where: { priority: 'urgent', status: 'open' } }).catch(()=>0);
-      roleSpecificData = {
-        openTickets: openTicketsCount,
-        resolvedToday: resolvedTodayCount,
-        urgentTickets: urgentTicketsCount,
-        avgResponseTime: '12 mins',
-      };
+      });
+      roleSpecificData.recentApplications = recentApplications;
+      roleSpecificData.draftCount = await db.application.count({
+        where: { ...applicationWhere, stage: { in: ['APPLICATION_DRAFT', 'draft'] } },
+      });
+      roleSpecificData.reviewCount = await db.application.count({
+        where: { ...applicationWhere, stage: { in: ['PROFILE_REVIEW', 'DOCUMENT_REVIEW', 'under_review'] } },
+      });
+      roleSpecificData.draftApplications = roleSpecificData.draftCount;
+      roleSpecificData.offerCount = offersReceived;
     }
 
-    return NextResponse.json({
-      success: true,
-      userRole,
-      userId,
-      branch,
-      country,
-      metrics: {
-        totalLeads: totalLeads,
-        assignedLeads: assignedLeads,
-        hotLeads: hotLeads,
-        totalStudents: totalStudents,
-        activeStudents: activeStudents,
-        activeApplications: activeApplications,
-        submittedApplications: submittedApplications,
-        offersReceived: offersReceived,
-        visaCasesCount: visaCasesCount,
-        pendingTasksCount: pendingTasksCount,
-        unreadNotifsCount: unreadNotifsCount,
-        unreadMessagesCount: unreadMessagesCount,
-        ...roleSpecificData,
+    if (userRole.includes('VISA')) {
+      roleSpecificData.recentVisaCases = await db.visaCase.findMany({
+        where: visaCaseWhere,
+        take: 10,
+        orderBy: { updatedAt: 'desc' },
+        select: {
+          id: true, caseCode: true, studentId: true, studentName: true,
+          destinationCountry: true, university: true, course: true, currentStage: true,
+          nextAction: true, deadline: true, updatedAt: true,
+        },
+      });
+      roleSpecificData.highRiskCount = await db.visaCase.count({ where: { ...visaCaseWhere, riskLevel: { in: ['HIGH', 'high'] } } });
+      roleSpecificData.interviewsScheduled = null;
+    }
+
+    if (['HR_MANAGER', 'BRANCH_MANAGER', 'OFFICE_MANAGER'].includes(userRole)) {
+      const employeeScope = isAdmin ? {} : branchEmployeeIds.length ? { id: { in: branchEmployeeIds } } : EMPTY_SCOPE;
+      const employeeKeyScope = isAdmin ? {} : scopeIds.length ? { employeeId: { in: scopeIds } } : { employeeId: { in: [] } };
+      const [totalEmployees, activeEmployees, pendingProfiles, leaveRequestsToday, attendancePresent, branchCounselors] = await Promise.all([
+        db.employee.count({ where: employeeScope }),
+        db.employee.count({ where: { ...employeeScope, status: { in: ['active', 'ACTIVE'] } } }),
+        db.employeeHRProfile.count({ where: employeeKeyScope }),
+        db.leaveRequest.count({ where: { ...employeeKeyScope, status: { in: ['PENDING', 'pending'] }, createdAt: { gte: dhakaDayStart, lte: dhakaDayEnd } } }),
+        db.employeeAttendance.count({ where: { ...employeeKeyScope, date: today, status: { in: ['present', 'PRESENT'] } } }),
+        db.employee.count({ where: { ...employeeScope, role: { in: ['counselor', 'COUNSELOR', 'senior_counselor', 'SENIOR_COUNSELOR'] } } }),
+      ]);
+      roleSpecificData.totalEmployees = totalEmployees;
+      roleSpecificData.activeEmployees = activeEmployees;
+      roleSpecificData.pendingProfiles = pendingProfiles;
+      roleSpecificData.leaveRequestsToday = leaveRequestsToday;
+      roleSpecificData.attendancePresent = attendancePresent;
+      roleSpecificData.branchCounselors = branchCounselors;
+    }
+
+    if (userRole.includes('COUNTRY')) {
+      roleSpecificData.countryStudents = destinationCountries.length
+        ? await db.portalStudentProfile.count({ where: { preferredCountry: { in: destinationCountries } } })
+        : null;
+      roleSpecificData.countryApplications = activeApplications;
+      roleSpecificData.countryOffers = offersReceived;
+      roleSpecificData.targetCountries = destinationCountries;
+    }
+
+    if (userRole.includes('MARKETING')) {
+      const campaignWhere = isAdmin ? {} : { createdById: auth.userId };
+      const activeCampaignWhere = { ...campaignWhere, status: { in: ['active', 'ACTIVE', 'published', 'PUBLISHED'] } };
+      const [activeCampaigns, campaigns] = await Promise.all([
+        db.marketingCampaign.count({ where: activeCampaignWhere }),
+        db.marketingCampaign.findMany({
+          where: activeCampaignWhere,
+          take: 5,
+          orderBy: { updatedAt: 'desc' },
+          select: { id: true, name: true, platform: true, status: true, updatedAt: true },
+        }),
+      ]);
+      roleSpecificData.activeCampaigns = activeCampaigns;
+      roleSpecificData.campaignsRunning = activeCampaigns;
+      roleSpecificData.recentCampaigns = campaigns;
+    }
+
+    if (userRole.includes('FINANCE')) {
+      roleSpecificData.pendingPayrollRecords = await db.employeePayroll.count({
+        where: { employeeId: { in: ownIds }, status: { in: ['draft', 'reviewed', 'pending', 'DRAFT', 'REVIEWED', 'PENDING'] } },
+      });
+      roleSpecificData.pendingCommissionRecords = await db.employeeCommission.count({
+        where: { employeeId: { in: ownIds }, status: { in: ['pending', 'PENDING'] } },
+      });
+      roleSpecificData.pendingPayments = null;
+      roleSpecificData.outstandingInvoices = null;
+      roleSpecificData.todaysReceipts = null;
+      roleSpecificData.partnerCommissionPending = null;
+      roleSpecificData.commissionApproved = null;
+      roleSpecificData.monthlyRevenue = null;
+    }
+
+    if (userRole.includes('SUPPORT')) {
+      roleSpecificData.openTickets = await db.communicationThread.count({
+        where: { ...threadWhere, status: { in: ['open', 'OPEN'] } },
+      });
+      roleSpecificData.urgentTickets = await db.communicationThread.count({
+        where: { ...threadWhere, status: { in: ['open', 'OPEN'] }, priority: { in: ['urgent', 'URGENT'] } },
+      });
+    }
+
+    if (userRole.includes('BRANCH')) {
+      roleSpecificData.branchStudents = totalStudents;
+      roleSpecificData.branchLeads = totalLeads;
+      roleSpecificData.branchApplications = activeApplications;
+    }
+
+    const metrics = {
+      totalLeads,
+      assignedLeads: totalLeads,
+      hotLeads,
+      newLeads: await db.marketingLead.count({ where: { ...leadWhere, status: { in: ['new', 'NEW'] } } }),
+      totalStudents,
+      activeStudents,
+      activeApplications,
+      submittedApplications,
+      offersReceived,
+      offerCount: offersReceived,
+      visaCasesCount,
+      visaCases: visaCasesCount,
+      pendingTasksCount,
+      unreadNotifsCount: unreadPortalNotifications + unreadHrmNotifications,
+      unreadMessagesCount,
+      unreadMessages: unreadMessagesCount,
+      slaBreaches: slaBreachesCount,
+      slaOverdueCount,
+      followUpsDue,
+      overdueFollowUps,
+      branch: employee?.branch || null,
+      country: destinationCountries[0] || null,
+      ...roleSpecificData,
+    };
+
+    await db.portalAuditLog.create({
+      data: {
+        actorUserId: auth.actorUserId || auth.userId,
+        action: 'EMPLOYEE_DASHBOARD_VIEWED',
+        entityType: 'EmployeeDashboard',
+        entityId: auth.userId,
+        ipAddress: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || '',
+        userAgent: request.headers.get('user-agent') || '',
+        metadata: JSON.stringify({ effectiveUserId: auth.userId, role: userRole }),
       },
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to load employee dashboard metrics', details: error.message }, { status: 500 });
+
+    return NextResponse.json({ success: true, userRole, userId: auth.userId, branch: employee?.branch || null, country: destinationCountries[0] || null, metrics });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Employee dashboard data is temporarily unavailable.' }, { status: 503 });
   }
 }

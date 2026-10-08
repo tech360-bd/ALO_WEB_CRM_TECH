@@ -22,8 +22,12 @@ const WEBHOOK = "src/app/api/crm/ucc/webhooks/whatsapp/route.ts";
 
 describe("Activation & lifecycle (self-audit 1-5)", () => {
   it("hashed one-time activation tokens with expiry + resend routes", () => {
-    expect(src("src/app/api/admin/employees/create/route.ts")).toContain("tokenHash");
-    expect(src("src/app/api/admin/employees/activate/route.ts")).toContain("expiresAt");
+    const creation = src("src/lib/employees/create.ts");
+    const activation = src("src/lib/employees/activation.ts");
+    expect(creation).toContain("tokenHash");
+    expect(activation).toContain("tokenHash");
+    expect(activation).toContain("expiresAt");
+    expect(src("src/app/api/admin/employees/activate/route.ts")).toContain("activateEmployeeAccount");
     expect(has("src/app/api/admin/employees/resend-activation/route.ts")).toBe(true);
   });
   it("12 lifecycle statuses exist across employee models", () => {
@@ -81,10 +85,13 @@ describe("Documents / HR / agreements (self-audit 6-12, 16-19)", () => {
     expect(src(SCHEMA)).toContain("model EmployeeDocumentVersion");
     expect(has("src/app/api/employee-access/secure-download/route.ts")).toBe(true);
   });
-  it("protected download endpoint with permission + audit", () => {
-    const d = src("src/app/api/employee-access/secure-download/route.ts");
-    expect(d).toContain("Permission denied");
-    expect(d).toContain("403");
+  it("disables the legacy insecure route and uses a resource-specific private download with permission + audit", () => {
+    const legacy = src("src/app/api/employee-access/secure-download/route.ts");
+    expect(legacy).toContain("status: 410");
+    const d = src("src/app/api/employee/documents/[id]/download/route.ts");
+    expect(d).toContain("Permission denied.");
+    expect(d).toContain("EMPLOYEE_DOCUMENT_DOWNLOADED");
+    expect(d).toContain("readPrivateFile");
   });
   it("agreement acceptance stores IP/device/timestamp (immutable history)", () => {
     const s = src(SCHEMA);

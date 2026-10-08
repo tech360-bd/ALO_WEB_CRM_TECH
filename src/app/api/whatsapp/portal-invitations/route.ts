@@ -7,9 +7,26 @@ import { sendWhatsAppMessage } from '@/lib/whatsapp-cloud-api';
 export const POST = withAuth(async (req, auth) => {
   try {
     const body = await req.json();
-    const { studentId, phone, email, language } = body;
+    const requestedStudentId = typeof body?.studentId === 'string' ? body.studentId.trim() : '';
+    const language = typeof body?.language === 'string' ? body.language : 'mixed';
+    if (!requestedStudentId) return NextResponse.json({ success: false, error: 'studentId required' }, { status: 400 });
 
-    if (!studentId) return NextResponse.json({ success: false, error: 'studentId required' }, { status: 400 });
+    const roles = new Set([auth.userType, ...auth.roles].map((role) => String(role).toUpperCase()));
+    const isAdmin = ['SUPER_ADMIN', 'ADMIN'].some((role) => roles.has(role));
+    if (!isAdmin && !roles.has('COUNSELOR')) {
+      return NextResponse.json({ success: false, error: 'Only administrators or counselors may create student portal invitations.' }, { status: 403 });
+    }
+    const student = await db.student.findFirst({
+      where: { OR: [{ id: requestedStudentId }, { studentId: requestedStudentId }] },
+      select: { id: true, studentId: true, phone: true, email: true, counselorId: true },
+    });
+    if (!student) return NextResponse.json({ success: false, error: 'Student not found.' }, { status: 404 });
+    if (!isAdmin && student.counselorId !== auth.userId) {
+      return NextResponse.json({ success: false, error: 'Student is not assigned to this counselor.' }, { status: 403 });
+    }
+    const studentId = student.id;
+    const phone = student.phone;
+    const email = student.email;
 
     // Generate secure token
     const { raw, hash } = generateSecureToken();
@@ -61,10 +78,12 @@ export const POST = withAuth(async (req, auth) => {
         text: welcomeText,
       });
 
-      await (db as any).studentPortalInvitation.update({
-        where: { id: (invitation as any).id },
-        data: { invitationSent: true, sentAt: new Date() },
-      }).catch(() => {});
+      if (sendResult?.success && sendResult.messageId) {
+        await (db as any).studentPortalInvitation.update({
+          where: { id: invitation.id },
+          data: { invitationSent: true, sentAt: new Date() },
+        });
+      }
     }
 
     await (db as any).aloAuditLog.create({

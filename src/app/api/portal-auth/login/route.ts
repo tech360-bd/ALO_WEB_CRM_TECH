@@ -21,23 +21,6 @@ const crmRoleMap: Record<string, string> = {
   'ai@alo.edu.bd': 'ai_manager',
 };
 
-const loginAttempts = new Map<string, { count: number; resetAt: number }>();
-const LOGIN_WINDOW_MS = 15 * 60 * 1000;
-const LOGIN_MAX_FAILURES = 5;
-
-function rateLimitKey(ip: string, email: string) { return `${ip}:${email}`; }
-function isRateLimited(key: string, now = Date.now()) {
-  const current = loginAttempts.get(key);
-  if (!current || current.resetAt <= now) { if (current) loginAttempts.delete(key); return false; }
-  return current.count >= LOGIN_MAX_FAILURES;
-}
-function recordLoginFailure(key: string, now = Date.now()) {
-  const current = loginAttempts.get(key);
-  if (!current || current.resetAt <= now) loginAttempts.set(key, { count: 1, resetAt: now + LOGIN_WINDOW_MS });
-  else current.count += 1;
-}
-function clearLoginFailures(key: string) { loginAttempts.delete(key); }
-
 const crmDepartmentMap: Record<string, string> = {
   super_admin: 'Administration',
   ceo: 'Executive',
@@ -65,7 +48,7 @@ function pageSessionRole(userType: string, crmRole: string | null): string {
 
 async function setPageSessionCookie(response: NextResponse, user: { id: string; email: string; name: string; userType: string; status: string }, crmRole: string | null) {
   const secret = process.env.NEXTAUTH_SECRET;
-  if (!secret) return response;
+  if (!secret || secret.length < 32) throw new Error('NEXTAUTH_SECRET must be configured (32+ characters) before portal login');
 
   const token = await encode({
     token: {
@@ -92,8 +75,14 @@ async function setPageSessionCookie(response: NextResponse, user: { id: string; 
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { email, password, portalType } = body;
+    const secret = process.env.NEXTAUTH_SECRET;
+    if (!secret || secret.length < 32) {
+      return NextResponse.json({ success: false, error: 'Portal authentication is not configured.' }, { status: 503 });
+    }
+    const body = await request.json().catch(() => null);
+    const email = typeof body?.email === 'string' ? body.email : '';
+    const password = typeof body?.password === 'string' ? body.password : '';
+    const portalType = typeof body?.portalType === 'string' ? body.portalType : '';
 
     if (!email || !password || !portalType) {
       return NextResponse.json(
@@ -103,12 +92,18 @@ export async function POST(request: Request) {
     }
 
     // Capture real client IP
-    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    const ipAddress = (request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       || request.headers.get('x-real-ip')
-      || 'unknown';
-    const normalizedEmail = String(email).toLowerCase().trim();
-    const attemptKey = rateLimitKey(ipAddress, normalizedEmail);
-    if (isRateLimited(attemptKey)) {
+      || 'unknown').slice(0, 191);
+    const normalizedEmail = email.toLowerCase().trim();
+    const failureCount = await db.loginAttempt.count({
+      where: {
+        success: false,
+        createdAt: { gte: new Date(Date.now() - 15 * 60 * 1000) },
+        OR: [{ email: normalizedEmail }, ...(ipAddress === 'unknown' ? [] : [{ ipAddress }])],
+      },
+    });
+    if (failureCount >= 5) {
       return NextResponse.json({ success: false, error: 'Too many login attempts. Please try again later.' }, { status: 429 });
     }
 
@@ -119,29 +114,32 @@ export async function POST(request: Request) {
     if (!user) {
       await db.loginAttempt.create({
         data: {
-          email: email.toLowerCase().trim(),
+          email: normalizedEmail,
+          ipAddress,
           success: false,
           failureReason: "user_not_found",
         },
       });
-      recordLoginFailure(attemptKey);
       return NextResponse.json(
         { success: false, error: "Invalid credentials" },
         { status: 401 }
       );
     }
 
+    // Normalize legacy status casing before applying fail-closed state checks.
+    const userStatus = user.status.toLowerCase();
+
     // Check account status
-    if (user.status === "suspended") {
+    if (userStatus === "suspended") {
       await db.loginAttempt.create({
         data: {
           userId: user.id,
           email: user.email,
+          ipAddress,
           success: false,
           failureReason: "account_suspended",
         },
       });
-      recordLoginFailure(attemptKey);
       return NextResponse.json(
         {
           success: false,
@@ -152,16 +150,21 @@ export async function POST(request: Request) {
       );
     }
 
-    if (user.status === "pending") {
+    if (userStatus === "pending_verification" || !user.emailVerified) {
+      await db.loginAttempt.create({ data: { userId: user.id, email: user.email, ipAddress, success: false, failureReason: 'email_not_verified' } });
+      return NextResponse.json({ success: false, error: 'email_verification_required', message: 'Verify your email before signing in.' }, { status: 403 });
+    }
+
+    if (userStatus === "pending") {
       await db.loginAttempt.create({
         data: {
           userId: user.id,
           email: user.email,
+          ipAddress,
           success: false,
           failureReason: "account_pending",
         },
       });
-      recordLoginFailure(attemptKey);
       return NextResponse.json(
         {
           success: false,
@@ -173,19 +176,19 @@ export async function POST(request: Request) {
     }
 
     if (
-      user.status === "blocked" ||
-      user.status === "resigned" ||
-      user.status === "terminated"
+      userStatus === "blocked" ||
+      userStatus === "resigned" ||
+      userStatus === "terminated"
     ) {
       await db.loginAttempt.create({
         data: {
           userId: user.id,
           email: user.email,
+          ipAddress,
           success: false,
           failureReason: `account_${user.status}`,
         },
       });
-      recordLoginFailure(attemptKey);
       return NextResponse.json(
         {
           success: false,
@@ -196,6 +199,11 @@ export async function POST(request: Request) {
       );
     }
 
+    if (userStatus !== 'active') {
+      await db.loginAttempt.create({ data: { userId: user.id, email: user.email, ipAddress, success: false, failureReason: 'account_inactive' } });
+      return NextResponse.json({ success: false, error: 'account_pending', message: 'Your account is not active.' }, { status: 403 });
+    }
+
     // Compare password using bcrypt
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
@@ -203,11 +211,11 @@ export async function POST(request: Request) {
         data: {
           userId: user.id,
           email: user.email,
+          ipAddress,
           success: false,
           failureReason: "wrong_password",
         },
       });
-      recordLoginFailure(attemptKey);
       return NextResponse.json(
         { success: false, error: "Invalid credentials" },
         { status: 401 }
@@ -233,7 +241,6 @@ export async function POST(request: Request) {
     }
 
     if (!portalMatches) {
-      recordLoginFailure(attemptKey);
       return NextResponse.json(
         {
           success: false,
@@ -286,11 +293,11 @@ export async function POST(request: Request) {
       data: {
         userId: user.id,
         email: user.email,
+        ipAddress,
         success: true,
       },
     });
 
-    clearLoginFailures(attemptKey);
     const response = NextResponse.json({
       success: true,
       user: {

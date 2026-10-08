@@ -161,7 +161,11 @@ export default function SuperAdminAccessControlCenter() {
       });
       const json = await res.json();
       if (res.ok) {
-        toast.success(`Employee ${json.data.employeeCode} created — activation email sent — INVITED → ACTIVE flow`);
+        if (json.emailSent) {
+          toast.success(`Employee ${json.data.employeeCode} created. Activation email accepted by SMTP; delivery to inbox is not verified.`);
+        } else {
+          toast.error(`Employee ${json.data.employeeCode} created, but SMTP did not accept the activation email. Use the authenticated resend workflow after correcting SMTP.`);
+        }
         setShowEmpModal(false); setNewEmpName(''); setNewEmpEmail(''); fetchControlData();
       } else toast.error(json.error || 'Failed');
     } finally { setCreatingEmp(false); }
@@ -326,7 +330,7 @@ export default function SuperAdminAccessControlCenter() {
       {activeTab==='documents' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><FileText className="w-4 h-4 text-[#0B5ED7]" /> Document Center — Mandatory types, no permanent delete, versioning V1/V2/V3 current/historical, protected download signed URLs expiry audit soft-delete</h2>
-          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-slate-50 rounded-xl border"><div className="font-bold uppercase text-[10px]">Mandatory Types</div><div className="flex flex-wrap gap-1 mt-2">{['passport','nid','photo','cv','academic_certificate','experience_letter','appointment_letter','nda','confidentiality_agreement','device_agreement','it_policy','data_privacy_agreement','international_agreement','bangladesh_employment_agreement'].map(t=><Badge key={t} className="bg-white text-slate-700 text-[8px] border">{t}</Badge>)}</div></div><div className="p-3 bg-blue-50 rounded-xl border border-blue-100"><div className="font-bold uppercase text-[10px]">Versioning & Security</div><div className="text-[11px] mt-2 space-y-1"><div>• Only one version CURRENT, previous historical per retention policy</div><div>• No permanent delete for official HR documents — archive/soft-delete only</div><div>• Protected download endpoint /api/employee-access/secure-download checks permission + audit + signed URL expiry 15min</div><div>• File storage protected, encrypted sensitive, signed URLs, expiry, audit, soft-delete, versioning</div></div></div></div>
+          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-slate-50 rounded-xl border"><div className="font-bold uppercase text-[10px]">Mandatory Types</div><div className="flex flex-wrap gap-1 mt-2">{['passport','nid','photo','cv','academic_certificate','experience_letter','appointment_letter','nda','confidentiality_agreement','device_agreement','it_policy','data_privacy_agreement','international_agreement','bangladesh_employment_agreement'].map(t=><Badge key={t} className="bg-white text-slate-700 text-[8px] border">{t}</Badge>)}</div></div><div className="p-3 bg-blue-50 rounded-xl border border-blue-100"><div className="font-bold uppercase text-[10px]">Versioning & Security</div><div className="text-[11px] mt-2 space-y-1"><div>• Only one version CURRENT, previous historical per retention policy</div><div>• No permanent delete for official HR documents — archive/soft-delete only</div><div>• Legacy generic signed-download endpoint is disabled; resource-specific authenticated download streams are required</div><div>• Employee document downloads authorize owner/HR/admin, verify private-file SHA-256, audit access, and retain versions</div></div></div></div>
         </Card>
       )}
 

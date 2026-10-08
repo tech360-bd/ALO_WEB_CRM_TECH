@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,7 @@ import { toast } from 'sonner';
 import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 export default function VisaOfficerDashboard() {
+  const router = useRouter();
   const { user, token, setView } = usePortalStore();
 
   const [loading, setLoading] = useState(true);
@@ -172,7 +174,7 @@ export default function VisaOfficerDashboard() {
 
   return (
     <div className="space-y-6 bg-slate-50/50 min-h-screen p-4 lg:p-6">
-      <DashboardCommunicationWidget role="VISA_OFFICER" unreadCount={4} slaOverdueCount={1} onNavigateToInbox={() => window.location.href='/crm/communications/inbox'} />
+      <DashboardCommunicationWidget role="VISA_OFFICER" unreadCount={null} slaOverdueCount={null} onNavigateToInbox={() => router.push('/crm/communications/inbox')} />
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
         <div>

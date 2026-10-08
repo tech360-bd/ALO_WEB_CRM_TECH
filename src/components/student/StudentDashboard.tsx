@@ -436,7 +436,7 @@ export default function StudentDashboard() {
       {/* Embedded Communication Widget for Student */}
       <DashboardCommunicationWidget
         role="STUDENT"
-        unreadCount={2}
+        unreadCount={null}
         onNavigateToInbox={() => setView('student-messages')}
       />
 

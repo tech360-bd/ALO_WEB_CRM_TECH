@@ -25,6 +25,7 @@ interface Partner {
 
 const statusColors: Record<string, string> = {
   active: 'bg-emerald-100 text-emerald-700',
+  approved: 'bg-emerald-100 text-emerald-700',
   pending: 'bg-yellow-100 text-yellow-700',
   suspended: 'bg-orange-100 text-orange-700',
   terminated: 'bg-red-100 text-red-700',
@@ -61,12 +62,12 @@ export default function CrmPartnersPage() {
 
   const filtered = partners.filter((p) => {
     const status = (p.approvalStatus || 'pending').toLowerCase();
-    return activeTab === 'all' || status === activeTab;
+    return activeTab === 'all' || (activeTab === 'active' ? ['active', 'approved'].includes(status) : status === activeTab);
   });
 
   const counts = {
     all: partners.length,
-    active: partners.filter(p => (p.approvalStatus || '').toLowerCase() === 'active').length,
+    active: partners.filter(p => ['active', 'approved'].includes((p.approvalStatus || '').toLowerCase())).length,
     pending: partners.filter(p => (p.approvalStatus || '').toLowerCase() === 'pending').length,
     suspended: partners.filter(p => (p.approvalStatus || '').toLowerCase() === 'suspended').length,
     terminated: partners.filter(p => (p.approvalStatus || '').toLowerCase() === 'terminated').length,

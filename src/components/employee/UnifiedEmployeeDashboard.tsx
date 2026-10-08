@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,6 +45,22 @@ import { usePortalStore } from '@/lib/stores/portal-store';
 import { HrRoleWidgets, HrmQuickActions } from '@/components/hrm/HrWidgets';
 import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
+function displayMetric(value: number | string | null | undefined): number | string {
+  return value == null || value === '' ? '—' : value;
+}
+
+const DASHBOARD_ROLE_NAMES = new Set([
+  'COUNSELOR', 'SENIOR_COUNSELOR', 'APPLICATION_TEAM', 'APPLICATION_MANAGER',
+  'VISA_OFFICER', 'VISA_INTERVIEW_OFFICER', 'FINANCE', 'MARKETING',
+  'MARKETING_MANAGER', 'HR_MANAGER', 'BRANCH_MANAGER', 'COUNTRY_MANAGER',
+  'OFFICE_MANAGER', 'FRONT_DESK', 'SUPPORT_STAFF', 'PARTNER_MANAGER',
+  'CEO', 'DIRECTOR', 'ADMIN', 'SUPER_ADMIN',
+]);
+
+function normalizeDashboardRole(value: string): string {
+  return value.trim().replace(/[\s-]+/g, '_').toUpperCase();
+}
+
 interface UnifiedEmployeeDashboardProps {
   forcedRole?: string;
   pageTitle?: string;
@@ -53,14 +70,25 @@ export default function UnifiedEmployeeDashboard({
   forcedRole,
   pageTitle = 'Employee Operating System',
 }: UnifiedEmployeeDashboardProps) {
+  const router = useRouter();
   const { user, logout } = usePortalStore();
+  const [resolvedRole, setResolvedRole] = useState('');
 
-  const firstRole = user?.roles && user.roles.length > 0 ? (typeof user.roles[0] === 'string' ? user.roles[0] : (user.roles[0] as any).name) : 'COUNSELOR';
-  const activeRole = String(forcedRole || firstRole || 'COUNSELOR').toUpperCase();
+  const roleCandidates: unknown[] = [
+    forcedRole,
+    ...((user?.roles || []).map((role: any) => typeof role === 'string' ? role : role?.name || role?.role || '')),
+    (user as any)?.role,
+  ];
+  const requestedRole = roleCandidates
+    .filter((role): role is string => typeof role === 'string')
+    .map(normalizeDashboardRole)
+    .find((role) => DASHBOARD_ROLE_NAMES.has(role)) || '';
+  const activeRole = requestedRole || normalizeDashboardRole(resolvedRole);
+  const canCreateLead = ['SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'SENIOR_COUNSELOR', 'MARKETING', 'MARKETING_MANAGER', 'FRONT_DESK', 'BRANCH_MANAGER', 'OFFICE_MANAGER'].includes(activeRole);
   const userName = user?.name || 'Authorized Officer';
   const designation = (user as any)?.designation || activeRole.replace(/_/g, ' ');
-  const branch = (user as any)?.branch || 'Dhaka Main Branch';
-  const country = (user as any)?.country || 'United Kingdom';
+  const branch = (user as any)?.branch || 'Branch not assigned';
+  const country = (user as any)?.country || 'Country not assigned';
 
   const [actingAsState, setActingAsState] = useState<{ isActing: boolean; originalAdmin?: string } | null>(null);
   const [data, setData] = useState<any>(null);
@@ -75,7 +103,7 @@ export default function UnifiedEmployeeDashboard({
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadPhone, setNewLeadPhone] = useState('');
-  const [newLeadCountry, setNewLeadCountry] = useState('United Kingdom');
+  const [newLeadCountry, setNewLeadCountry] = useState('');
   const [creatingLead, setCreatingLead] = useState(false);
 
   const fetchDashboardData = async () => {
@@ -89,7 +117,8 @@ export default function UnifiedEmployeeDashboard({
       return;
     }
     try {
-      const res = await fetch(`/api/employee/dashboard?role=${activeRole}`);
+      const dashboardUrl = requestedRole ? `/api/employee/dashboard?role=${encodeURIComponent(requestedRole)}` : '/api/employee/dashboard';
+      const res = await fetch(dashboardUrl);
       const json = await res.json().catch(()=> ({}));
       if (res.status === 403 || json.error?.toLowerCase().includes('forbidden') || json.error?.toLowerCase().includes('insufficient')) {
         setPermissionDenied(true);
@@ -101,6 +130,7 @@ export default function UnifiedEmployeeDashboard({
         return;
       }
       if (json.success) {
+        if (typeof json.userRole === 'string') setResolvedRole(json.userRole);
         setData(json.metrics);
       } else {
         setError(json.error || 'Failed to load metrics');
@@ -131,13 +161,13 @@ export default function UnifiedEmployeeDashboard({
       };
     }
     fetchDashboardData();
-  }, [activeRole]);
+  }, [requestedRole]);
 
   const handleStopActingAs = () => {
     localStorage.removeItem('alo_acting_as_admin');
     setActingAsState(null);
     toast.success('Acting-As session ended. Returning to Super Admin.');
-    window.location.href = '/admin/employees';
+    router.replace('/admin/employees');
   };
 
   const handleCreateLead = async (e: React.FormEvent) => {
@@ -188,7 +218,7 @@ export default function UnifiedEmployeeDashboard({
               variant="outline"
               className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs h-7"
               onClick={() => {
-                window.location.href = '/admin/access-control-center';
+                router.push('/admin/access-control-center');
               }}
             >
               View Acting-As Audit
@@ -235,19 +265,21 @@ export default function UnifiedEmployeeDashboard({
             />
           </div>
 
-          <Button
-            size="sm"
-            onClick={() => setShowLeadModal(true)}
-            className="bg-[#F97316] hover:bg-[#D04010] text-white text-xs h-9 font-semibold gap-1.5 shadow-sm"
-          >
-            <Plus className="w-4 h-4" /> Quick Lead
-          </Button>
+          {canCreateLead && (
+            <Button
+              size="sm"
+              onClick={() => setShowLeadModal(true)}
+              className="bg-[#F97316] hover:bg-[#D04010] text-white text-xs h-9 font-semibold gap-1.5 shadow-sm"
+            >
+              <Plus className="w-4 h-4" /> Quick Lead
+            </Button>
+          )}
 
           <Button
             variant="ghost"
             size="icon"
             className="relative text-slate-600 hover:text-slate-900 rounded-lg"
-            onClick={() => toast.info(`${data?.unreadNotifsCount || 0} unread notifications`)}
+            onClick={() => toast.info(data?.unreadNotifsCount == null ? 'Unread notification count unavailable' : `${data.unreadNotifsCount} unread notifications`)}
           >
             <Bell className="w-5 h-5" />
             {data?.unreadNotifsCount > 0 && (
@@ -269,7 +301,7 @@ export default function UnifiedEmployeeDashboard({
               className="text-slate-400 hover:text-red-600 h-8 w-8 ml-1"
               onClick={() => {
                 logout();
-                window.location.href = '/portal/login';
+                router.replace('/portal/login');
               }}
             >
               <LogOut className="w-4 h-4" />
@@ -291,7 +323,7 @@ export default function UnifiedEmployeeDashboard({
               <ShieldAlert className="w-8 h-8 text-red-600 mx-auto" />
               <h3 className="font-bold text-red-800">Permission Denied</h3>
               <p className="text-xs text-red-700 max-w-md mx-auto">{error || 'Your role does not have access to this dashboard. Contact Super Admin for permission.'}</p>
-              <Button size="sm" variant="outline" onClick={()=> window.location.href='/employee/dashboard'} className="text-xs">Back to My Dashboard</Button>
+              <Button size="sm" variant="outline" onClick={()=> router.push('/employee/dashboard')} className="text-xs">Back to My Dashboard</Button>
             </CardContent>
           </Card>
         )}
@@ -336,19 +368,18 @@ export default function UnifiedEmployeeDashboard({
                 activeRole.includes('ADMIN') || activeRole.includes('SUPER_ADMIN') ? 'SUPER_ADMIN' :
                 'STAFF_CRM'
               }
-              unreadCount={data?.unreadMessages ?? data?.unreadNotifsCount ?? 3}
-              slaOverdueCount={data?.slaBreaches ?? data?.overdueFollowUps ?? 1}
-              onNavigateToInbox={() => window.location.href='/crm/communications/inbox'}
+              unreadCount={data?.unreadMessages ?? null}
+              slaOverdueCount={data?.slaOverdueCount ?? null}
+              onNavigateToInbox={() => router.push('/crm/communications/inbox')}
             />
 
-            {/* Marketing Library — one-click repost to your official social (if approved) */}
-            {(activeRole.includes("COUNSELOR") || activeRole.includes("MARKETING") || true) && (
-              <div className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-gradient-to-r from-[#eef4ff] to-white p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="size-10 rounded-xl bg-[#0B5ED7] text-white flex items-center justify-center"><span className="text-lg">📚</span></div>
-                  <div><p className="font-bold text-sm text-[#0B5ED7]">Marketing Library — Repost Hub</p><p className="text-[11px] text-slate-500">Approved image/video/post দেখে নিজের অফিসিয়াল Facebook/Instagram/LinkedIn এ 1-click পোস্ট করুন — Brand Kit auto-retained</p></div>
+            {activeRole.includes('MARKETING') && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <p className="font-bold text-sm text-slate-800">Marketing content library</p>
+                  <p className="text-[11px] text-slate-500">External social publishing and provider delivery are not configured or verified.</p>
                 </div>
-                <button onClick={()=> window.location.href='/crm/marketing-manager'} className="h-9 px-4 rounded-xl bg-[#F97316] text-white text-xs font-bold hover:bg-[#d04010]">Open Library →</button>
+                <button onClick={() => router.push('/crm/marketing-manager')} className="h-9 px-4 rounded-xl bg-[#F97316] text-white text-xs font-bold hover:bg-[#d04010]">Open library</button>
               </div>
             )}
             {/* Top KPI Cards Grid — 12-column responsive: desktop 12-col, tablet 2-col, mobile 1-col; role-specific KPIs */}
@@ -358,9 +389,9 @@ export default function UnifiedEmployeeDashboard({
               <Card className="bg-white border-slate-200/80 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={()=> setActiveTab('leads')}>
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Assigned Leads</p>
-                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.assignedLeads ?? 0}</h3>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{data?.hotLeads ?? 0} hot leads • {data?.newLeads ?? 0} new</p>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Leads in Scope</p>
+                    <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.assignedLeads)}</h3>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{displayMetric(data?.hotLeads)} marked hot • {displayMetric(data?.newLeads)} marked new</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-orange-50 text-[#F97316] flex items-center justify-center">
                     <Users className="w-6 h-6" />
@@ -371,9 +402,9 @@ export default function UnifiedEmployeeDashboard({
               <Card className="bg-white border-slate-200/80 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={()=> setActiveTab('students')}>
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Students</p>
-                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.activeStudents ?? 0}</h3>
-                    <p className="text-[11px] text-slate-400 mt-1 font-medium">{data?.totalStudents ?? 0} total in CRM</p>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Students in Scope</p>
+                    <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.activeStudents)}</h3>
+                    <p className="text-[11px] text-slate-400 mt-1 font-medium">{displayMetric(data?.totalStudents)} student records in scope</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#0B5ED7] flex items-center justify-center">
                     <GraduationCap className="w-6 h-6" />
@@ -384,9 +415,9 @@ export default function UnifiedEmployeeDashboard({
               <Card className="bg-white border-slate-200/80 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={()=> setActiveTab('applications')}>
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Applications</p>
-                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.activeApplications ?? data?.branchApplications ?? data?.countryApplications ?? 0}</h3>
-                    <p className="text-[11px] text-[#0B5ED7] font-medium mt-1">{data?.offersReceived ?? data?.countryOffers ?? data?.offerCount ?? 0} Offers Received</p>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('COUNTRY') ? 'Country Applications' : activeRole.includes('BRANCH') ? 'Branch Applications' : 'Active Applications'}</p>
+                    <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.activeApplications ?? data?.branchApplications ?? data?.countryApplications)}</h3>
+                    <p className="text-[11px] text-[#0B5ED7] font-medium mt-1">{displayMetric(data?.offersReceived ?? data?.countryOffers ?? data?.offerCount)} Offers Received</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                     <FileText className="w-6 h-6" />
@@ -397,9 +428,9 @@ export default function UnifiedEmployeeDashboard({
               <Card className="bg-white border-slate-200/80 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={()=> setActiveTab('tasks')}>
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Tasks & SLA</p>
-                    <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.pendingTasksCount ?? data?.todaysTasks ?? 0}</h3>
-                    <p className="text-[11px] text-amber-600 font-medium mt-1">{data?.followUpsDue ?? 0} follow-ups due • {data?.overdueFollowUps ?? data?.overdueFollowUps ?? 0} overdue • {data?.slaBreaches ?? 0} breaches</p>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Open Tasks & Follow-ups</p>
+                    <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.pendingTasksCount)}</h3>
+                    <p className="text-[11px] text-amber-600 font-medium mt-1">{displayMetric(data?.followUpsDue)} follow-ups due • {displayMetric(data?.overdueFollowUps)} overdue • {displayMetric(data?.slaBreaches)} breaches</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                     <Clock className="w-6 h-6" />
@@ -414,8 +445,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Conversion Rate</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.conversionRate || '0%'}</h3>
-                        <p className="text-[11px] text-emerald-600 font-medium mt-1">leads → students</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.conversionRate)}</h3>
+                        <p className="text-[11px] text-slate-500 font-medium mt-1">Share of assigned leads marked converted in CRM.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><TrendingUp className="w-6 h-6" /></div>
                     </CardContent>
@@ -424,8 +455,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Unread Messages</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.unreadMessages ?? data?.unreadMessagesCount ?? 0}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">{data?.unreadNotifsCount ?? 0} notifications</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.unreadMessages ?? data?.unreadMessagesCount)}</h3>
+                        <p className="text-[11px] text-slate-400 mt-1">{displayMetric(data?.unreadNotifsCount)} notifications</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><MessageSquare className="w-6 h-6" /></div>
                     </CardContent>
@@ -434,8 +465,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Appointments Today</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.appointmentsToday ?? data?.appointmentsToday ?? 0}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">scheduled</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.appointmentsToday)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Scheduled or confirmed for assigned students.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#0B5ED7] flex items-center justify-center"><Calendar className="w-6 h-6" /></div>
                     </CardContent>
@@ -444,8 +475,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Documents</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.pendingDocuments ?? 0}</h3>
-                        <p className="text-[11px] text-amber-600 mt-1">requires follow-up</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.pendingDocuments)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Document pending-status data is unavailable.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><FileText className="w-6 h-6" /></div>
                     </CardContent>
@@ -459,7 +490,7 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Draft Applications</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.draftCount ?? data?.draftApplications ?? 0}</h3>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.draftCount ?? data?.draftApplications)}</h3>
                         <p className="text-[11px] text-slate-400 mt-1">needs completion</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center"><FileText className="w-6 h-6" /></div>
@@ -468,9 +499,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Offer Pending</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.offerCount ?? data?.offersReceived ?? 0}</h3>
-                        <p className="text-[11px] text-emerald-600 mt-1">offers tracked</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Offers Recorded</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.offerCount ?? data?.offersReceived)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Offer status present in scoped application records.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><CheckCircle2 className="w-6 h-6" /></div>
                     </CardContent>
@@ -478,9 +509,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Deadline Alerts</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.deadlineAlerts ?? data?.pendingDocuments ?? 0}</h3>
-                        <p className="text-[11px] text-red-600 mt-1">SLA risk</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Application Deadline Count</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.deadlineAlerts)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Deadline metrics are not connected.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
                     </CardContent>
@@ -489,7 +520,7 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Review Queue</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.reviewCount ?? 0}</h3>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.reviewCount)}</h3>
                         <p className="text-[11px] text-blue-600 mt-1">under review</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><Eye className="w-6 h-6" /></div>
@@ -504,8 +535,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Visa Cases</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.visaCasesCount ?? data?.visaCases ?? 0}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">{data?.visaReadyCount ?? data?.visaReady ?? 0} visa ready</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.visaCasesCount ?? data?.visaCases)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Readiness totals are not verified.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><ShieldCheck className="w-6 h-6" /></div>
                     </CardContent>
@@ -513,9 +544,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Interview Pending</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.interviewsScheduled ?? data?.interviewsPending ?? 0}</h3>
-                        <p className="text-[11px] text-amber-600 mt-1">scheduled</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Scheduled Interviews</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.interviewsScheduled ?? data?.interviewsPending)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Interview schedule data is unavailable.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><Calendar className="w-6 h-6" /></div>
                     </CardContent>
@@ -523,9 +554,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">High Risk</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.highRiskCount ?? data?.highRisk ?? 0}</h3>
-                        <p className="text-[11px] text-red-600 mt-1">needs review</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cases Marked High Risk</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.highRiskCount ?? data?.highRisk)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Recorded risk classification in CRM.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center"><ShieldAlert className="w-6 h-6" /></div>
                     </CardContent>
@@ -534,8 +565,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Escalated Cases</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.escalatedCases ?? 0}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">requires senior review</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.escalatedCases)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Escalation count is not connected to this dashboard.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
                     </CardContent>
@@ -548,9 +579,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Receipts</p>
-                        <h3 className="text-lg font-black text-slate-800 mt-1">{data?.todaysReceipts ?? 'BDT 0'}</h3>
-                        <p className="text-[11px] text-emerald-600 mt-1">verified payments</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Receipt Total</p>
+                        <h3 className="text-lg font-black text-slate-800 mt-1">{displayMetric(data?.todaysReceipts)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Payment totals are not connected to this dashboard.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><DollarSign className="w-6 h-6" /></div>
                     </CardContent>
@@ -558,9 +589,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Payments</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.pendingPayments ?? 0}</h3>
-                        <p className="text-[11px] text-amber-600 mt-1">{data?.outstandingInvoices ?? 0} invoices</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Payroll Records</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.pendingPayrollRecords)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Only records in this employee's scope.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><Clock className="w-6 h-6" /></div>
                     </CardContent>
@@ -568,9 +599,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Commission Pending</p>
-                        <h3 className="text-lg font-black text-slate-800 mt-1">{data?.partnerCommissionPending ?? 'BDT 0'}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">{data?.commissionApproved ?? 'BDT 0'} approved</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Commission Records</p>
+                        <h3 className="text-lg font-black text-slate-800 mt-1">{displayMetric(data?.pendingCommissionRecords)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Only records in this employee's scope.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><Briefcase className="w-6 h-6" /></div>
                     </CardContent>
@@ -578,9 +609,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Monthly Revenue</p>
-                        <h3 className="text-lg font-black text-slate-800 mt-1">{data?.monthlyRevenue ?? 'BDT 0'}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">finance reports</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Revenue Total</p>
+                        <h3 className="text-lg font-black text-slate-800 mt-1">{displayMetric(data?.monthlyRevenue)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Revenue totals are not connected to this dashboard.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><TrendingUp className="w-6 h-6" /></div>
                     </CardContent>
@@ -594,8 +625,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Campaigns</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.activeCampaigns ?? data?.campaignsRunning ?? 0}</h3>
-                        <p className="text-[11px] text-emerald-600 mt-1">running</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.activeCampaigns ?? data?.campaignsRunning)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">active/published status in CRM</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><Megaphone className="w-6 h-6" /></div>
                     </CardContent>
@@ -603,9 +634,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Leads Generated</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.totalLeadsGenerated ?? data?.totalLeads ?? 0}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">via campaigns</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Campaign-Attributed Leads</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.totalLeadsGenerated)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Campaign attribution data is unavailable.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center"><Users className="w-6 h-6" /></div>
                     </CardContent>
@@ -614,8 +645,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Social Inquiries Today</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.socialInquiriesToday ?? 0}</h3>
-                        <p className="text-[11px] text-blue-600 mt-1">inbox</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.socialInquiriesToday)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Provider-backed inbox metrics are unavailable.</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><MessageSquare className="w-6 h-6" /></div>
                     </CardContent>
@@ -624,8 +655,8 @@ export default function UnifiedEmployeeDashboard({
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Top Channel</p>
-                        <h3 className="text-sm font-black text-slate-800 mt-1">{data?.topChannel ?? 'Meta Ads'}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">lead source analytics</p>
+                        <h3 className="text-sm font-black text-slate-800 mt-1">{displayMetric(data?.topChannel)}</h3>
+                        <p className="text-[11px] text-slate-400 mt-1">source attribution unavailable</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center"><Globe className="w-6 h-6" /></div>
                     </CardContent>
@@ -633,14 +664,14 @@ export default function UnifiedEmployeeDashboard({
                 </>
               )}
 
-              {(activeRole.includes('HR') || activeRole.includes('BRANCH_MANAGER') || activeRole.includes('COUNTRY_MANAGER') || activeRole.includes('OFFICE_MANAGER') || activeRole.includes('FRONT_DESK') || activeRole.includes('SUPPORT') || activeRole.includes('PARTNER')) && (
+              {(activeRole.includes('HR') || activeRole.includes('BRANCH') || activeRole.includes('COUNTRY') || activeRole.includes('OFFICE_MANAGER')) && (
                 <>
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('HR')? 'Total Employees': activeRole.includes('BRANCH')? 'Branch Leads' : activeRole.includes('COUNTRY')? 'Country Students' : activeRole.includes('PARTNER')? 'Total Partners' : activeRole.includes('SUPPORT')? 'Open Tickets' : 'Walk-ins Today'}</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.totalEmployees ?? data?.branchLeads ?? data?.countryStudents ?? data?.totalPartners ?? data?.openTickets ?? data?.walkInsToday ?? 0}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">scoped view</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Employees in Scope' : activeRole.includes('BRANCH') ? 'Leads in Branch' : 'Student Profiles by Preferred Country'}</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.totalEmployees ?? data?.branchLeads ?? data?.countryStudents)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Employee records in this authorized scope.' : activeRole.includes('BRANCH') ? 'Lead records assigned within this branch.' : 'Profiles matching this employee’s destination focus.'}</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center"><Building className="w-6 h-6" /></div>
                     </CardContent>
@@ -648,9 +679,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('HR')? 'Active Employees': activeRole.includes('BRANCH')? 'Branch Students' : activeRole.includes('COUNTRY')? 'Country Applications' : 'Pending Items'}</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.activeEmployees ?? data?.branchStudents ?? data?.countryApplications ?? data?.pendingSeatRequests ?? data?.unassignedLeads ?? 0}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">requires action</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Active Employees' : activeRole.includes('BRANCH') ? 'Branch Students' : 'Country Applications'}</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.activeEmployees ?? data?.branchStudents ?? data?.countryApplications)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Records marked active in CRM.' : activeRole.includes('BRANCH') ? 'Student records assigned within this branch.' : 'Applications matching the selected destinations.'}</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><Users className="w-6 h-6" /></div>
                     </CardContent>
@@ -658,9 +689,9 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('HR')? 'Leave Requests': activeRole.includes('SUPPORT')? 'Urgent Tickets' : 'Pending Docs'}</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.leaveRequestsToday ?? data?.urgentTickets ?? data?.pendingDocuments ?? 0}</h3>
-                        <p className="text-[11px] text-amber-600 mt-1">approval queue</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Pending Leave Requests Today' : activeRole.includes('BRANCH') ? 'Branch Offers Recorded' : 'Country Offers Recorded'}</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.leaveRequestsToday ?? data?.offersReceived ?? data?.countryOffers)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Pending requests created today.' : 'Offer status recorded in scoped applications.'}</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><Clock className="w-6 h-6" /></div>
                     </CardContent>
@@ -668,14 +699,45 @@ export default function UnifiedEmployeeDashboard({
                   <Card className="bg-white border-slate-200/80 shadow-sm">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('HR')? 'Attendance Today': 'Reports'}</p>
-                        <h3 className="text-2xl font-black text-slate-800 mt-1">{data?.attendancePresent ?? data?.branchApplications ?? data?.countryOffers ?? 0}</h3>
-                        <p className="text-[11px] text-slate-400 mt-1">daily ops</p>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Attendance Marked Present Today' : activeRole.includes('BRANCH') ? 'Branch Applications' : 'Visa Cases in Selected Countries'}</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.attendancePresent ?? data?.branchApplications ?? data?.visaCasesCount)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Attendance records for today in this scope.' : activeRole.includes('BRANCH') ? 'Applications assigned in this branch scope.' : 'Visa cases matching destination focus.'}</p>
                       </div>
                       <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><CheckCircle2 className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                 </>
+              )}
+
+              {activeRole.includes('SUPPORT') && (
+                <>
+                  <Card className="bg-white border-slate-200/80 shadow-sm">
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Open Assigned Threads</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.openTickets)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Open communication threads assigned to this account.</p>
+                      </div>
+                      <div className="w-11 h-11 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center"><MessageSquare className="w-6 h-6" /></div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-white border-slate-200/80 shadow-sm">
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Urgent Assigned Threads</p>
+                        <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.urgentTickets)}</h3>
+                        <p className="text-[11px] text-slate-500 mt-1">Open threads marked urgent in CRM.</p>
+                      </div>
+                      <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
+
+              {(activeRole.includes('FRONT_DESK') || activeRole.includes('PARTNER')) && (
+                <div className="sm:col-span-2 lg:col-span-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600" role="status">
+                  {activeRole.includes('FRONT_DESK') ? 'Walk-in metrics are unavailable because no verified walk-in data source is connected.' : 'Partner totals are unavailable because no authorized partner metric source is connected.'}
+                </div>
               )}
             </div>
             )}
@@ -687,13 +749,13 @@ export default function UnifiedEmployeeDashboard({
                   Dashboard Overview
                 </TabsTrigger>
                 <TabsTrigger value="leads" className="text-xs font-semibold data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">
-                  My Leads ({data?.assignedLeads ?? 0})
+                  My Leads ({displayMetric(data?.assignedLeads)})
                 </TabsTrigger>
                 <TabsTrigger value="students" className="text-xs font-semibold data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">
-                  My Students ({data?.activeStudents ?? 0})
+                  My Students ({displayMetric(data?.activeStudents)})
                 </TabsTrigger>
                 <TabsTrigger value="applications" className="text-xs font-semibold data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">
-                  Applications ({data?.activeApplications ?? 0})
+                  Applications ({displayMetric(data?.activeApplications)})
                 </TabsTrigger>
                 <TabsTrigger value="tasks" className="text-xs font-semibold data-[state=active]:bg-[#0B5ED7] data-[state=active]:text-white">
                   Tasks & Follow-ups
@@ -712,7 +774,7 @@ export default function UnifiedEmployeeDashboard({
                       <CardHeader className="p-4 border-b border-slate-100 flex flex-row items-center justify-between">
                         <div>
                           <CardTitle className="text-sm font-bold text-slate-800">Assigned Student Pipeline</CardTitle>
-                          <p className="text-xs text-slate-400">Real-time status of students in your portfolio</p>
+                          <p className="text-xs text-slate-400">Student records returned by this request are limited to your account's assigned scope.</p>
                         </div>
                         <Button
                           variant="ghost"
@@ -734,12 +796,12 @@ export default function UnifiedEmployeeDashboard({
                                   </div>
                                   <div>
                                     <p className="text-sm font-bold text-slate-800">{s.fullName}</p>
-                                    <p className="text-xs text-slate-400">{s.studentCode} &bull; {s.targetCountry || 'UK'}</p>
+                                    <p className="text-xs text-slate-400">{s.studentCode} &bull; {s.currentCountry || 'Country not recorded'}</p>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-3">
                                   <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200 capitalize text-xs">
-                                    {s.currentStage || 'Counseling'}
+                                    {s.currentStage || 'Stage not recorded'}
                                   </Badge>
                                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-xs text-[#0B5ED7] font-medium h-7">
                                     Open
@@ -749,7 +811,7 @@ export default function UnifiedEmployeeDashboard({
                             ))
                           ) : (
                             <div className="p-8 text-center text-slate-400 text-sm">
-                              No active students assigned yet. Click "Quick Lead" to register a candidate.
+                              No active students are available in this account's assigned scope.
                             </div>
                           )}
                         </div>
@@ -778,16 +840,16 @@ export default function UnifiedEmployeeDashboard({
                     {activeRole.includes('VISA') && (
                       <Card className="bg-white border-slate-200 shadow-sm">
                         <CardHeader className="p-4 border-b border-slate-100">
-                          <CardTitle className="text-sm font-bold text-slate-800">Visa Case Readiness & Interview Priority</CardTitle>
+                          <CardTitle className="text-sm font-bold text-slate-800">Recent Visa Cases — Recorded Stage</CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 space-y-2">
                           {(data?.recentVisaCases && data.recentVisaCases.length>0) ? data.recentVisaCases.slice(0,4).map((vc:any)=>(
-                            <div key={vc.id} className="flex items-center justify-between p-3 rounded-lg border text-xs" style={{backgroundColor: (vc.readinessScore||0)>=85 ? '#ecfdf5':'#fffbeb', borderColor: (vc.readinessScore||0)>=85 ? '#a7f3d0':'#fde68a'}}>
+                            <div key={vc.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-slate-50 text-xs">
                               <span className="font-semibold text-slate-700 truncate pr-2">{vc.studentName || vc.caseCode} - {vc.destinationCountry || vc.university}</span>
-                              <Badge className={`${(vc.readinessScore||0)>=85 ? 'bg-emerald-600' : vc.readinessScore>=60 ? 'bg-amber-600' : 'bg-red-600'} text-white text-[10px] shrink-0`}>Readiness {vc.readinessScore||0}% ({vc.riskLevel})</Badge>
+                              <Badge variant="outline" className="text-[10px] shrink-0">Stage: {vc.currentStage || 'not recorded'}</Badge>
                             </div>
                           )) : (
-                            <div className="text-center py-4 text-xs text-slate-400">No visa cases assigned. Real-time readiness will appear here.</div>
+                            <div className="text-center py-4 text-xs text-slate-400">No visa cases are available in this account's assigned scope.</div>
                           )}
                         </CardContent>
                       </Card>
@@ -831,28 +893,28 @@ export default function UnifiedEmployeeDashboard({
                       <CardContent className="p-4 grid grid-cols-2 gap-2">
                         <Button
                           variant="outline"
-                          onClick={() => (window.location.href = '/admin/university-data')}
+                          onClick={() => router.push('/admin/university-data')}
                           className="h-14 text-xs flex-col gap-1 border-slate-200 hover:bg-blue-50 hover:text-[#0B5ED7]"
                         >
                           <Building className="w-4 h-4" /> Course Finder
                         </Button>
                         <Button
                           variant="outline"
-                          onClick={() => (window.location.href = '/employee/ucc')}
+                          onClick={() => router.push('/employee/ucc')}
                           className="h-14 text-xs flex-col gap-1 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700"
                         >
                           <MessageSquare className="w-4 h-4" /> WhatsApp UCC
                         </Button>
                         <Button
                           variant="outline"
-                          onClick={() => (window.location.href = '/employee/visa-dashboard')}
+                          onClick={() => router.push('/employee/visa-dashboard')}
                           className="h-14 text-xs flex-col gap-1 border-slate-200 hover:bg-orange-50 hover:text-[#F97316]"
                         >
                           <ShieldCheck className="w-4 h-4" /> Visa Cases
                         </Button>
                         <Button
                           variant="outline"
-                          onClick={() => (window.location.href = '/employee/tasks')}
+                          onClick={() => router.push('/employee/tasks')}
                           className="h-14 text-xs flex-col gap-1 border-slate-200 hover:bg-purple-50 hover:text-purple-700"
                         >
                           <CheckCircle2 className="w-4 h-4" /> All Tasks
@@ -871,9 +933,11 @@ export default function UnifiedEmployeeDashboard({
                       <CardTitle className="text-sm font-bold text-slate-800">Assigned Marketing Leads</CardTitle>
                       <p className="text-xs text-slate-400">Inbound and walk-in prospective international students</p>
                     </div>
-                    <Button size="sm" onClick={() => setShowLeadModal(true)} className="bg-[#F97316] text-white text-xs h-8">
-                      <Plus className="w-3.5 h-3.5 mr-1" /> Add Lead
-                    </Button>
+                    {canCreateLead && (
+                      <Button size="sm" onClick={() => setShowLeadModal(true)} className="bg-[#F97316] text-white text-xs h-8">
+                        <Plus className="w-3.5 h-3.5 mr-1" /> Add Lead
+                      </Button>
+                    )}
                   </CardHeader>
                   <CardContent className="p-4">
                     {/* Desktop table */}
@@ -975,23 +1039,25 @@ export default function UnifiedEmployeeDashboard({
                       <h3 className="font-bold text-base">ALO Counselor & Officer AI Co-Pilot</h3>
                     </div>
                     <p className="text-xs text-blue-200 max-w-xl">
-                      Generate intelligent course shortlists, draft customized SOP outlines, detect missing visa documents, or prepare follow-up scripts powered by ALO AgentOS knowledge.
+                      AI drafting is unavailable from this panel while the existing ALO AI Workforce, knowledge sources, and role/department permissions are being reconciled. No draft or SOP is generated here.
                     </p>
                     <div className="flex flex-wrap gap-2 pt-2">
                       <Button
                         size="sm"
-                        className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs"
-                        onClick={() => toast.success('AI Draft Generated for Student Follow-up')}
+                        className="bg-amber-500 text-slate-900 font-bold text-xs opacity-60"
+                        disabled
+                        title="Unavailable: no verified, role-scoped follow-up workflow is connected to this control."
                       >
-                        Draft Student Follow-up Script
+                        Draft Student Follow-up Script (Unavailable)
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="bg-white/10 hover:bg-white/20 text-white border-white/20 text-xs"
-                        onClick={() => toast.success('AI SOP Outline Generated')}
+                        className="bg-white/10 text-white border-white/20 text-xs opacity-60"
+                        disabled
+                        title="Unavailable: no approved employee SOP source/search workflow is connected to this control."
                       >
-                        Generate SOP Structure
+                        Generate SOP Structure (Unavailable)
                       </Button>
                     </div>
                   </CardContent>
@@ -1041,6 +1107,7 @@ export default function UnifiedEmployeeDashboard({
                     onChange={(e) => setNewLeadCountry(e.target.value)}
                     className="w-full mt-1 h-9 text-xs border border-slate-200 rounded-lg px-3 bg-white"
                   >
+                    <option value="">Select destination (optional)</option>
                     <option value="United Kingdom">United Kingdom</option>
                     <option value="USA">USA</option>
                     <option value="Canada">Canada</option>

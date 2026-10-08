@@ -286,7 +286,7 @@ export default function PartnerDashboard() {
       {/* Embedded Communication Widget for Partner */}
       <DashboardCommunicationWidget
         role="PARTNER"
-        unreadCount={4}
+        unreadCount={null}
       />
 
       {/* ── Main Content Grid ──────────────────────────────── */}

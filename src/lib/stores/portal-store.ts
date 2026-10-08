@@ -270,6 +270,10 @@ export const usePortalStore = create<PortalState>((set, get) => ({
       const data = await res.json();
       if (data.success) {
         if (data.requireVerification) {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('portal_otp_email', String(regData.email).trim().toLowerCase());
+            localStorage.setItem('portal_otp_type', String(regData.portalType));
+          }
           set({ loginLoading: false, currentView: 'verify-otp', authMessage: data.message });
           return true;
         }

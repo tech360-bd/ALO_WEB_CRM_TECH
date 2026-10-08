@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   GraduationCap, Globe, BookOpen, ClipboardCheck, ChevronLeft, ChevronRight,
   Loader2, CheckCircle2, AlertCircle, HelpCircle, ArrowRight, RotateCcw,
@@ -105,6 +106,7 @@ function bdtLakhsToBudgetGbp(lakhs: number): number {
 // MAIN COMPONENT
 // ══════════════════════════════════════════════════════════════════════════════
 export function EligibilityChecker() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -648,11 +650,7 @@ export function EligibilityChecker() {
                   <Button
                     className="flex-1 text-white"
                     style={{ background: ALO_ORANGE }}
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        window.location.href = '/book-consultation';
-                      }
-                    }}
+                    onClick={() => router.push('/book-consultation')}
                   >
                     Book Free Consultation
                     <ArrowRight className="w-4 h-4 ml-2" />
