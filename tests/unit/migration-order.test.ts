@@ -171,6 +171,17 @@ describe('prisma migration chain (re-baselined 2026-10-01)', () => {
     expect(migration).toContain('ALTER TABLE `MonitoringJob` MODIFY `description` TEXT NULL;');
   });
 
+  it('stores complete conflict evidence in long text while preserving its default', () => {
+    const schema = readFileSync(schemaPath, 'utf8');
+    const modelText = schema.split('model DataConflict {')[1];
+    const modelBody = modelText?.split(String.fromCharCode(10) + '}')[0];
+    const field = modelBody?.split(String.fromCharCode(10)).find((line) => line.trimStart().startsWith('conflictingValues '));
+    const migration = readFileSync(join(migrationsDir, '20261008030000_data_conflict_values_longtext', 'migration.sql'), 'utf8');
+
+    expect(field).toContain('@db.LongText');
+    expect(migration).toContain("MODIFY `conflictingValues` LONGTEXT NOT NULL DEFAULT (_utf8mb4'[]')");
+  });
+
   it('0_init is unedited Prisma-generated SQL (regenerated header intact)', () => {
     const init = readFileSync(join(migrationsDir, '0_init', 'migration.sql'), 'utf8');
     expect(init).toContain('prisma migrate diff --from-empty --to-schema-datamodel');

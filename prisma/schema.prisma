@@ -8123,7 +8123,7 @@ model DataConflict {
   countrySlug       String?
   fieldName         String // the disputed field
   // Conflicting values from different official sources
-  conflictingValues String    @default("[]") // JSON array of {sourceUrl, sourceName, value, detectedAt}
+  conflictingValues String    @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText // JSON array of {sourceUrl, sourceName, value, detectedAt}
   status            String    @default("PENDING") // PENDING | RESOLVED | ESCALATED
   resolution        String? // SUPERSEDED | MERGED | MANUAL_OVERRIDE
   resolvedBy        String?
