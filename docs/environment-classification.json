@@ -1,10 +1,10 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2160,
+  "filesScanned": 2158,
   "summary": {
     "UNUSED": 73,
-    "REFERENCED_WITH_FALLBACK": 122,
+    "REFERENCED_WITH_FALLBACK": 123,
     "REFERENCED_FAIL_CLOSED": 14,
     "REFERENCED": 91,
     "PUBLIC": 8
@@ -2886,6 +2886,20 @@
       "declaredIn": [],
       "sampleReferences": [
         "src/lib/nextcloud-client.ts"
+      ]
+    },
+    {
+      "name": "NEXT_DEV_ALLOWED_ORIGINS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "next.config.ts"
       ]
     },
     {
