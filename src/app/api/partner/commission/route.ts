@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult;
 
-    const partner = await db.partnerProfile.findUnique({
+    const partner = await db.partnerProfile.findFirst({
       where: { userId: auth.userId },
     });
     if (!partner) {
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
         skip,
         take: limit,
       }),
-      db.partnerProfile.findUnique({
+      db.partnerProfile.findFirst({
         where: { partnerId: partner.partnerId },
         select: {
           commissionPending: true,
@@ -114,7 +114,7 @@ export async function POST(request: Request) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult;
 
-    const partner = await db.partnerProfile.findUnique({
+    const partner = await db.partnerProfile.findFirst({
       where: { userId: auth.userId },
     });
     if (!partner) {
@@ -166,7 +166,7 @@ export async function POST(request: Request) {
     const totalExpected = allPartnerLeads.reduce((sum, l) => sum + (l.commissionExpected || 0), 0);
     const totalReceived = allPartnerLeads.reduce((sum, l) => sum + (l.commissionReceived || 0), 0);
 
-    await db.partnerProfile.update({
+    await db.partnerProfile.updateMany({
       where: { partnerId: partner.partnerId },
       data: {
         commissionPending: totalExpected,

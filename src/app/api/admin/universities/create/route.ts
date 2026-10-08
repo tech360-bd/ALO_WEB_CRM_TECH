@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { randomUUID } from 'node:crypto';
 
 // POST /api/admin/universities/create — Manual University form per spec section 26
 export async function POST(request: NextRequest) {
@@ -9,9 +10,9 @@ export async function POST(request: NextRequest) {
     if (!isAuthorized) return NextResponse.json({ success: false, error: 'Admin required' }, { status: 403 });
 
     const body = await req.json();
-    const { universityId, name, country, city, campusName, campuses, website, officialUrl, officialInternationalAdmissionsUrl, officialCourseSearchUrl, officialTuitionFeeUrl, officialScholarshipUrl, ranking, worldRanking, type, founded, students, intlStudents, ieltsMin, tuitionRange, scholarships, description, overview, sourceUrl, lastVerifiedAt, verificationStatus = 'NEEDS_REVIEW', publicationStatus = 'draft', seoTitle, seoDescription, canonicalUrl, status = 'verified', forceCreate } = body;
+    const { universityId, name, country, city, campusName, campuses, website, officialUrl, officialInternationalAdmissionsUrl, officialCourseSearchUrl, officialTuitionFeeUrl, officialScholarshipUrl, ranking, worldRanking, type, founded, students, intlStudents, ieltsMin, tuitionRange, scholarships, description, overview, sourceUrl, lastVerifiedAt, verificationStatus = 'NEEDS_REVIEW', publicationStatus = 'draft', seoTitle, seoDescription, canonicalUrl, status = 'active', forceCreate } = body;
 
-    if (!name || !country) return NextResponse.json({ success: false, error: 'University name and country required' }, { status: 400 });
+    if (typeof name !== 'string' || typeof country !== 'string' || !name.trim() || !country.trim() || name.length > 191 || country.length > 191) return NextResponse.json({ success: false, error: 'University name and country required' }, { status: 400 });
 
     // Duplicate check
     if (!forceCreate) {
@@ -19,12 +20,13 @@ export async function POST(request: NextRequest) {
       if (existing) return NextResponse.json({ success: false, error: `Possible duplicate: ${existing.name} already exists`, duplicateDetected: true, existingUniversity: { id: existing.id, name: existing.name } }, { status: 409 });
     }
 
-    const genCode = universityId || `UNI-${Date.now().toString(36).toUpperCase()}`;
+    const genCode = universityId || `UNI-${randomUUID().replace(/-/g, '').toUpperCase()}`;
     const slug = body.slug || name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
     const newUni = await db.crmUniversity.create({
       data: {
         universityId: genCode,
+        universityCode: typeof body.universityCode === 'string' ? body.universityCode.trim().slice(0, 191) : '',
         name,
         slug,
         country,
@@ -44,14 +46,14 @@ export async function POST(request: NextRequest) {
         founded: founded || 0,
         students: students || '',
         intlStudents: intlStudents || '',
-        ieltsMin: ieltsMin || 6.0,
+        ieltsMin: ieltsMin || 0,
         tuitionRange: tuitionRange || '',
         scholarships: scholarships || false,
         description: description || overview || '',
         verificationStatus,
         publicationStatus,
-        lastVerifiedAt: lastVerifiedAt || new Date().toISOString(),
-        status: status || 'verified',
+        lastVerifiedAt: lastVerifiedAt || '',
+        status: status || 'active',
       },
     });
 

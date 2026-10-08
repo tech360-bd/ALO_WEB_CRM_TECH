@@ -9,6 +9,7 @@ import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
 import FaqAccordion from './FaqAccordion';
 import TestPreparationMiniCard from './TestPreparationMiniCard';
+import Image from 'next/image';
 
 interface Props {
   slug: string;
@@ -87,12 +88,17 @@ export default function UniversityHub({ slug }: Props) {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs text-gray-500 font-medium">
           <Link href="/" className="hover:text-[#2563EB]">Home</Link><span>›</span><Link href="/universities" className="hover:text-[#2563EB]">Universities</Link><span>›</span><span className="text-gray-700">{country}</span><span>›</span><span className="text-[#2563EB] font-bold">{name}</span>
         </nav>
 
         {/* 1. University Header */}
-        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 md:p-10 shadow-sm">
+        <div className="overflow-hidden rounded-3xl border border-[#E2E8F0] bg-white shadow-sm">
+          <div className="relative h-52 sm:h-72">
+            <Image src="/images/hero/study-abroad-hero.png" alt="Students planning their international education" fill sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover" priority />
+          </div>
+          <div className="p-6 md:p-10">
+          <p className="mb-3 text-xs font-semibold tracking-wide text-slate-500">ALO university reference: {uni.universityId || uni.id}</p>
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <Badge className={`${uni.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-xs`}>
               {uni.verificationStatus === 'VERIFIED' ? 'Verified university record' : `Verification: ${uni.verificationStatus || 'not verified'}`}
@@ -117,6 +123,7 @@ export default function UniversityHub({ slug }: Props) {
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">International student count</p><p className="font-bold">{uni.intlStudents || 'Not recorded'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Scholarships</p><p className="font-bold text-emerald-600">{uni.scholarships ? 'Available' : 'Check'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Jan 2027–Jan 2028 courses</p><p className="font-bold">{courseLoading ? 'Loading…' : courseTotal}</p></div>
+          </div>
           </div>
         </div>
 
@@ -149,7 +156,7 @@ export default function UniversityHub({ slug }: Props) {
                   <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><GraduationCap className="w-6 h-6 text-[#2563EB]" />Courses with intakes: January 2027 – January 2028</h2>
                   <p className="text-xs text-gray-600 mt-2">All matching active, published course records are paginated; no popular-course top-N limit is applied. Eligibility and intake-source status are shown per record.</p>
                 </div>
-                <Badge className="bg-slate-50 text-slate-700 border-slate-200">Institution code on file: {uni.universityCode?.trim() || 'Not recorded'}</Badge>
+                <Badge className="bg-slate-50 text-slate-700 border-slate-200">ALO ID: {uni.universityId || uni.id}</Badge>
               </div>
               {intakeWindow && (
                 <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-950" role="status">

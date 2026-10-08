@@ -667,16 +667,7 @@ function FaqSection() {
                 Browse All FAQs
               </Link>
             </Button>
-            <Button
-              className="h-12 px-6 rounded-full text-sm font-semibold"
-              style={{ backgroundColor: `${C.whatsapp}`, color: '#FFFFFF' }}
-              asChild
-            >
-              <a href="https://wa.me/8801805020100" target="_blank" rel="noopener noreferrer">
-                <Phone className="mr-2 h-4 w-4" />
-                Ask on WhatsApp
-              </a>
-            </Button>
+
           </div>
         </motion.div>
       </div>
@@ -787,16 +778,7 @@ function FinalCtaSection() {
                   Find Your Course
                 </Link>
               </Button>
-              <Button
-                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold shadow-lg border-none"
-                style={{ backgroundColor: C.whatsapp, color: '#FFFFFF' }}
-                asChild
-              >
-                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  WhatsApp Us
-                </a>
-              </Button>
+
             </div>
 
             {/* Contact Info */}

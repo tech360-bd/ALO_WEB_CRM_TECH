@@ -41,7 +41,7 @@ export async function GET(request: Request) {
         }
       } catch {
         // MockTestCredit table may not exist yet
-        credits = { totalCredits: 3, usedCredits: 0, available: 3 };
+        return NextResponse.json({ success: false, error: 'Mock-test credits could not be verified. Please try again later.' }, { status: 503 });
       }
 
       // Get recent test sessions (TestSession has no @relation to TestResult)

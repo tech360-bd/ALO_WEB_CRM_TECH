@@ -11,6 +11,8 @@ import { classifyIntent as classifyIntentCRM, detectPriority, normalizePhoneE164
 // Consolidated 2026-09-14: handler provides CRM intent/priority + E.164 + comprehensive extractMessageContent (additional, not replacing local)
 // All original functions preserved (normalizePhone via normalizeBdPhone, safeEqual, verifySignature, sendOutboundViaApi, extractMessageContent, generateStudentId)
 
+import { ingestWhatsAppMedia, whatsappGraphBase, whatsappPhoneVariants } from "@/lib/whatsapp-media-ingestion";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -28,11 +30,8 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 function verifySignature(rawBody: string, signature: string): boolean {
-  const appSecret = process.env.WHATSAPP_APP_SECRET || process.env.WHATSAPP_VERIFY_TOKEN;
-  if (!appSecret) {
-    console.warn("[whatsapp.webhook] WHATSAPP_APP_SECRET not set — skipping verification (dev mode)");
-    return true;
-  }
+  const appSecret = process.env.WHATSAPP_APP_SECRET;
+  if (!appSecret) return false;
   if (!signature) return false;
   const expected = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
   return safeEqual(expected, signature);
@@ -51,7 +50,7 @@ async function sendOutboundViaApi(recipientPhone: string, text: string): Promise
     text: { body: text },
   };
   try {
-    const res = await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
+    const res = await fetch(`${whatsappGraphBase()}/${phoneNumberId}/messages`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -99,27 +98,7 @@ function extractMessageContent(msg: any): { type: string; body: string; mediaId?
 
 // Generate unique Student ID AE-YYYYNNNN
 async function generateStudentId(): Promise<string> {
-  const year = new Date().getFullYear();
-  const prefix = `AE-${year}`;
-  // Find last student with same year prefix
-  try {
-    const last = await db.student.findFirst({
-      where: { studentId: { startsWith: prefix } },
-      orderBy: { studentId: 'desc' },
-    });
-    if (last) {
-      const numPart = last.studentId.replace(prefix, '');
-      const num = parseInt(numPart, 10) || 0;
-      return `${prefix}${String(num + 1).padStart(4, '0')}`;
-    }
-  } catch {}
-  // Fallback count
-  try {
-    const count = await db.student.count();
-    return `${prefix}${String(10001 + count).padStart(4, '0')}`;
-  } catch {
-    return `${prefix}${String(Math.floor(Math.random() * 90000) + 10000)}`;
-  }
+  return `AE-${new Date().getFullYear()}${crypto.randomBytes(6).toString('hex').toUpperCase()}`;
 }
 
 export async function POST(req: NextRequest) {
@@ -127,8 +106,9 @@ export async function POST(req: NextRequest) {
   const signature = req.headers.get("x-hub-signature-256") || "";
 
   // 1. Validate payload & source
+  if (!process.env.WHATSAPP_APP_SECRET) return NextResponse.json({ error: "Webhook verification is not configured" }, { status: 503 });
   const signatureValid = verifySignature(rawBody, signature);
-  if (process.env.WHATSAPP_APP_SECRET && !signatureValid) {
+  if (!signatureValid) {
     return NextResponse.json({ error: "Invalid signature — webhook not verified" }, { status: 401 });
   }
 
@@ -240,6 +220,10 @@ export async function POST(req: NextRequest) {
         where: { whatsappMessageId: providerMessageId },
       });
       if (existingArchive) {
+        if (mediaId) {
+          try { await ingestWhatsAppMedia({ providerMessageId, mediaId, senderPhone: from, senderName: fromName, fileName: extra?.filename, phoneNumberId }); }
+          catch { return NextResponse.json({ error: "Media storage failed; retry required" }, { status: 503 }); }
+        }
         results.push({ messageId: providerMessageId, idempotent: true, duplicate: true });
         continue; // Skip duplicate
       }
@@ -302,42 +286,12 @@ export async function POST(req: NextRequest) {
     } catch {}
 
     // Search existing student
-    let existingStudent = null;
-    try {
-      existingStudent = await db.student.findFirst({
-        where: {
-          OR: [
-            { mobile: from },
-            { mobile: normalizedFrom },
-            { altMobile: from },
-            { altMobile: normalizedFrom },
-          ],
-        },
-      });
-      if (!existingStudent) {
-        existingStudent = await db.portalStudentProfile.findFirst({
-          where: {
-            OR: [
-              { studentId: waContact?.studentId || "" },
-              { userId: waContact?.studentId || "" },
-            ],
-          },
-        }).then(async (p) => {
-          if (p) return p;
-          // Search by phone in portal user
-          const portalUser = await db.portalUser.findFirst({
-            where: { phone: { in: [from, normalizedFrom] } },
-          });
-          if (portalUser) {
-            return await db.portalStudentProfile.findUnique({ where: { userId: portalUser.id } });
-          }
-          return null;
-        });
-      }
-    } catch {}
+    const existingStudent = await db.student.findFirst({
+      where: { OR: [{ phone: { in: whatsappPhoneVariants(from) } }, ...(waContact?.studentId ? [{ id: waContact.studentId }, { studentId: waContact.studentId }] : [])] },
+    });
 
     let leadId: string | null = waContact?.leadId || null;
-    let studentId: string | null = waContact?.studentId || (existingStudent as any)?.id || (existingStudent as any)?.studentId || null;
+    let studentId: string | null = existingStudent?.id || null;
 
     // Search existing lead if no student
     if (!studentId) {
@@ -371,7 +325,7 @@ export async function POST(req: NextRequest) {
           const count = await db.lead.count().catch(() => 0);
           const newLead = await db.lead.create({
             data: {
-              leadId: `ALO-L-${(10001 + count + 1).toString()}`,
+              leadId: `ALO-L-${crypto.randomBytes(6).toString("hex").toUpperCase()}`,
               fullName: `${fromName || `WhatsApp ${from.slice(-4)}`}`,
               phone: from,
               source: "WHATSAPP",
@@ -388,15 +342,12 @@ export async function POST(req: NextRequest) {
           const newStudent = await db.student.create({
             data: {
               studentId: studentCode,
-              firstName: fromName?.split(' ')[0] || 'WhatsApp',
-              lastName: fromName?.split(' ').slice(1).join(' ') || from.slice(-4),
-              fullName: fromName || `WhatsApp ${from.slice(-4)}`,
-              email: `wa_${from.slice(-4)}_${Date.now()}@aloeducation.com`,
-              mobile: from,
-              nationality: "Bangladeshi",
-              leadId: newLead?.id || "",
-              profileCompletion: 5,
-              status: "ACTIVE",
+              name: fromName || `WhatsApp ${from.slice(-4)}`,
+              email: `wa_${crypto.randomUUID()}@aloeducation.com`,
+              phone: normalizedFrom,
+              leadId: newLead?.id || null,
+              profileComplete: 5,
+              status: "active",
             },
           }).catch(() => null);
 
@@ -556,7 +507,7 @@ export async function POST(req: NextRequest) {
         }).catch(() => {});
       }
 
-      await db.uccMessage.create({
+      const uccMessage = await db.uccMessage.create({
         data: {
           conversationId: uccConv.id,
           direction: "inbound",
@@ -571,46 +522,13 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // If media, create attachment and queue document processing
-      if (mediaId && ['image','document','audio','video'].includes(type)) {
-        await db.uccAttachment.create({
-          data: {
-            conversationId: uccConv.id,
-            fileName: extra?.filename || `${type}-${providerMessageId}`,
-            fileType: type,
-            mimeType: extra?.mime || `${type}/*`,
-            fileSize: 0,
-            fileUrl: `whatsapp-media:${mediaId}`,
-            studentId: studentId || undefined,
-          },
-        }).catch(() => {});
-
-        // Document auto-ingestion
-        await db.studentDocument.create({
-          data: {
-            studentId: studentId || "",
-            category: type === 'image' ? 'image' : type === 'document' ? 'document' : type,
-            fileName: extra?.filename || `${type}-${providerMessageId}`,
-            fileUrl: `whatsapp-media:${mediaId}`,
-            status: "pending_verification",
-          },
-        }).catch(() => {});
-
-        // Queue AI extraction
-        await db.ocrJob.create({
-          data: {
-            documentId: `${type}-${providerMessageId}`,
-            fileUrl: `whatsapp-media:${mediaId}`,
-            fileName: extra?.filename || `${type}`,
-            mimeType: extra?.mime || "",
-            status: "queued",
-            studentId: studentId || undefined,
-            conversationId: uccConv.id,
-          },
-        }).catch(() => {});
+      if (mediaId && ['image', 'document', 'audio', 'video'].includes(type)) {
+        await ingestWhatsAppMedia({ providerMessageId, mediaId, senderPhone: from, senderName: fromName,
+          fileName: extra?.filename, phoneNumberId, conversationId: uccConv.id, messageId: uccMessage.id });
       }
     } catch (err) {
       console.error("UCC save error:", err);
+      if (mediaId) return NextResponse.json({ error: "Media storage failed; retry required" }, { status: 503 });
     }
 
     // 11. AI processing — unified Student Intake Agent (ID-first) for whatsapp + fallback
@@ -972,7 +890,7 @@ export async function GET(req: NextRequest) {
   const challenge = req.nextUrl.searchParams.get("hub.challenge");
 
   // Support both WHATSAPP_VERIFY_TOKEN and WHATSAPP_APP_SECRET as verify token
-  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || process.env.WHATSAPP_APP_SECRET;
+  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
 
   if (mode === "subscribe" && token === verifyToken) {
     return new NextResponse(challenge, { status: 200 });

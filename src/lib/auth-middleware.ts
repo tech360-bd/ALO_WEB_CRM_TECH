@@ -15,6 +15,7 @@ export interface AuthContext {
   sessionId: string;
   branch?: string;
   partnerId?: string;
+  partnerRole?: string;
 
   // Actor info for audit logs (especially when actingAs is used)
   actorUserId: string;
@@ -46,7 +47,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
   if (!token) {
     const { getServerSession } = await import('next-auth');
     const { authOptions } = await import('@/lib/auth');
-    const nextAuthSession = await getServerSession(authOptions);
+    const nextAuthSession = await getServerSession(authOptions).catch(() => null);
     const nextAuthUser = nextAuthSession?.user as {
       id?: string;
       email?: string | null;
@@ -105,7 +106,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
               },
             },
           },
-          partnerProfile: { select: { id: true, partnerId: true, approvalStatus: true } },
+          partnerProfile: { select: { id: true, partnerId: true, partnerRole: true, approvalStatus: true } },
         },
       },
     },
@@ -149,6 +150,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
   // Base user (Actor) info
   let actingUserId = session.user.id;
   let actingPartnerId = session.user.partnerProfile?.partnerId;
+  let actingPartnerRole = session.user.partnerProfile?.partnerRole;
   let actingEmail = session.user.email;
   let actingName = session.user.name;
   let actingUserType = session.user.userType;
@@ -176,7 +178,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       const actingAsUser = await db.portalUser.findUnique({
         where: { id: actingAsUserId },
         include: {
-          partnerProfile: { select: { id: true, partnerId: true, approvalStatus: true } },
+          partnerProfile: { select: { id: true, partnerId: true, partnerRole: true, approvalStatus: true } },
           roles: {
             include: {
               role: {
@@ -221,6 +223,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       actingName = actingAsUser.name;
       actingUserType = actingAsUser.userType;
       actingPartnerId = actingAsUser.partnerProfile?.partnerId;
+      actingPartnerRole = actingAsUser.partnerProfile?.partnerRole;
       roles = actingAsUser.roles.map(ur => ur.role.name);
       permissions = actingAsUser.roles.flatMap(ur =>
         ur.role.permissions
@@ -239,6 +242,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     permissions,
     sessionId: session.id,
     partnerId: actingPartnerId,
+    partnerRole: actingPartnerRole,
     actorUserId: session.user.id,
     actorEmail: session.user.email,
     actorName: session.user.name,
@@ -400,7 +404,7 @@ export async function getOptionalAuth(request: Request): Promise<AuthContext | n
                 },
               },
             },
-            partnerProfile: { select: { id: true, partnerId: true, approvalStatus: true } },
+            partnerProfile: { select: { id: true, partnerId: true, partnerRole: true, approvalStatus: true } },
           },
         },
       },
@@ -420,6 +424,7 @@ export async function getOptionalAuth(request: Request): Promise<AuthContext | n
       ),
       sessionId: session.id,
       partnerId: session.user.partnerProfile?.partnerId,
+      partnerRole: session.user.partnerProfile?.partnerRole,
       actorUserId: session.user.id,
       actorEmail: session.user.email,
       actorName: session.user.name || '',

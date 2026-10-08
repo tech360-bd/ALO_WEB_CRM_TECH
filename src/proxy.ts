@@ -79,6 +79,7 @@ const PUBLIC_ROUTES = [
   "/student/register",
   "/partner/login",
   "/partner/register",
+  "/partner/activate",
   "/employee/login",
   "/employee/activate",
   "/counselor/login",
@@ -343,7 +344,7 @@ export function isPublicApiRequest(pathname: string, method: string): boolean {
   // Explicit bearer-capability/token flows that are intentionally public.
   // Handlers must still validate and consume their respective token.
   if (pathname === "/api/crm/leads/public") return true;
-  if (pathname === "/api/employee/activate" && normalizedMethod === "POST") return true;
+  if ((pathname === "/api/employee/activate" || pathname === "/api/partner/activate") && normalizedMethod === "POST") return true;
 
   // NextAuth's catch-all is public, but the custom password-change handler is
   // explicitly excluded from this rule.
@@ -495,3 +496,4 @@ export const config = {
     "/((?!_next/static|_next/image|favicon.ico|public|.*\\..*).*)",
   ],
 };
+

@@ -1,0 +1,103 @@
+{
+  "results": [
+    {
+      "path": "/",
+      "status": 200,
+      "url": "http://127.0.0.1:3100/",
+      "title": "ALO Education — Study Abroad Consultancy in Bangladesh",
+      "headings": [
+        "Your Future Starts Here"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/universities",
+      "status": 200,
+      "url": "http://127.0.0.1:3100/universities",
+      "title": "University Directory and Course Information | ALO Education | ALO Education",
+      "headings": [
+        "Universities & Course Information"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/course-finder",
+      "status": 200,
+      "url": "http://127.0.0.1:3100/course-finder",
+      "title": "ALO Education — Study Abroad Consultancy in Bangladesh",
+      "headings": [
+        "Find Your Perfect Course"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/english-tests",
+      "status": 200,
+      "url": "http://127.0.0.1:3100/english-tests",
+      "title": "English Tests for Study Abroad — IELTS, PTE, TOEFL, Duolingo & More | ALO Education",
+      "headings": [
+        "Choose the right English test for your destination"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/visa",
+      "status": 200,
+      "url": "http://127.0.0.1:3100/visa",
+      "title": "Student Visa Support — Process, Documents, Work Rights & Sources | ALO Education",
+      "headings": [
+        "Student visa guidance, step by step"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/partner/activate",
+      "status": 200,
+      "url": "http://127.0.0.1:3100/partner/activate",
+      "title": "ALO Education — Study Abroad Consultancy in Bangladesh",
+      "headings": [
+        "Activate your partner account"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/student/login",
+      "status": 200,
+      "url": "http://127.0.0.1:3100/student/login",
+      "title": "ALO Education — Study Abroad Consultancy in Bangladesh",
+      "headings": [
+        "Your Study AbroadJourney, All in One Place"
+      ],
+      "errors": []
+    },
+    {
+      "path": "/employee/login",
+      "status": 200,
+      "url": "http://127.0.0.1:3100/employee/login",
+      "title": "ALO Education — Study Abroad Consultancy in Bangladesh",
+      "headings": [],
+      "errors": []
+    }
+  ],
+  "failed": [],
+  "health": {
+    "status": 200,
+    "body": {
+      "status": "ok",
+      "timestamp": "2026-10-08T20:41:33.614Z",
+      "database": {
+        "connected": true
+      },
+      "modules": {
+        "universities": true,
+        "courses": true,
+        "students": true,
+        "staff": true,
+        "documents": true,
+        "content": true
+      },
+      "responseTime_ms": 7
+    }
+  },
+  "environment": "isolated disposable SQLite verification mirror; does not prove production MySQL/provider behavior"
+}

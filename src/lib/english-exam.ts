@@ -55,6 +55,7 @@ export function isEnglishProficiencyTestSlug(slug: string | null | undefined): b
 export const ENGLISH_EXAM_COPY = {
   en: {
     question: 'Do you want to take an English test?',
+    promotion: 'Eligible ALO students can request 3 free mock tests. Sign in to check your eligibility and available credits.',
     button: 'Take the English Test',
     leaving: `You will continue to ${ENGLISH_EXAM_PLATFORM_HOST}, the English Test Platform.`,
     preparationLabel: 'PREPARATION',
@@ -64,6 +65,7 @@ export const ENGLISH_EXAM_COPY = {
   },
   bn: {
     question: 'আপনি কি ইংরেজি পরীক্ষা দিতে চান?',
+    promotion: 'যোগ্য ALO শিক্ষার্থীরা ৩টি ফ্রি মক টেস্টের জন্য আবেদন করতে পারেন। যোগ্যতা ও উপলব্ধ ক্রেডিট দেখতে লগইন করুন।',
     button: 'পরীক্ষা দিন',
     leaving: `আপনি ${ENGLISH_EXAM_PLATFORM_HOST}-এ ইংরেজি পরীক্ষা প্ল্যাটফর্মে যাবেন।`,
     preparationLabel: 'প্রস্তুতি',

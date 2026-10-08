@@ -307,7 +307,7 @@ export async function POST(request: Request) {
       let isUnique = false;
       let attempts = 0;
       while (!isUnique && attempts < 10) {
-        const existing = await db.partnerProfile.findUnique({
+        const existing = await db.partnerProfile.findFirst({
           where: { partnerId },
         });
         if (!existing) {

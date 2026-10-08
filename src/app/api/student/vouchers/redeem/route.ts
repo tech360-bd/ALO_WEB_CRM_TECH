@@ -79,16 +79,39 @@ export async function POST(request: Request) {
         );
       }
 
-      // Increment usedCount
+      // 5. Consume the voucher ATOMICALLY.
+      //
+      // Reading usedCount and then writing `usedCount + 1` is a lost-update
+      // race: two concurrent redemptions of the same voucher both read 0, both
+      // write 1, and the student gets two mock tests for one voucher. The
+      // conditional `updateMany` below makes the database itself re-check
+      // `usedCount < usageLimit` and `status = 'available'` as part of the
+      // write, so exactly one concurrent caller can succeed.
       const newUsedCount = voucher.usedCount + 1;
       const isFullyUsed = newUsedCount >= voucher.usageLimit;
 
-      const updatedVoucher = await db.studentMockTestVoucher.update({
-        where: { id: voucher.id },
+      const claim = await db.studentMockTestVoucher.updateMany({
+        where: {
+          id: voucher.id,
+          status: 'available',
+          usedCount: { lt: voucher.usageLimit },
+        },
         data: {
-          usedCount: newUsedCount,
+          usedCount: { increment: 1 },
           status: isFullyUsed ? 'used' : 'available',
         },
+      });
+
+      if (claim.count === 0) {
+        // Another request consumed the final use first.
+        return NextResponse.json(
+          { success: false, status: 409, message: 'This voucher has just been used. Please refresh and try again.' },
+          { status: 409 }
+        );
+      }
+
+      const updatedVoucher = await db.studentMockTestVoucher.findUniqueOrThrow({
+        where: { id: voucher.id },
       });
 
       // Audit log
