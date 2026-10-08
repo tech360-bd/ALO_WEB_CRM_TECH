@@ -9,11 +9,6 @@ function isAdministrator(auth: { userType: string; roles: string[] }) {
 
 export const dynamic = 'force-dynamic';
 
-  // SLA compliance = responded / total * 100
-  const slaEventList = Array.isArray(slaEvents) ? slaEvents : [];
-  const slaTotal = slaEventList.length;
-  const slaResponded = slaEventList.filter((e) => e.eventType === "RESPONDED" || e.responseAt).length;
-  const slaCompliance = slaTotal > 0 ? Math.round((slaResponded / slaTotal) * 100) : 100;
 // This legacy dashboard aggregates confidential communication and documents.
 // It is restricted to administrators; use the scoped UCC APIs for role inboxes.
 export async function GET(req: NextRequest) {
@@ -125,7 +120,6 @@ export async function GET(req: NextRequest) {
 
     await logAuditAction(auth, 'OMNICHANNEL_GLOBAL_DASHBOARD_VIEWED', 'CommunicationDashboard', 'global', {
       counts: { calls: phoneCalls.length, emails: emails.length, sms: sms.length, documents, messages: socialMessages.length + commMessages.length },
-      counts: { calls: phoneCalls.length, emails: emails.length, sms: sms.length, documents: documents, messages: socialMessages.length + commMessages.length },
     });
 
     return NextResponse.json({
