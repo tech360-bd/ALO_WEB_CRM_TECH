@@ -46,7 +46,7 @@ export const POST = withAuth(async (req, auth) => {
       });
       await tx.auditLog.create({
         data: {
-          userId: staffUser?.id || null,
+          userId: staffUser?.id ?? undefined,
           action: 'REVIEW_INVITATION_CREATED',
           resource: 'ReviewInvitation',
           resourceId: created.id,
