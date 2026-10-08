@@ -94,6 +94,13 @@ const nextConfig: NextConfig = {
       { source: "/portal", destination: "/portal/login" },
       { source: "/auth/login", destination: "/login" },
       { source: "/course-finder/saved", destination: "/?p=saved-courses" },
+      // Spec-named marketing IA aliases. The implementations already exist
+      // under their canonical CRM paths; these keep the specification's URLs
+      // working without duplicating a second dashboard.
+      { source: "/marketing", destination: "/crm/marketing" },
+      { source: "/marketing/dashboard", destination: "/crm/marketing" },
+      { source: "/crm/social-inbox", destination: "/crm/communications/social-inbox" },
+      { source: "/crm/ai-command-center", destination: "/admin/ai-command-center" },
 
     ];
   },

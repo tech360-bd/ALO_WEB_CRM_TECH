@@ -85,6 +85,17 @@ const portalItems = [
   { label: 'Employee Portal', href: '/employee/login', icon: LogIn },
 ];
 
+// Planning tools. Each runs on deterministic rules over verified data; none of
+// them promise an admission, award or visa outcome.
+const AI_TOOL_ITEMS = [
+  { label: 'Course Match', href: '/ai/course-match' },
+  { label: 'Scholarship Match', href: '/ai/scholarship-match' },
+  { label: 'Visa Coach', href: '/ai/visa-coach' },
+  { label: 'SOP Helper', href: '/ai/sop-helper' },
+  { label: 'CV Helper', href: '/ai/cv-helper' },
+  { label: 'Eligibility Check', href: '/eligibility-check' },
+];
+
 /* ------------------------------------------------------------------ */
 /*  DROPDOWN ANIMATION VARIANTS                                         */
 /* ------------------------------------------------------------------ */
@@ -348,6 +359,20 @@ export default function PublicNavbar() {
           >
             <div className="grid grid-cols-2 gap-x-6 gap-y-1 w-[420px]">
               {resourceItems.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+            </div>
+          </DropdownTrigger>
+
+          <DropdownTrigger
+            label="AI Tools"
+            isOpen={openDropdown === 'ai-tools'}
+            onToggle={() => handleToggle('ai-tools')}
+            onMouseEnter={() => handleDesktopEnter('ai-tools')}
+            onMouseLeave={handleDesktopLeave}
+          >
+            <div className="flex flex-col gap-1 w-[260px]">
+              {AI_TOOL_ITEMS.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
             </div>
