@@ -101,6 +101,44 @@ describe("proxy API exposure policy", () => {
   });
 });
 
+describe("proxy public marketing page exposure (2026-10-08 production regression)", () => {
+  // Production verification on commit 61eca94 showed these public pages
+  // redirecting anonymous visitors to /login?callbackUrl=... because they were
+  // missing from PUBLIC_ROUTES — breaking the homepage "Check Eligibility"
+  // CTA and the navbar "Application Tips" link.
+  it("keeps public marketing/SEO pages reachable without a session", () => {
+    for (const path of [
+      "/eligibility-check",
+      "/english-test-prep",
+      "/english-test-prep/ielts",
+      "/english-tests/ielts",
+      "/news",
+      "/news/some-article",
+      "/events",
+      "/compare",
+      "/application-process",
+      "/admission-requirements",
+    ]) {
+      expect(isPublicPageRequest(path), path).toBe(true);
+    }
+  });
+
+  it("still gates authenticated portals and unknown pages", () => {
+    for (const path of [
+      "/student/dashboard",
+      "/admin/dashboard",
+      "/crm/leads",
+      "/partner/students",
+      "/counselor/inbox",
+      "/application-manager/applications",
+      "/super-admin/settings",
+      "/not-a-public-page",
+    ]) {
+      expect(isPublicPageRequest(path), path).toBe(false);
+    }
+  });
+});
+
 describe("proxy public consultation workflow", () => {
   it("allows anonymous POST to the public consultation lead endpoint", () => {
     expect(isPublicApiRequest("/api/website/lead", "POST")).toBe(true);

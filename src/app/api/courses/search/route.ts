@@ -251,8 +251,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error: any) {
+    console.error('[api/courses/search] error', error);
     return NextResponse.json(
-      { success: false, error: error?.message || 'Failed to search courses' },
+      { success: false, error: 'Failed to search courses' },
       { status: 500 }
     );
   }

@@ -46,6 +46,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: true, universities: safe, data: safe, total: safe.length });
   } catch (e: any) {
     console.error('[api/universities] error', e);
-    return NextResponse.json({ success: false, error: e?.message || 'Failed to load universities' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to load universities' }, { status: 500 });
   }
 }

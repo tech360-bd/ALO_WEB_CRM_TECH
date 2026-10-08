@@ -35,6 +35,19 @@ const PUBLIC_ROUTES = [
   "/language-prep",
   "/visa-support",
   "/application-guide",
+  // Public marketing/SEO pages linked from the navbar, homepage CTAs and
+  // sitemap. Production verification (2026-10-08, commit 61eca94) showed these
+  // redirected anonymous visitors to /login?callbackUrl=... because they were
+  // missing from this list — breaking the public funnel (homepage "Check
+  // Eligibility" CTA, navbar "Application Tips", English-test prep hub, etc.).
+  "/eligibility-check",
+  "/english-test-prep",
+  "/english-tests",
+  "/news",
+  "/events",
+  "/compare",
+  "/application-process",
+  "/admission-requirements",
   "/portals",
   "/student-login",
   "/partner-login",
