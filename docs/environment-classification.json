@@ -1,13 +1,13 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2146,
+  "filesScanned": 2160,
   "summary": {
     "UNUSED": 73,
     "REFERENCED_WITH_FALLBACK": 122,
     "REFERENCED_FAIL_CLOSED": 14,
     "REFERENCED": 91,
-    "PUBLIC": 9
+    "PUBLIC": 8
   },
   "productionRequired": [
     "DATABASE_URL",
@@ -18,9 +18,7 @@
     "NEXT_PUBLIC_APP_URL",
     "NODE_ENV"
   ],
-  "publicSecretSuspects": [
-    "NEXT_PUBLIC_DEVELOPMENT_DEMO_PASSWORD"
-  ],
+  "publicSecretSuspects": [],
   "variables": [
     {
       "name": "AGENT_APPROVAL_POLICY",
@@ -2927,23 +2925,6 @@
       ]
     },
     {
-      "name": "NEXT_PUBLIC_DEVELOPMENT_DEMO_PASSWORD",
-      "classification": "PUBLIC",
-      "referenced": true,
-      "referenceCount": 1,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": [
-        "src/lib/stores/portal-store.ts"
-      ]
-    },
-    {
       "name": "NEXT_PUBLIC_FB_CONNECTED",
       "classification": "PUBLIC",
       "referenced": true,
@@ -3042,7 +3023,7 @@
       "name": "NODE_ENV",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 25,
+      "referenceCount": 24,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,

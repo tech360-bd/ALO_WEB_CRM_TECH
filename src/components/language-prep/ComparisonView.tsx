@@ -42,10 +42,10 @@ export default function ComparisonView() {
           </nav>
           <h1 className="text-4xl font-extrabold tracking-tight text-[#0F172A]">Compare English Tests</h1>
           <p className="text-sm text-slate-600 mt-3 max-w-3xl leading-relaxed">
-            Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats. No fake data — Check current provider information where not verified. Acceptance varies by university, course and visa route.
+            Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats. Check the current provider information where it is not yet verified. Acceptance varies by university, course and visa route.
           </p>
           <p className="text-[11px] text-amber-700 mt-3 p-3 rounded-xl bg-amber-50 border border-amber-100">
-            Do not hardcode current price/result time unless verified. If not verified: "Check current provider information" — Do not invent data. Every factual information supports source_url, source_name, last_verified_at.
+            Prices and result times change. Check the current provider information before you decide.
           </p>
         </div>
       </section>
@@ -142,7 +142,7 @@ export default function ComparisonView() {
                   </div>
                   <div className="mt-4 flex gap-2">
                     <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
-                    <a href={t.officialUrl} target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-9 rounded-xl text-xs">Official ↗</Button></a>
+                    <Button asChild variant="outline" className="bg-white border-[#E2E8F0] h-9 rounded-xl text-xs"><a href={t.officialUrl} target="_blank">Official ↗</a></Button>
                   </div>
                 </Card>
               ))}
@@ -151,7 +151,7 @@ export default function ComparisonView() {
             <Card className="mt-8 p-6 bg-amber-50 border border-amber-200 rounded-2xl">
               <h4 className="font-bold text-sm text-amber-900 flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Source Verification & Disclaimer</h4>
               <p className="text-xs text-amber-800 mt-2 leading-relaxed">
-                Every factual test information should support source_url, source_name, last_verified_at, verified_by, verification_status. For duration, scoring, result timeline, acceptance, requirements, visa relevance, test format, cost — If not verified: DO NOT invent. Show "Check official provider information" or "Information requires verification." Acceptance varies by university, course and visa route. Visa requirements vary by country and route. MOI Guidance is guidance resource, not an English proficiency test.
+                Test information is taken from official provider sources where available. Check the official provider for current duration, scoring, fees and requirements. Acceptance varies by university, course and visa route. Visa requirements vary by country and route. MOI is a guidance resource, not an English proficiency test.
               </p>
               <div className="mt-4 grid sm:grid-cols-3 gap-3 text-[11px]">
                 {filtered.slice(0,3).map((t: any) => (

@@ -160,18 +160,14 @@ export function PublicReviewSubmit({ token }: { token: string }) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {invitation.googleReviewUrl && (
-                  <a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB]">
+                  <Button asChild variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB]"><a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
                       <Icon name="Star" className="h-4 w-4 mr-1" /> Google Reviews
-                    </Button>
-                  </a>
+                    </a></Button>
                 )}
                 {invitation.facebookRecommendUrl && (
-                  <a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB]">
+                  <Button asChild variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB]"><a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
                       <Icon name="ThumbsUp" className="h-4 w-4 mr-1" /> Facebook
-                    </Button>
-                  </a>
+                    </a></Button>
                 )}
               </div>
             </div>
@@ -302,18 +298,14 @@ export function PublicReviewSubmit({ token }: { token: string }) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {invitation.googleReviewUrl && (
-                  <a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB]">
+                  <Button asChild variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB]"><a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
                       <Icon name="Star" className="h-4 w-4 mr-1" /> Google Reviews
-                    </Button>
-                  </a>
+                    </a></Button>
                 )}
                 {invitation.facebookRecommendUrl && (
-                  <a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB]">
+                  <Button asChild variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB]"><a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
                       <Icon name="ThumbsUp" className="h-4 w-4 mr-1" /> Facebook
-                    </Button>
-                  </a>
+                    </a></Button>
                 )}
               </div>
             </div>

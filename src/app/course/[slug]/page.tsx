@@ -36,7 +36,7 @@ export default async function CourseDetailPageRoute({
         <Suspense
           fallback={
             <div className="p-12 text-center text-gray-500 font-medium">
-              Loading Course Details — DB-driven with related content, FAQ, source verification...
+              Loading course details…
             </div>
           }
         >

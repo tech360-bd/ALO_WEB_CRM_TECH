@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   reactStrictMode: true,
   poweredByHeader: false,
+  // Dev-only origin allowlist. Next.js refuses HMR and dev-chunk requests from
+  // any Origin not listed here, so a sandbox/preview host would render the
+  // server HTML without hydrating. Set NEXT_DEV_ALLOWED_ORIGINS to a
+  // comma-separated list of hostnames. Unset means no extra origins (no effect
+  // on production builds).
+  allowedDevOrigins: (process.env.NEXT_DEV_ALLOWED_ORIGINS ?? "")
+    .split(",")
+    .map((h) => h.trim())
+    .filter(Boolean),
   // Public content uses curated Unsplash images through next/image. Keep the
   // allowlist hostname-scoped rather than disabling image optimization.
   images: {
@@ -50,6 +59,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Permanent (308) redirects are configured here, not in page components. A
+  // page-level redirect can be streamed as a 200 HTML response after the shell
+  // has started rendering, so the legacy URLs would not return a real 308.
+  async redirects() {
+    return [
+      // No index page exists at /english-tests. The preparation hub is
+      // /english-test-prep; the real exam is taken on the English Test Platform.
+      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
+      // Legacy alias. /eligibility-check is the canonical route.
+      { source: "/eligibility-checker", destination: "/eligibility-check", permanent: true },
+    ];
+  },
+
   async rewrites() {
     return [
       // Only legacy aliases that do not have a real App Router page remain

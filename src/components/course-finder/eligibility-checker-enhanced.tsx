@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
 const ALO_BLUE = '#2563EB';
@@ -565,10 +566,6 @@ export function EligibilityCheckerEnhanced() {
             <Button size="lg" onClick={goNext} className="bg-white text-[#2563EB] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
               <ClipboardCheck className="h-5 w-5 mr-2" />
               Start Eligibility Check
-            </Button>
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="lg" className="border-white/40 text-white hover:bg-white/10 px-8 py-3 text-base">
-              <BookOpen className="h-5 w-5 mr-2" />
-              How It Works
             </Button>
           </div>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
@@ -1394,11 +1391,11 @@ function ResultCard({ result, expanded, onToggle }: {
                 ))}
               </ul>
               <div className="flex flex-wrap gap-3 mt-4">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="font-semibold" style={{ background: ALO_BLUE, color: '#fff' }}>
-                  <ArrowRight className="h-4 w-4 mr-1" /> Apply with ALO Education
+                <Button asChild size="sm" className="font-semibold" style={{ background: ALO_BLUE, color: '#fff' }}>
+                  <Link href="/book-consultation"><ArrowRight className="h-4 w-4 mr-1" /> Apply with ALO Education</Link>
                 </Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
-                  <MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/book-consultation"><MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review</Link>
                 </Button>
               </div>
             </div>
@@ -1443,8 +1440,8 @@ function ResultCard({ result, expanded, onToggle }: {
                 </Table>
               </div>
               <div className="flex flex-wrap gap-3 mt-4">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-yellow-500 text-yellow-700">
-                  <MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review
+                <Button asChild variant="outline" size="sm" className="border-yellow-500 text-yellow-700">
+                  <Link href="/book-consultation"><MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review</Link>
                 </Button>
               </div>
             </div>
@@ -1552,8 +1549,8 @@ function ResultCard({ result, expanded, onToggle }: {
               <p className="text-sm text-muted-foreground mb-3">
                 This course has specific requirements that need human evaluation. Our automated engine cannot fully assess your eligibility for this programme. An ALO Education counsellor will review your profile against the full course requirements, including subject-specific criteria, work experience relevance, and any special conditions.
               </p>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" style={{ background: '#7C3AED', color: '#fff' }}>
-                <MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review
+              <Button asChild size="sm" style={{ background: '#7C3AED', color: '#fff' }}>
+                <Link href="/book-consultation"><MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review</Link>
               </Button>
             </div>
           )}

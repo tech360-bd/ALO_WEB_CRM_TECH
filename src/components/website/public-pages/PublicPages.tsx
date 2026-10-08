@@ -631,7 +631,7 @@ export function PublicServicesPage() {
       <div className="bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
-        <Button asChild className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/book-consultation">
+        <Button asChild className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
             Book Free Consultation
           </a></Button>
       </div>
@@ -1170,7 +1170,9 @@ export function PublicVisaReadinessPage() {
       <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Need Visa Help?</h3>
         <p className="text-blue-100 mb-5">Our visa experts will guide you through the entire process</p>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#F97316] text-white hover:brightness-110">Book Visa Consultation</Button>
+        <Button asChild className="bg-[#F97316] text-white hover:brightness-110">
+          <a href="/book-consultation">Book Visa Consultation</a>
+        </Button>
       </Card>
     </PublicShell>
   );

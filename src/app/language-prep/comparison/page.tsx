@@ -4,7 +4,7 @@ import ComparisonView from '@/components/language-prep/ComparisonView';
 
 export const metadata: Metadata = {
   title: 'English Test Comparison | IELTS vs PTE vs TOEFL vs Duolingo | ALO Education',
-  description: 'Compare IELTS, PTE Academic, TOEFL, Duolingo English Test requirements, scores, costs and acceptance for UK, Canada, Australia, USA universities. DB-driven, verified sources.',
+  description: 'Compare IELTS, PTE Academic, TOEFL, Duolingo English Test requirements, scores, costs and acceptance for UK, Canada, Australia, USA universities. Verified sources.',
   alternates: { canonical: 'https://aloeducation.com/language-prep/comparison' },
   openGraph: {
     title: 'English Test Comparison | ALO Education',

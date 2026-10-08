@@ -28,6 +28,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import LanguageToggle from '@/components/website/LanguageToggle';
+import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import { useI18n } from '@/i18n';
 
 /* ------------------------------------------------------------------ */
@@ -138,7 +139,7 @@ function DropdownTrigger({ label, isOpen, onToggle, onMouseEnter, onMouseLeave, 
         onClick={onToggle}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[#000000] rounded-lg hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+        className="flex items-center gap-1 whitespace-nowrap px-2 py-2 text-sm font-medium text-[#000000] rounded-lg hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
       >
         {label}
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -300,7 +301,7 @@ export default function PublicNavbar() {
         </Link>
 
         {/* DESKTOP NAV */}
-        <div className="hidden lg:flex items-center gap-1">
+        <div className="hidden xl:flex items-center gap-1">
           <DropdownTrigger
             label={t('nav.destinations')}
             isOpen={openDropdown === 'destinations'}
@@ -328,6 +329,15 @@ export default function PublicNavbar() {
               ))}
             </div>
           </DropdownTrigger>
+
+          {/* Single English Test entry point. Same tab, tracked, never a duplicate. */}
+          <EnglishExamButton
+            location="navbar"
+            className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-semibold text-[#C2410C] transition-colors hover:bg-orange-50"
+          >
+            <GraduationCap className="h-4 w-4" aria-hidden="true" />
+            {t('nav.englishTest')}
+          </EnglishExamButton>
 
           <DropdownTrigger
             label={t('nav.resources')}
@@ -363,25 +373,25 @@ export default function PublicNavbar() {
             </div>
           </DropdownTrigger>
 
-          <Link href="/course-finder" className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
+          <Link href="/course-finder" className="flex items-center gap-1.5 whitespace-nowrap px-2 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
             <Search className="h-4 w-4" />
             {t('nav.courseFinder')}
           </Link>
 
-          <Link href="/services" className="px-3 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
+          <Link href="/services" className="whitespace-nowrap px-2 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
             {t('nav.services')}
           </Link>
         </div>
 
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-3">
-          <Button asChild className="hidden lg:inline-flex bg-[#F97316] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
+          <Button asChild className="hidden xl:inline-flex whitespace-nowrap bg-[#F97316] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
             <Link href="/book-consultation">{t('cta.bookConsultation')}</Link>
           </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation menu">
+              <Button variant="ghost" size="icon" className="xl:hidden" aria-label="Open navigation menu">
                 <Menu className="h-6 w-6 text-[#0F172A]" />
               </Button>
             </SheetTrigger>
@@ -407,6 +417,14 @@ export default function PublicNavbar() {
                   <div className="px-4 py-4 flex flex-col gap-2">
                     <MobileLink href="/course-finder" label={t('nav.courseFinder')} icon={Search} onClick={closeMobile} />
                     <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
+                    <EnglishExamButton
+                      location="mobile_navbar"
+                      onNavigate={closeMobile}
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-[#C2410C] transition-colors hover:bg-orange-50"
+                    >
+                      <GraduationCap className="h-4 w-4" aria-hidden="true" />
+                      {t('nav.englishTest')}
+                    </EnglishExamButton>
 
                     <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value="destinations" className="border-b-0">

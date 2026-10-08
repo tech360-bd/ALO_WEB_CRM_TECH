@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Youtube, GraduationCap, MapPin, Phone, Mail, Clock } from 'lucide-react';
 import React from 'react';
+import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 
 const destinations = [
   { label: 'United Kingdom', href: '/destinations/uk' },
@@ -213,6 +214,16 @@ export default function PublicFooter() {
                   </Link>
                 </li>
               ))}
+              {/* Real-exam entry point is rendered outside the CMS-overridable list so it always appears. */}
+              <li>
+                <EnglishExamButton
+                  location="footer"
+                  className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-emerald-700 transition-colors hover:text-[#F97316]"
+                >
+                  Take the English Test
+                  <span aria-hidden="true">→</span>
+                </EnglishExamButton>
+              </li>
             </ul>
           </div>
 

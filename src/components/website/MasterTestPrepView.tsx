@@ -30,6 +30,8 @@ import {
   Users,
   Zap,
 } from 'lucide-react';
+import { EnglishExamCard } from '@/components/website/EnglishExamCta';
+import { isEnglishProficiencyTestSlug } from '@/lib/english-exam';
 
 export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
   // CRM Lead Form State
@@ -161,6 +163,15 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
             </div>
           </div>
         </section>
+
+        {/* REAL EXAM — shown for English-proficiency tests only, kept separate from preparation content */}
+        {isEnglishProficiencyTestSlug(test.slug) && (
+          <section className="bg-white px-4 py-10 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-4xl">
+              <EnglishExamCard location="english_test_prep_detail" testName={test.name} />
+            </div>
+          </section>
+        )}
 
         {/* ============================================================ */}
         {/* 2. TEST OVERVIEW */}

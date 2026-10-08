@@ -67,11 +67,13 @@ export default function StudentPortalLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Login page is exempt from auth check
-  const isLoginPage = pathname === '/student/login';
+  // Public student pages (sign-in and registration) are exempt from the portal
+  // session check. Without this, anonymous visitors to /student/register were
+  // redirected to /student/login.
+  const isPublicStudentPage = pathname === '/student/login' || pathname === '/student/register';
 
   useEffect(() => {
-    if (isLoginPage) {
+    if (isPublicStudentPage) {
       setLoading(false);
       return;
     }
@@ -105,7 +107,7 @@ export default function StudentPortalLayout({
       localStorage.removeItem('student_user');
       router.replace('/student/login');
     }
-  }, [pathname, isLoginPage, router]);
+  }, [pathname, isPublicStudentPage, router]);
 
   const logout = async () => {
     await fetch('/api/student/auth/logout', {
@@ -118,7 +120,7 @@ export default function StudentPortalLayout({
   };
 
   // Show login page without auth wrapper
-  if (isLoginPage) {
+  if (isPublicStudentPage) {
     return (
       <StudentAuthContext.Provider value={{ student: null, token: null, loading: false, logout }}>
         {children}
@@ -253,12 +255,12 @@ export default function StudentPortalLayout({
             </button>
 
             <div className="flex items-center gap-2 lg:ml-auto">
-              <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="relative p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+              <Link href="/student/messages" aria-label={unreadCount > 0 ? `Messages, ${unreadCount} unread` : 'Messages'} className="relative p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
                   <span className="absolute top-1 right-1 w-2 h-2 bg-[#F97316] rounded-full" />
                 )}
-              </button>
+              </Link>
               {student && (
                 <div className="flex items-center gap-2 pl-2 border-l border-white/10">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d82] flex items-center justify-center">

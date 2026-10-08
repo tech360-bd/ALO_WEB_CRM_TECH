@@ -85,7 +85,7 @@ const RESOURCES: ResourceItem[] = [
   { icon: BookOpen, title: 'Study Abroad Guide', href: '/resources/study-abroad-guide', color: C.blue },
   { icon: Search, title: 'University Search', href: '/resources/university-search', color: C.orange },
   { icon: ClipboardList, title: 'Application Checklist', href: '/resources/application-checklist', color: '#8B5CF6' },
-  { icon: Languages, title: 'IELTS Preparation', href: '/resources/ielts-prep', color: '#10B981' },
+  { icon: Languages, title: 'IELTS Preparation', href: '/language-prep/ielts', color: '#10B981' },
   { icon: Award, title: 'Scholarship Finder', href: '/resources/scholarships', color: '#F59E0B' },
   { icon: ShieldCheck, title: 'Visa Requirements', href: '/resources/visa-guide', color: '#EF4444' },
   { icon: PenTool, title: 'SOP Writing Tips', href: '/resources/sop-tips', color: '#EC4899' },
