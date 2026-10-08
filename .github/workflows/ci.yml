@@ -320,7 +320,14 @@ jobs:
           NEXTAUTH_URL: "https://aloeducation.com"
           NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
           FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
-        run: npm run build
+        run: |
+          set -uo pipefail
+          # Emit useful failure details as a check annotation because Actions
+          # log archives may be unreachable from restricted agent environments.
+          if ! npm run build 2>&1 | tee /tmp/mysql-build.log; then
+            echo "::error::MySQL-job production build failed — $(grep -aiE 'error|failed to compile|type error|cannot find|module not found|killed|out of memory|heap|SIGKILL' /tmp/mysql-build.log | head -12 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ' | cut -c1-900)"
+            exit 1
+          fi
 
       - name: Boot standalone server + runtime smoke (real DB over HTTP)
         env:
