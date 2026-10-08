@@ -1,6 +1,8 @@
 // @ts-nocheck - Complex webhook with Prisma stub issues, requires generated-client verification in Node 22 CI
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { downloadWhatsAppInboundMedia } from "@/lib/whatsapp-inbound-media";
+import { removePrivateFile, storePrivateFile } from "@/lib/storage/private-file-store";
 import crypto from "crypto";
 import { normalizeBdPhone, determineSenderNumber, MAIN_NUMBER, COO_NUMBER } from "@/lib/whatsapp-number-pool";
 import { detectLanguage, detectIntent, detectSentiment, generateAiReply, logAiOperation, calculateLeadScore } from "@/lib/ai-whatsapp-engine";
@@ -9,9 +11,7 @@ import { startSlaForThread, calculateSlaDueAt } from "@/lib/sla-engine";
 import { handleStopStartCommand, createFollowUpScheduleForStudent } from "@/lib/whatsapp-followup-engine";
 import { classifyIntent as classifyIntentCRM, detectPriority, normalizePhoneE164, extractMessageContent as extractMessageContentHandler } from "@/lib/whatsapp-webhook-handler";
 // Consolidated 2026-09-14: handler provides CRM intent/priority + E.164 + comprehensive extractMessageContent (additional, not replacing local)
-// All original functions preserved (normalizePhone via normalizeBdPhone, safeEqual, verifySignature, sendOutboundViaApi, extractMessageContent, generateStudentId)
-
-import { ingestWhatsAppMedia, whatsappGraphBase, whatsappPhoneVariants } from "@/lib/whatsapp-media-ingestion";
+// Existing phone normalization, signature verification, routing and message processing stay in place; student IDs are generated only by the reviewed student-creation workflow.
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,7 +31,14 @@ function safeEqual(a: string, b: string): boolean {
 
 function verifySignature(rawBody: string, signature: string): boolean {
   const appSecret = process.env.WHATSAPP_APP_SECRET;
-  if (!appSecret) return false;
+  if (!appSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[whatsapp.webhook] WHATSAPP_APP_SECRET is required in production.');
+      return false;
+    }
+    console.warn("[whatsapp.webhook] WHATSAPP_APP_SECRET not set — accepting unsigned requests only in non-production mode");
+    return true;
+  }
   if (!signature) return false;
   const expected = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
   return safeEqual(expected, signature);
@@ -50,7 +57,7 @@ async function sendOutboundViaApi(recipientPhone: string, text: string): Promise
     text: { body: text },
   };
   try {
-    const res = await fetch(`${whatsappGraphBase()}/${phoneNumberId}/messages`, {
+    const res = await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -61,6 +68,22 @@ async function sendOutboundViaApi(recipientPhone: string, text: string): Promise
   } catch (err: any) {
     return { messageId: null, apiResponse: { error: err.message } };
   }
+}
+
+function classifyWhatsAppDocument(fileName: string): string {
+  const name = fileName.toLowerCase();
+  if (/passport/.test(name)) return 'PASSPORT';
+  if (/transcript|marksheet|result/.test(name)) return 'TRANSCRIPT';
+  if (/certificate|cert|ssc|hsc|degree/.test(name)) return 'ACADEMIC_CERT';
+  if (/bank|statement|finance/.test(name)) return 'BANK_STATEMENT';
+  if (/ielts|pte|toefl|duolingo|english/.test(name)) return 'ENGLISH_TEST';
+  if (/visa/.test(name)) return 'VISA_DOC';
+  if (/offer|admission/.test(name)) return 'OFFER_LETTER';
+  if (/cas|coe|i20/.test(name)) return 'CAS_COE_I20';
+  if (/receipt|payment|invoice/.test(name)) return 'PAYMENT_RECEIPT';
+  if (/cv|resume/.test(name)) return 'CV';
+  if (/sop|statement-of-purpose/.test(name)) return 'SOP';
+  return 'OTHER';
 }
 
 function extractMessageContent(msg: any): { type: string; body: string; mediaId?: string; extra?: any } {
@@ -96,9 +119,16 @@ function extractMessageContent(msg: any): { type: string; body: string; mediaId?
   }
 }
 
-// Generate unique Student ID AE-YYYYNNNN
-async function generateStudentId(): Promise<string> {
-  return `AE-${new Date().getFullYear()}${crypto.randomBytes(6).toString('hex').toUpperCase()}`;
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const mode = url.searchParams.get('hub.mode') || '';
+  const suppliedToken = url.searchParams.get('hub.verify_token') || '';
+  const challenge = url.searchParams.get('hub.challenge') || '';
+  const configuredToken = process.env.WHATSAPP_VERIFY_TOKEN || '';
+  if (mode !== 'subscribe' || !configuredToken || !challenge || !safeEqual(suppliedToken, configuredToken)) {
+    return new Response('Forbidden', { status: 403 });
+  }
+  return new Response(challenge, { status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
 
 export async function POST(req: NextRequest) {
@@ -106,7 +136,6 @@ export async function POST(req: NextRequest) {
   const signature = req.headers.get("x-hub-signature-256") || "";
 
   // 1. Validate payload & source
-  if (!process.env.WHATSAPP_APP_SECRET) return NextResponse.json({ error: "Webhook verification is not configured" }, { status: 503 });
   const signatureValid = verifySignature(rawBody, signature);
   if (!signatureValid) {
     return NextResponse.json({ error: "Invalid signature — webhook not verified" }, { status: 401 });
@@ -117,10 +146,6 @@ export async function POST(req: NextRequest) {
     body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  if (body["hub.mode"] === "subscribe") {
-    return NextResponse.json({ "hub.challenge": body["hub.challenge"] });
   }
 
   // 2. Handle status updates
@@ -213,6 +238,7 @@ export async function POST(req: NextRequest) {
     const timestamp = msg.timestamp ? new Date(parseInt(msg.timestamp, 10) * 1000) : new Date();
     const { type, body: messageBody, mediaId, extra } = extractMessageContent(msg);
     const fromName = contact?.profile?.name || from;
+    let mediaIngestionFailure = false;
 
     // 4. Detect duplicates — check WhatsAppMessageArchive by whatsappMessageId
     try {
@@ -220,10 +246,6 @@ export async function POST(req: NextRequest) {
         where: { whatsappMessageId: providerMessageId },
       });
       if (existingArchive) {
-        if (mediaId) {
-          try { await ingestWhatsAppMedia({ providerMessageId, mediaId, senderPhone: from, senderName: fromName, fileName: extra?.filename, phoneNumberId }); }
-          catch { return NextResponse.json({ error: "Media storage failed; retry required" }, { status: 503 }); }
-        }
         results.push({ messageId: providerMessageId, idempotent: true, duplicate: true });
         continue; // Skip duplicate
       }
@@ -285,18 +307,34 @@ export async function POST(req: NextRequest) {
       });
     } catch {}
 
-    // Search existing student
-    const existingStudent = await db.student.findFirst({
-      where: { OR: [{ phone: { in: whatsappPhoneVariants(from) } }, ...(waContact?.studentId ? [{ id: waContact.studentId }, { studentId: waContact.studentId }] : [])] },
-    });
+    // Resolve a real Student row only; portal profile/contact IDs are not
+    // trusted as Student primary keys until they are looked up explicitly.
+    let existingStudent: any = null;
+    try {
+      existingStudent = await db.student.findFirst({ where: { phone: { in: [from, normalizedFrom] } } });
+      if (!existingStudent && waContact?.studentId) {
+        existingStudent = await db.student.findFirst({ where: { OR: [{ id: waContact.studentId }, { studentId: waContact.studentId }] } });
+      }
+      if (!existingStudent) {
+        const portalUser = await db.portalUser.findFirst({ where: { phone: { in: [from, normalizedFrom] } }, select: { id: true } });
+        if (portalUser) existingStudent = await db.student.findFirst({ where: { userId: portalUser.id } });
+      }
+      if (!existingStudent) {
+        const profile = await db.portalStudentProfile.findFirst({ where: { altPhone: { in: [from, normalizedFrom] } }, select: { studentId: true, userId: true } });
+        if (profile) existingStudent = await db.student.findFirst({ where: { OR: [{ id: profile.studentId }, { studentId: profile.studentId }, { userId: profile.userId }] } });
+      }
+    } catch (error) {
+      console.error('[whatsapp.webhook] existing student match lookup failed:', error instanceof Error ? error.message : 'unknown');
+    }
 
     let leadId: string | null = waContact?.leadId || null;
     let studentId: string | null = existingStudent?.id || null;
 
-    // Search existing lead if no student
+    // Search existing lead if no student, keeping the owner for UCC assignment.
+    let existingLead: any = null;
     if (!studentId) {
       try {
-        const existingLead = await db.lead.findFirst({
+        existingLead = await db.lead.findFirst({
           where: {
             OR: [
               { phone: from },
@@ -309,93 +347,72 @@ export async function POST(req: NextRequest) {
         leadId = existingLead?.id || null;
       } catch {}
     }
+    const assignedUserId = String(existingStudent?.counselorId || existingLead?.counselorId || '').trim();
 
     // 8. Handle STOP/START
     const stopStart = await handleStopStartCommand(from, messageBody).catch(() => ({ action: 'NONE' }));
 
-    // 9. Student auto-creation if unknown
-    let isNewStudent = false;
+    // 9. Unknown WhatsApp senders become leads/contacts only. Never create a
+    // student from a phone number or an unverified inbound document: the intake
+    // workflow must first match an existing student or obtain human confirmation.
+    const isNewStudent = false;
     if (!studentId && !leadId) {
       try {
-        // Check alternate phone records
         const altCheck = await db.whatsAppContact.findFirst({
           where: { OR: [{ phone: from }, { normalizedPhone: normalizedFrom }] },
         });
-        if (!altCheck) {
+        if (altCheck) {
+          leadId = altCheck.leadId || null;
+        } else {
           const count = await db.lead.count().catch(() => 0);
           const newLead = await db.lead.create({
             data: {
-              leadId: `ALO-L-${crypto.randomBytes(6).toString("hex").toUpperCase()}`,
-              fullName: `${fromName || `WhatsApp ${from.slice(-4)}`}`,
+              leadId: `ALO-L-${(10001 + count + 1).toString()}`,
+              fullName: fromName || `WhatsApp ${from.slice(-4)}`,
               phone: from,
               source: "WHATSAPP",
               sourceDetail: `WhatsApp inbound - ${type}`,
-              notes: `Auto-created from WhatsApp. First message: "${messageBody.slice(0, 200)}"`,
+              notes: `Contact identity not yet matched. First WhatsApp message: "${messageBody.slice(0, 200)}"`,
               status: "NEW",
               welcomeSent: false,
             },
           }).catch(() => null);
 
-          if (newLead) leadId = newLead.id;
-
-          const studentCode = await generateStudentId();
-          const newStudent = await db.student.create({
-            data: {
-              studentId: studentCode,
-              name: fromName || `WhatsApp ${from.slice(-4)}`,
-              email: `wa_${crypto.randomUUID()}@aloeducation.com`,
-              phone: normalizedFrom,
-              leadId: newLead?.id || null,
-              profileComplete: 5,
-              status: "active",
-            },
-          }).catch(() => null);
-
-          if (newStudent) {
-            studentId = newStudent.id;
-            isNewStudent = true;
-
-            // Create WhatsApp contact
+          if (newLead) {
+            leadId = newLead.id;
             await db.whatsAppContact.create({
               data: {
                 phone: from,
                 normalizedPhone: normalizedFrom,
                 displayName: fromName || `WhatsApp ${from.slice(-4)}`,
                 profileName: fromName,
-                studentId: newStudent.id,
-                leadId: newLead?.id || "",
+                studentId: '',
+                leadId: newLead.id,
                 source: "WHATSAPP",
                 firstContactAt: timestamp,
                 lastContactAt: timestamp,
               },
             }).catch(() => {});
-
-            // Timeline
             await db.timelineEvent.create({
               data: {
-                leadId: newLead?.id || "",
+                studentId: '',
+                leadId: newLead.id,
+                stage: "LEAD_CREATED",
                 type: "LEAD_CREATED",
-                title: "Lead auto-created from WhatsApp",
-                description: `Auto lead creation from WhatsApp inbound. Message: ${messageBody.slice(0, 100)}`,
+                title: "WhatsApp contact requires identity match",
+                description: `Lead recorded from WhatsApp inbound (${type}); no student profile was created.`,
               },
-            }).catch(() => {});
-
-            // Create follow-up schedule
-            await createFollowUpScheduleForStudent({
-              studentId: newStudent.id,
-              leadId: newLead?.id,
-              contactPhone: from,
             }).catch(() => {});
           }
         }
       } catch (err) {
-        console.error("Auto-creation error:", err);
+        console.error("WhatsApp contact review record creation failed:", err);
       }
     } else if (waContact) {
       // Update existing contact lastContactAt
       await db.whatsAppContact.update({
         where: { id: waContact.id },
-        data: { lastContactAt: new Date(), displayName: fromName || waContact.displayName },
+        data: { lastContactAt: new Date(), displayName: fromName || waContact.displayName, ...(studentId ? { studentId } : {}), ...(leadId ? { leadId } : {}) },
       }).catch(() => {});
     }
 
@@ -418,6 +435,8 @@ export async function POST(req: NextRequest) {
             leadId: leadId || "",
             channel: "whatsapp",
             subject: `WhatsApp with ${fromName}`,
+            assignedToId: assignedUserId,
+            assignedToName: assignedUserId ? String(existingStudent?.counselorName || '') : '',
             status: "open",
             lastMessageAt: new Date(),
             lastMessagePreview: messageBody.slice(0, 100),
@@ -426,7 +445,7 @@ export async function POST(req: NextRequest) {
       } else {
         await db.communicationThread.update({
           where: { id: thread.id },
-          data: { lastMessageAt: new Date(), lastMessagePreview: messageBody.slice(0, 100), status: "open" },
+          data: { lastMessageAt: new Date(), lastMessagePreview: messageBody.slice(0, 100), status: "open", ...(thread.assignedToId ? {} : { assignedToId: assignedUserId, assignedToName: assignedUserId ? String(existingStudent?.counselorName || '') : '' }) },
         }).catch(() => {});
       }
       threadId = thread.id;
@@ -494,6 +513,8 @@ export async function POST(req: NextRequest) {
             participantPhone: normalizedFrom,
             studentId: studentId || undefined,
             leadId: leadId || undefined,
+            assignedToUserId: assignedUserId || undefined,
+            assignedRole: assignedUserId ? 'COUNSELOR' : undefined,
             status: "open",
             lastMessageText: messageBody.slice(0, 200),
             lastMessageAt: new Date(),
@@ -503,7 +524,7 @@ export async function POST(req: NextRequest) {
       } else {
         await db.uccConversation.update({
           where: { id: uccConv.id },
-          data: { lastMessageText: messageBody.slice(0, 200), lastMessageAt: new Date(), unreadCount: { increment: 1 } },
+          data: { lastMessageText: messageBody.slice(0, 200), lastMessageAt: new Date(), unreadCount: { increment: 1 }, ...(!uccConv.assignedToUserId && assignedUserId ? { assignedToUserId: assignedUserId, assignedRole: 'COUNSELOR' } : {}) },
         }).catch(() => {});
       }
 
@@ -518,17 +539,113 @@ export async function POST(req: NextRequest) {
           messageType: type,
           status: "delivered",
           aiGenerated: false,
-          metadata: JSON.stringify({ whatsappMessageId: providerMessageId, mediaId, ...extra }),
+          metadata: JSON.stringify({ whatsappMessageId: providerMessageId, mediaId, ...extra, ...(mediaId ? { mediaIngestionStatus: 'PENDING' } : {}) }),
         },
       });
 
-      if (mediaId && ['image', 'document', 'audio', 'video'].includes(type)) {
-        await ingestWhatsAppMedia({ providerMessageId, mediaId, senderPhone: from, senderName: fromName,
-          fileName: extra?.filename, phoneNumberId, conversationId: uccConv.id, messageId: uccMessage.id });
+      // Inbound media is downloaded from Meta, MIME/signature/size/hash checked,
+      // and written to private storage before any document/OCR record is created.
+      // A media ID or caller-supplied URL alone is never treated as an upload.
+      if (mediaId && ['image', 'document'].includes(type)) {
+        const inboundName = String(extra?.filename || `${type}-${providerMessageId}`);
+        const detectedDocumentType = classifyWhatsAppDocument(inboundName);
+        let storedPath = '';
+        try {
+          const media = await downloadWhatsAppInboundMedia(mediaId, inboundName, String(extra?.mime || ''));
+          const stored = await storePrivateFile(media.bytes, media.fileName);
+          storedPath = stored.storagePath;
+          try {
+            await db.$transaction(async (tx) => {
+              const attachment = await tx.uccAttachment.create({
+                data: {
+                  conversationId: uccConv.id,
+                  messageId: uccMessage.id,
+                  fileName: media.fileName,
+                  fileType: detectedDocumentType.toLowerCase(),
+                  mimeType: media.mimeType,
+                  fileSize: stored.fileSize,
+                  fileUrl: '',
+                  detectedDocType: detectedDocumentType.toLowerCase(),
+                  studentId: studentId || undefined,
+                  ocrExtractedData: JSON.stringify({ storagePath: stored.storagePath, fileHash: stored.fileHash, originalName: media.fileName, source: 'WHATSAPP_CLOUD_API', providerMediaId: media.providerMediaId, providerSha256: media.providerSha256 }),
+                },
+              });
+              const staffDownloadUrl = `/api/crm/ucc/documents/${attachment.id}/download`;
+              await tx.uccAttachment.update({ where: { id: attachment.id }, data: { fileUrl: staffDownloadUrl } });
+
+              let verifiedStudentId = '';
+              if (studentId) {
+                const matchedStudent = await tx.student.findUnique({ where: { id: studentId }, select: { id: true, status: true, suspended: true } }).catch(() => null);
+                if (matchedStudent && !matchedStudent.suspended && matchedStudent.status.toLowerCase() === 'active') verifiedStudentId = matchedStudent.id;
+              }
+              let studentDocumentId = '';
+              if (verifiedStudentId) {
+                const existingDocument = await tx.studentDocument.findFirst({
+                  where: { studentId: verifiedStudentId, fileHash: stored.fileHash, isArchived: false },
+                  select: { id: true },
+                });
+                if (existingDocument) {
+                  studentDocumentId = existingDocument.id;
+                } else {
+                  const studentDocument = await tx.studentDocument.create({
+                    data: {
+                      studentId: verifiedStudentId,
+                      category: detectedDocumentType,
+                      fileName: media.fileName,
+                      fileUrl: '',
+                      storagePath: stored.storagePath,
+                      mimeType: media.mimeType,
+                      fileHash: stored.fileHash,
+                      fileSize: stored.fileSize,
+                      status: 'pending_review',
+                    },
+                  });
+                  studentDocumentId = studentDocument.id;
+                  await tx.studentDocument.update({ where: { id: studentDocument.id }, data: { fileUrl: `/api/student/documents/${studentDocument.id}/download` } });
+                  await tx.documentVersion.create({
+                    data: { documentId: studentDocument.id, version: 1, filePath: stored.storagePath, fileSize: stored.fileSize, fileType: media.mimeType, uploadedBy: 'whatsapp-cloud-api', reviewStatus: 'PENDING', isLatest: true },
+                  });
+                  await tx.documentAudit.create({
+                    data: { documentId: studentDocument.id, studentId: verifiedStudentId, actorId: 'whatsapp-cloud-api', actorName: 'WhatsApp Cloud API', actorRole: 'WHATSAPP_WEBHOOK', action: 'upload', newStatus: 'pending_review', note: 'Actual private file bytes received from WhatsApp; OCR queued and human verification required.' },
+                  });
+                }
+              }
+              const existingOcrJob = await tx.ocrJob.findFirst({ where: { attachmentId: attachment.id }, select: { id: true } });
+              if (!existingOcrJob) {
+                await tx.ocrJob.create({
+                  data: {
+                    documentId: studentDocumentId || attachment.id,
+                    documentType: detectedDocumentType,
+                    fileUrl: staffDownloadUrl,
+                    fileName: media.fileName,
+                    mimeType: media.mimeType,
+                    fileHash: stored.fileHash,
+                    status: 'queued',
+                    studentId: verifiedStudentId || undefined,
+                    conversationId: uccConv.id,
+                    attachmentId: attachment.id,
+                  },
+                });
+              }
+              const currentMetadata = (() => { try { return JSON.parse(uccMessage.metadata || '{}'); } catch { return {}; } })();
+              await tx.uccMessage.update({ where: { id: uccMessage.id }, data: { metadata: JSON.stringify({ ...currentMetadata, mediaIngestionStatus: 'STORED', attachmentId: attachment.id, studentDocumentId: studentDocumentId || null, fileHash: stored.fileHash }) } });
+            });
+          } catch (databaseError) {
+            await removePrivateFile(stored.storagePath).catch(() => {});
+            throw databaseError;
+          }
+        } catch (mediaError) {
+          mediaIngestionFailure = true;
+          const safeError = mediaError instanceof Error ? mediaError.message.slice(0, 120) : 'MEDIA_INGESTION_FAILED';
+          console.error('[whatsapp.webhook] inbound media could not be stored', safeError);
+          const currentMetadata = (() => { try { return JSON.parse(uccMessage.metadata || '{}'); } catch { return {}; } })();
+          await db.uccMessage.update({ where: { id: uccMessage.id }, data: { metadata: JSON.stringify({ ...currentMetadata, mediaIngestionStatus: 'FAILED', mediaIngestionError: safeError }) } }).catch(() => {});
+          if (storedPath) await removePrivateFile(storedPath).catch(() => {});
+        }
       }
     } catch (err) {
+      if (mediaId && ['image', 'document'].includes(type)) mediaIngestionFailure = true;
       console.error("UCC save error:", err);
-      if (mediaId) return NextResponse.json({ error: "Media storage failed; retry required" }, { status: 503 });
     }
 
     // 11. AI processing — unified Student Intake Agent (ID-first) for whatsapp + fallback
@@ -543,7 +660,11 @@ export async function POST(req: NextRequest) {
     // Unified intake agent: first asks Student ID, then informs independent application, then counseling (BN/EN, doc/voice, memory, office-hours human-like, sequential)
     // Respect STOP opt-out; still allow media (image/doc/audio) to be routed via intake
     const shouldAiHandle = !stopStart.optedOut && ((type === 'text' && messageBody.length > 0) || ['image','document','audio','video'].includes(type));
-    if (shouldAiHandle) {
+    if (mediaIngestionFailure && !stopStart.optedOut) {
+      aiReplyText = 'We could not securely store your attachment. Please resend it as a PDF or clear image, or contact your ALO counsellor. The file has not been added to your student record.';
+      shouldHandover = true;
+      handoverReason = 'whatsapp_media_ingestion_failed';
+    } else if (shouldAiHandle) {
       try {
         const intake = await handleStudentIntake({
           channel: 'whatsapp',
@@ -889,16 +1010,9 @@ export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("hub.verify_token");
   const challenge = req.nextUrl.searchParams.get("hub.challenge");
 
-  // Support both WHATSAPP_VERIFY_TOKEN and WHATSAPP_APP_SECRET as verify token
-  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
-
-  if (mode === "subscribe" && token === verifyToken) {
-    return new NextResponse(challenge, { status: 200 });
-  }
-
-  // Also support direct challenge param for testing
-  if (challenge) {
-    return new NextResponse(challenge, { status: 200 });
+  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || '';
+  if (mode === "subscribe" && verifyToken && token && challenge && safeEqual(token, verifyToken)) {
+    return new NextResponse(challenge, { status: 200, headers: { 'Cache-Control': 'no-store' } });
   }
 
   return NextResponse.json({ error: "Invalid verification" }, { status: 403 });

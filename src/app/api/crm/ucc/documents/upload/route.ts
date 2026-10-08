@@ -79,6 +79,8 @@ export async function POST(request: NextRequest) {
   const requestedStudentId = String(form.get('studentId') || '').trim();
   const applicationId = String(form.get('applicationId') || '').trim();
   const messageId = String(form.get('messageId') || '').trim();
+  const purpose = String(form.get('purpose') || 'document_review').trim().toLowerCase();
+  if (!['document_review', 'outbound_media'].includes(purpose)) return NextResponse.json({ success: false, error: 'Upload purpose is not supported.' }, { status: 400 });
   if (!(file instanceof File) || !file.size || file.size > MAX_FILE_BYTES) {
     return NextResponse.json({ success: false, error: 'A non-empty file no larger than 20 MB is required.' }, { status: 400 });
   }
@@ -88,9 +90,10 @@ export async function POST(request: NextRequest) {
 
   const conversation = await db.uccConversation.findUnique({
     where: { id: conversationId },
-    select: { id: true, studentId: true, assignedToUserId: true },
+    select: { id: true, studentId: true, assignedToUserId: true, channel: true },
   });
   if (!conversation) return NextResponse.json({ success: false, error: 'Conversation not found.' }, { status: 404 });
+  if (purpose === 'outbound_media' && conversation.channel !== 'whatsapp') return NextResponse.json({ success: false, error: 'Outbound media upload is only available for WhatsApp conversations.' }, { status: 422 });
   if (!canAccessUccDocumentConversation(auth, conversation) || !(await canViewUccConversationB2B(auth, conversation))) return NextResponse.json({ success: false, error: 'Access to this conversation is not permitted.' }, { status: 403 });
   if (requestedStudentId && requestedStudentId !== conversation.studentId) {
     return NextResponse.json({ success: false, error: 'Student id does not match the linked conversation.' }, { status: 403 });
@@ -99,13 +102,16 @@ export async function POST(request: NextRequest) {
     const message = await db.uccMessage.findFirst({ where: { id: messageId, conversationId }, select: { id: true } });
     if (!message) return NextResponse.json({ success: false, error: 'Message does not belong to the conversation.' }, { status: 403 });
   }
-  if (conversation.studentId && !applicationId) {
+  if (conversation.studentId) {
     const confidentialApplication = await db.application.findFirst({
       where: { studentId: conversation.studentId, isB2bConfidential: true },
       select: { id: true },
     });
-    if (confidentialApplication) {
-      return NextResponse.json({ success: false, error: 'This student has B2B-confidential applications. Link the document to its exact application before uploading.' }, { status: 400 });
+    if (confidentialApplication && !canViewUccB2B(auth)) {
+      return NextResponse.json({ success: false, error: 'Document upload for this student requires explicit B2B access.' }, { status: 403 });
+    }
+    if (confidentialApplication && !applicationId) {
+      return NextResponse.json({ success: false, error: 'This student has B2B-confidential applications. Link the document to an application before uploading.' }, { status: 400 });
     }
   }
   const applicationCheck = await verifyApplicationLink(applicationId, conversation.studentId, auth);
@@ -118,8 +124,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'File content does not match an allowed PDF or image type.' }, { status: 400 });
   }
 
-  const stored = await storePrivateFile(bytes, originalName);
   const fileHash = createHash('sha256').update(bytes).digest('hex');
+  // Reusing the same unsent private attachment makes a retry after a provider
+  // outage idempotent instead of storing another copy of the same bytes.
+  const recentUnsent = await db.uccAttachment.findMany({
+    where: { conversationId, messageId: null, studentId: conversation.studentId, applicationId: applicationCheck.ok ? applicationCheck.applicationId : null, fileName: originalName, mimeType, fileSize: bytes.byteLength },
+    orderBy: { createdAt: 'desc' },
+    take: 25,
+    select: { id: true, conversationId: true, messageId: true, fileName: true, fileType: true, mimeType: true, fileSize: true, fileUrl: true, detectedDocType: true, studentId: true, applicationId: true, createdAt: true, ocrExtractedData: true },
+  });
+  const duplicate = recentUnsent.find((item) => {
+    try { return JSON.parse(item.ocrExtractedData || '{}').fileHash === fileHash; } catch { return false; }
+  });
+  if (duplicate) return NextResponse.json({ success: true, duplicate: true, attachment: safeAttachment(duplicate), message: 'An identical unsent private attachment is already stored for this conversation.' });
+
+  const stored = await storePrivateFile(bytes, originalName);
   const actorRole = [...auth.roles, auth.userType].join(',');
   const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
   try {
@@ -141,20 +160,23 @@ export async function POST(request: NextRequest) {
       });
       const downloadUrl = `/api/crm/ucc/documents/${attachment.id}/download`;
       await tx.uccAttachment.update({ where: { id: attachment.id }, data: { fileUrl: downloadUrl } });
-      const ocrJob = await tx.ocrJob.create({
-        data: {
-          documentId: attachment.id,
-          documentType: 'unknown',
-          fileUrl: downloadUrl,
-          fileName: originalName,
-          mimeType,
-          fileHash,
-          status: 'queued',
-          studentId: conversation.studentId || undefined,
-          conversationId,
-          attachmentId: attachment.id,
-        },
-      });
+      let ocrJob: any = null;
+      if (purpose === 'document_review') {
+        ocrJob = await tx.ocrJob.create({
+          data: {
+            documentId: attachment.id,
+            documentType: 'unknown',
+            fileUrl: downloadUrl,
+            fileName: originalName,
+            mimeType,
+            fileHash,
+            status: 'queued',
+            studentId: conversation.studentId || undefined,
+            conversationId,
+            attachmentId: attachment.id,
+          },
+        });
+      }
       await tx.portalAuditLog.create({
         data: {
           actorUserId: auth.actorUserId || auth.userId,
@@ -171,8 +193,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       attachment: safeAttachment(result.attachment),
-      ocrJob: { id: result.ocrJob.id, status: result.ocrJob.status },
-      message: 'Private document bytes were stored. OCR is queued and requires human verification.',
+      ...(result.ocrJob ? { ocrJob: { id: result.ocrJob.id, status: result.ocrJob.status } } : {}),
+      message: purpose === 'outbound_media' ? 'Private media is ready to send through the WhatsApp Cloud API.' : 'Private document bytes were stored. OCR is queued and requires human verification.',
     }, { status: 201 });
   } catch {
     await removePrivateFile(stored.storagePath).catch(() => {});

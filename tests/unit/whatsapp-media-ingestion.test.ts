@@ -34,6 +34,14 @@ describe('WhatsApp media download', () => {
     await expect(downloadWhatsAppMedia('123456')).rejects.toThrow('20 MB');
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
+  it('rejects downloaded bytes when numeric provider file_size does not match the payload', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(Response.json({ ...metadata, file_size: bytes.length + 1 }))
+      .mockResolvedValueOnce(new Response(bytes));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(downloadWhatsAppMedia('123456')).rejects.toThrow('file size does not match');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
   it('classifies English certificates before general academic certificates', () => {
     expect(classifyIncomingDocument('IELTS certificate.pdf')).toBe('english_test');
     expect(classifyIncomingDocument('HSC certificate.pdf')).toBe('academic_certificate');

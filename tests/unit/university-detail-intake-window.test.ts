@@ -49,7 +49,13 @@ beforeEach(() => {
   vi.resetAllMocks();
   mocks.universityFindFirst.mockResolvedValue(university);
   mocks.getOptionalAuth.mockResolvedValue({ roles: [] });
-  mocks.courseCount.mockResolvedValueOnce(13).mockResolvedValueOnce(7);
+  mocks.courseCount
+    .mockResolvedValueOnce(13)
+    .mockResolvedValueOnce(7)
+    .mockResolvedValueOnce(45)
+    .mockResolvedValueOnce(40)
+    .mockResolvedValueOnce(35)
+    .mockResolvedValueOnce(10);
   mocks.courseFindMany.mockResolvedValue([
     {
       id: 'course-db-id',
@@ -61,13 +67,13 @@ beforeEach(() => {
       qualification: 'MSc',
       durationMonths: 12,
       status: 'active',
-      internationalEligibility: 'not_verified',
+      internationalEligibility: 'eligible',
       verificationStatus: 'VERIFIED',
       publicationStatus: 'published',
       officialUrl: 'https://example.edu/cs',
       sourceUrl: 'https://example.edu/cs',
       lastVerifiedAt: '2026-09-01',
-      intakeFees: [{ intakeYear: 2027, intakeMonth: 'September', verificationStatus: 'VERIFIED' }],
+      intakeFees: [{ intakeYear: 2027, intakeMonth: 'September', verificationStatus: 'VERIFIED', intakeSourceUrl: 'https://example.edu/international' }],
       courseIntakes: [],
       requirements: [],
     },
@@ -75,7 +81,7 @@ beforeEach(() => {
 });
 
 describe('university information intake-window API', () => {
-  it('returns a bounded, paginated January 2027–January 2028 listing and honest code coverage', async () => {
+  it('returns a bounded, paginated, explicitly international-eligible January 2027–January 2028 listing and honest coverage status', async () => {
     const response = await GET(
       makeRequest('https://alo.test/api/universities/example-university?intakeWindow=2027-01%3A2028-01&coursePage=2&courseLimit=12'),
       { params: Promise.resolve({ slug: 'example-university' }) },
@@ -92,18 +98,39 @@ describe('university information intake-window API', () => {
       pageSize: 12,
       courseCodesRecorded: 7,
       courseCodesMissing: 6,
+      catalogueCoverageStatus: 'RESEARCH_REQUIRED',
+      candidateCourseRecords: 45,
+      verifiedPublishedCourseRecords: 40,
+      verifiedInternationalCourseRecords: 35,
+      eligibilityNotConfirmedCourseRecords: 10,
+      courseRecordsNotCurrentlyPublishable: 5,
+      verifiedInternationalCoursesWithoutWindowIntake: 22,
     });
     expect(body.data.universityCode).toBe('PROVIDER-001');
     expect(body.data.popularCourses[0]).toMatchObject({
       courseCode: 'CS-2027',
-      internationalEligibility: 'not_verified',
+      internationalEligibility: 'eligible',
       courseTitle: 'Computer Science',
     });
     expect(mocks.courseFindMany).toHaveBeenCalledWith(expect.objectContaining({
       skip: 12,
       take: 12,
       orderBy: { courseTitle: 'asc' },
+      where: expect.objectContaining({
+        universityId: 'UNI-001',
+        status: 'active',
+        verificationStatus: 'VERIFIED',
+        publicationStatus: { in: ['published', 'PUBLISHED'] },
+        internationalEligibility: expect.objectContaining({ in: expect.arrayContaining(['eligible']) }),
+        intakeFees: expect.objectContaining({ some: expect.objectContaining({ verificationStatus: 'VERIFIED', intakeSourceUrl: { not: '' } }) }),
+      }),
+      include: expect.objectContaining({
+        intakeFees: expect.objectContaining({ where: expect.objectContaining({ verificationStatus: 'VERIFIED', intakeSourceUrl: { not: '' } }) }),
+      }),
     }));
+    const courseWhere = mocks.courseFindMany.mock.calls[0][0].where;
+    expect(courseWhere.internationalEligibility.in).not.toContain('not_verified');
+    expect(courseWhere).not.toHaveProperty('courseIntakes');
     expect(mocks.universityFindFirst).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({
         status: 'active',

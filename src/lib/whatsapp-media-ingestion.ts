@@ -69,13 +69,19 @@ export async function downloadWhatsAppMedia(mediaId: string, phoneNumberId?: str
   const metadataResponse = await fetch(metadataUrl, options);
   if (!metadataResponse.ok) throw new Error('WhatsApp media metadata request failed');
   const metadata = await metadataResponse.json();
-  if (Number(metadata.file_size) > MAX_BYTES) throw new Error('WhatsApp media exceeds 20 MB');
+  const declaredFileSize = metadata.file_size;
+  if (typeof declaredFileSize === 'number' && (!Number.isSafeInteger(declaredFileSize) || declaredFileSize < 0 || declaredFileSize > MAX_BYTES)) {
+    throw new Error('WhatsApp media exceeds 20 MB or has an invalid declared size');
+  }
   const url = new URL(metadata.url);
   if (url.protocol !== 'https:' || url.username || url.password || url.port ||
       !(url.hostname === 'lookaside.fbsbx.com' || url.hostname.endsWith('.fbcdn.net'))) {
     throw new Error('WhatsApp returned an untrusted media URL');
   }
   const bytes = await boundedBytes(await fetch(url, { ...options, signal: AbortSignal.timeout(30_000) }));
+  if (typeof declaredFileSize === 'number' && declaredFileSize !== bytes.byteLength) {
+    throw new Error('WhatsApp media file size does not match downloaded bytes');
+  }
   const mimeType = detectIncomingMediaMime(bytes);
   const declared = String(metadata.mime_type || '').split(';')[0].trim().toLowerCase();
   if (!mimeType || (declared !== mimeType && !(declared === 'audio/mp4' && mimeType === 'video/mp4'))) {
