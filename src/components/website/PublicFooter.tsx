@@ -33,7 +33,7 @@ const quickLinks = [
   { label: 'English Test Prep', href: '/english-test-prep' },
   { label: 'Scholarships', href: '/scholarships' },
   { label: 'Application Process', href: '/application-process' },
-  { label: 'Visa Support', href: '/visa-support' },
+  { label: 'Visa Support', href: '/visa' },
   { label: 'Admission Requirements', href: '/admission-requirements' },
 ];
 
@@ -42,7 +42,6 @@ const quickLinks = [
 const planningLinks = [
   { label: 'English Test Hub', href: '/english-tests' },
   { label: 'Compare Countries', href: '/compare/countries' },
-  { label: 'Visa Guide', href: '/visa' },
   { label: 'Course Match', href: '/ai/course-match' },
   { label: 'Scholarship Match', href: '/ai/scholarship-match' },
   { label: 'Visa Coach', href: '/ai/visa-coach' },

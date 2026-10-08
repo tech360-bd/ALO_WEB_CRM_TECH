@@ -66,6 +66,26 @@ const nextConfig: NextConfig = {
     return [
       // Legacy alias. /eligibility-check is the canonical route.
       { source: "/eligibility-checker", destination: "/eligibility-check", permanent: true },
+
+      // /visa-support carried hard-coded visa fees, processing times and a
+      // "98% visa success rate" with no source and no verification date, which
+      // the data policy forbids. The verified equivalents already exist:
+      // /visa (VisaSupportHub) and /destinations/[slug], both built on
+      // COUNTRY_DESTINATIONS, which records a source and lastVerifiedAt per
+      // fact. These pages are redirected rather than kept as a third copy.
+      //
+      // Slugs differ between the old and new routes, so each is mapped
+      // explicitly; a wildcard would send /visa-support/united-kingdom to a
+      // /destinations/united-kingdom that does not exist.
+      { source: "/visa-support/united-kingdom", destination: "/destinations/uk", permanent: true },
+      { source: "/visa-support/dubai-uae", destination: "/destinations/dubai", permanent: true },
+      { source: "/visa-support/usa", destination: "/destinations/usa", permanent: true },
+      { source: "/visa-support/canada", destination: "/destinations/canada", permanent: true },
+      { source: "/visa-support/australia", destination: "/destinations/australia", permanent: true },
+      { source: "/visa-support/ireland", destination: "/destinations/ireland", permanent: true },
+      { source: "/visa-support/new-zealand", destination: "/destinations/new-zealand", permanent: true },
+      { source: "/visa-support/germany", destination: "/destinations/germany", permanent: true },
+      { source: "/visa-support", destination: "/visa", permanent: true },
     ];
   },
 

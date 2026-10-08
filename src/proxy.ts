@@ -33,6 +33,13 @@ const PUBLIC_ROUTES = [
   // One-time, token-gated student review submission (token is hashed server-side).
   "/review",
   "/language-prep",
+  // Legacy alias only. The /visa-support pages were removed because they
+  // hard-coded visa fees, processing times and an unsourced visa success
+  // percentage, with no citation and no verification date on any of it.
+  // next.config.ts now permanently redirects this path (and its per-country
+  // slugs) to the verified /visa and /destinations/[slug] routes. It must pass
+  // the proxy for that redirect to run — same reason /eligibility-checker is
+  // listed below.
   "/visa-support",
   "/application-guide",
   "/student-journey",
@@ -53,8 +60,9 @@ const PUBLIC_ROUTES = [
   // return evidence-based matches. Every endpoint they call stays behind its
   // own guard, and none of them expose another user's data.
   "/ai",
-  // Public visa support hub (spec §44). /visa-support remains the legacy alias
-  // and /visa/readiness is a public marketing page.
+  // Public visa support hub (spec §44), served by VisaSupportHub from
+  // COUNTRY_DESTINATIONS with a source and lastVerifiedAt on every fact.
+  // /visa-support is the legacy alias that redirects here.
   "/visa",
   "/news",
   "/events",

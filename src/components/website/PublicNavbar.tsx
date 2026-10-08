@@ -70,7 +70,7 @@ const resourceItems = [
   { label: 'Blogs', href: '/blog' },
   { label: 'Articles', href: '/resources/articles' },
   { label: 'Scholarships by Country', href: '/scholarships' },
-  { label: 'Visa Guides', href: '/visa-support' },
+  { label: 'Visa Guides', href: '/visa' },
   { label: 'Success Stories', href: '/success-stories' },
   { label: 'Application Tips', href: '/application-process' },
   { label: 'Pre-Departure Guides', href: '/resources/pre-departure' },
