@@ -64,9 +64,6 @@ const nextConfig: NextConfig = {
   // has started rendering, so the legacy URLs would not return a real 308.
   async redirects() {
     return [
-      // No index page exists at /english-tests. The preparation hub is
-      // /english-test-prep; the real exam is taken on the English Test Platform.
-      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
       // Legacy alias. /eligibility-check is the canonical route.
       { source: "/eligibility-checker", destination: "/eligibility-check", permanent: true },
     ];
@@ -89,7 +86,6 @@ const nextConfig: NextConfig = {
       { source: "/super-admin", destination: "/super-admin/dashboard" },
       { source: "/counselor", destination: "/counselor/dashboard" },
       { source: "/application-manager", destination: "/application-manager/applications" },
-      { source: "/visa", destination: "/visa/readiness" },
       { source: "/staff/login", destination: "/employee/login" },
       { source: "/admin", destination: "/admin/login" },
       { source: "/admin/students", destination: "/admin/crm-command" },

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, FolderOpen, FileText, MessageSquare, Award,
   User, Map, CreditCard, LogOut, Menu, X, Bell, ChevronRight,
-  BookOpen, GraduationCap, Shield
+  BookOpen, GraduationCap, Shield, ListChecks, Bookmark
 } from 'lucide-react';
 
 // ============================================================
@@ -42,11 +42,14 @@ export const useStudentAuth = () => useContext(StudentAuthContext);
 const NAV_ITEMS = [
   { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/student/journey', label: 'My Journey', icon: Map },
+  { href: '/student/tasks', label: 'My Tasks', icon: ListChecks },
   { href: '/student/applications', label: 'Applications', icon: FolderOpen },
   { href: '/student/documents', label: 'Documents', icon: FileText },
   { href: '/student/offers', label: 'Offers', icon: Award },
+  { href: '/student/saved', label: 'Saved Courses', icon: Bookmark },
   { href: '/student/interview', label: 'Interview Prep', icon: BookOpen },
   { href: '/student/visa', label: 'Visa Readiness', icon: Shield },
+  { href: '/student/finance', label: 'Finance', icon: CreditCard },
   { href: '/student/messages', label: 'Messages', icon: MessageSquare },
   { href: '/student/profile', label: 'My Profile', icon: User },
 ];
