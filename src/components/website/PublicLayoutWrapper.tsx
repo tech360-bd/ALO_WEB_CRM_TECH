@@ -2,9 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import PublicNavbar from './PublicNavbar';
 import PublicFooter from './PublicFooter';
+import { isPublicChromeRoute } from './public-chrome-policy';
 
 // ─── CMS-managed announcements & banners (Virtual Editor) ─────
 // Super Admins publish announcements (dismissible info bar) and
@@ -98,15 +100,18 @@ export default function PublicLayoutWrapper({
   children: React.ReactNode;
 }) {
   const isAuthenticated = usePortalStore((s) => s.isAuthenticated);
-  // One navbar and one footer for every public page. The homepage no longer
-  // renders its own footer (HomepagePart4 used to duplicate this one).
+  const pathname = usePathname();
+  // One navbar and one footer for every public page. Login, registration,
+  // reset and every authenticated portal route render standalone: the public
+  // chrome is suppressed by route (see public-chrome-policy.ts) and by session.
+  const showPublicChrome = !isAuthenticated && isPublicChromeRoute(pathname);
   return (
     <>
-      {!isAuthenticated && <CmsAnnouncements />}
-      {!isAuthenticated && <PublicNavbar />}
+      {showPublicChrome && <CmsAnnouncements />}
+      {showPublicChrome && <PublicNavbar />}
       {children}
-      {!isAuthenticated && <PublicFooter />}
-      {!isAuthenticated && <CmsBanner />}
+      {showPublicChrome && <PublicFooter />}
+      {showPublicChrome && <CmsBanner />}
     </>
   );
 }

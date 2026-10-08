@@ -375,11 +375,9 @@ export default function PublicNavbar() {
 
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-3">
-          <Link href="/book-consultation" className="hidden lg:block">
-            <Button className="bg-[#F97316] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
-              {t('cta.bookConsultation')}
-            </Button>
-          </Link>
+          <Button asChild className="hidden lg:inline-flex bg-[#F97316] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
+            <Link href="/book-consultation">{t('cta.bookConsultation')}</Link>
+          </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
@@ -466,11 +464,9 @@ export default function PublicNavbar() {
 
                     <div className="mt-4 pt-4 border-t border-[#E2E8F0] space-y-3">
                       <LanguageToggle />
-                      <Link href="/book-consultation" onClick={closeMobile} className="block">
-                        <Button className="w-full bg-[#F97316] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
-                          {t('cta.bookConsultation')}
-                        </Button>
-                      </Link>
+                      <Button asChild className="w-full bg-[#F97316] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
+                        <Link href="/book-consultation" onClick={closeMobile}>{t('cta.bookConsultation')}</Link>
+                      </Button>
                       {/* Contact details as text — chat / WhatsApp live in the corner widget. */}
                       <p className="text-xs text-alo-text-muted leading-snug">
                         Office: Barek Mansion-02, Panthapath •{' '}
