@@ -71,7 +71,7 @@ Invalid values stop the worker with `EMAIL_CONFIG_INVALID` instead of guessing.
 
 | Outcome | Rule | Result |
 |---|---|---|
-| Hard bounce (550/551/553 with a 5.1.x or no enhanced code) | Never retried | Item `failed`, address suppressed as `hard_bounce` |
+| Hard bounce (550/551/553, unless the reply carries a 5.7.x policy code) | Never retried | Item `failed`, address suppressed as `hard_bounce` |
 | Policy rejection (550 5.7.x) | Treated as unknown | Retried, **never** suppressed |
 | Soft failure (4xx, 552, connection error) | Exponential backoff: 5, 10, 20 min ... capped at 6 h | Retried until `EMAIL_MAX_ATTEMPTS`, then `failed` |
 | Auth failure (535, EAUTH) | Stops the campaign | Campaign `paused` with `SMTP_AUTH_FAILED`. Nothing is retried until resumed |
@@ -104,7 +104,7 @@ All campaign routes need a logged-in session with `marketing.email.view` (read) 
 | `POST /api/email/unsubscribe?t=...` | Records the unsubscribe. Used by the confirm form and by one-click clients |
 | `GET or POST /api/cron/email-outbox` | Runs one worker batch. Needs `CRON_SECRET` or an admin session |
 
-Permission keys are in the catalog (`src/lib/marketing/permissions.ts`). They are **not** yet seeded into the database role table, so non-admin marketing users will receive 403 until that is done.
+Permission keys are in the catalog (`src/lib/marketing/permissions.ts`). They are **not** yet seeded into the database role table, so non-admin marketing users may receive 403 until that is done.
 
 ## Verification (honest status)
 
@@ -114,10 +114,10 @@ Permission keys are in the catalog (`src/lib/marketing/permissions.ts`). They ar
 | Worker logic against an in-memory store (send, suppression, test mode, caps, retries, auth stop, stale locks) | PASS | `tests/unit/email-marketing/worker.test.ts` |
 | Consent default-deny and channel refusal in `sendBroadcast` (mocked DB) | PASS | `tests/unit/email-marketing/broadcast-send.test.ts` |
 | Proxy public allowlist for the new routes | PASS | `tests/unit/email-marketing/proxy-public-routes.test.ts` |
-| Full existing unit suite | PASS | 97 files, 1071 tests before the final test additions |
+| Full unit suite on the integrated branch (includes the remote commits merged in before push) | PASS | 102 files, 1104 tests |
 | Real SMTP conversation (STARTTLS, AUTH, 550 / 451 / 550 5.7.1 / wrong password / connection refused), real worker through the real transport | PASS (local sink, not a provider) | 19 checks against a local `aiosmtpd` sink, outside the repo |
 | Prisma schema validates; client generated (531 models) | PASS | `prisma validate`, `npm run db:verify-client` |
-| TypeScript, ESLint, env audit (`audit:env -- --check`) | PASS | see the final run log |
+| TypeScript (`npm run typecheck`, including `db:verify-client`), full `eslint .`, env audit (`audit:env -- --check`), `prisma validate` | PASS | Run on the integrated branch |
 | Migration SQL | NOT VERIFIED | Hand-written. Columns and nullability checked against the schema. Not applied to a database. Sandbox has no working Prisma schema engine |
 | Campaign and outbox database behaviour (conditional claims, transactions, groupBy) | NOT VERIFIED | Needs MySQL or CI. CI is blocked by billing |
 | Admin console in a browser | NOT VERIFIED | Compiles and lints. Not rendered or clicked |
