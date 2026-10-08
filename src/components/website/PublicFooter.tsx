@@ -33,8 +33,18 @@ const quickLinks = [
   { label: 'English Test Prep', href: '/english-test-prep' },
   { label: 'Scholarships', href: '/scholarships' },
   { label: 'Application Process', href: '/application-process' },
-  { label: 'Visa Support', href: '/visa-support' },
+  { label: 'Visa Support', href: '/visa' },
   { label: 'Admission Requirements', href: '/admission-requirements' },
+];
+
+// Planning tools and guides. Rendered outside the CMS-overridable list so they
+// always appear even when CMS footer content is published.
+const planningLinks = [
+  { label: 'English Test Hub', href: '/english-tests' },
+  { label: 'Compare Countries', href: '/compare/countries' },
+  { label: 'Course Match', href: '/ai/course-match' },
+  { label: 'Scholarship Match', href: '/ai/scholarship-match' },
+  { label: 'Visa Coach', href: '/ai/visa-coach' },
 ];
 
 const companyLinks = [
@@ -209,6 +219,14 @@ export default function PublicFooter() {
             <ul className="flex flex-col gap-2">
               {quickL.map((link) => (
                 <li key={link.label}>
+                  <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              {/* Planning tools are rendered outside the CMS-overridable list so they always appear. */}
+              {planningLinks.map((link) => (
+                <li key={link.href}>
                   <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
                     {link.label}
                   </Link>

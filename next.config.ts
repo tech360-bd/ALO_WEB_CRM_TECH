@@ -64,11 +64,28 @@ const nextConfig: NextConfig = {
   // has started rendering, so the legacy URLs would not return a real 308.
   async redirects() {
     return [
-      // No index page exists at /english-tests. The preparation hub is
-      // /english-test-prep; the real exam is taken on the English Test Platform.
-      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
       // Legacy alias. /eligibility-check is the canonical route.
       { source: "/eligibility-checker", destination: "/eligibility-check", permanent: true },
+
+      // /visa-support carried hard-coded visa fees, processing times and a
+      // "98% visa success rate" with no source and no verification date, which
+      // the data policy forbids. The verified equivalents already exist:
+      // /visa (VisaSupportHub) and /destinations/[slug], both built on
+      // COUNTRY_DESTINATIONS, which records a source and lastVerifiedAt per
+      // fact. These pages are redirected rather than kept as a third copy.
+      //
+      // Slugs differ between the old and new routes, so each is mapped
+      // explicitly; a wildcard would send /visa-support/united-kingdom to a
+      // /destinations/united-kingdom that does not exist.
+      { source: "/visa-support/united-kingdom", destination: "/destinations/uk", permanent: true },
+      { source: "/visa-support/dubai-uae", destination: "/destinations/dubai", permanent: true },
+      { source: "/visa-support/usa", destination: "/destinations/usa", permanent: true },
+      { source: "/visa-support/canada", destination: "/destinations/canada", permanent: true },
+      { source: "/visa-support/australia", destination: "/destinations/australia", permanent: true },
+      { source: "/visa-support/ireland", destination: "/destinations/ireland", permanent: true },
+      { source: "/visa-support/new-zealand", destination: "/destinations/new-zealand", permanent: true },
+      { source: "/visa-support/germany", destination: "/destinations/germany", permanent: true },
+      { source: "/visa-support", destination: "/visa", permanent: true },
     ];
   },
 
@@ -89,7 +106,6 @@ const nextConfig: NextConfig = {
       { source: "/super-admin", destination: "/super-admin/dashboard" },
       { source: "/counselor", destination: "/counselor/dashboard" },
       { source: "/application-manager", destination: "/application-manager/applications" },
-      { source: "/visa", destination: "/visa/readiness" },
       { source: "/staff/login", destination: "/employee/login" },
       { source: "/admin", destination: "/admin/login" },
       { source: "/admin/students", destination: "/admin/crm-command" },
@@ -98,6 +114,13 @@ const nextConfig: NextConfig = {
       { source: "/portal", destination: "/portal/login" },
       { source: "/auth/login", destination: "/login" },
       { source: "/course-finder/saved", destination: "/?p=saved-courses" },
+      // Spec-named marketing IA aliases. The implementations already exist
+      // under their canonical CRM paths; these keep the specification's URLs
+      // working without duplicating a second dashboard.
+      { source: "/marketing", destination: "/crm/marketing" },
+      { source: "/marketing/dashboard", destination: "/crm/marketing" },
+      { source: "/crm/social-inbox", destination: "/crm/communications/social-inbox" },
+      { source: "/crm/ai-command-center", destination: "/admin/ai-command-center" },
 
     ];
   },

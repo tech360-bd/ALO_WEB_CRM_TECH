@@ -131,7 +131,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     name: 'Taslima Akter',
     role: 'CEO & Founder',
     specialty: 'Strategic Planning & Partnerships',
-    bio: 'Over 12 years of experience in international education consulting. Founded ALO Education with a vision to make quality global education accessible to every aspiring student.',
+    bio: 'Founded ALO Education to make global education pathways clearer for Bangladeshi students.',
     initials: 'TA',
     gradient: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
   },
@@ -139,7 +139,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     name: 'Al Aminn',
     role: 'Chief Operating Officer',
     specialty: 'Operations & Process Optimization',
-    bio: 'Expert in streamlining study abroad operations. Ensures every student receives a seamless experience from initial inquiry to university enrollment.',
+    bio: 'Oversees day-to-day operations across counselling, applications and visa casework.',
     initials: 'AA',
     gradient: 'linear-gradient(135deg, #F97316 0%, #FFB347 100%)',
   },
@@ -147,7 +147,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     name: 'Nusrat Jahan',
     role: 'Head of Admissions',
     specialty: 'University Applications & Documentation',
-    bio: 'Experienced admissions specialist with deep knowledge of UK, USA, and Canadian university requirements. Has guided hundreds of students through successful applications.',
+    bio: 'Leads university applications and documentation for UK, USA and Canadian programmes.',
     initials: 'NJ',
     gradient: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)',
   },
@@ -155,7 +155,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     name: 'Rafiqul Islam',
     role: 'Visa Specialist',
     specialty: 'Immigration Law & Visa Processing',
-    bio: 'Certified visa consultant with extensive experience in student visa applications for UK, USA, Canada, and Australia. Known for thorough preparation and high approval rates.',
+    bio: 'Handles student visa casework and interview preparation for UK, USA, Canada and Australia.',
     initials: 'RI',
     gradient: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)',
   },
@@ -191,8 +191,8 @@ const DEFAULT_FAQS: FaqItem[] = [
     answer: 'The full process typically takes 3–6 months from initial consultation to enrollment. We recommend starting at least 6 months before your intended intake for the best university options.',
   },
   {
-    question: 'What is the visa success rate with ALO Education?',
-    answer: 'Our visa approval rate is above 95%. Our dedicated visa specialists thoroughly prepare each application, conduct mock interviews, and ensure all documentation meets requirements.',
+    question: 'How do you support the visa application?',
+    answer: 'Our visa specialists build a document checklist for your specific country, review every file before submission, and run mock credibility interviews. We do not publish an approval-rate figure, because visa decisions are made solely by the issuing government and no agency can guarantee an outcome. Current official requirements and fees are linked on each destination page.',
   },
   {
     question: 'Can I work while studying abroad?',
@@ -240,7 +240,7 @@ const DEFAULT_FAQS: FaqItem[] = [
   },
   {
     question: 'What makes ALO Education different from other agencies?',
-    answer: 'We combine 12+ years of expertise with cutting-edge AI tools, personalized counseling, and a 95%+ success rate. We are committed to transparency, no hidden fees, and genuine care for every student\'s future.',
+    answer: 'We combine AI-assisted tools with named human counselors, so course matching and drafting are fast but every recommendation is reviewed by a person. Fees and timelines are stated upfront with no hidden charges, and we do not quote success-rate figures we cannot substantiate. Our focus is the right course for your career, not the highest commission.',
   },
 ];
 

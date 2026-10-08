@@ -8,6 +8,60 @@ const MARKETING_AUTH = {
   requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
 };
 
+// ─── GET: List SEO content (draft/approval queue) ────────────────────────────
+//
+// The SEO Manager screen needs a real list to render. Everything returned here
+// is a persisted MarketingGeneratedContent row — nothing is synthesised, so an
+// empty database yields an empty list rather than placeholder rows.
+
+export const GET = withAuth(async (request: Request, auth: AuthContext) => {
+  try {
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status')?.trim() || '';
+    const contentType = searchParams.get('contentType')?.trim() || '';
+    const search = searchParams.get('search')?.trim() || '';
+    const limitRaw = Number(searchParams.get('limit') || '50');
+    const limit = Number.isSafeInteger(limitRaw) && limitRaw >= 1 && limitRaw <= 100 ? limitRaw : 50;
+
+    const where: Record<string, unknown> = {};
+    if (status && ['draft', 'pending', 'approved', 'rejected'].includes(status)) where.status = status;
+    if (contentType) where.contentType = contentType;
+    if (search && search.length <= 100) {
+      where.OR = [{ title: { contains: search } }, { topic: { contains: search } }];
+    }
+
+    const [items, total] = await Promise.all([
+      db.marketingGeneratedContent.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        // body can be large markdown; the list view does not need it.
+        select: {
+          id: true,
+          contentType: true,
+          topic: true,
+          title: true,
+          language: true,
+          targetCountry: true,
+          targetCourse: true,
+          status: true,
+          publishedAt: true,
+          approvedAt: true,
+          rejectionReason: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+      db.marketingGeneratedContent.count({ where }),
+    ]);
+
+    return NextResponse.json({ success: true, data: items, total });
+  } catch (error) {
+    console.error('SEO GET error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}, MARKETING_AUTH);
+
 // ─── POST: Generate SEO content or approve ───────────────────────────────────
 
 export const POST = withAuth(async (request: Request, auth: AuthContext) => {

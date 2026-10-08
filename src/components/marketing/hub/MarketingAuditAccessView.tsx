@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -44,249 +43,351 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import {
   Shield,
   ScrollText,
   UserCog,
-  Download,
   Search,
-  Filter,
   Plus,
-  Lock,
-  Unlock,
+  RefreshCw,
   AlertTriangle,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  User,
-  Mail,
-  Instagram,
-  Facebook,
-  MessageCircle,
-  Smartphone,
-  Eye,
-  EyeOff,
-  Globe,
-  FileText,
-  Bot,
-  Users,
-  Settings,
-  Activity,
+  Ban,
+  KeyRound,
+  Info,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // ---------------------------------------------------------------------------
-// Types
+// Types — mirror what GET /api/marketing/audit-logs returns. The route merges
+// AuditLog rows (id, action, resource, resourceId, details, userId, createdAt)
+// with MarketingAuditLog rows (which additionally carry userName and role),
+// newest first. Neither source exposes an IP address, so no IP is rendered.
 // ---------------------------------------------------------------------------
 
-interface AuditLog {
+interface AuditLogEntry {
   id: string;
-  timestamp: string;
-  user: string;
-  role: string;
   action: string;
   resource: string;
-  details: string;
-  ip: string;
-  severity: 'info' | 'warning' | 'critical';
+  resourceId?: string;
+  details?: string;
+  userId?: string;
+  userName?: string;
+  role?: string;
+  createdAt: string;
+  source?: string;
 }
 
-interface MarketingUser {
+// ---------------------------------------------------------------------------
+// Types — mirror GET /api/marketing/user-access. MarketingUserAccess stores
+// `permissions` as a JSON-encoded string array, so it is parsed before render.
+// ---------------------------------------------------------------------------
+
+interface UserAccess {
   id: string;
-  name: string;
-  email: string;
-  role: string;
-  status: 'active' | 'inactive' | 'suspended';
-  permissions: string[];
-  lastLogin: string;
+  userId: string;
+  accessLevel: string;
+  status: string;
+  permissions: string;
+  approvedBy: string | null;
+  approvedAt: string | null;
+  createdAt: string;
+  user?: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    role: string | null;
+  } | null;
 }
 
-interface PermissionEntry {
-  permission: string;
-  manager: boolean;
-  staff1: boolean;
-  staff2: boolean;
-  staff3: boolean;
-}
-
-interface AccessViolation {
+interface DirectoryUser {
   id: string;
-  timestamp: string;
-  user: string;
-  action: string;
-  resource: string;
-  severity: 'low' | 'medium' | 'high';
-  resolved: boolean;
+  name: string | null;
+  email: string | null;
+  roles?: Array<{ id?: string; name?: string; label?: string }>;
 }
 
-// ---------------------------------------------------------------------------
-// Static Data
-// ---------------------------------------------------------------------------
+interface LoadState {
+  loading: boolean;
+  error: string | null;
+}
 
-const auditLogs: AuditLog[] = [
-  { id: 'AL-001', timestamp: '2025-01-15 14:23:01', user: 'Rakib Hasan', role: 'Marketing Manager', action: 'Post Approved', resource: 'Facebook Post #2847', details: 'Approved UK Spring intake post for scheduled publishing', ip: '103.28.147.52', severity: 'info' },
-  { id: 'AL-002', timestamp: '2025-01-15 14:18:45', user: 'Rakib Hasan', role: 'Marketing Manager', action: 'Campaign Created', resource: 'Campaign C-007', details: 'Created new Germany Work Visa campaign with \u09f32,50,000 budget', ip: '103.28.147.52', severity: 'info' },
-  { id: 'AL-003', timestamp: '2025-01-15 13:55:12', user: 'Nusrat Jahan', role: 'Marketing Staff', action: 'Lead Converted', resource: 'Lead L-4821', details: 'Converted hot lead Md. Arif to paid client for Canada PR', ip: '103.28.147.48', severity: 'info' },
-  { id: 'AL-004', timestamp: '2025-01-15 13:42:30', user: 'Tanvir Ahmed', role: 'Marketing Staff', action: 'Social Login', resource: 'Instagram Business', details: 'Logged into ALO Education Instagram via OAuth token', ip: '103.28.147.50', severity: 'info' },
-  { id: 'AL-005', timestamp: '2025-01-15 13:30:08', user: 'Rakib Hasan', role: 'Marketing Manager', action: 'AI Config', resource: 'WhatsApp Bot', details: 'Updated AI response threshold from 0.85 to 0.90 confidence', ip: '103.28.147.52', severity: 'warning' },
-  { id: 'AL-006', timestamp: '2025-01-15 12:55:44', user: 'System', role: 'Automated', action: 'SLA Event', resource: 'Conversation W-2891', details: 'SLA breach detected: initial response exceeded 5 min for WhatsApp lead', ip: '\u2014', severity: 'critical' },
-  { id: 'AL-007', timestamp: '2025-01-15 12:40:22', user: 'Fahim Rahman', role: 'Marketing Staff', action: 'Document Upload', resource: 'Campaign Assets', details: 'Uploaded 12 creative assets for Schengen Visa campaign', ip: '103.28.147.49', severity: 'info' },
-  { id: 'AL-008', timestamp: '2025-01-15 12:15:33', user: 'Rakib Hasan', role: 'Marketing Manager', action: 'Conversation Assign', resource: 'W-2901, W-2902, W-2903', details: 'Bulk assigned 3 high-priority WhatsApp conversations to Nusrat', ip: '103.28.147.52', severity: 'info' },
-  { id: 'AL-009', timestamp: '2025-01-15 11:50:18', user: 'Nusrat Jahan', role: 'Marketing Staff', action: 'Post Approved', resource: 'Instagram Story #921', details: 'Approved student testimonial story for Instagram', ip: '103.28.147.48', severity: 'info' },
-  { id: 'AL-010', timestamp: '2025-01-15 11:30:05', user: 'Tanvir Ahmed', role: 'Marketing Staff', action: 'Campaign Created', resource: 'Campaign C-008', details: 'Drafted Japan Student Visa awareness campaign', ip: '103.28.147.50', severity: 'info' },
-  { id: 'AL-011', timestamp: '2025-01-15 11:10:42', user: 'System', role: 'Automated', action: 'SLA Event', resource: 'Conversation F-187', details: 'Auto-escalated: follow-up overdue 2hrs for Facebook lead', ip: '\u2014', severity: 'warning' },
-  { id: 'AL-012', timestamp: '2025-01-15 10:55:30', user: 'Fahim Rahman', role: 'Marketing Staff', action: 'Document Upload', resource: 'Lead Docs L-4815', details: 'Uploaded IELTS scorecard and passport copy for lead processing', ip: '103.28.147.49', severity: 'info' },
-  { id: 'AL-013', timestamp: '2025-01-15 10:40:15', user: 'Rakib Hasan', role: 'Marketing Manager', action: 'AI Config', resource: 'Lead Scoring', details: 'Modified hot lead scoring weights: engagement +15%, budget +10%', ip: '103.28.147.52', severity: 'warning' },
-  { id: 'AL-014', timestamp: '2025-01-15 10:05:33', user: 'Unknown User', role: 'Unauthorised', action: 'Social Login', resource: 'Facebook Page Admin', details: 'FAILED login attempt with invalid credentials from unknown IP', ip: '45.155.22.11', severity: 'critical' },
-  { id: 'AL-015', timestamp: '2025-01-15 10:05:33', user: 'Nusrat Jahan', role: 'Marketing Staff', action: 'Conversation Assign', resource: 'W-2895', details: 'Self-assigned urgent visa query from WhatsApp', ip: '103.28.147.48', severity: 'info' },
-  { id: 'AL-016', timestamp: '2025-01-15 09:45:22', user: 'Tanvir Ahmed', role: 'Marketing Staff', action: 'Post Approved', resource: 'Facebook Post #2848', details: 'Approved Australia university partner spotlight post', ip: '103.28.147.50', severity: 'info' },
-  { id: 'AL-017', timestamp: '2025-01-15 09:30:10', user: 'System', role: 'Automated', action: 'SLA Event', resource: 'Conversation E-044', details: 'Email lead SLA breach: 24hr document collection deadline missed', ip: '\u2014', severity: 'critical' },
-  { id: 'AL-018', timestamp: '2025-01-15 09:15:45', user: 'Fahim Rahman', role: 'Marketing Staff', action: 'Lead Converted', resource: 'Lead L-4819', details: 'Converted referral lead to enrolment for UK September intake', ip: '103.28.147.49', severity: 'info' },
-];
+const ALL_ACTIONS = '__all__';
+const ALL_SOURCES = '__all__';
 
-const marketingUsers: MarketingUser[] = [
-  {
-    id: 'MU-001', name: 'Rakib Hasan', email: 'rakib@aloeducation.com.bd',
-    role: 'Marketing Manager', status: 'active', permissions: ['Full Access'], lastLogin: '2025-01-15 14:23:01',
-  },
-  {
-    id: 'MU-002', name: 'Nusrat Jahan', email: 'nusrat@aloeducation.com.bd',
-    role: 'Marketing Staff', status: 'active',
-    permissions: ['View Leads', 'Respond WhatsApp', 'Approve Posts', 'Upload Documents', 'View Reports'],
-    lastLogin: '2025-01-15 13:55:12',
-  },
-  {
-    id: 'MU-003', name: 'Tanvir Ahmed', email: 'tanvir@aloeducation.com.bd',
-    role: 'Marketing Staff', status: 'active',
-    permissions: ['View Leads', 'Respond WhatsApp', 'Approve Posts', 'Create Campaigns', 'View Reports'],
-    lastLogin: '2025-01-15 13:42:30',
-  },
-  {
-    id: 'MU-004', name: 'Fahim Rahman', email: 'fahim@aloeducation.com.bd',
-    role: 'Marketing Staff', status: 'active',
-    permissions: ['View Leads', 'Respond WhatsApp', 'Upload Documents', 'View Reports'],
-    lastLogin: '2025-01-15 12:40:22',
-  },
-];
+function asString(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return '';
+  }
+}
 
-const permissionMatrix: PermissionEntry[] = [
-  { permission: 'View Dashboard & Analytics', manager: true, staff1: true, staff2: true, staff3: true },
-  { permission: 'Create Campaigns', manager: true, staff1: false, staff2: true, staff3: false },
-  { permission: 'Edit Campaigns', manager: true, staff1: false, staff2: false, staff3: false },
-  { permission: 'Delete Campaigns', manager: true, staff1: false, staff2: false, staff3: false },
-  { permission: 'Approve Social Posts', manager: true, staff1: true, staff2: true, staff3: false },
-  { permission: 'Publish Posts', manager: true, staff1: true, staff2: true, staff3: false },
-  { permission: 'View All Leads', manager: true, staff1: true, staff2: true, staff3: true },
-  { permission: 'Convert Leads', manager: true, staff1: true, staff2: false, staff3: true },
-  { permission: 'Delete Leads', manager: true, staff1: false, staff2: false, staff3: false },
-  { permission: 'Respond via WhatsApp', manager: true, staff1: true, staff2: true, staff3: true },
-  { permission: 'Respond via Email', manager: true, staff1: true, staff2: false, staff3: true },
-  { permission: 'Respond via SMS', manager: true, staff1: false, staff2: false, staff3: false },
-  { permission: 'Upload Documents', manager: true, staff1: true, staff2: false, staff3: true },
-  { permission: 'AI Configuration', manager: true, staff1: false, staff2: false, staff3: false },
-  { permission: 'Access Control Management', manager: true, staff1: false, staff2: false, staff3: false },
-  { permission: 'View Audit Logs', manager: true, staff1: false, staff2: false, staff3: false },
-  { permission: 'Export Data', manager: true, staff1: false, staff2: true, staff3: false },
-  { permission: 'Manage SLA Settings', manager: true, staff1: false, staff2: false, staff3: false },
-];
+function formatTimestamp(value?: string | null): string {
+  if (!value) return 'Not recorded';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
 
-const accessViolations: AccessViolation[] = [
-  { id: 'AV-001', timestamp: '2025-01-15 10:05:22', user: 'Unknown (45.155.22.11)', action: 'Login Attempt', resource: 'Facebook Page Admin', severity: 'high', resolved: false },
-  { id: 'AV-002', timestamp: '2025-01-14 18:30:15', user: 'Tanvir Ahmed', action: 'Delete Attempt', resource: 'Campaign C-002', severity: 'medium', resolved: true },
-  { id: 'AV-003', timestamp: '2025-01-14 15:12:44', user: 'Fahim Rahman', action: 'AI Config Access', resource: 'WhatsApp Bot Settings', severity: 'low', resolved: true },
-  { id: 'AV-004', timestamp: '2025-01-13 22:45:08', user: 'Unknown (192.168.1.105)', action: 'API Access', resource: 'Lead Database Export', severity: 'high', resolved: false },
-  { id: 'AV-005', timestamp: '2025-01-13 14:20:33', user: 'Nusrat Jahan', action: 'SMS Send Attempt', resource: 'Bulk SMS Module', severity: 'low', resolved: true },
-];
-
-const actionOptions = [
-  'All Actions', 'Post Approved', 'Campaign Created', 'Lead Converted',
-  'Social Login', 'AI Config', 'SLA Event', 'Document Upload', 'Conversation Assign',
-];
-
-// ---------------------------------------------------------------------------
-// Main Component
-// ---------------------------------------------------------------------------
+function parsePermissions(raw?: string | null): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed.map((entry) => asString(entry)).filter(Boolean);
+  } catch {
+    // Legacy rows may hold a comma-separated list rather than JSON.
+    return raw.split(',').map((entry) => entry.trim()).filter(Boolean);
+  }
+  return [];
+}
 
 export default function MarketingAuditAccessView() {
   const [activeTab, setActiveTab] = useState('audit');
+
+  const [logs, setLogs] = useState<AuditLogEntry[]>([]);
+  const [logState, setLogState] = useState<LoadState>({ loading: true, error: null });
+  const [actionFilter, setActionFilter] = useState(ALL_ACTIONS);
+  const [sourceFilter, setSourceFilter] = useState(ALL_SOURCES);
   const [searchQuery, setSearchQuery] = useState('');
-  const [actionFilter, setActionFilter] = useState('All Actions');
-  const [userFilter, setUserFilter] = useState('All Users');
+
+  const [access, setAccess] = useState<UserAccess[]>([]);
+  const [accessState, setAccessState] = useState<LoadState>({ loading: true, error: null });
+  const [managerCount, setManagerCount] = useState(0);
+  const [approvedUserCount, setApprovedUserCount] = useState(0);
+  const [maxApprovedUsers, setMaxApprovedUsers] = useState(0);
+
   const [showAddUser, setShowAddUser] = useState(false);
-  const [newUserName, setNewUserName] = useState('');
-  const [newUserEmail, setNewUserEmail] = useState('');
-  const [newUserRole, setNewUserRole] = useState('staff');
-  const [exporting, setExporting] = useState(false);
-  const [permissions, setPermissions] = useState(permissionMatrix);
+  const [directory, setDirectory] = useState<DirectoryUser[]>([]);
+  const [directoryAvailable, setDirectoryAvailable] = useState(false);
+  const [grantUserId, setGrantUserId] = useState('');
+  const [grantLevel, setGrantLevel] = useState('LIMITED');
+  const [grantPermissions, setGrantPermissions] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
-  const togglePermission = (idx: number, field: 'staff1' | 'staff2' | 'staff3') => {
-    setPermissions((prev) =>
-      prev.map((p, i) => (i === idx ? { ...p, [field]: !p[field] } : p))
-    );
-  };
+  const loadLogs = useCallback(async () => {
+    setLogState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/marketing/audit-logs?take=200');
+      if (!response.ok) throw new Error(`Could not load audit logs (HTTP ${response.status})`);
+      const payload = await response.json();
+      setLogs(Array.isArray(payload?.logs) ? payload.logs : []);
+      setLogState({ loading: false, error: null });
+    } catch (error) {
+      setLogs([]);
+      setLogState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load audit logs',
+      });
+    }
+  }, []);
 
-  const uniqueUsers = useMemo(
-    () => ['All Users', ...Array.from(new Set(auditLogs.map((l) => l.user)))],
-    []
+  const loadAccess = useCallback(async () => {
+    setAccessState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/marketing/user-access');
+      if (!response.ok) throw new Error(`Could not load access list (HTTP ${response.status})`);
+      const payload = await response.json();
+      setAccess(Array.isArray(payload?.access) ? payload.access : []);
+      setManagerCount(Number(payload?.managerCount) || 0);
+      setApprovedUserCount(Number(payload?.approvedUserCount) || 0);
+      setMaxApprovedUsers(Number(payload?.maxApprovedUsers) || 0);
+      setAccessState({ loading: false, error: null });
+    } catch (error) {
+      setAccess([]);
+      setAccessState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load access list',
+      });
+    }
+  }, []);
+
+  // The staff directory sits behind ADMIN/SUPER_ADMIN only, while this view is
+  // also open to marketing managers. A 403 here is expected, so the grant form
+  // falls back to entering the user id directly instead of breaking.
+  const loadDirectory = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/users?limit=100');
+      if (!response.ok) {
+        setDirectory([]);
+        setDirectoryAvailable(false);
+        return;
+      }
+      const payload = await response.json();
+      const rows = payload?.data?.users;
+      setDirectory(Array.isArray(rows) ? rows : []);
+      setDirectoryAvailable(true);
+    } catch {
+      setDirectory([]);
+      setDirectoryAvailable(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadLogs();
+    void loadAccess();
+  }, [loadLogs, loadAccess]);
+
+  useEffect(() => {
+    if (showAddUser && directory.length === 0) void loadDirectory();
+  }, [showAddUser, directory.length, loadDirectory]);
+
+  const actionOptions = useMemo(
+    () => Array.from(new Set(logs.map((log) => log.action).filter(Boolean))).sort(),
+    [logs],
+  );
+
+  const sourceOptions = useMemo(
+    () => Array.from(new Set(logs.map((log) => log.source).filter(Boolean))) as string[],
+    [logs],
   );
 
   const filteredLogs = useMemo(() => {
-    return auditLogs.filter((log) => {
-      const matchSearch =
-        searchQuery === '' ||
-        log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        log.details.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        log.resource.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchAction = actionFilter === 'All Actions' || log.action === actionFilter;
-      const matchUser = userFilter === 'All Users' || log.user === userFilter;
-      return matchSearch && matchAction && matchUser;
+    const term = searchQuery.trim().toLowerCase();
+    return logs.filter((log) => {
+      if (actionFilter !== ALL_ACTIONS && log.action !== actionFilter) return false;
+      if (sourceFilter !== ALL_SOURCES && log.source !== sourceFilter) return false;
+      if (!term) return true;
+      return [log.action, log.resource, log.resourceId, log.details, log.userName, log.userId]
+        .some((value) => asString(value).toLowerCase().includes(term));
     });
-  }, [searchQuery, actionFilter, userFilter]);
+  }, [logs, actionFilter, sourceFilter, searchQuery]);
 
-  const handleExport = () => {
-    setExporting(true);
-    setTimeout(() => setExporting(false), 1500);
+  const activeAccess = useMemo(
+    () => access.filter((entry) => entry.status === 'ACTIVE'),
+    [access],
+  );
+
+  // The permission matrix is derived from the permissions actually stored on
+  // each active record. Nothing is inferred, and permissions nobody holds do
+  // not appear as rows.
+  const permissionRows = useMemo(() => {
+    const byPermission = new Map<string, Set<string>>();
+    activeAccess.forEach((entry) => {
+      const label = entry.user?.name || entry.user?.email || entry.userId;
+      parsePermissions(entry.permissions).forEach((permission) => {
+        if (!byPermission.has(permission)) byPermission.set(permission, new Set());
+        byPermission.get(permission)!.add(label);
+      });
+    });
+    return Array.from(byPermission.entries())
+      .map(([permission, holders]) => ({
+        permission,
+        holders: Array.from(holders),
+        holderCount: holders.size,
+      }))
+      .sort((a, b) => a.permission.localeCompare(b.permission));
+  }, [activeAccess]);
+
+  const handleGrant = async () => {
+    const userId = grantUserId.trim();
+    if (!userId) {
+      setSaveError('Select or enter the user to grant access to.');
+      return;
+    }
+    setSaving(true);
+    setSaveError(null);
+    setSaveMessage(null);
+    try {
+      const permissions = grantPermissions
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+      const response = await fetch('/api/marketing/user-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, accessLevel: grantLevel, permissions }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setSaveError(payload?.error || `Could not grant access (HTTP ${response.status})`);
+        return;
+      }
+      setSaveMessage(payload?.message || 'Access granted.');
+      setGrantUserId('');
+      setGrantPermissions('');
+      await loadAccess();
+      setTimeout(() => {
+        setShowAddUser(false);
+        setSaveMessage(null);
+      }, 1200);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Could not grant access');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const severityBadge = (severity: 'info' | 'warning' | 'critical') => {
-    const map = {
-      info: { cls: 'bg-sky-100 text-sky-700 hover:bg-sky-100', icon: <CheckCircle2 className="h-3 w-3 mr-1" /> },
-      warning: { cls: 'bg-amber-100 text-amber-700 hover:bg-amber-100', icon: <AlertTriangle className="h-3 w-3 mr-1" /> },
-      critical: { cls: 'bg-red-100 text-red-700 hover:bg-red-100', icon: <XCircle className="h-3 w-3 mr-1" /> },
-    };
-    const m = map[severity];
-    return <Badge variant="secondary" className={cn('text-xs', m.cls)}>{m.icon}{severity}</Badge>;
+  const handleStatusChange = async (entry: UserAccess, status: 'ACTIVE' | 'REVOKED') => {
+    setAccessState((current) => ({ ...current, error: null }));
+    try {
+      const response = await fetch('/api/marketing/user-access', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: entry.id, status }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setAccessState({
+          loading: false,
+          error: payload?.error || `Could not update access (HTTP ${response.status})`,
+        });
+        return;
+      }
+      await loadAccess();
+    } catch (error) {
+      setAccessState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not update access',
+      });
+    }
+  };
+
+  const accessLevelBadge = (level: string) => {
+    const isFull = level === 'FULL';
+    return (
+      <Badge
+        variant="secondary"
+        className={cn(
+          'text-xs',
+          isFull
+            ? 'bg-violet-100 text-violet-700 hover:bg-violet-100'
+            : 'bg-sky-100 text-sky-700 hover:bg-sky-100',
+        )}
+      >
+        <KeyRound className="mr-1 h-3 w-3" />
+        {isFull ? 'Manager' : 'Approved user'}
+      </Badge>
+    );
   };
 
   const statusBadge = (status: string) => {
     const map: Record<string, { cls: string; label: string }> = {
-      active: { cls: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100', label: 'Active' },
-      inactive: { cls: 'bg-gray-100 text-gray-600 hover:bg-gray-100', label: 'Inactive' },
-      suspended: { cls: 'bg-red-100 text-red-700 hover:bg-red-100', label: 'Suspended' },
+      ACTIVE: { cls: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100', label: 'Active' },
+      REVOKED: { cls: 'bg-gray-100 text-gray-600 hover:bg-gray-100', label: 'Revoked' },
+      SUSPENDED: { cls: 'bg-red-100 text-red-700 hover:bg-red-100', label: 'Suspended' },
     };
-    const m = map[status] || map.active;
-    return <Badge variant="secondary" className={cn('text-xs', m.cls)}>{m.label}</Badge>;
+    const match = map[status] || { cls: 'bg-gray-100 text-gray-600', label: status || 'Unknown' };
+    return <Badge variant="secondary" className={cn('text-xs', match.cls)}>{match.label}</Badge>;
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
           <Shield className="h-6 w-6 text-primary" />
-          Audit Logs & Access Control
+          Audit Logs &amp; Access Control
         </h1>
-        <p className="text-muted-foreground mt-1">
-          ALO Education \u2014 security audit trail and marketing team access management
+        <p className="mt-1 text-muted-foreground">
+          Recorded marketing activity and the accounts currently holding marketing access.
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 max-w-md">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
           <TabsTrigger value="audit" className="gap-2">
             <ScrollText className="h-4 w-4" />
             Audit Logs
@@ -297,389 +398,443 @@ export default function MarketingAuditAccessView() {
           </TabsTrigger>
         </TabsList>
 
-        {/* AUDIT LOGS TAB */}
+        {/* ── AUDIT LOGS ── */}
         <TabsContent value="audit" className="space-y-6">
           <Card>
-            <CardContent className="p-4">
-              <div className="flex flex-col md:flex-row gap-3">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <CardHeader className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <CardTitle className="text-base">Activity log</CardTitle>
+                  <CardDescription>
+                    Every entry the audit trail has recorded, newest first.
+                  </CardDescription>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => void loadLogs()}>
+                  <RefreshCw className={cn('mr-1 h-4 w-4', logState.loading && 'animate-spin')} />
+                  Refresh
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative min-w-[220px] flex-1">
+                  <Search className="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
                   <Input
-                    placeholder="Search logs by user, resource, or details..."
-                    className="pl-9"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Search action, resource, or person"
+                    className="pl-8"
                   />
                 </div>
                 <Select value={actionFilter} onValueChange={setActionFilter}>
-                  <SelectTrigger className="w-full md:w-[200px]">
-                    <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Filter action" />
+                  <SelectTrigger className="w-[190px]">
+                    <SelectValue placeholder="All actions" />
                   </SelectTrigger>
                   <SelectContent>
-                    {actionOptions.map((opt) => (
-                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                    <SelectItem value={ALL_ACTIONS}>All actions</SelectItem>
+                    {actionOptions.map((action) => (
+                      <SelectItem key={action} value={action}>{action}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <Select value={userFilter} onValueChange={setUserFilter}>
-                  <SelectTrigger className="w-full md:w-[200px]">
-                    <User className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Filter user" />
+                <Select value={sourceFilter} onValueChange={setSourceFilter}>
+                  <SelectTrigger className="w-[190px]">
+                    <SelectValue placeholder="All sources" />
                   </SelectTrigger>
                   <SelectContent>
-                    {uniqueUsers.map((u) => (
-                      <SelectItem key={u} value={u}>{u}</SelectItem>
+                    <SelectItem value={ALL_SOURCES}>All sources</SelectItem>
+                    {sourceOptions.map((source) => (
+                      <SelectItem key={source} value={source}>{source}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <Button variant="outline" className="gap-2 shrink-0" onClick={handleExport} disabled={exporting}>
-                  {exporting ? (
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  ) : (
-                    <Download className="h-4 w-4" />
-                  )}
-                  Export Logs
-                </Button>
               </div>
+
+              <p className="text-muted-foreground text-xs">
+                Showing {filteredLogs.length} of {logs.length} recorded entries
+              </p>
+            </CardHeader>
+
+            <CardContent>
+              {logState.error && (
+                <div className="bg-destructive/10 text-destructive mb-4 flex items-start gap-2 rounded-lg p-3 text-sm">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div>
+                    <p className="font-medium">{logState.error}</p>
+                    <button
+                      type="button"
+                      className="mt-1 underline underline-offset-2"
+                      onClick={() => void loadLogs()}
+                    >
+                      Try again
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {logState.loading ? (
+                <div className="text-muted-foreground py-10 text-center text-sm">Loading audit logs…</div>
+              ) : filteredLogs.length === 0 ? (
+                <div className="text-muted-foreground flex flex-col items-center gap-2 py-12 text-center">
+                  <ScrollText className="h-8 w-8 opacity-30" />
+                  <p className="text-sm">
+                    {logs.length === 0
+                      ? 'No marketing activity has been recorded yet.'
+                      : 'No entries match the current filters.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[170px]">Timestamp</TableHead>
+                        <TableHead>Action</TableHead>
+                        <TableHead>Resource</TableHead>
+                        <TableHead>Details</TableHead>
+                        <TableHead>Person</TableHead>
+                        <TableHead className="w-[150px]">Source</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredLogs.map((log) => (
+                        <TableRow key={`${log.source || 'log'}-${log.id}`}>
+                          <TableCell className="text-muted-foreground whitespace-nowrap text-xs">
+                            {formatTimestamp(log.createdAt)}
+                          </TableCell>
+                          <TableCell className="font-medium">{log.action || 'Not specified'}</TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {log.resource || '—'}
+                            {log.resourceId ? <span className="ml-1">#{log.resourceId}</span> : null}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground max-w-[280px] text-xs">
+                            {asString(log.details) || '—'}
+                          </TableCell>
+                          <TableCell className="text-xs">
+                            {log.userName || log.userId ? (
+                              <>
+                                <span>{log.userName || 'User'}</span>
+                                {log.role ? (
+                                  <Badge variant="outline" className="ml-1 text-[10px]">{log.role}</Badge>
+                                ) : null}
+                              </>
+                            ) : (
+                              <span className="text-muted-foreground">Not attributed</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-[10px]">
+                              {log.source === 'marketingAuditLog' ? 'Marketing audit' : 'System audit'}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-sky-500" />
-                    Audit Trail
-                  </CardTitle>
-                  <CardDescription>
-                    Showing {filteredLogs.length} of {auditLogs.length} log entries
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
-                <Table>
-                  <TableHeader className="sticky top-0 bg-background z-10">
-                    <TableRow>
-                      <TableHead className="w-[140px]">Timestamp</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Action</TableHead>
-                      <TableHead>Resource</TableHead>
-                      <TableHead className="min-w-[250px]">Details</TableHead>
-                      <TableHead>IP</TableHead>
-                      <TableHead className="text-center">Severity</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredLogs.map((log) => (
-                      <TableRow key={log.id} className={cn(log.severity === 'critical' && 'bg-red-50/50')}>
-                        <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
-                          {log.timestamp}
-                        </TableCell>
-                        <TableCell className="font-medium whitespace-nowrap">{log.user}</TableCell>
-                        <TableCell className="text-xs whitespace-nowrap">
-                          <Badge variant="outline" className="text-xs">{log.role}</Badge>
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap font-medium">{log.action}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{log.resource}</TableCell>
-                        <TableCell className="text-xs max-w-[280px] truncate" title={log.details}>
-                          {log.details}
-                        </TableCell>
-                        <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">{log.ip}</TableCell>
-                        <TableCell className="text-center">{severityBadge(log.severity)}</TableCell>
-                      </TableRow>
-                    ))}
-                    {filteredLogs.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                          No audit logs match the current filters.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+            <CardContent className="text-muted-foreground flex items-start gap-2 pt-6 text-xs">
+              <Info className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>
+                Entries are read from the platform audit trail. Client IP addresses are not part
+                of the marketing audit response, so none are shown. Access-denied attempts are
+                recorded as ordinary audit entries rather than in a separate violations list.
+              </span>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* ACCESS CONTROL TAB */}
+        {/* ── ACCESS CONTROL ── */}
         <TabsContent value="access" className="space-y-6">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-muted-foreground text-xs">Marketing managers</p>
+                <p className="text-2xl font-bold">{managerCount}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-muted-foreground text-xs">Approved users</p>
+                <p className="text-2xl font-bold">
+                  {approvedUserCount}
+                  {maxApprovedUsers > 0 ? <span className="text-muted-foreground text-sm"> / {maxApprovedUsers}</span> : null}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-muted-foreground text-xs">Records</p>
+                <p className="text-2xl font-bold">{access.length}</p>
+              </CardContent>
+            </Card>
+          </div>
+
           <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
+            <CardHeader className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Users className="h-4 w-4 text-emerald-500" />
-                    Marketing Team Members
-                  </CardTitle>
+                  <CardTitle className="text-base">Marketing access</CardTitle>
                   <CardDescription>
-                    Manager has full permissions. Staff have limited, role-specific access.
+                    Accounts granted access to the marketing workspace, and what each may do.
                   </CardDescription>
                 </div>
-                <Dialog open={showAddUser} onOpenChange={setShowAddUser}>
-                  <DialogTrigger asChild>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="gap-2">
-                      <Plus className="h-4 w-4" />
-                      Add User
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add Marketing User</DialogTitle>
-                      <DialogDescription>
-                        Add a new team member with limited marketing permissions.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="new-name">Full Name</Label>
-                        <Input id="new-name" placeholder="e.g. Kamal Hossain" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="new-email">Email Address</Label>
-                        <Input id="new-email" type="email" placeholder="e.g. kamal@aloeducation.com.bd" value={newUserEmail} onChange={(e) => setNewUserEmail(e.target.value)} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="new-role">Role</Label>
-                        <Select value={newUserRole} onValueChange={setNewUserRole}>
-                          <SelectTrigger id="new-role"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="staff">Marketing Staff</SelectItem>
-                            <SelectItem value="viewer">Marketing Viewer</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setShowAddUser(false)}>Cancel</Button>
-                      <Button onClick={() => setShowAddUser(false)}>Add User</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Permissions</TableHead>
-                      <TableHead>Last Login</TableHead>
-                      <TableHead className="text-center">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {marketingUsers.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{user.email}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={cn(user.role === 'Marketing Manager' && 'bg-violet-100 text-violet-700 border-violet-200')}>
-                            {user.role}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {user.permissions.map((p, i) => (
-                              <Badge key={i} variant="secondary" className="text-[10px] px-1.5 py-0">{p}</Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">{user.lastLogin}</TableCell>
-                        <TableCell className="text-center">{statusBadge(user.status)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => void loadAccess()}>
+                    <RefreshCw className={cn('mr-1 h-4 w-4', accessState.loading && 'animate-spin')} />
+                    Refresh
+                  </Button>
+                  <Dialog open={showAddUser} onOpenChange={setShowAddUser}>
+                    <DialogTrigger asChild>
+                      <Button size="sm">
+                        <Plus className="mr-1 h-4 w-4" />
+                        Grant access
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Grant marketing access</DialogTitle>
+                        <DialogDescription>
+                          Approve an existing staff account for the marketing workspace.
+                        </DialogDescription>
+                      </DialogHeader>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Globe className="h-4 w-4 text-pink-500" />
-                Official Social Media Access
-              </CardTitle>
-              <CardDescription>
-                Only Manager and designated staff can access company social media accounts. Other employees have NO access.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead className="text-center"><Facebook className="h-4 w-4 mx-auto" /></TableHead>
-                      <TableHead className="text-center"><Instagram className="h-4 w-4 mx-auto" /></TableHead>
-                      <TableHead className="text-center"><MessageCircle className="h-4 w-4 mx-auto" /></TableHead>
-                      <TableHead className="text-center"><Mail className="h-4 w-4 mx-auto" /></TableHead>
-                      <TableHead className="text-center"><Smartphone className="h-4 w-4 mx-auto" /></TableHead>
-                      <TableHead className="text-center">Access Level</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow className="bg-violet-50/50">
-                      <TableCell className="font-medium">Rakib Hasan <Badge variant="outline" className="ml-1 text-[10px]">Manager</Badge></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-xs">Full Access</Badge></TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Nusrat Jahan <Badge variant="outline" className="ml-1 text-[10px]">Staff</Badge></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-amber-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-amber-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><MessageCircle className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-amber-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><EyeOff className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 text-xs">Limited</Badge></TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Tanvir Ahmed <Badge variant="outline" className="ml-1 text-[10px]">Staff</Badge></TableCell>
-                      <TableCell className="text-center"><Eye className="h-4 w-4 text-amber-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><EyeOff className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><MessageCircle className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><EyeOff className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><EyeOff className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 text-xs">Limited</Badge></TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Fahim Rahman <Badge variant="outline" className="ml-1 text-[10px]">Staff</Badge></TableCell>
-                      <TableCell className="text-center"><EyeOff className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><EyeOff className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><MessageCircle className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Mail className="h-4 w-4 text-emerald-600 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><EyeOff className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 text-xs">Limited</Badge></TableCell>
-                    </TableRow>
-                    <TableRow className="bg-muted/30">
-                      <TableCell className="font-medium text-muted-foreground">Other Employees</TableCell>
-                      <TableCell className="text-center"><Lock className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><Lock className="h-4 w-4 text-red-400 mx-auto" /></TableCell>
-                      <TableCell className="text-center"><MessageCircle className="h-4 w-4 text-emerald-500 mx-auto" aria-label="Own WhatsApp only" /></TableCell>
-                      <TableCell className="text-center"><Mail className="h-4 w-4 text-emerald-500 mx-auto" aria-label="Own email only" /></TableCell>
-                      <TableCell className="text-center"><Smartphone className="h-4 w-4 text-emerald-500 mx-auto" aria-label="Own SMS only" /></TableCell>
-                      <TableCell className="text-center"><Badge className="bg-red-100 text-red-700 hover:bg-red-100 text-xs">NO Access</Badge></TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                <Lock className="h-3 w-3 inline mr-1" />Non-marketing employees can only access their own personal WhatsApp, email, and SMS \u2014 never company social media accounts.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Settings className="h-4 w-4 text-slate-500" />
-                Permission Matrix
-              </CardTitle>
-              <CardDescription>
-                Toggle permissions for each marketing staff member. Manager permissions are fixed (full access).
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
-                <Table>
-                  <TableHeader className="sticky top-0 bg-background z-10">
-                    <TableRow>
-                      <TableHead className="min-w-[220px]">Permission</TableHead>
-                      <TableHead className="text-center">Manager</TableHead>
-                      <TableHead className="text-center">Nusrat J.</TableHead>
-                      <TableHead className="text-center">Tanvir A.</TableHead>
-                      <TableHead className="text-center">Fahim R.</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {permissions.map((perm, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell className="text-sm font-medium">{perm.permission}</TableCell>
-                        <TableCell className="text-center">
-                          <CheckCircle2 className="h-4 w-4 text-emerald-600 mx-auto" />
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Switch checked={perm.staff1} onCheckedChange={() => togglePermission(idx, 'staff1')} className="data-[state=checked]:bg-emerald-600" />
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Switch checked={perm.staff2} onCheckedChange={() => togglePermission(idx, 'staff2')} className="data-[state=checked]:bg-emerald-600" />
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Switch checked={perm.staff3} onCheckedChange={() => togglePermission(idx, 'staff3')} className="data-[state=checked]:bg-emerald-600" />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-red-500" />
-                Access Violation Log
-              </CardTitle>
-              <CardDescription>Record of unauthorized or flagged access attempts</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Timestamp</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead>Action</TableHead>
-                      <TableHead>Resource</TableHead>
-                      <TableHead className="text-center">Severity</TableHead>
-                      <TableHead className="text-center">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {accessViolations.map((v) => (
-                      <TableRow key={v.id}>
-                        <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">{v.timestamp}</TableCell>
-                        <TableCell className="font-medium">{v.user}</TableCell>
-                        <TableCell>{v.action}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{v.resource}</TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="secondary" className={cn(
-                            'text-xs',
-                            v.severity === 'high' && 'bg-red-100 text-red-700 hover:bg-red-100',
-                            v.severity === 'medium' && 'bg-amber-100 text-amber-700 hover:bg-amber-100',
-                            v.severity === 'low' && 'bg-sky-100 text-sky-700 hover:bg-sky-100',
-                          )}>{v.severity}</Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {v.resolved ? (
-                            <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-xs gap-1">
-                              <CheckCircle2 className="h-3 w-3" /> Resolved
-                            </Badge>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="grant-user">User</Label>
+                          {directoryAvailable && directory.length > 0 ? (
+                            <Select value={grantUserId} onValueChange={setGrantUserId}>
+                              <SelectTrigger id="grant-user">
+                                <SelectValue placeholder="Select a staff account" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {directory.map((user) => (
+                                  <SelectItem key={user.id} value={user.id}>
+                                    {user.name || user.email || user.id}
+                                    {user.email && user.name ? ` — ${user.email}` : ''}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           ) : (
-                            <Badge variant="secondary" className="bg-red-100 text-red-700 hover:bg-red-100 text-xs gap-1">
-                              <XCircle className="h-3 w-3" /> Open
-                            </Badge>
+                            <Input
+                              id="grant-user"
+                              value={grantUserId}
+                              onChange={(event) => setGrantUserId(event.target.value)}
+                              placeholder="Staff user ID"
+                            />
                           )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                          <p className="text-muted-foreground text-xs">
+                            {directoryAvailable
+                              ? 'Choose from the staff accounts available to you.'
+                              : 'The staff directory is restricted to administrators. Enter the user ID directly, or ask an administrator to grant this access.'}
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="grant-level">Access level</Label>
+                          <Select value={grantLevel} onValueChange={setGrantLevel}>
+                            <SelectTrigger id="grant-level">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="LIMITED">Approved user</SelectItem>
+                              <SelectItem value="FULL">Marketing manager</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-muted-foreground text-xs">
+                            {maxApprovedUsers > 0
+                              ? `Up to ${maxApprovedUsers} approved users may hold access at once.`
+                              : 'Approved-user slots are limited; revoke an existing user before adding another.'}
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="grant-permissions">Permissions</Label>
+                          <Input
+                            id="grant-permissions"
+                            value={grantPermissions}
+                            onChange={(event) => setGrantPermissions(event.target.value)}
+                            placeholder="e.g. view-leads, respond-whatsapp"
+                          />
+                          <p className="text-muted-foreground text-xs">
+                            Comma-separated capability keys. Leave blank to grant the level&apos;s
+                            default access only.
+                          </p>
+                        </div>
+
+                        {saveError && (
+                          <p className="text-destructive text-sm">{saveError}</p>
+                        )}
+                        {saveMessage && (
+                          <p className="text-sm text-emerald-600">{saveMessage}</p>
+                        )}
+                      </div>
+
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowAddUser(false)}
+                          disabled={saving}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={() => void handleGrant()} disabled={saving}>
+                          {saving ? 'Granting…' : 'Grant access'}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
+            </CardHeader>
+
+            <CardContent>
+              {accessState.error && (
+                <div className="bg-destructive/10 text-destructive mb-4 flex items-start gap-2 rounded-lg p-3 text-sm">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div>
+                    <p className="font-medium">{accessState.error}</p>
+                    <button
+                      type="button"
+                      className="mt-1 underline underline-offset-2"
+                      onClick={() => void loadAccess()}
+                    >
+                      Try again
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {accessState.loading ? (
+                <div className="text-muted-foreground py-10 text-center text-sm">Loading access list…</div>
+              ) : access.length === 0 ? (
+                <div className="text-muted-foreground flex flex-col items-center gap-2 py-12 text-center">
+                  <UserCog className="h-8 w-8 opacity-30" />
+                  <p className="text-sm">No marketing access has been granted yet.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Account</TableHead>
+                        <TableHead className="w-[130px]">Role</TableHead>
+                        <TableHead className="w-[150px]">Access level</TableHead>
+                        <TableHead className="w-[110px]">Status</TableHead>
+                        <TableHead>Permissions</TableHead>
+                        <TableHead className="w-[170px]">Approved</TableHead>
+                        <TableHead className="w-[120px] text-right">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {access.map((entry) => {
+                        const permissions = parsePermissions(entry.permissions);
+                        return (
+                          <TableRow key={entry.id}>
+                            <TableCell>
+                              <p className="font-medium">
+                                {entry.user?.name || 'Unnamed account'}
+                              </p>
+                              <p className="text-muted-foreground text-xs">
+                                {entry.user?.email || entry.userId}
+                              </p>
+                            </TableCell>
+                            <TableCell className="text-xs">
+                              {entry.user?.role || 'Not specified'}
+                            </TableCell>
+                            <TableCell>{accessLevelBadge(entry.accessLevel)}</TableCell>
+                            <TableCell>{statusBadge(entry.status)}</TableCell>
+                            <TableCell>
+                              {permissions.length > 0 ? (
+                                <div className="flex flex-wrap gap-1">
+                                  {permissions.map((permission) => (
+                                    <Badge key={permission} variant="outline" className="text-[10px]">
+                                      {permission}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground text-xs">
+                                  Level default — no explicit permissions
+                                </span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-muted-foreground text-xs">
+                              {formatTimestamp(entry.approvedAt)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {entry.status === 'ACTIVE' ? (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-destructive"
+                                  onClick={() => void handleStatusChange(entry, 'REVOKED')}
+                                >
+                                  <Ban className="mr-1 h-3.5 w-3.5" />
+                                  Revoke
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => void handleStatusChange(entry, 'ACTIVE')}
+                                >
+                                  Restore
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Permission matrix</CardTitle>
+              <CardDescription>
+                Derived from the permissions stored on each active access record.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {permissionRows.length === 0 ? (
+                <p className="text-muted-foreground text-sm">
+                  {activeAccess.length === 0
+                    ? 'No active access records hold explicit permissions.'
+                    : 'Active records carry no explicit permissions — they use their access level default.'}
+                </p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Permission</TableHead>
+                        <TableHead className="w-[100px]">Holders</TableHead>
+                        <TableHead>Accounts</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {permissionRows.map((row) => (
+                        <TableRow key={row.permission}>
+                          <TableCell className="font-medium">{row.permission}</TableCell>
+                          <TableCell>{row.holderCount}</TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {row.holders.join(', ')}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

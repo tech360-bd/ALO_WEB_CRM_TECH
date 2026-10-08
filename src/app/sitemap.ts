@@ -38,7 +38,7 @@ const STATIC_PATHS: Array<[string, MetadataRoute.Sitemap[number]['changeFrequenc
   ['/destinations', 'weekly', 0.8], ['/scholarships', 'weekly', 0.8], ['/services', 'weekly', 0.8],
   ['/resources', 'weekly', 0.8], ['/blog', 'daily', 0.9], ['/language-prep', 'weekly', 0.8],
   ['/language-prep/comparison', 'weekly', 0.7], ['/eligibility-check', 'weekly', 0.8],
-  ['/compare', 'weekly', 0.7], ['/book-consultation', 'weekly', 0.7], ['/visa-support', 'weekly', 0.7],
+  ['/compare', 'weekly', 0.7], ['/book-consultation', 'weekly', 0.7], ['/visa', 'weekly', 0.7],
   ['/application-guide', 'monthly', 0.6], ['/application-process', 'monthly', 0.6],
   ['/admission-requirements', 'monthly', 0.6], ['/english-test-prep', 'weekly', 0.7],
 ['/news', 'daily', 0.6], ['/events', 'daily', 0.6],

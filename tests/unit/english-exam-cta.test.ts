@@ -150,7 +150,11 @@ describe('public surface regression guards', () => {
       'src/components/course-finder/eligibility-checker-enhanced.tsx',
       'src/app/english-test-prep/page.tsx',
       'src/app/events/page.tsx',
-      'src/app/visa-support/page.tsx',
+      // /visa-support was deleted (it shipped unsourced visa fees, processing
+      // times and a visa success percentage). /visa is the public visa surface
+      // now, so the guard follows it to the files that actually ship.
+      'src/app/visa/page.tsx',
+      'src/components/website/VisaSupportHub.tsx',
       'src/app/team/[slug]/page.tsx',
     ];
     const banned = [

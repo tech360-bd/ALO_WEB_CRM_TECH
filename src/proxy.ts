@@ -33,6 +33,13 @@ const PUBLIC_ROUTES = [
   // One-time, token-gated student review submission (token is hashed server-side).
   "/review",
   "/language-prep",
+  // Legacy alias only. The /visa-support pages were removed because they
+  // hard-coded visa fees, processing times and an unsourced visa success
+  // percentage, with no citation and no verification date on any of it.
+  // next.config.ts now permanently redirects this path (and its per-country
+  // slugs) to the verified /visa and /destinations/[slug] routes. It must pass
+  // the proxy for that redirect to run — same reason /eligibility-checker is
+  // listed below.
   "/visa-support",
   "/application-guide",
   "/student-journey",
@@ -48,6 +55,15 @@ const PUBLIC_ROUTES = [
   "/eligibility-checker",
   "/english-test-prep",
   "/english-tests",
+  // Public AI tools (spec §39–43). These are discovery/advisory tools on the
+  // marketing site, not portal features: they take a self-declared profile and
+  // return evidence-based matches. Every endpoint they call stays behind its
+  // own guard, and none of them expose another user's data.
+  "/ai",
+  // Public visa support hub (spec §44), served by VisaSupportHub from
+  // COUNTRY_DESTINATIONS with a source and lastVerifiedAt on every fact.
+  // /visa-support is the legacy alias that redirects here.
+  "/visa",
   "/news",
   "/events",
   "/compare",
@@ -65,6 +81,7 @@ const PUBLIC_ROUTES = [
   "/partner/register",
   "/employee/login",
   "/employee/activate",
+  "/counselor/login",
   "/admin/login",
   "/portal/login",
   // Offline fallback page. The service worker precaches it, so it must be
@@ -170,6 +187,15 @@ const PUBLIC_API_WRITE_ROUTES = [
   "/api/ai/match",
   "/api/ai/sop",
   "/api/ai/student-intake",
+  // Public course/eligibility matcher. The public /eligibility-check and
+  // /ai/course-match pages POST here while the visitor is still anonymous. The
+  // handler only reads published, verified courses and writes an anonymous
+  // assessment record — it never touches another user's data — and it is rate
+  // limited inside the route handler.
+  "/api/course-finder/eligibility-engine",
+  // Deterministic scholarship matcher used by the public /ai/scholarship-match
+  // tool. Read-only over published scholarship records; rate limited in-route.
+  "/api/ai/scholarship-match",
   "/api/events",
   "/api/reviews/submit",
   "/api/reviews/feedback",
