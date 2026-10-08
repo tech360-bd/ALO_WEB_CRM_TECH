@@ -55,6 +55,29 @@ export const POST = withAuth(async (req, auth) => {
       return created;
     });
 
+  const invitation = await db.reviewInvitation.create({
+    data: {
+      token,
+      studentId,
+      studentName,
+      studentEmail,
+      studentPhone,
+      counselorId,
+      country,
+      serviceType,
+      googleReviewUrl, // official Google review link (e.g., Google Business Profile URL)
+      facebookRecommendUrl, // official Facebook page recommendation link
+      campaignId,
+      expiresAt,
+    },
+  });
+
+  // Resolve createdBy to a valid User.id (it may be an email or user ID)
+  let userId: string | null | undefined = createdBy ?? undefined;
+  if (createdBy && createdBy.includes("@")) {
+    const user = await db.user.findFirst({ where: { email: createdBy.toLowerCase() }, select: { id: true } });
+    if (user) userId = user.id;
+    else userId = "system";
     return NextResponse.json({
       invitation,
       reviewUrl: `/review/${rawToken}`,
@@ -65,6 +88,53 @@ export const POST = withAuth(async (req, auth) => {
   }
 }, { requireRoles: REVIEW_ROLES });
 
+  // Audit log
+  await db.auditLog.create({
+    data: {
+      userId: userId === "system" ? null : userId ?? undefined,
+      action: "REVIEW_INVITATION_SENT",
+      resource: "ReviewInvitation",
+      resourceId: invitation.id,
+      details: JSON.stringify({ studentName, country, serviceType, expiresAt }),
+    },
+  });
+
+  return NextResponse.json({
+    invitation,
+    reviewUrl: `/review/${token}`,
+    message: "Review invitation created. Share the link with the student.",
+  }, { status: 201 });
+}
+
+// GET /api/reviews/invitation
+// Lists all review invitations (for the Marketing dashboard).
+export async function GET(req: NextRequest) {
+  const status = req.nextUrl.searchParams.get("status") || "ALL";
+  const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") || "100"), 500);
+
+  const where: any = {};
+  if (status !== "ALL") where.status = status;
+
+  const invitations = await db.reviewInvitation.findMany({
+    where,
+    orderBy: { sentAt: "desc" },
+    take: limit,
+  });
+
+  // Also fetch the linked reviews (if any) for display
+  const reviewIds = invitations.filter((i) => i.reviewId).map((i) => i.reviewId!);
+  const reviews = reviewIds.length > 0
+    ? await db.studentReview.findMany({ where: { id: { in: reviewIds } }, select: { id: true, rating: true, moderationStatus: true, publicationStatus: true } })
+    : [];
+  const reviewMap = new Map(reviews.map((r) => [r.id, r]));
+
+  const invitationsWithReviews = invitations.map((i) => ({
+    ...i,
+    review: i.reviewId ? reviewMap.get(i.reviewId) || null : null,
+  }));
+
+  return NextResponse.json({ invitations: invitationsWithReviews });
+}
 export const GET = withAuth(async (req) => {
   try {
     const url = new URL(req.url);

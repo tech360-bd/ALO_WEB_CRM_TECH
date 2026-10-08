@@ -86,6 +86,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       }, tx);
     });
 
+    return NextResponse.json({
+      success: true,
+      downloadUrl: doc.filePath ?? "",
+      fileName: doc.fileName ?? "document",
+      status: doc.status,
     const headers = new Headers({
       'Content-Type': mimeType,
       'Content-Length': String(bytes.length),
