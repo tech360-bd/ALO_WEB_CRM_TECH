@@ -419,11 +419,11 @@ const FAQ_DATA = [
   },
   {
     q: 'How can I contact my counselor?',
-    a: 'You can message your counselor directly through the "Messages" section. Your assigned counselor (Sarah Khan) typically responds within 2-4 business hours. For urgent matters, you can also reach us via WhatsApp at +880 1700-000000 or call our office during business hours (Sat-Thu, 9 AM - 6 PM BST).',
+    a: 'You can message your counselor directly through the "Messages" section. If a counselor has been assigned to you, their name appears on that thread. Response times depend on who is assigned and when the message arrives, so we do not quote a fixed turnaround here.',
   },
   {
     q: 'What scholarships am I eligible for?',
-    a: 'Based on your academic profile (SSC GPA 5.0, HSC GPA 4.80, IELTS 7.0), you may be eligible for several scholarships including Chevening, Commonwealth, and university-specific merit awards. Check the "Scholarships" page for a personalized list with deadlines and requirements. We recommend applying early as most deadlines are 6-12 months before intake.',
+    a: 'Scholarship eligibility depends on the specific award, and each one sets its own criteria. Open the "Scholarships" page to see awards that have been recorded with their requirements, amounts, deadlines and source, and check that source before you rely on any of them. Your counselor can also tell you which ones fit your profile.',
   },
   {
     q: 'How do I check my application status?',
@@ -506,10 +506,12 @@ export function StudentHelpCenter() {
           <div className="flex-1">
             <h3 className="text-base font-semibold text-slate-900">Still need help?</h3>
             <p className="text-sm text-slate-600 mt-1">
-              Our support team is available Sat–Thu, 9 AM – 6 PM BST.
+              Reach your assigned counsellor through the Messages section, where the thread carries
+              their name.
             </p>
             <p className="text-sm text-slate-500 mt-0.5">
-              WhatsApp: <span className="font-medium text-slate-700">+880 1700-000000</span>
+              Published support numbers and opening hours are not shown here because none has been
+              verified against a current source.
             </p>
           </div>
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white shrink-0">
@@ -783,23 +785,15 @@ const QUICK_CHIPS = [
   'Compare universities',
 ];
 
+// A single real greeting. The old version scripted a whole exchange in
+// which the assistant had already read the student's grades and returned a
+// ranked university match — none of which had happened.
 const INITIAL_MESSAGES: ChatMessage[] = [
   {
-    id: 'm1',
+    id: 'greeting',
     role: 'ai',
     content:
-      "Hello Rahim! I'm your AI Study Coach. How can I help you today?",
-  },
-  {
-    id: 'm2',
-    role: 'user',
-    content: 'What courses match my profile?',
-  },
-  {
-    id: 'm3',
-    role: 'ai',
-    content:
-      "Based on your IELTS 7.0, SSC GPA 5.0, HSC GPA 4.80, and preference for UK, I found 8 strong matches. Your top match is MSc Artificial Intelligence at University of Southampton (90% fit). Would you like me to show the full list?",
+      "Hello, I'm your AI study coach. Ask me about destinations, courses, English tests, documents or visas. I do not have access to your grades or test scores, so I cannot rank you against a course — for that, use the course finder or ask your counselor.",
   },
 ];
 
@@ -821,7 +815,7 @@ export function StudentAIAdvisor() {
       id: `m-${Date.now() + 1}`,
       role: 'ai',
       content:
-        "Great question! Let me look into that for you. Based on the latest data available, I'd recommend discussing this in detail with your counselor Sarah Khan for the most personalized guidance. Would you like me to help with anything else?",
+        "I can't answer that from anything I have verified, and I won't guess. For questions about your own grades, eligibility, fees or deadlines, ask the counsellor assigned to you — their name is on your message thread — or use the course finder, which shows the source recorded against each course.",
     };
     setMessages((prev) => [...prev, userMsg, aiMsg]);
     setInput('');
@@ -938,314 +932,161 @@ export function StudentAIAdvisor() {
 /*  5. STUDENT RECOMMENDATIONS                                         */
 /* ================================================================== */
 
-const COURSE_RECS = [
-  {
-    id: 'cr1',
-    university: 'University of Southampton',
-    course: 'MSc Artificial Intelligence',
-    country: 'UK',
-    match: 90,
-    reason: 'Strong match with your Computer Science background and IELTS 7.0. This program offers a specialization in machine learning that aligns with your interests.',
-    deadline: '2025-07-01',
-    scholarship: true,
-  },
-  {
-    id: 'cr2',
-    university: 'University of Manchester',
-    course: 'MSc Data Science',
-    country: 'UK',
-    match: 85,
-    reason: 'Your HSC GPA of 4.80 exceeds their minimum requirement. The program includes an industry placement year, which adds to your employability.',
-    deadline: '2025-07-15',
-    scholarship: false,
-  },
-  {
-    id: 'cr3',
-    university: 'University of Birmingham',
-    course: 'MSc Computer Science',
-    country: 'UK',
-    match: 82,
-    reason: 'Offers a flexible curriculum allowing you to choose AI/ML modules. Campus has a strong South Asian student community.',
-    deadline: '2025-08-01',
-    scholarship: true,
-  },
-  {
-    id: 'cr4',
-    university: 'University of Leeds',
-    course: 'MSc Advanced Computer Science',
-    country: 'UK',
-    match: 78,
-    reason: 'Russell Group university with excellent research facilities. Your profile meets all entry requirements comfortably.',
-    deadline: '2025-06-30',
-    scholarship: false,
-  },
-];
+// Real SavedCourse rows, per GET /api/student/shortlist.
+interface ShortlistCourse {
+  id: string;
+  courseName: string;
+  universityName: string;
+  country: string;
+  level: string;
+  department: string;
+  tuitionFee: string;
+  intake: string;
+  notes: string;
+  createdAt: string;
+}
 
-const SCHOLARSHIP_RECS = [
-  {
-    id: 'sr1',
-    name: 'Chevening Scholarship',
-    provider: 'UK Government',
-    amount: 'Full tuition + living allowance',
-    deadline: 'Nov 5, 2025',
-    match: 'High',
-    description: 'Fully funded scholarship for a one-year master\'s program in the UK. Your academic profile and leadership potential make you a strong candidate.',
-  },
-  {
-    id: 'sr2',
-    name: 'Commonwealth Scholarship',
-    provider: 'Commonwealth Scholarship Commission',
-    amount: 'Full tuition + travel + living',
-    deadline: 'Dec 15, 2025',
-    match: 'Medium',
-    description: 'For students from developing Commonwealth countries. Requires a strong academic record and a clear development impact plan.',
-  },
-  {
-    id: 'sr3',
-    name: 'University of Southampton International Scholarship',
-    provider: 'University of Southampton',
-    amount: '£3,000 - £5,000',
-    deadline: 'Rolling',
-    match: 'High',
-    description: 'Automatically considered for eligible international applicants. Merit-based with your IELTS 7.0 making you highly competitive.',
-  },
-];
-
-const ACTION_ITEMS = [
-  {
-    id: 'ai1',
-    title: 'Complete your IELTS to unlock 15 more courses',
-    description: 'Some top universities require IELTS 7.5. Consider retaking to expand your options.',
-    icon: Target,
-    priority: 'high' as const,
-    progress: 70,
-  },
-  {
-    id: 'ai2',
-    title: 'Upload passport to improve visa readiness',
-    description: 'Your passport scan is missing. Upload it to track your visa checklist progress.',
-    icon: Upload,
-    priority: 'high' as const,
-    progress: 0,
-  },
-  {
-    id: 'ai3',
-    title: 'Write your Statement of Purpose',
-    description: 'A strong SOP can boost your chances by 30%. Start with our AI-powered SOP builder.',
-    icon: BookOpen,
-    priority: 'medium' as const,
-    progress: 40,
-  },
-  {
-    id: 'ai4',
-    title: 'Get a recommendation letter',
-    description: 'Most UK universities require 2 academic references. Reach out to your professors early.',
-    icon: MessageSquare,
-    priority: 'medium' as const,
-    progress: 0,
-  },
-];
-
-const PROFILE_IMPROVEMENTS = [
-  { label: 'IELTS Score', current: '7.0', target: '7.5', progress: 85, color: 'bg-blue-500' },
-  { label: 'Documents Uploaded', current: '6/10', target: '10/10', progress: 60, color: 'bg-amber-500' },
-  { label: 'Profile Completeness', current: '75%', target: '100%', progress: 75, color: 'bg-emerald-500' },
-  { label: 'SOP Readiness', current: 'Draft', target: 'Final', progress: 40, color: 'bg-purple-500' },
-];
+function shortlistDate(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString();
+}
 
 export function StudentRecommendations() {
+  const [courses, setCourses] = useState<ShortlistCourse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/student/shortlist');
+        if (!response.ok) throw new Error(`Could not load your shortlist (HTTP ${response.status})`);
+        const payload = await response.json();
+        if (cancelled) return;
+        if (!payload?.success) throw new Error(payload?.error || 'Your shortlist is unavailable');
+        setCourses(Array.isArray(payload.data) ? payload.data : []);
+        setLoadError(null);
+      } catch (error) {
+        if (cancelled) return;
+        setCourses([]);
+        setLoadError(error instanceof Error ? error.message : 'Could not load your shortlist');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Recommended for You</h1>
+        <h1 className="text-2xl font-bold text-slate-900">Your shortlist</h1>
         <p className="text-sm text-slate-500 mt-1">
-          Personalized recommendations based on your academic profile and preferences.
+          Courses you have saved. Nothing is ranked or scored here: eligibility still has to be
+          checked against each course&apos;s published requirements.
         </p>
       </div>
 
-      {/* Course Recommendations */}
+      {loadError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-4 text-sm text-red-700">{loadError}</CardContent>
+        </Card>
+      )}
+
       <div>
         <div className="flex items-center gap-2 mb-3">
           <GraduationCap className="size-5 text-blue-600" />
-          <h2 className="text-base font-semibold text-slate-900">Course Recommendations</h2>
+          <h2 className="text-base font-semibold text-slate-900">
+            Saved courses{!loading ? ` (${courses.length})` : ''}
+          </h2>
         </div>
-        <div className="space-y-3">
-          {COURSE_RECS.map((course) => (
-            <Card key={course.id} className="hover:border-blue-200 hover:shadow-sm transition-all cursor-pointer group">
-              <CardContent className="p-4">
-                <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                  {/* Match Badge */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className="flex flex-col items-center justify-center h-14 w-14 rounded-xl bg-blue-50">
-                      <span className="text-lg font-bold text-blue-700">{course.match}%</span>
-                      <span className="text-[10px] text-blue-500 font-medium">Match</span>
-                    </div>
-                  </div>
 
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
-                          {course.course}
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {course.university} · {course.country}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {course.scholarship && (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
-                            <Award className="size-3 mr-0.5" />
-                            Scholarship
-                          </Badge>
-                        )}
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 px-2 text-blue-600 hover:text-blue-700">
-                          <ArrowUpRight className="size-3.5" />
-                        </Button>
-                      </div>
+        {loading ? (
+          <Card>
+            <CardContent className="py-10 text-center text-sm text-slate-500">
+              Loading your shortlist…
+            </CardContent>
+          </Card>
+        ) : courses.length === 0 && !loadError ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <Search className="size-8 mx-auto mb-3 text-slate-300" />
+              <p className="text-sm text-slate-600 font-medium">You have not saved any course yet.</p>
+              <p className="text-xs text-slate-500 mt-1">
+                Use the course finder to search verified courses, then save the ones you want to
+                compare.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {courses.map((course) => (
+              <Card key={course.id}>
+                <CardContent className="p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {course.courseName || 'Course name not recorded'}
+                      </p>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        {course.universityName || 'University not recorded'}
+                        {course.country ? ` · ${course.country}` : ''}
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-500 mt-2 line-clamp-2">{course.reason}</p>
-                    <div className="flex items-center gap-3 mt-2">
-                      <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                        <Clock className="size-3" />
-                        Deadline: {course.deadline}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Scholarship Recommendations */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <Award className="size-5 text-emerald-600" />
-          <h2 className="text-base font-semibold text-slate-900">Scholarship Recommendations</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {SCHOLARSHIP_RECS.map((sch) => (
-            <Card key={sch.id} className="hover:border-emerald-200 hover:shadow-sm transition-all cursor-pointer group">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <h3 className="text-sm font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors leading-tight">
-                    {sch.name}
-                  </h3>
-                  <Badge
-                    variant="secondary"
-                    className={cn(
-                      'text-[10px] shrink-0',
-                      sch.match === 'High' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
-                    )}
-                  >
-                    {sch.match} match
-                  </Badge>
-                </div>
-                <p className="text-xs text-slate-500 mb-2">{sch.provider}</p>
-                <p className="text-sm font-semibold text-slate-900 mb-2">{sch.amount}</p>
-                <p className="text-xs text-slate-500 line-clamp-2 mb-3">{sch.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                    <Clock className="size-3" />
-                    {sch.deadline}
-                  </span>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
-                    variant="outline"
-                    size="sm"
-                    className="h-7 text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Action Items */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <Lightbulb className="size-5 text-orange-600" />
-          <h2 className="text-base font-semibold text-slate-900">Next Actions</h2>
-        </div>
-        <div className="space-y-3">
-          {ACTION_ITEMS.map((item) => (
-            <Card key={item.id} className="hover:border-orange-200 transition-all">
-              <CardContent className="p-4 flex items-start gap-3">
-                <div
-                  className={cn(
-                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
-                    item.priority === 'high' ? 'bg-red-50' : 'bg-amber-50'
-                  )}
-                >
-                  <item.icon
-                    className={cn(
-                      'size-4.5',
-                      item.priority === 'high' ? 'text-red-600' : 'text-amber-600'
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-sm font-medium text-slate-900">{item.title}</h4>
-                    <Badge
-                      variant="secondary"
-                      className={cn(
-                        'text-[10px] shrink-0',
-                        item.priority === 'high' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-700'
-                      )}
-                    >
-                      {item.priority}
+                    <Badge variant="secondary" className="text-xs">
+                      {course.level || 'Level not recorded'}
                     </Badge>
                   </div>
-                  <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
-                  {item.progress > 0 && (
-                    <div className="mt-2">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] text-slate-400">Progress</span>
-                        <span className="text-[10px] font-medium text-slate-600">{item.progress}%</span>
-                      </div>
-                      <Progress value={item.progress} className="h-1.5" />
+
+                  <div className="grid grid-cols-2 gap-3 mt-3 text-xs">
+                    <div>
+                      <p className="text-slate-500">Department</p>
+                      <p className="text-slate-800">{course.department || '—'}</p>
                     </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <div>
+                      <p className="text-slate-500">Intake</p>
+                      <p className="text-slate-800">{course.intake || '—'}</p>
+                    </div>
+                    <div>
+                      <p className="text-slate-500">Tuition fee</p>
+                      <p className="text-slate-800">{course.tuitionFee || 'Not recorded'}</p>
+                    </div>
+                    <div>
+                      <p className="text-slate-500">Saved</p>
+                      <p className="text-slate-800">{shortlistDate(course.createdAt)}</p>
+                    </div>
+                  </div>
+
+                  {course.notes ? (
+                    <p className="text-xs text-slate-600 mt-3 border-t border-slate-100 pt-2">
+                      {course.notes}
+                    </p>
+                  ) : null}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Improve Your Profile */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
-            <TrendingUp className="size-5 text-blue-600" />
-            Improve Your Profile
-          </CardTitle>
-          <CardDescription>Complete these items to unlock better recommendations</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {PROFILE_IMPROVEMENTS.map((item) => (
-            <div key={item.label} className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-slate-900">{item.label}</span>
-                <span className="text-xs text-slate-500">
-                  {item.current} → <span className="font-medium text-blue-600">{item.target}</span>
-                </span>
-              </div>
-              <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className={cn('absolute inset-y-0 left-0 rounded-full transition-all', item.color)}
-                  style={{ width: `${item.progress}%` }}
-                />
-              </div>
-            </div>
-          ))}
+      <Card className="border-orange-200 bg-orange-50/40">
+        <CardContent className="p-4 flex items-start gap-3">
+          <Info className="size-5 text-orange-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-slate-900">About eligibility and scholarships</p>
+            <p className="text-xs text-slate-600 mt-1">
+              This page does not score a match, quote a scholarship amount or state a deadline,
+              because none of those figures is verified here. Before you rely on an entry
+              requirement, fee or funding amount, check the course record and the source recorded
+              against it, or ask your counsellor to confirm it.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
