@@ -46,7 +46,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     let filePath = document.filePath;
     let fileHash = document.fileHash;
-    let mimeType = document.mimeType;
+    let mimeType: string | null = document.mimeType;
     let fileName = document.fileName;
     if (versionNumber !== null) {
       const selectedVersion = await db.employeeDocumentVersion.findFirst({
