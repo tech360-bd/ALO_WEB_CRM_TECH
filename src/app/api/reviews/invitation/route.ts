@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
   });
 
   // Resolve createdBy to a valid User.id (it may be an email or user ID)
-  let userId = createdBy;
+  let userId: string | null | undefined = createdBy ?? undefined;
   if (createdBy && createdBy.includes("@")) {
     const user = await db.user.findFirst({ where: { email: createdBy.toLowerCase() }, select: { id: true } });
     if (user) userId = user.id;
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   // Audit log
   await db.auditLog.create({
     data: {
-      userId: userId === "system" ? null : userId,
+      userId: userId === "system" ? null : userId ?? undefined,
       action: "REVIEW_INVITATION_SENT",
       resource: "ReviewInvitation",
       resourceId: invitation.id,
