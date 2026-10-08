@@ -1,259 +1,451 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
-import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
 import {
-  Search, Send, Phone, Paperclip,
-  MessageSquare, Users, GraduationCap, Zap,
+  MessageCircle, Send, RefreshCw, AlertTriangle, Inbox, Clock, Info, Search,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-type ContactType = 'colleague' | 'student';
+// ============================================================
+// Types — mirror GET /api/employee/messages
+// ============================================================
 
+// CommunicationThread rows assigned to the signed-in employee
+interface Thread {
+  id: string;
+  threadCode?: string;
+  studentId?: string | null;
+  channel?: string;
+  subject?: string;
+  intent?: string;
+  priority?: string;
+  status?: string;
+  lastMessageAt?: string;
+  lastMessagePreview?: string;
+  unreadCount?: number;
+}
+
+// CommunicationMessage rows for the selected thread
 interface Message {
-  id: string; text: string; sentAt: string; isMine: boolean;
+  id: string;
+  threadId: string;
+  senderType: string;
+  senderName?: string;
+  content: string;
+  messageType?: string;
+  isInternal?: boolean;
+  isAiGenerated?: boolean;
+  isRead?: boolean;
+  createdAt: string;
 }
 
-interface Conversation {
-  id: string; name: string; type: ContactType;
-  lastMessage: string; lastTime: string; unread: number;
-  online: boolean; messages: Message[];
+interface LoadState {
+  loading: boolean;
+  error: string | null;
 }
 
-const mockConversations: Conversation[] = [
-  { id: 'C1', name: 'Rahim Uddin', type: 'student', lastMessage: 'Thank you for the IELTS prep resources!', lastTime: '10:30 AM', unread: 2, online: true,
-    messages: [
-      { id: 'm1', text: 'Hi Rahim, I wanted to follow up on your IELTS registration. Have you booked the test date?', sentAt: '10:15 AM', isMine: true },
-      { id: 'm2', text: 'Yes! I booked it for February 8th.', sentAt: '10:20 AM', isMine: false },
-      { id: 'm3', text: 'Great! Here are some prep resources that should help you. Also, remember the university deadline is March 1st.', sentAt: '10:22 AM', isMine: true },
-      { id: 'm4', text: 'Thank you for the IELTS prep resources!', sentAt: '10:30 AM', isMine: false },
-    ]
-  },
-  { id: 'C2', name: 'Fatima Akter', type: 'student', lastMessage: 'I will send the bank statement by tomorrow.', lastTime: '9:45 AM', unread: 1, online: false,
-    messages: [
-      { id: 'm5', text: 'Fatima, your Melbourne application needs the bank statement. Can you send it by EOD?', sentAt: '9:30 AM', isMine: true },
-      { id: 'm6', text: 'I will send the bank statement by tomorrow.', sentAt: '9:45 AM', isMine: false },
-    ]
-  },
-  { id: 'C3', name: 'Karim Hossain', type: 'colleague', lastMessage: 'Can you check the visa status for Tanvir?', lastTime: 'Yesterday', unread: 0, online: true,
-    messages: [
-      { id: 'm7', text: 'Hey Karim, did you get the CAS for Tanvir?', sentAt: 'Yesterday', isMine: true },
-      { id: 'm8', text: 'Yes, CAS is confirmed. We submitted the visa app yesterday.', sentAt: 'Yesterday', isMine: false },
-      { id: 'm9', text: 'Can you check the visa status for Tanvir?', sentAt: 'Yesterday', isMine: false },
-    ]
-  },
-  { id: 'C4', name: 'Tanvir Ahmed', type: 'student', lastMessage: 'Got it, I will prepare the documents tonight.', lastTime: 'Yesterday', unread: 0, online: false,
-    messages: [
-      { id: 'm10', text: 'Tanvir, please prepare your financial documents. We need them for the visa.', sentAt: 'Yesterday', isMine: true },
-      { id: 'm11', text: 'Got it, I will prepare the documents tonight.', sentAt: 'Yesterday', isMine: false },
-    ]
-  },
-  { id: 'C5', name: 'Nusrat Jahan', type: 'student', lastMessage: 'When can we schedule the next session?', lastTime: 'Mon', unread: 0, online: true,
-    messages: [
-      { id: 'm12', text: 'Hi Nusrat, your SOP looks good overall. I have shared some feedback.', sentAt: 'Mon', isMine: true },
-      { id: 'm13', text: 'Thanks! When can we schedule the next session?', sentAt: 'Mon', isMine: false },
-    ]
-  },
-  { id: 'C6', name: 'Rupali Das', type: 'colleague', lastMessage: 'Meeting rescheduled to 3 PM.', lastTime: 'Mon', unread: 0, online: false,
-    messages: [
-      { id: 'm14', text: 'Rupali, is the weekly meeting still at 2 PM?', sentAt: 'Mon', isMine: true },
-      { id: 'm15', text: 'Meeting rescheduled to 3 PM.', sentAt: 'Mon', isMine: false },
-    ]
-  },
+// Starting text the employee edits before sending. These are drafting
+// prompts, not claims about the world, so they carry no facts.
+const DRAFT_SNIPPETS = [
+  { label: 'Follow-up', text: 'I wanted to follow up on your application. Could you share the latest status?' },
+  { label: 'Document reminder', text: 'This is a reminder to submit your pending documents before the deadline.' },
+  { label: 'Session request', text: 'I would like to schedule a counselling session. Which times suit you this week?' },
+  { label: 'Stage update', text: 'Your application has moved to the next stage. Let us discuss the next steps.' },
 ];
 
-const quickTemplates = [
-  { label: 'Follow-up', text: 'Hi {name}, I wanted to follow up on your application status. Could you please share an update?' },
-  { label: 'Doc Reminder', text: 'Hi {name}, this is a gentle reminder to submit your pending documents before the deadline.' },
-  { label: 'Meeting Invite', text: 'Hi {name}, I would like to schedule a counseling session. Are you available this week?' },
-  { label: 'Congrats', text: 'Hi {name}, great news! Your application has moved to the next stage. Lets discuss next steps.' },
-];
+function formatTimestamp(value?: string | null): string {
+  if (!value) return 'Not recorded';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
 
 export default function EmployeeMessagesPage() {
-  const { setView } = usePortalStore();
-  const [loading, setLoading] = useState(true);
-  const [conversations, setConversations] = useState<Conversation[]>(mockConversations);
-  const [activeId, setActiveId] = useState('C1');
-  const [search, setSearch] = useState('');
-  const [newMessage, setNewMessage] = useState('');
-  const [showTemplates, setShowTemplates] = useState(false);
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [totalUnread, setTotalUnread] = useState(0);
+  const [threadState, setThreadState] = useState<LoadState>({ loading: true, error: null });
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [messageState, setMessageState] = useState<LoadState>({ loading: false, error: null });
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  const activeConversation = conversations.find((c) => c.id === activeId);
-  const filteredConversations = search
-    ? conversations.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
-    : conversations;
+  const loadThreads = useCallback(async () => {
+    setThreadState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/employee/messages?limit=50');
+      if (!response.ok) throw new Error(`Could not load your conversations (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (!payload?.success) throw new Error(payload?.error || 'Conversations are unavailable');
+      setThreads(Array.isArray(payload.data?.threads) ? payload.data.threads : []);
+      setTotalUnread(Number(payload.data?.totalUnread) || 0);
+      setThreadState({ loading: false, error: null });
+    } catch (error) {
+      setThreads([]);
+      setThreadState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load your conversations',
+      });
+    }
+  }, []);
 
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 400); return () => clearTimeout(t); }, []);
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [activeConversation?.messages.length]);
+  const loadMessages = useCallback(async (threadId: string) => {
+    setMessageState({ loading: true, error: null });
+    try {
+      const response = await fetch(`/api/employee/messages?threadId=${encodeURIComponent(threadId)}&limit=50`);
+      if (!response.ok) throw new Error(`Could not load this conversation (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (!payload?.success) throw new Error(payload?.error || 'This conversation is unavailable');
+      setMessages(Array.isArray(payload.data?.messages) ? payload.data.messages : []);
+      setMessageState({ loading: false, error: null });
+    } catch (error) {
+      setMessages([]);
+      setMessageState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load this conversation',
+      });
+    }
+  }, []);
 
-  const handleSend = async () => {
-    if (!newMessage.trim() || !activeId) return;
-    setSending(true);
-    await new Promise((r) => setTimeout(r, 300));
-    const msg: Message = { id: 'm' + Date.now(), text: newMessage.trim(), sentAt: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }), isMine: true };
-    setConversations((prev) => prev.map((c) => {
-      if (c.id !== activeId) return c;
-      return { ...c, messages: [...c.messages, msg], lastMessage: newMessage.trim(), lastTime: 'Just now' };
-    }));
-    setNewMessage('');
-    setSending(false);
-  };
+  useEffect(() => {
+    void loadThreads();
+  }, [loadThreads]);
 
-  const applyTemplate = (template: typeof quickTemplates[0]) => {
-    const name = activeConversation?.name || '{name}';
-    setNewMessage(template.text.replace('{name}', name));
-    setShowTemplates(false);
-  };
+  useEffect(() => {
+    if (!selectedId) {
+      setMessages([]);
+      return;
+    }
+    void loadMessages(selectedId);
+  }, [selectedId, loadMessages]);
 
-  if (loading) {
-    return (
-      <div className="bg-alo-page min-h-screen p-4 lg:p-6">
-        <Skeleton className="h-8 w-48 mb-6" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4" style={{ height: 'calc(100vh - 140px)' }}>
-          <Skeleton className="rounded-xl" />
-          <Skeleton className="md:col-span-2 rounded-xl" />
-        </div>
-      </div>
+  const selectedThread = useMemo(
+    () => threads.find((thread) => thread.id === selectedId) || null,
+    [threads, selectedId],
+  );
+
+  const filteredThreads = useMemo(() => {
+    const term = searchQuery.trim().toLowerCase();
+    if (!term) return threads;
+    return threads.filter((thread) =>
+      [thread.threadCode, thread.studentId, thread.subject, thread.lastMessagePreview]
+        .some((value) => String(value || '').toLowerCase().includes(term)),
     );
-  }
+  }, [threads, searchQuery]);
+
+  // Mark the incoming unread messages read once the conversation is open.
+  useEffect(() => {
+    if (!selectedId || messages.length === 0) return;
+    const unreadIncoming = messages
+      .filter((message) => message.senderType !== 'counselor' && message.isRead === false)
+      .map((message) => message.id);
+    if (unreadIncoming.length === 0) return;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        await fetch('/api/employee/messages', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ threadId: selectedId, messageIds: unreadIncoming }),
+        });
+        if (!cancelled) await loadThreads();
+      } catch {
+        // Read receipts are best-effort; failing to record one must not
+        // block reading or replying.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedId, messages, loadThreads]);
+
+  const sendMessage = async () => {
+    if (!selectedId) return;
+    const content = draft.trim();
+    if (!content) {
+      setActionError('Write a message before sending.');
+      return;
+    }
+    setSending(true);
+    setActionError(null);
+    try {
+      const response = await fetch('/api/employee/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ threadId: selectedId, content }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload?.success === false) {
+        setActionError(payload?.error || `Could not send the message (HTTP ${response.status})`);
+        return;
+      }
+      setDraft('');
+      await loadMessages(selectedId);
+      await loadThreads();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Could not send the message');
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
-    <div className="bg-alo-page min-h-screen p-4 lg:p-6">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold text-alo-text">Messages</h1>
-        <p className="text-sm text-alo-text-muted mt-1">Communicate with students and colleagues</p>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+            <MessageCircle className="h-6 w-6 text-primary" />
+            Messages
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Conversations assigned to you, and the messages in each.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => void loadThreads()}>
+          <RefreshCw className={`mr-1 h-4 w-4 ${threadState.loading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
 
-      <Card className="bg-white rounded-xl border border-alo-border overflow-hidden flex flex-col md:flex-row" style={{ height: 'calc(100vh - 160px)', minHeight: '500px' }}>
-        <div className="w-full md:w-80 lg:w-96 border-r border-alo-border flex flex-col shrink-0">
-          <div className="p-3 space-y-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-alo-text-muted" />
-              <Input placeholder="Search conversations..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-alo-page border-alo-border h-9 text-sm" />
-            </div>
-            <div className="flex gap-1">
-              <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex-1 py-1.5 text-xs font-medium rounded-lg bg-alo-brand text-white">All</button>
-              <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex-1 py-1.5 text-xs font-medium rounded-lg text-alo-text-secondary hover:bg-alo-page">Students</button>
-              <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex-1 py-1.5 text-xs font-medium rounded-lg text-alo-text-secondary hover:bg-alo-page">Colleagues</button>
-            </div>
-          </div>
-          <ScrollArea className="flex-1">
-            <div>
-              {filteredConversations.map((conv) => {
-                const isActive = conv.id === activeId;
-                return (
-                  <button key={conv.id} onClick={() => setActiveId(conv.id)}
-                    className={cn('w-full flex items-center gap-3 px-3 py-3 text-left transition-colors border-b border-alo-border/50',
-                      isActive ? 'bg-alo-brand-light' : 'hover:bg-alo-page/50')}>
-                    <div className="relative shrink-0">
-                      <Avatar className="w-10 h-10">
-                        <AvatarFallback className={cn('text-xs font-semibold', conv.type === 'student' ? 'bg-alo-brand-light text-alo-brand' : 'bg-amber-50 text-amber-700')}>
-                          {conv.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
-                      {conv.online && <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-sm font-medium text-alo-text truncate">{conv.name}</span>
-                        <span className="text-[11px] text-alo-text-muted shrink-0">{conv.lastTime}</span>
-                      </div>
-                      <div className="flex items-center justify-between gap-1 mt-0.5">
-                        <p className="text-xs text-alo-text-muted truncate">{conv.lastMessage}</p>
-                        {conv.unread > 0 && <span className="w-5 h-5 bg-alo-brand text-white text-[10px] rounded-full flex items-center justify-center font-bold shrink-0">{conv.unread}</span>}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </ScrollArea>
-        </div>
+      {actionError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p className="font-medium">{actionError}</p>
+          </CardContent>
+        </Card>
+      )}
 
-        {activeConversation ? (
-          <div className="flex-1 flex flex-col min-w-0">
-            <div className="px-4 py-3 border-b border-alo-border flex items-center gap-3">
-              <Avatar className="w-9 h-9">
-                <AvatarFallback className={cn('text-xs font-semibold', activeConversation.type === 'student' ? 'bg-alo-brand-light text-alo-brand' : 'bg-amber-50 text-amber-700')}>
-                  {activeConversation.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-alo-text truncate">{activeConversation.name}</h3>
-                <p className="text-xs text-alo-text-muted flex items-center gap-1">
-                  {activeConversation.online ? <span className="text-emerald-500">Online</span> : <span>Offline</span>}
-                  <span className="mx-1">{'\u00B7'}</span>
-                  <Badge variant={activeConversation.type === 'student' ? 'brand' : 'secondary'} className="text-[10px] px-1.5">
-                    {activeConversation.type === 'student' ? <GraduationCap className="w-2.5 h-2.5 mr-0.5" /> : <Users className="w-2.5 h-2.5 mr-0.5" />}
-                    {activeConversation.type}
-                  </Badge>
+      <div className="grid gap-4 lg:grid-cols-12">
+        {/* ── Thread list ── */}
+        <Card className="lg:col-span-4">
+          <CardHeader className="space-y-3">
+            <CardTitle className="text-base">
+              Your conversations ({threads.length})
+              {totalUnread > 0 ? ` · ${totalUnread} unread` : ''}
+            </CardTitle>
+            <div className="relative">
+              <Search className="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
+              <Input
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search thread, student or preview"
+                className="pl-8"
+              />
+            </div>
+          </CardHeader>
+          <CardContent>
+            {threadState.error && (
+              <div className="bg-destructive/10 text-destructive mb-3 flex items-start gap-2 rounded-lg p-3 text-sm">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">{threadState.error}</p>
+                  <button
+                    type="button"
+                    className="mt-1 underline underline-offset-2"
+                    onClick={() => void loadThreads()}
+                  >
+                    Try again
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {threadState.loading ? (
+              <p className="text-muted-foreground py-10 text-center text-sm">
+                Loading conversations…
+              </p>
+            ) : filteredThreads.length === 0 && !threadState.error ? (
+              <div className="text-muted-foreground flex flex-col items-center gap-2 py-12 text-center">
+                <Inbox className="h-8 w-8 opacity-30" />
+                <p className="text-sm">
+                  {threads.length === 0
+                    ? 'No conversation is assigned to you yet.'
+                    : 'No conversation matches that search.'}
                 </p>
               </div>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm"><Phone className="w-4 h-4 text-alo-text-muted" /></Button>
-            </div>
+            ) : (
+              <div className="max-h-[560px] space-y-2 overflow-y-auto">
+                {filteredThreads.map((thread) => (
+                  <button
+                    key={thread.id}
+                    type="button"
+                    onClick={() => setSelectedId(thread.id)}
+                    className={cn(
+                      'w-full rounded-lg border p-3 text-left transition-colors',
+                      selectedId === thread.id ? 'border-primary bg-muted/60' : 'hover:bg-muted/40',
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="truncate font-medium">
+                        {thread.subject || thread.lastMessagePreview || thread.threadCode || 'Untitled conversation'}
+                      </p>
+                      {thread.unreadCount && thread.unreadCount > 0 ? (
+                        <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[10px]">
+                          {thread.unreadCount}
+                        </Badge>
+                      ) : null}
+                    </div>
+                    <p className="text-muted-foreground mt-1 text-xs">
+                      {thread.threadCode || 'No thread code'}
+                      {thread.studentId ? ` · Student ${thread.studentId}` : ''}
+                    </p>
+                    <p className="text-muted-foreground mt-1 flex items-center gap-1 text-[10px]">
+                      <Clock className="h-3 w-3" />
+                      {formatTimestamp(thread.lastMessageAt)}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4 max-w-2xl mx-auto">
-                {activeConversation.messages.map((msg) => (
-                  <div key={msg.id} className={cn('flex', msg.isMine ? 'justify-end' : 'justify-start')}>
-                    <div className={cn('max-w-[75%] px-4 py-2.5 rounded-2xl',
-                      msg.isMine ? 'bg-alo-brand text-white rounded-br-md' : 'bg-alo-page text-alo-text rounded-bl-md')}>
-                      <p className="text-sm leading-relaxed">{msg.text}</p>
-                      <p className={cn('text-[10px] mt-1', msg.isMine ? 'text-white/70' : 'text-alo-text-muted')}>{msg.sentAt}</p>
+        {/* ── Selected conversation ── */}
+        <Card className="lg:col-span-8">
+          <CardHeader>
+            <CardTitle className="text-base">
+              {selectedThread
+                ? selectedThread.subject || selectedThread.threadCode || 'Conversation'
+                : 'No conversation selected'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!selectedThread ? (
+              <p className="text-muted-foreground py-12 text-center text-sm">
+                Select a conversation to read its messages and reply.
+              </p>
+            ) : (
+              <>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div>
+                    <p className="text-muted-foreground text-xs">Student</p>
+                    <p className="text-sm">{selectedThread.studentId || 'Not linked'}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-xs">Channel</p>
+                    <p className="text-sm">{selectedThread.channel || 'unknown'}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-xs">Intent</p>
+                    <p className="text-sm">{selectedThread.intent || 'general'}</p>
+                  </div>
+                </div>
+
+                {messageState.error && (
+                  <div className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-sm">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <div>
+                      <p className="font-medium">{messageState.error}</p>
+                      <button
+                        type="button"
+                        className="mt-1 underline underline-offset-2"
+                        onClick={() => void loadMessages(selectedThread.id)}
+                      >
+                        Try again
+                      </button>
                     </div>
                   </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea>
+                )}
 
-            <div className="border-t border-alo-border p-3">
-              {showTemplates && (
-                <div className="mb-3 p-3 bg-alo-page rounded-lg border border-alo-border">
-                  <p className="text-xs font-medium text-alo-text-secondary mb-2 flex items-center gap-1"><Zap className="w-3 h-3" /> Quick Templates</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {quickTemplates.map((t, i) => (
-                      <button key={i} onClick={() => applyTemplate(t)}
-                        className="text-left px-3 py-2 text-xs text-alo-text-secondary bg-white rounded-lg border border-alo-border hover:border-alo-brand hover:text-alo-brand transition-colors">
-                        {t.label}
-                      </button>
-                    ))}
-                  </div>
+                <div className="max-h-[380px] space-y-3 overflow-y-auto rounded-lg border p-3">
+                  {messageState.loading ? (
+                    <p className="text-muted-foreground py-8 text-center text-sm">
+                      Loading messages…
+                    </p>
+                  ) : messages.length === 0 && !messageState.error ? (
+                    <p className="text-muted-foreground py-8 text-center text-sm">
+                      No message has been recorded in this conversation yet.
+                    </p>
+                  ) : (
+                    messages.map((message) => {
+                      const mine = message.senderType === 'counselor';
+                      return (
+                        <div
+                          key={message.id}
+                          className={cn(
+                            'max-w-[85%] rounded-lg border p-3 text-sm',
+                            mine ? 'bg-primary/5 ml-auto' : 'bg-muted/40',
+                          )}
+                        >
+                          <div className="mb-1 flex flex-wrap items-center gap-2">
+                            <span className="text-xs font-medium">
+                              {message.senderName || (mine ? 'You' : 'Student')}
+                            </span>
+                            {message.isInternal ? (
+                              <Badge variant="outline" className="text-[10px]">Internal</Badge>
+                            ) : null}
+                            {message.isAiGenerated ? (
+                              <Badge variant="outline" className="text-[10px]">AI drafted</Badge>
+                            ) : null}
+                            <span className="text-muted-foreground text-[10px]">
+                              {formatTimestamp(message.createdAt)}
+                            </span>
+                          </div>
+                          <p className="whitespace-pre-wrap">{message.content}</p>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
-              )}
-              <div className="flex items-end gap-2">
-                <Button variant="ghost" size="icon-sm" onClick={() => setShowTemplates(!showTemplates)} title="Quick Templates"><Zap className="w-4 h-4 text-alo-text-muted" /></Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm"><Paperclip className="w-4 h-4 text-alo-text-muted" /></Button>
-                <div className="flex-1">
-                  <Input placeholder="Type a message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                    className="bg-alo-page border-alo-border" />
+
+                <div className="flex flex-wrap gap-1">
+                  {DRAFT_SNIPPETS.map((snippet) => (
+                    <Button
+                      key={snippet.label}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDraft(snippet.text)}
+                    >
+                      {snippet.label}
+                    </Button>
+                  ))}
                 </div>
-                <Button variant="brand" size="icon" onClick={handleSend} disabled={sending || !newMessage.trim()}>
-                  {sending ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send className="w-4 h-4" />}
+
+                <div>
+                  <label htmlFor="message-draft" className="text-muted-foreground text-xs">
+                    Reply
+                  </label>
+                  <Textarea
+                    id="message-draft"
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    placeholder="Write your message"
+                    className="mt-1 text-sm"
+                    rows={4}
+                  />
+                </div>
+
+                <Button size="sm" onClick={() => void sendMessage()} disabled={sending}>
+                  <Send className="mr-1 h-4 w-4" />
+                  {sending ? 'Sending…' : 'Send message'}
                 </Button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <MessageSquare className="w-16 h-16 text-alo-text-muted/30 mx-auto mb-4" />
-              <p className="text-alo-text-secondary font-medium">Select a conversation</p>
-              <p className="text-sm text-alo-text-muted mt-1">Choose from your existing conversations or start a new one</p>
-            </div>
-          </div>
-        )}
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardContent className="text-muted-foreground flex items-start gap-2 pt-6 text-xs">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Only conversations assigned to you are listed, and the sender name on each message is
+            taken from the message record. Contact names and online presence are not shown because
+            the thread does not store them.
+          </span>
+        </CardContent>
       </Card>
     </div>
   );
