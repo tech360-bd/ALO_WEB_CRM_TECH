@@ -72,13 +72,17 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      // All platforms overview
+      // All platforms overview.
+      // Only counts that are actually stored are returned. Engagement and
+      // growth were previously synthesised with Math.random() — invented
+      // metrics presented as measured data — so they are now reported as null
+      // and the UI must show "not measured" rather than a number.
       const overview = await Promise.all(
         SOCIAL_PLATFORMS_REGISTRY.slice(0, 12).map(async (p) => {
           try {
             const count = await (db as any).marketingSocialMessage.count({
               where: { platform: p.id }
-            }).catch(() => Math.floor(Math.random() * 100));
+            }).catch(() => 0);
             return {
               platform: p.id,
               displayName: p.displayName,
@@ -86,8 +90,11 @@ export async function GET(request: NextRequest) {
               priority: p.priority,
               category: p.category,
               messageCount: count,
-              engagement: Math.floor(Math.random() * 100),
-              growth: `${(Math.random() * 20 - 5).toFixed(1)}%`
+              // No provider metric is stored for these, so they are reported
+              // as unmeasured instead of a plausible-looking random figure.
+              engagement: null as number | null,
+              growth: null as string | null,
+              measured: false
             };
           } catch {
             return {
@@ -97,8 +104,9 @@ export async function GET(request: NextRequest) {
               priority: p.priority,
               category: p.category,
               messageCount: 0,
-              engagement: 0,
-              growth: '0%'
+              engagement: null as number | null,
+              growth: null as string | null,
+              measured: false
             };
           }
         })
