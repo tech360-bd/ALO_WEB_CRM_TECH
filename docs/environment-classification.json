@@ -1,6 +1,10 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
+  "filesScanned": 2176,
+  "summary": {
+    "UNUSED": 81,
+    "REFERENCED_WITH_FALLBACK": 124,
   "filesScanned": 2158,
   "summary": {
     "UNUSED": 73,
@@ -1172,6 +1176,76 @@
       ]
     },
     {
+      "name": "EMAIL_BATCH_SIZE",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "EMAIL_DAILY_CAP",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "EMAIL_FROM_NAME",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "EMAIL_HOURLY_CAP",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "EMAIL_MAX_ATTEMPTS",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "EMAIL_PROVIDER_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
@@ -1185,6 +1259,64 @@
         ".env.production.example"
       ],
       "sampleReferences": []
+    },
+    {
+      "name": "EMAIL_SENDING_ENABLED",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "EMAIL_TEST_MODE",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "EMAIL_TEST_RECIPIENTS",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "EMAIL_UNSUBSCRIBE_SECRET",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/app/api/email/unsubscribe/route.ts"
+      ]
     },
     {
       "name": "ENABLE_CRM_DEV_SEED",

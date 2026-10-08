@@ -4,6 +4,7 @@
  */
 import { db } from '@/lib/db';
 import crypto from 'crypto';
+import { queueEmailBroadcast } from '@/lib/email-marketing/broadcast-bridge';
 
 const MASS_AUDIENCE_LIMIT = 100; // above this requires Super Admin
 
@@ -108,12 +109,33 @@ export async function approveBroadcast(params: { broadcastId: string; approvedBy
   return { approved: true };
 }
 
-export async function sendBroadcast(broadcastId: string) {
+export async function sendBroadcast(broadcastId: string, actorId: string = '') {
   const broadcast = await db.broadcast.findUnique({ where: { id: broadcastId } }).catch(()=>null) as any;
   if (!broadcast) throw new Error('Broadcast not found');
   if (broadcast.approvalStatus !== 'approved') throw new Error('Broadcast must be approved before sending');
 
   const filter = JSON.parse(broadcast.audienceFilterJson || '{}');
+
+  // Email has a real transport (src/lib/email-marketing). This send only QUEUES an
+  // outbox. The outbox worker delivers later, under caps and test mode. Nothing is
+  // marked "sent" here, so the result never claims delivery.
+  if (broadcast.channel === 'email') {
+    const queued = await queueEmailBroadcast({
+      id: broadcast.id,
+      title: broadcast.title,
+      messageBody: broadcast.messageBody,
+      audienceType: broadcast.audienceType,
+      audienceFilter: filter,
+      createdBy: actorId || broadcast.createdBy || '',
+    });
+    return { channel: 'email' as const, broadcastId, ...queued };
+  }
+
+  // WhatsApp and SMS have no connected transport in this codebase. Refuse instead of
+  // writing "sent" rows for messages that were never delivered.
+  if (broadcast.channel !== 'portal') {
+    throw new Error(`CHANNEL_NOT_CONNECTED: ${broadcast.channel} sending is not connected. Nothing was sent.`);
+  }
 
   // Resolve audience respecting opt-out / consent
   let recipients: any[] = [];

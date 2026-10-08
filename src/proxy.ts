@@ -98,6 +98,10 @@ export function isPublicPageRequest(pathname: string): boolean {
 // only when listed in PUBLIC_API_WRITE_ROUTES; everything else reaches the
 // authentication/RBAC gate below.
 const PUBLIC_API_READ_ROUTES = [
+  // Email unsubscribe confirmation page (GET changes nothing; the token is verified server-side)
+  "/api/email/unsubscribe",
+  // Outbox worker. Auth is enforced by requireCron inside the route (CRON_SECRET or admin session).
+  "/api/cron/email-outbox",
   "/api/countries",
   "/api/universities",
   "/api/courses",
@@ -146,6 +150,10 @@ const PUBLIC_API_READ_ROUTES = [
 ];
 
 const PUBLIC_API_WRITE_ROUTES = [
+  // RFC 8058 one-click unsubscribe POST and confirm form. Token-verified in the route.
+  "/api/email/unsubscribe",
+  // Outbox worker trigger (Bearer CRON_SECRET, verified by requireCron).
+  "/api/cron/email-outbox",
   "/api/portal-auth/login",
   "/api/portal-auth/register",
   "/api/portal-auth/forgot-password",
@@ -206,6 +214,7 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/communications": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "BRANCH_MANAGER", "SUPPORT_STAFF", "PARTNER"],
   "/api/omnichannel": ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "APPLICATION_TEAM", "FRONT_DESK", "BRANCH_MANAGER", "SUPPORT_STAFF"],
   "/api/campaigns": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
+  "/api/email/campaigns": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
   "/api/marketing/content-generate": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
   "/api/marketing/user-access": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
   "/api/faqs": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],

@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success:true, ...result });
       }
       if (action === 'send') {
-        const result = await sendBroadcast(body.broadcastId);
+        const result = await sendBroadcast(body.broadcastId, auth.userId);
         return NextResponse.json({ success:true, ...result });
       }
       return NextResponse.json({ success:false, error:'Unknown action' }, { status:400 });
