@@ -108,6 +108,12 @@ describe('malicious file screening', () => {
 });
 
 describe('RBAC', () => {
+  it('lets staff with all-run visibility enter the run-history endpoint', () => {
+    for (const role of ['ADMIN', 'MANAGER'] as const) {
+      expect(can(role, 'awf.run.read.all')).toBe(true);
+      expect(can(role, 'awf.run.read.own')).toBe(true);
+    }
+  });
   it('gives Super Admin every capability', () => {
     expect(capabilitiesFor('SUPER_ADMIN')).toHaveLength(AWF_CAPABILITIES.length);
   });

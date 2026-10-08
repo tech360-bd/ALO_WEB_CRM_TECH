@@ -91,6 +91,8 @@ function ledgerOutcomeToMode(outcome: LedgerOutcome): string {
     case 'AGENT_ASSISTED':
       return 'AI_ASSISTED';
     case 'HUMAN_APPROVED':
+      return 'HUMAN';
+    case 'PENDING':
       return 'PENDING_APPROVAL';
     case 'HUMAN_ONLY':
       return 'HUMAN';

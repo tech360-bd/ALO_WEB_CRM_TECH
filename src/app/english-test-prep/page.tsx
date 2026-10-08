@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Metadata } from 'next';
 import { MASTER_TEST_PREP_DATA } from '@/lib/test-prep-data';
 
@@ -76,9 +77,9 @@ export default function TestPrepDirectoryPage() {
                     <span className="text-slate-500 font-medium">Target Score:</span>
                     <span className="font-bold text-[#2563EB]">{t.expectedScore}</span>
                   </div>
-                  <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
-                      Explore Full Test Prep & Modules →
-                    </a></Button>
+                  <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl">
+                    <Link href={`/english-test-prep/${t.slug}`}>Explore Full Test Prep & Modules →</Link>
+                  </Button>
                 </div>
               </Card>
             ))}

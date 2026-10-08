@@ -1,122 +1,52 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { db } from '@/lib/db';
+import { Button } from '@/components/ui/button';
 
+export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Study Abroad Events & Webinars | ALO Education Bangladesh',
-  description: 'Join our exclusive university fairs, visa workshops, and scholarship seminars to kickstart your study abroad journey.',
+  description: 'Browse published ALO Education events and request attendance information.',
 };
 
-const events = [
-  {
-    id: 1,
-    title: 'UK University Admissions Fair 2024',
-    type: 'University Fair',
-    date: 'Oct 15, 2024',
-    time: '10:00 AM - 5:00 PM',
-    venue: 'ALO Education Dhaka Office',
-    description: 'Meet representatives from 20+ top UK universities. On-spot assessments available.',
-    speakers: 'University Delegates',
-    isUpcoming: true,
-  },
-  {
-    id: 2,
-    title: 'USA F-1 Visa Interview Masterclass',
-    type: 'Visa Workshop',
-    date: 'Oct 20, 2024',
-    time: '3:00 PM - 5:00 PM',
-    venue: 'Online (Zoom)',
-    description: 'Learn the secrets to cracking the US student visa interview from ex-visa officers.',
-    speakers: 'Mr. Rahman, Senior Visa Expert',
-    isUpcoming: true,
-  },
-  {
-    id: 3,
-    title: 'Study in Canada: Scholarships & Pathways',
-    type: 'Scholarship Seminar',
-    date: 'Oct 25, 2024',
-    time: '4:00 PM - 6:00 PM',
-    venue: 'ALO Education Sylhet Office',
-    description: 'Discover how to secure partial and full scholarships for Canadian undergraduate programs.',
-    speakers: 'Sarah Jenkins, Canada Education Expert',
-    isUpcoming: true,
-  },
-  {
-    id: 4,
-    title: 'IELTS Band 8.0 Strategy Session',
-    type: 'IELTS Strategy',
-    date: 'Nov 02, 2024',
-    time: '11:00 AM - 1:00 PM',
-    venue: 'Online (Zoom)',
-    description: 'Master the IELTS reading and writing modules with proven strategies.',
-    speakers: 'Ms. Emily, CELTA Certified Trainer',
-    isUpcoming: true,
-  },
-  {
-    id: 5,
-    title: 'Australia Spring Intake Counseling',
-    type: 'One-on-One Counseling Camp',
-    date: 'Sep 10, 2024',
-    time: '10:00 AM - 4:00 PM',
-    venue: 'ALO Education Dhaka Office',
-    description: 'Personalized profile evaluation for Australia February/March intakes.',
-    speakers: 'Expert Counselors',
-    isUpcoming: false,
+type PublicEvent = { id: string; slug: string; title: string; description: string; eventDate: Date; location: string; eventType: string };
+
+export default async function EventsPage() {
+  let events: PublicEvent[] = [];
+  let unavailable = false;
+  try {
+    events = await db.eventPage.findMany({
+      where: { status: 'PUBLISHED', eventDate: { gte: new Date() } },
+      orderBy: [{ isFeatured: 'desc' }, { eventDate: 'asc' }],
+      take: 50,
+      select: { id: true, slug: true, title: true, description: true, eventDate: true, location: true, eventType: true },
+    });
+  } catch {
+    unavailable = true;
   }
-];
-
-export default function EventsPage() {
-  const upcomingEvents = events.filter(e => e.isUpcoming);
-  const pastEvents = events.filter(e => !e.isUpcoming);
-
   return (
-    <main className="pt-20 pb-16 min-h-screen bg-gray-50">
-      <div className="bg-[#2563EB] py-16 text-white text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">Events & Webinars</h1>
-        <p className="text-xl max-w-2xl mx-auto opacity-90">
-          Connect with university representatives, gain visa insights, and plan your study abroad journey.
-        </p>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Upcoming Events</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-          {upcomingEvents.map(event => (
-            <div key={event.id} className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col">
-              <div className="p-6 flex-grow">
-                <span className="inline-block px-3 py-1 bg-blue-100 text-[#2563EB] text-xs font-bold rounded-full mb-4">
-                  {event.type}
-                </span>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{event.title}</h3>
-                <div className="text-sm text-gray-500 mb-4 space-y-1">
-                  <p>📅 {event.date} | ⏰ {event.time}</p>
-                  <p>📍 {event.venue}</p>
-                </div>
-                <p className="text-gray-700 mb-4">{event.description}</p>
-                <p className="text-sm font-medium text-gray-600">Speakers: {event.speakers}</p>
-              </div>
-              <div className="p-6 pt-0 mt-auto">
-                <Link href="/book-consultation" className="block w-full bg-[#F97316] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded text-center transition-colors">
-                  Register Now
-                </Link>
-              </div>
-            </div>
+    <main className="mx-auto min-h-screen max-w-6xl px-4 pb-16 pt-24">
+      <h1 className="text-3xl font-bold text-slate-900">Events & Webinars</h1>
+      <p className="mt-3 text-slate-600">Upcoming published ALO Education events. Ask our team about attendance and availability.</p>
+      {events.length === 0 ? (
+        <div className="mt-8 rounded-2xl border border-slate-200 p-6" role="status">
+          <p>{unavailable ? 'Events are temporarily unavailable. Please contact our team.' : 'No upcoming events have been published yet.'}</p>
+          <Button asChild className="mt-4"><Link href="/book-consultation">Contact ALO Education</Link></Button>
+        </div>
+      ) : (
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          {events.map((event) => (
+            <article key={event.id} className="rounded-2xl border border-slate-200 p-6">
+              <p className="text-sm text-blue-700">{event.eventType}</p>
+              <h2 className="mt-2 text-xl font-semibold">{event.title}</h2>
+              <p className="mt-3 text-sm text-slate-600">{event.description}</p>
+              <p className="mt-4 text-sm"><time dateTime={event.eventDate.toISOString()}>{event.eventDate.toLocaleString('en-GB', { timeZone: 'Asia/Dhaka', dateStyle: 'medium', timeStyle: 'short' })} (Bangladesh time)</time></p>
+              <p className="mt-1 text-sm">{event.location}</p>
+              <Button asChild className="mt-4"><Link href={`/book-consultation?event=${encodeURIComponent(event.slug)}`}>Ask about this event</Link></Button>
+            </article>
           ))}
         </div>
-
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Past Events</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {pastEvents.map(event => (
-            <div key={event.id} className="bg-gray-100 rounded-xl p-6 border border-gray-200 opacity-80">
-              <span className="inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs font-bold rounded-full mb-3">
-                {event.type}
-              </span>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{event.title}</h3>
-              <p className="text-sm text-gray-500 mb-3">📅 {event.date}</p>
-              <p className="text-gray-600 text-sm">{event.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
     </main>
   );
 }

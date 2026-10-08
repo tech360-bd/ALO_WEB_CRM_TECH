@@ -204,11 +204,9 @@ export default function CrmHRMPage() {
           >
             <ArrowRight className="w-4 h-4 text-[#F97316]" /> Work Reassignment
           </Button>
-          <a href="/admin/access-control-center">
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#004088] text-white text-xs font-bold gap-2">
+          <Button asChild className="bg-[#2563EB] hover:bg-[#004088] text-white text-xs font-bold gap-2"><a href="/admin/access-control-center">
               <ShieldCheck className="w-4 h-4" /> Control Center
-            </Button>
-          </a>
+            </a></Button>
         </div>
       </div>
 

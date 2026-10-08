@@ -141,10 +141,10 @@
     "@playwright/test": "^1.62.0",
     "@prisma/adapter-libsql": "^6.19.3",
     "@types/nodemailer": "8.0.2",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "4.1.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
-    "vitest": "^4.1.10"
+    "vitest": "4.1.11"
   },
   "overrides": {
     "postcss": "8.5.25",
