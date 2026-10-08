@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import SocialAccountActions from '@/components/employee/SocialAccountActions';
 
 export const dynamic = "force-dynamic";
 
@@ -69,11 +70,7 @@ export default async function EmployeeMyAccountsPage() {
                   <div>Last sync: {acc.lastSyncAt ? new Date(acc.lastSyncAt).toLocaleString() : "—"}</div>
                 </div>
               )}
-              <div className="mt-3 flex gap-2">
-                <a className="text-xs bg-slate-900 text-white px-3 py-1.5 rounded" href={`/api/employee/social-accounts/connect?provider=${p.provider}`}>Connect OAuth</a>
-                <a className="text-xs border px-3 py-1.5 rounded" href={`/api/employee/social-accounts/request?provider=${p.provider}`}>Request Official Access</a>
-                {connected && <a className="text-xs border border-red-300 text-red-600 px-3 py-1.5 rounded" href={`/api/communications/social-accounts/${acc.id}`}>Disconnect</a>}
-              </div>
+              <SocialAccountActions connected={connected} accountId={acc?.id} />
               <div className="mt-2 text-xs text-slate-500">OAuth uses official flows with <code>state</code> + PKCE, encrypted with <code>ENCRYPTION_KEY</code>, audit logged. Disconnect revokes at provider.</div>
             </div>
           );

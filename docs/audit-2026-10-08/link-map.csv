@@ -1,0 +1,608 @@
+SourceFile,Line,Target,RepositoryResult
+src/app/not-found.tsx,15,/,EXISTS
+src/app/accessibility/page.tsx,40,https://wa.me/8801805020100,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/app/accessibility/page.tsx,44,mailto:info@aloeducation.com,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/app/admin/courses/page.tsx,116,/admin/courses/create,EXISTS
+src/app/admin/courses/page.tsx,116,/admin/import-center/courses,EXISTS
+src/app/admin/courses/page.tsx,116,/admin/university-data-updates,EXISTS
+src/app/admin/courses/page.tsx,120,/admin/courses/edit/${id},EXISTS
+src/app/admin/courses/page.tsx,120,/admin/courses/edit/${id},EXISTS
+src/app/admin/courses/edit/[id]/page.tsx,23,/admin/courses,EXISTS
+src/app/admin/data-import/page.tsx,20,/admin/data-import/new,EXISTS
+src/app/admin/data-import/new/page.tsx,135,/admin/change-approval,EXISTS
+src/app/admin/homepage-builder/page.tsx,27,/,EXISTS
+src/app/admin/homepage-builder/page.tsx,32,/admin/master-command,EXISTS
+src/app/admin/settings/digital-assets/page.tsx,71,/api/crm/ucc/oauth/start?provider=${p.provider},EXISTS
+src/app/admin/settings/digital-assets/page.tsx,72,/api/crm/ucc/webhooks/${p.provider},EXISTS
+src/app/admin/source-verification/page.tsx,29,/api/crm/source-verification,EXISTS
+src/app/admin/universities/page.tsx,116,/admin/universities/create,EXISTS
+src/app/admin/universities/page.tsx,116,/admin/import-center/universities,EXISTS
+src/app/admin/universities/page.tsx,116,/admin/university-data-updates,EXISTS
+src/app/admin/universities/page.tsx,120,/admin/universities/edit/${id},EXISTS
+src/app/admin/universities/page.tsx,120,/admin/universities/edit/${id},EXISTS
+src/app/admin/universities/page.tsx,120,/admin/courses?search=${encodeURIComponent(u.name || '')},EXISTS
+src/app/admin/universities/edit/[id]/page.tsx,24,/admin/universities,EXISTS
+src/app/admin/university-data/page.tsx,78,/admin/university-data/updates,EXISTS
+src/app/admin/university-data/page.tsx,84,/admin/university-data/duplicates,EXISTS
+src/app/admission-requirements/page.tsx,83,/eligibility-check,EXISTS
+src/app/application-manager/layout.tsx,110,/login,EXISTS
+src/app/application-manager/layout.tsx,111,/,EXISTS
+src/app/application-manager/application/[id]/page.tsx,128,/application-manager/applications,EXISTS
+src/app/application-manager/application/[id]/page.tsx,137,/application-manager/applications,EXISTS
+src/app/application-manager/b2b/page.tsx,41,/application-manager/b2b/providers,EXISTS
+src/app/application-manager/b2b/page.tsx,41,/application-manager/b2b/create,EXISTS
+src/app/application-manager/b2b/page.tsx,62,/application-manager/application/${app.applicationId},EXISTS
+src/app/application-manager/b2b/providers/page.tsx,37,/application-manager/b2b,EXISTS
+src/app/application-manager/b2b/providers/page.tsx,41,/application-manager/b2b/create,EXISTS
+src/app/application-manager/b2b/providers/page.tsx,44,/application-manager/b2b/provider/${p.id},EXISTS
+src/app/application-manager/cas-i20-coe/page.tsx,34,/application-manager/application/${a.id},EXISTS
+src/app/application-manager/dashboard/page.tsx,131,/application-manager/applications,EXISTS
+src/app/application-manager/dashboard/page.tsx,132,/application-manager/b2b,EXISTS
+src/app/application-manager/dashboard/page.tsx,172,/application-manager/applications,EXISTS
+src/app/application-manager/dashboard/page.tsx,245,/application-manager/document-review,EXISTS
+src/app/application-manager/dashboard/page.tsx,259,/application-manager/offer-management,EXISTS
+src/app/application-manager/dashboard/page.tsx,294,/application-manager/deadlines,EXISTS
+src/app/application-manager/dashboard/page.tsx,329,/application-manager/tasks,EXISTS
+src/app/application-manager/dashboard/page.tsx,390,/application-manager/applications,EXISTS
+src/app/application-manager/dashboard/page.tsx,422,/application-manager/application/${app.id},EXISTS
+src/app/application-manager/offer-management/page.tsx,34,/application-manager/application/${a.id},EXISTS
+src/app/application-manager/submission-queue/page.tsx,47,/application-manager/application/${app.id},EXISTS
+src/app/application-manager/tasks/page.tsx,36,/application-manager/application/${t.applicationId},EXISTS
+src/app/application-process/page.tsx,189,/book-consultation,EXISTS
+src/app/application-process/page.tsx,192,/contact,EXISTS
+src/app/blog/page.tsx,51,/blog/${blog.slug},EXISTS
+src/app/blog/[slug]/page.tsx,92,/,EXISTS
+src/app/blog/[slug]/page.tsx,94,/blog,EXISTS
+src/app/blog/[slug]/page.tsx,168,/book-consultation,EXISTS
+src/app/communication-policy/page.tsx,22,https://www.facebook.com/aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/app/communication-policy/page.tsx,40,/contact,EXISTS
+src/app/crm/application/[id]/page.tsx,37,/application-manager/application/${id},EXISTS
+src/app/crm/b2b-applications/page.tsx,34,/application-manager/application/${a.applicationId},EXISTS
+src/app/crm/cas-i20-coe/page.tsx,27,/application-manager/application/${a.id},EXISTS
+src/app/crm/course-finder/page.tsx,28,/crm/course/${c.courseId},EXISTS
+src/app/crm/course/[id]/page.tsx,29,/crm/course-finder,EXISTS
+src/app/crm/courses/page.tsx,28,/crm/course/${c.courseId},EXISTS
+src/app/crm/decision-pending/page.tsx,27,/application-manager/application/${a.id},EXISTS
+src/app/crm/hrm/page.tsx,35,/crm/hrm/profile,EXISTS
+src/app/crm/hrm/page.tsx,47,/crm/hrm/analytics,EXISTS
+src/app/crm/offer-letter-management/page.tsx,27,/application-manager/application/${a.id},EXISTS
+src/app/crm/universities/page.tsx,28,/crm/university/${u.universityId},EXISTS
+src/app/crm/university/[id]/page.tsx,29,/crm/universities,EXISTS
+src/app/destinations/page.tsx,66,/destinations/${dest.slug},EXISTS
+src/app/destinations/[slug]/admission-requirements/page.tsx,28,/destinations,EXISTS
+src/app/destinations/[slug]/admission-requirements/page.tsx,30,/destinations/${countryData.slug},EXISTS
+src/app/destinations/[slug]/cost-calculator/page.tsx,28,/destinations,EXISTS
+src/app/destinations/[slug]/cost-calculator/page.tsx,30,/destinations/${countryData.slug},EXISTS
+src/app/destinations/[slug]/courses/page.tsx,55,/destinations,EXISTS
+src/app/destinations/[slug]/courses/page.tsx,57,/destinations/${countryData.slug},EXISTS
+src/app/destinations/[slug]/courses/page.tsx,130,/eligibility-check?courseId=${course.id},EXISTS
+src/app/destinations/[slug]/scholarships/page.tsx,53,/destinations,EXISTS
+src/app/destinations/[slug]/scholarships/page.tsx,55,/destinations/${countryData.slug},EXISTS
+src/app/destinations/[slug]/scholarships/page.tsx,119,/book-consultation,EXISTS
+src/app/destinations/[slug]/universities/page.tsx,47,/destinations,EXISTS
+src/app/destinations/[slug]/universities/page.tsx,49,/destinations/${countryData.slug},EXISTS
+src/app/destinations/[slug]/universities/page.tsx,112,/destinations/${countryData.slug}/courses?uniId=${uni.id},EXISTS
+src/app/destinations/[slug]/visa-guide/page.tsx,28,/destinations,EXISTS
+src/app/destinations/[slug]/visa-guide/page.tsx,30,/destinations/${countryData.slug},EXISTS
+src/app/employee/activate/activation-form.tsx,53,/employee/login,EXISTS
+src/app/employee/login/page.tsx,95,/forgot-password,EXISTS
+src/app/employee/login/page.tsx,138,/admin/login,EXISTS
+src/app/english-test-prep/page.tsx,68,/english-test-prep/${t.slug},EXISTS
+src/app/lead-data-usage-policy/page.tsx,34,mailto:info@aloeducation.com,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/app/news/page.tsx,45,/news/${article.slug},EXISTS
+src/app/news/page.tsx,52,/news/${article.slug},EXISTS
+src/app/news/[slug]/page.tsx,40,/news,EXISTS
+src/app/news/[slug]/page.tsx,98,/book-consultation,EXISTS
+src/app/news/[slug]/page.tsx,117,/news/${rel.slug},EXISTS
+src/app/news/[slug]/page.tsx,122,/news/${rel.slug},EXISTS
+src/app/offline/page.tsx,22,/,EXISTS
+src/app/partner/apply/[student_id]/[course_id]/page.tsx,30,/partner/dashboard,EXISTS
+src/app/partner/login/page.tsx,95,/forgot-password,EXISTS
+src/app/partner/login/page.tsx,138,/contact,EXISTS
+src/app/partner/messages/page.tsx,22,/partner/dashboard,EXISTS
+src/app/partner/program/[id]/page.tsx,25,/partner/apply/demo-student/${course.courseId},EXISTS
+src/app/partner/program/[id]/page.tsx,26,/partner/search-programs,EXISTS
+src/app/partner/search-programs/page.tsx,85,/partner/program/${c.courseId},EXISTS
+src/app/partner/search-programs/page.tsx,86,/partner/apply/${selectedStudent?.id || 'student'}/${c.courseId},EXISTS
+src/app/research-opportunities/page.tsx,70,/book-consultation?service=research,EXISTS
+src/app/resources/page.tsx,103,/resources/${cat.slug},EXISTS
+src/app/resources/page.tsx,139,/resources/${catSlug}/${b.slug},EXISTS
+src/app/resources/page.tsx,152,/book-consultation,EXISTS
+src/app/resources/page.tsx,153,/course-finder,EXISTS
+src/app/resources/page.tsx,154,/eligibility-check,EXISTS
+src/app/resources/blogs/page.tsx,62,/resources/blogs/${b.slug},EXISTS
+src/app/resources/blogs/[slug]/page.tsx,93,/,EXISTS
+src/app/resources/blogs/[slug]/page.tsx,95,/resources,EXISTS
+src/app/resources/blogs/[slug]/page.tsx,97,/resources/blogs,EXISTS
+src/app/resources/blogs/[slug]/page.tsx,188,/eligibility-check,EXISTS
+src/app/resources/blogs/[slug]/page.tsx,218,/resources/blogs/${rel.slug},EXISTS
+src/app/services/page.tsx,54,/book-consultation,EXISTS
+src/app/services/page.tsx,55,/course-finder,EXISTS
+src/app/services/page.tsx,82,/services/${s.slug},EXISTS
+src/app/services/page.tsx,94,/book-consultation,EXISTS
+src/app/services/page.tsx,95,/course-finder,EXISTS
+src/app/services/page.tsx,96,/eligibility-check,EXISTS
+src/app/services/page.tsx,97,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/app/student-journey/page.tsx,194,/book-consultation,EXISTS
+src/app/student/layout.tsx,161,/student/dashboard,EXISTS
+src/app/student/ai-interview/page.tsx,190,/student/visa,EXISTS
+src/app/student/ai-interview/page.tsx,222,/student/visa,EXISTS
+src/app/student/ai-interview/page.tsx,276,/student/visa,EXISTS
+src/app/student/applications/[id]/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/applications/[id]/page.tsx,16,/student/profile,EXISTS
+src/app/student/apply/[course_id]/page.tsx,75,/student/applications,EXISTS
+src/app/student/appointments/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/appointments/page.tsx,16,/student/profile,EXISTS
+src/app/student/cas/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/cas/page.tsx,16,/student/profile,EXISTS
+src/app/student/compare/page.tsx,34,/student/course-finder,EXISTS
+src/app/student/compare/page.tsx,53,/student/course-finder,EXISTS
+src/app/student/compare/page.tsx,54,/student/shortlist,EXISTS
+src/app/student/course-finder/page.tsx,87,/student/course/${c.courseId},EXISTS
+src/app/student/course-finder/page.tsx,90,/student/compare,EXISTS
+src/app/student/course-finder/page.tsx,91,/student/apply/${c.courseId},EXISTS
+src/app/student/course/[id]/page.tsx,38,/student/course-finder,EXISTS
+src/app/student/course/[id]/page.tsx,43,/student/course-finder,EXISTS
+src/app/student/course/[id]/page.tsx,82,/student/compare,EXISTS
+src/app/student/course/[id]/page.tsx,82,/student/apply/${course.courseId},EXISTS
+src/app/student/course/[id]/page.tsx,82,/book-consultation,EXISTS
+src/app/student/credibility-interview/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/credibility-interview/page.tsx,16,/student/profile,EXISTS
+src/app/student/cv/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/cv/page.tsx,16,/student/profile,EXISTS
+src/app/student/documents/[id]/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/documents/[id]/page.tsx,16,/student/profile,EXISTS
+src/app/student/english-test/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/english-test/page.tsx,16,/student/profile,EXISTS
+src/app/student/help/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/help/page.tsx,16,/student/profile,EXISTS
+src/app/student/login/page.tsx,255,/forgot-password,EXISTS
+src/app/student/login/page.tsx,319,/register,EXISTS
+src/app/student/login/page.tsx,328,/terms,EXISTS
+src/app/student/login/page.tsx,330,/privacy-policy,EXISTS
+src/app/student/mock-tests/page.tsx,29,/student/mock-tests/available,EXISTS
+src/app/student/mock-tests/page.tsx,39,/student/mock-tests/available,EXISTS
+src/app/student/mock-tests/available/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/mock-tests/available/page.tsx,16,/student/profile,EXISTS
+src/app/student/mock-tests/result/[sessionId]/page.tsx,24,/student/dashboard,EXISTS
+src/app/student/mock-tests/session/[sessionId]/page.tsx,17,/student/mock-tests/result/${sessionId},EXISTS
+src/app/student/mock-tests/start/[testId]/page.tsx,17,/student/mock-tests/session/${testId},EXISTS
+src/app/student/notifications/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/notifications/page.tsx,16,/student/profile,EXISTS
+src/app/student/payments/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/payments/page.tsx,16,/student/profile,EXISTS
+src/app/student/profile/onboarding/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/profile/onboarding/page.tsx,16,/student/profile,EXISTS
+src/app/student/referrals/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/referrals/page.tsx,16,/student/profile,EXISTS
+src/app/student/referrals/[id]/page.tsx,17,/student/referrals,EXISTS
+src/app/student/shortlist/page.tsx,32,/student/course-finder,EXISTS
+src/app/student/shortlist/page.tsx,40,/student/compare,EXISTS
+src/app/student/shortlist/page.tsx,41,/student/apply/${c.courseId || c.id},EXISTS
+src/app/student/sop/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/sop/page.tsx,16,/student/profile,EXISTS
+src/app/student/timeline/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/timeline/page.tsx,16,/student/profile,EXISTS
+src/app/student/visa-checklist/page.tsx,56,/student/visa,EXISTS
+src/app/student/visa-checklist/page.tsx,79,/student/documents,EXISTS
+src/app/student/visa/page.tsx,68,/student/visa-interview-practice,EXISTS
+src/app/student/visa/page.tsx,136,/student/visa-interview-practice,EXISTS
+src/app/student/visa/checklist/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/visa/checklist/page.tsx,16,/student/profile,EXISTS
+src/app/student/visa/readiness/page.tsx,15,/student/dashboard,EXISTS
+src/app/student/visa/readiness/page.tsx,16,/student/profile,EXISTS
+src/app/success-stories/[slug]/page.tsx,75,/success-stories,EXISTS
+src/app/success-stories/[slug]/page.tsx,164,/eligibility-check,EXISTS
+src/app/success-stories/[slug]/page.tsx,188,/success-stories/${rs.slug},EXISTS
+src/app/team/[slug]/page.tsx,50,/team,EXISTS
+src/app/user-guide/page.tsx,25,https://www.facebook.com/aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/app/user-guide/page.tsx,25,https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/app/user-guide/page.tsx,54,/book-consultation,EXISTS
+src/app/user-guide/page.tsx,55,/contact,EXISTS
+src/app/user-guide/page.tsx,59,/privacy-policy,EXISTS
+src/app/user-guide/page.tsx,59,/communication-policy,EXISTS
+src/app/user-guide/page.tsx,59,/lead-data-usage-policy,EXISTS
+src/app/user-guide/page.tsx,59,https://wa.me/8801805020100,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/app/visa-support/page.tsx,50,/visa-support/${country.slug},EXISTS
+src/app/visa-support/[country]/page.tsx,186,/visa-support,EXISTS
+src/components/admin/AdminCountryBuilderView.tsx,197,/destinations/${c.slug},EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,252,/admin/employees,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,253,/admin/students,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,254,/admin/partners,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,255,/admin/employee-control,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,256,/admin/ai-command-center,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,257,/admin/reports,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,258,/admin/permission-matrix,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,259,/admin/system-builder,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,260,/admin/homepage-builder,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,261,/admin/approvals,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,262,/admin/security,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,314,/admin/employee-control,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,381,/admin/approvals,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,397,/admin/security,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,403,/admin/ai-command-center,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,409,/admin/tasks,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,415,/admin/reports,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,416,/admin/audit-logs,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,417,/admin/settings,EXISTS
+src/components/admin/EnhancedSuperAdminControlCenter.tsx,418,/admin/homepage-builder,EXISTS
+src/components/admin/StudentIntakeControlPanel.tsx,72,/api/ai/student-intake,EXISTS
+src/components/admin/StudentIntakeControlPanel.tsx,76,/super-admin/dashboard,EXISTS
+src/components/admin/StudentIntakeControlPanel.tsx,77,/admin/ai-command-center,EXISTS
+src/components/admin/StudentIntakeControlPanel.tsx,78,/admin/document-security,EXISTS
+src/components/alo/public-shell.tsx,434,https://www.facebook.com/aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/alo/public-shell.tsx,437,https://www.instagram.com/aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/alo/public-shell.tsx,440,https://www.linkedin.com/company/aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/alo/public-shell.tsx,443,https://www.youtube.com/@aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/alo/public-shell.tsx,489,tel:01805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/alo/public-shell.tsx,490,https://wa.me/8801805020100,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/alo/public-shell.tsx,491,mailto:info@aloeducation.com,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/alo/views/marketing-dashboard.tsx,2695,https://alo-education.com/lead-form?leadId=${l.id},EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/alo/views/public-contact.tsx,254,https://www.google.com/maps/search/?api=1&query=Banani+Dhaka+Bangladesh,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/application-manager/ApplicationTable.tsx,88,/application-manager/create,EXISTS
+src/components/application-manager/ApplicationTable.tsx,226,/application-manager/application/${app.id},EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,83,/student/help,EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,86,/student/documents,EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,89,/student/appointments,EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,97,/partner/messages,EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,100,/partner/documents,EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,103,/partner/commission,EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,106,/partner/leads,EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,120,/crm/ucc,EXISTS
+src/components/communication/DashboardCommunicationWidget.tsx,123,/employee/leads,EXISTS
+src/components/communication/EmployeeOmnichannelInbox.tsx,477,/api/crm/ucc/documents/${encodeURIComponent(attachment.id)}/download,EXISTS
+src/components/communication/EnterpriseUnifiedCommunicationCenter.tsx,357,/api/crm/ucc/documents/${encodeURIComponent(att.id)}/download,EXISTS
+src/components/course-finder/EnhancedCourseFinder.tsx,142,/course/${c.slug || c.courseId},EXISTS
+src/components/course-finder/EnhancedCourseFinder.tsx,146,/eligibility-check,EXISTS
+src/components/course-finder/course-compare-enhanced.tsx,747,/course-finder,EXISTS
+src/components/course-finder/course-compare-enhanced.tsx,787,/course-finder?slug=${course.slug},EXISTS
+src/components/course-finder/course-compare-enhanced.tsx,922,/course-finder?slug=${uni.slug},EXISTS
+src/components/course-finder/course-detail-enhanced.tsx,475,/course-finder,EXISTS
+src/components/course-finder/course-detail-enhanced.tsx,510,/course-finder?slug=${course.slug},EXISTS
+src/components/course-finder/course-detail-enhanced.tsx,811,/,EXISTS
+src/components/course-finder/course-detail-enhanced.tsx,815,/course-finder,EXISTS
+src/components/course-finder/course-detail-enhanced.tsx,837,/course-finder?slug=${uni.slug},EXISTS
+src/components/course-finder/course-finder-enhanced.tsx,1344,https://wa.me/8801805020100,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/course-finder/eligibility-checker.tsx,804,/courses/${result.slug},EXISTS
+src/components/course-finder/university-directory-enhanced.tsx,861,"?page=${Math.max(1, page - 1)}",EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/course-finder/university-directory-enhanced.tsx,876,?page=1,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/course-finder/university-directory-enhanced.tsx,898,?page=${i},EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/course-finder/university-directory-enhanced.tsx,921,?page=${totalPages},EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/course-finder/university-directory-enhanced.tsx,937,"?page=${Math.min(totalPages, page + 1)}",EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/crm/CrmEnglishPrepCounselorView.tsx,137,/language-prep,EXISTS
+src/components/crm/CrmEnglishPrepCounselorView.tsx,138,/language-prep/comparison,EXISTS
+src/components/crm/CrmEnglishPrepCounselorView.tsx,139,/course-finder,EXISTS
+src/components/crm/CrmEnglishPrepCounselorView.tsx,140,/destinations,EXISTS
+src/components/crm/CrmEnglishPrepCounselorView.tsx,141,/scholarships,EXISTS
+src/components/crm/CrmEnglishPrepCounselorView.tsx,142,/visa-support,EXISTS
+src/components/crm/pages/CrmHRMPage.tsx,207,/admin/access-control-center,EXISTS
+src/components/crm/seo/CrmSeoPolicyWatcher.tsx,284,https://${s.url},EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/hrm/HrWidgets.tsx,54,/crm/hrm,EXISTS
+src/components/hrm/HrWidgets.tsx,57,/crm/hrm/analytics,EXISTS
+src/components/hrm/HrWidgets.tsx,58,/crm/hrm/leave,EXISTS
+src/components/hrm/HrWidgets.tsx,59,/crm/hrm/payroll,EXISTS
+src/components/hrm/HrWidgets.tsx,60,/crm/hrm/documents,EXISTS
+src/components/hrm/HrWidgets.tsx,74,/crm/hrm/payroll,EXISTS
+src/components/hrm/HrWidgets.tsx,75,/crm/hrm/payroll,EXISTS
+src/components/hrm/HrWidgets.tsx,76,/crm/hrm/payroll,EXISTS
+src/components/hrm/HrWidgets.tsx,77,/crm/hrm/payroll,EXISTS
+src/components/hrm/HrWidgets.tsx,85,/crm/hrm/attendance,EXISTS
+src/components/hrm/HrWidgets.tsx,86,/crm/hrm/leave,EXISTS
+src/components/hrm/HrWidgets.tsx,87,/crm/hrm/analytics,EXISTS
+src/components/hrm/HrWidgets.tsx,95,/crm/hrm/attendance,EXISTS
+src/components/hrm/HrWidgets.tsx,96,/crm/hrm/leave,EXISTS
+src/components/hrm/HrWidgets.tsx,97,/crm/hrm/payroll,EXISTS
+src/components/hrm/HrWidgets.tsx,98,/crm/hrm/documents,EXISTS
+src/components/hrm/HrWidgets.tsx,105,/crm/hrm/attendance,EXISTS
+src/components/hrm/HrWidgets.tsx,106,/crm/hrm/leave,EXISTS
+src/components/hrm/HrWidgets.tsx,107,/crm/hrm/documents,EXISTS
+src/components/hrm/HrWidgets.tsx,108,/crm/hrm/payroll,EXISTS
+src/components/hrm/HrWidgets.tsx,116,/crm/hrm/attendance,EXISTS
+src/components/hrm/HrWidgets.tsx,117,/crm/hrm/leave,EXISTS
+src/components/hrm/HrWidgets.tsx,118,/crm/hrm/documents,EXISTS
+src/components/hrm/HrWidgets.tsx,119,/crm/hrm/profile,EXISTS
+src/components/hrm/HrWidgets.tsx,121,/crm/hrm/analytics,EXISTS
+src/components/language-prep/ComparisonView.tsx,39,/,EXISTS
+src/components/language-prep/ComparisonView.tsx,40,/language-prep,EXISTS
+src/components/language-prep/ComparisonView.tsx,110,/language-prep/${t.slug},EXISTS
+src/components/language-prep/ComparisonView.tsx,132,/language-prep/${t.slug},EXISTS
+src/components/language-prep/ComparisonView.tsx,144,/language-prep/${t.slug},EXISTS
+src/components/language-prep/TestDetailView.tsx,119,/language-prep,EXISTS
+src/components/language-prep/TestDetailView.tsx,139,/,EXISTS
+src/components/language-prep/TestDetailView.tsx,141,/language-prep,EXISTS
+src/components/language-prep/TestDetailView.tsx,175,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/TestDetailView.tsx,180,#assessment,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/TestDetailView.tsx,297,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/TestDetailView.tsx,367,/course-finder,EXISTS
+src/components/language-prep/TestDetailView.tsx,368,/language-prep/comparison?tests=${test.slug},EXISTS
+src/components/language-prep/TestDetailView.tsx,484,/language-prep/${s},EXISTS
+src/components/language-prep/TestDetailView.tsx,486,/language-prep/comparison,EXISTS
+src/components/language-prep/TestDetailView.tsx,560,/language-prep#test-discovery,EXISTS
+src/components/language-prep/TestDetailView.tsx,561,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/TestDetailView.tsx,581,/language-prep/${s},EXISTS
+src/components/language-prep/TestDetailView.tsx,587,/language-prep,EXISTS
+src/components/language-prep/TestDetailView.tsx,596,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/TestDetailView.tsx,620,/language-prep/${test.slug}#mock,EXISTS
+src/components/language-prep/TestDetailView.tsx,621,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/TestDetailView.tsx,622,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/TestDetailView.tsx,623,/language-prep#test-discovery,EXISTS
+src/components/language-prep/PremiumLandingView.tsx,178,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,183,#test-discovery,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,188,#assessment,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,197,#test-discovery,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,200,#score-explorer,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,203,#test-comparison,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,206,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,404,/language-prep/${t.slug},EXISTS
+src/components/language-prep/PremiumLandingView.tsx,412,/language-prep/${recommended.primary?.slug},EXISTS
+src/components/language-prep/PremiumLandingView.tsx,415,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,512,#test-discovery,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,560,/language-prep/comparison,EXISTS
+src/components/language-prep/PremiumLandingView.tsx,615,/language-prep/${t.slug},EXISTS
+src/components/language-prep/PremiumLandingView.tsx,618,/language-prep/comparison?tests=${t.slug},EXISTS
+src/components/language-prep/PremiumLandingView.tsx,656,/language-prep/${t.slug},EXISTS
+src/components/language-prep/PremiumLandingView.tsx,686,/language-prep/comparison,EXISTS
+src/components/language-prep/PremiumLandingView.tsx,725,/language-prep/${t.slug},EXISTS
+src/components/language-prep/PremiumLandingView.tsx,812,/course-finder,EXISTS
+src/components/language-prep/PremiumLandingView.tsx,813,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,984,#book-counselling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,987,#test-discovery,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,990,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/partner/PartnerEnglishPrepView.tsx,48,/language-prep/${t.slug},EXISTS
+src/components/student/PremiumStudentDashboard.tsx,170,/student/profile/onboarding,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,171,/login,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,172,/book-consultation,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,204,/student/messages,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,205,/student/notifications,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,226,/student/help,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,267,/student/profile,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,285,/student/applications,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,302,/student/documents,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,311,/student/english-test,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,319,/student/ai-interview,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,328,/student/visa,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,336,/student/messages,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,344,/student/appointments,EXISTS
+src/components/student/PremiumStudentDashboard.tsx,352,/student/payments,EXISTS
+src/components/student/StudentCourseFinder.tsx,1041,"?page=${Math.max(1, currentPage - 1)}",EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/student/StudentCourseFinder.tsx,1050,?page=${pageNumber},EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/student/StudentCourseFinder.tsx,1062,"?page=${Math.min(totalPages, currentPage + 1)}",EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/student/StudentEnglishPrepProfile.tsx,179,/language-prep,EXISTS
+src/components/student/StudentEnglishPrepProfile.tsx,180,/language-prep/comparison,EXISTS
+src/components/visa/VisaInterviewWorkspace.tsx,244,/employee/visa-cases,EXISTS
+src/components/website/CourseDetailHub.tsx,34,/course-finder,EXISTS
+src/components/website/CourseDetailHub.tsx,47,/,EXISTS
+src/components/website/CourseDetailHub.tsx,47,/course-finder,EXISTS
+src/components/website/CourseDetailHub.tsx,61,/eligibility-check,EXISTS
+src/components/website/CourseDetailHub.tsx,62,/book-consultation,EXISTS
+src/components/website/CourseDetailHub.tsx,64,/compare,EXISTS
+src/components/website/CourseDetailHub.tsx,65,/book-consultation,EXISTS
+src/components/website/CourseDetailHub.tsx,87,/universities/${uni.slug || uni.universityId},EXISTS
+src/components/website/CourseDetailHub.tsx,173,/eligibility-check,EXISTS
+src/components/website/CourseDetailHub.tsx,174,/book-consultation,EXISTS
+src/components/website/CourseDetailHub.tsx,175,/compare,EXISTS
+src/components/website/CourseDetailHub.tsx,182,/eligibility-check,EXISTS
+src/components/website/CourseDetailHub.tsx,182,/book-consultation,EXISTS
+src/components/website/CourseDetailHub.tsx,182,/compare,EXISTS
+src/components/website/FloatingActionWidget.tsx,228,/course-finder,EXISTS
+src/components/website/FloatingActionWidget.tsx,242,/portal/login,EXISTS
+src/components/website/HomepagePart1.tsx,145,/book-consultation,EXISTS
+src/components/website/HomepagePart1.tsx,151,/course-finder?country=${encodeURIComponent(slide.slug)},EXISTS
+src/components/website/HomepagePart1.tsx,267,/eligibility-check,EXISTS
+src/components/website/HomepagePart1.tsx,322,/destinations/${d.slug},EXISTS
+src/components/website/HomepagePart1.tsx,325,/course-finder?country=${d.slug},EXISTS
+src/components/website/HomepagePart1.tsx,462,https://english.aloeducation.com,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/HomepagePart2.tsx,550,/course-finder?search=${encodeURIComponent(course.courseTitle || '')},EXISTS
+src/components/website/HomepagePart2.tsx,555,/book-consultation,EXISTS
+src/components/website/HomepagePart2.tsx,568,/course-finder,EXISTS
+src/components/website/HomepagePart2.tsx,613,"/universities/${uni.universityId || uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}",EXISTS
+src/components/website/HomepagePart2.tsx,629,/course-finder,EXISTS
+src/components/website/HomepagePart3.tsx,211,/eligibility-check,EXISTS
+src/components/website/HomepagePart3.tsx,216,/scholarships,EXISTS
+src/components/website/HomepagePart3.tsx,235,/scholarships,EXISTS
+src/components/website/HomepagePart3.tsx,240,/scholarships,EXISTS
+src/components/website/HomepagePart3.tsx,371,/english-test-prep,EXISTS
+src/components/website/HomepagePart3.tsx,377,"/language-prep/${test.slug || test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}",EXISTS
+src/components/website/HomepagePart3.tsx,381,/english-test-prep,EXISTS
+src/components/website/HomepagePart3.tsx,386,/language-prep/${test.slug || 'ielts'},EXISTS
+src/components/website/HomepagePart3.tsx,429,/language-prep/comparison,EXISTS
+src/components/website/HomepagePart3.tsx,451,"/language-prep/${test.slug || test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}",EXISTS
+src/components/website/HomepagePart3.tsx,635,/visa/readiness,EXISTS
+src/components/website/HomepagePart3.tsx,640,/visa/readiness,EXISTS
+src/components/website/HomepagePart3.tsx,647,/book-consultation,EXISTS
+src/components/website/HomepagePart3.tsx,652,/contact,EXISTS
+src/components/website/HomepagePart3.tsx,794,/student/login,EXISTS
+src/components/website/HomepagePart3.tsx,810,/register,EXISTS
+src/components/website/HomepagePart3.tsx,910,/partner/login,EXISTS
+src/components/website/HomepagePart3.tsx,915,/partner/login,EXISTS
+src/components/website/HomepagePart3.tsx,922,/partner/register,EXISTS
+src/components/website/HomepagePart3.tsx,927,/partner/register,EXISTS
+src/components/website/HomepagePart3.tsx,1019,/course-finder,EXISTS
+src/components/website/HomepagePart4.tsx,333,/resources,EXISTS
+src/components/website/HomepagePart4.tsx,665,/resources/faqs,EXISTS
+src/components/website/HomepagePart4.tsx,675,https://wa.me/8801805020100,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/HomepagePart4.tsx,775,/book-consultation,EXISTS
+src/components/website/HomepagePart4.tsx,785,/course-finder,EXISTS
+src/components/website/HomepagePart4.tsx,795,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,199,/course-finder?country=${countryData.code},EXISTS
+src/components/website/MasterCountryDestinationView.tsx,205,#lead-form,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,211,/book-consultation,EXISTS
+src/components/website/MasterCountryDestinationView.tsx,217,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,265,/destinations/${countryData.slug},EXISTS
+src/components/website/MasterCountryDestinationView.tsx,270,#editorial-intro,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,273,#quick-facts,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,276,#why-study,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,279,#pathways,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,282,#courses,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,285,#universities,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,288,#budget-calculator,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,291,#entry-requirements,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,294,#visa-process,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,297,#work-rights,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,300,#scholarships,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,303,#faqs,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,426,/course-finder?country=${countryData.code},EXISTS
+src/components/website/MasterCountryDestinationView.tsx,453,/courses/${c.slug || c.courseId},EXISTS
+src/components/website/MasterCountryDestinationView.tsx,474,/universities,EXISTS
+src/components/website/MasterCountryDestinationView.tsx,498,/universities/${u.slug || u.universityId},EXISTS
+src/components/website/MasterLanguagePrepLandingView.tsx,149,#book-counseling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterLanguagePrepLandingView.tsx,154,#test-discovery,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterLanguagePrepLandingView.tsx,159,#test-cards,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterLanguagePrepLandingView.tsx,363,/language-prep/ielts,EXISTS
+src/components/website/MasterLanguagePrepLandingView.tsx,368,/language-prep/pte-academic,EXISTS
+src/components/website/MasterLanguagePrepLandingView.tsx,490,/language-prep/${t.slug},EXISTS
+src/components/website/MasterLanguagePrepLandingView.tsx,532,/language-prep/${t.slug},EXISTS
+src/components/website/MasterLanguagePrepLandingView.tsx,634,#book-counseling,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterLanguagePrepLandingView.tsx,639,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterTestPrepView.tsx,87,/,EXISTS
+src/components/website/MasterTestPrepView.tsx,89,/language-prep,EXISTS
+src/components/website/MasterTestPrepView.tsx,119,#crm-lead-form,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterTestPrepView.tsx,124,#crm-lead-form,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/MasterTestPrepView.tsx,159,#crm-lead-form,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PremiumCountryPage.tsx,175,/course-finder?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,176,/eligibility-check,EXISTS
+src/components/website/PremiumCountryPage.tsx,177,/book-consultation,EXISTS
+src/components/website/PremiumCountryPage.tsx,223,/course-finder?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,224,/book-consultation,EXISTS
+src/components/website/PremiumCountryPage.tsx,280,/course-finder?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,312,/course-finder?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,334,/course/${c.slug || c.courseId},EXISTS
+src/components/website/PremiumCountryPage.tsx,336,/compare?course=${c.courseId},EXISTS
+src/components/website/PremiumCountryPage.tsx,337,/eligibility-check,EXISTS
+src/components/website/PremiumCountryPage.tsx,352,/universities?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,373,/universities/${u.slug || u.universityId},EXISTS
+src/components/website/PremiumCountryPage.tsx,375,/course-finder?university=${u.universityId},EXISTS
+src/components/website/PremiumCountryPage.tsx,376,/eligibility-check,EXISTS
+src/components/website/PremiumCountryPage.tsx,501,"/language-prep/${test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}",EXISTS
+src/components/website/PremiumCountryPage.tsx,502,/student/mock-tests,EXISTS
+src/components/website/PremiumCountryPage.tsx,521,/student/documents,EXISTS
+src/components/website/PremiumCountryPage.tsx,521,/student/documents,EXISTS
+src/components/website/PremiumCountryPage.tsx,593,/student/visa-interview-practice,EXISTS
+src/components/website/PremiumCountryPage.tsx,618,/scholarships?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,624,/scholarships/${s.slug || s.id},EXISTS
+src/components/website/PremiumCountryPage.tsx,624,/eligibility-check,EXISTS
+src/components/website/PremiumCountryPage.tsx,652,/course-finder?country=${encodeURIComponent(countryData.name)}&city=${encodeURIComponent(city.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,723,/eligibility-check,EXISTS
+src/components/website/PremiumCountryPage.tsx,724,/course-finder?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,725,/book-consultation,EXISTS
+src/components/website/PremiumCountryPage.tsx,726,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PremiumCountryPage.tsx,788,/course-finder?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,789,/universities?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,790,/scholarships?country=${encodeURIComponent(countryData.name)},EXISTS
+src/components/website/PremiumCountryPage.tsx,791,/services/visa-guidance,EXISTS
+src/components/website/PremiumCountryPage.tsx,792,/language-prep/ielts,EXISTS
+src/components/website/PremiumCountryPage.tsx,793,/book-consultation,EXISTS
+src/components/website/PremiumCountryPage.tsx,794,/eligibility-check,EXISTS
+src/components/website/PublicFooter.tsx,144,/,EXISTS
+src/components/website/PublicFooter.tsx,162,tel:+8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicFooter.tsx,166,mailto:info@aloeducation.com,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicFooter.tsx,176,https://facebook.com/aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicFooter.tsx,179,https://instagram.com/aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicFooter.tsx,182,https://linkedin.com/company/aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicFooter.tsx,185,https://youtube.com/@aloeducation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicFooter.tsx,235,/book-consultation,EXISTS
+src/components/website/PublicFooter.tsx,254,/privacy-policy,EXISTS
+src/components/website/PublicFooter.tsx,256,/terms,EXISTS
+src/components/website/PublicFooter.tsx,258,/cookies,EXISTS
+src/components/website/PublicFooter.tsx,260,/communication-policy,EXISTS
+src/components/website/PublicFooter.tsx,262,/lead-data-usage-policy,EXISTS
+src/components/website/PublicFooter.tsx,264,/user-guide,EXISTS
+src/components/website/PublicFooter.tsx,266,/accessibility,EXISTS
+src/components/website/PublicNavbar.tsx,279,https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicNavbar.tsx,281,tel:+8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicNavbar.tsx,289,/,EXISTS
+src/components/website/PublicNavbar.tsx,363,/course-finder,EXISTS
+src/components/website/PublicNavbar.tsx,368,/services,EXISTS
+src/components/website/PublicNavbar.tsx,375,/book-consultation,EXISTS
+src/components/website/PublicNavbar.tsx,394,/,EXISTS
+src/components/website/PublicNavbar.tsx,407,/course-finder,EXISTS
+src/components/website/PublicNavbar.tsx,408,/services,EXISTS
+src/components/website/PublicNavbar.tsx,466,/book-consultation,EXISTS
+src/components/website/PublicNavbar.tsx,474,https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/PublicNavbar.tsx,475,tel:+8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/RelatedContentEngine.tsx,78,/course-finder,EXISTS
+src/components/website/RelatedContentEngine.tsx,79,/book-consultation,EXISTS
+src/components/website/RelatedContentEngine.tsx,115,/course-finder?university=${universityId || ''}&country=${country || ''},EXISTS
+src/components/website/ResourceDetailHub.tsx,35,/resources,EXISTS
+src/components/website/ResourceDetailHub.tsx,41,/,EXISTS
+src/components/website/ResourceDetailHub.tsx,41,/resources,EXISTS
+src/components/website/ResourceDetailHub.tsx,72,#${id},EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/ResourceDetailHub.tsx,149,/book-consultation,EXISTS
+src/components/website/ResourceDetailHub.tsx,150,/course-finder,EXISTS
+src/components/website/ResourceDetailHub.tsx,151,/eligibility-check,EXISTS
+src/components/website/ResourceDetailHub.tsx,152,/contact,EXISTS
+src/components/website/ResourceDetailHub.tsx,158,/course-finder,EXISTS
+src/components/website/ResourceDetailHub.tsx,158,/book-consultation,EXISTS
+src/components/website/ResourceDetailHub.tsx,158,/resources,EXISTS
+src/components/website/ResourcesCategoryListing.tsx,50,/,EXISTS
+src/components/website/ResourcesCategoryListing.tsx,51,/resources,EXISTS
+src/components/website/ResourcesCategoryListing.tsx,78,/resources,EXISTS
+src/components/website/ResourcesCategoryListing.tsx,93,/resources/${categorySlug}/${b.slug},EXISTS
+src/components/website/ScholarshipDetailHub.tsx,35,/scholarships,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,41,/,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,41,/scholarships,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,73,/eligibility-check,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,74,/book-consultation,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,75,/scholarships,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,168,/eligibility-check,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,169,/course-finder,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,170,/book-consultation,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,171,/contact,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,176,/eligibility-check,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,176,/book-consultation,EXISTS
+src/components/website/ScholarshipDetailHub.tsx,176,/scholarships,EXISTS
+src/components/website/ScholarshipsListing.tsx,120,/eligibility-check,EXISTS
+src/components/website/ScholarshipsListing.tsx,121,/book-consultation,EXISTS
+src/components/website/ScholarshipsListing.tsx,183,/scholarships/${s.slug},EXISTS
+src/components/website/ScholarshipsListing.tsx,184,/eligibility-check,EXISTS
+src/components/website/ScholarshipsListing.tsx,198,/eligibility-check,EXISTS
+src/components/website/ScholarshipsListing.tsx,199,/course-finder,EXISTS
+src/components/website/ScholarshipsListing.tsx,200,/book-consultation,EXISTS
+src/components/website/ServiceDetailHub.tsx,35,/services,EXISTS
+src/components/website/ServiceDetailHub.tsx,48,/,EXISTS
+src/components/website/ServiceDetailHub.tsx,48,/services,EXISTS
+src/components/website/ServiceDetailHub.tsx,57,/book-consultation,EXISTS
+src/components/website/ServiceDetailHub.tsx,59,/register,EXISTS
+src/components/website/ServiceDetailHub.tsx,61,/eligibility-check,EXISTS
+src/components/website/ServiceDetailHub.tsx,165,/language-prep,EXISTS
+src/components/website/ServiceDetailHub.tsx,172,/scholarships,EXISTS
+src/components/website/ServiceDetailHub.tsx,200,/services/${s.slug},EXISTS
+src/components/website/ServiceDetailHub.tsx,219,/book-consultation,EXISTS
+src/components/website/ServiceDetailHub.tsx,220,/course-finder,EXISTS
+src/components/website/ServiceDetailHub.tsx,221,/eligibility-check,EXISTS
+src/components/website/ServiceDetailHub.tsx,222,/contact,EXISTS
+src/components/website/ServiceDetailHub.tsx,223,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/ServiceDetailHub.tsx,230,/book-consultation,EXISTS
+src/components/website/ServiceDetailHub.tsx,230,/contact,EXISTS
+src/components/website/ServiceDetailHub.tsx,230,/course-finder,EXISTS
+src/components/website/TestPreparationMiniCard.tsx,49,/language-prep,EXISTS
+src/components/website/TestPreparationMiniCard.tsx,101,/language-prep,EXISTS
+src/components/website/UniversitiesListing.tsx,155,/universities/${university.slug || university.id},EXISTS
+src/components/website/UniversityHub.tsx,69,/universities,EXISTS
+src/components/website/UniversityHub.tsx,91,/,EXISTS
+src/components/website/UniversityHub.tsx,91,/universities,EXISTS
+src/components/website/UniversityHub.tsx,105,/eligibility-check,EXISTS
+src/components/website/UniversityHub.tsx,106,#popular-courses,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/UniversityHub.tsx,107,/compare,EXISTS
+src/components/website/UniversityHub.tsx,201,/course/${c.slug || c.courseId},EXISTS
+src/components/website/UniversityHub.tsx,229,/scholarships?university=${uni.universityId},EXISTS
+src/components/website/UniversityHub.tsx,253,"/destinations/${country.toLowerCase().replace(/[^a-z0-9]+/g, '-')}",EXISTS
+src/components/website/UniversityHub.tsx,257,"/destinations/${country.toLowerCase().replace(/[^a-z0-9]+/g, '-')}",EXISTS
+src/components/website/UniversityHub.tsx,257,/course-finder,EXISTS
+src/components/website/UniversityHub.tsx,268,/eligibility-check,EXISTS
+src/components/website/UniversityHub.tsx,269,/book-consultation,EXISTS
+src/components/website/UniversityHub.tsx,270,/course-finder?university=${uni.universityId},EXISTS
+src/components/website/UniversityHub.tsx,277,/eligibility-check,EXISTS
+src/components/website/UniversityHub.tsx,277,/book-consultation,EXISTS
+src/components/website/UniversityHub.tsx,277,/course-finder?university=${uni.universityId},EXISTS
+src/components/website/UniversityHub.tsx,277,/compare,EXISTS
+src/components/website/public-pages/PublicConsultationPage.tsx,325,https://wa.me/8801805020101?text=I%20want%20to%20book%20a%20consultation,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/public-pages/PublicPages.tsx,559,/scholarships/${slug},EXISTS
+src/components/website/public-pages/PublicPages.tsx,624,/services/${s.slug},EXISTS
+src/components/website/public-pages/PublicPages.tsx,638,/eligibility-check,EXISTS
+src/components/website/public-pages/PublicPages.tsx,929,https://wa.me/8801805020101,EXTERNAL/OTHER — LIVE NOT VERIFIED
+src/components/website/public-pages/PublicPages.tsx,1074,/english-test-prep,EXISTS
+src/components/website/public-pages/PublicPages.tsx,1105,/english-test-prep/${t.slug},EXISTS
+src/components/website/public-pages/PublicPages.tsx,1243,/eligibility-check,EXISTS
+src/components/website/public-pages/PublicPages.tsx,1248,/book-consultation,EXISTS
+src/components/website/public-pages/PublicPages.tsx,1280,/course-finder,EXISTS

@@ -27,7 +27,7 @@ interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; en
 
 /* ═══════════════════════════════════════════════════════════════ FALLBACKS ═══ */
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'united-kingdom', flag: '🇬🇧', accentColor: '#2563EB', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'World-Class Education in the Heart of Europe', universityCount: 42, courseCount: 1200, scholarshipCount: 35 },
+  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#2563EB', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'World-Class Education in the Heart of Europe', universityCount: 42, courseCount: 1200, scholarshipCount: 35 },
   { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#3B82F6', heroImage: '/images/hero-banners/USA slide Banner.webp', heroCity: 'New York', heroIntake: 'Aug 2025 / Jan 2026', heroSubtitle: 'Top Universities & Endless Career Opportunities', universityCount: 50, courseCount: 1500, scholarshipCount: 40 },
   { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F97316', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroIntake: 'Sep 2025 / Jan 2026 / May 2026', heroSubtitle: 'Immigration-Friendly Pathways to Your Future', universityCount: 35, courseCount: 950, scholarshipCount: 28 },
   { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/hero-banners/Australia slide Banner.webp', heroCity: 'Sydney', heroIntake: 'Feb 2026 / Jul 2026', heroSubtitle: 'Quality Education & Post-Study Work Rights', universityCount: 30, courseCount: 800, scholarshipCount: 22 },
@@ -263,11 +263,11 @@ function CourseFinderSection() {
             <Button onClick={handleSearch} className="h-12 rounded-xl font-semibold text-white" style={{ backgroundColor: C.orange }}><Search className="mr-2 h-4 w-4" /> Find Courses</Button>
           </div>
           <div className="mt-4 flex justify-center">
-            <a href="/eligibility-check">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="min-h-[48px] h-12 rounded-xl font-semibold border-2 px-8" style={{ borderColor: C.blue, color: C.blue }}>
+            <Button asChild variant="outline" className="min-h-[48px] h-12 rounded-xl font-semibold border-2 px-8" style={{ borderColor: C.blue, color: C.blue }}>
+              <a href="/eligibility-check">
                 <Sparkles className="mr-2 h-4 w-4" /> AI Course Match
-              </Button>
-            </a>
+              </a>
+            </Button>
           </div>
         </motion.div>
       </div>
@@ -318,8 +318,12 @@ function DestinationsSection() {
                   </div>
                   {d.visaType && <Badge variant="outline" className="text-xs w-fit" style={{ borderColor: d.accentColor, color: d.accentColor }}>{d.visaType}</Badge>}
                   <div className="flex gap-2 pt-1">
-                    <a href={`/destinations/${d.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full h-10 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>View Guide</Button></a>
-                    <a href={`/course-finder?country=${d.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="w-full h-10 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>{t('cta.findCourse')}</Button></a>
+                    <Button asChild variant="outline" size="sm" className="flex-1 h-10 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>
+                      <a href={`/destinations/${d.slug}`}>View Guide</a>
+                    </Button>
+                    <Button asChild size="sm" className="flex-1 h-10 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>
+                      <a href={`/course-finder?country=${d.slug}`}>{t('cta.findCourse')}</a>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -450,12 +454,35 @@ function MissionVisionValues() {
   );
 }
 
+/* ═════════════════════════════════════════════ ENGLISH TEST PROMOTION ═══ */
+function EnglishTestPromotion() {
+  return (
+    <section className="bg-white px-4 py-8 sm:px-6" aria-labelledby="english-test-promotion-title">
+      <a
+        href="https://english.aloeducation.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-5 rounded-2xl bg-emerald-700 px-6 py-6 text-white shadow-lg transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300 sm:flex-row sm:items-center sm:px-8"
+      >
+        <div>
+          <p id="english-test-promotion-title" className="text-xl font-bold sm:text-2xl">আপনি কি ইংরেজি পরীক্ষা দিতে চান?</p>
+          <p className="mt-2 text-sm text-emerald-50 sm:text-base">ALO Education Student ID ব্যবহার করলে ৩টি Mock Test FREE</p>
+        </div>
+        <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-emerald-800">
+          English Test শুরু করুন <span aria-hidden="true" className="ml-2">→</span>
+        </span>
+      </a>
+    </section>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════ EXPORT ═══ */
 export default function HomepagePart1() {
   return (
     <>
       <HeroSection />
       <CourseFinderSection />
+      <EnglishTestPromotion />
       <DestinationsSection />
       <AboutSection />
       <MissionVisionValues />

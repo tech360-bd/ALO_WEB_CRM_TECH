@@ -101,6 +101,78 @@ describe("proxy API exposure policy", () => {
   });
 });
 
+describe("proxy public marketing page exposure (2026-10-08 production regression)", () => {
+  // Production verification on commit 61eca94 showed these public pages
+  // redirecting anonymous visitors to /login?callbackUrl=... because they were
+  // missing from PUBLIC_ROUTES — breaking the homepage "Check Eligibility"
+  // CTA and the navbar "Application Tips" link.
+  it("keeps public marketing/SEO pages reachable without a session", () => {
+    for (const path of [
+      "/eligibility-check",
+      "/eligibility-checker",
+      "/english-test-prep",
+      "/english-test-prep/ielts",
+      "/english-tests/ielts",
+      "/news",
+      "/news/some-article",
+      "/events",
+      "/compare",
+      "/application-process",
+      "/admission-requirements",
+    ]) {
+      expect(isPublicPageRequest(path), path).toBe(true);
+    }
+  });
+
+  it("still gates authenticated portals and unknown pages", () => {
+    for (const path of [
+      "/student/dashboard",
+      "/admin/dashboard",
+      "/crm/leads",
+      "/partner/students",
+      "/counselor/inbox",
+      "/application-manager/applications",
+      "/super-admin/settings",
+      "/not-a-public-page",
+    ]) {
+      expect(isPublicPageRequest(path), path).toBe(false);
+    }
+  });
+});
+
+describe("proxy public language-prep data APIs (2026-10-08 production regression)", () => {
+  // The public /language-prep pages fetch these; when they were gated, every
+  // test detail page rendered "Test not found" and the comparison table was
+  // empty for anonymous visitors.
+  it("allows anonymous reads of the public language-prep data endpoints", () => {
+    expect(isPublicApiRequest("/api/language-prep/tests", "GET")).toBe(true);
+    expect(isPublicApiRequest("/api/language-prep/tests/ielts", "GET")).toBe(true);
+    expect(isPublicApiRequest("/api/language-prep/comparison", "GET")).toBe(true);
+    expect(isPublicApiRequest("/api/language-prep/requirements", "GET")).toBe(true);
+  });
+
+  it("keeps student profiles and the staff leads list protected", () => {
+    expect(isPublicApiRequest("/api/language-prep/student-profile", "GET")).toBe(false);
+    expect(isPublicApiRequest("/api/language-prep/student-profile", "POST")).toBe(false);
+    expect(isPublicApiRequest("/api/language-prep/leads", "GET")).toBe(false);
+    // Lead capture stays publicly writable (existing funnel).
+    expect(isPublicApiRequest("/api/language-prep/leads", "POST")).toBe(true);
+  });
+});
+
+describe("proxy public metrics/related-content APIs (2026-10-08 production regression)", () => {
+  it("allows anonymous reads of the documented-public content endpoints", () => {
+    expect(isPublicApiRequest("/api/metrics", "GET")).toBe(true);
+    expect(isPublicApiRequest("/api/related-content", "GET")).toBe(true);
+  });
+
+  it("does not open write methods or unrelated prefixes", () => {
+    expect(isPublicApiRequest("/api/metrics", "POST")).toBe(false);
+    expect(isPublicApiRequest("/api/related-content", "POST")).toBe(false);
+    expect(isPublicApiRequest("/api/metrics-admin", "GET")).toBe(false);
+  });
+});
+
 describe("proxy public consultation workflow", () => {
   it("allows anonymous POST to the public consultation lead endpoint", () => {
     expect(isPublicApiRequest("/api/website/lead", "POST")).toBe(true);

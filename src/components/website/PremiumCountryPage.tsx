@@ -153,23 +153,9 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
       ],
     };
     setEligibilityResult(result);
-    // Save to timeline if logged in — spec 15: if logged in save assessment to student timeline
-    try {
-      const portalState: any = (typeof window !== 'undefined' ? (window as any).__portalStore : null) || null;
-      // Attempt to save via API if session exists (RBAC protected, no public exposure)
-      await fetch('/api/student/timeline', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'AI_VISA_READINESS',
-          country: countryData.slug,
-          countryName: countryData.name,
-          input: { level: calcLevel },
-          result,
-          disclaimer: 'AI provides preparation guidance only. Final review must be completed by ALO staff. AI cannot guarantee visa approval.'
-        }),
-      }).catch(()=>{});
-    } catch {}
+    // This public calculator intentionally does not write to a student timeline.
+    // The previous fire-and-forget POST targeted a nonexistent API and could not
+    // authenticate or associate an anonymous result with a student safely.
   };
 
   return (

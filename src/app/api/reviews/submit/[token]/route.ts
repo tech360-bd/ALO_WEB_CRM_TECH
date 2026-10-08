@@ -8,7 +8,15 @@ const tokenDigest = (token: string) => createHash('sha256').update(token, 'utf8'
 // Public endpoint — fetches the invitation details so the student can
 // submit their review without logging in. Marks the invitation as OPENED.
 export async function GET(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
-  const { token } = await params;
+  try {
+    return await handleGet(await params);
+  } catch (error) {
+    console.error('[reviews/submit] GET failed', error instanceof Error ? error.name : 'unknown');
+    return NextResponse.json({ error: "Review service is temporarily unavailable." }, { status: 503 });
+  }
+}
+
+async function handleGet({ token }: { token: string }) {
   const invitation = await db.reviewInvitation.findUnique({ where: { token: tokenDigest(token) } });
 
   if (!invitation) {
@@ -50,8 +58,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ toke
 // Public endpoint — student submits their review. Consent is captured explicitly.
 // The review is NEVER auto-published — it goes to the moderation queue.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
-  const { token } = await params;
-  const body = await req.json();
+  try {
+    return await handlePost(req, await params);
+  } catch (error) {
+    console.error('[reviews/submit] POST failed', error instanceof Error ? error.name : 'unknown');
+    return NextResponse.json({ error: "Review service is temporarily unavailable." }, { status: 503 });
+  }
+}
+
+async function handlePost(req: NextRequest, { token }: { token: string }) {
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return NextResponse.json({ error: "A valid JSON body is required." }, { status: 400 });
+  }
   const {
     rating, reviewText, photoFileId,
     consentPublish, consentMarketing, consentShowName,
@@ -60,10 +79,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     consentPublish: boolean; consentMarketing: boolean; consentShowName: boolean;
   };
 
-  if (!rating || rating < 1 || rating > 5) {
+  if (typeof rating !== 'number' || !Number.isInteger(rating) || rating < 1 || rating > 5) {
     return NextResponse.json({ error: "Rating must be between 1 and 5." }, { status: 400 });
   }
-  if (!reviewText || reviewText.trim().length < 10) {
+  if (typeof reviewText !== 'string' || reviewText.trim().length < 10) {
     return NextResponse.json({ error: "Please write at least a short review." }, { status: 400 });
   }
 
@@ -95,7 +114,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
       serviceType: invitation.serviceType,
       rating,
       reviewText,
-      photoFileId,
+      photoFileId: typeof photoFileId === 'string' ? photoFileId.slice(0, 191) : null,
       // Consent (explicitly captured)
       consentPublish: !!consentPublish,
       consentMarketing: !!consentMarketing,

@@ -786,7 +786,7 @@ function StudentPortalPreview() {
           variants={staggerContainer}
         >
           <motion.div variants={staggerItem}>
-            <Link href="/login" className="block"><Button
+            <Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
               style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
@@ -795,18 +795,22 @@ function StudentPortalPreview() {
                 Student Login
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </Button></Link>
+            </Button>
           </motion.div>
           <motion.div variants={staggerItem}>
-            <Link href="/register" className="block"><Button
+            <Button
               className="h-12 rounded-xl text-sm font-semibold px-8"
               style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
               asChild
             >
-              <Link href="/student/register">
+              {/* /register is the canonical student registration page; the old
+                  nested Link pointed at /student/register, which redirects to
+                  the login page in production (broken sign-up funnel), and the
+                  Link-inside-Link markup was invalid nested anchors. */}
+              <Link href="/register">
                 Create Student Account
               </Link>
-            </Button></Link>
+            </Button>
           </motion.div>
         </motion.div>
       </div>

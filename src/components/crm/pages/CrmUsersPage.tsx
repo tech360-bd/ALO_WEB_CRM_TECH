@@ -117,10 +117,12 @@ export default function CrmUsersPage() {
     if (!target) return;
     const newStatus = target.status === 'active' ? 'suspended' : 'active';
     try {
-      const res = await fetch(`/api/admin/users/${id}`, {
+      // The admin users contract updates records through the collection route;
+      // userId is required in the body (there is no /api/admin/users/[id]).
+      const res = await fetch('/api/admin/users', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ userId: id, status: newStatus }),
       });
       if (res.ok) {
         setUsers(prev => prev.map(u => u.id === id ? { ...u, status: newStatus } : u));

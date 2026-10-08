@@ -858,7 +858,7 @@ export function UniversityDirectoryEnhanced() {
         <PaginationPrevious
           onClick={() => handlePageChange(page - 1)}
           className={page <= 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-          href="#"
+          href={`?page=${Math.max(1, page - 1)}`}
           onClickCapture={(e) => e.preventDefault()}
         />
       </PaginationItem>
@@ -873,7 +873,7 @@ export function UniversityDirectoryEnhanced() {
       items.push(
         <PaginationItem key={1}>
           <PaginationLink
-            href="#"
+            href="?page=1"
             onClickCapture={(e) => e.preventDefault()}
             onClick={() => handlePageChange(1)}
             className="cursor-pointer"
@@ -895,7 +895,7 @@ export function UniversityDirectoryEnhanced() {
       items.push(
         <PaginationItem key={i}>
           <PaginationLink
-            href="#"
+            href={`?page=${i}`}
             isActive={i === page}
             onClickCapture={(e) => e.preventDefault()}
             onClick={() => handlePageChange(i)}
@@ -918,7 +918,7 @@ export function UniversityDirectoryEnhanced() {
       items.push(
         <PaginationItem key={totalPages}>
           <PaginationLink
-            href="#"
+            href={`?page=${totalPages}`}
             onClickCapture={(e) => e.preventDefault()}
             onClick={() => handlePageChange(totalPages)}
             className="cursor-pointer"
@@ -934,7 +934,7 @@ export function UniversityDirectoryEnhanced() {
         <PaginationNext
           onClick={() => handlePageChange(page + 1)}
           className={page >= totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-          href="#"
+          href={`?page=${Math.min(totalPages, page + 1)}`}
           onClickCapture={(e) => e.preventDefault()}
         />
       </PaginationItem>

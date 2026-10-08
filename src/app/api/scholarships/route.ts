@@ -121,7 +121,7 @@ export async function GET(req: Request) {
     });
   } catch (error: any) {
     console.error('[scholarships.list] error', error);
-    return NextResponse.json({ success: false, error: error?.message || 'Failed to fetch scholarships' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to fetch scholarships' }, { status: 500 });
   }
 }
 
