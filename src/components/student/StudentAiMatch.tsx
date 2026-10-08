@@ -102,6 +102,9 @@ function CourseCard({ course }: { course: MatchedCourse }) {
   const tuition = formatMoney(course.tuitionFee, course.currency);
   const location = [course.city, course.country].filter(Boolean).join(', ')
     || [uni?.city, uni?.country].filter(Boolean).join(', ');
+  // Resolved once so the JSX below never has to null-guard `uni` inline.
+  const tuitionRange = uni?.tuitionRange ?? '';
+  const ranking = uni?.ranking ?? 0;
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col gap-3 hover:border-blue-300 transition-colors">
@@ -155,18 +158,18 @@ function CourseCard({ course }: { course: MatchedCourse }) {
         </div>
       </div>
 
-      {(uni?.tuitionRange || (uni?.ranking ?? 0) > 0) && (
+      {(tuitionRange || ranking) && (
         <div className="grid grid-cols-2 gap-3 text-sm">
-          {uni?.tuitionRange && (
+          {tuitionRange && (
             <div>
               <p className="text-[11px] text-slate-500">University fee range</p>
-              <p className="font-medium text-slate-800">{uni.tuitionRange}</p>
+              <p className="font-medium text-slate-800">{tuitionRange}</p>
             </div>
           )}
-          {(uni?.ranking ?? 0) > 0 && (
+          {ranking > 0 && (
             <div>
               <p className="text-[11px] text-slate-500">Recorded ranking</p>
-              <p className="font-medium text-slate-800">#{uni.ranking}</p>
+              <p className="font-medium text-slate-800">#{ranking}</p>
             </div>
           )}
         </div>
