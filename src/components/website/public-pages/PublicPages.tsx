@@ -222,86 +222,40 @@ export function PublicCourseFinderPage() {
   );
 }
 
-// ============================================================
-// DESTINATION PAGE — country-specific guide
-// ============================================================
-const DESTINATION_DATA: Record<string, any> = {
-  'united-kingdom': {
-    name: 'United Kingdom', flag: '🇬🇧', currency: 'GBP (£)', language: 'English',
-    avgTuition: '£10,000 - £38,000', avgLiving: '£12,000 - £15,000', workHours: '20 hrs/week',
-    intake: 'September, January', visaType: 'Student Visa (Tier 4)',
-    desc: 'The UK is home to 4 of the world\'s top 10 universities and offers world-class education with rich cultural heritage. International students can work part-time during studies and stay for 2 years post-graduation via the Graduate Route visa.',
-    topUnis: ['University of Oxford', 'University of Cambridge', 'Imperial College London', 'UCL', 'University of Edinburgh'],
-  },
-  'usa': {
-    name: 'United States', flag: '🇺🇸', currency: 'USD ($)', language: 'English',
-    avgTuition: '$25,000 - $55,000', avgLiving: '$10,000 - $18,000', workHours: '20 hrs/week',
-    intake: 'August, January', visaType: 'F-1 Student Visa',
-    desc: 'The USA hosts the largest number of top-ranked universities globally, with unmatched research opportunities, diverse programs, and OPT work authorization for up to 3 years post-graduation for STEM fields.',
-    topUnis: ['MIT', 'Harvard University', 'Stanford University', 'University of California, Berkeley', 'Columbia University'],
-  },
-  'canada': {
-    name: 'Canada', flag: '🇨🇦', currency: 'CAD ($)', language: 'English/French',
-    avgTuition: 'CA$15,000 - CA$35,000', avgLiving: 'CA$10,000 - CA$15,000', workHours: '20 hrs/week',
-    intake: 'September, January, May', visaType: 'Study Permit',
-    desc: 'Canada offers high-quality education at relatively affordable costs, with a clear path to permanent residency through the Post-Graduation Work Permit (PGWP) program. Known for safety, multiculturalism, and welcoming policies.',
-    topUnis: ['University of Toronto', 'University of British Columbia', 'McGill University', 'University of Alberta', 'University of Waterloo'],
-  },
-  'australia': {
-    name: 'Australia', flag: '🇦🇺', currency: 'AUD ($)', language: 'English',
-    avgTuition: 'A$20,000 - A$45,000', avgLiving: 'A$21,000', workHours: '48 hrs/fortnight',
-    intake: 'February, July', visaType: 'Subclass 500 Student Visa',
-    desc: 'Australia boasts 7 universities in the global top 100, with strong industry connections and post-study work rights of 2-4 years. Famous for its quality of life, beautiful landscapes, and diverse student community.',
-    topUnis: ['University of Melbourne', 'University of Sydney', 'UNSW Sydney', 'University of Queensland', 'Monash University'],
-  },
-  'ireland': {
-    name: 'Ireland', flag: '🇮🇪', currency: 'EUR (€)', language: 'English',
-    avgTuition: '€10,000 - €25,000', avgLiving: '€12,000', workHours: '20 hrs/week',
-    intake: 'September, January', visaType: 'Long Stay Study Visa',
-    desc: 'Ireland is the European headquarters of major tech companies (Google, Facebook, Apple) offering excellent post-study career opportunities. English-speaking, friendly, and home to top-ranked universities.',
-    topUnis: ['Trinity College Dublin', 'University College Dublin', 'University of Galway', 'Dublin City University', 'University of Limerick'],
-  },
-  'new-zealand': {
-    name: 'New Zealand', flag: '🇳🇿', currency: 'NZD ($)', language: 'English',
-    avgTuition: 'NZ$22,000 - NZ$35,000', avgLiving: 'NZ$15,000', workHours: '20 hrs/week',
-    intake: 'February, July', visaType: 'Student Visa',
-    desc: 'New Zealand offers a safe, beautiful environment with globally recognized qualifications. Post-study work visa up to 3 years and clear pathway to residency. Famous for outdoor lifestyle and innovation.',
-    topUnis: ['University of Auckland', 'University of Otago', 'Victoria University of Wellington', 'University of Canterbury', 'Massey University'],
-  },
-  'dubai-uae': {
-    name: 'Dubai / UAE', flag: '🇦🇪', currency: 'AED (د.إ)', language: 'English/Arabic',
-    avgTuition: 'AED 40,000 - AED 90,000', avgLiving: 'AED 40,000', workHours: 'Part-time allowed',
-    intake: 'September, January', visaType: 'Student Residence Visa',
-    desc: 'Dubai is a global education hub with branch campuses of top UK, US, and Australian universities. Tax-free economy, strategic location, and growing job market make it an attractive destination.',
-    topUnis: ['NYU Abu Dhabi', 'Heriot-Watt University Dubai', 'University of Birmingham Dubai', 'Middlesex University Dubai', 'American University of Sharjah'],
-  },
-  'germany': {
-    name: 'Germany', flag: '🇩🇪', currency: 'EUR (€)', language: 'German/English',
-    avgTuition: '€0 - €1,500', avgLiving: '€10,000', workHours: '20 hrs/week',
-    intake: 'October, April', visaType: 'Student Visa',
-    desc: 'Germany offers free or low-cost education at world-class public universities. Strong engineering and technical programs, with 18-month post-study work visa. Hub for automotive, engineering, and tech industries.',
-    topUnis: ['Technical University of Munich', 'Heidelberg University', 'LMU Munich', 'RWTH Aachen University', 'Humboldt University of Berlin'],
-  },
-};
 
+/**
+ * Destination guide.
+ *
+ * Rebuilt on COUNTRY_DESTINATIONS. The previous DESTINATION_DATA table carried
+ * tuition ranges, living costs, work-hour limits and a "top universities"
+ * ranking with no source and no verification date, and the overview copy made
+ * ranking claims we cannot evidence. Every figure here now comes from the
+ * verified dataset, which records a source and lastVerifiedAt per country.
+ *
+ * The invented per-country university ranking is gone. Where universities are
+ * listed they come from the verified city records instead.
+ */
 export function PublicDestinationPage({ slug }: { slug: string | null }) {
-  const setPublicPage = usePortalStore((s) => s.setPublicPage);
-  const data = slug ? DESTINATION_DATA[slug] : null;
+  const all = Object.values(COUNTRY_DESTINATIONS).sort((a, b) => a.name.localeCompare(b.name));
+  const data = slug ? COUNTRY_DESTINATIONS[slug] : null;
 
   if (!data) {
     return (
       <PublicShell title="Destinations" subtitle="Choose your study destination">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {Object.entries(DESTINATION_DATA).map(([s, d]) => (
-            <Card
-              key={s}
-              className="p-6 cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => setPublicPage('public-destination', s)}
-            >
-              <div className="text-4xl mb-3">{d.flag}</div>
-              <h3 className="text-xl font-bold text-[#0F172A] mb-1">{d.name}</h3>
-              <p className="text-sm text-slate-600 mb-3 line-clamp-2">{d.desc}</p>
-              <div className="text-xs text-[#2563EB] font-semibold">{d.topUnis.length}+ top universities</div>
+          {all.map((country) => (
+            <Card key={country.slug} className="p-6 hover:shadow-md transition-shadow">
+              <h3 className="text-xl font-bold text-[#0F172A] mb-1">{country.name}</h3>
+              <p className="text-sm text-slate-600 mb-3 line-clamp-3">{country.whyStudySummary}</p>
+              <p className="text-xs text-slate-500 mb-3">
+                {country.lastVerifiedAt ? `Verified ${country.lastVerifiedAt}` : 'Verification date not recorded'}
+              </p>
+              <a
+                href={`/destinations/${country.slug}`}
+                className="text-xs text-[#2563EB] font-semibold hover:underline"
+              >
+                View {country.name} guide
+              </a>
             </Card>
           ))}
         </div>
@@ -309,33 +263,43 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
     );
   }
 
+  const cityUniversities = data.cities.flatMap((city) =>
+    city.universities.map((university) => ({ university, city: city.name }))
+  );
+
   return (
     <PublicShell
-      title={`${data.flag} Study in ${data.name}`}
+      title={`Study in ${data.name}`}
       badge="DESTINATION GUIDE"
-      subtitle={data.desc}
+      subtitle={data.whyStudySummary}
     >
+      <p className="text-xs text-slate-500 mb-6">
+        {data.lastVerifiedAt
+          ? `Figures verified ${data.lastVerifiedAt} against the official sources listed below.`
+          : 'Verification date not recorded for this destination.'}
+      </p>
+
       <div className="grid lg:grid-cols-3 gap-6 mb-10">
         <Card className="p-5">
           <div className="flex items-center gap-2 text-[#2563EB] mb-2">
             <GraduationCap className="h-4 w-4" />
-            <span className="text-xs font-semibold uppercase">Avg Tuition</span>
+            <span className="text-xs font-semibold uppercase">Tuition Range</span>
           </div>
-          <p className="text-lg font-bold text-[#0F172A]">{data.avgTuition}</p>
+          <p className="text-lg font-bold text-[#0F172A]">{data.tuitionRange}</p>
         </Card>
         <Card className="p-5">
           <div className="flex items-center gap-2 text-[#2563EB] mb-2">
             <Building2 className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Living Cost</span>
           </div>
-          <p className="text-lg font-bold text-[#0F172A]">{data.avgLiving}/yr</p>
+          <p className="text-lg font-bold text-[#0F172A]">{data.livingCost}</p>
         </Card>
         <Card className="p-5">
           <div className="flex items-center gap-2 text-[#2563EB] mb-2">
             <Clock className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Work Rights</span>
           </div>
-          <p className="text-lg font-bold text-[#0F172A]">{data.workHours}</p>
+          <p className="text-lg font-bold text-[#0F172A]">{data.workRights}</p>
         </Card>
       </div>
 
@@ -344,10 +308,10 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
           <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
             <FileText className="h-4 w-4 text-[#2563EB]" /> Visa Information
           </h3>
-          <p className="text-sm text-slate-600 mb-2">Visa Type:</p>
+          <p className="text-sm text-slate-600 mb-2">Visa route:</p>
           <p className="font-semibold text-[#0F172A] mb-3">{data.visaType}</p>
-          <p className="text-sm text-slate-600 mb-2">Main Intake:</p>
-          <p className="font-semibold text-[#0F172A]">{data.intake}</p>
+          <p className="text-sm text-slate-600 mb-2">Popular intakes:</p>
+          <p className="font-semibold text-[#0F172A]">{data.popularIntakes.join(', ') || 'Not recorded'}</p>
         </Card>
         <Card className="p-6">
           <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
@@ -355,39 +319,57 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
           </h3>
           <p className="text-sm text-slate-600 mb-2">Currency:</p>
           <p className="font-semibold text-[#0F172A] mb-3">{data.currency}</p>
-          <p className="text-sm text-slate-600 mb-2">Language:</p>
-          <p className="font-semibold text-[#0F172A]">{data.language}</p>
+          <p className="text-sm text-slate-600 mb-2">Capital:</p>
+          <p className="font-semibold text-[#0F172A]">{data.capital}</p>
         </Card>
       </div>
 
-      <h3 className="text-2xl font-bold text-[#0F172A] mb-4">Top Universities in {data.name}</h3>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-        {data.topUnis.map((u: string, i: number) => (
-          <Card key={u} className="p-5">
-            <div className="flex items-center gap-3">
-              <div
-                className="h-10 w-10 rounded-lg flex items-center justify-center font-bold text-white"
-                style={{ backgroundColor: i === 0 ? '#F97316' : '#2563EB' }}
+      <Card className="p-6 mb-10">
+        <h3 className="font-bold text-[#0F172A] mb-3">Overview</h3>
+        <p className="text-sm text-slate-700 leading-relaxed">{data.overview}</p>
+      </Card>
+
+      {cityUniversities.length > 0 && (
+        <>
+          <h3 className="text-2xl font-bold text-[#0F172A] mb-4">Universities by city</h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+            {cityUniversities.map(({ university, city }) => (
+              <Card key={`${city}-${university}`} className="p-5">
+                <p className="font-semibold text-[#0F172A] text-sm">{university}</p>
+                <p className="text-xs text-slate-500">{city}</p>
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
+
+      <Card className="p-6 mb-10">
+        <h3 className="font-bold text-[#0F172A] mb-3">Official sources</h3>
+        <ul className="space-y-2">
+          {data.sources.map((source) => (
+            <li key={`${source.section}-${source.sourceUrl}`} className="text-sm">
+              <span className="text-slate-500">{source.section}: </span>
+              <a
+                href={source.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2563EB] hover:underline"
               >
-                {i + 1}
-              </div>
-              <div>
-                <p className="font-semibold text-[#0F172A] text-sm">{u}</p>
-                <p className="text-xs text-slate-500">{data.name}</p>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+                {source.sourceName}
+              </a>
+              <span className="text-slate-400"> · checked {source.lastVerifiedAt}</span>
+            </li>
+          ))}
+        </ul>
+      </Card>
 
       <div className="bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-2xl p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Ready to study in {data.name}?</h3>
-        <p className="text-blue-100 mb-5">Get free expert guidance from our counselors</p>
-        <Button
-          onClick={() => setPublicPage('public-consultation')}
-          className="bg-[#F97316] text-white hover:brightness-110"
-        >
-          Book Free Consultation
+        <p className="text-blue-100 mb-5">
+          Fees and visa rules change. A counselor confirms the current requirements for your case.
+        </p>
+        <Button asChild className="bg-[#F97316] text-white hover:brightness-110">
+          <a href="/book-consultation">Book Free Consultation</a>
         </Button>
       </div>
     </PublicShell>
