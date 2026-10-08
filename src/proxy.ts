@@ -117,6 +117,19 @@ const PUBLIC_API_READ_ROUTES = [
   "/api/ai/match",
   "/api/ai/sop",
   "/api/ai/student-intake",
+  // Public language-prep pages (/language-prep, /language-prep/[slug],
+  // /language-prep/comparison) load their data from these read-only endpoints.
+  // Without them the public test pages render "Test not found" / empty
+  // comparison tables (verified in production 2026-10-08). student-profile and
+  // the staff leads list stay protected.
+  "/api/language-prep/tests",
+  "/api/language-prep/comparison",
+  "/api/language-prep/requirements",
+  // Public verified-metrics payload (documented as public in its route) used by
+  // the public consultation page, and the public related-content engine used by
+  // the public course/university/scholarship/service/resource detail hubs.
+  "/api/metrics",
+  "/api/related-content",
   "/api/research/provider-status",
   "/api/seo/health",
   "/api/marketing/webhooks/google-business",
