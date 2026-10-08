@@ -5071,7 +5071,7 @@ model EmployeeReassignment {
   fromBranch           String    @default("")
   toBranch             String    @default("")
   effectiveDate        String    @default("")
-  reassignedBy         String
+  reassignedBy         String @default("")
 
   @@index([fromEmployeeId])
   @@index([toEmployeeId])
