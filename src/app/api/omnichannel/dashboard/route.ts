@@ -120,6 +120,7 @@ export async function GET(req: NextRequest) {
 
     await logAuditAction(auth, 'OMNICHANNEL_GLOBAL_DASHBOARD_VIEWED', 'CommunicationDashboard', 'global', {
       counts: { calls: phoneCalls.length, emails: emails.length, sms: sms.length, documents, messages: socialMessages.length + commMessages.length },
+      counts: { calls: phoneCalls.length, emails: emails.length, sms: sms.length, documents: documents, messages: socialMessages.length + commMessages.length },
     });
 
     return NextResponse.json({

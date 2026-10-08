@@ -45,6 +45,7 @@ export const POST = withAuth(async (req, auth) => {
       await tx.portalAuditLog.create({
         data: {
           actorUserId: auth.actorUserId,
+          userId: staffUser?.id ?? undefined,
           action: 'REVIEW_INVITATION_CREATED',
           entityType: 'ReviewInvitation',
           entityId: created.id,
