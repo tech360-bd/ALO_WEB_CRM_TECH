@@ -4,6 +4,24 @@ export const UNIVERSITY_COURSE_INTAKE_WINDOW = {
   label: 'January 2027 – January 2028',
 } as const;
 
+// Eligibility must be an explicit positive status from a source-verified course record.
+// Unknown, blank, closed, or free-text statuses are not treated as international eligibility.
+export const VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES = [
+  'eligible',
+  'eligible for international students',
+  'eligible_for_international_students',
+  'international students eligible',
+  'international_students_eligible',
+  'international eligible',
+  'international_eligible',
+  'yes',
+  'true',
+] as const;
+
+export function verifiedInternationalEligibilityWhere() {
+  return { internationalEligibility: { in: [...VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES] } };
+}
+
 const MONTHS: Array<{ names: string[] }> = [
   { names: ['January', 'Jan'] },
   { names: ['February', 'Feb'] },

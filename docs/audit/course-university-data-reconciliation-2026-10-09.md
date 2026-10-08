@@ -1,5 +1,11 @@
 # University and course data reconciliation — 2026-10-09
 
+## Mandatory page acceptance criterion
+
+Each university information page must ultimately include **every course offered to international students, from Foundation through PhD, with an intake from January 2027 through January 2028 inclusive; no course may be omitted**. The list may be paginated, but every matching course must be reachable. A page can only be certified complete after its official course catalogue has been exhaustively reconciled, course-level international eligibility is source-verified, and each displayed in-window intake has its own authoritative source evidence. Unknown or unresolved records must remain visible as coverage gaps and must block a completeness claim.
+
+The current public listing is intentionally narrower: it returns only source-linked, verified, published CRM courses with an explicit positive international-eligibility status and a source-verified intake in the requested window. The API labels catalogue coverage `RESEARCH_REQUIRED` and reports CRM candidate/verification counts; those counts do **not** prove that no course is missing from the official catalogue. This is a safe interim guard, not satisfaction of the no-omissions criterion.
+
 ## Release decision
 
 **University/course completeness is not established. Keep the data-completeness release gate closed.** This is a repository-file audit, not a query of the production CRM database and not a live verification of university websites. `DATABASE_URL` and `TEST_DATABASE_URL` were not configured for this run, and official university sites were not available to the audit process.

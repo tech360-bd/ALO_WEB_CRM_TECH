@@ -4,6 +4,7 @@ import { getOptionalAuth } from '@/lib/auth-middleware';
 import {
   UNIVERSITY_COURSE_INTAKE_WINDOW,
   universityIntakeWindowWhere,
+  verifiedInternationalEligibilityWhere,
 } from '@/lib/university-intake-window';
 
 const isIntegerParam = (value: string | null, fallback: number) => {
@@ -119,32 +120,42 @@ export async function GET(
 
     if (includeIntakeWindow) {
       const intakeWindowWhere = universityIntakeWindowWhere();
-      const courseWhere: Record<string, unknown> = {
+      const sourceLinkWhere = { OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] };
+      const verifiedPublishedCourseWhere: Record<string, unknown> = {
         universityId: university.universityId,
         status: 'active',
         verificationStatus: 'VERIFIED',
         publicationStatus: { in: ['published', 'PUBLISHED'] },
-        OR: [
-          {
-            intakeFees: {
-              some: {
-                status: 'active',
-                verificationStatus: 'VERIFIED',
-                ...intakeWindowWhere,
-              },
-            },
+        AND: [sourceLinkWhere],
+      };
+      const courseWhere: Record<string, unknown> = {
+        ...verifiedPublishedCourseWhere,
+        ...verifiedInternationalEligibilityWhere(),
+        intakeFees: {
+          some: {
+            status: 'active',
+            verificationStatus: 'VERIFIED',
+            intakeSourceUrl: { not: '' },
+            ...intakeWindowWhere,
           },
-          {
-            courseIntakes: {
-              some: intakeWindowWhere,
-            },
-          },
-        ],
+        },
       };
 
-      const [totalCourses, coursesWithRecordedCode, matchingCourses] = await Promise.all([
+      const [
+        totalCourses,
+        coursesWithRecordedCode,
+        candidateCourseRecords,
+        verifiedPublishedCourseRecords,
+        verifiedInternationalCourseRecords,
+        eligibilityNotConfirmedCourseRecords,
+        matchingCourses,
+      ] = await Promise.all([
         db.crmCourse.count({ where: courseWhere }),
         db.crmCourse.count({ where: { ...courseWhere, courseCode: { not: '' } } }),
+        db.crmCourse.count({ where: { universityId: university.universityId } }),
+        db.crmCourse.count({ where: verifiedPublishedCourseWhere }),
+        db.crmCourse.count({ where: { ...verifiedPublishedCourseWhere, ...verifiedInternationalEligibilityWhere() } }),
+        db.crmCourse.count({ where: { universityId: university.universityId, NOT: verifiedInternationalEligibilityWhere() } }),
         db.crmCourse.findMany({
           where: courseWhere,
           skip: (coursePage - 1) * courseLimit,
@@ -155,12 +166,9 @@ export async function GET(
               where: {
                 status: 'active',
                 verificationStatus: 'VERIFIED',
+                intakeSourceUrl: { not: '' },
                 ...intakeWindowWhere,
               },
-              orderBy: [{ intakeYear: 'asc' }, { intakeMonth: 'asc' }],
-            },
-            courseIntakes: {
-              where: intakeWindowWhere,
               orderBy: [{ intakeYear: 'asc' }, { intakeMonth: 'asc' }],
             },
             requirements: {
@@ -182,6 +190,14 @@ export async function GET(
         courseCodesRecorded: coursesWithRecordedCode,
         courseCodesMissing: Math.max(0, totalCourses - coursesWithRecordedCode),
         courseCodeMeaning: 'Counts non-empty CrmCourse.courseCode fields; this is not proof of complete official-code coverage.',
+        catalogueCoverageStatus: 'RESEARCH_REQUIRED',
+        catalogueCoverageStatement: 'This is a paginated list of source-linked, verified, published course records with explicit international eligibility and a source-verified intake in the requested window. CRM counts do not prove the university catalogue is exhaustive.',
+        candidateCourseRecords,
+        verifiedPublishedCourseRecords,
+        verifiedInternationalCourseRecords,
+        eligibilityNotConfirmedCourseRecords,
+        courseRecordsNotCurrentlyPublishable: Math.max(0, candidateCourseRecords - verifiedPublishedCourseRecords),
+        verifiedInternationalCoursesWithoutWindowIntake: Math.max(0, verifiedInternationalCourseRecords - totalCourses),
       };
     }
 
