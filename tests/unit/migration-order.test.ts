@@ -160,6 +160,17 @@ describe('prisma migration chain (re-baselined 2026-10-01)', () => {
     }
   });
 
+  it('stores the monitoring job description as TEXT for long operator guidance', () => {
+    const schema = readFileSync(schemaPath, 'utf8');
+    const modelText = schema.split('model MonitoringJob {')[1];
+    const modelBody = modelText?.split(String.fromCharCode(10) + '}')[0];
+    const description = modelBody?.split(String.fromCharCode(10)).find((line) => line.trimStart().startsWith('description '));
+    const migration = readFileSync(join(migrationsDir, '20261008020000_monitoring_job_description_text', 'migration.sql'), 'utf8');
+
+    expect(description).toContain('@db.Text');
+    expect(migration).toContain('ALTER TABLE `MonitoringJob` MODIFY `description` TEXT NULL;');
+  });
+
   it('0_init is unedited Prisma-generated SQL (regenerated header intact)', () => {
     const init = readFileSync(join(migrationsDir, '0_init', 'migration.sql'), 'utf8');
     expect(init).toContain('prisma migrate diff --from-empty --to-schema-datamodel');

@@ -8958,7 +8958,7 @@ model MonitoringJob {
   id                 String    @id @default(cuid())
   jobId              String    @unique // stable identifier e.g. "university-monitor-7d"
   name               String // "ALO University & Official Data Monitoring Agent"
-  description        String?
+  description        String?   @db.Text
   schedule           String    @default("0 3 * * 1") // cron: every Monday 03:00
   enabled            Boolean   @default(true)
   // Locking (prevents duplicate concurrent execution)

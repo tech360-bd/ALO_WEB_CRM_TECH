@@ -51,7 +51,7 @@ const roleIds: string[] = [];
 async function makeUser(userType: string, roleName: string, label: string): Promise<Fixture> {
   const email = `itest-${label}-${SUFFIX}@aloedu.test`;
   const user = await db.portalUser.create({
-    data: { email, name: `Test ${label}`, userType, status: 'active', passwordHash: 'x' },
+    data: { email, name: `Test ${label}`, userType, status: 'active', emailVerified: true, passwordHash: 'x' },
   });
   made.push(user.id);
 
