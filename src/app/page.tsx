@@ -54,7 +54,7 @@ import OldCrmImportCenterPage from '@/components/crm/pages/OldCrmImportCenterPag
 import UniversityDataUpdateCenterPage from '@/components/crm/pages/UniversityDataUpdateCenterPage';
 import AccessControlCenterPage from '@/components/admin/AccessControlCenterPage';
 import PartnerSuperAdminDashboard from '@/components/partner/PartnerSuperAdminDashboard';
-import PartnerMarketingStudioPage from '@/components/partner/PartnerMarketingStudioPage';
+import { PartnerMarketingStudio } from '@/components/alo/views/partner-marketing-studio';
 import StudentMessages from '@/components/student/StudentMessages';
 import StudentSopCvStudio from '@/components/student/StudentSopCvStudio';
 import StudentScholarships from '@/components/student/StudentScholarships';
@@ -427,8 +427,8 @@ const crmPageMap: Record<string, React.ReactNode> = {
   'crm-university-updates': <UniversityDataUpdateCenterPage />,
   'crm-access-control-center': <AccessControlCenterPage />,
   'partner-admin-dashboard': <PartnerSuperAdminDashboard />,
-  'partner-admin-marketing-studio': <PartnerMarketingStudioPage />,
-  'partner-admin-content-generator': <PartnerMarketingStudioPage />,
+  'partner-admin-marketing-studio': <PartnerMarketingStudio />,
+  'partner-admin-content-generator': <PartnerMarketingStudio />,
   'employee-visa-dashboard': <VisaOfficerDashboard />,
   'employee-visa-officer': <VisaOfficerDashboard />,
   'employee-visa-interview-officer': <VisaOfficerDashboard />,
