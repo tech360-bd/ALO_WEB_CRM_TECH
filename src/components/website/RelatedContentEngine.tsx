@@ -73,10 +73,10 @@ export default function RelatedContentEngine({ sourceType, sourceId = '', source
   if (related.length === 0) {
     return (
       <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl">
-        <p className="text-sm text-gray-600">No related content yet. Related content engine will populate based on country, university, course, study level, subject, tags priority: exact relationship → same university → same country → same subject → same destination → same tag/category.</p>
+        <p className="text-sm text-gray-600">Explore courses or speak with a counselor for guidance on your next step.</p>
         <div className="flex gap-2 mt-4">
-          <Link href="/course-finder"><Button size="sm" className="bg-[#2563EB] text-white h-11">Find Courses</Button></Link>
-          <Link href="/book-consultation"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-11">Book Consultation</Button></Link>
+          <Link href="/course-finder"><Button size="sm" className="bg-[#0057B8] text-white h-12">Find Courses</Button></Link>
+          <Link href="/book-consultation"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-12">Book Consultation</Button></Link>
         </div>
       </Card>
     );
@@ -86,7 +86,7 @@ export default function RelatedContentEngine({ sourceType, sourceId = '', source
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold text-[#0F172A]">{title}</h3>
-        <Badge className="bg-[#F8FAFC] text-gray-600 border-[#E2E8F0] text-[10px]">{related.length} related items — DB-driven</Badge>
+        <Badge className="bg-[#F8FAFC] text-gray-600 border-[#E2E8F0] text-[10px]">{related.length} related items</Badge>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {related.slice(0, 8).map((item: any, i: number) => {
@@ -95,16 +95,16 @@ export default function RelatedContentEngine({ sourceType, sourceId = '', source
           const href = linkFn(item.slug);
           return (
             <Link key={i} href={href}>
-              <Card className="p-4 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+              <Card className="p-4 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <div className="w-8 h-8 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center"><Icon className="w-4 h-4 text-[#2563EB]" /></div>
+                    <div className="w-8 h-8 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center"><Icon className="w-4 h-4 text-[#0057B8]" /></div>
                     <Badge className="bg-[#F8FAFC] text-gray-600 border-[#E2E8F0] text-[10px]">{item.relation?.replace(/_/g, ' ')}</Badge>
                   </div>
                   <h4 className="font-semibold text-sm text-[#0F172A] line-clamp-2 mb-1">{item.title}</h4>
                   {item.subtitle && <p className="text-xs text-gray-500 line-clamp-1">{item.subtitle}</p>}
                 </div>
-                <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#2563EB]">View Details <ArrowRight className="w-3 h-3" /></div>
+                <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#0057B8]">View Details <ArrowRight className="w-3 h-3" /></div>
               </Card>
             </Link>
           );
@@ -112,7 +112,7 @@ export default function RelatedContentEngine({ sourceType, sourceId = '', source
       </div>
       {related.length > 4 && (
         <div className="text-center pt-2">
-          <Link href={`/course-finder?university=${universityId || ''}&country=${country || ''}`}><Button variant="outline" className="border-[#E2E8F0] text-xs h-11">View More Related Information</Button></Link>
+          <Link href={`/course-finder?university=${universityId || ''}&country=${country || ''}`}><Button variant="outline" className="border-[#E2E8F0] text-xs h-12">View More Related Information</Button></Link>
         </div>
       )}
     </div>

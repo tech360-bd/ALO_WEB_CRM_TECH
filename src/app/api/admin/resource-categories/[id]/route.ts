@@ -79,51 +79,12 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    const force = req.nextUrl.searchParams.get("force") === "1";
-    if (force && role !== "SUPER_ADMIN") {
-      return NextResponse.json({ error: "Only SUPER_ADMIN may force-reassign resources" }, { status: 403 });
-    }
-    const existing = await db.resourceCategory.findUnique({
-      where: { id },
-      include: { _count: { select: { resources: true } } },
+    const existing = await db.resourceCategory.findUnique({ where: { id } });
+    if (!existing) return NextResponse.json({ error: "Category not found" }, { status: 404 });
+    await db.$transaction(async tx => {
+      await tx.resourceCategory.update({ where: { id }, data: { status: "ARCHIVED" } });
+      await contentAuditLog.create({ data: { userId, action: "RESOURCE_CATEGORY_ARCHIVE", resource: "ResourceCategory", resourceId: id, details: { slug: existing.slug } } }, tx);
     });
-    if (!existing) {
-      return NextResponse.json({ error: "Category not found" }, { status: 404 });
-    }
-
-    if (existing._count.resources > 0 && !force) {
-      return NextResponse.json(
-        {
-          error: `Category has ${existing._count.resources} resources. Reassign them first or pass ?force=1 to reassign to 'blogs' fallback.`,
-        },
-        { status: 409 }
-      );
-    }
-
-    if (existing._count.resources > 0 && force) {
-      // Reassign to "blogs" category (assumed to always exist)
-      const fallback = await db.resourceCategory.findUnique({ where: { slug: "blogs" } });
-      const fallbackId = fallback?.id;
-      if (!fallbackId) {
-        return NextResponse.json({ error: "Fallback category 'blogs' not found" }, { status: 500 });
-      }
-      await db.resource.updateMany({
-        where: { categoryId: id },
-        data: { categoryId: fallbackId },
-      });
-    }
-
-    await db.resourceCategory.delete({ where: { id } });
-
-    await contentAuditLog.create({
-      data: {
-        userId,
-        action: "RESOURCE_CATEGORY_DELETE",
-        resource: "ResourceCategory",
-        resourceId: id,
-        details: JSON.stringify({ slug: existing.slug, force, resourcesReassigned: existing._count.resources }),
-      },
-    }).catch(() => {});
 
     return NextResponse.json({ success: true, id });
   } catch (err: any) {

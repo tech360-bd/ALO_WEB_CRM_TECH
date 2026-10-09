@@ -19,6 +19,7 @@ import { RESOURCE_CATEGORIES } from '@/lib/website/resource-categories';
 export default function ResourcesHubPage() {
   const [resources, setResources] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -34,11 +35,12 @@ export default function ResourcesHubPage() {
     if (country) params.set('country', country);
     if (level) params.set('level', level);
     setLoading(true);
+    setError(null);
     const t = setTimeout(() => {
       fetch(`/api/resources?${params.toString()}`)
-        .then(r => r.json())
+        .then(r => { if (!r.ok) throw new Error("Resources could not be loaded"); return r.json(); })
         .then(d => setResources(d.resources || []))
-        .catch(() => setResources([]))
+        .catch(e => { setResources([]); setError(e.message); })
         .finally(() => setLoading(false));
     }, 250);
     return () => clearTimeout(t);
@@ -83,7 +85,7 @@ export default function ResourcesHubPage() {
             </form>
             <div className="flex flex-wrap gap-2 mt-3" role="tablist" aria-label="Resource categories">
               <button type="button" onClick={() => setActiveCategory(null)} className={`text-[11px] px-3 py-1.5 rounded-full border transition-colors min-h-[32px] ${activeCategory === null ? 'bg-[#0057B8] text-white border-[#0057B8]' : 'bg-white text-gray-700 border-[#E2E8F0]'}`}>All</button>
-              {RESOURCE_CATEGORIES.map((cat) => {
+              {categories.map((cat) => {
                 const dbCat = categories.find((c: any) => c.slug === cat.slug);
                 return (
                   <button key={cat.slug} type="button" onClick={() => setActiveCategory(activeCategory === cat.slug ? null : cat.slug)} className={`text-[11px] px-3 py-1.5 rounded-full border transition-colors min-h-[32px] ${activeCategory === cat.slug ? 'bg-[#0057B8] text-white border-[#0057B8]' : 'bg-white text-gray-700 border-[#E2E8F0]'}`}>
@@ -96,15 +98,15 @@ export default function ResourcesHubPage() {
 
           {/* Category cards — spec §25 categories */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
-            {RESOURCE_CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
+            {categories.map((cat) => {
+              const Icon = RESOURCE_CATEGORIES.find(c => c.slug === cat.slug)?.icon || BookOpen;
               const dbCat = categories.find((c: any) => c.slug === cat.slug);
               return (
                 <Link key={cat.slug} href={`/resources/${cat.slug}`}>
                   <Card className="p-4 h-full bg-white hover:shadow-md transition-all border-[#E2E8F0] hover:border-[#0057B8] rounded-2xl">
                     <div className="h-10 w-10 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#0057B8] flex items-center justify-center mb-3"><Icon className="h-5 w-5" /></div>
                     <h3 className="text-sm font-bold text-[#0F172A]">{cat.name}</h3>
-                    <p className="text-[11px] text-gray-600 mt-1 line-clamp-2">{cat.desc}</p>
+                    <p className="text-[11px] text-gray-600 mt-1 line-clamp-2">{cat.description}</p>
                     <p className="text-[10px] text-[#0057B8] font-bold mt-2">{dbCat?.resourceCount ? `${dbCat.resourceCount} article${dbCat.resourceCount === 1 ? '' : 's'}` : 'Browse'}</p>
                   </Card>
                 </Link>
@@ -114,7 +116,7 @@ export default function ResourcesHubPage() {
 
           {/* Article cards — spec §28 */}
           {loading ? <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{[...Array(6)].map((_, i) => <div key={i} className="h-40 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse" />)}</div> : sorted.length === 0 ? (
-            <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No articles found for this search.</p><p className="text-xs text-gray-500 mt-2">Try a different keyword or clear the filters — ALO publishes only verified content.</p></Card>
+            <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No articles found for this search.</p><p className="text-xs text-gray-500 mt-2">Try a different keyword or clear the filters — Check the source and verification label on each article.</p></Card>
           ) : (
             <>
               <p className="text-sm text-gray-500 mb-4" role="status">{sorted.length} article{sorted.length === 1 ? '' : 's'} found</p>

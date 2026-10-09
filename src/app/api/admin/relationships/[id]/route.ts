@@ -28,7 +28,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Relationship not found" }, { status: 404 });
     }
 
-    await db.contentRelationship.delete({ where: { id } });
+    await db.$transaction(async tx => {
+    await tx.contentRelationship.update({ where: { id }, data: { status: "INACTIVE" } });
 
     await contentAuditLog.create({
       data: {
@@ -44,7 +45,8 @@ export async function DELETE(
           relationshipType: existing.relationshipType,
         }),
       },
-    }).catch(() => {});
+    }, tx);
+    });
 
     return NextResponse.json({ success: true, id });
   } catch (err: any) {

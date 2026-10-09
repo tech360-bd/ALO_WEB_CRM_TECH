@@ -35,7 +35,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Relationship does not belong to this service" }, { status: 404 });
     }
 
-    await db.contentRelationship.delete({ where: { id: relId } });
+    await db.$transaction(async tx => {
+    await tx.contentRelationship.update({ where: { id: relId }, data: { status: "INACTIVE" } });
 
     await contentAuditLog.create({
       data: {
@@ -45,7 +46,8 @@ export async function DELETE(
         resourceId: relId,
         details: JSON.stringify({ serviceId: id, sourceType: existing.sourceType, targetType: existing.targetType }),
       },
-    }).catch(() => {});
+    }, tx);
+    });
 
     return NextResponse.json({ success: true, relId });
   } catch (err: any) {

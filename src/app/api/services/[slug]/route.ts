@@ -12,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     const service = await db.service.findUnique({
       where: { slug },
       include: {
-        faqs: { orderBy: { sortOrder: "asc" } },
+        faqs: { where: { status: "active" }, orderBy: { sortOrder: "asc" } },
       },
     });
 

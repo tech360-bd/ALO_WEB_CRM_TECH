@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     const scholarship = await db.scholarship.findUnique({
       where: { slug },
       include: {
-        faqs: { orderBy: { sortOrder: "asc" } },
+        faqs: { where: { status: "active" }, orderBy: { sortOrder: "asc" } },
       },
     });
 

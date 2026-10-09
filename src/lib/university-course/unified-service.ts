@@ -29,22 +29,32 @@ export async function getRelatedContent(
   const related: RelatedContentItem[] = [];
 
   try {
-    // Try to get from RelatedContent table first (precomputed)
-    const precomputed = await db.relatedContent.findMany({
-      where: { sourceType, sourceId },
-      orderBy: { score: 'desc' },
-      take: limit,
-    }).catch(() => []);
-
-    if (precomputed.length > 0) {
-      return precomputed.map((rc: any) => ({
-        id: rc.relatedId,
-        type: rc.relatedType,
-        slug: rc.relatedSlug,
-        title: rc.relatedId, // Will be enriched
-        relation: rc.relation,
-        score: rc.score,
-      }));
+    const type = sourceType.toUpperCase();
+    if (['SERVICE', 'RESOURCE', 'SCHOLARSHIP'].includes(type)) {
+      let source: { id: string } | null = null;
+      const identity = sourceId ? { id: sourceId } : { slug: sourceSlug };
+      if (type === 'SERVICE') source = await db.service.findFirst({ where: { ...identity, status: 'PUBLISHED' }, select: { id: true } });
+      if (type === 'RESOURCE') source = await db.resource.findFirst({ where: { ...identity, status: 'PUBLISHED', category: { status: 'ACTIVE' } }, select: { id: true } });
+      if (type === 'SCHOLARSHIP') source = await db.scholarship.findFirst({ where: { ...identity, status: { in: ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'] } }, select: { id: true } });
+      if (!source) return [];
+      const links = await db.contentRelationship.findMany({ where: { status: 'ACTIVE', OR: [{ sourceType: type, sourceId: source.id }, { targetType: type, targetId: source.id }] }, orderBy: { sortOrder: 'asc' }, take: limit });
+      for (const link of links) {
+        const outgoing = link.sourceType === type && link.sourceId === source.id;
+        const targetType = outgoing ? link.targetType : link.sourceType;
+        const targetId = outgoing ? link.targetId : link.sourceId;
+        if (targetType === 'SERVICE') {
+          const item = await db.service.findFirst({ where: { id: targetId, status: 'PUBLISHED' }, select: { id: true, slug: true, title: true } });
+          if (item) related.push({ ...item, type: 'service', relation: link.relationshipType, score: 1 });
+        }
+        if (targetType === 'RESOURCE') {
+          const item = await db.resource.findFirst({ where: { id: targetId, status: 'PUBLISHED', category: { status: 'ACTIVE' } }, include: { category: { select: { slug: true } } } });
+          if (item?.category) related.push({ id: item.id, slug: `${item.category.slug}/${item.slug}`, title: item.title, type: 'resource', relation: link.relationshipType, score: 1 });
+        }
+        if (targetType === 'SCHOLARSHIP') {
+          const item = await db.scholarship.findFirst({ where: { id: targetId, status: { in: ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'] } }, select: { id: true, slug: true, name: true } });
+          if (item) related.push({ id: item.id, slug: item.slug, title: item.name, type: 'scholarship', relation: link.relationshipType, score: 1 });
+        }
+      }
     }
 
     // Fallback: compute dynamically based on priority
@@ -106,7 +116,7 @@ export async function getRelatedContent(
 
     // 5. Related scholarships — same country/university
     if (related.length < limit) {
-      const where: any = { status: 'active' };
+      const where: any = { status: { in: ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'] } };
       if (country) where.country = country;
       if (universityId) where.universityId = universityId;
       const scholarships = await db.scholarship.findMany({ where, take: 3, select: { id: true, slug: true, name: true, country: true } }).catch(() => []);
@@ -117,7 +127,7 @@ export async function getRelatedContent(
 
     // 6. Related services
     if (related.length < limit) {
-      const services = await db.service.findMany({ where: { status: 'active' }, take: 3, orderBy: { sortOrder: 'asc' }, select: { id: true, slug: true, title: true } }).catch(() => []);
+      const services = await db.service.findMany({ where: { status: 'PUBLISHED' }, take: 3, orderBy: { sortOrder: 'asc' }, select: { id: true, slug: true, title: true } }).catch(() => []);
       services.forEach((s: any) => {
         related.push({ id: s.id, type: 'service', slug: s.slug, title: s.title, relation: 'same_tag', score: 0.5 });
       });
@@ -125,15 +135,15 @@ export async function getRelatedContent(
 
     // 7. Related resources
     if (related.length < limit) {
-      const resources = await db.resource.findMany({ where: { status: 'active' }, take: 3, orderBy: { sortOrder: 'asc' }, select: { id: true, slug: true, title: true } }).catch(() => []);
+      const resources = await db.resource.findMany({ where: { status: 'PUBLISHED', category: { status: 'ACTIVE' } }, take: 3, orderBy: { sortOrder: 'asc' }, select: { id: true, slug: true, title: true, category: { select: { slug: true } } } }).catch(() => []);
       resources.forEach((r: any) => {
-        related.push({ id: r.id, type: 'resource', slug: r.slug, title: r.title, relation: 'same_tag', score: 0.45 });
+        related.push({ id: r.id, type: 'resource', slug: `${r.category.slug}/${r.slug}`, title: r.title, relation: 'same_tag', score: 0.45 });
       });
     }
 
     // Sort by score and limit
     related.sort((a, b) => b.score - a.score);
-    return related.slice(0, limit);
+    return related.filter((item, index, all) => all.findIndex(other => other.type === item.type && other.id === item.id) === index).slice(0, limit);
   } catch (e) {
     console.error('getRelatedContent error', e);
     return [];

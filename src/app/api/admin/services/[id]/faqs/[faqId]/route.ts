@@ -77,7 +77,8 @@ export async function DELETE(
       return NextResponse.json({ error: "FAQ not found for this service" }, { status: 404 });
     }
 
-    await db.serviceFaq.delete({ where: { id: faqId } });
+    await db.$transaction(async tx => {
+    await tx.serviceFaq.update({ where: { id: faqId }, data: { status: "archived" } });
 
     await contentAuditLog.create({
       data: {
@@ -87,7 +88,8 @@ export async function DELETE(
         resourceId: faqId,
         details: JSON.stringify({ serviceId: id, question: existing.question }),
       },
-    }).catch(() => {});
+    }, tx);
+    });
 
     return NextResponse.json({ success: true, faqId });
   } catch (err: any) {
