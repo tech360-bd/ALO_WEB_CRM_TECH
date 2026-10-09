@@ -1003,17 +1003,3 @@ export async function POST(req: NextRequest) {
     results,
   });
 }
-
-// GET — webhook verification per Meta spec
-export async function GET(req: NextRequest) {
-  const mode = req.nextUrl.searchParams.get("hub.mode");
-  const token = req.nextUrl.searchParams.get("hub.verify_token");
-  const challenge = req.nextUrl.searchParams.get("hub.challenge");
-
-  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || '';
-  if (mode === "subscribe" && verifyToken && token && challenge && safeEqual(token, verifyToken)) {
-    return new NextResponse(challenge, { status: 200, headers: { 'Cache-Control': 'no-store' } });
-  }
-
-  return NextResponse.json({ error: "Invalid verification" }, { status: 403 });
-}
