@@ -89,4 +89,8 @@ function Button({
   )
 }
 
+/** Public type aliases for the design-system variants/sizes (used by AloCtaLink etc.) */
+export type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
+export type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
+
 export { Button, buttonVariants }

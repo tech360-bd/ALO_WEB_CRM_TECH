@@ -335,3 +335,23 @@ Stage Summary:
 - Clean-extract gate: from zip → npm ci → generate (480 models) → build → standalone start → health + 8 routes 200.
 - Package: ALO-EDUCATION-PRODUCTION-SOURCE (2,339 files, 46MB) integrity/content/secret-scan verified; branch pushed.
 - FINAL-ACCEPTANCE-REPORT.md: 46 gates PASS, 6 BLOCKED BY EXTERNAL DEPENDENCY (MySQL/SMTP/engine-binaries etc., exact list §6), 0 failed.
+
+---
+Task ID: link-audit-implement-2026-10-08
+Agent: Arena Agent Mode (main)
+Task: Check every supplied link (136 unique GitHub repos + 9 web sites + 19 YouTube redirects) and implement all missing elements (diagram designs, button designs, marketing kits).
+
+Work Log:
+- LINK AUDIT: verified all 136 unique GitHub repos via gh api (133 OK). Found and fixed a false-OK bug in the first pass (error bodies were misread as success) — re-ran with exit-code checking. 3 repos NOT accessible, all own-org: engralaminn-collab/alo-education-uk-final (403 private), ukvi-ai-markting_n8n (404), Ai-Markting-crm (404) — flagged to user for access. 9 web sites fetched (8 OK; developer.meta.com/ai 403 site-side). 19 YouTube-redirect links all resolve to GitHub repos already in the list. Full report: docs/LINK-AUDIT-2026-10-08.md.
+- DIAGRAM DESIGN SYSTEM (source: cathrynlavery/diagram-design, re-skinned to ALO palette per its onboarding rule): new src/components/diagrams/ — tokens.ts (semantic roles mapped to --alo-* brand), primitives.tsx (3 arrow markers, roundedOrthoPath with radius clamping, node/eyebrow/rule/root), ProcessDiagram (lanes×steps), JourneyMapDiagram (sentiment curve + pain markers), FunnelDiagram (honest proportional widths), TimelineDiagram (honest time spacing), FlowDiagram (decision flowchart), alo-diagrams.tsx (5 ALO compositions), index.ts barrel. Docs: docs/DIAGRAM-DESIGN-SYSTEM.md.
+- WIRED DIAGRAMS: /application-process (ApplicationProcessDiagram + IntakeTimelineDiagram + CTA pair), /student-journey (StudentJourneyMapDiagram), /eligibility-check (EligibilityFlowDiagram + CTA), /admin/marketing-automation (MarketingFunnelDiagram fed by LIVE CRM counts from /api/crm/leads|appointments|applications — no invented metrics).
+- MARKETING KIT (frameworks: coreyhaines31/marketingskills + mohamed11sk/Email-markting + knsoftic/Email_Markting): new src/lib/marketing-kit/ — 8 campaign kits, 2 email sequences (7-email welcome + 8-email nurture = 15 emails), 6 lead magnets, 6 SMS/WhatsApp templates with compliance/opt-out notes, 15-post social calendar, 8-item CRO checklist. Rebuilt MarketingKitPanel as a 6-tab library (campaigns/email/magnets/SMS/social/CRO) with copy+download per asset; backward-compatible exports preserved.
+- BUTTON DESIGNS: verified ui/button.tsx design system (12 variants × 7 sizes, ALO palette); added ButtonVariant/ButtonSize type exports; new src/components/website/AloCtaLink.tsx public CTA on the design system; adopted on /application-process (diagram CTA pair + bottom CTA), /student-journey (bottom CTA), /eligibility-check (CTA).
+- TESTS: added tests/unit/diagram-library.test.ts (9 tests — SVG validity, no-NaN geometry, orthogonal connectors, honest funnel widths/drop-offs, labeled branches, trough legend) and tests/unit/marketing-kit-library.test.ts (9 tests — kit completeness, sequence structure, SMS opt-out compliance, calendar coverage, CRO items). Both caught real issues (missing STOP opt-out in document-reminder template; calendar count) which were fixed. 18/18 pass.
+- VALIDATION: tsc --noEmit — 0 errors in all new/modified files (41 remaining errors are pre-existing Prisma-generate artifacts in 11 untouched files; prisma engines cannot download in this sandbox). eslint — 0 errors/warnings on all new/modified files. Full vitest: 1188 passed; 15 failures in 5 files reproduce identically on base commit (pre-existing, environment: missing Prisma engines) — zero regressions.
+
+Stage Summary:
+- Status: COMPLETE (with one external blocker: the 3 own-org repos need access to be audited)
+- Implemented: diagram design system (5 types + 5 compositions, 4 pages wired), marketing kit library (6 asset classes, tabbed panel), public CTA button component (3 pages adopted)
+- Verified: 136/136 GitHub links + 9/9 web links checked; typecheck/lint clean on touched files; 18 new tests green; no test regressions
+- Requires user action: grant access to (or make public) engralaminn-collab/alo-education-uk-final, ukvi-ai-markting_n8n, Ai-Markting-crm so their contents can be diffed and any missing elements ported

@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { ApplicationProcessDiagram, IntakeTimelineDiagram } from '@/components/diagrams';
+import { AloCtaLink } from '@/components/website/AloCtaLink';
 
 export const metadata: Metadata = {
   title: 'International Study Application Process | ALO Education Bangladesh',
@@ -103,6 +105,18 @@ export default function ApplicationProcessPage() {
           <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
             A transparent, step-by-step roadmap to guide you from your first consultation to your first day on campus.
           </p>
+        </div>
+      </section>
+
+      {/* Diagram Section — who does what + honest intake timeline */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 md:px-6 max-w-6xl space-y-10">
+          <ApplicationProcessDiagram />
+          <IntakeTimelineDiagram />
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <AloCtaLink href="/book-consultation">Book a Free Session</AloCtaLink>
+            <AloCtaLink href="/eligibility-check" variant="brand">Check Your Eligibility</AloCtaLink>
+          </div>
         </div>
       </section>
 
