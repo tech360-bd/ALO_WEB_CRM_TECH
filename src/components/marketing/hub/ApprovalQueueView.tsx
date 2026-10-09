@@ -206,7 +206,6 @@ export default function ApprovalQueueView() {
     let succeeded = 0;
     let failed = 0;
     for (const approvalId of Array.from(bulkSelected)) {
-      // eslint-disable-next-line no-await-in-loop
       const ok = await runAction(approvalId, 'approve');
       if (ok) succeeded += 1;
       else failed += 1;

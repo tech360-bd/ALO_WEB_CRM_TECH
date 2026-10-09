@@ -74,7 +74,6 @@ export function useStudentResource<T>(path: string, deps: unknown[] = []): Resou
     })();
 
     return () => controller.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path, attempt, ...deps]);
 
   const reload = useCallback(() => setAttempt((value) => value + 1), []);
