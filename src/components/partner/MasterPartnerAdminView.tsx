@@ -28,6 +28,7 @@ import {
   Lock,
 } from 'lucide-react';
 import Link from 'next/link';
+import { PartnerMarketingStudio } from '@/components/alo/views/partner-marketing-studio';
 
 interface MasterPartnerAdminViewProps {
   currentPath?: string;
@@ -142,6 +143,43 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
     { path: '/partner-admin/company-profile', label: 'Company Profile', icon: Building },
     { path: '/partner-admin/settings', label: 'Partner Settings', icon: Settings },
   ];
+  // Portal Navigation Bar — shared by the dashboard body and the Marketing Studio route.
+  const portalNav = (
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-2 text-xs font-semibold overflow-x-auto">
+          {routesList.map((r) => {
+            const Icon = r.icon;
+            const isActive = currentPath === r.path;
+            return (
+              <Link key={r.path} href={r.path}>
+                <div
+                  className={`px-4 py-2 rounded-xl flex items-center gap-2 shrink-0 transition cursor-pointer ${
+                    isActive ? 'bg-[#2563EB] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" /> {r.label}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+  );
+
+
+  // /partner-admin/marketing-studio renders the real, API-backed Marketing Studio
+  // (quota, AI draft generation, approval and scheduling workflow) instead of the
+  // generic partner dashboard body. The portal chrome is shared via portalNav.
+  const isMarketingStudioPath =
+    currentPath === '/partner-admin/marketing-studio' ||
+    currentPath === '/partner-admin/content-generator';
+
+  if (isMarketingStudioPath) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto space-y-6 text-slate-900">
+        {portalNav}
+        <PartnerMarketingStudio />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 text-slate-900">
@@ -168,24 +206,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         </div>
       </div>
 
-      {/* Portal Navigation Bar */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 text-xs font-semibold overflow-x-auto">
-        {routesList.map((r) => {
-          const Icon = r.icon;
-          const isActive = currentPath === r.path;
-          return (
-            <Link key={r.path} href={r.path}>
-              <div
-                className={`px-4 py-2 rounded-xl flex items-center gap-2 shrink-0 transition cursor-pointer ${
-                  isActive ? 'bg-[#2563EB] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                <Icon className="w-4 h-4" /> {r.label}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+      {portalNav}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
