@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { resolveSessionRole } from "@/lib/session-roles";
 
 // ─── Public page routes (no auth required) ────────────────────
 const PUBLIC_ROUTES = [
@@ -21,6 +22,17 @@ const PUBLIC_ROUTES = [
   "/destinations",
   "/universities",
   "/courses",
+  // Canonical public course-detail hub (/course/[slug]). It was missing from
+  // this list while the plural /courses and /course-finder were present, so
+  // matchesPath treated /course/{slug} as a portal route and redirected
+  // anonymous visitors to /login?callbackUrl=... — including the crawlers that
+  // sitemap.ts sends there, since it publishes exactly these URLs via
+  // mapRows(databaseEntries.crmCourses, '/course'). src/app/course/ contains
+  // only [slug]/page.tsx, and that page reads CrmCourse through its
+  // published + VERIFIED + source-linked filter, so exposing the prefix leaks
+  // nothing private. Kept separate from "/courses": matchesPath is
+  // boundary-aware, so neither prefix subsumes the other.
+  "/course",
   "/course-finder",
   "/services",
   "/scholarships",
@@ -357,7 +369,7 @@ export function isPublicApiRequest(pathname: string, method: string): boolean {
   return false;
 }
 
-const ROLE_ROUTES: Record<string, string[]> = {
+export const ROLE_ROUTES: Record<string, string[]> = {
   SUPER_ADMIN: ["/super-admin", "/admin", "/crm", "/student", "/partner", "/visa", "/marketing", "/finance", "/hrm"],
   ADMIN: ["/admin", "/crm", "/student", "/visa", "/marketing", "/finance", "/hrm"],
   COUNSELOR: ["/counselor", "/crm", "/employee"],
@@ -378,7 +390,33 @@ const ROLE_ROUTES: Record<string, string[]> = {
   MOCK_TEST_ADMIN: ["/student"],
 };
 
-function getDashboardRoute(role: string): string {
+/**
+ * Where the proxy sends a role that hit a route outside its allow-list (and
+ * where an already-authenticated user hitting /login or /register lands).
+ *
+ * Every target MUST be a route that (a) actually exists and (b) sits inside the
+ * same role's ROLE_ROUTES allow-list. Violating (b) causes an infinite redirect
+ * loop, because the fallback itself would fail the allow-list check and redirect
+ * back to itself. Violating (a) 404s the user.
+ *
+ * The VISA_OFFICER, FINANCE and HR_MANAGER targets were corrected from
+ * /visa/dashboard, /finance/dashboard and /hrm/dashboard: no such pages exist
+ * (src/app/visa has only page.tsx and readiness/; there is no src/app/finance or
+ * src/app/hrm at all), so those roles 404ed instead of reaching their dashboard.
+ * The replacements live under /employee, which all three roles already allow,
+ * and were verified to render.
+ *
+ * MARKETING_MANAGER / MARKETING intentionally keep /marketing/dashboard. That
+ * path is a next.config.ts rewrite to /crm/marketing, and /crm is NOT in their
+ * allow-list — pointing the fallback directly at /crm/marketing would loop.
+ *
+ * The `default` branch returns "/" on purpose. An unrecognised role has an empty
+ * allow-list, so any authenticated fallback would fail the check and loop;
+ * redirecting to a public route terminates instead. Roles should not reach this
+ * branch: pageSessionRole() now fails back to EMPLOYEE rather than minting a
+ * role the proxy cannot resolve.
+ */
+export function getDashboardRoute(role: string): string {
   switch (role) {
     case "SUPER_ADMIN": return "/super-admin/dashboard";
     case "ADMIN": return "/admin/dashboard";
@@ -389,11 +427,11 @@ function getDashboardRoute(role: string): string {
     case "FRONT_DESK": return "/crm/dashboard";
     case "SUPPORT_STAFF": return "/crm/dashboard";
     case "VISA_OFFICER":
-    case "VISA_INTERVIEW_OFFICER": return "/visa/dashboard";
+    case "VISA_INTERVIEW_OFFICER": return "/employee/visa-dashboard";
     case "MARKETING_MANAGER":
     case "MARKETING": return "/marketing/dashboard";
-    case "FINANCE": return "/finance/dashboard";
-    case "HR_MANAGER": return "/hrm/dashboard";
+    case "FINANCE": return "/employee/finance-dashboard";
+    case "HR_MANAGER": return "/employee/hr-dashboard";
     case "PARTNER": return "/partner-admin/dashboard";
     case "STUDENT": return "/student/dashboard";
     case "ENGLISH_TRAINER": return "/student/dashboard";
@@ -423,12 +461,20 @@ export default async function proxy(request: NextRequest) {
 
   const method = request.method.toUpperCase();
   const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
+  // Role claims are resolved through the shared vocabulary before any
+  // authorisation decision. Tokens minted before the alias fix still carry
+  // legacy claims (`HR`, `SUPPORT_AGENT`) that ROLE_ROUTES does not key on; left
+  // unresolved they produced an empty allow-list, so every portal page
+  // redirected to getDashboardRoute's default and dumped staff on the public
+  // homepage. Resolving here is idempotent for canonical roles and keeps
+  // existing 7-day sessions working without a forced re-login.
+  const sessionRole = resolveSessionRole(token?.role as string | undefined);
   const matchedSensitive = Object.entries(SENSITIVE_API_ROUTES).find(([prefix]) => matchesPath(pathname, prefix));
 
   // Allow public page routes
   if (isPublicPageRequest(pathname)) {
     if (token && (pathname === "/login" || pathname === "/register")) {
-      const dashboard = getDashboardRoute(token.role as string);
+      const dashboard = getDashboardRoute(sessionRole);
       return NextResponse.redirect(new URL(dashboard, request.url));
     }
     return NextResponse.next();
@@ -458,7 +504,7 @@ export default async function proxy(request: NextRequest) {
     }
     for (const [prefix, allowedRoles] of Object.entries(SENSITIVE_API_ROUTES)) {
       if (matchesPath(pathname, prefix)) {
-        if (!allowedRoles.includes(token.role as string)) {
+        if (!allowedRoles.includes(sessionRole)) {
           return NextResponse.json({ error: "Forbidden — insufficient permissions for this endpoint" }, { status: 403 });
         }
         break;
@@ -474,11 +520,11 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const allowedRoutes = ROLE_ROUTES[token.role as string] || [];
+  const allowedRoutes = ROLE_ROUTES[sessionRole] || [];
   const isAllowed = allowedRoutes.some((route) => matchesPath(pathname, route));
 
   if (!isAllowed) {
-    const dashboard = getDashboardRoute(token.role as string);
+    const dashboard = getDashboardRoute(sessionRole);
     return NextResponse.redirect(new URL(dashboard, request.url));
   }
 

@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { encode } from "next-auth/jwt";
 import bcrypt from 'bcryptjs';
+import { pageSessionRole } from "@/lib/session-roles";
 
 const crmRoleMap: Record<string, string> = {
   'admin@alo.edu.bd': 'super_admin',
@@ -39,12 +40,14 @@ const crmDepartmentMap: Record<string, string> = {
   ai_manager: 'AI & Technology',
 };
 
-function pageSessionRole(userType: string, crmRole: string | null): string {
-  if (userType === 'SUPER_ADMIN' || userType === 'ADMIN' || userType === 'PARTNER' || userType === 'STUDENT') {
-    return userType;
-  }
-  return crmRole ? crmRole.toUpperCase() : 'EMPLOYEE';
-}
+// pageSessionRole is imported from @/lib/session-roles so the role claim minted
+// here and the ROLE_ROUTES keys the proxy authorises against cannot drift apart
+// again. The previous local copy upper-cased the crmRole verbatim, which emitted
+// `HR` and `SUPPORT_AGENT` — roles the proxy did not know, leaving those staff
+// with an empty allow-list and bouncing them to the public homepage from their
+// own dashboards. crmRoleMap below is intentionally left alone: it still carries
+// the business role (used for `department`, the login response and Employee
+// records), while the shared resolver maps it to the authorisation vocabulary.
 
 async function setPageSessionCookie(response: NextResponse, user: { id: string; email: string; name: string; userType: string; status: string }, crmRole: string | null) {
   const secret = process.env.NEXTAUTH_SECRET;
