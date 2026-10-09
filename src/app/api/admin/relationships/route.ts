@@ -2,15 +2,14 @@ import { contentAuditLog } from "@/lib/content-audit";
 import { normalizeContentRelationshipType } from "@/lib/content-validation";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/relationships — list all content relationships for admin
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -47,7 +46,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/admin/relationships — create a new relationship
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -84,11 +83,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Relationship already exists", relationship: dupe }, { status: 409 });
     }
 
-    const rel = await db.contentRelationship.create({
+    const rel = await db.$transaction(async tx => {
+      const rel = await tx.contentRelationship.create({
       data: { sourceType, sourceId, targetType, targetId, relationshipType, sortOrder, status },
     });
-
-    await contentAuditLog.create({
+      await contentAuditLog.create({
       data: {
         userId,
         action: "CONTENT_RELATIONSHIP_CREATE",
@@ -96,7 +95,9 @@ export async function POST(req: NextRequest) {
         resourceId: rel.id,
         details: JSON.stringify({ sourceType, sourceId, targetType, targetId, relationshipType }),
       },
-    }).catch(() => {});
+    }, tx);
+      return rel;
+    });
 
     return NextResponse.json({ relationship: rel }, { status: 201 });
   } catch (err: any) {

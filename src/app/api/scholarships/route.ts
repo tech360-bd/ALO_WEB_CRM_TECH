@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { PUBLIC_SCHOLARSHIP_STATUSES } from '@/lib/website/public-content';
 import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
 // GET /api/scholarships — unified scholarship system DB-driven per spec section 10
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
     const applicationOpen = searchParams.get('applicationOpen') === 'true';
 
     // Build where for new Scholarship model
-    const where: any = { status: 'active' };
+    const where: any = { status: { in: PUBLIC_SCHOLARSHIP_STATUSES } };
     if (country) where.country = { contains: country };
     if (universityId) where.universityId = universityId;
     if (fundingType) where.fundingType = fundingType;

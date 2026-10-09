@@ -2,7 +2,6 @@ import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { withAuth, AuthContext } from "@/lib/auth-middleware";
-import { SPEC_SERVICES } from "@/lib/website/spec-services";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,33 +37,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Spec: the directory always offers the 14 canonical services — DB rows
-    // win; catalog records fill any gap so no card on /services is ever dead.
-    const dbSlugs = new Set(services.map((s) => s.slug));
-    const catalog = SPEC_SERVICES.filter((s) => !dbSlugs.has(s.slug)).map((s, i) => ({
-      id: `spec_${s.slug}`,
-      slug: s.slug,
-      title: s.title,
-      shortDescription: s.shortDescription,
-      icon: s.icon,
-      heroImage: '',
-      ctaLabel: 'Book Free Consultation',
-      ctaUrl: '/book-consultation',
-      status: 'PUBLISHED',
-      sortOrder: 1000 + i,
-      faqEnabled: true,
-      verificationStatus: 'pending',
-      lastVerifiedAt: null,
-      updatedAt: null,
-    }));
-
-    // DB items first (by sortOrder), then the 14-spec guaranteed set.
-    const merged = [
-      ...services,
-      ...catalog,
-    ];
-
-    return NextResponse.json({ services: merged.slice(0, limit), total: merged.length });
+    return NextResponse.json({ services, total: services.length });
   } catch (err: any) {
     console.error("[services.list] error:", err);
     return NextResponse.json({ error: "Failed to list services" }, { status: 500 });
@@ -81,7 +54,7 @@ async function createService(req: Request, auth: AuthContext) {
       heroImage, content, eligibility, requirements, documents,
       faqEnabled = true, ctaLabel, ctaUrl,
       status = "PUBLISHED", sortOrder = 0,
-      sourceUrl, verificationStatus = "VERIFIED",
+      sourceUrl, verificationStatus = "PENDING",
       lastVerifiedAt,
       faqs = [],
     } = body as any;
@@ -111,9 +84,9 @@ async function createService(req: Request, auth: AuthContext) {
         ctaUrl: ctaUrl || undefined,
         status,
         sortOrder,
-        sourceUrl: sourceUrl || null,
+        sourceUrl: sourceUrl || "",
         verificationStatus,
-        lastVerifiedAt: lastVerifiedAt ? new Date(lastVerifiedAt) : new Date(),
+        lastVerifiedAt: verificationStatus === "VERIFIED" && sourceUrl && lastVerifiedAt ? new Date(lastVerifiedAt) : null,
         faqs: faqs.length
           ? {
               create: faqs.map((f: any, i: number) => ({

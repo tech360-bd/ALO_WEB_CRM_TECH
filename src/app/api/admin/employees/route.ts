@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     const portalUsers = await db.portalUser.findMany({
       where: { userType: { not: 'STUDENT' } },
       take: 100,
-      include: { roles: { include: { role: true } } },
+      select: { id: true, name: true, email: true, userType: true, status: true, roles: { include: { role: true } } },
     }).catch(() => []);
 
     // Launcher cards with active users, pending tasks, alerts

@@ -68,7 +68,7 @@ async function createResource(req: Request, auth: AuthContext) {
       slug, categoryId, title, excerpt, content,
       authorId, featuredImage, countrySlug, studyLevel,
       readingTime = 5, status = "PUBLISHED",
-      publishedAt, sourceUrl, sourceName, verificationStatus = "VERIFIED",
+      publishedAt, sourceUrl, sourceName, verificationStatus = "PENDING",
       seoTitle, seoDescription, tags = [],
       faqs = [],
     } = body as any;
@@ -93,20 +93,20 @@ async function createResource(req: Request, auth: AuthContext) {
     const resource = await db.resource.create({
       data: {
         slug, categoryId, title,
-        excerpt: excerpt || null,
+        excerpt: excerpt || "",
         content,
-        authorId: authorId || null,
-        featuredImage: featuredImage || null,
-        countrySlug: countrySlug || null,
-        studyLevel: studyLevel || null,
+        authorId: authorId || "",
+        featuredImage: featuredImage || "",
+        countrySlug: countrySlug || "",
+        studyLevel: studyLevel || "",
         readingTime,
         status,
         publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
-        sourceUrl: sourceUrl || null,
-        sourceName: sourceName || null,
+        sourceUrl: sourceUrl || "",
+        sourceName: sourceName || "",
         verificationStatus,
-        seoTitle: seoTitle || null,
-        seoDescription: seoDescription || null,
+        seoTitle: seoTitle || "",
+        seoDescription: seoDescription || "",
         tags: Array.isArray(tags) ? JSON.stringify(tags) : (typeof tags === "string" ? tags : "[]"),
         faqs: faqs.length
           ? {

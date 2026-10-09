@@ -1,8 +1,7 @@
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +11,7 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; faqId: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -35,9 +34,9 @@ export async function PATCH(
     if (typeof body.answer === "string") patch.answer = body.answer;
     if (typeof body.sortOrder === "number") patch.sortOrder = body.sortOrder;
 
-    const updated = await db.resourceFaq.update({ where: { id: faqId }, data: patch });
-
-    await contentAuditLog.create({
+    const updated = await db.$transaction(async tx => {
+      const updated = await tx.resourceFaq.update({ where: { id: faqId }, data: patch });
+      await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_FAQ_UPDATE",
@@ -45,7 +44,9 @@ export async function PATCH(
         resourceId: faqId,
         details: JSON.stringify({ resourceId: id, changes: Object.keys(patch) }),
       },
-    }).catch(() => {});
+    }, tx);
+      return updated;
+    });
 
     return NextResponse.json({ faq: updated });
   } catch (err: any) {
@@ -59,7 +60,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; faqId: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

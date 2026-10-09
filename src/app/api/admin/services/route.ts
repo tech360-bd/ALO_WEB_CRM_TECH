@@ -1,15 +1,14 @@
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/services — list all services (incl. DRAFT, ARCHIVED) for admin
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -52,7 +51,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/admin/services — create a new service
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -69,7 +68,7 @@ export async function POST(req: NextRequest) {
       heroImage, content, eligibility, requirements, documents,
       faqEnabled = true, ctaLabel, ctaUrl,
       status = "DRAFT", sortOrder = 0,
-      sourceUrl, verificationStatus = "VERIFIED", lastVerifiedAt,
+      sourceUrl, verificationStatus = "PENDING", lastVerifiedAt,
     } = body as any;
 
     if (!slug || !title || !shortDescription || !description || !icon || !content) {
@@ -84,7 +83,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Service with this slug already exists" }, { status: 409 });
     }
 
-    const service = await db.service.create({
+    const service = await db.$transaction(async tx => {
+      const service = await tx.service.create({
       data: {
         slug, title, shortDescription, description, icon,
         heroImage: heroImage || undefined,
@@ -97,13 +97,12 @@ export async function POST(req: NextRequest) {
         ctaUrl: ctaUrl || undefined,
         status,
         sortOrder,
-        sourceUrl: sourceUrl || null,
+        sourceUrl: sourceUrl || "",
         verificationStatus,
-        lastVerifiedAt: lastVerifiedAt ? new Date(lastVerifiedAt) : new Date(),
+        lastVerifiedAt: verificationStatus === "VERIFIED" && sourceUrl && lastVerifiedAt ? new Date(lastVerifiedAt) : null,
       },
     });
-
-    await contentAuditLog.create({
+      await contentAuditLog.create({
       data: {
         userId,
         action: "SERVICE_CREATE",
@@ -111,7 +110,9 @@ export async function POST(req: NextRequest) {
         resourceId: service.id,
         details: JSON.stringify({ slug, title, status }),
       },
-    }).catch(() => {});
+    }, tx);
+      return service;
+    });
 
     return NextResponse.json({ service }, { status: 201 });
   } catch (err: any) {

@@ -2,8 +2,7 @@ import { pickEditableContentFields } from "@/lib/content-validation";
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,7 +12,7 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -41,9 +40,9 @@ export async function PATCH(
       if (clash) return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
     }
 
-    const updated = await db.resourceCategory.update({ where: { id }, data: patch });
-
-    await contentAuditLog.create({
+    const updated = await db.$transaction(async tx => {
+      const updated = await tx.resourceCategory.update({ where: { id }, data: patch });
+      await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CATEGORY_UPDATE",
@@ -51,7 +50,9 @@ export async function PATCH(
         resourceId: id,
         details: JSON.stringify({ changes: Object.keys(patch) }),
       },
-    }).catch(() => {});
+    }, tx);
+      return updated;
+    });
 
     return NextResponse.json({ category: updated });
   } catch (err: any) {
@@ -66,7 +67,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

@@ -50,7 +50,7 @@ export async function activateEmployeeAccount(input: {
   if (email && email !== user.email.toLowerCase()) {
     return { success: false, status: 400, error: 'Activation details do not match.' };
   }
-  if (user.status.toLowerCase() === 'blocked' || user.status.toLowerCase() === 'terminated' || user.status.toLowerCase() === 'resigned') {
+  if (user.status.toLowerCase() !== 'pending_activation') {
     return { success: false, status: 403, error: 'This employee account is not eligible for activation.' };
   }
   if (!user.firstLoginRequired) {
