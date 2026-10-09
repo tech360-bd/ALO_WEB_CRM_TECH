@@ -11,11 +11,19 @@
 // truth, no duplicate logic.
 
 import { EligibilityCheckerEnhanced } from '@/components/course-finder/eligibility-checker-enhanced';
+import { EligibilityFlowDiagram } from '@/components/diagrams';
+import { AloCtaLink } from '@/components/website/AloCtaLink';
 
 export default function EligibilityCheckPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <main className="flex-1 pt-16">
+        <div className="container mx-auto px-4 md:px-6 max-w-6xl py-10 space-y-8">
+          <EligibilityFlowDiagram />
+          <div className="flex justify-center">
+            <AloCtaLink href="/book-consultation">Book a Free Consultation</AloCtaLink>
+          </div>
+        </div>
         <EligibilityCheckerEnhanced />
       </main>
     </div>

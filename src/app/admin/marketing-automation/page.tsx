@@ -5,6 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import EditorialFlowDiagram from '@/components/marketing/EditorialFlowDiagram';
 import MarketingKitPanel from '@/components/marketing/MarketingKitPanel';
+import { MarketingFunnelDiagram } from '@/components/diagrams';
+import type { FunnelStage } from '@/components/diagrams';
 import {
   Share2,
   Zap,
@@ -56,6 +58,7 @@ export default function MarketingAutomationDashboard() {
   const [commentKeyword, setCommentKeyword] = useState('Study Abroad');
   const [commentLog, setCommentLog] = useState<string | null>(null);
   const [workflowLog, setWorkflowLog] = useState<string | null>(null);
+  const [funnelStages, setFunnelStages] = useState<FunnelStage[]>([]);
 
   const fetchDashboardData = async () => {
     try {
@@ -73,8 +76,41 @@ export default function MarketingAutomationDashboard() {
     }
   };
 
+  // Live conversion funnel — real CRM counts only, never invented metrics.
+  const fetchFunnelData = async () => {
+    try {
+      const readTotal = async (url: string): Promise<number> => {
+        const res = await fetch(url);
+        if (!res.ok) return 0;
+        const json = await res.json();
+        if (typeof json?.total === 'number') return json.total;
+        if (Array.isArray(json?.data)) return json.data.length;
+        return 0;
+      };
+      const activeStages =
+        'research,shortlisted,counseling,document_ready,submitted,under_review,offer_received,visa_applied,visa_approved,enrolled';
+      const [enquiries, consultations, applications, offers, enrolled] = await Promise.all([
+        readTotal('/api/crm/leads?limit=1'),
+        readTotal('/api/crm/appointments?limit=1'),
+        readTotal(`/api/crm/applications?limit=1&stage=${activeStages}`),
+        readTotal('/api/crm/applications?limit=1&stage=offer_received,visa_applied,visa_approved,enrolled'),
+        readTotal('/api/crm/applications?limit=1&stage=enrolled'),
+      ]);
+      setFunnelStages([
+        { label: 'Enquiries', value: enquiries, sublabel: 'marketing leads' },
+        { label: 'Consultations', value: consultations, sublabel: 'booked sessions' },
+        { label: 'Applications', value: applications, sublabel: 'active files' },
+        { label: 'Offers', value: offers, sublabel: 'received' },
+        { label: 'Enrolled', value: enrolled, sublabel: 'students' },
+      ]);
+    } catch {
+      setFunnelStages([]);
+    }
+  };
+
   useEffect(() => {
     fetchDashboardData();
+    fetchFunnelData();
   }, []);
 
   const handleLogoUpload = async () => {
@@ -531,6 +567,7 @@ export default function MarketingAutomationDashboard() {
 
       <div className="space-y-6">
         <EditorialFlowDiagram />
+        {funnelStages.length > 0 ? <MarketingFunnelDiagram stages={funnelStages} /> : null}
         <MarketingKitPanel />
       </div>
     </div>

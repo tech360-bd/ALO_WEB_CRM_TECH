@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { StudentJourneyMapDiagram } from '@/components/diagrams';
+import { AloCtaLink } from '@/components/website/AloCtaLink';
 
 export const metadata: Metadata = {
   title: 'Student Journey | From Bangladesh to International Campus | ALO Education',
@@ -92,6 +94,17 @@ export default function StudentJourneyPage() {
               <div className="text-sm text-gray-300">Success Stories</div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Journey Map Diagram — sentiment by stage */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+          <div className="text-center mb-10 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">The Journey at a Glance</h2>
+            <p className="text-lg text-gray-600">Where students feel confident, where it gets hard, and how ALO smooths the trough.</p>
+          </div>
+          <StudentJourneyMapDiagram />
         </div>
       </section>
 
@@ -191,9 +204,9 @@ export default function StudentJourneyPage() {
           <p className="text-xl text-blue-100 mb-10">
             Let's start your journey today with a free profile evaluation and counseling session.
           </p>
-          <Link href="/book-consultation" className="inline-block bg-[#F97316] hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-xl text-lg transition-all hover:scale-105 shadow-xl">
+          <AloCtaLink href="/book-consultation">
             Start Your Journey Now
-          </Link>
+          </AloCtaLink>
         </div>
       </section>
 
