@@ -47,6 +47,7 @@ follow the directive that **"file exists" / "API exists" / "model exists" ≠ co
 | Prisma generate | `npx prisma generate` | **BLOCKED** | same; `--no-engine` also blocked (schema-engine still fetched) |
 | Typecheck | `npm run typecheck` | **BLOCKED** | repo guard `db:verify-client` correctly refuses: *"Prisma model metadata is missing… A placeholder client is not type safety."* |
 | Build | `npm run build` | **BLOCKED** | depends on `prisma generate` |
+| CI (remote fallback) | GitHub Actions | **BLOCKED** | billing failure — jobs never start; see §1.3 |
 
 ### 1.1 The 15 test failures are PRE-EXISTING — proven, not assumed
 
@@ -70,6 +71,37 @@ a workaround.
 be fabricated. Those gates are **NOT VERIFIED** and must be re-run in CI or on a host with
 engine access. Syntax of every file touched this session *was* independently verified with
 `esbuild` (parse-check, see §2.4).
+
+### 1.3 ⛔ CI ITSELF IS DOWN — GitHub Actions billing failure (found this session)
+
+Because the sandbox cannot run the Prisma gates, CI was the fallback source of
+typecheck/build evidence. **CI is not running either.**
+
+Evidence (`gh api`, 2026-10-09):
+
+- PR #48's two jobs (`Lint · Typecheck · Tests · Prisma · Build`, `MySQL 8 · Migrate ·
+  Integrate · Boot`) both concluded `failure` in **2 seconds** with an **empty `steps[]`
+  array** — no step ever executed.
+- Check-run annotation, identical on both jobs:
+  > *"The job was not started because recent account payments have failed or your spending
+  > limit needs to be increased. Please check the 'Billing & plans' section in your settings"*
+- Conclusion tally over the last **100** workflow runs: **89 failure · 7 success · 4 cancelled**.
+- **Last successful CI run: `2026-10-08T09:12:32Z`** (branch `arena/d36e2d29-…`); last success
+  on `main`: `2026-10-08T08:27:59Z`.
+- Sampled the most recent `main` run (`37926231042`) directly: **both** jobs carry the same
+  billing annotation. So this is **not** a code failure and **not** specific to this branch.
+
+**Impact.** Since ≈`2026-10-08T09:12Z` (≈27 hours before this writing) **every** push and PR on
+this repository — including pushes to `main` — has had **zero** automated validation. Any
+"CI PASS" evidence in reports dated before that timestamp is stale and no longer holds.
+Nothing merged in that window has been typechecked, built, or test-run by CI.
+
+**Fix (owner action required — not fixable from code).** GitHub → *Settings → Billing & plans*:
+clear the failed payment or raise the Actions spending limit. Then re-run PR #48's checks to
+obtain the missing `prisma validate` / `generate` / `typecheck` / `build` evidence.
+
+**Status: `BLOCKED` — billing.** Until it is cleared, no gate beyond lint and unit tests can be
+certified for this repository from any environment.
 
 ---
 
@@ -288,7 +320,8 @@ not been executed.
 
 | # | Item | Status |
 |---|---|---|
-| 1 | `prisma validate` / `generate` / `typecheck` / `build` | `BLOCKED` — sandbox cannot reach `binaries.prisma.sh`; must be run in CI |
+| 0 | **GitHub Actions billing failure — ALL CI dead since ≈2026-10-08T09:12Z, including on `main` (89/100 runs failed, jobs never start)** | **`BLOCKED` — owner must fix Billing & plans; highest priority, it blinds every other gate** |
+| 1 | `prisma validate` / `generate` / `typecheck` / `build` | `BLOCKED` — sandbox cannot reach `binaries.prisma.sh`; CI fallback is also dead (#0) |
 | 2 | 15 pre-existing unit-test failures (accounting-ledger, cms-revisions, journal-integrity, whatsapp-media-ingestion) | `OPEN` — proven pre-existing, not yet repaired |
 | 3 | Production deploy via GitHub Actions SSH | `BLOCKED` — needs VPS shell or repo-secret write access |
 | 4 | Production running stale build since ≈2026-09-18 | `BLOCKED` — depends on #3 |
