@@ -65,6 +65,12 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/courses", destination: "/course-finder", permanent: true },
+      // Bare /course has no index page — src/app/course/ contains only
+      // [slug]/page.tsx, the canonical public course-detail hub. Send the
+      // listing intent to the Course Finder exactly as the plural alias above
+      // does, instead of 404ing. Source matching is exact (no wildcard), so this
+      // never touches /course/{slug}.
+      { source: "/course", destination: "/course-finder", permanent: true },
       // Legacy alias. /eligibility-check is the canonical route.
       { source: "/eligibility-checker", destination: "/eligibility-check", permanent: true },
 

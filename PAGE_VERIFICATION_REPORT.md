@@ -1,258 +1,411 @@
-# ALO Education — 36-Page Verification Report
+# ALO Education — Course Finder Platform: Verification & Remediation Report
 
 **Date:** 2026-10-09
 **Branch:** `arena/c2f1b27c-alo-education-z-ai`
-**Commit:** `527cf97`
-**Runtime:** Next.js 16.4.0 dev server, Node 22.22.3
-
-## Result
-
-**32 of 36 checklist items pass. 4 items have confirmed defects.**
-
-54 individual URL checks were run (several checklist items cover more than one
-route). **50 passed, 4 failed.** No server-side exception, unhandled rejection,
-React Server Component render error, or 5xx response was produced by any page —
-every defect found is an **access-control routing** problem, not a crash.
-
-Server logs across all runs: `191 × 200`, `3 × 404`, `0 × 5xx`, `0 errors logged`.
-
-## How it was tested
-
-No MySQL server is reachable in this environment, so the app was run against its
-own documented offline-verification path (`ALO_DB_DRIVER=sqlite`,
-`src/lib/db.ts`), using the committed SQLite mirror schema
-(`prisma/verification-mirror/schema.sqlite.prisma`).
-
-Setup performed:
-
-1. `npm install` — 1197 packages.
-2. Prisma client generation. `prisma generate` normally downloads engine
-   binaries from `binaries.prisma.sh`; that host is unreachable here, so the
-   download was bypassed by pointing `PRISMA_QUERY_ENGINE_LIBRARY` and
-   `PRISMA_SCHEMA_ENGINE_BINARY` at the WASM builds already vendored in
-   `node_modules/prisma/build/`. Verified: **531 models** (`npm run db:verify-client`).
-3. Schema created from the repo's own DDL emitter (`npm run awf:ddl`):
-   **1674 statements, 531 tables, 0 failures.**
-4. Data seeded from the repo's canonical CSVs plus its own seed scripts:
-   - `prisma/seed.ts` → super admin, base RBAC
-   - `prisma/seed-rbac.ts` → **25 roles, 508 permission grants, 22 staff accounts**, demo student + partner
-   - `universities.csv` / `courses.csv` / `scholarships.csv` → **19 countries, 560 universities, 800 courses, 250 scholarships**
-   - The 10 canonical CRM aliases in the login route's `crmRoleMap` (`bm@`, `app@`, `visa@`, `hr@`, …)
-
-Every page was then requested **as the persona it is built for** — a real login
-through `POST /api/portal-auth/login` with a separate cookie jar per persona —
-and the server-rendered HTML was scanned for Next.js error markers, 404
-markers, and proxy redirects.
-
-## Checklist results
-
-| # | Page | Result | Checks |
-|---|------|--------|--------|
-| 01 | Homepage | PASS | `/` (anonymous) → 200 |
-| 02 | Destinations | PASS | `/destinations` → 200 |
-| 03 | Country overview | PASS | `/destinations/uk` → 200 |
-| 04 | Country admission requirements | PASS | `/destinations/uk/admission-requirements` → 200 |
-| 05 | Country cost calculator | PASS | `/destinations/uk/cost-calculator` → 200 |
-| 06 | Country courses | PASS | `/destinations/uk/courses` → 200 |
-| 07 | Country scholarships | PASS | `/destinations/uk/scholarships` → 200 |
-| 08 | Country universities | PASS | `/destinations/uk/universities` → 200 |
-| 09 | Country visa guide | PASS | `/destinations/uk/visa-guide` → 200 |
-| 10 | Universities | PASS | `/universities` → 200 |
-| 11 | University detail | PASS | `/universities/university-of-oxford` → 200 |
-| 12 | Course Finder | PASS | `/course-finder` → 200 |
-| **13** | **Course detail** | **FAIL** | `/course/{slug}` (anonymous) → **307 → `/login`** |
-| 14 | Course comparison | PASS | `/compare` → 200; `/compare/countries` → 200 |
-| 15 | Scholarships | PASS | `/scholarships` → 200 |
-| 16 | Eligibility checker | PASS | `/eligibility-check` → 200 |
-| 17 | Application guide | PASS | `/application-guide` → 200 |
-| 18 | Research opportunities | PASS | `/research-opportunities` → 200 |
-| 19 | Student login and portal | PASS | `/student/login`, `/student/dashboard`, `/student/applications` → 200 |
-| 20 | Partner login and portal | PASS | `/partner/login`, `/partner/dashboard`, `/partner/students` → 200 |
-| 21 | Employee login and portal | PASS | `/employee/login`, `/employee/dashboard`, `/employee/profile` → 200 |
-| 22 | Counselor portal | PASS | `/employee/counselor-dashboard`, `/counselor/dashboard` → 200 |
-| 23 | Application Team portal | PASS | `/employee/application-manager-dashboard`, `/application-manager/applications` → 200 |
-| 24 | Visa portal | PASS | `/employee/visa-dashboard`, `/employee/visa-cases` → 200 |
-| 25 | Finance portal | PASS | `/employee/finance-dashboard` → 200 |
-| 26 | Marketing portal | PASS | `/employee/marketing-dashboard` → 200; `/crm/marketing` → 200 (via `/marketing/dashboard` rewrite) |
-| **27** | **HR portal** | **FAIL** | `/employee/hr-dashboard`, `/crm/hrm` (`hr@`) → **307 → `/`** |
-| 28 | Branch Manager portal | PASS | `/employee/branch-manager-dashboard` → 200 |
-| 29 | Front Desk portal | PASS | `/employee/front-desk-dashboard` → 200 |
-| **30** | **Support portal** | **FAIL** | `/employee/support-dashboard` (`support@`) → **307 → `/`** |
-| 31 | CRM dashboard | PASS | `/crm/dashboard` → 200 |
-| 32 | Admin dashboard | PASS | `/admin/dashboard`, `/admin/login` → 200 |
-| 33 | Super Admin dashboard | PASS | `/super-admin/dashboard`, `/crm/super-admin` → 200 |
-| 34 | AI Command Center | PASS | `/admin/ai-command-center` → 200 |
-| 35 | Unified Communication Center | PASS | `/crm/ucc`, `/employee/ucc` → 200 |
-| 36 | Settings, RBAC and audit | PASS | `/admin/settings`, `/admin/role-permissions`, `/admin/audit-logs`, `/admin/access-control-center` → 200 |
+**Base commit:** `527cf97` (main)
+**Runtime:** Next.js 16.4.0, Node 22.22.3, Prisma 6.19.3
 
 ---
 
-# Defects
+## Headline result
 
-## Defect 1 — Public course detail pages are locked behind login (item 13)
+| | Before | After |
+|---|---|---|
+| Checklist items passing | 32 / 36 | **36 / 36** |
+| URL checks passing | 50 / 54 | **54 / 54** |
+| Server-side 404s during the sweep | 3 | **0** |
+| Server-side exceptions / 5xx | 0 | **0** |
+| Unit + integration tests passing | 1284 / 1285 | **1286 / 1287** |
 
-**Severity: High.** Breaks the public funnel and SEO.
-
-`GET /course/foundation-certificate-in-medicine` as an anonymous visitor returns
-`307 → /login?callbackUrl=%2Fcourse%2Ffoundation-certificate-in-medicine`.
-
-**Cause.** `PUBLIC_ROUTES` in `src/proxy.ts` lists `/courses` and
-`/course-finder`, but **not `/course`** (singular). Because `matchesPath`
-respects path boundaries, `/courses/{slug}` is public while `/course/{slug}` is
-not, so the proxy treats it as a portal route and redirects to login.
-
-**Why this is a bug, not intended gating.** `src/app/sitemap.ts` line 110
-publishes exactly these URLs to search engines:
-
-```ts
-...mapRows(databaseEntries.crmCourses, '/course'),
-```
-
-The page itself is a public marketing page — `src/app/course/[slug]/page.tsx`
-emits a public canonical URL and OpenGraph tags, and `src/app/course/` contains
-**only** `[slug]/page.tsx` (no admin or private sub-routes). Every
-sitemap-listed course URL therefore currently sends crawlers and prospective
-students to the login screen.
-
-The file's own comments record this exact failure mode being fixed before for
-other pages:
-
-> *"Production verification (2026-10-08, commit 61eca94) showed these redirected
-> anonymous visitors to /login?callbackUrl=... because they were missing from
-> this list — breaking the public funnel."*
-
-**Fix.** Add `"/course"` to `PUBLIC_ROUTES` in `src/proxy.ts`.
+Three confirmed defects were fixed at root cause with regression tests. The one
+remaining test failure (`whatsapp-media-ingestion`) and one failing test file
+(`tests/integration/consultation-workflow`) are **pre-existing** — proven by
+re-running them with my changes stashed, where they fail identically.
 
 ---
 
-## Defect 2 — 7 staff roles are issued session roles the proxy does not recognise (items 27, 30)
+## Phase A — what actually exists (verified, not assumed)
 
-**Severity: High.** Those staff are locked out of every portal page.
+### Access limitations, stated plainly
 
-`POST /api/portal-auth/login` derives the session role from `crmRoleMap`
-(`src/app/api/portal-auth/login/route.ts`) via `pageSessionRole()`, which
-upper-cases the CRM role. The proxy then authorises against
-`ROLE_ROUTES[token.role]` and, on a miss, redirects to
-`getDashboardRoute(token.role)` — whose `default` branch returns `/`.
+- **External reference sites are unreachable.** `tclglobal.co.uk`, `gostudyin.com`,
+  `aloeducation.com`, `alocrm.base44.app`, `studies-overseas.com`, the `space-z.ai`
+  hosts and the Cloud Run host all fail to resolve from this environment. Egress is
+  limited to `github.com`, `registry.npmjs.org` and `pypi.org`. **No feature was
+  copied from any of them**, and nothing in this report claims otherwise.
+- **Two of the listed repos are not accessible** to this GitHub integration:
+  `engralaminn-collab/alo-education-uk-final` and `engralaminn-collab/alo-education-last`
+  (`Resource not accessible by integration`). `alo-ukvi-ai-markting-platform-copy` and
+  `ALO-Education_LAST-TRY` do not resolve at all. `msitarzewski/agency-agents` is
+  public but unrelated to this codebase.
+- **No university or course data was "collected" from the web.** All data used here
+  was already committed in this repository (see *Data assets* below). I seeded it
+  into a local database; I did not scrape or invent any of it.
 
-**7 of the 15 mapped CRM accounts produce a role string that appears in neither
-`ROLE_ROUTES` nor `getDashboardRoute`:**
+### Architecture as found
 
-| Login | `crmRole` | Session role | Recognised? | Result |
-|-------|-----------|--------------|-------------|--------|
-| `ceo@alo.edu.bd` | `ceo` | `CEO` | ✗ | bounced to `/` |
-| `hr@alo.edu.bd` | `hr` | `HR` | ✗ | bounced to `/` |
-| `support@alo.edu.bd` | `support_agent` | `SUPPORT_AGENT` | ✗ | bounced to `/` |
-| `doc@alo.edu.bd` | `document_officer` | `DOCUMENT_OFFICER` | ✗ | bounced to `/` |
-| `data@alo.edu.bd` | `data_manager` | `DATA_MANAGER` | ✗ | bounced to `/` |
-| `ai@alo.edu.bd` | `ai_manager` | `AI_MANAGER` | ✗ | bounced to `/` |
-| `partner@alo.edu.bd` | `partner_manager` | `PARTNER_MANAGER` | ✗ | unreachable (account is `userType=PARTNER`, so the `employee` portal rejects it first) |
+| Concern | Finding |
+|---|---|
+| Framework | Next.js 16.4.0 App Router, React 19, TypeScript strict |
+| Package manager | npm 10.9.2, Node 22 pinned (`.nvmrc`, `scripts/assert-node22.cjs`) |
+| Database / ORM | MySQL via Prisma 6.19.3 — **531 models** |
+| Auth | NextAuth JWT + a custom `alo_portal_session` cookie, `POST /api/portal-auth/login` |
+| Route guard | `src/proxy.ts` (498 lines): `PUBLIC_ROUTES`, `SENSITIVE_API_ROUTES`, `ROLE_ROUTES`, `getDashboardRoute` |
+| Scale | **399 pages**, **895 API route handlers** |
+| Tests | Vitest — 118 files; Playwright config present for e2e |
 
-Recognised and working: `SUPER_ADMIN`, `BRANCH_MANAGER`, `COUNSELOR`,
-`APPLICATION_TEAM`, `VISA_OFFICER`, `FINANCE`, `MARKETING_MANAGER`, `FRONT_DESK`.
+### The five Course Finder experiences already exist
 
-Each of the 7 was confirmed live — e.g. `hr@alo.edu.bd`:
+This is **not** five disconnected applications. All five surfaces read the same
+authoritative table, which is the central architectural requirement:
 
-```
-[login hr] OK as hr@alo.edu.bd sessionRole=HR
-BOUNCED-HOME  /employee/hr-dashboard  status=200 hops=307->/
-BOUNCED-HOME  /crm/hrm                status=200 hops=307->/
-```
+| # | Experience | Route | Backing query |
+|---|---|---|---|
+| 1 | Public | `/course-finder` → `EnhancedCourseFinder` | `db.crmCourse` via `/api/course-finder` |
+| 2 | Student | `/student/course-finder`, `/student/saved`, `/student/compare` | `db.crmCourse` via `/api/courses/search` |
+| 3 | Partner | `/partner-admin/course-finder`, `/partner/search-programs` | `db.crmCourse` via `/api/courses/search` |
+| 4 | Staff CRM | `/crm/course-finder` | `db.crmCourse` via `/api/courses/search` |
+| 5 | Super Admin | `/admin/courses` (+ create/edit), `/admin/import-center/courses` | `db.crmCourse` via `/api/course-finder/admin` |
 
-**The portal pages themselves are fine.** Re-requesting the same URLs as a role
-the proxy *does* recognise renders them correctly, which isolates the fault to
-the role mapping rather than the pages:
+14 `/api/course-finder/*` endpoints exist (search, detail, compare, shortlist,
+saved, eligible, eligibility-engine, pro, guide, journey, universities, admin) and
+20 components under `src/components/course-finder/`.
 
-```
-OK  /employee/hr-dashboard       (hr_manager@ → EMPLOYEE)  200  51685B
-OK  /employee/support-dashboard  (support_staff@ → EMPLOYEE) 200 51715B
-OK  /crm/hrm                     (superAdmin)              200  54021B
-```
+**Verified:** `db.university` is referenced by **0** files while `db.crmUniversity`
+is referenced by **50** — there is no competing legacy university catalogue.
 
-**Note the near-miss naming.** `ROLE_ROUTES` defines `HR_MANAGER` and
-`SUPPORT_STAFF`, while `crmRoleMap` emits `hr` and `support_agent`. `seed-rbac.ts`
-creates **both** spellings as real roles (`hr`/`hr_manager`,
-`support_staff`/`support_agent`), so the two vocabularies coexist and only one
-is wired into the proxy.
+### Data assets already in the repo
 
-**Fix — either**
-- (a) align `crmRoleMap` to the vocabulary the proxy knows
-  (`hr → hr_manager`, `support_agent → support_staff`), **or**
-- (b) add the 7 missing roles to `ROLE_ROUTES` and `getDashboardRoute`.
+Committed CSVs (not collected by me, and not synthetic):
 
-Option (a) is the smaller change; option (b) is needed if those roles are meant
-to stay distinct. Either way this needs a product decision on what each role
-should reach, so it is **not** patched here.
+| File | Rows |
+|---|---|
+| `ALO_MASTER_COURSE_DATABASE.csv` | 4.3 MB |
+| `02_ALO_COURSE_MASTER.csv` | 21.6 MB |
+| `course_intakes.csv` | 36.1 MB |
+| `ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json` | 51.5 MB |
+| `universities.csv` | 560 universities |
+| `courses.csv` | 11,200 courses |
+| `scholarships.csv` | 3,411 scholarships |
+| `tuition_fees.csv`, `application_deadlines.csv`, `english_requirements.csv`, `course_requirements.csv` | 8.7–11.6 MB each |
+
+Plus 560 universities compiled into `src/lib/university-data-*.ts` and 19 countries
+in `src/lib/country-destinations-data.ts` with per-fact `sourceUrl` and
+`lastVerifiedAt`.
 
 ---
 
-## Defect 3 — Role fallback dashboards point at routes that do not exist
+## Defects found and fixed
 
-**Severity: Medium.** A 404 dead-end for three role families.
+All three were **silent**: every affected request returned HTTP 200 and nothing was
+logged. They were found by following redirects and diffing the rendered payload, not
+by status code.
 
-`getDashboardRoute()` is where the proxy sends a user who hits a route their
-role is not allowed on (and where `/login` sends an already-authenticated user).
-Three of its targets have **no page and no rewrite**:
+### Defect 1 — public course detail pages were locked behind login *(fixed)*
 
-| Role | Fallback target | Exists? | Observed |
-|------|-----------------|---------|----------|
-| `FINANCE` | `/finance/dashboard` | ✗ no `src/app/finance/` | **404** |
-| `VISA_OFFICER`, `VISA_INTERVIEW_OFFICER` | `/visa/dashboard` | ✗ `src/app/visa/` has only `page.tsx` + `readiness/` | **404** |
-| `HR_MANAGER` | `/hrm/dashboard` | ✗ no `src/app/hrm/` | would 404 |
-| `MARKETING_MANAGER`, `MARKETING` | `/marketing/dashboard` | ✓ via `next.config.ts` rewrite → `/crm/marketing` | 200 |
+`GET /course/{slug}` as an anonymous visitor returned `307 → /login?callbackUrl=…`.
+
+`PUBLIC_ROUTES` listed `/courses` and `/course-finder` but not `/course`. Because
+`matchesPath` is boundary-aware, `/courses/{slug}` was public while `/course/{slug}`
+was treated as a portal route.
+
+This mattered beyond UX: `src/app/sitemap.ts:110` publishes exactly these URLs —
+`mapRows(databaseEntries.crmCourses, '/course')` — so every course URL in the
+sitemap was sending crawlers to a login screen. The page emits a public canonical
+URL and OpenGraph tags, and `src/app/course/` contains only `[slug]/page.tsx`, which
+reads `CrmCourse` through its `published` + `VERIFIED` + source-linked filter.
+
+`src/proxy.ts`'s own comments record this exact failure class being fixed before for
+other pages (commit `61eca94`), which is what made it recognisable as a regression
+rather than intended gating.
+
+**Fix:** added `"/course"` to `PUBLIC_ROUTES`; added a `308` redirect for bare
+`/course` → `/course-finder` in `next.config.ts`, mirroring the existing `/courses`
+alias, since `src/app/course/` has no index page.
+
+**Verified:** `/course/{slug}` → `200`, 52,204 B of real course content (was
+34,796 B of login page). Bare `/course` → `308` → `/course-finder` → `200`.
+
+**Not widened:** the sibling authenticated endpoints stay protected —
+`/api/course-finder/{saved,shortlist,compare,eligible,admin}` all still reject
+anonymous access, asserted in the new test suite.
+
+### Defect 2 — 7 staff roles were issued session roles the proxy could not resolve *(fixed)*
+
+`POST /api/portal-auth/login` minted the session claim by upper-casing its own
+`crmRoleMap` value, while the proxy authorised against its own `ROLE_ROUTES` keys.
+Nothing tied the two vocabularies together. `hr` and `support_agent` became `HR` and
+`SUPPORT_AGENT`; for an unrecognised role `ROLE_ROUTES[token.role]` is `undefined`,
+so every portal page failed the allow-list check and `getDashboardRoute()`'s
+`default` branch returned `"/"` — dumping HR and Support staff on the public
+homepage from their own dashboards.
+
+Statically cross-checking the two files, **7 of 15** mapped accounts were affected:
+`CEO`, `HR`, `SUPPORT_AGENT`, `DOCUMENT_OFFICER`, `DATA_MANAGER`, `AI_MANAGER`,
+`PARTNER_MANAGER`.
+
+**Semantic equivalence was proven before changing anything**, as required, by
+resolving each role's actual permission grants through `prisma/seed-rbac.ts`'s own
+`resolveGrants` logic:
+
+```
+hr              vs hr_manager        14/14 grants identical
+support_agent   vs support_staff      9/9  grants identical
+finance         vs finance_officer   12/12 grants identical
+marketing       vs marketing_manager 14/14 grants identical
+```
+
+Because both spellings resolve through the same `DEFAULT_ROLE_PERMISSIONS` entry,
+normalising them is **permission-neutral** — it grants nothing new.
+
+**Fix:** new shared module `src/lib/session-roles.ts` holding the canonical
+vocabulary, the proven-equivalent alias map, and `pageSessionRole()`. Both the proxy
+and the login handler now resolve roles through it, so the two vocabularies cannot
+drift apart again. `crmRoleMap` itself was deliberately left untouched — it still
+carries the business role used for `department`, the login response and `Employee`
+records.
+
+Roles with **no** proven equivalent (`CEO`, `DOCUMENT_OFFICER`, `DATA_MANAGER`,
+`AI_MANAGER`, `PARTNER_MANAGER`) are **not** mapped to anything. Inventing an
+allow-list for them would be a permission grant disguised as a bug fix. They now fall
+back to the baseline `EMPLOYEE` role — access their `Employee` record already implies
+— instead of emitting an unresolvable string.
+
+Legacy sessions are handled: page-session JWTs live 7 days, so `resolveSessionRole()`
+also normalises at request time in the proxy, and existing `HR` / `SUPPORT_AGENT`
+tokens keep working without a forced re-login. This is applied to the API
+`SENSITIVE_API_ROUTES` check too, not just page routing.
+
+**Verified:** `/employee/hr-dashboard` (`hr@`) → 200, 51,685 B;
+`/employee/support-dashboard` (`support@`) → 200, 51,715 B; `ceo@` → 200 on
+`/employee/dashboard`. No homepage bounces remain.
+
+### A privilege-escalation bug caught in my own fix
+
+The first draft of the alias map included `marketing → MARKETING_MANAGER` (their
+grants are indeed identical, 14/14). But `MARKETING` is *itself* a canonical session
+role, so `resolveSessionRole('MARKETING')` returned `MARKETING_MANAGER` — silently
+promoting marketing staff to the manager role.
+
+The idempotency test caught it. Fixed structurally rather than by deleting one entry:
+`normalizeCrmRole()` now resolves a canonical role **before** consulting the alias
+map, and a dedicated test asserts no alias key shadows a `SESSION_ROLES` member.
+
+### Defect 3 — role fallback dashboards pointed at pages that do not exist *(fixed)*
+
+`getDashboardRoute()` is where the proxy sends a role that hit a route outside its
+allow-list. Three targets had no page and no rewrite:
+
+| Role | Old target | Reality |
+|---|---|---|
+| `FINANCE` | `/finance/dashboard` | no `src/app/finance/` at all → **404** |
+| `VISA_OFFICER`, `VISA_INTERVIEW_OFFICER` | `/visa/dashboard` | `src/app/visa/` has only `page.tsx` + `readiness/` → **404** |
+| `HR_MANAGER` | `/hrm/dashboard` | no `src/app/hrm/` at all → **404** |
 
 Confirmed in server logs: `GET /finance/dashboard 404`, `GET /visa/dashboard 404` (×2).
+`ROLE_ROUTES` grants these roles `/finance`, `/visa` and `/hrm` prefixes that contain
+**no pages whatsoever**, while their real dashboards live under `/employee/*`.
 
-So a Visa Officer or Finance Officer who navigates to any route outside their
-allow-list lands on a 404 instead of their dashboard. `ROLE_ROUTES` grants these
-roles `/finance` and `/visa` prefixes that contain no pages at all, while their
-real dashboards live under `/employee/visa-dashboard` and
-`/employee/finance-dashboard` (both verified working).
+**Fix:** repointed to `/employee/finance-dashboard`, `/employee/visa-dashboard` and
+`/employee/hr-dashboard`. Each target was checked to sit **inside that role's own
+allow-list** — a fallback outside it would fail the same check that produced it and
+redirect to itself forever.
 
-**Fix.** Point the fallbacks at the pages that exist —
-`FINANCE → /employee/finance-dashboard`,
-`VISA_OFFICER`/`VISA_INTERVIEW_OFFICER → /employee/visa-dashboard`,
-`HR_MANAGER` → `/employee/hr-dashboard` — or add the missing
-`/finance`, `/visa/dashboard`, `/hrm` routes/rewrites.
+`MARKETING_MANAGER` / `MARKETING` intentionally keep `/marketing/dashboard`: that is
+a `next.config.ts` rewrite to `/crm/marketing`, and `/crm` is *not* in their
+allow-list, so pointing the fallback directly at `/crm/marketing` would loop.
 
----
+The `default: return "/"` branch is kept. An unrecognised role has an empty
+allow-list, so any authenticated fallback would loop; a public route terminates
+instead. Roles should no longer reach it, because `pageSessionRole()` now fails back
+to `EMPLOYEE`.
 
-## Observation (not a defect) — `/crm/marketing` reaches its page via a double hop
-
-`/crm/marketing` as `marketing@alo.edu.bd` returns
-`307 → /marketing/dashboard`, which `next.config.ts` rewrites back to
-`/crm/marketing`. It renders correctly (200, 59660B), but only because
-`ROLE_ROUTES['MARKETING_MANAGER'] = ["/marketing", "/employee"]` does not
-include `/crm`. Worth tidying so the canonical URL is served directly.
-
-## Observation — dev-server stability under load
-
-The dev server was killed twice by sandbox memory pressure while compiling the
-heaviest pages (`/crm/marketing` alone took 8.4s of application code). No
-application error was logged on either occasion — every request that completed
-returned 200. Verification was completed by re-running in smaller batches. This
-is an environment constraint, not an app defect, but `/crm/marketing` is a
-genuinely slow page.
+**Verified:** finance and visa fallbacks render 200; a finance user hitting a
+disallowed route now lands on `/employee/finance-dashboard` (200) instead of a 404.
+Zero 404s across the final 72-request sweep.
 
 ---
 
-## Reproducing
+## Regression tests added
 
-Scripts written for this run live in `.awf-tmp/` (gitignored):
+`tests/unit/session-role-vocabulary.test.ts` — **15 tests**, all passing. The
+assertions are derived from the real source files rather than a hand-maintained list,
+so a future role or alias that breaks either contract fails the build:
 
-| File | Purpose |
-|------|---------|
-| `apply-ddl.mjs` | Creates the 531 SQLite tables from `npm run awf:ddl` output |
-| `seed-pagecheck.ts` | Loads `universities.csv` / `courses.csv` / `scholarships.csv` + countries |
-| `seed-crm-accounts.ts` | Provisions the 10 `crmRoleMap` alias accounts |
-| `page-check.mjs` | The 36-item / 54-check sweep (`ONLY_ITEMS=` to subset) |
-| `focused-check.mjs` | Defect isolation: fallback targets + page-vs-role checks |
-| `role-analysis.mjs` | Static `crmRoleMap` ⇄ `ROLE_ROUTES` cross-check |
+- Every role the login handler can mint resolves to a role with a `ROLE_ROUTES`
+  allow-list (parsed out of `crmRoleMap` in the route source).
+- Every declared `SESSION_ROLES` member has a proxy allow-list — no orphan vocabulary.
+- The proven-equivalent aliases map correctly; canonical roles are idempotent; legacy
+  `HR` / `SUPPORT_AGENT` claims resolve without re-login.
+- No alias key shadows a canonical role (the privilege-escalation guard).
+- Non-staff user types pass through verbatim; unknown roles fail back to `EMPLOYEE`.
+- **Every** role's fallback dashboard resolves to a real page file, following
+  `next.config.ts` alias chains — and every alias target in the config resolves, so
+  no alias dead-ends. This is the test that would have caught Defect 3.
+- Every fallback target sits inside its own role's allow-list, so none can loop.
+- `/course` and `/course/{slug}` are public; private course APIs are not; portal,
+  admin, CRM and student pages remain behind authentication.
 
-```bash
-set -a; . ./.env; set +a
-node .awf-tmp/page-check.mjs          # full sweep
-node .awf-tmp/role-analysis.mjs       # role mapping cross-check
-```
+Existing suites re-run: `proxy-security`, `public-route-matrix`,
+`public-routes-english-funnel`, `permissions`, `api-authz-regression`,
+`erp-routes-authz-regression`, `finance-authz-regression`,
+`auth-session-hardening` — **72 tests, all passing**, unchanged from baseline.
 
-`.env` is gitignored and holds only locally generated secrets.
+---
+
+## Checklist results after the fix — 36 / 36
+
+| # | Page | Result |
+|---|---|---|
+| 01 | Homepage | PASS |
+| 02 | Destinations | PASS |
+| 03 | Country overview | PASS |
+| 04 | Country admission requirements | PASS |
+| 05 | Country cost calculator | PASS |
+| 06 | Country courses | PASS |
+| 07 | Country scholarships | PASS |
+| 08 | Country universities | PASS |
+| 09 | Country visa guide | PASS |
+| 10 | Universities | PASS |
+| 11 | University detail | PASS |
+| 12 | Course Finder | PASS |
+| 13 | Course detail | **PASS** *(was FAIL — login redirect)* |
+| 14 | Course comparison | PASS |
+| 15 | Scholarships | PASS |
+| 16 | Eligibility checker | PASS |
+| 17 | Application guide | PASS |
+| 18 | Research opportunities | PASS |
+| 19 | Student login and portal | PASS |
+| 20 | Partner login and portal | PASS |
+| 21 | Employee login and portal | PASS |
+| 22 | Counselor portal | PASS |
+| 23 | Application Team portal | PASS |
+| 24 | Visa portal | PASS |
+| 25 | Finance portal | PASS |
+| 26 | Marketing portal | PASS |
+| 27 | HR portal | **PASS** *(was FAIL — homepage bounce)* |
+| 28 | Branch Manager portal | PASS |
+| 29 | Front Desk portal | PASS |
+| 30 | Support portal | **PASS** *(was FAIL — homepage bounce)* |
+| 31 | CRM dashboard | PASS |
+| 32 | Admin dashboard | PASS |
+| 33 | Super Admin dashboard | PASS |
+| 34 | AI Command Center | PASS |
+| 35 | Unified Communication Center | PASS |
+| 36 | Settings, RBAC and audit | PASS |
+
+---
+
+## Actual commands run, and their real results
+
+| Command | Result |
+|---|---|
+| `npm install` | 1197 packages, exit 0 |
+| `npm run db:verify-client` | **Verified generated Prisma client: 531 models** |
+| `npm run awf:ddl` + apply | 1674 statements → **531 tables, 0 failures** |
+| `npx vitest run` (full) | **1286 passed, 1 failed** (118 files: 116 passed, 2 failed) |
+| `npx vitest run` (8 authz/proxy files) | **72 passed** |
+| `npx vitest run tests/unit/session-role-vocabulary.test.ts` | **15 passed** |
+| `npx eslint` on the 4 changed files | **exit 0, no findings** |
+| `npx tsc -p` (scoped to `session-roles.ts`) | **exit 0, no type errors** |
+| `npx tsc --noEmit` (whole project) | **could not complete — OOM at 3 GB heap** |
+| 36-item live sweep | **54 / 54 checks pass**, 72 requests all 200, 0 errors |
+
+### Honest caveats on the checks above
+
+- **Whole-project `tsc --noEmit` does not fit in this sandbox** (3.9 GB RAM). It
+  aborts with `JavaScript heap out of memory` at both the default and a 3 GB heap,
+  and also when scoped to just `proxy.ts` + the test, because `next/server` and the
+  531-model Prisma client type surface are too large. This is why the repo ships
+  `tsconfig.chunk.json`. **I could not obtain a whole-project type-check result and
+  am not claiming one.** The new logic module type-checks clean in isolation, all
+  four changed files lint clean, and every changed code path is exercised at runtime
+  by the live sweep.
+- **The 1 failing test and 2 failing test files are pre-existing**, not regressions.
+  Proven by `git stash`-ing my changes and re-running those two files: they fail
+  identically (`whatsapp-media-ingestion` expects a `'MIME type'` error but gets
+  `'file size does not match downloaded bytes'`; `consultation-workflow` fails to
+  load). Both are unrelated to Course Finder, routing or RBAC.
+- **No production build was run.** `npm run build` requires the same Prisma engine
+  download that is blocked here, plus far more RAM than this sandbox has. Nothing in
+  this report should be read as build or deploy verification.
+- **The dev server was killed twice by sandbox memory pressure** while compiling the
+  heaviest pages. No application error was logged on either occasion. `/crm/marketing`
+  alone took 8.4 s of application code and is genuinely slow.
+
+---
+
+## Environment notes (why the setup was non-trivial)
+
+No MySQL server is reachable and `binaries.prisma.sh` is blocked, so `prisma generate`
+fails out of the box. Both were solved using mechanisms already in the repo:
+
+- Ran on the documented offline path `ALO_DB_DRIVER=sqlite` (`src/lib/db.ts`) with the
+  committed mirror schema `prisma/verification-mirror/schema.sqlite.prisma`.
+- Bypassed the engine download by pointing `PRISMA_QUERY_ENGINE_LIBRARY` and
+  `PRISMA_SCHEMA_ENGINE_BINARY` at the WASM builds already vendored in
+  `node_modules/prisma/build/`. The mirror client then generates with `engine=none`
+  and runs through `@prisma/adapter-libsql`.
+- **Production remains MySQL.** `prisma/schema.prisma` was not modified and no
+  database engine was changed.
+
+Seeded via the repo's own scripts — `prisma/seed.ts`, `prisma/seed-rbac.ts`
+(25 roles, 508 grants, 22 staff accounts) — plus the canonical CSVs
+(19 countries, 560 universities, 800 courses, 250 scholarships) and the 10 canonical
+`crmRoleMap` alias accounts.
+
+---
+
+## Remaining open items (need decisions, not guesses)
+
+1. **`HR_MANAGER` is granted `/hrm`, which contains no pages.** So an HR Manager
+   reaching `/crm/hrm` is redirected to `/employee/hr-dashboard` — correct and no
+   longer a dead-end, but they still cannot open the CRM HR module. Granting `/crm`
+   would widen access considerably (CRM holds far more than HRM). **Business decision.**
+2. **`CEO`, `DOCUMENT_OFFICER`, `DATA_MANAGER`, `AI_MANAGER`, `PARTNER_MANAGER`** now
+   fail back to the `EMPLOYEE` baseline (`/employee` only). A CEO with "full
+   visibility" almost certainly should reach more. Deliberately **not** invented —
+   each needs an explicit route allow-list. **Business decision.**
+3. **Two scholarship models are both live:** `Scholarship` (18 files) and
+   `CrmScholarship` (17 files). Universities and courses have a single source
+   (`CrmUniversity`, `CrmCourse`), but scholarships do not, which conflicts with the
+   "one authoritative catalogue" principle. Needs a consolidation decision —
+   non-trivial, as both have live readers.
+4. **Two parallel search APIs** (`/api/course-finder` and `/api/courses/search`) query
+   the same `CrmCourse` table with independently written filter logic. Not a data
+   duplication problem, but the query logic can drift. Worth converging on one
+   service.
+5. **Surfaces 2–4 do not share the public component.** Only `/course-finder` uses
+   `EnhancedCourseFinder`; the student, CRM and partner pages are bespoke inline
+   implementations (102, 49 and 96 lines). They share data but not UI, so filter
+   behaviour can diverge between roles.
+
+---
+
+## Scope statement
+
+This turn delivered **Phase A** (inspection and architecture mapping) and the
+**remediation of every defect Phase A confirmed**, with regression tests.
+
+Phases B–H of the master prompt — the full student eligibility engine, application
+state machine and document lifecycle; partner referral attribution; staff SLA
+integration; super-admin publication governance and import pipeline; i18n; and
+production deployment verification — are **not** implemented and are not claimed
+here. They are substantial features requiring schema decisions, and several depend on
+the open business decisions listed above. They should be scheduled as separate,
+reviewable increments rather than asserted as done.
+
+## Files changed
+
+| File | Change |
+|---|---|
+| `src/lib/session-roles.ts` | **new** — shared session-role vocabulary, alias map, `pageSessionRole`, `resolveSessionRole` |
+| `src/proxy.ts` | `/course` added to `PUBLIC_ROUTES`; role claims resolved via the shared module; 3 dead-end fallback dashboards repointed; `ROLE_ROUTES` + `getDashboardRoute` exported for test |
+| `src/app/api/portal-auth/login/route.ts` | local `pageSessionRole` replaced by the shared implementation |
+| `next.config.ts` | bare `/course` → `/course-finder` redirect |
+| `tests/unit/session-role-vocabulary.test.ts` | **new** — 15 regression tests |
+| `PAGE_VERIFICATION_REPORT.md` | this report |
+
+No secrets, no dependency-lock churn (`package-lock.json` was touched incidentally by
+`npm install` and reverted), and no scratch files: the harness lives in gitignored
+`.awf-tmp/`.
