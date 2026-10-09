@@ -9,6 +9,7 @@ const url = testDatabaseUrl();
 const prisma = new PrismaClient(url ? { datasourceUrl: url } : {});
 vi.mock('@/lib/db', () => ({ get db() { return prisma; } }));
 import { POST } from '@/app/api/admin/resources/route';
+import { getRelatedContent } from '@/lib/university-course/unified-service';
 import { contentAuditLog } from '@/lib/content-audit';
 const suite = url ? describe : describe.skip;
 const suffix = Date.now().toString(36);
@@ -25,6 +26,8 @@ suite('real local MySQL content authorization and atomic audit', () => {
   });
   afterAll(async () => {
     vi.restoreAllMocks();
+    await prisma.contentRelationship.deleteMany({ where: { sourceId: { in: slugs } } });
+    await prisma.service.deleteMany({ where: { id: `security-service-${suffix}` } });
     await prisma.resource.deleteMany({ where: { slug: { in: slugs } } });
     await prisma.portalAuditLog.deleteMany({ where: { actorUserId: state.actorId } });
     await prisma.resourceCategory.delete({ where: { id: categoryId } });
@@ -47,6 +50,17 @@ suite('real local MySQL content authorization and atomic audit', () => {
   it('rejects foreign origins even with an admin session', async () => {
     expect((await POST(request(slugs[2], 'https://attacker.example'))).status).toBe(401);
     expect(await prisma.resource.count({ where: { slug: slugs[2] } })).toBe(0);
+  });
+  it('returns exact published relationships and omits archived targets', async () => {
+    const serviceId = `security-service-${suffix}`;
+    const resource = await prisma.resource.findUniqueOrThrow({ where: { slug: slugs[0] } });
+    await prisma.resource.update({ where: { id: resource.id }, data: { status: 'PUBLISHED' } });
+    await prisma.service.create({ data: { id: serviceId, slug: serviceId, title: 'Local related fixture', status: 'PUBLISHED' } });
+    await prisma.contentRelationship.create({ data: { sourceType: 'RESOURCE', sourceId: resource.id, resourceId: resource.id, targetType: 'SERVICE', targetId: serviceId, serviceReverseId: serviceId } });
+    expect((await getRelatedContent('resource', '', resource.slug)).some(item => item.id === serviceId && item.score === 1)).toBe(true);
+    await prisma.service.update({ where: { id: serviceId }, data: { status: 'ARCHIVED' } });
+    expect((await getRelatedContent('resource', '', resource.slug)).some(item => item.id === serviceId)).toBe(false);
+    await prisma.contentRelationship.deleteMany({ where: { sourceId: resource.id } });
   });
   it('revalidates disabled accounts instead of trusting stale session roles', async () => {
     await prisma.user.update({ where: { id: state.actorId }, data: { status: 'INACTIVE' } });

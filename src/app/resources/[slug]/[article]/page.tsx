@@ -37,9 +37,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ResourceArticlePage({ params }: { params: Promise<{ slug: string; article: string }> }) {
   const { slug: category, article } = await params;
-  const cat = RESOURCE_CATEGORIES.find((c) => c.slug === category);
-  if (!cat) notFound(); // /resources/{whatever}/{x} with an unknown category is a real 404
-
   const published = await getPublishedResource(article, category);
   if (!published) notFound();
 
