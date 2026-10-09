@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { validateRequestAccess } from '@/lib/access-control/central-security-engine';
+import { writePortalAudit } from '@/lib/transactional-audit';
 import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
 
 export async function GET(req: NextRequest) {
@@ -10,23 +12,17 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const employeeId = searchParams.get('employeeId') || auth.userId;
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-
-    if (employeeId !== auth.userId && !isSuper) {
-      return NextResponse.json({ success: false, error: 'Permission denied' }, { status: 403 });
+    const employee = await db.employee.findFirst({ where: { OR: [{ id: employeeId }, { userId: employeeId }] } });
+    if (!employee) return NextResponse.json({ success: false, error: 'Employee not found' }, { status: 404 });
+    if (employee.userId !== auth.userId) {
+      const access = await validateRequestAccess({ userId: auth.userId }, 'employee.permissions', 'view', { ownerId: employee.userId });
+      if (!access.allowed) return NextResponse.json({ success: false, error: 'Permission denied' }, { status: 403 });
     }
-
     const now = new Date();
-    // Auto-expire
-    await (db as any).employeeTemporaryPermission.updateMany({
-      where: { endDate: { lt: now }, isActive: true },
-      data: { isActive: false },
-    }).catch(() => {});
-
-    const perms = await (db as any).employeeTemporaryPermission.findMany({
-      where: { employeeId, isActive: true },
+    const perms = await db.employeeTemporaryPermission.findMany({
+      where: { employeeId: employee.id, isActive: true, active: true, startDate: { lte: now }, endDate: { gt: now }, expiresAt: { gt: now } },
       orderBy: { endDate: 'asc' },
-    }).catch(() => []);
+    });
 
     return NextResponse.json({ success: true, permissions: perms, note: 'Automatically revoke after expiry' });
   } catch (error: any) {
@@ -40,29 +36,44 @@ export async function POST(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
 
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
-    if (!isSuper) return NextResponse.json({ success: false, error: 'Super Admin required' }, { status: 403 });
+    const access = await validateRequestAccess({ userId: auth.userId }, 'employee.permissions', 'approve');
+    if (!access.allowed) return NextResponse.json({ success: false, error: 'Temporary permission approval authority required' }, { status: 403 });
 
     const body = await req.json();
     const { employeeId, featureKey, action, scopeType, scopeId, reason, startDate, endDate } = body;
     if (!employeeId || !featureKey || !endDate) return NextResponse.json({ success: false, error: 'employeeId, featureKey, endDate required' }, { status: 400 });
 
-    const perm = await (db as any).employeeTemporaryPermission.create({
+    const starts = startDate ? new Date(startDate) : new Date();
+    const ends = new Date(endDate);
+    if (!Number.isFinite(starts.getTime()) || !Number.isFinite(ends.getTime()) || ends <= starts || ends <= new Date() || !reason?.trim()) {
+      return NextResponse.json({ success: false, error: 'Valid start/end dates and a reason are required' }, { status: 400 });
+    }
+    const employee = await db.employee.findFirst({ where: { OR: [{ id: employeeId }, { userId: employeeId }] } });
+    if (!employee || employee.status.toLowerCase() !== 'active') return NextResponse.json({ success: false, error: 'Active employee required' }, { status: 422 });
+    if (employee.userId === auth.userId) return NextResponse.json({ success: false, error: 'Cannot grant own temporary permission' }, { status: 403 });
+    const perm = await db.$transaction(async tx => {
+      const created = await tx.employeeTemporaryPermission.create({
       data: {
-        employeeId,
+        employeeId: employee.id,
         featureKey,
+        permissionKey: featureKey,
+        expiresAt: ends,
+        active: true,
+        approvedBy: auth.userId,
         action: action || 'view',
         scopeType: scopeType || 'own',
         scopeId: scopeId || '',
         grantedBy: auth.userId,
         reason: reason || '',
-        startDate: startDate ? new Date(startDate) : new Date(),
-        endDate: new Date(endDate),
+        startDate: starts,
+        endDate: ends,
         isActive: true,
       },
     });
 
-    await logAuditAction(auth, 'TEMPORARY_PERMISSION_GRANTED', 'EmployeeTemporaryPermission', perm.id, { employeeId, featureKey, endDate });
+      await writePortalAudit(tx, auth, 'TEMPORARY_PERMISSION_GRANTED', 'EmployeeTemporaryPermission', created.id, { employeeId: employee.id, featureKey, endDate, reason }, req);
+      return created;
+    });
 
     return NextResponse.json({ success: true, data: perm });
   } catch (error: any) {

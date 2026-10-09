@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getSpecService, specServiceToPayload } from "@/lib/website/spec-services";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,24 +12,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     const service = await db.service.findUnique({
       where: { slug },
       include: {
-        faqs: { orderBy: { sortOrder: "asc" } },
+        faqs: { where: { status: "active" }, orderBy: { sortOrder: "asc" } },
       },
     });
 
-    if (!service) {
-      // Spec fallback: the 14 canonical services always open a complete,
-      // honest detail page — even before an admin seeds the DB record.
-      // Legacy slugs resolve through SERVICE_SLUG_ALIASES.
-      const spec = getSpecService(slug);
-      if (!spec) {
-        return NextResponse.json({ error: "Service not found" }, { status: 404 });
-      }
-      return NextResponse.json({
-        service: { ...specServiceToPayload(spec), faqs: [] },
-        related: { services: [], scholarships: [], resources: [], courses: [], countries: [] },
-        source: 'spec-catalog',
-      });
-    }
+    if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 });
     if (service.status !== "PUBLISHED") {
       return NextResponse.json({ error: "Service not found" }, { status: 404 });
     }

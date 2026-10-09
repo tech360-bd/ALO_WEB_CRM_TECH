@@ -23,7 +23,8 @@ describe('WhatsApp media download', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
   it('rejects MIME spoofing and corrupt content', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(Response.json(metadata)).mockResolvedValueOnce(new Response('<script>fake PDF</script>')));
+    const spoof = Buffer.from('<script>fake PDF</script>');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(Response.json({ ...metadata, file_size: spoof.length, sha256: createHash('sha256').update(spoof).digest('hex') })).mockResolvedValueOnce(new Response(spoof)));
     await expect(downloadWhatsAppMedia('123456')).rejects.toThrow('MIME type');
     vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(Response.json({ ...metadata, sha256: 'invalid' })).mockResolvedValueOnce(new Response(bytes)));
     await expect(downloadWhatsAppMedia('123456')).rejects.toThrow('integrity');

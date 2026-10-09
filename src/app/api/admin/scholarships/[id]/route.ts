@@ -2,15 +2,14 @@ import { pickEditableContentFields } from "@/lib/content-validation";
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/scholarships/[id] — single scholarship with FAQs + relationships
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -39,7 +38,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 // PATCH /api/admin/scholarships/[id] — update scholarship
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -80,13 +79,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       if (clash) return NextResponse.json({ error: "Scholarship code already in use" }, { status: 409 });
     }
 
-    const updated = await db.scholarship.update({
+    const updated = await db.$transaction(async tx => {
+      const updated = await tx.scholarship.update({
       where: { id },
       data: patch,
       include: { faqs: { orderBy: { sortOrder: "asc" } } },
     });
-
-    await contentAuditLog.create({
+      await contentAuditLog.create({
       data: {
         userId,
         action: "SCHOLARSHIP_UPDATE",
@@ -94,7 +93,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         resourceId: id,
         details: JSON.stringify({ changes: Object.keys(patch) }),
       },
-    }).catch(() => {});
+    }, tx);
+      return updated;
+    });
 
     return NextResponse.json({ scholarship: updated });
   } catch (err: any) {
@@ -104,9 +105,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 // DELETE /api/admin/scholarships/[id] — soft delete (set status to CLOSED)
-// Pass ?hard=1 to hard delete (cascades FAQs + relationships)
+// Permanent deletion is disabled; retain content history.
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -127,22 +128,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
     }
 
-    if (hard) {
-      // Relationships are polymorphic scalar references, so remove both
-      // directions explicitly before deleting the content record.
-      await db.contentRelationship.deleteMany({
-        where: {
-          OR: [
-            { sourceType: "SCHOLARSHIP", sourceId: id },
-            { targetType: "SCHOLARSHIP", targetId: id },
-          ],
-        },
-      });
-      await db.scholarship.delete({ where: { id } });
-    } else {
-      await db.scholarship.update({ where: { id }, data: { status: "CLOSED" } });
-    }
-
+    if (hard) return NextResponse.json({ error: 'Permanent content deletion is disabled. Archive the record to retain history.' }, { status: 403 });
+    await db.$transaction(async tx => {
+      await tx.scholarship.update({ where: { id }, data: { status: 'CLOSED' } });
     await contentAuditLog.create({
       data: {
         userId,
@@ -151,7 +139,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         resourceId: id,
         details: JSON.stringify({ slug: existing.slug, hard }),
       },
-    }).catch(() => {});
+    }, tx);
+
+    });
 
     return NextResponse.json({ success: true, id, hard });
   } catch (err: any) {

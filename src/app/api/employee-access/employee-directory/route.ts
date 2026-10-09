@@ -41,14 +41,14 @@ export async function GET(req: NextRequest) {
     // Apply private visibility restriction — only return private fields if authorized
     const sanitized = await Promise.all(users.map(async (u: any) => {
       const canViewPrivate = await canViewEmployeePrivateProfileEngine(auth.userId, auth.roles, u.id);
-      if (canViewPrivate) return u;
-      // Strip private info
-      const { employeeProfile, ...rest } = u;
-      if (employeeProfile) {
-        const { emergencyContact, ...publicProfile } = employeeProfile;
-        return { ...rest, employeeProfile: publicProfile };
-      }
-      return rest;
+      const identity = { id: u.id, name: u.name, email: u.email, userType: u.userType, status: u.status };
+      const profile = u.employeeProfile;
+      if (!profile) return identity;
+      const publicProfile = { employeeId: profile.employeeId, designation: profile.designation, department: profile.department, branch: profile.branch };
+      if (!canViewPrivate) return { ...identity, employeeProfile: publicProfile };
+      const salaryAllowed = await enforceFieldLevelSecurity(auth.userId, auth.roles, 'salary', u.id);
+      const { salary, ...privateProfile } = profile;
+      return { ...identity, employeeProfile: { ...privateProfile, ...(salaryAllowed ? { salary } : {}) } };
     }));
 
     return NextResponse.json({

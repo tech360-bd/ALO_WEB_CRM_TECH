@@ -32,7 +32,7 @@ function cookieValue(request: Request, name: string): string | null {
   return pair ? decodeURIComponent(pair.slice(name.length + 1)) : null;
 }
 
-export async function authenticateRequest(request: Request): Promise<AuthContext | NextResponse> {
+async function authenticateSession(request: Request): Promise<AuthContext | NextResponse> {
   const authHeader = request.headers.get('authorization');
   const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
   // New portal logins use an HttpOnly cookie. Bearer remains supported for
@@ -247,6 +247,30 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     actorEmail: session.user.email,
     actorName: session.user.name,
   };
+}
+
+/** Revalidate employee lifecycle for every employee/HR request. */
+export async function authenticateRequest(request: Request): Promise<AuthContext | NextResponse> {
+  const result = await authenticateSession(request);
+  if (result instanceof NextResponse) return result;
+  const pathname = new URL(request.url).pathname;
+  const employeeRoute = pathname.startsWith('/api/employee-access/') || pathname.startsWith('/api/admin/employees') || pathname.startsWith('/api/admin/payroll');
+  if (employeeRoute) {
+    if (['STUDENT', 'PARTNER'].includes(result.userType.toUpperCase())) {
+      return NextResponse.json({ success: false, error: 'Employee access required.' }, { status: 403 });
+    }
+    const employee = await db.employee.findFirst({ where: { userId: result.userId }, select: { status: true } });
+    if (employee && employee.status.toLowerCase() !== 'active') {
+      return NextResponse.json({ success: false, error: 'Employee account is not active.' }, { status: 403 });
+    }
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
+      const origin = request.headers.get('origin');
+      if (origin && origin !== new URL(process.env.NEXTAUTH_URL || request.url).origin) {
+        return NextResponse.json({ success: false, error: 'Cross-origin employee mutation denied.' }, { status: 403 });
+      }
+    }
+  }
+  return result;
 }
 
 // ============================================================

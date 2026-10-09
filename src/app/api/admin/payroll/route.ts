@@ -101,6 +101,8 @@ async function processPayroll(req: Request, auth: AuthContext) {
 
       const makerId = payrollToChange.preparedBy;
       try { assertMakerChecker(adminId, makerId); } catch (error) { return errorResponse(error); }
+      const permission = await validateRequestAccess({ userId: adminId }, 'payroll', action === 'approve_payroll' ? 'approve' : 'pay');
+      if (!permission.allowed) return NextResponse.json({ error: permission.reason }, { status: 403 });
       const check = canApproveAction(adminId, makerId, [auth.userType, ...auth.roles]);
       if (!check.allowed) return NextResponse.json({ error: check.reason || 'Maker-Checker Separation of Duties Violation' }, { status: 403 });
       const transition = assertPayrollTransition(payrollToChange.status, action === 'approve_payroll' ? 'approve' : 'pay');
