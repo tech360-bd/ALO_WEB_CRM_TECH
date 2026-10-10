@@ -12,7 +12,7 @@ import { detectLanguage } from '@/lib/ai-whatsapp-engine';
 export type Channel = 'website' | 'whatsapp' | 'webchat' | 'facebook';
 export type IntakeState = 'ASK_ID' | 'VERIFYING' | 'INFORMED_INDEPENDENT' | 'COUNSELING';
 
-const STUDENT_ID_REGEX = /\b(AE-\d{4}\d{6}|ALO-S-\d+|AE-\d{8}|STU-\w+)\b/i;
+const STUDENT_ID_REGEX = /\b(AE-\d{4}\d{5}|AE-\d{4}\d{6}|ALO-S-\d+|AE-\d{8}|STU-\w+)\b/i;
 
 export interface IntakeContext {
   channel: Channel;

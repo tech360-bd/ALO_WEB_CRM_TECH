@@ -11682,3 +11682,17 @@ model EmailEvent {
   @@index([campaignId, type, createdAt])
   @@index([type, createdAt])
 }
+
+// Concurrency-safe sequence for canonical identifiers (AE-YYYYNNNNN, AEP-, EMP-).
+// Rows are advanced inside the allocating transaction (see src/lib/identity/student-id.ts).
+// Numbers are never reused: a rolled-back transaction also rolls back its increment,
+// and a committed number is never handed out again.
+model StudentIdSequence {
+  id        String   @id
+  scope     String   @db.VarChar(16)
+  year      Int
+  lastValue Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([scope, year])
+}
