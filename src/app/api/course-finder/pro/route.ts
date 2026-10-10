@@ -1,4 +1,4 @@
-// @ts-nocheck - Prisma stub requires VPS generation
+// @ts-nocheck - Historical Prisma typing debt; generated client verification is required in Node 22 CI
 import { NextResponse } from 'next/server';
 import { authenticateRequest } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';

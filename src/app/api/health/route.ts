@@ -1,42 +1,40 @@
-// Health check endpoint.
-// Public — no authentication required.
-// Used by:
-//   - Load balancers (Caddy/Nginx) to verify the app is responding
-//   - Systemd watchdog to detect hangs
-//   - Monitoring tools (Uptime Kuma, Prometheus, etc.)
-//   - The mandatory clean-install gate: `curl -fsS http://127.0.0.1:3000/api/health`
-
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
+/** Readiness: a running process without a working database must not receive traffic. */
 export async function GET() {
   const startedAt = Date.now();
-  let dbOk = false;
-  let dbError: string | undefined;
-
+  let connected = false;
+  const modules: Record<string, boolean> = {};
   try {
-    // Run a trivial query to verify the DB connection is alive
     await db.$queryRaw`SELECT 1`;
-    dbOk = true;
-  } catch (e) {
-    dbError = e instanceof Error ? e.message : String(e);
+    connected = true;
+    const checks = {
+      universities: () => db.crmUniversity.findFirst({ select: { id: true, universityId: true, verificationStatus: true, publicationStatus: true } }),
+      courses: () => db.crmCourse.findFirst({ select: { id: true, courseId: true, verificationStatus: true, publicationStatus: true } }),
+      students: () => db.student.findFirst({ select: { id: true, userId: true, studentId: true, status: true } }),
+      staff: () => db.portalUser.findFirst({ select: { id: true, status: true, emailVerified: true } }),
+      documents: () => db.studentDocument.findFirst({ select: { id: true, storagePath: true, mimeType: true, fileHash: true } }),
+      content: () => db.cmsManagedContent.findFirst({ select: { id: true, status: true } }),
+    };
+    await Promise.all(Object.entries(checks).map(async ([name, check]) => {
+      try { await check(); modules[name] = true; } catch { modules[name] = false; }
+    }));
+  } catch {
+    // Public health responses deliberately omit database exceptions/credentials.
+    console.error('[readiness] Database probe failed');
   }
-
-  const response = {
-    status: dbOk ? 'ok' : 'degraded',
+  const ready = connected && Object.values(modules).every(Boolean);
+  return NextResponse.json({
+    status: ready ? 'ok' : 'degraded',
     timestamp: new Date().toISOString(),
-    uptime_ms: process.uptime() * 1000,
-    node: process.version,
-    platform: process.platform,
-    database: {
-      connected: dbOk,
-      ...(dbError ? { error: dbError } : {}),
-    },
+    database: { connected },
+    modules,
     responseTime_ms: Date.now() - startedAt,
-  };
-
-  // Return 200 even if DB is degraded — the app is running, just unhealthy.
-  // Load balancers can use the `status` field to decide whether to drain traffic.
-  // Use 503 only if the app process itself is failing (rare).
-  return NextResponse.json(response, { status: 200 });
+  }, {
+    status: ready ? 200 : 503,
+    headers: { 'Cache-Control': 'no-store' },
+  });
 }

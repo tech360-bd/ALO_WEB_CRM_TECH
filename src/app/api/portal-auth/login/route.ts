@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { encode } from "next-auth/jwt";
 import bcrypt from 'bcryptjs';
+import { pageSessionRole } from "@/lib/session-roles";
 
 const crmRoleMap: Record<string, string> = {
   'admin@alo.edu.bd': 'super_admin',
@@ -38,10 +40,52 @@ const crmDepartmentMap: Record<string, string> = {
   ai_manager: 'AI & Technology',
 };
 
+// pageSessionRole is imported from @/lib/session-roles so the role claim minted
+// here and the ROLE_ROUTES keys the proxy authorises against cannot drift apart
+// again. The previous local copy upper-cased the crmRole verbatim, which emitted
+// `HR` and `SUPPORT_AGENT` — roles the proxy did not know, leaving those staff
+// with an empty allow-list and bouncing them to the public homepage from their
+// own dashboards. crmRoleMap below is intentionally left alone: it still carries
+// the business role (used for `department`, the login response and Employee
+// records), while the shared resolver maps it to the authorisation vocabulary.
+
+async function setPageSessionCookie(response: NextResponse, user: { id: string; email: string; name: string; userType: string; status: string }, crmRole: string | null) {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret || secret.length < 32) throw new Error('NEXTAUTH_SECRET must be configured (32+ characters) before portal login');
+
+  const token = await encode({
+    token: {
+      sub: user.id,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: pageSessionRole(user.userType, crmRole),
+      status: 'ACTIVE',
+    },
+    secret,
+    maxAge: 7 * 24 * 60 * 60,
+  });
+  const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', token, {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60,
+  });
+  return response;
+}
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { email, password, portalType } = body;
+    const secret = process.env.NEXTAUTH_SECRET;
+    if (!secret || secret.length < 32) {
+      return NextResponse.json({ success: false, error: 'Portal authentication is not configured.' }, { status: 503 });
+    }
+    const body = await request.json().catch(() => null);
+    const email = typeof body?.email === 'string' ? body.email : '';
+    const password = typeof body?.password === 'string' ? body.password : '';
+    const portalType = typeof body?.portalType === 'string' ? body.portalType : '';
 
     if (!email || !password || !portalType) {
       return NextResponse.json(
@@ -51,18 +95,30 @@ export async function POST(request: Request) {
     }
 
     // Capture real client IP
-    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    const ipAddress = (request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       || request.headers.get('x-real-ip')
-      || 'unknown';
+      || 'unknown').slice(0, 191);
+    const normalizedEmail = email.toLowerCase().trim();
+    const failureCount = await db.loginAttempt.count({
+      where: {
+        success: false,
+        createdAt: { gte: new Date(Date.now() - 15 * 60 * 1000) },
+        OR: [{ email: normalizedEmail }, ...(ipAddress === 'unknown' ? [] : [{ ipAddress }])],
+      },
+    });
+    if (failureCount >= 5) {
+      return NextResponse.json({ success: false, error: 'Too many login attempts. Please try again later.' }, { status: 429 });
+    }
 
     const user = await db.portalUser.findUnique({
-      where: { email: email.toLowerCase().trim() },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
       await db.loginAttempt.create({
         data: {
-          email: email.toLowerCase().trim(),
+          email: normalizedEmail,
+          ipAddress,
           success: false,
           failureReason: "user_not_found",
         },
@@ -73,12 +129,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Normalize legacy status casing before applying fail-closed state checks.
+    const userStatus = user.status.toLowerCase();
+
     // Check account status
-    if (user.status === "suspended") {
+    if (userStatus === "suspended") {
       await db.loginAttempt.create({
         data: {
           userId: user.id,
           email: user.email,
+          ipAddress,
           success: false,
           failureReason: "account_suspended",
         },
@@ -93,11 +153,17 @@ export async function POST(request: Request) {
       );
     }
 
-    if (user.status === "pending") {
+    if (userStatus === "pending_verification" || !user.emailVerified) {
+      await db.loginAttempt.create({ data: { userId: user.id, email: user.email, ipAddress, success: false, failureReason: 'email_not_verified' } });
+      return NextResponse.json({ success: false, error: 'email_verification_required', message: 'Verify your email before signing in.' }, { status: 403 });
+    }
+
+    if (userStatus === "pending") {
       await db.loginAttempt.create({
         data: {
           userId: user.id,
           email: user.email,
+          ipAddress,
           success: false,
           failureReason: "account_pending",
         },
@@ -113,14 +179,15 @@ export async function POST(request: Request) {
     }
 
     if (
-      user.status === "blocked" ||
-      user.status === "resigned" ||
-      user.status === "terminated"
+      userStatus === "blocked" ||
+      userStatus === "resigned" ||
+      userStatus === "terminated"
     ) {
       await db.loginAttempt.create({
         data: {
           userId: user.id,
           email: user.email,
+          ipAddress,
           success: false,
           failureReason: `account_${user.status}`,
         },
@@ -135,6 +202,11 @@ export async function POST(request: Request) {
       );
     }
 
+    if (userStatus !== 'active') {
+      await db.loginAttempt.create({ data: { userId: user.id, email: user.email, ipAddress, success: false, failureReason: 'account_inactive' } });
+      return NextResponse.json({ success: false, error: 'account_pending', message: 'Your account is not active.' }, { status: 403 });
+    }
+
     // Compare password using bcrypt
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
@@ -142,6 +214,7 @@ export async function POST(request: Request) {
         data: {
           userId: user.id,
           email: user.email,
+          ipAddress,
           success: false,
           failureReason: "wrong_password",
         },
@@ -215,6 +288,7 @@ export async function POST(request: Request) {
         userType: true,
         status: true,
         firstLoginRequired: true,
+        partnerProfile: { select: { partnerRole: true, partnerId: true } },
       },
     });
 
@@ -223,20 +297,26 @@ export async function POST(request: Request) {
       data: {
         userId: user.id,
         email: user.email,
+        ipAddress,
         success: true,
       },
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
-      token: sessionToken,
       user: {
         ...updatedUser,
+        partnerRole: updatedUser.partnerProfile?.partnerRole || null,
         crmRole,
         department,
         branch: crmRole ? 'Dhanmondi HQ' : null,
       },
     });
+    const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+    response.cookies.set('alo_portal_session', sessionToken, {
+      httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 7 * 24 * 60 * 60,
+    });
+    return setPageSessionCookie(response, updatedUser, crmRole);
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

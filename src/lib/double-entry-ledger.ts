@@ -1,25 +1,27 @@
-// ============================================================
-// SlowBooks Pro — Free double-entry, invoicing, US payroll, inventory, bank feeds
-// Source: VonHoltenCodes/SlowBooks-Pro-2026 (494★ 657 commits 35 tags)
-//   Double-entry bookkeeping: Bill DR Expense/1300 CR A/P 2000, Vendor Credit
-//   mirror, A/R aging fix (unapplied credits hidden — now unapplied_credits col),
-//   journal vs sub-ledger split, 2089 tests.
-// ALO use: fix Payment/Payroll GL + A/R & A/P aging (hide-unapplied bug) +
-//   vendor credits + double-entry postings for commissions/invoices.
-// Reuses: Payment, Payroll, CrmAuditLog, Sla* — no new table; GL posted as AuditLog
-//   + FileEvent; aging computed via queries (no schema change).
-// ============================================================
-import { db } from '@/lib/db';
+// ============================================================================
+// ALO Education — LEGACY JOURNAL ADAPTER (compatibility facade).
+//
+// DEPRECATED since 2026-10-01: the authoritative implementation is
+// src/lib/accounting/ledger.ts, which persists to the REAL double-entry
+// tables (JournalEntry/JournalLine/ChartOfAccount/FiscalPeriod) created in
+// migration 20261001000002_accounting_ledger.
+//
+// This module keeps the historical exported surface (GL_ACCOUNTS, postJournal,
+// postInvoice, postBill, postCreditMemo, postVendorCredit, computeARAging)
+// so existing imports keep working, and delegates every posting to the real
+// ledger. Do not add new call sites; import from '@/lib/accounting/ledger'.
+// ============================================================================
 
-export type JournalEntry = {
-  id: string;
-  date: string; // YYYY-MM-DD
-  memo: string;
-  lines: { account: string; accountName: string; debit: number; credit: number; entityId?: string; entityType?: string }[];
-  actorId: string;
-};
+import {
+  postJournal as ledgerPostJournal,
+  computeARAging as ledgerComputeARAging,
+  type PostJournalInput,
+} from '@/lib/accounting/ledger';
+
+export type JournalEntry = PostJournalInput;
 
 // Canonical chart (mirrors SlowBooks 1100 A/R, 2000 A/P, 1300 Inventory, 4000 Revenue, 5000 Expense)
+// Codes match src/lib/accounting/chart.ts verbatim.
 export const GL_ACCOUNTS = {
   AR: { code: '1100', name: 'Accounts Receivable' },
   AP: { code: '2000', name: 'Accounts Payable' },
@@ -31,32 +33,9 @@ export const GL_ACCOUNTS = {
   PAYROLL_PAYABLE: { code: '2100', name: 'Payroll Payable' },
 } as const;
 
-function assertBalanced(lines: JournalEntry['lines']): void {
-  const d = lines.reduce((s,l)=> s + l.debit, 0);
-  const c = lines.reduce((s,l)=> s + l.credit, 0);
-  if (Math.abs(d - c) > 0.005) throw new Error(`Unbalanced journal: debit ${d} != credit ${c}`);
-}
-
-/**
- * Post a double-entry journal. Validates balanced, persists as CrmAuditLog + FileEvent.
- * Caller should also update Payment/Payroll row status separately.
- */
+/** A returned id proves this entry and its lines were committed atomically. */
 export async function postJournal(entry: JournalEntry): Promise<{ journalId: string }> {
-  assertBalanced(entry.lines);
-  const journalId = entry.id || `je_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
-  await db.crmAuditLog.create({
-    data: {
-      action: 'JOURNAL_POSTED',
-      targetCollection: 'JournalEntry',
-      targetId: journalId,
-      actorUserId: entry.actorId || '',
-      afterData: JSON.stringify({ date: entry.date, memo: entry.memo, lines: entry.lines }),
-      createdAt: new Date(entry.date),
-    },
-  }).catch(()=>{});
-  // NOTE: journal entries are not files — FileEvent.fileId is an FK to FileMetadata.id,
-  // so a journal-id FileEvent row could never be valid. Audit trail lives in CrmAuditLog.
-  return { journalId };
+  return ledgerPostJournal(entry);
 }
 
 // ─── Convenience postings (SlowBooks patterns) ────────────────
@@ -65,12 +44,14 @@ export async function postJournal(entry: JournalEntry): Promise<{ journalId: str
 export async function postInvoice(invoiceId: string, amount: number, opts: { date?: string; memo?: string; actorId: string }): Promise<{ journalId: string }> {
   return postJournal({
     id: `je_inv_${invoiceId}`,
-    date: opts.date || new Date().toISOString().slice(0,10),
+    date: opts.date || new Date().toISOString().slice(0, 10),
     memo: opts.memo || `Invoice ${invoiceId}`,
     actorId: opts.actorId,
+    source: 'finance.invoice',
+    sourceRefId: invoiceId,
     lines: [
-      { account: GL_ACCOUNTS.AR.code, accountName: GL_ACCOUNTS.AR.name, debit: amount, credit: 0, entityId: invoiceId, entityType: 'Invoice' },
-      { account: GL_ACCOUNTS.REVENUE.code, accountName: GL_ACCOUNTS.REVENUE.name, debit: 0, credit: amount, entityId: invoiceId, entityType: 'Invoice' },
+      { account: GL_ACCOUNTS.AR.code, debit: amount, credit: 0, entityId: invoiceId, entityType: 'Invoice' },
+      { account: GL_ACCOUNTS.REVENUE.code, debit: 0, credit: amount, entityId: invoiceId, entityType: 'Invoice' },
     ],
   });
 }
@@ -79,12 +60,14 @@ export async function postInvoice(invoiceId: string, amount: number, opts: { dat
 export async function postBill(billId: string, amount: number, opts: { isInventory?: boolean; date?: string; memo?: string; actorId: string }): Promise<{ journalId: string }> {
   return postJournal({
     id: `je_bill_${billId}`,
-    date: opts.date || new Date().toISOString().slice(0,10),
+    date: opts.date || new Date().toISOString().slice(0, 10),
     memo: opts.memo || `Bill ${billId}`,
     actorId: opts.actorId,
+    source: 'procurement.bill',
+    sourceRefId: billId,
     lines: [
-      { account: opts.isInventory ? GL_ACCOUNTS.INVENTORY.code : GL_ACCOUNTS.EXPENSE.code, accountName: opts.isInventory ? GL_ACCOUNTS.INVENTORY.name : GL_ACCOUNTS.EXPENSE.name, debit: amount, credit: 0, entityId: billId, entityType: 'Bill' },
-      { account: GL_ACCOUNTS.AP.code, accountName: GL_ACCOUNTS.AP.name, debit: 0, credit: amount, entityId: billId, entityType: 'Bill' },
+      { account: opts.isInventory ? GL_ACCOUNTS.INVENTORY.code : GL_ACCOUNTS.EXPENSE.code, debit: amount, credit: 0, entityId: billId, entityType: 'Bill' },
+      { account: GL_ACCOUNTS.AP.code, debit: 0, credit: amount, entityId: billId, entityType: 'Bill' },
     ],
   });
 }
@@ -93,12 +76,14 @@ export async function postBill(billId: string, amount: number, opts: { isInvento
 export async function postCreditMemo(creditId: string, amount: number, opts: { invoiceId?: string; date?: string; memo?: string; actorId: string }): Promise<{ journalId: string }> {
   return postJournal({
     id: `je_cm_${creditId}`,
-    date: opts.date || new Date().toISOString().slice(0,10),
+    date: opts.date || new Date().toISOString().slice(0, 10),
     memo: opts.memo || `Credit Memo ${creditId}${opts.invoiceId ? ` → Invoice ${opts.invoiceId}` : ' (unapplied)'}`,
     actorId: opts.actorId,
+    source: 'finance.credit_memo',
+    sourceRefId: creditId,
     lines: [
-      { account: GL_ACCOUNTS.REVENUE.code, accountName: GL_ACCOUNTS.REVENUE.name, debit: amount, credit: 0, entityId: creditId, entityType: 'CreditMemo' },
-      { account: GL_ACCOUNTS.AR.code, accountName: GL_ACCOUNTS.AR.name, debit: 0, credit: amount, entityId: creditId, entityType: 'CreditMemo' },
+      { account: GL_ACCOUNTS.REVENUE.code, debit: amount, credit: 0, entityId: creditId, entityType: 'CreditMemo' },
+      { account: GL_ACCOUNTS.AR.code, debit: 0, credit: amount, entityId: creditId, entityType: 'CreditMemo' },
     ],
   });
 }
@@ -107,40 +92,19 @@ export async function postCreditMemo(creditId: string, amount: number, opts: { i
 export async function postVendorCredit(vendorCreditId: string, amount: number, opts: { billId?: string; date?: string; memo?: string; actorId: string }): Promise<{ journalId: string }> {
   return postJournal({
     id: `je_vc_${vendorCreditId}`,
-    date: opts.date || new Date().toISOString().slice(0,10),
+    date: opts.date || new Date().toISOString().slice(0, 10),
     memo: opts.memo || `Vendor Credit ${vendorCreditId}${opts.billId ? ` → Bill ${opts.billId}` : ' (unapplied)'}`,
     actorId: opts.actorId,
+    source: 'procurement.vendor_credit',
+    sourceRefId: vendorCreditId,
     lines: [
-      { account: GL_ACCOUNTS.AP.code, accountName: GL_ACCOUNTS.AP.name, debit: amount, credit: 0, entityId: vendorCreditId, entityType: 'VendorCredit' },
-      { account: GL_ACCOUNTS.EXPENSE.code, accountName: GL_ACCOUNTS.EXPENSE.name, debit: 0, credit: amount, entityId: vendorCreditId, entityType: 'VendorCredit' },
+      { account: GL_ACCOUNTS.AP.code, debit: amount, credit: 0, entityId: vendorCreditId, entityType: 'VendorCredit' },
+      { account: GL_ACCOUNTS.EXPENSE.code, debit: 0, credit: amount, entityId: vendorCreditId, entityType: 'VendorCredit' },
     ],
   });
 }
 
-/**
- * A/R Aging — FIXES SlowBooks bug: unapplied credits hid from aging total.
- * GL 1100 at 700 but aging showed 1000 (300 credit not applied).
- * Correct: show gross + unapplied_credits column.
- */
-export async function computeARAging(): Promise<{ grossReceivable: number; unappliedCredits: number; netReceivable: number; note: string }> {
-  // Sum journals touching A/R
-  const logs: any[] = await db.crmAuditLog.findMany({ where: { targetCollection: 'JournalEntry', action: 'JOURNAL_POSTED' }, take: 5000 }).catch(()=>[]);
-  let gross = 0, unapplied = 0;
-  for (const l of logs) {
-    try {
-      const d = JSON.parse(l.afterData);
-      for (const line of d.lines || []) {
-        if (line.account === '1100') {
-          if (line.debit > 0) gross += line.debit;
-          if (line.credit > 0) unapplied += line.credit; // credit memos credit A/R
-        }
-      }
-    } catch {}
-  }
-  // Also sum Payment table pending (fallback when journals not yet posted)
-  try {
-    const payments: any[] = await db.payment.findMany({ take: 5000 }).catch(()=>[]);
-    for (const p of payments) if (p.status === 'pending' || p.status === 'unpaid') gross += Number(p.amount || 0);
-  } catch {}
-  return { grossReceivable: Math.round(gross*100)/100, unappliedCredits: Math.round(unapplied*100)/100, netReceivable: Math.round((gross - unapplied)*100)/100, note: 'Net = Gross − Unapplied Credits (fix: aging now carries unapplied_credits column)' };
+/** Journal-only A/R movement summary (see ledger.computeARAging for caveats). */
+export async function computeARAging(): Promise<{ grossReceivable: number; unappliedCredits: null; credits: number; netReceivable: number; note: string }> {
+  return ledgerComputeARAging();
 }

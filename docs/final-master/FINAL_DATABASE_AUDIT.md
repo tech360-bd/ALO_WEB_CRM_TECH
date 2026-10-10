@@ -1,3 +1,5 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # FINAL_DATABASE_AUDIT — MySQL (Prisma) — ALO Education
 **Date:** 2026-09-14 | **Engine:** `mysql` (`mysql2 ^3.24.4`, `DATABASE_URL` env) | **Schema:** `prisma/schema.prisma` (450 models, 719 indexes, 23 uniques, 9 migrations)  
 **Production DB:** `aloeduca_alo_education` (from `.env.example`, not accessed in sandbox) — **all live checks BLOCKED**; results below are static schema analysis + `prisma validate` + local `prisma generate`.

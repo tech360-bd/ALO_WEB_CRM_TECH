@@ -124,8 +124,8 @@ export default function ApplicationDetailPage() {
     } catch {}
   };
 
-  if (loading) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-[#0057B8]" /></div>;
-  if (!app) return <div className="p-8 bg-white min-h-screen text-center"><p>Application not found</p><Link href="/application-manager/applications"><Button className="mt-4 bg-[#0057B8] text-white">Back</Button></Link></div>;
+  if (loading) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-[#2563EB]" /></div>;
+  if (!app) return <div className="p-8 bg-white min-h-screen text-center"><p>Application not found</p><Link href="/application-manager/applications"><Button className="mt-4 bg-[#2563EB] text-white">Back</Button></Link></div>;
 
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
@@ -137,7 +137,7 @@ export default function ApplicationDetailPage() {
               <Link href="/application-manager/applications"><Button variant="ghost" size="sm" className="p-2"><ArrowLeft className="w-4 h-4" /></Button></Link>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono text-xs text-[#0057B8] bg-[#0057B8]/10 border border-[#0057B8]/20 rounded px-2 py-0.5">{app.applicationCode || app.id.substring(0,10)}</span>
+                  <span className="font-mono text-xs text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/20 rounded px-2 py-0.5">{app.applicationCode || app.id.substring(0,10)}</span>
                   <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[#0F172A] text-[11px]">{app.stage}</Badge>
                   <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">{app.safeStatus}</Badge>
                   {app.isB2b && <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[10px]"><Lock className="w-3 h-3 mr-1" />CONFIDENTIAL B2B</Badge>}
@@ -147,7 +147,7 @@ export default function ApplicationDetailPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button onClick={handleVisaHandover} className="bg-[#0057B8] hover:bg-[#004494] text-white text-xs"><Shield className="w-4 h-4 mr-1" />Handover to Visa</Button>
+              <Button onClick={handleVisaHandover} className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs"><Shield className="w-4 h-4 mr-1" />Handover to Visa</Button>
               <Button variant="outline" className="border-[#E2E8F0]" onClick={fetchApp}><RefreshCw className="w-4 h-4" /></Button>
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function ApplicationDetailPage() {
       <div className="bg-white border border-[#E2E8F0] rounded-2xl p-2 shadow-sm">
         <div className="flex gap-1 overflow-x-auto">
           {TABS.map(tab => (
-            <button key={tab.key} onClick={()=>setActiveTab(tab.key)} className={`px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap flex items-center gap-1.5 transition-all ${activeTab===tab.key ? 'bg-[#0057B8] text-white shadow-sm' : 'text-gray-600 hover:bg-[#F8FAFC] border border-transparent hover:border-[#E2E8F0]'}`}>
+            <button key={tab.key} onClick={()=>setActiveTab(tab.key)} className={`px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap flex items-center gap-1.5 transition-all ${activeTab===tab.key ? 'bg-[#2563EB] text-white shadow-sm' : 'text-gray-600 hover:bg-[#F8FAFC] border border-transparent hover:border-[#E2E8F0]'}`}>
               {(tab as any).lock && <Lock className={`w-3 h-3 ${activeTab===tab.key ? 'text-white' : 'text-rose-500'}`} />}{tab.label}
             </button>
           ))}
@@ -178,7 +178,7 @@ export default function ApplicationDetailPage() {
                 <div><p className="text-xs text-gray-500">Course</p><p className="font-semibold text-[#0F172A]">{app.courseName}</p></div>
                 <div><p className="text-xs text-gray-500">Country</p><p className="font-semibold">{app.country}</p></div>
                 <div><p className="text-xs text-gray-500">Intake</p><p className="font-semibold">{app.intake || 'N/A'}</p></div>
-                <div><p className="text-xs text-gray-500">Source</p><p className="font-semibold text-[#0057B8]">{app.applicationSource}</p></div>
+                <div><p className="text-xs text-gray-500">Source</p><p className="font-semibold text-[#2563EB]">{app.applicationSource}</p></div>
                 <div><p className="text-xs text-gray-500">Safe Status</p><Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs mt-1">{app.safeStatus}</Badge></div>
                 <div><p className="text-xs text-gray-500">Counselor</p><p className="font-semibold">{app.counselorName || app.counselorId?.substring(0,8) || 'Unassigned'}</p></div>
                 <div><p className="text-xs text-gray-500">App Officer</p><p className="font-semibold">{app.appTeamOfficerId?.substring(0,8) || app.applicationOfficer?.substring(0,8) || 'Pending'}</p></div>
@@ -191,7 +191,7 @@ export default function ApplicationDetailPage() {
               <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-xs uppercase tracking-wider text-gray-500">Quick Actions — Real API</CardTitle></CardHeader>
               <CardContent className="p-4 space-y-2">
                 <select onChange={e=> e.target.value && handleStatusChange(e.target.value)} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs"><option value="">Change Stage (30+)</option><option value="DOCUMENT_REVIEW">DOCUMENT_REVIEW</option><option value="READY_TO_SUBMIT">READY_TO_SUBMIT</option><option value="SUBMITTED_TO_UNIVERSITY">SUBMITTED_TO_UNIVERSITY</option><option value="DECISION_PENDING">DECISION_PENDING</option><option value="CONDITIONAL_OFFER">CONDITIONAL_OFFER</option><option value="UNCONDITIONAL_OFFER">UNCONDITIONAL_OFFER</option><option value="CAS_PENDING">CAS_PENDING</option><option value="VISA_HANDOVER_READY">VISA_HANDOVER_READY</option></select>
-                <Button onClick={handleVisaHandover} className="w-full bg-[#0057B8] text-white text-xs"><Shield className="w-4 h-4 mr-1" />Visa Handover</Button>
+                <Button onClick={handleVisaHandover} className="w-full bg-[#2563EB] text-white text-xs"><Shield className="w-4 h-4 mr-1" />Visa Handover</Button>
               </CardContent>
             </Card>
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl"><CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-xs">Visa Handover Status</CardTitle></CardHeader><CardContent className="p-4"><Badge className="bg-[#F8FAFC] border-[#E2E8F0]">{app.visaHandoverStatus}</Badge><p className="text-[11px] text-gray-500 mt-2">Reuses existing Visa Engine — no duplicate VisaCase</p></CardContent></Card>
@@ -212,7 +212,7 @@ export default function ApplicationDetailPage() {
           <CardHeader className="p-4 border-b border-[#E2E8F0] flex flex-row items-center justify-between"><CardTitle className="text-sm">Documents — Engine Reuse (Required/Uploaded/Missing/Rejected/Expired/Under Review/Verified/Locked/Request Again)</CardTitle><Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">{app.documents?.length || 0} docs</Badge></CardHeader>
           <CardContent className="p-4 space-y-2">
             {(app.documents || []).length===0 ? <p className="text-sm text-gray-500 py-6 text-center">No documents — real DB empty. Document engine reuses Required/Uploaded/Missing/Rejected/Expired/Under Review/Verified/Locked/Request Again with preview/download/approve/reject/note/version audited.</p> : (app.documents||[]).map((d:any)=>(
-              <div key={d.id} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 flex items-center justify-between"><div><p className="text-sm font-medium">{d.fileName || d.documentType}</p><p className="text-xs text-gray-500">{d.documentType} • {d.status} • v{d.version}</p></div><div className="flex gap-1"><Button size="sm" variant="ghost" className="h-7"><Eye className="w-3 h-3" /></Button><Button size="sm" variant="ghost" className="h-7"><Download className="w-3 h-3" /></Button><Button size="sm" className="h-7 bg-emerald-600 text-white"><Check className="w-3 h-3" /></Button><Button size="sm" variant="outline" className="h-7 border-red-200 text-red-600"><X className="w-3 h-3" /></Button></div></div>
+              <div key={d.id} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 flex items-center justify-between"><div><p className="text-sm font-medium">{d.fileName || d.documentType}</p><p className="text-xs text-gray-500">{d.documentType} • {d.status} • v{d.version}</p></div><div className="flex gap-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7"><Eye className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7"><Download className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 bg-emerald-600 text-white"><Check className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 border-red-200 text-red-600"><X className="w-3 h-3" /></Button></div></div>
             ))}
           </CardContent>
         </Card>
@@ -268,7 +268,7 @@ export default function ApplicationDetailPage() {
           <CardContent className="p-4 space-y-4">
             <form onSubmit={handleComment} className="space-y-3">
               <textarea value={commentText} onChange={e=>setCommentText(e.target.value)} placeholder="Add comment — visibility filtered backend, B2B never leak in templates" className="w-full bg-white border border-[#E2E8F0] rounded-xl p-3 text-sm min-h-[80px]" />
-              <div className="flex gap-2 items-center"><select value={commentType} onChange={e=>setCommentType(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs"><option value="STUDENT_VISIBLE">STUDENT_VISIBLE</option><option value="PARTNER_VISIBLE">PARTNER_VISIBLE</option><option value="COUNSELOR_VISIBLE">COUNSELOR_VISIBLE</option><option value="APPLICATION_TEAM_INTERNAL">APPLICATION_TEAM_INTERNAL</option><option value="B2B_CONFIDENTIAL">B2B_CONFIDENTIAL</option><option value="UNIVERSITY">UNIVERSITY</option><option value="FINANCE">FINANCE</option><option value="VISA_HANDOVER">VISA_HANDOVER</option></select><Button type="submit" disabled={submitting || !commentText.trim()} className="bg-[#0057B8] text-white text-xs">{submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><MessageSquare className="w-4 h-4 mr-1" />Post Comment</>}</Button></div>
+              <div className="flex gap-2 items-center"><select value={commentType} onChange={e=>setCommentType(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs"><option value="STUDENT_VISIBLE">STUDENT_VISIBLE</option><option value="PARTNER_VISIBLE">PARTNER_VISIBLE</option><option value="COUNSELOR_VISIBLE">COUNSELOR_VISIBLE</option><option value="APPLICATION_TEAM_INTERNAL">APPLICATION_TEAM_INTERNAL</option><option value="B2B_CONFIDENTIAL">B2B_CONFIDENTIAL</option><option value="UNIVERSITY">UNIVERSITY</option><option value="FINANCE">FINANCE</option><option value="VISA_HANDOVER">VISA_HANDOVER</option></select><Button type="submit" disabled={submitting || !commentText.trim()} className="bg-[#2563EB] text-white text-xs">{submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><MessageSquare className="w-4 h-4 mr-1" />Post Comment</>}</Button></div>
             </form>
             <div className="space-y-2">
               {(app.comments || []).length===0 ? <p className="text-sm text-gray-500 py-4 text-center">No comments — real DB empty. Comments filtered by visibility backend.</p> : (app.comments||[]).map((c:any)=>(
@@ -284,7 +284,7 @@ export default function ApplicationDetailPage() {
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Offer — DECISION_PENDING/CONDITIONAL/UNCONDITIONAL/REJECTED/DEFERRED/WITHDRAWN/MORE_DOCS/INTERVIEW/FEE_PENDING/DEPOSIT_REQUIRED</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-3 text-sm">
             {offerData ? (
-              <div className="grid grid-cols-2 gap-3"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Offer Status</p><p className="font-semibold">{offerData.offerStatus}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Scholarship</p><p className="font-semibold">{offerData.scholarship || 'None'} {offerData.scholarshipAmount ? `(${offerData.scholarshipAmount})` : ''}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Deposit</p><p className="font-semibold">{offerData.depositAmount || 0} — Due: {offerData.depositDeadline ? new Date(offerData.depositDeadline).toLocaleDateString() : 'N/A'}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Letter</p><p className="text-xs">{offerData.offerLetterUrl ? <a href={offerData.offerLetterUrl} target="_blank" className="text-[#0057B8] underline">View Letter</a> : 'No letter'}</p></div><div className="col-span-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Conditions</p><p className="text-xs">{offerData.offerConditions || 'No conditions'}</p></div></div>
+              <div className="grid grid-cols-2 gap-3"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Offer Status</p><p className="font-semibold">{offerData.offerStatus}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Scholarship</p><p className="font-semibold">{offerData.scholarship || 'None'} {offerData.scholarshipAmount ? `(${offerData.scholarshipAmount})` : ''}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Deposit</p><p className="font-semibold">{offerData.depositAmount || 0} — Due: {offerData.depositDeadline ? new Date(offerData.depositDeadline).toLocaleDateString() : 'N/A'}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Letter</p><p className="text-xs">{offerData.offerLetterUrl ? <a href={offerData.offerLetterUrl} target="_blank" className="text-[#2563EB] underline">View Letter</a> : 'No letter'}</p></div><div className="col-span-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Conditions</p><p className="text-xs">{offerData.offerConditions || 'No conditions'}</p></div></div>
             ) : <p className="text-sm text-gray-500 py-4 text-center">No offer yet — {app.offerStatus}. Real DB will show offer letter/conditions/scholarship/deposit/deadlines.</p>}
           </CardContent>
         </Card>
@@ -295,7 +295,7 @@ export default function ApplicationDetailPage() {
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">CAS / I-20 / COE — Destination UK CAS USA I-20 Australia COE Canada LOA/PAL Ireland/NZ/Dubai Offer/Visa letter</CardTitle></CardHeader>
           <CardContent className="p-4 text-sm space-y-3">
             {casData ? (
-              <div className="grid grid-cols-2 gap-3"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Document Type</p><p className="font-semibold">{casData.documentType} — {app.country === 'UK' ? 'CAS' : app.country === 'USA' ? 'I-20' : app.country === 'Australia' ? 'COE' : app.country === 'Canada' ? 'LOA/PAL' : 'Offer/Visa Letter'}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Status</p><p className="font-semibold">{casData.status}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Reference</p><p className="font-mono text-xs">{casData.referenceNumber || 'N/A'}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">File</p><p className="text-xs">{casData.fileUrl ? <a href={casData.fileUrl} target="_blank" className="text-[#0057B8] underline">View Document</a> : 'No file'}</p></div></div>
+              <div className="grid grid-cols-2 gap-3"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Document Type</p><p className="font-semibold">{casData.documentType} — {app.country === 'UK' ? 'CAS' : app.country === 'USA' ? 'I-20' : app.country === 'Australia' ? 'COE' : app.country === 'Canada' ? 'LOA/PAL' : 'Offer/Visa Letter'}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Status</p><p className="font-semibold">{casData.status}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Reference</p><p className="font-mono text-xs">{casData.referenceNumber || 'N/A'}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">File</p><p className="text-xs">{casData.fileUrl ? <a href={casData.fileUrl} target="_blank" className="text-[#2563EB] underline">View Document</a> : 'No file'}</p></div></div>
             ) : <p className="text-sm text-gray-500 py-4 text-center">No CAS/I-20/COE yet — {app.casI20CoeStatus}. Destination mapping: UK CAS, USA I-20, Australia COE, Canada LOA/PAL, etc.</p>}
           </CardContent>
         </Card>
@@ -317,7 +317,7 @@ export default function ApplicationDetailPage() {
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Visa Handover — When VISA_HANDOVER_READY Create Visa File/Send Docs/Checklist/Notify/Handover Complete Reuse Existing Visa Engine No Duplicate VisaCase</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-3">
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4"><p className="text-sm"><strong>Current Stage:</strong> {app.stage}</p><p className="text-sm"><strong>Handover Status:</strong> {app.visaHandoverStatus}</p><p className="text-xs text-gray-500 mt-2">When stage is VISA_HANDOVER_READY, create Visa File, send docs, checklist, notify, handover complete — reuses existing VisaCase model, no duplicate.</p></div>
-            <Button onClick={handleVisaHandover} className="bg-[#0057B8] text-white w-full md:w-auto"><Shield className="w-4 h-4 mr-2" />Handover to Visa Team — Real API</Button>
+            <Button onClick={handleVisaHandover} className="bg-[#2563EB] text-white w-full md:w-auto"><Shield className="w-4 h-4 mr-2" />Handover to Visa Team — Real API</Button>
           </CardContent>
         </Card>
       )}
@@ -327,7 +327,7 @@ export default function ApplicationDetailPage() {
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Timeline — Events Anonymized for Unauthorized (Submitted through B2B Provider X → Application Submitted)</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-2">
             {(app.statusLogs || []).length===0 ? <p className="text-sm text-gray-500 py-4 text-center">No timeline events — real DB empty. Timeline anonymized for unauthorized roles.</p> : (app.statusLogs||[]).map((log:any)=>(
-              <div key={log.id} className="flex gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><div className="w-2 h-2 rounded-full bg-[#0057B8] mt-1.5" /><div><p className="text-sm font-medium">{log.note || `${log.oldStatus} → ${log.newStatus}`}</p><p className="text-xs text-gray-500">{new Date(log.createdAt).toLocaleString()} • {log.visibility} • Safe: {log.safeStatus}</p></div></div>
+              <div key={log.id} className="flex gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><div className="w-2 h-2 rounded-full bg-[#2563EB] mt-1.5" /><div><p className="text-sm font-medium">{log.note || `${log.oldStatus} → ${log.newStatus}`}</p><p className="text-xs text-gray-500">{new Date(log.createdAt).toLocaleString()} • {log.visibility} • Safe: {log.safeStatus}</p></div></div>
             ))}
           </CardContent>
         </Card>

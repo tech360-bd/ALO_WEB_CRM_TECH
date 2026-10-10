@@ -24,7 +24,7 @@ export default function SocialInboxPage() {
   return (
     <div className="p-4 lg:p-6 bg-[#F8FAFC] min-h-screen space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><MessageSquare className="w-5 h-5 text-[#0057B8]" /> Social Inbox — Facebook & Instagram</h1>
+        <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><MessageSquare className="w-5 h-5 text-[#2563EB]" /> Social Inbox — Facebook & Instagram</h1>
         <p className="text-xs text-gray-500">Facebook comments • Facebook Messenger • Instagram comments • Instagram DM — Reply • Hide comment placeholder • Mark spam • Create lead • Link to lead/student • Assign counselor • AI draft reply • Course finder link • Consultation link — If token not configured, show “Integration not connected”</p>
       </div>
 

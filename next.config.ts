@@ -6,6 +6,22 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   reactStrictMode: true,
   poweredByHeader: false,
+  // Dev-only origin allowlist. Next.js refuses HMR and dev-chunk requests from
+  // any Origin not listed here, so a sandbox/preview host would render the
+  // server HTML without hydrating. Set NEXT_DEV_ALLOWED_ORIGINS to a
+  // comma-separated list of hostnames. Unset means no extra origins (no effect
+  // on production builds).
+  allowedDevOrigins: (process.env.NEXT_DEV_ALLOWED_ORIGINS ?? "")
+    .split(",")
+    .map((h) => h.trim())
+    .filter(Boolean),
+  // Public content uses curated Unsplash images through next/image. Keep the
+  // allowlist hostname-scoped rather than disabling image optimization.
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
+    ],
+  },
   compress: true,
   experimental: {
     workerThreads: false,
@@ -52,53 +68,79 @@ const nextConfig: NextConfig = {
       { source: "/english-tests", destination: "/english-test-prep", permanent: true },
     ];
   },
+  // Permanent (308) redirects are configured here, not in page components. A
+  // page-level redirect can be streamed as a 200 HTML response after the shell
+  // has started rendering, so the legacy URLs would not return a real 308.
+  async redirects() {
+    return [
+      { source: "/courses", destination: "/course-finder", permanent: true },
+      // Bare /course has no index page — src/app/course/ contains only
+      // [slug]/page.tsx, the canonical public course-detail hub. Send the
+      // listing intent to the Course Finder exactly as the plural alias above
+      // does, instead of 404ing. Source matching is exact (no wildcard), so this
+      // never touches /course/{slug}.
+      { source: "/course", destination: "/course-finder", permanent: true },
+      // Legacy alias. /eligibility-check is the canonical route.
+      { source: "/eligibility-checker", destination: "/eligibility-check", permanent: true },
+
+      // /visa-support carried hard-coded visa fees, processing times and a
+      // "98% visa success rate" with no source and no verification date, which
+      // the data policy forbids. The verified equivalents already exist:
+      // /visa (VisaSupportHub) and /destinations/[slug], both built on
+      // COUNTRY_DESTINATIONS, which records a source and lastVerifiedAt per
+      // fact. These pages are redirected rather than kept as a third copy.
+      //
+      // Slugs differ between the old and new routes, so each is mapped
+      // explicitly; a wildcard would send /visa-support/united-kingdom to a
+      // /destinations/united-kingdom that does not exist.
+      { source: "/visa-support/united-kingdom", destination: "/destinations/uk", permanent: true },
+      { source: "/visa-support/dubai-uae", destination: "/destinations/dubai", permanent: true },
+      { source: "/visa-support/usa", destination: "/destinations/usa", permanent: true },
+      { source: "/visa-support/canada", destination: "/destinations/canada", permanent: true },
+      { source: "/visa-support/australia", destination: "/destinations/australia", permanent: true },
+      { source: "/visa-support/ireland", destination: "/destinations/ireland", permanent: true },
+      { source: "/visa-support/new-zealand", destination: "/destinations/new-zealand", permanent: true },
+      { source: "/visa-support/germany", destination: "/destinations/germany", permanent: true },
+      { source: "/visa-support", destination: "/visa", permanent: true },
+    ];
+  },
+
   async rewrites() {
     return [
-      // Booking / consultation
-      { source: "/book-consultation", destination: "/?p=consultation" },
-      { source: "/book-consultation/:service", destination: "/?p=consultation&service=:service" },
-      { source: "/book-appointment", destination: "/?p=consultation" },
-      { source: "/contact", destination: "/?p=contact" },
-      // About / static pages
-      { source: "/about", destination: "/?p=about" },
-      { source: "/success-stories", destination: "/?p=success-stories" },
-      { source: "/team", destination: "/?p=team" },
-      { source: "/faqs", destination: "/?p=faqs" },
-      { source: "/resources/faqs", destination: "/?p=faqs" },
-      { source: "/resources/:slug", destination: "/?p=resources&slug=:slug" },
-      // Language prep - fix dead destinations from audit
-      { source: "/language-prep", destination: "/?p=language-prep" },
-      { source: "/language-prep/comparison", destination: "/?p=language-prep&slug=comparison" },
-      { source: "/language-prep/ielts", destination: "/language-prep/ielts" },
-      { source: "/language-prep/pte-academic", destination: "/language-prep/pte-academic" },
-      { source: "/language-prep/:slug", destination: "/?p=language-prep&slug=:slug" },
-      // Portals (login/register/admin) - fix audit dead links
-      { source: "/student/login", destination: "/?p=student-login" },
-      { source: "/student/register", destination: "/?p=student-register" },
-      { source: "/student/mock-tests", destination: "/student-portal/mock-tests" },
-      { source: "/partner/login", destination: "/?p=partner-login" },
-      { source: "/partner/register", destination: "/?p=partner-register" },
-      { source: "/employee/login", destination: "/?p=employee-login" },
-      { source: "/staff/login", destination: "/?p=employee-login" },
-      { source: "/admin/login", destination: "/?p=admin-login" },
-      { source: "/admin", destination: "/?p=admin-login" },
-      { source: "/portal/login", destination: "/?p=portals" },
-      { source: "/portal", destination: "/?p=portals" },
-      { source: "/login", destination: "/?p=portals" },
-      { source: "/register", destination: "/?p=student-register" },
-      // Course finder saved - SPA
-      { source: "/course-finder/saved", destination: "/?p=saved-courses" },
-      // Legal
-      { source: "/privacy-policy", destination: "/?p=privacy" },
-      { source: "/terms", destination: "/?p=terms" },
-      { source: "/cookies", destination: "/?p=cookies" },
-      // Destinations & courses
-      { source: "/destinations/:slug", destination: "/destinations/:slug" },
-      { source: "/universities/:slug", destination: "/universities/:slug" },
-      { source: "/courses/:slug", destination: "/courses/:slug" },
+      // Only legacy aliases that do not have a real App Router page remain
+      // here. Real pages must not be rewritten to the homepage: doing so loses
+      // their metadata, canonical URL, route-level loading/error states, and
+      // dynamic content.
+      { source: "/book-appointment", destination: "/book-consultation" },
+      // Spec-named IA aliases: the specification's /consultation and
+      // /test-preparation paths map onto the existing implementations.
+      { source: "/consultation", destination: "/book-consultation" },
+      { source: "/test-preparation", destination: "/english-test-prep" },
+      { source: "/test-preparation/:slug", destination: "/english-test-prep/:slug" },
+      // Portal roots without their own page.tsx map to their canonical
+      // dashboard so direct URL access never 404s (no-404 acceptance gate).
+      { source: "/super-admin", destination: "/super-admin/dashboard" },
+      { source: "/counselor", destination: "/counselor/dashboard" },
+      { source: "/application-manager", destination: "/application-manager/applications" },
+      { source: "/staff/login", destination: "/employee/login" },
+      { source: "/admin", destination: "/admin/login" },
+      { source: "/admin/students", destination: "/admin/crm-command" },
+      { source: "/admin/partners", destination: "/admin/access-control-center" },
+      { source: "/admin/tasks", destination: "/admin/crm-command" },
+      { source: "/portal", destination: "/portal/login" },
+      { source: "/auth/login", destination: "/login" },
+      { source: "/course-finder/saved", destination: "/student/saved" },
+      // Spec-named marketing IA aliases. The implementations already exist
+      // under their canonical CRM paths; these keep the specification's URLs
+      // working without duplicating a second dashboard.
+      { source: "/marketing", destination: "/crm/marketing" },
+      { source: "/marketing/dashboard", destination: "/crm/marketing" },
+      { source: "/crm/social-inbox", destination: "/crm/communications/social-inbox" },
+      { source: "/crm/ai-command-center", destination: "/admin/ai-command-center" },
+
+
     ];
   },
 };
 
 export default nextConfig;
-

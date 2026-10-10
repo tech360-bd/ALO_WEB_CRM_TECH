@@ -5,4 +5,4 @@ export { sendSms as sendHttpsms } from '@/lib/sms-gateway';
 
 // Example usage for counselor:
 // import { sendHttpsms } from '@/lib/httpsms-client';
-// await sendHttpsms({ to:'+8801XXXXXXXXX', message:'Your UKVI interview prep link: ...', provider:'httpsms', studentId:'AE-...' });
+// await sendHttpsms({ to:'+8801805020100', message:'Your UKVI interview prep link: ...', provider:'httpsms', studentId:'AE-...' });

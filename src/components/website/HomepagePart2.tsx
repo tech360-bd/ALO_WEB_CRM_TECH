@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 
 const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
+  blue: '#2563EB',
+  orange: '#F97316',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -552,11 +552,9 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
                           View Details
                         </Button>
                       </Link>
-                        <Link href="/book-consultation">
-                        <Button className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}>
+                        <Button asChild className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}><Link href="/book-consultation">
                           Apply
-                        </Button>
-                      </Link>
+                        </Link></Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -565,12 +563,10 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
             </motion.div>
           )}
           <div className="text-center mt-10">
-            <Link href="/course-finder">
-            <Button className="h-12 px-8 rounded-full text-white font-medium" style={{ background: C.blue }}>
+            <Button asChild className="h-12 px-8 rounded-full text-white font-medium" style={{ background: C.blue }}><Link href="/course-finder">
               Explore Full Course Finder
               <ArrowRight size={16} className="ml-2" />
-            </Button>
-            </Link>
+            </Link></Button>
           </div>
         </motion.div>
       </div>
@@ -611,7 +607,7 @@ function TrustedUniversitiesSection({ universities }: { universities: UniItem[] 
               return (
                 <motion.div key={uni.universityId} variants={staggerItemScale}>
                   <Link href={`/universities/${uni.universityId || uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
-                    <Card className="h-24 flex items-center justify-center border hover:shadow-md hover:border-[#0057B8] transition-all duration-300 cursor-pointer" style={{ borderColor: C.border }}>
+                    <Card className="h-24 flex items-center justify-center border hover:shadow-md hover:border-[#2563EB] transition-all duration-300 cursor-pointer" style={{ borderColor: C.border }}>
                       <CardContent className="p-3 flex flex-col items-center justify-center gap-1.5 w-full h-full">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background: C.blue }}>
                           {initials}
@@ -626,12 +622,10 @@ function TrustedUniversitiesSection({ universities }: { universities: UniItem[] 
           </motion.div>
         )}
         <div className="text-center mt-10">
-          <Link href="/course-finder">
-          <Button variant="outline" className="h-12 px-8 rounded-full font-medium" style={{ borderColor: C.blue, color: C.blue }}>
+          <Button asChild variant="outline" className="h-12 px-8 rounded-full font-medium" style={{ borderColor: C.blue, color: C.blue }}><Link href="/course-finder">
             View University Directory
             <ArrowRight size={16} className="ml-2" />
-          </Button>
-          </Link>
+          </Link></Button>
         </div>
       </div>
     </section>

@@ -74,8 +74,8 @@ export default function FrontDeskDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Phone className="w-4 h-4" /> Log Call</Button>
-          <Button variant="brand" size="sm"><Plus className="w-4 h-4" /> New Walk-in</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Phone className="w-4 h-4" /> Log Call</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Plus className="w-4 h-4" /> New Walk-in</Button>
         </div>
       </div>
 
@@ -212,9 +212,9 @@ export default function FrontDeskDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 gap-2">
-                <Button variant="outline" className="w-full justify-start text-sm"><Plus className="w-4 h-4" /> Log New Inquiry</Button>
-                <Button variant="outline" className="w-full justify-start text-sm"><Phone className="w-4 h-4" /> Log Missed Call</Button>
-                <Button variant="brand" className="w-full justify-start text-sm"><Calendar className="w-4 h-4" /> Book Appointment</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm"><Plus className="w-4 h-4" /> Log New Inquiry</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm"><Phone className="w-4 h-4" /> Log Missed Call</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" className="w-full justify-start text-sm"><Calendar className="w-4 h-4" /> Book Appointment</Button>
               </div>
             </CardContent>
           </Card>

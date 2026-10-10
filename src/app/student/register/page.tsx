@@ -1,7 +1,11 @@
-export default function Page() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0d1526] text-white">
-      <h1 className="text-2xl font-bold">Development in Progress</h1>
-    </div>
-  );
+'use client';
+
+import { useEffect } from 'react';
+import RegisterPage from '@/components/auth/RegisterPage';
+import { usePortalStore } from '@/lib/stores/portal-store';
+
+export default function StudentRegisterPage() {
+  const setSelectedPortal = usePortalStore((state) => state.setSelectedPortal);
+  useEffect(() => setSelectedPortal('student'), [setSelectedPortal]);
+  return <RegisterPage />;
 }

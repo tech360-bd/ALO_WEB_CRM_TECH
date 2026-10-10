@@ -1,51 +1,14 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { requireCron } from "@/lib/cron-auth";
+import { requireCron } from '@/lib/cron-auth';
 
+// Quarantined: the previous handler manufactured tuition changes without
+// fetching official sources. Retain the route and authorization, never write
+// fabricated evidence or claim a completed scan. No historical rows changed.
 export async function POST(req: Request) {
   const denied = await requireCron(req);
   if (denied) return denied;
-
-  try {
-    // Scan official university course pages for updates
-    const courses = await db.crmCourse.findMany({
-      take: 10,
-      include: {
-        university: true,
-      },
-    });
-    let createdCount = 0;
-
-    for (const c of courses) {
-      // Simulate detecting tuition fee or intake change
-      await db.universityUpdateRequest.create({
-        data: {
-          universityId: c.universityId,
-          courseId: c.courseId,
-          entityType: 'course',
-          entityName: c.courseTitle,
-          country: c.university?.country || 'UK',
-          fieldName: 'tuitionFee',
-          oldValue: `£14,500`,
-          newValue: `£15,000`,
-          evidenceUrl: c.officialUrl || 'https://www.manchester.ac.uk/study/masters/courses/',
-          aiConfidence: 0.95,
-          status: 'pending_approval',
-        },
-      });
-      createdCount++;
-    }
-
-    return NextResponse.json({
-      success: true,
-      scannedCourses: courses.length,
-      createdUpdateRequests: createdCount,
-      message: `Weekly AI Update Agent scanned official sources and created ${createdCount} update requests for Super Admin review.`,
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || 'Weekly AI agent scan failed' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    success: false, status: 'DISABLED',
+    error: 'Official-source change detection is not implemented; no scan or data change performed.',
+  }, { status: 503 });
 }

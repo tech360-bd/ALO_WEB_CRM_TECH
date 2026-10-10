@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { aiChat } from "@/lib/ai";
+import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 
 // GET — enterprise search across documents, news, training
-export async function GET(req: NextRequest) {
-  const q = req.nextUrl.searchParams.get("q");
+async function searchKnowledge(req: Request, _auth: AuthContext) {
+  const q = new URL(req.url).searchParams.get("q");
   if (!q) return NextResponse.json({ results: [] });
   const query = q.toLowerCase();
 
@@ -53,7 +54,7 @@ export async function GET(req: NextRequest) {
 }
 
 // POST — AI Knowledge Search
-export async function POST(req: NextRequest) {
+async function aiKnowledgeSearch(req: Request, _auth: AuthContext) {
   const { question } = await req.json();
   if (!question) return NextResponse.json({ error: "Question required" }, { status: 400 });
 
@@ -162,3 +163,8 @@ Provide a helpful answer based on the search results. Include document titles, u
     totalResults: documents.length + news.length + universities.length + courses.length,
   });
 }
+
+
+const KNOWLEDGE_ACCESS = { requireUserTypes: ["ADMIN", "SUPER_ADMIN", "EMPLOYEE", "HR_MANAGER", "BRANCH_MANAGER", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "MARKETING_MANAGER", "MARKETING", "FRONT_DESK", "SUPPORT_STAFF", "ENGLISH_TRAINER"] };
+export const GET = withAuth(searchKnowledge, KNOWLEDGE_ACCESS);
+export const POST = withAuth(aiKnowledgeSearch, KNOWLEDGE_ACCESS);

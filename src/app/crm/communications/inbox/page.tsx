@@ -10,7 +10,7 @@ export default function CommunicationsInboxPage() {
   return (
     <div className="p-4 lg:p-6 bg-[#F8FAFC] min-h-screen">
       <div className="mb-4">
-        <h1 className="text-xl font-bold text-[#0F172A]">Unified Inbox — <span className="text-[#0057B8]">/crm/communications/inbox</span></h1>
+        <h1 className="text-xl font-bold text-[#0F172A]">Unified Inbox — <span className="text-[#2563EB]">/crm/communications/inbox</span></h1>
         <p className="text-xs text-gray-500 mt-1">Message ID • Channel • Source • Sender • Recipient • Linked lead/student/application/partner • Assigned to • Priority • Intent • Visibility • Status • SLA timer • Created date • Last reply • Action — 10x enterprise view, SLA-sorted, Asia/Dhaka office hours aware</p>
       </div>
       <CommunicationInbox canViewB2B={false} />

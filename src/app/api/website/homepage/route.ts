@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { getPublicMetrics } from '@/lib/verified-metrics';
 
 export async function GET() {
   try {
@@ -11,7 +12,7 @@ export async function GET() {
       teamMembers,
       faqs,
       sections,
-      countryGroups,
+      metrics,
     ] = await Promise.all([
       db.country.findMany({
         where: { status: 'active' },
@@ -44,15 +45,9 @@ export async function GET() {
         where: { status: 'active' },
         orderBy: { sortOrder: 'asc' },
       }),
-      db.country.groupBy({
-        by: ['id'],
-        _sum: {
-          universityCount: true,
-          courseCount: true,
-          scholarshipCount: true,
-        },
-        where: { status: 'active' },
-      }),
+      // Centralized verified-metrics service (Part 13) — governed rows win,
+      // live DB aggregates fill the rest. Never hardcoded.
+      getPublicMetrics(),
     ]);
 
     // Parse JSON fields in countries
@@ -78,14 +73,18 @@ export async function GET() {
         heroSubtitle: c.heroSubtitle,
       }));
 
-    // Aggregate stats from country groups
+    // Stats come from the centralized verified-metrics service so every
+    // public surface shares one governed source (Part 13).
     const stats = {
-      totalUniversities: countryGroups.reduce((sum, g) => sum + (_sumToNum(g._sum.universityCount)), 0),
-      totalCourses: countryGroups.reduce((sum, g) => sum + (_sumToNum(g._sum.courseCount)), 0),
-      totalScholarships: countryGroups.reduce((sum, g) => sum + (_sumToNum(g._sum.scholarshipCount)), 0),
-      countryCounts: Object.fromEntries(
-        countries.map((c) => [c.slug, { universityCount: c.universityCount, courseCount: c.courseCount, scholarshipCount: c.scholarshipCount }])
-      ),
+      totalUniversities: metrics.metrics['universities.total']?.value ?? 0,
+      totalCourses: metrics.metrics['courses.total']?.value ?? 0,
+      totalScholarships: metrics.metrics['scholarships.total']?.value ?? 0,
+      countryCounts: metrics.countryCounts,
+      metricStatus: {
+        universities: metrics.metrics['universities.total']?.status ?? 'UNVERIFIED',
+        courses: metrics.metrics['courses.total']?.status ?? 'UNVERIFIED',
+        scholarships: metrics.metrics['scholarships.total']?.status ?? 'UNVERIFIED',
+      },
     };
 
     return NextResponse.json({
@@ -118,9 +117,4 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
-
-/** Helper to safely convert a Prisma _sum field (number | null) to a number */
-function _sumToNum(val: number | null): number {
-  return val ?? 0;
 }

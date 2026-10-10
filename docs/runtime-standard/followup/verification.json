@@ -1,0 +1,59 @@
+{
+  "scope": "Current local working tree, no production execution",
+  "checks": [
+    {
+      "command": "npm ci",
+      "exit": 0,
+      "evidence": "docs/runtime-standard/followup/install.log",
+      "sha256": "3d4f15780861f4d4dd5e369b92dc8535da7c071814cfe8c48dc1bc67cc5046a1"
+    },
+    {
+      "command": "node scripts/validate-deployment-config.mjs",
+      "exit": 0,
+      "evidence": "docs/runtime-standard/followup/contract.log",
+      "sha256": "2ca21ce1108b28235cbbb15d195caa8106b36fbc6554ebff1f9cfec8b2ad4bc4"
+    },
+    {
+      "command": "npm test",
+      "exit": 0,
+      "evidence": "docs/runtime-standard/followup/tests.log",
+      "sha256": "d497a9b24601ae130d081a5af5d11fe6b28a07dbf682d873aefbb11470789b44"
+    },
+    {
+      "command": "npm run lint",
+      "exit": 0,
+      "evidence": "docs/runtime-standard/followup/lint.log",
+      "sha256": "540a42243eeb96330ee31ac14fe42c398c2e192ca0a8033df501372a98640f56"
+    },
+    {
+      "command": "npx prisma validate",
+      "exit": 1,
+      "evidence": "docs/runtime-standard/followup/prisma-validate.log",
+      "sha256": "2df210b5487cf65a949dc15f484d3d04d7bd61051bd28b3884c9dd257e759b19"
+    },
+    {
+      "command": "npx prisma generate",
+      "exit": 1,
+      "evidence": "docs/runtime-standard/followup/prisma-generate.log",
+      "sha256": "afd1c29438e014bac8e1c808f396ae922de2bcb62e492c2c178ab63168895f96"
+    },
+    {
+      "command": "npm run typecheck",
+      "exit": 1,
+      "evidence": "docs/runtime-standard/followup/typecheck.log",
+      "sha256": "406b7ee9b91df482da177a51abf3788de38ecb698c23e2e2102c26a275783aa1"
+    },
+    {
+      "command": "npm run build",
+      "exit": 1,
+      "evidence": "docs/runtime-standard/followup/build.log",
+      "sha256": "8318b896deb071419cdf49ae93ee10b2786f5aa20ba62c4e28c500d067f9671d"
+    },
+    {
+      "command": "npm start",
+      "exit": 1,
+      "evidence": "docs/runtime-standard/followup/start.log",
+      "sha256": "fa3cf620e299de3db6a3362aaa348f35ece3ec50dee7f4106d3277c7a97d5b93"
+    }
+  ]
+}

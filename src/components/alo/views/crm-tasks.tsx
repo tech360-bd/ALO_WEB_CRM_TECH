@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-slate-100 text-slate-700",
-  NORMAL: "bg-[#EAF3FF] text-[#0066CC]",
+  NORMAL: "bg-[#EAF3FF] text-[#2563EB]",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
 };
@@ -162,7 +162,7 @@ export function CrmTasks() {
         action={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#0066CC] text-white hover:bg-[#0052a3]">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] text-white hover:bg-[#0052a3]">
                 <Icon name="Plus" className="mr-1.5 size-4" /> New Task
               </Button>
             </DialogTrigger>
@@ -247,7 +247,7 @@ export function CrmTasks() {
                 </div>
                 <Button
                   onClick={handleCreate}
-                  className="w-full bg-[#0066CC] text-white hover:bg-[#0052a3]"
+                  className="w-full bg-[#2563EB] text-white hover:bg-[#0052a3]"
                 >
                   Create Task
                 </Button>
@@ -291,7 +291,7 @@ export function CrmTasks() {
                 variant={filter === f ? "default" : "outline"}
                 className={
                   filter === f
-                    ? "bg-[#0066CC] text-white"
+                    ? "bg-[#2563EB] text-white"
                     : "border-[#DCE8F5] text-[#5A7299]"
                 }
                 onClick={() => setFilter(f)}
@@ -332,7 +332,7 @@ export function CrmTasks() {
                       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[#5A7299]">
                         <Badge variant="outline">{TYPE_LABELS[t.type] || t.type}</Badge>
                         {t.student && (
-                          <Badge variant="outline" className="text-[#0066CC]">
+                          <Badge variant="outline" className="text-[#2563EB]">
                             <Icon name="User" className="mr-1 size-3" />
                             {t.student.fullName}
                           </Badge>

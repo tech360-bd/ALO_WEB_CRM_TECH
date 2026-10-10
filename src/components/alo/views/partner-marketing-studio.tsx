@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useToast } from "@/hooks/use-toast";
+import { usePortalStore } from "@/lib/stores/portal-store";
 import {
   Icon,
   SectionCard,
@@ -102,6 +103,7 @@ type MarketingRequest = {
   assetUrl?: string | null;
   publishedUrl?: string | null;
   approvalStatus: string;
+  rejectionReason?: string | null;
   scheduledAt?: string | null;
   createdAt: string;
 };
@@ -121,10 +123,13 @@ type SocialAccount = {
 };
 
 type QuotaData = {
+  scope?: 'alo_review';
   quota: MarketingQuota | null;
   usage: MarketingUsage | null;
   requests: MarketingRequest[];
   socialAccounts: SocialAccount[];
+  capabilities?: { socialConnections: boolean; scheduling: boolean; publishing: boolean };
+  notices?: string[];
 };
 
 // ---------------------------------------------------------------------------
@@ -136,6 +141,8 @@ const PLATFORMS = [
   { value: "INSTAGRAM", label: "Instagram", icon: "Instagram" },
   { value: "LINKEDIN", label: "LinkedIn", icon: "Linkedin" },
 ];
+
+const SUPPORTED_INTAKES = ["January 2027", "May 2027", "September 2027", "January 2028"];
 
 const LANGUAGES = [
   { value: "English", label: "English" },
@@ -156,7 +163,8 @@ const MARKETING_STATUS_COLORS: Record<string, string> = {
   APPROVED: "bg-emerald-100 text-emerald-700",
   REJECTED: "bg-rose-100 text-rose-700",
   SCHEDULED: "bg-sky-100 text-sky-700",
-  PUBLISHED: "bg-[#0057B8]/15 text-[#0057B8]",
+  PUBLISHED: "bg-[#2563EB]/15 text-[#2563EB]",
+  ARCHIVED: "bg-slate-200 text-slate-600",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -164,8 +172,9 @@ const STATUS_LABELS: Record<string, string> = {
   PENDING_APPROVAL: "Pending Approval",
   APPROVED: "Approved",
   REJECTED: "Rejected",
-  SCHEDULED: "Scheduled",
+  SCHEDULED: "Scheduled (legacy)",
   PUBLISHED: "Published",
+  ARCHIVED: "Archived",
 };
 
 const PLATFORM_LABELS: Record<string, string> = {
@@ -174,23 +183,15 @@ const PLATFORM_LABELS: Record<string, string> = {
   LINKEDIN: "LinkedIn",
 };
 
-const SOCIAL_CONNECTION_COLORS: Record<string, string> = {
-  CONNECTED: "bg-emerald-100 text-emerald-700",
-  DISCONNECTED: "bg-slate-100 text-slate-600",
-  EXPIRED: "bg-rose-100 text-rose-700",
-};
-
 const WORKFLOW_STEPS = [
   { label: "Idea", icon: "Lightbulb" },
-  { label: "AI Draft", icon: "Sparkles" },
-  { label: "Image / Video Gen", icon: "Clapperboard" },
-  { label: "Compliance Check", icon: "ShieldCheck" },
-  { label: "Partner Approval", icon: "UserCheck" },
-  { label: "ALO Review", icon: "Building" },
-  { label: "Schedule", icon: "CalendarClock" },
-  { label: "Publish", icon: "Send" },
-  { label: "Lead Captured", icon: "UserPlus" },
-  { label: "CRM Timeline", icon: "History" },
+  { label: "AI or grounded draft", icon: "Sparkles" },
+  { label: "Image / video generation", icon: "Clapperboard" },
+  { label: "Compliance review", icon: "ShieldCheck" },
+  { label: "Submit for approval", icon: "UserCheck" },
+  { label: "ALO review (when required)", icon: "Building" },
+  { label: "Scheduling unavailable", icon: "CalendarClock" },
+  { label: "Publishing unavailable", icon: "Send" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -219,13 +220,6 @@ function quotaBadgeClass(pct: number): string {
   return "bg-emerald-100 text-emerald-700";
 }
 
-function maskToken(token?: string | null): string {
-  if (!token) return "••••••••ZD";
-  const trimmed = String(token).trim();
-  if (trimmed.length <= 4) return `••••••••${trimmed.slice(-2).toUpperCase()}`;
-  return `••••••••${trimmed.slice(-2).toUpperCase()}`;
-}
-
 // ---------------------------------------------------------------------------
 // Quota bar
 // ---------------------------------------------------------------------------
@@ -235,11 +229,11 @@ function QuotaBar({ label, used, limit, icon, hint }: { label: string; used: num
   const remaining = Math.max(0, limit - used);
   const color = quotaColor(pct);
   return (
-    <Card className="rounded-2xl border-2 border-[#0057B8]/20">
+    <Card className="rounded-2xl border-2 border-[#2563EB]/20">
       <CardContent className="pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
               <Icon name={icon} className="size-5" />
             </div>
             <div>
@@ -310,14 +304,14 @@ function AiContentCard({
   action?: React.ReactNode;
 }) {
   return (
-    <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+    <Card className="rounded-2xl border-2 border-[#2563EB]/15">
       <CardContent className="pt-4">
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
               <Icon name={icon} className="size-3.5" />
             </div>
-            <p className="text-sm font-semibold text-[#0057B8]">{title}</p>
+            <p className="text-sm font-semibold text-[#2563EB]">{title}</p>
           </div>
           {action}
         </div>
@@ -332,91 +326,19 @@ function AiContentCard({
 }
 
 // ---------------------------------------------------------------------------
-// Schedule Dialog
-// ---------------------------------------------------------------------------
-
-function ScheduleDialog({
-  open,
-  onOpenChange,
-  onConfirm,
-}: {
-  open: boolean;
-  onOpenChange: (o: boolean) => void;
-  onConfirm: (scheduledAt: string) => Promise<void>;
-}) {
-  const [datetime, setDatetime] = React.useState("");
-  const [submitting, setSubmitting] = React.useState(false);
-
-  function localNowPlusHour() {
-    const d = new Date(Date.now() + 60 * 60 * 1000);
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  }
-
-  React.useEffect(() => {
-    if (open && !datetime) setDatetime(localNowPlusHour());
-  }, [open, datetime]);
-
-  async function confirm() {
-    if (!datetime) return;
-    setSubmitting(true);
-    try {
-      await onConfirm(new Date(datetime).toISOString());
-      onOpenChange(false);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
-            <Icon name="CalendarClock" className="size-5" />
-            Schedule Campaign
-          </DialogTitle>
-          <DialogDescription>
-            Pick a date and time to auto-publish this campaign to your connected social account.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-2">
-          <Label htmlFor="sch-dt">Publish at</Label>
-          <Input id="sch-dt" type="datetime-local" value={datetime} onChange={(e) => setDatetime(e.target.value)} />
-          <p className="text-xs text-muted-foreground">
-            Timezone: Asia/Dhaka (BST, UTC+6). The campaign will be published automatically at the scheduled time.
-          </p>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={submitting || !datetime} onClick={confirm}>
-            {submitting ? (
-              <>
-                <Icon name="Loader2" className="size-4 animate-spin" />
-                Scheduling...
-              </>
-            ) : (
-              <>
-                <Icon name="CalendarClock" className="size-4" />
-                Schedule
-              </>
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
 export function PartnerMarketingStudio() {
   const { toast } = useToast();
+  const user = usePortalStore((state) => state.user);
+  const roleNames = (user?.roles || []).map((role) => role.name.toUpperCase());
+  const userType = String(user?.userType || '').toUpperCase();
+  const isAloStaff = ['ADMIN', 'SUPER_ADMIN'].includes(userType) || roleNames.some((role) => ['ADMIN', 'SUPER_ADMIN'].includes(role));
   const [data, setData] = React.useState<QuotaData | null>(null);
   const [loading, setLoading] = React.useState(true);
-  const [tab, setTab] = React.useState("create");
+  const [loadError, setLoadError] = React.useState("");
+  const [tab, setTab] = React.useState(() => isAloStaff ? "history" : "create");
   const [statusFilter, setStatusFilter] = React.useState("ALL");
 
   // Campaign form state
@@ -424,10 +346,10 @@ export function PartnerMarketingStudio() {
   const [country, setCountry] = React.useState("UK");
   const [university, setUniversity] = React.useState("");
   const [course, setCourse] = React.useState("");
-  const [intake, setIntake] = React.useState("September 2025");
-  const [targetAudience, setTargetAudience] = React.useState("Bangladeshi students aged 18-28");
+  const [intake, setIntake] = React.useState("January 2027");
+  const [targetAudience, setTargetAudience] = React.useState("Bangladeshi students");
   const [language, setLanguage] = React.useState("English");
-  const [cta, setCta] = React.useState("Book Free Consultation");
+  const [cta, setCta] = React.useState("Book a Consultation");
   const [platform, setPlatform] = React.useState("FACEBOOK");
   const [preferredStyle, setPreferredStyle] = React.useState("Professional");
 
@@ -436,17 +358,22 @@ export function PartnerMarketingStudio() {
   const [currentRequest, setCurrentRequest] = React.useState<MarketingRequest | null>(null);
   const [assetLoading, setAssetLoading] = React.useState<string | null>(null);
   const [workflowLoading, setWorkflowLoading] = React.useState<string | null>(null);
-  const [scheduleOpen, setScheduleOpen] = React.useState(false);
+  const [rejectOpen, setRejectOpen] = React.useState(false);
+  const [rejectionReason, setRejectionReason] = React.useState("");
 
   const load = React.useCallback(async () => {
     setLoading(true);
+    setLoadError("");
     try {
       const res = await fetch(`/api/partner-admin/marketing`, { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = (await res.json()) as QuotaData;
-      setData(json);
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.success) throw new Error(json?.error || `HTTP ${res.status}`);
+      setData(json as QuotaData);
+      if (json.scope === 'alo_review') setTab('history');
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Please try again later.";
+      setLoadError(msg);
+      setData(null);
       toast({ title: "Couldn't load marketing studio", description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
@@ -467,6 +394,14 @@ export function PartnerMarketingStudio() {
   const videoDurationLimit = quota?.videoDurationLimitSeconds ?? 30;
   const autoPublishAllowed = quota?.autoPublishAllowed ?? false;
   const requiresAloApproval = quota?.requiresAloApproval ?? true;
+  const isPartnerSuperAdmin = String(user?.partnerRole || '').toUpperCase() === 'PARTNER_SUPER_ADMIN' || roleNames.includes('PARTNER_SUPER_ADMIN');
+  const isMarketingAssistant = String(user?.partnerRole || '').toUpperCase() === 'PARTNER_MARKETING_ASSISTANT' || roleNames.includes('PARTNER_MARKETING_ASSISTANT');
+  const isAloReviewMode = data?.scope === 'alo_review';
+  const canCreateCampaign = Boolean(data && (isPartnerSuperAdmin || isMarketingAssistant));
+  const canReviewCampaign = isAloStaff || (isPartnerSuperAdmin && !requiresAloApproval);
+  const schedulerAvailable = data?.capabilities?.scheduling === true;
+  const publisherAvailable = data?.capabilities?.publishing === true;
+  const connectedAccounts = socialAccounts.filter((account) => account.connectionStatus.toUpperCase() === 'CONNECTED' && account.approvedByAlo);
 
   const filteredRequests = React.useMemo(() => {
     if (statusFilter === "ALL") return requests;
@@ -541,7 +476,7 @@ export function PartnerMarketingStudio() {
       setCurrentRequest(json.request as MarketingRequest);
       toast({
         title: action === "generate_image" ? "Image generated" : "Video generated",
-        description: json.message || "Asset ready. Status updated to pending approval.",
+        description: json.message || "Asset ready. Submit it separately when it is ready for review.",
       });
       load();
     } catch (e: unknown) {
@@ -553,14 +488,15 @@ export function PartnerMarketingStudio() {
   }
 
   // --- Workflow actions ---
-  async function runWorkflowAction(action: "approve" | "publish" | "reject" | "schedule", scheduledAt?: string) {
-    if (!currentRequest) return;
-    setWorkflowLoading(action + (scheduledAt ? "-schedule" : ""));
+  async function runWorkflowAction(
+    action: "approve" | "publish" | "reject" | "submit",
+    options: { rejectionReason?: string } = {},
+  ): Promise<boolean> {
+    if (!currentRequest) return false;
+    setWorkflowLoading(action);
     try {
-      const body: Record<string, unknown> = { id: currentRequest.id, action, partnerId: undefined };
-      if (action === "schedule" && scheduledAt) {
-        body.scheduledAt = scheduledAt;
-      }
+      const body: Record<string, unknown> = { id: currentRequest.id, action, partnerId: currentRequest.partnerId };
+      if (options.rejectionReason) body.rejectionReason = options.rejectionReason;
       const res = await fetch(`/api/partner-admin/marketing`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -569,62 +505,31 @@ export function PartnerMarketingStudio() {
       const json = await res.json();
       if (!res.ok) {
         toast({ title: "Action failed", description: json.error || "Please try again.", variant: "destructive" });
-        return;
+        return false;
       }
       setCurrentRequest(json.request as MarketingRequest);
       toast({ title: "Action completed", description: json.message });
-      load();
+      await load();
+      return true;
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Network error.";
       toast({ title: "Action failed", description: msg, variant: "destructive" });
+      return false;
     } finally {
       setWorkflowLoading(null);
     }
   }
 
   async function submitForApproval() {
-    if (!currentRequest) return;
-    setWorkflowLoading("submit");
-    try {
-      // Try a dedicated submit action; backend may not support it yet.
-      // If image already generated, status is already PENDING_APPROVAL — just refresh UI.
-      if (currentRequest.assetUrl) {
-        setCurrentRequest({ ...currentRequest, approvalStatus: "PENDING_APPROVAL" });
-        toast({ title: "Submitted for approval", description: "Campaign is now pending Partner Super Admin review." });
-        return;
-      }
-      // No asset yet — generate the image to move status to PENDING_APPROVAL.
-      const res = await fetch(`/api/partner-admin/marketing`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: currentRequest.id, action: "generate_image", partnerId: undefined }),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        if (res.status === 403) {
-          toast({
-            title: "Image quota finished",
-            description: json.error || "Request extra quota from ALO Education.",
-            variant: "destructive",
-          });
-        } else {
-          toast({ title: "Submission failed", description: json.error || "Please try again.", variant: "destructive" });
-        }
-        return;
-      }
-      setCurrentRequest(json.request as MarketingRequest);
-      toast({ title: "Submitted for approval", description: "Campaign moved to pending approval (1 image credit used)." });
-      load();
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Network error.";
-      toast({ title: "Submission failed", description: msg, variant: "destructive" });
-    } finally {
-      setWorkflowLoading(null);
-    }
+    await runWorkflowAction("submit");
   }
 
-  async function scheduleCampaign(scheduledAt: string) {
-    await runWorkflowAction("schedule", scheduledAt);
+  async function confirmReject() {
+    const completed = await runWorkflowAction("reject", { rejectionReason: rejectionReason.trim() });
+    if (completed) {
+      setRejectOpen(false);
+      setRejectionReason("");
+    }
   }
 
   function openCampaignFromHistory(r: MarketingRequest) {
@@ -634,31 +539,56 @@ export function PartnerMarketingStudio() {
     setCountry(r.country || "UK");
     setUniversity(r.university || "");
     setCourse(r.course || "");
-    setIntake(r.intake || "September 2025");
+    setIntake(r.intake || "January 2027");
     setTargetAudience(r.targetAudience || "Bangladeshi students");
     setLanguage(r.language || "English");
-    setCta(r.cta || "Book Free Consultation");
+    setCta(r.cta || "Book a Consultation");
     setPlatform(r.platform);
     setPreferredStyle(r.preferredStyle || "Professional");
-    toast({ title: "Campaign loaded", description: "Edit and regenerate to refresh AI content." });
+    toast({ title: "Campaign fields loaded", description: "Generating from these values creates a new draft; it does not edit the saved campaign." });
   }
 
-  function deleteCampaign(r: MarketingRequest) {
-    toast({
-      title: "Delete requested",
-      description: `Campaign "${r.idea.slice(0, 40)}${r.idea.length > 40 ? "…" : ""}" will be removed. ALO audit log will record this action.`,
-    });
+  async function archiveCampaign(r: MarketingRequest) {
+    if (r.approvalStatus === "PUBLISHED") return;
+    if (!window.confirm(`Archive this campaign? Its generated content will remain in the audit/history record.`)) return;
+    setWorkflowLoading("archive");
+    try {
+      const res = await fetch("/api/partner-admin/marketing", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: r.id, action: "archive", partnerId: r.partnerId }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        toast({ title: "Archive failed", description: json.error || "Please try again.", variant: "destructive" });
+        return;
+      }
+      if (currentRequest?.id === r.id) setCurrentRequest(json.request as MarketingRequest);
+      toast({ title: "Campaign archived", description: json.message });
+      await load();
+    } catch (e: unknown) {
+      toast({ title: "Archive failed", description: e instanceof Error ? e.message : "Network error.", variant: "destructive" });
+    } finally {
+      setWorkflowLoading(null);
+    }
   }
 
   const hashtags = safeParseHashtags(currentRequest?.hashtags);
-  const canPublish = autoPublishAllowed || currentRequest?.approvalStatus === "APPROVED";
+  const canPublish = Boolean(
+    currentRequest &&
+      publisherAvailable &&
+      isPartnerSuperAdmin &&
+      autoPublishAllowed &&
+      currentRequest.approvalStatus === "APPROVED" &&
+      connectedAccounts.some((account) => account.platform.toUpperCase() === currentRequest.platform.toUpperCase()),
+  );
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Partner Marketing Studio"
         icon="Megaphone"
-        subtitle="AI-powered marketing content generation with monthly quota management."
+        subtitle="Create partner-scoped marketing drafts and track monthly media quota. Social publishing is not connected in this deployment."
         action={
           <Button variant="outline" onClick={() => window.dispatchEvent(new CustomEvent("alo-navigate", { detail: { view: "partner-admin-dashboard" as ViewKey } }))}>
             <Icon name="ArrowLeft" className="size-4" />
@@ -667,32 +597,50 @@ export function PartnerMarketingStudio() {
         }
       />
 
+      <div role="status" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        {isAloReviewMode
+          ? 'ALO review queue: pending campaigns from partner tenants are listed below. Approvals and rejections are persisted; reviewed campaigns leave this queue.'
+          : 'Draft creation, media generation (when a provider returns a real asset), submission, and review are persisted. Partner social-account OAuth, scheduled delivery, and publishing are not configured here; those actions are disabled and no external post is simulated.'}
+        {!canCreateCampaign && !isAloStaff && <span className="block mt-1">Partner Super Admin or Marketing Assistant access is required to create or submit campaigns.</span>}
+      </div>
+
+      {loadError && (
+        <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+          <span>Marketing Studio data is unavailable: {loadError}</span>
+          <Button type="button" size="sm" variant="outline" onClick={() => void load()} disabled={loading}>Retry</Button>
+        </div>
+      )}
+
+      {data?.notices?.map((notice) => (
+        <div key={notice} className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-900">{notice}</div>
+      ))}
+
       {/* Quota bar — prominent */}
       {loading ? (
         <LoadingGrid count={2} />
-      ) : (
+      ) : data && !isAloReviewMode ? (
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <QuotaBar label="Image Quota" icon="Image" used={imagesUsed} limit={imageLimit} hint="AI marketing visuals" />
             <QuotaBar label="Video Quota" icon="Video" used={videosUsed} limit={videoLimit} hint={`Max ${videoDurationLimit}s per video`} />
           </div>
-          <div className="flex items-start gap-2 rounded-xl border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-2.5 text-xs text-foreground/80">
-            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+          <div className="flex items-start gap-2 rounded-xl border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-2.5 text-xs text-foreground/80">
+            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
             <p>
-              <strong>Video max duration: {videoDurationLimit} seconds.</strong> Quota resets monthly on the 1st. Color coding: green &lt;60%, amber 60-80%, red &gt;80%.
+              <strong>Video max duration: {videoDurationLimit} seconds.</strong> Quota resets at the start of each UTC calendar month. Color coding: green &lt;60%, amber 60-80%, red &gt;80%.
               {requiresAloApproval && " ALO approval is required before publishing."}
             </p>
           </div>
         </>
-      )}
+      ) : null}
 
       {/* Workflow visualization */}
-      <SectionCard title="Marketing Workflow" description="From idea to CRM timeline — every step is tracked and audited" icon="Workflow">
+      <SectionCard title="Marketing Workflow" description="Draft, media generation, submission, and review are persisted; external social publishing is unavailable" icon="Workflow">
         <ScrollArea className="w-full">
           <div className="flex min-w-[760px] items-center gap-1 overflow-x-auto pb-2">
             {WORKFLOW_STEPS.map((step, i) => (
               <React.Fragment key={step.label}>
-                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#0057B8]/15 bg-white px-3 py-2.5">
+                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#2563EB]/15 bg-white px-3 py-2.5">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-alo-gradient text-white">
                     <Icon name={step.icon} className="size-4" />
                   </div>
@@ -700,7 +648,7 @@ export function PartnerMarketingStudio() {
                   <span className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 {i < WORKFLOW_STEPS.length - 1 && (
-                  <Icon name="ChevronRight" className="size-4 shrink-0 text-[#0057B8]/40" />
+                  <Icon name="ChevronRight" className="size-4 shrink-0 text-[#2563EB]/40" />
                 )}
               </React.Fragment>
             ))}
@@ -711,15 +659,15 @@ export function PartnerMarketingStudio() {
       {/* Compliance rules card */}
       <SectionCard title="Compliance Rules" description="All AI content must follow ALO Education brand guidelines" icon="ShieldCheck">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-3">
+          <div className="rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Icon name="Sparkles" className="size-4 text-[#0057B8]" />
-              <p className="text-sm font-semibold text-[#0057B8]">AI Content MUST</p>
+              <Icon name="Sparkles" className="size-4 text-[#2563EB]" />
+              <p className="text-sm font-semibold text-[#2563EB]">AI Content MUST</p>
             </div>
             <ul className="mt-2 space-y-1 text-xs text-foreground/85">
               <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Follow ALO brand voice: professional, encouraging, student-focused</li>
-              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Include clear call-to-action (CTA) in every post</li>
-              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Be original and engaging — no plagiarism</li>
+              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Review that each draft includes a clear, accurate call-to-action (CTA)</li>
+              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Review for originality; automated plagiarism detection is not provided</li>
             </ul>
           </div>
           <div className="rounded-xl border-2 border-rose-200 bg-rose-50/40 px-4 py-3">
@@ -730,15 +678,15 @@ export function PartnerMarketingStudio() {
             <ul className="mt-2 space-y-1 text-xs text-rose-800/85">
               <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-rose-600" />Promise visa or admission guarantees</li>
               <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-rose-600" />Use misleading claims or false testimonials</li>
-              <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-rose-600" />Exceed monthly limits: 15 images, 10 videos (30s max)</li>
+              <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-rose-600" />Exceed monthly limits: {imageLimit} images, {videoLimit} videos ({videoDurationLimit}s max)</li>
             </ul>
           </div>
         </div>
         <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/50 px-3 py-2.5 text-xs text-amber-800">
           <Icon name="AlertTriangle" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
           <p>
-            <strong>Partner Super Admin must approve</strong> before publishing.
-            {requiresAloApproval ? " ALO review is required for Starter package partners." : " ALO review is waived for your package."}
+            {requiresAloApproval ? <><strong>ALO review is required</strong> after partner submission.</> : <><strong>Partner Super Admin review</strong> applies; ALO review is waived by the package setting.</>}
+            {' '}Social publishing remains unavailable until a connection and publisher are configured.
           </p>
         </div>
       </SectionCard>
@@ -747,19 +695,23 @@ export function PartnerMarketingStudio() {
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <ScrollArea className="w-full">
           <TabsList className="h-auto flex-wrap gap-1">
-            <TabsTrigger value="create" className="gap-1.5">
-              <Icon name="Sparkles" className="size-4" />
-              Create Campaign
-            </TabsTrigger>
+            {!isAloReviewMode && (
+              <TabsTrigger value="create" className="gap-1.5">
+                <Icon name="Sparkles" className="size-4" />
+                Create Campaign
+              </TabsTrigger>
+            )}
             <TabsTrigger value="history" className="gap-1.5">
               <Icon name="History" className="size-4" />
-              Campaign History
+              {isAloReviewMode ? 'ALO Review Queue' : 'Campaign History'}
               <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px]">{requests.length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="social" className="gap-1.5">
-              <Icon name="Share2" className="size-4" />
-              Social Connections
-            </TabsTrigger>
+            {!isAloReviewMode && (
+              <TabsTrigger value="social" className="gap-1.5">
+                <Icon name="Share2" className="size-4" />
+                Social Connections
+              </TabsTrigger>
+            )}
           </TabsList>
         </ScrollArea>
 
@@ -772,6 +724,11 @@ export function PartnerMarketingStudio() {
               {/* Left: Campaign idea form */}
               <div className="lg:col-span-1">
                 <SectionCard title="Campaign Idea" description="Describe what you want to promote" icon="Lightbulb">
+                  {!canCreateCampaign && (
+                    <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                      {isAloStaff ? 'Select a partner in an ALO review workspace to manage cross-partner campaigns.' : 'Your partner role is read-only for Marketing Studio.'}
+                    </p>
+                  )}
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="mkt-idea">Marketing Idea</Label>
@@ -780,7 +737,7 @@ export function PartnerMarketingStudio() {
                         rows={4}
                         value={idea}
                         onChange={(e) => setIdea(e.target.value)}
-                        placeholder="e.g. Promote our free IELTS mock test for September UK intake. Target students in Dhaka who haven't taken IELTS yet."
+                        placeholder="e.g. Promote our IELTS mock test for the January 2027 UK intake. Target students in Dhaka who are preparing for an English exam."
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -794,8 +751,13 @@ export function PartnerMarketingStudio() {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="mkt-intake">Intake</Label>
-                        <Input id="mkt-intake" value={intake} onChange={(e) => setIntake(e.target.value)} placeholder="September 2025" />
+                        <Label>Intake</Label>
+                        <Select value={intake} onValueChange={setIntake}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {SUPPORTED_INTAKES.map((supportedIntake) => <SelectItem key={supportedIntake} value={supportedIntake}>{supportedIntake}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -846,8 +808,8 @@ export function PartnerMarketingStudio() {
                       </div>
                     </div>
                     <Button
-                      className="w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12"
-                      disabled={generating}
+                      className="w-full bg-[#F97316] text-white hover:bg-[#F97316]/90 h-12"
+                      disabled={generating || !canCreateCampaign}
                       onClick={generateContent}
                     >
                       {generating ? (
@@ -897,7 +859,7 @@ export function PartnerMarketingStudio() {
                         {[0, 1, 2].map((i) => (
                           <span
                             key={i}
-                            className="size-2 rounded-full bg-[#0057B8]"
+                            className="size-2 rounded-full bg-[#2563EB]"
                             style={{ animation: `pulse 1s ease-in-out ${i * 0.15}s infinite` }}
                           />
                         ))}
@@ -917,18 +879,18 @@ export function PartnerMarketingStudio() {
                         content={currentRequest.instagramCaption}
                         action={<CopyButton text={currentRequest.instagramCaption || ""} label="Instagram caption" />}
                       />
-                      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+                      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
                         <CardContent className="pt-4">
                           <div className="mb-2 flex items-center gap-2">
-                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
                               <Icon name="Hash" className="size-3.5" />
                             </div>
-                            <p className="text-sm font-semibold text-[#0057B8]">Hashtags</p>
+                            <p className="text-sm font-semibold text-[#2563EB]">Hashtags</p>
                           </div>
                           {hashtags.length > 0 ? (
                             <div className="flex flex-wrap gap-1.5">
                               {hashtags.map((h, i) => (
-                                <Badge key={i} variant="outline" className="border-[#0057B8]/20 bg-[#e8f0fb]/40 font-mono text-[#0057B8]">
+                                <Badge key={i} variant="outline" className="border-[#2563EB]/20 bg-[#e8f0fb]/40 font-mono text-[#2563EB]">
                                   {h}
                                 </Badge>
                               ))}
@@ -947,8 +909,8 @@ export function PartnerMarketingStudio() {
                             <CopyButton text={currentRequest.imagePrompt || ""} label="Image prompt" />
                             <Button
                               size="sm"
-                              className="h-7 bg-[#0057B8] px-2 text-xs text-white hover:bg-[#0057B8]/90"
-                              disabled={assetLoading === "generate_image"}
+                              className="h-7 bg-[#2563EB] px-2 text-xs text-white hover:bg-[#2563EB]/90"
+                              disabled={!canCreateCampaign || assetLoading === "generate_image" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
                               onClick={() => runAssetAction("generate_image")}
                             >
                               {assetLoading === "generate_image" ? (
@@ -969,8 +931,8 @@ export function PartnerMarketingStudio() {
                             <CopyButton text={currentRequest.videoPrompt || ""} label="Video prompt" />
                             <Button
                               size="sm"
-                              className="h-7 bg-[#0057B8] px-2 text-xs text-white hover:bg-[#0057B8]/90"
-                              disabled={assetLoading === "generate_video"}
+                              className="h-7 bg-[#2563EB] px-2 text-xs text-white hover:bg-[#2563EB]/90"
+                              disabled={!canCreateCampaign || assetLoading === "generate_video" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
                               onClick={() => runAssetAction("generate_video")}
                             >
                               {assetLoading === "generate_video" ? (
@@ -1000,84 +962,98 @@ export function PartnerMarketingStudio() {
                         content={currentRequest.ctaText}
                         action={<CopyButton text={currentRequest.ctaText || ""} label="CTA text" />}
                       />
+                      {currentRequest.approvalStatus === "REJECTED" && currentRequest.rejectionReason && (
+                        <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900">
+                          <strong>Review feedback:</strong> {currentRequest.rejectionReason}
+                        </div>
+                      )}
 
                       {/* Workflow action buttons */}
-                      <Card className="rounded-2xl border-2 border-[#E8501A]/30 bg-[#fdece4]/30">
+                      <Card className="rounded-2xl border-2 border-[#F97316]/30 bg-[#fdece4]/30">
                         <CardContent className="pt-4">
                           <div className="mb-3 flex items-center justify-between">
-                            <p className="text-sm font-semibold text-[#E8501A]">Workflow Actions</p>
+                            <p className="text-sm font-semibold text-[#F97316]">Workflow Actions</p>
                             <Badge className={MARKETING_STATUS_COLORS[currentRequest.approvalStatus] ?? "bg-slate-100 text-slate-700"}>
                               {STATUS_LABELS[currentRequest.approvalStatus] ?? currentRequest.approvalStatus}
                             </Badge>
                           </div>
-                          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+                          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                             <Button
                               size="sm"
                               variant="outline"
                               className="border-amber-200 text-amber-700 hover:bg-amber-50"
-                              disabled={workflowLoading === "submit" || currentRequest.approvalStatus !== "DRAFT"}
-                              onClick={submitForApproval}
+                              disabled={!canCreateCampaign || workflowLoading === "submit" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus) || !currentRequest.assetUrl}
+                              onClick={() => void submitForApproval()}
+                              title={!currentRequest.assetUrl ? "Generate an image or video asset before submitting." : undefined}
                             >
                               {workflowLoading === "submit" ? <Icon name="Loader2" className="size-3.5 animate-spin" /> : <Icon name="Send" className="size-3.5" />}
-                              Submit
+                              Submit for review
                             </Button>
+                            {canReviewCampaign && currentRequest.approvalStatus === "PENDING_APPROVAL" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                                disabled={workflowLoading === "approve"}
+                                onClick={() => void runWorkflowAction("approve")}
+                              >
+                                {workflowLoading === "approve" ? <Icon name="Loader2" className="size-3.5 animate-spin" /> : <Icon name="Check" className="size-3.5" />}
+                                Approve
+                              </Button>
+                            )}
                             <Button
                               size="sm"
                               variant="outline"
-                              className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                              disabled={workflowLoading === "approve" || !["DRAFT", "PENDING_APPROVAL", "REJECTED"].includes(currentRequest.approvalStatus)}
-                              onClick={() => runWorkflowAction("approve")}
-                            >
-                              {workflowLoading === "approve" ? <Icon name="Loader2" className="size-3.5 animate-spin" /> : <Icon name="Check" className="size-3.5" />}
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-sky-200 text-sky-700 hover:bg-sky-50"
-                              disabled={workflowLoading === "schedule" || !["DRAFT", "APPROVED", "PENDING_APPROVAL"].includes(currentRequest.approvalStatus)}
-                              onClick={() => setScheduleOpen(true)}
+                              className="border-sky-200 text-sky-700"
+                              disabled={!schedulerAvailable || currentRequest.approvalStatus !== "APPROVED" || !currentRequest.assetUrl}
+                              title="No scheduled publisher is configured in this deployment."
                             >
                               <Icon name="CalendarClock" className="size-3.5" />
-                              Schedule
+                              Scheduling unavailable
                             </Button>
                             <Button
                               size="sm"
                               className="bg-emerald-600 text-white hover:bg-emerald-600/90"
-                              disabled={workflowLoading === "publish" || !canPublish || currentRequest.approvalStatus === "PUBLISHED"}
-                              onClick={() => runWorkflowAction("publish")}
+                              disabled={!canPublish || workflowLoading === "publish"}
+                              onClick={() => void runWorkflowAction("publish")}
+                              title="Publishing requires an active, approved social connection and publisher."
                             >
                               {workflowLoading === "publish" ? <Icon name="Loader2" className="size-3.5 animate-spin" /> : <Icon name="Send" className="size-3.5" />}
-                              Publish
+                              Publish unavailable
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-rose-200 text-rose-700 hover:bg-rose-50"
-                              disabled={workflowLoading === "reject" || currentRequest.approvalStatus === "PUBLISHED"}
-                              onClick={() => runWorkflowAction("reject")}
-                            >
-                              {workflowLoading === "reject" ? <Icon name="Loader2" className="size-3.5 animate-spin" /> : <Icon name="X" className="size-3.5" />}
-                              Reject
-                            </Button>
+                            {canReviewCampaign && currentRequest.approvalStatus === "PENDING_APPROVAL" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-rose-200 text-rose-700 hover:bg-rose-50"
+                                disabled={workflowLoading === "reject"}
+                                onClick={() => setRejectOpen(true)}
+                              >
+                                <Icon name="X" className="size-3.5" />
+                                Reject with reason
+                              </Button>
+                            )}
                           </div>
+                          {!canReviewCampaign && currentRequest.approvalStatus === "PENDING_APPROVAL" && (
+                            <p className="mt-3 flex items-start gap-1.5 text-xs text-amber-700">
+                              <Icon name="AlertTriangle" className="mt-0.5 size-3 shrink-0" />
+                              <span>{requiresAloApproval ? "ALO review is required; this partner workspace cannot approve the campaign." : "Partner Super Admin review is required."}</span>
+                            </p>
+                          )}
                           {!canPublish && (
                             <p className="mt-3 flex items-start gap-1.5 text-xs text-amber-700">
                               <Icon name="AlertTriangle" className="mt-0.5 size-3 shrink-0" />
-                              <span>
-                                Publish requires Partner Super Admin approval
-                                {requiresAloApproval ? " and ALO review (Starter package)" : ""}.
-                              </span>
+                              <span>No partner social-account connection or publishing service is configured. Approval or package settings alone will not publish anything.</span>
                             </p>
                           )}
                           {currentRequest.assetUrl && (
                             <p className="mt-3 flex items-center gap-1.5 text-xs text-emerald-700">
                               <Icon name="CheckCircle2" className="size-3" />
-                              <span>Image asset generated at <code className="font-mono">{currentRequest.assetUrl}</code></span>
+                              <span>Generated media asset: <code className="font-mono break-all">{currentRequest.assetUrl}</code></span>
                             </p>
                           )}
                           {currentRequest.publishedUrl && (
-                            <p className="mt-2 flex items-center gap-1.5 text-xs text-[#0057B8]">
+                            <p className="mt-2 flex items-center gap-1.5 text-xs text-[#2563EB]">
                               <Icon name="ExternalLink" className="size-3" />
                               <span>Published at <code className="font-mono">{currentRequest.publishedUrl}</code></span>
                             </p>
@@ -1085,7 +1061,7 @@ export function PartnerMarketingStudio() {
                           {currentRequest.scheduledAt && (
                             <p className="mt-2 flex items-center gap-1.5 text-xs text-sky-700">
                               <Icon name="CalendarClock" className="size-3" />
-                              <span>Scheduled for <strong>{fmtDate(currentRequest.scheduledAt)}</strong></span>
+                              <span>Legacy schedule record — not dispatched: <strong>{fmtDate(currentRequest.scheduledAt)}</strong></span>
                             </p>
                           )}
                         </CardContent>
@@ -1104,9 +1080,11 @@ export function PartnerMarketingStudio() {
             <LoadingGrid count={4} />
           ) : (
             <SectionCard
-              title="Campaign History"
-              description={`${requests.length} campaign${requests.length === 1 ? "" : "s"} total`}
-              icon="History"
+              title={isAloReviewMode ? 'ALO Review Queue' : 'Campaign History'}
+              description={isAloReviewMode
+                ? `${requests.length} campaign${requests.length === 1 ? '' : 's'} waiting for ALO review`
+                : `${requests.length} campaign${requests.length === 1 ? '' : 's'} total`}
+              icon={isAloReviewMode ? 'ShieldCheck' : 'History'}
               action={
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[180px]">
@@ -1118,23 +1096,26 @@ export function PartnerMarketingStudio() {
                     <SelectItem value="PENDING_APPROVAL">Pending Approval</SelectItem>
                     <SelectItem value="APPROVED">Approved</SelectItem>
                     <SelectItem value="REJECTED">Rejected</SelectItem>
-                    <SelectItem value="SCHEDULED">Scheduled</SelectItem>
+                    <SelectItem value="SCHEDULED">Legacy scheduled</SelectItem>
                     <SelectItem value="PUBLISHED">Published</SelectItem>
+                    <SelectItem value="ARCHIVED">Archived</SelectItem>
                   </SelectContent>
                 </Select>
               }
             >
               {filteredRequests.length === 0 ? (
                 <EmptyState
-                  icon="History"
-                  title="No campaigns yet"
-                  description="Generate your first AI marketing campaign in the Create Campaign tab."
-                  action={
-                    <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={() => setTab("create")}>
+                  icon={isAloReviewMode ? 'ShieldCheck' : 'History'}
+                  title={isAloReviewMode ? 'No campaigns awaiting review' : 'No campaigns yet'}
+                  description={isAloReviewMode
+                    ? 'Submitted partner campaigns that require ALO review will appear here.'
+                    : 'Generate your first marketing campaign in the Create Campaign tab.'}
+                  action={!isAloReviewMode ? (
+                    <Button className="bg-[#F97316] text-white hover:bg-[#F97316]/90 h-12" onClick={() => setTab("create")}>
                       <Icon name="Sparkles" className="size-4" />
                       Create Campaign
                     </Button>
-                  }
+                  ) : undefined}
                 />
               ) : (
                 <div className="overflow-x-auto">
@@ -1145,7 +1126,7 @@ export function PartnerMarketingStudio() {
                         <TableHead>Platform</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="hidden md:table-cell">Created</TableHead>
-                        <TableHead className="hidden lg:table-cell">Scheduled</TableHead>
+                        <TableHead className="hidden lg:table-cell">Legacy schedule record</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -1154,12 +1135,14 @@ export function PartnerMarketingStudio() {
                         <TableRow key={r.id}>
                           <TableCell className="max-w-[280px]">
                             <p className="truncate text-sm font-medium text-foreground">{r.idea}</p>
-                            {r.country && (
+                            {isAloReviewMode ? (
+                              <span className="text-xs text-muted-foreground">Partner {r.partnerId} · {r.requestedBy || 'Unknown submitter'}</span>
+                            ) : r.country ? (
                               <span className="text-xs text-muted-foreground">{r.country}{r.university ? ` • ${r.university}` : ""}</span>
-                            )}
+                            ) : null}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                            <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
                               {PLATFORM_LABELS[r.platform] ?? r.platform}
                             </Badge>
                           </TableCell>
@@ -1170,21 +1153,27 @@ export function PartnerMarketingStudio() {
                           </TableCell>
                           <TableCell className="hidden text-xs text-muted-foreground md:table-cell">{timeAgo(r.createdAt)}</TableCell>
                           <TableCell className="hidden text-xs text-muted-foreground lg:table-cell">
-                            {r.scheduledAt ? fmtDate(r.scheduledAt) : "—"}
+                            {r.scheduledAt ? `Not dispatched · ${fmtDate(r.scheduledAt)}` : "—"}
                           </TableCell>
                           <TableCell className="text-right">
                           <div className="flex justify-end gap-1.5">
                             <Button size="sm" variant="outline" onClick={() => openCampaignFromHistory(r)}>
-                              <Icon name="Eye" className="size-3.5" />
-                              View
+                              <Icon name={isAloReviewMode ? 'ShieldCheck' : 'Eye'} className="size-3.5" />
+                              {isAloReviewMode ? 'Review' : 'Open / reuse'}
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => openCampaignFromHistory(r)}>
-                              <Icon name="Pencil" className="size-3.5" />
-                              Edit
-                            </Button>
-                            <Button size="sm" variant="outline" className="border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => deleteCampaign(r)}>
-                              <Icon name="Trash2" className="size-3.5" />
-                            </Button>
+                            {!isAloReviewMode && r.approvalStatus !== "PUBLISHED" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-rose-200 text-rose-700 hover:bg-rose-50"
+                                disabled={!isPartnerSuperAdmin || workflowLoading === "archive" || r.approvalStatus === "ARCHIVED"}
+                                onClick={() => void archiveCampaign(r)}
+                                title={!isPartnerSuperAdmin ? "Partner Super Admin access required." : undefined}
+                              >
+                                <Icon name="Archive" className="size-3.5" />
+                                Archive
+                              </Button>
+                            )}
                           </div>
                           </TableCell>
                         </TableRow>
@@ -1199,115 +1188,67 @@ export function PartnerMarketingStudio() {
 
         {/* SOCIAL CONNECTIONS */}
         <TabsContent value="social" className="mt-4 space-y-4">
-          {loading ? (
-            <LoadingGrid count={2} />
-          ) : (
-            <>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {(["FACEBOOK", "INSTAGRAM"] as const).map((pf) => {
-                  const acct = socialAccounts.find((a) => a.platform === pf);
-                  const label = pf === "FACEBOOK" ? "Facebook" : "Instagram";
-                  const icon = pf === "FACEBOOK" ? "Facebook" : "Instagram";
-                  return (
-                    <Card key={pf} className="rounded-2xl border-2 border-[#0057B8]/20">
-                      <CardContent className="pt-5">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-center gap-3">
-                            <div className="flex size-12 items-center justify-center rounded-xl bg-alo-gradient text-white">
-                              <Icon name={icon} className="size-6" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-[#0057B8]">{label}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {acct ? acct.accountName : "Not connected"}
-                              </p>
-                            </div>
-                          </div>
-                          <Badge className={SOCIAL_CONNECTION_COLORS[acct?.connectionStatus ?? "DISCONNECTED"]}>
-                            {acct?.connectionStatus ?? "DISCONNECTED"}
-                          </Badge>
+          <SectionCard title="Social account connections" description="No OAuth connection is available in this deployment" icon="Share2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {PLATFORMS.map((item) => (
+                <Card key={item.value} className="rounded-2xl border-2 border-slate-200">
+                  <CardContent className="pt-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex size-12 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                          <Icon name={item.icon} className="size-6" />
                         </div>
-                        {acct ? (
-                          <div className="mt-4 space-y-2 border-t border-[#0057B8]/10 pt-3">
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">Token (masked)</span>
-                              <code className="font-mono text-muted-foreground">{maskToken(acct.accessTokenMasked)}</code>
-                            </div>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">Last sync</span>
-                              <span className="font-medium text-foreground">{acct.lastSync ? timeAgo(acct.lastSync) : "—"}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">ALO approved</span>
-                              {acct.approvedByAlo ? (
-                                <Badge className="bg-emerald-100 text-emerald-700"><Icon name="Check" className="mr-1 size-3" />Yes</Badge>
-                              ) : (
-                                <Badge className="bg-amber-100 text-amber-700"><Icon name="Clock" className="mr-1 size-3" />Pending</Badge>
-                              )}
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="mt-2 w-full"
-                              onClick={() => toast({ title: "Disconnect", description: `${label} account would be disconnected. Token revoked.` })}
-                            >
-                              <Icon name="Unplug" className="size-3.5" />
-                              Disconnect
-                            </Button>
-                          </div>
-                        ) : (
-                          <Button
-                            className="mt-4 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-11"
-                            onClick={() => toast({ title: "OAuth flow", description: `${label} OAuth flow would start here. Redirect to ${pf === "FACEBOOK" ? "Meta" : "Instagram"} login.` })}
-                          >
-                            <Icon name="Link" className="size-4" />
-                            Connect {label}
-                          </Button>
-                        )}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-700">{item.label}</p>
+                          <p className="text-xs text-muted-foreground">Not connected</p>
+                        </div>
+                      </div>
+                      <Badge variant="outline">Unavailable</Badge>
+                    </div>
+                    <Button className="mt-4 w-full" variant="outline" disabled title="No social OAuth endpoint or partner connection model is configured.">
+                      <Icon name="Link" className="size-4" />
+                      Connection unavailable
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </SectionCard>
 
-              <SectionCard title="Security & Compliance" description="How we protect your social account tokens" icon="ShieldCheck">
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <Icon name="Lock" className="size-4 text-[#0057B8]" />
-                      <p className="text-sm font-semibold text-[#0057B8]">Token Encryption</p>
-                    </div>
-                    <p className="mt-1.5 text-xs text-foreground/80">
-                      Tokens are AES-256 encrypted at rest. Only the last 2 characters are visible in the UI; full token views are audit-logged.
-                    </p>
-                  </div>
-                  <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <Icon name="ShieldCheck" className="size-4 text-[#0057B8]" />
-                      <p className="text-sm font-semibold text-[#0057B8]">ALO Approval Required</p>
-                    </div>
-                    <p className="mt-1.5 text-xs text-foreground/80">
-                      Social media posting requires ALO approval. Auto-publish is <strong>{autoPublishAllowed ? "ENABLED" : "DISABLED"}</strong> for your package.
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/40 px-3 py-2.5 text-xs text-amber-800">
-                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
-                  <p>
-                    Auto-publish is <strong>disabled by default for Starter Partners</strong>. Upgrade to a Growth or Scale package to enable direct publishing without per-post ALO review.
-                  </p>
-                </div>
-              </SectionCard>
-            </>
-          )}
+          <SectionCard title="Integration status" description="No social tokens or publishing jobs are configured" icon="ShieldCheck">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              This workspace has no partner-scoped OAuth flow, social-token storage, scheduled publisher, or live publishing endpoint. No token is stored or claimed to be encrypted, and no external post can be sent from this screen. Package approval flags alone do not enable publishing.
+            </div>
+          </SectionCard>
         </TabsContent>
       </Tabs>
 
-      <ScheduleDialog
-        open={scheduleOpen}
-        onOpenChange={setScheduleOpen}
-        onConfirm={scheduleCampaign}
-      />
+      <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reject campaign</DialogTitle>
+            <DialogDescription>Provide a clear reason so the partner knows what must be corrected.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="marketing-rejection-reason">Rejection reason</Label>
+            <Textarea
+              id="marketing-rejection-reason"
+              value={rejectionReason}
+              onChange={(event) => setRejectionReason(event.target.value)}
+              maxLength={1000}
+              rows={4}
+              placeholder="Explain the issue to fix before resubmission."
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setRejectOpen(false)}>Cancel</Button>
+            <Button type="button" disabled={workflowLoading === "reject" || !rejectionReason.trim()} onClick={() => void confirmReject()}>
+              {workflowLoading === "reject" ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="X" className="size-4" />}
+              Reject campaign
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

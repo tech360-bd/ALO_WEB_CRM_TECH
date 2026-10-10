@@ -32,7 +32,7 @@ export function StudentAppointments() {
             <Card key={a.id} className="rounded-2xl border border-[#DCE8F5] bg-white">
               <CardContent className="p-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0066CC]">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#2563EB]">
                     <Icon name="Calendar" className="size-6" />
                   </div>
                   <div>

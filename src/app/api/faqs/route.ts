@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getOptionalAuth } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
 // GET /api/faqs — unified FAQ system database-driven
 // Filters: category (Admission, Course, University, Scholarship, Visa, English Test, Application, Finance, Accommodation, Student Life), targetType, targetSlug, search
@@ -18,8 +18,10 @@ export async function GET(req: NextRequest) {
     if (targetSlug) where.targetSlug = targetSlug;
     if (search) {
       where.OR = [
-        { question: { contains: search, mode: 'insensitive' } },
-        { answer: { contains: search, mode: 'insensitive' } },
+        // The database is MySQL; its configured collation supplies case
+        // handling, while Prisma's `mode` filter is PostgreSQL-only.
+        { question: { contains: search } },
+        { answer: { contains: search } },
       ];
     }
 
@@ -81,8 +83,12 @@ export async function GET(req: NextRequest) {
 }
 
 // POST /api/faqs — create FAQ (admin)
-export async function POST(req: NextRequest) {
+async function createFaq(req: Request, auth: AuthContext) {
   try {
+    const role = (auth.userType || auth.roles[0] || '').toUpperCase();
+    if (!['SUPER_ADMIN', 'ADMIN', 'MARKETING_MANAGER'].includes(role)) {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    }
     const body = await req.json();
     const { question, answer, category = 'general', targetType = 'general', targetId = '', targetSlug = '', tags = [], sourceUrl = '', sourceName = '', verificationStatus = 'pending', status = 'active', sortOrder = 0 } = body;
 
@@ -113,3 +119,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to create FAQ', detail: err.message }, { status: 500 });
   }
 }
+
+export const POST = withAuth(createFaq, {
+  requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'MARKETING_MANAGER'],
+});

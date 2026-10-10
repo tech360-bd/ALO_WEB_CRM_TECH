@@ -1,12 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 
 // GET — all knowledge documents with categories
-export async function GET(req: NextRequest) {
-  const categoryId = req.nextUrl.searchParams.get("categoryId");
-  const fileType = req.nextUrl.searchParams.get("fileType");
-  const visibility = req.nextUrl.searchParams.get("visibility");
-  const featured = req.nextUrl.searchParams.get("featured") === "true";
+async function listKnowledgeDocuments(req: Request, _auth: AuthContext) {
+  const searchParams = new URL(req.url).searchParams;
+  const categoryId = searchParams.get("categoryId");
+  const fileType = searchParams.get("fileType");
+  const visibility = searchParams.get("visibility");
+  const featured = searchParams.get("featured") === "true";
   const where: any = { approvalStatus: "APPROVED" };
   if (categoryId) where.categoryId = categoryId;
   if (fileType) where.fileType = fileType;
@@ -30,19 +32,24 @@ export async function GET(req: NextRequest) {
 }
 
 // POST — upload knowledge document
-export async function POST(req: NextRequest) {
+async function createKnowledgeDocument(req: Request, auth: AuthContext) {
   const body = await req.json();
-  const { title, categoryId, fileType, filePath, fileSize, mimeType, tags, visibility, description, authorId } = body;
+  const { title, categoryId, fileType, filePath, fileSize, mimeType, tags, visibility, description } = body;
   const doc = await db.knowledgeDocument.create({
     data: {
       title, categoryId, fileType, filePath, fileSize, mimeType,
       tags: JSON.stringify(tags || []),
       visibility: visibility || "EMPLOYEE",
       description,
-      authorId,
-      approvalStatus: "APPROVED",
+      authorId: auth.userId,
+      approvalStatus: "PENDING",
     },
   });
-  await db.auditLog.create({ data: { action: "DATA_IMPORT", resource: "KnowledgeDocument", resourceId: doc.id, details: JSON.stringify({ title, fileType }) } });
+  await db.auditLog.create({ data: { userId: auth.userId, action: "DATA_IMPORT", resource: "KnowledgeDocument", resourceId: doc.id, details: JSON.stringify({ title, fileType }) } });
   return NextResponse.json({ doc, message: "Document uploaded to Knowledge Center." });
 }
+
+
+const KNOWLEDGE_ACCESS = { requireUserTypes: ["ADMIN", "SUPER_ADMIN", "EMPLOYEE", "HR_MANAGER", "BRANCH_MANAGER", "COUNSELOR", "APPLICATION_TEAM", "VISA_OFFICER", "MARKETING_MANAGER", "MARKETING", "FRONT_DESK", "SUPPORT_STAFF", "ENGLISH_TRAINER"] };
+export const GET = withAuth(listKnowledgeDocuments, KNOWLEDGE_ACCESS);
+export const POST = withAuth(createKnowledgeDocument, KNOWLEDGE_ACCESS);

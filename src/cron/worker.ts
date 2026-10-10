@@ -165,6 +165,7 @@ async function main() {
     while (true) {
         const now = new Date();
         for (const job of CRON_JOBS) {
+          if (!job.enabled) continue;
           try {
             const interval = parseCron(job.cronExpression, { tz: job.timezone });
             // Determine if job should run now - for per-minute jobs, always run; for scheduled, check if now matches

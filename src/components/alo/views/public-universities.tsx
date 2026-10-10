@@ -136,7 +136,7 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
       </div>
 
       {/* Filters */}
-      <Card className="mt-6 rounded-2xl border-2 border-[#0057B8]/15">
+      <Card className="mt-6 rounded-2xl border-2 border-[#2563EB]/15">
         <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-end">
           <div className="flex-1">
             <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Country</label>
@@ -178,7 +178,7 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
           {(countryFilter !== "all" || search) && (
             <Button
               variant="outline"
-              className="h-10 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+              className="h-10 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
               onClick={() => { setCountryFilter("all"); setSearch(""); }}
             >
               <Icon name="RotateCcw" className="size-4" /> Reset
@@ -206,14 +206,14 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
             action={
               <div className="flex gap-2">
                 <Button
-                  className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-10"
+                  className="bg-[#F97316] text-white hover:bg-[#F97316]/90 h-10"
                   onClick={() => { setCountryFilter("all"); setSearch(""); }}
                 >
                   <Icon name="RotateCcw" className="size-4" /> Reset filters
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10"
+                  className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-10"
                   onClick={() => onNavigate("public-courses")}
                 >
                   <Icon name="BookOpen" className="size-4" /> Browse courses
@@ -231,12 +231,12 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
             const hasScholarship = Boolean(quickFacts.scholarship || tuition.scholarship);
 
             return (
-              <Card key={u.slug} className="flex flex-col rounded-2xl border-2 border-[#0057B8]/15 transition-all hover:border-[#0057B8]/40 hover:shadow-md">
+              <Card key={u.slug} className="flex flex-col rounded-2xl border-2 border-[#2563EB]/15 transition-all hover:border-[#2563EB]/40 hover:shadow-md">
                 <CardContent className="flex flex-1 flex-col pt-5">
                   {/* Header: name + flag */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h3 className="line-clamp-2 text-base font-bold text-[#0057B8]">{u.name}</h3>
+                      <h3 className="line-clamp-2 text-base font-bold text-[#2563EB]">{u.name}</h3>
                       <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                         <span className="text-base leading-none">{u.country.flag}</span>
                         <span className="font-medium text-foreground">{u.country.name}</span>
@@ -245,7 +245,7 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
                       </p>
                     </div>
                     {hasScholarship && (
-                      <Badge className="shrink-0 bg-[#fdece4] text-[#E8501A] hover:bg-[#fdece4]">
+                      <Badge className="shrink-0 bg-[#fdece4] text-[#F97316] hover:bg-[#fdece4]">
                         <Icon name="Award" className="mr-1 size-3" /> Scholarship
                       </Badge>
                     )}
@@ -258,7 +258,7 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
                   {strengths.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {strengths.slice(0, 3).map((s, i) => (
-                        <span key={i} className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-[11px] font-medium text-[#0057B8]">
+                        <span key={i} className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-[11px] font-medium text-[#2563EB]">
                           <Icon name="Check" className="size-3" />
                           <span className="line-clamp-1 max-w-[180px]">{s}</span>
                         </span>
@@ -269,14 +269,14 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
                   {/* Quick facts */}
                   <div className="mt-4 space-y-2 rounded-xl bg-[#f7f9fc] p-3 text-xs">
                     <div className="flex items-start gap-2">
-                      <Icon name="Wallet" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                      <Icon name="Wallet" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-muted-foreground">Tuition range</p>
                         <p className="font-medium text-foreground">{quickFacts.tuitionRange || tuition.ug || "Confirm with counselor"}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Icon name="Calendar" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                      <Icon name="Calendar" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-muted-foreground">Intakes</p>
                         <p className="font-medium text-foreground">
@@ -286,7 +286,7 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
                     </div>
                     {quickFacts.englishTests && quickFacts.englishTests.length > 0 && (
                       <div className="flex items-start gap-2">
-                        <Icon name="Languages" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                        <Icon name="Languages" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                         <div className="min-w-0 flex-1">
                           <p className="font-semibold text-muted-foreground">English tests</p>
                           <p className="font-medium text-foreground">{quickFacts.englishTests.join(", ")}</p>
@@ -308,14 +308,14 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
                     </div>
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <Button
-                        className="flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-10"
+                        className="flex-1 bg-[#F97316] text-white hover:bg-[#F97316]/90 h-10"
                         onClick={() => onNavigate("public-university", u.slug)}
                       >
                         <Icon name="ArrowRight" className="size-4" /> View University
                       </Button>
                       <Button
                         variant="outline"
-                        className="flex-1 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10"
+                        className="flex-1 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-10"
                         onClick={() => onNavigate("public-courses")}
                       >
                         <Icon name="BookOpen" className="size-4" /> View Courses
@@ -335,7 +335,7 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
           icon="Sparkles"
           title="Not sure which university fits you?"
           description="Tell us your goals, academic background, and budget — an ALO counselor will shortlist 3 universities in 24 hours."
-          className="border-2 border-[#0057B8]/15 bg-gradient-to-br from-[#e8f0fb]/60 to-white"
+          className="border-2 border-[#2563EB]/15 bg-gradient-to-br from-[#e8f0fb]/60 to-white"
         >
           <PublicLeadForm
             sourceTag="Universities listing page"
@@ -346,18 +346,18 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
       </section>
 
       {/* Helpful links strip */}
-      <div className="mt-8 flex flex-wrap items-center gap-3 rounded-2xl border-2 border-dashed border-[#0057B8]/15 px-4 py-3 text-xs text-muted-foreground">
-        <Icon name="Lightbulb" className="size-4 text-[#E8501A]" />
+      <div className="mt-8 flex flex-wrap items-center gap-3 rounded-2xl border-2 border-dashed border-[#2563EB]/15 px-4 py-3 text-xs text-muted-foreground">
+        <Icon name="Lightbulb" className="size-4 text-[#F97316]" />
         <span>Looking for something specific?</span>
-        <button onClick={() => onNavigate("public-course-finder")} className="font-medium text-[#0057B8] hover:underline">
+        <button onClick={() => onNavigate("public-course-finder")} className="font-medium text-[#2563EB] hover:underline">
           Try the AI Course Finder →
         </button>
         <span className="hidden sm:inline" aria-hidden>·</span>
-        <button onClick={() => onNavigate("public-destinations")} className="font-medium text-[#0057B8] hover:underline">
+        <button onClick={() => onNavigate("public-destinations")} className="font-medium text-[#2563EB] hover:underline">
           Browse by destination →
         </button>
         <span className="hidden sm:inline" aria-hidden>·</span>
-        <button onClick={() => onNavigate("public-exams")} className="font-medium text-[#0057B8] hover:underline">
+        <button onClick={() => onNavigate("public-exams")} className="font-medium text-[#2563EB] hover:underline">
           Free English mock tests →
         </button>
       </div>

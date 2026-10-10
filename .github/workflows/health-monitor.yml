@@ -1,18 +1,4 @@
-# ============================================================================
-# ALO Education — Scheduled Health & Dependency Monitor
-#
-# Purpose (deliberately narrow, no noise):
-#   1. Daily: verify production is actually serving (public HTTPS checks of
-#      aloeducation.com incl. /api/health) and that the PROTECTED learning
-#      service (learn.aloeducation.com) is still up and isolated. Catches
-#      outages between deployments. No secrets, no SSH — public HTTPS only.
-#   2. Weekly (Mondays): lockfile-based dependency vulnerability audit.
-#      Blocks only on CRITICAL; high findings are reported as warnings.
-#
-# Success condition: health job green daily; audit job green unless a critical
-# vulnerability exists in production dependencies.
-# ============================================================================
-
+# Public ALO Education checks only; no hosting restart or database changes.
 name: Health & Dependency Monitor
 
 on:
@@ -33,45 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check production endpoints
-        shell: bash
-        run: |
-          set -uo pipefail
-          FAILED=0
-
-          check() { # url expected_codes label
-            local url="$1" expected="$2" label="$3"
-            local code
-            code=$(curl -s -o /tmp/body -w "%{http_code}" --max-time 25 -L "$url" || echo "000")
-            if echo " $expected " | grep -q " $code "; then
-              echo "✓ $label -> HTTP $code ($url)"
-            else
-              echo "::error::$label -> HTTP $code, expected one of [$expected] ($url)"
-              head -c 500 /tmp/body 2>/dev/null || true
-              FAILED=1
-            fi
-          }
-
-          check "https://aloeducation.com/api/health" "200" "Health endpoint"
-          HEALTH_BODY=$(curl -fsS --max-time 25 "https://aloeducation.com/api/health" || echo '{}')
-          echo "Health payload: $HEALTH_BODY"
-          case "$HEALTH_BODY" in
-            *'"status":"ok"'*) echo "✓ Database connectivity reported ok" ;;
-            *'"status":"degraded"'*) echo "::warning::Production reports DEGRADED — app up but database connection failing"; FAILED=1 ;;
-            *) echo "::warning::Unexpected health payload" ;;
-          esac
-
-          check "https://aloeducation.com/" "200 301 302" "Homepage"
-          check "https://www.aloeducation.com/" "200 301 302" "Homepage (www)"
-
-          # Protected/isolated service — must stay up and must NOT be this app
-          check "https://learn.aloeducation.com/" "200 301 302 401 403" "Learning service (isolated)"
-
-          if [ "$FAILED" -ne 0 ]; then
-            echo "::error::Production health check FAILED — see annotations above"
-            exit 1
-          fi
-          echo "### Production health: PASS" >> "$GITHUB_STEP_SUMMARY"
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22'
+      - name: Public readiness and anonymous smoke checks
+        run: node scripts/production-smoke.mjs https://aloeducation.com
 
   dependency-audit:
     name: Dependency vulnerability audit (weekly)
@@ -98,19 +53,5 @@ jobs:
         if: steps.gate.outputs.run == '1'
         shell: bash
         run: |
-          set -uo pipefail
-          echo "### Dependency audit" >> "$GITHUB_STEP_SUMMARY"
-          npm audit --omit=dev --package-lock-only --audit-level=high > /tmp/audit.txt 2>&1
-          AUDIT_EXIT=$?
-          tail -n 40 /tmp/audit.txt
-          if grep -qE '[0-9]+ critical' /tmp/audit.txt && ! grep -q '0 critical' /tmp/audit.txt; then
-            echo "::error::CRITICAL vulnerabilities found in production dependencies"
-            echo '```' >> "$GITHUB_STEP_SUMMARY"; tail -n 60 /tmp/audit.txt >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-          if [ "$AUDIT_EXIT" -ne 0 ]; then
-            echo "::warning::High-severity advisories present — review and schedule fixes (non-blocking)"
-            echo '```' >> "$GITHUB_STEP_SUMMARY"; tail -n 60 /tmp/audit.txt >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "✓ No high/critical advisories in production dependencies"
-          fi
+          set -euo pipefail
+          npm audit --omit=dev --package-lock-only --audit-level=high

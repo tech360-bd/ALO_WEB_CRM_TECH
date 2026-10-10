@@ -1,3 +1,5 @@
+> Deployment notice (2026-10-01): the instructions below are historical. The only production target is managed cPanel Node.js. See the root `CPANEL-DEPLOYMENT-GUIDE.md`; hosting configuration and live verification remain BLOCKED.
+
 # 🌐 ALO EDUCATION — CPANEL DEPLOYMENT GUIDE
 
 ## 1. CPANEL APPLICATION SETTINGS

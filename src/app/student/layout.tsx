@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, FolderOpen, FileText, MessageSquare, Award,
   User, Map, CreditCard, LogOut, Menu, X, Bell, ChevronRight,
-  BookOpen, GraduationCap, Shield
+  BookOpen, GraduationCap, Shield, ListChecks, Bookmark
 } from 'lucide-react';
 
 // ============================================================
@@ -42,11 +42,14 @@ export const useStudentAuth = () => useContext(StudentAuthContext);
 const NAV_ITEMS = [
   { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/student/journey', label: 'My Journey', icon: Map },
+  { href: '/student/tasks', label: 'My Tasks', icon: ListChecks },
   { href: '/student/applications', label: 'Applications', icon: FolderOpen },
   { href: '/student/documents', label: 'Documents', icon: FileText },
   { href: '/student/offers', label: 'Offers', icon: Award },
+  { href: '/student/saved', label: 'Saved Courses', icon: Bookmark },
   { href: '/student/interview', label: 'Interview Prep', icon: BookOpen },
   { href: '/student/visa', label: 'Visa Readiness', icon: Shield },
+  { href: '/student/finance', label: 'Finance', icon: CreditCard },
   { href: '/student/messages', label: 'Messages', icon: MessageSquare },
   { href: '/student/profile', label: 'My Profile', icon: User },
 ];
@@ -67,33 +70,25 @@ export default function StudentPortalLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Login page is exempt from auth check
-  const isLoginPage = pathname === '/student/login';
+  // Public student pages (sign-in and registration) are exempt from the portal
+  // session check. Without this, anonymous visitors to /student/register were
+  // redirected to /student/login.
+  const isPublicStudentPage = pathname === '/student/login' || pathname === '/student/register';
 
   useEffect(() => {
-    if (isLoginPage) {
+    if (isPublicStudentPage) {
       setLoading(false);
       return;
     }
 
-    const savedToken = localStorage.getItem('student_token');
     const savedStudent = localStorage.getItem('student_user');
 
-    if (!savedToken || !savedStudent) {
-      router.replace('/student/login');
-      return;
-    }
-
     try {
-      const parsedStudent = JSON.parse(savedStudent);
-      setStudent(parsedStudent);
-      setToken(savedToken);
-      setLoading(false);
-
-      // Fetch fresh data
-      fetch('/api/student/auth/me', {
-        headers: { 'Authorization': `Bearer ${savedToken}` }
-      }).then(async (res) => {
+      if (savedStudent) setStudent(JSON.parse(savedStudent));
+      setToken(null);
+      // The HttpOnly session cookie is sent automatically; never read a
+      // session token from JavaScript or localStorage.
+      fetch('/api/student/auth/me', { credentials: 'include' }).then(async (res) => {
         if (!res.ok) {
           // Token invalid → logout
           localStorage.removeItem('student_token');
@@ -115,23 +110,20 @@ export default function StudentPortalLayout({
       localStorage.removeItem('student_user');
       router.replace('/student/login');
     }
-  }, [pathname, isLoginPage, router]);
+  }, [pathname, isPublicStudentPage, router]);
 
   const logout = async () => {
-    const t = localStorage.getItem('student_token');
-    if (t) {
-      await fetch('/api/student/auth/logout', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${t}` }
-      }).catch(() => {});
-    }
+    await fetch('/api/student/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    }).catch(() => {});
     localStorage.removeItem('student_token');
     localStorage.removeItem('student_user');
     router.push('/student/login');
   };
 
   // Show login page without auth wrapper
-  if (isLoginPage) {
+  if (isPublicStudentPage) {
     return (
       <StudentAuthContext.Provider value={{ student: null, token: null, loading: false, logout }}>
         {children}
@@ -143,7 +135,7 @@ export default function StudentPortalLayout({
     return (
       <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center animate-pulse">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#003d82] flex items-center justify-center animate-pulse">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
           <p className="text-gray-400 text-sm">Loading your portal...</p>
@@ -172,21 +164,21 @@ export default function StudentPortalLayout({
           {/* Logo */}
           <div className="p-6 border-b border-white/5">
             <Link href="/student/dashboard" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#F97316] flex items-center justify-center">
                 <GraduationCap className="w-5 h-5 text-white" />
               </div>
               <div>
                 <p className="text-white font-bold text-sm">Student Portal</p>
-                <p className="text-[#0057B8] text-xs font-medium">ALO Education</p>
+                <p className="text-[#2563EB] text-xs font-medium">ALO Education</p>
               </div>
             </Link>
           </div>
 
           {/* Student ID Card */}
           {student && (
-            <div className="p-4 mx-3 mt-4 bg-gradient-to-br from-[#0057B8]/20 to-[#E8501A]/10 rounded-xl border border-[#0057B8]/30">
+            <div className="p-4 mx-3 mt-4 bg-gradient-to-br from-[#2563EB]/20 to-[#F97316]/10 rounded-xl border border-[#2563EB]/30">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d82] flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">{student.name.charAt(0).toUpperCase()}</span>
                 </div>
                 <div className="min-w-0">
@@ -202,7 +194,7 @@ export default function StudentPortalLayout({
                   </div>
                   <div className="h-1.5 bg-white/10 rounded-full">
                     <div
-                      className="h-full bg-gradient-to-r from-[#0057B8] to-[#E8501A] rounded-full transition-all"
+                      className="h-full bg-gradient-to-r from-[#2563EB] to-[#F97316] rounded-full transition-all"
                       style={{ width: `${student.profileComplete}%` }}
                     />
                   </div>
@@ -224,7 +216,7 @@ export default function StudentPortalLayout({
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group
                     ${isActive
-                      ? 'bg-[#0057B8] text-white shadow-lg shadow-[#0057B8]/20'
+                      ? 'bg-[#2563EB] text-white shadow-lg shadow-[#2563EB]/20'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }
                   `}
@@ -232,7 +224,7 @@ export default function StudentPortalLayout({
                   <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`} />
                   <span>{item.label}</span>
                   {item.href === '/student/messages' && unreadCount > 0 && (
-                    <span className="ml-auto bg-[#E8501A] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="ml-auto bg-[#F97316] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
@@ -266,15 +258,15 @@ export default function StudentPortalLayout({
             </button>
 
             <div className="flex items-center gap-2 lg:ml-auto">
-              <button className="relative p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+              <Link href="/student/messages" aria-label={unreadCount > 0 ? `Messages, ${unreadCount} unread` : 'Messages'} className="relative p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-[#E8501A] rounded-full" />
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-[#F97316] rounded-full" />
                 )}
-              </button>
+              </Link>
               {student && (
                 <div className="flex items-center gap-2 pl-2 border-l border-white/10">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d82] flex items-center justify-center">
                     <span className="text-white text-sm font-bold">{student.name.charAt(0).toUpperCase()}</span>
                   </div>
                   <div className="hidden sm:block">

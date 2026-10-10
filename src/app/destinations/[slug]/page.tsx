@@ -1,54 +1,30 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import PremiumCountryPage from '@/components/website/PremiumCountryPage';
-import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
+import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
+import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
 
-export async function generateStaticParams() {
-  return [
-    { slug: 'uk' },
-    { slug: 'united-kingdom' },
-    { slug: 'usa' },
-    { slug: 'united-states' },
-    { slug: 'canada' },
-    { slug: 'australia' },
-    { slug: 'germany' },
-    { slug: 'ireland' },
-    { slug: 'new-zealand' },
-    { slug: 'dubai-uae' },
-    { slug: 'dubai' },
-    { slug: 'malaysia' },
-    { slug: 'netherlands' },
-  ];
-}
-
-function resolveCountrySlug(slug: string) {
-  const s = slug.toLowerCase().trim();
-  if (s === 'united-kingdom' || s === 'great-britain') return 'uk';
-  if (s === 'united-states' || s === 'us' || s === 'america') return 'usa';
-  if (s === 'dubai-uae' || s === 'uae') return 'dubai';
-  if (s === 'nz') return 'new-zealand';
-  return s;
-}
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const resolved = resolveCountrySlug(slug);
-  const country = COUNTRY_DESTINATIONS[resolved] || COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const country = getCountryDestination(slug);
 
   if (!country) {
     return {
       title: 'Destination Guide | ALO Education Bangladesh',
-      description: 'Explore study abroad destinations with ALO Education — premium, DB-driven, country-specific, verified.',
+      description: 'Explore study abroad destinations with ALO Education: country-specific courses, universities, visa guidance and scholarships.',
     };
   }
 
   return {
     title: country.seoTitle,
-    description: country.seoDescription + ' Premium 10x country page system — white background #FFFFFF, no dark overlay, country-specific courses/universities/visa rules/work rights/post-study/entry requirements/scholarships/cities/FAQs — DB-driven, verified, actionable.',
+    description: country.seoDescription + ' Courses, universities, visa guidance, work rights, scholarships and FAQs for this destination, with sources shown.',
     alternates: { canonical: country.canonicalUrl },
     openGraph: {
-      title: country.name + ' Study Guide — Premium 10x',
+      title: country.name + ' Study Guide',
       description: country.seoDescription,
       url: country.canonicalUrl,
       type: 'website',
@@ -58,8 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CountryDestinationPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const resolved = resolveCountrySlug(slug);
-  const countryData = COUNTRY_DESTINATIONS[resolved] || COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const countryData = getCountryDestination(slug);
 
   if (!countryData) {
     notFound();
@@ -83,7 +58,7 @@ export default async function CountryDestinationPage({ params }: { params: Promi
         requirements: { take: 1 },
         scholarshipRecords: { take: 2 },
       },
-    }).catch(() => []),
+    }),
     db.crmUniversity.findMany({
       take: 24,
       where: {
@@ -96,7 +71,7 @@ export default async function CountryDestinationPage({ params }: { params: Promi
       include: {
         _count: { select: { courses: true, scholarshipRecords: true } },
       },
-    }).catch(() => []),
+    }),
     db.crmScholarship.findMany({
       where: {
         university: {
@@ -111,8 +86,12 @@ export default async function CountryDestinationPage({ params }: { params: Promi
         university: { select: { name: true, country: true, city: true } },
       },
       orderBy: { createdAt: 'desc' },
-    }).catch(() => []),
-  ]);
+    }),
+  ]).catch((error) => throwSanitizedDatabaseFailure(
+    'destination-page',
+    error,
+    'DESTINATION_DATA_UNAVAILABLE',
+  ));
 
   // Use premium 10x page — world-class ALO Education Country Page system at least 10x better than current shared format
   // Same premium design system and page architecture for all countries, but ALL CONTENT country-specific, NEVER copy UK rules into another country

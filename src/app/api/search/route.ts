@@ -25,6 +25,10 @@ export async function GET(req: NextRequest) {
     events,
     countries,
     exams,
+    services,
+    scholarships,
+    resources,
+    faqs,
   ] = await Promise.all([
     db.universityPage.findMany({
       where: {
@@ -154,6 +158,53 @@ export async function GET(req: NextRequest) {
         fullName: true,
       },
     }),
+    // spec §50: services, scholarships, resources, FAQs are indexed too
+    db.service.findMany({
+      where: {
+        status: "PUBLISHED",
+        OR: [
+          { title: { contains: q } },
+          { shortDescription: { contains: q } },
+        ],
+      },
+      take: 6,
+      select: { slug: true, title: true, shortDescription: true, icon: true },
+    }),
+    db.scholarship.findMany({
+      where: {
+        status: "active",
+        OR: [
+          { name: { contains: q } },
+          { university: { contains: q } },
+          { eligibility: { contains: q } },
+        ],
+      },
+      take: 6,
+      select: { slug: true, name: true, university: true, country: true, fundingAmount: true, deadline: true },
+    }).catch(() => [] as any[]),
+    db.resource.findMany({
+      where: {
+        status: "PUBLISHED",
+        OR: [
+          { title: { contains: q } },
+          { summary: { contains: q } },
+          { excerpt: { contains: q } },
+        ],
+      },
+      take: 8,
+      select: { slug: true, title: true, excerpt: true, readingTime: true, category: { select: { slug: true, name: true } } },
+    }),
+    db.unifiedFaq.findMany({
+      where: {
+        status: "active",
+        OR: [
+          { question: { contains: q } },
+          { answer: { contains: q } },
+        ],
+      },
+      take: 6,
+      select: { question: true, answer: true, category: true, targetType: true, targetSlug: true },
+    }),
   ]);
 
   const total =
@@ -163,7 +214,11 @@ export async function GET(req: NextRequest) {
     newsArticles.length +
     events.length +
     countries.length +
-    exams.length;
+    exams.length +
+    services.length +
+    scholarships.length +
+    resources.length +
+    faqs.length;
 
   return NextResponse.json({
     universities,
@@ -173,6 +228,10 @@ export async function GET(req: NextRequest) {
     events,
     countries,
     exams,
+    services,
+    scholarships,
+    resources,
+    faqs,
     total,
   });
 }

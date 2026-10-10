@@ -34,8 +34,8 @@ import {
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
+  blue: '#2563EB',
+  orange: '#F97316',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -85,7 +85,7 @@ const RESOURCES: ResourceItem[] = [
   { icon: BookOpen, title: 'Study Abroad Guide', href: '/resources/study-abroad-guide', color: C.blue },
   { icon: Search, title: 'University Search', href: '/resources/university-search', color: C.orange },
   { icon: ClipboardList, title: 'Application Checklist', href: '/resources/application-checklist', color: '#8B5CF6' },
-  { icon: Languages, title: 'IELTS Preparation', href: '/resources/ielts-prep', color: '#10B981' },
+  { icon: Languages, title: 'IELTS Preparation', href: '/language-prep/ielts', color: '#10B981' },
   { icon: Award, title: 'Scholarship Finder', href: '/resources/scholarships', color: '#F59E0B' },
   { icon: ShieldCheck, title: 'Visa Requirements', href: '/resources/visa-guide', color: '#EF4444' },
   { icon: PenTool, title: 'SOP Writing Tips', href: '/resources/sop-tips', color: '#EC4899' },
@@ -131,23 +131,23 @@ const TEAM_MEMBERS: TeamMember[] = [
     name: 'Taslima Akter',
     role: 'CEO & Founder',
     specialty: 'Strategic Planning & Partnerships',
-    bio: 'Over 12 years of experience in international education consulting. Founded ALO Education with a vision to make quality global education accessible to every aspiring student.',
+    bio: 'Founded ALO Education to make global education pathways clearer for Bangladeshi students.',
     initials: 'TA',
-    gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
+    gradient: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
   },
   {
     name: 'Al Aminn',
     role: 'Chief Operating Officer',
     specialty: 'Operations & Process Optimization',
-    bio: 'Expert in streamlining study abroad operations. Ensures every student receives a seamless experience from initial inquiry to university enrollment.',
+    bio: 'Oversees day-to-day operations across counselling, applications and visa casework.',
     initials: 'AA',
-    gradient: 'linear-gradient(135deg, #E8501A 0%, #FFB347 100%)',
+    gradient: 'linear-gradient(135deg, #F97316 0%, #FFB347 100%)',
   },
   {
     name: 'Nusrat Jahan',
     role: 'Head of Admissions',
     specialty: 'University Applications & Documentation',
-    bio: 'Experienced admissions specialist with deep knowledge of UK, USA, and Canadian university requirements. Has guided hundreds of students through successful applications.',
+    bio: 'Leads university applications and documentation for UK, USA and Canadian programmes.',
     initials: 'NJ',
     gradient: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)',
   },
@@ -155,7 +155,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     name: 'Rafiqul Islam',
     role: 'Visa Specialist',
     specialty: 'Immigration Law & Visa Processing',
-    bio: 'Certified visa consultant with extensive experience in student visa applications for UK, USA, Canada, and Australia. Known for thorough preparation and high approval rates.',
+    bio: 'Handles student visa casework and interview preparation for UK, USA, Canada and Australia.',
     initials: 'RI',
     gradient: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)',
   },
@@ -191,8 +191,8 @@ const DEFAULT_FAQS: FaqItem[] = [
     answer: 'The full process typically takes 3–6 months from initial consultation to enrollment. We recommend starting at least 6 months before your intended intake for the best university options.',
   },
   {
-    question: 'What is the visa success rate with ALO Education?',
-    answer: 'Our visa approval rate is above 95%. Our dedicated visa specialists thoroughly prepare each application, conduct mock interviews, and ensure all documentation meets requirements.',
+    question: 'How do you support the visa application?',
+    answer: 'Our visa specialists build a document checklist for your specific country, review every file before submission, and run mock credibility interviews. We do not publish an approval-rate figure, because visa decisions are made solely by the issuing government and no agency can guarantee an outcome. Current official requirements and fees are linked on each destination page.',
   },
   {
     question: 'Can I work while studying abroad?',
@@ -240,7 +240,7 @@ const DEFAULT_FAQS: FaqItem[] = [
   },
   {
     question: 'What makes ALO Education different from other agencies?',
-    answer: 'We combine 12+ years of expertise with cutting-edge AI tools, personalized counseling, and a 95%+ success rate. We are committed to transparency, no hidden fees, and genuine care for every student\'s future.',
+    answer: 'We combine AI-assisted tools with named human counselors, so course matching and drafting are fast but every recommendation is reviewed by a person. Fees and timelines are stated upfront with no hidden charges, and we do not quote success-rate figures we cannot substantiate. Our focus is the right course for your career, not the highest commission.',
   },
 ];
 
@@ -482,7 +482,7 @@ function TeamSection({ dbMembers }: { dbMembers?: Array<{ id: string; name: stri
         bio: m.bio,
         photo: m.photo,
         initials: m.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
-        gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
+        gradient: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
       }))
     : TEAM_MEMBERS;
   return (
@@ -667,16 +667,7 @@ function FaqSection() {
                 Browse All FAQs
               </Link>
             </Button>
-            <Button
-              className="h-12 px-6 rounded-full text-sm font-semibold"
-              style={{ backgroundColor: `${C.whatsapp}`, color: '#FFFFFF' }}
-              asChild
-            >
-              <a href="https://wa.me/8801XXXXXXXXX" target="_blank" rel="noopener noreferrer">
-                <Phone className="mr-2 h-4 w-4" />
-                Ask on WhatsApp
-              </a>
-            </Button>
+
           </div>
         </motion.div>
       </div>
@@ -787,16 +778,7 @@ function FinalCtaSection() {
                   Find Your Course
                 </Link>
               </Button>
-              <Button
-                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold shadow-lg border-none"
-                style={{ backgroundColor: C.whatsapp, color: '#FFFFFF' }}
-                asChild
-              >
-                <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  WhatsApp Us
-                </a>
-              </Button>
+
             </div>
 
             {/* Contact Info */}
@@ -1074,169 +1056,6 @@ function SendIcon({ className }: { className?: string }) {
 /* ═══════════════════════════════════════════════════════════════
    SECTION 24 — FOOTER
    ═══════════════════════════════════════════════════════════════ */
-function FooterSection() {
-  return (
-    <footer style={{ backgroundColor: C.text }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-8">
-          {/* Column 1: Brand */}
-          <motion.div className="col-span-2 sm:col-span-4 lg:col-span-2" initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg text-white" style={{ background: gradients.orange }}>A</div>
-              <span className="text-xl font-bold text-white">ALO Education</span>
-            </div>
-            <p className="text-sm leading-relaxed mb-6" style={{ color: '#94A3B8' }}>
-              Your trusted partner for studying abroad. We help students from Bangladesh and beyond achieve their dreams of international education with expert guidance and personalized support. Founded Feb 2023 by Taslima Akter in Dhaka.
-            </p>
-            <div className="flex gap-3">
-              {[
-                { icon: Facebook, href: 'https://facebook.com/aloeducation', label: 'Facebook' },
-                { icon: Instagram, href: 'https://instagram.com/aloeducation', label: 'Instagram' },
-                { icon: Linkedin, href: 'https://linkedin.com/company/aloeducation', label: 'LinkedIn' },
-                { icon: Twitter, href: 'https://twitter.com/aloeducation', label: 'Twitter' },
-              ].map((social, i) => (
-                <a key={i} href={social.href} aria-label={social.label} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors duration-200" target="_blank" rel="noopener noreferrer">
-                  <social.icon className="h-4.5 w-4.5 text-white" />
-                </a>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Column 2: Destinations A */}
-          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
-            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Destinations</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'United Kingdom', href: '/destinations/united-kingdom' },
-                { label: 'United States', href: '/destinations/usa' },
-                { label: 'Canada', href: '/destinations/canada' },
-                { label: 'Australia', href: '/destinations/australia' },
-              ].map((link) => (
-                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Column 3: Destinations B */}
-          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
-            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">More Destinations</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'Ireland', href: '/destinations/ireland' },
-                { label: 'New Zealand', href: '/destinations/new-zealand' },
-                { label: 'Dubai / UAE', href: '/destinations/dubai-uae' },
-                { label: 'All Countries', href: '/destinations' },
-              ].map((link) => (
-                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Column 4: Study Services */}
-          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
-            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Study Services</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'Course Finder', href: '/course-finder' },
-                { label: 'Universities', href: '/universities' },
-                { label: 'Scholarships', href: '/scholarships' },
-                { label: 'Eligibility Check', href: '/eligibility-check' },
-              ].map((link) => (
-                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Column 5: Application Support */}
-          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
-            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Application</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'Services', href: '/services' },
-                { label: 'Visa Support', href: '/visa-support' },
-                { label: 'SOP / CV Review', href: '/services/sop-review' },
-                { label: 'Application Tips', href: '/application-process' },
-              ].map((link) => (
-                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Column 6: Resources */}
-          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
-            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Resources</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'Blogs', href: '/blog' },
-                { label: 'Study Guides', href: '/resources/study-abroad-guide' },
-                { label: 'Success Stories', href: '/success-stories' },
-                { label: 'FAQs', href: '/faqs' },
-              ].map((link) => (
-                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Column 7: Company */}
-          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
-            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Company</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'About Us', href: '/about' },
-                { label: 'Our Team', href: '/team' },
-                { label: 'Contact', href: '/contact' },
-                { label: 'Book Consultation', href: '/book-consultation' },
-              ].map((link) => (
-                <li key={link.label}><Link href={link.href} className="text-sm flex items-center gap-1.5" style={{ color: '#94A3B8' }} onMouseEnter={(e)=>{e.currentTarget.style.color='#FFFFFF'}} onMouseLeave={(e)=>{e.currentTarget.style.color='#94A3B8'}}><ChevronRight className="h-3 w-3" style={{ color: C.orange }} />{link.label}</Link></li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Column 8: Contact */}
-          <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={fadeUp}>
-            <h4 className="text-xs font-bold text-white mb-4 uppercase tracking-wider">Contact</h4>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2"><Phone className="h-3.5 w-3.5 shrink-0 mt-1" style={{ color: C.orange }} /><span className="text-xs" style={{ color: '#94A3B8' }}>+880 1805-020101</span></li>
-              <li className="flex items-start gap-2"><Mail className="h-3.5 w-3.5 shrink-0 mt-1" style={{ color: C.blue }} /><span className="text-xs" style={{ color: '#94A3B8' }}>info@aloeducation.com</span></li>
-              <li className="flex items-start gap-2"><MapPin className="h-3.5 w-3.5 shrink-0 mt-1" style={{ color: C.orange }} /><span className="text-xs" style={{ color: '#94A3B8' }}>Suite 12B, Green Tower, Gulshan-2, Dhaka 1212</span></li>
-              <li className="flex items-start gap-2"><Clock className="h-3.5 w-3.5 shrink-0 mt-1" style={{ color: C.blue }} /><span className="text-xs" style={{ color: '#94A3B8' }}>Sat–Thu 9AM–7PM</span></li>
-            </ul>
-          </motion.div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t" style={{ borderColor: '#1E293B' }}>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs" style={{ color: '#64748B' }}>
-              &copy; 2025 ALO Education. All rights reserved.
-            </p>
-            <div className="flex items-center gap-4 md:gap-6">
-              <Link href="/privacy-policy" className="text-xs transition-colors duration-200" style={{ color: '#64748B' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#FFFFFF'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = '#64748B'; }}
-              >
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-xs transition-colors duration-200" style={{ color: '#64748B' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#FFFFFF'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = '#64748B'; }}
-              >
-                Terms of Service
-              </Link>
-              <Link href="/cookies" className="text-xs transition-colors duration-200" style={{ color: '#64748B' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#FFFFFF'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = '#64748B'; }}
-              >
-                Cookie Policy
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 /* ═══════════════════════════════════════════════════════════════
    MAIN EXPORT
    ═══════════════════════════════════════════════════════════════ */
@@ -1261,7 +1080,6 @@ export default function HomepagePart4() {
       <TeamSection dbMembers={teamMembers} />
       <FaqSection />
       <FinalCtaSection />
-      <FooterSection />
     </>
   );
 }

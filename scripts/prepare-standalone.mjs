@@ -38,3 +38,5 @@ if (!existsSync(join(STANDALONE_DIR, 'server.js'))) {
 
 console.log('[prepare-standalone] ✓ Verified generated .next/standalone/server.js');
 console.log('[prepare-standalone] Done.');
+
+await import('./verify-standalone.mjs');

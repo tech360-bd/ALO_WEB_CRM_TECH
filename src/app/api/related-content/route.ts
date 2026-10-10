@@ -30,7 +30,9 @@ export async function GET(req: NextRequest) {
       message: related.length === 0 ? 'No related content found. Real DB will populate based on country/university/course/subject/tags priority.' : `${related.length} related items found via priority: exact > same university > same country > same subject > same destination > same tag`,
     });
   } catch (err: any) {
+    // Log full diagnostics server-side; never echo raw driver/Prisma messages
+    // (they contain DB usernames/hosts) to the public client.
     console.error('[related-content] error', err);
-    return NextResponse.json({ error: 'Failed to fetch related content', detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch related content' }, { status: 500 });
   }
 }

@@ -1,0 +1,10 @@
+
+> alo-education-erp@0.3.0 typecheck
+> npm run db:verify-client && tsc --noEmit
+
+
+> alo-education-erp@0.3.0 db:verify-client
+> node scripts/verify-prisma-client.mjs
+
+Prisma client verification failed: Prisma model metadata is missing
+Run npm run db:generate successfully before typecheck/build. A placeholder client is not type safety.

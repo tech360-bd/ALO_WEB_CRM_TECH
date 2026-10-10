@@ -153,7 +153,7 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0066CC]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -162,16 +162,16 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F37021] border border-[#F37021]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
               <Icon name="HelpCircle" className="mr-1 size-3" />
               Quick Answers
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Frequently Asked <span className="text-[#0066CC]">Questions</span>
+              Frequently Asked <span className="text-[#2563EB]">Questions</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Real answers to the questions Bangladeshi students ask us most. Can't find your question?{" "}
-              <button onClick={() => onNavigate("public-contact")} className="font-semibold text-[#0066CC] hover:underline">
+              <button onClick={() => onNavigate("public-contact")} className="font-semibold text-[#2563EB] hover:underline">
                 Ask us directly
               </button>
               .
@@ -189,7 +189,7 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search questions... (e.g. 'visa', 'scholarship', 'IELTS')"
-            className="h-12 w-full rounded-xl border-2 border-[#0066CC]/15 bg-white pl-11 pr-4 text-sm text-[#0B2447] placeholder:text-[#5A7299] focus:border-[#0066CC] focus:outline-none focus:ring-2 focus:ring-[#0066CC]/10"
+            className="h-12 w-full rounded-xl border-2 border-[#2563EB]/15 bg-white pl-11 pr-4 text-sm text-[#0B2447] placeholder:text-[#5A7299] focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10"
           />
         </div>
 
@@ -202,8 +202,8 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
               className={cn(
                 "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
                 category === c
-                  ? "bg-[#0066CC] text-white"
-                  : "border border-[#0066CC]/20 bg-white text-[#0066CC] hover:bg-[#EAF3FF]"
+                  ? "bg-[#2563EB] text-white"
+                  : "border border-[#2563EB]/20 bg-white text-[#2563EB] hover:bg-[#EAF3FF]"
               )}
             >
               {c}
@@ -227,7 +227,7 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
             title="No matching questions"
             description="Try a different search term or browse all categories."
             action={
-              <Button onClick={() => { setSearch(""); setCategory("All"); }} className="bg-[#0066CC] text-white hover:bg-[#0066CC]/90">
+              <Button onClick={() => { setSearch(""); setCategory("All"); }} className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
                 Reset filters
               </Button>
             }
@@ -241,7 +241,7 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
                     <AccordionTrigger className="px-4 py-4 text-left text-sm font-semibold text-[#0B2447] hover:bg-[#EAF3FF]/40 hover:no-underline">
                       <div className="flex items-start gap-3">
                         {faq.category && (
-                          <Badge variant="outline" className="mt-0.5 shrink-0 bg-[#EAF3FF] text-[#0066CC]">
+                          <Badge variant="outline" className="mt-0.5 shrink-0 bg-[#EAF3FF] text-[#2563EB]">
                             {faq.category}
                           </Badge>
                         )}
@@ -261,13 +261,13 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
         {/* Still have questions CTA */}
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
           <SectionCard title="Still have questions?" description="Our counselors are happy to help" icon="Headset">
-            <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[#0066CC] text-white hover:bg-[#0066CC]/90">
+            <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
               <Icon name="Phone" className="size-4" />
               Contact Us
             </Button>
           </SectionCard>
           <SectionCard title="Want a free consultation?" description="1-on-1 expert guidance" icon="CalendarCheck">
-            <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[#F37021] text-white hover:bg-[#c8451a]">
+            <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[#F97316] text-white hover:bg-[#c8451a]">
               <Icon name="CalendarCheck" className="size-4" />
               Book Free Session
             </Button>

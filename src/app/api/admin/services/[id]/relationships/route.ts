@@ -2,15 +2,14 @@ import { contentAuditLog } from "@/lib/content-audit";
 import { normalizeContentRelationshipType } from "@/lib/content-validation";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/services/[id]/relationships — list relationships for a service
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -50,7 +49,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 // POST /api/admin/services/[id]/relationships — create a relationship from this service
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -89,15 +88,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: "Relationship already exists", relationship: dupe }, { status: 409 });
     }
 
-    const rel = await db.contentRelationship.create({
+    const rel = await db.$transaction(async tx => {
+      const rel = await tx.contentRelationship.create({
       data: {
         sourceType: "SERVICE", sourceId: id,
         targetType, targetId,
         relationshipType, sortOrder, status,
       },
     });
-
-    await contentAuditLog.create({
+      await contentAuditLog.create({
       data: {
         userId,
         action: "CONTENT_RELATIONSHIP_CREATE",
@@ -105,7 +104,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         resourceId: rel.id,
         details: JSON.stringify({ sourceType: "SERVICE", sourceId: id, targetType, targetId, relationshipType }),
       },
-    }).catch(() => {});
+    }, tx);
+      return rel;
+    });
 
     return NextResponse.json({ relationship: rel }, { status: 201 });
   } catch (err: any) {

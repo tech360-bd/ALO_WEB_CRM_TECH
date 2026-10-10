@@ -31,4 +31,21 @@ test.describe('public website and anonymous auth gates', () => {
     await page.goto('/admin/ai-command-center');
     await expect(page.locator('body')).toContainText(/command center|AI/i);
   });
+
+  test('bilingual toggle switches public navbar between English and বাংলা', async ({ page }) => {
+    await page.goto('/');
+    const toggle = page.getByRole('button', { name: 'বাংলা' }).first();
+    await expect(toggle).toBeVisible();
+    // Default is English.
+    await expect(page.getByRole('link', { name: 'Book Free Consultation' }).first()).toBeVisible();
+    // Switch to Bangla — the CTA and nav labels must switch language.
+    await toggle.click();
+    await expect(page.getByRole('button', { name: 'ফ্রি পরামর্শ নিন' }).first()).toBeVisible();
+    // Preference persists across a reload.
+    await page.reload();
+    await expect(page.getByRole('button', { name: 'ফ্রি পরামর্শ নিন' }).first()).toBeVisible();
+    // Switch back to English.
+    await page.getByRole('button', { name: 'English' }).first().click();
+    await expect(page.getByRole('link', { name: 'Book Free Consultation' }).first()).toBeVisible();
+  });
 });

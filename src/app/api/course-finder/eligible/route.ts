@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStudentResource } from "@/lib/student-resource-auth";
 
 /**
  * Score published courses against the student's persisted education, English
@@ -7,8 +8,10 @@ import { db } from "@/lib/db";
  * models; no demo data is used.
  */
 export async function GET(req: NextRequest) {
-  const studentId = req.nextUrl.searchParams.get("studentId");
-  if (!studentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
+  const requestedStudentId = req.nextUrl.searchParams.get("studentId");
+  const access = await requireStudentResource(req, requestedStudentId);
+  if (access instanceof NextResponse) return access;
+  const studentId = access.studentId;
 
   const [student, educationHistory, englishTests, profileSections] = await Promise.all([
     db.student.findUnique({

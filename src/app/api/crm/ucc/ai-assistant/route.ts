@@ -1,99 +1,169 @@
 // ============================================================
 // /api/crm/ucc/ai-assistant
-// POST — AI Communication Hub Assistant API
-// Handles AI Smart Reply suggestions, FAQ matching, Form Prefill, Translation, Summaries
+// POST — Real AI Communication Hub Assistant (§165, §166, §175)
+//
+// Every response is derived from stored conversation data and approved
+// template content ONLY. The previous implementation returned fabricated
+// people, fabricated scholarships and canned "translations" regardless of
+// input — that's exactly what this module forbids ("Do not build fake",
+// "AI must NOT invent information"). Where a capability requires a provider
+// that is not configured, this route answers CONFIGURATION REQUIRED.
+//
+// §166: permission is enforced BEFORE retrieval — the conversation is loaded
+// without messages, access is proven, and only then are messages fetched.
 // ============================================================
 
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest } from '@/lib/auth-middleware';
+import {
+  buildFormPrefill,
+  buildReplySuggestions,
+  canAccessConversation,
+  summarizeConversation,
+  TRANSLATION_CONFIGURATION_REQUIRED,
+  type AssistantActor,
+  type UccConversationView,
+  type UccMessageView,
+} from '@/lib/ucc/ai-assistant-core';
+import { canViewUccConversationB2B } from '@/lib/ucc/conversation-visibility';
+import { canUseUccCommunication } from '@/lib/ucc/document-access';
+
+export const dynamic = 'force-dynamic';
+
+function actorFromAuth(auth: unknown): AssistantActor {
+  const a = auth as { userId?: string; roles?: string[] };
+  const role = (a.roles || []).map((r) => String(r).toUpperCase())[0] || "";
+  return { userId: a.userId, role, employeeId: a.userId };
+}
+
+async function loadConversationCore(id: string) {
+  const conversation = (await db.uccConversation.findUnique({ where: { id } })) as
+    | (UccConversationView & { unreadCount: number })
+    | null;
+  return conversation;
+}
+
+async function loadMessages(conversationId: string, take = 60): Promise<UccMessageView[]> {
+  const rows = await db.uccMessage.findMany({
+    where: { conversationId },
+    orderBy: { createdAt: 'asc' },
+    take,
+  });
+  return rows.map((m) => ({
+    id: m.id,
+    direction: m.direction,
+    senderName: m.senderName,
+    messageType: m.messageType,
+    content: m.content,
+    status: m.status,
+    createdAt: m.createdAt,
+  }));
+}
 
 export async function POST(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (!canUseUccCommunication(auth)) {
+      return NextResponse.json({ success: false, error: 'Communication assistant access is not permitted.' }, { status: 403 });
+    }
 
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { action, conversationId, text, targetLanguage = 'en' } = body;
 
     if (!action) {
       return NextResponse.json({ success: false, error: 'Action is required' }, { status: 400 });
     }
 
-    if (action === 'suggest_replies') {
-      const conv = conversationId
-        ? await db.uccConversation.findUnique({
-            where: { id: conversationId },
-            include: { messages: { take: 10, orderBy: { createdAt: 'desc' } } },
-          })
-        : null;
+    // All four actions require a real conversation id — no anonymous demo data.
+    if (!conversationId || typeof conversationId !== 'string') {
+      return NextResponse.json(
+        { success: false, error: 'conversationId is required — the assistant works on a real, authorized conversation only (§166).' },
+        { status: 400 },
+      );
+    }
 
-      const suggestions = [
-        `Dear ${conv?.participantName || 'Student'}, thank you for contacting ALO Education. We represent over 100+ top universities in the UK, USA, Canada, and Australia. Which intake are you targeting?`,
-        `Based on your academic profile, you qualify for partial scholarships up to £3,000 at Aston University London and University of Hertfordshire. Would you like to schedule a free counseling session?`,
-        `Our Senior UK Counselor is available today for a free profile evaluation. Please share your passport copy and Bachelor transcripts so we can start your application.`,
-      ];
+    const conversation = await loadConversationCore(conversationId);
+    if (!conversation) {
+      return NextResponse.json(
+        { success: false, error: "Conversation not found" },
+        { status: 404 },
+      );
+    }
+    if (!canAccessConversation(actorFromAuth(auth), conversation) || !(await canViewUccConversationB2B(auth, conversation))) {
+      return NextResponse.json(
+        { success: false, error: "Conversation not found or access denied (§166: permission is enforced before retrieval)" },
+        { status: 404 },
+      );
+    }
+
+    if (action === 'suggest_replies') {
+      // Suggestions come exclusively from approved, unlocked templates.
+      const templates = await db.communicationTemplate.findMany({
+        where: { status: 'active', visibility: { in: ['public_safe', 'internal'] } },
+        orderBy: { updatedAt: 'desc' },
+        take: 12,
+      });
+      const messages = await loadMessages(conversation.id, 30);
+      const suggestions = buildReplySuggestions(
+        templates.map((t) => ({
+          templateCode: t.templateCode,
+          templateName: t.templateName,
+          channel: t.channel,
+          body: t.body,
+        })),
+        conversation,
+      );
 
       return NextResponse.json({
         success: true,
         action,
         suggestions,
-        recommendedNextAction: 'Schedule Profile Assessment',
+        requiresHumanReview: true,
+        basisNote:
+          suggestions.length > 0
+            ? 'Suggestions are approved-template drafts filled with conversation facts — review before sending (§130: AI GENERATED DRAFT).'
+            : 'No approved template applies to this channel — draft manually. The assistant never invents content (§175).',
+        lastMessageContext: messages.length
+          ? { lastInboundAt: conversation.lastMessageAt, messageCount: messages.length }
+          : undefined,
       });
     }
 
     if (action === 'form_prefill') {
-      const conv = conversationId
-        ? await db.uccConversation.findUnique({ where: { id: conversationId } })
-        : null;
-
-      const prefilledData = {
-        studentName: conv?.participantName || 'Rafiqul Islam',
-        email: conv?.participantEmail || 'rafiq.student@example.com',
-        phone: conv?.participantPhone || '+8801700000001',
-        destinationCountry: conv?.destinationCountry || 'UK',
-        targetIntake: 'September 2026',
-        preferredCourse: 'MSc Computer Science',
-        fundingSponsor: 'Self / Parent Bank Account',
-        englishScore: 'IELTS 6.5 (No band below 6.0)',
-      };
-
       return NextResponse.json({
         success: true,
         action,
-        prefilledData,
+        prefilledData: buildFormPrefill(conversation),
+        basisNote:
+          'Only fields backed by stored conversation data are prefilled; everything else stays empty so no profile data is ever fabricated (§175).',
       });
     }
 
     if (action === 'translate') {
-      const translatedText =
-        targetLanguage === 'bn'
-          ? `হ্যালো! ALO Education এ আপনাকে স্বাগতম। আপনি কোন দেশে উচ্চশিক্ষার জন্য যেতে চান?`
-          : `Hello! Welcome to ALO Education. Which country would you like to study in?`;
-
-      return NextResponse.json({
-        success: true,
-        action,
-        originalText: text,
-        translatedText,
-        targetLanguage,
-      });
+      if (!text || typeof text !== 'string' || !text.trim()) {
+        return NextResponse.json({ success: false, error: 'text is required for translation' }, { status: 400 });
+      }
+      const configured = !!process.env.TRANSLATION_PROVIDER && !!process.env.TRANSLATION_API_KEY;
+      if (!configured) {
+        return NextResponse.json(
+          { success: false, error: TRANSLATION_CONFIGURATION_REQUIRED, targetLanguage },
+          { status: 503 },
+        );
+      }
+      // A configured provider would be invoked here. This branch deliberately
+      // has no canned output.
+      return NextResponse.json(
+        { success: false, error: 'Translation provider adapter is not installed — configure the adapter package.' },
+        { status: 503 },
+      );
     }
 
     if (action === 'summarize') {
-      const summary = `Student inquired about UK MSc Computer Science for September 2026. Auto-matched with candidate profile. AI recommended Aston University London and requested IELTS score & transcripts. High conversion potential.`;
-
-      return NextResponse.json({
-        success: true,
-        action,
-        summary,
-        keyInsights: [
-          'Target Intake: Sep 2026',
-          'Preferred Country: UK',
-          'Status: Hot Lead',
-          'Action Required: Send Course Shortlist',
-        ],
-      });
+      const messages = await loadMessages(conversation.id, 60);
+      const summary = summarizeConversation(conversation, messages);
+      return NextResponse.json({ success: true, action, ...summary });
     }
 
     return NextResponse.json({ success: false, error: 'Unknown action' }, { status: 400 });

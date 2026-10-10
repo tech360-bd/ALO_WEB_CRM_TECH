@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { authenticateRequest } from '@/lib/auth-middleware';
 
 export async function POST(req: Request) {
   try {
@@ -106,6 +107,14 @@ export async function POST(req: Request) {
       }
     }
 
+    // Never report success unless a lead row was actually stored. Without this
+    // guard a database outage would show visitors "Lead captured" while the
+    // request was silently dropped.
+    if (!lead) {
+      console.error('[language-prep-lead] No lead row was persisted; returning sanitized failure.');
+      return NextResponse.json({ success: false, error: 'Service temporarily unavailable' }, { status: 503 });
+    }
+
     // Also create CRM lead via existing public lead API logic if available — try to create marketing lead
     try {
       await db.marketingLead.create({
@@ -145,7 +154,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      leadId: lead?.id || 'created',
+      leadId: lead.id,
       message: 'Lead captured — our team will contact you shortly',
       data: lead,
     });
@@ -156,6 +165,12 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  const allowedRoles = new Set(['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin', 'MARKETING_MANAGER', 'marketing_manager', 'COUNSELOR', 'counselor']);
+  if (!allowedRoles.has(auth.userType) && !auth.roles.some((role) => allowedRoles.has(role))) {
+    return NextResponse.json({ error: 'Lead management access required' }, { status: 403 });
+  }
   try {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status') || 'new';

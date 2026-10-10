@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
 
 type ContentAuditData = {
   userId?: string | null;
@@ -18,7 +19,7 @@ type ContentAuditData = {
  * real actor and entity consistently.
  */
 export const contentAuditLog = {
-  async create({ data }: { data: ContentAuditData }) {
+  async create({ data }: { data: ContentAuditData }, tx?: Prisma.TransactionClient) {
     const metadata =
       typeof data.details === "string"
         ? (() => {
@@ -30,7 +31,7 @@ export const contentAuditLog = {
           })()
         : data.details ?? {};
 
-    return db.portalAuditLog.create({
+    return (tx || db).portalAuditLog.create({
       data: {
         actorUserId: data.userId || "system",
         action: data.action,

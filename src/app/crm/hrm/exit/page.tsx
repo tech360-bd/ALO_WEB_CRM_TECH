@@ -29,7 +29,7 @@ export default function HrmExitPage() {
           <select value={form.exitType} onChange={e=> setForm({...form, exitType:e.target.value})} className="h-9 text-xs border border-slate-200 rounded px-2 bg-white"><option>RESIGNATION</option><option>TERMINATION</option><option>ABSCONDING</option></select>
           <Input type="date" value={form.exitDate} onChange={e=> setForm({...form, exitDate:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
           <Input type="number" placeholder="Final Settlement" value={form.finalSettlement} onChange={e=> setForm({...form, finalSettlement: Number(e.target.value)})} className="h-9 text-xs bg-white border-slate-200" />
-          <Button onClick={create} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-4">Initiate Exit</Button>
+          <Button onClick={create} className="bg-[#F97316] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-4">Initiate Exit</Button>
         </CardContent>
       </Card>
       <Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Exits ({list.length})</CardTitle></CardHeader>

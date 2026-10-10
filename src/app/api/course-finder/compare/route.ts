@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getOptionalAuth } from '@/lib/auth-middleware';
+import { requireStudentResource } from '@/lib/student-resource-auth';
 export async function GET(req: NextRequest) {
   try {
-    const auth = await getOptionalAuth(req);
-    const userId = auth?.userId || req.nextUrl.searchParams.get('studentId') || 'demo-student';
+    const access = await requireStudentResource(req, req.nextUrl.searchParams.get('studentId'));
+    if (access instanceof NextResponse) return access;
+    const userId = access.studentId;
     const comparison = await db.courseComparisonList.findFirst({ where: { studentId: userId }, orderBy: { updatedAt: 'desc' } }).catch(()=>null);
     if (comparison) {
       const courseIds = (()=>{ try{ return JSON.parse(comparison.courseIds); }catch{ return []; } })();
@@ -23,16 +24,37 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { studentId, courseIds } = body;
-    if (!studentId || !Array.isArray(courseIds)) return NextResponse.json({ success:false, error:'studentId and courseIds array required' }, { status:400 });
-    if (courseIds.length > 4) return NextResponse.json({ success:false, error:'Compare max sensible number is 4' }, { status:400 });
+    const { studentId: requestedStudentId, courseIds, courseSlug } = body;
+    const access = await requireStudentResource(req, requestedStudentId);
+    if (access instanceof NextResponse) return access;
+    const studentId = access.studentId;
+    const normalizedCourseIds = Array.isArray(courseIds) ? courseIds : courseSlug ? [courseSlug] : null;
+    if (!normalizedCourseIds) return NextResponse.json({ success:false, error:'courseIds array or courseSlug required' }, { status:400 });
+    if (normalizedCourseIds.length > 4) return NextResponse.json({ success:false, error:'Compare max sensible number is 4' }, { status:400 });
     const existing = await db.courseComparisonList.findFirst({ where: { studentId } }).catch(()=>null);
     let result;
     if (existing) {
-      result = await db.courseComparisonList.update({ where: { id: existing.id }, data: { courseIds: JSON.stringify(courseIds) } });
+      result = await db.courseComparisonList.update({ where: { id: existing.id }, data: { courseIds: JSON.stringify(normalizedCourseIds) } });
     } else {
-      result = await db.courseComparisonList.create({ data: { studentId, courseIds: JSON.stringify(courseIds) } });
+      result = await db.courseComparisonList.create({ data: { studentId, courseIds: JSON.stringify(normalizedCourseIds) } });
     }
     return NextResponse.json({ success:true, data: result, message: 'Comparison saved — unique per student, max 4 courses' });
   } catch(e:any){ return NextResponse.json({ success:false, error:e.message }, { status:500 }); }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const body = await req.json().catch(() => ({}));
+    const access = await requireStudentResource(req, body.studentId);
+    if (access instanceof NextResponse) return access;
+    const existing = await db.courseComparisonList.findFirst({ where: { studentId: access.studentId } });
+    if (!existing) return NextResponse.json({ success: true, removed: false });
+    const ids = (() => { try { return JSON.parse(existing.courseIds) as string[]; } catch { return []; } })();
+    const nextIds = ids.filter((id) => id !== body.courseSlug);
+    await db.courseComparisonList.update({ where: { id: existing.id }, data: { courseIds: JSON.stringify(nextIds) } });
+    return NextResponse.json({ success: true, removed: nextIds.length !== ids.length });
+  } catch (e: any) {
+    console.error('[api/course-finder/compare] error', e);
+    return NextResponse.json({ success: false, error: 'Unable to update comparison' }, { status: 500 });
+  }
 }

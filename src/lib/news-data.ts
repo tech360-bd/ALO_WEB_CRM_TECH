@@ -14,7 +14,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     date: 'August 5, 2024',
     category: 'Visa Updates',
     excerpt: 'The UK government has announced its decision regarding the Graduate Route visa following the MAC review. Good news for international students planning their studies.',
-    thumbnailColor: 'from-[#0057B8] to-[#003d80]',
+    thumbnailColor: 'from-[#2563EB] to-[#003d80]',
   },
   {
     slug: 'new-partnership-university-of-derby',
@@ -22,7 +22,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     date: 'July 28, 2024',
     category: 'University News',
     excerpt: 'We are thrilled to announce our official partnership with the University of Derby, opening up new opportunities for Bangladeshi students.',
-    thumbnailColor: 'from-[#E8501A] to-[#c23f10]',
+    thumbnailColor: 'from-[#F97316] to-[#c23f10]',
   },
   {
     slug: 'australia-student-visa-financial-requirements',
@@ -62,7 +62,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     date: 'May 20, 2024',
     category: 'ALO News',
     excerpt: 'Thank you to the hundreds of students who attended our latest study abroad seminar. Here are the key takeaways from the event.',
-    thumbnailColor: 'from-[#0057B8] to-blue-500',
+    thumbnailColor: 'from-[#2563EB] to-blue-500',
   },
   {
     slug: 'ireland-post-study-work-opportunities',

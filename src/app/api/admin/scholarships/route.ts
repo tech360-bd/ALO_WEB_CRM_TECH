@@ -1,15 +1,14 @@
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/scholarships — list all scholarships for admin
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -54,7 +53,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/admin/scholarships — create a scholarship
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -74,7 +73,7 @@ export async function POST(req: NextRequest) {
       eligibility, minimumRequirements, documentsRequired,
       applicationMethod, applicationUrl,
       openingDate, deadline, decisionDate,
-      status = "OPEN", verificationStatus = "VERIFIED",
+      status = "OPEN", verificationStatus = "PENDING",
       sourceUrl, sourceName, lastVerifiedAt,
     } = body as any;
 
@@ -90,7 +89,8 @@ export async function POST(req: NextRequest) {
     const byCode = await db.scholarship.findUnique({ where: { scholarshipCode } });
     if (byCode) return NextResponse.json({ error: "Scholarship code already in use" }, { status: 409 });
 
-    const scholarship = await db.scholarship.create({
+    const scholarship = await db.$transaction(async tx => {
+      const scholarship = await tx.scholarship.create({
       data: {
         slug, scholarshipCode, name,
         countrySlug: countrySlug || null,
@@ -114,11 +114,10 @@ export async function POST(req: NextRequest) {
         verificationStatus,
         sourceUrl: sourceUrl || null,
         sourceName: sourceName || null,
-        lastVerifiedAt: lastVerifiedAt ? new Date(lastVerifiedAt) : new Date(),
+        lastVerifiedAt: verificationStatus === "VERIFIED" && sourceUrl && lastVerifiedAt ? new Date(lastVerifiedAt) : null,
       },
     });
-
-    await contentAuditLog.create({
+      await contentAuditLog.create({
       data: {
         userId,
         action: "SCHOLARSHIP_CREATE",
@@ -126,7 +125,9 @@ export async function POST(req: NextRequest) {
         resourceId: scholarship.id,
         details: JSON.stringify({ slug, scholarshipCode, name }),
       },
-    }).catch(() => {});
+    }, tx);
+      return scholarship;
+    });
 
     return NextResponse.json({ scholarship }, { status: 201 });
   } catch (err: any) {

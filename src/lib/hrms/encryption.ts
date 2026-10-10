@@ -7,7 +7,9 @@ const IV_LEN = 12;
 const TAG_LEN = 16;
 
 function getKey(): Buffer {
-  const raw = process.env.HRMS_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY || 'alo-education-hrms-32b-dev-key-!';
+  const configured = process.env.HRMS_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY;
+  if (!configured && process.env.NODE_ENV === 'production') throw new Error('HRMS encryption key is required');
+  const raw = configured || 'alo-education-hrms-32b-dev-key-!';
   // derive 32 bytes via SHA256 if not exactly 32
   if (raw.length === 64 && /^[0-9a-fA-F]+$/.test(raw)) return Buffer.from(raw, 'hex');
   if (raw.length >= 32) return Buffer.from(raw.slice(0,32));
@@ -24,7 +26,7 @@ export function encryptField(plain: string): string {
     const enc = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
     const tag = cipher.getAuthTag();
     return `${iv.toString('hex')}:${tag.toString('hex')}:${enc.toString('hex')}`;
-  } catch { return plain; }
+  } catch (error) { throw error; }
 }
 
 export function decryptField(cipherText: string): string {

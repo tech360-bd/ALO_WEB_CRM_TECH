@@ -79,12 +79,15 @@ export async function POST(request: Request) {
       });
 
       // Send reset email to user
-      await sendPasswordResetEmail(email, resetToken);
+      const emailResult = await sendPasswordResetEmail(email, resetToken);
+      if (!emailResult.success) {
+        console.error('Password reset SMTP submission failed:', emailResult.error);
+      }
     }
 
     return NextResponse.json({
       success: true,
-      message: "If an account exists with that email, a verification code has been sent.",
+      message: "If an account exists and email delivery is available, password reset instructions will be emailed.",
     });
   } catch (error) {
     console.error("Forgot password error:", error);

@@ -110,7 +110,7 @@ export const JITSI_IFRAME_CONFIG = {
   interfaceConfigOverwrite: {
     SHOW_JITSI_WATERMARK: false,
     SHOW_WATERMARK_FOR_GUESTS: false,
-    DEFAULT_BACKGROUND: "#0057B8",
+    DEFAULT_BACKGROUND: "#2563EB",
     TOOLBAR_BUTTONS: [
       "microphone", "camera", "closedcaptions", "desktop", "fullscreen",
       "fodeviceselection", "hangup", "profile", "chat", "recording",

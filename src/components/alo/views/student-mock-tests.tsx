@@ -130,7 +130,7 @@ export function StudentMockTests() {
                 >
                   <CardContent className="p-5">
                     <div className="flex items-center gap-3">
-                      <div className="flex size-11 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0066CC]">
+                      <div className="flex size-11 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#2563EB]">
                         <Icon name={t.icon} className="size-5" />
                       </div>
                       <div>
@@ -139,7 +139,7 @@ export function StudentMockTests() {
                       </div>
                     </div>
                     <Button
-                      className="mt-4 w-full bg-[#0066CC] text-white hover:bg-[#0052a3]"
+                      className="mt-4 w-full bg-[#2563EB] text-white hover:bg-[#0052a3]"
                       disabled={creditsRemaining === 0}
                     >
                       <Icon name="Play" className="mr-1.5 size-4" />
@@ -183,7 +183,7 @@ export function StudentMockTests() {
                           <tr key={t.id} className="hover:bg-[#F7FAFE]">
                             <td className="px-5 py-3 font-mono text-[#0B2447]">{t.testId}</td>
                             <td className="px-5 py-3 text-[#0B2447]">{t.testType}</td>
-                            <td className="px-5 py-3 font-bold text-[#0066CC]">
+                            <td className="px-5 py-3 font-bold text-[#2563EB]">
                               {t.overallScore?.toFixed(1) || "—"}
                             </td>
                             <td className="px-5 py-3 text-[#5A7299]">

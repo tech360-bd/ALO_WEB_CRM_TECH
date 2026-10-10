@@ -39,7 +39,7 @@ export default function TemplatesPage() {
           <h1 className="text-xl font-bold text-[#0F172A]">Communication Templates — Manager</h1>
           <p className="text-xs text-gray-500">template_id • template_name • channel • category • language • body • variables • visibility • requires_approval • status • created_by • approved_by</p>
         </div>
-        <Button size="sm" className="bg-[#0057B8]" onClick={() => setShowCreate(!showCreate)}><Plus className="w-4 h-4 mr-1" /> Create Template</Button>
+        <Button size="sm" className="bg-[#2563EB]" onClick={() => setShowCreate(!showCreate)}><Plus className="w-4 h-4 mr-1" /> Create Template</Button>
       </div>
 
       {showCreate && (
@@ -52,12 +52,12 @@ export default function TemplatesPage() {
           </div>
           <Textarea placeholder="Body — use {{variables}} e.g., Hi {{name}}, your CAS for {{university}} is {{status}}" value={form.body} onChange={e => setForm(s => ({ ...s, body: e.target.value }))} className="min-h-[100px]" />
           <Input placeholder="Variables comma separated: name, university, status" value={form.variables} onChange={e => setForm(s => ({ ...s, variables: e.target.value }))} />
-          <Button size="sm" className="bg-[#E8501A]" onClick={create}>Create (requires_approval respected)</Button>
+          <Button size="sm" className="bg-[#F97316]" onClick={create}>Create (requires_approval respected)</Button>
         </CardContent></Card>
       )}
 
       <Card className="border border-gray-200">
-        <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4 text-[#0057B8]" /> {templates.length} Templates — Channels: WhatsApp, SMS, Email, Portal, Social DM — Categories: {TEMPLATE_CATEGORIES.slice(0,6).join(', ')}… ({TEMPLATE_CATEGORIES.length} total)</CardTitle></CardHeader>
+        <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4 text-[#2563EB]" /> {templates.length} Templates — Channels: WhatsApp, SMS, Email, Portal, Social DM — Categories: {TEMPLATE_CATEGORIES.slice(0,6).join(', ')}… ({TEMPLATE_CATEGORIES.length} total)</CardTitle></CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -70,7 +70,7 @@ export default function TemplatesPage() {
                     <td className="px-3 py-2"><Badge variant="outline" className="text-[10px]">{t.channel}</Badge><div className="text-[11px] text-gray-600">{t.category} • {t.language}</div></td>
                     <td className="px-3 py-2 text-[11px] text-gray-600 max-w-[200px] truncate">{(() => { try { return JSON.parse(t.variables||'[]').join(', ')} catch { return t.variables }})()}</td>
                     <td className="px-3 py-2"><Badge className={`text-[10px] ${t.status === 'active' || t.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' : t.status === 'LOCKED' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>{t.status}</Badge>{t.isLocked && <Lock className="w-3 h-3 inline ml-1 text-amber-600" />}</td>
-                    <td className="px-3 py-2"><Button size="sm" variant="outline" className="h-6 text-[11px]">View/Edit</Button></td>
+                    <td className="px-3 py-2"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-6 text-[11px]">View/Edit</Button></td>
                   </tr>
                 ))}
               </tbody>

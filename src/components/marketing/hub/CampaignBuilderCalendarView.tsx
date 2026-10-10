@@ -323,26 +323,26 @@ function CampaignTable({ campaigns }: { campaigns: CampaignRow[] }) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1 justify-end">
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-blue-600">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-blue-600">
                       <Eye className="w-3.5 h-3.5" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-orange-600">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-orange-600">
                       <Edit className="w-3.5 h-3.5" />
                     </Button>
                     {c.status === 'active' && (
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-yellow-600">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-yellow-600">
                         <Pause className="w-3.5 h-3.5" />
                       </Button>
                     )}
                     {c.status === 'paused' && (
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-green-600">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-green-600">
                         <Play className="w-3.5 h-3.5" />
                       </Button>
                     )}
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600">
                       <Copy className="w-3.5 h-3.5" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500">
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
                   </div>
@@ -405,7 +405,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
               <Button variant="outline" size="sm" className="h-7 text-[11px]" onClick={() => setCurrentMonth(Math.max(0, month - 1))}>
                 Prev
               </Button>
-              <Button variant="outline" size="sm" className="h-7 text-[11px]">Today</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 text-[11px]">Today</Button>
               <Button variant="outline" size="sm" className="h-7 text-[11px]" onClick={() => setCurrentMonth(Math.min(11, month + 1))}>
                 Next
               </Button>
@@ -505,7 +505,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
                         </Badge>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-gray-400 shrink-0">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-6 w-6 p-0 text-gray-400 shrink-0">
                       <Eye className="w-3 h-3" />
                     </Button>
                   </div>
@@ -803,11 +803,11 @@ function CampaignBuilder() {
 
         {/* Action Buttons */}
         <div className="flex items-center justify-between pt-2">
-          <Button variant="outline" className="text-xs">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="text-xs">
             <Archive className="w-3.5 h-3.5 mr-1" />
             Save as Draft
           </Button>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-xs text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500 hover:bg-orange-600 text-xs text-white">
             <ArrowRight className="w-3.5 h-3.5 mr-1" />
             Submit for Approval
           </Button>
@@ -958,7 +958,7 @@ export default function CampaignBuilderCalendarView() {
                   Reset
                 </Button>
                 <div className="flex-1" />
-                <Button className="bg-orange-500 hover:bg-orange-600 text-xs text-white h-8">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500 hover:bg-orange-600 text-xs text-white h-8">
                   <Plus className="w-3.5 h-3.5 mr-1" />
                   New Campaign
                 </Button>

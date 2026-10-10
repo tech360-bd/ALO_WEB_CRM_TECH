@@ -1,7 +1,9 @@
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
 # PRODUCTION ROLLBACK RUNBOOK
 
 **Project:** ALO Education
-**VPS Dir:** /root/alo-github-main-new
+**VPS Dir:** /root/alo-github-main
 **Port:** 3044
 **PM2:** alo-education
 **Domain:** aloeducation.com
@@ -18,7 +20,7 @@ Safe rollback of application code when health checks fail after deployment. Data
 
 ```bash
 ssh $VPS_USER@$VPS_HOST -p $VPS_PORT "
-  cd /root/alo-github-main-new &&
+  cd /root/alo-github-main &&
   echo '=== CURRENT COMMIT ===' &&
   git rev-parse HEAD &&
   git log -1 --oneline &&
@@ -46,7 +48,7 @@ ssh $VPS_USER@$VPS_HOST -p $VPS_PORT "
 
 ```bash
 ssh $VPS_USER@$VPS_HOST -p $VPS_PORT "
-  cd /root/alo-github-main-new &&
+  cd /root/alo-github-main &&
   # Verify DB provider from schema.prisma
   grep -A2 'datasource db' prisma/schema.prisma &&
   # Create backup dir
@@ -76,7 +78,7 @@ ssh $VPS_USER@$VPS_HOST -p $VPS_PORT "
 ```bash
 ssh $VPS_USER@$VPS_HOST -p $VPS_PORT "
   mkdir -p /root/alo-backups &&
-  cp -al /root/alo-github-main-new /root/alo-backups/alo-backup-\$(date +%Y%m%d-%H%M%S)-\$(git -C /root/alo-github-main-new rev-parse --short HEAD) &&
+  cp -al /root/alo-github-main /root/alo-backups/alo-backup-\$(date +%Y%m%d-%H%M%S)-\$(git -C /root/alo-github-main rev-parse --short HEAD) &&
   ls -ld /root/alo-backups/alo-backup-* | tail -n 10 &&
   cat /root/alo-backups/alo-backup-*/.git/refs/heads/arena/01a0a165-alo-education-z-ai 2>/dev/null || git -C /root/alo-backups/alo-backup-*/ rev-parse HEAD 2>/dev/null | head -n1
 "
@@ -99,7 +101,7 @@ Backup app dir: /root/alo-backups/alo-backup-<timestamp>-<sha>
 Backup DB file: /root/alo-backups/db-backup-<timestamp>-<sha>.sql
 Deployed commit: <new SHA>
 Deployed branch: arena/01a0a165-alo-education-z-ai
-Rollback command: cp -al /root/alo-backups/alo-backup-<timestamp>-<sha> /root/alo-github-main-new && cd /root/alo-github-main-new && pm2 restart alo-education --update-env && curl -fsS http://127.0.0.1:3044/api/health
+Rollback command: cp -al /root/alo-backups/alo-backup-<timestamp>-<sha> /root/alo-github-main && cd /root/alo-github-main && pm2 restart alo-education --update-env && curl -fsS http://127.0.0.1:3044/api/health
 ```
 
 ## Deployment Health Check Failure — When to Rollback
@@ -128,7 +130,7 @@ ssh $VPS_USER@$VPS_HOST -p $VPS_PORT "
   set -Eeuo pipefail
   echo '=== ROLLBACK START ==='
   # 1. Capture diagnostics
-  cd /root/alo-github-main-new
+  cd /root/alo-github-main
   git rev-parse HEAD > /tmp/failed-deploy-sha.txt
   pm2 logs alo-education --lines 100 --nostream > /tmp/failed-deploy-logs.txt || true
   curl -fsS http://127.0.0.1:3044/api/health > /tmp/failed-health.json || echo 'health failed' > /tmp/failed-health.json
@@ -143,9 +145,9 @@ ssh $VPS_USER@$VPS_HOST -p $VPS_PORT "
   # 3. Restore previous release (hard link copy preserves current failed as well)
   # Option A: Restore via cp -al (fast, preserves failed for investigation)
   TIMESTAMP=\$(date +%Y%m%d-%H%M%S)
-  mv /root/alo-github-main-new /root/alo-backups/alo-failed-\$TIMESTAMP-\$(cat /tmp/failed-deploy-sha.txt | cut -c1-7)
-  cp -al \$PREV_BACKUP /root/alo-github-main-new
-  cd /root/alo-github-main-new
+  mv /root/alo-github-main /root/alo-backups/alo-failed-\$TIMESTAMP-\$(cat /tmp/failed-deploy-sha.txt | cut -c1-7)
+  cp -al \$PREV_BACKUP /root/alo-github-main
+  cd /root/alo-github-main
   echo \"Restored to: \$(git rev-parse HEAD) \$(git log -1 --oneline)\"
 
   # 4. Restart PM2
@@ -217,13 +219,13 @@ ssh $VPS_USER@$VPS_HOST -p $VPS_PORT "
   if [ \"\$CONFIRM\" != \"YES\" ]; then echo 'Aborted'; exit 1; fi
 
   # 3. Restore (example for MySQL)
-  set -a; source /root/alo-github-main-new/.env; set +a
+  set -a; source /root/alo-github-main/.env; set +a
   mysql -h \${DATABASE_HOST:-localhost} -u \${DATABASE_USER} -p\${DATABASE_PASSWORD} \${DATABASE_NAME} < \$BACKUP_FILE
 
   # 4. Verify
   echo 'DB restored, verifying...'
   # Run prisma validate, check tables
-  cd /root/alo-github-main-new
+  cd /root/alo-github-main
   npx prisma validate
 
   echo '=== DB ROLLBACK COMPLETE ==='
@@ -264,7 +266,7 @@ Previous good SHA: 86762bb
 Previous good branch: arena/01a0a165-alo-education-z-ai
 Previous good backup dir: /root/alo-backups/alo-backup-20260915-214500-86762bb
 Previous good backup DB: /root/alo-backups/db-backup-20260915-214500-86762bb.sql
-Rollback command: cp -al /root/alo-backups/alo-backup-20260915-214500-86762bb /root/alo-github-main-new && cd /root/alo-github-main-new && pm2 restart alo-education --update-env && curl -fsS http://127.0.0.1:3044/api/health
+Rollback command: cp -al /root/alo-backups/alo-backup-20260915-214500-86762bb /root/alo-github-main && cd /root/alo-github-main && pm2 restart alo-education --update-env && curl -fsS http://127.0.0.1:3044/api/health
 Rollback result: PASS — PM2 online, port 3044 listening, health ok, domain ok, logs clean
 DB rollback: NOT PERFORMED — migration was additive, app rollback sufficient, no data loss
 Investigate failed: /root/alo-backups/alo-failed-20260915-214600-14a3127 preserved for investigation

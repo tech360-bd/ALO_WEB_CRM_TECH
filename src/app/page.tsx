@@ -54,7 +54,7 @@ import OldCrmImportCenterPage from '@/components/crm/pages/OldCrmImportCenterPag
 import UniversityDataUpdateCenterPage from '@/components/crm/pages/UniversityDataUpdateCenterPage';
 import AccessControlCenterPage from '@/components/admin/AccessControlCenterPage';
 import PartnerSuperAdminDashboard from '@/components/partner/PartnerSuperAdminDashboard';
-import PartnerMarketingStudioPage from '@/components/partner/PartnerMarketingStudioPage';
+import { PartnerMarketingStudio } from '@/components/alo/views/partner-marketing-studio';
 import StudentMessages from '@/components/student/StudentMessages';
 import StudentSopCvStudio from '@/components/student/StudentSopCvStudio';
 import StudentScholarships from '@/components/student/StudentScholarships';
@@ -100,6 +100,10 @@ import PartnerReferralsPage from '@/components/partner/PartnerReferralsPage';
 import PartnerSettingsPage from '@/components/partner/PartnerSettingsPage';
 import PartnerHelpPage from '@/components/partner/PartnerHelpPage';
 import PartnerNotificationsPage from '@/components/partner/PartnerNotificationsPage';
+import PartnerAdminUsersPage from '@/components/partner/PartnerAdminUsersPage';
+import PartnerVouchersPage from '@/components/partner/PartnerVouchersPage';
+import PartnerQuotaPage from '@/components/partner/PartnerQuotaPage';
+import PartnerEnglishPrepView from '@/components/partner/PartnerEnglishPrepView';
 
 // ---- CRM Admin ----
 import CrmAdminShell from '@/components/crm/CrmAdminShell';
@@ -308,6 +312,28 @@ function EmployeeView({ view }: { view: PortalView }) {
 
 const partnerPageMap: Record<string, React.ReactNode> = {
   'partner-dashboard': <PartnerDashboard />,
+  'partner-admin-dashboard': <PartnerSuperAdminDashboard />,
+  'partner-admin-users': <PartnerAdminUsersPage />,
+  'partner-admin-users-create': <PartnerAdminUsersPage />,
+  'partner-admin-marketing-studio': <PartnerMarketingStudio />,
+  'partner-admin-content-generator': <PartnerMarketingStudio />,
+  'partner-admin-image-generator': <PartnerMarketingStudio />,
+  'partner-admin-video-generator': <PartnerMarketingStudio />,
+  'partner-admin-social-scheduler': <SocialMediaManagementHub portal="partner" />,
+  'partner-admin-voucher-codes': <PartnerVouchersPage />,
+  'partner-admin-mock-tests': <PartnerVouchersPage />,
+  'partner-admin-usage-quota': <PartnerQuotaPage />,
+  'partner-admin-interview-prep': <PartnerEnglishPrepView />,
+  'partner-admin-course-finder': <PublicCourseFinderPage />,
+  'partner-admin-company-profile': <PartnerProfilePage />,
+  'partner-admin-settings': <PartnerSettingsPage />,
+  'partner-admin-support-request': <PartnerHelpPage />,
+  'partner-admin-reports': <PartnerReportsPage />,
+  'partner-admin-documents': <PartnerDocumentsPage />,
+  'partner-admin-applications': <PartnerApplicationsPage />,
+  'partner-admin-students': <PartnerStudentsPage />,
+  'partner-admin-leads': <PartnerLeadsPage />,
+  'partner-admin-roles': <PartnerAdminUsersPage />,
   'partner-profile': <PartnerProfilePage />,
   'partner-leads': <PartnerLeadsPage />,
   'partner-students': <PartnerStudentsPage />,
@@ -427,8 +453,8 @@ const crmPageMap: Record<string, React.ReactNode> = {
   'crm-university-updates': <UniversityDataUpdateCenterPage />,
   'crm-access-control-center': <AccessControlCenterPage />,
   'partner-admin-dashboard': <PartnerSuperAdminDashboard />,
-  'partner-admin-marketing-studio': <PartnerMarketingStudioPage />,
-  'partner-admin-content-generator': <PartnerMarketingStudioPage />,
+  'partner-admin-marketing-studio': <PartnerMarketingStudio />,
+  'partner-admin-content-generator': <PartnerMarketingStudio />,
   'employee-visa-dashboard': <VisaOfficerDashboard />,
   'employee-visa-officer': <VisaOfficerDashboard />,
   'employee-visa-interview-officer': <VisaOfficerDashboard />,
@@ -543,7 +569,7 @@ function HomePageContent() {
 
     let entry = pathToViewMap[pathname];
 
-    if (!entry && pParam) {
+    if ((!entry || pathname === '/') && pParam) {
       const pParamMap: Record<string, { view: PortalView; portal?: 'student' | 'partner' | 'employee' | 'admin' }> = {
         'consultation': { view: 'public-consultation' },
         'contact': { view: 'public-contact' },
@@ -588,7 +614,7 @@ function HomePageContent() {
     }
   }, [searchParams]);
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || currentView === 'website' || currentView.startsWith('public-')) {
     return <PublicView view={currentView} />;
   }
 

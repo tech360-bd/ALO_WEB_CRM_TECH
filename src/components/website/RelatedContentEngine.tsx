@@ -73,10 +73,10 @@ export default function RelatedContentEngine({ sourceType, sourceId = '', source
   if (related.length === 0) {
     return (
       <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl">
-        <p className="text-sm text-gray-600">No related content yet. Related content engine will populate based on country, university, course, study level, subject, tags priority: exact relationship → same university → same country → same subject → same destination → same tag/category.</p>
+        <p className="text-sm text-gray-600">Explore courses or speak with a counselor for guidance on your next step.</p>
         <div className="flex gap-2 mt-4">
-          <Link href="/course-finder"><Button size="sm" className="bg-[#0057B8] text-white h-11">Find Courses</Button></Link>
-          <Link href="/book-consultation"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-11">Book Consultation</Button></Link>
+          <Link href="/course-finder"><Button size="sm" className="bg-[#0057B8] text-white h-12">Find Courses</Button></Link>
+          <Link href="/book-consultation"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-12">Book Consultation</Button></Link>
         </div>
       </Card>
     );
@@ -86,7 +86,7 @@ export default function RelatedContentEngine({ sourceType, sourceId = '', source
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold text-[#0F172A]">{title}</h3>
-        <Badge className="bg-[#F8FAFC] text-gray-600 border-[#E2E8F0] text-[10px]">{related.length} related items — DB-driven</Badge>
+        <Badge className="bg-[#F8FAFC] text-gray-600 border-[#E2E8F0] text-[10px]">{related.length} related items</Badge>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {related.slice(0, 8).map((item: any, i: number) => {
@@ -112,7 +112,7 @@ export default function RelatedContentEngine({ sourceType, sourceId = '', source
       </div>
       {related.length > 4 && (
         <div className="text-center pt-2">
-          <Link href={`/course-finder?university=${universityId || ''}&country=${country || ''}`}><Button variant="outline" className="border-[#E2E8F0] text-xs h-11">View More Related Information</Button></Link>
+          <Link href={`/course-finder?university=${universityId || ''}&country=${country || ''}`}><Button variant="outline" className="border-[#E2E8F0] text-xs h-12">View More Related Information</Button></Link>
         </div>
       )}
     </div>

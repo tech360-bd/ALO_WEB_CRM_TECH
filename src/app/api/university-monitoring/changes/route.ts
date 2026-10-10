@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireMonitoringViewer } from "@/lib/university-monitoring-auth";
 
 // GET /api/university-monitoring/changes
 // Returns the change queue with filters. Default: pending changes.
 export async function GET(req: NextRequest) {
+  // Staff-only: this endpoint exposes unapproved, unverified detected changes.
+  const guard = await requireMonitoringViewer(req);
+  if (!guard.ok) return guard.response;
+
   const status = req.nextUrl.searchParams.get("status") || "PENDING";
   const impact = req.nextUrl.searchParams.get("impact"); // LOW | MEDIUM | HIGH | CRITICAL
   const changeType = req.nextUrl.searchParams.get("changeType");

@@ -1,42 +1,43 @@
-[Unit]
-Description=ALO Education ERP (Next.js standalone)
-Documentation=https://aloeducation.com
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=simple
-User=alo
-Group=alo
-WorkingDirectory=/root/alo-github-main-new
-EnvironmentFile=/root/alo-github-main-new/.env
-Environment=NODE_ENV=production
-Environment=HOSTNAME=0.0.0.0
-Environment=PORT=3044
-ExecStart=/usr/bin/node /root/alo-github-main-new/.next/standalone/server.js
-Restart=on-failure
-RestartSec=5
-StandardOutput=append:/var/log/alo-education/app.log
-StandardError=append:/var/log/alo-education/error.log
-LimitNOFILE=65535
-KillSignal=SIGTERM
-TimeoutStopSec=30
-
-# Hardening
-NoNewPrivileges=true
-PrivateTmp=true
-ProtectSystem=strict
-ProtectHome=true
-ReadWritePaths=/root/alo-github-main-new /root/alo-shared /root/alo-releases /var/log/alo-education
-ProtectKernelTunables=true
-ProtectKernelModules=true
-ProtectControlGroups=true
-RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
-RestrictNamespaces=true
-LockPersonality=true
-MemoryDenyWriteExecute=false
-RestrictRealtime=true
-RestrictSUIDSGID=true
-
-[Install]
-WantedBy=multi-user.target
+# LEGACY / NOT USED FOR CURRENT PRODUCTION — disabled; Hostinger owns runtime.
+# [Unit]
+# Description=ALO Education ERP (Next.js standalone)
+# Documentation=https://aloeducation.com
+# After=network-online.target
+# Wants=network-online.target
+#
+# [Service]
+# Type=simple
+# User=alo
+# Group=alo
+# WorkingDirectory=/opt/alo-education
+# EnvironmentFile=/opt/alo-education/.env
+# Environment=NODE_ENV=production
+# Environment=HOSTNAME=0.0.0.0
+# Environment=PORT=3044
+# ExecStart=/usr/bin/node /opt/alo-education/.next/standalone/server.js
+# Restart=on-failure
+# RestartSec=5
+# StandardOutput=append:/var/log/alo-education/app.log
+# StandardError=append:/var/log/alo-education/error.log
+# LimitNOFILE=65535
+# KillSignal=SIGTERM
+# TimeoutStopSec=30
+#
+# # Hardening
+# NoNewPrivileges=true
+# PrivateTmp=true
+# ProtectSystem=strict
+# ProtectHome=true
+# ReadWritePaths=/opt/alo-education /root/alo-shared /root/alo-releases /var/log/alo-education
+# ProtectKernelTunables=true
+# ProtectKernelModules=true
+# ProtectControlGroups=true
+# RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+# RestrictNamespaces=true
+# LockPersonality=true
+# MemoryDenyWriteExecute=false
+# RestrictRealtime=true
+# RestrictSUIDSGID=true
+#
+# [Install]
+# WantedBy=multi-user.target

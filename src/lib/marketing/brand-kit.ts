@@ -7,8 +7,8 @@ export interface BrandKit {
   phone: string;
   whatsapp: string;
   website: string;
-  primary: string; // #0057B8
-  cta: string; // #E8501A
+  primary: string; // #2563EB
+  cta: string; // #F97316
 }
 
 export async function getBrandKit(): Promise<BrandKit> {
@@ -19,8 +19,8 @@ export async function getBrandKit(): Promise<BrandKit> {
     phone: "+8809611-123456",
     whatsapp: "+8801712345678",
     website: "https://alo-education.com",
-    primary: "#0057B8",
-    cta: "#E8501A",
+    primary: "#2563EB",
+    cta: "#F97316",
   };
   try {
     const assets = await db.brandAsset.findMany({ where: { isActive: true } });

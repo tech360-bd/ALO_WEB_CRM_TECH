@@ -128,7 +128,7 @@ export default function EmployeeDashboard() {
             </span>
           </div>
         </div>
-        <Button variant="brand" size="sm"><Plus className="w-4 h-4" /> New Task</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Plus className="w-4 h-4" /> New Task</Button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -180,7 +180,7 @@ export default function EmployeeDashboard() {
             <CardHeader className="pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text">SLA Status</CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -197,7 +197,7 @@ export default function EmployeeDashboard() {
                       <TableCell>{channelIcon(row.channel)}</TableCell>
                       <TableCell className="text-alo-text-secondary text-xs">{row.waitTime}</TableCell>
                       <TableCell>{slaStatusBadge(row.status)}</TableCell>
-                      <TableCell className="text-right"><Button variant="ghost" size="icon-sm"><MessageSquare className="w-4 h-4 text-alo-brand" /></Button></TableCell>
+                      <TableCell className="text-right"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm"><MessageSquare className="w-4 h-4 text-alo-brand" /></Button></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -208,7 +208,7 @@ export default function EmployeeDashboard() {
             <CardHeader className="pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text">Recent Tasks</CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -239,10 +239,10 @@ export default function EmployeeDashboard() {
             <CardHeader className="pb-2"><CardTitle className="text-base font-semibold text-alo-text">Quick Actions</CardTitle></CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="brand" className="w-full justify-start text-sm"><Plus className="w-4 h-4" /> New Lead</Button>
-                <Button variant="outline" className="w-full justify-start text-sm"><MessageSquare className="w-4 h-4" /> Message Student</Button>
-                <Button variant="outline" className="w-full justify-start text-sm"><Upload className="w-4 h-4" /> Upload Document</Button>
-                <Button variant="outline" className="w-full justify-start text-sm"><ListTodo className="w-4 h-4" /> Create Task</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" className="w-full justify-start text-sm"><Plus className="w-4 h-4" /> New Lead</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm"><MessageSquare className="w-4 h-4" /> Message Student</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm"><Upload className="w-4 h-4" /> Upload Document</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm"><ListTodo className="w-4 h-4" /> Create Task</Button>
               </div>
             </CardContent>
           </Card>

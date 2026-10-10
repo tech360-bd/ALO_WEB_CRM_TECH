@@ -223,7 +223,7 @@ function ArchitectureBox({
   accent: "blue" | "violet" | "orange";
 }) {
   const accentMap: Record<string, string> = {
-    blue: "border-[#0057B8] bg-[#EFF6FF] text-[#0057B8]",
+    blue: "border-[#2563EB] bg-[#EFF6FF] text-[#2563EB]",
     violet: "border-violet-300 bg-violet-50 text-violet-700",
     orange: "border-[#C2410C] bg-[#FFF7ED] text-[#C2410C]",
   };
@@ -596,7 +596,7 @@ export function CentralAiCommand() {
                       onClick={() => setSelected(a)}
                       className="cursor-pointer border-[#E2E8F0] transition-colors hover:bg-[#EFF6FF]/50"
                     >
-                      <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">{a.agentCode}</TableCell>
+                      <TableCell className="font-mono text-xs font-semibold text-[#2563EB]">{a.agentCode}</TableCell>
                       <TableCell className="font-medium text-[#0F172A]">{a.agentName}</TableCell>
                       <TableCell><TypePill type={a.agentType} /></TableCell>
                       <TableCell>
@@ -652,9 +652,9 @@ export function CentralAiCommand() {
       {/* AI integration + Safety */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SectionCard title="Centralized Integration" icon="Workflow">
-          <div className="rounded-2xl border border-[#0057B8]/20 bg-gradient-to-br from-[#EFF6FF] to-white p-4">
+          <div className="rounded-2xl border border-[#2563EB]/20 bg-gradient-to-br from-[#EFF6FF] to-white p-4">
             <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
                 <Icon name="Network" className="size-5" />
               </div>
               <div>
@@ -674,7 +674,7 @@ export function CentralAiCommand() {
                 { icon: "Users", label: "Invisible to users" },
               ].map((s) => (
                 <div key={s.label} className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-2 py-1.5">
-                  <Icon name={s.icon} className="size-3.5 text-[#0057B8]" />
+                  <Icon name={s.icon} className="size-3.5 text-[#2563EB]" />
                   <span className="badge-text text-[#475569]">{s.label}</span>
                 </div>
               ))}
@@ -724,7 +724,7 @@ export function CentralAiCommand() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#0057B8]">
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#2563EB]">
                     <Icon name={agentTypeMeta(selected.agentType).icon} className="size-5" />
                   </div>
                   <div>

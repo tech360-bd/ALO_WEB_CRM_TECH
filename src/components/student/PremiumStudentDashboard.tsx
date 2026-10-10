@@ -167,9 +167,9 @@ export default function PremiumStudentDashboard() {
             <h2 className="text-2xl font-bold text-[#0F172A]">Your Student Portal is Ready — Real Data Only</h2>
             <p className="text-sm text-gray-600 mt-3 max-w-2xl mx-auto">Your ALO Student Portal is ready with secure login/OTP link. Student IDs follow AE/AET system: ALO FULL STUDENT AE-YYYY000001, ENGLISH TEST ONLY AET-YYYY000001, GUEST GUEST-YYYY-RANDOM. No fake student data — real DB only. If you already have an ALO Student ID, please provide it. If not, start guided registration with Full name, Phone, WhatsApp, Email, Preferred country, Study level, Subject, Intake, English test status, English score, Budget, Current qualification.</p>
             <div className="flex flex-wrap justify-center gap-3 mt-6">
-              <Link href="/student/profile/onboarding"><Button className="bg-[#0057B8] text-white h-12 px-8 font-bold rounded-xl">Complete Profile — Onboarding</Button></Link>
+              <Link href="/student/profile/onboarding"><Button className="bg-[#2563EB] text-white h-12 px-8 font-bold rounded-xl">Complete Profile — Onboarding</Button></Link>
               <Link href="/login"><Button variant="outline" className="border-[#E2E8F0] h-12 px-8 rounded-xl">Login — Email/Phone/WhatsApp/Student ID + OTP</Button></Link>
-              <Link href="/book-consultation"><Button className="bg-[#E8501A] text-white h-12 px-8 font-bold rounded-xl">Book Free Consultation</Button></Link>
+              <Link href="/book-consultation"><Button className="bg-[#F97316] text-white h-12 px-8 font-bold rounded-xl">Book Free Consultation</Button></Link>
             </div>
             <p className="text-[11px] text-gray-400 mt-4">Identity matching uses Student ID, verified phone, WhatsApp number, verified email, social account ID, existing CRM lead, application ID, document ownership — if existing number contacts ALO again LOAD EXISTING PROFILE → APPEND TO TIMELINE → DO NOT CREATE DUPLICATE — mandatory duplicate-prevention.</p>
           </Card>
@@ -185,17 +185,17 @@ export default function PremiumStudentDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#0057B8] text-white flex items-center justify-center font-black">ALO</div>
+              <div className="w-10 h-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-black">ALO</div>
               <div>
                 <h1 className="text-xl font-bold text-[#0F172A]">Welcome back, {profile?.fullName || profile?.givenName || student?.name || 'Student'}</h1>
                 <div className="flex flex-wrap items-center gap-2 mt-1 text-xs">
-                  <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20">{profile?.studentId || student?.studentId || 'AE-2026000001'}</Badge>
+                  <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20">{profile?.studentId || student?.studentId || 'AE-2026000001'}</Badge>
                   <Badge className="bg-[#F8FAFC] border-[#E2E8F0]">{profile?.studentType || student?.userType || 'ALO_FULL_STUDENT'}</Badge>
                   <span className="text-gray-500">{profile?.preferredCountry || 'UK'} Admission Journey</span>
                   <span className="text-gray-400">•</span>
                   <span className="text-gray-600">Profile: {profileCompletion}%</span>
                   <span className="text-gray-400">•</span>
-                  <span className="font-semibold text-[#0057B8]">Current stage: {journeyStage}</span>
+                  <span className="font-semibold text-[#2563EB]">Current stage: {journeyStage}</span>
                 </div>
               </div>
             </div>
@@ -203,8 +203,8 @@ export default function PremiumStudentDashboard() {
               <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">Next: {nextAction?.text || 'Complete profile'}</Badge>
               <Link href="/student/messages"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9"><MessageSquare className="w-4 h-4 mr-1" />Messages</Button></Link>
               <Link href="/student/notifications"><Button size="sm" variant="outline" className="border-[#E2E8F0] h-9">Notifications</Button></Link>
-              <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9">Help</Button>
-              <Button size="sm" variant="outline" className="border-[#E2E8F0] h-9">Logout</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-9">Help</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-9">Logout</Button>
             </div>
           </div>
           <Progress value={profileCompletion} className="h-2 mt-4" />
@@ -213,7 +213,7 @@ export default function PremiumStudentDashboard() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* 8. PRIMARY NEXT-ACTION ENGINE — Large dynamic YOUR NEXT BEST ACTION — AI determines from real DB — never hardcoded */}
-        <Card className="p-6 md:p-8 bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl text-white shadow-xl border-0">
+        <Card className="p-6 md:p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-3xl text-white shadow-xl border-0">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-3"><Sparkles className="w-5 h-5 text-[#FFB347]" /><Badge className="bg-white/20 text-white border-white/30 text-[11px] font-bold">YOUR NEXT BEST ACTION — AI Calculated from Real DB</Badge></div>
@@ -222,7 +222,7 @@ export default function PremiumStudentDashboard() {
               <p className="text-[11px] text-blue-200 mt-3">Examples: Complete profile, Upload passport/transcript/English certificate, Review university options, Compare courses, Apply to selected course, Sign application form, Upload bank statement, Pay application fee, Review offer, Pay deposit, Complete CAS questionnaire, Practice credibility interview, Upload visa documents, Book biometric appointment, Complete final visa review — AI calculates from real DB.</p>
             </div>
             <div className="flex flex-col gap-3 shrink-0">
-              <Link href={nextAction?.actionUrl || '/student/profile'}><Button className="bg-[#E8501A] text-white hover:bg-[#d44315] h-12 px-8 font-bold rounded-xl shadow-md">{nextAction?.cta || 'Continue'} →</Button></Link>
+              <Link href={nextAction?.actionUrl || '/student/profile'}><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold rounded-xl shadow-md">{nextAction?.cta || 'Continue'} →</Button></Link>
               <Link href="/student/help"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-11 rounded-xl text-xs">Ask ALO AI — What should I do now?</Button></Link>
             </div>
           </div>
@@ -231,11 +231,11 @@ export default function PremiumStudentDashboard() {
         {/* 9. DASHBOARD QUICK ACTIONS — Large action buttons */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
-            { label: 'Continue Application', icon: FileText, href: '/student/applications', color: 'bg-[#0057B8] text-white' },
+            { label: 'Continue Application', icon: FileText, href: '/student/applications', color: 'bg-[#2563EB] text-white' },
             { label: 'Find Courses', icon: Search, href: '/student/course-finder', color: 'bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC]' },
             { label: 'Upload Documents', icon: Upload, href: '/student/documents', color: 'bg-white border-[#E2E8F0] text-[#0F172A]' },
             { label: 'Message Counselor', icon: MessageSquare, href: '/student/messages', color: 'bg-white border-[#E2E8F0] text-[#0F172A]' },
-            { label: 'AI Advisor', icon: Sparkles, href: '/student/help', color: 'bg-[#E8501A]/10 border-[#E8501A]/20 text-[#E8501A] hover:bg-[#E8501A] hover:text-white' },
+            { label: 'AI Advisor', icon: Sparkles, href: '/student/help', color: 'bg-[#F97316]/10 border-[#F97316]/20 text-[#F97316] hover:bg-[#F97316] hover:text-white' },
             { label: 'Start Mock Test', icon: BookOpen, href: '/student/mock-tests', color: 'bg-white border-[#E2E8F0] text-[#0F172A]' },
             { label: 'Practice Interview', icon: Users, href: '/student/ai-interview', color: 'bg-white border-[#E2E8F0] text-[#0F172A]' },
             { label: 'Visa Readiness', icon: ShieldCheck, href: '/student/visa/readiness', color: 'bg-white border-[#E2E8F0] text-[#0F172A]' },
@@ -260,7 +260,7 @@ export default function PremiumStudentDashboard() {
             <div className="grid sm:grid-cols-2 gap-4">
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-3"><h4 className="font-bold text-sm flex items-center gap-2"><User className="w-4 h-4 text-[#0057B8]" />Profile</h4><Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">{profileCompletion}%</Badge></div>
+                  <div className="flex items-center justify-between mb-3"><h4 className="font-bold text-sm flex items-center gap-2"><User className="w-4 h-4 text-[#2563EB]" />Profile</h4><Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">{profileCompletion}%</Badge></div>
                   <Progress value={profileCompletion} className="h-2 mb-3" />
                   <p className="text-xs text-gray-600">Completion: {profileCompletion}% • Missing: {profile?.studyGap ? 'Study gap explanation' : 'Check profile'} • AI recommendation: Complete missing info for better course matching</p>
                 </div>
@@ -269,14 +269,14 @@ export default function PremiumStudentDashboard() {
 
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><GraduationCap className="w-4 h-4 text-[#0057B8]" />Applications</h4>
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><GraduationCap className="w-4 h-4 text-[#2563EB]" />Applications</h4>
                   {applications.length === 0 ? <p className="text-xs text-gray-500">No active applications yet — real DB, no fake data. Your application status, next deadline, counselor, application officer, visa officer, current status, progress, last update will appear here.</p> : (
                     <div className="space-y-2">
                       {applications.slice(0,2).map((app:any)=>(
                         <div key={app.id || app.applicationCode} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 text-xs">
                           <p className="font-semibold">{app.universityName || app.university} — {app.courseName || app.course}</p>
                           <p className="text-gray-500">Stage: {app.stage} • Status: {app.status} • Deadline: {app.deadline || 'Check'}</p>
-                          <p className="text-[#0057B8] font-medium">Next: {app.nextAction || 'Check with counselor'}</p>
+                          <p className="text-[#2563EB] font-medium">Next: {app.nextAction || 'Check with counselor'}</p>
                         </div>
                       ))}
                     </div>
@@ -287,7 +287,7 @@ export default function PremiumStudentDashboard() {
 
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-[#0057B8]" />Documents</h4>
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-[#2563EB]" />Documents</h4>
                   {documents.length === 0 ? <p className="text-xs text-gray-500">Documents: uploaded, approved, pending, rejected, missing — real DB, no fake data. Upload passport, transcripts, English certificate, bank statement, etc.</p> : (
                     <div className="space-y-1.5">
                       {documents.slice(0,4).map((doc:any)=>(
@@ -304,7 +304,7 @@ export default function PremiumStudentDashboard() {
 
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-[#0057B8]" />English Test</h4>
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-[#2563EB]" />English Test</h4>
                   <p className="text-xs text-gray-600">Latest score, mock credits, weak skill, recommended practice — ALO full students receive 3 free full mocks — track remaining/used/paid credits, mock history, latest result, weak areas — DB-driven.</p>
                   <p className="text-[11px] text-gray-500 mt-2">English Test-only students receive separate limited dashboard and must not gain admission/visa access unless upgraded — RBAC enforced.</p>
                 </div>
@@ -313,7 +313,7 @@ export default function PremiumStudentDashboard() {
 
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Users className="w-4 h-4 text-[#0057B8]" />AI Interview</h4>
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Users className="w-4 h-4 text-[#2563EB]" />AI Interview</h4>
                   <p className="text-xs text-gray-600">Readiness score, last practice, risk level, next recommendation — interview types credibility/visa/pre-CAS/scholarship/sponsor/study-gap/general English speaking — AI asks one question at a time dynamically follow up — scores communication/confidence/course knowledge/university knowledge/country knowledge/financial/sponsor/study-gap/future plan/visa risk/overall readiness — results READY/NEEDS_PRACTICE/HIGH_RISK/HUMAN_REVIEW_REQUIRED — save result to Student Portal/CRM timeline/Counselor dashboard/Visa Officer dashboard.</p>
                 </div>
                 <Link href="/student/ai-interview" className="block mt-4"><Button variant="outline" className="w-full border-[#E2E8F0] h-11 text-xs">Practice Interview — My Interviews</Button></Link>
@@ -321,7 +321,7 @@ export default function PremiumStudentDashboard() {
 
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#0057B8]" />Visa</h4>
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#2563EB]" />Visa</h4>
                   <p className="text-xs text-gray-600">Readiness %, missing items, risk flags, next action — visa checklist financial documents sponsor documents CAS passport medical/TB if required visa forms biometrics appointment visa application decision — CAS bank statement sponsor documents visa status TB/medical biometric decision refusal history and AI risk/readiness — DB-driven.</p>
                   <p className="text-[11px] text-amber-700 mt-2 bg-amber-50 border border-amber-200 rounded-xl p-2">AI must never guarantee visa approval — never show Visa guaranteed — use Current readiness assessment indicates areas that should be reviewed before submission.</p>
                 </div>
@@ -330,7 +330,7 @@ export default function PremiumStudentDashboard() {
 
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#0057B8]" />Messages — Unified Communication Center</h4>
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#2563EB]" />Messages — Unified Communication Center</h4>
                   <p className="text-xs text-gray-600">One unified conversation — WhatsApp/SMS/Website Chat/Messenger/Instagram/Email/Portal Message — do not manually switch between histories — every message connects to student_id/lead_id/application_id/conversation_id/channel/sender/sender_role/timestamp/status — same student record and timeline for AI/Counselor/Application Team/English Trainer/Visa Officer.</p>
                 </div>
                 <Link href="/student/messages" className="block mt-4"><Button variant="outline" className="w-full border-[#E2E8F0] h-11 text-xs">View Messages — My Messages</Button></Link>
@@ -338,7 +338,7 @@ export default function PremiumStudentDashboard() {
 
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><CalendarDays className="w-4 h-4 text-[#0057B8]" />Appointment</h4>
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><CalendarDays className="w-4 h-4 text-[#2563EB]" />Appointment</h4>
                   <p className="text-xs text-gray-600">Next appointment, counselor, date/time, meeting link — real DB, no fake data.</p>
                 </div>
                 <Link href="/student/appointments" className="block mt-4"><Button variant="outline" className="w-full border-[#E2E8F0] h-11 text-xs">View Appointments — My Appointments</Button></Link>
@@ -346,7 +346,7 @@ export default function PremiumStudentDashboard() {
 
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full flex flex-col justify-between">
                 <div>
-                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#0057B8]" />Payment</h4>
+                  <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#2563EB]" />Payment</h4>
                   <p className="text-xs text-gray-600">Outstanding amount, payment status, invoice — application fee/university deposit/ALO service payment/mock test payment/other approved fees — each payment invoice/amount/currency/status/deadline/receipt/transaction reference — never claim fee is current without verified source data.</p>
                 </div>
                 <Link href="/student/payments" className="block mt-4"><Button variant="outline" className="w-full border-[#E2E8F0] h-11 text-xs">View Payments — My Payments</Button></Link>
@@ -357,7 +357,7 @@ export default function PremiumStudentDashboard() {
             <Card className="p-6 md:p-8 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
               <h3 className="text-lg font-bold text-[#0F172A] mb-6">Complete Student Journey Timeline — Visual Journey — Single Source of Truth</h3>
               <div className="relative">
-                <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#0057B8] via-[#E8501A] to-emerald-500 hidden md:block" />
+                <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#2563EB] via-[#F97316] to-emerald-500 hidden md:block" />
                 <div className="space-y-4">
                   {JOURNEY_STAGES.map((stage, i) => {
                     const isCurrent = journeyStage === stage || (journeyStage.toLowerCase().includes(stage.toLowerCase().split(' ')[0]));
@@ -365,10 +365,10 @@ export default function PremiumStudentDashboard() {
                     const timelineEvents = timeline.filter((t:any)=> (t.stage||'').toLowerCase().includes(stage.toLowerCase().split(' ')[0]) || (t.title||'').toLowerCase().includes(stage.toLowerCase().split(' ')[0]));
                     return (
                       <div key={stage} className="relative flex gap-4">
-                        <div className={`hidden md:flex w-8 h-8 rounded-full items-center justify-center text-xs font-bold shrink-0 ${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-[#0057B8] text-white animate-pulse' : 'bg-white border border-[#E2E8F0] text-gray-400'}`}>{isCompleted ? '✓' : i+1}</div>
-                        <div className={`flex-1 p-4 rounded-2xl border ${isCurrent ? 'bg-[#0057B8]/5 border-[#0057B8]/20' : isCompleted ? 'bg-emerald-50/50 border-emerald-200' : 'bg-[#F8FAFC] border-[#E2E8F0]'} `}>
+                        <div className={`hidden md:flex w-8 h-8 rounded-full items-center justify-center text-xs font-bold shrink-0 ${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-[#2563EB] text-white animate-pulse' : 'bg-white border border-[#E2E8F0] text-gray-400'}`}>{isCompleted ? '✓' : i+1}</div>
+                        <div className={`flex-1 p-4 rounded-2xl border ${isCurrent ? 'bg-[#2563EB]/5 border-[#2563EB]/20' : isCompleted ? 'bg-emerald-50/50 border-emerald-200' : 'bg-[#F8FAFC] border-[#E2E8F0]'} `}>
                           <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-sm">{stage} {isCurrent && <Badge className="bg-[#0057B8] text-white text-[10px] ml-2">Current</Badge>} {isCompleted && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] ml-2">Completed</Badge>}</h4>
+                            <h4 className="font-bold text-sm">{stage} {isCurrent && <Badge className="bg-[#2563EB] text-white text-[10px] ml-2">Current</Badge>} {isCompleted && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] ml-2">Completed</Badge>}</h4>
                             <span className="text-[11px] text-gray-500">{timelineEvents[0]?.createdAt ? new Date(timelineEvents[0].createdAt).toLocaleString() : 'Pending'}</span>
                           </div>
                           {timelineEvents.length > 0 ? (
@@ -376,7 +376,7 @@ export default function PremiumStudentDashboard() {
                               {timelineEvents.slice(0,2).map((ev:any, idx:number)=>(
                                 <div key={idx} className="bg-white border border-[#E2E8F0] rounded-xl p-3 text-xs">
                                   <p className="font-medium">{ev.title || ev.description || 'Timeline event'}</p>
-                                  <p className="text-[11px] text-gray-500 mt-1">Responsible: {ev.actor || ev.senderName || 'System'} • {ev.actor === 'ai' ? 'AI' : 'Human'} • Status: {ev.status || 'completed'} • Note: {ev.description?.substring(0,80) || 'No orphan events'} • Document: {ev.documentId || 'Linked'} • Action: {ev.actionUrl ? <a href={ev.actionUrl} className="text-[#0057B8] underline">View</a> : 'Check'} • Communication ref: {ev.id?.substring(0,8) || 'Linked'}</p>
+                                  <p className="text-[11px] text-gray-500 mt-1">Responsible: {ev.actor || ev.senderName || 'System'} • {ev.actor === 'ai' ? 'AI' : 'Human'} • Status: {ev.status || 'completed'} • Note: {ev.description?.substring(0,80) || 'No orphan events'} • Document: {ev.documentId || 'Linked'} • Action: {ev.actionUrl ? <a href={ev.actionUrl} className="text-[#2563EB] underline">View</a> : 'Check'} • Communication ref: {ev.id?.substring(0,8) || 'Linked'}</p>
                                 </div>
                               ))}
                             </div>
@@ -402,7 +402,7 @@ export default function PremiumStudentDashboard() {
                   const isLocked = FINAL_JOURNEY_INDICATOR.indexOf(journeyStage.toUpperCase()) < i - 1;
                   return (
                     <div key={stage} className="flex items-center gap-2">
-                      <Badge className={`${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-[#0057B8] text-white animate-pulse' : isLocked ? 'bg-gray-100 text-gray-400 border-gray-200' : 'bg-[#F8FAFC] border-[#E2E8F0] text-gray-600'} text-[10px] px-3 py-1.5`}>{isCompleted ? '✓' : isLocked ? '🔒' : '•'} {stage} {isCurrent ? '(Current)' : isCompleted ? '(Done)' : isLocked ? '(Locked)' : ''}</Badge>
+                      <Badge className={`${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-[#2563EB] text-white animate-pulse' : isLocked ? 'bg-gray-100 text-gray-400 border-gray-200' : 'bg-[#F8FAFC] border-[#E2E8F0] text-gray-600'} text-[10px] px-3 py-1.5`}>{isCompleted ? '✓' : isLocked ? '🔒' : '•'} {stage} {isCurrent ? '(Current)' : isCompleted ? '(Done)' : isLocked ? '(Locked)' : ''}</Badge>
                       {i < FINAL_JOURNEY_INDICATOR.length - 1 && <ArrowRight className="w-3 h-3 text-gray-300" />}
                     </div>
                   );
@@ -420,12 +420,12 @@ export default function PremiumStudentDashboard() {
               <p className="text-[10px] text-gray-400 mt-2">Student ID: {profile?.studentId || 'AE-2026000001'} • Name: {profile?.fullName || 'Student'} • Phone: {profile?.city ? 'Verified' : 'Check'} • Email: {profile?.address ? 'Verified' : 'Check'} • Type: {profile?.preferredLevel || 'ALO_FULL_STUDENT'} — all from real DB, no fake data.</p>
             </Card>
 
-            <Card className="p-6 bg-[#0057B8]/5 border-[#0057B8]/20 rounded-2xl">
-              <h4 className="font-bold text-sm mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-[#0057B8]" />Ask ALO AI — Permanent AI Advisor</h4>
+            <Card className="p-6 bg-[#2563EB]/5 border-[#2563EB]/20 rounded-2xl">
+              <h4 className="font-bold text-sm mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-[#2563EB]" />Ask ALO AI — Permanent AI Advisor</h4>
               <p className="text-xs text-gray-600">Student can ask: What should I do now? What documents are missing? Why was my document rejected? Which course matches me? Am I eligible? What is my application status? What happens after offer? What do I need for CAS? Am I ready for visa? What should I prepare for interview? Why is my visa readiness low? AI answers from actual Student ID memory and database. If uncertain human handover do not hallucinate.</p>
               <div className="space-y-2 mt-4">
                 {['What should I do now?','What documents are missing?','Am I eligible?','Am I ready for visa?'].map(q=>(
-                  <div key={q} className="bg-white border border-[#E2E8F0] rounded-xl p-3 text-xs cursor-pointer hover:border-[#0057B8] flex justify-between items-center"><span>{q}</span><ArrowRight className="w-3 h-3 text-gray-400" /></div>
+                  <div key={q} className="bg-white border border-[#E2E8F0] rounded-xl p-3 text-xs cursor-pointer hover:border-[#2563EB] flex justify-between items-center"><span>{q}</span><ArrowRight className="w-3 h-3 text-gray-400" /></div>
                 ))}
               </div>
               <p className="text-[11px] text-gray-500 mt-3">Human handover: AI must detect uncertainty/sensitive case/refusal/financial complexity/legal/visa ambiguity/unusual document/high-risk case/student explicitly requests human then create Counselor Task or Visa Officer Task and notify student I have flagged this for your ALO team so you do not receive an unreliable answer.</p>
@@ -437,9 +437,9 @@ export default function PremiumStudentDashboard() {
               <div className="bg-white border border-[#E2E8F0] rounded-xl p-3 mt-3 text-xs">
                 <p className="font-bold">Your Referral Code: AEFR-{profile?.studentId?.substring(0,6) || 'XXXXXX'}</p>
                 <div className="flex gap-2 mt-2">
-                  <Button size="sm" className="bg-[#25D366] text-white h-8 text-[11px]">Share WhatsApp</Button>
-                  <Button size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[11px]">Copy Link</Button>
-                  <Button size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[11px]">Messenger</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[#25D366] text-white h-8 text-[11px]">Share WhatsApp</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[11px]">Copy Link</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[11px]">Messenger</Button>
                 </div>
               </div>
               <p className="text-[11px] text-gray-500 mt-2">Referrals: sent/pending/qualified/successful/available reward/offers — Marketing can configure offers from backend — not CRM administration, student-facing.</p>

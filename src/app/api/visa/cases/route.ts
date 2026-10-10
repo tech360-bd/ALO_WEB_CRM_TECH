@@ -18,7 +18,7 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     if (riskLevel) where.riskLevel = riskLevel;
     if (currentStage) where.currentStage = currentStage;
     if (studentId) where.studentId = studentId;
-    if (studentName) where.studentName = { contains: studentName, mode: 'insensitive' };
+    if (studentName) where.studentName = { contains: studentName };
 
     // RBAC: visa_officer, visa_interview_officer, super_admin, admin
     const isSuperAdmin = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');

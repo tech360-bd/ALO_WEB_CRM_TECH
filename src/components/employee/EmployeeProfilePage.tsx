@@ -112,7 +112,7 @@ export default function EmployeeProfilePage() {
                   <AvatarFallback className="bg-alo-brand-light text-alo-brand text-2xl font-bold">{displayInitials}</AvatarFallback>
                 </Avatar>
                 {editMode && (
-                  <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-alo-brand text-white rounded-full flex items-center justify-center shadow-md hover:bg-alo-brand/90 transition-colors">
+                  <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="absolute -bottom-1 -right-1 w-8 h-8 bg-alo-brand text-white rounded-full flex items-center justify-center shadow-md hover:bg-alo-brand/90 transition-colors">
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
                 )}

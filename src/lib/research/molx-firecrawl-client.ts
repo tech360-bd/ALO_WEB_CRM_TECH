@@ -11,7 +11,7 @@
 //     - schema-validate (coerceToJson, extractFieldPaths, validateAgainstSchema), plan(schema) → required field paths, formatOutput gate with repair hint
 //  4) firecrawl org (https://github.com/firecrawl) — ecosystem reference
 //
-// ALO practical architecture: Molx self-hosted is primary (free, MIT, on VPS),
+// ALO practical architecture: Molx is an external research integration, not the ALO application hosting target,
 // Firecrawl cloud is fallback when MOLX_URL empty or 5xx.
 // All results map to ALO Prisma MySQL models (University/Course/Country/Visa/Lead)
 // with sourceUrl + lastVerifiedAt (see market-intel-engine.ts + lead pipeline).

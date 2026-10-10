@@ -41,7 +41,7 @@ export async function GET(request: Request) {
         }
       } catch {
         // MockTestCredit table may not exist yet
-        credits = { totalCredits: 3, usedCredits: 0, available: 3 };
+        return NextResponse.json({ success: false, error: 'Mock-test credits could not be verified. Please try again later.' }, { status: 503 });
       }
 
       // Get recent test sessions (TestSession has no @relation to TestResult)
@@ -111,29 +111,40 @@ export async function POST(request: Request) {
         );
       }
 
-      // Check credits (gracefully handle if table doesn't exist)
+      // Consume one credit (gracefully handle if table doesn't exist).
+      //
+      // Enforcement is server-side and race-safe: the guarded UPDATE only
+      // increments when usedCredits < totalCredits still holds inside the
+      // database, so parallel/replayed starts cannot overspend the free
+      // entitlement (the previous read-then-increment allowed a TOCTOU
+      // double-spend, and students with no credit row were never limited).
       try {
         const creditRecord = await db.mockTestCredit.findFirst({
           where: { studentId: profile.id },
         });
 
         if (creditRecord) {
-          const available = creditRecord.totalCredits - creditRecord.usedCredits;
-          if (available <= 0) {
+          const consumed = await db.$executeRaw`
+            UPDATE MockTestCredit
+            SET usedCredits = usedCredits + 1, updatedAt = NOW()
+            WHERE id = ${creditRecord.id} AND usedCredits < totalCredits
+          `;
+          if (Number(consumed) === 0) {
             return NextResponse.json(
               { success: false, error: 'No test credits remaining. Please purchase more credits.' },
               { status: 400 }
             );
           }
-
-          // Deduct a credit
-          await db.mockTestCredit.updateMany({
-            where: { studentId: profile.id },
-            data: { usedCredits: { increment: 1 } },
+        } else {
+          // First-ever start: grant the default free entitlement (3 tests) and
+          // consume the first credit in the same record, so the 3-test limit is
+          // enforced from the very first test instead of being unlimited.
+          await db.mockTestCredit.create({
+            data: { studentId: profile.id, totalCredits: 3, usedCredits: 1, source: 'free' },
           });
         }
       } catch {
-        // If no credit record exists, allow the test (free tier)
+        // MockTestCredit table may not exist yet — preserve free-tier behaviour.
       }
 
       // Create test session
@@ -155,8 +166,10 @@ export async function POST(request: Request) {
 
       return NextResponse.json({ success: true, data: session }, { status: 201 });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Failed to start test session';
-      return NextResponse.json({ success: false, error: message }, { status: 500 });
+      // Never echo raw driver/Prisma messages (connection strings, hostnames,
+      // credentials hints) to the client — log server-side, return generic.
+      console.error('[student-portal/mock-tests] start failed', error);
+      return NextResponse.json({ success: false, error: 'Failed to start test session' }, { status: 500 });
     }
   }, { requireUserTypes: ['STUDENT'] })(request);
 }

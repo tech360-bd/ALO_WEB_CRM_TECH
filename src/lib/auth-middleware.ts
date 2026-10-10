@@ -14,6 +14,8 @@ export interface AuthContext {
   permissions: string[];
   sessionId: string;
   branch?: string;
+  partnerId?: string;
+  partnerRole?: string;
 
   // Actor info for audit logs (especially when actingAs is used)
   actorUserId: string;
@@ -22,18 +24,30 @@ export interface AuthContext {
 }
 
 // ============================================================
-// Extract and validate session from Authorization header
+// Extract and validate session from an HttpOnly cookie or legacy Authorization header
 // ============================================================
-export async function authenticateRequest(request: Request): Promise<AuthContext | NextResponse> {
+function cookieValue(request: Request, name: string): string | null {
+  const header = request.headers.get('cookie') || '';
+  const pair = header.split(';').map((part) => part.trim()).find((part) => part.startsWith(`${name}=`));
+  return pair ? decodeURIComponent(pair.slice(name.length + 1)) : null;
+}
+
+async function authenticateSession(request: Request): Promise<AuthContext | NextResponse> {
   const authHeader = request.headers.get('authorization');
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  // New portal logins use an HttpOnly cookie. Bearer remains supported for
+  // legacy clients, but fabricated empty/null values must not shadow the cookie.
+  const token = bearerToken && bearerToken !== 'null' && bearerToken !== 'undefined'
+    ? bearerToken
+    : cookieValue(request, 'alo_portal_session');
 
   // The web app uses NextAuth cookies while older portal clients use a
   // database-backed Bearer session. Support both without accepting fabricated
   // tokens or bypassing the database checks.
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!token) {
     const { getServerSession } = await import('next-auth');
     const { authOptions } = await import('@/lib/auth');
-    const nextAuthSession = await getServerSession(authOptions);
+    const nextAuthSession = await getServerSession(authOptions).catch(() => null);
     const nextAuthUser = nextAuthSession?.user as {
       id?: string;
       email?: string | null;
@@ -50,9 +64,9 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     }
 
     const user = await db.user.findUnique({ where: { id: nextAuthUser.id } });
-    if (!user || user.status !== 'ACTIVE') {
+    if (!user || user.status !== 'ACTIVE' || !user.emailVerified) {
       return NextResponse.json(
-        { success: false, error: 'Account is not active.' },
+        { success: false, error: 'Account is not active or email is not verified.' },
         { status: 403 }
       );
     }
@@ -66,15 +80,14 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       roles: [role, role.toLowerCase()],
       permissions: JSON.parse(user.permissions || '[]'),
       sessionId: `nextauth:${user.id}`,
+      partnerId: user.partnerId || undefined,
       actorUserId: user.id,
       actorEmail: user.email,
       actorName: user.name || user.email,
     };
   }
 
-  const token = authHeader.substring(7);
-
-  // Look up session in database
+  // Look up the cookie or bearer session in the database
   const session = await db.portalSession.findUnique({
     where: { token },
     include: {
@@ -93,6 +106,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
               },
             },
           },
+          partnerProfile: { select: { id: true, partnerId: true, partnerRole: true, approvalStatus: true } },
         },
       },
     },
@@ -121,16 +135,22 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     );
   }
 
-  // Check if user is active
-  if (session.user.status !== 'active') {
+  // Every database-backed session is revalidated against current account and
+  // email-verification state; revocation/status changes take effect immediately.
+  if (session.user.status.toLowerCase() !== 'active' || !session.user.emailVerified) {
     return NextResponse.json(
-      { success: false, error: 'Account is not active.', error_code: `account_${session.user.status}` },
+      { success: false, error: 'Account is not active or email is not verified.', error_code: `account_${session.user.status}` },
       { status: 403 }
     );
+  }
+  if (session.user.userType === 'PARTNER' && !['approved', 'active'].includes((session.user.partnerProfile?.approvalStatus || '').toLowerCase())) {
+    return NextResponse.json({ success: false, error: 'Partner account approval is required.' }, { status: 403 });
   }
 
   // Base user (Actor) info
   let actingUserId = session.user.id;
+  let actingPartnerId = session.user.partnerProfile?.partnerId;
+  let actingPartnerRole = session.user.partnerProfile?.partnerRole;
   let actingEmail = session.user.email;
   let actingName = session.user.name;
   let actingUserType = session.user.userType;
@@ -158,6 +178,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       const actingAsUser = await db.portalUser.findUnique({
         where: { id: actingAsUserId },
         include: {
+          partnerProfile: { select: { id: true, partnerId: true, partnerRole: true, approvalStatus: true } },
           roles: {
             include: {
               role: {
@@ -174,9 +195,10 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
         },
       });
 
-      if (!actingAsUser || actingAsUser.status !== 'active') {
+      if (!actingAsUser || actingAsUser.status.toLowerCase() !== 'active' || !actingAsUser.emailVerified ||
+        (actingAsUser.userType === 'PARTNER' && !['approved', 'active'].includes((actingAsUser.partnerProfile?.approvalStatus || '').toLowerCase()))) {
         return NextResponse.json(
-          { success: false, error: 'Acting-as target not found or inactive' },
+          { success: false, error: 'Acting-as target not found, inactive, or not approved' },
           { status: 404 }
         ) as any;
       }
@@ -200,6 +222,8 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       actingEmail = actingAsUser.email;
       actingName = actingAsUser.name;
       actingUserType = actingAsUser.userType;
+      actingPartnerId = actingAsUser.partnerProfile?.partnerId;
+      actingPartnerRole = actingAsUser.partnerProfile?.partnerRole;
       roles = actingAsUser.roles.map(ur => ur.role.name);
       permissions = actingAsUser.roles.flatMap(ur =>
         ur.role.permissions
@@ -217,10 +241,36 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     roles,
     permissions,
     sessionId: session.id,
+    partnerId: actingPartnerId,
+    partnerRole: actingPartnerRole,
     actorUserId: session.user.id,
     actorEmail: session.user.email,
     actorName: session.user.name,
   };
+}
+
+/** Revalidate employee lifecycle for every employee/HR request. */
+export async function authenticateRequest(request: Request): Promise<AuthContext | NextResponse> {
+  const result = await authenticateSession(request);
+  if (result instanceof NextResponse) return result;
+  const pathname = new URL(request.url).pathname;
+  const employeeRoute = pathname.startsWith('/api/employee-access/') || pathname.startsWith('/api/admin/employees') || pathname.startsWith('/api/admin/payroll') || pathname === '/api/finance' || pathname.startsWith('/api/finance/') || pathname.startsWith('/api/crm/finance');
+  if (employeeRoute) {
+    if (['STUDENT', 'PARTNER'].includes(result.userType.toUpperCase())) {
+      return NextResponse.json({ success: false, error: 'Employee access required.' }, { status: 403 });
+    }
+    const employee = await db.employee.findFirst({ where: { userId: result.userId }, select: { status: true } });
+    if (employee && employee.status.toLowerCase() !== 'active') {
+      return NextResponse.json({ success: false, error: 'Employee account is not active.' }, { status: 403 });
+    }
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
+      const origin = request.headers.get('origin');
+      if (origin && origin !== new URL(process.env.NEXTAUTH_URL || request.url).origin) {
+        return NextResponse.json({ success: false, error: 'Cross-origin employee mutation denied.' }, { status: 403 });
+      }
+    }
+  }
+  return result;
 }
 
 // ============================================================
@@ -378,13 +428,15 @@ export async function getOptionalAuth(request: Request): Promise<AuthContext | n
                 },
               },
             },
+            partnerProfile: { select: { id: true, partnerId: true, partnerRole: true, approvalStatus: true } },
           },
         },
       },
     });
-    if (!session || session.revokedAt || new Date() > session.expiresAt || session.user.status !== 'active') {
+    if (!session || session.revokedAt || new Date() > session.expiresAt || session.user.status.toLowerCase() !== 'active' || !session.user.emailVerified) {
       return null;
     }
+    if (session.user.userType === 'PARTNER' && !['approved', 'active'].includes((session.user.partnerProfile?.approvalStatus || '').toLowerCase())) return null;
     return {
       userId: session.user.id,
       email: session.user.email,
@@ -395,6 +447,8 @@ export async function getOptionalAuth(request: Request): Promise<AuthContext | n
         ur.role.permissions.filter((rp) => rp.granted).map((rp) => rp.permission.id)
       ),
       sessionId: session.id,
+      partnerId: session.user.partnerProfile?.partnerId,
+      partnerRole: session.user.partnerProfile?.partnerRole,
       actorUserId: session.user.id,
       actorEmail: session.user.email,
       actorName: session.user.name || '',

@@ -7,6 +7,27 @@ import { db } from '@/lib/db';
 import { authenticateRequest } from '@/lib/auth-middleware';
 import { NextResponse } from 'next/server';
 
+function clearPageSessionCookie(response: NextResponse) {
+  const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
+  response.cookies.set('alo_portal_session', '', {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+    expires: new Date(0),
+  });
+  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', '', {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+    expires: new Date(0),
+  });
+  return response;
+}
+
 export async function POST(request: Request) {
   try {
     // Validate the session token from Authorization header
@@ -34,11 +55,11 @@ export async function POST(request: Request) {
         },
       });
 
-      return NextResponse.json({
+      return clearPageSessionCookie(NextResponse.json({
         success: true,
         message: 'All sessions revoked successfully.',
         revokedCount: result.count,
-      });
+      }));
     } else {
       // Revoke only the current session
       const session = await db.portalSession.findUnique({
@@ -59,10 +80,10 @@ export async function POST(request: Request) {
         },
       });
 
-      return NextResponse.json({
+      return clearPageSessionCookie(NextResponse.json({
         success: true,
         message: 'Logged out successfully.',
-      });
+      }));
     }
   } catch (error) {
     console.error('Logout error:', error);

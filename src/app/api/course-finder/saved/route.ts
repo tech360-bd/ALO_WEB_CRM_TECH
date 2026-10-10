@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getOptionalAuth } from '@/lib/auth-middleware';
+import { requireStudentResource } from '@/lib/student-resource-auth';
 export async function GET(req: NextRequest) {
   try {
-    const auth = await getOptionalAuth(req);
-    const userId = auth?.userId || req.nextUrl.searchParams.get('studentId') || 'demo-student';
+    const access = await requireStudentResource(req, req.nextUrl.searchParams.get('studentId'));
+    if (access instanceof NextResponse) return access;
+    const userId = access.studentId;
     const shortlist = await db.courseShortlist.findMany({ where: { studentId: userId }, take: 50 }).catch(()=>[]);
     if (shortlist.length > 0) {
       const courseIds = shortlist.map((s:any)=> s.courseId);
@@ -18,8 +19,11 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { studentId, courseId } = body;
-    if (!studentId || !courseId) return NextResponse.json({ success:false, error:'studentId and courseId required' }, { status:400 });
+    const { studentId: requestedStudentId, courseId } = body;
+    const access = await requireStudentResource(req, requestedStudentId);
+    if (access instanceof NextResponse) return access;
+    const studentId = access.studentId;
+    if (!courseId) return NextResponse.json({ success:false, error:'courseId required' }, { status:400 });
     const existing = await db.courseShortlist.findFirst({ where: { studentId, courseId } }).catch(()=>null);
     if (existing) return NextResponse.json({ success:false, error:'Already saved — unique constraint', duplicate: true }, { status:409 });
     const created = await db.courseShortlist.create({ data: { studentId, courseId, courseSlug: String(courseId) } }).catch(async ()=> {
@@ -30,9 +34,12 @@ export async function POST(req: NextRequest) {
 }
 export async function DELETE(req: NextRequest) {
   try {
-    const studentId = req.nextUrl.searchParams.get('studentId');
+    const requestedStudentId = req.nextUrl.searchParams.get('studentId');
     const courseId = req.nextUrl.searchParams.get('courseId');
-    if (!studentId || !courseId) return NextResponse.json({ success:false, error:'studentId and courseId required' }, { status:400 });
+    const access = await requireStudentResource(req, requestedStudentId);
+    if (access instanceof NextResponse) return access;
+    if (!courseId) return NextResponse.json({ success:false, error:'courseId required' }, { status:400 });
+    const studentId = access.studentId;
     await db.courseShortlist.deleteMany({ where: { studentId, courseId } }).catch(()=>{});
     await db.savedCourse.deleteMany({ where: { studentId, courseName: courseId } }).catch(()=>{});
     return NextResponse.json({ success:true, message:'Removed from shortlist' });

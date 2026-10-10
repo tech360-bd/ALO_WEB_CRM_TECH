@@ -18,7 +18,7 @@ export default function DataImportDashboardRoute() {
         </div>
         <div className="flex gap-3">
           <Link href="/admin/data-import/new">
-            <Button className="bg-[#0057B8] hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
+            <Button className="bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
               <Upload className="w-4 h-4" /> New Multi-CSV Upload
             </Button>
           </Link>
@@ -60,7 +60,7 @@ export default function DataImportDashboardRoute() {
           ].map((file) => (
             <div key={file} className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
               <span className="font-semibold text-slate-800">{file}</span>
-              <Button size="sm" variant="ghost" className="h-7 text-[11px] text-blue-600 hover:text-blue-700">Template</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7 text-[11px] text-blue-600 hover:text-blue-700">Template</Button>
             </div>
           ))}
         </div>

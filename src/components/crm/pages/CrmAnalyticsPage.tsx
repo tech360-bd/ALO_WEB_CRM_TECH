@@ -192,7 +192,7 @@ export default function CrmAnalyticsPage() {
               </div>
             )}
           </div>
-          <Button variant="outline" size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
             <Download className="h-4 w-4 mr-1" />
             Export
           </Button>

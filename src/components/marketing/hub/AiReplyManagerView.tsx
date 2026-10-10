@@ -1,767 +1,581 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
-  Bot,
-  MessageSquare,
-  ShieldCheck,
-  ArrowRightLeft,
-  Plus,
-  Pencil,
-  Trash2,
-  UserCheck,
-  Clock,
-  Languages,
-  Eye,
-  Send,
-  AlertTriangle,
-  CreditCard,
-  Plane,
-  HeadphonesIcon,
-  PhoneCall,
-  Volume2,
-  ImageIcon,
-  Mic,
-  MousePointerClick,
-  Mail,
-  Ban,
-  Unlock,
-  ChevronRight,
-  ToggleLeft,
-  ToggleRight,
-  Zap,
-  Settings,
-  Search,
-  Filter,
-  MoreHorizontal,
-  CheckCircle2,
-  XCircle,
-  Globe,
-} from "lucide-react";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+  Tabs, TabsList, TabsTrigger, TabsContent,
+} from '@/components/ui/tabs';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  Bot, MessageCircle, Zap, RefreshCw, AlertTriangle, Search,
+  Inbox, Info, Shield, ArrowRight,
+} from 'lucide-react';
 
-/* ---------- mock data ---------- */
+// ============================================================
+// Types — mirror the real contracts
+// ============================================================
 
-const mockConversations = [
-  { id: "c1", contact: "Rahim Uddin", phone: "+8801712345678", language: "Bangla", messages: 14, leadCreated: true, studentId: "STU-2045", satisfaction: "Positive", counselor: "Fatima Akter" },
-  { id: "c2", contact: "Sara Islam", phone: "+8801898765432", language: "English", messages: 8, leadCreated: false, studentId: "—", satisfaction: "Neutral", counselor: "Karim Hossain" },
-  { id: "c3", contact: "Mizanur Rahman", phone: "+8801534567890", language: "Mixed", messages: 22, leadCreated: true, studentId: "STU-2047", satisfaction: "Positive", counselor: "Nusrat Jahan" },
-  { id: "c4", contact: "Tasnim Akter", phone: "+8801678901234", language: "Bangla", messages: 5, leadCreated: false, studentId: "—", satisfaction: "Negative", counselor: "Rezaul Haque" },
-  { id: "c5", contact: "Arif Hossain", phone: "+8801612345678", language: "English", messages: 31, leadCreated: true, studentId: "STU-2050", satisfaction: "Positive", counselor: "Farhana Begum" },
-];
+// GET /api/crm/inbox?channel=whatsapp → CommunicationThread
+interface AiThread {
+  id: string;
+  threadCode?: string;
+  studentId?: string | null;
+  subject?: string;
+  intent?: string;
+  priority?: string;
+  assignedToName?: string;
+  status?: string;
+  lastMessageAt?: string;
+  lastMessagePreview?: string;
+  unreadCount?: number;
+  isAiHandled?: boolean;
+  needsHumanTakeover?: boolean;
+  slaStatus?: string;
+}
 
-const mockReplyRules = [
-  { id: "r1", trigger: "Hi / Hello / Salam", reply: "Assalamu Alaikum! Welcome to ALO Education. How can we assist you with your study abroad plans today?", language: "Bangla", active: true },
-  { id: "r2", trigger: "Hi / Hello / Salam", reply: "Hello! Welcome to ALO Education. How can we help you with studying abroad?", language: "English", active: true },
-  { id: "r3", trigger: "Fee / Cost / Price", reply: "Thank you for your interest! Our consultation fee starts from BDT 500. For detailed pricing, please share which country and program you are interested in.", language: "Mixed", active: true },
-  { id: "r4", trigger: "IELTS / PTE / TOEFL", reply: "We offer comprehensive IELTS & PTE preparation courses. Would you like to know about our upcoming batch schedules?", language: "English", active: false },
-  { id: "r5", trigger: "Visa / Requirements", reply: "ভিসা রিকোয়ারমেন্ট নিয়ে আপনাকে সাহায্য করতে পারি। আপনি কোন দেশে আবেদন করতে চান?", language: "Bangla", active: true },
-  { id: "r6", trigger: "Scholarship", reply: "Great news! We have scholarship updates for the UK, Australia, and Canada. Which country interests you most?", language: "English", active: true },
-];
+// GET /api/marketing/keyword-triggers → KeywordTrigger
+interface KeywordTrigger {
+  id: string;
+  keyword: string;
+  keywordType: string;
+  platform: string;
+  autoReplyText: string;
+  autoDmText?: string | null;
+  autoCreateLead: boolean;
+  autoAssignCounselor: boolean;
+  sendPortalLink: boolean;
+  status: string;
+  triggerCount: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
-const mockBlockedUsers = [
-  { id: "b1", name: "Spam Account 1", phone: "+8801899000111", reason: "Repeated spam messages", blockedAt: "2025-01-10", blockedBy: "System" },
-  { id: "b2", name: "Fake Recruiter", phone: "+8801677000222", reason: "Impersonating ALO staff", blockedAt: "2025-01-15", blockedBy: "Admin" },
-  { id: "b3", name: "Abusive User", phone: "+8801555000333", reason: "Harassment & abusive language", blockedAt: "2025-02-01", blockedBy: "Fatima Akter" },
-];
+// GET /api/whatsapp/routing → CommunicationRoutingLog
+interface RoutingLog {
+  id: string;
+  threadId?: string;
+  conversationId?: string;
+  studentId?: string;
+  fromNumber?: string;
+  toNumber?: string;
+  routingReason?: string;
+  priority?: number;
+  assignedToName?: string;
+  branch?: string;
+  department?: string;
+  fallbackUsed?: boolean;
+  createdAt?: string;
+}
 
-const mockTransferHistory = [
-  { id: "t1", contact: "Complex Visa Query", from: "AI Bot", to: "Fatima Akter", reason: "Complex query – multiple visa options", transferredAt: "2025-02-10 14:23" },
-  { id: "t2", contact: "Angry Parent", from: "AI Bot", to: "Karim Hossain", reason: "Customer expressed anger / frustration", transferredAt: "2025-02-11 09:45" },
-  { id: "t3", contact: "Payment Dispute", from: "AI Bot", to: "Nusrat Jahan", reason: "Payment-related query detected", transferredAt: "2025-02-12 16:10" },
-  { id: "t4", contact: "Emergency Travel", from: "AI Bot", to: "Rezaul Haque", reason: "Emergency – urgent visa / travel", transferredAt: "2025-02-13 08:02" },
-];
+interface LoadState {
+  loading: boolean;
+  error: string | null;
+}
 
-/* ---------- main component ---------- */
+const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
+  high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
+  urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
+  medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
+  low: { label: 'Low', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
+  normal: { label: 'Normal', cls: 'bg-gray-100 text-gray-600 border-gray-200' },
+};
+
+function priorityBadge(priority?: string) {
+  const key = (priority || 'normal').toLowerCase();
+  const meta = PRIORITY_CONFIG[key] || PRIORITY_CONFIG.normal;
+  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+}
+
+function formatTimestamp(value?: string | null): string {
+  if (!value) return 'Not recorded';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
 
 export default function AiReplyManagerView() {
-  const [aiMasterToggle, setAiMasterToggle] = useState(true);
-  const [afterHoursEnabled, setAfterHoursEnabled] = useState(true);
-  const [otpEnabled, setOtpEnabled] = useState(true);
-  const [typingSeen, setTypingSeen] = useState(true);
-  const [followUpEnabled, setFollowUpEnabled] = useState(true);
-  const [voiceAnalysis, setVoiceAnalysis] = useState(true);
-  const [imageAnalysis, setImageAnalysis] = useState(true);
-  const [searchBlocked, setSearchBlocked] = useState("");
-  const [addRuleOpen, setAddRuleOpen] = useState(false);
-  const [newRule, setNewRule] = useState({ trigger: "", reply: "", language: "Bangla" });
+  const [threads, setThreads] = useState<AiThread[]>([]);
+  const [threadState, setThreadState] = useState<LoadState>({ loading: true, error: null });
 
-  const transferTriggers = [
-    { label: "Complex Query", icon: AlertTriangle, enabled: true },
-    { label: "Angry / Frustrated", icon: HeadphonesIcon, enabled: true },
-    { label: "Payment Related", icon: CreditCard, enabled: true },
-    { label: "Visa / Immigration", icon: Plane, enabled: true },
-    { label: "Complaint", icon: PhoneCall, enabled: true },
-    { label: "Emergency", icon: Zap, enabled: true },
-  ];
+  const [triggers, setTriggers] = useState<KeywordTrigger[]>([]);
+  const [triggerState, setTriggerState] = useState<LoadState>({ loading: true, error: null });
+  const [triggerSearch, setTriggerSearch] = useState('');
 
-  const [triggerStates, setTriggerStates] = useState(
-    Object.fromEntries(transferTriggers.map((t) => [t.label, t.enabled]))
-  );
+  const [routingLogs, setRoutingLogs] = useState<RoutingLog[]>([]);
+  const [routingState, setRoutingState] = useState<LoadState>({ loading: true, error: null });
 
-  const toggleTrigger = (label: string) => {
-    setTriggerStates((prev) => ({ ...prev, [label]: !prev[label] }));
+  const loadThreads = useCallback(async () => {
+    setThreadState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/crm/inbox?channel=whatsapp&limit=100');
+      if (!response.ok) throw new Error(`Could not load AI-handled conversations (HTTP ${response.status})`);
+      const payload = await response.json();
+      setThreads(Array.isArray(payload?.data) ? payload.data : []);
+      setThreadState({ loading: false, error: null });
+    } catch (error) {
+      setThreads([]);
+      setThreadState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load AI-handled conversations',
+      });
+    }
+  }, []);
+
+  const loadTriggers = useCallback(async () => {
+    setTriggerState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/marketing/keyword-triggers');
+      if (!response.ok) throw new Error(`Could not load reply rules (HTTP ${response.status})`);
+      const payload = await response.json();
+      setTriggers(Array.isArray(payload?.triggers) ? payload.triggers : []);
+      setTriggerState({ loading: false, error: null });
+    } catch (error) {
+      setTriggers([]);
+      setTriggerState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load reply rules',
+      });
+    }
+  }, []);
+
+  const loadRouting = useCallback(async () => {
+    setRoutingState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/whatsapp/routing');
+      if (!response.ok) throw new Error(`Could not load routing history (HTTP ${response.status})`);
+      const payload = await response.json();
+      setRoutingLogs(Array.isArray(payload?.logs) ? payload.logs : []);
+      setRoutingState({ loading: false, error: null });
+    } catch (error) {
+      setRoutingLogs([]);
+      setRoutingState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load routing history',
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadThreads();
+    void loadTriggers();
+    void loadRouting();
+  }, [loadThreads, loadTriggers, loadRouting]);
+
+  const refreshAll = async () => {
+    await Promise.all([loadThreads(), loadTriggers(), loadRouting()]);
   };
 
+  const aiHandledCount = useMemo(
+    () => threads.filter((thread) => thread.isAiHandled === true).length,
+    [threads],
+  );
+  const takeoverCount = useMemo(
+    () => threads.filter((thread) => thread.needsHumanTakeover === true).length,
+    [threads],
+  );
+  const activeTriggerCount = useMemo(
+    () => triggers.filter((trigger) => trigger.status === 'ACTIVE').length,
+    [triggers],
+  );
+  const totalTriggers = useMemo(
+    () => triggers.reduce((sum, trigger) => sum + (trigger.triggerCount || 0), 0),
+    [triggers],
+  );
+
+  const filteredTriggers = useMemo(() => {
+    const term = triggerSearch.trim().toLowerCase();
+    if (!term) return triggers;
+    return triggers.filter((trigger) =>
+      [trigger.keyword, trigger.autoReplyText, trigger.platform, trigger.status]
+        .some((value) => String(value || '').toLowerCase().includes(term)),
+    );
+  }, [triggers, triggerSearch]);
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Bot className="h-7 w-7 text-purple-500" />
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+            <Bot className="h-6 w-6 text-primary" />
             AI Reply Manager
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Configure AI auto-replies, conversation handling, rules, and block/transfer policies for ALO Education.
+          <p className="text-muted-foreground mt-1 text-sm">
+            Keyword reply rules, the conversations AI is handling, and routing history.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-lg border px-3 py-2 bg-white">
-            <span className="text-sm font-medium text-muted-foreground">AI Master</span>
-            <Switch checked={aiMasterToggle} onCheckedChange={setAiMasterToggle} />
-            <span className={`text-sm font-semibold ${aiMasterToggle ? "text-purple-600" : "text-gray-400"}`}>
-              {aiMasterToggle ? "ON" : "OFF"}
-            </span>
-          </div>
-        </div>
+        <Button variant="outline" size="sm" onClick={() => void refreshAll()}>
+          <RefreshCw
+            className={`mr-1 h-4 w-4 ${threadState.loading || triggerState.loading || routingState.loading ? 'animate-spin' : ''}`}
+          />
+          Refresh
+        </Button>
       </div>
 
-      <Separator />
-
-      {/* Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Active Conversations", value: "142", icon: MessageSquare, color: "text-purple-600 bg-purple-50" },
-          { label: "Replies Today", value: "1,285", icon: Send, color: "text-green-600 bg-green-50" },
-          { label: "Transferred to Human", value: "23", icon: ArrowRightLeft, color: "text-amber-600 bg-amber-50" },
-          { label: "Blocked Users", value: mockBlockedUsers.length, icon: Ban, color: "text-red-600 bg-red-50" },
-        ].map((stat) => (
-          <Card key={stat.label} className="shadow-sm">
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${stat.color}`}>
-                <stat.icon className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid gap-3 sm:grid-cols-4">
+        <Card>
+          <CardContent className="flex items-center justify-between pt-6">
+            <div>
+              <p className="text-muted-foreground text-xs">AI-handled</p>
+              <p className="text-2xl font-bold">{aiHandledCount}</p>
+            </div>
+            <Bot className="text-muted-foreground h-5 w-5" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center justify-between pt-6">
+            <div>
+              <p className="text-muted-foreground text-xs">Awaiting takeover</p>
+              <p className="text-2xl font-bold">{takeoverCount}</p>
+            </div>
+            <MessageCircle className="text-muted-foreground h-5 w-5" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center justify-between pt-6">
+            <div>
+              <p className="text-muted-foreground text-xs">Active rules</p>
+              <p className="text-2xl font-bold">{activeTriggerCount}</p>
+            </div>
+            <Zap className="text-muted-foreground h-5 w-5" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center justify-between pt-6">
+            <div>
+              <p className="text-muted-foreground text-xs">Rule matches</p>
+              <p className="text-2xl font-bold">{totalTriggers}</p>
+            </div>
+            <Shield className="text-muted-foreground h-5 w-5" />
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="config" className="w-full">
-        <TabsList className="flex flex-wrap h-auto gap-1 p-1">
-          <TabsTrigger value="config" className="gap-1.5">
-            <Settings className="h-4 w-4" />
-            Reply Config
+      <Tabs defaultValue="rules">
+        <TabsList className="h-9">
+          <TabsTrigger value="rules" className="h-8 px-3 text-xs font-medium">
+            Reply rules ({triggers.length})
           </TabsTrigger>
-          <TabsTrigger value="conversations" className="gap-1.5">
-            <MessageSquare className="h-4 w-4" />
-            AI Conversations
+          <TabsTrigger value="conversations" className="h-8 px-3 text-xs font-medium">
+            AI conversations ({threads.length})
           </TabsTrigger>
-          <TabsTrigger value="rules" className="gap-1.5">
-            <ShieldCheck className="h-4 w-4" />
-            Rule-based Replies
-          </TabsTrigger>
-          <TabsTrigger value="block" className="gap-1.5">
-            <Ban className="h-4 w-4" />
-            Block/Transfer
+          <TabsTrigger value="routing" className="h-8 px-3 text-xs font-medium">
+            Routing history ({routingLogs.length})
           </TabsTrigger>
         </TabsList>
 
-        {/* ===== TAB 1: Reply Config ===== */}
-        <TabsContent value="config" className="space-y-6 mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Office Hours & After Hours */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Clock className="h-5 w-5 text-purple-500" />
-                  Office Hours
-                </CardTitle>
-                <CardDescription>Configure active response window and after-hours behavior.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium">Start Time</Label>
-                    <Input type="time" defaultValue="10:00" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">End Time</Label>
-                    <Input type="time" defaultValue="18:00" className="mt-1" />
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium">After-hours Auto-reply</p>
-                    <p className="text-xs text-muted-foreground">Send automated response outside office hours</p>
-                  </div>
-                  <Switch checked={afterHoursEnabled} onCheckedChange={setAfterHoursEnabled} />
-                </div>
-                {afterHoursEnabled && (
-                  <Textarea
-                    placeholder="After-hours reply message..."
-                    defaultValue="Thank you for reaching ALO Education! Our office hours are 10 AM – 6 PM. We'll get back to you as soon as possible. আমাদের অফিস সময় সকাল ১০টা – সন্ধ্যা ৬টা।"
-                    className="min-h-[80px]"
-                  />
-                )}
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium">Follow-up Automation</p>
-                    <p className="text-xs text-muted-foreground">Auto-follow-up on unanswered leads after 24h</p>
-                  </div>
-                  <Switch checked={followUpEnabled} onCheckedChange={setFollowUpEnabled} />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Privacy & Security */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <ShieldCheck className="h-5 w-5 text-purple-500" />
-                  Privacy & Security
-                </CardTitle>
-                <CardDescription>OTP verification and data protection settings.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium">OTP Before Private Data</p>
-                    <p className="text-xs text-muted-foreground">Require OTP verification before sharing personal/sensitive data</p>
-                  </div>
-                  <Switch checked={otpEnabled} onCheckedChange={setOtpEnabled} />
-                </div>
-                <Separator />
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Supported Languages</Label>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="gap-1 text-purple-600 border-purple-200 bg-purple-50">
-                      <Globe className="h-3 w-3" /> Bangla
-                    </Badge>
-                    <Badge variant="outline" className="gap-1 text-purple-600 border-purple-200 bg-purple-50">
-                      <Globe className="h-3 w-3" /> English
-                    </Badge>
-                    <Badge variant="outline" className="gap-1 text-purple-600 border-purple-200 bg-purple-50">
-                      <Globe className="h-3 w-3" /> Mixed (Benglish)
-                    </Badge>
-                  </div>
-                </div>
-                <Separator />
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Conversation Features</Label>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">Typing & Seen Indicators</span>
-                      </div>
-                      <Switch checked={typingSeen} onCheckedChange={setTypingSeen} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Volume2 className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">Voice Message Analysis</span>
-                      </div>
-                      <Switch checked={voiceAnalysis} onCheckedChange={setVoiceAnalysis} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <ImageIcon className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">Image / Document Analysis</span>
-                      </div>
-                      <Switch checked={imageAnalysis} onCheckedChange={setImageAnalysis} />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Human Transfer Triggers */}
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <ArrowRightLeft className="h-5 w-5 text-purple-500" />
-                  Human Transfer Triggers
-                </CardTitle>
-                <CardDescription>
-                  Automatically transfer to a human counselor when these situations are detected by AI.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {transferTriggers.map((trigger) => (
-                    <div
-                      key={trigger.label}
-                      className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
-                        triggerStates[trigger.label] ? "border-purple-200 bg-purple-50" : "border-muted bg-background"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-md ${triggerStates[trigger.label] ? "bg-purple-500 text-white" : "bg-muted text-muted-foreground"}`}>
-                          <trigger.icon className="h-4 w-4" />
-                        </div>
-                        <span className="text-sm font-medium">{trigger.label}</span>
-                      </div>
-                      <Switch checked={triggerStates[trigger.label]} onCheckedChange={() => toggleTrigger(trigger.label)} />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Per-Conversation AI Toggle */}
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Bot className="h-5 w-5 text-purple-500" />
-                  Per-Conversation AI Settings
-                </CardTitle>
-                <CardDescription>Enable or disable AI replies for specific conversation categories.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Conversation Type</TableHead>
-                      <TableHead className="text-center">AI Enabled</TableHead>
-                      <TableHead>Auto-welcome</TableHead>
-                      <TableHead className="text-center">Active</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {[
-                      { type: "General Inquiry", aiEnabled: true, autoWelcome: true, active: true },
-                      { type: "Course Information", aiEnabled: true, autoWelcome: true, active: true },
-                      { type: "Visa & Immigration", aiEnabled: false, autoWelcome: true, active: true },
-                      { type: "Scholarship Queries", aiEnabled: true, autoWelcome: false, active: true },
-                      { type: "IELTS / PTE Prep", aiEnabled: true, autoWelcome: true, active: true },
-                      { type: "Payment & Billing", aiEnabled: false, autoWelcome: false, active: true },
-                      { type: "Complaints & Feedback", aiEnabled: false, autoWelcome: false, active: true },
-                      { type: "Document Collection", aiEnabled: true, autoWelcome: false, active: true },
-                    ].map((row) => (
-                      <TableRow key={row.type}>
-                        <TableCell className="font-medium">{row.type}</TableCell>
-                        <TableCell className="text-center">
-                          <Switch defaultChecked={row.aiEnabled} />
-                        </TableCell>
-                        <TableCell>{row.autoWelcome ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-gray-300 mx-auto" />}</TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant={row.active ? "default" : "secondary"} className={row.active ? "bg-purple-500 hover:bg-purple-600" : ""}>
-                            {row.active ? "Active" : "Inactive"}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+        {/* ── REPLY RULES ── */}
+        <TabsContent value="rules" className="mt-4 space-y-4">
+          <div className="relative max-w-sm">
+            <Search className="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
+            <Input
+              value={triggerSearch}
+              onChange={(event) => setTriggerSearch(event.target.value)}
+              placeholder="Search keyword or reply text"
+              className="pl-8"
+            />
           </div>
-        </TabsContent>
 
-        {/* ===== TAB 2: AI Conversations ===== */}
-        <TabsContent value="conversations" className="space-y-6 mt-6">
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          {triggerState.error && (
+            <Card>
+              <CardContent className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-sm">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <MessageSquare className="h-5 w-5 text-purple-500" />
-                    AI-Handled Conversations
-                  </CardTitle>
-                  <CardDescription>Recent conversations managed by the AI reply system.</CardDescription>
+                  <p className="font-medium">{triggerState.error}</p>
+                  <button
+                    type="button"
+                    className="mt-1 underline underline-offset-2"
+                    onClick={() => void loadTriggers()}
+                  >
+                    Try again
+                  </button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Search conversations..." className="pl-9 w-64" />
-                  </div>
-                  <Button variant="outline" size="sm" className="gap-1">
-                    <Filter className="h-3.5 w-3.5" /> Filter
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Language</TableHead>
-                      <TableHead className="text-center">Messages</TableHead>
-                      <TableHead className="text-center">Lead Created</TableHead>
-                      <TableHead>Student ID</TableHead>
-                      <TableHead>Satisfaction</TableHead>
-                      <TableHead>Counselor</TableHead>
-                      <TableHead className="text-center">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockConversations.map((conv) => (
-                      <TableRow key={conv.id}>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium text-sm">{conv.contact}</p>
-                            <p className="text-xs text-muted-foreground">{conv.phone}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={
-                              conv.language === "Bangla"
-                                ? "border-purple-200 bg-purple-50 text-purple-600"
-                                : conv.language === "English"
-                                ? "border-blue-200 bg-blue-50 text-blue-600"
-                                : "border-amber-200 bg-amber-50 text-amber-600"
-                            }
-                          >
-                            <Globe className="h-3 w-3 mr-1" />
-                            {conv.language}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center font-medium">{conv.messages}</TableCell>
-                        <TableCell className="text-center">
-                          {conv.leadCreated ? (
-                            <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" />
-                          ) : (
-                            <XCircle className="h-4 w-4 text-gray-300 mx-auto" />
-                          )}
-                        </TableCell>
-                        <TableCell className="font-mono text-xs">{conv.studentId}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={
-                              conv.satisfaction === "Positive"
-                                ? "border-green-200 bg-green-50 text-green-600"
-                                : conv.satisfaction === "Negative"
-                                ? "border-red-200 bg-red-50 text-red-600"
-                                : "border-gray-200 bg-gray-50 text-gray-600"
-                            }
-                          >
-                            {conv.satisfaction}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm">{conv.counselor}</TableCell>
-                        <TableCell className="text-center">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <Eye className="h-4 w-4 text-purple-500" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>View conversation</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <ArrowRightLeft className="h-4 w-4 text-amber-500" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Transfer to human</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          )}
 
-        {/* ===== TAB 3: Rule-based Replies ===== */}
-        <TabsContent value="rules" className="space-y-6 mt-6">
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <ShieldCheck className="h-5 w-5 text-purple-500" />
-                    Rule-based Reply Templates
-                  </CardTitle>
-                  <CardDescription>
-                    Pre-configured replies that bypass AI, saving cost and ensuring consistency. These trigger on exact keyword matches.
-                  </CardDescription>
-                </div>
-                <Dialog open={addRuleOpen} onOpenChange={setAddRuleOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-purple-500 hover:bg-purple-600 gap-1.5">
-                      <Plus className="h-4 w-4" /> Add Rule
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2">
-                        <Plus className="h-5 w-5 text-purple-500" />
-                        Add Reply Rule
-                      </DialogTitle>
-                      <DialogDescription>
-                        Define a trigger keyword and the reply template. This rule will bypass AI processing.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-2">
-                      <div>
-                        <Label>Trigger Keywords</Label>
-                        <Input
-                          placeholder="e.g., Hi / Hello / Salam"
-                          value={newRule.trigger}
-                          onChange={(e) => setNewRule({ ...newRule, trigger: e.target.value })}
-                          className="mt-1"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">Separate keywords with &quot; / &quot;</p>
-                      </div>
-                      <div>
-                        <Label>Reply Template</Label>
-                        <Textarea
-                          placeholder="Enter the auto-reply message..."
-                          value={newRule.reply}
-                          onChange={(e) => setNewRule({ ...newRule, reply: e.target.value })}
-                          className="mt-1 min-h-[100px]"
-                        />
-                      </div>
-                      <div>
-                        <Label>Language</Label>
-                        <Select value={newRule.language} onValueChange={(v) => setNewRule({ ...newRule, language: v })}>
-                          <SelectTrigger className="mt-1">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Bangla">Bangla</SelectItem>
-                            <SelectItem value="English">English</SelectItem>
-                            <SelectItem value="Mixed">Mixed (Benglish)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setAddRuleOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button className="bg-purple-500 hover:bg-purple-600" onClick={() => setAddRuleOpen(false)}>
-                        Save Rule
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Trigger Keywords</TableHead>
-                      <TableHead>Reply Template</TableHead>
-                      <TableHead>Language</TableHead>
-                      <TableHead className="text-center">Status</TableHead>
-                      <TableHead className="text-center">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockReplyRules.map((rule) => (
-                      <TableRow key={rule.id}>
-                        <TableCell>
-                          <Badge variant="outline" className="font-mono text-xs border-purple-200 bg-purple-50 text-purple-700">
-                            {rule.trigger}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <p className="text-sm max-w-xs truncate">{rule.reply}</p>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="border-purple-200 bg-purple-50 text-purple-600">
-                            <Globe className="h-3 w-3 mr-1" />
-                            {rule.language}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant={rule.active ? "default" : "secondary"} className={rule.active ? "bg-purple-500 hover:bg-purple-600" : ""}>
-                            {rule.active ? "Active" : "Inactive"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Pencil className="h-4 w-4 text-purple-500" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              <div className="mt-4 p-3 rounded-lg bg-purple-50 border border-purple-100">
-                <p className="text-sm text-purple-700 flex items-center gap-2">
-                  <Zap className="h-4 w-4" />
-                  <strong>Cost Saver:</strong> Rule-based replies bypass AI processing, reducing API costs for common greetings and FAQs.
+          {triggerState.loading ? (
+            <Card>
+              <CardContent className="text-muted-foreground py-12 text-center text-sm">
+                Loading reply rules…
+              </CardContent>
+            </Card>
+          ) : filteredTriggers.length === 0 && !triggerState.error ? (
+            <Card>
+              <CardContent className="text-muted-foreground flex flex-col items-center gap-2 py-14 text-center">
+                <Zap className="h-8 w-8 opacity-30" />
+                <p className="text-sm">
+                  {triggers.length === 0
+                    ? 'No keyword reply rule has been created yet.'
+                    : 'No rule matches that search.'}
                 </p>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[180px]">Keyword</TableHead>
+                        <TableHead>Auto reply</TableHead>
+                        <TableHead className="w-[110px]">Platform</TableHead>
+                        <TableHead className="w-[130px]">Actions</TableHead>
+                        <TableHead className="w-[100px]">Matches</TableHead>
+                        <TableHead className="w-[100px]">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredTriggers.map((trigger) => (
+                        <TableRow key={trigger.id}>
+                          <TableCell>
+                            <p className="font-medium">{trigger.keyword}</p>
+                            <p className="text-muted-foreground text-[10px]">
+                              {trigger.keywordType || 'EXACT'}
+                            </p>
+                          </TableCell>
+                          <TableCell className="max-w-[320px] text-xs">
+                            {trigger.autoReplyText || 'No reply text recorded.'}
+                          </TableCell>
+                          <TableCell className="text-xs">{trigger.platform || 'ALL'}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1">
+                              {trigger.autoCreateLead ? (
+                                <Badge variant="outline" className="text-[10px]">Lead</Badge>
+                              ) : null}
+                              {trigger.autoAssignCounselor ? (
+                                <Badge variant="outline" className="text-[10px]">Assign</Badge>
+                              ) : null}
+                              {trigger.sendPortalLink ? (
+                                <Badge variant="outline" className="text-[10px]">Portal link</Badge>
+                              ) : null}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-xs">{trigger.triggerCount || 0}</TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className={`text-[10px] ${
+                                trigger.status === 'ACTIVE'
+                                  ? 'bg-green-100 text-green-700 border-green-200'
+                                  : 'bg-gray-100 text-gray-600 border-gray-200'
+                              }`}
+                            >
+                              {trigger.status || 'UNKNOWN'}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
-        {/* ===== TAB 4: Block/Transfer ===== */}
-        <TabsContent value="block" className="space-y-6 mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Blocked Users */}
+        {/* ── AI CONVERSATIONS ── */}
+        <TabsContent value="conversations" className="mt-4 space-y-4">
+          {threadState.error && (
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Ban className="h-5 w-5 text-red-500" />
-                  Blocked Users
-                </CardTitle>
-                <CardDescription>Manage blocked numbers. They will not receive any replies.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search blocked users..."
-                    className="pl-9"
-                    value={searchBlocked}
-                    onChange={(e) => setSearchBlocked(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-3 max-h-80 overflow-y-auto">
-                  {mockBlockedUsers.map((user) => (
-                    <div key={user.id} className="flex items-start justify-between p-3 rounded-lg border bg-red-50/50">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium">{user.name}</p>
-                        <p className="text-xs text-muted-foreground">{user.phone}</p>
-                        <p className="text-xs text-red-600">Reason: {user.reason}</p>
-                        <p className="text-xs text-muted-foreground">Blocked on {user.blockedAt} by {user.blockedBy}</p>
-                      </div>
-                      <Button variant="outline" size="sm" className="gap-1 text-green-600 border-green-200 hover:bg-green-50 shrink-0">
-                        <Unlock className="h-3.5 w-3.5" /> Unblock
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-                <div className="pt-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="gap-1 text-red-600 border-red-200 hover:bg-red-50">
-                        <Ban className="h-3.5 w-3.5" /> Block New Number
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Block a Phone Number</DialogTitle>
-                        <DialogDescription>This number will not receive any messages from ALO Education.</DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4 py-2">
-                        <div>
-                          <Label>Phone Number</Label>
-                          <Input placeholder="+8801XXXXXXXXX" className="mt-1" />
-                        </div>
-                        <div>
-                          <Label>Reason</Label>
-                          <Textarea placeholder="Reason for blocking..." className="mt-1" />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button variant="outline">Cancel</Button>
-                        <Button variant="destructive" className="gap-1">
-                          <Ban className="h-4 w-4" /> Block Number
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+              <CardContent className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-sm">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">{threadState.error}</p>
+                  <button
+                    type="button"
+                    className="mt-1 underline underline-offset-2"
+                    onClick={() => void loadThreads()}
+                  >
+                    Try again
+                  </button>
                 </div>
               </CardContent>
             </Card>
+          )}
 
-            {/* Transfer History */}
+          {threadState.loading ? (
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <ArrowRightLeft className="h-5 w-5 text-amber-500" />
-                  Transfer History
-                </CardTitle>
-                <CardDescription>Recent AI-to-human transfers triggered by automated rules.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 max-h-[420px] overflow-y-auto">
-                  {mockTransferHistory.map((transfer) => (
-                    <div key={transfer.id} className="p-3 rounded-lg border bg-amber-50/30 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">{transfer.contact}</p>
-                        <span className="text-xs text-muted-foreground">{transfer.transferredAt}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Badge variant="outline" className="bg-purple-50 text-purple-600 border-purple-200">
-                          <Bot className="h-3 w-3 mr-1" /> {transfer.from}
-                        </Badge>
-                        <ChevronRight className="h-3 w-3" />
-                        <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">
-                          <UserCheck className="h-3 w-3 mr-1" /> {transfer.to}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <AlertTriangle className="h-3 w-3 text-amber-500" />
-                        {transfer.reason}
-                      </p>
-                    </div>
-                  ))}
+              <CardContent className="text-muted-foreground py-12 text-center text-sm">
+                Loading conversations…
+              </CardContent>
+            </Card>
+          ) : threads.length === 0 && !threadState.error ? (
+            <Card>
+              <CardContent className="text-muted-foreground flex flex-col items-center gap-2 py-14 text-center">
+                <Inbox className="h-8 w-8 opacity-30" />
+                <p className="text-sm">No WhatsApp conversation has been recorded yet.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Conversation</TableHead>
+                        <TableHead className="w-[120px]">Handling</TableHead>
+                        <TableHead className="w-[100px]">Priority</TableHead>
+                        <TableHead className="w-[150px]">Assigned to</TableHead>
+                        <TableHead className="w-[170px]">Last message</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {threads.map((thread) => (
+                        <TableRow key={thread.id}>
+                          <TableCell>
+                            <p className="font-medium">
+                              {thread.subject || thread.lastMessagePreview || thread.threadCode || 'Untitled conversation'}
+                            </p>
+                            <p className="text-muted-foreground text-xs">
+                              {thread.threadCode || 'No thread code'}
+                              {thread.studentId ? ` · Student ${thread.studentId}` : ''}
+                              {thread.intent ? ` · ${thread.intent}` : ''}
+                            </p>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className={`text-[10px] ${
+                                thread.isAiHandled
+                                  ? 'bg-violet-100 text-violet-700 border-violet-200'
+                                  : 'bg-sky-100 text-sky-700 border-sky-200'
+                              }`}
+                            >
+                              {thread.isAiHandled ? 'AI' : 'Human'}
+                            </Badge>
+                            {thread.needsHumanTakeover ? (
+                              <Badge variant="outline" className="mt-1 bg-red-100 text-red-700 text-[10px]">
+                                Needs takeover
+                              </Badge>
+                            ) : null}
+                          </TableCell>
+                          <TableCell>{priorityBadge(thread.priority)}</TableCell>
+                          <TableCell className="text-xs">
+                            {thread.assignedToName || <span className="text-muted-foreground">Unassigned</span>}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {formatTimestamp(thread.lastMessageAt)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          )}
+        </TabsContent>
+
+        {/* ── ROUTING HISTORY ── */}
+        <TabsContent value="routing" className="mt-4 space-y-4">
+          {routingState.error && (
+            <Card>
+              <CardContent className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-sm">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">{routingState.error}</p>
+                  <button
+                    type="button"
+                    className="mt-1 underline underline-offset-2"
+                    onClick={() => void loadRouting()}
+                  >
+                    Try again
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {routingState.loading ? (
+            <Card>
+              <CardContent className="text-muted-foreground py-12 text-center text-sm">
+                Loading routing history…
+              </CardContent>
+            </Card>
+          ) : routingLogs.length === 0 && !routingState.error ? (
+            <Card>
+              <CardContent className="text-muted-foreground flex flex-col items-center gap-2 py-14 text-center">
+                <ArrowRight className="h-8 w-8 opacity-30" />
+                <p className="text-sm">No routing decision has been logged yet.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Conversation</TableHead>
+                        <TableHead className="w-[170px]">Reason</TableHead>
+                        <TableHead className="w-[170px]">Assigned to</TableHead>
+                        <TableHead className="w-[130px]">Department</TableHead>
+                        <TableHead className="w-[170px]">Recorded</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {routingLogs.map((log) => (
+                        <TableRow key={log.id}>
+                          <TableCell>
+                            <p className="font-medium">
+                              {log.conversationId || log.threadId || 'No reference'}
+                            </p>
+                            <p className="text-muted-foreground text-xs">
+                              {log.studentId ? `Student ${log.studentId}` : 'Not linked to a student'}
+                            </p>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-[10px]">
+                              {(log.routingReason || 'unspecified').replace(/_/g, ' ')}
+                            </Badge>
+                            {log.fallbackUsed ? (
+                              <Badge variant="outline" className="mt-1 bg-amber-100 text-amber-700 text-[10px]">
+                                Fallback used
+                              </Badge>
+                            ) : null}
+                          </TableCell>
+                          <TableCell className="text-xs">
+                            {log.assignedToName || <span className="text-muted-foreground">Unassigned</span>}
+                            {log.branch ? (
+                              <span className="text-muted-foreground block">{log.branch}</span>
+                            ) : null}
+                          </TableCell>
+                          <TableCell className="text-xs">
+                            {log.department || <span className="text-muted-foreground">—</span>}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {formatTimestamp(log.createdAt)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
+
+      <Card>
+        <CardContent className="text-muted-foreground flex items-start gap-2 pt-6 text-xs">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Reply rules are edited on the Keyword Triggers screen, which writes to the same
+            keyword-trigger store this list reads. There is no global AI on/off switch, no
+            after-hours mode and no blocked-contact list in this platform, so no such controls are
+            shown. Satisfaction ratings, language detection and per-contact message counts are not
+            recorded on the conversation thread and are therefore not displayed.
+          </span>
+        </CardContent>
+      </Card>
     </div>
   );
 }

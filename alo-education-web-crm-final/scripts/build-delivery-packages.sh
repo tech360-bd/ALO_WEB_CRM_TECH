@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# LEGACY / NOT USED FOR CURRENT PRODUCTION
+echo "DISABLED: legacy package layout is not an approved Hostinger artifact. See HOSTINGER-RUNTIME-STANDARD.md." >&2
+exit 1
 # Final complete packaging script for ALO Education deliverables
 set -Eeuo pipefail
 

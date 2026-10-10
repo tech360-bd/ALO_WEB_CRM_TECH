@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -151,7 +151,7 @@ const MOCK_COURSES: CourseData[] = [
     level: 'Masters',
     subject: 'Computer Science',
     ranking: 84,
-    logoColor: 'bg-[#0057B8]',
+    logoColor: 'bg-[#2563EB]',
   },
   {
     id: '4',
@@ -271,7 +271,7 @@ const MOCK_COURSES: CourseData[] = [
     level: 'Foundation',
     subject: 'Business',
     ranking: 0,
-    logoColor: 'bg-[#0057B8]',
+    logoColor: 'bg-[#2563EB]',
   },
   {
     id: '9',
@@ -344,7 +344,7 @@ const QUICK_FILTERS = [
 // ─── Match Score Color ───────────────────────────────────────────────
 function matchColor(score: number) {
   if (score >= 90) return 'bg-emerald-500 text-white';
-  if (score >= 80) return 'bg-[#0057B8] text-white';
+  if (score >= 80) return 'bg-[#2563EB] text-white';
   if (score >= 70) return 'bg-amber-500 text-white';
   return 'bg-slate-400 text-white';
 }
@@ -410,8 +410,8 @@ function FilterSidebarContent({
               onClick={() => toggleQuickFilter(f.label)}
               className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all border cursor-pointer
                 ${activeQuickFilters.includes(f.label)
-                  ? 'bg-[#0057B8] text-white border-[#0057B8]'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-[#0057B8] hover:text-[#0057B8]'
+                  ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-[#2563EB] hover:text-[#2563EB]'
                 }`}
             >
               {f.label}
@@ -424,7 +424,7 @@ function FilterSidebarContent({
 
       {/* Country */}
       <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
+        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#2563EB] transition-colors cursor-pointer">
           <span className="flex items-center gap-2"><Globe className="size-4" /> Country</span>
           <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
         </CollapsibleTrigger>
@@ -435,9 +435,9 @@ function FilterSidebarContent({
                 <Checkbox
                   checked={selectedCountries.includes(c)}
                   onCheckedChange={() => toggleItem(selectedCountries, c, setSelectedCountries)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+                  className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{c}</span>
+                <span className="text-sm text-slate-700 group-hover:text-[#2563EB] transition-colors">{c}</span>
               </label>
             ))}
           </div>
@@ -448,7 +448,7 @@ function FilterSidebarContent({
 
       {/* Program Level */}
       <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
+        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#2563EB] transition-colors cursor-pointer">
           <span className="flex items-center gap-2"><GraduationCap className="size-4" /> Program Level</span>
           <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
         </CollapsibleTrigger>
@@ -459,9 +459,9 @@ function FilterSidebarContent({
                 <Checkbox
                   checked={selectedLevels.includes(l)}
                   onCheckedChange={() => toggleItem(selectedLevels, l, setSelectedLevels)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+                  className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{l}</span>
+                <span className="text-sm text-slate-700 group-hover:text-[#2563EB] transition-colors">{l}</span>
               </label>
             ))}
           </div>
@@ -472,7 +472,7 @@ function FilterSidebarContent({
 
       {/* Subject Area */}
       <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
+        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#2563EB] transition-colors cursor-pointer">
           <span className="flex items-center gap-2"><Star className="size-4" /> Subject Area</span>
           <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
         </CollapsibleTrigger>
@@ -483,9 +483,9 @@ function FilterSidebarContent({
                 <Checkbox
                   checked={selectedSubjects.includes(s)}
                   onCheckedChange={() => toggleItem(selectedSubjects, s, setSelectedSubjects)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+                  className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{s}</span>
+                <span className="text-sm text-slate-700 group-hover:text-[#2563EB] transition-colors">{s}</span>
               </label>
             ))}
           </div>
@@ -496,7 +496,7 @@ function FilterSidebarContent({
 
       {/* Intake */}
       <Collapsible>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
+        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#2563EB] transition-colors cursor-pointer">
           <span className="flex items-center gap-2"><Calendar className="size-4" /> Intake</span>
           <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
         </CollapsibleTrigger>
@@ -507,9 +507,9 @@ function FilterSidebarContent({
                 <Checkbox
                   checked={selectedIntakes.includes(i)}
                   onCheckedChange={() => toggleItem(selectedIntakes, i, setSelectedIntakes)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+                  className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{i}</span>
+                <span className="text-sm text-slate-700 group-hover:text-[#2563EB] transition-colors">{i}</span>
               </label>
             ))}
           </div>
@@ -520,7 +520,7 @@ function FilterSidebarContent({
 
       {/* Tuition Fee */}
       <Collapsible>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
+        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#2563EB] transition-colors cursor-pointer">
           <span className="flex items-center gap-2"><Award className="size-4" /> Tuition Fee</span>
           <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
         </CollapsibleTrigger>
@@ -531,9 +531,9 @@ function FilterSidebarContent({
                 <Checkbox
                   checked={selectedTuition.includes(t)}
                   onCheckedChange={() => toggleItem(selectedTuition, t, setSelectedTuition)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+                  className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{t}</span>
+                <span className="text-sm text-slate-700 group-hover:text-[#2563EB] transition-colors">{t}</span>
               </label>
             ))}
           </div>
@@ -544,7 +544,7 @@ function FilterSidebarContent({
 
       {/* IELTS Score */}
       <Collapsible>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
+        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#2563EB] transition-colors cursor-pointer">
           <span className="flex items-center gap-2"><Languages className="size-4" /> IELTS Score</span>
           <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
         </CollapsibleTrigger>
@@ -555,9 +555,9 @@ function FilterSidebarContent({
                 <Checkbox
                   checked={selectedIelts.includes(s)}
                   onCheckedChange={() => toggleItem(selectedIelts, s, setSelectedIelts)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+                  className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{s}</span>
+                <span className="text-sm text-slate-700 group-hover:text-[#2563EB] transition-colors">{s}</span>
               </label>
             ))}
           </div>
@@ -568,7 +568,7 @@ function FilterSidebarContent({
 
       {/* Scholarship */}
       <Collapsible>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
+        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#2563EB] transition-colors cursor-pointer">
           <span className="flex items-center gap-2"><Award className="size-4" /> Scholarship</span>
           <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
         </CollapsibleTrigger>
@@ -579,9 +579,9 @@ function FilterSidebarContent({
                 <Checkbox
                   checked={scholarshipFilter === s}
                   onCheckedChange={() => setScholarshipFilter(scholarshipFilter === s ? '' : s)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+                  className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
                 />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{s}</span>
+                <span className="text-sm text-slate-700 group-hover:text-[#2563EB] transition-colors">{s}</span>
               </label>
             ))}
           </div>
@@ -672,7 +672,7 @@ function CourseCard({ course, onShortlist, onCompare, isShortlisted, isCompareCh
 
       {/* Actions */}
       <div className="flex items-center gap-2 pt-1 mt-auto">
-        <Button variant="cta" size="sm" className="flex-1 h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 h-8 text-xs">
           Apply
         </Button>
         <Button
@@ -684,11 +684,11 @@ function CourseCard({ course, onShortlist, onCompare, isShortlisted, isCompareCh
           <Bookmark className={`size-3 ${isShortlisted ? 'fill-amber-500 text-amber-500' : ''}`} />
           {isShortlisted ? 'Saved' : 'Shortlist'}
         </Button>
-        <label className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-500 hover:text-[#0057B8] transition-colors whitespace-nowrap">
+        <label className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-500 hover:text-[#2563EB] transition-colors whitespace-nowrap">
           <Checkbox
             checked={isCompareChecked}
             onCheckedChange={(checked) => onCompare(checked === true)}
-            className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+            className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
           />
           Compare
         </label>
@@ -798,6 +798,19 @@ export default function StudentCourseFinder() {
   };
 
   const totalResults = filteredCourses.length;
+  const pageSize = 6;
+  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
+  const paginatedCourses = filteredCourses.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  // Filtering and sorting invalidate the current page. Clamp again when a
+  // result set shrinks after a deletion or a restrictive filter.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCountries, selectedLevels, selectedSubjects, selectedIntakes, selectedTuition, selectedIelts, scholarshipFilter, activeQuickFilters, sortBy]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
 
   // Clear all filters
   const clearAllFilters = () => {
@@ -841,10 +854,10 @@ export default function StudentCourseFinder() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search courses, universities, or subjects..."
-              className="h-12 pl-12 pr-4 text-base rounded-xl bg-white border-0 shadow-lg focus-visible:ring-2 focus-visible:ring-[#0057B8]"
+              className="h-12 pl-12 pr-4 text-base rounded-xl bg-white border-0 shadow-lg focus-visible:ring-2 focus-visible:ring-[#2563EB]"
             />
           </div>
-          <Button
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
             variant="brand"
             size="lg"
             className="h-12 px-6 rounded-xl shrink-0"
@@ -869,13 +882,13 @@ export default function StudentCourseFinder() {
               onClick={() => setFilterSheetOpen(true)}
               className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium border transition-all cursor-pointer
                 ${chip.value > 0
-                  ? 'bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/30'
+                  ? 'bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/30'
                   : 'bg-white/10 text-white/80 border-white/20 hover:bg-white/20'
                 }`}
             >
               {chip.label}
               {chip.value > 0 && (
-                <span className="size-4 rounded-full bg-[#0057B8] text-white text-[10px] flex items-center justify-center font-bold">
+                <span className="size-4 rounded-full bg-[#2563EB] text-white text-[10px] flex items-center justify-center font-bold">
                   {chip.value}
                 </span>
               )}
@@ -931,11 +944,11 @@ export default function StudentCourseFinder() {
                 {/* Mobile Filter Button */}
                 <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
                   <SheetTrigger asChild>
-                    <Button variant="outline" size="sm" className="lg:hidden gap-2">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="lg:hidden gap-2">
                       <SlidersHorizontal className="size-4" />
                       Filters
                       {hasActiveFilters && (
-                        <span className="size-4 rounded-full bg-[#0057B8] text-white text-[10px] flex items-center justify-center font-bold">
+                        <span className="size-4 rounded-full bg-[#2563EB] text-white text-[10px] flex items-center justify-center font-bold">
                           {selectedCountries.length + selectedLevels.length + selectedSubjects.length + selectedIntakes.length + selectedIelts.length + (scholarshipFilter ? 1 : 0) + activeQuickFilters.length}
                         </span>
                       )}
@@ -976,7 +989,7 @@ export default function StudentCourseFinder() {
                 </Sheet>
 
                 <p className="text-sm text-slate-500">
-                  Showing <span className="font-semibold text-slate-800">{totalResults}</span> courses
+                  Showing <span className="font-semibold text-slate-800">{totalResults === 0 ? 0 : (currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalResults)}</span> of {totalResults} courses
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -997,7 +1010,7 @@ export default function StudentCourseFinder() {
 
             {/* Course Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredCourses.map((course) => (
+              {paginatedCourses.map((course) => (
                 <CourseCard
                   key={course.id}
                   course={course}
@@ -1019,40 +1032,37 @@ export default function StudentCourseFinder() {
             )}
 
             {/* Pagination */}
-            {filteredCourses.length > 0 && (
+            {totalResults > 0 && totalPages > 1 && (
               <div className="mt-8">
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
                       <PaginationPrevious
-                        href="#"
-                        onClick={(e) => { e.preventDefault(); setCurrentPage((p) => Math.max(1, p - 1)); }}
+                        href={`?page=${Math.max(1, currentPage - 1)}`}
+                        aria-disabled={currentPage === 1}
+                        onClick={(e) => { e.preventDefault(); if (currentPage > 1) setCurrentPage((p) => p - 1); }}
                         className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                       />
                     </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#" isActive className="cursor-pointer" onClick={(e) => { e.preventDefault(); setCurrentPage(1); }}>
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#" className="cursor-pointer" onClick={(e) => { e.preventDefault(); setCurrentPage(2); }}>
-                        2
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#" className="cursor-pointer" onClick={(e) => { e.preventDefault(); setCurrentPage(3); }}>
-                        3
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>
+                    {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          href={`?page=${pageNumber}`}
+                          isActive={pageNumber === currentPage}
+                          aria-label={`Go to page ${pageNumber}`}
+                          onClick={(e) => { e.preventDefault(); setCurrentPage(pageNumber); }}
+                          className="cursor-pointer"
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
                     <PaginationItem>
                       <PaginationNext
-                        href="#"
-                        onClick={(e) => { e.preventDefault(); setCurrentPage((p) => p + 1); }}
-                        className="cursor-pointer"
+                        href={`?page=${Math.min(totalPages, currentPage + 1)}`}
+                        aria-disabled={currentPage === totalPages}
+                        onClick={(e) => { e.preventDefault(); if (currentPage < totalPages) setCurrentPage((p) => p + 1); }}
+                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                       />
                     </PaginationItem>
                   </PaginationContent>

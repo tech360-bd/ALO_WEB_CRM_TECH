@@ -73,6 +73,7 @@ node_modules/
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # Archives / exported packages
 *.zip
@@ -110,6 +111,7 @@ build/
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # Archives / exported packages
 *.zip
@@ -250,3 +252,5 @@ _reference_repos/*
 # Offline dev-sqlite sandbox artifacts (see docs/DEV-SQLITE-SANDBOX.md)
 prisma/schema.dev.prisma
 prisma/dev.db*
+# ALO AI Workforce offline verification scratch (fake engine, sqlite mirror db, generated DDL)
+.awf-tmp/

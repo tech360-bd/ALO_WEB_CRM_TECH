@@ -169,7 +169,7 @@ export async function evaluateDepartmentGates(slug: string): Promise<DepartmentA
     overall = 'BLOCKED';
     summary = `BLOCKED gates: ${blockedGates.join(', ')} — cannot activate until infrastructure/creds available.`;
     nextActions.push('Provide missing credentials/network, then re-run verification.');
-    if (cred.missing.length) nextActions.push(`Set env: ${cred.missing.join(', ')} on VPS (never commit values).`);
+    if (cred.missing.length) nextActions.push(`Set env: ${cred.missing.join(', ')} in Hostinger environment settings (never commit values).`);
   } else {
     overall = 'ACTIVE';
     summary = `All gates PASS — department can be ACTIVE (only after human approval gate was passed).`;

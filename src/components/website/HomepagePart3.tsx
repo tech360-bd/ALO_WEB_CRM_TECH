@@ -22,13 +22,14 @@ import {
   ArrowRight, AlertTriangle, Zap,
   type LucideIcon,
 } from 'lucide-react';
+import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 
 /* ═══════════════════════════════════════════════════════════════
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
+  blue: '#2563EB',
+  orange: '#F97316',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -180,7 +181,7 @@ function ScholarshipsSection() {
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0057B8]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#2563EB]">
                       <span className="text-base">{sch.flag}</span>
                       {sch.country}
                     </span>
@@ -213,7 +214,7 @@ function ScholarshipsSection() {
                     style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
                     asChild
                   >
-                    <Link href="/scholarships">
+                    <Link href="/eligibility-check">
                       Check Eligibility
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -426,11 +427,9 @@ function EnglishTestsSection() {
             <h3 className="text-xl md:text-2xl font-bold" style={{ color: C.text }}>
               English Test Comparison
             </h3>
-            <Link href="/language-prep/comparison">
-              <Button variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#0057B8] text-[#0057B8]">
+            <Button asChild variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#2563EB] text-[#2563EB]"><Link href="/language-prep/comparison">
                 Full Comparison Matrix <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-              </Button>
-            </Link>
+              </Link></Button>
           </div>
           <div className="rounded-2xl border shadow-sm overflow-hidden bg-white" style={{ borderColor: C.border }}>
             <Table>
@@ -472,24 +471,29 @@ function EnglishTestsSection() {
           viewport={viewportOnce}
           variants={staggerContainer}
         >
+          <motion.div variants={staggerItem}>
+            <EnglishExamButton
+              location="homepage_english_tests"
+              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[#F97316] px-6 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
+            >
+              Take the English Test
+              <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </EnglishExamButton>
+          </motion.div>
           {[
-            { label: 'Take Free English Placement Test', variant: 'primary' as const, href: '/language-prep/placement-test' },
-            { label: 'Start IELTS Mock', variant: 'secondary' as const, href: '/language-prep/ielts' },
-            { label: 'Start PTE Mock', variant: 'secondary' as const, href: '/language-prep/pte-academic' },
-            { label: 'English Test Comparison', variant: 'secondary' as const, href: '/language-prep/comparison' },
+            { label: 'Prepare for IELTS', href: '/language-prep/ielts' },
+            { label: 'Prepare for PTE Academic', href: '/language-prep/pte-academic' },
+            { label: 'Compare English tests', href: '/language-prep/comparison' },
           ].map((cta, i) => (
             <motion.div key={i} variants={staggerItem}>
               <Button
                 className="h-12 min-h-[48px] rounded-xl text-sm font-semibold px-6"
-                style={cta.variant === 'primary'
-                  ? { backgroundColor: C.orange, color: '#FFFFFF' }
-                  : { backgroundColor: '#FFFFFF', borderColor: C.border, color: C.text }}
-                variant={cta.variant === 'primary' ? 'default' : 'outline'}
+                style={{ backgroundColor: '#FFFFFF', borderColor: C.border, color: C.text }}
+                variant="outline"
                 asChild
               >
-                <Link href={cta.href || '#'}>
+                <Link href={cta.href}>
                   {cta.label}
-                  {cta.variant === 'primary' && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Link>
               </Button>
             </motion.div>
@@ -803,7 +807,11 @@ function StudentPortalPreview() {
               style={{ backgroundColor: C.blue, color: '#FFFFFF' }}
               asChild
             >
-              <Link href="/student/register">
+              {/* /register is the canonical student registration page; the old
+                  nested Link pointed at /student/register, which redirects to
+                  the login page in production (broken sign-up funnel), and the
+                  Link-inside-Link markup was invalid nested anchors. */}
+              <Link href="/register">
                 Create Student Account
               </Link>
             </Button>

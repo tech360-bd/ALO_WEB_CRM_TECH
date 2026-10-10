@@ -1,4 +1,4 @@
-// @ts-nocheck - Prisma stub requires VPS generation
+// @ts-nocheck - Historical Prisma typing debt; generated client verification is required in Node 22 CI
 /**
  * ALO Education AgentOS — Agent Runtime Service
  * Real DB-backed agent registry, execution simulator, and runtime state manager
@@ -327,26 +327,7 @@ export async function getPendingApprovals(limit = 50): Promise<AgentApprovalQueu
   }) as Promise<AgentApprovalQueue[]>;
 }
 
-export async function processApproval(
-  approvalId: string,
-  decision: "approved" | "rejected",
-  reviewerId: string,
-  notes?: string
-) {
-  return db.agentApprovalQueue.update({
-    where: { id: approvalId },
-    data: {
-      status: decision,
-      ...(decision === "approved" ? {
-        approvedById: reviewerId,
-        approvedAt: new Date(),
-      } : {
-        rejectedById: reviewerId,
-        rejectedAt: new Date(),
-      })
-    },
-  });
-}
+export { processApproval } from './approval-transition';
 
 // ─── Memory ────────────────────────────────────────────────────────────────────────
 

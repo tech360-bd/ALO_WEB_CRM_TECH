@@ -50,7 +50,7 @@ export default function HrmDocumentsPage() {
           <Input placeholder="File path / URL (storage)" value={form.filePath} onChange={e=> setForm({...form, filePath:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
           <Input placeholder="File name" value={form.fileName} onChange={e=> setForm({...form, fileName:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
           <Input type="date" value={form.expiryDate} onChange={e=> setForm({...form, expiryDate:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
-          <Button onClick={upload} disabled={uploading} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-4">{uploading? 'Uploading...' : 'Upload — Create Version'}</Button>
+          <Button onClick={upload} disabled={uploading} className="bg-[#F97316] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-4">{uploading? 'Uploading...' : 'Upload — Create Version'}</Button>
         </CardContent>
       </Card>
 

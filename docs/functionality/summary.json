@@ -1,0 +1,15 @@
+{
+  "auditBase": "HEAD",
+  "files": 6164,
+  "activeSourceFiles": 2155,
+  "textScanned": 5813,
+  "metadataOnly": 351,
+  "pages": 402,
+  "apiFiles": 898,
+  "apiMethods": 1452,
+  "forms": 60,
+  "actions": 5224,
+  "querySites": 5725,
+  "serverActionDirectives": 0,
+  "riskSignals": 10484
+}

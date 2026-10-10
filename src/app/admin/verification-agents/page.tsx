@@ -29,7 +29,7 @@ export default function VerificationAgentsRoute() {
             Agent: <strong className="text-slate-800">UniversityCourseVerificationAgent</strong> • Schedule: Weekly (Asia/Dhaka)
           </p>
         </div>
-        <Button onClick={handleRunNow} disabled={running} className="bg-[#0057B8] hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
+        <Button onClick={handleRunNow} disabled={running} className="bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
           <Play className="w-4 h-4" /> {running ? 'Agent Inspecting Sources...' : 'Trigger Verification Agent Now'}
         </Button>
       </div>

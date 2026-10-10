@@ -131,7 +131,7 @@ export function StudentCompare() {
                       <th key={c.slug} className="min-w-[200px] px-5 py-4 text-left">
                         <div>
                           <p className="font-bold text-[#0B2447]">{c.name || c.title}</p>
-                          <Badge className={cn("mt-1 bg-[#EAF3FF] text-[#0066CC]")}>
+                          <Badge className={cn("mt-1 bg-[#EAF3FF] text-[#2563EB]")}>
                             {c.country || "—"}
                           </Badge>
                         </div>

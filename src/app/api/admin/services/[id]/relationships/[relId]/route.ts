@@ -1,8 +1,7 @@
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +11,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; relId: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -36,7 +35,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Relationship does not belong to this service" }, { status: 404 });
     }
 
-    await db.contentRelationship.delete({ where: { id: relId } });
+    await db.$transaction(async tx => {
+    await tx.contentRelationship.update({ where: { id: relId }, data: { status: "INACTIVE" } });
 
     await contentAuditLog.create({
       data: {
@@ -46,7 +46,8 @@ export async function DELETE(
         resourceId: relId,
         details: JSON.stringify({ serviceId: id, sourceType: existing.sourceType, targetType: existing.targetType }),
       },
-    }).catch(() => {});
+    }, tx);
+    });
 
     return NextResponse.json({ success: true, relId });
   } catch (err: any) {

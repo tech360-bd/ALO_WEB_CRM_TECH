@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-01",
+  "repository": "engralaminn-collab/alo_education_z....ai",
+  "localHead": "df1961fd705e26e159d3a6c7b0aa5d7830f4d5ed",
+  "defaultBranch": "main",
+  "mainProtected": false,
+  "repositoryHooks": [],
+  "productionEnvironment": {
+    "protection_rules": [],
+    "deployment_branch_policy": null
+  },
+  "deploymentsAPI": "403 Resource not accessible by integration",
+  "rulesetsAPI": "403 Upgrade plan or make repository public",
+  "hostingerAccess": "No Hostinger/deployment/SSH environment names or SSH agent present; no Hostinger API credential available",
+  "externalConfiguration": "UNKNOWN",
+  "note": "An empty repository webhook list does not enumerate GitHub App subscriptions. No remote settings were modified."
+}

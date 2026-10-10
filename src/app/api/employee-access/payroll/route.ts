@@ -1,36 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { writePortalAudit } from '@/lib/transactional-audit';
+import { canManagePayroll, isFinance, isHR, isSuperAdmin } from '@/lib/hrms/rbac';
+import {
+  assertMakerChecker,
+  assertPayrollTransition,
+  assertPayrollPeriod,
+  PayrollValidationError,
+  validateSalaryRecord,
+} from '@/lib/hrms/payroll-controls';
+
+function canApproveOrPay(auth: AuthContext) {
+  return isSuperAdmin(auth) || isFinance(auth) || isHR(auth);
+}
+
+function failure(error: unknown) {
+  if (error instanceof PayrollValidationError) {
+    return NextResponse.json({ success: false, error: error.message, code: error.code }, { status: error.code === 'DUPLICATE_RUN' ? 409 : error.code === 'MAKER_CHECKER' ? 403 : 422 });
+  }
+  return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Payroll operation failed' }, { status: 500 });
+}
 
 export async function GET(req: NextRequest) {
   try {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
-
     const { searchParams } = new URL(req.url);
-    const employeeId = searchParams.get('employeeId') || auth.userId;
+    const requestedEmployeeId = searchParams.get('employeeId');
     const period = searchParams.get('period');
     const status = searchParams.get('status');
+    const canViewAll = canApproveOrPay(auth);
 
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('finance') || auth.roles.includes('hr_manager');
-    if (employeeId !== auth.userId && !isSuper) {
-      return NextResponse.json({ success: false, error: 'Can only view own payroll unless finance/HR' }, { status: 403 });
+    let employeeId = requestedEmployeeId || '';
+    if (!canViewAll) {
+      const ownEmployee = await (db as any).employee.findFirst({ where: { userId: auth.userId }, select: { id: true } });
+      if (!ownEmployee) return NextResponse.json({ success: true, payrolls: [] });
+      if (requestedEmployeeId && requestedEmployeeId !== ownEmployee.id) {
+        return NextResponse.json({ success: false, error: 'Can only view own payroll unless finance/HR' }, { status: 403 });
+      }
+      employeeId = ownEmployee.id;
     }
 
-    const where: any = { employeeId };
-    if (period) where.period = period;
-    if (status) where.status = status;
-
-    const payrolls = await (db as any).employeePayroll.findMany({ where, orderBy: { period: 'desc' }, include: { items: true } }).catch(() => []);
-
+    const where: Record<string, unknown> = { ...(employeeId ? { employeeId } : {}), ...(period ? { period } : {}), ...(status ? { status } : {}) };
+    const payrolls = await (db as any).employeePayroll.findMany({ where, orderBy: { period: 'desc' }, include: { items: true } });
     return NextResponse.json({
       success: true,
       payrolls,
-      note: 'AI may analyze attendance, calculate draft, detect anomalies, prepare draft, flag inconsistencies — AI CANNOT finalize high-risk salary/payment decisions. Workflow: AI PREPARES → HUMAN CHECK → HUMAN APPROVAL → FINAL',
+      note: 'AI may analyze attendance and prepare a draft. Only a human HR/Finance user can approve or pay payroll.',
     });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error) {
+    return failure(error);
   }
 }
 
@@ -39,60 +60,60 @@ export async function POST(req: NextRequest) {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
-
-    const isHrFinance = auth.roles.includes('hr_manager') || auth.roles.includes('finance') || auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    if (!isHrFinance) return NextResponse.json({ success: false, error: 'HR/Finance/Super Admin required' }, { status: 403 });
+    if (!canManagePayroll(auth)) return NextResponse.json({ success: false, error: 'HR/Finance/Super Admin required' }, { status: 403 });
 
     const body = await req.json();
-    const { employeeId, period, basicSalary, allowances, bonus, overtime, loanDeduction, advanceDeduction, taxDeduction, pfDeduction, items, isAiDraft } = body;
-    if (!employeeId || !period) return NextResponse.json({ success: false, error: 'employeeId and period required' }, { status: 400 });
+    const employeeId = typeof body.employeeId === 'string' ? body.employeeId : '';
+    const period = assertPayrollPeriod(body.period || '');
+    if (!employeeId) return NextResponse.json({ success: false, error: 'employeeId and period required' }, { status: 400 });
 
-    // Separation of duties: maker cannot approve own if high-risk
-    const gross = (basicSalary || 0) + (allowances || 0) + (bonus || 0) + (overtime || 0);
-    const totalDeduction = (loanDeduction || 0) + (advanceDeduction || 0) + (taxDeduction || 0) + (pfDeduction || 0);
-    const net = gross - totalDeduction;
+    const payroll = await (db as any).$transaction(async (tx: any) => {
+      const existing = await tx.employeePayroll.findFirst({ where: { employeeId, period } });
+      if (existing) throw new PayrollValidationError('DUPLICATE_RUN', `Payroll for employee ${employeeId} and ${period} already exists`);
+      const salary = await tx.employeeSalary.findFirst({ where: { employeeId }, orderBy: { effectiveFrom: 'desc' } });
+      const validSalary = validateSalaryRecord(salary, employeeId);
+      const gross = validSalary.grossSalary;
+      const totalDeduction = validSalary.taxDeduction + validSalary.pfDeduction;
+      const allowances = [validSalary.housingAllow, validSalary.transportAllow, validSalary.medicalAllow, validSalary.otherAllow]
+        .filter((value): value is number => Number.isFinite(value))
+        .reduce((sum, value) => sum + value, 0);
+      const net = gross - totalDeduction;
+      const created = await tx.employeePayroll.create({
+        data: {
+          employeeId,
+          period,
+          monthYear: period,
+          basicSalary: validSalary.basicSalary,
+          allowances,
+          taxDeduction: validSalary.taxDeduction,
+          pfDeduction: validSalary.pfDeduction,
+          grossSalary: gross,
+          netSalary: net,
+          status: body.isAiDraft ? 'draft' : 'review_pending',
+          preparedBy: auth.userId,
+        },
+      });
+      await tx.employeePayrollItem.create({
+        data: {
+          payrollId: created.id,
+          itemType: 'earning',
+          label: `${employeeId} — ${period} salary`,
+          amount: net,
+          employeeId,
+          basicSalary: validSalary.basicSalary,
+          allowances,
+          tax: validSalary.taxDeduction,
+          netSalary: net,
+          status: body.isAiDraft ? 'draft' : 'review_pending',
+        },
+      });
+      await writePortalAudit(tx, auth, body.isAiDraft ? 'PAYROLL_AI_DRAFT_CREATED' : 'PAYROLL_CREATED', 'EmployeePayroll', created.id, { employeeId, period, netSalary: created.netSalary }, req);
+      return created;
+    }, { isolationLevel: 'Serializable' });
 
-    const payroll = await (db as any).employeePayroll.create({
-      data: {
-        employeeId,
-        period,
-        basicSalary: basicSalary || 0,
-        allowances: allowances || 0,
-        bonus: bonus || 0,
-        overtime: overtime || 0,
-        loanDeduction: loanDeduction || 0,
-        advanceDeduction: advanceDeduction || 0,
-        taxDeduction: taxDeduction || 0,
-        pfDeduction: pfDeduction || 0,
-        grossSalary: gross,
-        netSalary: net,
-        status: isAiDraft ? 'draft' : 'review_pending',
-        preparedBy: auth.userId,
-      },
-    });
-
-    if (items && Array.isArray(items)) {
-      for (const item of items) {
-        await (db as any).employeePayrollItem.create({
-          data: {
-            payrollId: payroll.id,
-            itemType: item.itemType || 'earning',
-            label: item.label || '',
-            amount: item.amount || 0,
-          },
-        }).catch(() => {});
-      }
-    }
-
-    await logAuditAction(auth, isAiDraft ? 'PAYROLL_AI_DRAFT_CREATED' : 'PAYROLL_CREATED', 'EmployeePayroll', payroll.id, { employeeId, period, netSalary: net, isAiDraft });
-
-    return NextResponse.json({
-      success: true,
-      data: payroll,
-      message: isAiDraft ? 'AI draft payroll created — requires HUMAN HR/FINANCE CHECK → HUMAN APPROVAL → FINAL' : 'Payroll created — pending review',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, data: payroll, message: 'Payroll created from the persisted salary record; requires human review, approval, and payment.' });
+  } catch (error) {
+    return failure(error);
   }
 }
 
@@ -101,33 +122,40 @@ export async function PATCH(req: NextRequest) {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
+    if (!canApproveOrPay(auth)) return NextResponse.json({ success: false, error: 'HR/Finance approval required' }, { status: 403 });
 
     const body = await req.json();
-    const { id, status, reviewedBy, approvedBy } = body;
-    if (!id || !status) return NextResponse.json({ success: false, error: 'id and status required' }, { status: 400 });
+    const id = typeof body.id === 'string' ? body.id : '';
+    const requestedStatus = String(body.status || '').toLowerCase();
+    const action = requestedStatus === 'reviewed' ? 'review' : requestedStatus === 'approved' ? 'approve' : requestedStatus === 'paid' ? 'pay' : '';
+    if (!id || !action) return NextResponse.json({ success: false, error: 'id and status (reviewed, approved, paid) required' }, { status: 400 });
 
-    const existing = await (db as any).employeePayroll.findUnique({ where: { id } }).catch(() => null);
+    const existing = await (db as any).employeePayroll.findUnique({ where: { id } });
     if (!existing) return NextResponse.json({ success: false, error: 'Payroll not found' }, { status: 404 });
-
-    // Separation of duties: maker cannot approve own
-    if (existing.preparedBy === auth.userId && status === 'approved') {
-      return NextResponse.json({ success: false, error: 'Maker cannot approve own payroll — separation of duties' }, { status: 403 });
+    try {
+      assertMakerChecker(auth.userId, existing.preparedBy);
+      assertPayrollTransition(existing.status, action as 'review' | 'approve' | 'pay');
+    } catch (error) {
+      return failure(error);
     }
 
-    const updated = await (db as any).employeePayroll.update({
-      where: { id },
-      data: {
-        status,
-        ...(status === 'reviewed' ? { reviewedBy: auth.userId } : {}),
-        ...(status === 'approved' ? { approvedBy: auth.userId } : {}),
-        ...(status === 'paid' ? { paidAt: new Date() } : {}),
-      },
-    });
-
-    await logAuditAction(auth, `PAYROLL_${status.toUpperCase()}`, 'EmployeePayroll', id, { status, netSalary: existing.netSalary });
+    const updated = await (db as any).$transaction(async (tx: any) => {
+      const changed = await tx.employeePayroll.updateMany({
+        where: { id, status: existing.status },
+        data: {
+          status: requestedStatus,
+          ...(action === 'review' ? { reviewedBy: auth.userId } : {}),
+          ...(action === 'approve' ? { approvedBy: auth.userId } : {}),
+          ...(action === 'pay' ? { paidAt: new Date() } : {}),
+        },
+      });
+      if (changed.count !== 1) throw new PayrollValidationError('DUPLICATE_RUN', 'Payroll status changed; reload before retrying');
+      await writePortalAudit(tx, auth, `PAYROLL_${requestedStatus.toUpperCase()}`, 'EmployeePayroll', id, { status: requestedStatus, netSalary: existing.netSalary }, req);
+      return tx.employeePayroll.findUnique({ where: { id } });
+    }, { isolationLevel: 'Serializable' });
 
     return NextResponse.json({ success: true, data: updated });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error) {
+    return failure(error);
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Search, Building2, MapPin, Globe, Trophy, ExternalLink,
   BookOpen, SearchX, SlidersHorizontal, ArrowUpDown, ChevronLeft,
@@ -31,8 +32,8 @@ import { toast } from 'sonner';
 // usePortalStore no longer needed - public pages use real routes
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#0057B8';
-const ALO_ORANGE = '#E8501A';
+const ALO_BLUE = '#2563EB';
+const ALO_ORANGE = '#F97316';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface UniversityCardData {
@@ -139,7 +140,7 @@ function formatDate(iso: string | null | undefined): string {
 // ─── Skeletons ─────────────────────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
-    <div className="bg-gradient-to-br from-[#0057B8] to-[#003A7D] text-white">
+    <div className="bg-gradient-to-br from-[#2563EB] to-[#003A7D] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <Skeleton className="h-8 w-72 mb-4 bg-white/20" />
         <Skeleton className="h-5 w-96 mb-8 bg-white/15" />
@@ -524,7 +525,7 @@ function UniversityCard({
               </span>
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-slate-900 text-sm leading-snug truncate group-hover:text-[#0057B8] transition-colors">
+              <h3 className="font-semibold text-slate-900 text-sm leading-snug truncate group-hover:text-[#2563EB] transition-colors">
                 {flag} {uni.officialName || uni.name}
               </h3>
               <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
@@ -633,7 +634,7 @@ function UniversityCard({
           <Button
             variant="outline"
             size="sm"
-            className="h-8 text-xs col-span-1 text-[#E8501A] border-[#E8501A]/30 hover:bg-[#E8501A]/5"
+            className="h-8 text-xs col-span-1 text-[#F97316] border-[#F97316]/30 hover:bg-[#F97316]/5"
             onClick={() => onAskCounsellor(uni.name)}
           >
             <MessageCircle className="size-3 mr-1" />
@@ -682,6 +683,7 @@ const DEFAULT_FILTERS: FilterState = {
 
 // ─── Main Component ─────────────────────────────────────────────────────────────
 export function UniversityDirectoryEnhanced() {
+  const router = useRouter();
   const [universities, setUniversities] = useState<UniversityCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -818,8 +820,8 @@ export function UniversityDirectoryEnhanced() {
 
   // Handle view university
   const handleViewUniversity = useCallback((slug: string) => {
-    window.location.href = `/universities/${slug}`;
-  }, []);
+    router.push(`/universities/${slug}`);
+  }, [router]);
 
   // Handle view courses
   const handleViewCourses = useCallback((slug: string) => {
@@ -856,7 +858,7 @@ export function UniversityDirectoryEnhanced() {
         <PaginationPrevious
           onClick={() => handlePageChange(page - 1)}
           className={page <= 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-          href="#"
+          href={`?page=${Math.max(1, page - 1)}`}
           onClickCapture={(e) => e.preventDefault()}
         />
       </PaginationItem>
@@ -871,7 +873,7 @@ export function UniversityDirectoryEnhanced() {
       items.push(
         <PaginationItem key={1}>
           <PaginationLink
-            href="#"
+            href="?page=1"
             onClickCapture={(e) => e.preventDefault()}
             onClick={() => handlePageChange(1)}
             className="cursor-pointer"
@@ -893,7 +895,7 @@ export function UniversityDirectoryEnhanced() {
       items.push(
         <PaginationItem key={i}>
           <PaginationLink
-            href="#"
+            href={`?page=${i}`}
             isActive={i === page}
             onClickCapture={(e) => e.preventDefault()}
             onClick={() => handlePageChange(i)}
@@ -916,7 +918,7 @@ export function UniversityDirectoryEnhanced() {
       items.push(
         <PaginationItem key={totalPages}>
           <PaginationLink
-            href="#"
+            href={`?page=${totalPages}`}
             onClickCapture={(e) => e.preventDefault()}
             onClick={() => handlePageChange(totalPages)}
             className="cursor-pointer"
@@ -932,7 +934,7 @@ export function UniversityDirectoryEnhanced() {
         <PaginationNext
           onClick={() => handlePageChange(page + 1)}
           className={page >= totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-          href="#"
+          href={`?page=${Math.min(totalPages, page + 1)}`}
           onClickCapture={(e) => e.preventDefault()}
         />
       </PaginationItem>
@@ -944,7 +946,7 @@ export function UniversityDirectoryEnhanced() {
   return (
     <div className="min-h-screen bg-white">
       {/* ═══ HERO SECTION ═══ */}
-      <div className="bg-gradient-to-br from-[#0057B8] to-[#003A7D] text-white">
+      <div className="bg-gradient-to-br from-[#2563EB] to-[#003A7D] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* Title */}
           <div className="flex items-center gap-2.5 mb-3">
@@ -1024,7 +1026,7 @@ export function UniversityDirectoryEnhanced() {
             {/* Mobile filter trigger */}
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
-                <Button
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                   variant="outline"
                   size="sm"
                   className="lg:hidden"
@@ -1104,7 +1106,7 @@ export function UniversityDirectoryEnhanced() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 text-xs text-slate-500 hover:text-[#E8501A]"
+                    className="h-7 text-xs text-slate-500 hover:text-[#F97316]"
                     onClick={handleResetFilters}
                   >
                     Clear All

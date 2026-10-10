@@ -1,28 +1,31 @@
-import { NextResponse } from "next/server";
-import { withAuth } from "@/lib/auth-middleware";
-import { db } from "@/lib/db";
+import { NextRequest, NextResponse } from 'next/server';
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { db } from '@/lib/db';
 
-export async function GET(request: Request) {
-  return withAuth(async (req, auth) => {
-    try {
-      const url = new URL(req.url);
-      const limit = Math.min(parseInt(url.searchParams.get("limit") || "20"), 100);
-      
-      const files = await db.fileMetadata.findMany({
-        orderBy: { uploadedAt: "desc" },
-        take: limit,
-      }).catch(() => []);
-      
-      const stats = {
-        totalFiles: await db.fileMetadata.count().catch(() => 0),
-        totalSize: 0,
-        pools: {},
-      };
-      
-      return NextResponse.json({ success: true, data: files, stats });
-    } catch {
-      return NextResponse.json({ success: true, data: [], stats: { totalFiles: 0 } });
-    }
-  })(request);
+function isStorageAdmin(userType: string, roles: string[]) {
+  return ['SUPER_ADMIN', 'ADMIN'].includes(userType.toUpperCase()) || roles.some((role) => ['SUPER_ADMIN', 'ADMIN'].includes(role.toUpperCase()));
 }
 
+export async function GET(request: NextRequest) {
+  const auth = await authenticateRequest(request);
+  if (auth instanceof NextResponse) return auth;
+  if (!isStorageAdmin(auth.userType, auth.roles)) return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+
+  const limitParam = Number(request.nextUrl.searchParams.get('limit') || '20');
+  const limit = Number.isInteger(limitParam) && limitParam > 0 ? Math.min(limitParam, 100) : 20;
+  try {
+    const [files, totalFiles, totals] = await Promise.all([
+      db.fileMetadata.findMany({
+        where: { isDeleted: false },
+        orderBy: { uploadedAt: 'desc' },
+        take: limit,
+        select: { id: true, originalName: true, mimeType: true, sizeBytes: true, entityType: true, entityId: true, status: true, uploadedAt: true },
+      }),
+      db.fileMetadata.count({ where: { isDeleted: false } }),
+      db.fileMetadata.aggregate({ where: { isDeleted: false }, _sum: { sizeBytes: true } }),
+    ]);
+    return NextResponse.json({ success: true, data: files.map((file) => ({ ...file, sizeBytes: Number(file.sizeBytes) })), stats: { totalFiles, totalSize: Number(totals._sum.sizeBytes || 0) } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Storage metadata is temporarily unavailable.' }, { status: 503 });
+  }
+}

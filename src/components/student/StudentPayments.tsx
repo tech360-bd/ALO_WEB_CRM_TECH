@@ -2,15 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { loadPaymentHistory, paymentAmount, type StudentPayment } from '@/lib/student/payment-history';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
 } from '@/components/ui/card';
 import {
   Table,
@@ -23,82 +21,37 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  CreditCard,
   Shield,
   Building2,
   GraduationCap,
   Plane,
   FileCheck,
   Upload,
-  Download,
-  Info,
   Clock,
   CheckCircle2,
   AlertCircle,
-  CircleDot,
   Phone,
   Receipt,
-  PoundSterling,
-  Stethoscope,
-  Wallet,
-  ArrowUpRight,
 } from 'lucide-react';
 
-/* ================================================================== */
-/*  TYPES                                                               */
-/* ================================================================== */
-type PaymentStatus = 'Paid' | 'Pending' | 'Overdue';
-
-interface PaymentRecord {
-  id: string;
-  date: string;
-  description: string;
-  amount: string;
-  status: PaymentStatus;
-  reference: string;
-  hasReceipt: boolean;
-}
-
-/* ================================================================== */
-/*  MOCK DATA                                                          */
-/* ================================================================== */
-const MOCK_PAYMENTS: PaymentRecord[] = [
-  {
-    id: 'pay-1',
-    date: '2025-07-10',
-    description: 'University Deposit — University of Aberdeen',
-    amount: '£2,000',
-    status: 'Pending',
-    reference: 'DEP-ABN-2025-001',
-    hasReceipt: false,
-  },
-  {
-    id: 'pay-2',
-    date: '2025-07-02',
-    description: 'UK Student Visa Fee',
-    amount: '£490',
-    status: 'Paid',
-    reference: 'VISA-UK-2025-042',
-    hasReceipt: true,
-  },
-];
+type PaymentStatus = string;
 
 /* ================================================================== */
 /*  STATUS HELPERS                                                     */
 /* ================================================================== */
 function getStatusIcon(status: PaymentStatus) {
   switch (status) {
-    case 'Paid': return <CheckCircle2 className="size-4 text-crm-success" />;
-    case 'Pending': return <Clock className="size-4 text-crm-warning" />;
-    case 'Overdue': return <AlertCircle className="size-4 text-crm-danger" />;
+    case 'paid': return <CheckCircle2 className="size-4 text-crm-success" />;
+    case 'pending': return <Clock className="size-4 text-crm-warning" />;
+    case 'overdue': return <AlertCircle className="size-4 text-crm-danger" />;
   }
 }
 
 function getStatusBadge(status: PaymentStatus) {
   switch (status) {
-    case 'Paid': return 'success' as const;
-    case 'Pending': return 'warning' as const;
-    case 'Overdue': return 'danger' as const;
+    case 'paid': return 'success' as const;
+    case 'pending': return 'warning' as const;
+    case 'overdue': return 'danger' as const;
   }
 }
 
@@ -106,12 +59,25 @@ function getStatusBadge(status: PaymentStatus) {
 /*  COMPONENT                                                          */
 /* ================================================================== */
 export default function StudentPayments() {
-  const { user, token } = usePortalStore();
-  const [apiPay, setApiPay] = useState<PaymentRecord[] | null>(null)
-  useEffect(() => { if (!token) return; fetch('/api/student-portal/payments', { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()).then(j => { if (j.success && j.data && j.data.length > 0) setApiPay(j.data); }).catch(() => {}); }, [token]);
-  const payments = (apiPay && apiPay.length > 0) ? apiPay : MOCK_PAYMENTS;
-
-  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const { user, token, setView } = usePortalStore();
+  const [history, setHistory] = useState<{ payments: StudentPayment[]; total: number; totalPages: number; owner: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [retry, setRetry] = useState(0);
+  const owner = `${user?.id || ''}:${token || ''}:${page}`;
+  useEffect(() => {
+    const controller = new AbortController();
+    setHistory(null); setLoading(true); setError('');
+    loadPaymentHistory(token, page, controller.signal).then(data => {
+      if (!controller.signal.aborted) setHistory({ payments: data.data, total: data.total, totalPages: data.totalPages, owner });
+    }).catch(() => {
+      if (!controller.signal.aborted) setError('Payment history is unavailable. Please try again.');
+    }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [token, page, retry, owner]);
+  const visible = history?.owner === owner ? history : null;
+  const payments = visible?.payments || [];
 
   return (
     <div className="space-y-8">
@@ -150,14 +116,14 @@ export default function StudentPayments() {
             iconBg="bg-alo-brand/10"
             iconColor="text-alo-brand"
             title="University Deposit"
-            description="Typically £1,000 – £5,000 required to secure your offer"
+            description="Deposit requirements are set by your university"
             details={[
               'Payment method details provided by your counselor',
               'Deadline varies by university',
               'Contact your counselor for payment details',
             ]}
-            status="Pending"
-            statusNote="University of Aberdeen — £2,000"
+            status="Guide only"
+            statusNote="Confirm your deposit and deadline with your counselor."
           />
 
           {/* Tuition Fee */}
@@ -172,7 +138,7 @@ export default function StudentPayments() {
               'Payment deadlines set by the university',
               'Scholarships/deductions applied before final amount',
             ]}
-            status="Not Required"
+            status="Guide only"
             statusNote="Details provided after enrollment confirmation"
           />
 
@@ -184,12 +150,12 @@ export default function StudentPayments() {
             title="Visa Fee"
             description="Required for UK student visa application"
             details={[
-              'UK student visa fee: approximately £490',
-              'IHS (Immigration Health Surcharge): ~£776/year',
-              'TB test fee: ~৳3,500 (if required)',
+              'Check the official visa authority for current fees',
+              'Health surcharges depend on visa and duration',
+              'Medical test costs must be confirmed with the provider',
             ]}
-            status="Partially Paid"
-            statusNote="Visa fee paid. IHS payable with visa application."
+            status="Guide only"
+            statusNote="Confirm current fees and your payment requirements before paying."
           />
 
           {/* ALO Service Fee */}
@@ -204,8 +170,8 @@ export default function StudentPayments() {
               'Counseling and document review',
               'Visa preparation support',
             ]}
-            status="N/A"
-            statusNote="Not applicable at this time"
+            status="Guide only"
+            statusNote="Your agreed service charges must be confirmed with ALO Finance."
           />
         </div>
       </section>
@@ -218,10 +184,13 @@ export default function StudentPayments() {
           <h2 className="text-lg font-semibold text-alo-text">Payment History</h2>
           <Badge variant="secondary" className="gap-1.5">
             <Receipt className="size-3.5" />
-            {payments.length} records
+            {visible ? `${visible.total} records` : 'Records unavailable'}
           </Badge>
         </div>
 
+        {loading && <p role="status">Loading payment history…</p>}
+        {!loading && error && <Alert variant="destructive"><AlertDescription>{error} <Button variant="outline" onClick={() => setRetry(value => value + 1)}>Retry</Button></AlertDescription></Alert>}
+        {!loading && visible && payments.length === 0 && <p role="status">No payment records found.</p>}
         <Card>
           <CardContent className="p-0">
             {/* Desktop Table */}
@@ -241,7 +210,7 @@ export default function StudentPayments() {
                   {payments.map((payment) => (
                     <TableRow key={payment.id} className="border-b-alo-border/40">
                       <TableCell className="text-sm text-alo-text-secondary whitespace-nowrap">
-                        {new Date(payment.date).toLocaleDateString('en-GB', {
+                        {new Date(payment.createdAt).toLocaleDateString('en-GB', {
                           day: 'numeric',
                           month: 'short',
                           year: 'numeric',
@@ -254,25 +223,18 @@ export default function StudentPayments() {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <span className="text-sm font-semibold text-alo-text">{payment.amount}</span>
+                        <span className="text-sm font-semibold text-alo-text">{paymentAmount(payment)}</span>
                       </TableCell>
                       <TableCell>
                         <Badge variant={getStatusBadge(payment.status)}>{payment.status}</Badge>
                       </TableCell>
                       <TableCell>
                         <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-alo-text-muted">
-                          {payment.reference}
+                          {payment.id}
                         </code>
                       </TableCell>
                       <TableCell className="text-right">
-                        {payment.hasReceipt ? (
-                          <Button variant="outline" size="sm" className="gap-1.5 text-xs">
-                            <Download className="size-3.5" />
-                            Download
-                          </Button>
-                        ) : (
-                          <span className="text-xs text-alo-text-muted">—</span>
-                        )}
+                        <span className="text-xs text-alo-text-muted">Not available in this portal</span>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -293,7 +255,7 @@ export default function StudentPayments() {
                       <div>
                         <p className="text-sm font-medium text-alo-text">{payment.description}</p>
                         <p className="mt-0.5 text-xs text-alo-text-muted">
-                          {new Date(payment.date).toLocaleDateString('en-GB', {
+                          {new Date(payment.createdAt).toLocaleDateString('en-GB', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric',
@@ -305,17 +267,12 @@ export default function StudentPayments() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="text-base font-bold text-alo-text">{payment.amount}</span>
+                      <span className="text-base font-bold text-alo-text">{paymentAmount(payment)}</span>
                       <code className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-alo-text-muted">
-                        {payment.reference}
+                        {payment.id}
                       </code>
                     </div>
-                    {payment.hasReceipt && (
-                      <Button variant="outline" size="sm" className="gap-1.5 text-xs">
-                        <Download className="size-3.5" />
-                        Download
-                      </Button>
-                    )}
+                    <span className="text-xs text-alo-text-muted">Receipt download unavailable</span>
                   </div>
                 </div>
               ))}
@@ -323,6 +280,12 @@ export default function StudentPayments() {
           </CardContent>
         </Card>
       </section>
+
+      {visible && <nav aria-label="Payment history pages" className="flex items-center gap-3">
+        <Button variant="outline" disabled={loading || page <= 1} onClick={() => setPage(value => value - 1)}>Previous</Button>
+        <span>Page {page} of {Math.max(1, visible.totalPages)}</span>
+        <Button variant="outline" disabled={loading || page >= visible.totalPages} onClick={() => setPage(value => value + 1)}>Next</Button>
+      </nav>}
 
       {/* ============================================================ */}
       {/*  UPLOAD PAYMENT RECEIPT                                       */}
@@ -338,11 +301,11 @@ export default function StudentPayments() {
               Upload proof of payment (bank transfer receipt, payment confirmation, etc.) for the ALO Finance team to verify.
             </p>
             <div className="mt-5 flex flex-col items-center gap-2 sm:flex-row">
-              <Button variant="cta" className="gap-2">
+              <Button variant="cta" className="gap-2" disabled aria-describedby="receipt-unavailable">
                 <Upload className="size-4" />
                 Upload Receipt
               </Button>
-              <p className="text-xs text-alo-text-muted">PDF, JPG, or PNG up to 10MB</p>
+              <p id="receipt-unavailable" className="text-xs text-alo-text-muted">Receipt upload is not connected to a verified payment workflow. Contact your counselor.</p>
             </div>
           </CardContent>
         </Card>
@@ -362,7 +325,7 @@ export default function StudentPayments() {
               Contact your assigned counselor or reach out to the ALO Finance team for any payment-related queries.
             </p>
           </div>
-          <Button variant="brand-outline" size="sm" className="gap-1.5">
+          <Button variant="brand-outline" size="sm" className="gap-1.5" onClick={() => setView('student-messages')}>
             <Phone className="size-3.5" />
             Contact Counselor
           </Button>

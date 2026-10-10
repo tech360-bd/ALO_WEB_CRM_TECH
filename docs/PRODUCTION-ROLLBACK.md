@@ -1,4 +1,6 @@
-# Production Rollback — Safe Procedure (ALO Education — 3044 / /root/alo-github-main-new)
+> LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
+
+# Production Rollback — Safe Procedure (ALO Education — 3044 / /root/alo-github-main)
 
 This guide shows how to revert a failed production deployment without losing `.env`, uploads, or audit history.
 
@@ -9,7 +11,7 @@ This guide shows how to revert a failed production deployment without losing `.e
 Every run of `.github/workflows/deploy-production.yml` (the `Deploy to VPS` step) does before checkout:
 
 ```bash
-APP_DIR=/root/alo-github-main-new
+APP_DIR=/root/alo-github-main
 BACKUP_BASE=/root/alo-releases/backups
 BACKUP_DIR=$BACKUP_BASE/pre-$(git rev-parse --short HEAD)-$(date +%Y%m%d-%H%M%S)
 mkdir -p "$BACKUP_DIR"
@@ -22,7 +24,7 @@ cp -a public/uploads "$BACKUP_DIR/public_uploads"
 The previous commit SHA is recorded in the workflow logs as `Deployed: <SHA_before>` and `Target: <SHA_after>`. You can also find it via:
 
 ```bash
-cd /root/alo-github-main-new
+cd /root/alo-github-main
 git reflog | head -n 20
 ls -lt /root/alo-releases/backups/pre-* | head -n 20
 ```
@@ -40,12 +42,12 @@ ls -lt /root/alo-releases/backups/pre-* | head -n 20
 
 ## 3. Rollback steps (on VPS, as DEPLOY_USER)
 
-> Placeholders: `/root/alo-github-main-new` (e.g. `/root/alo-github-main-new`), `alo-education` (`alo-education`), `3044` (`3000` or `3025`), `PREVIOUS_SHA` (the commit you want to return to), `BACKUP_DIR` (the backup created by the failed deploy).
+> Placeholders: `/root/alo-github-main` (e.g. `/root/alo-github-main`), `alo-education` (`alo-education`), `3044`, `PREVIOUS_SHA` (the commit you want to return to), `BACKUP_DIR` (the backup created by the failed deploy).
 
 ### 3.1 Identify the previously working commit
 
 ```bash
-cd /root/alo-github-main-new
+cd /root/alo-github-main
 git log --oneline -10
 # or
 git reflog | head -n 20
@@ -62,7 +64,7 @@ echo "BACKUP_DIR=$BACKUP_DIR"
 ### 3.2 Restore code (without losing .env / uploads)
 
 ```bash
-cd /root/alo-github-main-new
+cd /root/alo-github-main
 # Preserve current .env just in case
 cp .env /tmp/current-env-$(date +%Y%m%d-%H%M%S) 2>/dev/null || true
 
@@ -111,7 +113,7 @@ curl -fsS http://127.0.0.1:3044/api/health | python3 -m json.tool
 ### 3.5 Verify via GitHub
 
 ```bash
-cd /root/alo-github-main-new
+cd /root/alo-github-main
 git rev-parse HEAD  # should equal PREVIOUS_SHA
 pm2 describe alo-education | grep -q "online" && echo "PM2 online"
 curl -fsS http://127.0.0.1:3044/api/health | grep -q '"status"' && echo "Health OK"
@@ -125,7 +127,7 @@ If you triggered the deploy via GitHub Actions, you can also roll back by re-run
 
 | Preserved (never overwritten) | Reverted to previous commit |
 |---|---|
-| `/root/alo-github-main-new/.env` (production secrets) | `src/`, `prisma/schema.prisma`, `package.json`, `next.config.ts`, etc. |
+| `/root/alo-github-main/.env` (production secrets) | `src/`, `prisma/schema.prisma`, `package.json`, `next.config.ts`, etc. |
 | `storage/`, `uploads/`, `public/uploads` (documents) | ` .next/`, `node_modules/` (rebuilt) |
 | `WhatsAppOfficialNumber` rows, `AloAuditLog`, `ApplicationDocument` version history (DB) | Code and `ecosystem.config.cjs`, `Caddyfile` |
 | `WhatsAppNumberAssignmentAudit` history | Workflow file `.github/workflows/deploy-production.yml` |

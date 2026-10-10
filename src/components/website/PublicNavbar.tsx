@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
@@ -27,20 +27,22 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import WebsiteActionButtons from '@/components/website/WebsiteActionButtons';
+import LanguageToggle from '@/components/website/LanguageToggle';
+import { EnglishExamButton } from '@/components/website/EnglishExamCta';
+import { useI18n } from '@/i18n';
 
 /* ------------------------------------------------------------------ */
 /*  DATA (defaults – overridden by API when available)                 */
 /* ------------------------------------------------------------------ */
 
 const DEFAULT_DESTINATIONS = [
-  { label: 'United Kingdom', href: '/destinations/united-kingdom' },
+  { label: 'United Kingdom', href: '/destinations/uk' },
   { label: 'United States', href: '/destinations/usa' },
   { label: 'Canada', href: '/destinations/canada' },
   { label: 'Australia', href: '/destinations/australia' },
   { label: 'Ireland', href: '/destinations/ireland' },
   { label: 'New Zealand', href: '/destinations/new-zealand' },
-  { label: 'Dubai / UAE', href: '/destinations/dubai-uae' },
+  { label: 'Dubai / UAE', href: '/destinations/dubai' },
   { label: 'More Countries', href: '/destinations' },
 ];
 
@@ -68,7 +70,7 @@ const resourceItems = [
   { label: 'Blogs', href: '/blog' },
   { label: 'Articles', href: '/resources/articles' },
   { label: 'Scholarships by Country', href: '/scholarships' },
-  { label: 'Visa Guides', href: '/visa-support' },
+  { label: 'Visa Guides', href: '/visa' },
   { label: 'Success Stories', href: '/success-stories' },
   { label: 'Application Tips', href: '/application-process' },
   { label: 'Pre-Departure Guides', href: '/resources/pre-departure' },
@@ -81,6 +83,17 @@ const portalItems = [
   { label: 'Student Portal', href: '/student/login', icon: GraduationCap },
   { label: 'Partner Portal', href: '/partner/login', icon: LayoutGrid },
   { label: 'Employee Portal', href: '/employee/login', icon: LogIn },
+];
+
+// Planning tools. Each runs on deterministic rules over verified data; none of
+// them promise an admission, award or visa outcome.
+const AI_TOOL_ITEMS = [
+  { label: 'Course Match', href: '/ai/course-match' },
+  { label: 'Scholarship Match', href: '/ai/scholarship-match' },
+  { label: 'Visa Coach', href: '/ai/visa-coach' },
+  { label: 'SOP Helper', href: '/ai/sop-helper' },
+  { label: 'CV Helper', href: '/ai/cv-helper' },
+  { label: 'Eligibility Check', href: '/eligibility-check' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -109,7 +122,7 @@ function MobileLink({ href, label, icon: Icon, onClick }: {
       onClick={onClick}
       className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 transition-colors"
     >
-      {Icon && <Icon className="h-4 w-4 text-[#0057B8]" />}
+      {Icon && <Icon className="h-4 w-4 text-[#2563EB]" />}
       {label}
     </Link>
   );
@@ -133,8 +146,11 @@ function DropdownTrigger({ label, isOpen, onToggle, onMouseEnter, onMouseLeave, 
   return (
     <div className={`relative ${className}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <button
+        type="button"
         onClick={onToggle}
-        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[#000000] rounded-lg hover:bg-slate-50 transition-colors"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        className="flex items-center gap-1 whitespace-nowrap px-2 py-2 text-sm font-medium text-[#000000] rounded-lg hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
       >
         {label}
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -183,9 +199,31 @@ export default function PublicNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [destinations, setDestinations] = useState(DEFAULT_DESTINATIONS);
   const [langItems, setLangItems] = useState(languagePrepItems);
+  const { t } = useI18n();
+
+  // Virtual Editor override: published 'navigation' items (section
+  // 'destinations') take precedence over the auto-generated list —
+  // Super Admins curate the destinations menu via /admin/website-cms.
+  const cmsNavApplied = useRef(false);
+  useEffect(() => {
+    fetch('/api/website/cms-content?type=navigation')
+      .then(r => r.json())
+      .then(j => {
+        if (!j?.success || !Array.isArray(j.items)) return;
+        const cmsDests = j.items
+          .filter((i: any) => i.section === 'destinations' && i.label && i.data?.href)
+          .map((i: any) => ({ label: String(i.label), href: String(i.data.href) }));
+        if (cmsDests.length > 0) {
+          cmsNavApplied.current = true;
+          setDestinations(cmsDests);
+        }
+      })
+      .catch(() => { /* keep existing list */ });
+  }, []);
 
   // Load destinations from countries table (status=active) via /api/website/homepage — fallback to DEFAULT_DESTINATIONS
   useEffect(() => {
+    if (cmsNavApplied.current) return; // curated CMS navigation wins
     fetch('/api/website/homepage')
       .then(r => r.json())
       .then(data => {
@@ -248,15 +286,18 @@ export default function PublicNavbar() {
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-sm"
     >
-      {/* Branded top contact bar — header/topbar placement for 3 high-conversion buttons */}
-      <div className="hidden md:flex w-full bg-[#F8FAFC] border-b border-[#E2E8F0] px-4 sm:px-6 lg:px-8 py-2 items-center justify-between">
-        <div className="text-[11px] text-slate-600 flex items-center gap-2">
-          <span className="hidden lg:inline">✈️ 24/7 Student Support • Office: Barek Mansion-02, Panthapath, Dhaka</span>
-          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:text-[#E8501A] underline font-medium">Maps</a>
-          <span className="text-slate-300">|</span>
-          <span className="font-medium text-[#0F172A]">Senior Counselor Al Aminn: 01805020101</span>
+      {/* Utility bar — contact details as plain links only. The AI / WhatsApp /
+          Facebook controls live in the single corner FloatingActionWidget. */}
+      <div className="hidden md:flex w-full bg-alo-page border-b border-alo-border px-4 sm:px-6 lg:px-8 py-2 items-center justify-between">
+        <div className="text-xs text-alo-text-secondary flex items-center gap-2">
+          <span className="hidden lg:inline">Office: Barek Mansion-02, Panthapath, Dhaka</span>
+          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-alo-brand hover:text-alo-brand-hover underline underline-offset-2 font-medium">Maps</a>
+          <span className="text-alo-border-strong" aria-hidden="true">|</span>
+          <a href="tel:+8801805020101" className="font-medium text-alo-navy hover:text-alo-brand">Senior Counselor Al Aminn: 01805020101</a>
         </div>
-        <WebsiteActionButtons variant="header" />
+        <div className="flex items-center gap-3">
+          <LanguageToggle compact />
+        </div>
       </div>
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* LOGO */}
@@ -265,15 +306,15 @@ export default function PublicNavbar() {
             <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-9 w-auto" />
           </motion.div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-[#0057B8] leading-tight">ALO Education</span>
-            <span className="text-[11px] italic text-[#E8501A] font-medium -mt-0.5" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
+            <span className="text-lg font-bold text-[#2563EB] leading-tight">ALO Education</span>
+            <span className="text-[11px] italic text-[#F97316] font-medium -mt-0.5" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
           </div>
         </Link>
 
         {/* DESKTOP NAV */}
-        <div className="hidden lg:flex items-center gap-1">
+        <div className="hidden xl:flex items-center gap-1">
           <DropdownTrigger
-            label="Destinations"
+            label={t('nav.destinations')}
             isOpen={openDropdown === 'destinations'}
             onToggle={() => handleToggle('destinations')}
             onMouseEnter={() => handleDesktopEnter('destinations')}
@@ -287,7 +328,7 @@ export default function PublicNavbar() {
           </DropdownTrigger>
 
           <DropdownTrigger
-            label="Language Prep"
+            label={t('nav.languagePrep')}
             isOpen={openDropdown === 'language-prep'}
             onToggle={() => handleToggle('language-prep')}
             onMouseEnter={() => handleDesktopEnter('language-prep')}
@@ -300,8 +341,17 @@ export default function PublicNavbar() {
             </div>
           </DropdownTrigger>
 
+          {/* Single English Test entry point. Same tab, tracked, never a duplicate. */}
+          <EnglishExamButton
+            location="navbar"
+            className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-semibold text-[#C2410C] transition-colors hover:bg-orange-50"
+          >
+            <GraduationCap className="h-4 w-4" aria-hidden="true" />
+            {t('nav.englishTest')}
+          </EnglishExamButton>
+
           <DropdownTrigger
-            label="Resources"
+            label={t('nav.resources')}
             isOpen={openDropdown === 'resources'}
             onToggle={() => handleToggle('resources')}
             onMouseEnter={() => handleDesktopEnter('resources')}
@@ -309,6 +359,20 @@ export default function PublicNavbar() {
           >
             <div className="grid grid-cols-2 gap-x-6 gap-y-1 w-[420px]">
               {resourceItems.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+            </div>
+          </DropdownTrigger>
+
+          <DropdownTrigger
+            label="AI Tools"
+            isOpen={openDropdown === 'ai-tools'}
+            onToggle={() => handleToggle('ai-tools')}
+            onMouseEnter={() => handleDesktopEnter('ai-tools')}
+            onMouseLeave={handleDesktopLeave}
+          >
+            <div className="flex flex-col gap-1 w-[260px]">
+              {AI_TOOL_ITEMS.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
             </div>
@@ -326,7 +390,7 @@ export default function PublicNavbar() {
                 const Icon = p.icon;
                 return (
                   <Link key={p.href} href={p.href} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition-colors">
-                    <Icon className="h-4 w-4 text-[#0057B8]" />
+                    <Icon className="h-4 w-4 text-[#2563EB]" />
                     {p.label}
                   </Link>
                 );
@@ -334,27 +398,25 @@ export default function PublicNavbar() {
             </div>
           </DropdownTrigger>
 
-          <Link href="/course-finder" className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
+          <Link href="/course-finder" className="flex items-center gap-1.5 whitespace-nowrap px-2 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
             <Search className="h-4 w-4" />
-            Course Finder
+            {t('nav.courseFinder')}
           </Link>
 
-          <Link href="/services" className="px-3 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
-            Services
+          <Link href="/services" className="whitespace-nowrap px-2 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
+            {t('nav.services')}
           </Link>
         </div>
 
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-3">
-          <Link href="/book-consultation" className="hidden lg:block">
-            <Button className="bg-[#E8501A] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
-              Book Free Consultation
-            </Button>
-          </Link>
+          <Button asChild className="hidden xl:inline-flex whitespace-nowrap bg-[#F97316] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
+            <Link href="/book-consultation">{t('cta.bookConsultation')}</Link>
+          </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation menu">
+              <Button variant="ghost" size="icon" className="xl:hidden" aria-label="Open navigation menu">
                 <Menu className="h-6 w-6 text-[#0F172A]" />
               </Button>
             </SheetTrigger>
@@ -368,8 +430,8 @@ export default function PublicNavbar() {
                     <Link href="/" onClick={closeMobile} className="flex items-center gap-2">
                       <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-7 w-auto" />
                       <div className="flex flex-col">
-                        <span className="text-base font-bold text-[#0057B8] leading-tight">ALO Education</span>
-                        <span className="text-[10px] italic text-[#E8501A] font-medium" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
+                        <span className="text-base font-bold text-[#2563EB] leading-tight">ALO Education</span>
+                        <span className="text-[10px] italic text-[#F97316] font-medium" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
                       </div>
                     </Link>
                     <Button variant="ghost" size="icon" onClick={closeMobile} aria-label="Close navigation menu">
@@ -378,13 +440,21 @@ export default function PublicNavbar() {
                   </div>
 
                   <div className="px-4 py-4 flex flex-col gap-2">
-                    <MobileLink href="/course-finder" label="Course Finder" icon={Search} onClick={closeMobile} />
-                    <MobileLink href="/services" label="Services" onClick={closeMobile} />
+                    <MobileLink href="/course-finder" label={t('nav.courseFinder')} icon={Search} onClick={closeMobile} />
+                    <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
+                    <EnglishExamButton
+                      location="mobile_navbar"
+                      onNavigate={closeMobile}
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-[#C2410C] transition-colors hover:bg-orange-50"
+                    >
+                      <GraduationCap className="h-4 w-4" aria-hidden="true" />
+                      {t('nav.englishTest')}
+                    </EnglishExamButton>
 
                     <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value="destinations" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Destinations
+                          {t('nav.destinations')}
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="flex flex-col gap-0.5 pl-4">
@@ -397,7 +467,7 @@ export default function PublicNavbar() {
 
                       <AccordionItem value="language-prep" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Language Prep
+                          {t('nav.languagePrep')}
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="grid grid-cols-1 gap-0.5 pl-4">
@@ -408,9 +478,22 @@ export default function PublicNavbar() {
                         </AccordionContent>
                       </AccordionItem>
 
+                      <AccordionItem value="ai-tools" className="border-b-0">
+                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
+                          AI Tools
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-1">
+                          <div className="flex flex-col gap-0.5 pl-4">
+                            {AI_TOOL_ITEMS.map((item) => (
+                              <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+
                       <AccordionItem value="resources" className="border-b-0">
                         <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Resources
+                          {t('nav.resources')}
                         </AccordionTrigger>
                         <AccordionContent className="pb-1">
                           <div className="flex flex-col gap-0.5 pl-4">
@@ -436,17 +519,16 @@ export default function PublicNavbar() {
                     </Accordion>
 
                     <div className="mt-4 pt-4 border-t border-[#E2E8F0] space-y-3">
-                      <Link href="/book-consultation" onClick={closeMobile} className="block">
-                        <Button className="w-full bg-[#E8501A] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
-                          Book Free Consultation
-                        </Button>
-                      </Link>
-                      {/* Mobile 3-button compact placement — high-conversion, no overlap with nav */}
-                      <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 space-y-2">
-                        <p className="text-[11px] font-bold uppercase tracking-widest text-[#0057B8]">Get Instant Help</p>
-                        <WebsiteActionButtons variant="compact" className="justify-start" />
-                        <p className="text-[11px] text-slate-500 leading-snug">Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-[#0057B8] underline">Maps</a> • Al Aminn 01805020101</p>
-                      </div>
+                      <LanguageToggle />
+                      <Button asChild className="w-full bg-[#F97316] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
+                        <Link href="/book-consultation" onClick={closeMobile}>{t('cta.bookConsultation')}</Link>
+                      </Button>
+                      {/* Contact details as text — chat / WhatsApp live in the corner widget. */}
+                      <p className="text-xs text-alo-text-muted leading-snug">
+                        Office: Barek Mansion-02, Panthapath •{' '}
+                        <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-alo-brand underline">Maps</a>
+                        {' '}• <a href="tel:+8801805020101" className="text-alo-brand underline">Al Aminn 01805020101</a>
+                      </p>
                     </div>
                   </div>
                 </SheetContent>

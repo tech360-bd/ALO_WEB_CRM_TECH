@@ -1,3 +1,4 @@
+import { measureAutomation, readAutomationBuckets } from '@/lib/automation-measurement';
 /**
  * CRM Automation Engine
  * 
@@ -17,7 +18,7 @@ export interface LeadScoreResult {
 
 export async function scoreLead(leadId: string): Promise<LeadScoreResult> {
   const lead = await db.lead.findUnique({ where: { id: leadId } });
-  if (!lead) return { score: 0, tier: "COLD", reasons: ["Lead not found"] };
+  if (!lead) throw new Error("Lead not found");
 
   let score = 0;
   const reasons: string[] = [];
@@ -73,8 +74,8 @@ export async function scoreLead(leadId: string): Promise<LeadScoreResult> {
     data: { leadScore: score, leadTier: tier },
   });
 
-  // Log metric
-  await incrementMetric("lead_qualification", "automated");
+  // AutomationEvent is the canonical execution metric. Do not let a legacy
+  // aggregate counter fail an already persisted score or double-count it.
 
   return { score, tier, reasons };
 }
@@ -325,6 +326,7 @@ export async function incrementMetric(category: string, taskType: "automated" | 
 // ─── Automation Dashboard Stats ─────────────────────────────────
 
 export async function getAutomationStats(): Promise<{
+  hasData: boolean;
   totalTasks: number;
   automatedTasks: number;
   aiAssistedTasks: number;
@@ -333,39 +335,14 @@ export async function getAutomationStats(): Promise<{
   automationPercentage: number;
   byCategory: Array<{ category: string; total: number; automated: number; percentage: number }>;
 }> {
-  const metrics = await db.automationMetric.findMany();
-  
-  const totals = metrics.reduce((acc, m) => ({
-    totalTasks: acc.totalTasks + m.totalTasks,
-    automatedTasks: acc.automatedTasks + m.automatedTasks,
-    aiAssistedTasks: acc.aiAssistedTasks + m.aiAssistedTasks,
-    humanTasks: acc.humanTasks + m.humanTasks,
-    failedTasks: acc.failedTasks + m.failedTasks,
-  }), { totalTasks: 0, automatedTasks: 0, aiAssistedTasks: 0, humanTasks: 0, failedTasks: 0 });
-
-  const byCategory = metrics.reduce((acc, m) => {
-    const existing = acc.find(a => a.category === m.category);
-    if (existing) {
-      existing.total += m.totalTasks;
-      existing.automated += m.automatedTasks + m.aiAssistedTasks;
-    } else {
-      acc.push({
-        category: m.category,
-        total: m.totalTasks,
-        automated: m.automatedTasks + m.aiAssistedTasks,
-        percentage: 0,
-      });
-    }
-    return acc;
-  }, [] as Array<{ category: string; total: number; automated: number; percentage: number }>);
-
-  byCategory.forEach(c => {
-    c.percentage = c.total > 0 ? Math.round((c.automated / c.total) * 100) : 0;
-  });
-
-  const automationPercentage = totals.totalTasks > 0
-    ? Math.round(((totals.automatedTasks + totals.aiAssistedTasks) / totals.totalTasks) * 100)
-    : 0;
-
-  return { ...totals, automationPercentage, byCategory };
+  const buckets = await readAutomationBuckets();
+  const measured = measureAutomation(buckets);
+  return {
+    hasData: measured.hasData, totalTasks: measured.total, automatedTasks: measured.automated, aiAssistedTasks: measured.assisted,
+    humanTasks: measured.human, failedTasks: measured.unsuccessful, automationPercentage: measured.automationRate,
+    byCategory: [...new Set(buckets.map(bucket => bucket.category))].map(category => {
+      const value = measureAutomation(buckets.filter(bucket => bucket.category === category));
+      return { category, total: value.total, automated: value.automated, percentage: value.automationRate };
+    }),
+  };
 }

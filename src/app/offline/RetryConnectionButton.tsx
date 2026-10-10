@@ -7,7 +7,7 @@ export default function RetryConnectionButton() {
     <button
       type="button"
       onClick={() => window.location.reload()}
-      className="w-full py-3 bg-[#0057B8] hover:bg-[#004494] text-white font-semibold rounded-xl transition-colors"
+      className="w-full py-3 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold rounded-xl transition-colors"
     >
       Retry Connection
     </button>

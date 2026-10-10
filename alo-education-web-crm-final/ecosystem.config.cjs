@@ -1,3 +1,4 @@
+throw new Error('DISABLED: legacy PM2 production entry; Hostinger owns deployment.');
 module.exports = {
   apps: [
     {

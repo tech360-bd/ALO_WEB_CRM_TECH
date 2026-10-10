@@ -19,12 +19,12 @@
  */
 
 import { db } from "@/lib/db";
+import { measureAutomation, readAutomationBuckets } from "@/lib/automation-measurement";
 import { isGlobalAiPaused } from "@/lib/ai-safety";
 import {
   scoreLead,
   autoAssignCounselor,
   createFollowUpTask,
-  incrementMetric,
 } from "@/lib/crm-automation";
 
 // ─── Shared types ───────────────────────────────────────────────
@@ -87,7 +87,7 @@ async function runIdempotentWorkflow<T>(
   const existing = await db.automationEvent.findUnique({
     where: { idempotencyKey },
     select: { id: true, result: true, success: true },
-  }).catch(() => null);
+  });
 
   if (existing) {
     return {
@@ -152,65 +152,23 @@ async function runIdempotentWorkflow<T>(
   }
   const durationMs = Date.now() - start;
 
-  // 5) Update AutomationEvent with outcome
-  try {
-    await db.automationEvent.update({
-      where: { id: automationEventId },
-      data: {
-        success,
-        errorMessage,
-        durationMs,
-        result: resultValue !== undefined ? safeStringify(resultValue) : null,
-      },
-    });
-  } catch (err) {
-    console.error(`[automation-engine] failed to update event:`, err);
-  }
-
-  // 6) AuditLog + TimelineEvent
-  const details = {
-    workflow,
-    targetId,
-    trigger,
-    actor,
-    action,
-    success,
-    errorMessage,
-    durationMs,
-    result: resultValue !== undefined ? safeStringify(resultValue) : null,
-  };
-  try {
-    await db.auditLog.create({
-      data: {
-        action: "AI_ACTION",
-        resource: "AutomationEvent",
-        resourceId: automationEventId,
-        details: JSON.stringify(details),
-      },
-    });
-  } catch (err) {
-    console.error(`[automation-engine] failed to write audit log:`, err);
-  }
-
-  if (opts?.studentId) {
-    try {
-      await db.timelineEvent.create({
-        data: {
-          leadId: opts.leadId ?? null,
-          studentId: opts.studentId,
-          stage: "automation",
-          title: `${workflow} ${success ? "succeeded" : "failed"}`,
-          description: errorMessage ?? action,
-          actor: "system",
-        },
-      });
-    } catch (err) {
-      console.error(`[automation-engine] failed to write timeline event:`, err);
+  // Persist outcome and audit together. If persistence fails, callers must not
+  // claim completion: the business side effect may already have happened.
+  await db.$transaction(async tx => {
+    await tx.crmAuditLog.create({ data: {
+      action: 'AI_ACTION', targetCollection: 'AutomationEvent', targetId: automationEventId,
+      afterData: JSON.stringify({ workflow, targetId, trigger, actor, action, success, durationMs }),
+    } });
+    if (opts?.studentId) {
+      await tx.timelineEvent.create({ data: {
+        leadId: opts.leadId ?? null, studentId: opts.studentId, stage: 'automation',
+        title: `${workflow} ${success ? 'succeeded' : 'failed'}`, description: errorMessage ?? action, actor,
+      } });
     }
-  }
-
-  // 7) Increment metric (best-effort)
-  await incrementMetric(workflow, success ? "automated" : "failed").catch(() => {});
+    await tx.automationEvent.update({ where: { id: automationEventId }, data: {
+      success, errorMessage, durationMs, result: resultValue !== undefined ? safeStringify(resultValue) : null,
+    } });
+  });
 
   return {
     workflow,
@@ -911,61 +869,22 @@ export interface UnifiedAutomationStats {
   escalated: number;
   aiAssisted: number;
   total: number;
-  automationRate: number; // round(automated / (automated + human + escalated) * 100)
+  automationRate: number; // successful automated eligible events / all eligible events
   byWorkflow: Array<{ workflow: string; automated: number; human: number; escalated: number; total: number }>;
 }
 
-/**
- * Compute the 70/30 automation rate from real AutomationEvent rows.
- *
- * automationRate = round(automated / (automated + human + escalated) * 100)
- */
+/** Same event-based definition used by CRM and workforce metrics. */
 export async function getUnifiedAutomationStats(): Promise<UnifiedAutomationStats> {
-  try {
-    const rows = await db.automationEvent.findMany({
-      select: { workflow: true, mode: true, category: true },
-    });
-
-    let automated = 0;
-    let human = 0;
-    let escalated = 0;
-    let aiAssisted = 0;
-    const byWorkflowMap = new Map<string, { automated: number; human: number; escalated: number; total: number }>();
-
-    for (const r of rows) {
-      const w = byWorkflowMap.get(r.workflow) ?? { automated: 0, human: 0, escalated: 0, total: 0 };
-      w.total++;
-      if (r.mode === "AUTOMATED") { automated++; w.automated++; }
-      else if (r.mode === "AI_ASSISTED") { aiAssisted++; w.automated++; }
-      else if (r.mode === "HUMAN") { human++; w.human++; }
-      else if (r.mode === "ESCALATED") { escalated++; w.escalated++; }
-      byWorkflowMap.set(r.workflow, w);
-    }
-
-    const denom = automated + human + escalated;
-    const automationRate = denom > 0 ? Math.round((automated / denom) * 100) : 0;
-
-    return {
-      automated,
-      human,
-      escalated,
-      aiAssisted,
-      total: rows.length,
-      automationRate,
-      byWorkflow: Array.from(byWorkflowMap.entries()).map(([workflow, v]) => ({ workflow, ...v })),
-    };
-  } catch (err) {
-    console.error("[automation-engine] getUnifiedAutomationStats error:", err);
-    return {
-      automated: 0,
-      human: 0,
-      escalated: 0,
-      aiAssisted: 0,
-      total: 0,
-      automationRate: 0,
-      byWorkflow: [],
-    };
-  }
+  const buckets = await readAutomationBuckets();
+  const measured = measureAutomation(buckets);
+  return {
+    automated: measured.automated, human: measured.human, escalated: measured.escalated,
+    aiAssisted: measured.assisted, total: measured.total, automationRate: measured.automationRate,
+    byWorkflow: [...new Set(buckets.map(bucket => bucket.workflow))].map(workflow => {
+      const values = measureAutomation(buckets.filter(bucket => bucket.workflow === workflow));
+      return { workflow, automated: values.automated, human: values.human, escalated: values.escalated, total: values.total };
+    }),
+  };
 }
 
 // ─── Public workflow dispatch ──────────────────────────────────

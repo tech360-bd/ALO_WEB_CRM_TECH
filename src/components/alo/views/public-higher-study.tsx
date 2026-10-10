@@ -27,7 +27,7 @@ export function PublicHigherStudy({ onNavigate }: Props) {
         {DEGREE_LEVELS.map((level) => (
           <Card key={level.slug} className="alo-card-hover cursor-pointer rounded-2xl border border-[#DCE8F5] bg-white shadow-sm" onClick={() => onNavigate("public-course-finder")}>
             <CardContent className="p-6">
-              <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0066CC]">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#2563EB]">
                 <Icon name={level.icon} className="size-6" />
               </div>
               <h3 className="mt-4 text-lg font-bold text-[#0B2447]">{level.title}</h3>
@@ -39,7 +39,7 @@ export function PublicHigherStudy({ onNavigate }: Props) {
               </div>
               <div className="mt-4 flex items-center justify-between">
                 <span className="text-xs text-[#5A7299]"><Icon name="Clock" className="mr-1 inline size-3.5" />{level.duration}</span>
-                <span className="text-sm font-semibold text-[#0066CC]">Find Courses <Icon name="ArrowRight" className="ml-1 inline size-3.5" /></span>
+                <span className="text-sm font-semibold text-[#2563EB]">Find Courses <Icon name="ArrowRight" className="ml-1 inline size-3.5" /></span>
               </div>
             </CardContent>
           </Card>
@@ -58,7 +58,7 @@ export function PublicHigherStudy({ onNavigate }: Props) {
             { icon: "CalendarCheck", label: "Consultation", action: "public-contact" as ViewKey },
           ].map((item) => (
             <button key={item.label} onClick={() => onNavigate(item.action)} className="flex flex-col items-center gap-2 rounded-xl border border-[#DCE8F5] bg-[#F7FAFE] p-4 transition-colors hover:bg-[#EAF3FF]">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0066CC]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#2563EB]">
                 <Icon name={item.icon} className="size-5" />
               </div>
               <span className="text-xs font-medium text-[#0B2447]">{item.label}</span>
@@ -68,10 +68,10 @@ export function PublicHigherStudy({ onNavigate }: Props) {
       </SectionCard>
 
       {/* CTA */}
-      <div className="rounded-2xl bg-gradient-to-br from-[#0066CC] to-[#3B82F6] p-8 text-center text-white">
+      <div className="rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#3B82F6] p-8 text-center text-white">
         <h2 className="text-2xl font-bold">Not Sure Which Degree Is Right for You?</h2>
         <p className="mt-2 text-white/90">Book a free consultation with our expert counselors to find your perfect study path.</p>
-        <Button onClick={() => onNavigate("public-contact")} className="mt-4 bg-white text-[#0066CC] hover:bg-[#EAF3FF]">Book Free Consultation</Button>
+        <Button onClick={() => onNavigate("public-contact")} className="mt-4 bg-white text-[#2563EB] hover:bg-[#EAF3FF]">Book Free Consultation</Button>
       </div>
     </div>
   );

@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { getOptionalAuth } from '@/lib/auth-middleware';
+import { publicCourseWhere } from '@/lib/public-catalog';
 
 // Public GET /api/courses — Course Finder database engine (Part 9 & 46)
 // Filters: country, universityId, level, subject, intake, tuition, scholarship, englishRequirement, status
-// Publish safety: defaults to status 'active' (seeders write 'active';
-// unverified rows stay 'needs_official_source'). ?status=all for internal use.
+// Public visibility: anonymous visitors only receive published, VERIFIED,
+// source-linked courses (publicCourseWhere). ?status=all is honored only for
+// privileged staff; for everyone else it is ignored.
 export async function GET(req: NextRequest) {
   try {
+    const auth = await getOptionalAuth(req);
+    const privileged = (auth?.roles || []).some((role) =>
+      ['SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'STAFF', 'APPLICATION_OFFICER', 'super_admin', 'admin', 'counselor'].includes(role),
+    );
     const country = req.nextUrl.searchParams.get('country') || '';
     const universityId = req.nextUrl.searchParams.get('universityId') || '';
     const level = req.nextUrl.searchParams.get('level') || '';
@@ -15,8 +22,8 @@ export async function GET(req: NextRequest) {
     const status = req.nextUrl.searchParams.get('status') || 'active';
     const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10) || 50, 100);
 
-    const where: any = {};
-    if (status !== 'all') where.status = status;
+    const where: any = privileged ? {} : publicCourseWhere();
+    if (privileged && status !== 'all') where.status = status;
     if (country && country !== 'all') where.country = country;
     if (universityId) where.universityId = universityId;
     if (level && level !== 'all') where.studyLevel = level;
@@ -57,7 +64,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ success: true, courses: safe, data: safe, total: safe.length });
   } catch (e: any) {
+    // Log full diagnostics server-side; never echo raw driver/Prisma messages
+    // (they contain DB usernames/hosts) to the public client.
     console.error('[api/courses] error', e);
-    return NextResponse.json({ success: false, error: e?.message || 'Failed to load courses' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to load courses' }, { status: 500 });
   }
 }

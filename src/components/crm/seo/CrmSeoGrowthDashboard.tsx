@@ -273,10 +273,10 @@ export default function CrmSeoGrowthDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="text-slate-700">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-slate-700">
             <RefreshCw className="w-4 h-4" /> Refresh Data
           </Button>
-          <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
             <ArrowRight className="w-4 h-4" /> View Full Report
           </Button>
         </div>

@@ -1,10 +1,11 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { rateLimitMiddleware } from '@/lib/rate-limiter';
 
 // ============================================================
 // ELIGIBILITY ENGINE API
-// Brand: ALO Education — Blue #0057B8, Orange #E8501A
+// Brand: ALO Education — Blue #2563EB, Orange #F97316
 // Server-side rule-based eligibility evaluation engine.
 // Evaluates a student profile against published/verified courses.
 // ============================================================
@@ -775,7 +776,11 @@ function evaluateCourse(course: any, profile: any): any {
         );
         metCount++;
         matchScore += 10;
-      } else if (course.scholarshipAvailable) {
+      } else if (course.university?.scholarships) {
+        // Scholarship availability lives on the university record
+        // (CrmUniversity.scholarships), not on the course. The previous
+        // `course.scholarshipAvailable` check read a column that does not
+        // exist, so this branch could never fire.
         requirements.push(
           makeRequirement(
             'Tuition Budget',
@@ -1082,7 +1087,10 @@ async function findAlternativeRoutes(course: any, profile: any, mainResult: any)
     mainResult.eligibilityCategory === PARTIALLY_MATCHED
   ) {
     const altWhere: any = {
-      approvalStatus: 'PUBLISHED',
+      // CrmCourse has no `approvalStatus` column. Published, verified courses
+      // are `status: 'active'` + `verificationStatus: 'VERIFIED'`, matching
+      // /api/course-finder/[slug] and /api/course-finder/universities.
+      status: 'active',
       verificationStatus: 'VERIFIED',
       id: { not: course.id },
     };
@@ -1147,6 +1155,12 @@ async function findAlternativeRoutes(course: any, profile: any, mainResult: any)
 // ============================================================
 export async function POST(req: Request) {
   try {
+    // This endpoint is reachable anonymously (the public /eligibility-check and
+    // /ai/course-match pages use it) and writes one assessment row per call, so
+    // it is throttled per client IP before any database work happens.
+    const limited = rateLimitMiddleware(req, 'lead_create');
+    if (limited) return limited;
+
     const body = await req.json();
     const {
       academicProfile,
@@ -1161,7 +1175,11 @@ export async function POST(req: Request) {
 
     // ---- Build WHERE clause for course query ----
     const baseWhere: any = {
-      approvalStatus: 'PUBLISHED',
+      // CrmCourse has no `approvalStatus` column — filtering on it made every
+      // request throw a Prisma validation error (P2009/P2025 style "Unknown
+      // argument"), which surfaced to visitors as a bare 500 on the public
+      // /eligibility-check and /ai/course-match tools.
+      status: 'active',
       verificationStatus: 'VERIFIED',
     };
 
@@ -1226,7 +1244,11 @@ export async function POST(req: Request) {
             city: true,
             rankingValue: true,
             rankingProvider: true,
-            scholarshipAvailable: true,
+            // CrmUniversity exposes scholarship availability as the boolean
+            // `scholarships`. There is no `scholarshipAvailable` column on
+            // either CrmUniversity or CrmCourse, so selecting it made the whole
+            // query throw and the public eligibility tools return a bare 500.
+            scholarships: true,
           },
         },
       },
@@ -1281,11 +1303,21 @@ export async function POST(req: Request) {
     }
 
     // ---- Save assessment to database ----
+    // FinderEligibilityResult columns are: studentId, assessmentId, result,
+    // eligibleCourses, score. The previous version wrote sessionId/userId/
+    // responses/results, none of which exist on the model, so every assessment
+    // failed to persist and the whole request 500'd.
+    const averageScore = limitedResults.length > 0
+      ? Math.round(
+          limitedResults.reduce((total, r) => total + (r.matchScore || 0), 0) / limitedResults.length
+        )
+      : 0;
+
     const assessment = await db.finderEligibilityResult.create({
       data: {
-        sessionId: sessionId || null,
-        userId: userId || null,
-        responses: JSON.stringify({
+        studentId: userId || null,
+        assessmentId: sessionId || null,
+        result: JSON.stringify({
           academicProfile,
           englishTests,
           workExperience,
@@ -1293,7 +1325,8 @@ export async function POST(req: Request) {
           studyPreferences,
           profileCompleteness,
         }),
-        results: JSON.stringify(limitedResults),
+        eligibleCourses: JSON.stringify(limitedResults),
+        score: averageScore,
       },
     });
 

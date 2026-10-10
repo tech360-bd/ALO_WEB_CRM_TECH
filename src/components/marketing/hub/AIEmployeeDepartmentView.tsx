@@ -35,16 +35,16 @@ export default function AIEmployeeDepartmentView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Bot className="w-6 h-6 text-[#F37021]" />AI Employee Department</h2>
-        <p className="text-sm text-gray-500">20 specialized agents — delegated by AI Director, bounded by permissions, task queues, schedules, timezone Asia/Dhaka, health, retry, escalation. Reuses ALO Labs infrastructure — no duplicate agent system.</p>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Bot className="w-6 h-6 text-[#F97316]" />AI Employee Department</h2>
+        <p className="text-sm text-gray-500">ALO Education marketing role catalog. Roles listed here are not evidence of active workers; execution and approval status must be verified in ALO Education’s own runtime.</p>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {EMPLOYEES.map(e=>(
-          <Card key={e.id} className="border-[#0066CC]/10 hover:shadow-md transition-shadow">
+          <Card key={e.id} className="border-[#2563EB]/10 hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm flex items-center gap-2"><Cpu className="w-4 h-4 text-[#0066CC]" />{e.name}</CardTitle>
-                <Badge className="bg-[#F37021]/10 text-[#F37021] border-[#F37021]/20 text-[10px]">{e.dept}</Badge>
+                <CardTitle className="text-sm flex items-center gap-2"><Cpu className="w-4 h-4 text-[#2563EB]" />{e.name}</CardTitle>
+                <Badge className="bg-[#F97316]/10 text-[#F97316] border-[#F97316]/20 text-[10px]">{e.dept}</Badge>
               </div>
               <p className="text-xs text-gray-500">{e.role} — {e.id}</p>
             </CardHeader>
@@ -67,7 +67,7 @@ export default function AIEmployeeDepartmentView() {
       <Card>
         <CardHeader><CardTitle className="text-sm">Execution Snapshot (MarketingAgentJob)</CardTitle></CardHeader>
         <CardContent>
-          {loading ? <Loader2 className="w-5 h-5 animate-spin text-[#F37021]" /> : jobs.length===0 ? <p className="text-sm text-gray-500">No active jobs — jobs appear when AI Director delegates tasks. Each job has status, input/output, error, duration, ragEnabled, memoryUsed, protectedMode, approvalId.</p> : <pre className="text-xs bg-[#F8FAFC] border rounded-xl p-3 max-h-[300px] overflow-auto">{JSON.stringify(jobs.slice(0,3), null, 2)}</pre>}
+          {loading ? <Loader2 className="w-5 h-5 animate-spin text-[#F97316]" /> : jobs.length===0 ? <p className="text-sm text-gray-500">No active jobs — jobs appear when AI Director delegates tasks. Each job has status, input/output, error, duration, ragEnabled, memoryUsed, protectedMode, approvalId.</p> : <pre className="text-xs bg-[#F8FAFC] border rounded-xl p-3 max-h-[300px] overflow-auto">{JSON.stringify(jobs.slice(0,3), null, 2)}</pre>}
         </CardContent>
       </Card>
       <p className="text-[11px] text-gray-400">All agents operate only within assigned permissions — cannot modify own permissions, bypass approvals, or execute shell commands. Verified via src/lib/marketing/permissions.ts + withAuth.</p>

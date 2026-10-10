@@ -55,3 +55,12 @@
 # --- Note for Next.js (if using Node worker instead of PHP wrappers) ---
 # Alternative: use Node cron worker: */5 * * * * cd /home/aloeduca/alo-web-crm && /opt/alt/alt-nodejs22/root/usr/bin/node src/cron/worker.ts >> /home/aloeduca/alo-web-crm-shared/logs/cron.log 2>&1
 # The PHP wrappers above simply call the same Prisma/Node logic via shell_exec for cPanel PHP cron compatibility (no Supervisor/Redis needed).
+
+# --- ALO University & Official Data Monitoring Agent (7-day cadence) ---
+# Polls daily at 03:00 Asia/Dhaka. The 7-day interval itself is enforced in the
+# database (MonitoringJob.nextRunAt), so firing this daily is safe and idempotent:
+# it returns {"status":"NOT_DUE"} until the interval has elapsed. Polling daily
+# rather than weekly means a window missed during a deployment or outage is
+# picked up the following day instead of slipping a full week.
+# Requires ALO_CRON_SECRET (>= 16 chars) to be exported in the environment.
+0 3 * * * /usr/bin/curl -fsS -m 290 -H "Authorization: Bearer $ALO_CRON_SECRET" https://YOUR-DOMAIN/api/cron/university-monitoring >> /home/aloeduca/alo-web-crm-shared/logs/cron.log 2>&1

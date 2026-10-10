@@ -1,10 +1,7 @@
-// Integration test: consultation workflow.
-// Tests the lead submission endpoint end-to-end with a real database.
-//
-// This test uses a separate test database (DATABASE_URL must point to a test DB).
-// Run with: DATABASE_URL="mysql://localhost:3306/test" npm test
-
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+// Real MySQL persistence contracts; these do not exercise the HTTP/AI workflow.
+// TEST_DATABASE_URL must target a disposable local alo_test_* schema.
+import { describe, it, expect, afterAll } from 'vitest';
+import { randomUUID } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
 
 // CI safety: this file requires a real (disposable, NEVER production) MySQL database.
@@ -29,22 +26,23 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  if (!HAS_TEST_DB) return;
-  await db.$disconnect();
-});
-
-beforeEach(async () => {
-  if (!HAS_TEST_DB) return;
-  await db.leadForm.deleteMany({});
-  await db.internalComment.deleteMany({});
-  await db.portalNotification.deleteMany({});
-  await db.portalAuditLog.deleteMany({});
+  if (!client) return;
+  try {
+    await client.portalNotification.deleteMany({ where: { id: ids.notification } });
+    await client.portalAuditLog.deleteMany({ where: { id: ids.audit } });
+    await client.leadForm.deleteMany({ where: { id: { startsWith: runId } } });
+    await client.portalUser.deleteMany({ where: { id: ids.user } });
+  } finally {
+    await client.$disconnect();
+  }
 });
 
 describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
   it('creates a lead with valid input', async () => {
+    const db = requireClient();
     const lead = await db.leadForm.create({
       data: {
+        id: ids.lead(),
         name: 'Test Student',
         phone: '+8801712345678',
         email: 'test@example.com',
@@ -64,9 +62,11 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
   });
 
   it('detects duplicate leads by email', async () => {
+    const db = requireClient();
     // Create first lead
     await db.leadForm.create({
       data: {
+        id: ids.lead(),
         name: 'Duplicate Test',
         phone: '+8801711111111',
         email: 'duplicate@example.com',
@@ -81,6 +81,7 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const existing = await db.leadForm.findFirst({
       where: {
+        id: { startsWith: runId },
         OR: [
           { phone: '+8801711111111', createdAt: { gte: thirtyDaysAgo } },
           { email: 'duplicate@example.com', createdAt: { gte: thirtyDaysAgo } },
@@ -93,9 +94,11 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
   });
 
   it('updates an existing lead instead of creating a duplicate', async () => {
+    const db = requireClient();
     // Create initial lead
     const original = await db.leadForm.create({
       data: {
+        id: ids.lead(),
         name: 'Update Test',
         phone: '+8801722222222',
         email: 'update@example.com',
@@ -121,8 +124,10 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
   });
 
   it('creates an audit log entry when a lead is created', async () => {
+    const db = requireClient();
     const lead = await db.leadForm.create({
       data: {
+        id: ids.lead(),
         name: 'Audit Test',
         phone: '+8801733333333',
         email: 'audit@example.com',
@@ -133,6 +138,7 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
 
     const auditLog = await db.portalAuditLog.create({
       data: {
+        id: ids.audit,
         actorUserId: 'public',
         action: 'lead.created',
         entityType: 'LeadForm',
@@ -149,10 +155,12 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
   });
 
   it('creates a notification for the assigned counselor', async () => {
+    const db = requireClient();
     // First create a counselor user with unique email
     const uniqueEmail = `counselor-test-${Date.now()}@example.com`;
     const counselor = await db.portalUser.create({
       data: {
+        id: ids.user,
         email: uniqueEmail,
         name: 'Test Counselor',
         userType: 'EMPLOYEE',
@@ -163,6 +171,7 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
 
     const lead = await db.leadForm.create({
       data: {
+        id: ids.lead(),
         name: 'Notification Test',
         phone: '+8801744444444',
         email: 'notify@example.com',
@@ -174,6 +183,7 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
 
     const notification = await db.portalNotification.create({
       data: {
+        id: ids.notification,
         userId: counselor.id,
         title: 'New lead assigned to you',
         message: `Lead from ${lead.name} (${lead.email})`,
@@ -194,8 +204,10 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
   });
 
   it('allows status updates on a lead', async () => {
+    const db = requireClient();
     const lead = await db.leadForm.create({
       data: {
+        id: ids.lead(),
         name: 'Status Test',
         phone: '+8801755555555',
         email: 'status@example.com',
@@ -218,8 +230,10 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
   });
 
   it('persists leads across DB reconnects', async () => {
+    const db = requireClient();
     const lead = await db.leadForm.create({
       data: {
+        id: ids.lead(),
         name: 'Persist Test',
         phone: '+8801766666666',
         email: 'persist@example.com',
@@ -230,11 +244,14 @@ describe.skipIf(!HAS_TEST_DB)('consultation workflow', () => {
 
     // Disconnect and reconnect
     await db.$disconnect();
-    const db2 = new PrismaClient();
-    const found = await db2.leadForm.findUnique({ where: { id: lead.id } });
-    expect(found).not.toBeNull();
-    expect(found?.name).toBe('Persist Test');
-    await db2.leadForm.delete({ where: { id: lead.id } });
-    await db2.$disconnect();
+    const db2 = new PrismaClient({ datasourceUrl: databaseUrl! });
+    try {
+      const found = await db2.leadForm.findUnique({ where: { id: lead.id } });
+      expect(found).not.toBeNull();
+      expect(found?.name).toBe('Persist Test');
+      await db2.leadForm.delete({ where: { id: lead.id } });
+    } finally {
+      await db2.$disconnect();
+    }
   });
 });

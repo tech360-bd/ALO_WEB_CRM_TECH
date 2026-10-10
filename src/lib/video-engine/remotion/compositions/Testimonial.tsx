@@ -5,7 +5,7 @@ export const Testimonial: React.FC<any> = ({ studentName = "Ahmed Rahman", count
   const frame = useCurrentFrame();
   const opacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" });
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0057B8", justifyContent: "center", alignItems: "center", color: "white", fontFamily: "Inter" }}>
+    <AbsoluteFill style={{ backgroundColor: "#2563EB", justifyContent: "center", alignItems: "center", color: "white", fontFamily: "Inter" }}>
       <div style={{ opacity, textAlign: "center", padding: 40 }}>
         {photoUrl && <Img src={photoUrl} style={{ width: 120, height: 120, borderRadius: 999, margin: "0 auto" }} />}
         <h2 style={{ fontSize: 48, fontWeight: 800, marginTop: 20 }}>{studentName}</h2>

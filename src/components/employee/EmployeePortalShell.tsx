@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -60,7 +61,8 @@ const navItems: NavItem[] = [
 ];
 
 export default function EmployeePortalShell({ children }: { children: React.ReactNode }) {
-  const { user, currentView, setView, logout, notifications, sidebarOpen, setSidebarOpen } =
+  const router = useRouter();
+  const { user, currentView, setView, logout, hydrate, notifications, sidebarOpen, setSidebarOpen } =
     usePortalStore();
   const [showNotifications, setShowNotifications] = useState(false);
   const [actingAs, setActingAs] = useState<{ isActing: boolean; originalAdmin?: string } | null>(null);
@@ -71,6 +73,10 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
   const country = (user as any)?.country || 'Bangladesh';
   const taskCount = 5; // could be fetched from /api/employee/tasks count
   const pendingApprovals = 2;
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -92,7 +98,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
   const handleStopActingAs = () => {
     localStorage.removeItem('alo_acting_as_admin');
     setActingAs(null);
-    window.location.href = '/admin/employees';
+    router.replace('/admin/employees');
   };
 
   const sidebarContent = (
@@ -165,7 +171,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
             <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-2">Audit Logging Active</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs h-7" onClick={()=> window.location.href='/admin/access-control-center'}>View Acting-As Audit</Button>
+            <Button size="sm" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs h-7" onClick={() => router.push('/admin/access-control-center')}>View Acting-As Audit</Button>
             <Button size="sm" className="bg-white text-orange-600 hover:bg-white/90 text-xs font-bold h-7 shadow" onClick={handleStopActingAs}>Stop Acting-As</Button>
           </div>
         </div>
@@ -174,7 +180,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
         <div className="flex items-center gap-3">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden">
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>

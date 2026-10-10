@@ -1,15 +1,14 @@
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/resources — list all resources for admin
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -54,7 +53,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/admin/resources — create a resource
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -70,7 +69,7 @@ export async function POST(req: NextRequest) {
       slug, categoryId, title, excerpt, content,
       authorId, featuredImage, countrySlug, studyLevel,
       readingTime = 5, status = "DRAFT",
-      publishedAt, sourceUrl, sourceName, verificationStatus = "VERIFIED",
+      publishedAt, sourceUrl, sourceName, verificationStatus = "PENDING",
       seoTitle, seoDescription, tags = [],
     } = body as any;
 
@@ -91,29 +90,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
     }
 
-    const resource = await db.resource.create({
+    const resource = await db.$transaction(async tx => {
+      const resource = await tx.resource.create({
       data: {
         slug, categoryId, title,
-        excerpt: excerpt || null,
+        excerpt: excerpt || "",
         content,
-        authorId: authorId || null,
-        featuredImage: featuredImage || null,
-        countrySlug: countrySlug || null,
-        studyLevel: studyLevel || null,
+        authorId: authorId || "",
+        featuredImage: featuredImage || "",
+        countrySlug: countrySlug || "",
+        studyLevel: studyLevel || "",
         readingTime,
         status,
         publishedAt: publishedAt ? new Date(publishedAt) : (status === "PUBLISHED" ? new Date() : null),
-        sourceUrl: sourceUrl || null,
-        sourceName: sourceName || null,
+        sourceUrl: sourceUrl || "",
+        sourceName: sourceName || "",
         verificationStatus,
-        seoTitle: seoTitle || null,
-        seoDescription: seoDescription || null,
+        seoTitle: seoTitle || "",
+        seoDescription: seoDescription || "",
         tags: Array.isArray(tags) ? JSON.stringify(tags) : (typeof tags === "string" ? tags : "[]"),
       },
       include: { category: true },
     });
-
-    await contentAuditLog.create({
+      await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CREATE",
@@ -121,7 +120,9 @@ export async function POST(req: NextRequest) {
         resourceId: resource.id,
         details: JSON.stringify({ slug, title, categoryId }),
       },
-    }).catch(() => {});
+    }, tx);
+      return resource;
+    });
 
     return NextResponse.json({ resource }, { status: 201 });
   } catch (err: any) {

@@ -148,6 +148,7 @@ export interface RegisterStudentParams {
   email: string;
   phone?: string;
   password: string;
+  pendingVerification?: boolean;
 }
 
 export interface RegisterStudentResult {
@@ -168,10 +169,10 @@ export interface RegisterStudentResult {
  *      AND differs, return STUDENT_EXISTS_DIFFERENT_OWNER.
  *   3. bcrypt.hash(password, 12).
  *   4. Create User (role=STUDENT, status=ACTIVE).
- *   5. Generate canonical student code with P2002 retry (max 5).
- *   6. Create Student record linked to User.id; if a legacy Student row
- *      existed without userId, its leadId is migrated and the duplicate
- *      is removed.
+ *   5. Generate a canonical student code with P2002 retry (max 5) only when
+ *      no matching CRM Student record exists.
+ *   6. Link User.id to an existing unowned Student row without discarding its
+ *      business id or history; otherwise create a new Student row.
  *   7. On any error → transaction rolls back.
  *
  * Returns { success, userId, studentId, studentDbId } or
@@ -205,7 +206,9 @@ export async function registerStudentAtomically(
       // 3. Hash password (cost=12)
       const passwordHash = await bcrypt.hash(params.password, 12);
 
-      // 4. Create User (role=STUDENT, status=ACTIVE)
+      // 4. Create the unverified account in a non-authenticating state when
+      // this transaction backs public self-registration.
+      const pendingVerification = params.pendingVerification === true;
       const user = await tx.user.create({
         data: {
           email,
@@ -213,33 +216,48 @@ export async function registerStudentAtomically(
           phone: params.phone,
           passwordHash,
           role: "STUDENT",
-          status: "ACTIVE",
+          status: pendingVerification ? "PENDING" : "ACTIVE",
+          emailVerified: !pendingVerification,
           mustChangePwd: false,
           permissions: JSON.stringify(["students.view_own"]),
         },
       });
 
-      // 5 + 6. Generate canonical student code with P2002 retry inside the transaction
+      // 5 + 6. Keep one Student row per person. If a legacy CRM record exists,
+      // attach the verified portal identity to it rather than creating a second
+      // profile and deleting the old row (which would orphan its documents,
+      // applications, payments, and timeline references).
       let studentRec: { id: string; studentId: string } | null = null;
-      for (let attempt = 1; attempt <= MAX_CODE_RETRIES; attempt++) {
-        const code = await generateCanonicalStudentCodeTx(tx);
-        try {
-          studentRec = await tx.student.create({
-            data: {
-              studentId: code,
-              userId: user.id,
-              leadId: existingStudent?.leadId ?? null,
-              name: fullName,
-              email,
-              phone: params.phone || "",
-            },
-            select: { id: true, studentId: true },
-          });
-          break;
-        } catch (err: unknown) {
-          const e = err as { code?: string };
-          if (e?.code === "P2002" && attempt < MAX_CODE_RETRIES) continue;
-          throw err;
+      if (existingStudent) {
+        studentRec = await tx.student.update({
+          where: { id: existingStudent.id },
+          data: {
+            userId: user.id,
+            status: pendingVerification ? "pending_verification" : "active",
+          },
+          select: { id: true, studentId: true },
+        });
+      } else {
+        for (let attempt = 1; attempt <= MAX_CODE_RETRIES; attempt++) {
+          const code = await generateCanonicalStudentCodeTx(tx);
+          try {
+            studentRec = await tx.student.create({
+              data: {
+                studentId: code,
+                userId: user.id,
+                name: fullName,
+                email,
+                phone: params.phone || "",
+                status: pendingVerification ? "pending_verification" : "active",
+              },
+              select: { id: true, studentId: true },
+            });
+            break;
+          } catch (err: unknown) {
+            const e = err as { code?: string };
+            if (e?.code === "P2002" && attempt < MAX_CODE_RETRIES) continue;
+            throw err;
+          }
         }
       }
 
@@ -247,12 +265,6 @@ export async function registerStudentAtomically(
         throw Object.assign(new Error("Could not allocate canonical student code"), {
           code: "INTERNAL_ERROR",
         });
-      }
-
-      // If a legacy Student row (no userId) existed, migrate is already done above
-      // (we copied its leadId onto the new record). Now delete the orphaned legacy row.
-      if (existingStudent) {
-        await tx.student.delete({ where: { id: existingStudent.id } }).catch(() => {});
       }
 
       return { userId: user.id, studentId: studentRec.studentId, studentDbId: studentRec.id };

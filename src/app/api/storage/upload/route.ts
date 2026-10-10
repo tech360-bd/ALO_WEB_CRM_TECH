@@ -1,60 +1,16 @@
-import { NextResponse } from "next/server";
-import { withAuth } from "@/lib/auth-middleware";
-import { db } from "@/lib/db";
+import { NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 
-export async function POST(request: Request) {
-  return withAuth(async (req, auth) => {
-    try {
-      const formData = await req.formData();
-      const file = formData.get("file") as File | null;
-      const entityType = formData.get("entityType") as string || "general";
-      const entityId = formData.get("entityId") as string || "";
-      
-      if (!file) return NextResponse.json({ success: false, error: "No file provided" }, { status: 400 });
-      
-      // Validate file
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (file.size > maxSize) return NextResponse.json({ success: false, error: "File too large (max 10MB)" }, { status: 400 });
-      
-      // Create metadata record
-      const fileUuid = "file-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
-      const fileExt = file.name.split(".").pop() || "bin";
-      const metadata = await db.fileMetadata.create({
-        data: {
-          uuid: fileUuid,
-          originalName: file.name,
-          storedName: `${fileUuid}.${fileExt}`,
-          mimeType: file.type || "application/octet-stream",
-          extension: file.name.split(".").pop() || "",
-          sizeBytes: BigInt(file.size),
-          checksumSha256: "", // populated once file bytes are persisted server-side
-          storagePath: `${entityType.toLowerCase()}/${fileUuid}.${fileExt}`,
-          storagePool: "default",
-          entityType,
-          entityId,
-          uploadedBy: auth.userId,
-          status: "ACTIVE",
-          visibility: "private",
-          source: "upload",
-        }
-      }).catch(() => ({
-        id: "file-" + Date.now(),
-        originalName: file.name,
-        sizeBytes: file.size,
-        status: "ACTIVE"
-      }));
-      
-      return NextResponse.json({ success: true, data: metadata, message: "File uploaded successfully" }, { status: 201 });
-    } catch (e) {
-      console.error("Upload error:", e);
-      return NextResponse.json({ success: false, error: "Upload failed" }, { status: 500 });
-    }
-  })(request);
-}
+// Quarantine this incomplete upload path, not all document services. Previously
+// it wrote metadata without bytes and fabricated metadata on DB failure. Wiring
+// storage-service requires an approved persistent private root and entity-level
+// ownership/visibility mapping; guessing either could lose or expose documents.
+export const POST = withAuth(async () => NextResponse.json({
+  success: false, status: 'DISABLED',
+  error: 'This upload endpoint has no verified persistent file storage workflow. No file was saved.',
+}, { status: 503 }));
 
-export async function GET(request: Request) {
-  return withAuth(async (req, auth) => {
-    return NextResponse.json({ success: true, message: "Use POST with multipart/form-data to upload", limits: { maxSize: "10MB", allowedTypes: ["pdf", "jpg", "png", "docx"] } });
-  })(request);
-}
-
+export const GET = withAuth(async () => NextResponse.json({
+  success: false, status: 'DISABLED',
+  error: 'Uploads through this endpoint are unavailable pending persistent storage and access-control verification.',
+}, { status: 503 }));

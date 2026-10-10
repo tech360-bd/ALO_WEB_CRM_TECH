@@ -22,12 +22,12 @@ export function PublicOffices({ onNavigate }: Props) {
           <Card key={office.city} className="rounded-2xl border border-[#DCE8F5] bg-white shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-start gap-3">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0066CC]">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#2563EB]">
                   <Icon name="MapPin" className="size-6" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-[#0B2447]">{office.city}</h3>
-                  {office.isMain && <Badge className="mt-1 bg-[#EAF3FF] text-[#0066CC]">Main Office</Badge>}
+                  {office.isMain && <Badge className="mt-1 bg-[#EAF3FF] text-[#2563EB]">Main Office</Badge>}
                 </div>
               </div>
               <div className="mt-4 space-y-2 text-sm">

@@ -2,12 +2,16 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Award, Calendar, DollarSign, ExternalLink, ArrowRight, ShieldCheck } from 'lucide-react';
-import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
+import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
+import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const country = COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const country = getCountryDestination(slug);
   if (!country) return { title: 'Scholarships | ALO Education' };
 
   return {
@@ -18,16 +22,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CountryScholarshipsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const countryData = COUNTRY_DESTINATIONS[slug.toLowerCase().trim()];
+  const countryData = getCountryDestination(slug);
   if (!countryData) notFound();
 
   const scholarships = await db.crmScholarship.findMany({
+    where: {
+      university: {
+        OR: [
+          { country: { contains: countryData.name } },
+          { country: { contains: countryData.code } },
+        ],
+      },
+    },
     take: 20,
     orderBy: { createdAt: 'desc' },
     include: {
       university: true,
     },
-  });
+  }).catch((error) => throwSanitizedDatabaseFailure(
+    'destination-scholarships',
+    error,
+    'DESTINATION_DATA_UNAVAILABLE',
+  ));
 
   return (
     <div className="bg-slate-50 min-h-screen py-12 text-slate-900">

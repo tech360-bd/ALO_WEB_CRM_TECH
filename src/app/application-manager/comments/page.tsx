@@ -33,7 +33,7 @@ export default function CommentsPage() {
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
       <div><h1 className="text-xl font-bold text-[#0F172A]">Comments — Channels</h1><p className="text-sm text-gray-500">STUDENT_VISIBLE/PARTNER_VISIBLE/COUNSELOR_VISIBLE/APPLICATION_TEAM_INTERNAL/B2B_CONFIDENTIAL/UNIVERSITY/FINANCE/VISA_HANDOVER — visibility filtered backend</p></div>
-      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : (
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#2563EB]" /></div> : (
         <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Recent Comments ({comments.length}) — Real DB</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-2">

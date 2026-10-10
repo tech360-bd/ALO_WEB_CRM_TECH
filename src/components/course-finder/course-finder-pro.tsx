@@ -144,7 +144,7 @@ function NotesPanel({ course, canView }: { course: Course; canView: boolean }) {
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full text-xs text-slate-500 hover:text-slate-700 h-7">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-xs text-slate-500 hover:text-slate-700 h-7">
           <StickyNote className="size-3.5 mr-1.5" />
           Internal Notes
           {open ? <ChevronUp className="size-3 ml-auto" /> : <ChevronDown className="size-3 ml-auto" />}
@@ -272,7 +272,7 @@ function ProCourseCard({
         {canViewCommission && (
           <Collapsible>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-full text-xs text-slate-500 hover:text-slate-700 h-7 -mt-1">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-xs text-slate-500 hover:text-slate-700 h-7 -mt-1">
                 <DollarSign className="size-3.5 mr-1.5" />
                 Commission Details
                 <ChevronDown className="size-3 ml-auto" />
@@ -643,7 +643,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
           {/* Mobile Filter Sheet */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white">
                 <SlidersHorizontal className="size-5" />
               </Button>
             </SheetTrigger>

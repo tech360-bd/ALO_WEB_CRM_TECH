@@ -73,19 +73,22 @@ export async function GET(request: NextRequest) {
       });
 
       const data = {
+        // The counts are real database reads. There is no historical baseline
+        // stored anywhere, so no period-over-period change is asserted: every
+        // `change` is null and `changeMeasured` is false.
         kpis: [
-          { label: 'Total Students', value: String(totalStudents), change: '+12.3%', changeType: 'up' as const, icon: 'Users' },
-          { label: 'Active Applications', value: String(activeApplications), change: '+8.7%', changeType: 'up' as const, icon: 'FileText' },
-          { label: 'Partner Organizations', value: String(totalPartners), change: '+2', changeType: 'up' as const, icon: 'Handshake' },
-          { label: 'Employees', value: String(totalEmployees), change: '+5', changeType: 'up' as const, icon: 'UserCheck' },
-          { label: 'Universities', value: String(totalUniversities), change: '+15', changeType: 'up' as const, icon: 'GraduationCap' },
-          { label: 'Courses', value: String(totalCourses), change: '+234', changeType: 'up' as const, icon: 'BookOpen' },
-          { label: 'Scholarships', value: String(totalScholarships), change: '+45', changeType: 'up' as const, icon: 'Award' },
-          { label: 'Pending Leads', value: String(pendingLeads), change: pendingLeads > 0 ? '-5%' : '+0%', changeType: pendingLeads > 0 ? 'down' as const : 'up' as const, icon: 'Target' },
-          { label: 'Visa Approved', value: String(visaApproved), change: '+3', changeType: 'up' as const, icon: 'CheckCircle' },
-          { label: 'Visa Pending', value: String(visaPending), change: '-2', changeType: 'down' as const, icon: 'Clock' },
-          { label: 'Documents Pending', value: String(documentsPending), change: '-4', changeType: 'down' as const, icon: 'FileCheck' },
-          { label: 'Unread Messages', value: String(unreadMessages), change: '+8', changeType: 'up' as const, icon: 'MessageSquare' },
+          { label: 'Total Students', value: String(totalStudents), change: null, changeMeasured: false, icon: 'Users' },
+          { label: 'Active Applications', value: String(activeApplications), change: null, changeMeasured: false, icon: 'FileText' },
+          { label: 'Partner Organizations', value: String(totalPartners), change: null, changeMeasured: false, icon: 'Handshake' },
+          { label: 'Employees', value: String(totalEmployees), change: null, changeMeasured: false, icon: 'UserCheck' },
+          { label: 'Universities', value: String(totalUniversities), change: null, changeMeasured: false, icon: 'GraduationCap' },
+          { label: 'Courses', value: String(totalCourses), change: null, changeMeasured: false, icon: 'BookOpen' },
+          { label: 'Scholarships', value: String(totalScholarships), change: null, changeMeasured: false, icon: 'Award' },
+          { label: 'Pending Leads', value: String(pendingLeads), change: null, changeMeasured: false, icon: 'Target' },
+          { label: 'Visa Approved', value: String(visaApproved), change: null, changeMeasured: false, icon: 'CheckCircle' },
+          { label: 'Visa Pending', value: String(visaPending), change: null, changeMeasured: false, icon: 'Clock' },
+          { label: 'Documents Pending', value: String(documentsPending), change: null, changeMeasured: false, icon: 'FileCheck' },
+          { label: 'Unread Messages', value: String(unreadMessages), change: null, changeMeasured: false, icon: 'MessageSquare' },
         ],
         tables: [
           {

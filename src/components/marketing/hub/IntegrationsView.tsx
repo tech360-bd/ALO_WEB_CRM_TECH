@@ -30,10 +30,10 @@ export default function IntegrationsView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Plug className="w-6 h-6 text-[#F37021]" />Integrations</h2>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Plug className="w-6 h-6 text-[#F97316]" />Integrations</h2>
         <p className="text-sm text-gray-500">Connect official APIs — health, sync status, token expiry alerts, webhook verification. Least privilege, secrets encrypted server-side, never in frontend/logs.</p>
       </div>
-      {loading ? <Loader2 className="w-5 h-5 animate-spin text-[#F37021]" /> : (
+      {loading ? <Loader2 className="w-5 h-5 animate-spin text-[#F97316]" /> : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {INTEGRATIONS.map(i=>{
             const st = getStatus(i.provider);
@@ -43,7 +43,7 @@ export default function IntegrationsView() {
               <Card key={i.id} className={isConnected ? 'border-emerald-200 bg-emerald-50/30' : isPending ? 'border-amber-200 bg-amber-50/30' : 'border-gray-200'}>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    {i.id==='meta' ? <Globe className="w-4 h-4 text-blue-600" /> : i.id==='whatsapp' ? <MessageSquare className="w-4 h-4 text-emerald-600" /> : i.id==='email' ? <Mail className="w-4 h-4 text-blue-600" /> : i.id==='sms' ? <Smartphone className="w-4 h-4 text-[#F37021]" /> : <Webhook className="w-4 h-4 text-[#0066CC]" />}
+                    {i.id==='meta' ? <Globe className="w-4 h-4 text-blue-600" /> : i.id==='whatsapp' ? <MessageSquare className="w-4 h-4 text-emerald-600" /> : i.id==='email' ? <Mail className="w-4 h-4 text-blue-600" /> : i.id==='sms' ? <Smartphone className="w-4 h-4 text-[#F97316]" /> : <Webhook className="w-4 h-4 text-[#2563EB]" />}
                     {i.name}
                   </CardTitle>
                   <Badge className={isConnected ? 'bg-emerald-100 text-emerald-700 border-emerald-200 w-fit mt-1' : isPending ? 'bg-amber-100 text-amber-700 border-amber-200 w-fit mt-1' : 'bg-gray-100 text-gray-600 border-gray-200 w-fit mt-1'}>
@@ -54,8 +54,8 @@ export default function IntegrationsView() {
                   <p className="text-gray-500">Env: {i.env.join(', ')}</p>
                   <p className="text-gray-400">Docs: {i.docs}</p>
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" className="h-7 text-[11px]"><Plug className="w-3 h-3 mr-1" />Connect</Button>
-                    <Button size="sm" variant="outline" className="h-7 text-[11px]"><RefreshCw className="w-3 h-3 mr-1" />Health Check</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[11px]"><Plug className="w-3 h-3 mr-1" />Connect</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[11px]"><RefreshCw className="w-3 h-3 mr-1" />Health Check</Button>
                   </div>
                   <p className="text-[11px] text-gray-400 flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Tokens encrypted, webhook signature verified, rate limits respected.</p>
                 </CardContent>

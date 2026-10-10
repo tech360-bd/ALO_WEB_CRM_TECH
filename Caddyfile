@@ -1,15 +1,16 @@
-aloeducation.com {
-	encode gzip zstd
-
-	log {
-		output file /var/log/caddy/alo_education_access.log
-	}
-
-	reverse_proxy 127.0.0.1:3044 {
-		header_up Host {host}
-		header_up X-Forwarded-For {remote_host}
-		header_up X-Forwarded-Proto {scheme}
-		header_up X-Real-IP {remote_host}
-	}
-}
-
+# LEGACY / NOT USED FOR CURRENT PRODUCTION — disabled; Hostinger owns runtime.
+# aloeducation.com {
+# 	encode gzip zstd
+#
+# 	log {
+# 		output file /var/log/caddy/alo_education_access.log
+# 	}
+#
+# 	reverse_proxy 127.0.0.1:3044 {
+# 		header_up Host {host}
+# 		header_up X-Forwarded-For {remote_host}
+# 		header_up X-Forwarded-Proto {scheme}
+# 		header_up X-Real-IP {remote_host}
+# 	}
+# }
+#

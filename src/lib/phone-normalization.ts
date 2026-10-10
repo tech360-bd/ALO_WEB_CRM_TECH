@@ -5,9 +5,9 @@
  *
  * Rules (BD):
  *   - "01XXXXXXXXX"           → "8801XXXXXXXXX"
- *   - "+8801XXXXXXXXX"        → "8801XXXXXXXXX"
- *   - "008801XXXXXXXXX"       → "8801XXXXXXXXX"
- *   - "8801XXXXXXXXX"         → unchanged
+ *   - "+8801805020100"        → "8801805020100"
+ *   - "008801805020100"       → "8801805020100"
+ *   - "8801805020100"         → unchanged
  *
  * Rules (intl):
  *   - "00CC..."               → "CC..."   (strip leading 00)
@@ -30,7 +30,7 @@ function isBlank(input: string | null | undefined): input is "" | null | undefin
  * Normalize a phone number into canonical digit-only form.
  *
  * - Returns "" for empty/null/undefined input.
- * - For Bangladesh numbers, always returns the 13-digit form "8801XXXXXXXXX".
+ * - For Bangladesh numbers, always returns the 13-digit form "8801805020100".
  * - For international numbers, returns country-code-prefixed digits
  *   (with leading "00" or "+" removed).
  */
@@ -44,12 +44,12 @@ export function normalizePhone(phone: string | null | undefined): string {
   if (/^01\d{9}$/.test(digits)) {
     return `880${digits}`;
   }
-  // Already BD with country code: 8801XXXXXXXXX
+  // Already BD with country code: 8801805020100
   if (/^8801\d{9}$/.test(digits)) {
     return digits;
   }
-  // +8801XXXXXXXXX becomes 8801XXXXXXXXX (after digit strip already done)
-  // 008801XXXXXXXXX → 8801XXXXXXXXX
+  // +8801805020100 becomes 8801805020100 (after digit strip already done)
+  // 008801805020100 → 8801805020100
   if (/^008801\d{9}$/.test(digits)) {
     return digits.slice(2);
   }

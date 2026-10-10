@@ -60,8 +60,8 @@ export default function SupportDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Search className="w-4 h-4" /> Search Inbox</Button>
-          <Button variant="brand" size="sm"><Send className="w-4 h-4" /> Open Inbox</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Search className="w-4 h-4" /> Search Inbox</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Send className="w-4 h-4" /> Open Inbox</Button>
         </div>
       </div>
 
@@ -121,7 +121,7 @@ export default function SupportDashboard() {
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-alo-brand" /> Inbox Preview
                 </CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs text-alo-brand">Open Full Inbox <ChevronRight className="w-3.5 h-3.5" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">Open Full Inbox <ChevronRight className="w-3.5 h-3.5" /></Button>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -222,7 +222,7 @@ export default function SupportDashboard() {
                       <p className="text-sm font-medium text-alo-text">{c.phone}</p>
                       <p className="text-[11px] text-alo-text-muted truncate">{c.lastMsg} · {c.msgCount} msgs</p>
                     </div>
-                    <Button variant="ghost" size="sm" className="text-[10px] text-alo-brand shrink-0 ml-1">Match</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-[10px] text-alo-brand shrink-0 ml-1">Match</Button>
                   </div>
                 ))}
               </div>

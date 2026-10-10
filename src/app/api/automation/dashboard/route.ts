@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server"
+import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 import { db } from "@/lib/db";
 import { getAutomationStats } from "@/lib/crm-automation";
 
@@ -6,9 +7,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/automation/dashboard — unified AutomationEvent stats + globalAiPaused + recentEvents.
-export async function GET() {
+async function getAutomationDashboard(_req: Request, _auth: AuthContext) {
   try {
-    // Get original automation stats (from AutomationMetric)
+    // Canonical AutomationEvent stats
     const stats = await getAutomationStats();
 
     // ── Unified AutomationEvent stats ──
@@ -70,21 +71,21 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      // Legacy (AutomationMetric-based)
+      // Compatibility response shape; canonical AutomationEvent source
       automation: stats,
 
       // Unified AutomationEvent stats
       automationEvents: {
         total: totalEvents,
         last24h: events24h,
-        byMode: byMode.map((m: any) => ({ mode: m.mode, count: m._count.mode })),
+        byMode: byMode.map((m: any) => ({ mode: m.mode, count: m._count })),
         byCategory: byCategory.map((c: any) => ({
           category: c.category,
-          count: c._count.category,
+          count: c._count,
         })),
         byWorkflow: byWorkflow.map((w: any) => ({
           workflow: w.workflow,
-          count: w._count.workflow,
+          count: w._count,
         })),
         recent: recentEvents,
       },
@@ -105,10 +106,14 @@ export async function GET() {
 
       // KPI target
       targetAutomation: 70,
-      status: stats.automationPercentage >= 70 ? "TARGET_MET" : "BELOW_TARGET",
+      status: !stats.hasData ? "NO_DATA" : stats.automationPercentage >= 70 ? "TARGET_MET" : "BELOW_TARGET",
     });
   } catch (error: any) {
     console.error("[automation.dashboard] error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const GET = withAuth(getAutomationDashboard, {
+  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
+});

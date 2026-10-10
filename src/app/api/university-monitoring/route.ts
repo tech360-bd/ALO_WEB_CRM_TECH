@@ -30,10 +30,11 @@ export async function GET(request: Request) {
       console.error('[university-monitoring] error', err);
       return NextResponse.json({ success: false, error: err?.message || 'Failed to load monitoring data' }, { status: 500 });
     }
-  })(request);
+  }, { requireUserTypes: ['SUPER_ADMIN', 'ADMIN', 'EMPLOYEE', 'COUNSELOR', 'MANAGER'] })(request);
 }
 
 export async function POST(request: Request) {
+  // Triggering a scan is a Super Admin action (spec: "Trigger monitoring").
   return withAuth(async (req, auth) => {
     const body = await req.json();
     const { action, universityId } = body;
@@ -53,6 +54,5 @@ export async function POST(request: Request) {
     }
     
     return NextResponse.json({ success: true, data: { id: "mon-" + Date.now(), ...body } });
-  })(request);
+  }, { requireUserTypes: ['SUPER_ADMIN'] })(request);
 }
-

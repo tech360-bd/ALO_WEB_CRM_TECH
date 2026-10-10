@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+# DEPLOYMENT OWNERSHIP QUARANTINE — no environment override is supported.
+# GitHub Actions is CI-only; main eligibility never authorizes this legacy path.
+_alo_branch="$(git -C "$(dirname "$0")" branch --show-current 2>/dev/null)" || _alo_branch=""
+if [ "$_alo_branch" != "main" ]; then
+  echo "BLOCKED: production operations require the main branch; current branch is unauthorized or unknown." >&2
+  exit 1
+fi
+echo "DISABLED: legacy deployment/recovery is not an approved Hostinger production mechanism. No changes performed." >&2
+exit 1
+# Historical implementation below is unreachable; preserved as audit evidence.
 # ============================================================
 # ALO Education ERP — restore script
 # Usage: sudo bash restore.sh /var/backups/alo-education/<TS>/
@@ -58,7 +68,7 @@ log "Starting service ..."
 systemctl start "$SERVICE_NAME"
 sleep 3
 
-if curl -fsS "http://127.0.0.1:3000/api/health" >/dev/null 2>&1; then
+if curl -fsS "http://127.0.0.1:3044/api/health" >/dev/null 2>&1; then
   log "✓ Health check passed"
 else
   fail "Health check failed — inspect: journalctl -u $SERVICE_NAME -n 100"

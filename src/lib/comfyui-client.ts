@@ -52,8 +52,8 @@ export async function runComfyWorkflow(opts: ComfyUIWorkflow & { apiUrl?: string
   return { images:[], videos:[], error:'timeout' };
 }
 
-// Helper for marketing: generate poster with ALO brand (#F37021 + blue)
+// Helper for marketing: generate poster with ALO brand (#F97316 + blue)
 export async function generateMarketingPoster(caption: string, style: string){
   // In production load workflow JSON from `prisma: MarketingAsset` + RunningHub workflow
-  return runComfyWorkflow({ workflowJson:{ caption, style, brand:'#F37021' } as any });
+  return runComfyWorkflow({ workflowJson:{ caption, style, brand:'#F97316' } as any });
 }

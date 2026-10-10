@@ -1,262 +1,485 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
-import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
-import { toast } from 'sonner';
 import {
-  FileText, Eye, Clock, CheckCircle2, XCircle,
-  Loader2, Inbox, AlertCircle,
+  Tabs, TabsList, TabsTrigger, TabsContent,
+} from '@/components/ui/tabs';
+import {
+  FileText, CheckCircle2, XCircle, RefreshCw, AlertTriangle,
+  Inbox, Search, Info,
 } from 'lucide-react';
 
-type DocType = 'Transcript' | 'Passport' | 'SOP' | 'CV/Resume' | 'IELTS Certificate' | 'Financial Docs' | 'Recommendation Letter' | 'Other';
-type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'info_requested';
+// ============================================================
+// Types — mirror GET /api/crm/documents
+// ============================================================
 
-interface PendingDoc {
-  id: string; studentName: string; studentId: string; docType: DocType;
-  fileName: string; fileSize: string; uploadedDate: string;
+interface StudentDocument {
+  id: string;
+  name: string;
+  category: string;
+  fileName: string;
+  mimeType?: string | null;
+  fileSize: number;
+  status: string;
+  rejectionReason: string;
+  uploadedAt: string;
+  reviewedBy: string;
+  createdAt: string;
+  studentProfile?: {
+    id: string;
+    studentId: string;
+    fullName: string | null;
+    user?: { email: string | null; phone: string | null } | null;
+  } | null;
 }
 
-interface CompletedReview {
-  id: string; studentName: string; docType: DocType; fileName: string;
-  reviewedDate: string; status: ReviewStatus; reviewedBy: string; notes: string;
+interface LoadState {
+  loading: boolean;
+  error: string | null;
 }
 
-const pendingDocs: PendingDoc[] = [
-  { id: 'DOC-001', studentName: 'Rahim Uddin', studentId: 'ALO-STU-2024-0045', docType: 'Transcript', fileName: 'Rahim_Transcript_BSc.pdf', fileSize: '1.2 MB', uploadedDate: '2025-01-18' },
-  { id: 'DOC-002', studentName: 'Fatima Akter', studentId: 'ALO-STU-2024-0038', docType: 'SOP', fileName: 'Fatima_SOP_Melbourne.pdf', fileSize: '245 KB', uploadedDate: '2025-01-18' },
-  { id: 'DOC-003', studentName: 'Nusrat Jahan', studentId: 'ALO-STU-2024-0061', docType: 'IELTS Certificate', fileName: 'Nusrat_IELTS_7.5.pdf', fileSize: '520 KB', uploadedDate: '2025-01-17' },
-  { id: 'DOC-004', studentName: 'Taslima Begum', studentId: 'ALO-STU-2024-0055', docType: 'Financial Docs', fileName: 'Taslima_Bank_Statement.pdf', fileSize: '3.4 MB', uploadedDate: '2025-01-17' },
-  { id: 'DOC-005', studentName: 'Jamil Hossain', studentId: 'ALO-STU-2024-0041', docType: 'CV/Resume', fileName: 'Jamil_CV_2025.pdf', fileSize: '380 KB', uploadedDate: '2025-01-16' },
-  { id: 'DOC-006', studentName: 'Mita Das', studentId: 'ALO-STU-2024-0070', docType: 'Passport', fileName: 'Mita_Passport_Scan.pdf', fileSize: '1.8 MB', uploadedDate: '2025-01-16' },
-  { id: 'DOC-007', studentName: 'Sajib Rahman', studentId: 'ALO-STU-2024-0044', docType: 'Recommendation Letter', fileName: 'Sajib_RecoLetter_ProfAli.pdf', fileSize: '290 KB', uploadedDate: '2025-01-15' },
-];
-
-const completedReviews: CompletedReview[] = [
-  { id: 'R-001', studentName: 'Tanvir Ahmed', docType: 'Transcript', fileName: 'Tanvir_Transcript_BEng.pdf', reviewedDate: '2025-01-17', status: 'approved', reviewedBy: 'Sarah Khan', notes: 'All documents verified and authentic.' },
-  { id: 'R-002', studentName: 'Imran Hossain', docType: 'Financial Docs', fileName: 'Imran_Sponsorship_Letter.pdf', reviewedDate: '2025-01-16', status: 'approved', reviewedBy: 'Sarah Khan', notes: 'Sufficient funds demonstrated.' },
-  { id: 'R-003', studentName: 'Sumaiya Akhter', docType: 'Passport', fileName: 'Sumaiya_Passport.pdf', reviewedDate: '2025-01-15', status: 'rejected', reviewedBy: 'Sarah Khan', notes: 'Passport scan is blurry. Please rescan with higher resolution.' },
-  { id: 'R-004', studentName: 'Arif Islam', docType: 'SOP', fileName: 'Arif_SOP_TUM.pdf', reviewedDate: '2025-01-14', status: 'info_requested', reviewedBy: 'Sarah Khan', notes: 'Please add more details about research experience.' },
-  { id: 'R-005', studentName: 'Rafi Ahmed', docType: 'IELTS Certificate', fileName: 'Rafi_IELTS_6.5.pdf', reviewedDate: '2025-01-13', status: 'approved', reviewedBy: 'Sarah Khan', notes: 'Score meets university requirement.' },
-];
-
-const docTypeIcons: Record<DocType, string> = {
-  Transcript: '\U0001F4C4', Passport: '\U0001F534', 'SOP': '\U0001F4DD', 'CV/Resume': '\U0001F4CB',
-  'IELTS Certificate': '\U0001F393', 'Financial Docs': '\U0001F4B0', 'Recommendation Letter': '\U0001F4E7', Other: '\U0001F4CE',
+const STATUS_META: Record<string, { label: string; cls: string }> = {
+  pending: { label: 'Pending review', cls: 'bg-amber-100 text-amber-800 border-amber-200' },
+  pending_review: { label: 'Pending review', cls: 'bg-amber-100 text-amber-800 border-amber-200' },
+  approved: { label: 'Approved', cls: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+  rejected: { label: 'Rejected', cls: 'bg-red-100 text-red-700 border-red-200' },
+  needs_update: { label: 'Needs update', cls: 'bg-sky-100 text-sky-700 border-sky-200' },
 };
 
+function statusBadge(status: string) {
+  const meta = STATUS_META[status] || { label: status || 'Unknown', cls: 'bg-slate-100 text-slate-600' };
+  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+}
+
+function formatBytes(size?: number): string {
+  if (!size || size <= 0) return 'Size not recorded';
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatDate(value?: string | null): string {
+  if (!value) return 'Not recorded';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString();
+}
+
 export default function EmployeeDocumentsPage() {
-  const { setView } = usePortalStore();
-  const [loading, setLoading] = useState(true);
-  const [pending, setPending] = useState<PendingDoc[]>(pendingDocs);
-  const [completed, setCompleted] = useState<CompletedReview[]>(completedReviews);
-  const [rejectDialog, setRejectDialog] = useState<{ open: boolean; doc: PendingDoc | null }>({ open: false, doc: null });
-  const [infoDialog, setInfoDialog] = useState<{ open: boolean; doc: PendingDoc | null }>({ open: false, doc: null });
-  const [reason, setReason] = useState('');
-  const [processing, setProcessing] = useState(false);
-  const [tab, setTab] = useState<'pending' | 'completed'>('pending');
+  const [pending, setPending] = useState<StudentDocument[]>([]);
+  const [pendingState, setPendingState] = useState<LoadState>({ loading: true, error: null });
+  const [pendingTotal, setPendingTotal] = useState(0);
 
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 500); return () => clearTimeout(t); }, []);
+  const [reviewed, setReviewed] = useState<StudentDocument[]>([]);
+  const [reviewedState, setReviewedState] = useState<LoadState>({ loading: true, error: null });
+  const [reviewedTotal, setReviewedTotal] = useState(0);
 
-  const handleApprove = async (doc: PendingDoc) => {
-    setProcessing(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setPending((p) => p.filter((d) => d.id !== doc.id));
-    setCompleted((c) => [{ id: 'R-' + String(Date.now()), studentName: doc.studentName, docType: doc.docType, fileName: doc.fileName, reviewedDate: new Date().toISOString().split('T')[0], status: 'approved', reviewedBy: 'Sarah Khan', notes: 'Approved' }, ...c]);
-    toast.success('Document approved for ' + doc.studentName);
-    setProcessing(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [note, setNote] = useState('');
+  const [actingId, setActingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const loadPending = useCallback(async () => {
+    setPendingState({ loading: true, error: null });
+    try {
+      const params = new URLSearchParams({ status: 'pending,pending_review', limit: '100' });
+      const term = searchQuery.trim();
+      if (term) params.set('search', term);
+      const response = await fetch(`/api/crm/documents?${params.toString()}`);
+      if (!response.ok) throw new Error(`Could not load the review queue (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (!payload?.success) throw new Error(payload?.error || 'The review queue returned no data');
+      setPending(Array.isArray(payload.data) ? payload.data : []);
+      setPendingTotal(Number(payload.total) || 0);
+      setPendingState({ loading: false, error: null });
+    } catch (error) {
+      setPending([]);
+      setPendingState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load the review queue',
+      });
+    }
+  }, [searchQuery]);
+
+  const loadReviewed = useCallback(async () => {
+    setReviewedState({ loading: true, error: null });
+    try {
+      const params = new URLSearchParams({
+        status: 'approved,rejected,needs_update',
+        limit: '100',
+        sortBy: 'updatedAt',
+      });
+      const term = searchQuery.trim();
+      if (term) params.set('search', term);
+      const response = await fetch(`/api/crm/documents?${params.toString()}`);
+      if (!response.ok) throw new Error(`Could not load completed reviews (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (!payload?.success) throw new Error(payload?.error || 'Completed reviews returned no data');
+      setReviewed(Array.isArray(payload.data) ? payload.data : []);
+      setReviewedTotal(Number(payload.total) || 0);
+      setReviewedState({ loading: false, error: null });
+    } catch (error) {
+      setReviewed([]);
+      setReviewedState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load completed reviews',
+      });
+    }
+  }, [searchQuery]);
+
+  useEffect(() => {
+    void loadPending();
+    void loadReviewed();
+  }, [loadPending, loadReviewed]);
+
+  const refreshAll = async () => {
+    setSelectedId(null);
+    setActionError(null);
+    await Promise.all([loadPending(), loadReviewed()]);
   };
 
-  const handleReject = async () => {
-    if (!rejectDialog.doc || !reason.trim()) { toast.error('Please provide a reason'); return; }
-    setProcessing(true);
-    await new Promise((r) => setTimeout(r, 600));
-    const doc = rejectDialog.doc;
-    setPending((p) => p.filter((d) => d.id !== doc.id));
-    setCompleted((c) => [{ id: 'R-' + String(Date.now()), studentName: doc.studentName, docType: doc.docType, fileName: doc.fileName, reviewedDate: new Date().toISOString().split('T')[0], status: 'rejected', reviewedBy: 'Sarah Khan', notes: reason }, ...c]);
-    toast.success('Document rejected for ' + doc.studentName);
-    setRejectDialog({ open: false, doc: null }); setReason('');
-    setProcessing(false);
+  const selected = useMemo(
+    () => pending.find((document) => document.id === selectedId) || null,
+    [pending, selectedId],
+  );
+
+  const reviewDocument = async (document: StudentDocument, status: 'approved' | 'rejected') => {
+    if (status === 'rejected' && !note.trim()) {
+      setActionError('Add a reason before rejecting a document, so the student knows what to fix.');
+      return;
+    }
+    setActingId(document.id);
+    setActionError(null);
+    try {
+      const response = await fetch('/api/crm/documents', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: document.id,
+          status,
+          rejectionReason: status === 'rejected' ? note.trim() : '',
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload?.success === false) {
+        setActionError(payload?.error || `Could not record the review (HTTP ${response.status})`);
+        return;
+      }
+      setNote('');
+      setSelectedId(null);
+      await refreshAll();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Could not record the review');
+    } finally {
+      setActingId(null);
+    }
   };
 
-  const handleRequestInfo = async () => {
-    if (!infoDialog.doc || !reason.trim()) { toast.error('Please describe what additional info is needed'); return; }
-    setProcessing(true);
-    await new Promise((r) => setTimeout(r, 600));
-    const doc = infoDialog.doc;
-    setPending((p) => p.filter((d) => d.id !== doc.id));
-    setCompleted((c) => [{ id: 'R-' + String(Date.now()), studentName: doc.studentName, docType: doc.docType, fileName: doc.fileName, reviewedDate: new Date().toISOString().split('T')[0], status: 'info_requested', reviewedBy: 'Sarah Khan', notes: reason }, ...c]);
-    toast.success('Additional info requested from ' + doc.studentName);
-    setInfoDialog({ open: false, doc: null }); setReason('');
-    setProcessing(false);
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6">
-        <Skeleton className="h-8 w-52" />
-        <Skeleton className="h-24 rounded-xl" />
-        {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
-      </div>
-    );
-  }
+  const errorBlock = (state: LoadState, onRetry: () => void) => (
+    <Card className="border-red-200 bg-red-50">
+      <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+        <div>
+          <p className="font-medium">{state.error}</p>
+          <button type="button" className="mt-1 underline underline-offset-2" onClick={onRetry}>
+            Try again
+          </button>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
-    <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-alo-text">Document Review</h1>
-          <p className="text-sm text-alo-text-muted mt-1">Review and process student documents</p>
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+            <FileText className="h-6 w-6 text-primary" />
+            Document Review
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Student documents awaiting verification, and the reviews already recorded.
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Badge variant="warning" className="text-xs">{pending.length} Pending</Badge>
-          <Badge variant="success" className="text-xs">{completed.length} Reviewed</Badge>
-        </div>
+        <Button variant="outline" size="sm" onClick={() => void refreshAll()}>
+          <RefreshCw
+            className={`mr-1 h-4 w-4 ${pendingState.loading || reviewedState.loading ? 'animate-spin' : ''}`}
+          />
+          Refresh
+        </Button>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Awaiting Review', count: pending.length, icon: Inbox, color: 'text-amber-500', bg: 'bg-amber-50' },
-          { label: 'Approved Today', count: 3, icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-          { label: 'Rejected Today', count: 1, icon: XCircle, color: 'text-red-500', bg: 'bg-red-50' },
-          { label: 'Info Requested', count: 1, icon: AlertCircle, color: 'text-blue-500', bg: 'bg-blue-50' },
-        ].map((item, i) => (
-          <Card key={i} className="bg-white rounded-xl border border-alo-border">
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', item.bg)}>
-                <item.icon className={cn('w-5 h-5', item.color)} />
-              </div>
-              <div>
-                <p className="text-xl font-bold text-alo-text">{item.count}</p>
-                <p className="text-xs text-alo-text-muted">{item.label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="relative max-w-sm">
+        <Search className="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
+        <Input
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          placeholder="Search student, document name or category"
+          className="pl-8"
+        />
       </div>
 
-      <div className="flex gap-1 p-1 bg-white rounded-xl border border-alo-border w-fit">
-        <button onClick={() => setTab('pending')} className={cn('px-4 py-2 text-sm font-medium rounded-lg transition-colors', tab === 'pending' ? 'bg-alo-brand text-white' : 'text-alo-text-secondary hover:bg-alo-page')}>Review Queue ({pending.length})</button>
-        <button onClick={() => setTab('completed')} className={cn('px-4 py-2 text-sm font-medium rounded-lg transition-colors', tab === 'completed' ? 'bg-alo-brand text-white' : 'text-alo-text-secondary hover:bg-alo-page')}>Completed ({completed.length})</button>
-      </div>
-
-      {tab === 'pending' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {pending.map((doc) => (
-            <Card key={doc.id} className="bg-white rounded-xl border border-alo-border hover:shadow-sm transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-lg bg-alo-page flex items-center justify-center text-2xl shrink-0">{docTypeIcons[doc.docType]}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-semibold text-alo-text truncate">{doc.studentName}</span>
-                      <Badge variant="warning" className="text-[10px] shrink-0">Pending</Badge>
-                    </div>
-                    <p className="text-xs text-alo-text-muted">{doc.docType}</p>
-                    <p className="text-xs text-alo-text-secondary mt-1 flex items-center gap-1"><FileText className="w-3 h-3" />{doc.fileName} <span className="text-alo-text-muted">({doc.fileSize})</span></p>
-                    <p className="text-[11px] text-alo-text-muted mt-1 flex items-center gap-1"><Clock className="w-3 h-3" />Uploaded {new Date(doc.uploadedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-alo-border">
-                  <Button variant="ghost" size="sm" className="text-alo-text-secondary" onClick={() => toast.info('Previewing ' + doc.fileName)}><Eye className="w-3.5 h-3.5" /> Preview</Button>
-                  <div className="flex-1" />
-                  <Button variant="success" size="sm" onClick={() => handleApprove(doc)} disabled={processing}><CheckCircle2 className="w-3.5 h-3.5" /> Approve</Button>
-                  <Button variant="danger" size="sm" onClick={() => { setRejectDialog({ open: true, doc }); setReason(''); }}><XCircle className="w-3.5 h-3.5" /> Reject</Button>
-                  <Button variant="outline" size="sm" onClick={() => { setInfoDialog({ open: true, doc }); setReason(''); }}><AlertCircle className="w-3.5 h-3.5" /> More Info</Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-          {pending.length === 0 && (
-            <div className="col-span-full py-12 text-center">
-              <CheckCircle2 className="w-12 h-12 text-alo-text-muted/40 mx-auto mb-3" />
-              <p className="text-sm text-alo-text-secondary font-medium">All caught up!</p>
-              <p className="text-xs text-alo-text-muted mt-1">No documents pending review</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {tab === 'completed' && (
-        <Card className="bg-white rounded-xl border border-alo-border overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-alo-page/50">
-                  <TableHead>Student</TableHead>
-                  <TableHead>Document</TableHead>
-                  <TableHead>File</TableHead>
-                  <TableHead>Reviewed</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="hidden md:table-cell">Notes</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {completed.map((r) => (
-                  <TableRow key={r.id}>
-                    <TableCell className="font-medium text-alo-text text-sm">{r.studentName}</TableCell>
-                    <TableCell><span className="text-xs text-alo-text-secondary">{r.docType}</span></TableCell>
-                    <TableCell><span className="text-xs text-alo-text-muted flex items-center gap-1"><FileText className="w-3 h-3" />{r.fileName}</span></TableCell>
-                    <TableCell><span className="text-xs text-alo-text-secondary">{new Date(r.reviewedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span></TableCell>
-                    <TableCell>
-                      <Badge variant={r.status === 'approved' ? 'success' : r.status === 'rejected' ? 'danger' : 'warning'} className="text-[11px] capitalize">{r.status === 'info_requested' ? 'Info Requested' : r.status}</Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell"><span className="text-xs text-alo-text-muted line-clamp-1 max-w-[200px]">{r.notes}</span></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+      {actionError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p className="font-medium">{actionError}</p>
+          </CardContent>
         </Card>
       )}
 
-      <Dialog open={rejectDialog.open} onOpenChange={(o) => setRejectDialog({ open: o, doc: null })}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-alo-text">Reject Document</DialogTitle>
-            <DialogDescription className="text-alo-text-muted">Provide a reason for rejecting {rejectDialog.doc?.studentName}'s {rejectDialog.doc?.docType}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2">
-            <Label className="text-sm text-alo-text-secondary">Rejection Reason *</Label>
-            <Textarea placeholder="Explain why this document is being rejected..." value={reason} onChange={(e) => setReason(e.target.value)} className="bg-alo-page border-alo-border min-h-[100px]" />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRejectDialog({ open: false, doc: null })}>Cancel</Button>
-            <Button variant="danger" onClick={handleReject} disabled={processing || !reason.trim()}>
-              {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Reject Document
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Tabs defaultValue="pending">
+        <TabsList className="h-9">
+          <TabsTrigger value="pending" className="h-8 px-3 text-xs font-medium">
+            Awaiting review ({pendingTotal})
+          </TabsTrigger>
+          <TabsTrigger value="reviewed" className="h-8 px-3 text-xs font-medium">
+            Completed ({reviewedTotal})
+          </TabsTrigger>
+        </TabsList>
 
-      <Dialog open={infoDialog.open} onOpenChange={(o) => setInfoDialog({ open: o, doc: null })}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-alo-text">Request Additional Information</DialogTitle>
-            <DialogDescription className="text-alo-text-muted">Describe what additional information is needed from {infoDialog.doc?.studentName}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2">
-            <Label className="text-sm text-alo-text-secondary">Details *</Label>
-            <Textarea placeholder="Describe what additional info is needed..." value={reason} onChange={(e) => setReason(e.target.value)} className="bg-alo-page border-alo-border min-h-[100px]" />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setInfoDialog({ open: false, doc: null })}>Cancel</Button>
-            <Button variant="brand" onClick={handleRequestInfo} disabled={processing || !reason.trim()}>
-              {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertCircle className="w-4 h-4" />} Send Request
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        {/* ── PENDING ── */}
+        <TabsContent value="pending" className="mt-4 space-y-4">
+          {pendingState.error && errorBlock(pendingState, () => void loadPending())}
+
+          {pendingState.loading ? (
+            <Card>
+              <CardContent className="text-muted-foreground py-12 text-center text-sm">
+                Loading the review queue…
+              </CardContent>
+            </Card>
+          ) : pending.length === 0 && !pendingState.error ? (
+            <Card>
+              <CardContent className="text-muted-foreground flex flex-col items-center gap-2 py-14 text-center">
+                <Inbox className="h-8 w-8 opacity-30" />
+                <p className="text-sm">
+                  {searchQuery.trim()
+                    ? 'No pending document matches that search.'
+                    : 'No document is awaiting review.'}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Document</TableHead>
+                        <TableHead className="w-[130px]">Category</TableHead>
+                        <TableHead className="w-[180px]">Student</TableHead>
+                        <TableHead className="w-[110px]">Size</TableHead>
+                        <TableHead className="w-[140px]">Uploaded</TableHead>
+                        <TableHead className="w-[110px] text-right">Review</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pending.map((document) => (
+                        <TableRow key={document.id}>
+                          <TableCell>
+                            <p className="font-medium">{document.name || 'Untitled document'}</p>
+                            {document.fileName ? (
+                              <p className="text-muted-foreground text-xs">{document.fileName}</p>
+                            ) : null}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-[10px]">
+                              {document.category || 'uncategorised'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-xs">
+                            <p>{document.studentProfile?.fullName || 'Unknown student'}</p>
+                            <p className="text-muted-foreground">
+                              {document.studentProfile?.studentId || 'No student code'}
+                            </p>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {formatBytes(document.fileSize)}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {formatDate(document.uploadedAt || document.createdAt)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedId(document.id)}
+                            >
+                              Open
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* ── COMPLETED ── */}
+        <TabsContent value="reviewed" className="mt-4 space-y-4">
+          {reviewedState.error && errorBlock(reviewedState, () => void loadReviewed())}
+
+          {reviewedState.loading ? (
+            <Card>
+              <CardContent className="text-muted-foreground py-12 text-center text-sm">
+                Loading completed reviews…
+              </CardContent>
+            </Card>
+          ) : reviewed.length === 0 && !reviewedState.error ? (
+            <Card>
+              <CardContent className="text-muted-foreground flex flex-col items-center gap-2 py-14 text-center">
+                <CheckCircle2 className="h-8 w-8 opacity-30" />
+                <p className="text-sm">
+                  {searchQuery.trim()
+                    ? 'No reviewed document matches that search.'
+                    : 'No review has been recorded yet.'}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Document</TableHead>
+                        <TableHead className="w-[180px]">Student</TableHead>
+                        <TableHead className="w-[140px]">Decision</TableHead>
+                        <TableHead className="w-[160px]">Reviewed by</TableHead>
+                        <TableHead>Note</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {reviewed.map((document) => (
+                        <TableRow key={document.id}>
+                          <TableCell>
+                            <p className="font-medium">{document.name || 'Untitled document'}</p>
+                            <p className="text-muted-foreground text-xs">
+                              {document.category || 'uncategorised'}
+                            </p>
+                          </TableCell>
+                          <TableCell className="text-xs">
+                            <p>{document.studentProfile?.fullName || 'Unknown student'}</p>
+                            <p className="text-muted-foreground">
+                              {document.studentProfile?.studentId || 'No student code'}
+                            </p>
+                          </TableCell>
+                          <TableCell>{statusBadge(document.status)}</TableCell>
+                          <TableCell className="text-xs">
+                            {document.reviewedBy || <span className="text-muted-foreground">Not attributed</span>}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground max-w-[260px] text-xs">
+                            {document.rejectionReason || '—'}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* ── REVIEW PANEL ── */}
+      {selected && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">{selected.name || 'Untitled document'}</CardTitle>
+            <CardDescription className="text-xs">
+              {selected.category || 'uncategorised'}
+              {selected.fileName ? ` · ${selected.fileName}` : ''} · {formatBytes(selected.fileSize)}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <p className="text-muted-foreground text-xs">Student</p>
+                <p className="text-sm">
+                  {selected.studentProfile?.fullName || 'Unknown student'}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {selected.studentProfile?.studentId || 'No student code'}
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Uploaded</p>
+                <p className="text-sm">
+                  {formatDate(selected.uploadedAt || selected.createdAt)}
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="review-note" className="text-muted-foreground text-xs">
+                Note for the student (required when rejecting)
+              </label>
+              <Textarea
+                id="review-note"
+                value={note}
+                onChange={(event) => setNote(event.target.value)}
+                placeholder="Explain what needs to change"
+                className="mt-1 text-sm"
+                rows={3}
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                onClick={() => void reviewDocument(selected, 'approved')}
+                disabled={actingId === selected.id}
+              >
+                <CheckCircle2 className="mr-1 h-4 w-4" />
+                {actingId === selected.id ? 'Recording…' : 'Approve document'}
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => void reviewDocument(selected, 'rejected')}
+                disabled={actingId === selected.id}
+              >
+                <XCircle className="mr-1 h-4 w-4" />
+                Reject document
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => { setSelectedId(null); setNote(''); }}
+                disabled={actingId === selected.id}
+              >
+                Close
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="text-muted-foreground flex items-start gap-2 pt-6 text-xs">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Reviews are recorded against the document with your name and written to the audit
+            trail. File storage paths and hashes are deliberately not displayed, and documents are
+            never served from a public URL.
+          </span>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -154,7 +154,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0066CC]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -163,23 +163,23 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F37021] border border-[#F37021]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
               <Icon name="GraduationCap" className="mr-1 size-3" />
               By Level &amp; Country
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Admission <span className="text-[#0066CC]">Requirements</span>
+              Admission <span className="text-[#2563EB]">Requirements</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Find out exactly what you need to get into your dream university — by study level and by country.
               All requirements verified against official university sources weekly.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[#F37021] px-6 text-white hover:bg-[#c8451a]">
+              <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[#F97316] px-6 text-white hover:bg-[#c8451a]">
                 <Icon name="UserCheck" className="size-4" />
                 Get Free Profile Assessment
               </Button>
-              <Button onClick={() => onNavigate("public-contact")} variant="outline" className="h-12 border-[#0066CC]/30 bg-white px-6 text-[#0066CC] hover:bg-[#EAF3FF]">
+              <Button onClick={() => onNavigate("public-contact")} variant="outline" className="h-12 border-[#2563EB]/30 bg-white px-6 text-[#2563EB] hover:bg-[#EAF3FF]">
                 <Icon name="Phone" className="size-4" />
                 Talk to a Counselor
               </Button>
@@ -192,24 +192,24 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       <section>
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#F37021]">By Study Level</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">By Study Level</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Requirements by study level</h2>
             <p className="mt-2 text-sm text-[#5A7299]">From Foundation to PhD — what you need at each stage.</p>
           </div>
           <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {LEVELS.map((l) => (
-              <Card key={l.level} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0066CC]/30">
+              <Card key={l.level} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30">
                 <CardContent className="p-6">
                   <div className={cn(
                     "flex size-12 items-center justify-center rounded-2xl",
-                    l.accent === "blue" ? "bg-[#EAF3FF] text-[#0066CC]" : "bg-[#FFF3EA] text-[#F37021]"
+                    l.accent === "blue" ? "bg-[#EAF3FF] text-[#2563EB]" : "bg-[#FFF3EA] text-[#F97316]"
                   )}>
                     <Icon name={l.icon} className="size-6" />
                   </div>
                   <h3 className="mt-4 text-lg font-black text-[#0B2447]">{l.level}</h3>
                   <p className="mt-1 text-xs text-[#5A7299]">{l.description}</p>
                   <div className="mt-4">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#0066CC]">Requirements</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB]">Requirements</p>
                     <ul className="mt-2 space-y-1.5">
                       {l.requirements.map((r, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-xs text-[#5A7299]">
@@ -220,7 +220,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
                     </ul>
                   </div>
                   <div className="mt-4 border-t border-[#E2E8F0] pt-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#F37021]">Typical courses</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#F97316]">Typical courses</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {l.typicalCourses.map((c) => (
                         <Badge key={c} variant="outline" className="bg-[#F7FAFE] text-[#5A7299] text-[10px]">{c}</Badge>
@@ -238,7 +238,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       <section className="bg-[#F7FAFE]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#0066CC]">By Destination Country</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">By Destination Country</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Country-specific requirements</h2>
             <p className="mt-2 text-sm text-[#5A7299]">Click any country for full entry requirements, visas, and university list.</p>
           </div>
@@ -246,13 +246,13 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
             {COUNTRY_REQUIREMENTS.map((c) => (
               <Card
                 key={c.slug}
-                className="alo-card-hover group cursor-pointer rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0066CC]/30"
+                className="alo-card-hover group cursor-pointer rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30"
                 onClick={() => onNavigate("public-country", c.slug)}
               >
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{c.flag}</span>
-                    <h3 className="text-base font-bold text-[#0B2447] group-hover:text-[#0066CC]">{c.name}</h3>
+                    <h3 className="text-base font-bold text-[#0B2447] group-hover:text-[#2563EB]">{c.name}</h3>
                   </div>
                   <div className="mt-3 space-y-2 text-xs">
                     <div className="flex items-center justify-between">
@@ -276,14 +276,14 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       <section>
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#F37021]">English Tests</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">English Tests</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">English test requirements comparison</h2>
             <p className="mt-2 text-sm text-[#5A7299]">Which test scores are accepted by which country's visa offices.</p>
           </div>
           <Card className="mt-8 overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white alo-shadow">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#0066CC] text-white">
+                <thead className="bg-[#2563EB] text-white">
                   <tr>
                     <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider">Test</th>
                     <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider">Common Score</th>
@@ -318,7 +318,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       <section className="bg-[#F7FAFE]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#0066CC]">Document Checklist</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">Document Checklist</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">All documents you'll need</h2>
             <p className="mt-2 text-sm text-[#5A7299]">Organised by category — tick them off as you prepare.</p>
           </div>
@@ -327,13 +327,13 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
               <Card key={cat.category} className="rounded-2xl border border-[#E2E8F0] bg-white">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2">
-                    <Icon name="Folder" className="size-5 text-[#0066CC]" />
+                    <Icon name="Folder" className="size-5 text-[#2563EB]" />
                     <h3 className="text-sm font-bold text-[#0B2447]">{cat.category}</h3>
                   </div>
                   <ul className="mt-3 space-y-1.5">
                     {cat.items.map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-[#5A7299]">
-                        <Icon name="FileText" className="mt-0.5 size-3 shrink-0 text-[#0066CC]" />
+                        <Icon name="FileText" className="mt-0.5 size-3 shrink-0 text-[#2563EB]" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -356,7 +356,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
                 requirements of your target universities — giving you a clear chance-of-admission estimate.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[#F37021] px-6 text-white hover:bg-[#c8451a]">
+                <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[#F97316] px-6 text-white hover:bg-[#c8451a]">
                   <Icon name="UserCheck" className="size-4" />
                   Get Profile Assessment
                 </Button>
