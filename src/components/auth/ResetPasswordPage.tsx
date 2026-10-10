@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,16 +11,21 @@ import { ArrowLeft, KeyRound, Loader2 } from 'lucide-react';
 
 export default function ResetPasswordPage() {
   const { setView } = usePortalStore();
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
+  const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
+  useEffect(() => {
+    // The reset link carries a one-time token in the query string (see sendPasswordResetEmail).
+    const params = new URLSearchParams(window.location.search);
+    setToken(params.get('token') ?? '');
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !otp.trim() || !newPassword) { toast.error('All fields are required'); return; }
+    if (!token || !newPassword) { toast.error('Reset link is missing or invalid. Please request a new one.'); return; }
     if (newPassword.length < 8) { toast.error('Password must be at least 8 characters'); return; }
     if (newPassword !== confirmPassword) { toast.error('Passwords do not match'); return; }
     setLoading(true);
@@ -28,7 +33,7 @@ export default function ResetPasswordPage() {
       const res = await fetch('/api/portal-auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), otp: otp.trim(), newPassword }),
+        body: JSON.stringify({ token, newPassword }),
       });
       const data = await res.json();
       if (data.success) {
@@ -70,14 +75,11 @@ export default function ResetPasswordPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label>Email</Label>
-                  <Input type="email" placeholder="Your registered email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1.5" required />
-                </div>
-                <div>
-                  <Label>Verification Code (OTP)</Label>
-                  <Input type="text" placeholder="Enter 6-digit code" value={otp} onChange={e => setOtp(e.target.value)} maxLength={6} className="mt-1.5" required />
-                </div>
+                {!token && (
+                  <p className="text-sm text-alo-text-secondary">
+                    This page needs the link from your reset email. Request a new one from the login screen.
+                  </p>
+                )}
                 <div>
                   <Label>New Password</Label>
                   <Input type="password" placeholder="Min 8 characters" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-1.5" required />
@@ -86,7 +88,7 @@ export default function ResetPasswordPage() {
                   <Label>Confirm New Password</Label>
                   <Input type="password" placeholder="Re-enter new password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="mt-1.5" required />
                 </div>
-                <Button type="submit" variant="brand" className="w-full" disabled={loading}>
+                <Button type="submit" variant="brand" className="w-full" disabled={loading || !token}>
                   {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                   Reset Password
                 </Button>

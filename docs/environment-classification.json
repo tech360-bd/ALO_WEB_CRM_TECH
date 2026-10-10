@@ -1,7 +1,7 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2280,
+  "filesScanned": 2283,
   "summary": {
     "UNUSED": 80,
     "REFERENCED_WITH_FALLBACK": 129,
@@ -2917,7 +2917,7 @@
       "name": "NEXTAUTH_SECRET",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 4,
+      "referenceCount": 5,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": true,
@@ -3193,7 +3193,7 @@
       "name": "NODE_ENV",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 25,
+      "referenceCount": 24,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3310,14 +3310,15 @@
       "name": "OTP_PEPPER",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/auth/email-otp.ts"
+        "src/lib/auth/email-otp.ts",
+        "src/lib/communication/otp-engine.ts"
       ]
     },
     {
