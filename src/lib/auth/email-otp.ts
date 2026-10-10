@@ -8,7 +8,7 @@ const MAX_PER_EMAIL_PER_HOUR = 3;
 const MAX_PER_IP_PER_HOUR = 10;
 const MAX_VERIFY_ATTEMPTS = 5;
 
-export type OtpPurpose = 'email_verification' | 'account_activation';
+export type OtpPurpose = 'email_verification' | 'account_activation' | 'email_change';
 
 function otpPepper(): string {
   const pepper = process.env.OTP_PEPPER || process.env.NEXTAUTH_SECRET;

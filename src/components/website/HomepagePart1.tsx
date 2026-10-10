@@ -22,19 +22,21 @@ import { EnglishExamBanner } from '@/components/website/EnglishExamCta';
 const C = { blue: '#2563EB', orange: '#F97316', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
 /* ═══════════════════════════════════════════════════════════════ TYPES ═══ */
-interface HeroCountry { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity: string; heroIntake: string; heroSubtitle: string; universityCount?: number; courseCount?: number; scholarshipCount?: number; }
-interface CountryData { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; popularCities: string[]; popularIntakes: string[]; studyLevels: string[]; universityCount: number; courseCount: number; scholarshipCount: number; visaType: string; tuitionRange?: string; livingCost?: string; workRights?: string; }
-interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; englishTests: { id: string; name: string; slug: string }[]; stats: { totalUniversities: number; totalCourses: number; totalScholarships: number; countryCounts: Record<string, number> }; }
+interface HeroCountry { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity?: string; heroIntake?: string; heroSubtitle?: string; }
+interface CountryData { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; popularCities: string[]; popularIntakes: string[]; studyLevels: string[]; universityCount?: number; courseCount?: number; scholarshipCount?: number; visaType?: string; tuitionRange?: string; livingCost?: string; workRights?: string; }
+interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; englishTests: { id: string; name: string; slug: string }[]; stats: { totalUniversities: number; totalCourses: number; totalScholarships: number; countryCounts: Record<string, number>; metricStatus?: { universities?: string; courses?: string; scholarships?: string } }; }
 
 /* ═══════════════════════════════════════════════════════════════ FALLBACKS ═══ */
+// These entries are visual destination choices only. Live availability,
+// current intakes and inventory counts come from the database API below.
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#2563EB', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'World-Class Education in the Heart of Europe', universityCount: 42, courseCount: 1200, scholarshipCount: 35 },
-  { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#3B82F6', heroImage: '/images/hero-banners/USA slide Banner.webp', heroCity: 'New York', heroIntake: 'Aug 2025 / Jan 2026', heroSubtitle: 'Top Universities & Endless Career Opportunities', universityCount: 50, courseCount: 1500, scholarshipCount: 40 },
-  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F97316', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroIntake: 'Sep 2025 / Jan 2026 / May 2026', heroSubtitle: 'Immigration-Friendly Pathways to Your Future', universityCount: 35, courseCount: 950, scholarshipCount: 28 },
-  { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/hero-banners/Australia slide Banner.webp', heroCity: 'Sydney', heroIntake: 'Feb 2026 / Jul 2026', heroSubtitle: 'Quality Education & Post-Study Work Rights', universityCount: 30, courseCount: 800, scholarshipCount: 22 },
-  { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/hero-banners/New Zealand slide Banner.webp', heroCity: 'Auckland', heroIntake: 'Feb 2026 / Jul 2026', heroSubtitle: 'Safe, Peaceful & Work While You Study', universityCount: 15, courseCount: 300, scholarshipCount: 12 },
-  { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/hero-banners/Europe slide Banner.webp', heroCity: 'Dublin', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'Stay Back Visa & Growing Tech Hub', universityCount: 20, courseCount: 400, scholarshipCount: 15 },
-  { id: '7', name: 'Dubai / UAE', slug: 'dubai-uae', flag: '🇦🇪', accentColor: '#F59E0B', heroImage: '/images/hero-banners/Europe slide Banner.webp', heroCity: 'Dubai', heroIntake: 'Sep 2025 / Jan 2026', heroSubtitle: 'Career Growth in the Gulf', universityCount: 18, courseCount: 250, scholarshipCount: 10 },
+  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#2563EB', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
+  { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#3B82F6', heroImage: '/images/hero-banners/USA slide Banner.webp', heroCity: 'New York', heroSubtitle: 'Top Universities & Endless Career Opportunities' },
+  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F97316', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
+  { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/hero-banners/Australia slide Banner.webp', heroCity: 'Sydney', heroSubtitle: 'Quality Education & Post-Study Work Rights' },
+  { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/hero-banners/New Zealand slide Banner.webp', heroCity: 'Auckland', heroSubtitle: 'Safe, Peaceful & Work While You Study' },
+  { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/hero-banners/Europe slide Banner.webp', heroCity: 'Dublin', heroSubtitle: 'Stay Back Visa & Growing Tech Hub' },
+  { id: '7', name: 'Dubai / UAE', slug: 'dubai-uae', flag: '🇦🇪', accentColor: '#F59E0B', heroImage: '/images/hero-banners/Europe slide Banner.webp', heroCity: 'Dubai', heroSubtitle: 'Career Growth in the Gulf' },
 ];
 
 const FALLBACK_DESTINATIONS: CountryData[] = FALLBACK_COUNTRIES.map(c => ({
@@ -44,13 +46,9 @@ const FALLBACK_DESTINATIONS: CountryData[] = FALLBACK_COUNTRIES.map(c => ({
   flag: c.flag,
   accentColor: c.accentColor,
   heroImage: c.heroImage,
-  popularCities: ['London', 'Manchester', 'Birmingham', 'Edinburgh'],
-  popularIntakes: ['Sep 2025', 'Jan 2026'],
-  studyLevels: ['Foundation', 'Undergraduate', 'Postgraduate', 'PhD'],
-  visaType: 'Student Visa',
-  universityCount: c.universityCount ?? 0,
-  courseCount: c.courseCount ?? 0,
-  scholarshipCount: c.scholarshipCount ?? 0,
+  popularCities: [],
+  popularIntakes: [],
+  studyLevels: [],
 }));
 
 /* ═══════════════════════════════════════════════════════════════ HOOK ═══ */
@@ -248,10 +246,7 @@ function CourseFinderSection() {
               <SelectContent><SelectItem value="foundation">Foundation</SelectItem><SelectItem value="undergraduate">Undergraduate</SelectItem><SelectItem value="postgraduate">Postgraduate</SelectItem><SelectItem value="phd">PhD</SelectItem><SelectItem value="diploma">Diploma</SelectItem></SelectContent>
             </Select>
             <Input placeholder="Subject area" value={form.subject} onChange={e => update('subject', e.target.value)} className="h-12 rounded-xl" />
-            <Select value={form.intake} onValueChange={v => update('intake', v)}>
-              <SelectTrigger className="h-12 rounded-xl"><SelectValue placeholder="Intake" /></SelectTrigger>
-              <SelectContent><SelectItem value="sep2025">Sep 2025</SelectItem><SelectItem value="jan2026">Jan 2026</SelectItem><SelectItem value="feb2026">Feb 2026</SelectItem><SelectItem value="may2026">May 2026</SelectItem><SelectItem value="jul2026">Jul 2026</SelectItem></SelectContent>
-            </Select>
+            <Input placeholder="Intake (e.g. Sep 2027)" value={form.intake} onChange={e => update('intake', e.target.value)} className="h-12 rounded-xl" />
             <Select value={form.budget} onValueChange={v => update('budget', v)}>
               <SelectTrigger className="h-12 rounded-xl"><SelectValue placeholder="Budget Range" /></SelectTrigger>
               <SelectContent><SelectItem value="0-10000">Under £10,000</SelectItem><SelectItem value="10000-20000">£10,000-£20,000</SelectItem><SelectItem value="20000-35000">£20,000-£35,000</SelectItem><SelectItem value="35000+">£35,000+</SelectItem></SelectContent>
@@ -280,7 +275,8 @@ function CourseFinderSection() {
 function DestinationsSection() {
   const { t } = useI18n();
   const { data } = useHomepageData();
-  const allCountries = data?.countries?.length ? data.countries : FALLBACK_DESTINATIONS;
+  const hasLiveCountryData = Boolean(data?.countries?.length);
+  const allCountries = hasLiveCountryData ? data!.countries : FALLBACK_DESTINATIONS;
   const main7 = allCountries.slice(0, 7);
   const extra = allCountries.slice(7);
   const [showMore, setShowMore] = useState(false);
@@ -302,21 +298,23 @@ function DestinationsSection() {
                   <div className="flex items-center gap-3"><span className="text-2xl">{d.flag}</span><h3 className="text-lg font-bold" style={{ color: C.text }}>{d.name}</h3></div>
                   <div className="space-y-1.5 text-sm text-[#64748B]">
                     <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: d.accentColor }} /><span>{d.popularCities?.slice(0, 3).join(', ') || 'Multiple cities'}</span></div>
-                    <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 shrink-0" style={{ color: d.accentColor }} /><span>Intakes: {d.popularIntakes?.slice(0, 2).join(', ') || 'Rolling'}</span></div>
+                    <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 shrink-0" style={{ color: d.accentColor }} /><span>Intakes: {d.popularIntakes?.slice(0, 2).join(', ') || 'Check course catalog for current dates'}</span></div>
                     <div className="flex items-center gap-2"><GraduationCap className="h-3.5 w-3.5 shrink-0" style={{ color: d.accentColor }} /><span>{d.studyLevels?.slice(0, 3).join(', ') || 'Multiple levels'}</span></div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#E2E8F0]">
-                    {[
-                      { v: d.universityCount, l: 'Universities' },
-                      { v: d.courseCount, l: 'Courses' },
-                      { v: d.scholarshipCount, l: 'Scholarships' },
-                    ].map(s => (
-                      <div key={s.l} className="text-center">
-                        <div className="text-lg font-bold" style={{ color: d.accentColor }}>{s.v}+</div>
-                        <div className="text-[10px] text-[#64748B] uppercase tracking-wider">{s.l}</div>
-                      </div>
-                    ))}
-                  </div>
+                  {hasLiveCountryData && (
+                    <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#E2E8F0]">
+                      {[
+                        { v: d.universityCount, l: 'Universities in catalog' },
+                        { v: d.courseCount, l: 'Courses in catalog' },
+                        { v: d.scholarshipCount, l: 'Scholarships in catalog' },
+                      ].filter((item) => typeof item.v === 'number').map((item) => (
+                        <div key={item.l} className="text-center">
+                          <div className="text-lg font-bold" style={{ color: d.accentColor }}>{item.v}</div>
+                          <div className="text-[10px] text-[#64748B] uppercase tracking-wider">{item.l}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {d.visaType && <Badge variant="outline" className="text-xs w-fit" style={{ borderColor: d.accentColor, color: d.accentColor }}>{d.visaType}</Badge>}
                   <div className="flex gap-2 pt-1">
                     <Button asChild variant="outline" size="sm" className="flex-1 h-10 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>
@@ -342,11 +340,17 @@ function DestinationsSection() {
                   <Card key={d.id} className="rounded-2xl border border-[#E2E8F0] p-5">
                     <div className="h-1.5 w-12 rounded mb-3" style={{ backgroundColor: d.accentColor }} />
                     <div className="flex items-center gap-2 mb-2"><span>{d.flag}</span><h3 className="font-bold" style={{ color: C.text }}>{d.name}</h3></div>
-                    <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                      <div><div className="font-bold" style={{ color: d.accentColor }}>{d.universityCount}+</div><div className="text-[10px] text-[#64748B]">Unis</div></div>
-                      <div><div className="font-bold" style={{ color: d.accentColor }}>{d.courseCount}+</div><div className="text-[10px] text-[#64748B]">Courses</div></div>
-                      <div><div className="font-bold" style={{ color: d.accentColor }}>{d.scholarshipCount}</div><div className="text-[10px] text-[#64748B]">Scholarships</div></div>
-                    </div>
+                    {hasLiveCountryData && (
+                      <div className="grid grid-cols-3 gap-2 text-center text-sm">
+                        {[
+                          { value: d.universityCount, label: 'Unis in catalog' },
+                          { value: d.courseCount, label: 'Courses in catalog' },
+                          { value: d.scholarshipCount, label: 'Scholarships in catalog' },
+                        ].filter((item) => typeof item.value === 'number').map((item) => (
+                          <div key={item.label}><div className="font-bold" style={{ color: d.accentColor }}>{item.value}</div><div className="text-[10px] text-[#64748B]">{item.label}</div></div>
+                        ))}
+                      </div>
+                    )}
                   </Card>
                 ))}
               </motion.div>
@@ -361,8 +365,15 @@ function DestinationsSection() {
 /* ═══════════════════════════════════════════════════════════════ ABOUT ═══ */
 function AboutSection() {
   const { data } = useHomepageData();
-  const totalUnis = data?.stats?.totalUniversities;
-  const totalCourses = data?.stats?.totalCourses;
+  const verifiedUnis = data?.stats?.metricStatus?.universities === 'VERIFIED' ? data.stats.totalUniversities : null;
+  const verifiedCourses = data?.stats?.metricStatus?.courses === 'VERIFIED' ? data.stats.totalCourses : null;
+
+  const badges = [
+    { icon: Globe, label: 'Study Destinations', color: C.blue },
+    ...(verifiedUnis ? [{ icon: GraduationCap, label: `${verifiedUnis.toLocaleString()}+ Universities`, color: C.blue }] : []),
+    ...(verifiedCourses ? [{ icon: BookOpen, label: `${verifiedCourses.toLocaleString()}+ Courses`, color: C.orange }] : []),
+    { icon: Heart, label: 'Student-First', color: '#10B981' },
+  ];
 
   return (
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-24 bg-white overflow-hidden">
@@ -377,14 +388,9 @@ function AboutSection() {
               <p>Guided by the founder&apos;s vision of <strong style={{ color: C.text }}>trust, transparency, and professionalism</strong>, ALO Education continues to grow with the mission of offering global opportunities and becoming a trusted partner in international education consultancy. We are not just consultants — we are mentors, guides, and partners in your journey toward a brighter future.</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              {[
-                { icon: Globe, label: '7 Countries', color: C.blue },
-                { icon: GraduationCap, label: `${totalUnis ? totalUnis + '+' : '200+'} Universities`, color: C.blue },
-                { icon: BookOpen, label: `${totalCourses ? totalCourses.toLocaleString() + '+' : '8,000+'} Courses`, color: C.orange },
-                { icon: Heart, label: 'Student-First', color: '#10B981' },
-              ].map(b => (
-                <div key={b.label} className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: `${b.color}10`, color: b.color }}>
-                  <b.icon className="h-4 w-4" /> {b.label}
+              {badges.map((badge) => (
+                <div key={badge.label} className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: `${badge.color}10`, color: badge.color }}>
+                  <badge.icon className="h-4 w-4" /> {badge.label}
                 </div>
               ))}
             </div>

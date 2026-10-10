@@ -288,6 +288,7 @@ export async function POST(request: Request) {
         userType: true,
         status: true,
         firstLoginRequired: true,
+        partnerProfile: { select: { partnerRole: true, partnerId: true } },
       },
     });
 
@@ -305,6 +306,7 @@ export async function POST(request: Request) {
       success: true,
       user: {
         ...updatedUser,
+        partnerRole: updatedUser.partnerProfile?.partnerRole || null,
         crmRole,
         department,
         branch: crmRole ? 'Dhanmondi HQ' : null,

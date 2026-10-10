@@ -12,6 +12,7 @@
 import { describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import EditorialFlowDiagram from '@/components/marketing/EditorialFlowDiagram';
 import { roundedOrthoPath } from '@/components/diagrams/primitives';
 import {
   ApplicationProcessDiagram,
@@ -119,5 +120,25 @@ describe('diagram compositions render valid SVG', () => {
     expect(html).toContain('Month 5');
     expect(html).toContain('week 0');
     expect(html).toContain('to scale');
+  });
+});
+
+describe('editorial process diagram accessibility', () => {
+  it('uses unique, connected caption ids when multiple diagrams render together', () => {
+    const html = render(
+      createElement('div', null,
+        createElement(EditorialFlowDiagram),
+        createElement(EditorialFlowDiagram, { title: 'Application review flow' }),
+      ),
+    );
+    const captionIds = Array.from(html.matchAll(/<figcaption id="([^"]+)"/g), (match) => match[1]);
+    const labelledByIds = Array.from(html.matchAll(/<figure[^>]*aria-labelledby="([^"]+)"/g), (match) => match[1]);
+
+    expect(captionIds).toHaveLength(2);
+    expect(new Set(captionIds).size).toBe(2);
+    expect(labelledByIds).toEqual(captionIds);
+    expect(html).toContain('Lead-to-campaign control loop');
+    expect(html).toContain('Application review flow');
+    expect(html).toContain('Automation drafts stay reviewable');
   });
 });

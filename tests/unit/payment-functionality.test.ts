@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 const { db, getServerSession } = vi.hoisted(() => ({
   getServerSession: vi.fn(),
   db: {
-    user: { findUnique: vi.fn() }, portalSession: { findUnique: vi.fn() }, portalStudentProfile: { findUnique: vi.fn() },
+    user: { findUnique: vi.fn() }, employee: { findFirst: vi.fn().mockResolvedValue(null) }, portalSession: { findUnique: vi.fn() }, portalStudentProfile: { findUnique: vi.fn() },
     aloPayment: { findMany: vi.fn(), count: vi.fn(), create: vi.fn() },
     student: { findMany: vi.fn() }, portalAuditLog: { create: vi.fn() }, $transaction: vi.fn(),
   },

@@ -39,6 +39,7 @@ export default async function ResourceArticlePage({ params }: { params: Promise<
   const { slug: category, article } = await params;
   const published = await getPublishedResource(article, category);
   if (!published) notFound();
+  const categoryName = RESOURCE_CATEGORIES.find((item) => item.slug === category)?.name ?? category;
 
   // Article/Breadcrumb structured data (spec §49) — populated from DB at request time
   let jsonLd: object[] = [];
@@ -63,7 +64,7 @@ export default async function ResourceArticlePage({ params }: { params: Promise<
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aloeducation.com' },
             { '@type': 'ListItem', position: 2, name: 'Resources', item: 'https://aloeducation.com/resources' },
-            { '@type': 'ListItem', position: 3, name: cat.name, item: `https://aloeducation.com/resources/${category}` },
+            { '@type': 'ListItem', position: 3, name: categoryName, item: `https://aloeducation.com/resources/${category}` },
             { '@type': 'ListItem', position: 4, name: r.title, item: `https://aloeducation.com/resources/${category}/${article}` },
           ],
         },

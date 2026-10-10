@@ -114,6 +114,7 @@ export interface PortalUserData {
   crmRole?: CrmRole;
   department?: string;
   branch?: string;
+  partnerRole?: string;
   roles?: PortalRole[];
 }
 
@@ -144,6 +145,7 @@ interface PortalState {
   setSidebarOpen: (open: boolean) => void;
   clearLoginError: () => void;
   clearAuthMessage: () => void;
+  setNotifications: (notifications: Array<{ id: string; title: string; message: string; type: string; isRead: boolean; createdAt: string }>) => void;
   hasPermission: (module: string, action: string) => boolean;
   hasRole: (roleName: string) => boolean;
 }
@@ -195,7 +197,9 @@ export const usePortalStore = create<PortalState>((set, get) => ({
         user,
         userType: user.userType,
         token: null,
-        currentView: viewMap[user.userType] || 'portals',
+        currentView: user.userType === 'PARTNER' && user.partnerRole?.toUpperCase() === 'PARTNER_SUPER_ADMIN'
+          ? 'partner-admin-dashboard'
+          : viewMap[user.userType] || 'portals',
       });
     } catch {
       localStorage.removeItem('portal_token');
@@ -230,7 +234,9 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           userType: ut,
           token: null,
           loginLoading: false,
-          currentView: viewMap[ut] || 'portals',
+          currentView: ut === 'PARTNER' && data.user.partnerRole?.toUpperCase() === 'PARTNER_SUPER_ADMIN'
+            ? 'partner-admin-dashboard'
+            : viewMap[ut] || 'portals',
         });
         if (typeof window !== 'undefined') {
           localStorage.removeItem('portal_token');
@@ -341,6 +347,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   clearLoginError: () => set({ loginError: null }),
   clearAuthMessage: () => set({ authMessage: null }),
+  setNotifications: (notifications) => set({ notifications }),
   hasPermission: (module: string, action: string) => {
     const state = get();
     if (!state.user) return false;
