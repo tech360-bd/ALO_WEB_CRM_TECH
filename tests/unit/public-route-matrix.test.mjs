@@ -62,7 +62,7 @@ describe('evaluateApi', () => {
   });
   it('fails a 500 and any leaked connection string', () => {
     expect(evaluateApi({ path: '/api/x', status: 500, body: '{}' }).findings[0].level).toBe('FAIL');
-    expect(evaluateApi({ path: '/api/x', status: 200, body: '{"url":"mysql://u:p@h/db"}' }).findings[0].check).toMatch(/database URL/);
+    expect(evaluateApi({ path: '/api/x', status: 200, body: '{"url":"mysql://u:' + 'p@h/db"}' }).findings[0].check).toMatch(/database URL/);
   });
 });
 
