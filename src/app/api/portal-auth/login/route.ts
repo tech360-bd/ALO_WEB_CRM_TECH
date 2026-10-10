@@ -2,52 +2,7 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { encode } from "next-auth/jwt";
 import bcrypt from 'bcryptjs';
-import { pageSessionRole } from "@/lib/session-roles";
-
-const crmRoleMap: Record<string, string> = {
-  'admin@alo.edu.bd': 'super_admin',
-  'ceo@alo.edu.bd': 'ceo',
-  'bm@alo.edu.bd': 'branch_manager',
-  'counselor@alo.edu.bd': 'counselor',
-  'app@alo.edu.bd': 'application_team',
-  'visa@alo.edu.bd': 'visa_officer',
-  'finance@alo.edu.bd': 'finance',
-  'marketing@alo.edu.bd': 'marketing_manager',
-  'frontdesk@alo.edu.bd': 'front_desk',
-  'hr@alo.edu.bd': 'hr',
-  'partner@alo.edu.bd': 'partner_manager',
-  'doc@alo.edu.bd': 'document_officer',
-  'data@alo.edu.bd': 'data_manager',
-  'support@alo.edu.bd': 'support_agent',
-  'ai@alo.edu.bd': 'ai_manager',
-};
-
-const crmDepartmentMap: Record<string, string> = {
-  super_admin: 'Administration',
-  ceo: 'Executive',
-  branch_manager: 'Operations',
-  counselor: 'Counseling',
-  application_team: 'Applications',
-  visa_officer: 'Visa',
-  finance: 'Finance',
-  marketing_manager: 'Marketing',
-  front_desk: 'Operations',
-  hr: 'Human Resources',
-  partner_manager: 'Partnerships',
-  document_officer: 'Documentation',
-  data_manager: 'Data & Analytics',
-  support_agent: 'Support',
-  ai_manager: 'AI & Technology',
-};
-
-// pageSessionRole is imported from @/lib/session-roles so the role claim minted
-// here and the ROLE_ROUTES keys the proxy authorises against cannot drift apart
-// again. The previous local copy upper-cased the crmRole verbatim, which emitted
-// `HR` and `SUPPORT_AGENT` — roles the proxy did not know, leaving those staff
-// with an empty allow-list and bouncing them to the public homepage from their
-// own dashboards. crmRoleMap below is intentionally left alone: it still carries
-// the business role (used for `department`, the login response and Employee
-// records), while the shared resolver maps it to the authorisation vocabulary.
+import { pageSessionRole, storedStaffRole } from "@/lib/session-roles";
 
 async function setPageSessionCookie(response: NextResponse, user: { id: string; email: string; name: string; userType: string; status: string }, crmRole: string | null) {
   const secret = process.env.NEXTAUTH_SECRET;
@@ -112,6 +67,7 @@ export async function POST(request: Request) {
 
     const user = await db.portalUser.findUnique({
       where: { email: normalizedEmail },
+      include: { roles: { include: { role: true }, orderBy: { assignedAt: "asc" } } },
     });
 
     if (!user) {
@@ -254,9 +210,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Resolve CRM role from email
-    const crmRole = crmRoleMap[user.email] || null;
-    const department = crmRole ? (crmDepartmentMap[crmRole] || null) : null;
+    // Authority comes from persisted assignments, never from an email address.
+    const employee = isStaffUser
+      ? await db.employee.findUnique({ where: { userId: user.id }, select: { status: true, branch: true, department: true } })
+      : null;
+    if (employee && employee.status.toLowerCase() !== 'active') {
+      return NextResponse.json({ success: false, error: 'Employee access is inactive.' }, { status: 403 });
+    }
+    const crmRole = isStaffUser ? storedStaffRole(user.roles.map(assignment => assignment.role.name)) : null;
+    const department = employee?.department || null;
 
     // Create a session token
     const crypto = await import('crypto');
@@ -307,7 +269,7 @@ export async function POST(request: Request) {
         ...updatedUser,
         crmRole,
         department,
-        branch: crmRole ? 'Dhanmondi HQ' : null,
+        branch: employee?.branch || null,
       },
     });
     const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');

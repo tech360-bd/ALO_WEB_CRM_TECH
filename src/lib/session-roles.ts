@@ -140,3 +140,12 @@ export function pageSessionRole(userType: string, crmRole: string | null): strin
   if (isKnownSessionRole(candidate)) return candidate;
   return 'EMPLOYEE';
 }
+
+/** Use explicit persisted staff assignments; unknown and non-staff roles grant nothing. */
+export function storedStaffRole(roleNames: readonly string[]): SessionRole | null {
+  for (const name of roleNames) {
+    const candidate = normalizeCrmRole(name);
+    if (isKnownSessionRole(candidate) && candidate !== 'STUDENT' && candidate !== 'PARTNER') return candidate;
+  }
+  return null;
+}

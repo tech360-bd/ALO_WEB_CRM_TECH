@@ -63,7 +63,7 @@ export default async function ResourceArticlePage({ params }: { params: Promise<
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aloeducation.com' },
             { '@type': 'ListItem', position: 2, name: 'Resources', item: 'https://aloeducation.com/resources' },
-            { '@type': 'ListItem', position: 3, name: cat.name, item: `https://aloeducation.com/resources/${category}` },
+            { '@type': 'ListItem', position: 3, name: r.category?.name || category, item: `https://aloeducation.com/resources/${category}` },
             { '@type': 'ListItem', position: 4, name: r.title, item: `https://aloeducation.com/resources/${category}/${article}` },
           ],
         },

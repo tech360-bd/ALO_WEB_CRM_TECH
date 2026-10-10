@@ -144,6 +144,7 @@ export function genCommunicationCode(): string {
 // Main create communication — validates linked entity, saves timeline, audit, SLA start
 export async function createCommunication(params: {
   channel: string;
+  threadId?: string;
   direction?: string;
   source?: string;
   senderUserId?: string;
@@ -173,6 +174,11 @@ export async function createCommunication(params: {
   createdBy?: string;
   assignedTo?: string;
 }) {
+  if (!(CHANNELS as readonly string[]).includes(params.channel)) throw new Error('Unsupported channel');
+  if (params.visibility && !(VISIBILITY_LEVELS as readonly string[]).includes(params.visibility)) throw new Error('Unsupported visibility');
+  if (params.priority && !(PRIORITIES as readonly string[]).includes(params.priority)) throw new Error('Unsupported priority');
+  if (params.status && !(COMMUNICATION_STATUS as readonly string[]).includes(params.status)) throw new Error('Unsupported status');
+  return db.$transaction(async tx => {
   // Validate at least one linked entity
   const linked = [params.leadId, params.studentId, params.partnerId, params.applicationId, params.documentId, params.visaFileId, params.campaignId, params.taskId, params.employeeId, params.b2bProviderId].filter(Boolean);
   if (linked.length === 0) {
@@ -208,21 +214,22 @@ export async function createCommunication(params: {
   } catch {}
 
   // Find or create thread
-  const threadWhere: any = {};
-  if (params.studentId) threadWhere.studentId = params.studentId;
-  else if (params.leadId) threadWhere.leadId = params.leadId;
-  else if (params.partnerId) threadWhere.partnerId = params.partnerId;
-  else if (params.applicationId) threadWhere.applicationId = params.applicationId;
+  const threadWhere: any = { channel, visibility, b2bProviderId: params.b2bProviderId || '' };
+  if (params.threadId) threadWhere.id = params.threadId;
+  for (const key of ['studentId', 'leadId', 'partnerId', 'applicationId', 'documentId', 'visaFileId', 'campaignId', 'taskId'] as const) {
+    if (params[key]) threadWhere[key] = params[key];
+  }
 
   let thread: any = null;
   if (Object.keys(threadWhere).length > 0) {
-    thread = await db.communicationThread.findFirst({
+    thread = await tx.communicationThread.findFirst({
       where: { ...threadWhere, status: { not: 'resolved' } },
       orderBy: { lastMessageAt: 'desc' },
-    }).catch(() => null);
+    });
   }
+  if (!thread && params.threadId) throw new Error('Thread no longer accessible');
   if (!thread) {
-    thread = await db.communicationThread.create({
+    thread = await tx.communicationThread.create({
       data: {
         threadCode: genCommunicationCode().replace('COMM','THREAD'),
         studentId: params.studentId || '',
@@ -249,7 +256,7 @@ export async function createCommunication(params: {
       }
     });
   } else {
-    await db.communicationThread.update({
+    await tx.communicationThread.update({
       where: { id: thread.id },
       data: {
         lastMessageAt: new Date(),
@@ -257,11 +264,11 @@ export async function createCommunication(params: {
         unreadCount: { increment: 1 },
         slaDueAt: slaDueAt || thread.slaDueAt,
       }
-    }).catch(()=>{});
+    });
   }
 
   // Create message
-  const msg = await db.communicationMessage.create({
+  const msg = await tx.communicationMessage.create({
     data: {
       threadId: thread.id,
       communicationCode,
@@ -291,7 +298,7 @@ export async function createCommunication(params: {
       intent,
       priority,
       status,
-      deliveryStatus: 'sent',
+      deliveryStatus: params.direction === 'outbound' ? 'queued' : 'received',
       slaDueAt,
       createdBy: params.createdBy || params.senderUserId || '',
       assignedTo: params.assignedTo || '',
@@ -307,7 +314,7 @@ export async function createCommunication(params: {
   });
 
   // Audit log
-  await db.communicationLog.create({
+  await tx.communicationLog.create({
     data: {
       communicationId: msg.id,
       eventType: 'created',
@@ -316,11 +323,11 @@ export async function createCommunication(params: {
       details: JSON.stringify({ channel, visibility, intent, afterHours, communicationCode }),
       createdBy: params.createdBy || params.senderUserId || 'system',
     }
-  }).catch(()=>{});
+  });
 
   // CrmAuditLog for sensitive views
   if (visibility === 'b2b_confidential' || visibility === 'super_admin_only') {
-    await db.crmAuditLog.create({
+    await tx.crmAuditLog.create({
       data: {
         actorUserId: params.createdBy || params.senderUserId || 'system',
         actorRole: 'communication',
@@ -329,12 +336,12 @@ export async function createCommunication(params: {
         targetId: msg.id,
         afterData: JSON.stringify({ visibility, channel, intent }),
       }
-    }).catch(()=>{});
+    });
   }
 
   // Create timeline event for linked student/application
-  if (params.studentId) {
-    await db.timelineEvent.create({
+  if (params.studentId && ['public_safe', 'student_visible'].includes(visibility)) {
+    await tx.timelineEvent.create({
       data: {
         studentId: params.studentId,
         stage: 'communication',
@@ -343,19 +350,20 @@ export async function createCommunication(params: {
         actor: params.senderName || 'system',
         actionUrl: `/student/messages`,
       }
-    }).catch(()=>{});
+    });
   }
 
   // After-hours automation: create lead if new contact gives phone/email, assign follow-up for next working hour
   let afterHoursReply: string | null = null;
-  if (afterHours && ['whatsapp','sms','facebook_messenger','instagram_dm','website_chat'].includes(channel)) {
+  if (afterHours && params.direction !== 'outbound' && ['whatsapp','sms','facebook_messenger','instagram_dm','website_chat'].includes(channel)) {
     afterHoursReply = AFTER_HOURS_MESSAGE;
     // Create counselor task for next working hour (next day 10:00 Dhaka)
     const nextWorking = new Date();
-    nextWorking.setDate(nextWorking.getDate() + (nextWorking.getHours() >= 18 ? 1 : 0));
+    const dhakaHour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Dhaka', hour: 'numeric', hourCycle: 'h23' }).format(nextWorking));
+    if (dhakaHour >= 18) nextWorking.setUTCDate(nextWorking.getUTCDate() + 1);
     // 10:00 Dhaka = 04:00 UTC
     nextWorking.setUTCHours(4, 0, 0, 0);
-    await db.counselorTask.create({
+    await tx.counselorTask.create({
       data: {
         employeeId: params.assignedTo || '',
         studentId: params.studentId || '',
@@ -367,10 +375,11 @@ export async function createCommunication(params: {
         status: 'pending',
         dueDate: nextWorking.toISOString(),
       }
-    }).catch(()=>{});
+    });
   }
 
   return { thread, message: msg, afterHours, afterHoursReply, slaDueAt };
+  });
 }
 
 // WhatsApp Student ID flow helper
