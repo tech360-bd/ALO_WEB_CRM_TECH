@@ -254,7 +254,7 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
   const result = await authenticateSession(request);
   if (result instanceof NextResponse) return result;
   const pathname = new URL(request.url).pathname;
-  const employeeRoute = pathname.startsWith('/api/employee-access/') || pathname.startsWith('/api/admin/employees') || pathname.startsWith('/api/admin/payroll');
+  const employeeRoute = pathname.startsWith('/api/employee-access/') || pathname.startsWith('/api/admin/employees') || pathname.startsWith('/api/admin/payroll') || pathname === '/api/finance' || pathname.startsWith('/api/finance/') || pathname.startsWith('/api/crm/finance');
   if (employeeRoute) {
     if (['STUDENT', 'PARTNER'].includes(result.userType.toUpperCase())) {
       return NextResponse.json({ success: false, error: 'Employee access required.' }, { status: 403 });

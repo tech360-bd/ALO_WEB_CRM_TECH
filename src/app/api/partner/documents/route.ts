@@ -1,250 +1,204 @@
+import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { authenticateRequest } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
+import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
 
-// ============================================================
-// GET — List partner's student documents with filters and search
-// ============================================================
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+const MAX_FILE_BYTES = 20 * 1024 * 1024;
+const MIME_BY_EXTENSION: Record<string, string> = {
+  pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp',
+};
+
+function detectMime(bytes: Buffer): string | null {
+  if (bytes.length >= 5 && bytes.subarray(0, 5).toString('ascii') === '%PDF-') return 'application/pdf';
+  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return 'image/jpeg';
+  if (bytes.length >= 8 && bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return 'image/png';
+  if (bytes.length >= 12 && bytes.subarray(0, 4).toString('ascii') === 'RIFF' && bytes.subarray(8, 12).toString('ascii') === 'WEBP') return 'image/webp';
+  if (bytes.length >= 6 && ['GIF87a', 'GIF89a'].includes(bytes.subarray(0, 6).toString('ascii'))) return 'image/gif';
+  return null;
+}
+
+function safeOriginalName(value: string): string | null {
+  const name = value.split(/[\\/]/).pop()?.trim() || '';
+  if (!name || name.length > 191 || /[\u0000-\u001f]/.test(name)) return null;
+  return name;
+}
+
+async function getPartner(authUserId: string) {
+  return db.partnerProfile.findUnique({ where: { userId: authUserId } });
+}
+
 export async function GET(request: Request) {
   try {
-    const authResult = await authenticateRequest(request);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult;
-
-    const partner = await db.partnerProfile.findUnique({
-      where: { userId: auth.userId },
-    });
-    if (!partner) {
-      return NextResponse.json({ success: false, error: 'Partner profile not found' }, { status: 404 });
-    }
+    const auth = await authenticateRequest(request);
+    if (auth instanceof NextResponse) return auth;
+    const partner = await getPartner(auth.userId);
+    if (!partner) return NextResponse.json({ success: false, error: 'Partner profile not found.' }, { status: 404 });
 
     const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category') || '';
-    const status = searchParams.get('status') || '';
-    const search = searchParams.get('search') || '';
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
-    const skip = (page - 1) * limit;
+    const category = (searchParams.get('category') || '').trim().slice(0, 80);
+    const status = (searchParams.get('status') || '').trim().slice(0, 40);
+    const search = (searchParams.get('search') || '').trim().slice(0, 100);
+    const requestedPage = Number.parseInt(searchParams.get('page') || '1', 10);
+    const requestedLimit = Number.parseInt(searchParams.get('limit') || '20', 10);
+    const page = Number.isFinite(requestedPage) ? Math.max(1, requestedPage) : 1;
+    const limit = Number.isFinite(requestedLimit) ? Math.min(100, Math.max(1, requestedLimit)) : 20;
 
-    // Build query filter
-    const where: Record<string, unknown> = {
-      studentProfile: { partnerId: partner.partnerId },
-    };
-
-    if (category) {
-      where.category = category;
-    }
-    if (status) {
-      where.status = status;
-    }
+    const where: Record<string, unknown> = { studentProfile: { partnerId: partner.partnerId } };
+    if (category) where.category = category;
+    if (status) where.status = status;
     if (search) {
       where.OR = [
         { name: { contains: search } },
         { fileName: { contains: search } },
+        { studentProfile: { fullName: { contains: search }, partnerId: partner.partnerId } },
+        { studentProfile: { studentId: { contains: search }, partnerId: partner.partnerId } },
       ];
     }
 
-    // Fetch documents with student info
-    const [documents, total] = await Promise.all([
+    const [documents, total, stats] = await Promise.all([
       db.portalStudentDocument.findMany({
         where,
-        include: {
-          studentProfile: {
-            select: {
-              id: true,
-              fullName: true,
-              studentId: true,
-            },
-          },
+        select: {
+          id: true,
+          name: true,
+          category: true,
+          fileName: true,
+          fileSize: true,
+          status: true,
+          rejectionReason: true,
+          uploadedAt: true,
+          createdAt: true,
+          updatedAt: true,
+          studentProfile: { select: { id: true, fullName: true, studentId: true } },
         },
         orderBy: { createdAt: 'desc' },
-        skip,
+        skip: (page - 1) * limit,
         take: limit,
       }),
       db.portalStudentDocument.count({ where }),
+      db.portalStudentDocument.groupBy({
+        by: ['status'],
+        where: { studentProfile: { partnerId: partner.partnerId } },
+        _count: { id: true },
+      }),
     ]);
 
-    // Compute document stats
-    const stats = await db.portalStudentDocument.groupBy({
-      by: ['status'],
-      where: {
-        studentProfile: { partnerId: partner.partnerId },
-      },
-      _count: { id: true },
-    });
-
-    const statusCounts: Record<string, number> = {};
-    for (const s of stats) {
-      statusCounts[s.status] = s._count.id;
-    }
-
+    const statusCounts = Object.fromEntries(stats.map((entry) => [entry.status, entry._count.id]));
     return NextResponse.json({
       success: true,
-      data: documents,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      data: documents.map((document) => ({
+        ...document,
+        downloadUrl: `/api/partner/documents/${document.id}/download`,
+      })),
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
       stats: statusCounts,
     });
   } catch (error) {
     console.error('[PARTNER DOCUMENTS GET] Error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch documents' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to fetch partner documents.' }, { status: 500 });
   }
 }
 
-// ============================================================
-// POST — Create a new document metadata record
-// ============================================================
 export async function POST(request: Request) {
+  let stored: Awaited<ReturnType<typeof storePrivateFile>> | null = null;
   try {
-    const authResult = await authenticateRequest(request);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult;
+    const auth = await authenticateRequest(request);
+    if (auth instanceof NextResponse) return auth;
+    const partner = await getPartner(auth.userId);
+    if (!partner) return NextResponse.json({ success: false, error: 'Partner profile not found.' }, { status: 404 });
 
-    const partner = await db.partnerProfile.findUnique({
-      where: { userId: auth.userId },
+    let form: FormData;
+    try { form = await request.formData(); } catch {
+      return NextResponse.json({ success: false, error: 'Upload actual file bytes using multipart/form-data.' }, { status: 415 });
+    }
+
+    const studentProfileId = String(form.get('studentProfileId') || '').trim();
+    const category = String(form.get('category') || '').trim();
+    const file = form.get('file');
+    if (!studentProfileId || !category || category.length > 80 || /[\u0000-\u001f]/.test(category) || !(file instanceof File) || !file.size || file.size > MAX_FILE_BYTES) {
+      return NextResponse.json({ success: false, error: 'A student, document category, and non-empty file up to 20 MB are required.' }, { status: 400 });
+    }
+    const fileName = safeOriginalName(file.name);
+    if (!fileName) return NextResponse.json({ success: false, error: 'File name is invalid.' }, { status: 400 });
+    const bytes = Buffer.from(await file.arrayBuffer());
+    const mimeType = detectMime(bytes);
+    const extension = fileName.split('.').pop()?.toLowerCase() || '';
+    if (!mimeType || MIME_BY_EXTENSION[extension] !== mimeType || (file.type && file.type !== mimeType)) {
+      return NextResponse.json({ success: false, error: 'File content does not match an allowed PDF or image type.' }, { status: 400 });
+    }
+
+    const studentProfile = await db.portalStudentProfile.findFirst({
+      where: { id: studentProfileId, partnerId: partner.partnerId },
+      select: { id: true, studentId: true, fullName: true },
     });
-    if (!partner) {
-      return NextResponse.json({ success: false, error: 'Partner profile not found' }, { status: 404 });
-    }
+    if (!studentProfile) return NextResponse.json({ success: false, error: 'Student profile not found for this partner.' }, { status: 404 });
 
-    const body = await request.json();
-    const {
-      studentProfileId,
-      name,
-      fileName,
-      fileSize,
-      category,
-      uploadedAt,
-    } = body;
-
-    // Validate required fields
-    if (!studentProfileId) {
-      return NextResponse.json({ success: false, error: 'studentProfileId is required' }, { status: 400 });
-    }
-    if (!name) {
-      return NextResponse.json({ success: false, error: 'Document name is required' }, { status: 400 });
-    }
-    if (!fileName) {
-      return NextResponse.json({ success: false, error: 'fileName is required' }, { status: 400 });
-    }
-
-    // Verify student belongs to this partner
-    const studentProfile = await db.portalStudentProfile.findUnique({
-      where: { id: studentProfileId },
-    });
-    if (!studentProfile) {
-      return NextResponse.json({ success: false, error: 'Student profile not found' }, { status: 404 });
-    }
-    if (studentProfile.partnerId !== partner.partnerId) {
-      return NextResponse.json({ success: false, error: 'Student does not belong to your partner account' }, { status: 403 });
-    }
-
-    // Create document record
-    const document = await db.portalStudentDocument.create({
-      data: {
-        studentProfileId,
-        name,
-        fileName,
-        fileSize: fileSize || 0,
-        category: category || 'other',
-        uploadedAt: uploadedAt || new Date().toISOString(),
-        status: 'pending',
-      },
-      include: {
-        studentProfile: {
-          select: {
-            id: true,
-            fullName: true,
-            studentId: true,
-          },
+    stored = await storePrivateFile(bytes, fileName);
+    const document = await db.$transaction(async (tx) => {
+      const created = await tx.portalStudentDocument.create({
+        data: {
+          studentProfileId: studentProfile.id,
+          name: fileName,
+          category,
+          fileName,
+          storagePath: stored!.storagePath,
+          mimeType,
+          fileHash: stored!.fileHash,
+          fileSize: stored!.fileSize,
+          status: 'pending',
+          uploadedAt: new Date().toISOString(),
         },
-      },
+        select: {
+          id: true,
+          name: true,
+          category: true,
+          fileName: true,
+          fileSize: true,
+          status: true,
+          uploadedAt: true,
+          createdAt: true,
+          studentProfile: { select: { id: true, fullName: true, studentId: true } },
+        },
+      });
+      await tx.portalTimelineEvent.create({
+        data: {
+          studentProfileId: studentProfile.id,
+          channel: 'portal',
+          messageType: 'document',
+          content: `A ${category} document was uploaded for review by the partner account.`,
+          senderName: auth.name,
+          senderType: 'partner',
+          visibility: 'student_visible',
+        },
+      });
+      await tx.portalAuditLog.create({
+        data: {
+          actorUserId: auth.userId,
+          action: 'PARTNER_DOCUMENT_UPLOADED',
+          entityType: 'PortalStudentDocument',
+          entityId: created.id,
+          metadata: JSON.stringify({ studentId: studentProfile.studentId, category, fileHash: stored!.fileHash }),
+        },
+      });
+      return created;
     });
 
-    return NextResponse.json({ success: true, data: document }, { status: 201 });
+    return NextResponse.json({
+      success: true,
+      data: { ...document, downloadUrl: `/api/partner/documents/${document.id}/download` },
+      message: 'File bytes were stored privately and queued for document review.',
+    }, { status: 201 });
   } catch (error) {
+    if (stored?.storagePath) await removePrivateFile(stored.storagePath).catch(() => {});
     console.error('[PARTNER DOCUMENTS POST] Error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to create document' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Document upload could not be completed.' }, { status: 503 });
   }
 }
 
-// ============================================================
-// PUT — Update document status (verified, rejected, needs_info)
-// ============================================================
-export async function PUT(request: Request) {
-  try {
-    const authResult = await authenticateRequest(request);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult;
-
-    const partner = await db.partnerProfile.findUnique({
-      where: { userId: auth.userId },
-    });
-    if (!partner) {
-      return NextResponse.json({ success: false, error: 'Partner profile not found' }, { status: 404 });
-    }
-
-    const body = await request.json();
-    const { documentId, status, rejectionReason } = body;
-
-    if (!documentId) {
-      return NextResponse.json({ success: false, error: 'documentId is required' }, { status: 400 });
-    }
-    if (!status) {
-      return NextResponse.json({ success: false, error: 'status is required' }, { status: 400 });
-    }
-
-    // Validate allowed statuses
-    const allowedStatuses = ['pending', 'verified', 'rejected', 'needs_info'];
-    if (!allowedStatuses.includes(status)) {
-      return NextResponse.json(
-        { success: false, error: `Invalid status. Must be one of: ${allowedStatuses.join(', ')}` },
-        { status: 400 }
-      );
-    }
-
-    // Verify document belongs to partner's student
-    const document = await db.portalStudentDocument.findUnique({
-      where: { id: documentId },
-      include: { studentProfile: true },
-    });
-    if (!document) {
-      return NextResponse.json({ success: false, error: 'Document not found' }, { status: 404 });
-    }
-    if (document.studentProfile.partnerId !== partner.partnerId) {
-      return NextResponse.json({ success: false, error: 'Document does not belong to your partner account' }, { status: 403 });
-    }
-
-    // Build update data
-    const updateData: Record<string, unknown> = { status };
-    if (rejectionReason !== undefined) {
-      updateData.rejectionReason = rejectionReason;
-    }
-    if (status === 'verified') {
-      updateData.reviewedBy = auth.name || auth.userId;
-    }
-
-    const updated = await db.portalStudentDocument.update({
-      where: { id: documentId },
-      data: updateData,
-      include: {
-        studentProfile: {
-          select: {
-            id: true,
-            fullName: true,
-            studentId: true,
-          },
-        },
-      },
-    });
-
-    return NextResponse.json({ success: true, data: updated });
-  } catch (error) {
-    console.error('[PARTNER DOCUMENTS PUT] Error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to update document' }, { status: 500 });
-  }
+// Document review decisions belong to internal document staff, not the partner.
+export async function PUT() {
+  return NextResponse.json({ success: false, error: 'Partners cannot approve or reject uploaded documents.' }, { status: 403 });
 }

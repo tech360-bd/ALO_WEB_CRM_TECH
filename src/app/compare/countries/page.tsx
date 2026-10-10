@@ -37,8 +37,12 @@ async function loadCatalogueCounts(): Promise<Record<string, { universities: num
     ]);
 
     const normalise = (value: string) => value.trim().toLowerCase();
-    const universities = new Map(universityGroups.map((group) => [normalise(group.country), group._count._all]));
-    const courses = new Map(courseGroups.map((group) => [normalise(group.country), group._count._all]));
+    const universities = new Map<string, number>(
+      universityGroups.map((group) => [normalise(group.country), group._count._all] as const),
+    );
+    const courses = new Map<string, number>(
+      courseGroups.map((group) => [normalise(group.country), group._count._all] as const),
+    );
 
     const counts: Record<string, { universities: number; courses: number }> = {};
     for (const country of getComparableCountries()) {

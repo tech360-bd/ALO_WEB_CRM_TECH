@@ -36,7 +36,6 @@ interface ProfileData {
   approvalStatus: string;
   totalLeads: number;
   activeStudents: number;
-  studentCount: number | null;
   applicationCount: number | null;
 }
 
@@ -52,12 +51,11 @@ const EMPTY_PROFILE: ProfileData = {
   approvalStatus: '',
   totalLeads: 0,
   activeStudents: 0,
-  studentCount: null,
   applicationCount: null,
 };
 
 export default function PartnerProfilePage() {
-  const { user } = usePortalStore();
+  const setView = usePortalStore((state) => state.setView);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [form, setForm] = useState<ProfileData>(EMPTY_PROFILE);
   const [editing, setEditing] = useState(false);
@@ -67,19 +65,12 @@ export default function PartnerProfilePage() {
   const [loadError, setLoadError] = useState('');
   const [noProfile, setNoProfile] = useState(false);
 
-  const authHeaders = useCallback((): HeadersInit => {
-    const token = usePortalStore.getState().token;
-    return token
-      ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-      : { 'Content-Type': 'application/json' };
-  }, []);
-
   const fetchProfile = useCallback(async () => {
     setLoading(true);
     setLoadError('');
     setNoProfile(false);
     try {
-      const res = await fetch('/api/partner/profile', { headers: authHeaders(), cache: 'no-store' });
+      const res = await fetch('/api/partner/profile', { credentials: 'include', cache: 'no-store' });
       const data = await res.json().catch(() => null);
 
       if (res.status === 404) {
@@ -96,8 +87,8 @@ export default function PartnerProfilePage() {
       const loaded: ProfileData = {
         companyName: p.companyName || '',
         contactPerson: p.contactPerson || '',
-        email: user?.email || '',
-        phone: user?.phone || '',
+        email: data.user?.email || '',
+        phone: data.user?.phone || '',
         businessType: p.businessType || '',
         city: p.city || '',
         address: p.address || '',
@@ -105,7 +96,6 @@ export default function PartnerProfilePage() {
         approvalStatus: p.approvalStatus || '',
         totalLeads: p.totalLeads ?? 0,
         activeStudents: p.activeStudents ?? 0,
-        studentCount: typeof p.studentCount === 'number' ? p.studentCount : null,
         applicationCount: typeof p.applicationCount === 'number' ? p.applicationCount : null,
       };
       setProfile(loaded);
@@ -116,7 +106,7 @@ export default function PartnerProfilePage() {
     } finally {
       setLoading(false);
     }
-  }, [user?.email, user?.phone, authHeaders]);
+  }, []);
 
   useEffect(() => { void fetchProfile(); }, [fetchProfile]);
 
@@ -134,7 +124,8 @@ export default function PartnerProfilePage() {
     try {
       const res = await fetch('/api/partner/profile', {
         method: 'PUT',
-        headers: authHeaders(),
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           companyName: form.companyName.trim(),
           contactPerson: form.contactPerson.trim(),
@@ -270,8 +261,9 @@ export default function PartnerProfilePage() {
                     <Input id="contactPerson" value={form.contactPerson} onChange={(e) => setForm({ ...form, contactPerson: e.target.value })} placeholder="Enter contact person" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="partner@company.com" />
+                    <Label htmlFor="email">Sign-in email</Label>
+                    <Input id="email" type="email" value={form.email} readOnly aria-readonly="true" />
+                    <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => setView('partner-settings')}>Change email with verification in Settings</Button>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone</Label>
@@ -335,13 +327,7 @@ export default function PartnerProfilePage() {
               <Separator />
               <StatItem label="Total Leads" value={String(profile.totalLeads)} />
               <Separator />
-              <StatItem label="Active Students" value={String(profile.activeStudents)} />
-              {profile.studentCount !== null && (
-                <>
-                  <Separator />
-                  <StatItem label="Lead Records" value={String(profile.studentCount)} />
-                </>
-              )}
+              <StatItem label="Student Profiles" value={String(profile.activeStudents)} />
               {profile.applicationCount !== null && (
                 <>
                   <Separator />
@@ -367,9 +353,7 @@ export default function PartnerProfilePage() {
               <CardTitle className="text-base font-semibold text-alo-text">Account Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <StatItem label="Account Email" value={user?.email || profile.email || '—'} />
-              <Separator />
-              <StatItem label="User ID" value={user?.id || '—'} mono />
+              <StatItem label="Account Email" value={profile.email || '—'} />
               <Separator />
               <StatItem label="Portal" value="Partner Portal" />
             </CardContent>

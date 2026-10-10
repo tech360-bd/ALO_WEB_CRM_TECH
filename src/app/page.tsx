@@ -100,6 +100,10 @@ import PartnerReferralsPage from '@/components/partner/PartnerReferralsPage';
 import PartnerSettingsPage from '@/components/partner/PartnerSettingsPage';
 import PartnerHelpPage from '@/components/partner/PartnerHelpPage';
 import PartnerNotificationsPage from '@/components/partner/PartnerNotificationsPage';
+import PartnerAdminUsersPage from '@/components/partner/PartnerAdminUsersPage';
+import PartnerVouchersPage from '@/components/partner/PartnerVouchersPage';
+import PartnerQuotaPage from '@/components/partner/PartnerQuotaPage';
+import PartnerEnglishPrepView from '@/components/partner/PartnerEnglishPrepView';
 
 // ---- CRM Admin ----
 import CrmAdminShell from '@/components/crm/CrmAdminShell';
@@ -308,6 +312,28 @@ function EmployeeView({ view }: { view: PortalView }) {
 
 const partnerPageMap: Record<string, React.ReactNode> = {
   'partner-dashboard': <PartnerDashboard />,
+  'partner-admin-dashboard': <PartnerSuperAdminDashboard />,
+  'partner-admin-users': <PartnerAdminUsersPage />,
+  'partner-admin-users-create': <PartnerAdminUsersPage />,
+  'partner-admin-marketing-studio': <PartnerMarketingStudio />,
+  'partner-admin-content-generator': <PartnerMarketingStudio />,
+  'partner-admin-image-generator': <PartnerMarketingStudio />,
+  'partner-admin-video-generator': <PartnerMarketingStudio />,
+  'partner-admin-social-scheduler': <SocialMediaManagementHub portal="partner" />,
+  'partner-admin-voucher-codes': <PartnerVouchersPage />,
+  'partner-admin-mock-tests': <PartnerVouchersPage />,
+  'partner-admin-usage-quota': <PartnerQuotaPage />,
+  'partner-admin-interview-prep': <PartnerEnglishPrepView />,
+  'partner-admin-course-finder': <PublicCourseFinderPage />,
+  'partner-admin-company-profile': <PartnerProfilePage />,
+  'partner-admin-settings': <PartnerSettingsPage />,
+  'partner-admin-support-request': <PartnerHelpPage />,
+  'partner-admin-reports': <PartnerReportsPage />,
+  'partner-admin-documents': <PartnerDocumentsPage />,
+  'partner-admin-applications': <PartnerApplicationsPage />,
+  'partner-admin-students': <PartnerStudentsPage />,
+  'partner-admin-leads': <PartnerLeadsPage />,
+  'partner-admin-roles': <PartnerAdminUsersPage />,
   'partner-profile': <PartnerProfilePage />,
   'partner-leads': <PartnerLeadsPage />,
   'partner-students': <PartnerStudentsPage />,

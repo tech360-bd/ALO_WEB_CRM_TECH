@@ -2,35 +2,54 @@ import { NextResponse } from 'next/server';
 import { authenticateRequest } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
 
-// GET: Get communication threads for this partner (threads where partner is a participant)
+const MAX_MESSAGE_LENGTH = 5000;
+
 export async function GET(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
-
-    const partner = await db.partnerProfile.findFirst({ where: { userId: auth.userId } });
-    if (!partner) return NextResponse.json({ success: false, error: 'Partner not found' }, { status: 404 });
+    const partner = await db.partnerProfile.findUnique({ where: { userId: auth.userId }, select: { partnerId: true } });
+    if (!partner) return NextResponse.json({ success: false, error: 'Partner profile not found.' }, { status: 404 });
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '20', 10);
-    const status = searchParams.get('status') || undefined;
-
-    const where: any = {
-      participants: { some: { participantId: partner.partnerId } },
-    };
-    if (status) {
-      where.status = status;
+    const threadId = (searchParams.get('threadId') || '').trim();
+    if (threadId) {
+      const thread = await db.communicationThread.findFirst({
+        where: { id: threadId, channel: 'partner_support', studentId: auth.userId, partnerId: partner.partnerId },
+        select: { id: true, subject: true, status: true, createdAt: true, updatedAt: true, lastMessageAt: true, lastMessagePreview: true, unreadCount: true },
+      });
+      if (!thread) return NextResponse.json({ success: false, error: 'Support conversation not found.' }, { status: 404 });
+      const messages = await db.communicationMessage.findMany({
+        where: { threadId: thread.id },
+        select: { id: true, content: true, senderId: true, senderType: true, senderName: true, isRead: true, createdAt: true },
+        orderBy: { createdAt: 'asc' },
+        take: 200,
+      });
+      await db.communicationMessage.updateMany({
+        where: { threadId: thread.id, senderId: { not: auth.userId }, isRead: false },
+        data: { isRead: true },
+      });
+      await db.communicationThread.update({ where: { id: thread.id }, data: { unreadCount: 0 } });
+      return NextResponse.json({ success: true, data: { thread, messages: messages.map((message) => ({ ...message, isMine: message.senderId === auth.userId || message.senderType === 'partner' })) } });
     }
 
+    const requestedPage = Number.parseInt(searchParams.get('page') || '1', 10);
+    const requestedLimit = Number.parseInt(searchParams.get('limit') || '30', 10);
+    const page = Number.isFinite(requestedPage) ? Math.max(1, requestedPage) : 1;
+    const limit = Number.isFinite(requestedLimit) ? Math.min(100, Math.max(1, requestedLimit)) : 30;
+    const where = { channel: 'partner_support', studentId: auth.userId, partnerId: partner.partnerId };
     const [threads, total] = await Promise.all([
       db.communicationThread.findMany({
         where,
-        include: {
-          messages: {
-            orderBy: { createdAt: 'asc' },
-            take: 1,
-          },
+        select: {
+          id: true,
+          subject: true,
+          status: true,
+          createdAt: true,
+          lastMessageAt: true,
+          lastMessagePreview: true,
+          unreadCount: true,
+          messages: { select: { content: true, senderId: true, senderName: true, isRead: true, createdAt: true }, orderBy: { createdAt: 'desc' }, take: 1 },
         },
         orderBy: { lastMessageAt: 'desc' },
         skip: (page - 1) * limit,
@@ -38,103 +57,117 @@ export async function GET(request: Request) {
       }),
       db.communicationThread.count({ where }),
     ]);
-
     return NextResponse.json({
       success: true,
-      data: threads,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      data: { threads, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } },
     });
   } catch (error) {
     console.error('[GET /partner/messages]', error);
-    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Partner messages are temporarily unavailable.' }, { status: 500 });
   }
 }
 
-// POST: Send a message – create a new thread or add to an existing thread
 export async function POST(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    const partner = await db.partnerProfile.findUnique({ where: { userId: auth.userId } });
+    if (!partner) return NextResponse.json({ success: false, error: 'Partner profile not found.' }, { status: 404 });
 
-    const partner = await db.partnerProfile.findFirst({ where: { userId: auth.userId } });
-    if (!partner) return NextResponse.json({ success: false, error: 'Partner not found' }, { status: 404 });
-
-    const body = await request.json();
-    const { threadId, recipientId, subject, content, channel } = body;
-
-    if (!content || (!threadId && !recipientId)) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields: content, and either threadId or recipientId' },
-        { status: 400 },
-      );
+    const body = await request.json().catch(() => ({}));
+    const threadId = typeof body.threadId === 'string' ? body.threadId.trim() : '';
+    const subject = typeof body.subject === 'string' ? body.subject.trim() : '';
+    const content = typeof body.content === 'string' ? body.content.trim() : typeof body.text === 'string' ? body.text.trim() : '';
+    if (!content || content.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json({ success: false, error: `Message content must be between 1 and ${MAX_MESSAGE_LENGTH} characters.` }, { status: 400 });
+    }
+    if (!threadId && (!subject || subject.length > 200)) {
+      return NextResponse.json({ success: false, error: 'A subject of 1 to 200 characters is required for a new support conversation.' }, { status: 400 });
     }
 
     if (threadId) {
-      // Add message to existing thread
-      const thread = await db.communicationThread.findUnique({
-        where: { id: threadId },
-        include: { participants: true },
+      const thread = await db.communicationThread.findFirst({
+        where: { id: threadId, channel: 'partner_support', studentId: auth.userId, partnerId: partner.partnerId },
+        select: { id: true, status: true },
       });
-      if (!thread) {
-        return NextResponse.json({ success: false, error: 'Thread not found' }, { status: 404 });
-      }
-      if (!thread.participants.some(p => p.participantId === partner.partnerId)) {
-        return NextResponse.json({ success: false, error: 'Not a participant in this thread' }, { status: 403 });
-      }
+      if (!thread) return NextResponse.json({ success: false, error: 'Support conversation not found.' }, { status: 404 });
 
-      const message = await db.communicationMessage.create({
-        data: {
-          threadId,
-          senderId: auth.userId,
-          content,
-          type: 'text',
-          messageType: 'text',
-        },
-      });
-
-      await db.communicationThread.update({
-        where: { id: threadId },
-        data: { lastMessageAt: new Date() },
-      });
-
-      return NextResponse.json({ success: true, data: message });
-    } else {
-      // Create a new thread with the first message
-      const participantIds = [partner.partnerId, recipientId];
-
-      const thread = await db.communicationThread.create({
-        data: {
-          subject: subject || '',
-          channel: channel || 'in_app',
-          status: 'active',
-          lastMessageAt: new Date(),
-          participants: {
-            create: participantIds.map(pid => ({
-              participantId: pid,
-              participantType: pid === partner.partnerId ? 'partner' : 'user',
-            })),
+      const result = await db.$transaction(async (tx) => {
+        const message = await tx.communicationMessage.create({
+          data: {
+            threadId: thread.id,
+            studentId: auth.userId,
+            partnerId: partner.partnerId,
+            senderType: 'partner',
+            senderId: auth.userId,
+            senderUserId: auth.userId,
+            senderName: auth.name || partner.companyName,
+            direction: 'outbound',
+            source: 'portal',
+            channel: 'partner_support',
+            content,
+            messageBody: content,
+            messageType: 'text',
+            type: 'text',
+            status: 'sent',
+            deliveryStatus: 'sent',
+            isRead: true,
+            isInternal: false,
           },
-          messages: {
-            create: {
-              senderId: auth.userId,
-              content,
-              type: 'text',
-              messageType: 'text',
-            },
-          },
-        },
-        include: { messages: true, participants: true },
+        });
+        await tx.communicationThread.update({
+          where: { id: thread.id },
+          data: { status: 'open', lastMessageAt: new Date(), lastMessagePreview: content.slice(0, 200), updatedAt: new Date() },
+        });
+        return message;
       });
-
-      return NextResponse.json({ success: true, data: thread });
+      return NextResponse.json({ success: true, data: { threadId: thread.id, message: result } }, { status: 201 });
     }
+
+    const result = await db.$transaction(async (tx) => {
+      const thread = await tx.communicationThread.create({
+        data: {
+          partnerId: partner.partnerId,
+          studentId: auth.userId,
+          channel: 'partner_support',
+          subject,
+          status: 'open',
+          visibility: 'partner_support',
+          lastMessageAt: new Date(),
+          lastMessagePreview: content.slice(0, 200),
+          unreadCount: 0,
+          participants: { create: [{ participantId: partner.partnerId, participantType: 'partner' }, { participantId: auth.userId, participantType: 'partner_user' }] },
+        },
+        select: { id: true, subject: true, status: true, createdAt: true, lastMessageAt: true, lastMessagePreview: true },
+      });
+      const message = await tx.communicationMessage.create({
+        data: {
+          threadId: thread.id,
+          studentId: auth.userId,
+          partnerId: partner.partnerId,
+          senderType: 'partner',
+          senderId: auth.userId,
+          senderUserId: auth.userId,
+          senderName: auth.name || partner.companyName,
+          direction: 'outbound',
+          source: 'portal',
+          channel: 'partner_support',
+          messageSubject: subject,
+          content,
+          messageBody: content,
+          messageType: 'text',
+          type: 'text',
+          status: 'sent',
+          deliveryStatus: 'sent',
+          isRead: true,
+          isInternal: false,
+        },
+      });
+      return { thread, message };
+    });
+    return NextResponse.json({ success: true, data: result }, { status: 201 });
   } catch (error) {
     console.error('[POST /partner/messages]', error);
-    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Message could not be saved.' }, { status: 500 });
   }
 }

@@ -18,7 +18,8 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const period = searchParams.get('period') || 'monthly';
+    const requestedPeriod = searchParams.get('period') || 'monthly';
+    const period = ['monthly', 'weekly', 'yearly'].includes(requestedPeriod) ? requestedPeriod : 'monthly';
     const partnerId = profile.partnerId;
 
     // Leads by status
@@ -80,10 +81,14 @@ export async function GET(request: Request) {
       }
     }
 
-    const commissionData = await db.partnerLead.aggregate({
-      where: { partnerId },
-      _sum: { commissionExpected: true, commissionReceived: true },
-    });
+    const [commissionData, activeStudents, applicationCount] = await Promise.all([
+      db.partnerLead.aggregate({
+        where: { partnerId },
+        _sum: { commissionExpected: true, commissionReceived: true },
+      }),
+      db.portalStudentProfile.count({ where: { partnerId } }),
+      db.portalStudentApplication.count({ where: { studentProfile: { partnerId } } }),
+    ]);
 
     return NextResponse.json({
       success: true,
@@ -92,6 +97,8 @@ export async function GET(request: Request) {
           totalLeads,
           convertedLeads,
           conversionRate,
+          activeStudents,
+          applicationCount,
           commissionExpected: commissionData._sum.commissionExpected || 0,
           commissionReceived: commissionData._sum.commissionReceived || 0,
         },
