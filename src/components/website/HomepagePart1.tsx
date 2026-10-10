@@ -233,7 +233,7 @@ function CourseFinderSection() {
         <motion.div variants={staggerContainer} className="text-center mb-10">
           <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#2563EB] border border-[#2563EB]/20 mb-4">Smart Course Finder</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
-          <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Search from thousands of courses across top universities worldwide</motion.p>
+          <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Explore published courses and compare your study options</motion.p>
         </motion.div>
         <motion.div variants={fadeUp} className="bg-white rounded-2xl shadow-xl border border-[#E2E8F0] p-4 sm:p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
