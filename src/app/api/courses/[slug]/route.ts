@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getOptionalAuth } from '@/lib/auth-middleware';
+import { publicCourseIdentifierWhere, publicCourseWhere, stripInternalFields } from '@/lib/public-catalog';
 
 export async function GET(
   request: NextRequest,
@@ -18,17 +19,19 @@ export async function GET(
     const isPrivileged = roles.some((r) =>
       ['SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'STAFF', 'APPLICATION_OFFICER', 'super_admin', 'admin', 'counselor'].includes(r)
     );
-    const isPartner = roles.some((r) => ['PARTNER', 'partner', 'AGENT', 'agent'].includes(r));
+
+    // Exact identifiers only (slug, courseId, id). A fuzzy title match could
+    // return a different course than the one the visitor requested.
+    // Public visitors are restricted to the canonical public-visibility rule in the query itself.
+    const identifierWhere = isPrivileged
+      ? { OR: [{ slug: cleanSlug }, { courseId: cleanSlug }, { id: cleanSlug }] }
+      : publicCourseIdentifierWhere(cleanSlug);
+    if (!identifierWhere) {
+      return NextResponse.json({ success: false, error: 'Course not found' }, { status: 404 });
+    }
 
     const course = await db.crmCourse.findFirst({
-      where: {
-        OR: [
-          { slug: cleanSlug },
-          { courseId: cleanSlug },
-          { id: cleanSlug },
-          { courseTitle: { contains: cleanSlug.replace(/-/g, ' ') } },
-        ],
-      },
+      where: identifierWhere as any,
       include: {
         university: {
           select: {
@@ -71,7 +74,8 @@ export async function GET(
             ? { status: 'active', verificationStatus: { in: ['VERIFIED', 'verified'] } }
             : { status: 'active' },
         },
-        commissions: true,
+        // Commission data is internal: only staff/admin roles receive it.
+        ...(isPrivileged ? { commissions: true } : {}),
       },
     });
 
@@ -92,12 +96,7 @@ export async function GET(
         id: { not: course.id },
         AND: [
           { OR: [{ subjectArea: course.subjectArea }, { universityId: course.universityId }] },
-          ...(!isPrivileged ? [
-            { status: 'active' },
-            { verificationStatus: 'VERIFIED' },
-            { publicationStatus: { in: ['published', 'PUBLISHED'] } },
-            { OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] },
-          ] : []),
+          ...(!isPrivileged ? [publicCourseWhere()] : []),
         ],
       },
       take: 4,
@@ -203,15 +202,13 @@ export async function GET(
       updatedAt: course.updatedAt,
     };
 
+    // Partners are NOT given commission rows: CrmCommission has no partner
+    // ownership column, so no row can be proven to belong to the requesting partner.
     if (isPrivileged) {
       result.commissions = course.commissions || [];
-    } else if (isPartner) {
-      result.commissions = (course.commissions || []).map((comm: any) => ({
-        partnerCommission: comm.partnerCommission,
-      }));
     }
 
-    return NextResponse.json({ success: true, data: result });
+    return NextResponse.json({ success: true, data: stripInternalFields(result) });
   } catch (error: any) {
     console.error('[api/courses/[slug]] error', error);
     return NextResponse.json(

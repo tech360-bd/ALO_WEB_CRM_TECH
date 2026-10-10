@@ -25,10 +25,12 @@ interface UniversityListingItem {
 }
 
 const PAGE_SIZE = 24;
+// Must match the stored `country` values exactly (the filter is an exact match).
+// Aligned with the university master data (data/01_ALO_UNIVERSITY_MASTER.csv).
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Ireland',
-  'Germany', 'New Zealand', 'Denmark', 'Japan', 'Malaysia',
-  'South Korea', 'Dubai/UAE', 'India',
+  'New Zealand', 'Germany', 'France', 'Netherlands', 'Italy',
+  'Malta', 'Cyprus', 'South Korea', 'UAE',
 ];
 
 export default function UniversitiesListing() {
