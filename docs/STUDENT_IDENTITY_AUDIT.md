@@ -37,8 +37,8 @@ Status legend: PASS, PARTIAL, FAIL, BLOCKED, NOT VERIFIED.
 
 | Test file | Coverage | Result |
 |---|---|---|
-| `tests/unit/student-id-allocation.test.ts` | Format, scopes, overflow, Dhaka-year boundary, sequential uniqueness (200 issues), per-year restart, rollback releases numbers, unknown scope | 9 tests — see TEST RESULTS below |
-| `tests/unit/identity-match-policy.test.ts` | Normalisation, exact ID, unknown ID stops, verified email (case-insensitive), unverified email rejected, verified phone across formats, linked channel, ambiguity, precedence, no name matching | 11 tests |
+| `tests/unit/student-id-allocation.test.ts` | Format, scopes, overflow, Dhaka-year boundary, sequential uniqueness (200 issues), per-year restart, rollback releases numbers, unknown scope | 8 tests |
+| `tests/unit/identity-match-policy.test.ts` | Normalisation, exact ID, unknown ID stops, verified email (case-insensitive), unverified email rejected, verified phone across formats, linked channel, ambiguity, precedence, no name matching | 12 tests |
 | `tests/unit/whatsapp-webhook-handler.test.ts` | Updated: delegates to allocator, output `AE-YYYYNNNNN` | 8 tests |
 
 **NOT VERIFIED:** real concurrency. The allocation test uses an in-memory fake that models MySQL single-connection semantics. Concurrent correctness depends on InnoDB row locking, and must be verified against a disposable MySQL instance (`TEST_DATABASE_URL`). No migration has been applied to any database.
