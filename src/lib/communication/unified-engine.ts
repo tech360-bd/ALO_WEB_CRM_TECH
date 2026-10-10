@@ -96,33 +96,6 @@ export function detectIntent(text: string): string {
   return 'general';
 }
 
-// Visibility enforcement — backend must check, never rely on frontend hiding
-export function canViewVisibility(viewerRole: string, visibility: string): boolean {
-  const r = (viewerRole || '').toLowerCase();
-  // Super admin sees everything
-  if (['super_admin','super admin','chairman','admin'].includes(r)) return true;
-
-  // Student can see only student_visible and public_safe linked to own profile
-  if (r === 'student') return ['public_safe','student_visible'].includes(visibility);
-  // Partner can see only partner_visible for own students/applications
-  if (['partner','partner_super_admin','partner_counselor'].includes(r)) {
-    return ['public_safe','partner_visible'].includes(visibility);
-  }
-  // B2B confidential visible only to application team, manager, super admin
-  if (visibility === 'b2b_confidential') {
-    return ['application_team','application_manager','application_officer','super_admin','super admin','admin'].includes(r);
-  }
-  if (visibility === 'super_admin_only') return ['super_admin','chairman','ceo'].includes(r);
-  if (visibility === 'internal_only') return !['student','partner','partner_super_admin'].includes(r);
-  // Counselor cannot see B2B unless permission granted — deny here, grant via canViewB2BDetails check
-  if (r === 'counselor' && visibility === 'b2b_confidential') return false;
-  // Marketing cannot see private documents or B2B
-  if (r.startsWith('marketing') && ['b2b_confidential','internal_only','visa_team_visible','finance_visible'].includes(visibility)) return false;
-  // Finance cannot see B2B provider contact unless permission
-  if (r.startsWith('finance') && visibility === 'b2b_confidential') return false;
-  return true;
-}
-
 // After-hours detection: Bangladesh 18:00 to 10:00
 export function isAfterHours(date = new Date()): boolean {
   // Convert to Asia/Dhaka (UTC+6, no DST)

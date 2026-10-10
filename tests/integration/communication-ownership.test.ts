@@ -12,6 +12,7 @@ import { createCommunication } from '@/lib/communication/unified-engine';
 import { GET as timeline } from '@/app/api/crm/communications/timeline/route';
 import { GET as inbox, POST as action } from '@/app/api/crm/communications/inbox/route';
 import { GET as messages } from '@/app/api/crm/communications/route';
+import { GET as broadcasts, POST as broadcastAction } from '@/app/api/crm/communications/broadcasts/route';
 const suite = url ? describe : describe.skip;
 const suffix = Date.now().toString(36);
 const ids = ['student', 'other', 'staff', 'partner', 'master'].map(name => `scope-${name}-${suffix}`);
@@ -51,6 +52,13 @@ suite('real MySQL communication ownership, previews and atomic actions', () => {
     await prisma.portalStudentProfile.deleteMany({ where: { userId: { in: ids } } });
     await prisma.portalUser.deleteMany({ where: { id: { in: ids } } });
     await prisma.$disconnect();
+  });
+  it('denies student and partner broadcast creation even with forged elevated roles', async () => {
+    for (const [index, type] of [[0, 'STUDENT'], [3, 'PARTNER']] as const) {
+      actor(index, type, ['SUPER_ADMIN'], ['communication.broadcast']);
+      expect((await broadcasts(req('/broadcasts'))).status).toBe(403);
+      expect((await broadcastAction(new NextRequest(req('/broadcasts').url, { method: 'POST', body: JSON.stringify({ action: 'create', title: 'Forbidden' }) }))).status).toBe(403);
+    }
   });
   it('limits student queries to own safe messages even when a foreign ID is supplied', async () => {
     actor(0, 'STUDENT');

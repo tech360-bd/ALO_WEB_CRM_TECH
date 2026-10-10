@@ -59,21 +59,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  async redirects() {
-    return [
-      // Index URLs that only have [slug] children — redirect to the real
-      // listing pages instead of 404ing (live-production defect, 2026-09-28
-      // audit: https://aloeducation.com/courses returned 404).
-      { source: "/courses", destination: "/course-finder", permanent: true },
-      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
-    ];
-  },
   // Permanent (308) redirects are configured here, not in page components. A
   // page-level redirect can be streamed as a 200 HTML response after the shell
   // has started rendering, so the legacy URLs would not return a real 308.
   async redirects() {
     return [
       { source: "/courses", destination: "/course-finder", permanent: true },
+      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
       // Bare /course has no index page — src/app/course/ contains only
       // [slug]/page.tsx, the canonical public course-detail hub. Send the
       // listing intent to the Course Finder exactly as the plural alias above

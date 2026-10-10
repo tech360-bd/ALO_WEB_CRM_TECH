@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, MapPin, Building2, ArrowRight, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface UniversityListingItem {
   id: string;
@@ -34,8 +33,7 @@ const COUNTRIES = [
 ];
 
 export default function UniversitiesListing() {
-  const [universities, setUniversities] = useState<any[]>([]);
-  const [total, setTotal] = useState<number | null>(null);
+  const [universities, setUniversities] = useState<UniversityListingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -80,15 +78,9 @@ export default function UniversitiesListing() {
     };
   }, [search, countryFilter, page]);
 
-    fetch(`/api/universities?${params.toString()}`)
-      .then(r => r.json())
-      .then(d => {
-        setUniversities(d.universities || []);
-        setTotal(typeof d.total === 'number' ? d.total : null);
-      })
-      .catch(() => setUniversities([]))
-      .finally(() => setLoading(false));
-  }, [search, countryFilter]);
+  const changeSearch = (value: string) => { setSearch(value); setPage(1); };
+  const changeCountry = (value: string) => { setCountryFilter(value); setPage(1); };
+
 
   return (
     <div className="bg-white">
@@ -96,10 +88,10 @@ export default function UniversitiesListing() {
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
           <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-4">{total ? `${total} Partner Universities Worldwide` : 'Partner Universities Worldwide'}</Badge>
           <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Top Partner Universities Worldwide</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse our complete directory of partner universities across the UK, USA, Canada, Australia, Germany, New Zealand, Ireland, and Dubai. Find entry requirements, tuition fees, and scholarship guidance — DB-driven with source verification, related content engine.</p>
+          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse partner universities across the UK, USA, Canada, Australia, Germany, New Zealand, Ireland, and Dubai. Find entry requirements, tuition fees, and scholarship guidance.</p>
           <div className="flex gap-2 mt-4">
-            <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">DB-driven</Badge>
-            <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">Verified</Badge>
+
+
             <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">{total ? `${total} Universities` : 'Live Directory'}</Badge>
           </div>
         </div>
@@ -142,14 +134,16 @@ export default function UniversitiesListing() {
           <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center">
             <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-sm text-gray-600">No university records matched these filters.</p>
-            <p className="text-xs text-gray-500 mt-2">This is a database search result, not proof that no other universities exist.</p>
+            <p className="text-xs text-gray-500 mt-2">Try a different search or country filter.</p>
           </Card>
         ) : (
           <>
-            <p className="text-sm text-gray-500">{total !== null && total > universities.length ? `Showing ${universities.length} of ${total} universities — DB-driven` : `${universities.length} universities found — DB-driven`}</p>
+            <p className="text-sm text-gray-500">{total !== null && total > universities.length ? `Showing ${universities.length} of ${total} universities` : `${universities.length} universities found`}</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {universities.map((u: any) => (
-                <Link key={u.universityId || u.id} href={`/universities/${u.slug || u.universityId}`}>
+              {universities.map(university => {
+                const ranking = university.worldRanking ?? university.ranking ?? 0;
+                return (
+                <Link key={university.id} href={`/universities/${university.slug || university.id}`}>
                   <Card className="p-6 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
@@ -180,7 +174,7 @@ export default function UniversitiesListing() {
             )}
           </>
         )}
-        <p className="text-xs text-gray-500">The directory is limited to records returned by the current verified-university query. An authorized database coverage audit and official-source review are still required before calling it complete.</p>
+
       </div>
     </div>
   );
