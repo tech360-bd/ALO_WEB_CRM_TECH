@@ -5750,20 +5750,23 @@ model ApplicationFinance {
 }
 
 model AuditLog {
-  id          String   @id @default(cuid())
-  userId      String   @default("")
-  action      String
-  resource    String   @default("")
-  resourceId  String   @default("")
-  details     String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
-  ipAddress   String   @default("")
-  userAgent   String   @default("")
-  actorRole   String   @default("")
-  studentId   String   @default("")
-  beforeValue String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
-  afterValue  String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
-  createdAt   DateTime @default(now())
-  user        User?    @relation(fields: [userId], references: [id])
+  id           String   @id @default(cuid())
+  // Nullable: system/automation events (e.g. public lead intake) have no
+  // acting user. The previous `String @default("")` violated the FK to User
+  // on every system-generated audit row, turning successful lead submissions
+  // into HTTP 500s (found live, 2026-09-28).
+  userId       String?
+  action       String
+  resource     String   @default("")
+  resourceId   String   @default("")
+  details      String   @default("{}") @db.Text
+  ipAddress    String   @default("")
+  userAgent    String   @default("")
+  actorRole    String   @default("")
+  studentId    String   @default("")
+  beforeValue  String   @default("{}") @db.Text
+  afterValue   String   @default("{}") @db.Text
+  createdAt    DateTime @default(now())
 
   @@index([userId])
   @@index([action])

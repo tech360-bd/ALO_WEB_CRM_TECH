@@ -66,14 +66,14 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
     id: "srv-02",
     slug: "university-course-selection",
     title: "University & Course Selection",
-    shortDesc: "Data-driven selection from 362+ top-ranked universities and 1,500+ courses across UK, USA, Canada, Australia & Europe.",
+    shortDesc: "Data-driven selection from our verified directory of partner universities and thousands of courses across UK, USA, Canada, Australia & Europe.",
     longDescription: "Choosing the right university and course is critical for your future employability and visa success. We analyze global university rankings, course modules, tuition fees, location advantages, and industry links to ensure the perfect academic match.",
     heroImage: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80",
     iconName: "Building2",
-    seoTitle: "University & Course Selection Guidance | 362+ Unis | ALO Education",
-    seoDescription: "Data-driven university and course selection across 362+ global partner universities in UK, USA, Canada, Australia, Germany, and Ireland.",
+    seoTitle: "University & Course Selection Guidance | ALO Education",
+    seoDescription: "Data-driven university and course selection across our global partner university network in UK, USA, Canada, Australia, Germany, and Ireland.",
     benefits: [
-      "Access to 362+ verified international universities and 1,500+ degree programs.",
+      "Access to a verified directory of international universities and degree programs.",
       "Detailed tuition fee, living cost, and location comparison.",
       "Matching entry requirements (GPA, IELTS/PTE, work experience).",
       "High offer acceptance and scholarship probability matching."
@@ -172,7 +172,7 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
     heroImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
     iconName: "Layers",
     seoTitle: "University Application Submission & Tracking | ALO Education Portal",
-    seoDescription: "Fast, error-free application submission and real-time tracking across 362+ partner universities in UK, USA, Canada, Australia, and Europe.",
+    seoDescription: "Fast, error-free application submission and real-time tracking across our partner universities in UK, USA, Canada, Australia, and Europe.",
     benefits: [
       "Direct portal application submission via authorized partner channels.",
       "Application fee waivers at participating universities.",

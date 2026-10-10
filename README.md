@@ -8,6 +8,11 @@
 
 # ALO Education — Web CRM & Consultancy Platform Deployment Guide
 
+> **Developing without MySQL / offline?** See
+> [docs/DEV-SQLITE-SANDBOX.md](docs/DEV-SQLITE-SANDBOX.md) for the SQLite
+> (libsql + WASM Prisma client) development pipeline. Production deployment
+> below is unchanged and always uses MySQL.
+
 Follow these exact steps to deploy ALO Education on your production server.
 
 ---
