@@ -111,11 +111,27 @@ export async function autoAssignCounselor(leadId: string): Promise<{ counselorId
     }))
   );
 
-  // Sort by workload (ascending)
-  leadCounts.sort((a, b) => a.activeLeads - b.activeLeads);
+  // Sort by workload (ascending), breaking ties by role: dedicated
+  // counselors take leads before branch managers, and admins/super-admins
+  // only receive leads as a last-resort fallback when no counselor exists.
+  const rolePriority: Record<string, number> = {
+    COUNSELOR: 0,
+    BRANCH_MANAGER: 1,
+    ADMIN: 2,
+    SUPER_ADMIN: 3,
+  };
+  const hasDedicated = leadCounts.some((c) => c.role === "COUNSELOR" || c.role === "BRANCH_MANAGER");
+  const pool = hasDedicated
+    ? leadCounts.filter((c) => c.role === "COUNSELOR" || c.role === "BRANCH_MANAGER")
+    : leadCounts;
+  pool.sort(
+    (a, b) =>
+      a.activeLeads - b.activeLeads ||
+      (rolePriority[a.role] ?? 9) - (rolePriority[b.role] ?? 9)
+  );
 
   // Pick the counselor with least workload
-  const assigned = leadCounts[0];
+  const assigned = pool[0];
   const reason = `Auto-assigned to ${assigned.name} (${assigned.role}) — least workload (${assigned.activeLeads} active leads)`;
 
   await db.lead.update({
