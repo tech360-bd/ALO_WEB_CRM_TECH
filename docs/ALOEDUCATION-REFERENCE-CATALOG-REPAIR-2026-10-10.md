@@ -10,11 +10,14 @@ Scope: aloeducation.com, existing Hostinger managed Node.js hosting only. No DNS
 - Batch record, fee and audit writes now share one Prisma transaction. Audit/fee errors no longer disappear behind a success response. Batch size is capped at 500; preview remains read-only.
 - Historical run-production-real-collection.ts is disabled before Prisma client construction. It previously rejected every non-Aston course, assumed Aston verification, manufactured university URLs, campuses, faculties, fees and national metadata. This script was not run.
 
+- Aston heuristic course/profile extraction no longer automatically sets VERIFIED or lastVerified timestamps. Extraction time and review warnings are retained separately.
+- Services directory removes the unsupported blanket Verified content badge and derives its service count from returned data.
+
 ## Read-only official discovery
 
 scripts/collect-official-source-evidence.py uses the explicit destination registry and produces evidence hashes, check timestamps, requested/final URLs, HTTP status, title and candidate links. It performs no database operations and never marks discovered data VERIFIED or published. It is a directory-discovery starting point, not a generic full course parser. It does not claim complete country coverage or acceptance criteria coverage. Single-page directories may need pagination or institution-specific adapters.
 
-Initial registry covers 17 destinations: UK, US, Canada, Australia, Ireland, New Zealand, UAE, Germany, Netherlands, France, Italy, Malta, Cyprus, South Korea, Denmark, Sweden and Finland. Initial run fetched 11 directories and discovered 1,512 candidate links including navigation and review-required pages. Six sources require HTTP/domain review. No course fees, intakes or requirements have been imported or published from this run.
+Initial registry covers 17 destinations: UK, US, Canada, Australia, Ireland, New Zealand, UAE, Germany, Netherlands, France, Italy, Malta, Cyprus, South Korea, Denmark, Sweden and Finland. Initial run fetched 11 directories and discovered 1,512 candidate links including navigation and review-required pages. Correcting moved directory URLs subsequently fetched 15 of 17 sources with 1,522 candidate links. Australia and Cyprus are HTTP 403 from this collection environment; no access bypass was attempted. No course fees, intakes or requirements have been imported or published from this run.
 
 ## Reference inspection bounds
 
@@ -24,7 +27,7 @@ Authenticated GitHub access retrieved metadata/READMEs for all 20 requested repo
 
 - Full TypeScript check passed.
 - Production build passed; standalone manifests/assets verified.
-- 126 unit files, 1,355 tests passed, including six new catalog import regression checks.
+- 126 unit files, 1,356 tests passed, including six new catalog import regression checks and an automatic-verification regression check.
 - No production schema migration or data mutation was required for these changes.
 - Hostinger release and live endpoint results must be recorded after the exact new commit completes deployment.
 
