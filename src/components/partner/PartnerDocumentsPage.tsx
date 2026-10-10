@@ -1,393 +1,199 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-import {
-  FileUp, FileText, Download, Eye, Trash2, Clock, Filter,
-  Upload, Loader2, Search, CheckCircle2, XCircle, AlertCircle,
-  RefreshCw, FileCheck, ShieldAlert, FolderOpen,
-} from 'lucide-react';
+import { FileUp, FileText, Download, Clock, Filter, Upload, Loader2, Search, CheckCircle2, XCircle, AlertCircle, RefreshCw, FileCheck } from 'lucide-react';
 
-/* ── Types ──────────────────────────────────────────── */
-
-type DocStatus = 'not_requested' | 'requested' | 'uploaded' | 'under_review' | 'verified' | 'rejected' | 'expired';
-type DocType = 'passport' | 'transcript' | 'ielts' | 'sop' | 'cv' | 'lors' | 'financial' | 'offer_letter' | 'visa_docs' | 'other';
-
-interface Document {
+const PAGE_SIZE = 20;
+const DOCUMENT_CATEGORIES = [
+  ['passport', 'Passport'], ['transcript', 'Academic transcript'], ['english_test', 'English test'],
+  ['sop', 'Statement of purpose'], ['cv', 'CV / Resume'], ['recommendation_letter', 'Recommendation letter'],
+  ['financial', 'Financial document'], ['offer_letter', 'Offer letter'], ['visa_document', 'Visa document'], ['other', 'Other'],
+] as const;
+interface StudentOption { id: string; studentId: string; name: string }
+interface DocumentRow {
   id: string;
   name: string;
-  type: DocType;
+  category: string;
+  fileName: string;
   studentName: string;
   studentId: string;
-  status: DocStatus;
+  status: string;
   uploadedAt: string;
-  expiresAt: string;
-  size: string;
+  fileSize: number;
+  rejectionReason: string;
 }
 
-const docTypeLabels: Record<DocType, string> = {
-  passport: 'Passport',
-  transcript: 'Academic Transcript',
-  ielts: 'IELTS / English Test',
-  sop: 'Statement of Purpose',
-  cv: 'CV / Resume',
-  lors: 'Letters of Recommendation',
-  financial: 'Financial Documents',
-  offer_letter: 'Offer Letter',
-  visa_docs: 'Visa Documents',
-  other: 'Other',
-};
-
-const statusConfig: Record<DocStatus, { variant: 'muted' | 'outline' | 'brand' | 'warning' | 'success' | 'danger' | 'secondary'; label: string; icon: React.ElementType }> = {
-  not_requested: { variant: 'muted', label: 'Not Requested', icon: FolderOpen },
-  requested: { variant: 'outline', label: 'Requested', icon: FileText },
-  uploaded: { variant: 'brand', label: 'Uploaded', icon: Upload },
-  under_review: { variant: 'warning', label: 'Under Review', icon: RefreshCw },
-  verified: { variant: 'success', label: 'Verified', icon: FileCheck },
-  rejected: { variant: 'danger', label: 'Rejected', icon: XCircle },
-  expired: { variant: 'secondary', label: 'Expired', icon: AlertCircle },
-};
-
-/* ── Mock Data ─────────────────────────────────────── */
-
-const mockDocuments: Document[] = [
-  { id: '1', name: 'Passport_Copy_Arif.pdf', type: 'passport', studentName: 'Arif Rahman', studentId: 'STU-001', status: 'verified', uploadedAt: '2025-01-05', expiresAt: '2030-01-05', size: '2.4 MB' },
-  { id: '2', name: 'Transcript_Arif.pdf', type: 'transcript', studentName: 'Arif Rahman', studentId: 'STU-001', status: 'verified', uploadedAt: '2025-01-05', expiresAt: '', size: '1.8 MB' },
-  { id: '3', name: 'IELTS_Arif.pdf', type: 'ielts', studentName: 'Arif Rahman', studentId: 'STU-001', status: 'uploaded', uploadedAt: '2025-01-06', expiresAt: '2027-01-06', size: '0.5 MB' },
-  { id: '4', name: 'SOP_Mitu.pdf', type: 'sop', studentName: 'Mitu Sarkar', studentId: 'STU-002', status: 'under_review', uploadedAt: '2025-01-10', expiresAt: '', size: '0.8 MB' },
-  { id: '5', name: 'CV_Mitu.pdf', type: 'cv', studentName: 'Mitu Sarkar', studentId: 'STU-002', status: 'rejected', uploadedAt: '2025-01-08', expiresAt: '', size: '0.3 MB' },
-  { id: '6', name: 'Financial_Shakib.pdf', type: 'financial', studentName: 'Shakib Hasan', studentId: 'STU-003', status: 'verified', uploadedAt: '2024-11-15', expiresAt: '', size: '3.1 MB' },
-  { id: '7', name: 'Offer_Letter_Priya.pdf', type: 'offer_letter', studentName: 'Priya Das', studentId: 'STU-004', status: 'verified', uploadedAt: '2024-12-01', expiresAt: '', size: '1.2 MB' },
-  { id: '8', name: 'LOR_Nayeem.pdf', type: 'lors', studentName: 'Nayeem Islam', studentId: 'STU-005', status: 'requested', uploadedAt: '', expiresAt: '', size: '' },
-  { id: '9', name: 'Visa_Docs_Taslima.pdf', type: 'visa_docs', studentName: 'Taslima Akter', studentId: 'STU-006', status: 'not_requested', uploadedAt: '', expiresAt: '', size: '' },
-  { id: '10', name: 'Passport_Priya.pdf', type: 'passport', studentName: 'Priya Das', studentId: 'STU-004', status: 'expired', uploadedAt: '2024-06-10', expiresAt: '2024-06-10', size: '2.1 MB' },
-];
-
-/* ── Component ─────────────────────────────────────── */
+function statusInfo(status: string) {
+  const normalized = status.toLowerCase();
+  if (normalized === 'verified' || normalized === 'accepted') return { label: 'Verified', variant: 'success' as const, icon: FileCheck };
+  if (normalized === 'rejected') return { label: 'Rejected', variant: 'danger' as const, icon: XCircle };
+  if (normalized === 'needs_info' || normalized === 'needs_update') return { label: 'Needs update', variant: 'warning' as const, icon: AlertCircle };
+  if (normalized === 'uploaded' || normalized === 'pending_review' || normalized === 'under_review') return { label: 'Under review', variant: 'warning' as const, icon: Clock };
+  return { label: normalized ? normalized.replace(/[_-]+/g, ' ') : 'Status not recorded', variant: 'outline' as const, icon: FileText };
+}
+function formatDate(value: string) {
+  if (!value) return '—';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+function formatSize(bytes: number) { return bytes > 0 ? `${(bytes / (1024 * 1024)).toFixed(2)} MB` : '—'; }
+function formatLabel(value: string) { return value.replace(/[_-]+/g, ' ').replace(/\b\w/g, (character) => character.toUpperCase()); }
 
 export default function PartnerDocumentsPage() {
-  const { user } = usePortalStore();
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [documents, setDocuments] = useState<DocumentRow[]>([]);
+  const [students, setStudents] = useState<StudentOption[]>([]);
+  const [stats, setStats] = useState<Record<string, number>>({});
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('All');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [studentError, setStudentError] = useState<string | null>(null);
   const [uploadDialog, setUploadDialog] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadForm, setUploadForm] = useState({ studentName: '', type: 'other' as DocType, file: null as File | null });
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [studentProfileId, setStudentProfileId] = useState('');
+  const [category, setCategory] = useState('other');
+  const [file, setFile] = useState<File | null>(null);
 
   const fetchDocuments = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
-      const res = await fetch(`/api/partner/documents?partnerId=${user?.id || ''}`);
-      const data = await res.json();
-      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        setDocuments(data.data);
-      } else {
-        setDocuments(mockDocuments);
+      const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
+      if (search.trim()) params.set('search', search.trim());
+      if (statusFilter !== 'all') params.set('status', statusFilter);
+      if (categoryFilter !== 'all') params.set('category', categoryFilter);
+      const [documentsResponse, studentsResponse] = await Promise.all([
+        fetch(`/api/partner/documents?${params}`, { credentials: 'include' }),
+        fetch('/api/partner/students?page=1&limit=100', { credentials: 'include' }),
+      ]);
+      const [documentPayload, studentPayload] = await Promise.all([
+        documentsResponse.json().catch(() => ({})),
+        studentsResponse.json().catch(() => ({})),
+      ]);
+      if (!documentsResponse.ok || !documentPayload.success || !Array.isArray(documentPayload.data)) {
+        throw new Error(documentPayload.error || `Could not load documents (HTTP ${documentsResponse.status})`);
       }
-    } catch {
-      setDocuments(mockDocuments);
+      setDocuments(documentPayload.data.map((document: any): DocumentRow => ({
+        id: String(document.id || ''),
+        name: String(document.name || document.fileName || 'Document'),
+        category: String(document.category || 'other'),
+        fileName: String(document.fileName || ''),
+        studentName: String(document.studentProfile?.fullName || 'Student name unavailable'),
+        studentId: String(document.studentProfile?.studentId || ''),
+        status: String(document.status || ''),
+        uploadedAt: String(document.uploadedAt || document.createdAt || ''),
+        fileSize: Number(document.fileSize || 0),
+        rejectionReason: String(document.rejectionReason || ''),
+      })));
+      setStats(documentPayload.stats || {});
+      setTotal(Number(documentPayload.pagination?.total || 0));
+      setTotalPages(Math.max(1, Number(documentPayload.pagination?.totalPages || 1)));
+      if (studentsResponse.ok && studentPayload.success && Array.isArray(studentPayload.data)) {
+        setStudents(studentPayload.data.map((student: any): StudentOption => ({
+          id: String(student.id || ''), studentId: String(student.studentId || ''), name: String(student.fullName || 'Student name unavailable'),
+        })));
+        setStudentError(null);
+      } else {
+        setStudents([]);
+        setStudentError(studentPayload.error || 'Could not load partner student profiles.');
+      }
+    } catch (caught) {
+      setDocuments([]);
+      setTotal(0);
+      setTotalPages(1);
+      setError(caught instanceof Error ? caught.message : 'Could not load partner documents.');
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [page, search, statusFilter, categoryFilter]);
 
-  useEffect(() => { fetchDocuments(); }, [fetchDocuments]);
+  useEffect(() => { void fetchDocuments(); }, [fetchDocuments]);
 
   const handleUpload = async () => {
-    if (!uploadForm.studentName.trim()) { toast.error('Student name is required'); return; }
+    if (!studentProfileId) { toast.error('Select a linked student profile.'); return; }
+    if (!file) { toast.error('Choose a document file to upload.'); return; }
     setUploading(true);
     try {
-      const res = await fetch('/api/partner/documents', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          partnerId: user?.id,
-          studentName: uploadForm.studentName,
-          type: uploadForm.type,
-          status: 'uploaded',
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        const newDoc: Document = {
-          id: data.data?.id || `doc-${documents.length + 1}`,
-          name: `${docTypeLabels[uploadForm.type]}_${uploadForm.studentName.split(' ')[0]}.pdf`,
-          type: uploadForm.type,
-          studentName: uploadForm.studentName,
-          studentId: '—',
-          status: 'uploaded',
-          uploadedAt: new Date().toISOString().split('T')[0],
-          expiresAt: '',
-          size: '—',
-        };
-        setDocuments((prev) => [newDoc, ...prev]);
-        setUploadDialog(false);
-        setUploadForm({ studentName: '', type: 'other', file: null });
-        toast.success('Document uploaded successfully!');
-      } else {
-        toast.error(data.error || 'Upload failed');
-      }
-    } catch {
-      toast.success('Document recorded successfully!');
+      const body = new FormData();
+      body.append('studentProfileId', studentProfileId);
+      body.append('category', category);
+      body.append('file', file);
+      const response = await fetch('/api/partner/documents', { method: 'POST', credentials: 'include', body });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.success) throw new Error(payload.error || `Upload failed (HTTP ${response.status})`);
+      toast.success('File uploaded privately and queued for review.');
+      setUploadDialog(false);
+      setFile(null);
+      setStudentProfileId('');
+      setCategory('other');
+      await fetchDocuments();
+    } catch (caught) {
+      toast.error(caught instanceof Error ? caught.message : 'Document upload failed.');
     } finally {
       setUploading(false);
     }
   };
 
-  const filtered = documents.filter((doc) => {
-    if (statusFilter !== 'all' && doc.status !== statusFilter) return false;
-    if (typeFilter !== 'All' && doc.type !== typeFilter) return false;
-    if (search) {
-      const q = search.toLowerCase();
-      return doc.name.toLowerCase().includes(q) || doc.studentName.toLowerCase().includes(q);
+  const handleDownload = async (document: DocumentRow) => {
+    setDownloadingId(document.id);
+    try {
+      const response = await fetch(`/api/partner/documents/${encodeURIComponent(document.id)}/download`, { credentials: 'include' });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error || `Download failed (HTTP ${response.status})`);
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = window.document.createElement('a');
+      anchor.href = url;
+      anchor.download = document.fileName || document.name || 'document';
+      anchor.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (caught) {
+      toast.error(caught instanceof Error ? caught.message : 'Could not download this file.');
+    } finally {
+      setDownloadingId(null);
     }
-    return true;
-  });
-
-  const statusCounts: Record<string, number> = {
-    all: documents.length,
-    not_requested: documents.filter((d) => d.status === 'not_requested').length,
-    requested: documents.filter((d) => d.status === 'requested').length,
-    uploaded: documents.filter((d) => d.status === 'uploaded').length,
-    under_review: documents.filter((d) => d.status === 'under_review').length,
-    verified: documents.filter((d) => d.status === 'verified').length,
-    rejected: documents.filter((d) => d.status === 'rejected').length,
-    expired: documents.filter((d) => d.status === 'expired').length,
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6 p-1">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-xl" />
-        </div>
-        <Skeleton className="h-[400px] w-full rounded-xl" />
-      </div>
-    );
-  }
+  if (loading) return <div className="space-y-6 p-1"><Skeleton className="h-8 w-48" /><div className="grid grid-cols-2 sm:grid-cols-4 gap-4">{Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-20 w-full rounded-xl" />)}</div><Skeleton className="h-[400px] w-full rounded-xl" /></div>;
+
+  const pendingCount = (stats.pending || 0) + (stats.pending_review || 0) + (stats.under_review || 0) + (stats.uploaded || 0);
 
   return (
     <div className="space-y-6 p-1">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-alo-text">Documents</h1>
-          <p className="text-sm text-alo-text-muted mt-0.5">Manage student documents and uploads</p>
-        </div>
-        <Dialog open={uploadDialog} onOpenChange={setUploadDialog}>
-          <DialogTrigger asChild>
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand">
-              <FileUp className="w-4 h-4" /> Upload Document
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-alo-text">Upload Document</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-2">
-              <div className="space-y-2">
-                <Label htmlFor="docStudent">Student Name <span className="text-red-500">*</span></Label>
-                <Input id="docStudent" placeholder="Enter student name" value={uploadForm.studentName} onChange={(e) => setUploadForm({ ...uploadForm, studentName: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="docType">Document Type</Label>
-                <Select value={uploadForm.type} onValueChange={(v) => setUploadForm({ ...uploadForm, type: v as DocType })}>
-                  <SelectTrigger id="docType"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(docTypeLabels).map(([key, label]) => (
-                      <SelectItem key={key} value={key}>{label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>File</Label>
-                <div className="border-2 border-dashed border-alo-border rounded-lg p-6 text-center hover:border-alo-brand transition-colors cursor-pointer">
-                  <Upload className="w-8 h-8 text-alo-text-muted mx-auto mb-2" />
-                  <p className="text-sm text-alo-text-secondary">Click or drag to upload</p>
-                  <p className="text-xs text-alo-text-muted mt-1">PDF, JPG, PNG up to 10MB</p>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={() => setUploadDialog(false)}>Cancel</Button>
-                <Button variant="brand" onClick={handleUpload} disabled={uploading}>
-                  {uploading ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</> : <><Upload className="w-4 h-4" /> Upload</>}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><div><h1 className="text-2xl font-bold text-alo-text">Documents</h1><p className="text-sm text-alo-text-muted mt-0.5">Private student files linked to your partner account</p></div><Dialog open={uploadDialog} onOpenChange={setUploadDialog}><DialogTrigger asChild><Button variant="brand" disabled={students.length === 0}><FileUp className="w-4 h-4" />Upload Document</Button></DialogTrigger><DialogContent className="sm:max-w-md"><DialogHeader><DialogTitle className="text-alo-text">Upload Student Document</DialogTitle></DialogHeader><div className="space-y-4 pt-2"><div className="space-y-2"><Label htmlFor="docStudent">Student profile</Label><Select value={studentProfileId} onValueChange={setStudentProfileId}><SelectTrigger id="docStudent"><SelectValue placeholder="Select a linked student" /></SelectTrigger><SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.name}{student.studentId ? ` · ${student.studentId}` : ''}</SelectItem>)}</SelectContent></Select>{studentError && <p className="text-xs text-amber-700">{studentError}</p>}</div><div className="space-y-2"><Label htmlFor="docCategory">Document category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger id="docCategory"><SelectValue /></SelectTrigger><SelectContent>{DOCUMENT_CATEGORIES.map(([value, title]) => <SelectItem key={value} value={value}>{title}</SelectItem>)}</SelectContent></Select></div><div className="space-y-2"><Label htmlFor="docFile">File (PDF or image, max 20 MB)</Label><Input id="docFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp" onChange={(event) => setFile(event.target.files?.[0] || null)} /><p className="text-xs text-alo-text-muted">File bytes are stored in private storage and the document is queued for review.</p></div><div className="flex justify-end gap-2 pt-2"><Button variant="outline" onClick={() => setUploadDialog(false)} disabled={uploading}>Cancel</Button><Button variant="brand" onClick={() => void handleUpload()} disabled={uploading || students.length === 0}>{uploading ? <><Loader2 className="w-4 h-4 animate-spin" />Uploading…</> : <><Upload className="w-4 h-4" />Upload</>}</Button></div></div></DialogContent></Dialog></div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><FileText className="w-4 h-4 text-alo-brand" /><span className="text-xs text-alo-text-muted">Total Docs</span></div>
-            <p className="text-2xl font-bold text-alo-text">{documents.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><CheckCircle2 className="w-4 h-4 text-emerald-500" /><span className="text-xs text-alo-text-muted">Verified</span></div>
-            <p className="text-2xl font-bold text-alo-text">{statusCounts.verified}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><RefreshCw className="w-4 h-4 text-amber-500" /><span className="text-xs text-alo-text-muted">Under Review</span></div>
-            <p className="text-2xl font-bold text-alo-text">{statusCounts.under_review}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><AlertCircle className="w-4 h-4 text-red-500" /><span className="text-xs text-alo-text-muted">Rejected</span></div>
-            <p className="text-2xl font-bold text-alo-text">{statusCounts.rejected}</p>
-          </CardContent>
-        </Card>
-      </div>
+      {error && <Card className="border-amber-200 bg-amber-50"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4"><p className="text-sm text-amber-900">{error}</p><Button variant="outline" size="sm" onClick={() => void fetchDocuments()}><RefreshCw className="mr-2 h-3.5 w-3.5" />Retry</Button></CardContent></Card>}
 
-      {/* Filters */}
-      <Card className="bg-white rounded-xl border border-alo-border">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-alo-text-muted" />
-              <Input placeholder="Search by document or student name..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-alo-text-muted hidden sm:block" />
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="not_requested">Not Requested</SelectItem>
-                  <SelectItem value="requested">Requested</SelectItem>
-                  <SelectItem value="uploaded">Uploaded</SelectItem>
-                  <SelectItem value="under_review">Under Review</SelectItem>
-                  <SelectItem value="verified">Verified</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                  <SelectItem value="expired">Expired</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All Types</SelectItem>
-                  {Object.entries(docTypeLabels).map(([key, label]) => (
-                    <SelectItem key={key} value={key}>{label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4"><Metric title="Records matching filter" value={total} icon={FileText} /><Metric title="Verified" value={stats.verified || stats.accepted || 0} icon={CheckCircle2} /><Metric title="Pending review" value={pendingCount} icon={Clock} /><Metric title="Rejected" value={stats.rejected || 0} icon={XCircle} /></div>
 
-      {/* Documents Table */}
-      <Card className="bg-white rounded-xl border border-alo-border">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto max-h-[520px] overflow-y-auto custom-scrollbar">
-            <Table>
-              <TableHeader className="sticky top-0 bg-white z-10">
-                <TableRow>
-                  <TableHead>Document</TableHead>
-                  <TableHead className="hidden sm:table-cell">Type</TableHead>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="hidden md:table-cell">Date</TableHead>
-                  <TableHead className="hidden lg:table-cell">Size</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center text-alo-text-muted">
-                      No documents found. Try adjusting your filters.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filtered.map((doc) => {
-                    const cfg = statusConfig[doc.status];
-                    return (
-                      <TableRow key={doc.id} className="hover:bg-alo-brand-light/20 transition-colors">
-                        <TableCell>
-                          <div className="flex items-center gap-2 min-w-0">
-                            <div className="w-8 h-8 rounded-lg bg-alo-brand-light/50 flex items-center justify-center shrink-0">
-                              <FileText className="w-4 h-4 text-alo-brand" />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-alo-text truncate max-w-[180px]">{doc.name}</p>
-                              <p className="text-[11px] text-alo-text-muted font-mono">{doc.studentId}</p>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell text-xs text-alo-text-secondary">{docTypeLabels[doc.type]}</TableCell>
-                        <TableCell className="text-sm text-alo-text-secondary">{doc.studentName}</TableCell>
-                        <TableCell>
-                          <Badge variant={cfg.variant} className="text-[11px]">
-                            {cfg.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell text-xs text-alo-text-muted">
-                          {doc.uploadedAt ? formatDate(doc.uploadedAt) : '—'}
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell text-xs text-alo-text-muted">{doc.size || '—'}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <Button variant="ghost" size="icon-sm" title="View" disabled={doc.status === 'not_requested'}>
-                              <Eye className="w-3.5 h-3.5" />
-                            </Button>
-                            <Button variant="ghost" size="icon-sm" title="Download" disabled={!doc.uploadedAt}>
-                              <Download className="w-3.5 h-3.5" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      <Card className="bg-white rounded-xl border border-alo-border"><CardContent className="flex flex-col sm:flex-row gap-3 p-4"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-alo-text-muted" /><Input placeholder="Search document or student name/ID..." className="pl-9" value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></div><div className="flex items-center gap-2"><Filter className="w-4 h-4 text-alo-text-muted hidden sm:block" /><Select value={statusFilter} onValueChange={(value) => { setStatusFilter(value); setPage(1); }}><SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All Status</SelectItem><SelectItem value="pending">Pending</SelectItem><SelectItem value="verified">Verified</SelectItem><SelectItem value="rejected">Rejected</SelectItem><SelectItem value="needs_info">Needs update</SelectItem></SelectContent></Select><Select value={categoryFilter} onValueChange={(value) => { setCategoryFilter(value); setPage(1); }}><SelectTrigger className="w-[170px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All Categories</SelectItem>{DOCUMENT_CATEGORIES.map(([value, title]) => <SelectItem key={value} value={value}>{title}</SelectItem>)}</SelectContent></Select></div></CardContent></Card>
 
-      <p className="text-xs text-alo-text-muted text-center">
-        Showing {filtered.length} of {documents.length} documents
-      </p>
+      <Card className="bg-white rounded-xl border border-alo-border"><CardHeader><CardTitle className="text-base font-semibold text-alo-text">Student Documents</CardTitle></CardHeader><CardContent className="p-0"><div className="overflow-x-auto max-h-[520px] overflow-y-auto custom-scrollbar"><Table><TableHeader className="sticky top-0 bg-white z-10"><TableRow><TableHead>Document</TableHead><TableHead className="hidden sm:table-cell">Category</TableHead><TableHead>Student</TableHead><TableHead>Status</TableHead><TableHead className="hidden md:table-cell">Uploaded</TableHead><TableHead className="hidden lg:table-cell">Size</TableHead><TableHead>File</TableHead></TableRow></TableHeader><TableBody>
+        {documents.length === 0 ? <TableRow><TableCell colSpan={7} className="h-32 text-center text-alo-text-muted">{error ? 'Document records could not be loaded.' : 'No student documents match this page and filter.'}</TableCell></TableRow> : documents.map((document) => { const info = statusInfo(document.status); const Icon = info.icon; return <TableRow key={document.id} className="hover:bg-alo-brand-light/20"><TableCell><div className="flex items-center gap-2 min-w-0"><div className="w-8 h-8 rounded-lg bg-alo-brand-light/50 flex items-center justify-center shrink-0"><FileText className="w-4 h-4 text-alo-brand" /></div><div className="min-w-0"><p className="text-sm font-medium text-alo-text truncate max-w-[180px]">{document.name}</p><p className="text-[11px] text-alo-text-muted font-mono">{document.studentId || 'Student ID not recorded'}</p></div></div>{document.rejectionReason && <p className="mt-1 text-xs text-red-700">Review note: {document.rejectionReason}</p>}</TableCell><TableCell className="hidden sm:table-cell text-xs text-alo-text-secondary">{formatLabel(document.category)}</TableCell><TableCell className="text-sm text-alo-text-secondary">{document.studentName}</TableCell><TableCell><Badge variant={info.variant} className="text-[11px]"><Icon className="mr-1 h-3 w-3" />{info.label}</Badge></TableCell><TableCell className="hidden md:table-cell text-xs text-alo-text-muted">{formatDate(document.uploadedAt)}</TableCell><TableCell className="hidden lg:table-cell text-xs text-alo-text-muted">{formatSize(document.fileSize)}</TableCell><TableCell><Button variant="outline" size="sm" onClick={() => void handleDownload(document)} disabled={!document.fileName || downloadingId === document.id}>{downloadingId === document.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}<span className="sr-only">Download {document.fileName || document.name}</span></Button></TableCell></TableRow>; })}
+        </TableBody></Table></div></CardContent></Card>
+
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-alo-text-muted"><p>Showing {documents.length} of {total} matching document records · file downloads are private and partner-scoped</p><div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page <= 1}>Previous</Button><span>{page} / {totalPages}</span><Button variant="outline" size="sm" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page >= totalPages}>Next</Button></div></div>
     </div>
   );
 }
 
-/* ── Helper ────────────────────────────────────────── */
-
-function formatDate(dateStr: string) {
-  try {
-    return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
+function Metric({ title, value, icon: Icon }: { title: string; value: number; icon: typeof FileText }) {
+  return <Card className="bg-white rounded-xl border border-alo-border"><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Icon className="w-4 h-4 text-alo-brand" /><span className="text-xs text-alo-text-muted">{title}</span></div><p className="text-2xl font-bold text-alo-text">{value}</p></CardContent></Card>;
 }

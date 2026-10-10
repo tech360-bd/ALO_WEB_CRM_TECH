@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import { ArrowDown, CheckCircle2, CircleDot, Database, Megaphone, ShieldCheck, Sparkles } from 'lucide-react';
 
 export type EditorialFlowStep = {
@@ -41,9 +42,11 @@ export default function EditorialFlowDiagram({
   title?: string;
   steps?: EditorialFlowStep[];
 }) {
+  const titleId = useId();
+
   return (
-    <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" aria-labelledby="editorial-flow-title">
-      <figcaption id="editorial-flow-title" className="mb-5 flex items-start justify-between gap-4">
+    <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" aria-labelledby={titleId}>
+      <figcaption id={titleId} className="mb-5 flex items-start justify-between gap-4">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2563EB]">System map</p>
           <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
@@ -54,7 +57,7 @@ export default function EditorialFlowDiagram({
         {steps.map((step, index) => {
           const Icon = ICONS[step.icon];
           return (
-            <li key={step.label} className="contents">
+            <li key={`${index}-${step.label}`} className="contents">
               <div className={`min-h-[108px] rounded-xl border p-3 ${TONES[step.tone]}`}>
                 <div className="flex items-center gap-2">
                   <Icon className="h-4 w-4" aria-hidden="true" />

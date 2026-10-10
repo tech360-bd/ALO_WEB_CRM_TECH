@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { db, sendActivationEmail, sendPasswordResetEmail } = vi.hoisted(() => ({
-  db: { portalAuditLog: { create: vi.fn() }, portalUser: { findUnique: vi.fn(), update: vi.fn() }, otpCode: { count: vi.fn(), create: vi.fn() }, passwordResetToken: { create: vi.fn() }, employeeActivationToken: { updateMany: vi.fn(), create: vi.fn() }, $transaction: vi.fn() },
+  db: { portalAuditLog: { create: vi.fn() }, portalUser: { findUnique: vi.fn(), update: vi.fn() }, otpCode: { count: vi.fn(), create: vi.fn() }, passwordResetToken: { create: vi.fn(), count: vi.fn(), updateMany: vi.fn() }, employeeActivationToken: { updateMany: vi.fn(), create: vi.fn() }, $transaction: vi.fn() },
   sendActivationEmail: vi.fn(), sendPasswordResetEmail: vi.fn(),
 }));
 vi.mock('@/lib/db', () => ({ db }));
@@ -21,6 +21,9 @@ beforeEach(() => {
   db.employeeActivationToken.updateMany.mockResolvedValue({ count: 1 });
   db.employeeActivationToken.create.mockResolvedValue({ id: 'activation' });
   db.otpCode.count.mockResolvedValue(0);
+  db.passwordResetToken.count.mockResolvedValue(0);
+  db.passwordResetToken.updateMany.mockResolvedValue({ count: 0 });
+  db.passwordResetToken.create.mockResolvedValue({ id: 'reset' });
 });
 describe('email consumer responses', () => {
   it('resend reports failure, not delivery, when submission fails', async () => {

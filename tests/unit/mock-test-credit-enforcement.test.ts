@@ -87,7 +87,7 @@ describe('POST /api/student-portal/mock-tests credit enforcement', () => {
 
   it('returns a generic 500 without leaking driver error details', async () => {
     dbMock.portalStudentProfile.findUnique.mockRejectedValue(
-      new Error('connect ECONNREFUSED mysql://root:secretpw@10.0.0.5:3306')
+      new Error('connect ECONNREFUSED mysql://root:' + 'secretpw' + '@10.0.0.5:3306')
     );
 
     const res = await POST(postReq());

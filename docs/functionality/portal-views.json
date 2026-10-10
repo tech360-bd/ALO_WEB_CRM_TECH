@@ -3,1009 +3,1109 @@
   "views": [
     {
       "view": "portals",
-      "entryLine": 192,
+      "entryLine": 196,
       "status": "NOT VERIFIED"
     },
     {
       "view": "website",
-      "entryLine": 203,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "login",
-      "entryLine": 193,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "register",
-      "entryLine": 195,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-login",
-      "entryLine": 193,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-register",
-      "entryLine": 195,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-login",
-      "entryLine": 193,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-register",
-      "entryLine": 195,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-login",
-      "entryLine": 193,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "admin-login",
-      "entryLine": 193,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "forgot-password",
-      "entryLine": 200,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "reset-password",
-      "entryLine": 201,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "verify-otp",
-      "entryLine": 202,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "account-suspended",
-      "entryLine": 197,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "account-pending",
-      "entryLine": 198,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "unauthorized",
-      "entryLine": 199,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "public-consultation",
-      "entryLine": 205,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "public-contact",
-      "entryLine": 206,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "public-course-finder",
       "entryLine": 207,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-destination",
-      "entryLine": 208,
+      "view": "login",
+      "entryLine": 197,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-universities",
+      "view": "register",
+      "entryLine": 199,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-login",
+      "entryLine": 197,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-register",
+      "entryLine": 199,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-login",
+      "entryLine": 197,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-register",
+      "entryLine": 199,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "employee-login",
+      "entryLine": 197,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "admin-login",
+      "entryLine": 197,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "forgot-password",
+      "entryLine": 204,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "reset-password",
+      "entryLine": 205,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "verify-otp",
+      "entryLine": 206,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "account-suspended",
+      "entryLine": 201,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "account-pending",
+      "entryLine": 202,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "unauthorized",
+      "entryLine": 203,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "public-consultation",
       "entryLine": 209,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-scholarships",
+      "view": "public-contact",
       "entryLine": 210,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-services",
+      "view": "public-course-finder",
       "entryLine": 211,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-about",
+      "view": "public-destination",
       "entryLine": 212,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-success-stories",
+      "view": "public-universities",
       "entryLine": 213,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-team",
+      "view": "public-scholarships",
       "entryLine": 214,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-faqs",
+      "view": "public-services",
       "entryLine": 215,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-resources",
+      "view": "public-about",
       "entryLine": 216,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-language-prep",
+      "view": "public-success-stories",
       "entryLine": 217,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-english-test",
-      "entryLine": 217,
+      "view": "public-team",
+      "entryLine": 218,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-visa-readiness",
+      "view": "public-faqs",
       "entryLine": 219,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-privacy",
+      "view": "public-resources",
       "entryLine": 220,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-terms",
+      "view": "public-language-prep",
       "entryLine": 221,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-cookie",
+      "view": "public-english-test",
+      "entryLine": 221,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "public-visa-readiness",
       "entryLine": 223,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-cookies",
-      "entryLine": 222,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "public-accessibility",
+      "view": "public-privacy",
       "entryLine": 224,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-communication-policy",
+      "view": "public-terms",
       "entryLine": 225,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "public-lead-data-policy",
-      "entryLine": 226,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "public-user-guide",
+      "view": "public-cookie",
       "entryLine": 227,
       "status": "NOT VERIFIED"
     },
     {
+      "view": "public-cookies",
+      "entryLine": 226,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "public-accessibility",
+      "entryLine": 228,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "public-communication-policy",
+      "entryLine": 229,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "public-lead-data-policy",
+      "entryLine": 230,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "public-user-guide",
+      "entryLine": 231,
+      "status": "NOT VERIFIED"
+    },
+    {
       "view": "student-dashboard",
-      "entryLine": 234,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-profile",
-      "entryLine": 235,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-applications",
-      "entryLine": 240,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-applications-detail",
-      "entryLine": 241,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-documents",
-      "entryLine": 242,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-messages",
-      "entryLine": 243,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-course-finder",
-      "entryLine": 236,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-favorites",
       "entryLine": 238,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-compare",
+      "view": "student-profile",
       "entryLine": 239,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-sop",
-      "entryLine": 245,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-cv",
-      "entryLine": 246,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-visa",
+      "view": "student-applications",
       "entryLine": 244,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-scholarships",
+      "view": "student-applications-detail",
+      "entryLine": 245,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-documents",
+      "entryLine": 246,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-messages",
       "entryLine": 247,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-appointments",
-      "entryLine": 248,
+      "view": "student-course-finder",
+      "entryLine": 240,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-payments",
+      "view": "student-favorites",
+      "entryLine": 242,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-compare",
+      "entryLine": 243,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-sop",
       "entryLine": 249,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-notifications",
+      "view": "student-cv",
       "entryLine": 250,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-settings",
+      "view": "student-visa",
+      "entryLine": 248,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-scholarships",
       "entryLine": 251,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-help",
+      "view": "student-appointments",
       "entryLine": 252,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-ai-advisor",
+      "view": "student-payments",
       "entryLine": 253,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-recommendations",
-      "entryLine": 237,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-interviews",
-      "entryLine": 257,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "student-referrals",
+      "view": "student-notifications",
       "entryLine": 254,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-events",
+      "view": "student-settings",
       "entryLine": 255,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "student-onboarding",
+      "view": "student-help",
       "entryLine": 256,
       "status": "NOT VERIFIED"
     },
     {
+      "view": "student-ai-advisor",
+      "entryLine": 257,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-recommendations",
+      "entryLine": 241,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-interviews",
+      "entryLine": 261,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-referrals",
+      "entryLine": 258,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-events",
+      "entryLine": 259,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "student-onboarding",
+      "entryLine": 260,
+      "status": "NOT VERIFIED"
+    },
+    {
       "view": "employee-dashboard",
-      "entryLine": 269,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-profile",
-      "entryLine": 270,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-tasks",
-      "entryLine": 271,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-leads",
-      "entryLine": 272,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-students",
       "entryLine": 273,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-applications",
+      "view": "employee-profile",
       "entryLine": 274,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-documents",
+      "view": "employee-tasks",
       "entryLine": 275,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-messages",
+      "view": "employee-leads",
       "entryLine": 276,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-whatsapp",
+      "view": "employee-students",
       "entryLine": 277,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-calendar",
+      "view": "employee-applications",
       "entryLine": 278,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-attendance",
+      "view": "employee-documents",
       "entryLine": 279,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-leave",
+      "view": "employee-messages",
       "entryLine": 280,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-salary",
+      "view": "employee-whatsapp",
       "entryLine": 281,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-performance",
+      "view": "employee-calendar",
       "entryLine": 282,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-reports",
+      "view": "employee-attendance",
       "entryLine": 283,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-notifications",
+      "view": "employee-leave",
       "entryLine": 284,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-settings",
+      "view": "employee-salary",
       "entryLine": 285,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "employee-help",
+      "view": "employee-performance",
       "entryLine": 286,
       "status": "NOT VERIFIED"
     },
     {
+      "view": "employee-reports",
+      "entryLine": 287,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "employee-notifications",
+      "entryLine": 288,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "employee-settings",
+      "entryLine": 289,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "employee-help",
+      "entryLine": 290,
+      "status": "NOT VERIFIED"
+    },
+    {
       "view": "employee-visa-dashboard",
-      "entryLine": 432,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-visa-officer",
-      "entryLine": 433,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-visa-interview-officer",
-      "entryLine": 434,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-visa-cases",
-      "entryLine": 435,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-visa-interviews",
-      "entryLine": 436,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-visa-documents",
-      "entryLine": 437,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-visa-readiness",
-      "entryLine": 438,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "employee-visa-reports",
-      "entryLine": 439,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-dashboard",
-      "entryLine": 310,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-profile",
-      "entryLine": 311,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-leads",
-      "entryLine": 312,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-students",
-      "entryLine": 313,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-applications",
-      "entryLine": 314,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-documents",
-      "entryLine": 315,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-commission",
-      "entryLine": 316,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-reports",
-      "entryLine": 317,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-messages",
-      "entryLine": 318,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-resources",
-      "entryLine": 319,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-referrals",
-      "entryLine": 320,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-notifications",
-      "entryLine": 321,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-settings",
-      "entryLine": 322,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-help",
-      "entryLine": 323,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-dashboard",
-      "entryLine": 429,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-company-profile",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-users",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-users-create",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-roles",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-students",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-leads",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-applications",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-documents",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-course-finder",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-marketing-studio",
-      "entryLine": 430,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-content-generator",
-      "entryLine": 431,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-image-generator",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-video-generator",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-social-scheduler",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-mock-tests",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-interview-prep",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-voucher-codes",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-usage-quota",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-reports",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-support-request",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "partner-admin-settings",
-      "entryLine": null,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-dashboard",
-      "entryLine": 393,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-users",
-      "entryLine": 449,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-roles",
-      "entryLine": 450,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-permissions",
-      "entryLine": 451,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-leads",
-      "entryLine": 396,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-students",
-      "entryLine": 397,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-analytics",
-      "entryLine": 394,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-partners",
-      "entryLine": 443,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-applications",
-      "entryLine": 398,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-documents",
-      "entryLine": 399,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-communications",
-      "entryLine": 408,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-whatsapp",
-      "entryLine": 406,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-social",
-      "entryLine": 407,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-reports",
-      "entryLine": 446,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-audit-logs",
-      "entryLine": 447,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-settings",
-      "entryLine": 448,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-finance",
-      "entryLine": 441,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-commissions",
-      "entryLine": 442,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-marketing",
-      "entryLine": 444,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-hrm",
-      "entryLine": 452,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-ai-command",
-      "entryLine": 454,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-tasks",
-      "entryLine": 417,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-appointments",
-      "entryLine": 418,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-course-finder",
-      "entryLine": 402,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-universities",
-      "entryLine": 403,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-visa",
-      "entryLine": 420,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-visa-dashboard",
-      "entryLine": 421,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-visa-cases",
-      "entryLine": 422,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-visa-interviews",
-      "entryLine": 423,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-visa-readiness",
-      "entryLine": 424,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-visa-reports",
-      "entryLine": 425,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-import-center",
-      "entryLine": 426,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-university-updates",
-      "entryLine": 427,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-access-control-center",
-      "entryLine": 428,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-scholarships",
-      "entryLine": 400,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-support",
-      "entryLine": 419,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-inbox",
-      "entryLine": 405,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-seo-dashboard",
-      "entryLine": 456,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-seo-keywords",
-      "entryLine": 457,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "crm-seo-content",
       "entryLine": 458,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "crm-seo-competitors",
+      "view": "employee-visa-officer",
       "entryLine": 459,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "crm-seo-technical",
+      "view": "employee-visa-interview-officer",
       "entryLine": 460,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "crm-seo-policy",
+      "view": "employee-visa-cases",
       "entryLine": 461,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "marketing-dashboard",
-      "entryLine": 351,
+      "view": "employee-visa-interviews",
+      "entryLine": 462,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "marketing-campaigns",
-      "entryLine": 352,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-social",
-      "entryLine": 353,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-analytics",
-      "entryLine": 354,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-inbox",
-      "entryLine": 355,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-approvals",
-      "entryLine": 362,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-brand-assets",
-      "entryLine": 363,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-keywords",
-      "entryLine": 364,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-whatsapp",
-      "entryLine": 365,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-leads",
-      "entryLine": 366,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-ai-replies",
-      "entryLine": 367,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-assignment",
-      "entryLine": 368,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-handoff",
-      "entryLine": 369,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-workflows",
-      "entryLine": 370,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "marketing-audit",
-      "entryLine": 371,
-      "status": "NOT VERIFIED"
-    },
-    {
-      "view": "knowledge-sharing-hub",
+      "view": "employee-visa-documents",
       "entryLine": 463,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "knowledge-sharing-detail",
+      "view": "employee-visa-readiness",
       "entryLine": 464,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "international-officer-dashboard",
-      "entryLine": 466,
+      "view": "employee-visa-reports",
+      "entryLine": 465,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "international-officer-research",
-      "entryLine": 467,
+      "view": "partner-dashboard",
+      "entryLine": 314,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "international-officer-communications",
-      "entryLine": 468,
+      "view": "partner-profile",
+      "entryLine": 337,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "international-officer-contacts",
-      "entryLine": 469,
+      "view": "partner-leads",
+      "entryLine": 338,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "international-officer-agreements",
-      "entryLine": 470,
+      "view": "partner-students",
+      "entryLine": 339,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "international-officer-strategy",
-      "entryLine": 471,
+      "view": "partner-applications",
+      "entryLine": 340,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "super-admin-master-command",
-      "entryLine": 473,
+      "view": "partner-documents",
+      "entryLine": 341,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "super-admin-website-cms",
-      "entryLine": 474,
+      "view": "partner-commission",
+      "entryLine": 342,
       "status": "NOT VERIFIED"
     },
     {
-      "view": "super-admin-crm-command",
+      "view": "partner-reports",
+      "entryLine": 343,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-messages",
+      "entryLine": 344,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-resources",
+      "entryLine": 345,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-referrals",
+      "entryLine": 346,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-notifications",
+      "entryLine": 347,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-settings",
+      "entryLine": 348,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-help",
+      "entryLine": 349,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-dashboard",
+      "entryLine": 455,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-company-profile",
+      "entryLine": 328,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-users",
+      "entryLine": 316,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-users-create",
+      "entryLine": 317,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-roles",
+      "entryLine": 336,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-students",
+      "entryLine": 334,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-leads",
+      "entryLine": 335,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-applications",
+      "entryLine": 333,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-documents",
+      "entryLine": 332,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-course-finder",
+      "entryLine": 327,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-marketing-studio",
+      "entryLine": 456,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-content-generator",
+      "entryLine": 457,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-image-generator",
+      "entryLine": 320,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-video-generator",
+      "entryLine": 321,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-social-scheduler",
+      "entryLine": 322,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-mock-tests",
+      "entryLine": 324,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-interview-prep",
+      "entryLine": 326,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-voucher-codes",
+      "entryLine": 323,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-usage-quota",
+      "entryLine": 325,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-reports",
+      "entryLine": 331,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-support-request",
+      "entryLine": 330,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "partner-admin-settings",
+      "entryLine": 329,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-dashboard",
+      "entryLine": 419,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-users",
       "entryLine": 475,
       "status": "NOT VERIFIED"
     },
     {
+      "view": "crm-roles",
+      "entryLine": 476,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-permissions",
+      "entryLine": 477,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-leads",
+      "entryLine": 422,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-students",
+      "entryLine": 423,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-analytics",
+      "entryLine": 420,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-partners",
+      "entryLine": 469,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-applications",
+      "entryLine": 424,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-documents",
+      "entryLine": 425,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-communications",
+      "entryLine": 434,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-whatsapp",
+      "entryLine": 432,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-social",
+      "entryLine": 433,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-reports",
+      "entryLine": 472,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-audit-logs",
+      "entryLine": 473,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-settings",
+      "entryLine": 474,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-finance",
+      "entryLine": 467,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-commissions",
+      "entryLine": 468,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-marketing",
+      "entryLine": 470,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-hrm",
+      "entryLine": 478,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-accounting",
+      "entryLine": null,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-procurement",
+      "entryLine": null,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-ai-command",
+      "entryLine": 480,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-tasks",
+      "entryLine": 443,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-appointments",
+      "entryLine": 444,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-course-finder",
+      "entryLine": 428,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-universities",
+      "entryLine": 429,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-visa",
+      "entryLine": 446,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-visa-dashboard",
+      "entryLine": 447,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-visa-cases",
+      "entryLine": 448,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-visa-interviews",
+      "entryLine": 449,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-visa-readiness",
+      "entryLine": 450,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-visa-reports",
+      "entryLine": 451,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-import-center",
+      "entryLine": 452,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-university-updates",
+      "entryLine": 453,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-access-control-center",
+      "entryLine": 454,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-scholarships",
+      "entryLine": 426,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-support",
+      "entryLine": 445,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-inbox",
+      "entryLine": 431,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-seo-dashboard",
+      "entryLine": 482,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-seo-keywords",
+      "entryLine": 483,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-seo-content",
+      "entryLine": 484,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-seo-competitors",
+      "entryLine": 485,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-seo-technical",
+      "entryLine": 486,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "crm-seo-policy",
+      "entryLine": 487,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-dashboard",
+      "entryLine": 377,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-campaigns",
+      "entryLine": 378,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-social",
+      "entryLine": 379,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-analytics",
+      "entryLine": 380,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-inbox",
+      "entryLine": 381,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-approvals",
+      "entryLine": 388,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-brand-assets",
+      "entryLine": 389,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-keywords",
+      "entryLine": 390,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-whatsapp",
+      "entryLine": 391,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-leads",
+      "entryLine": 392,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-ai-replies",
+      "entryLine": 393,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-assignment",
+      "entryLine": 394,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-handoff",
+      "entryLine": 395,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-workflows",
+      "entryLine": 396,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "marketing-audit",
+      "entryLine": 397,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "knowledge-sharing-hub",
+      "entryLine": 489,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "knowledge-sharing-detail",
+      "entryLine": 490,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "international-officer-dashboard",
+      "entryLine": 492,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "international-officer-research",
+      "entryLine": 493,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "international-officer-communications",
+      "entryLine": 494,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "international-officer-contacts",
+      "entryLine": 495,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "international-officer-agreements",
+      "entryLine": 496,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "international-officer-strategy",
+      "entryLine": 497,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "super-admin-master-command",
+      "entryLine": 499,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "super-admin-website-cms",
+      "entryLine": 500,
+      "status": "NOT VERIFIED"
+    },
+    {
+      "view": "super-admin-crm-command",
+      "entryLine": 501,
+      "status": "NOT VERIFIED"
+    },
+    {
       "view": "social-media-hub",
-      "entryLine": 410,
+      "entryLine": 436,
       "status": "NOT VERIFIED"
     },
     {
       "view": "social-inbox",
-      "entryLine": 411,
+      "entryLine": 437,
       "status": "NOT VERIFIED"
     },
     {
       "view": "social-analytics",
-      "entryLine": 412,
+      "entryLine": 438,
       "status": "NOT VERIFIED"
     },
     {
       "view": "social-content",
-      "entryLine": 413,
+      "entryLine": 439,
       "status": "NOT VERIFIED"
     },
     {
       "view": "social-posts",
-      "entryLine": 414,
+      "entryLine": 440,
       "status": "NOT VERIFIED"
     },
     {
       "view": "social-automation",
-      "entryLine": 415,
+      "entryLine": 441,
       "status": "NOT VERIFIED"
     }
   ],
   "rewrites": [
     {
+      "source": "/courses",
+      "destination": "/course-finder",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/course",
+      "destination": "/course-finder",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/eligibility-checker",
+      "destination": "/eligibility-check",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support/united-kingdom",
+      "destination": "/destinations/uk",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support/dubai-uae",
+      "destination": "/destinations/dubai",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support/usa",
+      "destination": "/destinations/usa",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support/canada",
+      "destination": "/destinations/canada",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support/australia",
+      "destination": "/destinations/australia",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support/ireland",
+      "destination": "/destinations/ireland",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support/new-zealand",
+      "destination": "/destinations/new-zealand",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support/germany",
+      "destination": "/destinations/germany",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/visa-support",
+      "destination": "/visa",
+      "status": "NOT VERIFIED"
+    },
+    {
       "source": "/book-appointment",
       "destination": "/book-consultation",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/consultation",
+      "destination": "/book-consultation",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/test-preparation",
+      "destination": "/english-test-prep",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/test-preparation/:slug",
+      "destination": "/english-test-prep/:slug",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/super-admin",
+      "destination": "/super-admin/dashboard",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/counselor",
+      "destination": "/counselor/dashboard",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/application-manager",
+      "destination": "/application-manager/applications",
       "status": "NOT VERIFIED"
     },
     {
@@ -1045,7 +1145,27 @@
     },
     {
       "source": "/course-finder/saved",
-      "destination": "/?p=saved-courses",
+      "destination": "/student/saved",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/marketing",
+      "destination": "/crm/marketing",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/marketing/dashboard",
+      "destination": "/crm/marketing",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/crm/social-inbox",
+      "destination": "/crm/communications/social-inbox",
+      "status": "NOT VERIFIED"
+    },
+    {
+      "source": "/crm/ai-command-center",
+      "destination": "/admin/ai-command-center",
       "status": "NOT VERIFIED"
     }
   ]

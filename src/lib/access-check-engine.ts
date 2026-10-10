@@ -97,11 +97,11 @@ export async function getQuota(ownerType: string, ownerId: string, rawFeatureKey
   const featureKey = normalizeQuotaKey(rawFeatureKey);
   if (featureKey === 'monthly_images' || featureKey === 'MARKETING_IMAGE_GENERATION') {
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
-    return quota?.monthlyImageLimit || STARTER_IMAGE_LIMIT;
+    return quota?.monthlyImageLimit ?? STARTER_IMAGE_LIMIT;
   }
   if (featureKey === 'monthly_videos' || featureKey === 'MARKETING_VIDEO_GENERATION') {
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
-    return quota?.monthlyVideoLimit || STARTER_VIDEO_LIMIT;
+    return quota?.monthlyVideoLimit ?? STARTER_VIDEO_LIMIT;
   }
   if (featureKey === 'user_seats' || featureKey === 'partner_max_users') {
     const assignment = await db.partnerPackageAssignment.findFirst({
@@ -114,11 +114,15 @@ export async function getQuota(ownerType: string, ownerId: string, rawFeatureKey
       const pkg = await db.partnerPackage.findUnique({ where: { id: assignment.packageId } }).catch(() => null);
       if (pkg?.maxUsers) return pkg.maxUsers;
     }
+    // Legacy/admin quota assignment is also an authoritative package limit.
+    // Seat-approval flows write here when a tenant has no package assignment.
+    const partnerQuota = await db.partnerQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
+    if (partnerQuota?.maxUsers && partnerQuota.maxUsers > 0) return partnerQuota.maxUsers;
     return STARTER_SEAT_LIMIT; // Starter package = 3 (1 Partner Super Admin + 2 Employees)
   }
   if (featureKey === 'video_duration_limit_seconds') {
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
-    return quota?.videoDurationLimitSeconds || STARTER_VIDEO_DURATION_SECONDS;
+    return quota?.videoDurationLimitSeconds ?? STARTER_VIDEO_DURATION_SECONDS;
   }
   return 0;
 }

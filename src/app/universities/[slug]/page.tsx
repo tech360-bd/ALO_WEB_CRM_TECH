@@ -3,17 +3,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import UniversityHub from '@/components/website/UniversityHub';
 import UniversityPageRecord from '@/components/website/UniversityPageRecord';
-import { getAllUniversitySlugs, getUniversityBySlug } from '@/lib/all-universities';
 import { db } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
-
-export async function generateStaticParams() {
-  return getAllUniversitySlugs().slice(0, 50);
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -24,9 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }),
     db.universityPage.findFirst({ where: { slug, approvalStatus: 'PUBLISHED', sourceUrl: { not: '' } }, select: { name: true, slug: true, overview: true } }),
   ]);
+  // Metadata comes only from published database records (no static fallback data).
   const profile = crmUniversity || publishedPage;
-  const staticRecord = profile ? null : getUniversityBySlug(slug);
-  const title = profile?.name || staticRecord?.name || 'University information';
+  const title = profile?.name || 'University information';
   const description = (crmUniversity?.description || publishedPage?.overview || `University details for ${title}. Only recorded, source-linked information is displayed.`).slice(0, 155);
   return {
     title: `${title} | University Information & Courses | ALO Education`,

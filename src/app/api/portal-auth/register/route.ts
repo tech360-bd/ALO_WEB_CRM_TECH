@@ -2,24 +2,9 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import bcrypt from 'bcryptjs';
 import { getRequestIp, issueEmailOtp } from '@/lib/auth/email-otp';
+import { allocateIdentifierCommitted } from '@/lib/identity/student-id';
 
 const BCRYPT_ROUNDS = 12;
-
-function generateStudentId(): string {
-  const year = new Date().getFullYear().toString().slice(-2);
-  const random = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, "0");
-  return `ALO-S-${year}${random}`;
-}
-
-function generatePartnerId(): string {
-  const year = new Date().getFullYear().toString().slice(-2);
-  const random = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, "0");
-  return `ALO-P-${year}${random}`;
-}
 
 function isValidEmail(email: string): boolean {
   const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
@@ -121,21 +106,8 @@ export async function POST(request: Request) {
 
     // Create the corresponding profile
     if (portalType === "student") {
-      // Generate a unique student ID with retry on collision
-      let studentId = generateStudentId();
-      let isUnique = false;
-      let attempts = 0;
-      while (!isUnique && attempts < 10) {
-        const existing = await db.portalStudentProfile.findUnique({
-          where: { studentId },
-        });
-        if (!existing) {
-          isUnique = true;
-        } else {
-          studentId = generateStudentId();
-          attempts++;
-        }
-      }
+      // Sequence-allocated, never random and never reused (see src/lib/identity/student-id.ts).
+      const studentId = await allocateIdentifierCommitted('AE');
 
       await db.portalStudentProfile.create({
         data: {
@@ -302,21 +274,8 @@ export async function POST(request: Request) {
         }).catch(() => {});
       }
     } else if (portalType === "partner") {
-      // Generate a unique partner ID with retry on collision
-      let partnerId = generatePartnerId();
-      let isUnique = false;
-      let attempts = 0;
-      while (!isUnique && attempts < 10) {
-        const existing = await db.partnerProfile.findFirst({
-          where: { partnerId },
-        });
-        if (!existing) {
-          isUnique = true;
-        } else {
-          partnerId = generatePartnerId();
-          attempts++;
-        }
-      }
+      // Sequence-allocated partner identifier (AEP-YYYYNNNNN).
+      const partnerId = await allocateIdentifierCommitted('AEP');
 
       await db.partnerProfile.create({
         data: {

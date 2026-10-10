@@ -17,21 +17,38 @@ interface Props {
 export default function CourseDetailHub({ slug }: Props) {
   const [course, setCourse] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ status: number | null; message: string } | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    fetch(`/api/courses/${encodeURIComponent(slug)}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`Failed ${r.status}`);
-        return r.json();
+    const controller = new AbortController();
+    setLoading(true);
+    setError(null);
+    fetch(`/api/courses/${encodeURIComponent(slug)}`, { signal: controller.signal })
+      .then(async r => {
+        const body = await r.json().catch(() => null);
+        if (!r.ok) {
+          const err = new Error(body?.error || `Request failed (${r.status})`) as Error & { status?: number };
+          err.status = r.status;
+          throw err;
+        }
+        return body;
       })
       .then(d => setCourse(d.data || d.course))
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
-  }, [slug]);
+      .catch((e: Error & { status?: number }) => {
+        if (e.name === 'AbortError') return;
+        setCourse(null);
+        setError({ status: e.status ?? null, message: e.message });
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
+  }, [slug, attempt]);
 
   if (loading) return <div className="p-12 text-center"><div className="h-64 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse max-w-7xl mx-auto" /></div>;
-  if (error || !course) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm font-semibold">A published, verified course record is not currently available.</p><p className="text-xs text-gray-500 mt-2">No course facts are shown until an authorized source-linked record passes review.</p><Link href="/course-finder"><Button className="mt-4 bg-[#2563EB] text-white h-11">Browse Courses</Button></Link></Card></div>;
+  if (error && error.status !== 404) return <div className="p-8 max-w-7xl mx-auto" role="alert"><Card className="p-8 bg-red-50 border-red-200 rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-2" /><p className="text-sm font-semibold text-red-900">Course information could not be loaded right now.</p><p className="text-xs text-red-800 mt-2">Please try again. If this continues, check with an ALO Education counselor.</p><div className="flex justify-center gap-3 mt-4"><Button onClick={() => setAttempt(a => a + 1)} className="bg-[#2563EB] text-white h-11">Try again</Button><Link href="/course-finder"><Button variant="outline" className="h-11 border-[#E2E8F0]">Browse Courses</Button></Link></div></Card></div>;
+  if (!course) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm font-semibold">A published, verified course record is not currently available.</p><p className="text-xs text-gray-500 mt-2">No course facts are shown until an authorized source-linked record passes review.</p><Link href="/course-finder"><Button className="mt-4 bg-[#2563EB] text-white h-11">Browse Courses</Button></Link></Card></div>;
 
   const uni = course.university || {};
   const intakes = course.intakes || course.intakeFees || [];
@@ -44,7 +61,7 @@ export default function CourseDetailHub({ slug }: Props) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-10">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs text-gray-500 font-medium">
-          <Link href="/" className="hover:text-[#2563EB]">Home</Link><span>›</span><Link href="/course-finder" className="hover:text-[#2563EB]">Course Finder</Link>{uni.slug && <><span>›</span><Link href={`/universities/${uni.slug}`} className="hover:text-[#2563EB]">{uni.name || 'University'}</Link></>}<span>›</span><span className="text-[#2563EB] font-bold">{course.courseTitle}</span>
+          <Link href="/" className="hover:text-[#2563EB]">Home</Link><span>›</span><Link href="/course-finder" className="hover:text-[#2563EB]">Course Finder</Link>{(uni.slug || uni.universityId) && <><span>›</span><Link href={`/universities/${encodeURIComponent(uni.slug || uni.universityId)}`} className="hover:text-[#2563EB]">{uni.name || 'University'}</Link></>}<span>›</span><span className="text-[#2563EB] font-bold">{course.courseTitle}</span>
         </nav>
 
         {/* Header */}
@@ -85,7 +102,7 @@ export default function CourseDetailHub({ slug }: Props) {
             </Card>
 
             {/* University Overview */}
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2"><Building2 className="w-5 h-5 text-[#2563EB]" />University Overview</h3><p className="text-sm text-gray-700">{[uni.name, uni.city, uni.country].filter(Boolean).join(' · ') || 'University details are not recorded on this course page.'}</p><p className="mt-2 text-sm text-gray-600">{uni.description ? uni.description.substring(0, 300) : 'University overview not recorded.'}</p>{uni.slug && <Link href={`/universities/${uni.slug}`} className="text-xs text-[#2563EB] underline mt-2 inline-block">View University Hub →</Link>}</Card>
+            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2"><Building2 className="w-5 h-5 text-[#2563EB]" />University Overview</h3><p className="text-sm text-gray-700">{[uni.name, uni.city, uni.country].filter(Boolean).join(' · ') || 'University details are not recorded on this course page.'}</p><p className="mt-2 text-sm text-gray-600">{uni.description ? uni.description.substring(0, 300) : 'University overview not recorded.'}</p>{(uni.slug || uni.universityId) && <Link href={`/universities/${encodeURIComponent(uni.slug || uni.universityId)}`} className="text-xs text-[#2563EB] underline mt-2 inline-block">View University Hub →</Link>}</Card>
 
             {/* Academic Requirements */}
             <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">

@@ -313,14 +313,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
 
 // ============================================================
 // STUDENT ID GENERATION
+// Use src/lib/identity/student-id.ts (sequence-allocated). Random generation was removed.
 // ============================================================
-
-export function generateStudentId(type: "AE" | "AET"): string {
-  const year = new Date().getFullYear();
-  // In production, this would query DB for next sequential number
-  const seq = String(Math.floor(Math.random() * 999999) + 1).padStart(6, "0");
-  return `${type}-${year}${seq}`;
-}
 
 // ============================================================
 // SLA CONSTANTS
