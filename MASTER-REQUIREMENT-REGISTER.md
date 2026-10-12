@@ -1,5 +1,3 @@
-> **2026-10-11 current gate notice:** NOT READY. Historical statements below are retained, not current certification. See [Phase 2 Gate1/Gate2 findings](AUDIT/phase2-gates-2026-10-11/REPORT.md) for measured counts, private-storage mitigation, tests and unresolved source/staging blockers. Legacy signed-download guidance below is superseded by resource-specific authorized downloads.
-
 # MASTER REQUIREMENT REGISTER — ALO Education Web + CRM
 
 **Purpose.** This file is the standing cross-check required by the master directive:

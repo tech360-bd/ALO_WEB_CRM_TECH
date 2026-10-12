@@ -347,7 +347,7 @@ export function PartnerMarketingStudio() {
   const [university, setUniversity] = React.useState("");
   const [course, setCourse] = React.useState("");
   const [intake, setIntake] = React.useState("January 2027");
-  const [targetAudience, setTargetAudience] = React.useState("Bangladeshi students");
+  const [targetAudience, setTargetAudience] = React.useState("Bangladeshi students aged 18-28");
   const [language, setLanguage] = React.useState("English");
   const [cta, setCta] = React.useState("Book a Consultation");
   const [platform, setPlatform] = React.useState("FACEBOOK");
@@ -737,7 +737,7 @@ export function PartnerMarketingStudio() {
                         rows={4}
                         value={idea}
                         onChange={(e) => setIdea(e.target.value)}
-                        placeholder="e.g. Promote our IELTS mock test for the January 2027 UK intake. Target students in Dhaka who are preparing for an English exam."
+                        placeholder="e.g. Promote our free IELTS mock test for the January 2027 UK intake. Target students in Dhaka who haven't taken IELTS yet."
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -751,13 +751,8 @@ export function PartnerMarketingStudio() {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label>Intake</Label>
-                        <Select value={intake} onValueChange={setIntake}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            {SUPPORTED_INTAKES.map((supportedIntake) => <SelectItem key={supportedIntake} value={supportedIntake}>{supportedIntake}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                        <Label htmlFor="mkt-intake">Intake</Label>
+                        <Input id="mkt-intake" value={intake} onChange={(e) => setIntake(e.target.value)} placeholder="January 2027" />
                       </div>
                     </div>
                     <div className="space-y-2">
