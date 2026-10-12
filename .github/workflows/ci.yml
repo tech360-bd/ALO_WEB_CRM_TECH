@@ -305,7 +305,7 @@ jobs:
             echo "::error::test-db migrate deploy failed — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy2.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
-          if ! TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log; then
+          if ! ALLOW_DISPOSABLE_DATABASE_TESTS=1 TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log; then
             echo "::error::integration tests failed — $(grep -aE '✖|FAIL|Error|AssertionError' /tmp/integration.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi

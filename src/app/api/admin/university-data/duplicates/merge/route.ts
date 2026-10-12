@@ -1,30 +1,25 @@
-import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
+import { requireCatalogAdmin } from '@/lib/course-finder/catalog-admin-auth';
 
-export const POST = withAuth(async (request: Request, auth: AuthContext) => {
-  try {
-    const body = await request.json();
-    const { masterId, duplicateId, type } = body;
-
-    if (type === 'university') {
-      await db.crmCourse.updateMany({
-        where: { universityId: duplicateId },
-        data: { universityId: masterId }
-      });
-      await db.crmUniversity.update({
-        where: { universityId: duplicateId },
-        data: { status: 'ARCHIVED' }
-      });
-    } else if (type === 'course') {
-      await db.crmCourse.update({
-        where: { courseId: duplicateId },
-        data: { status: 'ARCHIVED' }
-      });
-    }
-    
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
-});
+/**
+ * Merge is disabled (fail closed).
+ *
+ * The previous handler accepted any authenticated session (withAuth without
+ * role options), re-pointed courses with two separate non-transactional
+ * writes, left intakes/requirements/scholarships/campuses/rankings pointing
+ * at the archived university, and wrote no audit record. A safe merge needs a
+ * reviewed, audited, single-transaction workflow over every dependent model;
+ * until that exists no merge is performed.
+ */
+export async function POST(req: Request) {
+  const auth = await requireCatalogAdmin(req, { level: 'superAdmin', mutation: true });
+  if (auth instanceof NextResponse) return auth;
+  return NextResponse.json(
+    {
+      success: false,
+      code: 'MERGE_WORKFLOW_REQUIRED',
+      error: 'Merging records is unavailable until an audited, transactional merge workflow is approved. No records were changed.',
+    },
+    { status: 409 },
+  );
+}

@@ -2,8 +2,8 @@
  * ALO Education — Bulk University & Course Importer
  * Task ID: DATA-IMPORT
  *
- * Reads:  /home/z/my-project/upload/ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json
- *         (400 universities, 17,653 courses across 14 countries)
+ * Reads:  fixtures/synthetic-catalogue/ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json
+ *         (GENERATED, UNVERIFIED data despite the file name; development only)
  *
  * Writes:
  *   - UniversityPage  (slug = university_information.normalized_name, deduped)
@@ -25,17 +25,14 @@ import { PrismaClient } from "@prisma/client";
 import * as fs from "fs";
 import * as path from "path";
 
-// Portable: resolve from project root, fallback to CSVs (560/11200/145600 verified 2026-09-15)
-const PORTABLE_JSON_CANDIDATES = [
-  path.resolve(__dirname, "..", "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json"),
-  path.resolve(__dirname, "..", "upload", "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json"),
-  "/home/z/my-project/upload/ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json", // legacy VPS
-  process.env.UNIVERSITY_JSON_PATH || "",
-].filter(Boolean);
-const JSON_PATH = PORTABLE_JSON_CANDIDATES.find(p => fs.existsSync(p)) || path.resolve(__dirname, "..", "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json");
-// Fallback CSVs for GCU London verification (560 universities, 11200 courses)
-const CSV_UNIVERSITIES = path.resolve(__dirname, "..", "universities.csv");
-const CSV_COURSES = path.resolve(__dirname, "..", "courses.csv");
+// Synthetic (generated, unverified) datasets live only in the non-production
+// fixture archive. There is no fallback to repository-root, upload or legacy
+// VPS paths, and no environment override. See
+// AUDIT/course-finder-2026-10-12/SYNTHETIC-CATALOGUE-ARCHIVE.md.
+const SYNTHETIC_DIR = path.resolve(__dirname, "..", "fixtures", "synthetic-catalogue");
+const JSON_PATH = path.join(SYNTHETIC_DIR, "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json");
+const CSV_UNIVERSITIES = path.join(SYNTHETIC_DIR, "universities.csv");
+const CSV_COURSES = path.join(SYNTHETIC_DIR, "courses.csv");
 
 const db = new PrismaClient({
   log: ["error"],
@@ -142,8 +139,27 @@ const DEFAULT_COURSE_FAQS = J([
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
+/**
+ * Containment guard (Course Finder remediation, 2026-10-12): this script
+ * deletes every CoursePage/UniversityPage row and loads a generated data set
+ * whose "verified" labels are not backed by evidence. It must never run at
+ * launch or against production. It refuses unless a developer opts in
+ * explicitly on a non-production database.
+ */
+function destructiveTemplateSeedAllowed(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.ALO_ALLOW_DESTRUCTIVE_TEMPLATE_SEED === "1" && env.NODE_ENV !== "production";
+}
+
 async function main() {
-  console.log("=== ALO Education — University & Course Bulk Import (560/11200/145600, GCU London verified 2026-09-15) ===");
+  if (!destructiveTemplateSeedAllowed()) {
+    console.error(
+      "[seed-university-data] Refusing to run: this script wipes CoursePage/UniversityPage and loads unverified generated data. " +
+        "Set ALO_ALLOW_DESTRUCTIVE_TEMPLATE_SEED=1 on a disposable non-production database to proceed.",
+    );
+    process.exitCode = 1;
+    return;
+  }
+  console.log("=== ALO Education — synthetic template catalogue load (generated, UNVERIFIED, non-production only) ===");
   let universities: any[] = [];
   if (fs.existsSync(JSON_PATH)) {
     console.log("Reading JSON from:", JSON_PATH);

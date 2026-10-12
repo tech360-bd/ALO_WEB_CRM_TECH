@@ -1,17 +1,14 @@
-// ============================================================
-// IP Flow Trace (YutaroHayakawa/ipftrace2)
-// Network diagnostics for CRM connectivity (SIP/RTP, httpsms webhook)
-// Lightweight wrapper — in production calls `ipftrace2` eBPF tool via sidecar
-// ============================================================
+import { isIP } from 'node:net';
 
-export async function traceIpFlow(dstIp: string, port?: number){
-  // In prod: exec `ipftrace2 -d ${dstIp} -p ${port}` and parse JSON
-  // Here we return a diagnostic stub with guidance
-  return {
-    dstIp,
-    port: port||5060,
-    hops: [] as { ip:string; rttMs:number }[],
-    status:'stub — deploy ipftrace2 sidecar for eBPF trace',
-    guidance:'For SIP 502/503, check Linphone transport=tls + firewall 5060/5061 + Cloudflare Tunnel for httpsms webhook',
-  };
+/** ipftrace2 traces kernel functions, not network hops or ping latency.
+ * Requires a privileged Linux sidecar and an explicit operator action. Never
+ * execute a shell command from a CRM input or invent network measurements.
+ */
+export async function traceIpFlow(dstIp: string, port = 5060) {
+  if (!isIP(dstIp) || !Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error('A valid IP address and port (1–65535) are required.');
+  }
+  return { dstIp, port, available: false, status: 'not_configured' as const,
+    events: [],
+    guidance: 'No privileged ipftrace2 collector is installed. This tool observes Linux kernel packet paths; it is not a SIP client or traceroute service.' };
 }

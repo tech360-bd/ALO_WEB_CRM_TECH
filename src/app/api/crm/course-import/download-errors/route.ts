@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { COURSE_COLUMNS, escapeCsvField } from '@/lib/crm/import-constants';
+import { withAuth } from '@/lib/auth-middleware';
 
-export async function GET(req: Request) {
+// Phase 1 (2026-10-12): this route previously had no handler-level check and
+// relied on the proxy alone, which also admits APPLICATION_TEAM. It returns
+// the raw rows of failed imports, so it now uses the same ADMIN/SUPER_ADMIN
+// check as its sibling /api/crm/course-import/errors.
+async function downloadErrors(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const batchId = searchParams.get('batchId');
 
-    if (!batchId) {
+    if (!batchId || batchId.length > 191 || !/^[A-Za-z0-9_-]+$/.test(batchId)) {
       return NextResponse.json({ error: 'batchId query parameter is required' }, { status: 400 });
     }
 
@@ -56,3 +61,5 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const GET = withAuth(downloadErrors, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] });

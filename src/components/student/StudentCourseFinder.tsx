@@ -844,7 +844,7 @@ export default function StudentCourseFinder() {
             Find Your Perfect Course
           </h1>
           <p className="text-slate-400 text-sm md:text-base">
-            Search from thousands of courses across top universities worldwide
+            Search courses by country, subject, level and intake
           </p>
         </div>
         <div className="max-w-4xl mx-auto flex gap-3">

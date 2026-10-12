@@ -85,7 +85,8 @@ export async function POST(request: Request) {
         workRights: workRights || '',
         seoTitle: seoTitle || '',
         seoDescription: seoDescription || '',
-        lastVerifiedAt: new Date(),
+        // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
+        // the public country page shows it as "Last verified".
       },
       create: {
         name,
@@ -105,7 +106,8 @@ export async function POST(request: Request) {
         workRights: workRights || '',
         seoTitle: seoTitle || '',
         seoDescription: seoDescription || '',
-        lastVerifiedAt: new Date(),
+        // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
+        // the public country page shows it as "Last verified".
       },
     });
 

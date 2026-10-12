@@ -1,0 +1,9 @@
+
+> alo-education-erp@0.3.0 build
+> node scripts/assert-node22.cjs && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' prisma generate && npm run db:verify-client && SKIP_CMS_DB=1 RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' next build --webpack && node scripts/prepare-standalone.mjs
+
+Loaded Prisma config from prisma.config.ts.
+
+Error: request to https://binaries.prisma.sh/all_commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/schema-engine.gz.sha256 failed, reason: Client network socket disconnected before secure TLS connection was established
+
+EXIT_CODE=1

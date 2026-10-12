@@ -5,6 +5,8 @@
 //        DEPARTMENT_MANAGER, ADMIN, SUPER_ADMIN
 // ============================================================
 
+import { outboundReplyPolicyBlock } from '@/lib/inbox/outbound-reply-policy';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
@@ -54,6 +56,7 @@ export async function POST(
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (!mutationOriginAllowed(request, auth)) return NextResponse.json({success:false,error:"Same-origin request required."},{status:403});
 
     const normalizedRoles = new Set([auth.userType, ...auth.roles].map((role) => role.toUpperCase()));
     if (!canUseUccCommunication(auth) || !ALLOWED_ROLES.some((role) => normalizedRoles.has(role))) {
@@ -101,6 +104,10 @@ export async function POST(
 
     if (!canAccessUccConversation(auth, conversation) || !(await canViewUccConversationB2B(auth, conversation))) {
       return NextResponse.json({ success: false, error: 'You can only reply to conversations assigned to you.' }, { status: 403 });
+    }
+    if (!isInternalNote || attachment) {
+      const policyBlock = outboundReplyPolicyBlock();
+      if (policyBlock) return NextResponse.json(policyBlock, {status:503});
     }
     if (attachment) {
       if (conversation.channel !== 'whatsapp') {

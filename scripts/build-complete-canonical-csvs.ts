@@ -4,8 +4,11 @@ import { ukUniversitiesPart1 } from '../src/lib/university-data-uk';
 import { ukUniversitiesPart2 } from '../src/lib/university-data-uk2';
 import { allIntlUniversities } from '../src/lib/university-data-intl';
 import execa from 'child_process';
+import { requireSyntheticOutputDir, syntheticOutputPath } from './lib/synthetic-output-guard.mjs';
 
-const outputDir = 'docs/import-templates';
+// SYNTHETIC GENERATOR: built from hard-coded template data, never verified. It used to overwrite
+// docs/import-templates/ (blank import templates); it now writes only under ALO_SYNTHETIC_OUTPUT_DIR.
+const outputDir = syntheticOutputPath(requireSyntheticOutputDir('build-complete-canonical-csvs'), 'docs/import-templates');
 mkdirSync(outputDir, { recursive: true });
 
 console.log('===== GENERATING COMPLETED CANONICAL DATASET CSV SUITE =====');

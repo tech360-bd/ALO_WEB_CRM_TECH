@@ -49,7 +49,7 @@ function colCenter(stageIndex: number): number {
 }
 
 export default function JourneyMapDiagram({
-  idPrefix,
+  idPrefix: requestedPrefix,
   title,
   eyebrow,
   stages,
@@ -59,6 +59,7 @@ export default function JourneyMapDiagram({
   eyebrow?: string;
   stages: JourneyStage[];
 }) {
+  const idPrefix = `${requestedPrefix}-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const width = LEFT_MARGIN + stages.length * COL_W + (stages.length - 1) * GUTTER + RIGHT_PAD;
   const height = SENTIMENT_TOP + SENTIMENT_H + ACTIONS_H + TOUCH_H + LEGEND_H;
 

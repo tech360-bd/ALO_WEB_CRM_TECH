@@ -14,7 +14,7 @@ import { POST as orchestratePOST } from '@/app/api/workforce/orchestrate/route';
 const req = (body: unknown) => new Request('http://localhost/api/workforce/approval', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(getServerSession).mockResolvedValue({ user: { id: 'admin' } });
+  vi.mocked(getServerSession).mockResolvedValue({ user: { identityDomain: 'user', id: 'admin' } });
   vi.mocked(db.user.findUnique).mockResolvedValue({ id: 'admin', email: 'admin@example.com', name: 'Admin', role: 'ADMIN', permissions: '[]', status: 'ACTIVE', emailVerified: true });
   vi.mocked(db.$transaction).mockImplementation(async callback => callback(db));
   vi.mocked(db.agentApprovalQueue.findUnique).mockResolvedValue({ id: 'approval', agentId: 'agent', status: 'pending' });
@@ -25,7 +25,7 @@ describe('real auth middleware on workforce routes', () => {
   it('denies unauthenticated and student approval/orchestration requests', async () => {
     vi.mocked(getServerSession).mockResolvedValue(null);
     expect((await approvalPOST(req({}))).status).toBe(401);
-    vi.mocked(getServerSession).mockResolvedValue({ user: { id: 'student' } });
+    vi.mocked(getServerSession).mockResolvedValue({ user: { identityDomain: 'user', id: 'student' } });
     vi.mocked(db.user.findUnique).mockResolvedValue({ id: 'student', role: 'STUDENT', status: 'ACTIVE', emailVerified: true, permissions: '[]' });
     expect((await approvalPOST(req({ id: 'approval', decision: 'APPROVE' }))).status).toBe(403);
     expect((await approvalGET(new Request('http://localhost/api/workforce/approval'))).status).toBe(403);

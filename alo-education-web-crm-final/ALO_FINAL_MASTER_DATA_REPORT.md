@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — NOT A SOURCE OF TRUTH** (labelled 2026-10-12).
+> Unsupported: Claims 1 verified university (Aston University) and 471 verified courses. Official-page fetch results for Aston exist under data/official-source-audit/, but no human reviewer verification or database record backs the "verified" label, and the counts were not reproduced against any database. Treat as unverified research evidence only.
+> See AUDIT/historical-catalogue-reports-2026-10-12/README.md.
+
 # ALO Education — Final Master Data Collection & Audit Report
 
 ## 1. Executive Summary & Final Status

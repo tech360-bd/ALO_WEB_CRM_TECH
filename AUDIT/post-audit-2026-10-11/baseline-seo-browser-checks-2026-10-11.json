@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-11T08:39:55.719Z",
+  "mode": "real SEO components, mocked browser HTTP, no measured ranks/crawl/DB/provider",
+  "checks": [
+    "empty store shown without invented rows",
+    "keyword POST and reload",
+    "configuration-only technical evidence",
+    "invalid metric JSON rejected",
+    "supplied-metric analysis result accurately labeled",
+    "503 clears stale rows and exposes failure",
+    "no fallback AI request"
+  ],
+  "requests": 6
+}

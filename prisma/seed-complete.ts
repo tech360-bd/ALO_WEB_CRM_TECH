@@ -16,7 +16,8 @@ function slugify(s: string) {
 }
 
 async function seedUniversities() {
-  const root = path.resolve(__dirname, '..');
+  // Synthetic datasets are read only from the non-production fixture archive (no root fallback).
+  const root = path.resolve(__dirname, '..', 'fixtures', 'synthetic-catalogue');
   const uniPath = path.join(root, 'universities.csv');
   const coursesPath = path.join(root, 'courses.csv');
   const intakesPath = path.join(root, 'course_intakes.csv');
@@ -274,7 +275,7 @@ async function seedUniversities() {
 }
 
 async function seedComplete() {
-  console.log('[Seed] Starting complete production-safe MySQL seed (560 universities / 11200 courses / 145600 intakes)...');
+  console.log('[Seed] Starting complete production-safe MySQL seed (system administrator and roles).');
 
   const adminEmail = process.env.SEED_SUPER_ADMIN_EMAIL || 'admin@aloeducation.com';
   const adminPassword = process.env.SEED_SUPER_ADMIN_PASSWORD;
@@ -300,8 +301,23 @@ async function seedComplete() {
   await db.portalUserRole.upsert({ where: { userId_roleId: { userId: portalAdmin.id, roleId: superAdminRole.id } }, update: {}, create: { userId: portalAdmin.id, roleId: superAdminRole.id, assignedBy: 'complete-production-seed' } });
   await db.employeeCommunicationProfile.upsert({ where: { employeeId: 'system-initial-admin' }, update: {}, create: { employeeId: 'system-initial-admin', employeeName: 'Initial Super Admin', officialEmail: adminEmail, officialPhone: '', whatsappAccess:false, facebookAccess:false, instagramAccess:false, emailAccess:true, assignedBranch:'unassigned', assignedDepartments:JSON.stringify(['Administration']), channelPermissions:JSON.stringify({email:true}), workingHoursStart:'10:00', workingHoursEnd:'18:00' } });
 
-  // Now seed universities/courses if CSVs present
-  await seedUniversities();
+  // University/course catalogue seeding is OFF by default and impossible in production.
+  // The synthetic CSVs (fixtures/synthetic-catalogue/universities.csv, courses.csv, ...) are
+  // template-generated (e.g. 20 identical course titles per university, a
+  // fixed lastVerifiedAt date, every course/intake labelled VERIFIED_OFFICIAL)
+  // and this function upserts them as `published`. Loading them would label
+  // unverified data as verified and overwrite catalogue rows on every run.
+  // University data must arrive through the reviewed CSV import instead
+  // (/admin/data-import). Set ALO_SEED_UNIVERSITY_CATALOGUE=1 only on a
+  // disposable development database; the flag is ignored when NODE_ENV=production.
+  if (process.env.ALO_SEED_UNIVERSITY_CATALOGUE === '1' && process.env.NODE_ENV === 'production') {
+    console.warn('[Seed] ALO_SEED_UNIVERSITY_CATALOGUE=1 ignored: synthetic catalogue data is never seeded in production.');
+  } else if (process.env.ALO_SEED_UNIVERSITY_CATALOGUE === '1') {
+    console.warn('[Seed] ALO_SEED_UNIVERSITY_CATALOGUE=1 — loading template catalogue CSVs (development only).');
+    await seedUniversities();
+  } else {
+    console.log('[Seed] Skipping university/course catalogue seed (use the reviewed CSV import).');
+  }
 
   console.log('[Seed] Completed complete production-safe MySQL seed.');
 }

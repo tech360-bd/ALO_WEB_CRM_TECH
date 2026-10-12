@@ -12,7 +12,11 @@ export async function GET(req: NextRequest) {
     const universityId = req.nextUrl.searchParams.get('universityId') || undefined;
     const subjectArea = req.nextUrl.searchParams.get('subjectArea') || undefined;
     const studyLevel = req.nextUrl.searchParams.get('studyLevel') || undefined;
-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '8', 10), 20);
+    const rawLimit = req.nextUrl.searchParams.get('limit') || '8';
+    if (!/^\d+$/.test(rawLimit) || !Number.isSafeInteger(Number(rawLimit)) || Number(rawLimit) < 1 || Number(rawLimit) > 20) {
+      return NextResponse.json({ success: false, error: 'limit must be an integer from 1 to 20' }, { status: 400 });
+    }
+    const limit = Number(rawLimit);
 
     if (!sourceId && !sourceSlug) {
       return NextResponse.json({ success: false, error: 'sourceId or sourceSlug required' }, { status: 400 });

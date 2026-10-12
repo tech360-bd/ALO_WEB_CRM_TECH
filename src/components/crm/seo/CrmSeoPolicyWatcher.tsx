@@ -117,6 +117,10 @@ const riskBadge = (r: string) => {
 // --- Component ---
 
 export default function CrmSeoPolicyWatcher() {
+ return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">Immigration Policy Watcher</h1><p role="status">No current authoritative policy feed is verified here. Historical sample policy dates and claims must not be used as immigration advice.</p><a href="/crm/seo-manager" className="text-blue-700 underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
+}
+/** Historical design fixture; not an operational dashboard. */
+function LegacyUnverifiedCrmSeoPolicyWatcher() {
   return (
     <div className="space-y-6">
       {/* Header */}

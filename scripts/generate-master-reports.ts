@@ -1,6 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
+import { requireSyntheticOutputDir, syntheticOutputPath } from './lib/synthetic-output-guard.mjs';
+
+// SYNTHETIC / UNVERIFIED GENERATOR (2026-10-12 safety remediation): every file this script writes goes
+// under ALO_SYNTHETIC_OUTPUT_DIR (fixtures/synthetic-catalogue/** or staging/synthetic/**). It refuses
+// to run otherwise and never writes the repository root, docs/import-templates/, data/ or public/.
+const SYNTH_OUT = requireSyntheticOutputDir('generate-master-reports');
+const synthOut = (rel: string) => syntheticOutputPath(SYNTH_OUT, rel);
 
 const db = new PrismaClient();
 
@@ -63,7 +70,7 @@ async function main() {
 
   try {
     const BATCH_ID = `IMPORT-400-${Date.now().toString().slice(-6)}`;
-    const pkgDir = path.join(__dirname, '../docs/import-templates/package');
+    const pkgDir = synthOut('docs/import-templates/package');
     if (!fs.existsSync(pkgDir)) {
       fs.mkdirSync(pkgDir, { recursive: true });
     }
@@ -195,9 +202,9 @@ async function main() {
       uniRows += row.map(escapeCsv).join(',') + '\n';
     }
 
-    fs.writeFileSync(path.join(__dirname, '../ALO_UNIVERSITY_MASTER.csv'), uniRows);
+    fs.writeFileSync(synthOut('ALO_UNIVERSITY_MASTER.csv'), uniRows);
     fs.writeFileSync(path.join(pkgDir, '01_ALO_UNIVERSITY_MASTER.csv'), uniRows);
-    fs.writeFileSync(path.join(__dirname, '../ALO_MISSING_UNIVERSITY_INFO.csv'), missingInfoRows);
+    fs.writeFileSync(synthOut('ALO_MISSING_UNIVERSITY_INFO.csv'), missingInfoRows);
     fs.writeFileSync(path.join(pkgDir, '17_ALO_MISSING_UNIVERSITY_INFO.csv'), missingInfoRows);
     console.log('  ✓ Wrote ALO_UNIVERSITY_MASTER.csv & ALO_MISSING_UNIVERSITY_INFO.csv');
 
@@ -270,7 +277,7 @@ async function main() {
       }
     }
 
-    fs.writeFileSync(path.join(__dirname, '../ALO_COURSE_MASTER.csv'), courseRows);
+    fs.writeFileSync(synthOut('ALO_COURSE_MASTER.csv'), courseRows);
     fs.writeFileSync(path.join(pkgDir, '02_ALO_COURSE_MASTER.csv'), courseRows);
     console.log('  ✓ Wrote ALO_COURSE_MASTER.csv');
 
@@ -320,7 +327,7 @@ async function main() {
       }
     }
 
-    fs.writeFileSync(path.join(__dirname, '../ALO_COURSE_INTAKES_2027.csv'), intakeRows);
+    fs.writeFileSync(synthOut('ALO_COURSE_INTAKES_2027.csv'), intakeRows);
     fs.writeFileSync(path.join(pkgDir, '03_ALO_COURSE_INTAKES_2027.csv'), intakeRows);
     console.log('  ✓ Wrote ALO_COURSE_INTAKES_2027.csv');
 
@@ -378,7 +385,7 @@ async function main() {
       }
     }
 
-    fs.writeFileSync(path.join(__dirname, '../ALO_UNIVERSITY_COURSE_MASTER.csv'), combinedRows);
+    fs.writeFileSync(synthOut('ALO_UNIVERSITY_COURSE_MASTER.csv'), combinedRows);
     fs.writeFileSync(path.join(pkgDir, '04_ALO_UNIVERSITY_COURSE_MASTER.csv'), combinedRows);
     console.log(`  ✓ Wrote ALO_UNIVERSITY_COURSE_MASTER.csv with ${totalFlatRows} rows.`);
 
@@ -501,12 +508,12 @@ async function main() {
     fs.writeFileSync(path.join(pkgDir, '16_ALO_MISSING_COURSES.csv'), csv16);
     fs.writeFileSync(path.join(pkgDir, '18_ALO_IMPORT_MANIFEST.csv'), csv18);
 
-    fs.writeFileSync(path.join(__dirname, '../ALO_VERIFICATION_REPORT.csv'), csv12.replace('log_id,', 'record_type,record_id,name_or_title,verification_status,verified_source,checked_at\n'));
-    fs.writeFileSync(path.join(__dirname, '../ALO_DUPLICATE_REPORT.csv'), csv13.replace('log_id,', 'duplicate_id,original_id,type,similarity_score,resolution_action,merged_at\n'));
-    fs.writeFileSync(path.join(__dirname, '../ALO_CONFLICT_REPORT.csv'), csv14.replace('log_id,', 'conflict_id,field,source_a_value,source_b_value,selected_value,justification,resolved_at\n'));
-    fs.writeFileSync(path.join(__dirname, '../ALO_COURSE_COVERAGE_REPORT.csv'), csv15);
-    fs.writeFileSync(path.join(__dirname, '../ALO_MISSING_COURSES.csv'), csv16);
-    fs.writeFileSync(path.join(__dirname, '../ALO_IMPORT_MANIFEST.csv'), csv18);
+    fs.writeFileSync(synthOut('ALO_VERIFICATION_REPORT.csv'), csv12.replace('log_id,', 'record_type,record_id,name_or_title,verification_status,verified_source,checked_at\n'));
+    fs.writeFileSync(synthOut('ALO_DUPLICATE_REPORT.csv'), csv13.replace('log_id,', 'duplicate_id,original_id,type,similarity_score,resolution_action,merged_at\n'));
+    fs.writeFileSync(synthOut('ALO_CONFLICT_REPORT.csv'), csv14.replace('log_id,', 'conflict_id,field,source_a_value,source_b_value,selected_value,justification,resolved_at\n'));
+    fs.writeFileSync(synthOut('ALO_COURSE_COVERAGE_REPORT.csv'), csv15);
+    fs.writeFileSync(synthOut('ALO_MISSING_COURSES.csv'), csv16);
+    fs.writeFileSync(synthOut('ALO_IMPORT_MANIFEST.csv'), csv18);
 
     console.log('  ✓ Wrote all package relational and log CSVs.');
 
@@ -619,7 +626,7 @@ async function main() {
       };
     });
 
-    fs.writeFileSync(path.join(__dirname, '../ALO_UNIVERSITY_COURSE_MASTER.json'), JSON.stringify(jsonOutput, null, 2));
+    fs.writeFileSync(synthOut('ALO_UNIVERSITY_COURSE_MASTER.json'), JSON.stringify(jsonOutput, null, 2));
     console.log('  ✓ Wrote ALO_UNIVERSITY_COURSE_MASTER.json');
 
     // ==========================================
@@ -691,7 +698,7 @@ ${intakeBreakdownMd}
 | South Korea | 20 | 20 | COMPLETE | ${universities.filter(u => u.country === 'South Korea').reduce((acc, u) => acc + u.courses.length, 0)} | ${universities.filter(u => u.country === 'South Korea').reduce((acc, u) => acc + u.courses.reduce((s, c) => s + c.intakeFees.length, 0), 0)} |
 | **TOTAL** | **400** | **400** | **COMPLETE** | **${totalCoursesCount}** | **${totalIntakesCount}** |
 `;
-    fs.writeFileSync(path.join(__dirname, '../ALO_DATA_COLLECTION_REPORT.md'), reportMd);
+    fs.writeFileSync(synthOut('ALO_DATA_COLLECTION_REPORT.md'), reportMd);
 
     // ALO_IMPORT_REPORT.md
     const importReportMd = `# ALO Education — CRM Database Import Guide
@@ -716,7 +723,7 @@ If any error occurs during import, run the rollback command to restore the previ
 npm run db:rollback -- --batch=LAST
 \`\`\`
 `;
-    fs.writeFileSync(path.join(__dirname, '../ALO_IMPORT_REPORT.md'), importReportMd);
+    fs.writeFileSync(synthOut('ALO_IMPORT_REPORT.md'), importReportMd);
 
     console.log('  ✓ Wrote Supplementary MD Reports.');
     console.log('\n========================================');

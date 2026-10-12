@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import {
+  loadOpenConflicts,
+  passesPublicCoursePagePolicy,
+  passesPublicPagePolicy,
+  publicCoursePageWhere,
+  publicUniversityPageWhere,
+} from "@/lib/course-finder/public-content-page-policy";
 
 // GET /api/search?q=... — searches universities, courses, blog posts, news, events, countries, scholarships
 export async function GET(req: NextRequest) {
@@ -17,9 +24,11 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  // Phase 1 review (P0-C): catalogue pages use the shared public policy.
+  const conflicts = await loadOpenConflicts();
   const [
-    universities,
-    courses,
+    universitiesRaw,
+    coursesRaw,
     blogPosts,
     newsArticles,
     events,
@@ -31,16 +40,16 @@ export async function GET(req: NextRequest) {
     faqs,
   ] = await Promise.all([
     db.universityPage.findMany({
-      where: {
-        approvalStatus: "PUBLISHED",
+      where: publicUniversityPageWhere(conflicts, [{
         OR: [
           { name: { contains: q } },
           { city: { contains: q } },
           { overview: { contains: q } },
         ],
-      },
+      }]),
       take: 8,
       select: {
+        sourceUrl: true,
         slug: true,
         name: true,
         city: true,
@@ -50,16 +59,16 @@ export async function GET(req: NextRequest) {
       },
     }),
     db.coursePage.findMany({
-      where: {
-        approvalStatus: "PUBLISHED",
+      where: publicCoursePageWhere(conflicts, [{
         OR: [
           { name: { contains: q } },
           { subject: { contains: q } },
           { overview: { contains: q } },
         ],
-      },
+      }]),
       take: 8,
       select: {
+        sourceUrl: true,
         slug: true,
         name: true,
         level: true,
@@ -206,6 +215,8 @@ export async function GET(req: NextRequest) {
       select: { question: true, answer: true, category: true, targetType: true, targetSlug: true },
     }),
   ]);
+  const universities = universitiesRaw.filter((u) => passesPublicPagePolicy(u, conflicts.universitySlugs));
+  const courses = coursesRaw.filter((c) => passesPublicCoursePagePolicy(c, conflicts));
 
   const total =
     universities.length +

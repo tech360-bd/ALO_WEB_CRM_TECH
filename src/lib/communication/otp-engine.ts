@@ -11,7 +11,7 @@
  */
 import { createHmac, randomInt, timingSafeEqual } from 'node:crypto';
 import { db } from '@/lib/db';
-import { sendSms } from '@/lib/sms-gateway';
+import { sendSms, SmsDeliveryError } from '@/lib/sms-gateway';
 
 const OTP_EXPIRY_MIN = 10;
 const MAX_ATTEMPTS = 5;
@@ -62,7 +62,7 @@ export async function generateOtp(params: { ownerType: string; ownerId: string; 
   }
 
   const latest = await db.otpLog.findFirst({
-    where: { phone, status: 'pending' },
+    where: { phone },
     orderBy: { createdAt: 'desc' },
   });
   if (latest && now.getTime() - new Date(latest.createdAt).getTime() < RESEND_COOLDOWN_SEC * 1000) {
@@ -90,11 +90,15 @@ export async function generateOtp(params: { ownerType: string; ownerId: string; 
   try {
     await sendSms({
       to: phone,
+      sensitive: true,
       message: `Your ALO Education verification code is ${code}. It expires in ${OTP_EXPIRY_MIN} minutes. Do not share it with anyone.`,
     });
-  } catch {
-    // The code never reached the phone, so it must not remain usable.
-    await db.otpLog.update({ where: { id: challenge.id }, data: { status: 'delivery_failed' } });
+  } catch (error) {
+    // Timeouts may have delivered the SMS. Retire this challenge consistently,
+    // keep it in rate limits and never retry automatically.
+    const unknown = error instanceof SmsDeliveryError && error.outcome === 'unknown';
+    await db.otpLog.update({ where: { id: challenge.id }, data: { status: unknown ? 'delivery_unknown' : 'delivery_failed' } });
+    if (unknown) throw new OtpError('Delivery could not be confirmed. This code has been retired; wait 60 seconds before requesting a new one.', 503);
     throw new OtpError('The verification code could not be sent right now. Please try again later.', 503);
   }
 

@@ -274,3 +274,11 @@ describe('GET /api/course-finder/[slug] (legacy detail endpoint)', () => {
     expect(text).not.toContain('internalNotes');
   });
 });
+
+it('filters similar-course intakes as strictly as the main public course', async () => {
+  const { NextRequest } = await import('next/server');
+  const res = await courseDetailGET(new NextRequest('https://alo.test/api/courses/msc-data-science-leeds'), { params: Promise.resolve({ slug: 'msc-data-science-leeds' }) });
+  expect(res.status).toBe(200);
+  const query = mocks.courseFindMany.mock.calls[0][0];
+  expect(query.select.intakeFees.where).toEqual({ status: 'active', verificationStatus: 'VERIFIED' });
+});

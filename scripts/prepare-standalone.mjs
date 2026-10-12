@@ -1,6 +1,7 @@
 // Cross-platform standalone preparation script.
 import { existsSync, mkdirSync, cpSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { assertNoPublicUploads } from './lib/public-upload-guard.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const TOP_NEXT_DIR = join(ROOT, '.next');
@@ -10,6 +11,10 @@ const STATIC_SOURCE = join(TOP_NEXT_DIR, 'static');
 const PUBLIC_SOURCE = join(ROOT, 'public');
 const STATIC_TARGET = join(STANDALONE_NEXT_DIR, 'static');
 const PUBLIC_TARGET = join(STANDALONE_DIR, 'public');
+
+// Check BOTH source and stale destination before creating/copying anything.
+assertNoPublicUploads(PUBLIC_SOURCE);
+assertNoPublicUploads(PUBLIC_TARGET);
 
 console.log('[prepare-standalone] Preparing standalone production assets...');
 

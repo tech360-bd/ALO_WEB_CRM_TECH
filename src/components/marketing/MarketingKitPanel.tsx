@@ -29,6 +29,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import CampaignCreativeComposer from './CampaignCreativeComposer';
 import {
   DEFAULT_MARKETING_KITS,
   EMAIL_SEQUENCES,
@@ -364,6 +365,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 </dd>
               </div>
             </dl>
+            <CampaignCreativeComposer key={kit.id} kit={kit} />
 
             <section
               className="mt-5 rounded-2xl border border-amber-200 bg-white p-4"

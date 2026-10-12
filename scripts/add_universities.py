@@ -4,6 +4,10 @@ Script to add universities from gostudyin.json and tclglobal.json
 to the existing universities.ts data file.
 """
 import json, re, os
+import sys as _alo_sys, pathlib as _alo_pathlib
+_alo_sys.path.insert(0, str(_alo_pathlib.Path(__file__).resolve().parent / "lib"))
+from synthetic_output_guard import refuse_permanently
+refuse_permanently('add_universities.py', 'historical generator that overwrites src/lib/data/universities.ts with invented universities.')
 
 # Load extracted data
 with open('/home/z/my-project/download/extracted_all.json', 'r') as f:

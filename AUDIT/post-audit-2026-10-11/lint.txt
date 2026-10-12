@@ -1,0 +1,6 @@
+
+> alo-education-erp@0.3.0 lint
+> eslint .
+
+
+EXIT_CODE=0

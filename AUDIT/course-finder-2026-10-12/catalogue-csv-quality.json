@@ -1,0 +1,238 @@
+{
+  "generatedAt": "2026-10-11T21:05:48.768Z",
+  "note": "Static analysis of repository CSV files only. No URL was fetched; \"plausible\" patterns are heuristics, not verification.",
+  "files": {
+    "seed-complete set (universities.csv …)": {
+      "usedBy": "prisma/seed-complete.ts (now gated behind ALO_SEED_UNIVERSITY_CATALOGUE=1)",
+      "universities": {
+        "rows": 560,
+        "sha256": "82d83cbe8034320cd1df4829d8aaee793a50cb67428fe32605782cfd7fb730b3",
+        "byCountry": {
+          "United Kingdom": 140,
+          "United States": 20,
+          "Canada": 20,
+          "Australia": 40,
+          "Ireland": 20,
+          "New Zealand": 20,
+          "Germany": 20,
+          "UAE": 20,
+          "France": 20,
+          "Netherlands": 20,
+          "Italy": 20,
+          "Malta": 20,
+          "Cyprus": 20,
+          "South Korea": 20,
+          "Malaysia": 20,
+          "Sweden": 20,
+          "Brazil": 20,
+          "Russia": 20,
+          "India": 20,
+          "China": 20,
+          "South Africa": 20
+        },
+        "verificationStatus": {
+          "VERIFIED_OFFICIAL": 234,
+          "CROSS_SOURCE_VERIFIED": 79,
+          "NEEDS_REVIEW": 247
+        }
+      },
+      "courses": {
+        "rows": 11200,
+        "sha256": "41c5237f2702efa779f6fa70724fc35d5e775861390f73a7deb1edda578e87f0",
+        "coursesPerUniversityDistribution": {
+          "20": 560
+        },
+        "verificationStatus": {
+          "VERIFIED_OFFICIAL": 11200
+        },
+        "mostRepeatedTitles": [
+          [
+            "BSc (Hons) Computer Science",
+            251
+          ],
+          [
+            "MSc Civil Engineering",
+            250
+          ],
+          [
+            "BSc (Hons) Biology",
+            242
+          ],
+          [
+            "BSc (Hons) Environmental Science",
+            235
+          ],
+          [
+            "BSc (Hons) Psychology",
+            234
+          ],
+          [
+            "MSc Nursing",
+            232
+          ],
+          [
+            "MSc Mathematics",
+            231
+          ],
+          [
+            "MRes Psychology",
+            228
+          ]
+        ],
+        "universitiesSharingTheMostCommonSubjectSet": 1,
+        "hasCourseUrlColumn": false,
+        "exampleRowsForFirstUniversity": [
+          "Foundation Certificate in Medicine (Foundation)",
+          "Foundation Certificate in Pharmacy (Foundation)",
+          "Foundation Certificate in Engineering (Foundation)",
+          "BSc (Hons) Physics (Undergraduate)",
+          "BSc (Hons) Computer Science (Undergraduate)"
+        ]
+      },
+      "intakes": {
+        "rows": 145600,
+        "perCourse": 13,
+        "verificationStatus": {
+          "VERIFIED_OFFICIAL": 145600
+        },
+        "lastVerifiedAt": [
+          [
+            "2026-09-15",
+            145600
+          ]
+        ]
+      },
+      "requirements": {
+        "rows": 11200,
+        "distinctAcademicRequirementTexts": 6,
+        "distinctMinScores": 5
+      },
+      "englishRequirements": {
+        "rows": 22400,
+        "distinctOverallScores": [
+          [
+            "IELTS 6.5",
+            5600
+          ],
+          [
+            "PTE 58",
+            5600
+          ],
+          [
+            "IELTS 6.0",
+            3920
+          ],
+          [
+            "PTE 50",
+            3920
+          ],
+          [
+            "IELTS 5.5",
+            1680
+          ],
+          [
+            "PTE 42",
+            1680
+          ]
+        ]
+      }
+    },
+    "01_universities.csv / 02_courses.csv": {
+      "universities": {
+        "rows": 362,
+        "sha256": "4f54682c9474c9dd5d20111ee8c1dd227292832d5bb924573a80c685ed2f21a8",
+        "verificationStatus": {
+          "VERIFIED": 362
+        },
+        "sourceUrlEqualsHomepage": 362,
+        "byCountry": {
+          "United Kingdom": 165,
+          "United States": 50,
+          "Canada": 27,
+          "Australia": 24,
+          "Germany": 23,
+          "Malaysia": 25,
+          "New Zealand": 24,
+          "Ireland": 24
+        }
+      },
+      "courses": {
+        "rows": 1790,
+        "sha256": "c745672b5357d567afd454ea6af46c9040718b5c849541f403337226ac070228",
+        "verificationStatus": {
+          "VERIFIED": 1790
+        },
+        "urlsFollowingGeneratedPattern_slashCoursesSlashTitleSlug": 1368,
+        "mostRepeatedTitles": [
+          [
+            "MSc Business & Management",
+            158
+          ],
+          [
+            "MSc Computer Science",
+            137
+          ],
+          [
+            "MSc Engineering",
+            115
+          ],
+          [
+            "BSc Business & Management",
+            98
+          ],
+          [
+            "BSc Computer Science",
+            92
+          ],
+          [
+            "BSc Engineering",
+            79
+          ],
+          [
+            "MSc Data Science",
+            74
+          ],
+          [
+            "MSc Law",
+            73
+          ]
+        ],
+        "examples": [
+          "BSc Medicine → https://www.ox.ac.uk/courses/bsc-medicine",
+          "BSc Law → https://www.ox.ac.uk/courses/bsc-law",
+          "BSc Political Science → https://www.ox.ac.uk/courses/bsc-political-science"
+        ]
+      }
+    },
+    "data/01_ALO_UNIVERSITY_MASTER.csv": {
+      "rows": 400,
+      "sha256": "a774fae47023a449ea45ddd82b91df6a4a215176343abc9ba979ca37d04f648a",
+      "byCountry": {
+        "United Kingdom": 140,
+        "United States": 20,
+        "Canada": 20,
+        "Australia": 20,
+        "Ireland": 20,
+        "New Zealand": 20,
+        "Germany": 20,
+        "UAE": 20,
+        "France": 20,
+        "Netherlands": 20,
+        "Italy": 20,
+        "Malta": 20,
+        "Cyprus": 20,
+        "South Korea": 20
+      },
+      "verificationStatus": {
+        "NEEDS_REVIEW": 399,
+        "VERIFIED_OFFICIAL": 1
+      },
+      "lastVerifiedAt": [
+        [
+          "2026-08-13",
+          400
+        ]
+      ]
+    }
+  }
+}

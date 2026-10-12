@@ -32,7 +32,7 @@ const PLOT_X1 = WIDTH - 48;
 const HEIGHT = 230;
 
 export default function TimelineDiagram({
-  idPrefix,
+  idPrefix: requestedPrefix,
   title,
   eyebrow,
   events,
@@ -46,6 +46,7 @@ export default function TimelineDiagram({
   startLabel?: string;
   endLabel?: string;
 }) {
+  const idPrefix = `${requestedPrefix}-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   return (
     <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
       <figcaption className="mb-4 flex items-start justify-between gap-4">

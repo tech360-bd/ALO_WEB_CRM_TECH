@@ -1,0 +1,1 @@
+Serve _reference_repos/ui-verification on port 4173, then run scripts/verify-reference-components.mjs. Synthetic fixtures only.

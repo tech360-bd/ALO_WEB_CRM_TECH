@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { changedFields, invalidUrlField, presentControlFields, verificationAfterEdit } from '@/lib/course-finder/crm-edit-verification';
 
 export async function GET(
   request: NextRequest,
@@ -45,6 +46,17 @@ export async function PUT(
 
       const { id } = await params;
       const body = await req.json();
+      if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
+      }
+      // Phase 1 review (P1-D): an edit is not verification or publication.
+      const control = presentControlFields(body);
+      if (control.length) {
+        return NextResponse.json({ success: false, error: `Control fields cannot be set by editing: ${control.join(', ')}` }, { status: 400 });
+      }
+      if (body.tuitionFee !== undefined && !(typeof body.currency === 'string' && /^[A-Za-z]{3}$/.test(body.currency))) {
+        return NextResponse.json({ success: false, error: 'A three-letter currency code is required when changing tuition (no default currency is assumed).' }, { status: 400 });
+      }
 
       const existing = await db.crmCourse.findFirst({
         where: { OR: [{ id }, { courseId: id }] },
@@ -53,25 +65,33 @@ export async function PUT(
       if (!existing) {
         return NextResponse.json({ success: false, error: 'Course not found' }, { status: 404 });
       }
+      const badUrl = invalidUrlField(body, ['sourceUrl'], existing as any);
+      if (badUrl) return NextResponse.json({ success: false, error: `${badUrl} must be an https official source URL` }, { status: 400 });
+
+      const data: Record<string, unknown> = {
+        courseTitle: body.courseTitle !== undefined ? body.courseTitle : existing.courseTitle,
+        studyLevel: body.studyLevel !== undefined ? body.studyLevel : existing.studyLevel,
+        subjectArea: body.subjectArea !== undefined ? body.subjectArea : existing.subjectArea,
+        disciplineArea: body.disciplineArea !== undefined ? body.disciplineArea : existing.disciplineArea,
+        durationMonths: body.durationMonths !== undefined ? body.durationMonths : existing.durationMonths,
+        qualification: body.qualification !== undefined ? body.qualification : existing.qualification,
+        deliveryMode: body.deliveryMode !== undefined ? body.deliveryMode : existing.deliveryMode,
+        campus: body.campus !== undefined ? body.campus : existing.campus,
+        placementOption: body.placementOption !== undefined ? body.placementOption : existing.placementOption,
+        onlineOption: body.onlineOption !== undefined ? body.onlineOption : existing.onlineOption,
+        sourceUrl: body.sourceUrl !== undefined ? body.sourceUrl : existing.sourceUrl,
+        status: body.status !== undefined ? body.status : existing.status,
+      };
+      const factFields = Object.keys(data).filter((f) => f !== 'status');
+      const changed = changedFields(data, existing as any, factFields);
+      const feeOrRequirementChanged = body.tuitionFee !== undefined || body.depositAmount !== undefined
+        || body.ieltsOverall !== undefined || body.academicReq !== undefined;
+      // Never upgraded, never re-dated here.
+      data.verificationStatus = verificationAfterEdit(existing.verificationStatus, changed.length > 0 || feeOrRequirementChanged);
 
       const updated = await db.crmCourse.update({
         where: { id: existing.id },
-        data: {
-          courseTitle: body.courseTitle !== undefined ? body.courseTitle : existing.courseTitle,
-          studyLevel: body.studyLevel !== undefined ? body.studyLevel : existing.studyLevel,
-          subjectArea: body.subjectArea !== undefined ? body.subjectArea : existing.subjectArea,
-          disciplineArea: body.disciplineArea !== undefined ? body.disciplineArea : existing.disciplineArea,
-          durationMonths: body.durationMonths !== undefined ? body.durationMonths : existing.durationMonths,
-          qualification: body.qualification !== undefined ? body.qualification : existing.qualification,
-          deliveryMode: body.deliveryMode !== undefined ? body.deliveryMode : existing.deliveryMode,
-          campus: body.campus !== undefined ? body.campus : existing.campus,
-          placementOption: body.placementOption !== undefined ? body.placementOption : existing.placementOption,
-          onlineOption: body.onlineOption !== undefined ? body.onlineOption : existing.onlineOption,
-          sourceUrl: body.sourceUrl !== undefined ? body.sourceUrl : existing.sourceUrl,
-          status: body.status !== undefined ? body.status : existing.status,
-          verificationStatus: body.sourceUrl ? 'VERIFIED' : existing.verificationStatus,
-          lastVerifiedAt: new Date().toISOString(),
-        },
+        data: data as any,
       });
 
       if (body.tuitionFee !== undefined) {
@@ -80,7 +100,9 @@ export async function PUT(
           data: {
             yearlyTuition: body.tuitionFee,
             depositAmount: body.depositAmount || 0,
-            tuitionCurrency: body.currency || 'GBP',
+            tuitionCurrency: String(body.currency).toUpperCase(),
+            // Changed fee facts need review again.
+            verificationStatus: 'NEEDS_REVIEW',
           },
         });
       }
@@ -93,6 +115,7 @@ export async function PUT(
             ieltsOverall: body.ieltsOverall,
             ieltsMinBand: body.ieltsMinBand,
             pteOverall: body.pteOverall,
+            verificationStatus: 'NEEDS_REVIEW',
           },
         });
       }
@@ -104,8 +127,8 @@ export async function PUT(
           action: 'UPDATE_COURSE',
           targetCollection: 'CrmCourse',
           targetId: existing.id,
-          beforeData: JSON.stringify({ title: existing.courseTitle, status: existing.status }),
-          afterData: JSON.stringify({ title: updated.courseTitle, status: updated.status }),
+          beforeData: JSON.stringify({ title: existing.courseTitle, status: existing.status, verificationStatus: existing.verificationStatus }),
+          afterData: JSON.stringify({ title: updated.courseTitle, status: updated.status, verificationStatus: updated.verificationStatus, changedFields: changed }),
         },
       }).catch(() => null);
 
@@ -113,7 +136,7 @@ export async function PUT(
     } catch (error: any) {
       return NextResponse.json({ success: false, error: error?.message || 'Failed to update course' }, { status: 500 });
     }
-  })(request);
+  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
 }
 
 export async function DELETE(

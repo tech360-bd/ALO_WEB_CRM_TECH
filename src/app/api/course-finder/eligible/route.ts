@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireStudentResource } from "@/lib/student-resource-auth";
+import {
+  loadOpenConflicts,
+  passesPublicCoursePagePolicy,
+  publicCoursePageWhere,
+} from "@/lib/course-finder/public-content-page-policy";
 
 /**
  * Score published courses against the student's persisted education, English
@@ -46,10 +51,15 @@ export async function GET(req: NextRequest) {
   const latestEnglish = (englishTests as any[])[0];
   const latestEducation = (educationHistory as any[])[0];
 
-  const courses = await (db as any).coursePage.findMany({
-    where: { approvalStatus: "PUBLISHED" },
-    include: { university: { select: { name: true, slug: true } } },
+  // Phase 1 review (P0-C): only course pages that pass the shared public
+  // catalogue policy are scored (published + VERIFIED + https source + no open
+  // conflict + public university).
+  const conflicts = await loadOpenConflicts();
+  const loadedCourses = await (db as any).coursePage.findMany({
+    where: publicCoursePageWhere(conflicts),
+    include: { university: { select: { name: true, slug: true, sourceUrl: true } } },
   });
+  const courses = (loadedCourses as any[]).filter((course) => passesPublicCoursePagePolicy(course, conflicts));
 
   const results = (courses as any[]).map((course: any) => {
     let score = 0;

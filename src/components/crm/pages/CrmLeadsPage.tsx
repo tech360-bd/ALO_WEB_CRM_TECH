@@ -1,6 +1,7 @@
 'use client';
+import RegistrationEnquiries from '@/components/crm/RegistrationEnquiries';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,9 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { Search, Plus, Eye, UserCheck, ArrowRightLeft, Trash2, Loader2 } from 'lucide-react';
+import KanbanPipeline from '@/components/crm/KanbanPipeline';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Search, Plus, Eye, UserCheck, ArrowRightLeft, Loader2 } from 'lucide-react';
 
-type LeadStatus = 'new' | 'hot' | 'converted' | 'lost';
+const SOURCES = ['manual', 'facebook', 'website', 'referral', 'google_ads'];
+const STAGES = ['new', 'contacted', 'qualified', 'assigned', 'converted', 'lost'];
+const INITIAL_COUNTS: Record<string, number> = Object.fromEntries(['all', 'hot', ...STAGES].map(s => [s, 0]));
 
 interface Lead {
   id: string;
@@ -23,6 +28,9 @@ interface Lead {
   counselorName: string;
   createdAt: string;
   hotLead?: boolean;
+  updatedAt: string;
+  followUpDueAt?: string | null;
+  followUpDone?: boolean;
 }
 
 const statusColors: Record<string, string> = {
@@ -44,87 +52,102 @@ export default function CrmLeadsPage() {
   const [createForm, setCreateForm] = useState({ name: '', phone: '', email: '', destination: '', source: 'manual' });
   const [creating, setCreating] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [counts, setCounts] = useState(INITIAL_COUNTS);
+  const [sources, setSources] = useState(SOURCES);
+  const [error, setError] = useState('');
+  const [capabilities, setCapabilities] = useState({ create: false, update: false });
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [updating, setUpdating] = useState(false);
+  const [board, setBoard] = useState(false);
+  const sequence = useRef(0);
+  const authorization = useCallback((): Record<string, string> => token && !['null', 'undefined'].includes(token) ? { Authorization: `Bearer ${token}` } : {}, [token]);
+
   const loadLeads = useCallback(async () => {
+    const seq = ++sequence.current;
+    setLoading(true);
+    setError('');
     try {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams({ page: String(page), limit: '20' });
       if (search) params.set('search', search);
       if (statusFilter !== 'all') params.set('status', statusFilter);
       if (sourceFilter !== 'all') params.set('source', sourceFilter);
-      const res = await fetch(`/api/crm/leads?${params.toString()}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setLeads(json.data || []);
-      }
+      if (activeTab !== 'all') params.set('tab', activeTab);
+      const res = await fetch(`/api/crm/leads?${params}`, { headers: authorization(), credentials: 'same-origin' });
+      const json = await res.json();
+      if (!res.ok || !json.success || !Array.isArray(json.data)) throw new Error(json.error || 'Failed to load leads');
+      if (seq !== sequence.current) return;
+      setLeads(json.data);
+      setTotal(json.total);
+      setTotalPages(json.totalPages);
+      setCounts(json.counts || INITIAL_COUNTS);
+      setSources([...new Set([...SOURCES, ...(json.sources || [])])]);
+      setCapabilities(json.capabilities || { create: false, update: false });
+      setSelectedLead(prev => prev ? json.data.find((lead: Lead) => lead.id === prev.id) || null : null);
+      return true;
     } catch (error) {
-      console.error('Failed to load leads:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [token, search, statusFilter, sourceFilter]);
+      if (seq !== sequence.current) return;
+      setError(error instanceof Error ? error.message : 'Failed to load leads');
+      setLeads([]); setCounts(INITIAL_COUNTS); setTotal(0); setTotalPages(0);
+      setCapabilities({ create: false, update: false }); setSelectedLead(null);
+      return false;
+    } finally { if (seq === sequence.current) setLoading(false); }
+  }, [authorization, search, statusFilter, sourceFilter, activeTab, page]);
 
-  useEffect(() => { loadLeads(); }, [loadLeads]);
-
-  const filtered = leads.filter((l) => {
-    const status = l.hotLead ? 'hot' : l.status;
-    const matchTab = activeTab === 'all' || status === activeTab;
-    return matchTab;
-  });
-
-  const counts = {
-    all: leads.length,
-    new: leads.filter(l => !l.hotLead && l.status === 'new').length,
-    hot: leads.filter(l => l.hotLead || l.status === 'hot').length,
-    converted: leads.filter(l => l.status === 'converted').length,
-    lost: leads.filter(l => l.status === 'lost').length,
-  };
-
-  const sources = [...new Set(leads.map(l => l.source).filter(Boolean))];
+  useEffect(() => {
+    void loadLeads();
+    return () => { sequence.current++; };
+  }, [loadLeads]);
 
   const handleCreateLead = async () => {
-    setCreating(true);
+    setCreating(true); setError('');
     try {
       const res = await fetch('/api/crm/leads', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(createForm),
+        method: 'POST', headers: { ...authorization(), 'Content-Type': 'application/json' },
+        credentials: 'same-origin', body: JSON.stringify(createForm),
       });
-      if (res.ok) {
-        setShowCreateDialog(false);
-        setCreateForm({ name: '', phone: '', email: '', destination: '', source: 'manual' });
-        loadLeads();
-      }
-    } catch (error) {
-      console.error('Failed to create lead:', error);
-    } finally {
-      setCreating(false);
-    }
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || 'Failed to create lead');
+      setShowCreateDialog(false);
+      setCreateForm({ name: '', phone: '', email: '', destination: '', source: 'manual' });
+      await loadLeads();
+    } catch (error) { setError(error instanceof Error ? error.message : 'Failed to create lead'); }
+    finally { setCreating(false); }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete this lead?')) return;
+  const updateLead = async (id: string, change: Record<string, unknown>) => {
+    const lead = leads.find(item => item.id === id);
+    if (!lead || !capabilities.update) throw new Error('Lead update unavailable');
+    setUpdating(true); setError('');
     try {
-      await fetch(`/api/crm/leads?id=${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-      loadLeads();
+      const res = await fetch('/api/crm/leads', {
+        method: 'PATCH', credentials: 'same-origin', headers: { ...authorization(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, expectedUpdatedAt: lead.updatedAt, ...change }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || 'Failed to update lead');
+      if (!await loadLeads()) throw new Error('Update accepted, but refresh failed. Reload before making further changes.');
     } catch (error) {
-      console.error('Failed to delete lead:', error);
-    }
+      setError(error instanceof Error ? error.message : 'Failed to update lead');
+      throw error;
+    } finally { setUpdating(false); }
   };
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-64"><Loader2 className="h-6 w-6 animate-spin text-alo-brand" /></div>;
-  }
 
   return (
     <div className="space-y-6 p-6">
+      <RegistrationEnquiries/>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-alo-text">Lead Management</h1>
-        <Button className="bg-alo-brand hover:bg-alo-brand-light text-white" onClick={() => setShowCreateDialog(true)}>
+        <Button className="bg-alo-brand hover:bg-alo-brand-light text-white" disabled={!capabilities.create} title={!capabilities.create ? "Verified User mapping and create access required" : "Create lead"} onClick={() => setShowCreateDialog(true)}>
           <Plus className="mr-2 h-4 w-4" />Create Lead
         </Button>
       </div>
 
+      <p className="text-sm text-alo-text-muted">Persisted records only. Consent is not assumed. Assignment and student conversion require separate verified services; hard deletion is unavailable until retention rules are approved.</p>
+      {error && <div role="alert" className="rounded border border-red-200 p-3 text-red-700">{error} <Button variant="outline" onClick={() => void loadLeads()}>Retry</Button></div>}
+      {loading && <p role="status">Loading leads…</p>}
       {showCreateDialog && (
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4 space-y-3">
@@ -146,7 +169,7 @@ export default function CrmLeadsPage() {
               </Select>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleCreateLead} disabled={creating} className="bg-alo-brand hover:bg-alo-brand-light text-white">
+              <Button onClick={handleCreateLead} disabled={creating || !capabilities.create} className="bg-alo-brand hover:bg-alo-brand-light text-white">
                 {creating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}Create
               </Button>
               <Button variant="outline" onClick={() => setShowCreateDialog(false)}>Cancel</Button>
@@ -155,13 +178,9 @@ export default function CrmLeadsPage() {
         </Card>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-white border border-alo-border">
-          <TabsTrigger value="all">All Leads <Badge variant="secondary" className="ml-1">{counts.all}</Badge></TabsTrigger>
-          <TabsTrigger value="new">New <Badge variant="secondary" className="ml-1">{counts.new}</Badge></TabsTrigger>
-          <TabsTrigger value="hot">Hot <Badge variant="secondary" className="ml-1">{counts.hot}</Badge></TabsTrigger>
-          <TabsTrigger value="converted">Converted <Badge variant="secondary" className="ml-1">{counts.converted}</Badge></TabsTrigger>
-          <TabsTrigger value="lost">Lost <Badge variant="secondary" className="ml-1">{counts.lost}</Badge></TabsTrigger>
+      <Tabs value={activeTab} onValueChange={v => { setActiveTab(v); setPage(1); }}>
+        <TabsList className="bg-white border border-alo-border flex-wrap h-auto">
+          {['all', 'hot', ...STAGES].map(view => <TabsTrigger key={view} value={view}>{view === 'all' ? 'All Leads' : view} <Badge variant="secondary" className="ml-1">{counts[view] || 0}</Badge></TabsTrigger>)}
         </TabsList>
         <TabsContent value={activeTab}>
           <Card className="bg-white rounded-xl border border-alo-border">
@@ -169,19 +188,16 @@ export default function CrmLeadsPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-4">
                 <div className="relative max-w-sm">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-alo-text-muted" />
-                  <Input placeholder="Search leads..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+                  <Input placeholder="Search leads..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
                 </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select value={statusFilter} onValueChange={v => { setStatusFilter(v); setPage(1); }}>
                   <SelectTrigger className="w-[150px]"><SelectValue placeholder="Status" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="new">New</SelectItem>
-                    <SelectItem value="hot">Hot</SelectItem>
-                    <SelectItem value="converted">Converted</SelectItem>
-                    <SelectItem value="lost">Lost</SelectItem>
+                    {['hot', ...STAGES].map(stage => <SelectItem key={stage} value={stage}>{stage}</SelectItem>)}
                   </SelectContent>
                 </Select>
-                <Select value={sourceFilter} onValueChange={setSourceFilter}>
+                <Select value={sourceFilter} onValueChange={v => { setSourceFilter(v); setPage(1); }}>
                   <SelectTrigger className="w-[150px]"><SelectValue placeholder="Source" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Sources</SelectItem>
@@ -189,7 +205,11 @@ export default function CrmLeadsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="overflow-x-auto">
+              <div className="mb-3 flex items-center gap-3">
+                <Button variant="outline" onClick={() => setBoard(v => !v)}>{board ? 'Table view' : 'Board view'}</Button>
+                <span className="text-sm">{total} matching records · page {page} of {Math.max(1, totalPages)}</span>
+              </div>
+              {board ? <><p className="mb-2 text-sm text-alo-text-muted">Board shows this page only. Move new/contacted/qualified leads to supported stages; assignment and conversion need dedicated services.</p><KanbanPipeline items={leads.map(l => ({ id: l.id, title: l.name || l.email || l.phone, subtitle: l.destination, stage: l.status, meta: { Source: l.source } }))} stages={[...new Set([...STAGES, ...leads.map(l => l.status)])]} moveTargets={item => ['new','contacted','qualified'].includes(item.stage) ? ['new','contacted','qualified','lost'] : []} onStageChange={capabilities.update && !loading && !updating ? (id, status) => updateLead(id, { status }) : undefined} onOpen={id => setSelectedLead(leads.find(l => l.id === id) || null)} /></> : <div className="overflow-x-auto">
                 <table className="min-w-[800px] w-full text-sm">
                   <thead>
                     <tr className="border-b border-alo-border text-left text-alo-text-muted">
@@ -205,8 +225,8 @@ export default function CrmLeadsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.map((lead) => {
-                      const status = lead.hotLead ? 'hot' : lead.status;
+                    {leads.map((lead) => {
+                      const status = lead.hotLead && !['converted', 'lost'].includes(lead.status) ? 'hot' : lead.status;
                       return (
                         <tr key={lead.id} className="border-b border-alo-border/50 hover:bg-gray-50">
                           <td className="py-3 font-medium text-alo-text">{lead.name}</td>
@@ -219,25 +239,44 @@ export default function CrmLeadsPage() {
                           <td className="py-3 text-alo-text-muted">{lead.createdAt?.substring(0, 10)}</td>
                           <td className="py-3 text-right">
                             <div className="flex justify-end gap-1">
-                              <Button disabled title="View — not yet wired (see BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
-                              <Button disabled title="Assign — not yet wired (see BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><UserCheck className="h-4 w-4" /></Button>
-                              <Button disabled title="Convert — not yet wired (see BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><ArrowRightLeft className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="sm" className="text-red-500" title="Delete" onClick={() => handleDelete(lead.id)}><Trash2 className="h-4 w-4" /></Button>
+                              <Button title="View lead" aria-label={`View ${lead.name || lead.id}`} onClick={() => setSelectedLead(lead)} variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+                              <Button disabled aria-label="Assign unavailable" title="Assignment requires a verified counselor identity mapping" variant="ghost" size="sm"><UserCheck className="h-4 w-4" /></Button>
+                              <Button disabled aria-label="Convert unavailable" title="Student creation/conversion transaction is not available here" variant="ghost" size="sm"><ArrowRightLeft className="h-4 w-4" /></Button>
                             </div>
                           </td>
                         </tr>
                       );
                     })}
-                    {filtered.length === 0 && (
-                      <tr><td colSpan={9} className="py-8 text-center text-alo-text-muted">No leads found</td></tr>
+                    {leads.length === 0 && (
+                      <tr><td colSpan={9} className="py-8 text-center text-alo-text-muted">{error ? 'Records unavailable — see error above' : 'No leads found'}</td></tr>
                     )}
                   </tbody>
                 </table>
+              </div>}
+              <div className="mt-4 flex gap-2">
+                <Button variant="outline" disabled={loading || page <= 1} onClick={() => setPage(p => p - 1)}>Previous</Button>
+                <Button variant="outline" disabled={loading || page >= totalPages} onClick={() => setPage(p => p + 1)}>Next</Button>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+      <Dialog open={Boolean(selectedLead)} onOpenChange={open => { if (!open) setSelectedLead(null); }}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>{selectedLead?.name || 'Lead details'}</DialogTitle><DialogDescription>Saved contact information and supported follow-up controls.</DialogDescription></DialogHeader>
+          {selectedLead && <div className="space-y-3">
+            <dl className="text-sm"><dt>Email</dt><dd>{selectedLead.email || 'Not supplied'}</dd><dt>Phone</dt><dd>{selectedLead.phone || 'Not supplied'}</dd><dt>Destination</dt><dd>{selectedLead.destination || 'Not supplied'}</dd><dt>Source</dt><dd>{selectedLead.source}</dd><dt>Follow-up due</dt><dd>{selectedLead.followUpDueAt || 'Not scheduled'}</dd></dl>
+            <label className="block text-sm">Stage
+              <select aria-label="Lead stage" className="ml-2 rounded border p-2" value={selectedLead.status} disabled={updating || loading || !capabilities.update || !['new', 'contacted', 'qualified'].includes(selectedLead.status)} onChange={e => void updateLead(selectedLead.id, { status: e.target.value }).catch(() => {})}>
+                {[...new Set(['new', 'contacted', 'qualified', 'lost', selectedLead.status])].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </label>
+            <Button variant="outline" disabled={updating || loading || !capabilities.update || !['new', 'contacted', 'qualified'].includes(selectedLead.status)} onClick={() => void updateLead(selectedLead.id, { hotLead: !selectedLead.hotLead }).catch(() => {})}>{selectedLead.hotLead ? 'Remove hot flag' : 'Mark hot'}</Button>
+            {selectedLead.followUpDueAt && <Button variant="outline" disabled={updating || loading || !capabilities.update || !['new', 'contacted', 'qualified'].includes(selectedLead.status)} onClick={() => void updateLead(selectedLead.id, { followUpDone: !selectedLead.followUpDone }).catch(() => {})}>{selectedLead.followUpDone ? 'Reopen follow-up' : 'Complete follow-up'}</Button>}
+            {error && <p role="alert" className="text-red-700">{error}</p>}
+          </div>}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

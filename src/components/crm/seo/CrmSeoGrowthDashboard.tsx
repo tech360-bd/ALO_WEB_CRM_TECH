@@ -241,6 +241,10 @@ function ContentPipelineBlock({ label, count, color, icon: Icon }: { label: stri
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export default function CrmSeoGrowthDashboard() {
+ return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Growth Dashboard</h1><p role="status">Measured growth and attribution are not verified. Hard-coded traffic, conversion and revenue figures are not operational evidence.</p><a href="/crm/seo-manager" className="text-blue-700 underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
+}
+/** Historical design fixture; not an operational dashboard. */
+function LegacyUnverifiedCrmSeoGrowthDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
 

@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-11T08:40:00.467Z",
+  "browser": "153.0.8010.0",
+  "mode": "isolated real component browser tests; synthetic fixture; not authenticated application or DB/provider tests",
+  "checks": [
+    "process: rendered, SVG and PNG files downloaded, SVG clipboard readback verified",
+    "journey: rendered, SVG and PNG files downloaded, SVG clipboard readback verified",
+    "flow: rendered, SVG and PNG files downloaded, SVG clipboard readback verified",
+    "timeline: rendered, SVG and PNG files downloaded, SVG clipboard readback verified",
+    "funnel: rendered, SVG and PNG files downloaded, SVG clipboard readback verified",
+    "Marketing library Markdown download and selected campaign clipboard readback",
+    "Campaign headline editing persists into downloaded SVG"
+  ],
+  "artifacts": "_reference_repos/ui-verification/module-results"
+}

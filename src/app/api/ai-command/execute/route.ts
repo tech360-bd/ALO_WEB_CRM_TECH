@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { deployContentFallback } from "@/lib/course-finder/ai-content-fallback";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -180,6 +181,15 @@ export async function POST(req: NextRequest) {
 // GET /api/ai-command/execute — list actions (optionally filter by status)
 export async function GET(req: NextRequest) {
   try {
+    // Phase 1 review: action payloads can contain CRM data, so listing them
+    // requires the same ADMIN/SUPER_ADMIN check as POST/PATCH (previously the
+    // handler relied on the proxy alone).
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const role = (session.user as { role?: string }).role;
+    if (role !== "SUPER_ADMIN" && role !== "ADMIN") {
+      return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
+    }
     const status = req.nextUrl.searchParams.get("status") || "PENDING";
     const limit = Math.min(
       parseInt(req.nextUrl.searchParams.get("limit") || "50"),
@@ -413,35 +423,10 @@ async function executeActionInline(
       };
     }
     case "DEPLOY_CONTENT": {
-      if (targetType === "CoursePage") {
-        if (targetId) {
-          const updated = await db.coursePage.update({
-            where: { id: targetId },
-            data: payload?.data || {},
-          });
-          return { id: updated.id, summary: `Course page ${updated.name} updated` };
-        }
-        const created = await db.coursePage.create({
-          data: {
-            name: payload?.name || "New Course",
-            slug: payload?.slug || `course-${Date.now()}`,
-            universitySlug: payload?.universitySlug || "aalborg-university",
-            countrySlug: payload?.countrySlug || "denmark",
-            city: payload?.city || "Unknown",
-            level: payload?.level || "Bachelors",
-            subject: payload?.subject || "General",
-            duration: payload?.duration || "3 years",
-            intake: payload?.intake || "September",
-            tuition: payload?.tuition || "Contact for details",
-            englishRequirement: payload?.englishRequirement || "IELTS 6.0",
-            academicRequirement: payload?.academicRequirement || "SSC/HSC equivalent",
-            overview: payload?.overview || "Course overview pending.",
-            approvalStatus: "DRAFT",
-          },
-        });
-        return { id: created.id, summary: `Course page ${created.name} created (draft)` };
-      }
-      return { summary: `Content deployed to ${targetType}` };
+      // Phase 1 review (P0-B): never invent facts, never inherit the
+      // VERIFIED/PUBLISHED schema defaults, never mass-assign payload.data and
+      // never report success for an unsupported target.
+      return deployContentFallback(targetType, targetId, payload);
     }
     case "MODIFY_CRM": {
       return { summary: `CRM modification logged for ${targetType}` };

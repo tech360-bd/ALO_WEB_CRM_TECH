@@ -1450,8 +1450,6 @@ function CommentComposer({
       const payload: Record<string, unknown> = {
         type: kind,
         body: body.trim(),
-        authorId: "counselor-self", // server defaults to first counselor if not matched
-        authorRole: "COUNSELOR",
       };
       if (isInternal) {
         payload.visibility = visibility;

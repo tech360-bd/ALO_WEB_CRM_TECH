@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-11",
+  "scope": "sandbox, no production changes or real provider sends",
+  "branch": "arena/8b727e17-alo-education-z-ai",
+  "head": "c5bfcbbaef4e612eddb55f5f8516e5b1526e68cc",
+  "tests": {
+    "status": "PASS",
+    "passed": 1594,
+    "skipped": 63,
+    "failed": 0,
+    "filesPassed": 153,
+    "filesSkipped": 5,
+    "durationSeconds": 84.27
+  },
+  "lint": {
+    "status": "PASS",
+    "exitCode": 0
+  },
+  "focusedTypes": {
+    "registrationVerification": "PASS",
+    "suppliedReferences": "PASS",
+    "wholeApp": "BLOCKED_MEMORY"
+  },
+  "generatedPrismaClient": {
+    "status": "PASS",
+    "models": 532
+  },
+  "productionBuild": {
+    "status": "BLOCKED",
+    "reason": "Prisma schema-engine checksum download TLS failure; Next build not reached"
+  },
+  "schemaValidation": {
+    "status": "BLOCKED",
+    "reason": "Prisma schema-engine checksum download TLS failure"
+  },
+  "databaseIntegration": "BLOCKED_NO_TEST_DATABASE_URL",
+  "deployment": "NOT_TESTED_NOT_DEPLOYED",
+  "browserEvidence": [
+    "module-browser-checks-2026-10-11.json",
+    "leads-browser-checks-2026-10-11.json",
+    "seo-browser-checks-2026-10-11.json",
+    "supplied-reference-ui-verification-2026-10-10.json"
+  ]
+}

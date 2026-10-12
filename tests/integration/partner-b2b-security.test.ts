@@ -1,3 +1,4 @@
+import { testDatabaseUrl } from '../helpers/test-database';
 // ============================================================
 // ALO Education — B2B Partner security & tenant isolation tests
 // ============================================================
@@ -44,7 +45,7 @@ import {
   isPartnerSuperAdmin,
 } from '@/lib/partner-tenant-guard';
 
-const describeDb = process.env.TEST_DATABASE_URL ? describe : describe.skip;
+const describeDb = testDatabaseUrl() ? describe : describe.skip;
 
 const SUFFIX = `b2b-${Date.now().toString(36)}`;
 const PARTNER_A = `partner-a-${SUFFIX}`;
@@ -125,6 +126,7 @@ let partnerBSuperAdmin: Fixture;
 let aloSuperAdmin: Fixture;
 
 beforeAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
   partnerASuperAdmin = await makeUser('a-sa', 'PARTNER', 'partner', {
     partnerId: PARTNER_A,
     partnerRole: 'PARTNER_SUPER_ADMIN',
@@ -150,6 +152,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
   await db.partnerMarketingUsage.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
   await db.partnerMarketingQuota.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
   await db.studentMockTestVoucher.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
@@ -402,6 +405,7 @@ describeDb('Partner dashboard metrics are tenant-scoped', () => {
   const appIds: string[] = [];
 
   afterAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
     await db.portalStudentApplication.deleteMany({ where: { id: { in: appIds } } }).catch(() => undefined);
     await db.portalStudentProfile.deleteMany({ where: { id: { in: profileIds } } }).catch(() => undefined);
   });

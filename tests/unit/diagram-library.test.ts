@@ -96,7 +96,8 @@ describe('diagram compositions render valid SVG', () => {
     expect(html).toContain('−61%'); // 1240 → 486
     expect(html).toContain('−75%'); // 486 → 121
     expect(html).toContain('1,240');
-    expect(html).toContain('live CRM counts');
+    expect(html).toContain('supplied counts');
+    expect(html).not.toContain('live CRM counts');
   });
 
   it('funnel clamps widths when a later stage exceeds the first', () => {

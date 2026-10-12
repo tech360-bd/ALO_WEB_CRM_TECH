@@ -1,0 +1,254 @@
+[
+  {
+    "url": "https://github.com/prisma/docs/blob/c05758d0364384c5cf4bb8aed75fd33e0d72043e/apps/docs/content/docs/orm/v6/more/internals/engines.mdx",
+    "sha256": "45fb915a2e08629021b821c4e9cb82cb672dc3a8956d021ad45737553ad7ea9f",
+    "excerpts": [
+      {
+        "line": 36,
+        "text": "\nAll of these components are located in the generated output folder after you run `prisma generate`.\n\nThis page covers relevant technical details about the **Rust-based query engine architecture**, which is now optional and primarily used for:\n"
+      },
+      {
+        "line": 67,
+        "text": "\nWhen using Rust-based engines, all engine files are automatically downloaded into the `node_modules/@prisma/engines` folder when you install or update `prisma`, the Prisma CLI package. The [query engine](/orm/v6/more/internals/engines) is also copied to the generated Prisma Client when you call `prisma generate`.\n\nYou might want to use a [custom library or binary](https://github.com/prisma/prisma-engines) file if:\n"
+      },
+      {
+        "line": 76,
+        "text": "\n- [`PRISMA_QUERY_ENGINE_LIBRARY`](/orm/v6/reference/environment-variables-reference#prisma_query_engine_library) (Query engine, library) \u2014 **Not supported in Prisma ORM v7**\n- [`PRISMA_QUERY_ENGINE_BINARY`](/orm/v6/reference/environment-variables-reference#prisma_query_engine_binary) (Query engine, binary) \u2014 **Not supported in Prisma ORM v7**\n- [`PRISMA_SCHEMA_ENGINE_BINARY`](/orm/v6/reference/environment-variables-reference#prisma_schema_engine_binary) (Schema engine)\n- [`PRISMA_MIGRATION_ENGINE_BINARY`](/orm/v6/reference/environment-variables-reference#prisma_migration_engine_binary) (Migration engine)"
+      },
+      {
+        "line": 78,
+        "text": "- [`PRISMA_QUERY_ENGINE_BINARY`](/orm/v6/reference/environment-variables-reference#prisma_query_engine_binary) (Query engine, binary) \u2014 **Not supported in Prisma ORM v7**\n- [`PRISMA_SCHEMA_ENGINE_BINARY`](/orm/v6/reference/environment-variables-reference#prisma_schema_engine_binary) (Schema engine)\n- [`PRISMA_MIGRATION_ENGINE_BINARY`](/orm/v6/reference/environment-variables-reference#prisma_migration_engine_binary) (Migration engine)\n- [`PRISMA_INTROSPECTION_ENGINE_BINARY`](/orm/v6/reference/environment-variables-reference#prisma_introspection_engine_binary) (Introspection engine) \u2014 **Not supported in Prisma ORM v7**\n"
+      },
+      {
+        "line": 86,
+        "text": "\n- `PRISMA_QUERY_ENGINE_LIBRARY` and `PRISMA_QUERY_ENGINE_BINARY` are not supported in Prisma ORM v7.\n- `PRISMA_INTROSPECTION_ENGINE_BINARY` is not supported in Prisma ORM v7.\n\n**Earlier deprecations:**"
+      },
+      {
+        "line": 159,
+        "text": "\nThe [`PRISMA_ENGINES_MIRROR`](/orm/v6/reference/environment-variables-reference#prisma_engines_mirror) environment variable allows you to host engine files via a private server, AWS bucket or other cloud storage.\nThis can be useful if you have a custom OS that requires custom-built engines.\n\n```bash"
+      },
+      {
+        "line": 163,
+        "text": "```bash\nPRISMA_ENGINES_MIRROR=https://my-aws-bucket\n```\n\n## The query engine file"
+      },
+      {
+        "line": 174,
+        "text": "\nThe **query engine file** is different for each operating system. It is named `query-engine-PLATFORM` or `libquery_engine-PLATFORM` where `PLATFORM` corresponds to the name of a compile target. Query engine file extensions depend on the platform as well. As an example, if the query engine must run on a [Darwin](<https://en.wikipedia.org/wiki/Darwin_(operating_system)>) operating system such as macOS Intel, it is called `libquery_engine-darwin.dylib.node` or `query-engine-darwin`. You can find an overview of all supported platforms in [`binaryTargets` options](/orm/v6/reference/prisma-schema-reference#binarytargets-options).\n\nThe query engine file is downloaded into the `runtime` directory of the generated Prisma Client when `prisma generate` is called.\n"
+      },
+      {
+        "line": 176,
+        "text": "\nThe query engine file is downloaded into the `runtime` directory of the generated Prisma Client when `prisma generate` is called.\n\nNote that the query engine is implemented in Rust. The source code is located in the [`prisma-engines`](https://github.com/prisma/prisma-engines/) repository.\n"
+      },
+      {
+        "line": 191,
+        "text": "\n![Diagram showing the query engine and Node.js at runtime](/img/v6/orm/more/internals/query-engine-node-js-at-runtime.png)\n\nThe query engine is started when the first Prisma Client query is invoked or when the [`$connect()`](/orm/v6/prisma-client/setup-and-configuration/databases-connections/connection-management) method is called on your `PrismaClient` instance. Once the query engine is started, it creates a [connection pool](/orm/v6/prisma-client/setup-and-configuration/databases-connections/connection-pool) and manages the physical connections to the database. From that point onwards, Prisma Client is ready to send [queries](/orm/v6/prisma-client/queries/crud) to the database (e.g. `findUnique()`, `findMany`, `create`, ...).\n"
+      },
+      {
+        "line": 224,
+        "text": "- manage physical database connections in connection pool\n- receive incoming queries from the Prisma Client Node.js process\n- generate SQL queries\n- send SQL queries to the database\n- process responses from the database and send them back to Prisma Client"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/prisma/docs/blob/c05758d0364384c5cf4bb8aed75fd33e0d72043e/apps/docs/content/docs/orm/v6/reference/environment-variables-reference.mdx",
+    "sha256": "88fd00b91c3f0a27864e334af0ff30f39af9bc2c8a83925b0df43e630f2691c3",
+    "excerpts": [
+      {
+        "line": 68,
+        "text": "\n`PRISMA_GENERATE_SKIP_AUTOINSTALL` can be set to a truthy value to skip the auto-install of `prisma` CLI and `@prisma/client` dependencies (if they are missing), if the `prisma-client-js` generator is defined in the Prisma Schema, when using the `prisma generate` command.\n\n### `PRISMA_SKIP_POSTINSTALL_GENERATE`\n"
+      },
+      {
+        "line": 78,
+        "text": "\n`PRISMA_SKIP_POSTINSTALL_GENERATE` can be set to a truthy value to skip the auto-generation of Prisma Client when its `postinstall` hook is triggered by a package manager. The `postinstall` hook of the `@prisma/client` package is triggered when the package is installed, or its version is updated.\n\n### `PRISMA_DISABLE_WARNINGS`\n"
+      },
+      {
+        "line": 170,
+        "text": "\nNote: You need to generate your Prisma Client after setting this variable for the configuration to take effect and the libraries to be downloaded. Otherwise, Prisma Client will be missing the appropriate query engine library and you will _have to_ define their location using [`PRISMA_QUERY_ENGINE_LIBRARY`](#prisma_query_engine_library).\n\nIt is the environment variable equivalent for the [`engineType` property of the `generator` block](/orm/v6/more/internals/engines#configuring-the-query-engine) which enables you to define the same setting in your Prisma Schema.\n"
+      },
+      {
+        "line": 176,
+        "text": "\n#### `PRISMA_ENGINES_MIRROR`\n\n`PRISMA_ENGINES_MIRROR` can be used to specify a custom CDN (or server) endpoint to download the engines files for the CLI/Client. The default value is `https://binaries.prisma.sh`, where Prisma hosts the engine files.\n"
+      },
+      {
+        "line": 178,
+        "text": "\n`PRISMA_ENGINES_MIRROR` can be used to specify a custom CDN (or server) endpoint to download the engines files for the CLI/Client. The default value is `https://binaries.prisma.sh`, where Prisma hosts the engine files.\n\n```text\nPRISMA_ENGINES_MIRROR=https://example.org/custom-engines/"
+      },
+      {
+        "line": 181,
+        "text": "```text\nPRISMA_ENGINES_MIRROR=https://example.org/custom-engines/\n```\n\nSee [Prisma engines](/orm/v6/more/internals/engines#hosting-engines) for a conceptual overview of how to use this environment variable."
+      },
+      {
+        "line": 225,
+        "text": "For Prisma CLI it allows you to define the query engine file to be used.  \nFor Prisma Client, on build time (during `prisma generate`), it defines where the query engine file will be copied from into Prisma Client. At run time (when using the generated Client) it can be used to define the specific query engine file to be used instead of the included one.\n\nNote: This can only have an effect if the engine type of CLI or Client are set to `binary`. If the engine type is `library` (the default), use PRISMA_QUERY_ENGINE_LIBRARY instead.\n"
+      },
+      {
+        "line": 227,
+        "text": "\nNote: This can only have an effect if the engine type of CLI or Client are set to `binary`. If the engine type is `library` (the default), use PRISMA_QUERY_ENGINE_LIBRARY instead.\n\n#### `PRISMA_QUERY_ENGINE_LIBRARY`\n"
+      },
+      {
+        "line": 229,
+        "text": "\n#### `PRISMA_QUERY_ENGINE_LIBRARY`\n\n:::danger[Prisma v7 Deprecation]\n"
+      },
+      {
+        "line": 237,
+        "text": "\n`PRISMA_QUERY_ENGINE_LIBRARY` is used to set a custom location for your own query engine library.\n\n```text\nPRISMA_QUERY_ENGINE_LIBRARY=custom/libquery_engine-<target>.so.node"
+      },
+      {
+        "line": 240,
+        "text": "```text\nPRISMA_QUERY_ENGINE_LIBRARY=custom/libquery_engine-<target>.so.node\n# Example: ./prisma/binaries/libquery_engine-linux-arm64-openssl-1.0.x.so.node\n```\n"
+      },
+      {
+        "line": 245,
+        "text": "For Prisma CLI it allows you to define the query engine file to be used.  \nFor Prisma Client, on build time (during `prisma generate`), it defines where the query engine file will be copied from into Prisma Client. At run time (when using the generated Client) it can be used to define the specific query engine file to be used instead of the included one.\n\nNote: This can only have an effect if the engine type of CLI or Client are set to `library` (the default)\n"
+      },
+      {
+        "line": 249,
+        "text": "\n#### `PRISMA_SCHEMA_ENGINE_BINARY`\n\n`PRISMA_SCHEMA_ENGINE_BINARY` is used to set a custom location for your Schema engine binary.\n"
+      },
+      {
+        "line": 251,
+        "text": "\n`PRISMA_SCHEMA_ENGINE_BINARY` is used to set a custom location for your Schema engine binary.\n\n```text\nPRISMA_SCHEMA_ENGINE_BINARY=custom/my-schema-engine-unix"
+      },
+      {
+        "line": 254,
+        "text": "```text\nPRISMA_SCHEMA_ENGINE_BINARY=custom/my-schema-engine-unix\n```\n\n#### `PRISMA_MIGRATION_ENGINE_BINARY`"
+      },
+      {
+        "line": 323,
+        "text": "\nUse `PRISMA_CLI_BINARY_TARGETS` if you 1) deploy to a specific platform via an upload of a local project that includes dependencies, and 2) your local environment is different from the target (e.g. AWS Lambda with Node.js 20+ is `rhel-openssl-3.0.x`, and your local environment might be macOS arm64 `darwin-arm64`). Using the `PRISMA_CLI_BINARY_TARGETS` environment variable ensures that the target engine files are also downloaded.\n\n```bash\nPRISMA_CLI_BINARY_TARGETS=darwin-arm64,rhel-openssl-3.0.x npm install"
+      },
+      {
+        "line": 329,
+        "text": "\nThis is the Prisma CLI equivalent for the [`binaryTargets` property of the `generator` block](/orm/v6/prisma-schema/overview/generators#binary-targets), which enables you to define the same setting for Prisma Client.\n\n:::info[Note]\n"
+      },
+      {
+        "line": 333,
+        "text": "\nFor Node.js versions earlier than 20, the openssl version was 1.0.x instead of 3.0.x. This is most obvious in AWS Lambda deployments, where the binary target would be `rhel-openssl-1.0.x` instead of `rhel-openssl-3.0.x`.\n\n:::"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/prisma/docs/blob/c05758d0364384c5cf4bb8aed75fd33e0d72043e/apps/docs/content/docs/orm/v6/reference/system-requirements.mdx",
+    "sha256": "e8709123e1c93a21d5378c5b6c56e779d5f184c9094f5982b0e8f0945b6475e1",
+    "excerpts": [
+      {
+        "line": 21,
+        "text": "| :-------------------- | :----------------------------- |\n| Node.js               | ^20.19.0, ^22.12.0, or ^24.0.0 |\n| TypeScript (optional) | 5.4+                           |\n| Yarn (optional)       | 1.19.2                         |\n"
+      },
+      {
+        "line": 25,
+        "text": "\n- Prisma ORM supports and tests all _Active LTS_ and _Maintenance LTS_ **Node.js** releases. [Releases that are not in these states like _Current_, and also odd-numbered versions](https://nodejs.org/en/about/releases/) probably also work, but are not recommended for production use.\n- **TypeScript** is only required for TypeScript users.\n- When using **Yarn 1**, `1.19.2` is the minimum version compatible with Prisma Client.\n"
+      },
+      {
+        "line": 40,
+        "text": "| :-------------------- | :----------------------- |\n| Node.js               | 16.13 / 18.X / 20.X      |\n| TypeScript (optional) | 4.7+                     |\n| Yarn (optional)       | 1.19.2                   |\n"
+      },
+      {
+        "line": 54,
+        "text": "\n- OpenSSL 1.0.x, 1.1.x or 3.x\n- zlib (`libz.so.1`)\n- libgcc (`libgcc_s.so.1`)\n- C standard library (glibc on most Linux distributions or musl libc on Alpine Linux)"
+      },
+      {
+        "line": 59,
+        "text": "\nThe following two tables show the supported Linux distro families, OpenSSL versions and C standard libraries for each CPU architecture.\n\nOn `AMD64` (`x86_64`) architecture:\n"
+      },
+      {
+        "line": 63,
+        "text": "\n| Distro family    | OpenSSL version   | libc version |\n| ---------------- | ----------------- | ------------ |\n| Alpine           | 1.1.x, 3.x        | musl 1.2.x   |\n| RHEL             | 1.0.x, 1.1.x, 3.x | glibc 2.17+  |"
+      },
+      {
+        "line": 72,
+        "text": "\n| Distro family    | OpenSSL version   | libc version |\n| ---------------- | ----------------- | ------------ |\n| Alpine           | 1.1.x, 3.x        | musl 1.2.x   |\n| RHEL             | 1.0.x, 1.1.x, 3.x | glibc 2.24+  |"
+      },
+      {
+        "line": 78,
+        "text": "\nWhen Prisma ORM can not resolve the OpenSSL version on a system (e.g. because it is not installed), it will default to OpenSSL 1.1.x.\n\nSystems that can run the supported Node.js versions will most likely have zlib and libgcc available. One notable exception is Google's Distroless images, where `libz.so.1` needs to be copied from a compatible Debian system.\n"
+      },
+      {
+        "line": 80,
+        "text": "\nSystems that can run the supported Node.js versions will most likely have zlib and libgcc available. One notable exception is Google's Distroless images, where `libz.so.1` needs to be copied from a compatible Debian system.\n\n#### Windows runtime dependencies\n"
+      },
+      {
+        "line": 98,
+        "text": "\nYou see the following error when you try type-checking a project after you run `prisma generate`.\n\n```bash wrap\n./node_modules/.prisma/client/index.d.ts:10:33"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/prisma/docs/blob/c05758d0364384c5cf4bb8aed75fd33e0d72043e/apps/docs/content/docs/orm/v6/prisma-schema/overview/generators.mdx",
+    "sha256": "a210cad9b6f62c6f3943391aac0dc58694c32c2c4f9afb92633d9199d290b333",
+    "excerpts": [
+      {
+        "line": 3,
+        "text": "title: Generators\ndescription: Generators in your Prisma schema specify what assets are generated when the `prisma generate` command is invoked. This page explains how to configure generators.\nurl: /orm/v6/prisma-schema/overview/generators\nmetaTitle: Generators (Reference)\nmetaDescription: Generators in your Prisma schema specify what assets are generated when the `prisma generate` command is invoked. This page explains how to configure generators."
+      },
+      {
+        "line": 6,
+        "text": "metaTitle: Generators (Reference)\nmetaDescription: Generators in your Prisma schema specify what assets are generated when the `prisma generate` command is invoked. This page explains how to configure generators.\n---\n\nA Prisma schema can have one or more generators, represented by the [`generator`](/orm/v6/reference/prisma-schema-reference#generator) block:"
+      },
+      {
+        "line": 18,
+        "text": "\nA generator determines which assets are created when you run the `prisma generate` command.\n\nThe default generator for Prisma Client is `prisma-client`, which outputs plain TypeScript code and _requires_ a custom `output` path (read more about it in [the blog post on generating into `node_modules`](https://www.prisma.io/blog/why-prisma-orm-generates-code-into-node-modules-and-why-it-ll-change)).\n"
+      },
+      {
+        "line": 74,
+        "text": "```npm\nnpx prisma generate\n```\n\nThis generates the code for Prisma Client (including the query engine binary) into the specified `output` folder."
+      },
+      {
+        "line": 209,
+        "text": "\n- Contains no transitive dependencies on Node.js or other server-only packages.\n- Contains no real `PrismaClient` constructor.\n- Contains all model and enum types and values.\n- Provides access to various utilities like `Prisma.JsonNull` and `Prisma.Decimal`."
+      },
+      {
+        "line": 319,
+        "text": "| ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- | ----------------- | ------------------------------------------------ | --------- |\n| [`nextjs-starter-webpack`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack)                                   | Next.js 15     | Webpack           | Node.js                                          | n/a       |\n| [`nextjs-starter-turbopack`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-turbopack)                               | Next.js 15     | Turbopack (alpha) | Node.js                                          | n/a       |\n| [`nextjs-starter-webpack-monorepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-monorepo)                 | Next.js 15     | Webpack           | Node.js                                          | pnpm      |\n| [`nextjs-starter-webpack-with-middleware`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-with-middleware)   | Next.js 15     | Webpack           | Node.js (main pages), `vercel-edge` (middleware) | n/a       |"
+      },
+      {
+        "line": 320,
+        "text": "| [`nextjs-starter-webpack`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack)                                   | Next.js 15     | Webpack           | Node.js                                          | n/a       |\n| [`nextjs-starter-turbopack`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-turbopack)                               | Next.js 15     | Turbopack (alpha) | Node.js                                          | n/a       |\n| [`nextjs-starter-webpack-monorepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-monorepo)                 | Next.js 15     | Webpack           | Node.js                                          | pnpm      |\n| [`nextjs-starter-webpack-with-middleware`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-with-middleware)   | Next.js 15     | Webpack           | Node.js (main pages), `vercel-edge` (middleware) | n/a       |\n| [`nextjs-starter-webpack-turborepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-turborepo)               | Next.js 15     | Webpack           | Node.js                                          | turborepo |"
+      },
+      {
+        "line": 321,
+        "text": "| [`nextjs-starter-turbopack`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-turbopack)                               | Next.js 15     | Turbopack (alpha) | Node.js                                          | n/a       |\n| [`nextjs-starter-webpack-monorepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-monorepo)                 | Next.js 15     | Webpack           | Node.js                                          | pnpm      |\n| [`nextjs-starter-webpack-with-middleware`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-with-middleware)   | Next.js 15     | Webpack           | Node.js (main pages), `vercel-edge` (middleware) | n/a       |\n| [`nextjs-starter-webpack-turborepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-turborepo)               | Next.js 15     | Webpack           | Node.js                                          | turborepo |\n| [`react-router-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/react-router-starter-nodejs)                         | React Router 7 | Vite 6            | Node.js                                          | n/a       |"
+      },
+      {
+        "line": 322,
+        "text": "| [`nextjs-starter-webpack-monorepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-monorepo)                 | Next.js 15     | Webpack           | Node.js                                          | pnpm      |\n| [`nextjs-starter-webpack-with-middleware`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-with-middleware)   | Next.js 15     | Webpack           | Node.js (main pages), `vercel-edge` (middleware) | n/a       |\n| [`nextjs-starter-webpack-turborepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-turborepo)               | Next.js 15     | Webpack           | Node.js                                          | turborepo |\n| [`react-router-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/react-router-starter-nodejs)                         | React Router 7 | Vite 6            | Node.js                                          | n/a       |\n| [`react-router-starter-cloudflare-workerd`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/react-router-starter-cloudflare-workerd) | React Router 7 |                   |                                                  | n/a       |"
+      },
+      {
+        "line": 323,
+        "text": "| [`nextjs-starter-webpack-with-middleware`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-with-middleware)   | Next.js 15     | Webpack           | Node.js (main pages), `vercel-edge` (middleware) | n/a       |\n| [`nextjs-starter-webpack-turborepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-turborepo)               | Next.js 15     | Webpack           | Node.js                                          | turborepo |\n| [`react-router-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/react-router-starter-nodejs)                         | React Router 7 | Vite 6            | Node.js                                          | n/a       |\n| [`react-router-starter-cloudflare-workerd`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/react-router-starter-cloudflare-workerd) | React Router 7 |                   |                                                  | n/a       |\n| [`nuxt3-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nuxt3-starter-nodejs)                                       | Nuxt 3         | Vite 6            | Node.js                                          | n/a       |"
+      },
+      {
+        "line": 324,
+        "text": "| [`nextjs-starter-webpack-turborepo`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nextjs-starter-webpack-turborepo)               | Next.js 15     | Webpack           | Node.js                                          | turborepo |\n| [`react-router-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/react-router-starter-nodejs)                         | React Router 7 | Vite 6            | Node.js                                          | n/a       |\n| [`react-router-starter-cloudflare-workerd`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/react-router-starter-cloudflare-workerd) | React Router 7 |                   |                                                  | n/a       |\n| [`nuxt3-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nuxt3-starter-nodejs)                                       | Nuxt 3         | Vite 6            | Node.js                                          | n/a       |\n| [`nuxt4-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nuxt4-starter-nodejs)                                       | Nuxt 4         | Vite 7            | Node.js                                          | n/a       |"
+      },
+      {
+        "line": 326,
+        "text": "| [`react-router-starter-cloudflare-workerd`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/react-router-starter-cloudflare-workerd) | React Router 7 |                   |                                                  | n/a       |\n| [`nuxt3-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nuxt3-starter-nodejs)                                       | Nuxt 3         | Vite 6            | Node.js                                          | n/a       |\n| [`nuxt4-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nuxt4-starter-nodejs)                                       | Nuxt 4         | Vite 7            | Node.js                                          | n/a       |\n| [`bun`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/deno-deploy)                                                                 | None           | None              | Deno 2                                           | n/a       |\n| [`deno`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/deno-deploy)                                                                | None           | None              | Deno 2                                           | n/a       |"
+      },
+      {
+        "line": 327,
+        "text": "| [`nuxt3-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nuxt3-starter-nodejs)                                       | Nuxt 3         | Vite 6            | Node.js                                          | n/a       |\n| [`nuxt4-starter-nodejs`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/nuxt4-starter-nodejs)                                       | Nuxt 4         | Vite 7            | Node.js                                          | n/a       |\n| [`bun`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/deno-deploy)                                                                 | None           | None              | Deno 2                                           | n/a       |\n| [`deno`](https://github.com/prisma/prisma-examples/tree/latest/generator-prisma-client/deno-deploy)                                                                | None           | None              | Deno 2                                           | n/a       |\n"
+      },
+      {
+        "line": 346,
+        "text": "- `previewFeatures`: [Preview features](/orm/v6/reference/preview-features) to include\n- `binaryTargets`: Engine binary targets for `prisma-client-js` (for example, `debian-openssl-1.1.x` if you are deploying to Ubuntu 18+, or `native` if you are working locally)\n\n```prisma\ngenerator client {"
+      },
+      {
+        "line": 352,
+        "text": "  previewFeatures = [\"sample-preview-feature\"]\n  binaryTargets   = [\"debian-openssl-1.1.x\"] // defaults to `\"native\"`\n}\n```\n"
+      },
+      {
+        "line": 374,
+        "text": "\nWhen using Prisma ORM without Rust, the `binaryTargets` field is obsolete and not needed.\n\nYou can [read about the performance and DX improvements](https://www.prisma.io/blog/prisma-orm-without-rust-latest-performance-benchmarks) of this change on our blog.\n"
+      },
+      {
+        "line": 386,
+        "text": "\nThe `native` binary target is special. It doesn't map to a concrete operating system. Instead, when `native` is specified in `binaryTargets`, Prisma Client detects the _current_ operating system and automatically specifies the correct binary target for it.\n\nAs an example, assume you're running **macOS** and you specify the following generator:\n"
+      },
+      {
+        "line": 393,
+        "text": "  provider      = \"prisma-client-js\"\n  binaryTargets = [\"native\"]\n}\n```\n"
+      }
+    ]
+  }
+]

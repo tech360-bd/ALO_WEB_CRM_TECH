@@ -113,7 +113,7 @@ function linkGeometry(
 }
 
 export default function FlowDiagram({
-  idPrefix,
+  idPrefix: requestedPrefix,
   title,
   eyebrow,
   width,
@@ -129,6 +129,7 @@ export default function FlowDiagram({
   nodes: FlowNode[];
   links: FlowLink[];
 }) {
+  const idPrefix = `${requestedPrefix}-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const byId = new Map(nodes.map((n) => [n.id, n]));
 
   return (

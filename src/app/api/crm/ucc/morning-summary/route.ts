@@ -1,3 +1,4 @@
+import { canUseUnscopedUccAdmin } from '@/lib/ucc/document-access';
 // ============================================================
 // /api/crm/ucc/morning-summary
 // GET — Daily counselor briefing: overnight conversations,
@@ -13,6 +14,7 @@ export async function GET(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (!canUseUnscopedUccAdmin(auth)) return NextResponse.json({success:false,code:'UCC_OWNERSHIP_SCOPE_PENDING',error:'Private UCC access is restricted to canonical administrators until domain-aware ownership is verified.'},{status:403});
 
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000);
