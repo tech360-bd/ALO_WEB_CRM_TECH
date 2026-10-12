@@ -1,16 +1,1 @@
-{
-  "name": "alo-sla-monitor",
-  "version": "1.0.0",
-  "scripts": {
-    "dev": "node -e \"throw new Error('Worker disabled pending Node 22 and lifecycle verification')\"",
-    "start": "node -e \"throw new Error('Worker disabled pending Node 22 and lifecycle verification')\""
-  },
-  "dependencies": {
-    "@prisma/client": "^6.11.1"
-  },
-  "engines": {
-    "node": "22.x",
-    "npm": ">=10"
-  },
-  "description": "Legacy unverified worker; not enabled in Hostinger production."
-}
+{ "name": "alo-sla-monitor", "version": "1.0.0", "scripts": { "dev": "bun --hot index.ts", "start": "bun index.ts" }, "dependencies": { "@prisma/client": "^6.11.1" } }

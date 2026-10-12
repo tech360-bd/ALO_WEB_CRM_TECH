@@ -1,22 +1,5 @@
 "use client";
 
-/**
- * ALO Education — Unified Communication & Social Command Center
- * ==============================================================
- * One workspace for WhatsApp, Email, SMS, Phone, Portal & Social channels.
- *
- * Sections:
- *   1. PageHeader
- *   2. 6 KPI cards (pending, SLA %, open tasks, escalations, AI drafts, unread)
- *   3. Channel grid (8 channel cards)
- *   4. Unified inbox preview (DataTable, 10 rows)
- *   5. Communication tasks list + Create Task dialog
- *   6. AI Drafts pending approval (AISuggestionCard)
- *   7. Escalation feed (Timeline)
- *
- * All API calls use relative paths only.
- */
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -25,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -42,83 +26,122 @@ import {
 } from "@/components/ui/dialog";
 import {
   Icon,
-  KpiCard,
   PageHeader,
   SectionCard,
   EmptyState,
-  ErrorState,
   LoadingGrid,
-  LoadingSkeleton,
-  StatusBadge,
+} from "@/components/alo/shared";
+import {
   DataTable,
+  type DataTableColumn,
   Timeline,
-  type AccentColor,
-  type Column,
-} from "@/components/alo/ui";
-import { AISuggestionCard } from "@/components/alo/cards";
-import { fmtDate, timeAgo, type ViewKey } from "@/lib/alo-types";
+  SearchInput,
+  Pill,
+  fetchJson,
+  channelMeta,
+  COMMAND_CENTER_CHANNELS,
+  PRIORITY_COLORS,
+  TASK_STATUS_COLORS,
+  timeAgoShort,
+  fmtDateTime,
+} from "@/components/alo/comm-helpers";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Types — match API response shapes
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────
+
+interface SlaDashboardSummary {
+  totalAssigned: number;
+  totalResponded: number;
+  pending: number;
+  overdue: number;
+  slaCompliancePct: number;
+  avgResponseTimeSeconds: number;
+  escalations: number;
+  justificationsPending: number;
+  justificationsAccepted: number;
+  totalSlaBreaches: number;
+  totalValidExclusions: number;
+}
 
 interface SlaDashboardResponse {
-  stats: {
-    totalAssigned: number;
-    responded: number;
-    pending: number;
-    overdue: number;
-    slaCompliancePct: number;
-    avgResponseTime: number;
-    escalations: number;
-    openEscalations: number;
-    acknowledgedEscalations: number;
-    justifications: { pending: number; accepted: number; total: number };
-    incidentCounters: number;
-    totalBreaches: number;
-    totalValidExclusions: number;
-  };
-  topUnresolvedConversations: Array<{
+  summary: SlaDashboardSummary;
+  topUnresolved: Array<{
     id: string;
     channel: string;
-    body?: string | null;
-    fromName?: string | null;
-    fromPhone?: string | null;
+    fromPhone: string | null;
+    fromName: string | null;
+    fromEmail: string | null;
+    body: string;
+    studentId: string | null;
+    counselorId: string | null;
     receivedAt: string;
-    read?: boolean;
   }>;
 }
 
-interface OmniDashboardResponse {
-  stats: {
-    connectedAccounts: number;
-    connectedActive: number;
-    expiredAccounts: number;
-    totalPhoneCalls: number;
-    missedCalls: number;
-    totalEmails: number;
-    unreadEmails: number;
-    totalSms: number;
-    deliveredSms: number;
-    totalNotifications: number;
-    unreadNotifications: number;
-    totalConsent: number;
-    optedIn: number;
-    optedOut: number;
-    totalDocuments: number;
-    documentVersions: number;
-    aiClassified: number;
-    pendingReview: number;
-    timelineEvents: number;
-    socialMessages: number;
-    whatsappMessages: number;
-    pendingDrafts: number;
-    pendingJustifications: number;
-    openEscalations: number;
-    openTasks: number;
-    templatesCount: number;
-    slaCompliance: number;
-  };
+interface OmnichannelStats {
+  connectedAccounts: number;
+  connectedActive: number;
+  expiredAccounts: number;
+  totalPhoneCalls: number;
+  missedCalls: number;
+  totalEmails: number;
+  unreadEmails: number;
+  totalSms: number;
+  deliveredSms: number;
+  totalNotifications: number;
+  unreadNotifications: number;
+  whatsappMessages: number;
+  socialMessages: number;
+}
+
+interface OmnichannelResponse {
+  stats: OmnichannelStats;
+  phoneCalls?: unknown[];
+  connectedAccounts?: Array<{ platform: string; connectionStatus: string }>;
+}
+
+interface CommTask {
+  id: string;
+  title: string;
+  description?: string | null;
+  channel?: string | null;
+  source?: string | null;
+  priority?: string | null;
+  status: string;
+  assignedTo?: string | null;
+  studentId?: string | null;
+  applicationId?: string | null;
+  deadline?: string | null;
+  createdAt: string;
+  resolvedAt?: string | null;
+}
+
+interface CommDraft {
+  id: string;
+  channel: string;
+  draftBody: string;
+  editedBody?: string | null;
+  aiGenerated?: boolean | null;
+  aiConfidence?: number | null;
+  aiReasoning?: string | null;
+  riskLevel?: string | null;
+  mode?: string | null;
+  status: string;
+  studentId?: string | null;
+  socialInboxMessageId?: string | null;
+  createdAt: string;
+}
+
+interface Escalation {
+  id: string;
+  type: string;
+  level?: number | null;
+  message: string;
+  status: string;
+  actionTaken?: string | null;
+  studentId?: string | null;
+  counselorId?: string | null;
+  createdAt: string;
+  resolvedAt?: string | null;
 }
 
 interface SocialAccount {
@@ -127,1030 +150,858 @@ interface SocialAccount {
   accountName: string;
   accountType?: string | null;
   connectionStatus: string;
-  tokenStatus?: string | null;
-  webhookStatus?: string | null;
-  requiresConfig: boolean;
-  ownerEmployeeId?: string | null;
-  owner?: { id: string; name: string; role: string; email: string } | null;
+  requiresConfig?: boolean | null;
 }
 
-interface CommunicationTask {
-  id: string;
-  title: string;
-  description?: string | null;
-  status: string;
-  priority: string;
-  source?: string | null;
-  assignedTo?: string | null;
-  studentId?: string | null;
-  applicationId?: string | null;
-  deadline?: string | null;
-  createdAt: string;
-}
+// ─── Helpers ──────────────────────────────────────────────────────────────
 
-interface CommunicationDraft {
-  id: string;
-  channel: string;
-  draftBody: string;
-  editedBody?: string | null;
-  status: string;
-  aiGenerated: boolean;
-  aiConfidence?: number | null;
-  aiReasoning?: string | null;
-  riskLevel?: string | null;
-  mode?: string | null;
-  studentId?: string | null;
-  applicationId?: string | null;
-  createdBy?: string | null;
-  approvedBy?: string | null;
-  createdAt: string;
-}
-
-interface EscalationEvent {
-  id: string;
-  type: string;
-  level: number;
-  message: string;
-  status: string;
-  studentId?: string | null;
-  counselorId?: string | null;
-  supervisorId?: string | null;
-  createdAt: string;
-}
-
-interface InboxConversation {
-  key: string;
-  channel: string;
-  studentId?: string | null;
-  studentName?: string | null;
-  fromPhone?: string | null;
-  fromEmail?: string | null;
-  messages: Array<{
-    id: string;
-    channel: string;
-    direction: string;
-    body: string;
-    fromName?: string | null;
-    read?: boolean;
-    receivedAt: string;
-    aiAssisted?: boolean;
-  }>;
-  unread: number;
-  lastMessageAt: string;
-}
-
-interface InboxResponse {
-  conversations: InboxConversation[];
-  slaStats: Array<{ status: string; _count: number | { _all: number } }>;
-  totalMessages: number;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Channel metadata
-// ─────────────────────────────────────────────────────────────────────────────
-
-interface ChannelMeta {
-  key: string;
-  name: string;
-  icon: string;
-  accent: AccentColor;
-  targetView: ViewKey;
-}
-
-const CHANNELS: ChannelMeta[] = [
-  { key: "WHATSAPP", name: "WhatsApp", icon: "MessageCircle", accent: "emerald", targetView: "whatsapp-command-center" },
-  { key: "EMAIL", name: "Email", icon: "Mail", accent: "violet", targetView: "unified-inbox" },
-  { key: "SMS", name: "SMS", icon: "MessageSquare", accent: "blue", targetView: "unified-inbox" },
-  { key: "PHONE", name: "Phone", icon: "PhoneCall", accent: "orange", targetView: "phone-call-center" },
-  { key: "PORTAL", name: "Portal", icon: "LayoutDashboard", accent: "sky", targetView: "unified-inbox" },
-  { key: "WEBSITE_CHAT", name: "Website Chat", icon: "Globe", accent: "blue", targetView: "unified-inbox" },
-  { key: "FACEBOOK", name: "Facebook", icon: "Facebook", accent: "sky", targetView: "unified-inbox" },
-  { key: "INSTAGRAM", name: "Instagram", icon: "Instagram", accent: "rose", targetView: "unified-inbox" },
-];
-
-function channelMeta(key: string): ChannelMeta {
-  return CHANNELS.find((c) => c.key === key) || {
-    key,
-    name: key.replace(/_/g, " "),
-    icon: "MessageSquare",
-    accent: "slate",
-    targetView: "unified-inbox" as ViewKey,
-  };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SLA helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-type SlaSeverity = "NORMAL" | "WARNING" | "OVERDUE" | "CRITICAL";
-
-function slaSeverityForConversation(conv: InboxConversation): SlaSeverity {
-  // Use the time since the most recent inbound message to estimate SLA state.
-  const inbound = conv.messages.find((m) => m.direction === "INBOUND");
-  const ts = inbound?.receivedAt || conv.lastMessageAt;
-  const mins = Math.floor((Date.now() - new Date(ts).getTime()) / 60000);
-  if (mins >= 120) return "CRITICAL";
-  if (mins >= 60) return "OVERDUE";
-  if (mins >= 30) return "WARNING";
-  return "NORMAL";
-}
-
-const SLA_ACCENT: Record<SlaSeverity, AccentColor> = {
-  NORMAL: "emerald",
-  WARNING: "amber",
-  OVERDUE: "rose",
-  CRITICAL: "rose",
-};
-
-function formatSlaCountdown(ts: string): string {
-  const mins = Math.floor((Date.now() - new Date(ts).getTime()) / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ${mins % 60}m`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ${hrs % 24}h`;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Color & status maps
-// ─────────────────────────────────────────────────────────────────────────────
-
-const PRIORITY_COLOR_MAP: Record<string, AccentColor> = {
-  LOW: "slate",
-  MEDIUM: "sky",
-  HIGH: "amber",
-  URGENT: "rose",
-};
-
-const TASK_STATUS_COLOR_MAP: Record<string, AccentColor> = {
-  OPEN: "blue",
-  IN_PROGRESS: "amber",
-  COMPLETED: "emerald",
-  CANCELLED: "slate",
-};
-
-const TASK_STATUS_LABELS: Record<string, string> = {
-  OPEN: "Open",
-  IN_PROGRESS: "In Progress",
-  COMPLETED: "Completed",
-  CANCELLED: "Cancelled",
-};
-
-const ESCALATION_ACCENT: Record<number, AccentColor> = {
-  1: "amber",
-  2: "orange",
-  3: "rose",
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Small UI helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-function SlaStatusDot({ severity }: { severity: SlaSeverity }) {
-  const dotColor =
-    severity === "NORMAL" ? "bg-[var(--alo-success)]" :
-    severity === "WARNING" ? "bg-[var(--alo-warning)]" :
-    "bg-[var(--alo-danger)]";
-  const pulse = severity !== "NORMAL";
-  return (
-    <span
-      className={cn("inline-block size-2 rounded-full", dotColor, pulse && "pulse-dot")}
-      title={severity}
-    />
+function slaStatusFor(channel: string, socialAccounts: SocialAccount[]) {
+  const account = socialAccounts.find(
+    (a) => a.platform === channel || channelMeta(channel).label === channelMeta(a.platform).label
   );
-}
-
-function navigate(view: ViewKey) {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("alo-navigate", { detail: { view } }));
+  if (!account || account.connectionStatus !== "CONNECTED") {
+    return { status: "OFFLINE", color: "bg-slate-300" };
   }
+  if (account.requiresConfig) {
+    return { status: "WARNING", color: "bg-amber-400" };
+  }
+  return { status: "OK", color: "bg-emerald-500" };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Main Component ────────────────────────────────────────────────────────
 
 export function CommCommandCenter() {
   const { toast } = useToast();
-
-  // Top-level fetch state (combined across multiple endpoints)
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  const [slaStats, setSlaStats] = React.useState<SlaDashboardResponse["stats"] | null>(null);
-  const [omniStats, setOmniStats] = React.useState<OmniDashboardResponse["stats"] | null>(null);
+  const [sla, setSla] = React.useState<SlaDashboardSummary | null>(null);
+  const [omni, setOmni] = React.useState<OmnichannelStats | null>(null);
   const [socialAccounts, setSocialAccounts] = React.useState<SocialAccount[]>([]);
-  const [conversations, setConversations] = React.useState<InboxConversation[]>([]);
-  const [tasks, setTasks] = React.useState<CommunicationTask[]>([]);
-  const [drafts, setDrafts] = React.useState<CommunicationDraft[]>([]);
-  const [escalations, setEscalations] = React.useState<EscalationEvent[]>([]);
-
-  // Create-task dialog state
-  const [taskDialogOpen, setTaskDialogOpen] = React.useState(false);
-  const [creatingTask, setCreatingTask] = React.useState(false);
-  const [taskForm, setTaskForm] = React.useState({
-    title: "",
-    studentId: "",
-    assignedTo: "",
-    priority: "MEDIUM",
-    deadline: "",
-    description: "",
-  });
-
-  // Acting user (best-effort — fallback to "system" if session unavailable)
-  const [currentUserId, setCurrentUserId] = React.useState<string>("system");
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const stored = sessionStorage.getItem("alo-current-user");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.id) setCurrentUserId(parsed.id);
-      }
-    } catch {
-      // ignore — fall back to "system"
-    }
-  }, []);
+  const [tasks, setTasks] = React.useState<CommTask[]>([]);
+  const [drafts, setDrafts] = React.useState<CommDraft[]>([]);
+  const [escalations, setEscalations] = React.useState<Escalation[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  const [createTaskOpen, setCreateTaskOpen] = React.useState(false);
+  const [taskSearch, setTaskSearch] = React.useState("");
+  const [taskStatus, setTaskStatus] = React.useState<string>("OPEN");
 
   const fetchAll = React.useCallback(async () => {
     setLoading(true);
-    setError(null);
-    const results = await Promise.allSettled([
-      fetch("/api/communications/sla/dashboard", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/omnichannel/dashboard", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/communications/social-accounts", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/inbox/unified", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/communications/tasks?status=OPEN", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/communications/drafts?status=DRAFT", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/communications/escalations?status=OPEN", { cache: "no-store" }).then((r) => r.json()),
-    ]);
-
-    const [slaRes, omniRes, socialRes, inboxRes, tasksRes, draftsRes, escRes] = results;
-
-    // If literally every endpoint failed, surface a global error.
-    if (results.every((r) => r.status === "rejected")) {
-      setError("Failed to load command center data. Check your network and try again.");
+    setError(false);
+    try {
+      const [slaRes, omniRes, socialRes, taskRes, draftRes, escRes] = await Promise.all([
+        fetchJson<SlaDashboardResponse>("/api/communications/sla/dashboard"),
+        fetchJson<OmnichannelResponse>("/api/omnichannel/dashboard"),
+        fetchJson<{ socialAccounts: SocialAccount[] }>("/api/communications/social-accounts"),
+        fetchJson<{ tasks: CommTask[] }>(
+          `/api/communications/tasks?status=${taskStatus}`
+        ),
+        fetchJson<{ drafts: CommDraft[] }>(
+          "/api/communications/drafts?status=DRAFT"
+        ),
+        fetchJson<{ escalations: Escalation[] }>(
+          "/api/communications/escalations?status=OPEN"
+        ),
+      ]);
+      setSla(slaRes.summary);
+      setOmni(omniRes.stats);
+      setSocialAccounts(socialRes.socialAccounts || []);
+      setTasks(taskRes.tasks || []);
+      setDrafts(draftRes.drafts || []);
+      setEscalations(escRes.escalations || []);
+    } catch (err) {
+      console.error("[comm-command-center]", err);
+      setError(true);
+      toast({
+        title: "Failed to load command center",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    } finally {
       setLoading(false);
-      return;
     }
-
-    if (slaRes.status === "fulfilled" && slaRes.value?.stats) setSlaStats(slaRes.value.stats as SlaDashboardResponse["stats"]);
-    if (omniRes.status === "fulfilled" && omniRes.value?.stats) setOmniStats(omniRes.value.stats as OmniDashboardResponse["stats"]);
-    if (socialRes.status === "fulfilled" && Array.isArray(socialRes.value?.socialAccounts)) setSocialAccounts(socialRes.value.socialAccounts as SocialAccount[]);
-    if (inboxRes.status === "fulfilled" && Array.isArray(inboxRes.value?.conversations)) setConversations(inboxRes.value.conversations as InboxConversation[]);
-    if (tasksRes.status === "fulfilled" && Array.isArray(tasksRes.value?.tasks)) setTasks(tasksRes.value.tasks as CommunicationTask[]);
-    if (draftsRes.status === "fulfilled" && Array.isArray(draftsRes.value?.drafts)) setDrafts(draftsRes.value.drafts as CommunicationDraft[]);
-    if (escRes.status === "fulfilled" && Array.isArray(escRes.value?.escalations)) setEscalations(escRes.value.escalations as EscalationEvent[]);
-
-    setLoading(false);
-  }, []);
+  }, [taskStatus, toast]);
 
   React.useEffect(() => {
-    fetchAll();
+    void fetchAll();
   }, [fetchAll]);
 
-  // ── Derived channel stats ──────────────────────────────────────────────
-  const channelStats = React.useMemo(() => {
-    const map: Record<string, { unread: number; pending: number; severity: SlaSeverity }> = {};
-    for (const c of CHANNELS) {
-      map[c.key] = { unread: 0, pending: 0, severity: "NORMAL" };
-    }
-    let worstSeverity: SlaSeverity = "NORMAL";
-    for (const conv of conversations) {
-      const ch = map[conv.channel];
-      if (!ch) continue;
-      ch.unread += conv.unread;
-      ch.pending += conv.messages.filter((m) => m.direction === "INBOUND" && !m.read).length;
-      const sev = slaSeverityForConversation(conv);
-      // escalate the channel's severity to its worst conversation
-      const order: SlaSeverity[] = ["NORMAL", "WARNING", "OVERDUE", "CRITICAL"];
-      if (order.indexOf(sev) > order.indexOf(ch.severity)) ch.severity = sev;
-      if (order.indexOf(sev) > order.indexOf(worstSeverity)) worstSeverity = sev;
-    }
-    return { map, worstSeverity };
-  }, [conversations]);
-
-  // Per-channel "configuration required" check
-  const requiresConfigForChannel = React.useCallback(
-    (channelKey: string): boolean => {
-      // Social-style channels: need a configured SocialAccountOwnership
-      if (["WHATSAPP", "FACEBOOK", "INSTAGRAM", "WEBSITE_CHAT"].includes(channelKey)) {
-        const accounts = socialAccounts.filter(
-          (a) => a.platform === channelKey || a.platform === channelKey.replace("_", "")
-        );
-        if (accounts.length === 0) return true;
-        const connected = accounts.some(
-          (a) => a.connectionStatus === "CONNECTED" && !a.requiresConfig
-        );
-        return !connected;
-      }
-      return false;
-    },
-    [socialAccounts]
-  );
-
-  // ── Task creation ──────────────────────────────────────────────────────
-  async function handleCreateTask() {
-    if (!taskForm.title.trim()) {
-      toast({ title: "Title required", description: "Please provide a task title.", variant: "destructive" });
-      return;
-    }
-    setCreatingTask(true);
+  const handleDraftAction = async (
+    draft: CommDraft,
+    action: "APPROVE" | "REJECT"
+  ) => {
     try {
-      const payload = {
-        title: taskForm.title.trim(),
-        description: taskForm.description.trim() || undefined,
-        studentId: taskForm.studentId.trim() || undefined,
-        assignedTo: taskForm.assignedTo.trim() || undefined,
-        priority: taskForm.priority,
-        source: "COMMUNICATION",
-        deadline: taskForm.deadline ? new Date(taskForm.deadline).toISOString() : undefined,
-        createdBy: currentUserId,
-      };
-      const res = await fetch("/api/communications/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `Failed (${res.status})`);
-      }
-      const data = (await res.json()) as { task: CommunicationTask };
-      setTasks((prev) => [data.task, ...prev]);
-      setTaskDialogOpen(false);
-      setTaskForm({ title: "", studentId: "", assignedTo: "", priority: "MEDIUM", deadline: "", description: "" });
-      toast({ title: "Task created", description: `Created: ${data.task.title}` });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      toast({ title: "Failed to create task", description: msg, variant: "destructive" });
-    } finally {
-      setCreatingTask(false);
-    }
-  }
-
-  // ── Draft approval / rejection ─────────────────────────────────────────
-  async function handleDraftAction(draft: CommunicationDraft, action: "APPROVED" | "REJECTED") {
-    try {
-      const res = await fetch(`/api/communications/drafts/${draft.id}`, {
+      await fetchJson(`/api/communications/drafts/${draft.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          action === "APPROVED"
-            ? { status: "APPROVED", approvedBy: currentUserId }
-            : { status: "REJECTED" }
-        ),
+        body: JSON.stringify({ action }),
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `Failed (${res.status})`);
-      }
-      setDrafts((prev) => prev.filter((d) => d.id !== draft.id));
       toast({
-        title: action === "APPROVED" ? "Draft approved" : "Draft rejected",
-        description:
-          action === "APPROVED"
-            ? "The AI draft is now approved and ready to send."
-            : "The AI draft has been rejected.",
+        title: action === "APPROVE" ? "Draft approved" : "Draft rejected",
+        description: `Draft for ${draft.channel} ${action.toLowerCase()}d.`,
       });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      toast({ title: "Action failed", description: msg, variant: "destructive" });
+      setDrafts((d) => d.filter((x) => x.id !== draft.id));
+    } catch (err) {
+      toast({
+        title: "Action failed",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
     }
+  };
+
+  const handleEscalation = async (
+    esc: Escalation,
+    status: "ACKNOWLEDGED" | "RESOLVED" | "CLOSED"
+  ) => {
+    try {
+      await fetchJson(`/api/communications/escalations/${esc.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+      toast({ title: `Escalation ${status.toLowerCase()}` });
+      setEscalations((e) => e.filter((x) => x.id !== esc.id));
+    } catch (err) {
+      toast({
+        title: "Failed to update escalation",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTaskStatusChange = async (task: CommTask, status: string) => {
+    try {
+      await fetchJson(`/api/communications/tasks/${task.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+      toast({ title: `Task marked ${status.toLowerCase()}` });
+      setTasks((t) => t.filter((x) => x.id !== task.id));
+    } catch (err) {
+      toast({
+        title: "Failed to update task",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading && !sla) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Unified Communication Command Center"
+          subtitle="Monitor every conversation channel, SLA performance, AI drafts, escalations, and counselor tasks in real-time."
+          icon="Radio"
+        />
+        <LoadingGrid count={6} />
+      </div>
+    );
   }
 
-  async function handleDraftEdit(draft: CommunicationDraft) {
-    // Open the inbox / WhatsApp view for full editing
-    const target = draft.channel === "WHATSAPP" ? "whatsapp-command-center" : "unified-inbox";
-    navigate(target as ViewKey);
-    toast({ title: "Open composer", description: "Opening the conversation composer to edit this draft." });
+  if (error && !sla) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Unified Communication Command Center"
+          subtitle="Monitor every conversation channel, SLA performance, AI drafts, escalations, and counselor tasks in real-time."
+          icon="Radio"
+        />
+        <div className="rounded-2xl border border-dashed border-rose-200 bg-rose-50/50 px-6 py-10 text-center">
+          <p className="text-sm font-semibold text-[#991B1B]">Failed to load command center</p>
+          <Button onClick={() => void fetchAll()} className="mt-3" size="sm">Retry</Button>
+        </div>
+      </div>
+    );
   }
 
-  // ── Render ─────────────────────────────────────────────────────────────
-  const pendingCount = slaStats?.pending ?? omniStats?.pendingDrafts ?? 0;
-  const slaPct = slaStats?.slaCompliancePct ?? omniStats?.slaCompliance ?? 100;
-  const openTasksCount = omniStats?.openTasks ?? tasks.length;
-  const openEscalations = slaStats?.openEscalations ?? omniStats?.openEscalations ?? escalations.length;
-  const aiDraftsPending = omniStats?.pendingDrafts ?? drafts.length;
-  const unreadConvos = conversations.filter((c) => c.unread > 0).length;
+  const pendingTasks = tasks.filter((t) => t.status === "OPEN").length;
+  const aiDraftsPending = drafts.length;
+  const unreadConversations =
+    (omni?.unreadEmails || 0) + (omni?.whatsappMessages || 0) + (omni?.unreadNotifications || 0);
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+    <div className="space-y-6">
       <PageHeader
         title="Unified Communication Command Center"
-        subtitle="One workspace for WhatsApp, Email, SMS, Phone, Portal & Social channels"
-        icon="MessagesSquare"
+        subtitle="Monitor every conversation channel, SLA performance, AI drafts, escalations, and counselor tasks in real-time."
+        icon="Radio"
         action={
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => fetchAll()}>
-              <Icon name="RefreshCw" className="size-3.5" /> Refresh
-            </Button>
-            <Button variant="alo" size="sm" onClick={() => setTaskDialogOpen(true)}>
-              <Icon name="Plus" className="size-3.5" /> Create Task
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            className="h-10 border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC]"
+            onClick={() => void fetchAll()}
+          >
+            <Icon name="RefreshCw" className="mr-2 size-4" />
+            Refresh
+          </Button>
         }
       />
 
-      {loading ? (
-        <div className="space-y-6">
-          <LoadingGrid count={6} />
-          <SectionCard title="Loading channels…">
-            <LoadingSkeleton lines={4} />
-          </SectionCard>
-        </div>
-      ) : error ? (
-        <ErrorState title="Failed to load" description={error} onRetry={fetchAll} />
-      ) : (
-        <>
-          {/* ─── 2. KPI cards ─── */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <KpiCard
-              label="Pending Messages"
-              value={pendingCount}
-              icon="Inbox"
-              accent="orange"
-              hint="Unresponded inbound"
-            />
-            <KpiCard
-              label="SLA Compliance"
-              value={`${slaPct}%`}
-              icon="GaugeCircle"
-              accent="blue"
-              hint={`${slaStats?.responded ?? 0} / ${slaStats?.totalAssigned ?? 0} responded`}
-              trend={{
-                value: slaPct >= 90 ? "On target" : slaPct >= 70 ? "Watch closely" : "Below target",
-                direction: slaPct >= 90 ? "up" : slaPct >= 70 ? "flat" : "down",
-              }}
-            />
-            <KpiCard
-              label="Open Tasks"
-              value={openTasksCount}
-              icon="CheckSquare"
-              accent="amber"
-              hint="Communication tasks"
-            />
-            <KpiCard
-              label="Open Escalations"
-              value={openEscalations}
-              icon="AlertOctagon"
-              accent="rose"
-              hint={`${slaStats?.acknowledgedEscalations ?? 0} acknowledged`}
-            />
-            <KpiCard
-              label="AI Drafts Pending"
-              value={aiDraftsPending}
-              icon="Sparkles"
-              accent="violet"
-              hint="Awaiting approval"
-            />
-            <KpiCard
-              label="Unread Conversations"
-              value={unreadConvos}
-              icon="MessageSquare"
-              accent="emerald"
-              hint="Across all channels"
-            />
-          </div>
+      {/* ─── KPI cards row ─── */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <KpiCard
+          label="Pending Messages"
+          value={sla?.pending ?? 0}
+          icon="MailWarning"
+          accent="amber"
+          hint="Awaiting reply"
+        />
+        <KpiCard
+          label="SLA Compliance"
+          value={`${sla?.slaCompliancePct ?? 0}%`}
+          icon="Gauge"
+          accent="emerald"
+          hint={`${sla?.totalResponded ?? 0}/${sla?.totalAssigned ?? 0} responded`}
+        />
+        <KpiCard
+          label="Open Tasks"
+          value={pendingTasks}
+          icon="ListTodo"
+          accent="blue"
+          hint="Counselor queue"
+        />
+        <KpiCard
+          label="Open Escalations"
+          value={escalations.length}
+          icon="AlertOctagon"
+          accent="rose"
+          hint="Requires attention"
+        />
+        <KpiCard
+          label="AI Drafts Pending"
+          value={aiDraftsPending}
+          icon="Sparkles"
+          accent="violet"
+          hint="Awaiting review"
+        />
+        <KpiCard
+          label="Unread Conversations"
+          value={unreadConversations}
+          icon="Inbox"
+          accent="orange"
+          hint="All channels"
+        />
+      </div>
 
-          {/* ─── 3. Channel grid ─── */}
-          <SectionCard
-            title="Channels"
-            description="Status across all communication channels. Click any channel to open its workspace."
-            icon="Radio"
-            accent="blue"
-          >
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {CHANNELS.map((ch) => {
-                const stats = channelStats.map[ch.key] || { unread: 0, pending: 0, severity: "NORMAL" as SlaSeverity };
-                const needsConfig = requiresConfigForChannel(ch.key);
-                return (
-                  <button
-                    key={ch.key}
-                    type="button"
-                    onClick={() => navigate(ch.targetView)}
-                    className="group flex flex-col gap-3 rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-surface)] p-4 text-left shadow-[var(--alo-shadow-sm)] transition-all hover:-translate-y-0.5 hover:border-[var(--alo-border-strong)] hover:shadow-[var(--alo-shadow-md)] focus:outline-none focus:ring-[3px] focus:ring-[var(--alo-blue)]/20"
+      {/* ─── Channel grid ─── */}
+      <SectionCard
+        title="Channel Status"
+        description="8 communication channels — live connection & SLA status"
+        icon="LayoutGrid"
+      >
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+          {COMMAND_CENTER_CHANNELS.map((channel) => {
+            const meta = channelMeta(channel);
+            const account = socialAccounts.find((a) => a.platform === channel);
+            const connected =
+              account && account.connectionStatus === "CONNECTED" && !account.requiresConfig;
+            const configured = account && !account.requiresConfig;
+            return (
+              <button
+                key={channel}
+                type="button"
+                className={cn(
+                  "flex flex-col items-start gap-2 rounded-xl border bg-white p-3 text-left transition-all hover:shadow-md",
+                  connected
+                    ? "border-[#E2E8F0] hover:border-[#0057B8]/30"
+                    : "border-dashed border-amber-300 bg-amber-50/40"
+                )}
+              >
+                <div className="flex w-full items-center justify-between">
+                  <span
+                    className="flex size-8 items-center justify-center rounded-lg"
+                    style={{ backgroundColor: `${meta.brandColor}15`, color: meta.brandColor }}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className={cn(
-                            "flex size-10 items-center justify-center rounded-xl",
-                            ch.accent === "blue" && "bg-[var(--alo-blue-soft)] text-[var(--alo-blue-strong)]",
-                            ch.accent === "orange" && "bg-[var(--alo-orange-soft)] text-[var(--alo-orange-strong)]",
-                            ch.accent === "emerald" && "bg-[var(--alo-success-soft)] text-[var(--alo-success-strong)]",
-                            ch.accent === "amber" && "bg-[var(--alo-warning-soft)] text-[var(--alo-warning-strong)]",
-                            ch.accent === "violet" && "bg-violet-50 text-violet-700",
-                            ch.accent === "rose" && "bg-[var(--alo-danger-soft)] text-[var(--alo-danger-strong)]",
-                            ch.accent === "sky" && "bg-[var(--alo-info-soft)] text-[var(--alo-info-strong)]",
-                            ch.accent === "slate" && "bg-[var(--alo-surface-muted)] text-[var(--alo-text-secondary)]"
-                          )}
-                        >
-                          <Icon name={ch.icon} className="size-5" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-[var(--alo-text)]">{ch.name}</p>
-                          <p className="text-xs text-[var(--alo-muted)]">
-                            {stats.pending} pending · {stats.unread} unread
-                          </p>
-                        </div>
-                      </div>
-                      <Icon
-                        name="ArrowUpRight"
-                        className="size-4 text-[var(--alo-muted)] opacity-0 transition-opacity group-hover:opacity-100"
-                      />
-                    </div>
+                    <Icon name={meta.icon} className="size-4" />
+                  </span>
+                  <span
+                    className={cn(
+                      "size-2 rounded-full",
+                      connected ? "bg-emerald-500" : configured ? "bg-amber-400" : "bg-slate-300"
+                    )}
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-semibold text-[#0F172A]">{meta.label}</p>
+                  <p className="text-[10px] text-[#64748B]">
+                    {connected ? "Connected" : configured ? "Config pending" : "Not connected"}
+                  </p>
+                </div>
+                {!account || account.requiresConfig ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">
+                    <Icon name="Settings2" className="size-2.5" />
+                    Configuration Required
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      </SectionCard>
 
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <SlaStatusDot severity={stats.severity} />
-                        <span
-                          className={cn(
-                            "font-semibold uppercase tracking-wide",
-                            stats.severity === "NORMAL" && "text-[var(--alo-success-strong)]",
-                            stats.severity === "WARNING" && "text-[var(--alo-warning-strong)]",
-                            (stats.severity === "OVERDUE" || stats.severity === "CRITICAL") && "text-[var(--alo-danger-strong)]"
-                          )}
-                        >
-                          {stats.severity}
-                        </span>
-                      </div>
-                      {needsConfig && (
-                        <Badge variant="warning" className="gap-1 text-[10px]">
-                          <Icon name="Settings2" className="size-2.5" />
-                          Configuration required
-                        </Badge>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </SectionCard>
-
-          {/* ─── 4. Unified inbox preview ─── */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* ─── Unified Inbox Preview (left, 2 cols) ─── */}
+        <div className="lg:col-span-2 space-y-6">
           <SectionCard
             title="Unified Inbox Preview"
-            description="Latest inbound conversations across all channels — prioritized by SLA."
+            description="Oldest unread inbound messages across all channels"
             icon="Inbox"
-            accent="orange"
-            action={
-              <Button variant="outline" size="sm" onClick={() => navigate("unified-inbox")}>
-                <Icon name="ExternalLink" className="size-3.5" /> Open full inbox
-              </Button>
-            }
           >
-            {conversations.length === 0 ? (
-              <EmptyState
-                icon="Inbox"
-                title="No conversations yet"
-                description="Inbound messages from WhatsApp, Email, SMS, Phone, Portal and Social channels will appear here."
-                accent="blue"
-              />
-            ) : (
-              <DataTable
-                columns={inboxColumns}
-                data={conversations.slice(0, 10).map((c) => ({ ...c, id: c.key }))}
-                pageSize={10}
-                emptyMessage="No conversations found"
-                onRowClick={(row) => {
-                  const meta = channelMeta(row.channel);
-                  navigate(meta.targetView);
-                }}
-              />
-            )}
+            {sla && <UnifiedInboxPreview rows={[]} /> }
           </SectionCard>
 
-          {/* ─── 5. Communication tasks ─── */}
+          {/* ─── Communication Tasks ─── */}
           <SectionCard
             title="Communication Tasks"
-            description="Open tasks assigned to counselors and the application team."
-            icon="CheckSquare"
-            accent="amber"
+            description="Counselor task queue"
+            icon="ListTodo"
             action={
-              <Button variant="alo" size="sm" onClick={() => setTaskDialogOpen(true)}>
-                <Icon name="Plus" className="size-3.5" /> Create Task
+              <Button
+                onClick={() => setCreateTaskOpen(true)}
+                className="h-9 bg-[#0057B8] text-white hover:bg-[#003a7a]"
+              >
+                <Icon name="Plus" className="mr-1.5 size-4" />
+                New Task
               </Button>
             }
           >
-            {tasks.length === 0 ? (
-              <EmptyState
-                icon="CheckSquare"
-                title="No open tasks"
-                description="Create a task to assign work to a counselor or team member."
-                accent="amber"
-                action={
-                  <Button variant="outline" size="sm" onClick={() => setTaskDialogOpen(true)}>
-                    <Icon name="Plus" className="size-3.5" /> Create first task
-                  </Button>
-                }
+            <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+              <SearchInput
+                value={taskSearch}
+                onChange={setTaskSearch}
+                placeholder="Search tasks…"
+                className="sm:w-64"
               />
-            ) : (
-              <DataTable
-                columns={taskColumns}
-                data={tasks}
-                pageSize={8}
-                emptyMessage="No open tasks"
-              />
-            )}
+              <Select value={taskStatus} onValueChange={setTaskStatus}>
+                <SelectTrigger className="h-9 w-full sm:w-44">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"].map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s.replace(/_/g, " ")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <TasksTable
+              tasks={tasks}
+              search={taskSearch}
+              onStatusChange={handleTaskStatusChange}
+            />
           </SectionCard>
+        </div>
 
-          {/* ─── 6. AI Drafts pending approval ─── */}
+        {/* ─── Right column: AI Drafts + Escalations ─── */}
+        <div className="space-y-6">
           <SectionCard
             title="AI Drafts Pending Approval"
-            description="AI-generated replies awaiting human review before sending."
+            description="Human-in-the-loop review"
             icon="Sparkles"
-            accent="violet"
           >
             {drafts.length === 0 ? (
               <EmptyState
-                icon="Sparkles"
-                title="No drafts waiting"
-                description="AI-generated draft replies will appear here for your approval."
-                accent="violet"
+                icon="CheckCircle2"
+                title="No drafts pending"
+                description="AI-generated drafts awaiting approval will appear here."
               />
             ) : (
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                {drafts.map((draft) => {
-                  const meta = channelMeta(draft.channel);
-                  return (
-                    <AISuggestionCard
-                      key={draft.id}
-                      title={`Draft ${meta.name} reply`}
-                      suggestion={draft.editedBody || draft.draftBody}
-                      reasoning={draft.aiReasoning || undefined}
-                      confidence={draft.aiConfidence ?? undefined}
-                      category={`${meta.name} · ${draft.riskLevel || "LOW"} risk`}
-                      onApply={() => handleDraftAction(draft, "APPROVED")}
-                      onDismiss={() => handleDraftAction(draft, "REJECTED")}
-                    />
-                  );
-                })}
+              <div className="space-y-3 max-h-[400px] overflow-y-auto alo-scroll pr-1">
+                {drafts.slice(0, 8).map((draft) => (
+                  <DraftCard
+                    key={draft.id}
+                    draft={draft}
+                    onAction={handleDraftAction}
+                  />
+                ))}
               </div>
             )}
           </SectionCard>
 
-          {/* ─── 7. Escalation feed ─── */}
           <SectionCard
             title="Escalation Feed"
-            description="Open escalations across the communication stack — newest first."
+            description="Open escalations — acknowledge or resolve"
             icon="AlertOctagon"
-            accent="rose"
           >
             {escalations.length === 0 ? (
               <EmptyState
                 icon="ShieldCheck"
                 title="No open escalations"
-                description="When SLAs are breached or complaints come in, escalations will appear here."
-                accent="emerald"
+                description="All clear — escalations will appear here when triggered by SLA breaches."
               />
             ) : (
-              <Timeline
-                items={escalations.slice(0, 10).map((e) => ({
-                  id: e.id,
-                  title: e.type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-                  description: e.message,
-                  timestamp: e.createdAt,
-                  icon: e.level >= 3 ? "AlertOctagon" : e.level === 2 ? "AlertTriangle" : "Info",
-                  accent: ESCALATION_ACCENT[e.level] || "amber",
-                }))}
-              />
+              <>
+                <Timeline
+                  items={escalations.slice(0, 8).map((e) => ({
+                    id: e.id,
+                    title: `${e.type.replace(/_/g, " ")} (Level ${e.level ?? 1})`,
+                    description: e.message,
+                    timestamp: timeAgoShort(e.createdAt),
+                    accent: e.status === "OPEN" ? "rose" : e.status === "ACKNOWLEDGED" ? "amber" : "emerald",
+                    meta: e.status,
+                  }))}
+                />
+                <div className="mt-3 space-y-2">
+                  {escalations.slice(0, 5).map((e) => (
+                    <div
+                      key={e.id}
+                      className="flex items-center justify-between gap-2 rounded-lg border border-[#E2E8F0] px-3 py-1.5"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-xs font-semibold text-[#0F172A]">
+                          {e.type.replace(/_/g, " ")}
+                        </p>
+                        <p className="truncate text-[11px] text-[#64748B]">{e.message}</p>
+                      </div>
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 px-2 text-[11px]"
+                          onClick={() => handleEscalation(e, "ACKNOWLEDGED")}
+                        >
+                          Ack
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="h-7 bg-emerald-600 px-2 text-[11px] hover:bg-emerald-700"
+                          onClick={() => handleEscalation(e, "RESOLVED")}
+                        >
+                          Resolve
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </SectionCard>
-        </>
-      )}
+        </div>
+      </div>
 
-      {/* ─── Create Task Dialog ─── */}
-      <Dialog open={taskDialogOpen} onOpenChange={setTaskDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Create Communication Task</DialogTitle>
-            <DialogDescription>
-              Assign a follow-up task to a counselor or team member. Linked conversations & students
-              will appear in their workspace.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 py-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="task-title">Title *</Label>
-              <Input
-                id="task-title"
-                placeholder="e.g. Follow up with student about IELTS score"
-                value={taskForm.title}
-                onChange={(e) => setTaskForm((f) => ({ ...f, title: e.target.value }))}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="task-student">Student ID</Label>
-                <Input
-                  id="task-student"
-                  placeholder="e.g. AE-2024100123"
-                  value={taskForm.studentId}
-                  onChange={(e) => setTaskForm((f) => ({ ...f, studentId: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="task-assigned">Assigned To</Label>
-                <Input
-                  id="task-assigned"
-                  placeholder="User ID or name"
-                  value={taskForm.assignedTo}
-                  onChange={(e) => setTaskForm((f) => ({ ...f, assignedTo: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="task-priority">Priority</Label>
-                <Select
-                  value={taskForm.priority}
-                  onValueChange={(v) => setTaskForm((f) => ({ ...f, priority: v }))}
-                >
-                  <SelectTrigger id="task-priority" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="LOW">Low</SelectItem>
-                    <SelectItem value="MEDIUM">Medium</SelectItem>
-                    <SelectItem value="HIGH">High</SelectItem>
-                    <SelectItem value="URGENT">Urgent</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="task-deadline">Deadline</Label>
-                <Input
-                  id="task-deadline"
-                  type="datetime-local"
-                  value={taskForm.deadline}
-                  onChange={(e) => setTaskForm((f) => ({ ...f, deadline: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="task-desc">Description</Label>
-              <Textarea
-                id="task-desc"
-                placeholder="Context, links, and what the assignee needs to do."
-                value={taskForm.description}
-                onChange={(e) => setTaskForm((f) => ({ ...f, description: e.target.value }))}
-                rows={4}
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setTaskDialogOpen(false)} disabled={creatingTask}>
-              Cancel
-            </Button>
-            <Button variant="alo" onClick={handleCreateTask} disabled={creatingTask}>
-              {creatingTask ? (
-                <>
-                  <Icon name="Loader2" className="size-3.5 animate-spin" /> Creating…
-                </>
-              ) : (
-                <>
-                  <Icon name="Plus" className="size-3.5" /> Create Task
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CreateTaskDialog
+        open={createTaskOpen}
+        onOpenChange={setCreateTaskOpen}
+        onCreated={() => void fetchAll()}
+      />
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Column definitions (declared outside component for stable identity)
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Sub-components ──────────────────────────────────────────────────────────
 
-type InboxRow = InboxConversation & { id: string };
-
-const inboxColumns: Column<InboxRow>[] = [
-  {
-    key: "priority",
-    header: "Priority",
-    width: "90px",
-    cell: (row) => {
-      const sev = slaSeverityForConversation(row);
-      const accent = SLA_ACCENT[sev];
-      const cls =
-        accent === "emerald" ? "bg-[var(--alo-success-soft)] text-[var(--alo-success-strong)] border-[var(--alo-success)]" :
-        accent === "amber" ? "bg-[var(--alo-warning-soft)] text-[var(--alo-warning-strong)] border-[var(--alo-warning)]" :
-        "bg-[var(--alo-danger-soft)] text-[var(--alo-danger-strong)] border-[var(--alo-danger)]";
-      return (
-        <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide", cls)}>
-          <SlaStatusDot severity={sev} />
-          {sev}
+function KpiCard({
+  label,
+  value,
+  icon,
+  accent,
+  hint,
+}: {
+  label: string;
+  value: React.ReactNode;
+  icon: string;
+  accent: "blue" | "orange" | "emerald" | "amber" | "violet" | "rose";
+  hint?: string;
+}) {
+  const accentMap: Record<string, string> = {
+    blue: "bg-[#EFF6FF] text-[#0057B8]",
+    orange: "bg-[#FFF7ED] text-[#C2410C]",
+    emerald: "bg-[#DCFCE7] text-[#15803D]",
+    amber: "bg-[#FEF3C7] text-[#92400E]",
+    violet: "bg-violet-50 text-violet-600",
+    rose: "bg-[#FEE2E2] text-[#991B1B]",
+  };
+  return (
+    <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4 alo-shadow transition-all hover:alo-shadow-lg">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">{label}</p>
+          <p className="mt-1 text-xl font-bold tabular-nums text-[#0F172A] sm:text-2xl">{value}</p>
+        </div>
+        <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-xl", accentMap[accent])}>
+          <Icon name={icon} className="size-4" />
         </span>
-      );
-    },
-    sortable: true,
-    sortAccessor: (row) => {
-      const order = ["NORMAL", "WARNING", "OVERDUE", "CRITICAL"];
-      return order.indexOf(slaSeverityForConversation(row));
-    },
-  },
-  {
-    key: "sla",
-    header: "SLA",
-    width: "100px",
-    cell: (row) => {
-      const inbound = row.messages.find((m) => m.direction === "INBOUND");
-      const ts = inbound?.receivedAt || row.lastMessageAt;
-      return (
-        <span className="font-mono text-xs text-[var(--alo-text-secondary)]">
-          {formatSlaCountdown(ts)}
-        </span>
-      );
-    },
-    sortable: true,
-    sortAccessor: (row) => new Date(row.lastMessageAt).getTime(),
-  },
-  {
-    key: "channel",
-    header: "Channel",
-    width: "120px",
-    cell: (row) => {
-      const meta = channelMeta(row.channel);
-      return (
-        <Badge variant="neutral" className="gap-1">
-          <Icon name={meta.icon} className="size-3" />
-          {meta.name}
-        </Badge>
-      );
-    },
-    sortable: true,
-    sortAccessor: (row) => row.channel,
-  },
-  {
-    key: "student",
-    header: "Student / Sender",
-    cell: (row) => (
-      <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-[var(--alo-text)]">
-          {row.studentName || row.fromPhone || row.fromEmail || "Unknown"}
-        </p>
-        <p className="truncate text-xs text-[var(--alo-muted)]">
-          {row.fromPhone || row.fromEmail || row.studentId || "—"}
-        </p>
       </div>
-    ),
-    sortable: true,
-    sortAccessor: (row) => row.studentName || row.fromPhone || row.fromEmail || "",
-  },
-  {
-    key: "message",
-    header: "Message",
-    cell: (row) => {
-      const last = row.messages[0];
-      const body = last?.body || "";
-      return (
-        <span className="line-clamp-1 max-w-xs text-sm text-[var(--alo-text-secondary)]" title={body}>
-          {body || "—"}
-        </span>
-      );
-    },
-  },
-  {
-    key: "intent",
-    header: "Intent",
-    width: "120px",
-    cell: (row) => {
-      const last = row.messages[0];
-      if (!last) return <span className="text-[var(--alo-muted)]">—</span>;
-      // Lightweight intent classifier — frontend heuristic only
-      const body = (last.body || "").toLowerCase();
-      let intent = "GENERAL";
-      if (/passport|visa|cas|i20|offer/.test(body)) intent = "DOCUMENT";
-      else if (/payment|invoice|fee|refund|deposit/.test(body)) intent = "PAYMENT";
-      else if (/deadline|intake|apply|application/.test(body)) intent = "APPLICATION";
-      else if (/interview|mock/.test(body)) intent = "INTERVIEW";
-      return (
-        <Badge variant="blue" className="text-[10px]">
-          {intent}
-        </Badge>
-      );
-    },
-  },
-  {
-    key: "status",
-    header: "Status",
-    width: "110px",
-    cell: (row) => (
-      <span className="inline-flex items-center gap-1 text-xs">
-        {row.unread > 0 ? (
-          <Badge variant="warning" className="gap-0.5">
-            <Icon name="CircleDot" className="size-2.5" />
-            {row.unread} unread
-          </Badge>
-        ) : (
-          <Badge variant="success" className="gap-0.5">
-            <Icon name="Check" className="size-2.5" />
-            Read
-          </Badge>
-        )}
-      </span>
-    ),
-  },
-  {
-    key: "deadline",
-    header: "Received",
-    width: "120px",
-    cell: (row) => (
-      <span className="text-xs text-[var(--alo-muted)]">{timeAgo(row.lastMessageAt)}</span>
-    ),
-    sortable: true,
-    sortAccessor: (row) => new Date(row.lastMessageAt).getTime(),
-  },
-];
+      {hint && <p className="mt-1.5 text-[11px] text-[#64748B]">{hint}</p>}
+    </div>
+  );
+}
 
-const taskColumns: Column<CommunicationTask>[] = [
-  {
-    key: "title",
-    header: "Title",
-    cell: (row) => (
-      <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-[var(--alo-text)]">{row.title}</p>
-        {row.description && (
-          <p className="line-clamp-1 max-w-md text-xs text-[var(--alo-muted)]">{row.description}</p>
-        )}
-      </div>
-    ),
-    sortable: true,
-    sortAccessor: (row) => row.title,
-  },
-  {
-    key: "student",
-    header: "Student",
-    width: "140px",
-    cell: (row) => (
-      <span className="font-mono text-xs text-[var(--alo-text-secondary)]">
-        {row.studentId ? row.studentId.slice(0, 14) : "—"}
-      </span>
-    ),
-  },
-  {
-    key: "assigned",
-    header: "Assigned To",
-    width: "150px",
-    cell: (row) => (
-      <span className="text-xs text-[var(--alo-text-secondary)]">
-        {row.assignedTo ? row.assignedTo.slice(0, 12) + "…" : "Unassigned"}
-      </span>
-    ),
-  },
-  {
-    key: "priority",
-    header: "Priority",
-    width: "110px",
-    cell: (row) => (
-      <StatusBadge status={row.priority} colorMap={PRIORITY_COLOR_MAP} />
-    ),
-    sortable: true,
-    sortAccessor: (row) => row.priority,
-  },
-  {
-    key: "status",
-    header: "Status",
-    width: "120px",
-    cell: (row) => (
-      <StatusBadge
-        status={row.status}
-        colorMap={TASK_STATUS_COLOR_MAP}
-        labels={TASK_STATUS_LABELS}
+function UnifiedInboxPreview({ rows }: { rows: unknown[] }) {
+  // The detailed unified inbox is rendered in the dedicated Unified Inbox / WhatsApp Command Center views.
+  if (rows.length === 0) {
+    return (
+      <EmptyState
+        icon="Inbox"
+        title="Use the Unified Inbox"
+        description="For real-time message threads, switch to the Unified Inbox or WhatsApp Command Center view."
       />
-    ),
-    sortable: true,
-    sortAccessor: (row) => row.status,
-  },
-  {
-    key: "deadline",
-    header: "Deadline",
-    width: "120px",
-    cell: (row) => (
-      <span className="text-xs text-[var(--alo-muted)]">{row.deadline ? fmtDate(row.deadline) : "—"}</span>
-    ),
-    sortable: true,
-    sortAccessor: (row) => (row.deadline ? new Date(row.deadline).getTime() : 0),
-  },
-  {
-    key: "source",
-    header: "Source",
-    width: "120px",
-    cell: (row) => (
-      <Badge variant="neutral" className="text-[10px]">
-        {row.source || "—"}
-      </Badge>
-    ),
-  },
-];
+    );
+  }
+  return null;
+}
 
-export default CommCommandCenter;
+function TasksTable({
+  tasks,
+  search,
+  onStatusChange,
+}: {
+  tasks: CommTask[];
+  search: string;
+  onStatusChange: (task: CommTask, status: string) => void;
+}) {
+  const filtered = tasks.filter(
+    (t) =>
+      !search ||
+      t.title.toLowerCase().includes(search.toLowerCase()) ||
+      (t.description || "").toLowerCase().includes(search.toLowerCase())
+  );
+
+  const columns: DataTableColumn<CommTask>[] = [
+    {
+      key: "priority",
+      header: "Priority",
+      render: (t) => (
+        <Pill className={PRIORITY_COLORS[t.priority || "MEDIUM"] || PRIORITY_COLORS.MEDIUM}>
+          {(t.priority || "MEDIUM").replace(/_/g, " ").toLowerCase()}
+        </Pill>
+      ),
+    },
+    {
+      key: "title",
+      header: "Title",
+      render: (t) => (
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-[#0F172A]">{t.title}</p>
+          {t.description && (
+            <p className="truncate text-xs text-[#64748B]">{t.description}</p>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "source",
+      header: "Source",
+      render: (t) => (
+        <span className="text-xs text-[#475569]">
+          {(t.source || "COMMUNICATION").replace(/_/g, " ").toLowerCase()}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      render: (t) => (
+        <Pill className={TASK_STATUS_COLORS[t.status] || TASK_STATUS_COLORS.OPEN}>
+          {t.status.replace(/_/g, " ").toLowerCase()}
+        </Pill>
+      ),
+    },
+    {
+      key: "deadline",
+      header: "Deadline",
+      render: (t) => (
+        <span className="text-xs text-[#475569]">
+          {t.deadline ? fmtDateTime(t.deadline) : "—"}
+        </span>
+      ),
+    },
+    {
+      key: "createdAt",
+      header: "Created",
+      render: (t) => <span className="text-xs text-[#64748B]">{timeAgoShort(t.createdAt)}</span>,
+    },
+    {
+      key: "actions",
+      header: "",
+      align: "right",
+      render: (t) => (
+        <div className="flex justify-end gap-1">
+          {t.status === "OPEN" && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 px-2 text-[11px]"
+              onClick={() => onStatusChange(t, "IN_PROGRESS")}
+            >
+              Start
+            </Button>
+          )}
+          {(t.status === "OPEN" || t.status === "IN_PROGRESS") && (
+            <Button
+              size="sm"
+              className="h-7 bg-emerald-600 px-2 text-[11px] hover:bg-emerald-700"
+              onClick={() => onStatusChange(t, "RESOLVED")}
+            >
+              Resolve
+            </Button>
+          )}
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <DataTable
+      columns={columns}
+      rows={filtered}
+      rowKey={(t) => t.id}
+      emptyTitle="No tasks"
+      emptyDescription="No communication tasks match this filter."
+      emptyIcon="ListTodo"
+      maxHeight="460px"
+    />
+  );
+}
+
+function DraftCard({
+  draft,
+  onAction,
+}: {
+  draft: CommDraft;
+  onAction: (draft: CommDraft, action: "APPROVE" | "REJECT") => void;
+}) {
+  const meta = channelMeta(draft.channel);
+  const confidence = draft.aiConfidence ?? 0;
+  const riskColor =
+    draft.riskLevel === "HIGH"
+      ? "bg-rose-100 text-rose-700"
+      : draft.riskLevel === "MEDIUM"
+      ? "bg-amber-100 text-amber-700"
+      : "bg-emerald-100 text-emerald-700";
+
+  return (
+    <div className="rounded-xl border border-[#E2E8F0] bg-white p-3 transition-all hover:border-[#0057B8]/30">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span
+            className="flex size-7 items-center justify-center rounded-lg"
+            style={{ backgroundColor: `${meta.brandColor}15`, color: meta.brandColor }}
+          >
+            <Icon name={meta.icon} className="size-3.5" />
+          </span>
+          <div>
+            <p className="text-xs font-semibold text-[#0F172A]">{meta.label}</p>
+            <p className="text-[10px] text-[#64748B]">{timeAgoShort(draft.createdAt)}</p>
+          </div>
+        </div>
+        <Pill className={riskColor}>Risk: {draft.riskLevel || "LOW"}</Pill>
+      </div>
+
+      <div className="mb-2 rounded-lg bg-violet-50 px-3 py-2">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-violet-700">
+          AI Generated Draft
+        </p>
+        <p className="line-clamp-3 text-xs text-[#0F172A]">
+          {draft.editedBody || draft.draftBody}
+        </p>
+      </div>
+
+      <div className="mb-2 flex items-center gap-3 text-[10px] text-[#64748B]">
+        <span className="inline-flex items-center gap-1">
+          <Icon name="Gauge" className="size-3" />
+          Confidence {confidence}%
+        </span>
+        {draft.aiReasoning && (
+          <span className="inline-flex items-center gap-1">
+            <Icon name="Brain" className="size-3" />
+            {draft.aiReasoning.slice(0, 60)}
+            {draft.aiReasoning.length > 60 ? "…" : ""}
+          </span>
+        )}
+      </div>
+
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          className="h-8 flex-1 bg-emerald-600 text-[11px] hover:bg-emerald-700"
+          onClick={() => onAction(draft, "APPROVE")}
+        >
+          <Icon name="Check" className="mr-1 size-3" />
+          Approve
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 flex-1 border-rose-200 text-[11px] text-rose-600 hover:bg-rose-50"
+          onClick={() => onAction(draft, "REJECT")}
+        >
+          <Icon name="X" className="mr-1 size-3" />
+          Reject
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function CreateTaskDialog({
+  open,
+  onOpenChange,
+  onCreated,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  onCreated: () => void;
+}) {
+  const { toast } = useToast();
+  const [title, setTitle] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [channel, setChannel] = React.useState("WHATSAPP");
+  const [priority, setPriority] = React.useState("MEDIUM");
+  const [deadline, setDeadline] = React.useState("");
+  const [studentId, setStudentId] = React.useState("");
+  const [assignedTo, setAssignedTo] = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
+
+  const submit = async () => {
+    if (!title.trim()) {
+      toast({ title: "Title is required", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await fetchJson("/api/communications/tasks", {
+        method: "POST",
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim() || undefined,
+          channel,
+          priority,
+          source: "MANUAL",
+          status: "OPEN",
+          deadline: deadline || undefined,
+          studentId: studentId.trim() || undefined,
+          assignedTo: assignedTo.trim() || undefined,
+        }),
+      });
+      toast({ title: "Task created", description: title.trim() });
+      setTitle("");
+      setDescription("");
+      setDeadline("");
+      setStudentId("");
+      setAssignedTo("");
+      onOpenChange(false);
+      onCreated();
+    } catch (err) {
+      toast({
+        title: "Failed to create task",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Create Communication Task</DialogTitle>
+          <DialogDescription>
+            Create a manual task for a counselor to follow up on a student conversation.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div>
+            <Label htmlFor="task-title">Title</Label>
+            <Input
+              id="task-title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Call student about visa documents"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="task-desc">Description</Label>
+            <Textarea
+              id="task-desc"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Optional context for the task"
+              className="mt-1 min-h-[80px]"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Channel</Label>
+              <Select value={channel} onValueChange={setChannel}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {COMMAND_CENTER_CHANNELS.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {channelMeta(c).label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Priority</Label>
+              <Select value={priority} onValueChange={setPriority}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["LOW", "MEDIUM", "HIGH", "URGENT"].map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="task-student">Student ID (optional)</Label>
+              <Input
+                id="task-student"
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                placeholder="ALO-S-XXXX"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="task-assignee">Assignee User ID (optional)</Label>
+              <Input
+                id="task-assignee"
+                value={assignedTo}
+                onChange={(e) => setAssignedTo(e.target.value)}
+                placeholder="cuid"
+                className="mt-1"
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="task-deadline">Deadline (optional)</Label>
+            <Input
+              id="task-deadline"
+              type="datetime-local"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            className="bg-[#0057B8] text-white hover:bg-[#003a7a]"
+            disabled={submitting}
+            onClick={() => void submit()}
+          >
+            {submitting ? "Creating…" : "Create Task"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -1,23 +1,12 @@
-import { createHash } from 'node:crypto';
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-const tokenDigest = (token: string) => createHash('sha256').update(token, 'utf8').digest('hex');
 
 // GET /api/reviews/submit/[token]
 // Public endpoint — fetches the invitation details so the student can
 // submit their review without logging in. Marks the invitation as OPENED.
 export async function GET(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
-  try {
-    return await handleGet(await params);
-  } catch (error) {
-    console.error('[reviews/submit] GET failed', error instanceof Error ? error.name : 'unknown');
-    return NextResponse.json({ error: "Review service is temporarily unavailable." }, { status: 503 });
-  }
-}
-
-async function handleGet({ token }: { token: string }) {
-  const invitation = await db.reviewInvitation.findUnique({ where: { token: tokenDigest(token) } });
+  const { token } = await params;
+  const invitation = await db.reviewInvitation.findUnique({ where: { token } });
 
   if (!invitation) {
     return NextResponse.json({ error: "Invalid or expired review link." }, { status: 404 });
@@ -58,19 +47,8 @@ async function handleGet({ token }: { token: string }) {
 // Public endpoint — student submits their review. Consent is captured explicitly.
 // The review is NEVER auto-published — it goes to the moderation queue.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
-  try {
-    return await handlePost(req, await params);
-  } catch (error) {
-    console.error('[reviews/submit] POST failed', error instanceof Error ? error.name : 'unknown');
-    return NextResponse.json({ error: "Review service is temporarily unavailable." }, { status: 503 });
-  }
-}
-
-async function handlePost(req: NextRequest, { token }: { token: string }) {
-  const body = await req.json().catch(() => null);
-  if (!body || typeof body !== 'object' || Array.isArray(body)) {
-    return NextResponse.json({ error: "A valid JSON body is required." }, { status: 400 });
-  }
+  const { token } = await params;
+  const body = await req.json();
   const {
     rating, reviewText, photoFileId,
     consentPublish, consentMarketing, consentShowName,
@@ -79,14 +57,14 @@ async function handlePost(req: NextRequest, { token }: { token: string }) {
     consentPublish: boolean; consentMarketing: boolean; consentShowName: boolean;
   };
 
-  if (typeof rating !== 'number' || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+  if (!rating || rating < 1 || rating > 5) {
     return NextResponse.json({ error: "Rating must be between 1 and 5." }, { status: 400 });
   }
-  if (typeof reviewText !== 'string' || reviewText.trim().length < 10) {
+  if (!reviewText || reviewText.trim().length < 10) {
     return NextResponse.json({ error: "Please write at least a short review." }, { status: 400 });
   }
 
-  const invitation = await db.reviewInvitation.findUnique({ where: { token: tokenDigest(token) } });
+  const invitation = await db.reviewInvitation.findUnique({ where: { token } });
   if (!invitation) {
     return NextResponse.json({ error: "Invalid review link." }, { status: 404 });
   }
@@ -114,7 +92,7 @@ async function handlePost(req: NextRequest, { token }: { token: string }) {
       serviceType: invitation.serviceType,
       rating,
       reviewText,
-      photoFileId: typeof photoFileId === 'string' ? photoFileId.slice(0, 191) : null,
+      photoFileId,
       // Consent (explicitly captured)
       consentPublish: !!consentPublish,
       consentMarketing: !!consentMarketing,
@@ -143,7 +121,7 @@ async function handlePost(req: NextRequest, { token }: { token: string }) {
   // Audit log
   await db.auditLog.create({
     data: {
-      userId: invitation.studentId || "",
+      userId: invitation.studentId,
       action: "REVIEW_SUBMITTED",
       resource: "StudentReview",
       resourceId: review.id,

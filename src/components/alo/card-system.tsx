@@ -654,7 +654,7 @@ export function ActionCard({ title, description, icon, ctaLabel, onCta, accent, 
         </div>
         <h3 className="mt-4 text-base font-bold text-[var(--alo-text)]">{title}</h3>
         {description && <p className="mt-1 text-sm text-[var(--alo-muted)]">{description}</p>}
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant={accent === "orange" ? "cta" : "alo"} size="sm" className="alo-card-cta mt-4">
+        <Button variant={accent === "orange" ? "cta" : "alo"} size="sm" className="alo-card-cta mt-4">
           {ctaLabel}
           <Icon name="ArrowRight" className="size-3.5" />
         </Button>

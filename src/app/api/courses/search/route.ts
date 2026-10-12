@@ -1,262 +1,186 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere } from '@/lib/public-catalog';
-import { getOptionalAuth } from '@/lib/auth-middleware';
 
-export async function GET(request: NextRequest) {
+/* ------------------------------------------------------------------ */
+/*  In-memory cache (60-second TTL)                                    */
+/* ------------------------------------------------------------------ */
+
+const cache = new Map<string, { data: Record<string, unknown>; timestamp: number }>();
+const CACHE_TTL = 60000;
+
+function getCached(key: string) {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setCache(key: string, data: Record<string, unknown>) {
+  cache.set(key, { data, timestamp: Date.now() });
+}
+
+/* ------------------------------------------------------------------ */
+/*  Parse tuition string to number for max comparison                  */
+/* ------------------------------------------------------------------ */
+
+function parseTuition(tuition: string): number | null {
+  if (!tuition) return null;
+  // Extract first number from tuition string (e.g., "£15,000/year" → 15000)
+  const match = tuition.replace(/[^0-9.]/g, '').match(/^([0-9]+(?:\.[0-9]+)?)/);
+  return match ? parseFloat(match[1]) : null;
+}
+
+/* ------------------------------------------------------------------ */
+/*  POST — Search courses with filters                                   */
+/* ------------------------------------------------------------------ */
+
+export async function POST(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const q = searchParams.get('q') || searchParams.get('search') || '';
-    const country = searchParams.get('country') || '';
-    const city = searchParams.get('city') || '';
-    const university = searchParams.get('university') || '';
-    const campus = searchParams.get('campus') || '';
-    const studyLevel = searchParams.get('study_level') || searchParams.get('studyLevel') || '';
-    const studyArea = searchParams.get('study_area') || searchParams.get('subjectArea') || '';
-    const discipline = searchParams.get('discipline') || '';
-    const intakeMonth = searchParams.get('intake') || searchParams.get('intakeMonth') || '';
-    const intakeYear = searchParams.get('year') || searchParams.get('intakeYear') || '';
-    const scholarship = searchParams.get('scholarship') === 'true';
-    const tag = searchParams.get('tag') || '';
-    const openProgram = searchParams.get('open_program') === 'true';
-    const sort = searchParams.get('sort') || 'relevance';
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
-    const skip = (page - 1) * limit;
+    const body = await req.json();
+    const {
+      country,
+      universitySlug,
+      level,
+      subject,
+      intake,
+      tuitionMax,
+      scholarshipOnly,
+      search,
+      page = 1,
+      limit = 20,
+    } = body;
 
-    // RBAC Check for field sanitation
-    const auth = await getOptionalAuth(request);
-    const roles = auth?.roles || [];
-    const isPrivileged = roles.some((r) =>
-      ['SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'STAFF', 'APPLICATION_OFFICER', 'super_admin', 'admin', 'counselor'].includes(r)
-    );
+    const p = Math.max(1, parseInt(String(page), 10) || 1);
+    const l = Math.min(100, Math.max(1, parseInt(String(limit), 10) || 20));
 
-    // Public visibility: non-staff only see published, VERIFIED, source-linked courses.
-    const where: any = isPrivileged ? {} : { ...publicCourseWhere() };
+    // Build where clause
+    const where: Record<string, unknown> = { approvalStatus: 'PUBLISHED' };
 
-    if (q) {
+    if (typeof country === 'string' && country.trim()) {
+      where.countrySlug = country.trim();
+    }
+    if (typeof universitySlug === 'string' && universitySlug.trim()) {
+      where.universitySlug = universitySlug.trim();
+    }
+    if (typeof level === 'string' && level.trim()) {
+      where.level = level.trim();
+    }
+    if (typeof subject === 'string' && subject.trim()) {
+      where.subject = { contains: subject.trim() };
+    }
+    if (typeof intake === 'string' && intake.trim()) {
+      where.intake = { contains: intake.trim() };
+    }
+    if (scholarshipOnly === true) {
+      where.scholarshipAvailable = true;
+    }
+    if (typeof search === 'string' && search.trim()) {
       where.OR = [
-        { courseTitle: { contains: q } },
-        { subjectArea: { contains: q } },
-        { disciplineArea: { contains: q } },
-        { universityId: { contains: q } },
-        { university: { name: { contains: q } } },
+        { name: { contains: search.trim() } },
+        { subject: { contains: search.trim() } },
+        { discipline: { contains: search.trim() } },
+        { university: { name: { contains: search.trim() } } },
       ];
     }
 
-    if (country && country !== 'all') {
-      where.OR = [
-        ...(where.OR || []),
-        { country: { contains: country } },
-        { university: { country: { contains: country } } },
-      ];
+    // If tuitionMax is set, we need to fetch and filter manually
+    // since tuition is stored as a string
+    const hasTuitionMax = typeof tuitionMax === 'number' && tuitionMax > 0;
+
+    // Cache key based on all filter params
+    const cacheKey = `course-search:${JSON.stringify({ country, universitySlug, level, subject, intake, tuitionMax, scholarshipOnly, search, page: p, limit: l })}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached);
     }
 
-    if (city) {
-      where.city = { contains: city };
-    }
-
-    if (university && university !== 'all') {
-      where.OR = [
-        { universityId: { contains: university } },
-        { university: { name: { contains: university } } },
-        { university: { slug: { contains: university } } },
-      ];
-    }
-
-    if (campus) {
-      where.campus = { contains: campus };
-    }
-
-    if (studyLevel && studyLevel !== 'all') {
-      where.studyLevel = { contains: studyLevel };
-    }
-
-    if (studyArea && studyArea !== 'all') {
-      where.subjectArea = { contains: studyArea };
-    }
-
-    if (discipline) {
-      where.disciplineArea = { contains: discipline };
-    }
-
-    if (openProgram) {
-      where.internationalEligibility = { not: 'closed' };
-    }
-
-    if (tag) {
-      where.publicTags = { contains: tag };
-    }
-
-    if (scholarship) {
-      where.scholarshipRecords = { some: { status: 'active' } };
-    }
-
-    if (intakeMonth || intakeYear) {
-      const intakeWhere: any = {};
-      if (intakeMonth) intakeWhere.intakeMonth = { contains: intakeMonth };
-      if (intakeYear) intakeWhere.intakeYear = parseInt(intakeYear, 10);
-      where.intakeFees = { some: intakeWhere };
-    }
-
-    let orderBy: any = { courseTitle: 'asc' };
-    if (sort === 'popular') {
-      orderBy = { placementOption: 'desc' };
-    } else if (sort === 'newest') {
-      orderBy = { createdAt: 'desc' };
-    }
-
-    const [total, courses] = await Promise.all([
-      db.crmCourse.count({ where }),
-      db.crmCourse.findMany({
+    // Fetch courses with university relation
+    const [coursesRaw, totalRaw] = await Promise.all([
+      db.coursePage.findMany({
         where,
-        skip,
-        take: limit,
-        orderBy,
         include: {
           university: {
             select: {
-              universityId: true,
               name: true,
-              country: true,
-              city: true,
-              campusName: true,
-              ranking: true,
-              worldRanking: true,
-              website: true,
               slug: true,
-              ieltsMin: true,
-              scholarships: true,
-              tuitionRange: true,
-              status: true,
+              city: true,
+              ranking: true,
+              logo: true,
             },
           },
-          intakeFees: {
-            ...(isPrivileged ? {} : { where: publicIntakeWhere() }),
-            take: 4,
-            orderBy: { intakeYear: 'asc' },
-            select: {
-              intakeYear: true,
-              intakeMonth: true,
-              applicationDeadline: true,
-              tuitionCurrency: true,
-              yearlyTuition: true,
-              depositAmount: true,
-              appFeeAmount: true,
-            },
-          },
-          requirements: {
-            ...(isPrivileged ? {} : { where: publicRequirementWhere() }),
-            take: 2,
-            select: {
-              academicReq: true,
-              minScore: true,
-              ieltsOverall: true,
-              ieltsMinBand: true,
-              pteOverall: true,
-              toeflOverall: true,
-              detOverall: true,
-              moiAccepted: true,
-            },
-          },
-          scholarshipRecords: {
-            ...(isPrivileged ? {} : { where: publicScholarshipWhere() }),
-            take: 3,
-            select: {
-              scholarshipName: true,
-              scholarshipAmount: true,
-              scholarshipCurrency: true,
-              deadline: true,
-            },
-          },
-          // Commission rows are internal. Partners are not given rows because
-          // CrmCommission has no partner-ownership column to prove attribution.
-          commissions: isPrivileged
-            ? {
-                take: 1,
-                select: {
-                  partnerCommission: true,
-                  internalExpected: true,
-                  internalNotes: isPrivileged,
-                },
-              }
-            : false,
         },
+        orderBy: { matchScore: 'desc' },
+        skip: (p - 1) * l,
+        take: l,
+      }),
+      db.coursePage.count({ where }),
+    ]);
+
+    // Apply tuitionMax filter in-memory if needed
+    let courses = coursesRaw;
+    let total = totalRaw;
+
+    if (hasTuitionMax) {
+      courses = coursesRaw.filter((c) => {
+        const t = parseTuition(c.tuition);
+        return t !== null && t <= tuitionMax;
+      });
+      // For accurate total with tuition filter, count from DB
+      // Since we can't easily do this in SQL for string fields, we approximate
+      total = courses.length;
+    }
+
+    // Fetch filter options (distinct values) for sidebar
+    const [countries, levels, subjects, intakes] = await Promise.all([
+      db.coursePage.findMany({
+        where: { approvalStatus: 'PUBLISHED' },
+        select: { countrySlug: true },
+        distinct: ['countrySlug'],
+      }),
+      db.coursePage.findMany({
+        where: { approvalStatus: 'PUBLISHED' },
+        select: { level: true },
+        distinct: ['level'],
+      }),
+      db.coursePage.findMany({
+        where: { approvalStatus: 'PUBLISHED' },
+        select: { subject: true },
+        distinct: ['subject'],
+      }),
+      db.coursePage.findMany({
+        where: { approvalStatus: 'PUBLISHED' },
+        select: { intake: true },
+        distinct: ['intake'],
       }),
     ]);
 
-    const sanitized = courses.map((c: any) => {
-      let qualityScore = 50;
-      if (c.university) qualityScore += 15;
-      if (c.intakeFees && c.intakeFees.length > 0) qualityScore += 15;
-      if (c.requirements && c.requirements.length > 0) qualityScore += 10;
-      if (c.sourceUrl) qualityScore += 10;
-
-      const primaryIntake = c.intakeFees?.[0];
-      const primaryReq = c.requirements?.[0];
-      const tuitionFee = primaryIntake?.yearlyTuition || 0;
-      const currency = primaryIntake?.tuitionCurrency || 'GBP';
-      const depositAmount = primaryIntake?.depositAmount || 0;
-      const appFeeAmount = primaryIntake?.appFeeAmount || 0;
-
-      const output: any = {
-        id: c.id,
-        courseId: c.courseId,
-        courseTitle: c.courseTitle,
-        slug: c.slug || c.courseId,
-        studyLevel: c.studyLevel || 'Postgraduate',
-        programLevel: c.programLevel,
-        subjectArea: c.subjectArea || 'General',
-        disciplineArea: c.disciplineArea,
-        durationMonths: c.durationMonths || 12,
-        qualification: c.qualification || 'MSc',
-        deliveryMode: c.deliveryMode || 'Full-time On Campus',
-        city: c.city || c.university?.city || '',
-        country: c.country || c.university?.country || 'United Kingdom',
-        campus: c.campus || c.university?.campusName || 'Main Campus',
-        tuitionFee,
-        currency,
-        depositAmount,
-        appFeeAmount,
-        publicTags: c.publicTags ? c.publicTags.split(',').map((t: string) => t.trim()) : [],
-        placementOption: c.placementOption,
-        onlineOption: c.onlineOption,
-        internationalEligibility: c.internationalEligibility,
-        university: c.university,
-        intakes: c.intakeFees || [],
-        requirements: primaryReq || null,
-        scholarships: c.scholarshipRecords || [],
-        createdAt: c.createdAt,
-      };
-
-      if (isPrivileged) {
-        output.sourceUrl = c.sourceUrl;
-        output.lastVerifiedAt = c.lastVerifiedAt;
-        output.verificationStatus = c.verificationStatus;
-        output.status = c.status;
-        output.publicationStatus = c.publicationStatus;
-        output.dataQualityScore = qualityScore;
-        output.commissions = c.commissions || [];
-      }
-
-      return output;
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: sanitized,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+    const result = {
+      courses,
+      total,
+      page: p,
+      limit: l,
+      filters: {
+        countries: countries.map((c) => c.countrySlug).filter(Boolean).sort(),
+        levels: levels.map((c) => c.level).filter(Boolean).sort(),
+        subjects: subjects.map((c) => c.subject).filter(Boolean).sort(),
+        intakes: intakes
+          .flatMap((c) => (c.intake ? c.intake.split(',').map((s: string) => s.trim()) : []))
+          .filter(Boolean)
+          .sort()
+          .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i),
       },
-    });
-  } catch (error: any) {
-    console.error('[api/courses/search] error', error);
+    };
+
+    setCache(cacheKey, result as unknown as Record<string, unknown>);
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('Error searching courses:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to search courses' },
-      { status: 500 }
+      { error: 'Internal server error.' },
+      { status: 500 },
     );
   }
 }

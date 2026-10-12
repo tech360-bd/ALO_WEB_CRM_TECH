@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { withAuth, AuthContext } from "@/lib/auth-middleware";
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
 
 // GET — campaign posts
-export const GET = withAuth(async (req: Request, _auth: AuthContext) => {
-  const status = new URL(req.url).searchParams.get("status");
-  const platform = new URL(req.url).searchParams.get("platform");
+export async function GET(req: NextRequest) {
+  const status = req.nextUrl.searchParams.get("status");
+  const platform = req.nextUrl.searchParams.get("platform");
   const where: any = {};
   if (status) where.approvalStatus = status;
   if (platform) where.platform = platform;
@@ -31,11 +26,11 @@ export const GET = withAuth(async (req: Request, _auth: AuthContext) => {
       published: posts.filter((p) => p.approvalStatus === "PUBLISHED").length,
       rejected: posts.filter((p) => p.approvalStatus === "REJECTED").length,
     },
-  } as any);
-}, MARKETING_AUTH);
+  });
+}
 
 // POST — create campaign post (AI-generated or manual)
-export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
+export async function POST(req: NextRequest) {
   const body = await req.json();
   const { title, category, platform, caption, hashtags, ctaText, ctaUrl, videoScript, reelCaption, landingLink, campaignObjective, platformSize, createdBy } = body;
 
@@ -62,11 +57,11 @@ export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
     data: { action: "DATA_IMPORT", resource: "CampaignPost", resourceId: post.id, details: JSON.stringify({ title, platform, category }) },
   });
 
-  return NextResponse.json({ post, message: "Campaign post created as draft. Submit for approval to publish." } as any);
-}, MARKETING_AUTH);
+  return NextResponse.json({ post, message: "Campaign post created as draft. Submit for approval to publish." });
+}
 
 // PATCH — approve/reject/schedule/publish post
-export const PATCH = withAuth(async (req: Request, _auth: AuthContext) => {
+export async function PATCH(req: NextRequest) {
   const body = await req.json();
   const { id, action, approvedBy, rejectionReason, scheduledAt, publishedUrl } = body;
 
@@ -99,4 +94,4 @@ export const PATCH = withAuth(async (req: Request, _auth: AuthContext) => {
   }
 
   return NextResponse.json({ error: "Unknown action" }, { status: 400 });
-}, MARKETING_AUTH);
+}

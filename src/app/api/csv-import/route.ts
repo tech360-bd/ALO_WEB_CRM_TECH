@@ -1,26 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { authenticateRequest } from "@/lib/auth-middleware";
 
-// CSV Import Center — preview, validate, import (SUPER_ADMIN/ADMIN only)
-async function requireImportAdmin(req: NextRequest) {
-  const auth = await authenticateRequest(req);
-  if (auth instanceof NextResponse) return auth;
-  const role = (auth.userType || auth.roles?.[0] || "").toUpperCase();
-  const ok =
-    role === "SUPER_ADMIN" ||
-    role === "ADMIN" ||
-    (auth.roles || []).includes("super_admin") ||
-    (auth.roles || []).includes("admin");
-  if (!ok) {
-    return NextResponse.json({ error: "Forbidden — SUPER_ADMIN or ADMIN only" }, { status: 403 });
-  }
-  return auth;
-}
-
-export async function GET(req: NextRequest) {
-  const auth = await requireImportAdmin(req);
-  if (auth instanceof NextResponse) return auth;
+// CSV Import Center — preview, validate, import
+export async function GET() {
   const batches = await db.importBatch.findMany({
     include: { _count: { select: { errors: true } } },
     orderBy: { createdAt: "desc" },
@@ -39,12 +21,8 @@ export async function GET(req: NextRequest) {
 
 // POST — parse and validate CSV (simulated), create import batch
 export async function POST(req: NextRequest) {
-  const auth = await requireImportAdmin(req);
-  if (auth instanceof NextResponse) return auth;
   const body = await req.json();
-  const { type, fileName, csvData } = body;
-  // Attribution comes from the authenticated session, never the request body.
-  const uploadedBy = auth.userId || auth.email || "system";
+  const { type, fileName, csvData, uploadedBy } = body;
 
   // Parse CSV (simple — split by newlines and commas)
   const lines = csvData.split("\n").filter((l: string) => l.trim());
@@ -53,10 +31,10 @@ export async function POST(req: NextRequest) {
 
   const batch = await db.importBatch.create({
     data: {
-      sourceCrmName: type || "CSV",
+      type,
       fileName,
-      createdBy: uploadedBy || "system",
-      status: "processing",
+      uploadedBy,
+      status: "PROCESSING",
       totalRows: dataRows.length,
     },
   });
@@ -100,11 +78,11 @@ export async function POST(req: NextRequest) {
 
   await db.importBatch.update({
     where: { id: batch.id },
-    data: { status: "completed", newCount: successCount, errorCount },
+    data: { status: "COMPLETED", successRows: successCount, errorRows: errorCount },
   });
 
   return NextResponse.json({
-    batch: { ...batch, newCount: successCount, errorCount, status: "completed" },
+    batch: { ...batch, successRows: successCount, errorRows: errorCount, status: "COMPLETED" },
     message: `Import completed: ${successCount} success, ${errorCount} errors out of ${dataRows.length} rows.`,
     preview: dataRows.slice(0, 5).map((r: string, i: number) => {
       const values = r.split(",").map((v: string) => v.trim());

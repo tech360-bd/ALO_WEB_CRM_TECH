@@ -149,8 +149,8 @@ function MetricTile({
   value: any;
 }) {
   const accentMap: Record<string, string> = {
-    blue: "bg-[#e8f0fb] text-[#2563EB]",
-    orange: "bg-[#fdece4] text-[#F97316]",
+    blue: "bg-[#e8f0fb] text-[#0057B8]",
+    orange: "bg-[#fdece4] text-[#E8501A]",
     emerald: "bg-emerald-50 text-emerald-600",
     amber: "bg-amber-50 text-amber-600",
     violet: "bg-violet-50 text-violet-600",
@@ -159,7 +159,7 @@ function MetricTile({
   const isEmpty = value === undefined || value === null || value === "";
 
   return (
-    <div className="rounded-xl border border-[#2563EB]/10 bg-white p-3">
+    <div className="rounded-xl border border-[#0057B8]/10 bg-white p-3">
       <div className="flex items-center gap-2">
         <div
           className={cn(
@@ -185,17 +185,17 @@ function ReportCard({ report }: { report: WeeklyReport }) {
   const summary = report.summary || {};
 
   return (
-    <Card className="overflow-hidden rounded-2xl border-2 border-[#2563EB]/15">
+    <Card className="overflow-hidden rounded-2xl border-2 border-[#0057B8]/15">
       <CardHeader className="flex-row items-center justify-between space-y-0 bg-[#e8f0fb]/40">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[#2563EB] text-white">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-[#0057B8] text-white">
             <Icon
               name={TABS.find((t) => t.key === report.type)?.icon || "BarChart3"}
               className="size-5"
             />
           </div>
           <div>
-            <CardTitle className="text-sm text-[#2563EB]">
+            <CardTitle className="text-sm text-[#0057B8]">
               {fmtDate(report.periodStart)} → {fmtDate(report.periodEnd)}
             </CardTitle>
             <CardDescription className="text-xs">
@@ -324,7 +324,7 @@ export function WeeklyReports() {
         action={
           <Button
             onClick={handleGenerate}
-            className="h-12 bg-[#F97316] hover:bg-[#F97316]/90 text-white"
+            className="h-12 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
           >
             <Icon name="Sparkles" className="size-4" />
             Generate New Report
@@ -338,7 +338,7 @@ export function WeeklyReports() {
             <TabsTrigger
               key={t.key}
               value={t.key}
-              className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#2563EB] data-[state=active]:shadow-sm"
+              className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm"
             >
               <Icon name={t.icon} className="mr-1.5 size-3.5" />
               <span className="hidden sm:inline">{t.label}</span>
@@ -356,4 +356,3 @@ export function WeeklyReports() {
     </div>
   );
 }
-export default WeeklyReports;

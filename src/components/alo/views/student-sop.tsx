@@ -180,7 +180,7 @@ export function StudentSop() {
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
+                className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
               >
                 Save Draft
               </Button>
@@ -188,7 +188,7 @@ export function StudentSop() {
                 onClick={handleAiGenerate}
                 disabled={generating}
                 variant="outline"
-                className="border-[#F97316] text-[#F97316] hover:bg-[#FFF3EA]"
+                className="border-[#F37021] text-[#F37021] hover:bg-[#FFF3EA]"
               >
                 <Icon name="Sparkles" className="mr-1.5 size-4" />
                 AI Generate

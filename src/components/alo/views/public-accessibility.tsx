@@ -63,9 +63,9 @@ export function PublicAccessibility({ onNavigate }: PublicAccessibilityProps) {
       {/* WCAG principles */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {COMMITMENTS.map((c) => (
-          <Card key={c.title} className="rounded-2xl border border-[#2563EB]/15 bg-[#EAF3FF]/40">
+          <Card key={c.title} className="rounded-2xl border border-[#0066CC]/15 bg-[#EAF3FF]/40">
             <CardContent className="p-5">
-              <div className="flex size-10 items-center justify-center rounded-xl bg-[#2563EB] text-white">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-[#0066CC] text-white">
                 <Icon name={c.icon} className="size-5" />
               </div>
               <h3 className="mt-3 text-sm font-bold text-[#0B2447]">{c.title}</h3>
@@ -139,7 +139,7 @@ export function PublicAccessibility({ onNavigate }: PublicAccessibilityProps) {
             seriously and will work to fix issues as quickly as possible.
           </p>
           <div className="mt-4">
-            <SectionCard title="How to report" icon="Mail" className="rounded-2xl border-[#2563EB]/15 bg-[#EAF3FF]/40">
+            <SectionCard title="How to report" icon="Mail" className="rounded-2xl border-[#0066CC]/15 bg-[#EAF3FF]/40">
               <div className="space-y-2 text-sm text-[#0B2447]">
                 <p><span className="font-semibold">Email:</span> hello@aloeducation.com</p>
                 <p><span className="font-semibold">Phone:</span> +880 1805 020101 (during office hours)</p>
@@ -181,4 +181,3 @@ export function PublicAccessibility({ onNavigate }: PublicAccessibilityProps) {
     </LegalLayout>
   );
 }
-export default PublicAccessibility;

@@ -146,19 +146,9 @@ const SAMPLE_RISK_ALERTS: RiskAlert[] = [
 // Component
 // -----------------------------------------------------------------------------
 
-interface WorkforceMetrics {
-  workforce: { total:number; active:number; idle:number; busy:number; paused:number; failed:number; waitingApproval:number; escalated:number; queued:number; running:number };
-  queue: { queued:number; running:number; success:number; failed:number };
-  groq: { concurrency:{ current:number; max:number }; perMinute:{ count:number; limit:number }; queueLength:number; circuitOpen:boolean; totalRequests:number; totalFallbacks:number };
-  automation: { hasData:boolean; totalEligible:number; automated:number; assisted:number; human:number; escalated:number; automationRate:number; humanRate:number; targetAutomation:number; targetHuman:number; variance:number; verdict:string; period:{ label:string } };
-  collaboration: Array<{ id:string; at:string; actor:string; action:string; target:string; automated:boolean }>;
-  latency: { avgMs:number|null };
-}
 export function AiCommandCenter() {
   const { toast } = useToast();
   const [agents, setAgents] = React.useState<AiAgent[]>([]);
-  const [metrics, setMetrics] = React.useState<WorkforceMetrics | null>(null);
-  const [metricsErr, setMetricsErr] = React.useState<string|null>(null);
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -166,22 +156,10 @@ export function AiCommandCenter() {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
     try {
-      const [aRes, mRes] = await Promise.all([
-        fetch("/api/ai-agents", { cache: "no-store" }),
-        fetch("/api/workforce/metrics?periodDays=30", { cache: "no-store" }),
-      ]);
-      if (aRes.ok) {
-        const data = (await aRes.json()) as { agents: AiAgent[] };
-        setAgents(Array.isArray(data?.agents) ? data.agents : []);
-      } else throw new Error("Failed to load AI agents");
-      if (mRes.ok) {
-        const m = await mRes.json();
-        if (m?.automation) { setMetrics(m as WorkforceMetrics); setMetricsErr(null); }
-        else setMetricsErr(m?.error || "metrics empty");
-      } else {
-        const t = await mRes.text().catch(()=> "");
-        setMetricsErr(t.slice(0,300) || `metrics ${mRes.status}`);
-      }
+      const res = await fetch("/api/ai-agents", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to load AI agents");
+      const data = (await res.json()) as { agents: AiAgent[] };
+      setAgents(Array.isArray(data?.agents) ? data.agents : []);
     } catch (err) {
       toast({
         title: "Failed to load AI agents",
@@ -189,7 +167,6 @@ export function AiCommandCenter() {
         variant: "destructive",
       });
       setAgents([]);
-      setMetricsErr(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -279,7 +256,7 @@ export function AiCommandCenter() {
             variant="outline"
             onClick={() => fetchAgents(true)}
             disabled={refreshing}
-            className="h-12 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+            className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
           >
             <Icon name={refreshing ? "Loader2" : "RefreshCw"} className={cn("size-4", refreshing && "animate-spin")} />
             Refresh
@@ -288,14 +265,14 @@ export function AiCommandCenter() {
       />
 
       {/* AI Safety Rules Banner */}
-      <Card className="rounded-2xl border-2 border-[#F97316]/40 bg-orange-50/40">
+      <Card className="rounded-2xl border-2 border-[#E8501A]/40 bg-orange-50/40">
         <CardHeader>
           <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-[#F97316] text-white">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-[#E8501A] text-white">
               <Icon name="ShieldAlert" className="size-5" />
             </div>
             <div>
-              <CardTitle className="text-base text-[#F97316]">
+              <CardTitle className="text-base text-[#E8501A]">
                 AI Safety Rules — Non-Negotiable
               </CardTitle>
               <CardDescription className="text-xs">
@@ -319,7 +296,7 @@ export function AiCommandCenter() {
                 ))}
               </ul>
             </div>
-            <div className="md:border-l md:border-[#F97316]/20 md:pl-6">
+            <div className="md:border-l md:border-[#E8501A]/20 md:pl-6">
               <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-700">
                 <Icon name="CheckCircle2" className="size-4" /> AI MUST
               </p>
@@ -336,58 +313,7 @@ export function AiCommandCenter() {
         </CardContent>
       </Card>
 
-      {/* §30 TOP KPIs — real automation from DB + workforce + Groq */}
-      <Card className="rounded-2xl border-2 border-[#2563EB]/20 bg-gradient-to-br from-blue-50/80 to-slate-50">
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm tracking-wide text-[#2563EB]">Automation measurement — database events · 70% target, not a guarantee</CardTitle>
-            <Badge variant="outline" className="text-[11px]">{metrics?.automation?.period?.label ?? "Last 30d"} · {metrics ? "live" : metricsErr ? "auth/empty" : "loading"}</Badge>
-          </div>
-          <CardDescription className="text-xs">AUTOMATION_RATE = AI_AUTOMATED / TOTAL_ELIGIBLE ×100 · TARGET 70% · VARIANCE = ACTUAL−TARGET · Source: AutomationEvent table</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-            <div className="rounded-xl border bg-white p-3">
-              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Automation Rate</div>
-              <div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-bold text-[#2563EB]">{metrics?.automation.hasData ? `${metrics.automation.automationRate.toFixed(2)}%` : "—"}</span><span className={`text-xs ${metrics && metrics.automation.variance >= -5 && metrics.automation.variance <= 10 ? "text-emerald-600" : metrics && metrics.automation.variance < -5 ? "text-amber-600" : "text-slate-500"}`}>{metrics?.automation.hasData ? `Δ ${metrics.automation.variance >=0?"+":""}${metrics.automation.variance.toFixed(2)}%` : ""}</span></div>
-              <div className="mt-1 text-[11px] text-muted-foreground">TARGET 70% · {metrics?.automation.verdict ?? ""}</div>
-            </div>
-            <div className="rounded-xl border bg-white p-3">
-              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Human Rate</div>
-              <div className="mt-1 text-2xl font-bold">{metrics ? `${metrics.automation.humanRate.toFixed(2)}%` : "—"}</div>
-              <div className="mt-1 text-[11px] text-muted-foreground">Successful human events / all events</div>
-            </div>
-            <div className="rounded-xl border bg-white p-3">
-              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Eligible / Automated</div>
-              <div className="mt-1 text-lg font-bold">{metrics ? `${metrics.automation.automated.toLocaleString()} / ${metrics.automation.totalEligible.toLocaleString()}` : "—"}</div>
-              <div className="mt-1 text-[11px] text-muted-foreground">+ assisted {metrics?.automation.assisted ?? 0} · human {metrics?.automation.human ?? 0} · escal {metrics?.automation.escalated ?? 0}</div>
-            </div>
-            <div className="rounded-xl border bg-white p-3">
-              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Workforce</div>
-              <div className="mt-1 text-lg font-bold">{metrics ? `${metrics.workforce.active} active` : `${activeAgents} active`} <span className="text-sm font-normal text-muted-foreground">/ {metrics?.workforce.total ?? totalAgents}</span></div>
-              <div className="mt-1 text-[11px] text-muted-foreground">idle {metrics?.workforce.idle ?? 0} · busy {metrics?.workforce.busy ?? 0} · paused {metrics?.workforce.paused ?? 0}</div>
-            </div>
-            <div className="rounded-xl border bg-white p-3">
-              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Queue</div>
-              <div className="mt-1 text-lg font-bold">Q {metrics?.queue.queued ?? metrics?.workforce.queued ?? 0} · R {metrics?.queue.running ?? metrics?.workforce.running ?? 0}</div>
-              <div className="mt-1 text-[11px] text-muted-foreground">ok {metrics?.queue.success ?? 0} · fail {metrics?.queue.failed ?? 0} · wait {metrics?.workforce.waitingApproval ?? pendingApprovals}</div>
-            </div>
-            <div className="rounded-xl border bg-white p-3">
-              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Groq Free-Tier</div>
-              <div className="mt-1 text-sm font-bold">{metrics ? `${metrics.groq.concurrency.current}/${metrics.groq.concurrency.max} conc` : "—"}</div>
-              <div className="mt-1 text-[11px] text-muted-foreground">{metrics ? `${metrics.groq.perMinute.count}/${metrics.groq.perMinute.limit}/min · q ${metrics.groq.queueLength}${metrics.groq.circuitOpen ? " · CIRCUIT OPEN" : ""}` : "limit 6 conc / 30 req/min / queue 200"}</div>
-            </div>
-          </div>
-          {(metricsErr || !metrics) && <p className="mt-2 text-[11px] text-amber-700">Metrics need admin session (DB is source of truth). Login as admin to see live counts. Empty DB → rate 0% (not fabricated) — seed AutomationEvent via workflows.</p>}
-          <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-3 text-xs">
-            <div className="rounded-lg bg-white border p-2.5"><div className="font-semibold">Classification</div><div className="text-muted-foreground mt-1">AI_AUTOMATABLE → auto · AI_ASSISTED → draft+human review · HUMAN_REQUIRED → block · HUMAN_APPROVAL_REQUIRED → queue · ESCALATED → senior</div></div>
-            <div className="rounded-lg bg-white border p-2.5"><div className="font-semibold">Guardrails</div><div className="text-muted-foreground mt-1">maxSteps 12 · maxRuntime 120s · maxToolCalls 8 · tokenBudget 12k · depth 10 · never guarantee visa/admission</div></div>
-            <div className="rounded-lg bg-white border p-2.5"><div className="font-semibold">Latency & Success</div><div className="text-muted-foreground mt-1">avg {metrics?.latency.avgMs != null ? `${metrics.latency.avgMs}ms` : "—"} · success {metrics ? Math.round((metrics.queue.success / Math.max(1, metrics.queue.success+metrics.queue.failed))*100) : 0}% · fallbacks {metrics?.groq.totalFallbacks ?? 0}</div></div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats (department rollup) */}
+      {/* Stats */}
       {loading ? (
         <LoadingGrid count={4} />
       ) : (
@@ -397,7 +323,7 @@ export function AiCommandCenter() {
             value={totalAgents}
             icon="Bot"
             accent="blue"
-            hint={`across ${grouped.length} departments · registry-driven`}
+            hint={`across ${grouped.length} departments`}
           />
           <StatCard
             label="Active Agents"
@@ -411,14 +337,14 @@ export function AiCommandCenter() {
             value={jobsProcessed.toLocaleString()}
             icon="Zap"
             accent="orange"
-            hint="sum AiAgent.jobsProcessed (real DB)"
+            hint="last 30 days"
           />
           <StatCard
             label="Pending Approvals"
             value={pendingApprovals}
             icon="AlertCircle"
             accent="amber"
-            hint={`WAITING_APPROVAL ${metrics?.workforce.waitingApproval ?? pendingApprovals} · ESCALATED ${metrics?.workforce.escalated ?? 0}`}
+            hint="awaiting human review"
           />
         </div>
       )}
@@ -517,7 +443,7 @@ export function AiCommandCenter() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7 px-2 text-xs text-[#2563EB] hover:bg-[#e8f0fb]"
+                              className="h-7 px-2 text-xs text-[#0057B8] hover:bg-[#e8f0fb]"
                               onClick={() => handleAgentAction(agent, "run")}
                             >
                               <Icon name="Play" className="size-3" /> Run
@@ -564,15 +490,6 @@ export function AiCommandCenter() {
             </div>
           )}
         </section>
-      )}
-
-      {/* Sections 7-11: Health, Model Router, Tool Gateway, RAG/Memory, Collaboration */}
-      {!loading && metrics && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Health & Concurrency</CardTitle><CardDescription className="text-xs">GroqGuard + queue + circuit (real)</CardDescription></CardHeader><CardContent className="text-xs space-y-1"><div className="flex justify-between"><span>Concurrency</span><span className="font-mono">{metrics.groq.concurrency.current}/{metrics.groq.concurrency.max}</span></div><div className="flex justify-between"><span>Per-minute</span><span className="font-mono">{metrics.groq.perMinute.count}/{metrics.groq.perMinute.limit}</span></div><div className="flex justify-between"><span>Queue</span><span className="font-mono">{metrics.groq.queueLength} / 200</span></div><div className="flex justify-between"><span>Circuit</span><span className={metrics.groq.circuitOpen? "text-red-600 font-bold":"text-emerald-600"}>{metrics.groq.circuitOpen? "OPEN":"CLOSED"}</span></div><div className="flex justify-between"><span>Total requests / fallbacks</span><span className="font-mono">{metrics.groq.totalRequests} / {metrics.groq.totalFallbacks}</span></div></CardContent></Card>
-          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Model Router</CardTitle><CardDescription className="text-xs">FAST/COMPLEX/PRIVATE (Groq→fallback)</CardDescription></CardHeader><CardContent className="text-xs space-y-1"><div>GROQ_FAST → llama-3.1-8b-instant (6 conc, 30/min)</div><div>GROQ_LARGE → llama-3.3-70b-versatile (complex/reasoning)</div><div>LOCAL → {`process.env.LOCAL_AI_URL || fallback`}</div><div className="text-muted-foreground">Gateway: generateText/Structured/classify/summarize/chat/stream + audit to AgentAuditLog</div></CardContent></Card>
-          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Human↔AI Collaboration (real TimelineEvent)</CardTitle><CardDescription className="text-xs">Last 8 events · automated vs human</CardDescription></CardHeader><CardContent>{metrics.collaboration.length===0? <p className="text-xs text-muted-foreground">No timeline rows yet — run any workflow (leadWelcome/scoring/SLA) to populate.</p> : <ul className="space-y-1.5 text-xs">{metrics.collaboration.slice(0,8).map(c=> <li key={c.id} className="flex justify-between border-b py-1"><span className={c.automated?"text-[#2563EB]":"text-amber-700"}>{c.actor.slice(0,18)}</span><span className="text-muted-foreground">{c.action.slice(0,28)}</span><span className="font-mono text-[11px]">{c.target}</span></li>)}</ul>}</CardContent></Card>
-        </div>
       )}
 
       {/* Approval queue + Risk alerts */}
@@ -684,7 +601,7 @@ export function AiCommandCenter() {
                     <Button
                       size="sm"
                       variant="link"
-                      className="mt-1 h-auto p-0 text-xs text-[#2563EB]"
+                      className="mt-1 h-auto p-0 text-xs text-[#0057B8]"
                       onClick={() =>
                         toast({
                           title: "Alert acknowledged",
@@ -704,4 +621,3 @@ export function AiCommandCenter() {
     </div>
   );
 }
-export default AiCommandCenter;

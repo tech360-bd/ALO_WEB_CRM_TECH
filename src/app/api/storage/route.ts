@@ -1,31 +1,73 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateRequest } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
+import { requireAuth, isErrorResponse } from '@/lib/access-control';
 
-function isStorageAdmin(userType: string, roles: string[]) {
-  return ['SUPER_ADMIN', 'ADMIN'].includes(userType.toUpperCase()) || roles.some((role) => ['SUPER_ADMIN', 'ADMIN'].includes(role.toUpperCase()));
-}
+export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
-  const auth = await authenticateRequest(request);
-  if (auth instanceof NextResponse) return auth;
-  if (!isStorageAdmin(auth.userType, auth.roles)) return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+// RBAC: SUPER_ADMIN, ADMIN only
+const ALLOWED_ROLES = ['SUPER_ADMIN', 'ADMIN'];
 
-  const limitParam = Number(request.nextUrl.searchParams.get('limit') || '20');
-  const limit = Number.isInteger(limitParam) && limitParam > 0 ? Math.min(limitParam, 100) : 20;
+export async function GET(_req: NextRequest) {
+  const auth = await requireAuth(_req);
+  if (isErrorResponse(auth)) return auth;
+
+  if (!ALLOWED_ROLES.includes(auth.user.role)) {
+    return NextResponse.json(
+      { success: false, error: 'Access denied. Requires SUPER_ADMIN or ADMIN role.' },
+      { status: 403 },
+    );
+  }
+
   try {
-    const [files, totalFiles, totals] = await Promise.all([
-      db.fileMetadata.findMany({
-        where: { isDeleted: false },
-        orderBy: { uploadedAt: 'desc' },
-        take: limit,
-        select: { id: true, originalName: true, mimeType: true, sizeBytes: true, entityType: true, entityId: true, status: true, uploadedAt: true },
+    const [fileTypeCounts, totalStorage, documentTypeCounts, recentUploads] = await Promise.all([
+      // File counts by type (FileMetadata)
+      db.fileMetadata.groupBy({
+        by: ['fileType'],
+        _count: true,
       }),
-      db.fileMetadata.count({ where: { isDeleted: false } }),
-      db.fileMetadata.aggregate({ where: { isDeleted: false }, _sum: { sizeBytes: true } }),
+
+      // Total storage used (FileMetadata)
+      db.fileMetadata.aggregate({
+        _sum: { fileSize: true },
+        _count: true,
+      }),
+
+      // Document counts by category (Document model)
+      db.document.groupBy({
+        by: ['category'],
+        _count: true,
+      }),
+
+      // Recent 15 uploads (FileMetadata)
+      db.fileMetadata.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 15,
+        select: {
+          id: true,
+          fileName: true,
+          fileType: true,
+          fileSize: true,
+          uploadedBy: true,
+          createdAt: true,
+        },
+      }),
     ]);
-    return NextResponse.json({ success: true, data: files.map((file) => ({ ...file, sizeBytes: Number(file.sizeBytes) })), stats: { totalFiles, totalSize: Number(totals._sum.sizeBytes || 0) } });
-  } catch {
-    return NextResponse.json({ success: false, error: 'Storage metadata is temporarily unavailable.' }, { status: 503 });
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        totalFiles: totalStorage._count,
+        totalStorageBytes: totalStorage._sum.fileSize || 0,
+        fileCountsByType: fileTypeCounts.map((f) => ({ type: f.fileType, count: f._count })),
+        documentCountsByCategory: documentTypeCounts.map((d) => ({ category: d.category, count: d._count })),
+        recentUploads,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching storage stats:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch storage statistics.' },
+      { status: 500 },
+    );
   }
 }

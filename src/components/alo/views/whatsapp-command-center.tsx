@@ -1,29 +1,13 @@
 "use client";
 
-/**
- * ALO Education — WhatsApp Command Center
- * ========================================
- * Three-column workspace:
- *   • Left   — conversation list (search + filter: All / Unread / SLA Overdue)
- *   • Center — active conversation (header w/ live SLA timer, student context banner,
- *              message thread, AI draft reply panel, quick replies, composer, templates)
- *   • Right  — student/contact context panel + AI message classification +
- *              WhatsApp document receipt (when inbound attachment detected)
- *
- * Resilient to AI/webhook failures: shows "AI service unavailable" gracefully.
- * All API calls use relative paths only.
- */
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -41,51 +25,41 @@ import {
 } from "@/components/ui/dialog";
 import {
   Icon,
-  SearchInput,
-  IconButton,
+  PageHeader,
   EmptyState,
-  ErrorState,
-  LoadingSkeleton,
+  LoadingGrid,
   InfoRow,
-  StatusBadge,
-  SectionCard,
-  FileUploader,
-  type AccentColor,
-} from "@/components/alo/ui";
-import { AISuggestionCard } from "@/components/alo/cards";
-import { fmtDate, timeAgo, type ViewKey } from "@/lib/alo-types";
+} from "@/components/alo/shared";
+import {
+  SearchInput,
+  Pill,
+  fetchJson,
+  slaCountdown,
+  timeAgoShort,
+  fmtTime,
+} from "@/components/alo/comm-helpers";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────
 
 interface InboxMessage {
   id: string;
   channel: string;
-  direction: string; // INBOUND | OUTBOUND
+  direction: string;
   fromName?: string | null;
   fromPhone?: string | null;
   fromEmail?: string | null;
   body: string;
-  aiAssisted?: boolean;
-  read?: boolean;
+  aiAssisted?: boolean | null;
+  read?: boolean | null;
   receivedAt: string;
   sentAt?: string | null;
   deliveryStatus?: string | null;
-  attachmentsJson?: string | null;
-}
-
-interface Attachment {
-  id?: string;
-  name: string;
-  type: string; // mime type
-  size: number;
-  url?: string;
+  studentId?: string | null;
+  counselorId?: string | null;
 }
 
 interface Conversation {
   key: string;
-  source?: 'communication_thread' | 'ucc_conversation';
   channel: string;
   studentId?: string | null;
   studentName?: string | null;
@@ -98,1665 +72,1076 @@ interface Conversation {
 
 interface InboxResponse {
   conversations: Conversation[];
+  slaStats: unknown[];
   totalMessages: number;
 }
 
-interface StudentContext {
+interface StudentSummary {
   id: string;
   studentId: string;
   fullName: string;
-  mobile?: string | null;
-  altMobile?: string | null;
   email?: string | null;
+  mobile?: string | null;
+  counselorId?: string | null;
+  counselorName?: string | null;
   studyDestination?: string | null;
   programTitle?: string | null;
-  profileCompletion?: number;
-  hasPassport?: boolean;
-  status?: string;
-  counselor?: { id: string; name: string; email?: string | null } | null;
-  applications?: Array<{
-    id: string;
-    universityName?: string | null;
-    courseName?: string | null;
-    stage: string;
-    isB2bConfidential?: boolean;
-  }>;
-  hasB2bConfidentialApplications?: boolean;
-  canManageB2bDocuments?: boolean;
-  documents?: Array<{
-    id: string;
-    name: string;
-    category: string;
-    status: string;
-  }>;
-  payments?: Array<{
-    id: string;
-    amount?: number | null;
-    status?: string | null;
-    type?: string | null;
-  }>;
-  interviews?: Array<{
-    id: string;
-    type?: string | null;
-    score?: number | null;
-    startedAt?: string | null;
-  }>;
-  timelineEvents?: Array<{
-    id: string;
-    type: string;
-    title: string;
-    createdAt: string;
-  }>;
+  studyLevel?: string | null;
+  applicationStage?: string | null;
+  profileCompletion?: number | null;
+  hasPassport?: boolean | null;
+  missingDocuments?: string[];
+}
+
+interface ContactMatchResponse {
+  matched: boolean;
+  matchType: "STUDENT" | "LEAD" | "PARTNER" | "NONE";
+  matchedId?: string;
+  confidence: number;
+  reviewId: string;
+  possibleDuplicates: Array<{ type: string; id: string; label: string; field?: string }>;
+}
+
+interface DraftPayload {
+  channel: string;
+  socialInboxMessageId?: string;
+  studentId?: string;
+  draftBody: string;
+  aiGenerated: boolean;
+  aiConfidence: number;
+  aiReasoning?: string | null;
+  riskLevel: string;
+  mode: string;
+  status: string;
 }
 
 interface QuickReply {
   id: string;
   title: string;
   body: string;
-  category?: string | null;
-  channel?: string | null;
   shortcut?: string | null;
+  category?: string | null;
 }
 
 interface Template {
   id: string;
-  templateId: string;
   name: string;
   body: string;
   category?: string | null;
-  channel: string;
-  status: string;
-  language?: string | null;
+  variables?: string | null;
 }
 
-interface AiReplyResponse {
-  reply?: string;
-  requiresOtp?: boolean;
-  verificationAvailable?: boolean;
-  requiresHumanApproval?: boolean;
-  error?: string;
-}
+// ─── Constants ───────────────────────────────────────────────────────────
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Constants & helpers
-// ─────────────────────────────────────────────────────────────────────────────
+const WHATSAPP_BRAND = "#16a34a";
 
-const SLA_TARGET_MINUTES = 30; // WARNING threshold
-const SLA_OVERDUE_MINUTES = 60; // OVERDUE threshold
-const SLA_CRITICAL_MINUTES = 120; // CRITICAL threshold
+// ─── Main Component ───────────────────────────────────────────────────────
 
-type SlaSeverity = "NORMAL" | "WARNING" | "OVERDUE" | "CRITICAL";
-
-function severityFor(ts: string): SlaSeverity {
-  const mins = Math.floor((Date.now() - new Date(ts).getTime()) / 60000);
-  if (mins >= SLA_CRITICAL_MINUTES) return "CRITICAL";
-  if (mins >= SLA_OVERDUE_MINUTES) return "OVERDUE";
-  if (mins >= SLA_TARGET_MINUTES) return "WARNING";
-  return "NORMAL";
-}
-
-function formatCountdown(ts: string): string {
-  const elapsed = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
-  if (elapsed < 60) return `${elapsed}s`;
-  const mins = Math.floor(elapsed / 60);
-  const secs = elapsed % 60;
-  if (mins < 60) return `${mins}m ${secs}s`;
-  const hrs = Math.floor(mins / 60);
-  const m = mins % 60;
-  return `${hrs}h ${m}m`;
-}
-
-function initials(name?: string | null): string {
-  if (!name) return "?";
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w.charAt(0).toUpperCase())
-    .join("");
-}
-
-function parseAttachments(json?: string | null): Attachment[] {
-  if (!json) return [];
-  try {
-    const parsed = JSON.parse(json);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (a): a is Attachment =>
-        !!a &&
-        typeof a === "object" &&
-        typeof (a as Attachment).name === "string"
-    );
-  } catch {
-    return [];
-  }
-}
-
-function fileSizeLabel(bytes: number): string {
-  if (!bytes) return "—";
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-}
-
-function fileTypeIcon(name: string): string {
-  const ext = name.split(".").pop()?.toLowerCase() || "";
-  if (["jpg", "jpeg", "png", "webp", "gif"].includes(ext)) return "Image";
-  if (["pdf"].includes(ext)) return "FileText";
-  if (["doc", "docx"].includes(ext)) return "FileText";
-  if (["xls", "xlsx", "csv"].includes(ext)) return "Sheet";
-  if (["mp4", "mov", "avi"].includes(ext)) return "Video";
-  return "File";
-}
-
-const SEVERITY_LABEL: Record<SlaSeverity, string> = {
-  NORMAL: "Normal",
-  WARNING: "Warning",
-  OVERDUE: "Overdue",
-  CRITICAL: "Critical",
-};
-
-function SlaTimer({ ts, live }: { ts: string; live: boolean }) {
-  // Re-render every second while live
-  const [, setTick] = React.useState(0);
-  React.useEffect(() => {
-    if (!live) return;
-    const i = setInterval(() => setTick((t) => t + 1), 1000);
-    return () => clearInterval(i);
-  }, [live]);
-
-  const sev = severityFor(ts);
-  const dotColor =
-    sev === "NORMAL" ? "bg-[var(--alo-success)]" :
-    sev === "WARNING" ? "bg-[var(--alo-warning)]" :
-    "bg-[var(--alo-danger)]";
-  const textColor =
-    sev === "NORMAL" ? "text-[var(--alo-success-strong)]" :
-    sev === "WARNING" ? "text-[var(--alo-warning-strong)]" :
-    "text-[var(--alo-danger-strong)]";
-
-  return (
-    <div className="flex items-center gap-1.5 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] px-2 py-1 text-xs">
-      <span className={cn("inline-block size-2 rounded-full", dotColor, sev !== "NORMAL" && "pulse-dot")} />
-      <span className={cn("font-semibold uppercase tracking-wide", textColor)}>
-        {SEVERITY_LABEL[sev]}
-      </span>
-      <span className="font-mono text-[var(--alo-text-secondary)]">·</span>
-      <span className="font-mono text-[var(--alo-text-secondary)]">{formatCountdown(ts)}</span>
-    </div>
-  );
-}
-
-function DeliveryStatus({ status }: { status?: string | null }) {
-  // SENT = single check, DELIVERED = double check, READ = blue double check
-  if (!status || status === "PENDING") {
-    return <Icon name="Clock" className="size-3 text-[var(--alo-muted)]" />;
-  }
-  if (status === "SENT") {
-    return <Icon name="Check" className="size-3 text-[var(--alo-muted)]" />;
-  }
-  if (status === "DELIVERED") {
-    return <Icon name="CheckCheck" className="size-3 text-[var(--alo-muted)]" />;
-  }
-  if (status === "READ") {
-    return <Icon name="CheckCheck" className="size-3 text-[var(--alo-blue)]" />;
-  }
-  if (status === "FAILED") {
-    return <Icon name="AlertCircle" className="size-3 text-[var(--alo-danger)]" />;
-  }
-  return <Icon name="Check" className="size-3 text-[var(--alo-muted)]" />;
-}
-
-function navigate(view: ViewKey) {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("alo-navigate", { detail: { view } }));
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main component
-// ─────────────────────────────────────────────────────────────────────────────
-
-export function WhatsAppCommandCenter() {
+export function WhatsappCommandCenter() {
   const { toast } = useToast();
-
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
   const [conversations, setConversations] = React.useState<Conversation[]>([]);
-  const [selectedKey, setSelectedKey] = React.useState<string | null>(null);
-
-  // Filters
+  const [activeKey, setActiveKey] = React.useState<string | null>(null);
   const [search, setSearch] = React.useState("");
-  const [filter, setFilter] = React.useState<"all" | "unread" | "overdue">("all");
-
-  // Selected conversation context
-  const [student, setStudent] = React.useState<StudentContext | null>(null);
+  const [filter, setFilter] = React.useState<"ALL" | "UNREAD" | "SLA_OVERDUE">("ALL");
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  const [student, setStudent] = React.useState<StudentSummary | null>(null);
   const [studentLoading, setStudentLoading] = React.useState(false);
-  const [studentError, setStudentError] = React.useState<string | null>(null);
-  const [contactMatchId, setContactMatchId] = React.useState<string | null>(null);
+  const [contactMatch, setContactMatch] = React.useState<ContactMatchResponse | null>(null);
+  const [matchReviewOpen, setMatchReviewOpen] = React.useState(false);
 
-  // AI draft
-  const [aiDraft, setAiDraft] = React.useState<string | null>(null);
-  const [aiLoading, setAiLoading] = React.useState(false);
-  const [aiError, setAiError] = React.useState<string | null>(null);
-  const [aiOtpRequired, setAiOtpRequired] = React.useState(false);
-
-  // Quick replies & templates
+  // Active conversation state
+  const [aiDraft, setAiDraft] = React.useState<{ body: string; confidence: number; reasoning?: string } | null>(null);
+  const [draftLoading, setDraftLoading] = React.useState(false);
+  const [draftError, setDraftError] = React.useState<string | null>(null);
+  const [editedDraft, setEditedDraft] = React.useState("");
+  const [composerText, setComposerText] = React.useState("");
+  const [sending, setSending] = React.useState(false);
   const [quickReplies, setQuickReplies] = React.useState<QuickReply[]>([]);
   const [templates, setTemplates] = React.useState<Template[]>([]);
 
-  // Composer
-  const [composerText, setComposerText] = React.useState("");
-  const [attachments, setAttachments] = React.useState<File[]>([]);
-  const [outboundApplicationId, setOutboundApplicationId] = React.useState('');
-  const [sending, setSending] = React.useState(false);
-
-  // Acting user
-  const [currentUserId, setCurrentUserId] = React.useState<string>("system");
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const stored = sessionStorage.getItem("alo-current-user");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.id) setCurrentUserId(parsed.id);
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  // ── Fetch conversation list ─────────────────────────────────────────────
   const fetchInbox = React.useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setError(false);
     try {
-      const res = await fetch("/api/inbox/unified?channel=WHATSAPP", { cache: "no-store" });
-      if (!res.ok) throw new Error(`Failed to fetch inbox (${res.status})`);
-      const data = (await res.json()) as InboxResponse;
-      const conversations = Array.isArray(data?.conversations) ? data.conversations : [];
-      setConversations(conversations);
-      if (conversations.length > 0 && !selectedKey) {
-        setSelectedKey(conversations[0].key);
-      }
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      setError(msg);
+      const data = await fetchJson<InboxResponse>("/api/inbox/unified?channel=WHATSAPP");
+      const sorted = (data.conversations || []).sort(
+        (a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime()
+      );
+      setConversations(sorted);
+      if (!activeKey && sorted.length > 0) setActiveKey(sorted[0].key);
+    } catch (err) {
+      console.error("[whatsapp inbox]", err);
+      setError(true);
+      toast({
+        title: "Failed to load WhatsApp conversations",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
-  }, [selectedKey]);
+  }, [activeKey, toast]);
 
-  React.useEffect(() => {
-    fetchInbox();
-  }, [fetchInbox]);
-
-  // ── Fetch quick replies + templates ─────────────────────────────────────
-  React.useEffect(() => {
-    Promise.allSettled([
-      fetch("/api/communications/quick-replies?channel=WHATSAPP&isActive=true", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/communications/templates?channel=WHATSAPP&status=APPROVED", { cache: "no-store" }).then((r) => r.json()),
-    ]).then(([qrRes, tplRes]) => {
-      if (qrRes.status === "fulfilled" && Array.isArray(qrRes.value?.quickReplies)) {
-        setQuickReplies(qrRes.value.quickReplies as QuickReply[]);
-      }
-      if (tplRes.status === "fulfilled" && Array.isArray(tplRes.value?.templates)) {
-        setTemplates(tplRes.value.templates as Template[]);
-      }
-    });
+  const fetchQuickReplies = React.useCallback(async () => {
+    try {
+      const res = await fetchJson<{ quickReplies: QuickReply[] }>(
+        "/api/communications/quick-replies?channel=WHATSAPP&isActive=true"
+      );
+      setQuickReplies(res.quickReplies || []);
+    } catch {
+      // Non-critical — silently ignore
+    }
   }, []);
 
-  // ── Selected conversation ──────────────────────────────────────────────
-  const selected = React.useMemo(
-    () => conversations.find((c) => c.key === selectedKey) || null,
-    [conversations, selectedKey]
-  );
-  React.useEffect(() => setOutboundApplicationId(''), [selectedKey]);
-
-  // ── Filtered list ──────────────────────────────────────────────────────
-  const filtered = React.useMemo(() => {
-    let list = conversations;
-    if (filter === "unread") list = list.filter((c) => c.unread > 0);
-    if (filter === "overdue") {
-      list = list.filter((c) => {
-        const inbound = c.messages.find((m) => m.direction === "INBOUND");
-        const ts = inbound?.receivedAt || c.lastMessageAt;
-        return severityFor(ts) !== "NORMAL";
-      });
-    }
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter((c) => {
-        const name = (c.studentName || c.fromPhone || c.fromEmail || "").toLowerCase();
-        const lastMsg = c.messages[0]?.body?.toLowerCase() || "";
-        return name.includes(q) || lastMsg.includes(q);
-      });
-    }
-    return list;
-  }, [conversations, filter, search]);
-
-  // ── Load student context when a conversation is selected ────────────────
-  React.useEffect(() => {
-    if (!selected) {
-      setStudent(null);
-      setContactMatchId(null);
-      return;
-    }
-    if (selected.studentId) {
-      setStudentLoading(true);
-      setStudentError(null);
-      fetch(`/api/students?id=${encodeURIComponent(selected.studentId)}`, { cache: "no-store" })
-        .then(async (r) => {
-          if (!r.ok) throw new Error(`Failed (${r.status})`);
-          const data = (await r.json()) as { student: StudentContext };
-          setStudent(data.student);
-        })
-        .catch((e: unknown) => {
-          const msg = e instanceof Error ? e.message : "Failed to load student";
-          setStudentError(msg);
-          setStudent(null);
-        })
-        .finally(() => setStudentLoading(false));
-    } else {
-      setStudent(null);
-      // For new contacts, attempt to fetch a contact match review by POSTing the phone.
-      // This is best-effort — failures just hide the match panel.
-      if (selected.fromPhone) {
-        fetch("/api/communications/contacts/match", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone: selected.fromPhone }),
-        })
-          .then(async (r) => {
-            if (!r.ok) return null;
-            const data = await r.json();
-            // The endpoint returns the review record id (if any)
-            if (data?.review?.id) setContactMatchId(data.review.id);
-          })
-          .catch(() => {
-            // ignore — UI gracefully falls back to NEW CONTACT view
-          });
-      }
-    }
-    // Reset AI draft on conversation switch
-    setAiDraft(null);
-    setAiError(null);
-    setAiOtpRequired(false);
-  }, [selected]);
-
-  // ── Generate AI reply ──────────────────────────────────────────────────
-  async function generateAiReply() {
-    if (!selected) return;
-    const lastInbound = [...selected.messages]
-      .reverse()
-      .find((m) => m.direction === "INBOUND");
-    if (!lastInbound) {
-      toast({
-        title: "No inbound message",
-        description: "Select or wait for an inbound message before generating a reply.",
-        variant: "destructive",
-      });
-      return;
-    }
-    setAiLoading(true);
-    setAiError(null);
-    setAiOtpRequired(false);
+  const fetchTemplates = React.useCallback(async () => {
     try {
+      const res = await fetchJson<{ templates: Template[] }>(
+        "/api/communications/templates?channel=WHATSAPP"
+      );
+      setTemplates(res.templates || []);
+    } catch {
+      // Non-critical
+    }
+  }, []);
+
+  React.useEffect(() => {
+    void fetchInbox();
+    void fetchQuickReplies();
+    void fetchTemplates();
+  }, [fetchInbox, fetchQuickReplies, fetchTemplates]);
+
+  const activeConversation = conversations.find((c) => c.key === activeKey) || null;
+
+  // ── Load student context when active conversation changes ──
+  React.useEffect(() => {
+    setStudent(null);
+    setContactMatch(null);
+    setAiDraft(null);
+    setEditedDraft("");
+    setComposerText("");
+    setDraftError(null);
+
+    if (!activeConversation) return;
+
+    if (activeConversation.studentId) {
+      void loadStudent(activeConversation.studentId);
+    } else if (activeConversation.fromPhone) {
+      void attemptContactMatch(activeConversation.fromPhone, activeConversation.studentName || undefined);
+    }
+  }, [activeKey]);
+
+  const loadStudent = async (studentId: string) => {
+    setStudentLoading(true);
+    try {
+      const data = await fetchJson<StudentSummary | { student: StudentSummary } | StudentSummary[]>(
+        `/api/students?id=${encodeURIComponent(studentId)}`
+      );
+      const stu = Array.isArray(data)
+        ? data[0]
+        : "student" in (data as Record<string, unknown>)
+        ? (data as { student: StudentSummary }).student
+        : (data as StudentSummary);
+      setStudent(stu || null);
+    } catch {
+      // Student endpoint may differ — fall back to contact match attempt
+      if (activeConversation?.fromPhone) {
+        void attemptContactMatch(activeConversation.fromPhone, activeConversation.studentName || undefined);
+      }
+    } finally {
+      setStudentLoading(false);
+    }
+  };
+
+  const attemptContactMatch = async (phone: string, name?: string) => {
+    try {
+      const res = await fetchJson<ContactMatchResponse>("/api/communications/contacts/match", {
+        method: "POST",
+        body: JSON.stringify({ phone, name }),
+      });
+      setContactMatch(res);
+      if (res.matched && res.matchType === "STUDENT" && res.matchedId) {
+        void loadStudent(res.matchedId);
+      } else if (!res.matched) {
+        setMatchReviewOpen(true);
+      }
+    } catch {
+      // Non-critical
+    }
+  };
+
+  // ── AI Draft generation ──
+  const generateAiDraft = async () => {
+    if (!activeConversation) return;
+    setDraftLoading(true);
+    setDraftError(null);
+    setAiDraft(null);
+    setEditedDraft("");
+    try {
+      const lastInbound = [...activeConversation.messages]
+        .reverse()
+        .find((m) => m.direction === "INBOUND");
+      if (!lastInbound) {
+        setDraftError("No inbound message to generate a reply for.");
+        return;
+      }
       const res = await fetch("/api/whatsapp/ai-reply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          phone: activeConversation.fromPhone,
           message: lastInbound.body,
-          conversationId: selected.key,
-          conversationSource: selected.source || 'communication_thread',
-          studentId: selected.studentId || undefined,
+          conversationId: activeConversation.key,
+          studentId: activeConversation.studentId,
         }),
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `AI service error (${res.status})`);
-      }
-      const data = (await res.json()) as AiReplyResponse;
-      if (data.error) throw new Error(data.error);
-      if (data.requiresOtp) {
-        setAiOtpRequired(true);
-        setAiDraft(data.reply || "For security, use the secure student portal or contact the assigned counselor. No OTP is sent by this drafting flow.");
-        toast({
-          title: "Private details blocked",
-          description: data.verificationAvailable
-            ? "Complete the secure verification process before sharing private information."
-            : "This flow cannot send or verify an OTP. Use the secure portal or assigned-counselor process.",
-        });
-        return;
-      }
-      setAiDraft(data.reply || "");
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      setAiError(msg);
-      toast({
-        title: "AI service unavailable",
-        description: "Manual reply required. You can still type and send a reply below.",
-        variant: "destructive",
-      });
+      if (!res.ok) throw new Error(`AI service error (${res.status})`);
+      const data = (await res.json()) as { reply?: string; requiresOtp?: boolean };
+      if (!data.reply) throw new Error("AI returned no reply");
+      const draft = {
+        body: data.reply,
+        confidence: 75,
+        reasoning: "Generated by ALO AI assistant using student context.",
+      };
+      setAiDraft(draft);
+      setEditedDraft(draft.body);
+    } catch (err) {
+      setDraftError(
+        err instanceof Error
+          ? `AI service unavailable — ${err.message}. You can still type and send a manual reply below.`
+          : "AI service unavailable. You can still type and send a manual reply below."
+      );
     } finally {
-      setAiLoading(false);
+      setDraftLoading(false);
     }
-  }
+  };
 
-  // ── Approve & send AI draft ────────────────────────────────────────────
-  async function sendReplyText(text: string, aiAssisted = false) {
-    if (!selected) throw new Error('Select a WhatsApp conversation first.');
-    const isUcc = selected.source === 'ucc_conversation';
-    const endpoint = isUcc
-      ? `/api/crm/ucc/conversations/${encodeURIComponent(selected.key)}/reply`
-      : '/api/inbox/unified';
-    const payload = isUcc
-      ? { content: text, aiGenerated: aiAssisted, aiApproved: aiAssisted }
-      : { threadId: selected.key, channel: 'WHATSAPP', content: text, aiAssisted };
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || !result.success) throw new Error(result.error || `Send failed (${response.status})`);
-    return result;
-  }
-
-  async function approveAndSendDraft() {
-    if (!selected || !aiDraft) return;
-    setSending(true);
-    let providerConfirmed = false;
+  // ── Approve / reject AI draft ──
+  const handleDraftApprove = async () => {
+    if (!activeConversation || !aiDraft) return;
     try {
-      // Persist the human-review draft before any external send is attempted.
-      const draftRes = await fetch('/api/communications/drafts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          channel: 'WHATSAPP',
-          studentId: selected.studentId || undefined,
-          conversationId: selected.source === 'ucc_conversation' ? selected.key : undefined,
-          threadId: selected.source === 'ucc_conversation' ? undefined : selected.key,
-          draftBody: aiDraft,
-          aiGenerated: true,
-          mode: 'AI_DRAFT_HUMAN_SEND',
-        }),
-      });
-      const draftData = await draftRes.json().catch(() => ({}));
-      if (!draftRes.ok || !draftData.success || !draftData.draft?.id) throw new Error(draftData.error || `Draft could not be saved (${draftRes.status}); the reply was not sent.`);
-
-      const send = await sendReplyText(aiDraft, true);
-      const providerMessageId = typeof send.providerMessageId === 'string' ? send.providerMessageId : '';
-      if (!providerMessageId) throw new Error('WhatsApp did not return a provider message ID; the draft was not marked as sent.');
-      providerConfirmed = true;
-
-      const statusResponse = await fetch(`/api/communications/drafts/${encodeURIComponent(draftData.draft.id)}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'SENT', providerMessageId }),
-      });
-      const statusResult = await statusResponse.json().catch(() => ({}));
-      const auditStatusSaved = statusResponse.ok && statusResult.success;
-
-      const sentAt = new Date().toISOString();
-      setConversations((previous) => previous.map((conversation) => conversation.key === selected.key
-        ? { ...conversation, messages: [{ id: send?.message?.id || providerMessageId, channel: 'WHATSAPP', direction: 'OUTBOUND', body: aiDraft, receivedAt: sentAt, sentAt, deliveryStatus: 'SENT', read: true, aiAssisted: true }, ...conversation.messages], lastMessageAt: sentAt }
-        : conversation));
-      setAiDraft(null);
-      toast({ title: auditStatusSaved ? 'Reply sent' : 'Reply sent; audit update pending', description: auditStatusSaved ? 'WhatsApp confirmed the AI-assisted reply.' : 'WhatsApp confirmed the reply, but its draft audit status could not be finalized. Do not resend.' });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Unknown error';
-      if (providerConfirmed) {
-        setAiDraft(null);
-        toast({ title: 'Reply sent; audit update pending', description: `${msg} Do not resend this message.`, variant: 'destructive' });
-      } else {
-        toast({ title: 'Failed to send', description: msg, variant: 'destructive' });
-      }
-    } finally {
-      setSending(false);
-    }
-  }
-
-  function rejectDraft() {
-    setAiDraft(null);
-    setAiOtpRequired(false);
-    toast({ title: "Draft rejected", description: "You can write a manual reply below." });
-  }
-
-  function editDraft() {
-    if (aiDraft) setComposerText(aiDraft);
-    setAiDraft(null);
-    toast({ title: "Moved to composer", description: "Edit the draft text below before sending." });
-  }
-
-  // ── Send manual message ────────────────────────────────────────────────
-  async function sendMessage() {
-    if (!selected) return;
-    const text = composerText.trim();
-    if (!text && attachments.length === 0) return;
-    setSending(true);
-    let sentAttachmentCount = 0;
-    try {
-      const sentMessages: Array<{ id: string; body: string }> = [];
-      if (attachments.length > 0) {
-        if (student?.hasB2bConfidentialApplications && !student.canManageB2bDocuments) throw new Error('This student’s B2B-confidential media must be handled by a B2B-authorized staff member. No attachment was sent.');
-        if (student?.hasB2bConfidentialApplications && student.canManageB2bDocuments && !outboundApplicationId) throw new Error('Select the application for this B2B-confidential media before sending.');
-        if (selected.source !== 'ucc_conversation') throw new Error('Secure media sending requires an assigned UCC WhatsApp conversation. No attachment was sent.');
-        if (attachments.length > 5) throw new Error('Send no more than five attachments in one reply.');
-        for (const file of attachments) {
-          if (file.size > 20 * 1024 * 1024) throw new Error(`${file.name} exceeds the 20 MB WhatsApp document limit.`);
-          if (file.type && !['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
-            throw new Error(`${file.name} is not a supported PDF or image file.`);
-          }
-        }
-        const uploaded: Array<{ id: string; fileName: string }> = [];
-        for (const file of attachments) {
-          const form = new FormData();
-          form.append('conversationId', selected.key);
-          form.append('purpose', 'outbound_media');
-          if (selected.studentId) form.append('studentId', selected.studentId);
-          if (outboundApplicationId) form.append('applicationId', outboundApplicationId);
-          form.append('file', file, file.name);
-          const uploadResponse = await fetch('/api/crm/ucc/documents/upload', { method: 'POST', body: form });
-          const upload = await uploadResponse.json().catch(() => ({}));
-          if (!uploadResponse.ok || !upload.success || !upload.attachment?.id) {
-            throw new Error(upload.error || `Private upload failed (${uploadResponse.status}); no message was sent.`);
-          }
-          uploaded.push({ id: upload.attachment.id, fileName: upload.attachment.fileName || file.name });
-        }
-        for (let index = 0; index < uploaded.length; index += 1) {
-          const item = uploaded[index];
-          const response = await fetch(`/api/crm/ucc/conversations/${encodeURIComponent(selected.key)}/reply`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: index === 0 ? text : '', attachment: { attachmentId: item.id } }),
-          });
-          const result = await response.json().catch(() => ({}));
-          if (!response.ok || !result.success) {
-            throw new Error(result.error || `WhatsApp attachment send failed (${response.status}). Any remaining files are stored privately and were not marked as sent.`);
-          }
-          sentMessages.push({ id: result.message?.id || `local-${Date.now()}-${index}`, body: text && index === 0 ? text : `[Attachment: ${item.fileName}]` });
-          sentAttachmentCount += 1;
-        }
-      } else {
-        const result = await sendReplyText(text, false);
-        sentMessages.push({ id: result?.message?.id || result?.providerMessageId || `local-${Date.now()}`, body: text });
-      }
-
-      const sentAt = new Date().toISOString();
-      const optimisticMessages: InboxMessage[] = [...sentMessages].reverse().map((message) => ({ id: message.id, channel: 'WHATSAPP', direction: 'OUTBOUND', body: message.body, receivedAt: sentAt, sentAt, deliveryStatus: 'SENT', read: true, aiAssisted: false }));
-      setConversations((previous) => previous.map((conversation) => conversation.key === selected.key
-        ? { ...conversation, messages: [...optimisticMessages, ...conversation.messages], lastMessageAt: sentAt }
-        : conversation));
-      setComposerText('');
-      setAttachments([]);
-      toast({ title: 'Message sent', description: 'WhatsApp confirmed the reply.' });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Unknown error';
-      if (sentAttachmentCount > 0) {
-        setAttachments(attachments.slice(sentAttachmentCount));
-        setComposerText('');
-        void fetchInbox();
-      }
-      toast({ title: 'Failed to send', description: sentAttachmentCount > 0 ? `${sentAttachmentCount} attachment(s) were confirmed sent. Remaining files stay selected. ${msg}` : msg, variant: 'destructive' });
-    } finally {
-      setSending(false);
-    }
-  }
-
-  // ── Resolve contact match (Open Existing / Merge / Create New) ──────────
-  async function resolveContact(decision: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW") {
-    if (!contactMatchId) {
-      toast({
-        title: "No review record",
-        description: "There's no ContactMatchReview to resolve for this conversation.",
-        variant: "destructive",
-      });
-      return;
-    }
-    try {
-      const res = await fetch(`/api/communications/contacts/match/${contactMatchId}/resolve`, {
+      await fetchJson("/api/communications/drafts", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ decision, decidedBy: currentUserId }),
+        body: JSON.stringify({
+          channel: "WHATSAPP",
+          studentId: activeConversation.studentId || undefined,
+          socialInboxMessageId: activeConversation.messages[0]?.id,
+          draftBody: aiDraft.body,
+          aiGenerated: true,
+          aiConfidence: aiDraft.confidence,
+          aiReasoning: aiDraft.reasoning,
+          riskLevel: "LOW",
+          mode: "AI_DRAFT_HUMAN_SEND",
+          status: "DRAFT",
+        } satisfies DraftPayload),
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `Failed (${res.status})`);
-      }
+      toast({ title: "Draft saved for human review", description: "Stored in pending drafts queue." });
+      // Send the reply (manual send)
+      await sendMessage(editedDraft || aiDraft.body);
+      setAiDraft(null);
+      setEditedDraft("");
+    } catch (err) {
       toast({
-        title: "Decision recorded",
-        description: `Contact resolution: ${decision.replace(/_/g, " ").toLowerCase()}`,
+        title: "Failed to save draft",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
       });
-      setContactMatchId(null);
-      // Refetch inbox so the conversation is re-grouped correctly
-      fetchInbox();
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      toast({ title: "Failed to resolve", description: msg, variant: "destructive" });
     }
-  }
+  };
 
-  // ── WhatsApp document upload ──────────────────────────────────────────
-  async function createDocumentUploadEvent(attachment: Attachment, documentType: string, applicationId?: string) {
-    if (!selected || selected.source !== 'ucc_conversation' || !attachment.id) {
-      toast({ title: 'Attachment unavailable', description: 'This message has no securely stored WhatsApp file ID to link.', variant: 'destructive' });
-      return;
-    }
+  const handleDraftReject = () => {
+    setAiDraft(null);
+    setEditedDraft("");
+    setDraftError(null);
+    toast({ title: "AI draft rejected", description: "Compose a manual reply below." });
+  };
+
+  // ── Send reply ──
+  const sendMessage = async (text: string) => {
+    if (!activeConversation || !text.trim()) return;
+    setSending(true);
     try {
-      const res = await fetch('/api/whatsapp/document-upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversationId: selected.key, attachmentId: attachment.id, documentType, applicationId }),
+      await fetchJson("/api/inbox/unified", {
+        method: "POST",
+        body: JSON.stringify({
+          channel: "WHATSAPP",
+          toPhone: activeConversation.fromPhone,
+          body: text.trim(),
+          studentId: activeConversation.studentId,
+          aiAssisted: !!aiDraft,
+          humanApproved: true,
+        }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.success) throw new Error(data.error || `Failed (${res.status})`);
+      toast({ title: "Message sent" });
+      setComposerText("");
+      setAiDraft(null);
+      setEditedDraft("");
+      // Refresh conversations to show new message
+      void fetchInbox();
+    } catch (err) {
       toast({
-        title: data.duplicate ? 'Document already linked' : 'Document attached',
-        description: data.message || `"${attachment.name}" is stored privately and remains pending human review.`,
+        title: "Failed to send message",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
       });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Unknown error';
-      toast({ title: 'Document link failed', description: msg, variant: 'destructive' });
+    } finally {
+      setSending(false);
     }
+  };
+
+  // ── Filtered conversation list ──
+  const filteredConversations = conversations.filter((c) => {
+    if (filter === "UNREAD" && c.unread === 0) return false;
+    if (filter === "SLA_OVERDUE") {
+      const lastInbound = [...c.messages].reverse().find((m) => m.direction === "INBOUND");
+      if (!lastInbound) return false;
+      const deadline = new Date(lastInbound.receivedAt);
+      deadline.setMinutes(deadline.getMinutes() + 30);
+      if (deadline.getTime() > Date.now()) return false;
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      return (
+        (c.studentName || "").toLowerCase().includes(q) ||
+        (c.fromPhone || "").toLowerCase().includes(q) ||
+        (c.fromEmail || "").toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="WhatsApp Command Center"
+          subtitle="Real-time WhatsApp conversation management with AI-assisted drafting and student context."
+          icon="MessageCircle"
+        />
+        <LoadingGrid count={4} />
+      </div>
+    );
   }
 
-  // ── Latest inbound message & its attachments ──────────────────────────
-  const lastInbound = React.useMemo(() => {
-    if (!selected) return null;
-    return [...selected.messages]
-      .filter((message) => message.direction === 'INBOUND')
-      .sort((a, b) => new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime())[0] || null;
-  }, [selected]);
-
-  const lastInboundAttachments = React.useMemo(() => {
-    if (!lastInbound) return [] as Attachment[];
-    return parseAttachments(lastInbound.attachmentsJson);
-  }, [lastInbound]);
-
-  // ── Student context derived values ───────────────────────────────────
-  const activeApplications = student?.applications?.filter((a) =>
-    !["VISA_REFUSED", "ENROLLED"].includes(a.stage)
-  ) || [];
-  const missingDocuments = student?.documents?.filter((d) =>
-    d.status === "PENDING" || d.status === "REJECTED"
-  ) || [];
-  const latestOffer = student?.applications?.find((a) =>
-    ["CONDITIONAL_OFFFER", "UNCONDITIONAL_OFFER"].includes(a.stage)
-  ) || null;
-  const latestPayment = student?.payments?.[0] || null;
-  const latestInterview = student?.interviews?.[0] || null;
-  const lastCommunication = student?.timelineEvents?.find((e) =>
-    e.type === "MESSAGE_SENT" || e.type === "MESSAGE_RECEIVED"
-  ) || student?.timelineEvents?.[0] || null;
-
-  // ─── Render ────────────────────────────────────────────────────────────
-  return (
-    <div className="flex h-[calc(100vh-9rem)] min-h-[640px] flex-col gap-4 p-3 sm:p-4 lg:p-6">
-      {/* Top bar */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-10 items-center justify-center rounded-2xl bg-alo-gradient text-white shadow-[var(--alo-shadow-blue)]">
-            <Icon name="MessageCircleMore" className="size-5" />
-          </div>
-          <div>
-            <h1 className="crm-page-title text-[var(--alo-text)]">WhatsApp Command Center</h1>
-            <p className="body-text text-[var(--alo-muted)]">
-              Live conversations · AI-assisted replies · 24/7 first response
-            </p>
-          </div>
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="WhatsApp Command Center"
+          subtitle="Real-time WhatsApp conversation management with AI-assisted drafting and student context."
+          icon="MessageCircle"
+        />
+        <div className="rounded-2xl border border-dashed border-rose-200 bg-rose-50/50 px-6 py-10 text-center">
+          <p className="text-sm font-semibold text-[#991B1B]">Failed to load conversations</p>
+          <Button onClick={() => void fetchInbox()} className="mt-3" size="sm">Retry</Button>
         </div>
-        <Button variant="outline" size="sm" onClick={() => navigate("comm-command-center")}>
-          <Icon name="ArrowLeft" className="size-3.5" />
-          Back to Command Center
-        </Button>
       </div>
+    );
+  }
 
-      {/* 3-column grid */}
-      <div className="grid flex-1 grid-cols-1 gap-4 overflow-hidden lg:grid-cols-12">
-        {/* ─── LEFT — conversation list ─── */}
-        <aside className="flex h-full min-h-[300px] flex-col gap-2 lg:col-span-3">
-          <SectionCard className="flex h-full flex-col overflow-hidden">
-            <div className="space-y-2 border-b border-[var(--alo-border)] p-3">
-              <SearchInput
-                placeholder="Search name, phone, message…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onClear={() => setSearch("")}
-                size="sm"
-              />
-              <Select value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
-                <SelectTrigger className="h-8 w-full text-xs" size="sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All conversations</SelectItem>
-                  <SelectItem value="unread">Unread only</SelectItem>
-                  <SelectItem value="overdue">SLA overdue</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="WhatsApp Command Center"
+        subtitle="Real-time WhatsApp conversation management with AI-assisted drafting and student context."
+        icon="MessageCircle"
+        action={
+          <Button
+            variant="outline"
+            className="h-10 border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC]"
+            onClick={() => void fetchInbox()}
+          >
+            <Icon name="RefreshCw" className="mr-2 size-4" />
+            Refresh
+          </Button>
+        }
+      />
 
-            <ScrollArea className="alo-scroll flex-1">
-              {loading ? (
-                <div className="space-y-2 p-2">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <LoadingSkeleton key={i} lines={2} />
-                  ))}
-                </div>
-              ) : filtered.length === 0 ? (
-                <EmptyState
-                  icon="MessageCircle"
-                  title="No conversations"
-                  description="Inbound WhatsApp messages will appear here once received."
-                  accent="emerald"
-                />
-              ) : (
-                <ul className="divide-y divide-[var(--alo-border)]">
-                  {filtered.map((conv) => {
-                    const isActive = conv.key === selectedKey;
-                    const inbound = conv.messages.find((m) => m.direction === "INBOUND");
-                    const ts = inbound?.receivedAt || conv.lastMessageAt;
-                    const sev = severityFor(ts);
-                    const sevDot =
-                      sev === "NORMAL" ? "bg-[var(--alo-success)]" :
-                      sev === "WARNING" ? "bg-[var(--alo-warning)]" :
-                      "bg-[var(--alo-danger)]";
-                    return (
-                      <li key={conv.key}>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedKey(conv.key)}
-                          className={cn(
-                            "flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition-colors",
-                            isActive
-                              ? "bg-[var(--alo-blue-soft)]"
-                              : "hover:bg-[var(--alo-surface-muted)]"
-                          )}
-                        >
-                          <Avatar className="size-9 shrink-0">
-                            <AvatarFallback className="bg-[var(--alo-blue-soft)] text-xs font-semibold text-[var(--alo-blue-strong)]">
-                              {initials(conv.studentName || conv.fromPhone)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center justify-between gap-2">
-                              <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
-                                {conv.studentName || conv.fromPhone || "Unknown"}
-                              </p>
-                              <span className="shrink-0 text-[10px] text-[var(--alo-muted)]">
-                                {timeAgo(conv.lastMessageAt)}
-                              </span>
-                            </div>
-                            <p className="truncate text-xs text-[var(--alo-muted)]">
-                              {conv.messages[0]?.body || "—"}
-                            </p>
-                            <div className="mt-1 flex items-center gap-1.5">
-                              <span
-                                className={cn(
-                                  "inline-block size-1.5 rounded-full",
-                                  sevDot,
-                                  sev !== "NORMAL" && "pulse-dot"
-                                )}
-                              />
-                              <span className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
-                                {SEVERITY_LABEL[sev]}
-                              </span>
-                              {conv.unread > 0 && (
-                                <Badge variant="warning" className="ml-auto h-4 px-1 text-[10px]">
-                                  {conv.unread}
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </ScrollArea>
-          </SectionCard>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-4">
+        {/* ─── Left: Conversation list ─── */}
+        <aside className="lg:col-span-3">
+          <ConversationList
+            conversations={filteredConversations}
+            activeKey={activeKey}
+            onSelect={setActiveKey}
+            search={search}
+            onSearch={setSearch}
+            filter={filter}
+            onFilter={setFilter}
+          />
         </aside>
 
-        {/* ─── CENTER — active conversation ─── */}
-        <main className="flex h-full min-h-[400px] flex-col gap-3 lg:col-span-6">
-          {!selected ? (
-            <SectionCard className="flex h-full items-center justify-center">
-              <EmptyState
-                icon="MessageCircleMore"
-                title="Select a conversation"
-                description="Choose a conversation from the list to view the message thread, AI draft reply, and student context."
-                accent="blue"
-              />
-            </SectionCard>
-          ) : (
-            <SectionCard className="flex h-full flex-col overflow-hidden">
-              {/* Header */}
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--alo-border)] p-3">
-                <div className="flex min-w-0 items-center gap-2.5">
-                  <Avatar className="size-9">
-                    <AvatarFallback className="bg-[var(--alo-success-soft)] text-xs font-semibold text-[var(--alo-success-strong)]">
-                      {initials(selected.studentName || selected.fromPhone)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
-                        {selected.studentName || selected.fromPhone || "Unknown contact"}
-                      </p>
-                      <Badge variant="success" className="gap-1 text-[10px]">
-                        <Icon name="MessageCircle" className="size-2.5" /> WhatsApp
-                      </Badge>
-                    </div>
-                    <p className="truncate text-xs text-[var(--alo-muted)] font-mono">
-                      {selected.fromPhone || selected.fromEmail || "—"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Live SLA timer */}
-                {lastInbound ? (
-                  <SlaTimer ts={lastInbound.receivedAt} live />
-                ) : (
-                  <Badge variant="neutral">No inbound</Badge>
-                )}
-              </div>
-
-              {/* Student context banner (if matched) */}
-              {selected.studentId && student && (
-                <div className="flex flex-wrap items-center gap-2 border-b border-[var(--alo-border)] bg-[var(--alo-blue-soft)]/40 px-3 py-2 text-xs">
-                  <Icon name="Orbit" className="size-3.5 text-[var(--alo-blue)]" />
-                  <span className="font-semibold text-[var(--alo-blue-strong)]">Student</span>
-                  <Badge variant="blue" className="text-[10px]">{student.studentId}</Badge>
-                  {student.counselor?.name && (
-                    <span className="text-[var(--alo-text-secondary)]">
-                      Counselor: <span className="font-medium">{student.counselor.name}</span>
-                    </span>
-                  )}
-                  {activeApplications[0]?.stage && (
-                    <Badge variant="warning" className="text-[10px]">
-                      Stage: {activeApplications[0].stage.replace(/_/g, " ").toLowerCase()}
-                    </Badge>
-                  )}
-                </div>
-              )}
-
-              {/* Message thread */}
-              <ScrollArea className="alo-scroll flex-1 bg-[var(--alo-surface-muted)]/30 p-3">
-                <div className="space-y-3">
-                  {selected.messages.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-[var(--alo-muted)]">
-                      No messages yet.
-                    </p>
-                  ) : (
-                    selected.messages
-                      .slice()
-                      .reverse()
-                      .map((m) => {
-                        const isOutbound = m.direction === "OUTBOUND";
-                        const atts = parseAttachments(m.attachmentsJson);
-                        return (
-                          <div
-                            key={m.id}
-                            className={cn(
-                              "flex items-end gap-2",
-                              isOutbound ? "justify-end" : "justify-start"
-                            )}
-                          >
-                            {!isOutbound && (
-                              <Avatar className="size-7">
-                                <AvatarFallback className="bg-[var(--alo-surface-muted)] text-[10px] font-semibold text-[var(--alo-text-secondary)]">
-                                  {initials(selected.studentName || selected.fromPhone)}
-                                </AvatarFallback>
-                              </Avatar>
-                            )}
-                            <div
-                              className={cn(
-                                "max-w-[78%] rounded-2xl border px-3 py-2 text-sm shadow-[var(--alo-shadow-xs)]",
-                                isOutbound
-                                  ? "rounded-br-md border-[var(--alo-blue)]/30 bg-[var(--alo-blue-soft)] text-[var(--alo-text)]"
-                                  : "rounded-bl-md border-[var(--alo-border)] bg-[var(--alo-surface)] text-[var(--alo-text)]"
-                              )}
-                            >
-                              {m.aiAssisted && (
-                                <span className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--alo-blue-strong)]">
-                                  <Icon name="Sparkles" className="size-2.5" />
-                                  AI-assisted
-                                </span>
-                              )}
-                              <p className="whitespace-pre-wrap break-words">{m.body}</p>
-                              {atts.length > 0 && (
-                                <div className="mt-2 flex flex-wrap gap-1.5">
-                                  {atts.map((a, i) => (
-                                    <a
-                                      key={a.id || i}
-                                      href={a.url || undefined}
-                                      target={a.url ? '_blank' : undefined}
-                                      rel={a.url ? 'noreferrer' : undefined}
-                                      className="flex items-center gap-1.5 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] px-2 py-1 text-xs hover:border-[var(--alo-blue)]"
-                                      aria-label={a.url ? `Open private attachment ${a.name}` : a.name}
-                                    >
-                                      <Icon name={fileTypeIcon(a.name)} className="size-3.5 text-[var(--alo-blue)]" />
-                                      <span className="max-w-[120px] truncate" title={a.name}>{a.name}</span>
-                                      <span className="text-[10px] text-[var(--alo-muted)]">{fileSizeLabel(a.size)}</span>
-                                    </a>
-                                  ))}
-                                </div>
-                              )}
-                              <div
-                                className={cn(
-                                  "mt-1 flex items-center gap-1 text-[10px] text-[var(--alo-muted)]",
-                                  isOutbound ? "justify-end" : "justify-start"
-                                )}
-                              >
-                                <span>{timeAgo(m.receivedAt)}</span>
-                                {isOutbound && <DeliveryStatus status={m.deliveryStatus} />}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                  )}
-                </div>
-              </ScrollArea>
-
-              {/* AI Draft Reply panel */}
-              <div className="border-t border-[var(--alo-border)] p-3">
-                {aiDraft !== null ? (
-                  <div className="space-y-2 rounded-xl border border-[var(--alo-blue)]/30 bg-gradient-to-br from-[var(--alo-blue-soft)]/60 to-[var(--alo-surface)] p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--alo-blue-strong)]">
-                        <Icon name="Sparkles" className="size-3.5" />
-                        AI Generated Draft
-                      </div>
-                      <IconButton
-                        icon="X"
-                        label="Discard draft"
-                        size="sm"
-                        variant="ghost"
-                        onClick={rejectDraft}
-                      />
-                    </div>
-                    <p className="whitespace-pre-wrap break-words text-sm text-[var(--alo-text)]">{aiDraft}</p>
-                    {aiOtpRequired && (
-                      <div className="flex items-center gap-1.5 rounded-md bg-[var(--alo-warning-soft)] px-2 py-1 text-xs text-[var(--alo-warning-strong)]">
-                        <Icon name="ShieldAlert" className="size-3.5" />
-                        Private details are blocked here. This draft flow cannot send or verify an OTP; use the secure student portal or assigned-counselor process.
-                      </div>
-                    )}
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                      <Button variant="outline" size="sm" onClick={editDraft}>
-                        <Icon name="Pencil" className="size-3.5" /> Edit
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={rejectDraft} className="text-[var(--alo-danger-strong)] border-[var(--alo-danger)]/40 hover:bg-[var(--alo-danger-soft)]">
-                        <Icon name="X" className="size-3.5" /> Reject
-                      </Button>
-                      <Button
-                        variant="alo"
-                        size="sm"
-                        onClick={approveAndSendDraft}
-                        disabled={sending || aiOtpRequired}
-                        className="ml-auto"
-                      >
-                        {sending ? (
-                          <>
-                            <Icon name="Loader2" className="size-3.5 animate-spin" /> Sending…
-                          </>
-                        ) : (
-                          <>
-                            <Icon name="Send" className="size-3.5" /> Approve & Send
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 text-xs text-[var(--alo-muted)]">
-                      <Icon name="Sparkles" className="size-3.5 text-[var(--alo-blue)]" />
-                      Generate an AI draft reply for the latest inbound message.
-                    </div>
-                    <Button
-                      variant="alo"
-                      size="sm"
-                      onClick={generateAiReply}
-                      disabled={aiLoading || !lastInbound}
-                    >
-                      {aiLoading ? (
-                        <>
-                          <Icon name="Loader2" className="size-3.5 animate-spin" /> Generating…
-                        </>
-                      ) : (
-                        <>
-                          <Icon name="Sparkles" className="size-3.5" /> Generate AI Reply
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
-                {aiError && (
-                  <p className="mt-2 flex items-center gap-1.5 text-xs text-[var(--alo-danger-strong)]">
-                    <Icon name="AlertTriangle" className="size-3.5" />
-                    AI service unavailable — manual reply required. ({aiError})
-                  </p>
-                )}
-
-                {/* Quick replies */}
-                {quickReplies.length > 0 && (
-                  <div className="mt-3">
-                    <p className="caption-text text-[var(--alo-muted)]">Quick replies</p>
-                    <div className="mt-1.5 flex flex-wrap gap-1.5">
-                      {quickReplies.slice(0, 8).map((qr) => (
-                        <button
-                          key={qr.id}
-                          type="button"
-                          onClick={() => setComposerText((c) => (c ? `${c}\n\n${qr.body}` : qr.body))}
-                          className="rounded-full border border-[var(--alo-border)] bg-[var(--alo-surface)] px-2.5 py-1 text-xs text-[var(--alo-text-secondary)] transition-colors hover:border-[var(--alo-blue)] hover:bg-[var(--alo-blue-soft)] hover:text-[var(--alo-blue-strong)]"
-                          title={qr.body}
-                        >
-                          {qr.title}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Templates dropdown */}
-                {templates.length > 0 && (
-                  <div className="mt-3 flex items-center gap-2">
-                    <Label className="text-xs text-[var(--alo-muted)]">Template:</Label>
-                    <Select
-                      value=""
-                      onValueChange={(v) => {
-                        const tpl = templates.find((t) => t.id === v);
-                        if (tpl) setComposerText((c) => (c ? `${c}\n\n${tpl.body}` : tpl.body));
-                      }}
-                    >
-                      <SelectTrigger className="h-8 flex-1 text-xs" size="sm">
-                        <SelectValue placeholder="Insert approved WhatsApp template…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {templates.map((t) => (
-                          <SelectItem key={t.id} value={t.id}>
-                            {t.name} {t.language ? `(${t.language})` : ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {/* Composer */}
-                <div className="mt-3 space-y-2">
-                  {attachments.length > 0 && (student?.applications?.length || 0) > 0 && (
-                    <div className="space-y-1">
-                      <Label className="text-xs text-[var(--alo-muted)]">Associate media with an application (optional unless required by access policy)</Label>
-                      <Select value={outboundApplicationId} onValueChange={setOutboundApplicationId}>
-                        <SelectTrigger className="h-8 w-full text-xs" size="sm"><SelectValue placeholder="Choose an application, if relevant…" /></SelectTrigger>
-                        <SelectContent>
-                          {student?.applications?.map((application) => (
-                            <SelectItem key={application.id} value={application.id}>
-                              {application.universityName || 'Application'} · {application.stage.replace(/_/g, ' ').toLowerCase()}{application.isB2bConfidential ? ' · B2B confidential' : ''}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  {attachments.length > 0 && student?.hasB2bConfidentialApplications && !student.canManageB2bDocuments && (
-                    <p role="status" className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">This student has B2B-confidential applications. Media sending is blocked until an authorized B2B user handles the file.</p>
-                  )}
-                  {attachments.length > 0 && student?.hasB2bConfidentialApplications && student.canManageB2bDocuments && !outboundApplicationId && (
-                    <p role="status" className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">Select the relevant application before uploading this media.</p>
-                  )}
-                  <Textarea
-                    placeholder="Type your reply…"
-                    value={composerText}
-                    onChange={(e) => setComposerText(e.target.value)}
-                    rows={3}
-                    className="resize-none"
-                  />
-                  {attachments.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {attachments.map((f, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center gap-1.5 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] px-2 py-1 text-xs"
-                        >
-                          <Icon name={fileTypeIcon(f.name)} className="size-3.5 text-[var(--alo-blue)]" />
-                          <span className="truncate max-w-[120px]" title={f.name}>{f.name}</span>
-                          <span className="text-[10px] text-[var(--alo-muted)]">{fileSizeLabel(f.size)}</span>
-                          <button
-                            type="button"
-                            onClick={() => setAttachments((a) => a.filter((_, idx) => idx !== i))}
-                            className="text-[var(--alo-muted)] hover:text-[var(--alo-danger)]"
-                            aria-label="Remove attachment"
-                          >
-                            <Icon name="X" className="size-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5">
-                      <FileUploader
-                        onFiles={(files) => setAttachments((a) => [...a, ...files])}
-                        accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
-                        multiple
-                        maxSizeMB={10}
-                        hint=""
-                        className="!px-3 !py-2 !text-xs"
-                      />
-                      {/* Inline upload button (compact) */}
-                      <label className="flex size-8 cursor-pointer items-center justify-center rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface)] text-[var(--alo-text-secondary)] hover:bg-[var(--alo-surface-muted)]">
-                        <Icon name="Paperclip" className="size-3.5" />
-                        <input
-                          type="file"
-                          multiple
-                          accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
-                          className="hidden"
-                          onChange={(e) => {
-                            const files = Array.from(e.target.files || []);
-                            if (files.length) setAttachments((a) => [...a, ...files]);
-                          }}
-                        />
-                      </label>
-                    </div>
-                    <Button
-                      variant="alo"
-                      size="sm"
-                      onClick={sendMessage}
-                      disabled={sending || (!composerText.trim() && attachments.length === 0) || (attachments.length > 0 && Boolean(student?.hasB2bConfidentialApplications && (!student.canManageB2bDocuments || !outboundApplicationId)))}
-                    >
-                      {sending ? (
-                        <>
-                          <Icon name="Loader2" className="size-3.5 animate-spin" /> Sending…
-                        </>
-                      ) : (
-                        <>
-                          <Icon name="Send" className="size-3.5" /> Send
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Status bar */}
-                <div className="mt-3 flex items-center justify-between border-t border-[var(--alo-border)] pt-2 text-[10px] text-[var(--alo-muted)]">
-                  <span className="flex items-center gap-1">
-                    <Icon name="Check" className="size-2.5" /> Sent
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Icon name="CheckCheck" className="size-2.5" /> Delivered
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Icon name="CheckCheck" className="size-2.5 text-[var(--alo-blue)]" /> Read
-                  </span>
-                </div>
-              </div>
-            </SectionCard>
-          )}
-        </main>
-
-        {/* ─── RIGHT — student/contact context ─── */}
-        <aside className="flex h-full min-h-[400px] flex-col gap-3 overflow-y-auto lg:col-span-3">
-          {!selected ? (
-            <SectionCard>
-              <EmptyState
-                icon="UserCircle2"
-                title="No contact selected"
-                description="Select a conversation to see student context, AI classification, and document receipts."
-                accent="slate"
-              />
-            </SectionCard>
-          ) : studentError ? (
-            <ErrorState title="Failed to load student" description={studentError} />
-          ) : studentLoading ? (
-            <SectionCard title="Loading student…">
-              <LoadingSkeleton lines={6} />
-            </SectionCard>
-          ) : student ? (
-            <StudentContextPanel
-              student={student}
-              activeApplications={activeApplications}
-              missingDocuments={missingDocuments}
-              latestOffer={latestOffer}
-              latestPayment={latestPayment}
-              latestInterview={latestInterview}
-              lastCommunication={lastCommunication}
+        {/* ─── Center: Active conversation ─── */}
+        <section className="lg:col-span-6">
+          {activeConversation ? (
+            <ActiveConversation
+              conversation={activeConversation}
+              aiDraft={aiDraft}
+              draftLoading={draftLoading}
+              draftError={draftError}
+              editedDraft={editedDraft}
+              setEditedDraft={setEditedDraft}
+              onGenerateDraft={generateAiDraft}
+              onApproveDraft={handleDraftApprove}
+              onRejectDraft={handleDraftReject}
+              composerText={composerText}
+              setComposerText={setComposerText}
+              onSend={() => void sendMessage(composerText)}
+              sending={sending}
+              quickReplies={quickReplies}
+              templates={templates}
             />
           ) : (
-            <NewContactPanel
-              phone={selected.fromPhone || selected.fromEmail || "—"}
-              contactMatchId={contactMatchId}
-              onResolve={resolveContact}
-            />
-          )}
-
-          {/* AI Message Classification */}
-          {selected && (
-            <AiClassificationPanel
-              message={lastInbound?.body || ""}
-              studentId={selected.studentId}
-            />
-          )}
-
-          {/* WhatsApp Document Receipt */}
-          {selected && lastInbound && lastInboundAttachments.length > 0 && (
-            <DocumentReceiptPanel
-              key={`${selected.key}-${lastInbound.id}`}
-              attachments={lastInboundAttachments}
-              studentId={selected.studentId}
-              activeApplications={activeApplications}
-              onCreateUploadEvent={createDocumentUploadEvent}
-            />
-          )}
-          {selected && lastInbound && lastInboundAttachments.length === 0 && student && (
-            <SectionCard
-              title="Document Receipt"
-              icon="FileText"
-              accent="orange"
-              description="No inbound attachment on the selected message."
-            >
-              <p className="text-xs text-[var(--alo-muted)]">
-                When the student sends an image or PDF via WhatsApp, the document receipt panel
-                will appear here for matching to a student record and application.
+            <div className="flex h-full min-h-[500px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#E2E8F0] bg-white px-6 py-12 text-center">
+              <div
+                className="flex size-14 items-center justify-center rounded-2xl text-white"
+                style={{ backgroundColor: WHATSAPP_BRAND }}
+              >
+                <Icon name="MessageCircle" className="size-7" />
+              </div>
+              <p className="mt-4 text-sm font-semibold text-[#0F172A]">Select a conversation</p>
+              <p className="mt-1 text-xs text-[#64748B]">
+                Pick a conversation from the list to view messages and student context.
               </p>
-            </SectionCard>
+            </div>
+          )}
+        </section>
+
+        {/* ─── Right: Student context / contact match ─── */}
+        <aside className="lg:col-span-3">
+          {student ? (
+            <StudentContextPanel student={student} loading={studentLoading} />
+          ) : contactMatch ? (
+            <ContactMatchPanel
+              match={contactMatch}
+              onResolve={(decision) =>
+                void resolveContactMatch(contactMatch.reviewId, decision)
+              }
+              openDialog={matchReviewOpen}
+              setOpenDialog={setMatchReviewOpen}
+            />
+          ) : (
+            <div className="rounded-2xl border border-dashed border-[#E2E8F0] bg-white px-5 py-6 text-center">
+              <p className="text-xs text-[#64748B]">
+                Student context & contact match details will appear here when a conversation is selected.
+              </p>
+            </div>
           )}
         </aside>
       </div>
     </div>
   );
+
+  async function resolveContactMatch(reviewId: string, decision: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW") {
+    try {
+      await fetchJson(`/api/communications/contacts/match/${reviewId}/resolve`, {
+        method: "POST",
+        body: JSON.stringify({ decision }),
+      });
+      toast({
+        title: `Contact review: ${decision.replace(/_/g, " ").toLowerCase()}`,
+        description: "Decision recorded. The conversation is now ready for follow-up.",
+      });
+      setMatchReviewOpen(false);
+    } catch (err) {
+      toast({
+        title: "Failed to resolve match",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    }
+  }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Right-column sub-components
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Sub-components ────────────────────────────────────────────────────────
+
+function ConversationList({
+  conversations,
+  activeKey,
+  onSelect,
+  search,
+  onSearch,
+  filter,
+  onFilter,
+}: {
+  conversations: Conversation[];
+  activeKey: string | null;
+  onSelect: (key: string) => void;
+  search: string;
+  onSearch: (v: string) => void;
+  filter: "ALL" | "UNREAD" | "SLA_OVERDUE";
+  onFilter: (f: "ALL" | "UNREAD" | "SLA_OVERDUE") => void;
+}) {
+  return (
+    <div className="flex h-full flex-col rounded-2xl border border-[#E2E8F0] bg-white">
+      <div className="border-b border-[#E2E8F0] p-3">
+        <SearchInput value={search} onChange={onSearch} placeholder="Search WhatsApp chats…" />
+        <div className="mt-2 flex gap-1">
+          {[
+            { v: "ALL", l: "All" },
+            { v: "UNREAD", l: "Unread" },
+            { v: "SLA_OVERDUE", l: "SLA Overdue" },
+          ].map((opt) => (
+            <button
+              key={opt.v}
+              onClick={() => onFilter(opt.v as "ALL" | "UNREAD" | "SLA_OVERDUE")}
+              className={cn(
+                "rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors",
+                filter === opt.v
+                  ? "bg-[#16a34a] text-white"
+                  : "bg-[#F1F5F9] text-[#475569] hover:bg-[#E2E8F0]"
+              )}
+            >
+              {opt.l}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex-1 overflow-y-auto alo-scroll" style={{ maxHeight: "calc(100vh - 280px)" }}>
+        {conversations.length === 0 ? (
+          <div className="px-4 py-10 text-center text-xs text-[#64748B]">
+            No conversations match this filter.
+          </div>
+        ) : (
+          conversations.map((c) => {
+            const lastMsg = c.messages[0];
+            const active = c.key === activeKey;
+            const lastInbound = [...c.messages].reverse().find((m) => m.direction === "INBOUND");
+            const slaDeadline = lastInbound
+              ? new Date(new Date(lastInbound.receivedAt).getTime() + 30 * 60 * 1000)
+              : null;
+            const sla = slaCountdown(slaDeadline);
+            const overdue = sla.status === "OVERDUE" || sla.status === "URGENT";
+            return (
+              <button
+                key={c.key}
+                onClick={() => onSelect(c.key)}
+                className={cn(
+                  "flex w-full items-start gap-2.5 border-b border-[#E2E8F0] px-3 py-3 text-left transition-colors",
+                  active ? "bg-[#EFF6FF]" : "hover:bg-[#F8FAFC]"
+                )}
+              >
+                <div
+                  className="flex size-9 shrink-0 items-center justify-center rounded-full text-white"
+                  style={{ backgroundColor: WHATSAPP_BRAND }}
+                >
+                  <span className="text-xs font-bold">
+                    {(c.studentName || c.fromPhone || "?").charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-sm font-semibold text-[#0F172A]">
+                      {c.studentName || c.fromPhone || "Unknown"}
+                    </p>
+                    <span className="text-[10px] text-[#94A3B8]">
+                      {timeAgoShort(c.lastMessageAt)}
+                    </span>
+                  </div>
+                  <p className="truncate text-xs text-[#64748B]">
+                    {lastMsg?.body || "—"}
+                  </p>
+                  <div className="mt-1 flex items-center gap-1.5">
+                    {c.unread > 0 && (
+                      <span className="inline-flex items-center justify-center rounded-full bg-[#16a34a] px-1.5 text-[10px] font-bold text-white">
+                        {c.unread}
+                      </span>
+                    )}
+                    {overdue && (
+                      <Pill className="bg-rose-100 text-rose-700">
+                        <Icon name="Clock" className="size-2.5" />
+                        SLA {sla.text}
+                      </Pill>
+                    )}
+                  </div>
+                </div>
+              </button>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ActiveConversation({
+  conversation,
+  aiDraft,
+  draftLoading,
+  draftError,
+  editedDraft,
+  setEditedDraft,
+  onGenerateDraft,
+  onApproveDraft,
+  onRejectDraft,
+  composerText,
+  setComposerText,
+  onSend,
+  sending,
+  quickReplies,
+  templates,
+}: {
+  conversation: Conversation;
+  aiDraft: { body: string; confidence: number; reasoning?: string } | null;
+  draftLoading: boolean;
+  draftError: string | null;
+  editedDraft: string;
+  setEditedDraft: React.Dispatch<React.SetStateAction<string>>;
+  onGenerateDraft: () => void;
+  onApproveDraft: () => void;
+  onRejectDraft: () => void;
+  composerText: string;
+  setComposerText: React.Dispatch<React.SetStateAction<string>>;
+  onSend: () => void;
+  sending: boolean;
+  quickReplies: QuickReply[];
+  templates: Template[];
+}) {
+  // Live SLA countdown
+  const [tick, setTick] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setTick((x) => x + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+  void tick; // re-render every second
+
+  const lastInbound = [...conversation.messages].reverse().find((m) => m.direction === "INBOUND");
+  const slaDeadline = lastInbound
+    ? new Date(new Date(lastInbound.receivedAt).getTime() + 30 * 60 * 1000)
+    : null;
+  const sla = slaCountdown(slaDeadline);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [conversation.messages.length]);
+
+  return (
+    <div className="flex h-full flex-col rounded-2xl border border-[#E2E8F0] bg-white">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-2 border-b border-[#E2E8F0] px-4 py-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <p className="truncate text-sm font-bold text-[#0F172A]">
+              {conversation.studentName || conversation.fromPhone || "Unknown"}
+            </p>
+            {conversation.fromPhone && (
+              <span className="font-mono text-xs text-[#64748B]">{conversation.fromPhone}</span>
+            )}
+          </div>
+          <p className="text-[11px] text-[#64748B]">
+            WhatsApp · {conversation.messages.length} message(s)
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Pill
+            className={cn(
+              sla.status === "OVERDUE"
+                ? "bg-rose-100 text-rose-700"
+                : sla.status === "URGENT"
+                ? "bg-orange-100 text-orange-700"
+                : sla.status === "WARNING"
+                ? "bg-amber-100 text-amber-700"
+                : "bg-emerald-100 text-emerald-700"
+            )}
+          >
+            <Icon name="Clock" className="size-2.5" />
+            SLA: {sla.text}
+          </Pill>
+        </div>
+      </div>
+
+      {/* Message thread */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto alo-scroll px-4 py-4" style={{ maxHeight: "calc(100vh - 480px)", minHeight: 220 }}>
+        {conversation.messages.map((m) => {
+          const inbound = m.direction === "INBOUND";
+          return (
+            <div
+              key={m.id}
+              className={cn("mb-3 flex", inbound ? "justify-start" : "justify-end")}
+            >
+              <div
+                className={cn(
+                  "max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow-sm",
+                  inbound
+                    ? "bg-[#F1F5F9] text-[#0F172A] rounded-tl-sm"
+                    : "text-white rounded-tr-sm"
+                )}
+                style={!inbound ? { backgroundColor: WHATSAPP_BRAND } : undefined}
+              >
+                <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                <div
+                  className={cn(
+                    "mt-1 flex items-center justify-end gap-1 text-[10px]",
+                    inbound ? "text-[#94A3B8]" : "text-white/80"
+                  )}
+                >
+                  <span>{fmtTime(m.receivedAt)}</span>
+                  {!inbound && (
+                    <Icon
+                      name={
+                        m.deliveryStatus === "READ"
+                          ? "CheckCheck"
+                          : m.deliveryStatus === "DELIVERED"
+                          ? "CheckCheck"
+                          : "Check"
+                      }
+                      className="size-3"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* AI Draft panel */}
+      {(aiDraft || draftLoading || draftError) && (
+        <div className="border-t border-[#E2E8F0] px-4 py-3">
+          <div className="rounded-xl border border-violet-200 bg-violet-50/60 p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="flex size-6 items-center justify-center rounded-lg bg-violet-600 text-white">
+                  <Icon name="Sparkles" className="size-3.5" />
+                </span>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-violet-700">
+                    AI Generated Draft
+                  </p>
+                  {aiDraft && (
+                    <p className="text-[10px] text-violet-600">
+                      Confidence {aiDraft.confidence}% · {aiDraft.reasoning}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={onRejectDraft}
+                className="text-[11px] font-semibold text-rose-600 hover:underline"
+                aria-label="Dismiss AI draft"
+              >
+                Dismiss
+              </button>
+            </div>
+
+            {draftLoading && (
+              <div className="flex items-center gap-2 text-xs text-violet-700">
+                <Icon name="Loader2" className="size-3.5 animate-spin" />
+                Generating draft…
+              </div>
+            )}
+
+            {draftError && (
+              <p className="text-xs text-amber-700">{draftError}</p>
+            )}
+
+            {aiDraft && (
+              <>
+                <Textarea
+                  value={editedDraft}
+                  onChange={(e) => setEditedDraft(e.target.value)}
+                  className="min-h-[80px] bg-white text-sm"
+                />
+                <div className="mt-2 flex gap-2">
+                  <Button
+                    size="sm"
+                    className="h-8 flex-1 bg-emerald-600 text-[11px] hover:bg-emerald-700"
+                    onClick={onApproveDraft}
+                  >
+                    <Icon name="Check" className="mr-1 size-3" />
+                    Approve & Send
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 border-rose-200 text-[11px] text-rose-600 hover:bg-rose-50"
+                    onClick={onRejectDraft}
+                  >
+                    <Icon name="X" className="mr-1 size-3" />
+                    Reject
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Quick replies */}
+      {quickReplies.length > 0 && (
+        <div className="border-t border-[#E2E8F0] px-4 py-2">
+          <div className="flex items-center gap-1.5 overflow-x-auto alo-scroll pb-1">
+            {quickReplies.slice(0, 8).map((q) => (
+              <button
+                key={q.id}
+                onClick={() => setComposerText((c) => (c ? c + " " : "") + q.body)}
+                className="shrink-0 rounded-full border border-[#E2E8F0] bg-white px-2.5 py-1 text-[11px] font-medium text-[#0F172A] hover:bg-[#F1F5F9]"
+              >
+                {q.title}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Composer */}
+      <div className="border-t border-[#E2E8F0] p-3">
+        <div className="mb-2 flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 border-violet-200 text-violet-700 hover:bg-violet-50"
+            onClick={onGenerateDraft}
+            disabled={draftLoading}
+          >
+            <Icon name="Sparkles" className="mr-1.5 size-3.5" />
+            {draftLoading ? "Generating…" : "AI Draft Reply"}
+          </Button>
+          <Select
+            value=""
+            onValueChange={(val) => {
+              const t = templates.find((x) => x.id === val);
+              if (t) setComposerText((c) => (c ? c + " " : "") + t.body);
+            }}
+          >
+            <SelectTrigger className="h-8 w-40 text-[11px]">
+              <span className="flex items-center gap-1.5">
+                <Icon name="FileText" className="size-3.5" />
+                Templates
+              </span>
+            </SelectTrigger>
+            <SelectContent>
+              {templates.length === 0 ? (
+                <SelectItem value="none" disabled>
+                  No templates
+                </SelectItem>
+              ) : (
+                templates.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.name}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+          <label className="ml-auto cursor-pointer rounded-lg border border-[#E2E8F0] px-2.5 py-1.5 text-[11px] font-medium text-[#475569] hover:bg-[#F1F5F9]">
+            <Icon name="Paperclip" className="mr-1 size-3.5" />
+            Attach
+            <input type="file" className="hidden" onChange={() => toastPlaceholder()} />
+          </label>
+        </div>
+        <div className="flex gap-2">
+          <Textarea
+            value={composerText}
+            onChange={(e) => setComposerText(e.target.value)}
+            placeholder="Type a message…"
+            className="min-h-[60px] flex-1 text-sm"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                onSend();
+              }
+            }}
+          />
+          <Button
+            className="h-auto px-4 text-white"
+            style={{ backgroundColor: WHATSAPP_BRAND }}
+            disabled={!composerText.trim() || sending}
+            onClick={onSend}
+          >
+            <Icon name="Send" className="mr-1.5 size-4" />
+            {sending ? "Sending…" : "Send"}
+          </Button>
+        </div>
+        <p className="mt-1 text-[10px] text-[#94A3B8]">
+          Press Cmd/Ctrl + Enter to send. AI replies are saved as drafts pending human approval.
+        </p>
+      </div>
+    </div>
+  );
+
+  function toastPlaceholder() {
+    // File upload is stubbed — the real flow uses /api/storage/upload + /api/whatsapp/document-upload
+  }
+}
 
 function StudentContextPanel({
   student,
-  activeApplications,
-  missingDocuments,
-  latestOffer,
-  latestPayment,
-  latestInterview,
-  lastCommunication,
+  loading,
 }: {
-  student: StudentContext;
-  activeApplications: NonNullable<StudentContext["applications"]>;
-  missingDocuments: NonNullable<StudentContext["documents"]>;
-  latestOffer: NonNullable<StudentContext["applications"]>[number] | null;
-  latestPayment: NonNullable<StudentContext["payments"]>[number] | null;
-  latestInterview: NonNullable<StudentContext["interviews"]>[number] | null;
-  lastCommunication: NonNullable<StudentContext["timelineEvents"]>[number] | null;
+  student: StudentSummary | null;
+  loading: boolean;
 }) {
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4">
+        <div className="skeleton h-4 w-24 rounded" />
+        <div className="mt-3 space-y-2">
+          <div className="skeleton h-3 w-full rounded" />
+          <div className="skeleton h-3 w-3/4 rounded" />
+          <div className="skeleton h-3 w-2/3 rounded" />
+        </div>
+      </div>
+    );
+  }
+  if (!student) {
+    return (
+      <div className="rounded-2xl border border-dashed border-[#E2E8F0] bg-white p-4 text-center text-xs text-[#64748B]">
+        No student context available for this conversation.
+      </div>
+    );
+  }
   return (
-    <SectionCard
-      title="Student Context"
-      icon="UserSquare"
-      accent="blue"
-      className="flex-shrink-0"
-    >
-      <div className="space-y-1">
-        <InfoRow label="Name" value={student.fullName} />
+    <div className="rounded-2xl border border-[#E2E8F0] bg-white">
+      <div className="flex items-center gap-3 border-b border-[#E2E8F0] px-4 py-3">
+        <div className="flex size-10 items-center justify-center rounded-full bg-alo-gradient text-white">
+          <span className="text-sm font-bold">
+            {(student.fullName || "?").charAt(0).toUpperCase()}
+          </span>
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold text-[#0F172A]">{student.fullName}</p>
+          <p className="text-[11px] text-[#64748B]">{student.studentId}</p>
+        </div>
+      </div>
+      <div className="p-4">
         <InfoRow label="Student ID" value={student.studentId} mono />
-        <InfoRow label="Phone" value={student.mobile || "—"} mono />
-        <InfoRow label="Counselor" value={student.counselor?.name || "Unassigned"} />
+        <InfoRow label="Counselor" value={student.counselorName || "Unassigned"} />
+        <InfoRow label="Stage" value={student.applicationStage?.replace(/_/g, " ") || "—"} />
         <InfoRow label="Destination" value={student.studyDestination || "—"} />
+        <InfoRow label="Program" value={student.programTitle || "—"} />
+        <InfoRow label="Study Level" value={student.studyLevel || "—"} />
         <InfoRow
           label="Profile"
-          value={
-            <span className="flex items-center gap-1.5">
-              <span className="font-mono">{student.profileCompletion || 0}%</span>
-              <span className="h-1.5 w-12 overflow-hidden rounded-full bg-[var(--alo-surface-muted)]">
-                <span
-                  className="block h-full rounded-full bg-alo-gradient"
-                  style={{ width: `${student.profileCompletion || 0}%` }}
-                />
-              </span>
-            </span>
-          }
+          value={`${student.profileCompletion ?? 0}% complete`}
         />
-      </div>
-
-      {activeApplications.length > 0 && (
-        <div className="mt-3">
-          <p className="caption-text text-[var(--alo-muted)]">Active applications</p>
-          <div className="mt-1.5 space-y-1.5">
-            {activeApplications.slice(0, 3).map((a) => (
-              <div
-                key={a.id}
-                className="rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-2 text-xs"
-              >
-                <p className="font-medium text-[var(--alo-text)]">
-                  {a.universityName || "—"}
-                </p>
-                <p className="text-[var(--alo-muted)]">
-                  {a.courseName || "—"}
-                </p>
-                <Badge variant="warning" className="mt-1 text-[10px]">
-                  {a.stage.replace(/_/g, " ").toLowerCase()}
-                </Badge>
-              </div>
-            ))}
+        <InfoRow
+          label="Passport"
+          value={student.hasPassport ? "Yes" : "No"}
+        />
+        {student.missingDocuments && student.missingDocuments.length > 0 && (
+          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-amber-700">
+              Missing Documents
+            </p>
+            <ul className="mt-1 space-y-0.5 text-[11px] text-amber-800">
+              {student.missingDocuments.slice(0, 5).map((d, i) => (
+                <li key={i} className="flex items-center gap-1">
+                  <Icon name="FileWarning" className="size-3" />
+                  {d}
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      )}
-
-      {missingDocuments.length > 0 && (
-        <div className="mt-3">
-          <p className="caption-text text-[var(--alo-muted)]">Missing documents</p>
-          <div className="mt-1.5 flex flex-wrap gap-1">
-            {missingDocuments.slice(0, 6).map((d) => (
-              <Badge key={d.id} variant="danger" className="text-[10px]">
-                {d.name}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="mt-3 space-y-1">
-        <InfoRow
-          label="Latest offer"
-          value={
-            latestOffer
-              ? `${latestOffer.universityName || "—"} · ${latestOffer.stage.replace(/_/g, " ").toLowerCase()}`
-              : "—"
-          }
-        />
-        <InfoRow
-          label="Payment status"
-          value={
-            latestPayment
-              ? `${latestPayment.status || "—"} · ${latestPayment.amount || 0} BDT`
-              : "—"
-          }
-        />
-        <InfoRow
-          label="Interview"
-          value={
-            latestInterview
-              ? `${latestInterview.type || "—"} · score ${latestInterview.score ?? "—"}`
-              : "—"
-          }
-        />
-        <InfoRow
-          label="Last communication"
-          value={lastCommunication ? timeAgo(lastCommunication.createdAt) : "—"}
-        />
-      </div>
-
-      {/* AI Next Best Action */}
-      <div className="mt-3">
-        <AISuggestionCard
-          title="Next best action"
-          suggestion={suggestNextBestAction(student, missingDocuments.length, activeApplications)}
-          reasoning="Inferred from current application stage, missing documents and recent timeline events."
-          confidence={78}
-          category="Recommendation"
-        />
-      </div>
-    </SectionCard>
-  );
-}
-
-function suggestNextBestAction(
-  student: StudentContext,
-  missingDocs: number,
-  activeApps: NonNullable<StudentContext["applications"]>
-): string {
-  if (missingDocs > 0) {
-    return `Request the ${missingDocs} missing document${missingDocs > 1 ? "s" : ""} from the student. Send a friendly checklist via WhatsApp and offer upload assistance.`;
-  }
-  if (activeApps.length === 0) {
-    return "No active applications. Recommend booking a free consultation to shortlist universities and programs.";
-  }
-  const latestStage = activeApps[0]?.stage;
-  if (latestStage === "APPLICATION_SUBMITTED") {
-    return "Application submitted — share typical offer turnaround times and keep the student engaged with weekly check-ins.";
-  }
-  if (latestStage === "CONDITIONAL_OFFFER" || latestStage === "UNCONDITIONAL_OFFFER") {
-    return "Offer received — guide the student toward deposit payment and CAS issuance. Send the deposit instructions template.";
-  }
-  if (latestStage && latestStage.startsWith("VISA_")) {
-    return "Visa stage in progress — share the visa document checklist and pre-departure checklist.";
-  }
-  return `Continue counseling ${student.fullName} on ${student.studyDestination || "their destination"} of choice.`;
-}
-
-function NewContactPanel({
-  phone,
-  contactMatchId,
-  onResolve,
-}: {
-  phone: string;
-  contactMatchId: string | null;
-  onResolve: (d: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW") => void;
-}) {
-  return (
-    <>
-      <SectionCard title="New Contact" icon="UserPlus" accent="orange">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 rounded-md bg-[var(--alo-orange-soft)] px-3 py-2 text-sm">
-            <Icon name="Phone" className="size-4 text-[var(--alo-orange-strong)]" />
-            <span className="font-mono font-semibold text-[var(--alo-orange-strong)]">{phone}</span>
-          </div>
-          <p className="body-text text-[var(--alo-text-secondary)]">
-            This phone number is not linked to an existing student or lead.
-            Send a welcome message and triage the contact below.
-          </p>
-        </div>
-      </SectionCard>
-
-      <SectionCard
-        title="Contact Match Review"
-        icon="Shuffle"
-        accent="amber"
-        description="Possible existing contact detected. Choose how to resolve this match."
-      >
-        {!contactMatchId ? (
-          <p className="text-xs text-[var(--alo-muted)]">
-            No automated review record found. Use the actions below to triage manually.
-          </p>
-        ) : (
-          <p className="text-xs text-[var(--alo-muted)]">
-            Review ID: <span className="font-mono">{contactMatchId.slice(0, 12)}…</span>
-          </p>
         )}
-        <div className="mt-3 flex flex-col gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onResolve("OPEN_EXISTING")}
-          >
-            <Icon name="FolderOpen" className="size-3.5" /> Open Existing
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onResolve("MERGE_REQUEST")}
-          >
-            <Icon name="GitMerge" className="size-3.5" /> Merge Request
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onResolve("CREATE_NEW")}
-            className="text-[var(--alo-orange-strong)] border-[var(--alo-orange)]/40 hover:bg-[var(--alo-orange-soft)]"
-          >
-            <Icon name="UserPlus" className="size-3.5" /> Create New (Authorized Role Only)
-          </Button>
+      </div>
+    </div>
+  );
+}
+
+function ContactMatchPanel({
+  match,
+  onResolve,
+  openDialog,
+  setOpenDialog,
+}: {
+  match: ContactMatchResponse;
+  onResolve: (decision: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW") => void;
+  openDialog: boolean;
+  setOpenDialog: (o: boolean) => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-amber-200 bg-amber-50/40 p-4">
+      <div className="flex items-center gap-2">
+        <span className="flex size-8 items-center justify-center rounded-lg bg-amber-500 text-white">
+          <Icon name="UserSearch" className="size-4" />
+        </span>
+        <div>
+          <p className="text-sm font-bold text-[#0F172A]">New Contact</p>
+          <p className="text-[11px] text-[#64748B]">Contact Match Review</p>
         </div>
-      </SectionCard>
-    </>
-  );
-}
-
-function AiClassificationPanel({
-  message,
-  studentId,
-}: {
-  message: string;
-  studentId?: string | null;
-}) {
-  // Lightweight client-side heuristic for display purposes only.
-  const lower = message.toLowerCase();
-  let intent = "GENERAL_INQUIRY";
-  let linkedApp = studentId ? "Linked to most recent active application" : "Not linked (new contact)";
-  if (/passport|visa|cas|i20|offer|document/.test(lower)) {
-    intent = "DOCUMENT_REQUIREMENT";
-  } else if (/payment|invoice|fee|refund|deposit/.test(lower)) {
-    intent = "PAYMENT_QUESTION";
-  } else if (/deadline|intake|apply|application/.test(lower)) {
-    intent = "APPLICATION_STATUS";
-  } else if (/interview|mock/.test(lower)) {
-    intent = "INTERVIEW_PREP";
-  } else if (/hi|hello|hey|salam|assalam/.test(lower)) {
-    intent = "GREETING";
-  }
-
-  const nextBest: Record<string, string> = {
-    DOCUMENT_REQUIREMENT: "Verify document identity via OTP, then share the document checklist with upload instructions.",
-    PAYMENT_QUESTION: "Share the latest invoice and accepted payment methods. Escalate to finance if disputed.",
-    APPLICATION_STATUS: "Verify identity via OTP, then share current stage and next milestone timeline.",
-    INTERVIEW_PREP: "Recommend booking a mock interview session via the AI Interview Studio.",
-    GREETING: "Send a warm welcome and offer to help with their query.",
-    GENERAL_INQUIRY: "Clarify the student's question, then route to the relevant counselor.",
-  };
-
-  return (
-    <SectionCard title="AI Message Classification" icon="BrainCircuit" accent="violet">
-      <div className="space-y-2">
-        <InfoRow label="Detected intent" value={<Badge variant="info" className="text-[10px]">{intent.replace(/_/g, " ")}</Badge>} />
-        <InfoRow label="Linked application" value={linkedApp} />
       </div>
-      <div className="mt-3">
-        <AISuggestionCard
-          title="Next best action"
-          suggestion={nextBest[intent] || nextBest.GENERAL_INQUIRY}
-          confidence={intent === "GREETING" ? 90 : 65}
-          category={intent}
-        />
+      <div className="mt-3 space-y-1 text-xs text-[#475569]">
+        <InfoRow label="Match Type" value={match.matchType === "NONE" ? "No match" : match.matchType} />
+        <InfoRow label="Confidence" value={`${match.confidence}%`} />
+        {match.possibleDuplicates.length > 0 && (
+          <InfoRow
+            label="Possible Duplicates"
+            value={`${match.possibleDuplicates.length} found`}
+          />
+        )}
       </div>
-    </SectionCard>
-  );
-}
-
-function DocumentReceiptPanel({
-  attachments,
-  studentId,
-  activeApplications,
-  onCreateUploadEvent,
-}: {
-  attachments: Attachment[];
-  studentId?: string | null;
-  activeApplications: NonNullable<StudentContext["applications"]>;
-  onCreateUploadEvent: (attachment: Attachment, documentType: string, applicationId?: string) => void;
-}) {
-  const [selectedAppId, setSelectedAppId] = React.useState<string>("");
-  const [selectedDocRequirement, setSelectedDocRequirement] = React.useState<string>("");
-
-  return (
-    <SectionCard
-      title="WhatsApp Document Receipt"
-      icon="FileText"
-      accent="orange"
-      description="Inbound attachment received via WhatsApp. Match it to a student application and document requirement."
-    >
-      <div className="space-y-2">
-        {attachments.map((a, i) => (
-          <div
-            key={i}
-            className="rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-2.5"
-          >
-            <div className="flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-orange-soft)] text-[var(--alo-orange-strong)]">
-                <Icon name={fileTypeIcon(a.name)} className="size-4.5" />
+      <div className="mt-3 space-y-1.5">
+        <Button
+          size="sm"
+          className="h-8 w-full bg-[#0057B8] text-[11px] hover:bg-[#003a7a]"
+          onClick={() => onResolve("OPEN_EXISTING")}
+        >
+          <Icon name="FolderOpen" className="mr-1.5 size-3" />
+          Open Existing
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 w-full border-[#E2E8F0] text-[11px] text-[#475569]"
+          onClick={() => onResolve("MERGE_REQUEST")}
+        >
+          <Icon name="GitMerge" className="mr-1.5 size-3" />
+          Merge Request
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 w-full border-emerald-200 text-[11px] text-emerald-700 hover:bg-emerald-50"
+          onClick={() => onResolve("CREATE_NEW")}
+        >
+          <Icon name="UserPlus" className="mr-1.5 size-3" />
+          Create New Contact
+        </Button>
+      </div>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Contact Match Review</DialogTitle>
+            <DialogDescription>
+              We couldn&apos;t auto-match this phone number to an existing student. Choose how to proceed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 text-sm text-[#475569]">
+            <p>
+              Confidence: <strong>{match.confidence}%</strong>
+            </p>
+            {match.possibleDuplicates.length > 0 && (
+              <div>
+                <p className="font-semibold text-[#0F172A]">Possible duplicates:</p>
+                <ul className="mt-1 space-y-1">
+                  {match.possibleDuplicates.map((d) => (
+                    <li key={`${d.type}-${d.id}`} className="text-xs">
+                      • {d.type}: {d.label} ({d.field || "phone"})
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-[var(--alo-text)]" title={a.name}>
-                  {a.name}
-                </p>
-                <p className="text-xs text-[var(--alo-muted)]">
-                  {a.type || "Unknown type"} · {fileSizeLabel(a.size)}
-                </p>
-              </div>
-            </div>
-            {a.url && <a href={a.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex text-xs font-medium text-[var(--alo-blue)] underline underline-offset-2">Open private attachment</a>}
-
-            {/* Match-to-application dropdown */}
-            <div className="mt-2 space-y-2">
-              {!studentId ? (
-                <div className="flex items-center gap-1.5 rounded-md bg-[var(--alo-warning-soft)] px-2 py-1 text-xs text-[var(--alo-warning-strong)]">
-                  <Icon name="AlertTriangle" className="size-3.5" />
-                  Sender is not linked to a student. Match the contact before adding this file to a student profile; the private file remains in this conversation.
-                </div>
-              ) : (
-                <>
-                  {activeApplications.length > 0 ? (
-                    <div>
-                      <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
-                        Match to application
-                      </Label>
-                      <Select value={selectedAppId} onValueChange={setSelectedAppId}>
-                        <SelectTrigger className="mt-0.5 h-8 w-full text-xs" size="sm">
-                          <SelectValue placeholder="Select an active application…" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {activeApplications.map((a2) => (
-                            <SelectItem key={a2.id} value={a2.id}>
-                              {a2.universityName || "—"} · {a2.stage.replace(/_/g, " ").toLowerCase()}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-[var(--alo-muted)]">No active application is available; you can still link this file to the student profile.</p>
-                  )}
-                  <div>
-                    <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
-                      Match to document requirement
-                    </Label>
-                    <Select value={selectedDocRequirement} onValueChange={setSelectedDocRequirement}>
-                      <SelectTrigger className="mt-0.5 h-8 w-full text-xs" size="sm">
-                        <SelectValue placeholder="Select document type…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PASSPORT">Passport</SelectItem>
-                        <SelectItem value="ACADEMIC_CERT">Academic Certificate</SelectItem>
-                        <SelectItem value="TRANSCRIPT">Academic Transcript</SelectItem>
-                        <SelectItem value="BANK_STATEMENT">Bank Statement</SelectItem>
-                        <SelectItem value="IELTS_CERT">English Test Certificate</SelectItem>
-                        <SelectItem value="CV">CV / Resume</SelectItem>
-                        <SelectItem value="SOP">Statement of Purpose</SelectItem>
-                        <SelectItem value="VISA_DOC">Visa Document</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </>
-              )}
-
-              <Button
-                variant="alo"
-                size="sm"
-                className="w-full"
-                disabled={!studentId || !selectedDocRequirement || (activeApplications.length > 0 && !selectedAppId)}
-                onClick={() => onCreateUploadEvent(a, selectedDocRequirement, selectedAppId || undefined)}
-              >
-                <Icon name="FileUp" className="size-3.5" /> Attach to student profile (pending review)
-              </Button>
-            </div>
+            )}
           </div>
-        ))}
-      </div>
-    </SectionCard>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenDialog(false)}>
+              Decide later
+            </Button>
+            <Button
+              className="bg-[#0057B8] text-white hover:bg-[#003a7a]"
+              onClick={() => onResolve("CREATE_NEW")}
+            >
+              Create New Contact
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
 
-export default WhatsAppCommandCenter;
-// Backward-compat alias — both PascalCase interpretations resolve to the same component.
-export { WhatsAppCommandCenter as WhatsappCommandCenter };
+// Aliases for backward compatibility
+export const WhatsAppCommandCenter = WhatsappCommandCenter;

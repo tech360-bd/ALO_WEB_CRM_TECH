@@ -54,7 +54,7 @@ export function PrivacyToggle() {
       onClick={toggle}
       className={cn(
         "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-colors",
-        privacyOn ? "border-[#2563EB] bg-[#e8f0fb] text-[#2563EB]" : "border-[#F97316] bg-[#fdece4] text-[#F97316]"
+        privacyOn ? "border-[#0057B8] bg-[#e8f0fb] text-[#0057B8]" : "border-[#E8501A] bg-[#fdece4] text-[#E8501A]"
       )}
       title={privacyOn ? "Privacy mode ON — sensitive data blurred. Click to turn off." : "Privacy mode OFF. Click to turn on."}
     >
@@ -78,7 +78,7 @@ export function SensitiveField({ id, label, value, type = "text", mono }: { id: 
         <div className="flex items-center gap-2">
           <span className={cn("text-right text-sm font-semibold text-foreground", mono && "font-mono", type === "currency" && "tabular-nums")}>{value}</span>
           {privacyOn && revealed && (
-            <button onClick={rehide} className="text-muted-foreground hover:text-[#2563EB]" title="Hide again">
+            <button onClick={rehide} className="text-muted-foreground hover:text-[#0057B8]" title="Hide again">
               <Icon name="EyeOff" className="size-3.5" />
             </button>
           )}
@@ -94,7 +94,7 @@ export function SensitiveField({ id, label, value, type = "text", mono }: { id: 
         <span className="select-none rounded bg-muted px-3 py-0.5 text-sm font-mono text-muted-foreground/60 blur-sm transition-all">{String(value)}</span>
         <button
           onClick={() => setShowPinPrompt(true)}
-          className="flex items-center gap-1 rounded border border-[#2563EB]/30 px-2 py-0.5 text-[10px] font-semibold text-[#2563EB] hover:bg-[#e8f0fb]"
+          className="flex items-center gap-1 rounded border border-[#0057B8]/30 px-2 py-0.5 text-[10px] font-semibold text-[#0057B8] hover:bg-[#e8f0fb]"
           title="Click to reveal (requires PIN)"
         >
           <Icon name="Lock" className="size-3" />
@@ -103,13 +103,13 @@ export function SensitiveField({ id, label, value, type = "text", mono }: { id: 
       </div>
       {showPinPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => { setShowPinPrompt(false); setPin(""); }}>
-          <div className="w-full max-w-xs rounded-2xl border-2 border-[#2563EB]/20 bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-xs rounded-2xl border-2 border-[#0057B8]/20 bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
                 <Icon name="ShieldCheck" className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#2563EB]">Reveal sensitive data</p>
+                <p className="text-sm font-bold text-[#0057B8]">Reveal sensitive data</p>
                 <p className="text-xs text-muted-foreground">Enter your PIN to view {label.toLowerCase()}</p>
               </div>
             </div>
@@ -132,7 +132,7 @@ export function SensitiveField({ id, label, value, type = "text", mono }: { id: 
             <div className="mt-3 flex gap-2">
               <Button variant="outline" className="flex-1 h-9" onClick={() => { setShowPinPrompt(false); setPin(""); }}>Cancel</Button>
               <Button
-                className="flex-1 h-9 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
+                className="flex-1 h-9 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
                 disabled={pin.length < 4}
                 onClick={() => { reveal(id); setShowPinPrompt(false); setPin(""); }}
               >

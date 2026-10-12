@@ -1,262 +1,103 @@
-import { createHash, randomBytes } from 'node:crypto';
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { withAuth } from '@/lib/auth-middleware';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import crypto from "crypto";
 
-const REVIEW_ROLES = [
-  'SUPER_ADMIN',
-  'ADMIN',
-  'MARKETING_MANAGER',
-  'MARKETING',
-  'super_admin',
-  'admin',
-  'marketing_manager',
-  'marketing',
-];
+// POST /api/reviews/invitation
+// Marketing/Super Admin creates a review invitation for a student.
+// Generates a secure token for /review/{token}. Optionally includes
+// Google and Facebook review links (official URLs only — never fabricated).
+//
+// Body: { studentName, studentEmail?, studentPhone?, studentId?, counselorId?,
+//         country?, serviceType?, googleReviewUrl?, facebookRecommendUrl?,
+//         campaignId?, expiresDays?, createdBy }
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const {
+    studentName, studentEmail, studentPhone, studentId, counselorId,
+    country, serviceType, googleReviewUrl, facebookRecommendUrl,
+    campaignId, expiresDays, createdBy,
+  } = body;
 
-const sha256 = (value: string) =>
-  createHash('sha256').update(value, 'utf8').digest('hex');
+  if (!studentName) {
+    return NextResponse.json({ error: "studentName is required" }, { status: 400 });
+  }
 
-export const POST = withAuth(
-  async (req, auth) => {
-    try {
-      const body = await req.json().catch(() => null);
+  // Generate a secure random token (32 bytes = 64 hex chars)
+  const token = crypto.randomBytes(32).toString("hex");
 
-      if (!body || typeof body !== 'object' || Array.isArray(body)) {
-        return NextResponse.json(
-          { error: 'A valid JSON body is required' },
-          { status: 400 },
-        );
-      }
+  // Expiry (default 30 days)
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + (expiresDays || 30));
 
-      const studentName =
-        typeof body.studentName === 'string'
-          ? body.studentName.trim().slice(0, 191)
-          : '';
+  const invitation = await db.reviewInvitation.create({
+    data: {
+      token,
+      studentId,
+      studentName,
+      studentEmail,
+      studentPhone,
+      counselorId,
+      country,
+      serviceType,
+      googleReviewUrl, // official Google review link (e.g., Google Business Profile URL)
+      facebookRecommendUrl, // official Facebook page recommendation link
+      campaignId,
+      expiresAt,
+    },
+  });
 
-      if (!studentName) {
-        return NextResponse.json(
-          { error: 'studentName is required' },
-          { status: 400 },
-        );
-      }
+  // Resolve createdBy to a valid User.id (it may be an email or user ID)
+  let userId = createdBy;
+  if (createdBy && createdBy.includes("@")) {
+    const user = await db.user.findFirst({ where: { email: createdBy.toLowerCase() }, select: { id: true } });
+    if (user) userId = user.id;
+    else userId = "system";
+  }
 
-      const email =
-        typeof body.studentEmail === 'string'
-          ? body.studentEmail.trim().toLowerCase()
-          : null;
+  // Audit log
+  await db.auditLog.create({
+    data: {
+      userId: userId === "system" ? null : userId,
+      action: "REVIEW_INVITATION_SENT",
+      resource: "ReviewInvitation",
+      resourceId: invitation.id,
+      details: JSON.stringify({ studentName, country, serviceType, expiresAt }),
+    },
+  });
 
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return NextResponse.json(
-          { error: 'studentEmail must be valid' },
-          { status: 400 },
-        );
-      }
-
-      const expiresDays =
-        Number.isInteger(body.expiresDays)
-          ? Math.min(90, Math.max(1, body.expiresDays))
-          : 30;
-
-      const rawToken = randomBytes(32).toString('hex');
-      const tokenHash = sha256(rawToken);
-      const expiresAt = new Date(
-        Date.now() + expiresDays * 24 * 60 * 60 * 1000,
-      );
-
-      const invitation = await db.$transaction(async (tx) => {
-        const created = await tx.reviewInvitation.create({
-          data: {
-            token: tokenHash,
-            studentId:
-              typeof body.studentId === 'string'
-                ? body.studentId.slice(0, 191)
-                : null,
-            studentName,
-            studentEmail: email,
-            studentPhone:
-              typeof body.studentPhone === 'string'
-                ? body.studentPhone.slice(0, 64)
-                : null,
-            counselorId:
-              typeof body.counselorId === 'string'
-                ? body.counselorId.slice(0, 191)
-                : null,
-            country:
-              typeof body.country === 'string'
-                ? body.country.slice(0, 100)
-                : null,
-            serviceType:
-              typeof body.serviceType === 'string'
-                ? body.serviceType.slice(0, 100)
-                : null,
-            googleReviewUrl:
-              typeof body.googleReviewUrl === 'string'
-                ? body.googleReviewUrl.slice(0, 1000)
-                : null,
-            facebookRecommendUrl:
-              typeof body.facebookRecommendUrl === 'string'
-                ? body.facebookRecommendUrl.slice(0, 1000)
-                : null,
-            campaignId:
-              typeof body.campaignId === 'string'
-                ? body.campaignId.slice(0, 191)
-                : null,
-            expiresAt,
-          },
-          select: {
-            id: true,
-            studentName: true,
-            studentEmail: true,
-            country: true,
-            serviceType: true,
-            status: true,
-            sentAt: true,
-            expiresAt: true,
-          },
-        });
-
-        await tx.portalAuditLog.create({
-          data: {
-            actorUserId: auth.actorUserId,
-            action: 'REVIEW_INVITATION_CREATED',
-            entityType: 'ReviewInvitation',
-            entityId: created.id,
-            ipAddress:
-              req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-              req.headers.get('x-real-ip') ||
-              '',
-            userAgent: req.headers.get('user-agent') || '',
-            metadata: JSON.stringify({
-              expiresAt,
-              createdBy: auth.userId,
-              ...(auth.actorUserId !== auth.userId
-                ? { actingAsUser: auth.userId }
-                : {}),
-            }),
-          },
-        });
-
-        return created;
-      });
-
-      return NextResponse.json(
-        {
-          invitation,
-          reviewUrl: `/review/${rawToken}`,
-          message:
-            'Invitation created. Share this one-time review link with the student.',
-        },
-        { status: 201 },
-      );
-    } catch {
-      return NextResponse.json(
-        { error: 'Failed to create review invitation' },
-        { status: 500 },
-      );
-    }
-  },
-  { requireRoles: REVIEW_ROLES },
-);
+  return NextResponse.json({
+    invitation,
+    reviewUrl: `/review/${token}`,
+    message: "Review invitation created. Share the link with the student.",
+  }, { status: 201 });
+}
 
 // GET /api/reviews/invitation
-// Lists all review invitations for the Marketing dashboard.
-export const GET = withAuth(
-  async (req) => {
-    try {
-      const url = new URL(req.url);
+// Lists all review invitations (for the Marketing dashboard).
+export async function GET(req: NextRequest) {
+  const status = req.nextUrl.searchParams.get("status") || "ALL";
+  const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") || "100"), 500);
 
-      const status = url.searchParams.get('status') || 'ALL';
+  const where: any = {};
+  if (status !== "ALL") where.status = status;
 
-      const allowedStatuses = new Set([
-        'ALL',
-        'SENT',
-        'OPENED',
-        'SUBMITTED',
-        'EXPIRED',
-      ]);
+  const invitations = await db.reviewInvitation.findMany({
+    where,
+    orderBy: { sentAt: "desc" },
+    take: limit,
+  });
 
-      if (!allowedStatuses.has(status)) {
-        return NextResponse.json(
-          { error: 'Invalid status filter' },
-          { status: 400 },
-        );
-      }
+  // Also fetch the linked reviews (if any) for display
+  const reviewIds = invitations.filter((i) => i.reviewId).map((i) => i.reviewId!);
+  const reviews = reviewIds.length > 0
+    ? await db.studentReview.findMany({ where: { id: { in: reviewIds } }, select: { id: true, rating: true, moderationStatus: true, publicationStatus: true } })
+    : [];
+  const reviewMap = new Map(reviews.map((r) => [r.id, r]));
 
-      const parsedLimit = Number.parseInt(
-        url.searchParams.get('limit') || '100',
-        10,
-      );
+  const invitationsWithReviews = invitations.map((i) => ({
+    ...i,
+    review: i.reviewId ? reviewMap.get(i.reviewId) || null : null,
+  }));
 
-      const limit = Number.isFinite(parsedLimit)
-        ? Math.max(1, Math.min(parsedLimit, 100))
-        : 100;
-
-      const where = status === 'ALL' ? {} : { status };
-
-      const invitations = await db.reviewInvitation.findMany({
-        where,
-        orderBy: { sentAt: 'desc' },
-        take: limit,
-        select: {
-          id: true,
-          studentId: true,
-          studentName: true,
-          studentEmail: true,
-          studentPhone: true,
-          counselorId: true,
-          country: true,
-          serviceType: true,
-          campaignId: true,
-          status: true,
-          sentAt: true,
-          openedAt: true,
-          submittedAt: true,
-          expiresAt: true,
-          reviewId: true,
-        },
-      });
-
-      const reviewIds = invitations.flatMap((invitation) =>
-        invitation.reviewId ? [invitation.reviewId] : [],
-      );
-
-      const reviews = reviewIds.length
-        ? await db.studentReview.findMany({
-            where: {
-              id: {
-                in: reviewIds,
-              },
-            },
-            select: {
-              id: true,
-              rating: true,
-              moderationStatus: true,
-              publicationStatus: true,
-            },
-          })
-        : [];
-
-      const reviewMap = new Map(
-        reviews.map((review) => [review.id, review]),
-      );
-
-      const invitationsWithReviews = invitations.map((invitation) => ({
-        ...invitation,
-        review: invitation.reviewId
-          ? reviewMap.get(invitation.reviewId) || null
-          : null,
-      }));
-
-      return NextResponse.json({
-        invitations: invitationsWithReviews,
-      });
-    } catch {
-      return NextResponse.json(
-        { error: 'Failed to list review invitations' },
-        { status: 500 },
-      );
-    }
-  },
-  { requireRoles: REVIEW_ROLES },
-);
+  return NextResponse.json({ invitations: invitationsWithReviews });
+}

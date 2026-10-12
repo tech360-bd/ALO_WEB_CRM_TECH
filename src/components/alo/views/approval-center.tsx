@@ -341,4 +341,3 @@ export function ApprovalCenter() {
     </div>
   );
 }
-export default ApprovalCenter;

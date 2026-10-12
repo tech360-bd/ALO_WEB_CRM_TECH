@@ -118,7 +118,7 @@ export function CrmSms() {
                           {c.studentName || c.fromName || "Unknown"}
                         </p>
                         {c.unread > 0 && (
-                          <Badge className="bg-[#F97316] text-white">{c.unread}</Badge>
+                          <Badge className="bg-[#F37021] text-white">{c.unread}</Badge>
                         )}
                       </div>
                       <p className="text-xs text-[#5A7299]">{c.fromPhone}</p>
@@ -147,7 +147,7 @@ export function CrmSms() {
                           key={m.id}
                           className={`rounded-2xl px-3 py-2 text-sm ${
                             m.direction === "OUTBOUND"
-                              ? "ml-auto max-w-[75%] bg-[#2563EB] text-white"
+                              ? "ml-auto max-w-[75%] bg-[#0066CC] text-white"
                               : "max-w-[75%] bg-white text-[#0B2447]"
                           }`}
                         >
@@ -177,7 +177,7 @@ export function CrmSms() {
                         <Button
                           onClick={handleSend}
                           disabled={sending || !reply.trim()}
-                          className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
+                          className="bg-[#0066CC] text-white hover:bg-[#0052a3]"
                         >
                           <Icon name="Send" className="size-4" />
                         </Button>
@@ -200,4 +200,3 @@ export function CrmSms() {
     </div>
   );
 }
-export default CrmSms;

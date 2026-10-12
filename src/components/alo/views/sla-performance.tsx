@@ -1,27 +1,5 @@
 "use client";
 
-/**
- * SLA & Counselor Performance — Fair governance surface.
- *
- * Capabilities:
- *  • SLA dashboard KPIs with CompletionRing for compliance %
- *  • SLA Policy table (channel/priority/student-type/SLA minutes)
- *  • Counselor performance table (breaches, exclusions, warnings — highlighted)
- *  • Pending Justifications (ApprovalCard) + Manager review dialog
- *  • Open Escalations timeline (acknowledge/resolve)
- *  • Fair Governance notice + exclusion-category legend
- *
- * APIs:
- *  GET  /api/communications/sla/dashboard
- *  GET  /api/communications/sla/policies
- *  POST /api/communications/sla/policies
- *  GET  /api/communications/sla/incidents
- *  GET  /api/communications/sla/justifications?status=PENDING
- *  POST /api/communications/sla/justifications/[id]/review
- *  GET  /api/communications/escalations?status=OPEN
- *  PATCH /api/communications/escalations/[id]
- */
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -29,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -48,44 +25,38 @@ import {
 import {
   Icon,
   PageHeader,
-  KpiCard,
   SectionCard,
   EmptyState,
-  ErrorState,
   LoadingGrid,
-  Notification,
-  StatusBadge,
-  DataTable,
   CompletionRing,
+  InfoRow,
+} from "@/components/alo/shared";
+import {
+  DataTable,
+  type DataTableColumn,
   Timeline,
-  type Column,
-  type AccentColor,
-  type TimelineItem,
-} from "@/components/alo/ui";
-import { ApprovalCard } from "@/components/alo/cards";
-import { timeAgo, fmtDate } from "@/lib/alo-types";
+  Notification,
+  Pill,
+  fetchJson,
+  fmtDateTime,
+  fmtMinutes,
+  timeAgoShort,
+  TASK_STATUS_COLORS,
+} from "@/components/alo/comm-helpers";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────
 
-interface SlaDashboardStats {
+interface SlaSummary {
   totalAssigned: number;
-  responded: number;
+  totalResponded: number;
   pending: number;
   overdue: number;
   slaCompliancePct: number;
-  avgResponseTime: number; // minutes
+  avgResponseTimeSeconds: number;
   escalations: number;
-  openEscalations: number;
-  acknowledgedEscalations: number;
-  justifications: {
-    pending: number;
-    accepted: number;
-    total: number;
-  };
-  incidentCounters: number;
-  totalBreaches: number;
+  justificationsPending: number;
+  justificationsAccepted: number;
+  totalSlaBreaches: number;
   totalValidExclusions: number;
 }
 
@@ -93,979 +64,583 @@ interface SlaPolicy {
   id: string;
   name: string;
   channel: string;
-  priority: string;
-  studentType: string;
-  applicationStage: string;
-  messageIntent: string;
-  slaMinutes: number;
-  warningMinutes: number;
-  urgentMinutes: number;
-  overdueMinutes: number;
-  escalationMinutes: number;
-  businessHoursOnly: boolean;
+  priority?: string | null;
+  studentType?: string | null;
+  applicationStage?: string | null;
+  messageIntent?: string | null;
+  slaMinutes?: number | null;
+  warningMinutes?: number | null;
+  urgentMinutes?: number | null;
+  overdueMinutes?: number | null;
+  escalationMinutes?: number | null;
+  businessHoursOnly?: boolean | null;
   holidayCalendar?: string | null;
   isActive: boolean;
-  createdAt: string;
+  updatedAt: string;
 }
 
 interface SlaIncident {
   id: string;
-  counselorId: string;
-  period: string;
-  totalAssigned: number;
-  requiredResponses: number;
-  slaBreaches: number;
-  validExclusions: number;
-  avgResponseTime: number;
-  worstDelay: number;
-  warningIssued: boolean;
-  warningAt?: string | null;
-  createdAt: string;
-  counselor?: { id: string; name: string; role: string } | null;
+  counselorId?: string | null;
+  counselorName?: string | null;
+  period?: string | null;
+  totalAssigned?: number | null;
+  totalResponded?: number | null;
+  slaBreaches?: number | null;
+  validExclusions?: number | null;
+  warningIssued?: boolean | null;
+  lastBreachAt?: string | null;
+  updatedAt: string;
 }
 
 interface SlaJustification {
   id: string;
   counselorId: string;
-  slaEventId?: string | null;
   period: string;
   reason: string;
   category: string;
   explanation: string;
   evidence?: string | null;
   status: string;
-  reviewedBy?: string | null;
-  reviewedAt?: string | null;
   reviewNotes?: string | null;
   createdAt: string;
+  reviewedAt?: string | null;
 }
 
-interface EscalationEvent {
+interface Escalation {
   id: string;
   type: string;
-  level: number;
-  communicationId?: string | null;
-  slaEventId?: string | null;
+  level?: number | null;
+  message: string;
+  status: string;
+  actionTaken?: string | null;
   studentId?: string | null;
   counselorId?: string | null;
-  supervisorId?: string | null;
-  message: string;
-  actionTaken?: string | null;
-  status: string;
   createdAt: string;
-  resolvedAt?: string | null;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Constants
-// ─────────────────────────────────────────────────────────────────────────────
-
-const CHANNEL_META: Record<string, { accent: AccentColor; icon: string; label: string }> = {
-  WHATSAPP: { accent: "emerald", icon: "MessageCircle", label: "WhatsApp" },
-  EMAIL: { accent: "violet", icon: "Mail", label: "Email" },
-  SMS: { accent: "sky", icon: "MessageSquare", label: "SMS" },
-  PHONE: { accent: "orange", icon: "Phone", label: "Phone" },
-  PORTAL: { accent: "blue", icon: "Globe", label: "Portal" },
-  SOCIAL: { accent: "rose", icon: "Share2", label: "Social" },
-};
-
-const PRIORITY_META: Record<string, { accent: AccentColor; label: string }> = {
-  URGENT: { accent: "rose", label: "Urgent" },
-  HIGH: { accent: "amber", label: "High" },
-  NORMAL: { accent: "blue", label: "Normal" },
-  LOW: { accent: "slate", label: "Low" },
-};
-
-const JUSTIFICATION_CATEGORY_META: Record<
-  string,
-  { accent: AccentColor; icon: string; label: string; description: string }
-> = {
-  STUDENT_UNAVAILABLE: {
-    accent: "amber",
-    icon: "UserX",
-    label: "Student Unavailable",
-    description: "Student did not respond despite reasonable attempts.",
-  },
-  UNIVERSITY_WAITING: {
-    accent: "sky",
-    icon: "Building2",
-    label: "University Waiting",
-    description: "Blocked on university response — out of counselor control.",
-  },
-  SYSTEM_ISSUE: {
-    accent: "rose",
-    icon: "ServerCrash",
-    label: "System Issue",
-    description: "Platform outage, webhook failure, or DB latency spike.",
-  },
-  WRONG_ASSIGNMENT: {
-    accent: "violet",
-    icon: "UserMinus",
-    label: "Wrong Assignment",
-    description: "Conversation routed to the wrong counselor initially.",
-  },
-  HIGH_WORKLOAD: {
-    accent: "amber",
-    icon: "Layers",
-    label: "High Workload",
-    description: "Spike in volume beyond capacity (with manager approval).",
-  },
-  EMERGENCY: {
-    accent: "rose",
-    icon: "Siren",
-    label: "Emergency",
-    description: "Personal or medical emergency with documentation.",
-  },
-  APPROVED_LEAVE: {
-    accent: "sky",
-    icon: "CalendarClock",
-    label: "Approved Leave",
-    description: "Approved annual/sick leave during the breach window.",
-  },
-  OTHER: {
-    accent: "slate",
-    icon: "Circle",
-    label: "Other",
-    description: "Reviewed case-by-case by manager.",
-  },
-};
-
-const ESCALATION_TYPE_META: Record<string, { accent: AccentColor; icon: string }> = {
-  SLA_WARNING: { accent: "amber", icon: "AlertTriangle" },
-  SLA_URGENT: { accent: "orange", icon: "AlertCircle" },
-  SLA_OVERDUE: { accent: "rose", icon: "Clock" },
-  SLA_ESCALATION: { accent: "rose", icon: "AlertOctagon" },
-  MISSED_RESPONSE: { accent: "rose", icon: "XCircle" },
-  REPEATED_FAILURE: { accent: "rose", icon: "Repeat" },
-};
-
-function formatMinutes(min: number): string {
-  if (!min || min <= 0) return "0m";
-  if (min < 60) return `${min}m`;
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  return m > 0 ? `${h}h ${m}m` : `${h}h`;
-}
-
-function formatDateTime(d: string): string {
-  try {
-    return new Date(d).toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return d;
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main component
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Main Component ────────────────────────────────────────────────────────
 
 export function SlaPerformance() {
   const { toast } = useToast();
-  const [stats, setStats] = React.useState<SlaDashboardStats | null>(null);
+  const [summary, setSummary] = React.useState<SlaSummary | null>(null);
   const [policies, setPolicies] = React.useState<SlaPolicy[]>([]);
   const [incidents, setIncidents] = React.useState<SlaIncident[]>([]);
   const [justifications, setJustifications] = React.useState<SlaJustification[]>([]);
-  const [escalations, setEscalations] = React.useState<EscalationEvent[]>([]);
+  const [escalations, setEscalations] = React.useState<Escalation[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  // Dialogs
+  const [error, setError] = React.useState(false);
   const [createPolicyOpen, setCreatePolicyOpen] = React.useState(false);
-  const [reviewJustification, setReviewJustification] = React.useState<SlaJustification | null>(null);
 
   const fetchAll = React.useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setError(false);
     try {
       const [dashRes, polRes, incRes, jusRes, escRes] = await Promise.all([
-        fetch("/api/communications/sla/dashboard"),
-        fetch("/api/communications/sla/policies"),
-        fetch("/api/communications/sla/incidents"),
-        fetch("/api/communications/sla/justifications?status=PENDING"),
-        fetch("/api/communications/escalations?status=OPEN"),
+        fetchJson<{ summary: SlaSummary }>("/api/communications/sla/dashboard"),
+        fetchJson<{ policies: SlaPolicy[] }>("/api/communications/sla/policies"),
+        fetchJson<{ incidents: SlaIncident[] }>("/api/communications/sla/incidents"),
+        fetchJson<{ justifications: SlaJustification[] }>(
+          "/api/communications/sla/justifications?status=PENDING"
+        ),
+        fetchJson<{ escalations: Escalation[] }>(
+          "/api/communications/escalations?status=OPEN"
+        ),
       ]);
-      if (!dashRes.ok) throw new Error("Failed to fetch SLA dashboard");
-      const dashJson = await dashRes.json();
-      const polJson = polRes.ok ? await polRes.json() : { policies: [] };
-      const incJson = incRes.ok ? await incRes.json() : { incidents: [] };
-      const jusJson = jusRes.ok ? await jusRes.json() : { justifications: [] };
-      const escJson = escRes.ok ? await escRes.json() : { escalations: [] };
-      setStats(dashJson.stats);
-      setPolicies(polJson.policies || []);
-      setIncidents(incJson.incidents || []);
-      setJustifications(jusJson.justifications || []);
-      setEscalations(escJson.escalations || []);
-    } catch (e: any) {
-      setError(e?.message || "Failed to load SLA dashboard");
+      setSummary(dashRes.summary);
+      setPolicies(polRes.policies || []);
+      setIncidents(incRes.incidents || []);
+      setJustifications(jusRes.justifications || []);
+      setEscalations(escRes.escalations || []);
+    } catch (err) {
+      console.error("[sla-performance]", err);
+      setError(true);
+      toast({
+        title: "Failed to load SLA data",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   React.useEffect(() => {
     void fetchAll();
   }, [fetchAll]);
 
-  // Escalation acknowledge / resolve handlers
-  const handleEscalationAction = async (
-    esc: EscalationEvent,
-    action: "ACKNOWLEDGED" | "RESOLVED",
-  ) => {
-    try {
-      const res = await fetch(`/api/communications/escalations/${esc.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: action,
-          actionTaken:
-            action === "RESOLVED"
-              ? "Marked resolved by manager"
-              : "Acknowledged by manager",
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to update escalation");
-      toast({
-        title: action === "ACKNOWLEDGED" ? "Escalation acknowledged" : "Escalation resolved",
-        description: esc.message.slice(0, 80),
-      });
-      void fetchAll();
-    } catch (e: any) {
-      toast({
-        title: "Action failed",
-        description: e?.message || "Could not update escalation",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Justification review handler
-  const handleReviewSubmit = async (
-    justificationId: string,
-    decision: string,
-    reviewNotes: string,
-  ) => {
-    try {
-      const res = await fetch(
-        `/api/communications/sla/justifications/${justificationId}/review`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            reviewedBy: "manager-demo",
-            decision,
-            reviewNotes,
-          }),
-        },
-      );
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to submit review");
-      toast({
-        title: `Justification ${decision.toLowerCase().replace(/_/g, " ")}`,
-        description: "Counselor has been notified of the decision.",
-      });
-      setReviewJustification(null);
-      void fetchAll();
-    } catch (e: any) {
-      toast({
-        title: "Review failed",
-        description: e?.message || "Could not submit review",
-        variant: "destructive",
-      });
-    }
-  };
-
   if (loading) {
     return (
-      <div className="space-y-6 p-4 lg:p-6">
-        <PageHeader
-          title="SLA & Counselor Performance"
-          subtitle="Fair SLA governance with exclusions & justifications"
-          icon="GaugeCircle"
-        />
-        <LoadingGrid count={6} />
+      <div className="space-y-6">
+        <PageHeader title="SLA & Counselor Performance" subtitle="Monitor SLA compliance, counselor performance, and fairly review justifications." icon="Gauge" />
+        <LoadingGrid count={5} />
       </div>
     );
   }
 
-  if (error || !stats) {
+  if (error && !summary) {
     return (
-      <div className="space-y-6 p-4 lg:p-6">
-        <PageHeader
-          title="SLA & Counselor Performance"
-          subtitle="Fair SLA governance with exclusions & justifications"
-          icon="GaugeCircle"
-        />
-        <ErrorState
-          title="Could not load SLA dashboard"
-          description={error || "Unknown error"}
-          onRetry={() => void fetchAll()}
-        />
+      <div className="space-y-6">
+        <PageHeader title="SLA & Counselor Performance" subtitle="Monitor SLA compliance, counselor performance, and fairly review justifications." icon="Gauge" />
+        <div className="rounded-2xl border border-dashed border-rose-200 bg-rose-50/50 px-6 py-10 text-center">
+          <p className="text-sm font-semibold text-[#991B1B]">Failed to load SLA data</p>
+          <Button onClick={() => void fetchAll()} className="mt-3" size="sm">Retry</Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 p-4 lg:p-6">
+    <div className="space-y-6">
       <PageHeader
         title="SLA & Counselor Performance"
-        subtitle="Fair SLA governance with exclusions & justifications"
-        icon="GaugeCircle"
+        subtitle="Monitor SLA compliance, counselor performance, and fairly review justifications."
+        icon="Gauge"
         action={
-          <Button variant="alo" onClick={() => setCreatePolicyOpen(true)}>
-            <Icon name="Plus" className="size-4" /> Create Policy
+          <Button
+            variant="outline"
+            className="h-10 border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC]"
+            onClick={() => void fetchAll()}
+          >
+            <Icon name="RefreshCw" className="mr-2 size-4" />
+            Refresh
           </Button>
         }
       />
 
-      {/* KPI row with CompletionRing for SLA compliance */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* SLA Compliance ring */}
-        <div className="rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-surface)] p-5 shadow-[var(--alo-shadow-sm)]">
-          <div className="flex items-start justify-between">
+      {/* KPI row */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-5 alo-shadow">
+          <div className="flex items-center gap-4">
+            <CompletionRing value={summary?.slaCompliancePct ?? 0} size={68} />
             <div>
-              <p className="caption-text">SLA Compliance</p>
-              <p className="mt-1 text-2xl font-bold text-[var(--alo-text)] tabular-nums">
-                {stats.slaCompliancePct}%
-              </p>
-              <p className="mt-1 body-text text-[var(--alo-muted)]">
-                {stats.responded} / {stats.totalAssigned} responded
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">SLA Compliance</p>
+              <p className="text-xs text-[#475569]">
+                {summary?.totalResponded ?? 0}/{summary?.totalAssigned ?? 0} responded
               </p>
             </div>
-            <CompletionRing value={stats.slaCompliancePct} size={72} />
           </div>
         </div>
-
-        {/* KPI cards */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2">
-          <KpiCard
-            label="Avg Response Time"
-            value={formatMinutes(stats.avgResponseTime)}
-            icon="Timer"
-            accent="amber"
-          />
-          <KpiCard
-            label="Pending Responses"
-            value={stats.pending}
-            icon="Clock"
-            accent="sky"
-          />
-          <KpiCard
-            label="Overdue"
-            value={stats.overdue}
-            icon="AlertOctagon"
-            accent="rose"
-          />
-          <KpiCard
-            label="Escalations"
-            value={stats.openEscalations}
-            icon="AlertTriangle"
-            accent="orange"
-            hint={`${stats.acknowledgedEscalations} acknowledged`}
-          />
-        </div>
-
-        {/* Justifications KPI */}
-        <KpiCard
-          label="Justifications Pending"
-          value={stats.justifications.pending}
-          icon="Scale"
-          accent="violet"
-          hint={`${stats.justifications.accepted} accepted · ${stats.totalBreaches} breaches · ${stats.totalValidExclusions} exclusions`}
-        />
+        <KpiCard label="Avg Response" value={fmtMinutes(summary?.avgResponseTimeSeconds)} icon="Timer" accent="blue" />
+        <KpiCard label="Pending" value={summary?.pending ?? 0} icon="Clock" accent="amber" />
+        <KpiCard label="Overdue" value={summary?.overdue ?? 0} icon="AlertTriangle" accent="rose" />
+        <KpiCard label="Escalations" value={escalations.length} icon="AlertOctagon" accent="violet" />
+        <KpiCard label="Justifications Pending" value={justifications.length} icon="Scale" accent="orange" />
       </div>
 
-      {/* Fair Governance Notice */}
+      {/* Fair governance notice */}
       <Notification
         type="info"
         title="Fair SLA Governance"
-        message={
-          <div className="space-y-1">
-            <p>
-              SLA breaches exclude: <strong>provider outages</strong>,{" "}
-              <strong>system outages</strong>, <strong>holidays</strong>,{" "}
-              <strong>approved leave</strong>, <strong>incorrect assignments</strong>, and{" "}
-              <strong>messages not requiring response</strong>.
-            </p>
-            <p className="text-xs opacity-90">
-              Counselors are not penalized for system failures. Each breach is reviewed
-              individually — counselors can submit a justification that managers approve or reject.
-            </p>
-          </div>
-        }
+        description="SLA breaches are tracked for accountability — but we recognize not every late reply is a counselor's fault. Justifications are reviewed by managers, and valid exclusions (system downtime, weekends, holidays, emergencies) are honored. Use the Pending Justifications section below to review requests fairly."
+        icon="Scale"
       />
 
-      {/* Exclusion Categories Legend */}
+      {/* SLA Policies */}
       <SectionCard
-        title="Exclusion Categories"
-        description="Valid reasons a breach is excluded from counselor performance scoring"
-        icon="ShieldCheck"
-        accent="emerald"
+        title="SLA Policies"
+        description="Response time targets per channel, priority, and student stage"
+        icon="ListChecks"
+        action={
+          <Button
+            onClick={() => setCreatePolicyOpen(true)}
+            className="h-9 bg-[#0057B8] text-white hover:bg-[#003a7a]"
+          >
+            <Icon name="Plus" className="mr-1.5 size-4" />
+            New Policy
+          </Button>
+        }
       >
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          {Object.entries(JUSTIFICATION_CATEGORY_META).map(([key, meta]) => (
-            <div
-              key={key}
-              className="flex items-start gap-2.5 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3"
-            >
-              <div
-                className={cn(
-                  "flex size-7 shrink-0 items-center justify-center rounded-md",
-                  `bg-[var(--alo-${meta.accent === "emerald" ? "success" : meta.accent === "amber" ? "warning" : meta.accent === "rose" ? "danger" : meta.accent === "sky" ? "info" : meta.accent === "blue" ? "blue" : meta.accent === "orange" ? "orange" : "surface-muted"}-soft)]`,
-                  `text-[var(--alo-${meta.accent === "emerald" ? "success" : meta.accent === "amber" ? "warning" : meta.accent === "rose" ? "danger" : meta.accent === "sky" ? "info" : meta.accent === "blue" ? "blue" : meta.accent === "orange" ? "orange" : "text-secondary"}-strong)]`,
-                )}
-              >
-                <Icon name={meta.icon} className="size-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-[var(--alo-text)]">{meta.label}</p>
-                <p className="mt-0.5 text-[11px] leading-tight text-[var(--alo-muted)]">
-                  {meta.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <PoliciesTable policies={policies} />
       </SectionCard>
 
-      {/* Pending Justifications */}
-      <PendingJustifications
-        justifications={justifications}
-        onView={(j) => setReviewJustification(j)}
-      />
+      {/* Counselor Performance */}
+      <SectionCard
+        title="Counselor Performance"
+        description="Per-counselor SLA incident counters — rows with warnings are highlighted"
+        icon="Users"
+      >
+        <IncidentsTable incidents={incidents} />
+      </SectionCard>
 
-      {/* SLA Policies Table */}
-      <SlaPoliciesTable policies={policies} />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Pending Justifications */}
+        <SectionCard
+          title="Pending Justifications"
+          description="Counselor-submitted reasons for SLA breaches — review fairly"
+          icon="Scale"
+        >
+          {justifications.length === 0 ? (
+            <EmptyState
+              icon="CheckCircle2"
+              title="No pending justifications"
+              description="All counselor SLA justifications have been reviewed."
+            />
+          ) : (
+            <div className="space-y-3">
+              {justifications.map((j) => (
+                <JustificationCard
+                  key={j.id}
+                  justification={j}
+                  onReview={(decision, notes) =>
+                    void reviewJustification(j.id, decision, notes)
+                  }
+                />
+              ))}
+            </div>
+          )}
+        </SectionCard>
 
-      {/* Counselor Performance Table */}
-      <CounselorPerformanceTable incidents={incidents} />
+        {/* Escalation Feed */}
+        <SectionCard
+          title="Escalation Feed"
+          description="Open escalations timeline"
+          icon="AlertOctagon"
+        >
+          {escalations.length === 0 ? (
+            <EmptyState
+              icon="ShieldCheck"
+              title="No open escalations"
+              description="Escalations will appear here when SLA thresholds are breached."
+            />
+          ) : (
+            <Timeline
+              items={escalations.slice(0, 12).map((e) => ({
+                id: e.id,
+                title: `${e.type.replace(/_/g, " ")} (Level ${e.level ?? 1})`,
+                description: e.message,
+                timestamp: timeAgoShort(e.createdAt),
+                accent: e.status === "OPEN" ? "rose" : "amber",
+                meta: e.status,
+              }))}
+            />
+          )}
+        </SectionCard>
+      </div>
 
-      {/* Escalation Feed */}
-      <EscalationFeed
-        escalations={escalations}
-        onAcknowledge={(e) => handleEscalationAction(e, "ACKNOWLEDGED")}
-        onResolve={(e) => handleEscalationAction(e, "RESOLVED")}
-      />
-
-      {/* Create Policy Dialog */}
       <CreatePolicyDialog
         open={createPolicyOpen}
         onOpenChange={setCreatePolicyOpen}
-        onCreated={() => {
-          toast({
-            title: "SLA Policy created",
-            description: "The new SLA policy is now active.",
-          });
-          void fetchAll();
-        }}
+        onCreated={() => void fetchAll()}
       />
+    </div>
+  );
 
-      {/* Review Justification Dialog */}
-      <ReviewJustificationDialog
-        justification={reviewJustification}
-        onOpenChange={(o) => !o && setReviewJustification(null)}
-        onSubmit={handleReviewSubmit}
-      />
+  async function reviewJustification(id: string, decision: "ACCEPTED" | "REJECTED" | "CLARIFICATION_REQUESTED", notes: string) {
+    try {
+      await fetchJson(`/api/communications/sla/justifications/${id}/review`, {
+        method: "POST",
+        body: JSON.stringify({
+          reviewedBy: "manager-placeholder",
+          decision,
+          reviewNotes: notes,
+        }),
+      });
+      toast({
+        title: `Justification ${decision.toLowerCase().replace(/_/g, " ")}`,
+        description: "Decision recorded.",
+      });
+      setJustifications((j) => j.filter((x) => x.id !== id));
+    } catch (err) {
+      toast({
+        title: "Failed to review justification",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    }
+  }
+}
+
+// ─── Sub-components ────────────────────────────────────────────────────────
+
+function KpiCard({
+  label,
+  value,
+  icon,
+  accent,
+}: {
+  label: string;
+  value: React.ReactNode;
+  icon: string;
+  accent: "blue" | "orange" | "emerald" | "amber" | "violet" | "rose";
+}) {
+  const accentMap: Record<string, string> = {
+    blue: "bg-[#EFF6FF] text-[#0057B8]",
+    orange: "bg-[#FFF7ED] text-[#C2410C]",
+    emerald: "bg-[#DCFCE7] text-[#15803D]",
+    amber: "bg-[#FEF3C7] text-[#92400E]",
+    violet: "bg-violet-50 text-violet-600",
+    rose: "bg-[#FEE2E2] text-[#991B1B]",
+  };
+  return (
+    <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4 alo-shadow">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">{label}</p>
+          <p className="mt-1 text-lg font-bold tabular-nums text-[#0F172A] sm:text-xl">{value}</p>
+        </div>
+        <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-xl", accentMap[accent])}>
+          <Icon name={icon} className="size-4" />
+        </span>
+      </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Pending Justifications (ApprovalCard grid)
-// ─────────────────────────────────────────────────────────────────────────────
-
-function PendingJustifications({
-  justifications,
-  onView,
-}: {
-  justifications: SlaJustification[];
-  onView: (j: SlaJustification) => void;
-}) {
-  if (justifications.length === 0) {
-    return (
-      <SectionCard
-        title="Pending Justifications"
-        description="Counselor-submitted explanations awaiting manager review"
-        icon="Scale"
-        accent="violet"
-      >
-        <EmptyState
-          icon="Scale"
-          title="No pending justifications"
-          description="When a counselor submits a justification for a breach, it appears here for manager review."
-          accent="violet"
-        />
-      </SectionCard>
-    );
-  }
-
-  return (
-    <SectionCard
-      title="Pending Justifications"
-      description={`${justifications.length} counselor-submitted explanations awaiting manager review`}
-      icon="Scale"
-      accent="violet"
-    >
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {justifications.map((j) => {
-          const cat = JUSTIFICATION_CATEGORY_META[j.category] || JUSTIFICATION_CATEGORY_META.OTHER;
-          return (
-            <ApprovalCard
-              key={j.id}
-              title={j.reason}
-              description={j.explanation}
-              priority="medium"
-              metadata={[
-                { label: "Counselor", value: j.counselorId.slice(-6) },
-                { label: "Period", value: j.period },
-                { label: "Submitted", value: timeAgo(j.createdAt) },
-                { label: "SLA Event", value: j.slaEventId ? j.slaEventId.slice(-6) : "—" },
-              ]}
-              onView={() => onView(j)}
-            />
-          );
-        })}
-      </div>
-
-      {/* Category badges summary */}
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <span className="caption-text text-[var(--alo-muted)]">Categories:</span>
-        {Object.entries(
-          justifications.reduce<Record<string, number>>((acc, j) => {
-            acc[j.category] = (acc[j.category] || 0) + 1;
-            return acc;
-          }, {}),
-        ).map(([cat, count]) => {
-          const meta = JUSTIFICATION_CATEGORY_META[cat] || JUSTIFICATION_CATEGORY_META.OTHER;
-          return (
-            <Badge key={cat} variant="neutral" className="gap-1 text-[10px]">
-              <Icon name={meta.icon} className="size-3" />
-              {meta.label} · {count}
-            </Badge>
-          );
-        })}
-      </div>
-    </SectionCard>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: SLA Policies Table
-// ─────────────────────────────────────────────────────────────────────────────
-
-function SlaPoliciesTable({ policies }: { policies: SlaPolicy[] }) {
-  if (policies.length === 0) {
-    return (
-      <SectionCard
-        title="SLA Policies"
-        description="Channel / priority / student-type routing rules"
-        icon="BookOpen"
-        accent="blue"
-      >
-        <EmptyState
-          icon="BookOpen"
-          title="No SLA policies configured"
-          description="Create your first SLA policy to start governing response-time rules per channel."
-          accent="blue"
-        />
-      </SectionCard>
-    );
-  }
-
-  const columns: Column<SlaPolicy>[] = [
+function PoliciesTable({ policies }: { policies: SlaPolicy[] }) {
+  const columns: DataTableColumn<SlaPolicy>[] = [
     {
-      key: "channel",
-      header: "Channel",
-      cell: (r) => {
-        const meta = CHANNEL_META[r.channel] || {
-          accent: "slate" as AccentColor,
-          icon: "Radio",
-          label: r.channel,
-        };
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-            <Icon name={meta.icon} className="size-3.5" />
-            {meta.label}
-          </span>
-        );
-      },
+      key: "name",
+      header: "Name",
+      render: (p) => (
+        <div>
+          <p className="text-sm font-semibold text-[#0F172A]">{p.name}</p>
+          <p className="text-[11px] text-[#64748B]">{p.channel}</p>
+        </div>
+      ),
     },
     {
       key: "priority",
       header: "Priority",
-      cell: (r) => (
-        <StatusBadge
-          status={r.priority}
-          colorMap={{
-            URGENT: "rose",
-            HIGH: "amber",
-            NORMAL: "blue",
-            LOW: "slate",
-          }}
-          labels={Object.fromEntries(
-            Object.entries(PRIORITY_META).map(([k, v]) => [k, v.label]),
-          )}
-        />
+      render: (p) => (
+        <span className="text-xs">{p.priority || "NORMAL"}</span>
       ),
     },
     {
-      key: "studentType",
-      header: "Student Type",
-      cell: (r) => (
-        <Badge variant="neutral" className="text-[10px]">
-          {r.studentType}
-        </Badge>
+      key: "scope",
+      header: "Scope",
+      render: (p) => (
+        <span className="text-xs text-[#475569]">
+          {p.studentType || "ALL"} / {p.applicationStage || "ALL"}
+        </span>
       ),
     },
     {
       key: "slaMinutes",
       header: "SLA",
-      sortable: true,
-      sortAccessor: (r) => r.slaMinutes,
-      cell: (r) => (
-        <span className="font-mono text-xs font-semibold text-[var(--alo-blue-strong)]">
-          {formatMinutes(r.slaMinutes)}
-        </span>
-      ),
+      render: (p) => <span className="text-xs tabular-nums">{p.slaMinutes ?? "—"}m</span>,
     },
     {
       key: "warningMinutes",
       header: "Warning",
-      cell: (r) => (
-        <span className="font-mono text-xs text-[var(--alo-warning-strong)]">
-          {formatMinutes(r.warningMinutes)}
-        </span>
-      ),
-    },
-    {
-      key: "urgentMinutes",
-      header: "Urgent",
-      cell: (r) => (
-        <span className="font-mono text-xs text-[var(--alo-orange-strong)]">
-          {formatMinutes(r.urgentMinutes)}
-        </span>
-      ),
-    },
-    {
-      key: "overdueMinutes",
-      header: "Overdue",
-      cell: (r) => (
-        <span className="font-mono text-xs text-[var(--alo-danger-strong)]">
-          {formatMinutes(r.overdueMinutes)}
-        </span>
-      ),
+      render: (p) => <span className="text-xs tabular-nums">{p.warningMinutes ?? "—"}m</span>,
     },
     {
       key: "escalationMinutes",
       header: "Escalation",
-      cell: (r) => (
-        <span className="font-mono text-xs text-[var(--alo-danger-strong)]">
-          {formatMinutes(r.escalationMinutes)}
-        </span>
-      ),
+      render: (p) => <span className="text-xs tabular-nums">{p.escalationMinutes ?? "—"}m</span>,
     },
     {
       key: "isActive",
-      header: "Active",
-      cell: (r) => (
-        <StatusBadge
-          status={r.isActive ? "ACTIVE" : "INACTIVE"}
-          colorMap={{ ACTIVE: "emerald", INACTIVE: "slate" }}
-          labels={{ ACTIVE: "Active", INACTIVE: "Inactive" }}
-        />
+      header: "Status",
+      render: (p) => (
+        <Pill
+          className={p.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}
+        >
+          {p.isActive ? "Active" : "Inactive"}
+        </Pill>
       ),
     },
+    {
+      key: "updatedAt",
+      header: "Updated",
+      render: (p) => <span className="text-xs">{timeAgoShort(p.updatedAt)}</span>,
+    },
   ];
-
   return (
-    <SectionCard
-      title="SLA Policies"
-      description="Channel / priority / student-type routing rules with warning → urgent → overdue → escalation tiers"
-      icon="BookOpen"
-      accent="blue"
-    >
-      <DataTable columns={columns} data={policies} pageSize={10} emptyMessage="No policies configured" />
-    </SectionCard>
+    <DataTable
+      columns={columns}
+      rows={policies}
+      rowKey={(p) => p.id}
+      emptyTitle="No SLA policies"
+      emptyDescription="Create an SLA policy to define response time targets per channel."
+      emptyIcon="ListChecks"
+      maxHeight="420px"
+    />
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Counselor Performance Table
-// ─────────────────────────────────────────────────────────────────────────────
-
-function CounselorPerformanceTable({ incidents }: { incidents: SlaIncident[] }) {
-  if (incidents.length === 0) {
-    return (
-      <SectionCard
-        title="Counselor Performance"
-        description="Per-counselor SLA incident counters with breaches, exclusions & warnings"
-        icon="Users"
-        accent="orange"
-      >
-        <EmptyState
-          icon="Users"
-          title="No counselor performance records"
-          description="Once SLA events accumulate, per-counselor incident counters will appear here."
-          accent="orange"
-        />
-      </SectionCard>
-    );
-  }
-
-  const columns: Column<SlaIncident>[] = [
+function IncidentsTable({ incidents }: { incidents: SlaIncident[] }) {
+  const columns: DataTableColumn<SlaIncident>[] = [
     {
-      key: "counselor",
+      key: "counselorName",
       header: "Counselor",
-      sortable: true,
-      sortAccessor: (r) => r.counselor?.name || r.counselorId,
-      cell: (r) => (
-        <div className="flex items-center gap-2">
-          <div
-            className={cn(
-              "flex size-7 items-center justify-center rounded-full text-[10px] font-bold",
-              r.warningIssued
-                ? "bg-[var(--alo-danger-soft)] text-[var(--alo-danger-strong)]"
-                : "bg-[var(--alo-blue-soft)] text-[var(--alo-blue-strong)]",
-            )}
-          >
-            {(r.counselor?.name || "C").charAt(0)}
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-xs font-semibold text-[var(--alo-text)]">
-              {r.counselor?.name || `Counselor ${r.counselorId.slice(-6)}`}
-            </p>
-            <p className="text-[10px] text-[var(--alo-muted)]">
-              {r.counselor?.role || "—"}
-            </p>
-          </div>
+      render: (i) => (
+        <div>
+          <p className="text-sm font-semibold text-[#0F172A]">
+            {i.counselorName || "Unknown"}
+          </p>
+          <p className="text-[11px] text-[#64748B]">{i.counselorId?.slice(0, 8) || "—"}</p>
         </div>
       ),
     },
     {
       key: "period",
       header: "Period",
-      sortable: true,
-      sortAccessor: (r) => r.period,
-      cell: (r) => <span className="font-mono text-xs">{r.period}</span>,
+      render: (i) => <span className="text-xs">{i.period || "—"}</span>,
     },
     {
       key: "totalAssigned",
       header: "Assigned",
-      sortable: true,
-      sortAccessor: (r) => r.totalAssigned,
-      cell: (r) => <span className="font-mono text-xs">{r.totalAssigned}</span>,
+      render: (i) => <span className="text-xs tabular-nums">{i.totalAssigned ?? 0}</span>,
     },
     {
-      key: "requiredResponses",
-      header: "Required",
-      sortable: true,
-      sortAccessor: (r) => r.requiredResponses,
-      cell: (r) => <span className="font-mono text-xs">{r.requiredResponses}</span>,
+      key: "totalResponded",
+      header: "Responded",
+      render: (i) => <span className="text-xs tabular-nums">{i.totalResponded ?? 0}</span>,
     },
     {
       key: "slaBreaches",
       header: "Breaches",
-      sortable: true,
-      sortAccessor: (r) => r.slaBreaches,
-      cell: (r) => (
-        <span
-          className={cn(
-            "font-mono text-xs font-semibold",
-            r.slaBreaches > 0 ? "text-[var(--alo-danger-strong)]" : "text-[var(--alo-success-strong)]",
-          )}
-        >
-          {r.slaBreaches}
+      render: (i) => (
+        <span className={cn("text-xs font-bold tabular-nums", (i.slaBreaches ?? 0) > 0 && "text-rose-600")}>
+          {i.slaBreaches ?? 0}
         </span>
       ),
     },
     {
       key: "validExclusions",
       header: "Exclusions",
-      sortable: true,
-      sortAccessor: (r) => r.validExclusions,
-      cell: (r) => (
-        <span className="font-mono text-xs text-[var(--alo-info-strong)]">
-          {r.validExclusions}
-        </span>
-      ),
-    },
-    {
-      key: "avgResponseTime",
-      header: "Avg Response",
-      sortable: true,
-      sortAccessor: (r) => r.avgResponseTime,
-      cell: (r) => (
-        <span className="font-mono text-xs">{formatMinutes(r.avgResponseTime)}</span>
-      ),
-    },
-    {
-      key: "worstDelay",
-      header: "Worst Delay",
-      sortable: true,
-      sortAccessor: (r) => r.worstDelay,
-      cell: (r) => (
-        <span
-          className={cn(
-            "font-mono text-xs",
-            r.worstDelay > 60
-              ? "text-[var(--alo-danger-strong)]"
-              : r.worstDelay > 30
-                ? "text-[var(--alo-warning-strong)]"
-                : "text-[var(--alo-text)]",
-          )}
-        >
-          {formatMinutes(r.worstDelay)}
-        </span>
-      ),
+      render: (i) => <span className="text-xs tabular-nums">{i.validExclusions ?? 0}</span>,
     },
     {
       key: "warningIssued",
       header: "Warning",
-      cell: (r) =>
-        r.warningIssued ? (
-          <Badge variant="danger" className="gap-1 text-[10px]">
-            <Icon name="AlertOctagon" className="size-3" />
-            Issued
-          </Badge>
+      render: (i) =>
+        i.warningIssued ? (
+          <Pill className="bg-rose-100 text-rose-700">Issued</Pill>
         ) : (
-          <Badge variant="neutral" className="text-[10px]">
-            None
-          </Badge>
+          <Pill className="bg-emerald-100 text-emerald-700">OK</Pill>
         ),
     },
   ];
-
   return (
-    <SectionCard
-      title="Counselor Performance"
-      description="Per-counselor incident counters — rows highlighted red have active warnings"
-      icon="Users"
-      accent="orange"
-    >
-      <DataTable
-        columns={columns}
-        data={incidents}
-        pageSize={10}
-        emptyMessage="No incident counters"
-      />
-    </SectionCard>
+    <DataTable
+      columns={columns}
+      rows={incidents}
+      rowKey={(i) => i.id}
+      rowClassName={(i) => (i.warningIssued ? "border-l-4 border-l-rose-500 bg-rose-50/30" : "")}
+      emptyTitle="No SLA incidents"
+      emptyDescription="Per-counselor SLA counters will appear here once messages are processed."
+      emptyIcon="Users"
+      maxHeight="420px"
+    />
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Escalation Feed (Timeline)
-// ─────────────────────────────────────────────────────────────────────────────
-
-function EscalationFeed({
-  escalations,
-  onAcknowledge,
-  onResolve,
+function JustificationCard({
+  justification,
+  onReview,
 }: {
-  escalations: EscalationEvent[];
-  onAcknowledge: (e: EscalationEvent) => void;
-  onResolve: (e: EscalationEvent) => void;
+  justification: SlaJustification;
+  onReview: (decision: "ACCEPTED" | "REJECTED" | "CLARIFICATION_REQUESTED", notes: string) => void;
 }) {
-  if (escalations.length === 0) {
-    return (
-      <SectionCard
-        title="Open Escalations"
-        description="SLA breaches that triggered an escalation — acknowledge or resolve"
-        icon="AlertTriangle"
-        accent="rose"
-      >
-        <EmptyState
-          icon="AlertTriangle"
-          title="No open escalations"
-          description="When a SLA breach escalates beyond the warning tier, it appears here for manager attention."
-          accent="rose"
-        />
-      </SectionCard>
-    );
-  }
-
-  const items: TimelineItem[] = escalations.map((e) => {
-    const meta = ESCALATION_TYPE_META[e.type] || { accent: "rose" as AccentColor, icon: "AlertTriangle" };
-    const levelAccent: AccentColor =
-      e.level >= 3 ? "rose" : e.level === 2 ? "orange" : "amber";
-    return {
-      id: e.id,
-      title: `${e.type.replace(/_/g, " ")} · Level ${e.level}`,
-      description: e.message,
-      timestamp: e.createdAt,
-      icon: meta.icon,
-      accent: levelAccent,
-    };
-  });
+  const [open, setOpen] = React.useState(false);
+  const [notes, setNotes] = React.useState("");
 
   return (
-    <SectionCard
-      title="Open Escalations"
-      description={`${escalations.length} escalations awaiting acknowledgement or resolution`}
-      icon="AlertTriangle"
-      accent="rose"
-    >
-      <div className="space-y-4">
-        <Timeline items={items} />
-        <div className="space-y-2 border-t border-[var(--alo-border)] pt-4">
-          {escalations.map((e) => (
-            <div
-              key={e.id}
-              className="flex flex-col gap-2 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <Badge variant="danger" className="text-[10px]">
-                    {e.type.replace(/_/g, " ")}
-                  </Badge>
-                  <Badge variant="neutral" className="text-[10px]">
-                    Level {e.level}
-                  </Badge>
-                  <span className="text-[10px] text-[var(--alo-muted)]">
-                    {timeAgo(e.createdAt)}
-                  </span>
-                </div>
-                <p className="mt-1 line-clamp-1 text-xs text-[var(--alo-text-secondary)]">
-                  {e.message}
-                </p>
-              </div>
-              <div className="flex shrink-0 gap-1.5">
-                {e.status === "OPEN" && (
-                  <Button
-                    size="xs"
-                    variant="outline"
-                    onClick={() => onAcknowledge(e)}
-                    className="h-7 border-[var(--alo-warning)] text-[var(--alo-warning-strong)] hover:bg-[var(--alo-warning-soft)]"
-                  >
-                    <Icon name="Bell" className="size-3" />
-                    Acknowledge
-                  </Button>
-                )}
-                <Button
-                  size="xs"
-                  variant="outline"
-                  onClick={() => onResolve(e)}
-                  className="h-7 border-[var(--alo-success)] text-[var(--alo-success-strong)] hover:bg-[var(--alo-success-soft)]"
-                >
-                  <Icon name="CheckCircle2" className="size-3" />
-                  Resolve
-                </Button>
-              </div>
-            </div>
-          ))}
+    <div className="rounded-xl border border-[#E2E8F0] bg-white p-3 transition-all hover:border-[#0057B8]/30">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-[#0F172A]">
+            {justification.reason}
+          </p>
+          <p className="text-[11px] text-[#64748B]">
+            Category: {justification.category} · Period: {justification.period}
+          </p>
         </div>
+        <Pill className={TASK_STATUS_COLORS[justification.status] || "bg-amber-100 text-amber-700"}>
+          {justification.status.toLowerCase()}
+        </Pill>
       </div>
-    </SectionCard>
+      <p className="mt-2 line-clamp-3 text-xs text-[#475569]">{justification.explanation}</p>
+      {justification.evidence && (
+        <p className="mt-1 text-[11px] text-[#64748B]">
+          <Icon name="Paperclip" className="mr-1 inline size-3" />
+          Evidence provided
+        </p>
+      )}
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <span className="text-[11px] text-[#94A3B8]">Submitted {timeAgoShort(justification.createdAt)}</span>
+        <Button
+          size="sm"
+          className="h-8 bg-[#0057B8] text-[11px] hover:bg-[#003a7a]"
+          onClick={() => setOpen(true)}
+        >
+          <Icon name="Scale" className="mr-1.5 size-3.5" />
+          Review
+        </Button>
+      </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Manager Review</DialogTitle>
+            <DialogDescription>
+              Review this SLA justification fairly. Valid exclusions (system downtime, holidays, emergencies) should be accepted.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 text-sm">
+            <InfoRow label="Reason" value={justification.reason} />
+            <InfoRow label="Category" value={justification.category} />
+            <InfoRow label="Period" value={justification.period} />
+            <div>
+              <p className="text-xs font-semibold text-[#64748B]">Explanation</p>
+              <p className="mt-1 text-xs text-[#0F172A]">{justification.explanation}</p>
+            </div>
+            {justification.evidence && (
+              <div>
+                <p className="text-xs font-semibold text-[#64748B]">Evidence</p>
+                <p className="mt-1 text-xs text-[#0F172A]">{justification.evidence}</p>
+              </div>
+            )}
+            <div>
+              <Label htmlFor="review-notes">Review Notes</Label>
+              <Textarea
+                id="review-notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Optional notes for the counselor"
+                className="mt-1 min-h-[60px]"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button
+              variant="outline"
+              className="border-amber-200 text-amber-700 hover:bg-amber-50"
+              onClick={() => {
+                onReview("CLARIFICATION_REQUESTED", notes);
+                setOpen(false);
+              }}
+            >
+              Ask for Clarification
+            </Button>
+            <Button
+              variant="outline"
+              className="border-rose-200 text-rose-600 hover:bg-rose-50"
+              onClick={() => {
+                onReview("REJECTED", notes);
+                setOpen(false);
+              }}
+            >
+              Reject
+            </Button>
+            <Button
+              className="bg-emerald-600 text-white hover:bg-emerald-700"
+              onClick={() => {
+                onReview("ACCEPTED", notes);
+                setOpen(false);
+              }}
+            >
+              Accept
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Create Policy Dialog
-// ─────────────────────────────────────────────────────────────────────────────
 
 function CreatePolicyDialog({
   open,
@@ -1077,297 +652,164 @@ function CreatePolicyDialog({
   onCreated: () => void;
 }) {
   const { toast } = useToast();
-  const [form, setForm] = React.useState({
-    name: "",
-    channel: "WHATSAPP",
-    priority: "NORMAL",
-    studentType: "ALL",
-    applicationStage: "ALL",
-    messageIntent: "ALL",
-    slaMinutes: 30,
-    warningMinutes: 20,
-    urgentMinutes: 28,
-    overdueMinutes: 30,
-    escalationMinutes: 45,
-    businessHoursOnly: false,
-    isActive: true,
-  });
-  const [saving, setSaving] = React.useState(false);
+  const [name, setName] = React.useState("");
+  const [channel, setChannel] = React.useState("WHATSAPP");
+  const [priority, setPriority] = React.useState("NORMAL");
+  const [studentType, setStudentType] = React.useState("ALL");
+  const [applicationStage, setApplicationStage] = React.useState("ALL");
+  const [messageIntent, setMessageIntent] = React.useState("ALL");
+  const [slaMinutes, setSlaMinutes] = React.useState("30");
+  const [warningMinutes, setWarningMinutes] = React.useState("20");
+  const [urgentMinutes, setUrgentMinutes] = React.useState("28");
+  const [overdueMinutes, setOverdueMinutes] = React.useState("30");
+  const [escalationMinutes, setEscalationMinutes] = React.useState("45");
+  const [businessHoursOnly, setBusinessHoursOnly] = React.useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
 
-  const reset = () => {
-    setForm({
-      name: "",
-      channel: "WHATSAPP",
-      priority: "NORMAL",
-      studentType: "ALL",
-      applicationStage: "ALL",
-      messageIntent: "ALL",
-      slaMinutes: 30,
-      warningMinutes: 20,
-      urgentMinutes: 28,
-      overdueMinutes: 30,
-      escalationMinutes: 45,
-      businessHoursOnly: false,
-      isActive: true,
-    });
-  };
-
-  const handleSave = async () => {
-    if (!form.name.trim()) {
-      toast({
-        title: "Policy name required",
-        description: "Give this SLA policy a descriptive name.",
-        variant: "destructive",
-      });
+  const submit = async () => {
+    if (!name.trim() || !channel) {
+      toast({ title: "Name and channel are required", variant: "destructive" });
       return;
     }
-    setSaving(true);
+    setSubmitting(true);
     try {
-      const res = await fetch("/api/communications/sla/policies", {
+      await fetchJson("/api/communications/sla/policies", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: name.trim(),
+          channel,
+          priority,
+          studentType,
+          applicationStage,
+          messageIntent,
+          slaMinutes: parseInt(slaMinutes, 10) || 30,
+          warningMinutes: parseInt(warningMinutes, 10) || 20,
+          urgentMinutes: parseInt(urgentMinutes, 10) || 28,
+          overdueMinutes: parseInt(overdueMinutes, 10) || 30,
+          escalationMinutes: parseInt(escalationMinutes, 10) || 45,
+          businessHoursOnly,
+          isActive: true,
+        }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to create policy");
-      reset();
+      toast({ title: "SLA policy created", description: name.trim() });
+      setName("");
       onOpenChange(false);
       onCreated();
-    } catch (e: any) {
+    } catch (err) {
       toast({
-        title: "Could not create policy",
-        description: e?.message || "Unknown error",
+        title: "Failed to create policy",
+        description: err instanceof Error ? err.message : "Unknown error.",
         variant: "destructive",
       });
     } finally {
-      setSaving(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => {
-        if (!saving) {
-          if (!o) reset();
-          onOpenChange(o);
-        }
-      }}
-    >
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Icon name="BookOpen" className="size-5 text-[var(--alo-blue)]" />
-            Create SLA Policy
-          </DialogTitle>
+          <DialogTitle>Create SLA Policy</DialogTitle>
           <DialogDescription>
-            Define response-time rules for a channel / priority / student-type combination.
+            Define response time targets for a specific channel, priority, and student type.
           </DialogDescription>
         </DialogHeader>
-
-        <div className="space-y-4">
-          {/* Name */}
-          <div className="space-y-2">
-            <Label className="text-xs">Policy name *</Label>
+        <div className="space-y-3">
+          <div>
+            <Label htmlFor="policy-name">Policy Name</Label>
             <Input
-              placeholder="e.g. WhatsApp — High priority VIP students"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="h-10"
+              id="policy-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. WhatsApp Urgent - 15 min"
+              className="mt-1"
             />
           </div>
-
-          {/* Channel / Priority */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label className="text-xs">Channel</Label>
-              <Select
-                value={form.channel}
-                onValueChange={(v) => setForm({ ...form, channel: v })}
-              >
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
+            <div>
+              <Label>Channel</Label>
+              <Select value={channel} onValueChange={setChannel}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {Object.entries(CHANNEL_META).map(([k, v]) => (
-                    <SelectItem key={k} value={k}>
-                      {v.label}
-                    </SelectItem>
+                  {["WHATSAPP", "EMAIL", "SMS", "PHONE", "PORTAL", "WEBSITE_CHAT", "FACEBOOK", "INSTAGRAM"].map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label className="text-xs">Priority</Label>
-              <Select
-                value={form.priority}
-                onValueChange={(v) => setForm({ ...form, priority: v })}
-              >
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
+            <div>
+              <Label>Priority</Label>
+              <Select value={priority} onValueChange={setPriority}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {Object.entries(PRIORITY_META).map(([k, v]) => (
-                    <SelectItem key={k} value={k}>
-                      {v.label}
-                    </SelectItem>
+                  {["LOW", "NORMAL", "HIGH", "URGENT"].map((p) => (
+                    <SelectItem key={p} value={p}>{p}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-
-          {/* Student type / Application stage / Message intent */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label className="text-xs">Student Type</Label>
-              <Select
-                value={form.studentType}
-                onValueChange={(v) => setForm({ ...form, studentType: v })}
-              >
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <Label>Student Type</Label>
+              <Select value={studentType} onValueChange={setStudentType}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ALL">All</SelectItem>
-                  <SelectItem value="NEW">New</SelectItem>
-                  <SelectItem value="EXISTING">Existing</SelectItem>
-                  <SelectItem value="VIP">VIP</SelectItem>
+                  {["ALL", "NEW", "EXISTING", "VIP"].map((s) => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label className="text-xs">Application Stage</Label>
-              <Select
-                value={form.applicationStage}
-                onValueChange={(v) => setForm({ ...form, applicationStage: v })}
-              >
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
+            <div>
+              <Label>App Stage</Label>
+              <Select value={applicationStage} onValueChange={setApplicationStage}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ALL">All</SelectItem>
-                  <SelectItem value="LEAD">Lead</SelectItem>
-                  <SelectItem value="APPLICATION">Application</SelectItem>
-                  <SelectItem value="VISA">Visa</SelectItem>
-                  <SelectItem value="CAS">CAS</SelectItem>
+                  {["ALL", "COUNSELING", "APPLICATION_SUBMITTED", "CAS_PENDING", "VISA_SUBMITTED"].map((s) => (
+                    <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label className="text-xs">Message Intent</Label>
-              <Select
-                value={form.messageIntent}
-                onValueChange={(v) => setForm({ ...form, messageIntent: v })}
-              >
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
+            <div>
+              <Label>Intent</Label>
+              <Select value={messageIntent} onValueChange={setMessageIntent}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ALL">All</SelectItem>
-                  <SelectItem value="DOCUMENT_REQUIREMENT">Document Requirement</SelectItem>
-                  <SelectItem value="PAYMENT">Payment</SelectItem>
-                  <SelectItem value="VISA">Visa</SelectItem>
-                  <SelectItem value="INTERVIEW">Interview</SelectItem>
-                  <SelectItem value="URGENT_ISSUE">Urgent Issue</SelectItem>
+                  {["ALL", "INQUIRY", "COMPLAINT", "URGENT", "DOCUMENT_REQUEST"].map((s) => (
+                    <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-
-          {/* SLA timing grid */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            <div className="space-y-1">
-              <Label className="text-[11px]">SLA (min)</Label>
-              <Input
-                type="number"
-                min={1}
-                value={form.slaMinutes}
-                onChange={(e) => setForm({ ...form, slaMinutes: Number(e.target.value) })}
-                className="h-9"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[11px]">Warning</Label>
-              <Input
-                type="number"
-                min={1}
-                value={form.warningMinutes}
-                onChange={(e) => setForm({ ...form, warningMinutes: Number(e.target.value) })}
-                className="h-9"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[11px]">Urgent</Label>
-              <Input
-                type="number"
-                min={1}
-                value={form.urgentMinutes}
-                onChange={(e) => setForm({ ...form, urgentMinutes: Number(e.target.value) })}
-                className="h-9"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[11px]">Overdue</Label>
-              <Input
-                type="number"
-                min={1}
-                value={form.overdueMinutes}
-                onChange={(e) => setForm({ ...form, overdueMinutes: Number(e.target.value) })}
-                className="h-9"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[11px]">Escalation</Label>
-              <Input
-                type="number"
-                min={1}
-                value={form.escalationMinutes}
-                onChange={(e) => setForm({ ...form, escalationMinutes: Number(e.target.value) })}
-                className="h-9"
-              />
-            </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <NumField label="SLA (min)" value={slaMinutes} onChange={setSlaMinutes} />
+            <NumField label="Warning (min)" value={warningMinutes} onChange={setWarningMinutes} />
+            <NumField label="Urgent (min)" value={urgentMinutes} onChange={setUrgentMinutes} />
+            <NumField label="Overdue (min)" value={overdueMinutes} onChange={setOverdueMinutes} />
+            <NumField label="Escalation (min)" value={escalationMinutes} onChange={setEscalationMinutes} />
           </div>
-
-          {/* Toggles */}
-          <div className="flex flex-wrap items-center gap-4 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3">
-            <label className="flex cursor-pointer items-center gap-2 text-xs">
-              <input
-                type="checkbox"
-                checked={form.businessHoursOnly}
-                onChange={(e) => setForm({ ...form, businessHoursOnly: e.target.checked })}
-                className="size-4"
-              />
-              Business hours only
-            </label>
-            <label className="flex cursor-pointer items-center gap-2 text-xs">
-              <input
-                type="checkbox"
-                checked={form.isActive}
-                onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-                className="size-4"
-              />
-              Active immediately
-            </label>
-          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={businessHoursOnly}
+              onChange={(e) => setBusinessHoursOnly(e.target.checked)}
+              className="size-4 rounded border-[#E2E8F0]"
+            />
+            Business hours only (Sun–Thu, 9 AM – 6 PM)
+          </label>
         </div>
-
         <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button
-            variant="outline"
-            onClick={() => {
-              if (!saving) {
-                reset();
-                onOpenChange(false);
-              }
-            }}
-            disabled={saving}
+            className="bg-[#0057B8] text-white hover:bg-[#003a7a]"
+            disabled={submitting}
+            onClick={() => void submit()}
           >
-            Cancel
-          </Button>
-          <Button variant="alo" onClick={handleSave} disabled={saving}>
-            <Icon name="Save" className="size-3.5" />
-            {saving ? "Saving…" : "Create Policy"}
+            {submitting ? "Creating…" : "Create Policy"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -1375,148 +817,16 @@ function CreatePolicyDialog({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Review Justification Dialog
-// ─────────────────────────────────────────────────────────────────────────────
-
-function ReviewJustificationDialog({
-  justification,
-  onOpenChange,
-  onSubmit,
-}: {
-  justification: SlaJustification | null;
-  onOpenChange: (o: boolean) => void;
-  onSubmit: (id: string, decision: string, notes: string) => void;
-}) {
-  const [decision, setDecision] = React.useState<string>("ACCEPTED");
-  const [reviewNotes, setReviewNotes] = React.useState<string>("");
-
-  React.useEffect(() => {
-    if (justification) {
-      setDecision("ACCEPTED");
-      setReviewNotes("");
-    }
-  }, [justification]);
-
-  if (!justification) return null;
-
-  const cat = JUSTIFICATION_CATEGORY_META[justification.category] || JUSTIFICATION_CATEGORY_META.OTHER;
-
+function NumField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
-    <Dialog open={!!justification} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Icon name="Scale" className="size-5 text-[var(--alo-violet)]" />
-            Review Justification
-          </DialogTitle>
-          <DialogDescription>
-            Manager review — accept, reject, or request clarification from the counselor.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          {/* Reason + Category */}
-          <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <p className="caption-text">Reason</p>
-                <p className="mt-0.5 text-sm font-semibold text-[var(--alo-text)]">
-                  {justification.reason}
-                </p>
-              </div>
-              <Badge
-                variant="neutral"
-                className="gap-1 text-[10px]"
-              >
-                <Icon name={cat.icon} className="size-3" />
-                {cat.label}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Explanation */}
-          <div className="space-y-1">
-            <p className="caption-text">Counselor explanation</p>
-            <p className="body-text text-[var(--alo-text-secondary)]">
-              {justification.explanation}
-            </p>
-          </div>
-
-          {/* Evidence */}
-          {justification.evidence && (
-            <div className="space-y-1">
-              <p className="caption-text">Evidence</p>
-              <p className="body-text text-[var(--alo-text-secondary)]">
-                {justification.evidence}
-              </p>
-            </div>
-          )}
-
-          {/* Metadata */}
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            <div className="rounded-md border border-[var(--alo-border)] p-2.5">
-              <p className="caption-text">Counselor</p>
-              <p className="mt-0.5 font-mono text-[var(--alo-blue-strong)]">
-                {justification.counselorId.slice(-6)}
-              </p>
-            </div>
-            <div className="rounded-md border border-[var(--alo-border)] p-2.5">
-              <p className="caption-text">Period</p>
-              <p className="mt-0.5 font-mono text-[var(--alo-text)]">{justification.period}</p>
-            </div>
-            <div className="rounded-md border border-[var(--alo-border)] p-2.5">
-              <p className="caption-text">Submitted</p>
-              <p className="mt-0.5 text-[var(--alo-text)]">{timeAgo(justification.createdAt)}</p>
-            </div>
-          </div>
-
-          {/* Manager Review form */}
-          <div className="space-y-3 rounded-lg border border-[var(--alo-violet)]/30 bg-violet-50/40 p-3">
-            <p className="caption-text text-[var(--alo-violet)]">Manager Review</p>
-
-            <div className="space-y-2">
-              <Label className="text-xs">Decision *</Label>
-              <Select value={decision} onValueChange={setDecision}>
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ACCEPTED">Accept — exclusion valid</SelectItem>
-                  <SelectItem value="REJECTED">Reject — breach stands</SelectItem>
-                  <SelectItem value="CLARIFICATION_REQUESTED">
-                    Request clarification
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-xs">Review notes</Label>
-              <Textarea
-                rows={3}
-                placeholder="Optional notes for the counselor…"
-                value={reviewNotes}
-                onChange={(e) => setReviewNotes(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button
-            variant={decision === "REJECTED" ? "destructive" : "alo"}
-            onClick={() => onSubmit(justification.id, decision, reviewNotes)}
-          >
-            <Icon name="Gavel" className="size-3.5" />
-            Submit Review
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <div>
+      <Label>{label}</Label>
+      <Input
+        type="number"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1"
+      />
+    </div>
   );
 }
-export default SlaPerformance;

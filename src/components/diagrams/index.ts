@@ -1,42 +1,36 @@
 /**
- * ALO diagram library — editorial SVG diagrams, branded to the ALO palette.
+ * ALO Education — Diagram Component Library
  *
- * Design system source: cathrynlavery/diagram-design (re-skinned per its
- * onboarding rule — never ship default-skinned diagrams into a branded site).
- *
- * Generic types: ProcessDiagram, JourneyMapDiagram, FunnelDiagram,
- * TimelineDiagram, FlowDiagram.
- * ALO compositions: alo-diagrams.tsx (application process, student journey,
- * eligibility flow, marketing funnel, intake timeline).
+ * Barrel export for all diagram components following the editorial design system:
+ * - Paper bg (#f5f5f5), Ink text (#2d3142), Coral accent (#bf4520)
+ * - No shadows, max 6-10px border-radius
+ * - 1-2 coral focal nodes per diagram
+ * - Density 4/10 (generous whitespace)
  */
 
-export { diagramTokens, diagramType, diagramTypeClasses } from './tokens';
-export type { DiagramToken } from './tokens';
-export {
-  DiagramConnector,
-  DiagramEyebrow,
-  DiagramNode,
-  DiagramRoot,
-  DiagramRule,
-  DiagramArrowDefs,
-  roundedOrthoPath,
-  rectCenter,
-} from './primitives';
-export type { DiagramPoint, DiagramRect, ArrowTone, DiagramNodeTone } from './primitives';
-export { default as ProcessDiagram, processDiagramSize } from './ProcessDiagram';
-export type { ProcessLane, ProcessStep, ProcessNodeSpec, ProcessArrow } from './ProcessDiagram';
-export { default as JourneyMapDiagram } from './JourneyMapDiagram';
-export type { JourneyStage, JourneySentiment } from './JourneyMapDiagram';
-export { default as FunnelDiagram } from './FunnelDiagram';
-export type { FunnelStage } from './FunnelDiagram';
-export { default as TimelineDiagram } from './TimelineDiagram';
-export type { TimelineEvent } from './TimelineDiagram';
-export { default as FlowDiagram } from './FlowDiagram';
-export type { FlowNode, FlowNodeKind, FlowLink, FlowSide } from './FlowDiagram';
-export {
-  ApplicationProcessDiagram,
-  StudentJourneyMapDiagram,
-  EligibilityFlowDiagram,
-  MarketingFunnelDiagram,
-  IntakeTimelineDiagram,
-} from './alo-diagrams';
+// Flowchart
+export { Flowchart, StudentApplicationFlow } from './flowchart';
+
+// Funnel Chart
+export { FunnelChart, LeadConversionFunnel } from './funnel-chart';
+
+// Timeline Diagram
+export { TimelineDiagram, StudentJourneyTimeline } from './timeline-diagram';
+
+// Swimlane Diagram
+export { SwimlaneDiagram, ApplicationWorkflowSwimlane } from './swimlane-diagram';
+
+// Pyramid Chart
+export { PyramidChart, ServiceTierPyramid } from './pyramid-chart';
+
+// Stat Card & Chip
+export { StatCard, StatChip, StatsGrid } from './stat-card';
+
+// CTA Band
+export { CtaBand, StudentCtaBand } from './cta-band';
+
+// Scroll Reveal
+export { ScrollReveal, StaggerReveal } from './scroll-reveal';
+
+// Page Hero
+export { PageHero, StudentJourneyHero } from './page-hero';

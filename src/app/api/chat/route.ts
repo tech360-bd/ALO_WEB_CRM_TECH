@@ -1,96 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
-import { withAuth } from "@/lib/auth-middleware";
+import { aiChat } from "@/lib/ai";
 
-// Simple in-memory rate limiter: max 20 requests per minute per user
-const chatRateLimit = new Map<string, { count: number; windowStart: number }>();
-const CHAT_RATE_LIMIT = 20;
-const CHAT_RATE_WINDOW_MS = 60 * 1000; // 1 minute
+// ALO AI Assistant - guides students through their journey
+// (lead → profile → documents → application → interview → visa)
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const { message, history, context } = body;
 
-function checkRateLimit(userId: string): boolean {
-  const now = Date.now();
-  const entry = chatRateLimit.get(userId);
-
-  if (!entry || now - entry.windowStart > CHAT_RATE_WINDOW_MS) {
-    chatRateLimit.set(userId, { count: 1, windowStart: now });
-    return true;
+  if (!message) {
+    return NextResponse.json({ error: "message is required" }, { status: 400 });
   }
 
-  if (entry.count >= CHAT_RATE_LIMIT) {
-    return false;
-  }
+  const systemPrompt = `You are ALO AI Assistant, the intelligent guide for ALO Education — a study-abroad consultancy helping Bangladeshi students go from first inquiry to final visa.
 
-  entry.count++;
-  return true;
+Your job is to help students and ALO staff navigate the full journey:
+1. Lead capture & counseling
+2. Student profile completion (personal, education, passport, English test, work, sponsor, visa history, admission preference)
+3. Course & university matching
+4. Document collection & verification
+5. Application submission & offer tracking
+6. CAS / final admission
+7. English test & mock test preparation
+8. AI interview practice (credibility, pre-CAS, visa)
+9. Visa document checklist & submission
+10. Pre-departure
+
+Rules:
+- Be concise, warm, and actionable. Prefer short paragraphs and bullet points.
+- Guide the user to their NEXT best step.
+- Never guarantee admission or visa approval — only universities and embassies decide that.
+- If a student asks about requirements you're unsure of, say it "needs verification" and suggest checking with their counselor.
+- You can switch between English and Bangla if the user writes in Bangla.
+- Do not invent specific university deadlines or exact requirements; give general guidance and suggest verifying.
+
+${context ? `Current context: ${context}` : ""}
+
+Respond helpfully and concisely.`;
+
+  const messages = [
+    { role: "assistant", content: systemPrompt },
+    ...(history || []).map((h: any) => ({ role: h.role, content: h.content })),
+    { role: "user", content: message },
+  ];
+
+  const reply = await aiChat(messages);
+  return NextResponse.json({ reply });
 }
-
-// Clean up old entries every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of chatRateLimit.entries()) {
-    if (now - entry.windowStart > CHAT_RATE_WINDOW_MS * 2) {
-      chatRateLimit.delete(key);
-    }
-  }
-}, 5 * 60 * 1000);
-
-export const POST = withAuth(async (req: Request, auth) => {
-  try {
-    // Rate limit check
-    if (!checkRateLimit(auth.userId)) {
-      return NextResponse.json(
-        { reply: "You're sending messages too quickly. Please wait a moment before asking another question." },
-        { status: 429 }
-      );
-    }
-
-    const { message, context } = await req.json();
-
-    const systemPrompt = `You are an AI study abroad counselor for ALO Education, helping Bangladeshi students.
-You have knowledge about:
-- 13 study destinations: UK, USA, Canada, Australia, Germany, Ireland, New Zealand, Dubai, Denmark, Europe (Schengen), Japan, Malaysia, South Korea
-- 111+ partner universities across these countries
-- Course information at Bachelor's, Master's, PhD, Foundation, and Diploma levels
-- Visa requirements, tuition costs, living expenses, work rights, and post-study visa options
-- IELTS/TOEFL/PTE requirements
-- Scholarships including Chevening, Commonwealth, Fulbright, MEXT, DAAD, KGSP
-- Application processes and document requirements
-
-Context provided by user: ${context || "General inquiry"}
-
-Be helpful, accurate, and encouraging. If unsure about specific data, recommend the student book a free consultation for personalized advice. Keep responses concise but informative.`;
-
-    const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.ZAI_API_KEY || ""}`,
-      },
-      body: JSON.stringify({
-        model: "glm-4-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: message },
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-      }),
-    });
-
-    if (!response.ok) {
-      return NextResponse.json(
-        { reply: "I'm having trouble connecting right now. Please try again or book a free consultation with our expert counselors." },
-        { status: 200 }
-      );
-    }
-
-    const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "I'd be happy to help! Could you tell me more about what you're looking for? For example, which country interests you, what subject you'd like to study, or what your budget range is.";
-
-    return NextResponse.json({ reply });
-  } catch {
-    return NextResponse.json(
-      { reply: "Thank you for your message! For the most accurate and personalized guidance, I recommend booking a free consultation with one of our expert counselors who can provide tailored advice based on your profile." },
-      { status: 200 }
-    );
-  }
-});

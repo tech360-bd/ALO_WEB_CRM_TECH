@@ -1,37 +1,35 @@
-// ALO Education — Storage & Brand Seed (Task 22) — Portable 2026-09-15
+// ALO Education — Storage & Brand Seed (Task 22)
 // Seeds the three storage pools, the default brand profile,
 // and 10 marketing model profiles + 4 voice profiles.
-// Idempotent via upsert. Storage paths now portable (STORAGE_ROOT env or ./storage).
+// Idempotent via upsert.
 
 import { PrismaClient } from "@prisma/client";
-import * as path from "path";
 const db = new PrismaClient();
 
 async function main() {
   console.log("=== ALO Storage & Brand Seed (Task 22) ===\n");
 
-  // 1. Initialize storage pools (portable: project-root/storage, fallback /home/z legacy)
-  const storageRoot = process.env.STORAGE_ROOT || path.resolve(process.cwd(), "storage");
+  // 1. Initialize storage pools
   const pools = [
     {
       poolKey: "STUDENT_PARTNER",
       name: "Student & Partner Private Storage",
       description: "Student documents, partner documents, passports, certificates, financial docs. Pool A (~120GB SSD).",
-      mountPath: `${storageRoot}/student-partner`,
+      mountPath: "/home/z/my-project/storage/student-partner",
       capacityBytes: 120 * 1024 * 1024 * 1024,
     },
     {
       poolKey: "OFFICIAL",
       name: "ALO Official Documents & Project Archives",
       description: "Company policies, SOPs, Knowledge Center, brand assets, project archives. Pool B (~120GB SSD).",
-      mountPath: `${storageRoot}/official`,
+      mountPath: "/home/z/my-project/storage/official",
       capacityBytes: 120 * 1024 * 1024 * 1024,
     },
     {
       poolKey: "OPERATIONAL",
       name: "Employee & Production & General Operational Storage",
       description: "Employee work files, marketing media, AI-generated media, reports. Pool C (~500GB HDD).",
-      mountPath: `${storageRoot}/operational`,
+      mountPath: "/home/z/my-project/storage/operational",
       capacityBytes: 500 * 1024 * 1024 * 1024,
     },
   ];
@@ -52,8 +50,8 @@ async function main() {
     create: {
       id: "default-brand-profile",
       name: "ALO Education",
-      primaryColor: "#F97316", // ALO Orange
-      secondaryColor: "#0B5ED7", // Education Blue
+      primaryColor: "#F37021", // ALO Orange
+      secondaryColor: "#0066CC", // Education Blue
       accentColor: "#FFB347", // Sunshine Accent
       tagline: "Your Gateway to Global Education",
       website: "https://aloeducation.com",

@@ -1,52 +1,41 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { withAuth } from '@/lib/auth-middleware';
+import { NextRequest, NextResponse } from "next/server";
+import { aiChat } from "@/lib/ai";
+import { db } from "@/lib/db";
 
-export const POST = withAuth(async (req, auth) => {
-  try {
-    const body = await req.json();
-    const { studentId, template, data } = body;
-    if (!studentId) return NextResponse.json({ success: false, error: 'studentId required' }, { status: 400 });
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const { studentId, counselorId, template, personalInfo, education, workExperience, skills, achievements } = body;
 
-    const student = await db.student.findUnique({ where: { id: studentId } }).catch(() => null) ||
-                    await db.portalStudentProfile.findFirst({ where: { studentId } }).catch(() => null);
+  const systemPrompt = `You are the ALO Education AI CV Builder. Create a professional, well-structured CV/Resume for an international student.
 
-    if (!student) return NextResponse.json({ success: false, error: 'Student not found' }, { status: 404 });
+Rules:
+- Use the student's real information provided.
+- Format: Contact info, Summary, Education, Work Experience, Skills, Achievements, (optional: Languages, Certifications).
+- Be honest — do NOT invent achievements.
+- Keep it to one page equivalent (300–500 words).
+- Use clear section headers and bullet points.
 
-    // Generate CV draft with originality tracking
-    const cv = await db.cvDraft.create({
-      data: {
-        studentId,
-        applicationId: (data as any)?.applicationId || '',
-        content: JSON.stringify({ template: template || 'standard', ...(data || {}) }),
-        status: 'draft',
-        version: 1,
-      },
+Student info:
+- Personal info: ${personalInfo || "Name, email, phone"}
+- Education: ${education || "Not specified"}
+- Work experience: ${workExperience || "Not specified"}
+- Skills: ${skills || "Not specified"}
+- Achievements: ${achievements || "Not specified"}
+- Template: ${template || "STANDARD"}
+
+Write the CV now. Output only the CV text with clear sections.`;
+
+  const content = await aiChat([
+    { role: "assistant", content: systemPrompt },
+    { role: "user", content: "Generate the CV now." },
+  ]);
+
+  let draft: Awaited<ReturnType<typeof db.cvDraft.create>> | null = null;
+  if (studentId) {
+    draft = await db.cvDraft.create({
+      data: { studentId, counselorId, template: template || "STANDARD", content, version: 1, status: "DRAFT" },
     });
-
-    await db.timelineEvent.create({
-      data: {
-        studentId,
-        stage: 'CV_GENERATED',
-        title: 'CV draft generated',
-        description: `Template: ${template || 'standard'} by ${auth.name}`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, data: cv });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-});
 
-export const GET = withAuth(async (req, auth) => {
-  try {
-    const { searchParams } = new URL(req.url);
-    const studentId = searchParams.get('studentId');
-    if (!studentId) return NextResponse.json({ success: false, error: 'studentId required' }, { status: 400 });
-    const drafts = await db.cvDraft.findMany({ where: { studentId }, orderBy: { createdAt: 'desc' } });
-    return NextResponse.json({ success: true, drafts });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
-});
+  return NextResponse.json({ content, draft });
+}

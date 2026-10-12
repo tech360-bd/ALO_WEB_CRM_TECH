@@ -1,65 +1,71 @@
-import { contentAuditLog } from "@/lib/content-audit";
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { withAuth, AuthContext } from "@/lib/auth-middleware";
+import { db } from '@/lib/db';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+const PUBLIC_BLOG_FIELDS = {
+  slug: true,
+  title: true,
+  category: true,
+  excerpt: true,
+  heroImage: true,
+  author: true,
+  readingTime: true,
+  keyTakeaways: true,
+  whoAppliesTo: true,
+  requirements: true,
+  stepByStep: true,
+  documents: true,
+  timeline: true,
+  fees: true,
+  importantDates: true,
+  commonMistakes: true,
+  aloGuidance: true,
+  officialSources: true,
+  metaTitle: true,
+  metaDescription: true,
+  createdAt: true,
+};
 
-// GET /api/resources — list resources with filters (public)
-// Filters: category (slug), country (slug), level (studyLevel), search (title/excerpt/tags), tag
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const category = req.nextUrl.searchParams.get("category");
-    const country = req.nextUrl.searchParams.get("country");
-    const level = req.nextUrl.searchParams.get("level");
-    const search = req.nextUrl.searchParams.get("search");
-    const tag = req.nextUrl.searchParams.get("tag");
-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") || "100", 10), 200);
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
 
-    const where: any = { status: "PUBLISHED", category: { status: "ACTIVE" } };
-    if (category) where.category = { slug: category, status: "ACTIVE" };
-    if (country) where.countrySlug = country;
-    if (level) where.studyLevel = level;
-    if (tag) where.tags = { contains: `"${tag}"` };
-    if (search) {
-      where.OR = [
-        { title: { contains: search } },
-        { excerpt: { contains: search } },
-        { tags: { contains: search } },
-      ];
+    const where: Record<string, unknown> = { status: 'PUBLISHED' };
+    if (category) {
+      where.category = category;
     }
 
-    const resources = await db.resource.findMany({
-      where,
-      orderBy: [{ publishedAt: "desc" }, { title: "asc" }],
-      take: limit,
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        excerpt: true,
-        featuredImage: true,
-        countrySlug: true,
-        studyLevel: true,
-        readingTime: true,
-        publishedAt: true,
-        updatedAt: true,
-        tags: true,
-        verificationStatus: true,
-        sourceName: true,
-        sourceUrl: true,
-        lastVerifiedAt: true,
-        category: { select: { slug: true, name: true, icon: true } },
-      },
-    });
+    const [resources, total, categories] = await Promise.all([
+      db.blogPost.findMany({
+        where,
+        select: PUBLIC_BLOG_FIELDS,
+        orderBy: { createdAt: 'desc' },
+      }),
+      db.blogPost.count({ where }),
+      db.blogPost.findMany({
+        where: { status: 'PUBLISHED' },
+        select: { category: true },
+        distinct: ['category'],
+      }),
+    ]);
 
-    return NextResponse.json({ resources, total: resources.length });
-  } catch (err: any) {
-    console.error("[resources.list] error:", err);
-    return NextResponse.json({ error: "Failed to list resources" }, { status: 500 });
+    return NextResponse.json(
+      {
+        resources,
+        total,
+        categories: categories.map((c) => c.category),
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    );
+  } catch (error) {
+    console.error('Resources API error:', error);
+    return NextResponse.json(
+      { error: 'Failed to load resources' },
+      { status: 500 }
+    );
   }
 }
-
-// Keep legacy creation URLs on the same authenticated, audited implementation.
-export { POST } from "../admin/resources/route";

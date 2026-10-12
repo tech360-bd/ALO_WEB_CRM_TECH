@@ -35,11 +35,10 @@ export async function POST(req: NextRequest) {
     const incomingPhone = phone || "";
     const normalizedPhone = normalizePhone(incomingPhone);
 
-    // Search across the canonical Main Student phone field, Lead phone fields,
-    // and User (phone, role=PARTNER). Legacy mobile aliases are donor-only.
+    // Search across Student (mobile, altMobile), Lead (phone, altPhone), User (phone, role=PARTNER)
     const [studentsByMobile, studentsByAltMobile, leadsByPhone, leadsByAltPhone, partnersByPhone, partnersByEmail] = await Promise.all([
-      db.student.findFirst({ where: { phone: incomingPhone } }),
-      normalizedPhone ? db.student.findFirst({ where: { phone: normalizedPhone } }) : null,
+      db.student.findFirst({ where: { mobile: incomingPhone } }),
+      normalizedPhone ? db.student.findFirst({ where: { OR: [{ mobile: incomingPhone }, { mobile: normalizedPhone }, { altMobile: incomingPhone }, { altMobile: normalizedPhone }] } }) : null,
       db.lead.findFirst({ where: { phone: incomingPhone } }),
       normalizedPhone ? db.lead.findFirst({ where: { OR: [{ phone: incomingPhone }, { phone: normalizedPhone }, { altPhone: incomingPhone }, { altPhone: normalizedPhone }] } }) : null,
       db.user.findFirst({ where: { phone: incomingPhone, role: "PARTNER" } }),

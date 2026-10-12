@@ -1,11 +1,41 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from '@/lib/db';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const countries = await db.countryPage.findMany({
-    where: { approvalStatus: "PUBLISHED" },
-    orderBy: { name: "asc" },
-    select: { slug: true, name: true, shortName: true, flag: true, capital: true, currency: true, intro: true, quickFacts: true, lastVerifiedAt: true, verificationStatus: true, sourceUrl: true },
-  });
-  return NextResponse.json({ countries });
+  try {
+    const countries = await db.countryPage.findMany({
+      where: { approvalStatus: 'PUBLISHED' },
+      select: {
+        slug: true,
+        name: true,
+        shortName: true,
+        flag: true,
+        _count: { select: { universities: { where: { approvalStatus: 'PUBLISHED' } } } },
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    return NextResponse.json(
+      {
+        countries: countries.map((c) => ({
+          slug: c.slug,
+          name: c.name,
+          shortName: c.shortName,
+          flag: c.flag,
+          universities: c._count.universities,
+        })),
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300',
+        },
+      }
+    );
+  } catch (error) {
+    console.error('Countries list API error:', error);
+    return NextResponse.json(
+      { error: 'Failed to load countries' },
+      { status: 500 }
+    );
+  }
 }

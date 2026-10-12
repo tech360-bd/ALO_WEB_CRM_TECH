@@ -1,248 +1,128 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import {
-  loadOpenConflicts,
-  passesPublicCoursePagePolicy,
-  passesPublicPagePolicy,
-  publicCoursePageWhere,
-  publicUniversityPageWhere,
-} from "@/lib/course-finder/public-content-page-policy";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { requireAuth, isErrorResponse, parsePagination } from '@/lib/access-control';
 
-// GET /api/search?q=... — searches universities, courses, blog posts, news, events, countries, scholarships
+const SEARCHABLE_TYPES = ['students', 'leads', 'applications', 'universities', 'courses'] as const;
+
+type SearchableType = (typeof SEARCHABLE_TYPES)[number];
+
+// ─── GET: Global search ─────────────────────────────────────
+
 export async function GET(req: NextRequest) {
-  const q = req.nextUrl.searchParams.get("q")?.trim() || "";
-  if (q.length < 2) {
-    return NextResponse.json({
-      universities: [],
-      courses: [],
-      blogPosts: [],
-      newsArticles: [],
-      events: [],
-      countries: [],
-      exams: [],
-      total: 0,
-    });
+  const auth = await requireAuth(req);
+  if (isErrorResponse(auth)) return auth;
+
+  try {
+    const sp = req.nextUrl.searchParams;
+    const q = (sp.get('q') || '').trim();
+    const type = sp.get('type') as SearchableType | null;
+    const { page, limit, skip } = parsePagination(sp, 10);
+
+    if (!q) {
+      return NextResponse.json({ success: false, error: 'Search query (q) is required.' }, { status: 400 });
+    }
+
+    const types: SearchableType[] = type ? [type] : SEARCHABLE_TYPES;
+    const results: Array<{ type: SearchableType; results: unknown[]; total: number }> = [];
+
+    for (const t of types) {
+      switch (t) {
+        case 'students': {
+          const where: Record<string, unknown> = {
+            OR: [
+              { fullName: { contains: q, mode: 'insensitive' as const } },
+              { email: { contains: q, mode: 'insensitive' as const } },
+              { studentId: { contains: q, mode: 'insensitive' as const } },
+            ],
+          };
+          // Students see only own
+          if (auth.user.role === 'STUDENT') {
+            (where.OR as Array<Record<string, unknown>>).push({ id: auth.user.id });
+          }
+          const [data, total] = await Promise.all([
+            db.student.findMany({ where, take: limit, skip }),
+            db.student.count({ where }),
+          ]);
+          results.push({ type: 'students', results: data, total });
+          break;
+        }
+
+        case 'leads': {
+          if (auth.user.role === 'STUDENT') break; // Students don't see leads
+          const where = {
+            OR: [
+              { fullName: { contains: q, mode: 'insensitive' as const } },
+              { email: { contains: q, mode: 'insensitive' as const } },
+              { phone: { contains: q, mode: 'insensitive' as const } },
+              { leadId: { contains: q, mode: 'insensitive' as const } },
+            ],
+          };
+          const [data, total] = await Promise.all([
+            db.lead.findMany({ where, take: limit, skip }),
+            db.lead.count({ where }),
+          ]);
+          results.push({ type: 'leads', results: data, total });
+          break;
+        }
+
+        case 'applications': {
+          const where: Record<string, unknown> = {
+            OR: [
+              { applicationId: { contains: q, mode: 'insensitive' as const } },
+              { university: { contains: q, mode: 'insensitive' as const } },
+              { course: { contains: q, mode: 'insensitive' as const } },
+              { country: { contains: q, mode: 'insensitive' as const } },
+            ],
+          };
+          if (auth.user.role === 'STUDENT') {
+            const student = await db.student.findFirst({ where: { email: auth.user.email } });
+            if (student) where.studentId = student.id;
+          }
+          const [data, total] = await Promise.all([
+            db.application.findMany({ where, take: limit, skip }),
+            db.application.count({ where }),
+          ]);
+          results.push({ type: 'applications', results: data, total });
+          break;
+        }
+
+        case 'universities': {
+          const where = {
+            OR: [
+              { name: { contains: q, mode: 'insensitive' as const } },
+              { slug: { contains: q, mode: 'insensitive' as const } },
+              { city: { contains: q, mode: 'insensitive' as const } },
+            ],
+          };
+          const [data, total] = await Promise.all([
+            db.universityPage.findMany({ where, take: limit, skip, select: { slug: true, name: true, city: true, countrySlug: true, logo: true } }),
+            db.universityPage.count({ where }),
+          ]);
+          results.push({ type: 'universities', results: data, total });
+          break;
+        }
+
+        case 'courses': {
+          const where = {
+            OR: [
+              { name: { contains: q, mode: 'insensitive' as const } },
+              { subject: { contains: q, mode: 'insensitive' as const } },
+              { level: { contains: q, mode: 'insensitive' as const } },
+            ],
+          };
+          const [data, total] = await Promise.all([
+            db.coursePage.findMany({ where, take: limit, skip, select: { slug: true, name: true, level: true, subject: true, universitySlug: true, countrySlug: true } }),
+            db.coursePage.count({ where }),
+          ]);
+          results.push({ type: 'courses', results: data, total });
+          break;
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true, data: results });
+  } catch (error) {
+    console.error('Error in global search:', error);
+    return NextResponse.json({ success: false, error: 'Search failed.' }, { status: 500 });
   }
-
-  // Phase 1 review (P0-C): catalogue pages use the shared public policy.
-  const conflicts = await loadOpenConflicts();
-  const [
-    universitiesRaw,
-    coursesRaw,
-    blogPosts,
-    newsArticles,
-    events,
-    countries,
-    exams,
-    services,
-    scholarships,
-    resources,
-    faqs,
-  ] = await Promise.all([
-    db.universityPage.findMany({
-      where: publicUniversityPageWhere(conflicts, [{
-        OR: [
-          { name: { contains: q } },
-          { city: { contains: q } },
-          { overview: { contains: q } },
-        ],
-      }]),
-      take: 8,
-      select: {
-        sourceUrl: true,
-        slug: true,
-        name: true,
-        city: true,
-        countrySlug: true,
-        quickFacts: true,
-        overview: true,
-      },
-    }),
-    db.coursePage.findMany({
-      where: publicCoursePageWhere(conflicts, [{
-        OR: [
-          { name: { contains: q } },
-          { subject: { contains: q } },
-          { overview: { contains: q } },
-        ],
-      }]),
-      take: 8,
-      select: {
-        sourceUrl: true,
-        slug: true,
-        name: true,
-        level: true,
-        subject: true,
-        duration: true,
-        tuition: true,
-        city: true,
-        countrySlug: true,
-        universitySlug: true,
-      },
-    }),
-    db.blogPost.findMany({
-      where: {
-        status: "PUBLISHED",
-        OR: [
-          { title: { contains: q } },
-          { excerpt: { contains: q } },
-        ],
-      },
-      take: 6,
-      select: {
-        slug: true,
-        title: true,
-        excerpt: true,
-        category: true,
-        publishedAt: true,
-      },
-    }),
-    db.newsArticle.findMany({
-      where: {
-        status: "PUBLISHED",
-        OR: [
-          { title: { contains: q } },
-          { excerpt: { contains: q } },
-        ],
-      },
-      take: 6,
-      select: {
-        slug: true,
-        title: true,
-        excerpt: true,
-        category: true,
-        country: true,
-        publishedAt: true,
-      },
-    }),
-    db.eventPage.findMany({
-      where: {
-        status: "PUBLISHED",
-        OR: [
-          { title: { contains: q } },
-          { description: { contains: q } },
-        ],
-      },
-      take: 6,
-      select: {
-        slug: true,
-        title: true,
-        description: true,
-        eventDate: true,
-        location: true,
-        eventType: true,
-        category: true,
-      },
-    }),
-    db.countryPage.findMany({
-      where: {
-        approvalStatus: "PUBLISHED",
-        OR: [
-          { name: { contains: q } },
-          { shortName: { contains: q } },
-          { capital: { contains: q } },
-        ],
-      },
-      take: 6,
-      select: {
-        slug: true,
-        name: true,
-        shortName: true,
-        flag: true,
-        capital: true,
-      },
-    }),
-    db.examPage.findMany({
-      where: {
-        approvalStatus: "PUBLISHED",
-        OR: [
-          { name: { contains: q } },
-          { fullName: { contains: q } },
-        ],
-      },
-      take: 6,
-      select: {
-        slug: true,
-        name: true,
-        fullName: true,
-      },
-    }),
-    // spec §50: services, scholarships, resources, FAQs are indexed too
-    db.service.findMany({
-      where: {
-        status: "PUBLISHED",
-        OR: [
-          { title: { contains: q } },
-          { shortDescription: { contains: q } },
-        ],
-      },
-      take: 6,
-      select: { slug: true, title: true, shortDescription: true, icon: true },
-    }),
-    db.scholarship.findMany({
-      where: {
-        status: "active",
-        OR: [
-          { name: { contains: q } },
-          { university: { contains: q } },
-          { eligibility: { contains: q } },
-        ],
-      },
-      take: 6,
-      select: { slug: true, name: true, university: true, country: true, fundingAmount: true, deadline: true },
-    }).catch(() => [] as any[]),
-    db.resource.findMany({
-      where: {
-        status: "PUBLISHED",
-        OR: [
-          { title: { contains: q } },
-          { summary: { contains: q } },
-          { excerpt: { contains: q } },
-        ],
-      },
-      take: 8,
-      select: { slug: true, title: true, excerpt: true, readingTime: true, category: { select: { slug: true, name: true } } },
-    }),
-    db.unifiedFaq.findMany({
-      where: {
-        status: "active",
-        OR: [
-          { question: { contains: q } },
-          { answer: { contains: q } },
-        ],
-      },
-      take: 6,
-      select: { question: true, answer: true, category: true, targetType: true, targetSlug: true },
-    }),
-  ]);
-  const universities = universitiesRaw.filter((u) => passesPublicPagePolicy(u, conflicts.universitySlugs));
-  const courses = coursesRaw.filter((c) => passesPublicCoursePagePolicy(c, conflicts));
-
-  const total =
-    universities.length +
-    courses.length +
-    blogPosts.length +
-    newsArticles.length +
-    events.length +
-    countries.length +
-    exams.length +
-    services.length +
-    scholarships.length +
-    resources.length +
-    faqs.length;
-
-  return NextResponse.json({
-    universities,
-    courses,
-    blogPosts,
-    newsArticles,
-    events,
-    countries,
-    exams,
-    services,
-    scholarships,
-    resources,
-    faqs,
-    total,
-  });
 }

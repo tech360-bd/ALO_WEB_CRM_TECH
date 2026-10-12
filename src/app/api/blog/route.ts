@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const featured = req.nextUrl.searchParams.get("featured");
 
   if (slug) {
-    const post = await db.blogPost.findUnique({
+    const post = await db.blogPost.findFirst({
       where: { slug, status: "PUBLISHED" },
     });
     if (!post) {

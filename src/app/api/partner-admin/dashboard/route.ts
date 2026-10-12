@@ -1,142 +1,84 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { requirePartnerContext } from '@/lib/partner-tenant-guard';
-import {
-  getQuota,
-  currentPeriod,
-  STARTER_VIDEO_DURATION_SECONDS,
-} from '@/lib/access-check-engine';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
-/**
- * Partner Super Admin dashboard metrics — real data, tenant-scoped.
- *
- * Defects fixed here:
- *   1. CROSS-TENANT LEAK. `activeApplications`, `submittedApplications`,
- *      `offerReceived` and `visaReadyStudents` were counted with no partner
- *      filter at all, so every partner's dashboard displayed ALO Education's
- *      platform-wide application totals as if they were its own. The lead
- *      count had a `.catch()` fallback that counted every lead in the system.
- *   2. The tenant key fell back to `auth.userId` when no partner profile was
- *      present, which is not a tenant identifier.
- *   3. `counselorSeats.used` counted rows in PartnerUserSeatRequest — i.e. the
- *      number of times extra seats had been REQUESTED — rather than the number
- *      of users actually occupying a seat, and the limit was hardcoded to 3
- *      regardless of the partner's package or approved seat grants.
- *   4. Marketing usage was read with `findFirst` ordered by createdAt, so an
- *      earlier month's row could be shown as the current month's consumption.
- *   5. `videoDurationLimitSeconds` was hardcoded to 30 instead of read from
- *      the partner's quota record.
- *
- * Every figure below is derived from real rows for this tenant. Nothing is
- * defaulted to a demo value; absent data yields 0 so the UI can show a proper
- * empty state.
- */
+// B2B Partner Admin Dashboard — KPIs, seats, quota, vouchers, marketing
 export async function GET(req: NextRequest) {
-  const ctx = await requirePartnerContext(req);
-  if (ctx instanceof NextResponse) return ctx;
-  const partnerId = ctx.partnerId;
+  const partnerEmployeeId = req.nextUrl.searchParams.get("partnerId");
+  let partner: Awaited<ReturnType<typeof db.employeeHR.findFirst>> = null;
+  if (partnerEmployeeId) partner = await db.employeeHR.findFirst({ where: { id: partnerEmployeeId, role: "PARTNER" } });
+  if (!partner) partner = await db.employeeHR.findFirst({ where: { role: "PARTNER" } });
+  if (!partner) return NextResponse.json({ error: "No partner found" }, { status: 404 });
 
-  try {
-    const monthYear = currentPeriod();
+  // Partner users
+  const partnerUsers = await db.partnerUser.findMany({ where: { partnerId: partner.id } });
 
-    // Applications belonging to students of THIS partner only.
-    const tenantApplication = { studentProfile: { partnerId } };
+  // Students referred by this partner
+  const students = await db.student.findMany({
+    where: { partnerId: partner.userId || "none" },
+    include: { applications: true, documents: true },
+  });
 
-    const [
-      totalStudents,
-      activeApplications,
-      submittedApplications,
-      offerReceived,
-      visaReadyStudents,
-      seatsUsed,
-      supportThreadsCount,
-      pendingSeatRequests,
-      seatRequests,
-      marketingQuota,
-      marketingUsage,
-      pendingMarketingApprovals,
-      vouchersTotal,
-      vouchersAvailable,
-      vouchersUsed,
-      activeEntitlements,
-      recentVouchers,
-    ] = await Promise.all([
-      db.portalStudentProfile.count({ where: { partnerId } }),
-      db.portalStudentApplication.count({
-        where: { ...tenantApplication, stage: { notIn: ['enrolled', 'withdrawn', 'rejected', 'cancelled'] } },
-      }),
-      db.portalStudentApplication.count({ where: { ...tenantApplication, stage: 'submitted' } }),
-      db.portalStudentApplication.count({ where: { ...tenantApplication, stage: 'offer_received' } }),
-      db.portalStudentApplication.count({ where: { ...tenantApplication, stage: 'visa_approved' } }),
-      db.portalUser.count({ where: { status: { in: ['active', 'pending_activation'] }, partnerProfile: { partnerId } } }),
-      db.communicationThread.count({ where: { partnerId } }),
-      db.partnerUserSeatRequest.count({ where: { partnerId, status: { in: ['pending', 'PENDING'] } } }),
-      db.partnerUserSeatRequest.findMany({ where: { partnerId }, orderBy: { createdAt: 'desc' }, take: 5 }),
-      db.partnerMarketingQuota.findUnique({ where: { partnerId } }),
-      db.partnerMarketingUsage.findUnique({
-        where: { partnerId_monthYear: { partnerId, monthYear } },
-      }).catch(() => null),
-      db.partnerMarketingRequest.count({ where: { partnerId, approvalStatus: 'pending' } }),
-      db.studentMockTestVoucher.count({ where: { partnerId } }),
-      db.studentMockTestVoucher.count({ where: { partnerId, status: 'available' } }),
-      db.studentMockTestVoucher.count({ where: { partnerId, status: 'used' } }),
-      db.studentBenefitEntitlement.count({ where: { partnerId, status: 'active' } }),
-      db.studentMockTestVoucher.findMany({ where: { partnerId }, take: 10, orderBy: { createdAt: 'desc' } }),
-    ]);
+  // Leads from partner
+  const leads = await db.lead.findMany({ where: { source: "PARTNER_REFERRAL" } });
 
-    // Limits come from the partner's package / approved seat grant, never from
-    // a hardcoded constant.
-    const [seatLimit, imageLimit, videoLimit] = await Promise.all([
-      getQuota('PARTNER', partnerId, 'user_seats'),
-      getQuota('PARTNER', partnerId, 'monthly_images'),
-      getQuota('PARTNER', partnerId, 'monthly_videos'),
-    ]);
+  // Marketing quota + usage
+  const marketingQuota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: partner.id } });
+  const monthYear = new Date().toISOString().slice(0, 7);
+  const marketingUsage = await db.partnerMarketingUsage.findUnique({ where: { partnerId_monthYear: { partnerId: partner.id, monthYear } } });
+  const marketingRequests = await db.partnerMarketingRequest.findMany({ where: { partnerId: partner.id }, orderBy: { createdAt: "desc" }, take: 10 });
 
-    const imagesUsed = marketingUsage?.imagesUsed || 0;
-    const videosUsed = marketingUsage?.videosUsed || 0;
+  // Vouchers
+  const vouchers = await db.studentMockTestVoucher.findMany({ where: { partnerId: partner.id }, include: { student: { select: { studentId: true, fullName: true } } } });
 
-    return NextResponse.json({
-      success: true,
-      partnerId,
-      period: monthYear,
-      kpis: {
-        totalStudents,
-        activeApplications,
-        submittedApplications,
-        offerReceived,
-        visaReadyStudents,
-        userSeats: {
-          limit: seatLimit,
-          used: seatsUsed,
-          available: Math.max(0, seatLimit - seatsUsed),
-          pendingSeatRequests,
-        },
-        marketingQuota: {
-          monthlyImageLimit: imageLimit,
-          imagesUsed,
-          imagesRemaining: Math.max(0, imageLimit - imagesUsed),
-          monthlyVideoLimit: videoLimit,
-          videosUsed,
-          videosRemaining: Math.max(0, videoLimit - videosUsed),
-          videoDurationLimitSeconds:
-            marketingQuota?.videoDurationLimitSeconds || STARTER_VIDEO_DURATION_SECONDS,
-        },
-        pendingMarketingApprovals,
-        vouchers: {
-          total: vouchersTotal,
-          available: vouchersAvailable,
-          used: vouchersUsed,
-        },
-        activeEntitlementsCount: activeEntitlements,
-        supportThreadsCount,
-      },
-      recentSeatRequests: seatRequests,
-      recentVouchers,
-    });
-  } catch {
-    return NextResponse.json(
-      { success: false, error: 'Failed to load partner dashboard data.' },
-      { status: 500 },
-    );
-  }
+  // Benefits
+  const benefits = await db.studentBenefitEntitlement.findMany({ where: { partnerId: partner.id } });
+
+  // Seat requests
+  const seatRequests = await db.partnerUserSeatRequest.findMany({ where: { partnerId: partner.id }, orderBy: { createdAt: "desc" } });
+
+  // Social accounts
+  const socialAccounts = await db.partnerSocialAccount.findMany({ where: { partnerId: partner.id } });
+
+  // Commission
+  const commissionPayments = await db.payment.findMany({ where: { partnerId: partner.userId || "none", type: "COMMISSION" } });
+  const totalCommission = commissionPayments.reduce((s, p) => s + (p.commissionAmount || 0), 0);
+  const pendingCommission = commissionPayments.filter((p) => p.commissionStatus === "PENDING").reduce((s, p) => s + (p.commissionAmount || 0), 0);
+
+  // KPIs
+  const activeApps = students.flatMap((s) => s.applications).filter((a) => !["VISA_REFUSED", "ENROLLED"].includes(a.stage));
+  const kpis = {
+    totalStudents: students.length,
+    activeApplications: activeApps.length,
+    submittedApplications: activeApps.filter((a) => ["APPLICATION_SUBMITTED", "CONDITIONAL_OFFFER", "UNCONDITIONAL_OFFER"].includes(a.stage)).length,
+    offerReceived: activeApps.filter((a) => ["CONDITIONAL_OFFFER", "UNCONDITIONAL_OFFER"].includes(a.stage)).length,
+    visaReadyStudents: activeApps.filter((a) => ["VISA_DOCUMENTS", "VISA_SUBMITTED", "VISA_APPROVED"].includes(a.stage)).length,
+    pendingDocuments: students.flatMap((s) => s.documents).filter((d) => d.status === "PENDING").length,
+    availableCounselorSeats: Math.max(0, 3 - partnerUsers.filter((u) => u.role !== "PARTNER_SUPER_ADMIN").length),
+    usedCounselorSeats: partnerUsers.filter((u) => u.role !== "PARTNER_SUPER_ADMIN").length,
+    monthlyImageQuotaUsed: marketingUsage?.imagesUsed || 0,
+    monthlyVideoQuotaUsed: marketingUsage?.videosUsed || 0,
+    mockTestVouchersUsed: vouchers.filter((v) => v.status === "USED").length,
+    interviewPrepUsage: benefits.filter((b) => b.benefitType.includes("INTERVIEW") && b.usedCount > 0).length,
+    englishMockVouchersUsed: vouchers.filter((v) => v.status === "USED").length,
+    pendingAloApprovals: seatRequests.filter((s) => s.status === "PENDING").length + marketingRequests.filter((m) => m.approvalStatus === "PENDING_APPROVAL").length,
+    totalCommission,
+    pendingCommission,
+    supportTickets: 2, // placeholder
+  };
+
+  return NextResponse.json({
+    partner,
+    kpis,
+    partnerUsers,
+    students: students.slice(0, 10),
+    leads: leads.slice(0, 10),
+    marketingQuota,
+    marketingUsage,
+    marketingRequests,
+    vouchers,
+    benefits,
+    seatRequests,
+    socialAccounts,
+    commission: { total: totalCommission, pending: pendingCommission, items: commissionPayments },
+  });
 }

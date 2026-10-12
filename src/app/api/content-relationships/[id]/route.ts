@@ -1,19 +1,15 @@
-import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { withAuth, AuthContext } from "@/lib/auth-middleware";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // DELETE /api/content-relationships/[id] — delete relationship (admin)
-async function deleteRelationship(
-  req: Request,
-  auth: AuthContext,
-  context?: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await context!.params;
+    const { id } = await params;
+    const performedBy = req.nextUrl.searchParams.get("performedBy") || undefined;
+
     const existing = await db.contentRelationship.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Relationship not found" }, { status: 404 });
@@ -21,8 +17,8 @@ async function deleteRelationship(
 
     await db.contentRelationship.delete({ where: { id } });
 
-    const userId = auth.userId;
-    await contentAuditLog.create({
+    const userId = await resolveUserId(performedBy);
+    await db.auditLog.create({
       data: {
         userId,
         action: "CONTENT_RELATIONSHIP_DELETE",
@@ -41,11 +37,15 @@ async function deleteRelationship(
     return NextResponse.json({ success: true, id });
   } catch (err: any) {
     console.error("[content-relationships.delete] error:", err);
-    return NextResponse.json({ error: "Failed to delete relationship" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete relationship", detail: err.message }, { status: 500 });
   }
 }
 
-
-export const DELETE = withAuth(deleteRelationship, {
-  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
-});
+async function resolveUserId(performedBy?: string): Promise<string | null> {
+  if (!performedBy) return null;
+  if (performedBy.includes("@")) {
+    const u = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
+    return u?.id ?? null;
+  }
+  return performedBy;
+}

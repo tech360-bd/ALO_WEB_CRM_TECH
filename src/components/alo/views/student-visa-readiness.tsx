@@ -97,7 +97,7 @@ export function StudentVisaReadiness() {
             <p className="text-sm font-bold uppercase text-[#5A7299]">
               Overall Readiness
             </p>
-            <p className="mt-4 text-5xl font-black text-[#2563EB]">{score}%</p>
+            <p className="mt-4 text-5xl font-black text-[#0066CC]">{score}%</p>
             <Badge className={cn("mt-4 capitalize", riskColor)}>
               {risk.replace(/_/g, " ").toLowerCase()}
             </Badge>

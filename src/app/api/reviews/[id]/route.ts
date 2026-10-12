@@ -1,21 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { withAuth, type AuthContext } from "@/lib/auth-middleware";
 
 // PATCH /api/reviews/[id]
 // Marketing/Super Admin moderates a review: APPROVE | REJECT | PUBLISH | UNPUBLISH
 // Body: { action, notes, performedBy }
-async function moderateReview(req: Request, auth: AuthContext, context?: { params: Promise<{ id: string }> }) {
-  const { id } = await context!.params;
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const body = await req.json();
-  const { action, notes } = body as { action: string; notes?: string };
+  const { action, notes, performedBy } = body as { action: string; notes?: string; performedBy: string };
 
-  const role = (auth.userType || auth.roles[0] || '').toUpperCase();
-  if (!['SUPER_ADMIN', 'ADMIN', 'MARKETING_MANAGER'].includes(role)) {
-    return NextResponse.json({ error: 'Review moderation access required' }, { status: 403 });
-  }
-  if (!action) {
-    return NextResponse.json({ error: "action is required" }, { status: 400 });
+  if (!action || !performedBy) {
+    return NextResponse.json({ error: "action and performedBy are required" }, { status: 400 });
   }
 
   const review = await db.studentReview.findUnique({ where: { id } });
@@ -55,7 +50,13 @@ async function moderateReview(req: Request, auth: AuthContext, context?: { param
     publishedAt = new Date();
   }
 
-  const userId = auth.userId;
+  // Resolve performedBy to a valid User.id
+  let userId = performedBy;
+  if (performedBy.includes("@")) {
+    const user = await db.user.findFirst({ where: { email: performedBy.toLowerCase() }, select: { id: true } });
+    if (user) userId = user.id;
+    else userId = "system";
+  }
 
   const updated = await db.studentReview.update({
     where: { id },
@@ -74,7 +75,7 @@ async function moderateReview(req: Request, auth: AuthContext, context?: { param
   // Audit log
   await db.auditLog.create({
     data: {
-      userId: !userId || userId === "system" ? "" : userId,
+      userId: userId === "system" ? null : userId,
       action: `REVIEW_${action}`,
       resource: "StudentReview",
       resourceId: review.id,
@@ -87,7 +88,3 @@ async function moderateReview(req: Request, auth: AuthContext, context?: { param
     message: `Review ${action.toLowerCase()}d successfully.`,
   });
 }
-
-export const PATCH = withAuth(moderateReview, {
-  requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'MARKETING_MANAGER'],
-});

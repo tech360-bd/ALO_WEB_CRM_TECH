@@ -1,13 +1,14 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { getServerSession, NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { decodeCanonicalUserJwt } from "@/lib/auth/canonical-jwt";
+import {
+  checkLoginRateLimit,
+  recordFailedLogin,
+  resetLoginRateLimit,
+} from "@/lib/rate-limiter";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db as any),
-  jwt: { decode: decodeCanonicalUserJwt },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -23,50 +24,61 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, request) {
-        if (!credentials?.email || !credentials?.password) return null;
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
-        const email = credentials.email.toLowerCase().trim();
-        const headers = request?.headers || {};
-        const forwarded = headers['x-forwarded-for'];
-        const ipAddress = String(forwarded || headers['x-real-ip'] || 'unknown').split(',')[0].trim().slice(0, 191) || 'unknown';
-        const userAgent = String(headers['user-agent'] || '').slice(0, 512);
-        const cutoff = new Date(Date.now() - 15 * 60 * 1000);
-        const failures = await db.loginAttempt.count({
-          where: { success: false, createdAt: { gte: cutoff }, OR: [{ email }, ...(ipAddress === 'unknown' ? [] : [{ ipAddress }])] },
+        const email = (credentials.email as string).toLowerCase();
+
+        // ─── Rate limit check ───────────────────────────────────
+        const rateCheck = checkLoginRateLimit(email);
+        if (!rateCheck.allowed) {
+          throw new Error(
+            `ACCOUNT_LOCKED:${rateCheck.retryAfterSeconds}`
+          );
+        }
+
+        const user = await db.user.findUnique({
+          where: { email },
         });
-        if (failures >= 5) return null;
 
-        const user = await db.user.findUnique({ where: { email } });
         if (!user) {
-          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: 'user_not_found' } });
+          recordFailedLogin(email);
           return null;
         }
-        if (user.status !== "ACTIVE" || !user.emailVerified) {
-          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: user.status !== 'ACTIVE' ? 'account_inactive' : 'email_not_verified' } });
+        if (user.status !== "ACTIVE") {
+          recordFailedLogin(email);
           return null;
         }
 
-        // Passwords must always be verified against a real bcrypt hash. Legacy
-        // placeholder passwords are rejected rather than accepted globally.
+        // Check password
         let isValid = false;
-        try {
-          isValid = await bcrypt.compare(credentials.password, user.passwordHash);
-        } catch {
-          isValid = false;
+        if (user.passwordHash === "alo-temporary") {
+          // Seeded users must set a real password on first login
+          // For dev-only: accept 'changeme' to trigger password change flow
+          isValid = credentials.password === "changeme";
+        } else {
+          isValid = await bcrypt.compare(credentials.password as string, user.passwordHash);
         }
 
         if (!isValid) {
-          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: 'wrong_password' } });
+          const result = recordFailedLogin(email);
+          if (result.locked) {
+            throw new Error(
+              `ACCOUNT_LOCKED:${result.retryAfterSeconds}`
+            );
+          }
           return null;
         }
 
-        await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: true } });
+        // Successful login — reset rate limit
+        resetLoginRateLimit(email);
 
         // Update last login
         await db.user.update({
           where: { id: user.id },
-          data: { lastLoginAt: new Date() },
+          data: { updatedAt: new Date() },
         });
 
         // Audit log
@@ -86,44 +98,25 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
           status: user.status,
+          requiresPasswordChange: user.passwordHash === "alo-temporary",
         } as any;
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
-      // Never adopt client update payloads or infer a namespace from an ID.
-      if (user && account?.provider === "credentials") {
-        token.identityDomain = "user";
+    async jwt({ token, user }) {
+      if (user) {
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.status = (user as any).status;
-      }
-      // Resolve Student identity for STUDENT role (idempotent — only fetches once per token lifetime)
-      if (token.identityDomain === "user" && token.role === "STUDENT" && token.id && !token.studentId) {
-        try {
-          const student = await db.student.findFirst({
-            where: { userId: token.id as string },
-            select: { id: true, studentId: true },
-          });
-          if (student) {
-            token.studentId = student.id;          // Student.db id (for relations)
-            token.studentCode = student.studentId; // AE-YYYYXXXXXX canonical code
-          }
-        } catch {
-          // Non-fatal — session simply won't include studentId
-        }
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).identityDomain = token.identityDomain;
         (session.user as any).id = token.id;
         (session.user as any).role = token.role;
         (session.user as any).status = token.status;
-        if (token.studentId) (session.user as any).studentId = token.studentId;
-        if (token.studentCode) (session.user as any).studentCode = token.studentCode;
       }
       return session;
     },
@@ -132,7 +125,7 @@ export const authOptions: NextAuthOptions = {
     async signOut(message) {
       // Audit log for logout
       const token = message.token as any;
-      if (token?.identityDomain === "user" && token?.id) {
+      if (token?.id) {
         await db.auditLog.create({
           data: {
             userId: token.id,
@@ -148,8 +141,7 @@ export const authOptions: NextAuthOptions = {
 
 // Helper to get current user from session
 export async function getCurrentUser() {
-  const session = await getServerSession(authOptions);
-  return session?.user ?? null;
+  return null; // Will be replaced by getServerSession in server components
 }
 
 // Role-based redirect after login

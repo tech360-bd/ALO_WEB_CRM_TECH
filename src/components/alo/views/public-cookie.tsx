@@ -119,4 +119,3 @@ export function PublicCookie({ onNavigate }: PublicCookieProps) {
     </LegalLayout>
   );
 }
-export default PublicCookie;

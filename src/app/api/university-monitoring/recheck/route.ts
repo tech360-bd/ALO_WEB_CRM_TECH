@@ -1,25 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireMonitoringAdmin } from "@/lib/university-monitoring-auth";
 
 // POST /api/university-monitoring/recheck
 // Super Admin: request an immediate re-check of a specific change's source.
-// Body: { changeId }
+// Body: { changeId, performedBy }
 // The AI agent re-fetches the source, re-extracts facts, recalculates confidence.
-//
-// SECURITY: "Force recheck" is a Super-Admin-only action per the spec, and it
-// causes outbound fetches to official sources. This route was previously
-// unauthenticated and trusted a client-supplied `performedBy`.
 export async function POST(req: NextRequest) {
-  const guard = await requireMonitoringAdmin(req);
-  if (!guard.ok) return guard.response;
-  const performedBy = guard.actor.userId;
+  const body = await req.json();
+  const { changeId, performedBy } = body as { changeId: string; performedBy: string };
 
-  const body = await req.json().catch(() => ({}));
-  const { changeId } = body as { changeId?: string };
-
-  if (!changeId) {
-    return NextResponse.json({ error: "changeId is required" }, { status: 400 });
+  if (!changeId || !performedBy) {
+    return NextResponse.json({ error: "changeId and performedBy are required" }, { status: 400 });
   }
 
   const change = await db.dataChange.findUnique({

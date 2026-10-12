@@ -74,7 +74,7 @@ export function IconButton({ icon, label, size = "default", variant = "ghost", c
     <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
+          <Button
             variant={variant}
             size={sz as any}
             aria-label={label}
@@ -157,7 +157,7 @@ export function MultiSelect({ options, value, onChange, placeholder = "Select...
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
+        <button
           type="button"
           className={cn(
             "flex h-9 w-full items-center justify-between gap-2 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface)] px-3 py-2 text-sm shadow-[var(--alo-shadow-xs)] hover:border-[var(--alo-border-strong)] focus:border-[var(--alo-blue)] focus:outline-none focus:ring-[3px] focus:ring-[var(--alo-blue)]/20",
@@ -386,7 +386,7 @@ export function RichTextEditor({ value, onChange, placeholder = "Write something
     <div className={cn("overflow-hidden rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface)]", className)}>
       <div className="flex flex-wrap items-center gap-0.5 border-b border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-1">
         {tools.map((t) => (
-          <button 
+          <button
             key={t.label}
             type="button"
             title={t.label}

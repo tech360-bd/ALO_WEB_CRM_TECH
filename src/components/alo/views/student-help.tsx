@@ -23,15 +23,14 @@ export function StudentHelp() {
           <div><Label>Subject</Label><Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Briefly describe your issue" className="mt-1" /></div>
           <div><Label>Category</Label><select value={category} onChange={(e) => setCategory(e.target.value)} className="mt-1 flex h-10 w-full rounded-md border border-[#DCE8F5] bg-white px-3"><option value="GENERAL">General</option><option value="TECHNICAL">Technical</option><option value="ADMISSION">Admission</option><option value="VISA">Visa</option><option value="PAYMENT">Payment</option><option value="DOCUMENT">Document</option></select></div>
           <div><Label>Message</Label><Textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={5} placeholder="Describe in detail..." className="mt-1" /></div>
-          <Button onClick={handleSubmit} className="bg-[#2563EB] text-white hover:bg-[#0052a3]">Submit Ticket</Button>
+          <Button onClick={handleSubmit} className="bg-[#0066CC] text-white hover:bg-[#0052a3]">Submit Ticket</Button>
         </CardContent></Card>
         <div className="space-y-4">
-          <Card className="rounded-2xl border border-[#DCE8F5] bg-[#F7FAFE]"><CardContent className="p-5"><div className="flex items-center gap-3"><div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#2563EB]"><Icon name="MessageCircle" className="size-5" /></div><div><p className="font-semibold text-[#0B2447]">WhatsApp</p><p className="text-sm text-[#5A7299]">01805020101</p></div></div></CardContent></Card>
-          <Card className="rounded-2xl border border-[#DCE8F5] bg-[#F7FAFE]"><CardContent className="p-5"><div className="flex items-center gap-3"><div className="flex size-10 items-center justify-center rounded-lg bg-[#FFF3EA] text-[#F97316]"><Icon name="Mail" className="size-5" /></div><div><p className="font-semibold text-[#0B2447]">Email</p><p className="text-sm text-[#5A7299]">info@aloeducation.com</p></div></div></CardContent></Card>
+          <Card className="rounded-2xl border border-[#DCE8F5] bg-[#F7FAFE]"><CardContent className="p-5"><div className="flex items-center gap-3"><div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0066CC]"><Icon name="MessageCircle" className="size-5" /></div><div><p className="font-semibold text-[#0B2447]">WhatsApp</p><p className="text-sm text-[#5A7299]">01805020101</p></div></div></CardContent></Card>
+          <Card className="rounded-2xl border border-[#DCE8F5] bg-[#F7FAFE]"><CardContent className="p-5"><div className="flex items-center gap-3"><div className="flex size-10 items-center justify-center rounded-lg bg-[#FFF3EA] text-[#F37021]"><Icon name="Mail" className="size-5" /></div><div><p className="font-semibold text-[#0B2447]">Email</p><p className="text-sm text-[#5A7299]">info@aloeducation.com</p></div></div></CardContent></Card>
           <Card className="rounded-2xl border border-[#DCE8F5] bg-[#F7FAFE]"><CardContent className="p-5"><div className="flex items-center gap-3"><div className="flex size-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600"><Icon name="Bot" className="size-5" /></div><div><p className="font-semibold text-[#0B2447]">AI Assistant</p><p className="text-sm text-[#5A7299]">Ask ALO AI</p></div></div></CardContent></Card>
         </div>
       </div>
     </div>
   );
 }
-export default StudentHelp;

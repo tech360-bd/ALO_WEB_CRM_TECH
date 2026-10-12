@@ -104,7 +104,6 @@ type EmployeeDocument = {
 
 type Employee = {
   id: string;
-  userId?: string;
   employeeCode: string;
   fullName: string;
   companyEmail: string;
@@ -170,6 +169,8 @@ const PROFILE_STATUS_OPTIONS = [
 ];
 
 const ROLE_OPTIONS = [
+  { value: "SUPER_ADMIN", label: "Super Admin" },
+  { value: "ADMIN", label: "Admin" },
   { value: "HR_MANAGER", label: "HR Manager" },
   { value: "FINANCE", label: "Finance" },
   { value: "COUNSELOR", label: "Counselor" },
@@ -177,9 +178,7 @@ const ROLE_OPTIONS = [
   { value: "VISA_OFFICER", label: "Visa Officer" },
   { value: "MARKETING_MANAGER", label: "Marketing Manager" },
   { value: "MARKETING", label: "Marketing" },
-  { value: "FRONT_DESK", label: "Front Desk" },
-  { value: "BRANCH_MANAGER", label: "Branch Manager" },
-  { value: "SUPPORT_STAFF", label: "Support Staff" },
+  { value: "PARTNER", label: "Partner" },
   { value: "STAFF", label: "Staff" },
 ];
 
@@ -257,11 +256,11 @@ export function EmployeeManagement() {
   const [createOpen, setCreateOpen] = React.useState(false);
   const [creating, setCreating] = React.useState(false);
   const [createResult, setCreateResult] = React.useState<{
+    activationLink: string;
     message: string;
-    emailSent: boolean;
+    emailPreview: { subject: string; body: string };
     employeeCode: string;
     companyEmail: string;
-    userId: string;
   } | null>(null);
 
   // ----- Load ------------------------------------------------------------
@@ -364,10 +363,10 @@ export function EmployeeManagement() {
 
   const handleResendActivation = async (emp: Employee) => {
     try {
-      const res = await fetch(`/api/admin/employees/resend-activation`, {
-        method: "POST",
+      const res = await fetch(`/api/employees/activate`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ employeeId: emp.userId }),
+        body: JSON.stringify({ employeeId: emp.id, requestedById: SUPER_ADMIN_ID }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
@@ -382,7 +381,7 @@ export function EmployeeManagement() {
   };
 
   const handleToggleStatus = async (emp: Employee) => {
-    const next = emp.status.toLowerCase() === "active" ? "suspended" : "active";
+    const next = emp.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
     try {
       const res = await fetch(`/api/employees/${emp.id}`, {
         method: "PATCH",
@@ -391,8 +390,8 @@ export function EmployeeManagement() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       toast({
-        title: next === "suspended" ? "Employee suspended" : "Employee reactivated",
-        description: `${emp.fullName} (${emp.employeeCode}) is now ${next}.`,
+        title: next === "SUSPENDED" ? "Employee suspended" : "Employee reactivated",
+        description: `${emp.fullName} (${emp.employeeCode}) is now ${next.toLowerCase()}.`,
       });
       load();
     } catch (e: unknown) {
@@ -423,16 +422,15 @@ export function EmployeeManagement() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
       setCreateResult({
-        userId: json.employee.id,
+        activationLink: json.activationLink,
         message: json.message,
-        emailSent: Boolean(json.emailSent),
+        emailPreview: json.emailPreview,
         employeeCode: json.employee.employeeCode,
         companyEmail: json.employee.companyEmail,
       });
       toast({
-        title: json.emailSent ? "Employee account created" : "Employee created; email not sent",
-        description: json.message,
-        variant: json.emailSent ? undefined : "destructive",
+        title: "Employee account created",
+        description: `${json.employee.employeeCode} — activation email sent to ${json.employee.companyEmail}.`,
       });
       load();
     } catch (e: unknown) {
@@ -441,6 +439,13 @@ export function EmployeeManagement() {
     } finally {
       setCreating(false);
     }
+  };
+
+  const copyActivationLink = (link: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(link).catch(() => {});
+    }
+    toast({ title: "Link copied", description: "Activation link copied to clipboard." });
   };
 
   // ----- Render ----------------------------------------------------------
@@ -534,7 +539,7 @@ export function EmployeeManagement() {
           title="No employees match your filters"
           description="Try adjusting the filters above, or create a new employee account."
           action={
-            <Button className="bg-[#F97316] hover:bg-[#F97316]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
+            <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
               <Icon name="Plus" className="size-4" />
               Create Employee
             </Button>
@@ -546,7 +551,7 @@ export function EmployeeManagement() {
           description={`${filtered.length} of ${employees.length} employees`}
           icon="Users"
           action={
-            <Button className="bg-[#F97316] hover:bg-[#F97316]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
+            <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
               <Icon name="Plus" className="size-4" />
               Create Employee
             </Button>
@@ -570,7 +575,7 @@ export function EmployeeManagement() {
               <TableBody>
                 {filtered.map((emp) => (
                   <TableRow key={emp.id}>
-                    <TableCell className="font-mono text-xs font-semibold text-[#2563EB]">
+                    <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">
                       {emp.employeeCode}
                     </TableCell>
                     <TableCell>
@@ -578,7 +583,7 @@ export function EmployeeManagement() {
                       <div className="text-[10px] text-muted-foreground">{emp.companyEmail}</div>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
+                      <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
                         {emp.designation}
                       </Badge>
                     </TableCell>
@@ -637,14 +642,14 @@ export function EmployeeManagement() {
       {/* Profile workflow + privacy notes */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Workflow */}
-        <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+        <Card className="rounded-2xl border-2 border-[#0057B8]/15">
           <CardContent className="pt-5">
             <div className="mb-3 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
                 <Icon name="GitBranch" className="size-4" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#2563EB]">Profile Review Workflow</p>
+                <p className="text-sm font-semibold text-[#0057B8]">Profile Review Workflow</p>
                 <p className="text-xs text-muted-foreground">HR reviews and approves employee profiles after self-completion.</p>
               </div>
             </div>
@@ -669,14 +674,14 @@ export function EmployeeManagement() {
         </Card>
 
         {/* Privacy note */}
-        <Card className="rounded-2xl border-2 border-[#F97316]/20 bg-[#fdece4]/30">
+        <Card className="rounded-2xl border-2 border-[#E8501A]/20 bg-[#fdece4]/30">
           <CardContent className="pt-5">
             <div className="mb-3 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#F97316] text-white">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[#E8501A] text-white">
                 <Icon name="ShieldCheck" className="size-4" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#F97316]">Profile Privacy Policy</p>
+                <p className="text-sm font-semibold text-[#E8501A]">Profile Privacy Policy</p>
                 <p className="text-xs text-muted-foreground">Private data is hidden from normal users.</p>
               </div>
             </div>
@@ -685,7 +690,7 @@ export function EmployeeManagement() {
               documents, NID/passport, bank details, HR documents, leave records — is hidden from
               normal users.
             </p>
-            <p className="mt-2 text-xs font-semibold text-[#2563EB]">Who can view private data:</p>
+            <p className="mt-2 text-xs font-semibold text-[#0057B8]">Who can view private data:</p>
             <ul className="mt-1.5 space-y-1 text-xs text-foreground/80">
               <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> The employee themselves</li>
               <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> Super Admin</li>
@@ -705,7 +710,7 @@ export function EmployeeManagement() {
           {profileEmp && (
             <>
               <DialogHeader className="border-b border-border/60 px-6 py-4">
-                <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
+                <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
                   <Icon name="UserSquare" className="size-5" />
                   Employee Profile
                 </DialogTitle>
@@ -759,12 +764,12 @@ export function EmployeeManagement() {
       <Dialog open={createOpen} onOpenChange={(o) => { setCreateOpen(o); if (!o) setCreateResult(null); }}>
         <DialogContent className="max-h-[90vh] overflow-hidden p-0 sm:max-w-2xl">
           <DialogHeader className="border-b border-border/60 px-6 py-4">
-            <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
+            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
               <Icon name="UserPlus" className="size-5" />
               Create Employee Account
             </DialogTitle>
             <DialogDescription>
-              An activation email will be attempted. The employee must set a password within 48 hours.
+              An activation email will be sent. The employee must set a password within 7 days.
             </DialogDescription>
           </DialogHeader>
 
@@ -772,11 +777,13 @@ export function EmployeeManagement() {
             <CreateEmployeeSuccess
               result={createResult}
               onClose={() => { setCreateOpen(false); setCreateResult(null); }}
-              onResend={() => handleResendActivation({
-                id: '', userId: createResult.userId, employeeCode: createResult.employeeCode,
-                fullName: '', companyEmail: createResult.companyEmail, designation: '',
-                joiningDate: '', employmentType: '', profileStatus: '', status: '', role: '',
-              })}
+              onResend={() =>
+                toast({
+                  title: "Activation email queued",
+                  description: `A new link will be sent to ${createResult.companyEmail}.`,
+                })
+              }
+              onCopy={() => copyActivationLink(createResult.activationLink)}
             />
           ) : (
             <form action={handleCreateEmployee} className="flex max-h-[60vh] flex-col overflow-hidden">
@@ -867,7 +874,7 @@ export function EmployeeManagement() {
               </ScrollArea>
               <DialogFooter className="border-t border-border/60 px-6 py-4">
                 <Button type="button" variant="outline" className="h-11" onClick={() => setCreateOpen(false)}>Cancel</Button>
-                <Button type="submit" className="h-11 bg-[#F97316] text-white hover:bg-[#F97316]/90" disabled={creating}>
+                <Button type="submit" className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={creating}>
                   {creating ? (
                     <><Icon name="Loader2" className="size-4 animate-spin" /> Creating…</>
                   ) : (
@@ -908,7 +915,7 @@ function DropdownActions({
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-50 mt-1 w-44 rounded-lg border-2 border-[#2563EB]/20 bg-white p-1 shadow-lg">
+          <div className="absolute right-0 z-50 mt-1 w-44 rounded-lg border-2 border-[#0057B8]/20 bg-white p-1 shadow-lg">
             <button
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-[#e8f0fb]/60"
               onClick={() => { onEdit(); setOpen(false); }}
@@ -974,11 +981,11 @@ function EmployeeProfileBody({
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-lg font-bold text-[#2563EB]">{emp.fullName}</h3>
-              <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">{emp.designation}</Badge>
+              <h3 className="text-lg font-bold text-[#0057B8]">{emp.fullName}</h3>
+              <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">{emp.designation}</Badge>
             </div>
             <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-              <code className="font-mono font-semibold text-[#2563EB]">{emp.employeeCode}</code>
+              <code className="font-mono font-semibold text-[#0057B8]">{emp.employeeCode}</code>
               <span className="inline-flex items-center gap-1"><Icon name="Building2" className="size-3" />{joinName(emp.department)}</span>
               <span className="inline-flex items-center gap-1"><Icon name="MapPin" className="size-3" />{joinName(emp.office)}</span>
             </div>
@@ -1031,22 +1038,22 @@ function EmployeeProfileBody({
       <Tabs value={tab} onValueChange={onTabChange} className="flex-1 overflow-hidden">
         <div className="border-b border-border/60 px-6">
           <TabsList className="h-auto flex-wrap rounded-none bg-transparent p-0">
-            <TabsTrigger value="personal" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2563EB]">
+            <TabsTrigger value="personal" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
               <Icon name="User" className="size-3.5" /> Personal
             </TabsTrigger>
-            <TabsTrigger value="employment" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2563EB]">
+            <TabsTrigger value="employment" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
               <Icon name="Briefcase" className="size-3.5" /> Employment
             </TabsTrigger>
-            <TabsTrigger value="education" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2563EB]">
+            <TabsTrigger value="education" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
               <Icon name="GraduationCap" className="size-3.5" /> Education
             </TabsTrigger>
-            <TabsTrigger value="emergency" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2563EB]">
+            <TabsTrigger value="emergency" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
               <Icon name="PhoneCall" className="size-3.5" /> Emergency
             </TabsTrigger>
-            <TabsTrigger value="salary" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2563EB]">
+            <TabsTrigger value="salary" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
               <Icon name="Wallet" className="size-3.5" /> Salary
             </TabsTrigger>
-            <TabsTrigger value="documents" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2563EB]">
+            <TabsTrigger value="documents" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
               <Icon name="FolderLock" className="size-3.5" /> Documents
             </TabsTrigger>
           </TabsList>
@@ -1098,7 +1105,7 @@ function EmployeeProfileBody({
           {/* Education */}
           <TabsContent value="education" className="mt-0">
             {education.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-[#2563EB]/20 px-4 py-3 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
                 No education records added yet.
               </p>
             ) : (
@@ -1111,7 +1118,7 @@ function EmployeeProfileBody({
                         <p className="text-xs text-muted-foreground">{ed.institution} · {ed.passingYear}</p>
                       </div>
                       {ed.result && (
-                        <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
+                        <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
                           Result: {ed.result}
                         </Badge>
                       )}
@@ -1133,7 +1140,7 @@ function EmployeeProfileBody({
           {/* Emergency contact */}
           <TabsContent value="emergency" className="mt-0">
             {emergencyContacts.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-[#2563EB]/20 px-4 py-3 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
                 No emergency contacts on file.
               </p>
             ) : (
@@ -1183,7 +1190,7 @@ function EmployeeProfileBody({
                 </p>
               </div>
             ) : !salary ? (
-              <p className="rounded-lg border border-dashed border-[#2563EB]/20 px-4 py-3 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
                 No salary record assigned yet.
               </p>
             ) : (
@@ -1197,8 +1204,8 @@ function EmployeeProfileBody({
                 <SensitiveField id={`sal-bank-${emp.id}`} label="Bank Name" value={salary.bankName || "—"} />
                 <SensitiveField id={`sal-acct-${emp.id}`} label="Bank Account" value={salary.bankAccount || "—"} mono />
                 <div className="sm:col-span-2">
-                  <div className="mt-2 flex items-start gap-2 rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2 text-xs text-foreground/80">
-                    <Icon name="ShieldAlert" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
+                  <div className="mt-2 flex items-start gap-2 rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2 text-xs text-foreground/80">
+                    <Icon name="ShieldAlert" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
                     <p>This access is audit-logged. Salary visibility changes require Chairman approval.</p>
                   </div>
                 </div>
@@ -1209,7 +1216,7 @@ function EmployeeProfileBody({
           {/* Documents */}
           <TabsContent value="documents" className="mt-0">
             {documents.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-[#2563EB]/20 px-4 py-3 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
                 No documents uploaded yet.
               </p>
             ) : (
@@ -1220,7 +1227,7 @@ function EmployeeProfileBody({
                     <div key={doc.id} className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <Icon name="FileText" className="size-4 text-[#2563EB]" />
+                          <Icon name="FileText" className="size-4 text-[#0057B8]" />
                           <p className="text-sm font-medium text-foreground">
                             {DOC_TYPE_LABELS[doc.documentType] || doc.documentType}
                           </p>
@@ -1281,15 +1288,18 @@ function CreateEmployeeSuccess({
   result,
   onClose,
   onResend,
+  onCopy,
 }: {
   result: {
+    activationLink: string;
     message: string;
-    emailSent: boolean;
+    emailPreview: { subject: string; body: string };
     employeeCode: string;
     companyEmail: string;
   };
   onClose: () => void;
   onResend: () => void;
+  onCopy: () => void;
 }) {
   return (
     <div className="flex max-h-[70vh] flex-col overflow-hidden">
@@ -1308,10 +1318,32 @@ function CreateEmployeeSuccess({
           </div>
         </div>
 
-        <div className={`mt-4 rounded-lg border p-3 text-sm ${result.emailSent ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
-          {result.emailSent
-            ? 'The activation email was accepted by SMTP. This does not confirm inbox delivery.'
-            : 'SMTP did not accept the activation email. Correct the email configuration and use the authenticated resend action.'}
+        <div className="mt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Activation Link
+          </p>
+          <div className="mt-1.5 flex items-center gap-2 rounded-lg border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40 p-2.5">
+            <code className="flex-1 truncate font-mono text-xs text-[#0057B8]">{result.activationLink}</code>
+            <Button size="sm" className="h-8 bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={onCopy}>
+              <Icon name="Copy" className="size-3.5" />
+              Copy
+            </Button>
+          </div>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Link expires in 7 days. After that, HR must resend.
+          </p>
+        </div>
+
+        <div className="mt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Email Preview
+          </p>
+          <div className="mt-1.5 rounded-lg border border-border/60 bg-muted/30 p-3">
+            <p className="text-xs font-semibold text-foreground">{result.emailPreview.subject}</p>
+            <pre className="mt-2 whitespace-pre-wrap text-[11px] leading-relaxed text-foreground/80">
+{result.emailPreview.body}
+            </pre>
+          </div>
         </div>
 
         <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5 text-xs text-foreground/80">
@@ -1325,11 +1357,10 @@ function CreateEmployeeSuccess({
           <Icon name="RefreshCw" className="size-4" />
           Resend Email
         </Button>
-        <Button className="h-11 bg-[#F97316] text-white hover:bg-[#F97316]/90" onClick={onClose}>
+        <Button className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90" onClick={onClose}>
           Done
         </Button>
       </DialogFooter>
     </div>
   );
 }
-export default EmployeeManagement;

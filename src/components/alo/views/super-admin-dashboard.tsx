@@ -553,23 +553,23 @@ function QuickActionCard({
     <button
       type="button"
       onClick={() => onNavigate(def.view)}
-      className="group relative flex h-full w-full flex-col gap-2 rounded-2xl border-2 border-[#E2E8F0] bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+      className="group relative flex h-full w-full flex-col gap-2 rounded-2xl border-2 border-[#E2E8F0] bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8]"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex size-10 items-center justify-center rounded-xl bg-alo-gradient text-white shadow-sm">
           <Icon name={def.icon} className="size-5" />
         </div>
         {typeof count === "number" && count > 0 && (
-          <Badge className="border-0 bg-[#e8f0fb] text-[#2563EB] hover:bg-[#e8f0fb]">
+          <Badge className="border-0 bg-[#e8f0fb] text-[#0057B8] hover:bg-[#e8f0fb]">
             {count.toLocaleString()}
           </Badge>
         )}
       </div>
       <div className="mt-1">
-        <p className="text-sm font-semibold text-foreground group-hover:text-[#2563EB]">{def.label}</p>
+        <p className="text-sm font-semibold text-foreground group-hover:text-[#0057B8]">{def.label}</p>
         <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground line-clamp-2">{def.description}</p>
       </div>
-      <div className="mt-auto flex items-center gap-1 text-xs font-medium text-[#2563EB] opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="mt-auto flex items-center gap-1 text-xs font-medium text-[#0057B8] opacity-0 transition-opacity group-hover:opacity-100">
         Open
         <Icon name="ArrowRight" className="size-3.5" />
       </div>
@@ -798,7 +798,7 @@ export function SuperAdminDashboard({
       {/* ----------------------------------------------------------------- */}
       <section>
         <div className="mb-3 flex items-center gap-2">
-          <Icon name="Activity" className="size-4 text-[#2563EB]" />
+          <Icon name="Activity" className="size-4 text-[#0057B8]" />
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             System-wide Metrics
           </h2>
@@ -831,7 +831,7 @@ export function SuperAdminDashboard({
       <section>
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Icon name="LayoutGrid" className="size-4 text-[#2563EB]" />
+            <Icon name="LayoutGrid" className="size-4 text-[#0057B8]" />
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Quick Actions · Master Hub
             </h2>
@@ -855,27 +855,27 @@ export function SuperAdminDashboard({
       {/* ----------------------------------------------------------------- */}
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-2xl border-2 border-[#E2E8F0] bg-white p-1.5">
-          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
             <Icon name="Gauge" className="mr-1.5 size-4" />
             System Overview
           </TabsTrigger>
-          <TabsTrigger value="employee" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+          <TabsTrigger value="employee" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
             <Icon name="UserCog" className="mr-1.5 size-4" />
             Employee Control
           </TabsTrigger>
-          <TabsTrigger value="branch" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+          <TabsTrigger value="branch" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
             <Icon name="Building" className="mr-1.5 size-4" />
             Branch Control
           </TabsTrigger>
-          <TabsTrigger value="country" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+          <TabsTrigger value="country" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
             <Icon name="Globe" className="mr-1.5 size-4" />
             Country Control
           </TabsTrigger>
-          <TabsTrigger value="ai" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+          <TabsTrigger value="ai" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
             <Icon name="Bot" className="mr-1.5 size-4" />
             AI Command
           </TabsTrigger>
-          <TabsTrigger value="settings" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+          <TabsTrigger value="settings" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
             <Icon name="Settings" className="mr-1.5 size-4" />
             System Settings
           </TabsTrigger>
@@ -1074,7 +1074,7 @@ export function SuperAdminDashboard({
                 <div className="rounded-xl border-2 border-[#E2E8F0] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-[#2563EB]">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-[#0057B8]">
                         <Icon name="FileCheck2" className="size-4" />
                       </div>
                       <div>
@@ -1082,7 +1082,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Bulk + CSV pipelines</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-blue-100 text-[#2563EB] hover:bg-blue-100">0</Badge>
+                    <Badge className="border-0 bg-blue-100 text-[#0057B8] hover:bg-blue-100">0</Badge>
                   </div>
                   <Button
                     variant="outline"
@@ -1116,7 +1116,7 @@ export function SuperAdminDashboard({
                             </span>
                             <span className="tabular-nums text-muted-foreground">{n}</span>
                           </div>
-                          <MiniBar value={n} max={max} color="#2563EB" />
+                          <MiniBar value={n} max={max} color="#0057B8" />
                         </div>
                       );
                     })}
@@ -1195,7 +1195,7 @@ export function SuperAdminDashboard({
         <TabsContent value="employee" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#2563EB]">Employee Control</h3>
+              <h3 className="text-base font-bold text-[#0057B8]">Employee Control</h3>
               <p className="text-sm text-muted-foreground">
                 {employeeCount} employees · {activeEmployees} active · {pendingProfiles} pending profile
                 approvals
@@ -1228,7 +1228,7 @@ export function SuperAdminDashboard({
                             <span className="font-medium text-foreground">{desig}</span>
                             <span className="tabular-nums text-muted-foreground">{n}</span>
                           </div>
-                          <MiniBar value={n} max={max} color="#2563EB" />
+                          <MiniBar value={n} max={max} color="#0057B8" />
                         </div>
                       );
                     })}
@@ -1252,7 +1252,7 @@ export function SuperAdminDashboard({
                             <span className="font-medium text-foreground">{dept}</span>
                             <span className="tabular-nums text-muted-foreground">{n}</span>
                           </div>
-                          <MiniBar value={n} max={max} color="#F97316" />
+                          <MiniBar value={n} max={max} color="#E8501A" />
                         </div>
                       );
                     })}
@@ -1375,7 +1375,7 @@ export function SuperAdminDashboard({
         <TabsContent value="branch" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#2563EB]">Branch Control</h3>
+              <h3 className="text-base font-bold text-[#0057B8]">Branch Control</h3>
               <p className="text-sm text-muted-foreground">
                 {branchStats.length} branches · {employeeCount} total employees
               </p>
@@ -1414,12 +1414,12 @@ export function SuperAdminDashboard({
                   return (
                     <Card
                       key={b.name}
-                      className="rounded-2xl border-2 border-[#E2E8F0] hover:border-[#2563EB]/40 transition-colors"
+                      className="rounded-2xl border-2 border-[#E2E8F0] hover:border-[#0057B8]/40 transition-colors"
                     >
                       <CardContent className="pt-5">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
+                            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
                               <Icon name="Building" className="size-5" />
                             </div>
                             <div>
@@ -1475,7 +1475,7 @@ export function SuperAdminDashboard({
                           <span className="font-medium text-foreground">{b.name}</span>
                           <span className="tabular-nums text-muted-foreground">{b.employees} staff</span>
                         </div>
-                        <MiniBar value={b.employees} max={max} color="#2563EB" />
+                        <MiniBar value={b.employees} max={max} color="#0057B8" />
                       </div>
                     );
                   })}
@@ -1489,7 +1489,7 @@ export function SuperAdminDashboard({
         <TabsContent value="country" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#2563EB]">Country Control</h3>
+              <h3 className="text-base font-bold text-[#0057B8]">Country Control</h3>
               <p className="text-sm text-muted-foreground">
                 {countries.length} destinations · {universities.length} universities · {courses.length} courses ·{" "}
                 {scholarships.length} scholarships
@@ -1515,7 +1515,7 @@ export function SuperAdminDashboard({
               {countryStats.map((c) => (
                 <Card
                   key={c.id}
-                  className="rounded-2xl border-2 border-[#E2E8F0] hover:border-[#2563EB]/40 transition-colors"
+                  className="rounded-2xl border-2 border-[#E2E8F0] hover:border-[#0057B8]/40 transition-colors"
                 >
                   <CardContent className="pt-5">
                     <div className="flex items-start justify-between gap-2">
@@ -1604,7 +1604,7 @@ export function SuperAdminDashboard({
                             </span>
                             <span className="tabular-nums text-muted-foreground">{c.universities}</span>
                           </div>
-                          <MiniBar value={c.universities} max={max} color="#2563EB" />
+                          <MiniBar value={c.universities} max={max} color="#0057B8" />
                         </div>
                       );
                     })}
@@ -1627,7 +1627,7 @@ export function SuperAdminDashboard({
                             </span>
                             <span className="tabular-nums text-muted-foreground">{c.courses}</span>
                           </div>
-                          <MiniBar value={c.courses} max={max} color="#F97316" />
+                          <MiniBar value={c.courses} max={max} color="#E8501A" />
                         </div>
                       );
                     })}
@@ -1641,7 +1641,7 @@ export function SuperAdminDashboard({
         <TabsContent value="ai" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#2563EB]">AI Command Center</h3>
+              <h3 className="text-base font-bold text-[#0057B8]">AI Command Center</h3>
               <p className="text-sm text-muted-foreground">
                 {agents.length} agents across {Object.keys(agentsByDept).length} departments ·{" "}
                 {aiJobsProcessed.toLocaleString()} jobs processed
@@ -1738,7 +1738,7 @@ export function SuperAdminDashboard({
         <TabsContent value="settings" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#2563EB]">System Settings</h3>
+              <h3 className="text-base font-bold text-[#0057B8]">System Settings</h3>
               <p className="text-sm text-muted-foreground">
                 Global configuration across the entire ALO Education platform
               </p>
@@ -1756,7 +1756,7 @@ export function SuperAdminDashboard({
                 <CardContent className="pt-5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
+                      <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
                         <Icon name={card.icon} className="size-4.5" />
                       </div>
                       <p className="text-sm font-semibold text-foreground">{card.title}</p>
@@ -1851,14 +1851,14 @@ export function SuperAdminDashboard({
       {/* ----------------------------------------------------------------- */}
       {/* 5. Security & RBAC summary                                         */}
       {/* ----------------------------------------------------------------- */}
-      <Card className="rounded-2xl border-2 border-[#2563EB]/20 bg-gradient-to-br from-[#e8f0fb]/40 to-white">
+      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-br from-[#e8f0fb]/40 to-white">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#2563EB] text-white alo-shadow">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#0057B8] text-white alo-shadow">
               <Icon name="ShieldCheck" className="size-6" />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-bold text-[#2563EB]">Security & RBAC Summary</h3>
+              <h3 className="text-base font-bold text-[#0057B8]">Security & RBAC Summary</h3>
               <p className="mt-0.5 text-sm text-muted-foreground">
                 Defense-in-depth across backend, frontend, and middleware layers.
               </p>
@@ -1871,7 +1871,7 @@ export function SuperAdminDashboard({
                 key={item.title}
                 className="rounded-xl border-2 border-[#E2E8F0] bg-white p-4"
               >
-                <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
+                <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
                   <Icon name={item.icon} className="size-4.5" />
                 </div>
                 <p className="mt-3 text-sm font-semibold text-foreground">{item.title}</p>
@@ -1907,4 +1907,3 @@ export function SuperAdminDashboard({
     </div>
   );
 }
-export default SuperAdminDashboard;

@@ -1,94 +1,96 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { PUBLIC_SCHOLARSHIP_STATUSES } from "@/lib/website/public-content";
+import { db } from '@/lib/db';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+const PUBLIC_SCHOLARSHIP_FIELDS = {
+  scholarshipCode: true,
+  name: true,
+  slug: true,
+  countrySlug: true,
+  universitySlug: true,
+  courseSlug: true,
+  studyLevel: true,
+  subject: true,
+  amount: true,
+  currency: true,
+  fundingType: true,
+  eligibility: true,
+  minimumRequirements: true,
+  coverage: true,
+  openingDate: true,
+  deadline: true,
+  decisionDate: true,
+  documentsRequired: true,
+  applicationMethod: true,
+  applicationUrl: true,
+  metaTitle: true,
+  metaDescription: true,
+};
 
-// GET /api/scholarships/[slug] — single scholarship with FAQs + relationships (public)
-export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
   try {
     const { slug } = await params;
 
     const scholarship = await db.scholarship.findUnique({
       where: { slug },
-      include: {
-        faqs: { where: { status: "active" }, orderBy: { sortOrder: "asc" } },
-      },
+      select: PUBLIC_SCHOLARSHIP_FIELDS,
     });
 
-    if (!scholarship) {
-      return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
-    }
-    if (!PUBLIC_SCHOLARSHIP_STATUSES.includes(scholarship.status)) {
-      return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
+    if (!scholarship || scholarship.status !== 'OPEN') {
+      return NextResponse.json({ error: 'Scholarship not found' }, { status: 404 });
     }
 
-    const relationships = await db.contentRelationship.findMany({
-      where: {
-        status: "ACTIVE",
-        OR: [
-          { sourceType: "SCHOLARSHIP", sourceId: scholarship.id },
-          { targetType: "SCHOLARSHIP", targetId: scholarship.id },
-        ],
-      },
-      orderBy: { sortOrder: "asc" },
-    });
-    const related = await hydrateRelationships(relationships.map((r) => {
-      const outgoing = r.sourceType === "SCHOLARSHIP" && r.sourceId === scholarship.id;
-      return outgoing
-        ? { ...r, _direction: "out" }
-        : { ...r, targetType: r.sourceType, targetId: r.sourceId, _direction: "in" };
-    }));
+    // Fetch related university and course info
+    const [universityInfo, courseInfo, countryInfo] = await Promise.all([
+      scholarship.universitySlug
+        ? db.universityPage.findUnique({
+            where: { slug: scholarship.universitySlug, approvalStatus: 'PUBLISHED' },
+            select: {
+              name: true,
+              slug: true,
+              logo: true,
+              city: true,
+              countrySlug: true,
+            },
+          })
+        : null,
+      scholarship.courseSlug
+        ? db.coursePage.findUnique({
+            where: { slug: scholarship.courseSlug, approvalStatus: 'PUBLISHED' },
+            select: { name: true, slug: true, level: true, subject: true },
+          })
+        : null,
+      scholarship.countrySlug
+        ? db.countryPage.findUnique({
+            where: { slug: scholarship.countrySlug, approvalStatus: 'PUBLISHED' },
+            select: { name: true, shortName: true, flag: true, slug: true },
+          })
+        : null,
+    ]);
 
-    return NextResponse.json({
-      scholarship: {
-        ...scholarship,
-        coverage: safeJson(scholarship.coverage),
-        minimumRequirements: safeJson(scholarship.minimumRequirements),
-        documentsRequired: safeJson(scholarship.documentsRequired),
-      },
-      related,
-    });
-  } catch (err: any) {
-    console.error("[scholarships.get] error:", err);
-    return NextResponse.json({ error: "Failed to fetch scholarship" }, { status: 500 });
-  }
-}
+    const safeScholarship = {
+      ...scholarship,
+      universityName: universityInfo?.name ?? null,
+      universityInfo: universityInfo ?? null,
+      courseInfo: courseInfo ?? null,
+      countryInfo: countryInfo ?? null,
+    };
 
-// ─── Helpers ────────────────────────────────────────────────
-
-function safeJson(v: string | null): any {
-  if (!v) return null;
-  try { return JSON.parse(v); } catch { return v; }
-}
-
-async function hydrateRelationships(rels: any[]): Promise<any[]> {
-  const out: any[] = [];
-  for (const r of rels) {
-    let target: any = null;
-    try {
-      switch (r.targetType) {
-        case "SERVICE":
-          target = await db.service.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, icon: true, shortDescription: true } });
-          break;
-        case "SCHOLARSHIP":
-          target = await db.scholarship.findUnique({ where: { id: r.targetId, status: { in: PUBLIC_SCHOLARSHIP_STATUSES } }, select: { slug: true, name: true, fundingType: true, amount: true, currency: true } });
-          break;
-        case "RESOURCE":
-          target = await db.resource.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, excerpt: true, featuredImage: true } });
-          break;
+    return NextResponse.json(
+      { scholarship: safeScholarship },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
       }
-    } catch {}
-    if (!target) continue;
-    out.push({
-      id: r.id,
-      direction: r._direction,
-      relationshipType: r.relationshipType,
-      targetType: r.targetType,
-      targetId: r.targetId,
-      target,
-    });
+    );
+  } catch (error) {
+    console.error('Scholarship detail API error:', error);
+    return NextResponse.json(
+      { error: 'Failed to load scholarship' },
+      { status: 500 }
+    );
   }
-  return out;
 }

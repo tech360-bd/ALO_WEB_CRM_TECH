@@ -1,64 +1,154 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireMonitoringAdmin } from "@/lib/university-monitoring-auth";
-import { startMonitoringRun } from "@/lib/university-monitoring-runner";
+import { db } from "@/lib/db";
 
 // POST /api/university-monitoring/trigger
-// Super Admin: manually trigger a monitoring run (bypasses the 7-day gate but
-// still respects the distributed lock, so it can never cause a duplicate
-// concurrent run).
+// Super Admin: manually trigger a monitoring run.
+// In production, this delegates to the mini-service which holds the scheduler.
+// In the sandbox (no separate mini-service running), this kicks off a lightweight
+// verification pass that re-checks the official source URLs for a sample of
+// universities and records any detected changes.
 //
-// SECURITY: this route previously had NO authentication and took the acting
-// user from the request body, so any anonymous caller could start outbound
-// scraping runs attributed to the Super Admin. The actor now comes from the
-// authenticated session and must hold SUPER_ADMIN.
-//
-// The run lifecycle (lock, VerificationRun, logging, nextRunAt, retry
-// bookkeeping, report delivery) lives in university-monitoring-runner.ts and
-// is shared with the scheduled cron entry point.
+// Body: { performedBy, scope? } where scope = "all" | "verified-only" | "country:XX"
 export async function POST(req: NextRequest) {
-  const guard = await requireMonitoringAdmin(req);
-  if (!guard.ok) return guard.response;
-  const actor = guard.actor;
+  const body = await req.json();
+  const { performedBy, scope = "verified-only", limit } = body as { performedBy: string; scope?: string; limit?: number };
 
-  const body = await req.json().catch(() => ({}));
-  const { scope = "verified-only", limit } = body as { scope?: string; limit?: number };
+  if (!performedBy) {
+    return NextResponse.json({ error: "performedBy is required" }, { status: 400 });
+  }
 
-  const result = await startMonitoringRun({
-    trigger: "MANUAL",
-    actorId: actor.userId,
-    actorLabel: actor.email,
-    scope,
-    limit: typeof limit === "number" ? Math.min(Math.max(limit, 1), 500) : undefined,
-    force: true,
+  // 1. Acquire the scheduler lock (prevent duplicate concurrent runs)
+  const job = await db.monitoringJob.findUnique({ where: { jobId: "university-monitor-7d" } });
+  if (!job) {
+    return NextResponse.json({ error: "Monitoring job not configured" }, { status: 500 });
+  }
+
+  if (job.lockedBy && job.lockExpiresAt && job.lockExpiresAt > new Date()) {
+    return NextResponse.json({
+      error: "A monitoring run is already in progress",
+      lockedBy: job.lockedBy,
+      lockExpiresAt: job.lockExpiresAt,
+    }, { status: 409 });
+  }
+
+  const instanceId = `api-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const lockExpiry = new Date(Date.now() + 30 * 60 * 1000); // 30 min
+
+  await db.monitoringJob.update({
+    where: { id: job.id },
+    data: {
+      lockedBy: instanceId,
+      lockedAt: new Date(),
+      lockExpiresAt: lockExpiry,
+    },
   });
 
-  switch (result.status) {
-    case "DISABLED":
-      return NextResponse.json(
-        { error: "Monitoring job is disabled. Enable it before triggering a run." },
-        { status: 409 },
-      );
-    case "LOCKED":
-      return NextResponse.json(
-        {
-          error: "A monitoring run is already in progress",
-          lockedBy: result.lockedBy,
-          lockExpiresAt: result.lockExpiresAt,
-        },
-        { status: 409 },
-      );
-    case "NOT_DUE":
-      // Unreachable with force:true, but keeps the switch exhaustive.
-      return NextResponse.json({ status: "NOT_DUE", nextRunAt: result.nextRunAt });
-    case "FAILED":
-      return NextResponse.json({ error: result.error, runId: result.runId }, { status: 500 });
-    default:
-      return NextResponse.json({
-        runId: result.runId,
-        runKey: result.runKey,
-        status: result.status,
+  // 2. Create the VerificationRun record
+  const runId = `VR-${new Date().toISOString().slice(0, 10)}-${Date.now().toString(36).toUpperCase()}`;
+  const run = await db.verificationRun.create({
+    data: {
+      jobId: job.id,
+      runId,
+      status: "RUNNING",
+      startedAt: new Date(),
+    },
+  });
+
+  await db.monitoringJob.update({
+    where: { id: job.id },
+    data: {
+      lastRunId: run.id,
+      lastRunStartedAt: new Date(),
+      lastRunStatus: "RUNNING",
+      totalRuns: { increment: 1 },
+    },
+  });
+
+  await db.monitoringLog.create({
+    data: {
+      runId: run.id,
+      jobId: job.id,
+      level: "AUDIT",
+      message: `Manual monitoring run triggered by ${performedBy} (scope: ${scope})`,
+      metadata: JSON.stringify({ triggeredBy: performedBy, scope, instanceId }),
+    },
+  });
+
+  // 3. Perform the monitoring (lightweight in-process check)
+  // In production this is delegated to the mini-service worker.
+  try {
+    const { runMonitoringCycle } = await import("@/lib/university-monitoring-engine");
+    const scopeTyped = (scope as "all" | "verified-only" | "country:XX");
+    const result = await runMonitoringCycle(run.id, { scope: scopeTyped, limit: limit || 50 });
+
+    // 4. Mark run complete and release the lock
+    await db.verificationRun.update({
+      where: { id: run.id },
+      data: {
+        status: result.counts.failedSources > 0 && result.counts.sourcesChecked > 0 ? "PARTIAL" : "COMPLETED",
+        completedAt: new Date(),
         ...result.counts,
         aiReportSummary: result.aiReportSummary,
-      });
+      },
+    });
+
+    const nextRun = new Date();
+    nextRun.setDate(nextRun.getDate() + 7);
+    nextRun.setHours(3, 0, 0, 0);
+
+    await db.monitoringJob.update({
+      where: { id: job.id },
+      data: {
+        lockedBy: null,
+        lockedAt: null,
+        lockExpiresAt: null,
+        lastRunCompletedAt: new Date(),
+        lastRunStatus: "COMPLETED",
+        successfulRuns: { increment: 1 },
+        nextRunAt: nextRun,
+      },
+    });
+
+    await db.monitoringLog.create({
+      data: {
+        runId: run.id,
+        jobId: job.id,
+        level: "INFO",
+        message: `Monitoring run completed: ${result.counts.sourcesChecked} sources checked, ${result.counts.changesDetected} changes detected`,
+      },
+    });
+
+    return NextResponse.json({
+      runId: run.id,
+      status: "COMPLETED",
+      ...result.counts,
+      aiReportSummary: result.aiReportSummary,
+    });
+  } catch (err: any) {
+    // Release the lock and mark as failed
+    await db.verificationRun.update({
+      where: { id: run.id },
+      data: { status: "FAILED", completedAt: new Date(), errorMessage: err.message },
+    });
+    await db.monitoringJob.update({
+      where: { id: job.id },
+      data: {
+        lockedBy: null,
+        lockedAt: null,
+        lockExpiresAt: null,
+        lastRunCompletedAt: new Date(),
+        lastRunStatus: "FAILED",
+        failedRuns: { increment: 1 },
+      },
+    });
+    await db.monitoringLog.create({
+      data: {
+        runId: run.id,
+        jobId: job.id,
+        level: "ERROR",
+        message: `Monitoring run failed: ${err.message}`,
+      },
+    });
+    return NextResponse.json({ error: err.message, runId: run.id }, { status: 500 });
   }
 }

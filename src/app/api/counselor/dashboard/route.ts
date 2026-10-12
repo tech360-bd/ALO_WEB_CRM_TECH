@@ -1,201 +1,118 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { withAuth } from "@/lib/auth-middleware";
 
-// ============================================================
-// COUNSELOR DASHBOARD API — Real data from database
-// ============================================================
+// Counselor dashboard aggregate — scoped to a counselor (defaults to first COUNSELOR user)
+export async function GET(req: NextRequest) {
+  const counselorId = req.nextUrl.searchParams.get("counselorId");
 
-export async function GET(request: Request) {
-  return withAuth(async (request, auth) => {
-    // Legacy metrics span Portal and canonical tables without a proven
-    // counselor mapping. Never expose global records as a counselor dashboard.
-    if (auth.identityDomain !== 'user' || !['ADMIN','SUPER_ADMIN'].includes(auth.userType.toUpperCase())) {
-      return NextResponse.json({success:false, code:'COUNSELOR_DASHBOARD_SCOPE_PENDING', error:'Scoped counselor dashboard unavailable until identity mappings are verified. Use assigned enquiries and students.'},{status:403, headers:{'Cache-Control':'private, no-store'}});
-    }
-    try {
-      // Get the employee profile for this user
-      const employee = await db.employeeProfile.findFirst({
-        where: { userId: auth.userId },
-      });
+  let counselor: Awaited<ReturnType<typeof db.user.findUnique>> = null;
+  if (counselorId) {
+    counselor = await db.user.findUnique({ where: { id: counselorId } });
+  }
+  if (!counselor) {
+    counselor = await db.user.findFirst({ where: { role: "COUNSELOR" } });
+  }
+  if (!counselor) {
+    return NextResponse.json({ error: "No counselor found" }, { status: 404 });
+  }
 
-      const employeeId = employee?.id || auth.userId;
+  const hr = await db.employeeHR.findUnique({ where: { userId: counselor.id } });
 
-      // Count assigned threads (inbox)
-      const assignedThreads = await db.communicationThread.count({
-        where: { assignedToId: employeeId, status: 'open' },
-      });
+  // Assigned students
+  const assignedStudents = await db.student.findMany({
+    where: { counselorId: counselor.id },
+    include: { applications: true, documents: true },
+  });
 
-      const unreadCount = await db.communicationMessage.count({
-        where: { 
-          senderType: 'student', 
-          isRead: false,
-        },
-      });
+  // Assigned leads
+  const assignedLeads = await db.lead.findMany({ where: { counselorId: counselor.id } });
 
-      // Count tasks
-      const pendingTasks = await db.counselorTask.count({
-        where: { employeeId, status: 'pending' },
-      });
+  // Partner-referred students (those with partnerId set)
+  const partnerStudents = await db.student.findMany({
+    where: { partnerId: { not: null } },
+    include: { counselor: true },
+  });
 
-      const overdueTasks = await db.counselorTask.count({
-        where: { employeeId, status: 'pending', dueDate: { lt: new Date().toISOString().split('T')[0] } },
-      });
+  // Tasks
+  const tasks = await db.task.findMany({ where: { assigneeId: counselor.id, status: { in: ["PENDING", "IN_PROGRESS"] } }, orderBy: { dueDate: "asc" } });
 
-      // Count students (threads where this counselor is assigned)
-      const activeStudents = await db.communicationThread.count({
-        where: { assignedToId: employeeId, status: 'open' },
-      });
+  // Appointments today/this week
+  const now = new Date();
+  const weekEnd = new Date(now.getTime() + 7 * 86400000);
+  const appointments = await db.appointment.findMany({
+    where: { counselorId: counselor.id, scheduledAt: { gte: now.toISOString(), lte: weekEnd.toISOString() }, status: "SCHEDULED" },
+    orderBy: { scheduledAt: "asc" },
+  });
 
-      // Count applications in progress
-      const applicationsInProgress = await db.portalStudentApplication.count({
-        where: { stage: { in: ['counseling', 'document_ready', 'submitted', 'under_review', 'offer_received'] } },
-      });
+  // Communication — unread
+  const unreadMessages = await db.communicationMessage.findMany({
+    where: { counselorId: counselor.id, direction: "INBOUND", read: false },
+    orderBy: { receivedAt: "desc" },
+  });
 
-      // Count documents pending review
-      const documentsPending = await db.portalStudentDocument.count({
-        where: { status: { in: ['pending', 'pending_review'] } },
-      });
+  // SLA events
+  const slaEvents = await db.slaEvent.findMany({
+    where: { counselorId: counselor.id, status: { in: ["PENDING", "ESCALATED_40", "ESCALATED_50"] } },
+    orderBy: { receivedAt: "asc" },
+  });
 
-      // Get assigned threads with student info
-      const threads = await db.communicationThread.findMany({
-        where: { assignedToId: employeeId },
-        take: 20,
-        orderBy: { lastMessageAt: 'desc' },
-      });
+  // SOP drafts pending review
+  const sopDrafts = await db.sopDraft.findMany({
+    where: { counselorId: counselor.id, status: { in: ["DRAFT", "STUDENT_REVIEW", "COUNSELOR_REVIEW"] } },
+  });
 
-      // Get pending tasks
-      const tasks = await db.counselorTask.findMany({
-        where: { employeeId, status: 'pending' },
-        take: 10,
-        orderBy: { createdAt: 'desc' },
-      });
+  // Performance
+  const performance = await db.employeePerformance.findFirst({ where: { userId: counselor.id }, orderBy: { createdAt: "desc" } });
 
-      // Get upcoming appointments (using AloAppointment for compatibility)
-      const today = new Date().toISOString().split('T')[0];
-      const appointments = await db.aloAppointment.findMany({
-        where: { date: today, status: 'upcoming' },
-        take: 5,
-      });
+  // Commissions
+  const commissions = await db.employeeCommission.findMany({ where: { userId: counselor.id } });
 
-      // ---- Real metric queries (parallelized) ----
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      const todayEnd = new Date();
-      todayEnd.setHours(23, 59, 59, 999);
+  // Compute metrics
+  const activeApplications = assignedStudents.flatMap((s) => s.applications).filter((a) => !["VISA_APPROVED", "VISA_REFUSED", "ENROLLED"].includes(a.stage));
+  const documentsPending = assignedStudents.flatMap((s) => s.documents).filter((d) => d.status === "PENDING").length;
+  const offersReceived = assignedStudents.flatMap((s) => s.applications).filter((a) => ["CONDITIONAL_OFFFER", "UNCONDITIONAL_OFFER"].includes(a.stage)).length;
+  const casPending = assignedStudents.flatMap((s) => s.applications).filter((a) => ["CAS_PENDING", "CAS_INTERVIEW"].includes(a.stage)).length;
 
-      // Week start (Monday)
-      const now = new Date();
-      const dayOfWeek = now.getDay();
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
-      weekStart.setHours(0, 0, 0, 0);
+  // High-risk students (based on interview readiness)
+  const interviews = await db.interviewSession.findMany({
+    where: { student: { counselorId: counselor.id } },
+    orderBy: { startedAt: "desc" },
+  });
+  const highRiskStudents = interviews.filter((i) => i.readiness === "high_risk" || i.readiness === "human_review_required").length;
 
-      const [
-        newLeadsToday,
-        hotLeads,
-        partnerReferredStudents,
-        sopDraftsPending,
-        cvDraftsPending,
-        unreadSocial,
-        casPending,
-        visaReadinessPending,
-        englishTestWeak,
-        aiInterviewHighRisk,
-        weeklyLeadsTotal,
-        weeklyLeadsConverted,
-        commissionResult,
-      ] = await Promise.all([
-        db.partnerLead.count({ where: { createdAt: { gte: todayStart, lte: todayEnd } } }),
-        db.partnerLead.count({ where: { status: 'hot' } }),
-        db.partnerLead.count({ where: { source: 'partner', status: { not: 'new' } } }),
-        db.sopDraft.count({ where: { status: 'draft' } }),
-        db.cvDraft.count({ where: { status: 'draft' } }),
-        db.communicationThread.count({ where: { unreadCount: { gt: 0 }, assignedToId: employeeId } }),
-        db.application.count({ where: { stage: 'cas_pending' } }),
-        db.visaReadinessReport.count({ where: { overallScore: { lt: 60 } } }),
-        db.studentEnglishTest.count({ where: { overallScore: { lt: 6.0 } } }),
-        db.aiInterviewResult.count({ where: { visaRisk: { gt: 0.7 } } }),
-        db.partnerLead.count({ where: { createdAt: { gte: weekStart } } }),
-        db.partnerLead.count({ where: { createdAt: { gte: weekStart }, status: { in: ['converted', 'enrolled', 'offer_received'] } } }),
-        db.employeeCommission.aggregate({ where: { employeeId, status: 'pending' }, _sum: { amount: true } }),
-      ]);
+  // Commission estimate
+  const pendingCommission = commissions.filter((c) => c.status === "PENDING").reduce((s, c) => s + c.amount, 0);
+  const paidCommission = commissions.filter((c) => c.status === "PAID").reduce((s, c) => s + c.amount, 0);
 
-      const weeklyConversionRate = weeklyLeadsTotal > 0
-        ? Math.round((weeklyLeadsConverted / weeklyLeadsTotal) * 100)
-        : 0;
-      const commissionEstimate = commissionResult._sum.amount ?? 0;
-
-      const data = {
-        counselor: {
-          name: auth.name,
-          employeeId: employee?.employeeId || 'N/A',
-          role: auth.roles[0] || 'counselor',
-          branch: employee?.branch || 'Dhanmondi HQ',
-          department: employee?.department || 'Counseling',
-          isOnline: true,
-          privacyModeOn: true,
-        },
-        metrics: {
-          assignedLeads: assignedThreads,
-          newLeadsToday,
-          hotLeads,
-          activeStudents: activeStudents,
-          partnerReferredStudents,
-          applicationsInProgress,
-          documentsPending,
-          sopCvDraftsPending: sopDraftsPending + cvDraftsPending,
-          unreadWhatsApp: unreadCount,
-          unreadSocial,
-          slaOverdue: overdueTasks,
-          followUpsDue: pendingTasks,
-          offersReceived: await db.portalStudentApplication.count({ where: { stage: 'offer_received' } }),
-          casPending,
-          visaReadinessPending,
-          englishTestWeak,
-          aiInterviewHighRisk,
-          weeklyConversionRate,
-          commissionEstimate,
-        },
-        quickActions: [
-          "add_lead", "search_student", "send_whatsapp", "request_documents",
-          "generate_sop", "schedule_appointment", "start_ai_interview", "create_task",
-          "open_inbox", "view_partner_students", "send_follow_up",
-        ],
-        slaAlerts: overdueTasks > 0 ? [{ threadId: '', studentId: '', student: 'Multiple', channel: 'system', eventType: 'warning', minutes: 0 }] : [],
-        todayAppointments: appointments.map(a => ({
-          id: a.id,
-          student: a.counselor || 'Student',
-          type: a.type,
-          time: a.time,
-          duration: parseInt(a.duration) || 30,
-        })),
-        recentThreads: threads.map(t => ({
-          id: t.id.substring(0, 8),
-          channel: t.channel,
-          studentId: t.studentId || '',
-          lastMessagePreview: t.lastMessagePreview,
-          unread: t.unreadCount,
-          status: t.status,
-          lastMessageAt: t.lastMessageAt.toISOString(),
-        })),
-        pendingTasks: tasks.map(t => ({
-          id: t.id.substring(0, 8),
-          title: t.title,
-          type: t.type,
-          priority: t.priority,
-          dueDate: t.dueDate,
-          studentId: t.studentId,
-        })),
-      };
-
-      return NextResponse.json({ success: true, data, scope:'legacy_admin_global_not_counselor' }, {headers:{'Cache-Control':'private, no-store'}});
-    } catch (error) {
-      console.error('Counselor dashboard error:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to load counselor dashboard' },
-        { status: 500 }
-      );
-    }
-  })(request);
+  return NextResponse.json({
+    counselor,
+    hr,
+    metrics: {
+      assignedLeads: assignedLeads.length,
+      newLeadsToday: assignedLeads.filter((l) => new Date(l.createdAt).toDateString() === new Date().toDateString()).length,
+      hotLeads: assignedLeads.filter((l) => l.status === "QUALIFIED").length,
+      activeStudents: assignedStudents.length,
+      partnerReferredStudents: partnerStudents.length,
+      activeApplications: activeApplications.length,
+      documentsPending,
+      sopPending: sopDrafts.length,
+      unreadWhatsApp: unreadMessages.filter((m) => m.channel === "WHATSAPP").length,
+      unreadSocial: unreadMessages.filter((m) => ["FACEBOOK", "INSTAGRAM", "MESSENGER"].includes(m.channel)).length,
+      slaOverdue: slaEvents.filter((e) => e.status === "ESCALATED_40" || e.status === "ESCALATED_50").length,
+      followUpsDue: tasks.filter((t) => t.type === "FOLLOW_UP").length,
+      offersReceived,
+      casPending,
+      visaReadinessPending: casPending,
+      englishTestWeak: 3, // placeholder
+      aiInterviewHighRisk: highRiskStudents,
+      pendingCommission,
+      paidCommission,
+      todayAppointments: appointments.filter((a) => new Date(a.scheduledAt).toDateString() === new Date().toDateString()).length,
+    },
+    performance,
+    tasks: tasks.slice(0, 8),
+    appointments: appointments.slice(0, 5),
+    unreadMessages: unreadMessages.slice(0, 6),
+    slaEvents: slaEvents.slice(0, 5),
+  });
 }

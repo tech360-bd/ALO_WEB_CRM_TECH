@@ -84,7 +84,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
   return (
     <div className="bg-white">
       {/* Breadcrumb */}
-      <div className="border-b border-[#2563EB]/10 bg-[#f7f9fc]">
+      <div className="border-b border-[#0057B8]/10 bg-[#f7f9fc]">
         <div className="mx-auto max-w-[1280px] px-4 py-3 lg:px-6">
           <Breadcrumb
             items={[
@@ -99,11 +99,11 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
       <section className="bg-alo-hero">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="max-w-3xl">
-            <Badge variant="outline" className="mb-4 border-[#2563EB]/30 bg-white/70 text-[#2563EB]">
+            <Badge variant="outline" className="mb-4 border-[#0057B8]/30 bg-white/70 text-[#0057B8]">
               <Icon name="Globe" className="mr-1.5 size-3.5" />
               {countries.length || 13} verified destinations
             </Badge>
-            <h1 className="text-4xl font-black text-[#2563EB] md:text-5xl">Study Destinations</h1>
+            <h1 className="text-4xl font-black text-[#0057B8] md:text-5xl">Study Destinations</h1>
             <p className="mt-3 text-base text-muted-foreground md:text-lg">
               Explore {countries.length || 13} countries with verified tuition, visa, work rights, and scholarship data — all written in ALO's own words.
             </p>
@@ -112,12 +112,12 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
           {/* Stats row */}
           <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
             {STATS.map((s) => (
-              <div key={s.label} className="rounded-2xl border-2 border-[#2563EB]/15 bg-white/80 px-4 py-4">
+              <div key={s.label} className="rounded-2xl border-2 border-[#0057B8]/15 bg-white/80 px-4 py-4">
                 <div className="flex items-center gap-2">
                   <div className={cn(
                     "flex size-8 items-center justify-center rounded-lg",
-                    s.accent === "blue" && "bg-[#e8f0fb] text-[#2563EB]",
-                    s.accent === "orange" && "bg-[#fdece4] text-[#F97316]",
+                    s.accent === "blue" && "bg-[#e8f0fb] text-[#0057B8]",
+                    s.accent === "orange" && "bg-[#fdece4] text-[#E8501A]",
                     s.accent === "emerald" && "bg-emerald-50 text-emerald-600",
                     s.accent === "violet" && "bg-violet-50 text-violet-600",
                   )}>
@@ -142,7 +142,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
             title="No destinations available"
             description="Country pages will appear here once published."
             action={
-              <Button onClick={() => onNavigate("public-course-finder")} className="bg-[#F97316] text-white hover:bg-[#F97316]/90">
+              <Button onClick={() => onNavigate("public-course-finder")} className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
                 Try Course Finder
               </Button>
             }
@@ -162,13 +162,13 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
               return (
                 <Card
                   key={c.slug}
-                  className="flex flex-col rounded-2xl border-2 border-[#2563EB]/15 p-6 transition-all hover:border-[#2563EB] hover:shadow-lg"
+                  className="flex flex-col rounded-2xl border-2 border-[#0057B8]/15 p-6 transition-all hover:border-[#0057B8] hover:shadow-lg"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <span className="text-5xl">{c.flag}</span>
                       <div>
-                        <p className="text-xl font-black text-[#2563EB]">{c.shortName}</p>
+                        <p className="text-xl font-black text-[#0057B8]">{c.shortName}</p>
                         <p className="text-xs text-muted-foreground">
                           <Icon name="MapPin" className="mr-1 inline size-3" />
                           {c.shortName} · Capital: {c.capital}
@@ -186,7 +186,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                   <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{c.intro}</p>
 
                   {/* Quick facts mini-grid */}
-                  <div className="mt-4 rounded-xl border border-[#2563EB]/10 bg-[#f7f9fc] px-3 py-1">
+                  <div className="mt-4 rounded-xl border border-[#0057B8]/10 bg-[#f7f9fc] px-3 py-1">
                     <InfoRow
                       label="Intakes"
                       value={intakes.length ? intakes.join(", ") : "—"}
@@ -197,7 +197,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                     />
                     <InfoRow
                       label="Tuition from"
-                      value={<span className="font-bold text-[#F97316]">{tuitionLine}</span>}
+                      value={<span className="font-bold text-[#E8501A]">{tuitionLine}</span>}
                     />
                     <InfoRow
                       label="English tests"
@@ -213,7 +213,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                   <div className="mt-auto flex flex-col gap-2 pt-5 sm:flex-row">
                     <Button
                       onClick={() => onNavigate("public-country", c.slug)}
-                      className="flex-1 bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                      className="flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                     >
                       <Icon name="ArrowRight" className="mr-1.5 size-4" />
                       Explore Country
@@ -221,7 +221,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                     <Button
                       onClick={() => onNavigate("public-course-finder")}
                       variant="outline"
-                      className="flex-1 border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]"
+                      className="flex-1 border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
                     >
                       <Icon name="Search" className="mr-1.5 size-4" />
                       Find Courses
@@ -237,18 +237,18 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
       {/* Bottom CTA */}
       <section className="bg-[#f7f9fc]">
         <div className="mx-auto max-w-[1280px] px-4 py-14 lg:px-6">
-          <div className="rounded-3xl border-2 border-[#2563EB]/15 bg-white p-6 md:p-10">
+          <div className="rounded-3xl border-2 border-[#0057B8]/15 bg-white p-6 md:p-10">
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
               <div className="flex flex-col justify-center">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Still deciding?</p>
-                <h2 className="mt-1 text-3xl font-black text-[#2563EB] md:text-4xl">Not sure which country is right for you?</h2>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Still deciding?</p>
+                <h2 className="mt-1 text-3xl font-black text-[#0057B8] md:text-4xl">Not sure which country is right for you?</h2>
                 <p className="mt-3 text-base text-muted-foreground">
                   Use our AI Course Finder to match your background, budget, and goals to the right destination — or book a free consultation with a senior ALO counselor.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Button
                     onClick={() => onNavigate("public-course-finder")}
-                    className="bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                    className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                   >
                     <Icon name="Search" className="mr-2 size-4" />
                     Use Course Finder
@@ -256,7 +256,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                   <Button
                     onClick={() => setShowConsult((v) => !v)}
                     variant="outline"
-                    className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]"
+                    className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
                   >
                     <Icon name={showConsult ? "X" : "CalendarCheck"} className="mr-2 size-4" />
                     {showConsult ? "Hide form" : "Book Free Consultation"}
@@ -292,4 +292,3 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
     </div>
   );
 }
-export default PublicDestinations;

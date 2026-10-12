@@ -1,26 +1,5 @@
 "use client";
 
-/**
- * Phone Call Center — Unified Communication surface.
- *
- * Capabilities:
- *  • KPI dashboard (calls, answered, missed, avg duration, unknown callers pending)
- *  • Tabs: Active Calls / Call History / Unknown Callers / Call Outcomes
- *  • Initiate Call dialog (student search → application → outbound call log)
- *  • Unknown-contact triage (CREATE_LEAD / LINK_EXISTING / CREATE_PARTNER_CONTACT / MARK_SPAM)
- *  • Call Outcome logging with consent, follow-up, student-visible & internal notes
- *  • Simulated Incoming Call banner (only when ?incomingCall=phone is present)
- *
- * APIs:
- *  GET  /api/omnichannel/dashboard
- *  GET  /api/communications/calls/unknown
- *  GET  /api/communications/calls/outcomes
- *  POST /api/communications/calls/outcomes
- *  POST /api/communications/calls/unknown
- *  GET  /api/students
- *  GET  /api/applications
- */
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -28,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -37,12 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -52,1564 +24,869 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
-import {
   Icon,
   PageHeader,
-  KpiCard,
   SectionCard,
   EmptyState,
-  ErrorState,
   LoadingGrid,
-  Notification,
-  StatusBadge,
+} from "@/components/alo/shared";
+import {
   DataTable,
-  DatePicker,
-  type Column,
-  type AccentColor,
-} from "@/components/alo/ui";
-import { timeAgo, fmtDate } from "@/lib/alo-types";
+  type DataTableColumn,
+  Pill,
+  fetchJson,
+  fmtDateTime,
+  fmtDuration,
+  timeAgoShort,
+  PRIORITY_COLORS,
+} from "@/components/alo/comm-helpers";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────
+
+interface OmnichannelResponse {
+  stats: {
+    totalPhoneCalls: number;
+    missedCalls: number;
+  };
+  phoneCalls: PhoneCall[];
+}
 
 interface PhoneCall {
   id: string;
-  callType: string; // INCOMING | OUTGOING | MISSED
+  callType: string;
   fromNumber: string;
   toNumber: string;
   duration: number;
-  recordingPath?: string | null;
-  callNotes?: string | null;
-  disposition?: string | null;
-  studentId?: string | null;
-  leadId?: string | null;
-  partnerId?: string | null;
-  employeeId?: string | null;
+  callNotes: string | null;
+  disposition: string;
   createdAt: string;
 }
 
 interface UnknownContact {
   id: string;
-  phone: string;
-  email?: string | null;
-  name?: string | null;
-  source: string;
-  callLogId?: string | null;
+  incomingPhone: string;
+  incomingName?: string | null;
+  source?: string | null;
+  reason?: string | null;
   matchedToStudent: boolean;
-  matchedStudentId?: string | null;
-  matchedLeadId?: string | null;
-  matchedPartnerId?: string | null;
   action?: string | null;
-  actionById?: string | null;
-  actionAt?: string | null;
   createdAt: string;
 }
 
 interface CallOutcome {
   id: string;
-  callLogId?: string | null;
   outcome: string;
   summary?: string | null;
   studentVisibleNote?: string | null;
   internalNote?: string | null;
   nextAction?: string | null;
   followUpAt?: string | null;
-  consentRecorded: boolean;
-  recordingPath?: string | null;
+  consentRecorded?: boolean | null;
+  duration?: number | null;
   counselorId?: string | null;
   studentId?: string | null;
   applicationId?: string | null;
-  duration: number;
   createdAt: string;
 }
 
-interface StudentLite {
+interface StudentOption {
   id: string;
-  fullName: string;
-  email: string;
-  mobile: string;
-  altMobile?: string | null;
-}
-
-interface ApplicationLite {
-  id: string;
-  applicationId: string;
   studentId: string;
-  university: string;
-  course: string;
-  stage: string;
+  fullName: string;
+  mobile?: string | null;
 }
 
-interface DashboardData {
-  stats: {
-    totalPhoneCalls: number;
-    missedCalls: number;
-    totalEmails: number;
-    totalSms: number;
-  };
-  phoneCalls: PhoneCall[];
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Constants & helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-const CALL_TYPE_META: Record<string, { accent: AccentColor; icon: string }> = {
-  INCOMING: { accent: "blue", icon: "PhoneIncoming" },
-  OUTGOING: { accent: "emerald", icon: "PhoneOutgoing" },
-  MISSED: { accent: "rose", icon: "PhoneMissed" },
-};
-
-const OUTCOME_META: Record<string, { accent: AccentColor; icon: string }> = {
-  ANSWERED: { accent: "emerald", icon: "PhoneCall" },
-  NO_ANSWER: { accent: "amber", icon: "PhoneOff" },
-  BUSY: { accent: "amber", icon: "PhoneOff" },
-  CALLBACK_REQUESTED: { accent: "sky", icon: "PhoneForwarded" },
-  WRONG_NUMBER: { accent: "rose", icon: "X" },
-  RESOLVED: { accent: "emerald", icon: "CheckCircle2" },
-  ESCALATED: { accent: "rose", icon: "AlertTriangle" },
-};
-
-const UNKNOWN_ACTION_META: Record<string, { accent: AccentColor; icon: string; label: string }> = {
-  CREATE_LEAD: { accent: "blue", icon: "UserPlus", label: "Create Lead" },
-  LINK_EXISTING: { accent: "emerald", icon: "Link2", label: "Link Existing" },
-  CREATE_PARTNER_CONTACT: { accent: "violet", icon: "Handshake", label: "Create Partner Contact" },
-  MARK_SPAM: { accent: "rose", icon: "Ban", label: "Mark Spam" },
-};
-
-const SOURCE_META: Record<string, { accent: AccentColor; label: string }> = {
-  PHONE_CALL: { accent: "blue", label: "Phone Call" },
-  WHATSAPP: { accent: "emerald", label: "WhatsApp" },
-  WEBSITE_CHAT: { accent: "sky", label: "Website Chat" },
-};
-
-function formatDuration(seconds: number): string {
-  if (!seconds || seconds <= 0) return "0:00";
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
-function formatDateTime(d: string): string {
-  try {
-    return new Date(d).toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return d;
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main component
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Main Component ────────────────────────────────────────────────────────
 
 export function PhoneCallCenter() {
   const { toast } = useToast();
-
-  const [activeTab, setActiveTab] = React.useState("active-calls");
-  const [dashboard, setDashboard] = React.useState<DashboardData | null>(null);
-  const [unknownContacts, setUnknownContacts] = React.useState<UnknownContact[]>([]);
-  const [callOutcomes, setCallOutcomes] = React.useState<CallOutcome[]>([]);
+  const [stats, setStats] = React.useState<{ totalPhoneCalls: number; missedCalls: number } | null>(null);
+  const [calls, setCalls] = React.useState<PhoneCall[]>([]);
+  const [unknowns, setUnknowns] = React.useState<UnknownContact[]>([]);
+  const [outcomes, setOutcomes] = React.useState<CallOutcome[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  // Initiate Call dialog
+  const [error, setError] = React.useState(false);
+  const [tab, setTab] = React.useState("call-history");
   const [initiateOpen, setInitiateOpen] = React.useState(false);
-
-  // Call detail drawer
-  const [selectedCall, setSelectedCall] = React.useState<PhoneCall | null>(null);
-
-  // Log call outcome dialog
   const [logOutcomeOpen, setLogOutcomeOpen] = React.useState(false);
-
-  // Incoming Call banner (simulated) — only show if ?incomingCall=phone is present
-  const [showIncomingBanner, setShowIncomingBanner] = React.useState(false);
-  const [incomingPhone, setIncomingPhone] = React.useState<string>("");
-
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    const inc = url.searchParams.get("incomingCall");
-    if (inc) {
-      setIncomingPhone(inc);
-      setShowIncomingBanner(true);
-    }
-  }, []);
 
   const fetchAll = React.useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setError(false);
     try {
-      const [dashRes, unkRes, outRes] = await Promise.all([
-        fetch("/api/omnichannel/dashboard"),
-        fetch("/api/communications/calls/unknown"),
-        fetch("/api/communications/calls/outcomes"),
+      const [omniRes, unknownRes, outcomeRes] = await Promise.all([
+        fetchJson<OmnichannelResponse>("/api/omnichannel/dashboard"),
+        fetchJson<{ unknownContacts: UnknownContact[] }>("/api/communications/calls/unknown"),
+        fetchJson<{ outcomes: CallOutcome[] }>("/api/communications/calls/outcomes"),
       ]);
-      if (!dashRes.ok) throw new Error("Failed to fetch dashboard");
-      const dashJson = await dashRes.json();
-      const unkJson = unkRes.ok ? await unkRes.json() : { contacts: [] };
-      const outJson = outRes.ok ? await outRes.json() : { outcomes: [] };
-      setDashboard(dashJson);
-      setUnknownContacts(unkJson.contacts || []);
-      setCallOutcomes(outJson.outcomes || []);
-    } catch (e: any) {
-      setError(e?.message || "Failed to load phone call center");
+      setStats(omniRes.stats);
+      setCalls(omniRes.phoneCalls || []);
+      setUnknowns(unknownRes.unknownContacts || []);
+      setOutcomes(outcomeRes.outcomes || []);
+    } catch (err) {
+      console.error("[phone-call-center]", err);
+      setError(true);
+      toast({
+        title: "Failed to load call center",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   React.useEffect(() => {
     void fetchAll();
   }, [fetchAll]);
 
-  // ── Derived KPIs ──
-  const totalCalls = dashboard?.stats.totalPhoneCalls ?? 0;
-  const missedCalls = dashboard?.stats.missedCalls ?? 0;
-  const answered = totalCalls - missedCalls;
-  const avgDuration = React.useMemo(() => {
-    const calls = dashboard?.phoneCalls ?? [];
-    if (calls.length === 0) return 0;
-    return Math.round(calls.reduce((s, c) => s + (c.duration || 0), 0) / calls.length);
-  }, [dashboard?.phoneCalls]);
-  const unknownPending = unknownContacts.filter((c) => !c.matchedToStudent && !c.action).length;
+  const answered = calls.filter((c) => c.callType !== "MISSED").length;
+  const missed = calls.filter((c) => c.callType === "MISSED").length || stats?.missedCalls || 0;
+  const avgDuration =
+    calls.length > 0
+      ? Math.round(calls.reduce((s, c) => s + (c.duration || 0), 0) / calls.length)
+      : 0;
+  const unknownPending = unknowns.length;
 
-  // ── Resolve unknown contact action ──
-  const handleUnknownAction = async (contact: UnknownContact, action: string) => {
-    const meta = UNKNOWN_ACTION_META[action];
-    if (!meta) return;
-    try {
-      const res = await fetch("/api/communications/calls/unknown", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: contact.id,
-          action,
-          actionById: "counselor-demo",
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Action failed");
-      toast({
-        title: `${meta.label} — done`,
-        description: `${contact.phone} → ${action.replace(/_/g, " ").toLowerCase()}`,
-      });
-      void fetchAll();
-    } catch (e: any) {
-      toast({
-        title: "Action failed",
-        description: e?.message || "Could not resolve contact",
-        variant: "destructive",
-      });
-    }
-  };
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <PageHeader title="Phone Call Center" subtitle="Track, log, and resolve all inbound and outbound calls." icon="Phone" />
+        <LoadingGrid count={5} />
+      </div>
+    );
+  }
 
-  // ── Incoming-call banner actions ──
-  const dismissIncoming = () => setShowIncomingBanner(false);
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <PageHeader title="Phone Call Center" subtitle="Track, log, and resolve all inbound and outbound calls." icon="Phone" />
+        <div className="rounded-2xl border border-dashed border-rose-200 bg-rose-50/50 px-6 py-10 text-center">
+          <p className="text-sm font-semibold text-[#991B1B]">Failed to load call center</p>
+          <Button onClick={() => void fetchAll()} className="mt-3" size="sm">Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6 p-4 lg:p-6">
+    <div className="space-y-6">
       <PageHeader
         title="Phone Call Center"
-        subtitle="Initiate calls, match callers, record outcomes"
-        icon="PhoneCall"
+        subtitle="Track, log, and resolve all inbound and outbound calls."
+        icon="Phone"
         action={
-          <Button variant="cta" onClick={() => setInitiateOpen(true)}>
-            <Icon name="Phone" className="size-4" /> Initiate Call
+          <Button
+            onClick={() => setInitiateOpen(true)}
+            className="h-10 bg-[#0057B8] text-white hover:bg-[#003a7a]"
+          >
+            <Icon name="PhoneOutgoing" className="mr-2 size-4" />
+            Initiate Call
           </Button>
         }
       />
 
-      {/* Incoming-call simulated banner */}
-      {showIncomingBanner && (
-        <Notification
-          type="warning"
-          title={`Incoming call from ${incomingPhone}`}
-          message={
-            <div className="space-y-1">
-              <p>
-                A live incoming call is ringing. Caller ID is{" "}
-                <span className="font-mono font-semibold">{incomingPhone}</span>.
-              </p>
-              <p className="text-xs opacity-80">
-                If matched to a student, their name & student ID will appear here.
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="default">
-                  <Icon name="UserCircle" className="size-3.5" /> Open Contact
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    // Trigger the unknown-contact flow by creating a ContactMatchReview
-                    // (here we just simulate by opening the create-lead dialog path)
-                    toast({
-                      title: "Create Lead",
-                      description: `Lead capture for ${incomingPhone} — redirecting to CRM Lead form.`,
-                    });
-                  }}
-                >
-                  <Icon name="UserPlus" className="size-3.5" /> Create Lead
-                </Button>
-              </div>
-            </div>
-          }
-          onDismiss={dismissIncoming}
-        />
-      )}
-
       {/* KPI row */}
-      {loading ? (
-        <LoadingGrid count={5} />
-      ) : error ? (
-        <ErrorState
-          title="Could not load Phone Call Center"
-          description={error}
-          onRetry={() => void fetchAll()}
-        />
-      ) : (
-        <>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            <KpiCard
-              label="Total Calls"
-              value={totalCalls}
-              icon="PhoneCall"
-              accent="blue"
-              hint="all channels"
-            />
-            <KpiCard
-              label="Answered"
-              value={answered}
-              icon="PhoneCall"
-              accent="emerald"
-              hint={`${totalCalls > 0 ? Math.round((answered / totalCalls) * 100) : 0}% pick-up`}
-            />
-            <KpiCard
-              label="Missed"
-              value={missedCalls}
-              icon="PhoneMissed"
-              accent="rose"
-            />
-            <KpiCard
-              label="Avg Duration"
-              value={formatDuration(avgDuration)}
-              icon="Timer"
-              accent="amber"
-            />
-            <KpiCard
-              label="Unknown Callers"
-              value={unknownPending}
-              icon="UserX"
-              accent="violet"
-              hint="pending triage"
-            />
-          </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <KpiCard label="Total Calls" value={calls.length} icon="Phone" accent="blue" />
+        <KpiCard label="Answered" value={answered} icon="PhoneCall" accent="emerald" />
+        <KpiCard label="Missed" value={missed} icon="PhoneMissed" accent="rose" />
+        <KpiCard label="Avg Duration" value={fmtDuration(avgDuration)} icon="Clock" accent="violet" />
+        <KpiCard label="Unknown Pending" value={unknownPending} icon="UserSearch" accent="amber" />
+      </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5">
-            <div className="overflow-x-auto rounded-xl border border-[var(--alo-border)] bg-[var(--alo-surface)] p-1.5">
-              <TabsList className="h-auto w-max gap-1 bg-transparent">
-                <TabsTrigger value="active-calls" className="data-[state=active]:bg-[var(--alo-blue-soft)] data-[state=active]:text-[var(--alo-blue-strong)]">
-                  <Icon name="Radio" className="mr-1.5 size-3.5" /> Active Calls
-                </TabsTrigger>
-                <TabsTrigger value="call-history" className="data-[state=active]:bg-[var(--alo-blue-soft)] data-[state=active]:text-[var(--alo-blue-strong)]">
-                  <Icon name="History" className="mr-1.5 size-3.5" /> Call History
-                </TabsTrigger>
-                <TabsTrigger value="unknown-callers" className="data-[state=active]:bg-[var(--alo-blue-soft)] data-[state=active]:text-[var(--alo-blue-strong)]">
-                  <Icon name="UserX" className="mr-1.5 size-3.5" /> Unknown Callers
-                  {unknownPending > 0 && (
-                    <Badge variant="warning" className="ml-1.5 px-1.5 py-0 text-[10px]">
-                      {unknownPending}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="call-outcomes" className="data-[state=active]:bg-[var(--alo-blue-soft)] data-[state=active]:text-[var(--alo-blue-strong)]">
-                  <Icon name="ClipboardCheck" className="mr-1.5 size-3.5" /> Call Outcomes
-                </TabsTrigger>
-              </TabsList>
-            </div>
+      <Tabs value={tab} onValueChange={setTab} className="space-y-5">
+        <div className="overflow-x-auto alo-scroll rounded-xl border border-[#E2E8F0] bg-white p-1.5">
+          <TabsList className="h-auto w-max gap-1 bg-transparent">
+            <TabsTrigger value="active-calls" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+              <Icon name="PhoneCall" className="mr-1.5 size-3.5" /> Active Calls
+            </TabsTrigger>
+            <TabsTrigger value="call-history" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+              <Icon name="History" className="mr-1.5 size-3.5" /> Call History
+            </TabsTrigger>
+            <TabsTrigger value="unknown-callers" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+              <Icon name="UserSearch" className="mr-1.5 size-3.5" /> Unknown Callers
+            </TabsTrigger>
+            <TabsTrigger value="call-outcomes" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+              <Icon name="ClipboardCheck" className="mr-1.5 size-3.5" /> Call Outcomes
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-            {/* Active Calls — UI demo of the live-call surface */}
-            <TabsContent value="active-calls" className="space-y-4">
-              <SectionCard
-                title="Active Calls"
-                description="Live in-progress calls — simulated surface for the operator"
-                icon="Radio"
-                accent="blue"
+        <TabsContent value="active-calls" className="space-y-4">
+          <SectionCard
+            title="Active Calls"
+            description="Live in-progress calls (placeholder — telephony integration required)"
+            icon="PhoneCall"
+          >
+            <EmptyState
+              icon="PhoneCall"
+              title="No active calls"
+              description="When telephony integration is enabled, in-progress calls will appear here with live call controls (mute, hold, transfer)."
+            />
+          </SectionCard>
+        </TabsContent>
+
+        <TabsContent value="call-history" className="space-y-4">
+          <SectionCard
+            title="Call History"
+            description={`${calls.length} call(s) recorded`}
+            icon="History"
+          >
+            <CallHistoryTable calls={calls} />
+          </SectionCard>
+        </TabsContent>
+
+        <TabsContent value="unknown-callers" className="space-y-4">
+          <SectionCard
+            title="Unknown Callers"
+            description={`${unknownPending} unmatched incoming caller(s)`}
+            icon="UserSearch"
+          >
+            <UnknownCallersTable
+              unknowns={unknowns}
+              onResolve={(id, action) => void resolveUnknown(id, action)}
+            />
+          </SectionCard>
+        </TabsContent>
+
+        <TabsContent value="call-outcomes" className="space-y-4">
+          <SectionCard
+            title="Call Outcomes"
+            description={`${outcomes.length} logged outcome(s)`}
+            icon="ClipboardCheck"
+            action={
+              <Button
+                onClick={() => setLogOutcomeOpen(true)}
+                className="h-9 bg-[#0057B8] text-white hover:bg-[#003a7a]"
               >
-                <EmptyState
-                  icon="PhoneCall"
-                  title="No active calls right now"
-                  description="When a call connects, the live operator console appears here with real-time controls (mute, hold, transfer, take notes)."
-                  accent="blue"
-                  action={
-                    <Button variant="alo" size="sm" onClick={() => setInitiateOpen(true)}>
-                      <Icon name="Phone" className="size-3.5" /> Initiate Call
-                    </Button>
-                  }
-                />
-              </SectionCard>
-            </TabsContent>
+                <Icon name="Plus" className="mr-1.5 size-4" />
+                Log Call Outcome
+              </Button>
+            }
+          >
+            <CallOutcomesTable outcomes={outcomes} />
+          </SectionCard>
+        </TabsContent>
+      </Tabs>
 
-            {/* Call History */}
-            <TabsContent value="call-history" className="space-y-4">
-              <CallHistoryTable
-                calls={dashboard?.phoneCalls ?? []}
-                onRowClick={(c) => setSelectedCall(c)}
-              />
-            </TabsContent>
+      <InitiateCallDialog open={initiateOpen} onOpenChange={setInitiateOpen} onDone={() => void fetchAll()} />
+      <LogOutcomeDialog open={logOutcomeOpen} onOpenChange={setLogOutcomeOpen} onDone={() => void fetchAll()} />
+    </div>
+  );
 
-            {/* Unknown Callers */}
-            <TabsContent value="unknown-callers" className="space-y-4">
-              <UnknownCallersTable
-                contacts={unknownContacts}
-                onAction={handleUnknownAction}
-              />
-            </TabsContent>
+  async function resolveUnknown(id: string, action: "MATCH_STUDENT" | "MATCH_LEAD" | "CREATE_LEAD" | "IGNORE" | "BLOCK") {
+    try {
+      await fetchJson("/api/communications/calls/unknown", {
+        method: "POST",
+        body: JSON.stringify({ id, action }),
+      });
+      toast({
+        title: "Unknown contact resolved",
+        description: `Action: ${action.replace(/_/g, " ").toLowerCase()}`,
+      });
+      setUnknowns((u) => u.filter((x) => x.id !== id));
+    } catch (err) {
+      toast({
+        title: "Failed to resolve contact",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    }
+  }
+}
 
-            {/* Call Outcomes */}
-            <TabsContent value="call-outcomes" className="space-y-4">
-              <CallOutcomesTable
-                outcomes={callOutcomes}
-                onLogOutcome={() => setLogOutcomeOpen(true)}
-                onCreated={() => void fetchAll()}
-              />
-            </TabsContent>
-          </Tabs>
+// ─── Sub-components ────────────────────────────────────────────────────────
 
-          {/* Initiate Call Dialog */}
-          <InitiateCallDialog
-            open={initiateOpen}
-            onOpenChange={setInitiateOpen}
-            onInitiated={() => {
-              toast({
-                title: "Call initiated",
-                description: "Outgoing call logged. Outcome recorded as CALLBACK_REQUESTED.",
-              });
-              void fetchAll();
-            }}
-          />
-
-          {/* Log Call Outcome Dialog */}
-          <LogCallOutcomeDialog
-            open={logOutcomeOpen}
-            onOpenChange={setLogOutcomeOpen}
-            onSaved={() => {
-              toast({
-                title: "Call outcome logged",
-                description: "The outcome has been recorded against the student.",
-              });
-              void fetchAll();
-            }}
-          />
-
-          {/* Call Detail Sheet */}
-          <CallDetailSheet
-            call={selectedCall}
-            onOpenChange={(o) => !o && setSelectedCall(null)}
-          />
-        </>
-      )}
+function KpiCard({
+  label,
+  value,
+  icon,
+  accent,
+}: {
+  label: string;
+  value: React.ReactNode;
+  icon: string;
+  accent: "blue" | "orange" | "emerald" | "amber" | "violet" | "rose";
+}) {
+  const accentMap: Record<string, string> = {
+    blue: "bg-[#EFF6FF] text-[#0057B8]",
+    orange: "bg-[#FFF7ED] text-[#C2410C]",
+    emerald: "bg-[#DCFCE7] text-[#15803D]",
+    amber: "bg-[#FEF3C7] text-[#92400E]",
+    violet: "bg-violet-50 text-violet-600",
+    rose: "bg-[#FEE2E2] text-[#991B1B]",
+  };
+  return (
+    <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4 alo-shadow">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">{label}</p>
+          <p className="mt-1 text-xl font-bold tabular-nums text-[#0F172A] sm:text-2xl">{value}</p>
+        </div>
+        <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-xl", accentMap[accent])}>
+          <Icon name={icon} className="size-4" />
+        </span>
+      </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Call History Table
-// ─────────────────────────────────────────────────────────────────────────────
+const CALL_TYPE_COLORS: Record<string, string> = {
+  INCOMING: "bg-blue-100 text-blue-700",
+  OUTGOING: "bg-emerald-100 text-emerald-700",
+  MISSED: "bg-rose-100 text-rose-700",
+  VOICEMAIL: "bg-amber-100 text-amber-700",
+};
 
-function CallHistoryTable({
-  calls,
-  onRowClick,
-}: {
-  calls: PhoneCall[];
-  onRowClick: (call: PhoneCall) => void;
-}) {
-  if (calls.length === 0) {
-    return (
-      <SectionCard title="Call History" icon="History" accent="blue">
-        <EmptyState
-          icon="PhoneCall"
-          title="No call logs yet"
-          description="Inbound and outbound calls will appear here once the telephony integration syncs logs."
-        />
-      </SectionCard>
-    );
-  }
-
-  const columns: Column<PhoneCall>[] = [
+function CallHistoryTable({ calls }: { calls: PhoneCall[] }) {
+  const columns: DataTableColumn<PhoneCall>[] = [
     {
       key: "createdAt",
       header: "Time",
-      sortable: true,
-      sortAccessor: (r) => new Date(r.createdAt).getTime(),
-      cell: (r) => <span className="text-xs">{formatDateTime(r.createdAt)}</span>,
+      render: (c) => <span className="text-xs">{fmtDateTime(c.createdAt)}</span>,
     },
     {
       key: "callType",
       header: "Type",
-      cell: (r) => {
-        const meta = CALL_TYPE_META[r.callType] || CALL_TYPE_META.INCOMING;
-        return (
-          <StatusBadge
-            status={r.callType}
-            colorMap={{
-              INCOMING: "blue",
-              OUTGOING: "emerald",
-              MISSED: "rose",
-            }}
-            labels={{
-              INCOMING: "Incoming",
-              OUTGOING: "Outgoing",
-              MISSED: "Missed",
-            }}
-          />
-        );
-      },
+      render: (c) => (
+        <Pill className={CALL_TYPE_COLORS[c.callType] || "bg-slate-100 text-slate-700"}>
+          {c.callType.toLowerCase()}
+        </Pill>
+      ),
     },
     {
-      key: "from",
-      header: "From / To",
-      cell: (r) => (
-        <div className="text-xs leading-tight">
-          <div className="font-medium">
-            <Icon name="ArrowDownLeft" className="mr-1 inline size-3 text-[var(--alo-muted)]" />
-            {r.fromNumber || "—"}
-          </div>
-          <div className="text-[var(--alo-muted)]">
-            <Icon name="ArrowUpRight" className="mr-1 inline size-3" />
-            {r.toNumber || "—"}
-          </div>
-        </div>
-      ),
+      key: "fromNumber",
+      header: "From",
+      render: (c) => <span className="font-mono text-xs">{c.fromNumber || "—"}</span>,
+    },
+    {
+      key: "toNumber",
+      header: "To",
+      render: (c) => <span className="font-mono text-xs">{c.toNumber || "—"}</span>,
     },
     {
       key: "duration",
       header: "Duration",
-      sortable: true,
-      sortAccessor: (r) => r.duration,
-      cell: (r) => (
-        <span className="font-mono text-xs">{formatDuration(r.duration)}</span>
-      ),
-    },
-    {
-      key: "studentId",
-      header: "Student",
-      cell: (r) =>
-        r.studentId ? (
-          <Badge variant="blue" className="font-mono text-[10px]">
-            {r.studentId.slice(-6)}
-          </Badge>
-        ) : (
-          <span className="text-xs text-[var(--alo-muted)]">—</span>
-        ),
+      render: (c) => <span className="text-xs tabular-nums">{fmtDuration(c.duration)}</span>,
     },
     {
       key: "disposition",
-      header: "Outcome",
-      cell: (r) =>
-        r.disposition ? (
-          <Badge variant="neutral" className="text-[10px]">
-            {r.disposition}
-          </Badge>
-        ) : (
-          <span className="text-xs text-[var(--alo-muted)]">—</span>
-        ),
+      header: "Disposition",
+      render: (c) => (
+        <span className="text-xs text-[#475569]">{c.disposition || "—"}</span>
+      ),
     },
     {
       key: "callNotes",
       header: "Notes",
-      cell: (r) =>
-        r.callNotes ? (
-          <span className="line-clamp-1 max-w-[200px] text-xs text-[var(--alo-text-secondary)]">
-            {r.callNotes}
-          </span>
-        ) : (
-          <span className="text-xs text-[var(--alo-muted)]">—</span>
-        ),
+      render: (c) => (
+        <span className="line-clamp-1 text-xs text-[#64748B]">{c.callNotes || "—"}</span>
+      ),
     },
   ];
-
   return (
-    <SectionCard
-      title="Call History"
-      description="Inbound, outbound & missed calls — click any row for full details"
-      icon="History"
-      accent="blue"
-    >
-      <DataTable
-        columns={columns}
-        data={calls}
-        pageSize={10}
-        onRowClick={onRowClick}
-        emptyMessage="No calls recorded"
-      />
-    </SectionCard>
+    <DataTable
+      columns={columns}
+      rows={calls}
+      rowKey={(c) => c.id}
+      emptyTitle="No calls recorded"
+      emptyDescription="Inbound and outbound calls will appear here once telephony is connected."
+      emptyIcon="Phone"
+      maxHeight="480px"
+    />
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Unknown Callers Table
-// ─────────────────────────────────────────────────────────────────────────────
-
 function UnknownCallersTable({
-  contacts,
-  onAction,
+  unknowns,
+  onResolve,
 }: {
-  contacts: UnknownContact[];
-  onAction: (contact: UnknownContact, action: string) => void;
+  unknowns: UnknownContact[];
+  onResolve: (id: string, action: "MATCH_STUDENT" | "MATCH_LEAD" | "CREATE_LEAD" | "IGNORE" | "BLOCK") => void;
 }) {
-  if (contacts.length === 0) {
-    return (
-      <SectionCard title="Unknown Callers" icon="UserX" accent="violet">
-        <EmptyState
-          icon="UserX"
-          title="No unknown callers pending"
-          description="When a call comes in from a number not matched to any Student, Lead, or Partner, it will appear here for triage."
-          accent="violet"
-        />
-      </SectionCard>
-    );
-  }
-
-  const columns: Column<UnknownContact>[] = [
+  const columns: DataTableColumn<UnknownContact>[] = [
     {
-      key: "phone",
-      header: "Phone",
-      cell: (r) => <span className="font-mono text-xs font-semibold">{r.phone}</span>,
+      key: "createdAt",
+      header: "Time",
+      render: (c) => <span className="text-xs">{timeAgoShort(c.createdAt)}</span>,
     },
     {
-      key: "name",
-      header: "Caller",
-      cell: (r) =>
-        r.name ? (
-          <span className="text-xs font-medium">{r.name}</span>
-        ) : (
-          <span className="text-xs text-[var(--alo-muted)]">unknown</span>
-        ),
+      key: "incomingPhone",
+      header: "Phone",
+      render: (c) => <span className="font-mono text-xs">{c.incomingPhone}</span>,
+    },
+    {
+      key: "incomingName",
+      header: "Name",
+      render: (c) => <span className="text-xs">{c.incomingName || "Unknown"}</span>,
     },
     {
       key: "source",
       header: "Source",
-      cell: (r) => {
-        const meta = SOURCE_META[r.source] || { accent: "slate" as AccentColor, label: r.source };
-        return (
-          <StatusBadge
-            status={r.source}
-            colorMap={{ PHONE_CALL: "blue", WHATSAPP: "emerald", WEBSITE_CHAT: "sky" }}
-            labels={{ PHONE_CALL: "Phone Call", WHATSAPP: "WhatsApp", WEBSITE_CHAT: "Website Chat" }}
-          />
-        );
-      },
+      render: (c) => <span className="text-xs">{c.source || "—"}</span>,
     },
     {
-      key: "createdAt",
-      header: "Received At",
-      sortable: true,
-      sortAccessor: (r) => new Date(r.createdAt).getTime(),
-      cell: (r) => <span className="text-xs">{timeAgo(r.createdAt)}</span>,
+      key: "reason",
+      header: "Reason",
+      render: (c) => (
+        <span className="line-clamp-1 text-xs text-[#64748B]">{c.reason || "—"}</span>
+      ),
     },
     {
-      key: "action",
-      header: "Actions",
-      cell: (r) => (
-        <div className="flex flex-wrap gap-1">
-          {Object.entries(UNKNOWN_ACTION_META).map(([action, meta]) => (
-            <Button
-              key={action}
-              size="xs"
-              variant="outline"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAction(r, action);
-              }}
-              className={cn(
-                "h-7 border-[var(--alo-border)] px-2 text-[11px]",
-                meta.accent === "blue" && "hover:border-[var(--alo-blue)] hover:bg-[var(--alo-blue-soft)] hover:text-[var(--alo-blue-strong)]",
-                meta.accent === "emerald" && "hover:border-[var(--alo-success)] hover:bg-[var(--alo-success-soft)] hover:text-[var(--alo-success-strong)]",
-                meta.accent === "violet" && "hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700",
-                meta.accent === "rose" && "hover:border-[var(--alo-danger)] hover:bg-[var(--alo-danger-soft)] hover:text-[var(--alo-danger-strong)]",
-              )}
-            >
-              <Icon name={meta.icon} className="size-3" />
-              {meta.label}
-            </Button>
-          ))}
+      key: "actions",
+      header: "Resolve",
+      align: "right",
+      render: (c) => (
+        <div className="flex flex-wrap justify-end gap-1">
+          <Button
+            size="sm"
+            className="h-7 bg-emerald-600 px-2 text-[10px] hover:bg-emerald-700"
+            onClick={() => onResolve(c.id, "CREATE_LEAD")}
+          >
+            Create Lead
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 border-[#E2E8F0] px-2 text-[10px]"
+            onClick={() => onResolve(c.id, "MATCH_STUDENT")}
+          >
+            Link Existing
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 border-[#E2E8F0] px-2 text-[10px]"
+            onClick={() => onResolve(c.id, "IGNORE")}
+          >
+            Ignore
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 border-rose-200 px-2 text-[10px] text-rose-600 hover:bg-rose-50"
+            onClick={() => onResolve(c.id, "BLOCK")}
+          >
+            Block
+          </Button>
         </div>
       ),
     },
   ];
-
   return (
-    <SectionCard
-      title="Unknown Callers"
-      description="Triage calls from numbers not yet matched to a Student, Lead, or Partner"
-      icon="UserX"
-      accent="violet"
-    >
-      <DataTable
-        columns={columns}
-        data={contacts}
-        pageSize={10}
-        emptyMessage="No unknown callers pending"
-      />
-    </SectionCard>
+    <DataTable
+      columns={columns}
+      rows={unknowns}
+      rowKey={(c) => c.id}
+      emptyTitle="No unknown callers"
+      emptyDescription="Incoming calls that couldn't be auto-matched to a student or lead will appear here."
+      emptyIcon="UserSearch"
+      maxHeight="480px"
+    />
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Call Outcomes Table
-// ─────────────────────────────────────────────────────────────────────────────
-
-function CallOutcomesTable({
-  outcomes,
-  onLogOutcome,
-  onCreated,
-}: {
-  outcomes: CallOutcome[];
-  onLogOutcome: () => void;
-  onCreated: () => void;
-}) {
-  // unused onCreated prop reserved for future refetch hooks (kept in signature for parity)
-  void onCreated;
-
-  if (outcomes.length === 0) {
-    return (
-      <SectionCard
-        title="Call Outcomes"
-        description="Logged outcomes for every call — answered, missed, escalated, callback requested"
-        icon="ClipboardCheck"
-        accent="emerald"
-        action={
-          <Button size="sm" variant="alo" onClick={onLogOutcome}>
-            <Icon name="Plus" className="size-3.5" /> Log Call Outcome
-          </Button>
-        }
-      >
-        <EmptyState
-          icon="ClipboardCheck"
-          title="No call outcomes logged yet"
-          description="Log the outcome of every call — summary, next action, follow-up date and student-visible note."
-          accent="emerald"
-          action={
-            <Button size="sm" variant="alo" onClick={onLogOutcome}>
-              <Icon name="Plus" className="size-3.5" /> Log Call Outcome
-            </Button>
-          }
-        />
-      </SectionCard>
-    );
-  }
-
-  const columns: Column<CallOutcome>[] = [
+function CallOutcomesTable({ outcomes }: { outcomes: CallOutcome[] }) {
+  const columns: DataTableColumn<CallOutcome>[] = [
     {
       key: "createdAt",
-      header: "Time",
-      sortable: true,
-      sortAccessor: (r) => new Date(r.createdAt).getTime(),
-      cell: (r) => <span className="text-xs">{formatDateTime(r.createdAt)}</span>,
-    },
-    {
-      key: "counselorId",
-      header: "Counselor",
-      cell: (r) =>
-        r.counselorId ? (
-          <Badge variant="neutral" className="font-mono text-[10px]">
-            {r.counselorId.slice(-6)}
-          </Badge>
-        ) : (
-          <span className="text-xs text-[var(--alo-muted)]">—</span>
-        ),
-    },
-    {
-      key: "studentId",
-      header: "Student",
-      cell: (r) =>
-        r.studentId ? (
-          <Badge variant="blue" className="font-mono text-[10px]">
-            {r.studentId.slice(-6)}
-          </Badge>
-        ) : (
-          <span className="text-xs text-[var(--alo-muted)]">—</span>
-        ),
+      header: "Logged",
+      render: (o) => <span className="text-xs">{fmtDateTime(o.createdAt)}</span>,
     },
     {
       key: "outcome",
       header: "Outcome",
-      cell: (r) => {
-        const meta = OUTCOME_META[r.outcome] || { accent: "slate" as AccentColor, icon: "Circle" };
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-            <Icon name={meta.icon} className="size-3.5" />
-            <StatusBadge
-              status={r.outcome}
-              colorMap={{
-                ANSWERED: "emerald",
-                NO_ANSWER: "amber",
-                BUSY: "amber",
-                CALLBACK_REQUESTED: "sky",
-                WRONG_NUMBER: "rose",
-                RESOLVED: "emerald",
-                ESCALATED: "rose",
-              }}
-              labels={{
-                ANSWERED: "Answered",
-                NO_ANSWER: "No Answer",
-                BUSY: "Busy",
-                CALLBACK_REQUESTED: "Callback Requested",
-                WRONG_NUMBER: "Wrong Number",
-                RESOLVED: "Resolved",
-                ESCALATED: "Escalated",
-              }}
-            />
-          </span>
-        );
-      },
-    },
-    {
-      key: "duration",
-      header: "Duration",
-      cell: (r) => <span className="font-mono text-xs">{formatDuration(r.duration)}</span>,
+      render: (o) => (
+        <Pill className={PRIORITY_COLORS[o.outcome] || "bg-slate-100 text-slate-700"}>
+          {o.outcome.replace(/_/g, " ").toLowerCase()}
+        </Pill>
+      ),
     },
     {
       key: "summary",
       header: "Summary",
-      cell: (r) =>
-        r.summary ? (
-          <span className="line-clamp-1 max-w-[260px] text-xs text-[var(--alo-text-secondary)]">
-            {r.summary}
-          </span>
-        ) : (
-          <span className="text-xs text-[var(--alo-muted)]">—</span>
-        ),
+      render: (o) => (
+        <span className="line-clamp-1 text-xs text-[#0F172A]">{o.summary || "—"}</span>
+      ),
+    },
+    {
+      key: "nextAction",
+      header: "Next Action",
+      render: (o) => (
+        <span className="line-clamp-1 text-xs text-[#64748B]">{o.nextAction || "—"}</span>
+      ),
     },
     {
       key: "followUpAt",
-      header: "Follow-up",
-      cell: (r) =>
-        r.followUpAt ? (
-          <span className="text-xs font-medium text-[var(--alo-warning-strong)]">
-            {fmtDate(r.followUpAt)}
-          </span>
+      header: "Follow Up",
+      render: (o) => <span className="text-xs">{fmtDateTime(o.followUpAt)}</span>,
+    },
+    {
+      key: "duration",
+      header: "Duration",
+      render: (o) => <span className="text-xs tabular-nums">{fmtDuration(o.duration || 0)}</span>,
+    },
+    {
+      key: "consent",
+      header: "Consent",
+      render: (o) =>
+        o.consentRecorded ? (
+          <Pill className="bg-emerald-100 text-emerald-700">Yes</Pill>
         ) : (
-          <span className="text-xs text-[var(--alo-muted)]">—</span>
+          <Pill className="bg-slate-100 text-slate-600">No</Pill>
         ),
     },
   ];
-
   return (
-    <SectionCard
-      title="Call Outcomes"
-      description="Logged outcomes for every call — answered, missed, escalated, callback requested"
-      icon="ClipboardCheck"
-      accent="emerald"
-      action={
-        <Button size="sm" variant="alo" onClick={onLogOutcome}>
-          <Icon name="Plus" className="size-3.5" /> Log Call Outcome
-        </Button>
-      }
-    >
-      <DataTable
-        columns={columns}
-        data={outcomes}
-        pageSize={10}
-        emptyMessage="No outcomes recorded"
-      />
-    </SectionCard>
+    <DataTable
+      columns={columns}
+      rows={outcomes}
+      rowKey={(o) => o.id}
+      emptyTitle="No outcomes logged"
+      emptyDescription="Logged call outcomes will appear here for audit and follow-up."
+      emptyIcon="ClipboardCheck"
+      maxHeight="480px"
+    />
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Initiate Call Dialog (with student search + application picker)
-// ─────────────────────────────────────────────────────────────────────────────
 
 function InitiateCallDialog({
   open,
   onOpenChange,
-  onInitiated,
+  onDone,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  onInitiated: () => void;
+  onDone: () => void;
 }) {
   const { toast } = useToast();
-  const [students, setStudents] = React.useState<StudentLite[]>([]);
-  const [applications, setApplications] = React.useState<ApplicationLite[]>([]);
-  const [query, setQuery] = React.useState("");
-  const [selectedStudentId, setSelectedStudentId] = React.useState<string | null>(null);
-  const [selectedApplicationId, setSelectedApplicationId] = React.useState<string | null>(null);
-  const [calling, setCalling] = React.useState(false);
-  const [callStage, setCallStage] = React.useState<"idle" | "connecting" | "connected">("idle");
+  const [studentQuery, setStudentQuery] = React.useState("");
+  const [students, setStudents] = React.useState<StudentOption[]>([]);
+  const [selectedStudent, setSelectedStudent] = React.useState<StudentOption | null>(null);
+  const [phone, setPhone] = React.useState("");
+  const [applicationId, setApplicationId] = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
 
-  // Load students & applications on mount
+  // Search students as user types
   React.useEffect(() => {
-    if (!open) return;
-    void (async () => {
-      try {
-        const [sRes, aRes] = await Promise.all([
-          fetch("/api/students"),
-          fetch("/api/applications"),
-        ]);
-        if (sRes.ok) {
-          const sJson = await sRes.json();
-          setStudents(sJson.students || []);
-        }
-        if (aRes.ok) {
-          const aJson = await aRes.json();
-          setApplications(aJson.applications || []);
-        }
-      } catch {
-        // ignore — inputs remain free-text fallback
-      }
-    })();
-  }, [open]);
-
-  const filteredStudents = React.useMemo(() => {
-    if (!query.trim()) return students.slice(0, 20);
-    const q = query.toLowerCase();
-    return students
-      .filter(
-        (s) =>
-          s.fullName.toLowerCase().includes(q) ||
-          s.mobile?.toLowerCase().includes(q) ||
-          s.altMobile?.toLowerCase().includes(q) ||
-          s.email?.toLowerCase().includes(q),
-      )
-      .slice(0, 20);
-  }, [students, query]);
-
-  const selectedStudent = React.useMemo(
-    () => students.find((s) => s.id === selectedStudentId) || null,
-    [students, selectedStudentId],
-  );
-
-  const studentApplications = React.useMemo(
-    () =>
-      selectedStudentId
-        ? applications.filter((a) => a.studentId === selectedStudentId)
-        : [],
-    [applications, selectedStudentId],
-  );
-
-  const phoneDisplay = selectedStudent?.mobile || selectedStudent?.altMobile || "";
-
-  const reset = () => {
-    setQuery("");
-    setSelectedStudentId(null);
-    setSelectedApplicationId(null);
-    setCallStage("idle");
-  };
-
-  const handleCall = async () => {
-    if (!selectedStudentId) {
-      toast({
-        title: "Select a student",
-        description: "Pick a student from the search results to call.",
-        variant: "destructive",
-      });
+    if (!studentQuery || studentQuery.length < 2) {
+      setStudents([]);
       return;
     }
-    setCalling(true);
-    setCallStage("connecting");
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetchJson<{ students?: StudentOption[]; data?: StudentOption[] } | StudentOption[]>(
+          `/api/students?search=${encodeURIComponent(studentQuery)}`
+        );
+        const list = Array.isArray(res)
+          ? res
+          : res.students || res.data || [];
+        setStudents(list.slice(0, 10));
+      } catch {
+        setStudents([]);
+      }
+    }, 300);
+    return () => clearTimeout(t);
+  }, [studentQuery]);
+
+  const submit = async () => {
+    if (!phone.trim()) {
+      toast({ title: "Phone number is required", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
     try {
-      // Simulate a brief connecting state, then POST the outcome
-      await new Promise((r) => setTimeout(r, 1200));
-      const res = await fetch("/api/communications/calls/outcomes", {
+      await fetchJson("/api/communications/calls/outcomes", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          callType: "OUTGOING", // extra field — recorded for audit/UX (backend stores it as outcome=CALLBACK_REQUESTED)
-          outcome: "CALLBACK_REQUESTED",
-          summary: `Outgoing call initiated to ${selectedStudent?.fullName || "student"} (${phoneDisplay}). Call connecting…`,
-          counselorId: "counselor-demo",
-          studentId: selectedStudentId,
-          applicationId: selectedApplicationId || undefined,
-          duration: 0,
+          outcome: "INITIATED",
+          summary: `Outbound call initiated to ${phone}`,
+          studentId: selectedStudent?.id,
+          applicationId: applicationId || undefined,
           consentRecorded: true,
         }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to initiate call");
-      setCallStage("connected");
-      setTimeout(() => {
-        setCalling(false);
-        reset();
-        onOpenChange(false);
-        onInitiated();
-      }, 600);
-    } catch (e: any) {
-      setCalling(false);
-      setCallStage("idle");
+      toast({ title: "Call initiated", description: `Outbound call to ${phone}` });
+      setPhone("");
+      setStudentQuery("");
+      setSelectedStudent(null);
+      setApplicationId("");
+      onOpenChange(false);
+      onDone();
+    } catch (err) {
       toast({
-        title: "Could not initiate call",
-        description: e?.message || "Unknown error",
+        title: "Failed to initiate call",
+        description: err instanceof Error ? err.message : "Unknown error.",
         variant: "destructive",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => {
-        if (!calling) {
-          if (!o) reset();
-          onOpenChange(o);
-        }
-      }}
-    >
-      <DialogContent className="max-w-lg">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Icon name="Phone" className="size-5 text-[var(--alo-blue)]" />
-            Initiate Call
-          </DialogTitle>
+          <DialogTitle>Initiate Call</DialogTitle>
           <DialogDescription>
-            Search for a student by name or phone, optionally attach an application, then place the call.
+            Search for a student (optional) and enter the phone number to log an outbound call.
           </DialogDescription>
         </DialogHeader>
-
-        {callStage === "connecting" ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-8">
-            <div className="relative flex size-16 items-center justify-center">
-              <div className="absolute inset-0 animate-ping rounded-full bg-[var(--alo-blue)]/30" />
-              <div className="relative flex size-16 items-center justify-center rounded-full bg-[var(--alo-blue-soft)] text-[var(--alo-blue)]">
-                <Icon name="Phone" className="size-7 animate-pulse" />
+        <div className="space-y-3">
+          <div>
+            <Label htmlFor="student-search">Search Student (optional)</Label>
+            <Input
+              id="student-search"
+              value={studentQuery}
+              onChange={(e) => setStudentQuery(e.target.value)}
+              placeholder="Type student name or ID…"
+              className="mt-1"
+            />
+            {students.length > 0 && (
+              <div className="mt-1 max-h-44 overflow-y-auto rounded-lg border border-[#E2E8F0] bg-white">
+                {students.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      setSelectedStudent(s);
+                      setStudentQuery(`${s.fullName} (${s.studentId})`);
+                      if (s.mobile) setPhone(s.mobile);
+                      setStudents([]);
+                    }}
+                    className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-xs hover:bg-[#F1F5F9]"
+                  >
+                    <span className="font-semibold text-[#0F172A]">{s.fullName}</span>
+                    <span className="text-[#64748B]">{s.studentId}</span>
+                  </button>
+                ))}
               </div>
-            </div>
-            <p className="text-sm font-semibold text-[var(--alo-text)]">
-              Call connecting…
-            </p>
-            <p className="text-xs text-[var(--alo-muted)]">
-              Dialling <span className="font-mono">{phoneDisplay}</span>
-            </p>
-          </div>
-        ) : callStage === "connected" ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-8">
-            <div className="flex size-16 items-center justify-center rounded-full bg-[var(--alo-success-soft)] text-[var(--alo-success)]">
-              <Icon name="CheckCircle2" className="size-7" />
-            </div>
-            <p className="text-sm font-semibold text-[var(--alo-text)]">Call connected</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {/* Student search */}
-            <div className="space-y-2">
-              <Label className="text-xs">Search student (name or phone) *</Label>
-              <Input
-                placeholder="e.g. Rahim Uddin or 01XXXXXXXXX"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="h-10"
-              />
-              {filteredStudents.length > 0 && (
-                <div className="max-h-48 overflow-y-auto alo-scroll rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface)]">
-                  {filteredStudents.map((s) => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedStudentId(s.id);
-                        setQuery(s.fullName);
-                        setSelectedApplicationId(null);
-                      }}
-                      className={cn(
-                        "flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-xs hover:bg-[var(--alo-surface-muted)]",
-                        selectedStudentId === s.id && "bg-[var(--alo-blue-soft)]",
-                      )}
-                    >
-                      <div className="min-w-0">
-                        <p className="font-medium text-[var(--alo-text)]">{s.fullName}</p>
-                        <p className="text-[var(--alo-muted)]">{s.email}</p>
-                      </div>
-                      <span className="font-mono text-[var(--alo-blue-strong)]">{s.mobile}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Phone number display */}
-            <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3">
-              <p className="caption-text">Phone number to dial</p>
-              <p className="mt-0.5 font-mono text-lg font-bold text-[var(--alo-text)]">
-                {phoneDisplay || "—"}
+            )}
+            {selectedStudent && (
+              <p className="mt-1 text-[11px] text-emerald-700">
+                ✓ Selected: {selectedStudent.fullName}
               </p>
-            </div>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="call-phone">Phone Number</Label>
+            <Input
+              id="call-phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+8801XXXXXXXXX"
+              className="mt-1 font-mono"
+            />
+          </div>
+          <div>
+            <Label htmlFor="call-app">Application ID (optional)</Label>
+            <Input
+              id="call-app"
+              value={applicationId}
+              onChange={(e) => setApplicationId(e.target.value)}
+              placeholder="cuid"
+              className="mt-1"
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            className="bg-[#0057B8] text-white hover:bg-[#003a7a]"
+            disabled={submitting}
+            onClick={() => void submit()}
+          >
+            <Icon name="PhoneOutgoing" className="mr-1.5 size-4" />
+            {submitting ? "Calling…" : "Call"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
-            {/* Application selector (optional) */}
-            <div className="space-y-2">
-              <Label className="text-xs">Attach application (optional)</Label>
-              <Select
-                value={selectedApplicationId || undefined}
-                onValueChange={setSelectedApplicationId}
-                disabled={studentApplications.length === 0}
-              >
-                <SelectTrigger className="h-10">
-                  <SelectValue
-                    placeholder={
-                      studentApplications.length === 0
-                        ? selectedStudentId
-                          ? "No applications for this student"
-                          : "Select a student first"
-                        : "Choose application…"
-                    }
-                  />
+function LogOutcomeDialog({
+  open,
+  onOpenChange,
+  onDone,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  onDone: () => void;
+}) {
+  const { toast } = useToast();
+  const [outcome, setOutcome] = React.useState("CALL_CONNECTED");
+  const [summary, setSummary] = React.useState("");
+  const [internalNote, setInternalNote] = React.useState("");
+  const [studentVisibleNote, setStudentVisibleNote] = React.useState("");
+  const [nextAction, setNextAction] = React.useState("");
+  const [studentId, setStudentId] = React.useState("");
+  const [duration, setDuration] = React.useState("");
+  const [consent, setConsent] = React.useState(true);
+  const [submitting, setSubmitting] = React.useState(false);
+
+  const submit = async () => {
+    if (!summary.trim()) {
+      toast({ title: "Summary is required", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await fetchJson("/api/communications/calls/outcomes", {
+        method: "POST",
+        body: JSON.stringify({
+          outcome,
+          summary: summary.trim(),
+          internalNote: internalNote.trim() || undefined,
+          studentVisibleNote: studentVisibleNote.trim() || undefined,
+          nextAction: nextAction.trim() || undefined,
+          studentId: studentId.trim() || undefined,
+          duration: duration ? parseInt(duration, 10) : undefined,
+          consentRecorded: consent,
+        }),
+      });
+      toast({ title: "Call outcome logged" });
+      setSummary("");
+      setInternalNote("");
+      setStudentVisibleNote("");
+      setNextAction("");
+      setStudentId("");
+      setDuration("");
+      onOpenChange(false);
+      onDone();
+    } catch (err) {
+      toast({
+        title: "Failed to log outcome",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Log Call Outcome</DialogTitle>
+          <DialogDescription>
+            Record the outcome of a call for audit and follow-up tracking.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Outcome</Label>
+              <Select value={outcome} onValueChange={setOutcome}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {studentApplications.map((a) => (
-                    <SelectItem key={a.id} value={a.id}>
-                      {a.applicationId} · {a.university} — {a.course}
+                  {[
+                    "CALL_CONNECTED",
+                    "NO_ANSWER",
+                    "VOICEMAIL_LEFT",
+                    "CALLBACK_REQUESTED",
+                    "WRONG_NUMBER",
+                    "DISCONNECTED",
+                    "FOLLOW_UP_SCHEDULED",
+                  ].map((o) => (
+                    <SelectItem key={o} value={o}>
+                      {o.replace(/_/g, " ").toLowerCase()}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="rounded-lg bg-[var(--alo-info-soft)] p-2.5 text-[11px] text-[var(--alo-info-strong)]">
-              <Icon name="Info" className="mr-1 inline size-3" />
-              A CallOutcome record will be created with outcome=CALLBACK_REQUESTED and
-              consentRecorded=true. Update it once the call completes.
-            </div>
-          </div>
-        )}
-
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => {
-              if (!calling) {
-                reset();
-                onOpenChange(false);
-              }
-            }}
-            disabled={calling}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="cta"
-            onClick={handleCall}
-            disabled={calling || !selectedStudentId || !phoneDisplay}
-          >
-            <Icon name="Phone" className="size-3.5" />
-            {calling ? "Calling…" : "Call"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Log Call Outcome Dialog
-// ─────────────────────────────────────────────────────────────────────────────
-
-function LogCallOutcomeDialog({
-  open,
-  onOpenChange,
-  onSaved,
-}: {
-  open: boolean;
-  onOpenChange: (o: boolean) => void;
-  onSaved: () => void;
-}) {
-  const { toast } = useToast();
-  const [form, setForm] = React.useState({
-    outcome: "ANSWERED",
-    summary: "",
-    studentVisibleNote: "",
-    internalNote: "",
-    nextAction: "",
-    counselorId: "counselor-demo",
-    studentId: "",
-    applicationId: "",
-    duration: 0,
-    consentRecorded: false,
-  });
-  const [followUpAt, setFollowUpAt] = React.useState<Date | undefined>(undefined);
-  const [saving, setSaving] = React.useState(false);
-
-  const reset = () => {
-    setForm({
-      outcome: "ANSWERED",
-      summary: "",
-      studentVisibleNote: "",
-      internalNote: "",
-      nextAction: "",
-      counselorId: "counselor-demo",
-      studentId: "",
-      applicationId: "",
-      duration: 0,
-      consentRecorded: false,
-    });
-    setFollowUpAt(undefined);
-  };
-
-  const handleSave = async () => {
-    if (!form.summary.trim()) {
-      toast({
-        title: "Summary required",
-        description: "Please add a brief summary of the call.",
-        variant: "destructive",
-      });
-      return;
-    }
-    setSaving(true);
-    try {
-      const res = await fetch("/api/communications/calls/outcomes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          outcome: form.outcome,
-          summary: form.summary,
-          studentVisibleNote: form.studentVisibleNote || undefined,
-          internalNote: form.internalNote || undefined,
-          nextAction: form.nextAction || undefined,
-          followUpAt: followUpAt ? followUpAt.toISOString() : undefined,
-          consentRecorded: form.consentRecorded,
-          counselorId: form.counselorId || undefined,
-          studentId: form.studentId || undefined,
-          applicationId: form.applicationId || undefined,
-          duration: Number(form.duration) || 0,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to save call outcome");
-      reset();
-      onOpenChange(false);
-      onSaved();
-    } catch (e: any) {
-      toast({
-        title: "Could not save outcome",
-        description: e?.message || "Unknown error",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => {
-        if (!saving) {
-          if (!o) reset();
-          onOpenChange(o);
-        }
-      }}
-    >
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Icon name="ClipboardCheck" className="size-5 text-[var(--alo-emerald)]" />
-            Log Call Outcome
-          </DialogTitle>
-          <DialogDescription>
-            Record the outcome of a call — summary, next action, follow-up date & student-visible note.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          {/* Outcome */}
-          <div className="space-y-2">
-            <Label className="text-xs">Outcome *</Label>
-            <Select
-              value={form.outcome}
-              onValueChange={(v) => setForm({ ...form, outcome: v })}
-            >
-              <SelectTrigger className="h-10">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ANSWERED">Answered</SelectItem>
-                <SelectItem value="NO_ANSWER">No Answer</SelectItem>
-                <SelectItem value="BUSY">Busy</SelectItem>
-                <SelectItem value="CALLBACK_REQUESTED">Callback Requested</SelectItem>
-                <SelectItem value="WRONG_NUMBER">Wrong Number</SelectItem>
-                <SelectItem value="RESOLVED">Resolved</SelectItem>
-                <SelectItem value="ESCALATED">Escalated</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Summary */}
-          <div className="space-y-2">
-            <Label className="text-xs">Summary *</Label>
-            <Textarea
-              rows={2}
-              placeholder="Brief summary of the call…"
-              value={form.summary}
-              onChange={(e) => setForm({ ...form, summary: e.target.value })}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {/* Student ID */}
-            <div className="space-y-2">
-              <Label className="text-xs">Student ID</Label>
+            <div>
+              <Label htmlFor="call-duration">Duration (sec)</Label>
               <Input
-                placeholder="cuid…"
-                value={form.studentId}
-                onChange={(e) => setForm({ ...form, studentId: e.target.value })}
-                className="h-10 font-mono text-xs"
-              />
-            </div>
-            {/* Application ID */}
-            <div className="space-y-2">
-              <Label className="text-xs">Application ID</Label>
-              <Input
-                placeholder="cuid… (optional)"
-                value={form.applicationId}
-                onChange={(e) => setForm({ ...form, applicationId: e.target.value })}
-                className="h-10 font-mono text-xs"
-              />
-            </div>
-            {/* Counselor ID */}
-            <div className="space-y-2">
-              <Label className="text-xs">Counselor ID</Label>
-              <Input
-                placeholder="cuid…"
-                value={form.counselorId}
-                onChange={(e) => setForm({ ...form, counselorId: e.target.value })}
-                className="h-10 font-mono text-xs"
-              />
-            </div>
-            {/* Duration */}
-            <div className="space-y-2">
-              <Label className="text-xs">Duration (seconds)</Label>
-              <Input
+                id="call-duration"
                 type="number"
-                min={0}
-                placeholder="0"
-                value={form.duration}
-                onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })}
-                className="h-10"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                placeholder="120"
+                className="mt-1"
               />
             </div>
           </div>
-
-          {/* Student-visible note */}
-          <div className="space-y-2">
-            <Label className="text-xs">
-              Student-visible note
-              <span className="ml-1 text-[var(--alo-muted)]">(shown on portal)</span>
-            </Label>
+          <div>
+            <Label htmlFor="outcome-summary">Summary *</Label>
             <Textarea
-              rows={2}
-              placeholder="A note the student can see in their portal…"
-              value={form.studentVisibleNote}
-              onChange={(e) => setForm({ ...form, studentVisibleNote: e.target.value })}
+              id="outcome-summary"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              placeholder="What was discussed?"
+              className="mt-1 min-h-[80px]"
             />
           </div>
-
-          {/* Internal note */}
-          <div className="space-y-2">
-            <Label className="text-xs">
-              Internal note
-              <span className="ml-1 text-[var(--alo-muted)]">(restricted — not student-visible)</span>
-            </Label>
-            <Textarea
-              rows={2}
-              placeholder="Restricted internal context…"
-              value={form.internalNote}
-              onChange={(e) => setForm({ ...form, internalNote: e.target.value })}
-            />
-          </div>
-
-          {/* Next action */}
-          <div className="space-y-2">
-            <Label className="text-xs">Next action</Label>
+          <div>
+            <Label htmlFor="outcome-next">Next Action</Label>
             <Input
-              placeholder="e.g. Send documents email tomorrow"
-              value={form.nextAction}
-              onChange={(e) => setForm({ ...form, nextAction: e.target.value })}
-              className="h-10"
+              id="outcome-next"
+              value={nextAction}
+              onChange={(e) => setNextAction(e.target.value)}
+              placeholder="e.g. Send visa docs checklist"
+              className="mt-1"
             />
           </div>
-
-          {/* Follow-up date */}
-          <div className="space-y-2">
-            <Label className="text-xs">Follow-up date</Label>
-            <DatePicker
-              value={followUpAt}
-              onChange={setFollowUpAt}
-              placeholder="Pick a follow-up date"
+          <div>
+            <Label htmlFor="outcome-student">Student ID (optional)</Label>
+            <Input
+              id="outcome-student"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+              placeholder="cuid"
+              className="mt-1"
             />
           </div>
-
-          {/* Consent checkbox */}
-          <label className="flex cursor-pointer items-center gap-2 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3">
-            <Checkbox
-              checked={form.consentRecorded}
-              onCheckedChange={(v) =>
-                setForm({ ...form, consentRecorded: v === true })
-              }
+          <div>
+            <Label htmlFor="outcome-student-visible">Student-Visible Note (optional)</Label>
+            <Textarea
+              id="outcome-student-visible"
+              value={studentVisibleNote}
+              onChange={(e) => setStudentVisibleNote(e.target.value)}
+              placeholder="A note the student can see in their portal"
+              className="mt-1 min-h-[60px]"
             />
-            <span className="text-xs font-medium text-[var(--alo-text-secondary)]">
-              Consent recorded — the student has consented to this call being logged and reviewed.
-            </span>
+          </div>
+          <div>
+            <Label htmlFor="outcome-internal">Internal Note (optional)</Label>
+            <Textarea
+              id="outcome-internal"
+              value={internalNote}
+              onChange={(e) => setInternalNote(e.target.value)}
+              placeholder="Counselor-only note"
+              className="mt-1 min-h-[60px]"
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              className="size-4 rounded border-[#E2E8F0]"
+            />
+            Consent recorded for this call
           </label>
         </div>
-
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => {
-              if (!saving) {
-                reset();
-                onOpenChange(false);
-              }
-            }}
-            disabled={saving}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button variant="alo" onClick={handleSave} disabled={saving}>
-            <Icon name="Save" className="size-3.5" />
-            {saving ? "Saving…" : "Save Outcome"}
+          <Button
+            className="bg-[#0057B8] text-white hover:bg-[#003a7a]"
+            disabled={submitting}
+            onClick={() => void submit()}
+          >
+            {submitting ? "Saving…" : "Log Outcome"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Call Detail Sheet (drawer)
-// ─────────────────────────────────────────────────────────────────────────────
-
-function CallDetailSheet({
-  call,
-  onOpenChange,
-}: {
-  call: PhoneCall | null;
-  onOpenChange: (o: boolean) => void;
-}) {
-  return (
-    <Sheet open={!!call} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-lg">
-        {call && (
-          <>
-            <SheetHeader>
-              <SheetTitle className="flex items-center gap-2">
-                <Icon
-                  name={CALL_TYPE_META[call.callType]?.icon || "PhoneCall"}
-                  className="size-5"
-                />
-                Call Details
-              </SheetTitle>
-              <SheetDescription>
-                Full call record, recording & metadata
-              </SheetDescription>
-            </SheetHeader>
-
-            <div className="space-y-4 px-4 pb-6">
-              <div className="flex items-center justify-between">
-                <StatusBadge
-                  status={call.callType}
-                  colorMap={{
-                    INCOMING: "blue",
-                    OUTGOING: "emerald",
-                    MISSED: "rose",
-                  }}
-                  labels={{
-                    INCOMING: "Incoming",
-                    OUTGOING: "Outgoing",
-                    MISSED: "Missed",
-                  }}
-                />
-                <span className="text-xs text-[var(--alo-muted)]">
-                  {timeAgo(call.createdAt)}
-                </span>
-              </div>
-
-              <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-4">
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <p className="caption-text">From</p>
-                    <p className="mt-0.5 font-mono font-semibold text-[var(--alo-text)]">
-                      {call.fromNumber || "—"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="caption-text">To</p>
-                    <p className="mt-0.5 font-mono font-semibold text-[var(--alo-text)]">
-                      {call.toNumber || "—"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="caption-text">Duration</p>
-                    <p className="mt-0.5 font-mono font-semibold text-[var(--alo-text)]">
-                      {formatDuration(call.duration)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="caption-text">Disposition</p>
-                    <p className="mt-0.5 text-[var(--alo-text)]">
-                      {call.disposition || "—"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <p className="caption-text">Notes</p>
-                <p className="mt-1 body-text text-[var(--alo-text-secondary)]">
-                  {call.callNotes || "—"}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="rounded-md border border-[var(--alo-border)] p-2.5">
-                  <p className="caption-text">Student</p>
-                  <p className="mt-0.5 font-mono text-[var(--alo-blue-strong)]">
-                    {call.studentId || "—"}
-                  </p>
-                </div>
-                <div className="rounded-md border border-[var(--alo-border)] p-2.5">
-                  <p className="caption-text">Lead / Partner</p>
-                  <p className="mt-0.5 font-mono text-[var(--alo-text)]">
-                    {call.leadId || call.partnerId || "—"}
-                  </p>
-                </div>
-              </div>
-
-              {call.recordingPath && (
-                <div className="rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3">
-                  <p className="caption-text mb-1.5">Recording</p>
-                  <audio controls className="w-full">
-                    <source src={call.recordingPath} />
-                    Your browser does not support audio playback.
-                  </audio>
-                </div>
-              )}
-
-              <div className="flex gap-2 pt-2">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="flex-1">
-                  <Icon name="Phone" className="size-3.5" /> Call Back
-                </Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="alo" size="sm" className="flex-1">
-                  <Icon name="ClipboardCheck" className="size-3.5" /> Log Outcome
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
-      </SheetContent>
-    </Sheet>
-  );
-}
-export default PhoneCallCenter;

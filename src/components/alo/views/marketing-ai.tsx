@@ -110,7 +110,7 @@ const STATUS_COLORS: Record<string, string> = {
   DRAFT: "bg-amber-100 text-amber-700",
   APPROVED: "bg-emerald-100 text-emerald-700",
   SCHEDULED: "bg-sky-100 text-sky-700",
-  PUBLISHED: "bg-[#2563EB]/15 text-[#2563EB]",
+  PUBLISHED: "bg-[#0057B8]/15 text-[#0057B8]",
 };
 
 const CHANNEL_ICONS: Record<string, string> = {
@@ -234,14 +234,14 @@ const BRAND_CHECKLIST = [
 
 function BrandRulesBanner() {
   return (
-    <Card className="rounded-2xl border-2 border-[#F97316]/40 bg-orange-50/40">
+    <Card className="rounded-2xl border-2 border-[#E8501A]/40 bg-orange-50/40">
       <CardHeader>
         <div className="flex items-start gap-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#F97316] text-white">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#E8501A] text-white">
             <Icon name="ShieldAlert" className="size-5" />
           </div>
           <div>
-            <CardTitle className="text-base text-[#F97316]">
+            <CardTitle className="text-base text-[#E8501A]">
               AI Content Rules — Brand Compliance Guardrails
             </CardTitle>
             <CardDescription className="text-xs">
@@ -274,7 +274,7 @@ function BrandRulesBanner() {
               ))}
             </ul>
           </div>
-          <div className="md:border-l md:border-[#F97316]/20 md:pl-5">
+          <div className="md:border-l md:border-[#E8501A]/20 md:pl-5">
             <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-red-700">
               <Icon name="XCircle" className="size-4" /> AI content must NOT
             </p>
@@ -509,7 +509,7 @@ function ContentGeneratorTab() {
           <Button
             onClick={handleGenerate}
             disabled={generating}
-            className="h-12 w-full bg-[#F97316] hover:bg-[#F97316]/90 text-white"
+            className="h-12 w-full bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
           >
             <Icon
               name={generating ? "Loader2" : "Sparkles"}
@@ -541,13 +541,13 @@ function ContentGeneratorTab() {
           ) : result ? (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className="bg-[#e8f0fb] text-[#2563EB]">{result.contentType}</Badge>
-                <Badge className="bg-[#fdece4] text-[#F97316]">{result.platform}</Badge>
+                <Badge className="bg-[#e8f0fb] text-[#0057B8]">{result.contentType}</Badge>
+                <Badge className="bg-[#fdece4] text-[#E8501A]">{result.platform}</Badge>
                 <Badge variant="outline" className="border-violet-200 text-violet-700">
                   <Icon name="Bot" className="mr-1 size-3" /> AI draft
                 </Badge>
               </div>
-              <div className="max-h-[280px] overflow-y-auto rounded-xl border border-[#2563EB]/15 bg-[#f7f9fc] p-4">
+              <div className="max-h-[280px] overflow-y-auto rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
                 <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
                   {result.content}
                 </pre>
@@ -557,7 +557,7 @@ function ContentGeneratorTab() {
                   size="sm"
                   variant="outline"
                   onClick={handleCopy}
-                  className="h-10 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                  className="h-10 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                 >
                   <Icon name="Copy" className="size-3.5" /> Copy
                 </Button>
@@ -566,14 +566,14 @@ function ContentGeneratorTab() {
                   variant="outline"
                   onClick={handleRegenerate}
                   disabled={generating}
-                  className="h-10 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                  className="h-10 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                 >
                   <Icon name="RefreshCw" className="size-3.5" /> Regenerate
                 </Button>
                 <Button
                   size="sm"
                   onClick={handleSchedule}
-                  className="h-10 bg-[#2563EB] hover:bg-[#2563EB]/90 text-white"
+                  className="h-10 bg-[#0057B8] hover:bg-[#0057B8]/90 text-white"
                 >
                   <Icon name="CalendarClock" className="size-3.5" /> Schedule Post
                 </Button>
@@ -696,7 +696,7 @@ function CampaignCalendarTab() {
       action={
         <Button
           onClick={handleNewIdea}
-          className="h-10 bg-[#F97316] hover:bg-[#F97316]/90 text-white"
+          className="h-10 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
         >
           <Icon name="Plus" className="size-4" /> New Content Idea
         </Button>
@@ -712,8 +712,8 @@ function CampaignCalendarTab() {
             className={cn(
               "rounded-full border-2 px-3 py-1 text-[11px] font-semibold transition-colors",
               filter === s
-                ? "border-[#2563EB] bg-[#2563EB] text-white"
-                : "border-[#2563EB]/15 bg-white text-[#2563EB] hover:bg-[#e8f0fb]"
+                ? "border-[#0057B8] bg-[#0057B8] text-white"
+                : "border-[#0057B8]/15 bg-white text-[#0057B8] hover:bg-[#e8f0fb]"
             )}
           >
             {s === "ALL" ? "All statuses" : s}
@@ -735,10 +735,10 @@ function CampaignCalendarTab() {
             return (
               <Card
                 key={item.id}
-                className="flex flex-col rounded-2xl border-2 border-[#2563EB]/12 p-4"
+                className="flex flex-col rounded-2xl border-2 border-[#0057B8]/12 p-4"
               >
                 <div className="mb-3 flex items-start justify-between gap-2">
-                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
                     <Icon name={icon} className="size-4.5" />
                   </div>
                   <Badge className={STATUS_COLORS[item.status] || "bg-slate-100 text-slate-700"}>
@@ -759,12 +759,12 @@ function CampaignCalendarTab() {
                     {fmtDate(item.scheduledAt)}
                   </span>
                 </div>
-                <div className="mt-3 flex gap-1.5 border-t border-[#2563EB]/10 pt-3">
+                <div className="mt-3 flex gap-1.5 border-t border-[#0057B8]/10 pt-3">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => handleItemAction(item, "edit")}
-                    className="h-8 flex-1 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                    className="h-8 flex-1 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                   >
                     <Icon name="Pencil" className="size-3" /> Edit
                   </Button>
@@ -772,7 +772,7 @@ function CampaignCalendarTab() {
                     size="sm"
                     variant="outline"
                     onClick={() => handleItemAction(item, "duplicate")}
-                    className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                    className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                   >
                     <Icon name="Copy" className="size-3" />
                   </Button>
@@ -864,11 +864,11 @@ function ReplyQueueTab() {
             return (
               <Card
                 key={item.id}
-                className="rounded-2xl border-2 border-[#2563EB]/12 p-4"
+                className="rounded-2xl border-2 border-[#0057B8]/12 p-4"
               >
                 <div className="mb-3 flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
                       <Icon name={channelIcon} className="size-4" />
                     </div>
                     <div>
@@ -895,21 +895,21 @@ function ReplyQueueTab() {
                   </div>
 
                   {editingId === item.id ? (
-                    <div className="rounded-xl border-2 border-[#2563EB]/30 bg-[#e8f0fb]/30 p-3">
-                      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#2563EB]">
+                    <div className="rounded-xl border-2 border-[#0057B8]/30 bg-[#e8f0fb]/30 p-3">
+                      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#0057B8]">
                         Edit reply
                       </p>
                       <Textarea
                         rows={5}
                         value={editText}
                         onChange={(e) => setEditText(e.target.value)}
-                        className="border-[#2563EB]/20"
+                        className="border-[#0057B8]/20"
                       />
                       <div className="mt-2 flex gap-2">
                         <Button
                           size="sm"
                           onClick={() => handleSaveEdit(item)}
-                          className="h-9 bg-[#2563EB] hover:bg-[#2563EB]/90 text-white"
+                          className="h-9 bg-[#0057B8] hover:bg-[#0057B8]/90 text-white"
                         >
                           <Icon name="Send" className="size-3.5" /> Send edited reply
                         </Button>
@@ -939,7 +939,7 @@ function ReplyQueueTab() {
                 </div>
 
                 {editingId !== item.id && (
-                  <div className="mt-3 flex flex-wrap gap-2 border-t border-[#2563EB]/10 pt-3">
+                  <div className="mt-3 flex flex-wrap gap-2 border-t border-[#0057B8]/10 pt-3">
                     <Button
                       size="sm"
                       onClick={() => handleApprove(item)}
@@ -950,7 +950,7 @@ function ReplyQueueTab() {
                     <Button
                       size="sm"
                       onClick={() => handleEditApprove(item)}
-                      className="h-9 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                      className="h-9 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                       variant="outline"
                     >
                       <Icon name="Pencil" className="size-3.5" /> Edit & Approve
@@ -1025,21 +1025,21 @@ export function MarketingAi() {
         <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-2xl bg-[#e8f0fb] p-1.5">
           <TabsTrigger
             value="generator"
-            className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#2563EB] data-[state=active]:shadow-sm"
+            className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm"
           >
             <Icon name="PenLine" className="mr-1.5 size-3.5" />
             Content Generator
           </TabsTrigger>
           <TabsTrigger
             value="calendar"
-            className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#2563EB] data-[state=active]:shadow-sm"
+            className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm"
           >
             <Icon name="CalendarRange" className="mr-1.5 size-3.5" />
             Campaign Calendar
           </TabsTrigger>
           <TabsTrigger
             value="queue"
-            className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#2563EB] data-[state=active]:shadow-sm"
+            className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm"
           >
             <Icon name="Inbox" className="mr-1.5 size-3.5" />
             AI Reply Queue
@@ -1059,4 +1059,3 @@ export function MarketingAi() {
     </div>
   );
 }
-export default MarketingAi;

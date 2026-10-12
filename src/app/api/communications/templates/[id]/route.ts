@@ -32,11 +32,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     const data: any = {};
-    if (name !== undefined) data.templateName = name;
+    if (name !== undefined) data.name = name;
     if (category !== undefined) data.category = category;
     if (channel !== undefined) data.channel = channel;
     if (language !== undefined) data.language = language;
-    if (subject !== undefined)
+    if (subject !== undefined) data.subject = subject;
     if (tplBody !== undefined) data.body = tplBody;
     if (variables !== undefined) data.variables = typeof variables === "string" ? variables : JSON.stringify(variables || []);
     if (status !== undefined) data.status = status;
@@ -45,7 +45,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       data.isLocked = isLocked;
       if (isLocked) {
         data.status = "LOCKED";
-        data.approvedBy = approvedById || actionById;
+        data.approvedById = approvedById || actionById;
+        data.approvedAt = new Date();
       }
     }
 

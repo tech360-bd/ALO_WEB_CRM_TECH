@@ -227,11 +227,11 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
             description="The destination you're looking for may not be published yet."
             action={
               <div className="flex flex-wrap justify-center gap-3">
-                <Button onClick={() => onNavigate("public-destinations")} className="bg-[#F97316] text-white hover:bg-[#F97316]/90">
+                <Button onClick={() => onNavigate("public-destinations")} className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
                   <Icon name="Globe" className="mr-2 size-4" />
                   All Destinations
                 </Button>
-                <Button onClick={() => onNavigate("public-home")} variant="outline" className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]">
+                <Button onClick={() => onNavigate("public-home")} variant="outline" className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
                   <Icon name="Home" className="mr-2 size-4" />
                   Home
                 </Button>
@@ -270,7 +270,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
   return (
     <div className="bg-white">
       {/* 1. Breadcrumb */}
-      <div className="border-b border-[#2563EB]/10 bg-[#f7f9fc]">
+      <div className="border-b border-[#0057B8]/10 bg-[#f7f9fc]">
         <div className="mx-auto max-w-[1280px] px-4 py-3 lg:px-6">
           <Breadcrumb
             items={[
@@ -290,11 +290,11 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               <div className="flex items-start gap-4">
                 <span className="text-6xl md:text-7xl">{country.flag}</span>
                 <div>
-                  <Badge variant="outline" className="mb-2 border-[#2563EB]/30 bg-white/70 text-[#2563EB]">
+                  <Badge variant="outline" className="mb-2 border-[#0057B8]/30 bg-white/70 text-[#0057B8]">
                     <Icon name="Globe" className="mr-1.5 size-3.5" />
                     Study destination
                   </Badge>
-                  <h1 className="text-3xl font-black text-[#2563EB] md:text-5xl">
+                  <h1 className="text-3xl font-black text-[#0057B8] md:text-5xl">
                     Study in {country.name} from Bangladesh
                   </h1>
                   <p className="mt-3 max-w-2xl text-base text-muted-foreground md:text-lg">
@@ -307,7 +307,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button
                   onClick={() => onNavigate("public-course-finder")}
-                  className="bg-[#F97316] text-white hover:bg-[#F97316]/90 h-12"
+                  className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12"
                 >
                   <Icon name="Search" className="mr-2 size-4" />
                   Find Courses
@@ -315,7 +315,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 <Button
                   onClick={() => scrollToId("eligibility")}
                   variant="outline"
-                  className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb] h-12"
+                  className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb] h-12"
                 >
                   <Icon name="ClipboardCheck" className="mr-2 size-4" />
                   Check Eligibility
@@ -323,7 +323,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 <Button
                   onClick={() => scrollToId("lead-form")}
                   variant="outline"
-                  className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb] h-12"
+                  className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb] h-12"
                 >
                   <Icon name="CalendarCheck" className="mr-2 size-4" />
                   Book Free Consultation
@@ -346,7 +346,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   { icon: "Award", label: scholarships.length ? "Scholarships available" : "Scholarships" },
                   { icon: "Bot", label: "AI course matcher" },
                 ].map((b) => (
-                  <span key={b.label} className="inline-flex items-center gap-1.5 rounded-full border border-[#2563EB]/20 bg-white/80 px-3 py-1 text-xs font-semibold text-[#2563EB]">
+                  <span key={b.label} className="inline-flex items-center gap-1.5 rounded-full border border-[#0057B8]/20 bg-white/80 px-3 py-1 text-xs font-semibold text-[#0057B8]">
                     <Icon name={b.icon} className="size-3.5" />
                     {b.label}
                   </span>
@@ -355,9 +355,9 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
             </div>
 
             {/* Quick facts mini-card */}
-            <Card className="rounded-2xl border-2 border-[#2563EB]/20 bg-white alo-shadow">
+            <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-white alo-shadow">
               <CardContent className="p-5">
-                <p className="text-sm font-bold text-[#2563EB]">At a glance</p>
+                <p className="text-sm font-bold text-[#0057B8]">At a glance</p>
                 <div className="mt-3">
                   <InfoRow label="Capital" value={country.capital} />
                   <InfoRow label="Currency" value={country.currency} />
@@ -376,7 +376,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 </div>
                 <Button
                   onClick={() => onNavigate("public-course-finder")}
-                  className="mt-4 w-full bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                  className="mt-4 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                 >
                   <Icon name="Search" className="mr-2 size-4" />
                   Find Courses in {country.shortName}
@@ -433,11 +433,11 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               >
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {whyStudy.map((w, i) => (
-                    <div key={i} className="rounded-2xl border-2 border-[#2563EB]/15 p-5">
-                      <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
+                    <div key={i} className="rounded-2xl border-2 border-[#0057B8]/15 p-5">
+                      <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
                         <Icon name={w.icon || "Check"} className="size-5" />
                       </div>
-                      <p className="mt-3 font-bold text-[#2563EB]">{w.heading}</p>
+                      <p className="mt-3 font-bold text-[#0057B8]">{w.heading}</p>
                       <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{w.explanation}</p>
                     </div>
                   ))}
@@ -476,22 +476,22 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 description="Subjects Bangladeshi students frequently choose in this destination."
                 icon="BookOpen"
                 action={
-                  <Button onClick={() => onNavigate("public-courses")} variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]">
+                  <Button onClick={() => onNavigate("public-courses")} variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
                     All Courses <Icon name="ArrowRight" className="ml-1.5 size-3.5" />
                   </Button>
                 }
               >
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {popularCourses.map((c, i) => (
-                    <div key={i} className="flex flex-col rounded-2xl border-2 border-[#2563EB]/15 p-5">
-                      <p className="font-bold text-[#2563EB]">{c.name}</p>
-                      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-[#F97316]">{c.level}</p>
+                    <div key={i} className="flex flex-col rounded-2xl border-2 border-[#0057B8]/15 p-5">
+                      <p className="font-bold text-[#0057B8]">{c.name}</p>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-[#E8501A]">{c.level}</p>
                       <p className="mt-2 text-sm text-muted-foreground">
                         <span className="font-medium text-foreground">Career:</span> {c.career}
                       </p>
                       <button
                         onClick={() => onNavigate("public-courses")}
-                        className="mt-4 inline-flex items-center gap-1 self-start text-sm font-semibold text-[#F97316] hover:gap-2 transition-all"
+                        className="mt-4 inline-flex items-center gap-1 self-start text-sm font-semibold text-[#E8501A] hover:gap-2 transition-all"
                       >
                         View Courses <Icon name="ArrowRight" className="size-3.5" />
                       </button>
@@ -509,7 +509,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               description="Verified ALO partner universities in this destination."
               icon="Building2"
               action={
-                <Button onClick={() => onNavigate("public-universities")} variant="outline" size="sm" className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]">
+                <Button onClick={() => onNavigate("public-universities")} variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
                   All Universities <Icon name="ArrowRight" className="ml-1.5 size-3.5" />
                 </Button>
               }
@@ -520,7 +520,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   title="Universities coming soon"
                   description="We're adding verified university pages for this destination."
                   action={
-                    <Button onClick={() => onNavigate("public-course-finder")} className="bg-[#F97316] text-white hover:bg-[#F97316]/90">
+                    <Button onClick={() => onNavigate("public-course-finder")} className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
                       <Icon name="Search" className="mr-2 size-4" />
                       Use Course Finder
                     </Button>
@@ -536,10 +536,10 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                       : "Varies";
                     const uIntakes: string[] = Array.isArray(uFacts.intakes) ? uFacts.intakes : [];
                     return (
-                      <div key={u.slug} className="flex flex-col rounded-2xl border-2 border-[#2563EB]/15 p-5">
+                      <div key={u.slug} className="flex flex-col rounded-2xl border-2 border-[#0057B8]/15 p-5">
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <p className="font-bold leading-tight text-[#2563EB]">{u.name}</p>
+                            <p className="font-bold leading-tight text-[#0057B8]">{u.name}</p>
                             <p className="mt-1 text-xs text-muted-foreground">
                               <Icon name="MapPin" className="mr-1 inline size-3" />
                               {u.city}
@@ -565,7 +565,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                             onClick={() => onNavigate("public-university", u.slug)}
                             variant="outline"
                             size="sm"
-                            className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]"
+                            className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
                           >
                             <Icon name="BookOpen" className="mr-1.5 size-3.5" />
                             View Courses
@@ -573,7 +573,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                           <Button
                             onClick={() => toast({ title: "Application started", description: `ALO counselor will reach out about ${u.name}.` })}
                             size="sm"
-                            className="bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                            className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                           >
                             <Icon name="Send" className="mr-1.5 size-3.5" />
                             Apply through ALO
@@ -613,7 +613,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 <Tabs defaultValue={ENTRY_LEVELS.find((l) => entryRequirements[l]) || "bachelor"} className="w-full">
                   <TabsList className="flex w-full flex-wrap justify-start gap-1 bg-[#e8f0fb]/60">
                     {ENTRY_LEVELS.filter((l) => entryRequirements[l]).map((l) => (
-                      <TabsTrigger key={l} value={l} className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+                      <TabsTrigger key={l} value={l} className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
                         {ENTRY_LABELS[l]}
                       </TabsTrigger>
                     ))}
@@ -623,16 +623,16 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                     return (
                       <TabsContent key={l} value={l} className="mt-4">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                          <div className="rounded-xl border-2 border-[#2563EB]/15 p-4">
-                            <p className="text-xs font-bold uppercase tracking-wide text-[#F97316]">Academic</p>
+                          <div className="rounded-xl border-2 border-[#0057B8]/15 p-4">
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#E8501A]">Academic</p>
                             <p className="mt-1.5 text-sm text-foreground">{req.academic || "—"}</p>
                           </div>
-                          <div className="rounded-xl border-2 border-[#2563EB]/15 p-4">
-                            <p className="text-xs font-bold uppercase tracking-wide text-[#F97316]">English</p>
+                          <div className="rounded-xl border-2 border-[#0057B8]/15 p-4">
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#E8501A]">English</p>
                             <p className="mt-1.5 text-sm text-foreground">{req.english || "—"}</p>
                           </div>
-                          <div className="rounded-xl border-2 border-[#2563EB]/15 p-4">
-                            <p className="text-xs font-bold uppercase tracking-wide text-[#F97316]">Documents</p>
+                          <div className="rounded-xl border-2 border-[#0057B8]/15 p-4">
+                            <p className="text-xs font-bold uppercase tracking-wide text-[#E8501A]">Documents</p>
                             <p className="mt-1.5 text-sm text-foreground">{req.documents || "—"}</p>
                           </div>
                         </div>
@@ -645,13 +645,13 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               )}
 
               {/* AI Eligibility Checker */}
-              <div className="mt-6 rounded-2xl border-2 border-[#F97316]/25 bg-[#fdece4]/40 p-5">
+              <div className="mt-6 rounded-2xl border-2 border-[#E8501A]/25 bg-[#fdece4]/40 p-5">
                 <div className="flex items-center gap-2">
-                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#F97316] text-white">
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#E8501A] text-white">
                     <Icon name="Bot" className="size-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-[#2563EB]">AI Eligibility Checker</p>
+                    <p className="font-bold text-[#0057B8]">AI Eligibility Checker</p>
                     <p className="text-xs text-muted-foreground">Tell us about your profile — get an instant AI assessment.</p>
                   </div>
                 </div>
@@ -670,7 +670,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               {englishTestsList.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {englishTestsList.map((t) => (
-                    <span key={t} className="inline-flex items-center gap-1.5 rounded-full border border-[#2563EB]/20 bg-[#e8f0fb] px-3 py-1.5 text-sm font-semibold text-[#2563EB]">
+                    <span key={t} className="inline-flex items-center gap-1.5 rounded-full border border-[#0057B8]/20 bg-[#e8f0fb] px-3 py-1.5 text-sm font-semibold text-[#0057B8]">
                       <Icon name="Check" className="size-3.5" />
                       {t}
                     </span>
@@ -685,16 +685,16 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   onClick={() => { onNavigate("public-exams"); toast({ title: "Opening English placement", description: "Quick free test to find your level." }); }}
                   variant="outline"
                   size="sm"
-                  className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]"
+                  className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
                 >
                   <Icon name="GraduationCap" className="mr-1.5 size-3.5" />
                   Take Free English Placement Test
                 </Button>
-                <Button onClick={() => onNavigate("public-exam", "ielts")} size="sm" className="bg-[#F97316] text-white hover:bg-[#F97316]/90">
+                <Button onClick={() => onNavigate("public-exam", "ielts")} size="sm" className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
                   <Icon name="Play" className="mr-1.5 size-3.5" />
                   Start IELTS Mock
                 </Button>
-                <Button onClick={() => onNavigate("public-exam", "pte")} size="sm" className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
+                <Button onClick={() => onNavigate("public-exam", "pte")} size="sm" className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
                   <Icon name="Play" className="mr-1.5 size-3.5" />
                   Start PTE Mock
                 </Button>
@@ -719,9 +719,9 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               icon="FolderCheck"
             >
               {documents.length > 0 ? (
-                <div className="overflow-x-auto rounded-xl border border-[#2563EB]/10">
+                <div className="overflow-x-auto rounded-xl border border-[#0057B8]/10">
                   <table className="w-full text-sm">
-                    <thead className="bg-[#e8f0fb]/60 text-[#2563EB]">
+                    <thead className="bg-[#e8f0fb]/60 text-[#0057B8]">
                       <tr>
                         <th className="px-3 py-2 text-left text-xs font-bold uppercase tracking-wide">Document</th>
                         <th className="hidden px-3 py-2 text-left text-xs font-bold uppercase tracking-wide md:table-cell">Category</th>
@@ -729,7 +729,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                         <th className="hidden px-3 py-2 text-left text-xs font-bold uppercase tracking-wide lg:table-cell">Notes</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#2563EB]/10">
+                    <tbody className="divide-y divide-[#0057B8]/10">
                       {documents.map((d, i) => (
                         <tr key={i} className="hover:bg-[#f7f9fc]">
                           <td className="px-3 py-2.5 font-medium text-foreground">{d.name}</td>
@@ -764,14 +764,14 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               icon="Plane"
             >
               {visaProcess.length > 0 ? (
-                <ol className="relative space-y-4 border-l-2 border-[#2563EB]/15 pl-6">
+                <ol className="relative space-y-4 border-l-2 border-[#0057B8]/15 pl-6">
                   {visaProcess.map((s, i) => (
                     <li key={i} className="relative">
                       <span className="absolute -left-[31px] flex size-7 items-center justify-center rounded-full bg-alo-gradient text-xs font-bold text-white alo-shadow">
                         {s.step || i + 1}
                       </span>
-                      <div className="rounded-xl border-2 border-[#2563EB]/15 p-4">
-                        <p className="font-bold text-[#2563EB]">{s.title}</p>
+                      <div className="rounded-xl border-2 border-[#0057B8]/15 p-4">
+                        <p className="font-bold text-[#0057B8]">{s.title}</p>
                         <p className="mt-1 text-sm text-muted-foreground">{s.detail}</p>
                       </div>
                     </li>
@@ -782,13 +782,13 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               )}
 
               {/* AI Visa Readiness Checker */}
-              <div className="mt-6 rounded-2xl border-2 border-[#2563EB]/25 bg-[#e8f0fb]/40 p-5">
+              <div className="mt-6 rounded-2xl border-2 border-[#0057B8]/25 bg-[#e8f0fb]/40 p-5">
                 <div className="flex items-center gap-2">
-                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#2563EB] text-white">
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#0057B8] text-white">
                     <Icon name="ShieldCheck" className="size-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-[#2563EB]">AI Visa Readiness Checker</p>
+                    <p className="font-bold text-[#0057B8]">AI Visa Readiness Checker</p>
                     <p className="text-xs text-muted-foreground">Answer a few questions — AI estimates your visa readiness.</p>
                   </div>
                 </div>
@@ -807,11 +807,11 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               {interviewTypes.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {interviewTypes.map((t, i) => (
-                    <div key={i} className="rounded-2xl border-2 border-[#2563EB]/15 p-5">
-                      <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
+                    <div key={i} className="rounded-2xl border-2 border-[#0057B8]/15 p-5">
+                      <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
                         <Icon name="Mic" className="size-5" />
                       </div>
-                      <p className="mt-3 font-bold text-[#2563EB]">{t.type}</p>
+                      <p className="mt-3 font-bold text-[#0057B8]">{t.type}</p>
                       <p className="mt-1.5 text-sm text-muted-foreground">{t.desc}</p>
                     </div>
                   ))}
@@ -823,19 +823,19 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               <div className="mt-5 flex flex-wrap gap-3">
                 <Button
                   onClick={() => onNavigate("ai-interview")}
-                  className="bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                  className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                 >
                   <Icon name="Mic" className="mr-2 size-4" />
                   Start AI Interview Practice
                 </Button>
               </div>
 
-              <div className="mt-5 rounded-xl border border-[#2563EB]/10 bg-[#f7f9fc] p-4">
-                <p className="text-xs font-bold uppercase tracking-wide text-[#2563EB]">Questions our AI interviewer asks</p>
+              <div className="mt-5 rounded-xl border border-[#0057B8]/10 bg-[#f7f9fc] p-4">
+                <p className="text-xs font-bold uppercase tracking-wide text-[#0057B8]">Questions our AI interviewer asks</p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {INTERVIEW_QUESTIONS.map((q) => (
-                    <span key={q} className="inline-flex items-center gap-1 rounded-full border border-[#2563EB]/15 bg-white px-2.5 py-1 text-xs text-foreground">
-                      <Icon name="HelpCircle" className="size-3 text-[#F97316]" />
+                    <span key={q} className="inline-flex items-center gap-1 rounded-full border border-[#0057B8]/15 bg-white px-2.5 py-1 text-xs text-foreground">
+                      <Icon name="HelpCircle" className="size-3 text-[#E8501A]" />
                       {q}
                     </span>
                   ))}
@@ -852,16 +852,16 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               icon="Briefcase"
             >
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div className="rounded-2xl border-2 border-[#2563EB]/15 p-5">
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#F97316]">Term-time work</p>
+                <div className="rounded-2xl border-2 border-[#0057B8]/15 p-5">
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#E8501A]">Term-time work</p>
                   <p className="mt-1.5 text-sm text-foreground">{workRights.termTimeWork || "—"}</p>
                 </div>
-                <div className="rounded-2xl border-2 border-[#2563EB]/15 p-5">
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#F97316]">Vacation work</p>
+                <div className="rounded-2xl border-2 border-[#0057B8]/15 p-5">
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#E8501A]">Vacation work</p>
                   <p className="mt-1.5 text-sm text-foreground">{workRights.vacationWork || "—"}</p>
                 </div>
-                <div className="rounded-2xl border-2 border-[#2563EB]/15 p-5">
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#F97316]">Post-study route</p>
+                <div className="rounded-2xl border-2 border-[#0057B8]/15 p-5">
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#E8501A]">Post-study route</p>
                   <p className="mt-1.5 text-sm text-foreground">{workRights.postStudyRoute || "—"}</p>
                 </div>
               </div>
@@ -869,7 +869,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 <Disclaimer text="Rules may change. Final visa/work conditions depend on official visa conditions and government rules." />
               </div>
               {workRights.sourceUrl && (
-                <a href={workRights.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#2563EB] hover:underline">
+                <a href={workRights.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#0057B8] hover:underline">
                   <Icon name="ExternalLink" className="size-3.5" />
                   Official work-rights source
                 </a>
@@ -889,7 +889,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   {scholarships.map((s, i) => (
                     <div key={i} className="rounded-2xl border-2 border-amber-200 bg-amber-50/40 p-5">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="font-bold text-[#2563EB]">{s.name}</p>
+                        <p className="font-bold text-[#0057B8]">{s.name}</p>
                         <Badge variant="outline" className="border-amber-300 bg-amber-100 text-amber-800">{s.amount}</Badge>
                       </div>
                       <p className="mt-2 text-sm text-muted-foreground">
@@ -909,7 +909,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   onClick={() => onNavigate("public-course-finder")}
                   variant="outline"
                   size="sm"
-                  className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]"
+                  className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
                 >
                   <Icon name="Search" className="mr-1.5 size-3.5" />
                   Find Scholarships
@@ -917,7 +917,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 <Button
                   onClick={() => scrollToId("lead-form")}
                   size="sm"
-                  className="bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                  className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                 >
                   <Icon name="ClipboardCheck" className="mr-1.5 size-3.5" />
                   Check Scholarship Eligibility
@@ -936,9 +936,9 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               {cities.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {cities.map((city, i) => (
-                    <div key={i} className="flex flex-col rounded-2xl border-2 border-[#2563EB]/15 p-5">
+                    <div key={i} className="flex flex-col rounded-2xl border-2 border-[#0057B8]/15 p-5">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="font-bold text-[#2563EB]">{city.name}</p>
+                        <p className="font-bold text-[#0057B8]">{city.name}</p>
                         <Badge
                           variant="outline"
                           className={cn(
@@ -960,7 +960,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                       </div>
                       <button
                         onClick={() => toast({ title: `Courses in ${city.name}`, description: "Use Course Finder to filter by city." })}
-                        className="mt-4 inline-flex items-center gap-1 self-start text-sm font-semibold text-[#F97316] hover:gap-2 transition-all"
+                        className="mt-4 inline-flex items-center gap-1 self-start text-sm font-semibold text-[#E8501A] hover:gap-2 transition-all"
                       >
                         Find courses in this city <Icon name="ArrowRight" className="size-3.5" />
                       </button>
@@ -982,8 +982,8 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
             >
               <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
                 {ALO_SUPPORT_STEPS.map((s, i) => (
-                  <div key={i} className="flex items-center gap-3 rounded-xl border-2 border-[#2563EB]/15 p-3">
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+                  <div key={i} className="flex items-center gap-3 rounded-xl border-2 border-[#0057B8]/15 p-3">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
                       <Icon name={s.icon} className="size-4" />
                     </div>
                     <p className="text-xs font-semibold text-foreground">{s.label}</p>
@@ -991,7 +991,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 ))}
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
-                <Button onClick={() => scrollToId("lead-form")} className="bg-[#F97316] text-white hover:bg-[#F97316]/90">
+                <Button onClick={() => scrollToId("lead-form")} className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
                   <Icon name="Send" className="mr-2 size-4" />
                   Start Your Application
                 </Button>
@@ -999,7 +999,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   <Icon name="Whatsapp" className="mr-2 size-4" />
                   Talk to Counselor
                 </Button>
-                <Button onClick={() => onNavigate("student-dashboard")} variant="outline" className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]">
+                <Button onClick={() => onNavigate("student-dashboard")} variant="outline" className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
                   <Icon name="FolderLock" className="mr-2 size-4" />
                   Upload Documents
                 </Button>
@@ -1017,8 +1017,8 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               {faqs.length > 0 ? (
                 <Accordion type="single" collapsible className="w-full">
                   {faqs.map((f, i) => (
-                    <AccordionItem key={i} value={`faq-${i}`} className="border-b border-[#2563EB]/10">
-                      <AccordionTrigger className="text-left text-sm font-semibold text-[#2563EB] hover:no-underline">
+                    <AccordionItem key={i} value={`faq-${i}`} className="border-b border-[#0057B8]/10">
+                      <AccordionTrigger className="text-left text-sm font-semibold text-[#0057B8] hover:no-underline">
                         {f.q}
                       </AccordionTrigger>
                       <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
@@ -1040,19 +1040,19 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
         <div className="mx-auto max-w-[1280px] px-4 py-14 lg:px-6">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div className="flex flex-col justify-center">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Ready when you are</p>
-              <h2 className="mt-1 text-3xl font-black text-[#2563EB] md:text-4xl">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Ready when you are</p>
+              <h2 className="mt-1 text-3xl font-black text-[#0057B8] md:text-4xl">
                 Ready to start your {country.shortName} study journey?
               </h2>
               <p className="mt-3 text-base text-muted-foreground">
                 Book a free consultation with a senior ALO counselor. We'll review your background, recommend universities, and walk you through every step — from documents to visa.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => scrollToId("eligibility")} variant="outline" className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]">
+                <Button onClick={() => scrollToId("eligibility")} variant="outline" className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
                   <Icon name="ClipboardCheck" className="mr-2 size-4" />
                   Check Eligibility
                 </Button>
-                <Button onClick={() => onNavigate("public-course-finder")} variant="outline" className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]">
+                <Button onClick={() => onNavigate("public-course-finder")} variant="outline" className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
                   <Icon name="Search" className="mr-2 size-4" />
                   Find Courses
                 </Button>
@@ -1102,12 +1102,12 @@ function FactTile({
   accent?: "blue" | "emerald";
 }) {
   return (
-    <div className="rounded-xl border-2 border-[#2563EB]/15 p-4">
+    <div className="rounded-xl border-2 border-[#0057B8]/15 p-4">
       <div className="flex items-center gap-2">
         <div
           className={cn(
             "flex size-7 items-center justify-center rounded-lg",
-            accent === "blue" && "bg-[#e8f0fb] text-[#2563EB]",
+            accent === "blue" && "bg-[#e8f0fb] text-[#0057B8]",
             accent === "emerald" && "bg-emerald-50 text-emerald-600",
           )}
         >
@@ -1122,10 +1122,10 @@ function FactTile({
 
 function PathwayTile({ from, to }: { from: string; to: string }) {
   return (
-    <div className="rounded-2xl border-2 border-[#2563EB]/15 p-5">
+    <div className="rounded-2xl border-2 border-[#0057B8]/15 p-5">
       <div className="flex items-center gap-2">
-        <Badge variant="outline" className="border-[#2563EB]/30 bg-[#e8f0fb] text-[#2563EB]">{from}</Badge>
-        <Icon name="ArrowRight" className="size-4 text-[#F97316]" />
+        <Badge variant="outline" className="border-[#0057B8]/30 bg-[#e8f0fb] text-[#0057B8]">{from}</Badge>
+        <Icon name="ArrowRight" className="size-4 text-[#E8501A]" />
       </div>
       <p className="mt-2 text-sm font-semibold text-foreground">{to}</p>
     </div>
@@ -1175,33 +1175,33 @@ function BudgetCalculator({
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <div>
-        <p className="text-xs font-bold uppercase tracking-wide text-[#2563EB]">Tuition ranges (per year)</p>
+        <p className="text-xs font-bold uppercase tracking-wide text-[#0057B8]">Tuition ranges (per year)</p>
         <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-          <div className="rounded-lg border border-[#2563EB]/15 p-3">
+          <div className="rounded-lg border border-[#0057B8]/15 p-3">
             <p className="text-xs text-muted-foreground">Undergraduate</p>
             <p className="font-semibold text-foreground">{typeof tuitionRange === "string" ? tuitionRange : (tuitionRange?.ug || "—")}</p>
           </div>
-          <div className="rounded-lg border border-[#2563EB]/15 p-3">
+          <div className="rounded-lg border border-[#0057B8]/15 p-3">
             <p className="text-xs text-muted-foreground">Postgraduate</p>
             <p className="font-semibold text-foreground">{typeof tuitionRange === "string" ? "—" : (tuitionRange?.pg || "—")}</p>
           </div>
-          <div className="rounded-lg border border-[#2563EB]/15 p-3">
+          <div className="rounded-lg border border-[#0057B8]/15 p-3">
             <p className="text-xs text-muted-foreground">MBA</p>
             <p className="font-semibold text-foreground">{typeof tuitionRange === "string" ? "—" : (tuitionRange?.mba || "—")}</p>
           </div>
-          <div className="rounded-lg border border-[#2563EB]/15 p-3">
+          <div className="rounded-lg border border-[#0057B8]/15 p-3">
             <p className="text-xs text-muted-foreground">Deposit</p>
             <p className="font-semibold text-foreground">{typeof tuitionRange === "string" ? "—" : (tuitionRange?.deposit || "—")}</p>
           </div>
         </div>
-        <div className="mt-3 rounded-lg border border-[#2563EB]/15 p-3 text-sm">
+        <div className="mt-3 rounded-lg border border-[#0057B8]/15 p-3 text-sm">
           <p className="text-xs text-muted-foreground">Living cost (typical)</p>
           <p className="font-semibold text-foreground">{livingCost || `~${currency} 1,000 / month`}</p>
         </div>
       </div>
 
-      <div className="rounded-xl border-2 border-[#2563EB]/15 p-5">
-        <p className="text-xs font-bold uppercase tracking-wide text-[#2563EB]">First-year budget calculator</p>
+      <div className="rounded-xl border-2 border-[#0057B8]/15 p-5">
+        <p className="text-xs font-bold uppercase tracking-wide text-[#0057B8]">First-year budget calculator</p>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <div>
             <Label className="text-xs font-semibold">Study level</Label>
@@ -1254,9 +1254,9 @@ function BudgetCalculator({
               <p className="font-bold text-foreground">{currency} {totalLiving.toLocaleString()}</p>
             </div>
           </div>
-          <div className="mt-3 border-t border-[#2563EB]/15 pt-3">
+          <div className="mt-3 border-t border-[#0057B8]/15 pt-3">
             <p className="text-xs text-muted-foreground">Estimated first-year cost (BDT)</p>
-            <p className="text-2xl font-black text-[#F97316]">৳ {totalBDT.toLocaleString()}</p>
+            <p className="text-2xl font-black text-[#E8501A]">৳ {totalBDT.toLocaleString()}</p>
           </div>
         </div>
 
@@ -1364,7 +1364,7 @@ function EligibilityChecker({ countryName }: { countryName: string }) {
         </div>
       </div>
 
-      <Button onClick={run} disabled={loading} className="mt-4 bg-[#F97316] text-white hover:bg-[#F97316]/90">
+      <Button onClick={run} disabled={loading} className="mt-4 bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
         {loading ? (
           <><Icon name="Loader2" className="mr-2 size-4 animate-spin" /> AI assessing...</>
         ) : (
@@ -1380,7 +1380,7 @@ function EligibilityChecker({ countryName }: { countryName: string }) {
 function EligibilityResultCard({ result }: { result: EligibilityResult }) {
   const status = result.status || "NEEDS_COUNSELOR_REVIEW";
   return (
-    <div className="mt-5 rounded-2xl border-2 border-[#2563EB]/15 p-5">
+    <div className="mt-5 rounded-2xl border-2 border-[#0057B8]/15 p-5">
       <div className="flex flex-wrap items-center gap-2">
         <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold", STATUS_COLORS[status] || STATUS_COLORS.NEEDS_COUNSELOR_REVIEW)}>
           <Icon name="ShieldCheck" className="size-3.5" />
@@ -1420,25 +1420,25 @@ function EligibilityResultCard({ result }: { result: EligibilityResult }) {
       </div>
       <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
         {Array.isArray(result.recommendedDocuments) && result.recommendedDocuments.length > 0 && (
-          <div className="rounded-xl border-2 border-[#2563EB]/15 p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-[#2563EB]">Recommended documents</p>
+          <div className="rounded-xl border-2 border-[#0057B8]/15 p-4">
+            <p className="text-xs font-bold uppercase tracking-wide text-[#0057B8]">Recommended documents</p>
             <ul className="mt-2 space-y-1 text-sm text-foreground">
-              {result.recommendedDocuments.map((d, i) => <li key={i} className="flex gap-2"><Icon name="FileText" className="size-3.5 text-[#2563EB]" /> {d}</li>)}
+              {result.recommendedDocuments.map((d, i) => <li key={i} className="flex gap-2"><Icon name="FileText" className="size-3.5 text-[#0057B8]" /> {d}</li>)}
             </ul>
           </div>
         )}
         {Array.isArray(result.recommendedNextSteps) && result.recommendedNextSteps.length > 0 && (
-          <div className="rounded-xl border-2 border-[#2563EB]/15 p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-[#2563EB]">Next steps</p>
+          <div className="rounded-xl border-2 border-[#0057B8]/15 p-4">
+            <p className="text-xs font-bold uppercase tracking-wide text-[#0057B8]">Next steps</p>
             <ol className="mt-2 space-y-1 text-sm text-foreground">
-              {result.recommendedNextSteps.map((s, i) => <li key={i} className="flex gap-2"><span className="font-bold text-[#F97316]">{i + 1}.</span> {s}</li>)}
+              {result.recommendedNextSteps.map((s, i) => <li key={i} className="flex gap-2"><span className="font-bold text-[#E8501A]">{i + 1}.</span> {s}</li>)}
             </ol>
           </div>
         )}
       </div>
       {result.englishTestAdvice && (
-        <div className="mt-3 rounded-xl border border-[#2563EB]/15 bg-[#e8f0fb]/50 p-3 text-sm">
-          <p className="text-xs font-bold uppercase tracking-wide text-[#2563EB]">English test advice</p>
+        <div className="mt-3 rounded-xl border border-[#0057B8]/15 bg-[#e8f0fb]/50 p-3 text-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-[#0057B8]">English test advice</p>
           <p className="mt-1 text-foreground">{result.englishTestAdvice}</p>
         </div>
       )}
@@ -1550,7 +1550,7 @@ function VisaReadinessChecker({ countryName }: { countryName: string }) {
         </div>
       </div>
 
-      <Button onClick={run} disabled={loading} className="mt-4 bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
+      <Button onClick={run} disabled={loading} className="mt-4 bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
         {loading ? (
           <><Icon name="Loader2" className="mr-2 size-4 animate-spin" /> AI assessing...</>
         ) : (
@@ -1562,4 +1562,3 @@ function VisaReadinessChecker({ countryName }: { countryName: string }) {
     </div>
   );
 }
-export default PublicCountry;

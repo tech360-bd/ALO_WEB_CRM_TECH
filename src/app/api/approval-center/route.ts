@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-import { withAuth, type AuthContext } from "@/lib/auth-middleware";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -10,10 +9,9 @@ export const dynamic = "force-dynamic";
 //   - AI Command Actions (CRM modifications pending approval)
 //   - University Monitoring changes (pending review)
 //   - Communication Drafts (AI-drafted replies pending approval)
-async function getApprovalCenter(req: Request, _auth: AuthContext) {
-  const searchParams = new URL(req.url).searchParams;
-  const source = searchParams.get("source") || "ALL";
-  const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200);
+export async function GET(req: NextRequest) {
+  const source = req.nextUrl.searchParams.get("source") || "ALL";
+  const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") || "50"), 200);
 
   const items: any[] = [];
 
@@ -123,7 +121,3 @@ async function getApprovalCenter(req: Request, _auth: AuthContext) {
 
   return NextResponse.json({ items, stats });
 }
-
-export const GET = withAuth(getApprovalCenter, {
-  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
-});

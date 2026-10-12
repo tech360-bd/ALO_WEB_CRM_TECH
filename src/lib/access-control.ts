@@ -1,8 +1,143 @@
 import { db } from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 // ─── ALO Employee Access Control Engine ─────────────────────
 // Backend helpers for permission checking — MUST be used by every controller.
 // Do NOT rely on frontend hiding.
+
+// ─── Auth Types ─────────────────────────────────────────────
+
+type AuthResult =
+  | { success: true; user: { id: string; email: string; name: string; role: string; status: string } }
+  | NextResponse;
+
+type ErrorResponse = NextResponse;
+
+/**
+ * Type guard to check if an auth result is an error response.
+ * Usage: const auth = await requireAuth(req); if (isErrorResponse(auth)) return auth;
+ */
+export function isErrorResponse(result: AuthResult | ErrorResponse): result is ErrorResponse {
+  return result instanceof NextResponse;
+}
+
+/**
+ * Require authentication. Returns user info or a 401 response.
+ */
+export async function requireAuth(req: NextRequest): Promise<AuthResult> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, error: "Authentication required. Please sign in." },
+        { status: 401 }
+      );
+    }
+    const user = session.user as any;
+    if (user.status !== "ACTIVE") {
+      return NextResponse.json(
+        { success: false, error: "Account is not active." },
+        { status: 403 }
+      );
+    }
+    return {
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        status: user.status,
+      },
+    };
+  } catch {
+    return NextResponse.json(
+      { success: false, error: "Authentication check failed." },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Require a specific permission (feature key). Returns user info or error.
+ * SUPER_ADMIN and ADMIN roles bypass permission checks.
+ */
+export async function requirePermission(req: NextRequest, permissionKey: string): Promise<AuthResult> {
+  const auth = await requireAuth(req);
+  if (isErrorResponse(auth)) return auth;
+
+  // SUPER_ADMIN and ADMIN bypass permission checks
+  if (auth.user.role === "SUPER_ADMIN" || auth.user.role === "ADMIN") {
+    return auth;
+  }
+
+  // Check feature access via employee record
+  const employee = await db.employeeHR.findFirst({ where: { userId: auth.user.id } });
+  if (!employee) {
+    return NextResponse.json(
+      { success: false, error: "No employee record found. Permission denied." },
+      { status: 403 }
+    );
+  }
+
+  // Chairman/CEO always have access
+  if (employee.designation === "Chairman" || employee.designation === "CEO") {
+    return auth;
+  }
+
+  const rule = await db.featureAccessRule.findUnique({
+    where: {
+      ownerType_ownerId_featureKey: { ownerType: "EMPLOYEE", ownerId: employee.id, featureKey: permissionKey },
+    },
+  });
+
+  if (!rule || !rule.isEnabled) {
+    return NextResponse.json(
+      { success: false, error: `Permission denied: ${permissionKey}` },
+      { status: 403 }
+    );
+  }
+
+  return auth;
+}
+
+/**
+ * Log an audit event. Fire-and-forget.
+ */
+export async function auditLog(params: {
+  userId: string;
+  action: string;
+  resource: string;
+  resourceId?: string;
+  details?: Record<string, unknown>;
+  ipAddress?: string;
+}): Promise<void> {
+  try {
+    await db.auditLog.create({
+      data: {
+        userId: params.userId,
+        action: params.action,
+        resource: params.resource,
+        resourceId: params.resourceId,
+        details: params.details ? JSON.stringify(params.details) : null,
+        ipAddress: params.ipAddress,
+      },
+    });
+  } catch {
+    // Audit logging should never break the main flow
+  }
+}
+
+/**
+ * Parse pagination params from request URL search params.
+ */
+export function parsePagination(searchParams: URLSearchParams, defaultLimit = 20) {
+  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || String(defaultLimit), 10) || defaultLimit));
+  return { page, limit, skip: (page - 1) * limit };
+}
 
 /**
  * Check if a user/employee can access a specific feature.
@@ -10,7 +145,7 @@ import { db } from "@/lib/db";
  */
 export async function canAccessFeature(ownerId: string, featureKey: string): Promise<boolean> {
   // Get the employee
-  const employee = await db.employee.findFirst({ where: { id: ownerId } });
+  const employee = await db.employeeHR.findFirst({ where: { id: ownerId } });
   if (!employee) return false;
 
   // Super Admin and Chairman always have access
@@ -19,7 +154,11 @@ export async function canAccessFeature(ownerId: string, featureKey: string): Pro
   }
 
   // Check feature access rule
-  const rule = await db.featureAccessRule.findFirst({ where: { ownerType: "EMPLOYEE", ownerId, featureKey } });
+  const rule = await db.featureAccessRule.findUnique({
+    where: {
+      ownerType_ownerId_featureKey: { ownerType: "EMPLOYEE", ownerId, featureKey },
+    },
+  });
 
   if (!rule) return false;
   return rule.isEnabled;
@@ -29,7 +168,11 @@ export async function canAccessFeature(ownerId: string, featureKey: string): Pro
  * Get the quota limit for a feature (e.g. monthly image limit).
  */
 export async function getQuota(ownerType: string, ownerId: string, featureKey: string): Promise<number | null> {
-  const rule = await db.featureAccessRule.findFirst({ where: { ownerType, ownerId, featureKey } });
+  const rule = await db.featureAccessRule.findUnique({
+    where: {
+      ownerType_ownerId_featureKey: { ownerType, ownerId, featureKey },
+    },
+  });
   return rule?.limitValue ?? null;
 }
 
@@ -83,7 +226,7 @@ export async function canViewEmployeePrivateProfile(viewerId: string, employeeId
   // Self
   if (viewerId === employeeId) return true;
 
-  const viewer = await db.employee.findFirst({ where: { id: viewerId } });
+  const viewer = await db.employeeHR.findFirst({ where: { id: viewerId } });
   if (!viewer) return false;
 
   // Super Admin and Chairman always can
@@ -103,7 +246,7 @@ export async function canViewEmployeePrivateProfile(viewerId: string, employeeId
  * Check if a user can view B2B partner details for a specific application.
  */
 export async function canViewB2BDetails(userId: string, applicationId: string): Promise<boolean> {
-  const employee = await db.employee.findFirst({ where: { id: userId } });
+  const employee = await db.employeeHR.findFirst({ where: { id: userId } });
   if (!employee) return false;
 
   if (employee.role === "SUPER_ADMIN" || employee.designation === "Chairman") return true;
@@ -135,24 +278,37 @@ export async function canUseStudentBenefit(studentId: string, benefitType: "ENGL
     return { allowed: false, remaining: 0, reason: "Student benefits require an ALO application first" };
   }
 
-  // Partner leads carry the partner ownership in Main's schema.
-  const partnerLead = await db.partnerLead.findFirst({ where: { studentId } });
-  if (partnerLead?.partnerId) {
-    const assignment = await db.partnerPackageAssignment.findFirst({ where: { partnerId: partnerLead.partnerId, status: "active" } });
-    const packageRecord = assignment ? await db.partnerPackage.findUnique({ where: { id: assignment.packageId } }) : null;
-    if (assignment && packageRecord) {
-      const features = JSON.parse(packageRecord.features || "{}");
-      const configuredLimit = benefitType === "ENGLISH_MOCK" ? features.englishMockVoucherLimit : features.interviewPrepLimit;
-      const limit = typeof configuredLimit === "number" ? configuredLimit : (benefitType === "ENGLISH_MOCK" ? 3 : 1);
-      const usageCount = await db.featureUsageLog.count({ where: { ownerType: "PARTNER", ownerId: partnerLead.partnerId, featureKey: "partner.student.benefit", action: benefitType === "ENGLISH_MOCK" ? "mock_voucher_used" : "interview_prep_used", metadata: { contains: studentId } } });
-      const remaining = Math.max(0, limit - usageCount);
-      if (remaining === 0) return { allowed: false, remaining: 0, reason: `${benefitType} voucher limit reached (${limit})` };
-      return { allowed: true, remaining };
+  // Check partner package limits
+  if (student.partnerId) {
+    const partnerEmp = await db.employeeHR.findFirst({ where: { userId: student.partnerId } });
+    if (partnerEmp) {
+      const assignment = await db.partnerPackageAssignment.findFirst({
+        where: { partnerId: partnerEmp.id, status: "ACTIVE" },
+        include: { package: true },
+      });
+      if (assignment) {
+        const limit = benefitType === "ENGLISH_MOCK" ? assignment.package.englishMockVoucherLimit : assignment.package.interviewPrepLimit;
+        // Count usage for this student
+        const usageCount = await db.featureUsageLog.count({
+          where: {
+            ownerType: "PARTNER",
+            ownerId: partnerEmp.id,
+            featureKey: benefitType === "ENGLISH_MOCK" ? "partner.student.benefit" : "partner.student.benefit",
+            action: benefitType === "ENGLISH_MOCK" ? "mock_voucher_used" : "interview_prep_used",
+            metadata: { contains: studentId },
+          },
+        });
+        const remaining = Math.max(0, limit - usageCount);
+        if (remaining === 0) {
+          return { allowed: false, remaining: 0, reason: `${benefitType} voucher limit reached (${limit})` };
+        }
+        return { allowed: true, remaining };
+      }
     }
   }
 
   // Non-partner ALO students: 3 free mocks + 1 interview (standard ALO policy)
-  const mockCount = await db.testSession.count({ where: { studentId } });
+  const mockCount = await db.mockTest.count({ where: { studentId, isFree: true } });
   if (benefitType === "ENGLISH_MOCK") {
     const remaining = Math.max(0, 3 - mockCount);
     if (remaining === 0) return { allowed: false, remaining: 0, reason: "Free mock limit reached (3). Payment required for additional mocks." };
@@ -188,8 +344,11 @@ export async function logSensitiveAccess(userId: string, action: string, resourc
  * Get partner package for a partner employee
  */
 export async function getPartnerPackage(partnerEmployeeId: string) {
-  const assignment = await db.partnerPackageAssignment.findFirst({ where: { partnerId: partnerEmployeeId, status: "active" } });
-  return assignment ? db.partnerPackage.findUnique({ where: { id: assignment.packageId } }) : null;
+  const assignment = await db.partnerPackageAssignment.findFirst({
+    where: { partnerId: partnerEmployeeId, status: "ACTIVE" },
+    include: { package: true },
+  });
+  return assignment?.package || null;
 }
 
 /**

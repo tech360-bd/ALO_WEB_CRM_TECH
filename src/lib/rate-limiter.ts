@@ -1,79 +1,113 @@
 /**
- * Rate Limiter — ALO Education
- * Protects login, OTP, AI endpoints, WhatsApp send, document endpoints, admin settings, webhook
+ * In-memory login rate limiter.
+ * Locks an email after MAX_ATTEMPTS failed logins for LOCKOUT_DURATION_MS.
+ * No external dependencies (Redis, etc.). Resets on successful login.
  */
 
-const store = new Map<string, { count: number; resetAt: number }>();
-
-interface RateLimitConfig {
-  windowMs: number;
-  max: number;
+interface RateLimitEntry {
+  attempts: number;
+  lockedUntil: number | null; // epoch ms, null = not locked
+  lastAttemptAt: number;
 }
 
-const DEFAULT_LIMITS: Record<string, RateLimitConfig> = {
-  login: { windowMs: 15 * 60 * 1000, max: 10 }, // 10 attempts per 15min
-  otp: { windowMs: 10 * 60 * 1000, max: 5 },
-  ai: { windowMs: 60 * 1000, max: 20 }, // 20 AI requests per minute
-  whatsapp_send: { windowMs: 60 * 1000, max: 30 },
-  document: { windowMs: 60 * 1000, max: 50 },
-  admin_settings: { windowMs: 60 * 1000, max: 30 },
-  lead_create: { windowMs: 60 * 1000, max: 5 },
-  webhook: { windowMs: 60 * 1000, max: 100 }, // Allow high for WhatsApp traffic
-};
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 
-export function checkRateLimit(key: string, type: keyof typeof DEFAULT_LIMITS = 'webhook'): { allowed: boolean; remaining: number; resetAt: number } {
-  const config = DEFAULT_LIMITS[type] || DEFAULT_LIMITS.webhook;
+// In-memory store: email → entry
+const store = new Map<string, RateLimitEntry>();
+
+// Periodic cleanup to avoid memory leaks (every 10 minutes)
+const CLEANUP_INTERVAL_MS = 10 * 60 * 1000;
+
+function cleanup() {
   const now = Date.now();
-  const storeKey = `${type}:${key}`;
-
-  const existing = store.get(storeKey);
-
-  if (!existing || now > existing.resetAt) {
-    store.set(storeKey, { count: 1, resetAt: now + config.windowMs });
-    return { allowed: true, remaining: config.max - 1, resetAt: now + config.windowMs };
-  }
-
-  if (existing.count >= config.max) {
-    return { allowed: false, remaining: 0, resetAt: existing.resetAt };
-  }
-
-  existing.count++;
-  store.set(storeKey, existing);
-  return { allowed: true, remaining: config.max - existing.count, resetAt: existing.resetAt };
-}
-
-export function rateLimitMiddleware(req: Request, type: keyof typeof DEFAULT_LIMITS = 'webhook'): Response | null {
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
-  const result = checkRateLimit(ip, type);
-
-  if (!result.allowed) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: 'Rate limit exceeded. Please try again later.',
-        retryAfter: Math.ceil((result.resetAt - Date.now()) / 1000),
-      }),
-      {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          'Retry-After': String(Math.ceil((result.resetAt - Date.now()) / 1000)),
-          'X-RateLimit-Remaining': '0',
-          'X-RateLimit-Reset': String(result.resetAt),
-        },
-      }
-    );
-  }
-
-  return null;
-}
-
-// Cleanup old entries every 10 minutes
-if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [key, value] of store.entries()) {
-      if (now > value.resetAt) store.delete(key);
+  for (const [email, entry] of store) {
+    // Remove entries that are not locked and last attempted > 30 min ago
+    if (!entry.lockedUntil && now - entry.lastAttemptAt > 30 * 60 * 1000) {
+      store.delete(email);
     }
-  }, 10 * 60 * 1000);
+    // Remove expired locks that were locked > 30 min ago
+    if (entry.lockedUntil && now - entry.lockedUntil > 15 * 60 * 1000) {
+      store.delete(email);
+    }
+  }
+}
+
+// Start cleanup interval
+if (typeof globalThis !== "undefined" && typeof setInterval !== "undefined") {
+  setInterval(cleanup, CLEANUP_INTERVAL_MS);
+}
+
+/**
+ * Check if login is allowed for the given email.
+ * Returns `{ allowed: true }` or `{ allowed: false, retryAfterSeconds: number }`.
+ */
+export function checkLoginRateLimit(email: string): {
+  allowed: boolean;
+  retryAfterSeconds?: number;
+} {
+  const key = email.toLowerCase();
+  const entry = store.get(key);
+
+  if (!entry) return { allowed: true };
+
+  const now = Date.now();
+
+  // Check if currently locked out
+  if (entry.lockedUntil && now < entry.lockedUntil) {
+    const retryAfterSeconds = Math.ceil(
+      (entry.lockedUntil - now) / 1000
+    );
+    return { allowed: false, retryAfterSeconds };
+  }
+
+  // Lockout expired, reset
+  if (entry.lockedUntil && now >= entry.lockedUntil) {
+    store.delete(key);
+    return { allowed: true };
+  }
+
+  return { allowed: true };
+}
+
+/**
+ * Record a failed login attempt. Returns the updated state.
+ */
+export function recordFailedLogin(email: string): {
+  locked: boolean;
+  retryAfterSeconds?: number;
+} {
+  const key = email.toLowerCase();
+  const entry = store.get(key) || {
+    attempts: 0,
+    lockedUntil: null,
+    lastAttemptAt: 0,
+  };
+
+  entry.attempts += 1;
+  entry.lastAttemptAt = Date.now();
+
+  if (entry.attempts >= MAX_ATTEMPTS) {
+    entry.lockedUntil = Date.now() + LOCKOUT_DURATION_MS;
+    store.set(key, entry);
+    return { locked: true, retryAfterSeconds: LOCKOUT_DURATION_MS / 1000 };
+  }
+
+  store.set(key, entry);
+  return { locked: false };
+}
+
+/**
+ * Reset rate limit on successful login.
+ */
+export function resetLoginRateLimit(email: string): void {
+  store.delete(email.toLowerCase());
+}
+
+/**
+ * Get current attempt count for an email (useful for UI feedback).
+ */
+export function getLoginAttempts(email: string): number {
+  const entry = store.get(email.toLowerCase());
+  return entry?.attempts || 0;
 }

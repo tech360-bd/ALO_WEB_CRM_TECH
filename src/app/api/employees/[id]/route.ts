@@ -1,81 +1,84 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { canViewEmployeePrivateProfile, logSensitiveAccess } from '@/lib/access-control';
-import { withAuth, type AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { canViewEmployeePrivateProfile, logSensitiveAccess } from "@/lib/access-control";
 
-async function getEmployee(req: Request, auth: AuthContext, context?: { params: Promise<{ id: string }> }) {
-  const { id } = await context!.params;
-  const employee = await db.employee.findUnique({ where: { id } });
-  if (!employee) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  const [profile, documents, salary] = await Promise.all([
-    db.employeeProfile.findUnique({ where: { userId: employee.userId } }),
-    db.employeeDocument.findMany({ where: { employeeId: id } }),
-    db.employeeSalary.findFirst({ where: { employeeId: id } }),
-  ]);
-  const canViewPrivate = await canViewEmployeePrivateProfile(auth.userId, id);
-  if (canViewPrivate) await logSensitiveAccess(auth.userId, 'SALARY_ACCESS', 'Employee', id);
+// GET — single employee with full profile (privacy-checked)
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const viewerId = req.nextUrl.searchParams.get("viewerId");
+
+  const employee = await db.employeeHR.findUnique({
+    where: { id },
+    include: {
+      department: true,
+      office: true,
+      profile: true,
+      education: true,
+      emergencyContacts: true,
+      salary: true,
+      documents: true,
+    },
+  });
+
+  if (!employee) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  // Privacy check: can viewer see private profile?
+  const canViewPrivate = viewerId ? await canViewEmployeePrivateProfile(viewerId, id) : false;
+
+  // Log sensitive access if viewing private data
+  if (canViewPrivate && viewerId) {
+    await logSensitiveAccess(viewerId, "SALARY_ACCESS", "Employee", id);
+  }
+
+  // Strip private data if not authorized
+  const sanitized = canViewPrivate ? employee : {
+    ...employee,
+    salary: null,
+    emergencyContacts: [],
+    documents: employee.documents?.map((d) => ({ ...d, filePath: null })) || [],
+    profile: employee.profile ? {
+      ...employee.profile,
+      presentAddress: null,
+      permanentAddress: null,
+    } : null,
+  };
+
   return NextResponse.json({
-    employee: { ...employee, profile: canViewPrivate ? profile : profile ? { ...profile, salary: null, bankAccount: null, bankName: null, bankRouting: null, emergencyContact: null } : null, documents: canViewPrivate ? documents : documents.map((document) => ({ ...document, filePath: null })), salary: canViewPrivate ? salary : null },
+    employee: sanitized,
     canViewPrivate,
-    privacyNote: canViewPrivate ? 'Private access is audit-logged.' : 'Private profile data is hidden.',
+    privacyNote: canViewPrivate
+      ? "You have full access to this employee's private profile. This access is audit-logged."
+      : "Private profile data (salary, emergency contacts, documents, address) is hidden. Only the employee themselves, Super Admin, Chairman, and HR Manager with permission can view.",
   });
 }
 
-async function updateEmployee(req: Request, auth: AuthContext, context?: { params: Promise<{ id: string }> }) {
-  const { id } = await context!.params;
-  const body = await req.json().catch(() => null);
-  if (!body || typeof body !== 'object') return NextResponse.json({ success: false, error: 'Invalid request body.' }, { status: 400 });
-  const employee = await db.employee.findUnique({ where: { id } });
-  if (!employee) return NextResponse.json({ success: false, error: 'Employee not found.' }, { status: 404 });
+// PATCH — update employee (profile status, designation, status, etc.)
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const body = await req.json();
+  const { profileStatus, status, designation, departmentId, officeId, role, updatedById } = body;
 
-  const updates: Record<string, string> = {};
-  for (const field of ['designation', 'department', 'branch'] as const) {
-    if (body[field] !== undefined) {
-      if (typeof body[field] !== 'string' || body[field].length > 191) return NextResponse.json({ success: false, error: `Invalid ${field}.` }, { status: 400 });
-      updates[field] = body[field].trim();
-    }
-  }
-
-  const requestedStatus = typeof body.status === 'string' ? body.status.toLowerCase() : undefined;
-  if (requestedStatus && !['active', 'suspended'].includes(requestedStatus)) {
-    return NextResponse.json({ success: false, error: 'Use the lifecycle workflow for terminal or activation states.' }, { status: 400 });
-  }
-  if (!requestedStatus && Object.keys(updates).length === 0) {
-    return NextResponse.json({ success: false, error: 'No supported employee fields were supplied.' }, { status: 400 });
-  }
-
-  const portalUser = await db.portalUser.findUnique({ where: { id: employee.userId } });
-  if (!portalUser || portalUser.userType !== 'EMPLOYEE') {
-    return NextResponse.json({ success: false, error: 'Linked employee login account was not found.' }, { status: 409 });
-  }
-  if (requestedStatus === 'active') {
-    if (['terminated', 'resigned', 'blocked'].includes(portalUser.status.toLowerCase())) {
-      return NextResponse.json({ success: false, error: 'Terminated or blocked employee accounts cannot be reactivated here.' }, { status: 409 });
-    }
-    if (portalUser.firstLoginRequired || !portalUser.emailVerified || !portalUser.passwordHash) {
-      return NextResponse.json({ success: false, error: 'Employee must complete the one-time activation flow before reactivation.' }, { status: 409 });
-    }
-  }
-
-  const status = requestedStatus || employee.status;
-  const updated = await db.$transaction(async (tx) => {
-    const row = await tx.employee.update({ where: { id }, data: { ...updates, ...(requestedStatus ? { status: requestedStatus } : {}) } });
-    if (requestedStatus) {
-      await tx.portalUser.update({ where: { id: portalUser.id }, data: { status: requestedStatus } });
-      if (requestedStatus !== 'active') {
-        await tx.portalSession.updateMany({ where: { userId: portalUser.id, revokedAt: null }, data: { revokedAt: new Date() } });
-        await tx.employeeActivationToken.updateMany({ where: { employeeId: portalUser.id, status: 'active' }, data: { status: 'expired' } });
-      }
-    }
-    return row;
+  const employee = await db.employeeHR.update({
+    where: { id },
+    data: {
+      ...(profileStatus && { profileStatus }),
+      ...(status && { status }),
+      ...(designation && { designation }),
+      ...(departmentId && { departmentId }),
+      ...(officeId && { officeId }),
+      ...(role && { role }),
+    },
   });
-  await logAuditAction(auth, requestedStatus ? 'employee_status_changed' : 'employee_profile_updated', 'Employee', id, {
-    previousStatus: employee.status,
-    nextStatus: status,
-    fields: Object.keys(updates),
+
+  await db.auditLog.create({
+    data: {
+      userId: updatedById,
+      action: "ROLE_CHANGE",
+      resource: "Employee",
+      resourceId: id,
+      details: JSON.stringify({ profileStatus, status, designation }),
+    },
   });
-  return NextResponse.json({ employee: updated });
+
+  return NextResponse.json({ employee });
 }
-
-export const GET = withAuth(getEmployee, { requireRoles: ['super_admin', 'admin', 'hr_manager'] });
-export const PATCH = withAuth(updateEmployee, { requireRoles: ['super_admin', 'admin', 'hr_manager'] });

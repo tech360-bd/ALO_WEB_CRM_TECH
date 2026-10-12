@@ -61,63 +61,7 @@ export type ViewKey =
   | "review-dashboard"
   | "storage-monitoring"
   | "public-review-submit"
-  | "public-about"
-  | "public-services"
-  | "public-blog"
-  | "public-news"
-  | "public-events"
-  | "public-success-stories"
-  | "public-faq"
-  | "public-contact"
-  | "public-visa-support"
-  | "public-admission-requirements"
-  | "public-application-process"
-  | "public-team"
-  | "public-resources"
-  | "public-journey"
-  | "public-privacy"
-  | "public-terms"
-  | "public-cookie"
-  | "public-cookies"
-  | "public-accessibility"
-  | "public-communication-policy"
-  | "public-lead-data-policy"
-  | "public-user-guide"
-  | "public-search"
-  | "student-sop"
-  | "student-cv"
-  | "student-cas"
-  | "student-visa-checklist"
-  | "student-referrals"
-  | "student-timeline"
-  | "student-notifications"
-  | "student-appointments"
-  | "student-help"
-  | "student-visa-readiness"
-  | "public-offices"
-  | "public-partners"
-  | "public-careers"
-  | "public-refund-policy"
-  | "public-higher-study"
-  | "student-messages"
-  | "student-payments"
-  | "student-offers"
-  | "student-shortlist"
-  | "student-compare"
-  | "student-mock-tests"
-  | "crm-tasks"
-  | "crm-followups"
-  | "crm-appointments"
-  | "crm-email"
-  | "crm-sms"
-  | "crm-calls"
-  | "crm-invoices"
-  | "crm-analytics"
-  | "crm-settings"
-  | "employee-workspace"
   | "comm-command-center"
-  | "approval-center"
-  | "nexabroad"
   | "whatsapp-command-center"
   | "phone-call-center"
   | "sla-performance"
@@ -155,22 +99,6 @@ export const NAV_ITEMS: NavItem[] = [
   { key: "csv-import-center", label: "CSV Import", icon: "FileSpreadsheet", roles: ["ADMIN", "SUPER_ADMIN"], group: "System" },
   { key: "admin-course-management", label: "Course Management", icon: "BookOpen", roles: ["ADMIN", "SUPER_ADMIN"], group: "System" },
   { key: "student-course-finder", label: "Smart Course Finder", icon: "Sparkles", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-sop", label: "SOP Studio", icon: "PenLine", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-cv", label: "CV Builder", icon: "FileUser", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-visa-readiness", label: "Visa Readiness", icon: "ShieldCheck", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-visa-checklist", label: "Visa Checklist", icon: "ListChecks", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-cas", label: "CAS Center", icon: "FileCheck", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-timeline", label: "My Timeline", icon: "Clock", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-notifications", label: "Notifications", icon: "Bell", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-appointments", label: "Appointments", icon: "Calendar", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-referrals", label: "Refer a Friend", icon: "Gift", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-help", label: "Help Center", icon: "HelpCircle", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-messages", label: "Messages", icon: "MessageSquare", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-payments", label: "Payments", icon: "CreditCard", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-offers", label: "University Offers", icon: "Award", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-shortlist", label: "Shortlist", icon: "Bookmark", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-compare", label: "Compare Courses", icon: "Columns3", roles: ["STUDENT", "COUNSELOR", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
-  { key: "student-mock-tests", label: "Mock Tests", icon: "FileCheck2", roles: ["STUDENT", "ENGLISH_TRAINER", "MOCK_TEST_ADMIN", "ADMIN", "SUPER_ADMIN"], group: "Student Portal" },
   { key: "permission-matrix", label: "Permission Matrix", icon: "Lock", roles: ["SUPER_ADMIN", "ADMIN"], group: "System" },
   { key: "access-control-center", label: "Access Control Center", icon: "Shield", roles: ["SUPER_ADMIN"], group: "System" },
   { key: "employee-management", label: "Employee Management", icon: "UserCog", roles: ["SUPER_ADMIN", "HR_MANAGER", "ADMIN"], group: "System" },
@@ -193,25 +121,13 @@ export const NAV_ITEMS: NavItem[] = [
   { key: "university-monitoring", label: "University Monitor", icon: "SatelliteDish", roles: ["SUPER_ADMIN", "ADMIN"], group: "System" },
   { key: "review-dashboard", label: "Review Center", icon: "Star", roles: ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"], group: "System" },
   { key: "storage-monitoring", label: "Storage Control", icon: "HardDrive", roles: ["SUPER_ADMIN", "ADMIN"], group: "System" },
-  { key: "crm-tasks", label: "Tasks", icon: "CheckSquare", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "FRONT_DESK"], group: "CRM & Operations" },
-  { key: "crm-followups", label: "Follow-ups", icon: "CalendarClock", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "FRONT_DESK"], group: "CRM & Operations" },
-  { key: "crm-appointments", label: "Appointments Calendar", icon: "CalendarDays", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "FRONT_DESK"], group: "CRM & Operations" },
-  { key: "crm-email", label: "Email Center", icon: "Mail", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER"], group: "CRM & Operations" },
-  { key: "crm-sms", label: "SMS Center", icon: "MessageCircle", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER"], group: "CRM & Operations" },
-  { key: "crm-calls", label: "Call Logs", icon: "PhoneCall", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "FRONT_DESK"], group: "CRM & Operations" },
-  { key: "crm-invoices", label: "Invoices", icon: "ReceiptText", roles: ["FINANCE", "ADMIN", "SUPER_ADMIN", "COUNSELOR"], group: "CRM & Operations" },
-  { key: "crm-analytics", label: "CRM Analytics", icon: "TrendingUp", roles: ["ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "MARKETING_MANAGER"], group: "CRM & Operations" },
-  { key: "crm-settings", label: "CRM Settings", icon: "Settings2", roles: ["ADMIN", "SUPER_ADMIN"], group: "CRM & Operations" },
-  { key: "employee-workspace", label: "My Workspace", icon: "LayoutPanelLeft", roles: ["COUNSELOR", "APPLICATION_TEAM", "ADMIN", "SUPER_ADMIN", "VISA_OFFICER", "FRONT_DESK", "MARKETING"], group: "Counselor Portal" },
-  { key: "comm-command-center", label: "Comm Command Center", icon: "MessagesSquare", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "FRONT_DESK", "MARKETING_MANAGER"], group: "Unified Communication" },
-  { key: "approval-center", label: "Human Approval Center", icon: "ClipboardCheck", roles: ["SUPER_ADMIN", "ADMIN", "BRANCH_MANAGER"], group: "Unified Communication" },
-  { key: "nexabroad", label: "NexAbroad AI", icon: "Sparkles", roles: ["SUPER_ADMIN", "ADMIN", "COUNSELOR"], group: "Unified Communication" },
-  { key: "whatsapp-command-center", label: "WhatsApp Command", icon: "MessageCircleMore", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "FRONT_DESK"], group: "Unified Communication" },
-  { key: "phone-call-center", label: "Phone Call Center", icon: "PhoneCall", roles: ["COUNSELOR", "ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "FRONT_DESK"], group: "Unified Communication" },
-  { key: "sla-performance", label: "SLA & Counselor Performance", icon: "GaugeCircle", roles: ["ADMIN", "SUPER_ADMIN", "BRANCH_MANAGER", "COUNSELOR"], group: "Unified Communication" },
-  { key: "social-dashboard", label: "Social Accounts Hub", icon: "Share2", roles: ["MARKETING_MANAGER", "MARKETING", "ADMIN", "SUPER_ADMIN"], group: "Unified Communication" },
-  { key: "comm-templates", label: "Template Manager", icon: "FileText", roles: ["ADMIN", "SUPER_ADMIN", "COUNSELOR", "BRANCH_MANAGER"], group: "Unified Communication" },
-  { key: "partner-comm-hub", label: "Partner Communication", icon: "Handshake", roles: ["PARTNER", "ADMIN", "SUPER_ADMIN"], group: "Portals" },
+  { key: "comm-command-center", label: "Comm Command Center", icon: "Radio", roles: ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "BRANCH_MANAGER"], group: "Communication" },
+  { key: "whatsapp-command-center", label: "WhatsApp Center", icon: "MessageCircle", roles: ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "BRANCH_MANAGER"], group: "Communication" },
+  { key: "phone-call-center", label: "Phone Call Center", icon: "Phone", roles: ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "FRONT_DESK"], group: "Communication" },
+  { key: "sla-performance", label: "SLA Performance", icon: "Gauge", roles: ["SUPER_ADMIN", "ADMIN", "BRANCH_MANAGER"], group: "Communication" },
+  { key: "social-dashboard", label: "Social Accounts", icon: "Share2", roles: ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"], group: "Communication" },
+  { key: "comm-templates", label: "Comm Templates", icon: "FileText", roles: ["SUPER_ADMIN", "ADMIN", "COUNSELOR", "MARKETING_MANAGER"], group: "Communication" },
+  { key: "partner-comm-hub", label: "Partner Comm Hub", icon: "Handshake", roles: ["PARTNER", "ADMIN", "SUPER_ADMIN"], group: "Portals" },
 ];
 
 export const ROLES = [

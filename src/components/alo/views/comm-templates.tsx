@@ -1,22 +1,5 @@
 "use client";
 
-/**
- * ALO Education — Communication Template Manager
- * ===============================================
- * Official approved templates for WhatsApp, Email & SMS.
- * Plus a Quick Replies management surface.
- *
- * Backend contracts:
- *   GET    /api/communications/templates?channel&category&status&language
- *   POST   /api/communications/templates
- *   PATCH  /api/communications/templates/[id]
- *   DELETE /api/communications/templates/[id]  (archives, sets status=ARCHIVED)
- *   GET    /api/communications/quick-replies?channel&category&isActive
- *   POST   /api/communications/quick-replies
- *
- * Task ID: COMM-FE-C
- */
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -24,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -42,49 +23,36 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
-import {
   Icon,
   PageHeader,
   SectionCard,
   EmptyState,
-  ErrorState,
   LoadingGrid,
-  KpiCard,
+} from "@/components/alo/shared";
+import {
   DataTable,
+  type DataTableColumn,
   SearchInput,
-  RichTextEditor,
-  Notification,
-  StatusBadge,
-  type Column,
-  type AccentColor,
-} from "@/components/alo/ui";
-import { fmtDate, timeAgo } from "@/lib/alo-types";
+  Pill,
+  fetchJson,
+  channelMeta,
+  timeAgoShort,
+} from "@/components/alo/comm-helpers";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────
 
 interface Template {
   id: string;
-  templateId: string;
+  templateId?: string | null;
   name: string;
   category: string;
   channel: string;
-  language: string;
-  subject: string | null;
+  language?: string | null;
+  subject?: string | null;
   body: string;
-  variables: string; // JSON array string
-  version: number;
-  status: string; // DRAFT | PENDING_APPROVAL | APPROVED | LOCKED | ARCHIVED
+  variables?: string | null;
+  status: string;
   isLocked: boolean;
-  approvedById: string | null;
-  approvedAt: string | null;
-  createdBy: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -93,547 +61,502 @@ interface QuickReply {
   id: string;
   title: string;
   body: string;
-  category: string;
-  channel: string;
-  shortcut: string | null;
-  sortOrder: number;
+  category?: string | null;
+  channel?: string | null;
+  shortcut?: string | null;
+  sortOrder?: number | null;
   isActive: boolean;
-  usedCount: number;
-  createdBy: string | null;
   createdAt: string;
-  updatedAt: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Constants & metadata
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Constants ───────────────────────────────────────────────────────────
 
-const CHANNELS = [
-  { value: "WHATSAPP", label: "WhatsApp", icon: "MessageCircle" },
-  { value: "EMAIL", label: "Email", icon: "Mail" },
-  { value: "SMS", label: "SMS", icon: "MessageSquare" },
-  { value: "PORTAL", label: "Portal", icon: "LayoutDashboard" },
-];
-
-const CATEGORIES = [
-  { value: "DOCUMENT_REQUEST", label: "Document Request" },
-  { value: "OFFER_NOTIFICATION", label: "Offer Notification" },
-  { value: "PAYMENT_INSTRUCTION", label: "Payment Instruction" },
-  { value: "PAYMENT_REMINDER", label: "Payment Reminder" },
-  { value: "INTERVIEW_REMINDER", label: "Interview Reminder" },
-  { value: "VISA_REMINDER", label: "Visa Reminder" },
-  { value: "SUCCESS", label: "Success" },
-  { value: "REVIEW_REQUEST", label: "Review Request" },
-  { value: "GREETING", label: "Greeting" },
-  { value: "FOLLOW_UP", label: "Follow-up" },
-];
-
-const STATUSES = [
-  { value: "DRAFT", label: "Draft" },
-  { value: "PENDING_APPROVAL", label: "Pending Approval" },
-  { value: "APPROVED", label: "Approved" },
-  { value: "LOCKED", label: "Locked" },
-  { value: "ARCHIVED", label: "Archived" },
-];
-
-const TEMPLATE_STATUS_ACCENT: Record<string, AccentColor> = {
-  DRAFT: "slate",
-  PENDING_APPROVAL: "amber",
-  APPROVED: "emerald",
-  LOCKED: "blue",
-  ARCHIVED: "rose",
+const STATUS_COLORS: Record<string, string> = {
+  DRAFT: "bg-slate-100 text-slate-700",
+  PENDING_APPROVAL: "bg-amber-100 text-amber-700",
+  APPROVED: "bg-emerald-100 text-emerald-700",
+  LOCKED: "bg-violet-100 text-violet-700",
+  ARCHIVED: "bg-rose-100 text-rose-700",
 };
-
-const TEMPLATE_STATUS_LABELS: Record<string, string> = {
-  DRAFT: "Draft",
-  PENDING_APPROVAL: "Pending Approval",
-  APPROVED: "Approved",
-  LOCKED: "Locked",
-  ARCHIVED: "Archived",
-};
-
-const CHANNEL_META: Record<string, { label: string; icon: string; accent: AccentColor }> = {
-  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", accent: "emerald" },
-  EMAIL: { label: "Email", icon: "Mail", accent: "violet" },
-  SMS: { label: "SMS", icon: "MessageSquare", accent: "sky" },
-  PORTAL: { label: "Portal", icon: "LayoutDashboard", accent: "orange" },
-};
-
-const QUICK_REPLY_CATEGORIES = [
-  { value: "GENERAL", label: "General" },
-  { value: "DOCUMENT", label: "Document" },
-  { value: "PAYMENT", label: "Payment" },
-  { value: "VISA", label: "Visa" },
-  { value: "INTERVIEW", label: "Interview" },
-  { value: "APPLICATION", label: "Application" },
-];
 
 const VARIABLE_SUGGESTIONS = [
-  { token: "{{student_name}}", label: "Student name" },
-  { token: "{{university}}", label: "University" },
-  { token: "{{deadline}}", label: "Deadline" },
-  { token: "{{amount}}", label: "Amount" },
-  { token: "{{counselor_name}}", label: "Counselor name" },
-  { token: "{{appointment_date}}", label: "Appointment date" },
+  "{{student_name}}",
+  "{{student_id}}",
+  "{{university}}",
+  "{{program}}",
+  "{{country}}",
+  "{{counselor_name}}",
+  "{{application_stage}}",
+  "{{next_deadline}}",
+  "{{interview_date}}",
+  "{{visa_status}}",
 ];
 
-// Demo role — the real RBAC will come from session. UI gates the Lock action on this.
-const CURRENT_ROLE = "SUPER_ADMIN"; // SUPER_ADMIN | ADMIN | COUNSELOR | others
-const ADMIN_ROLES = ["SUPER_ADMIN", "ADMIN"];
-const isAdmin = ADMIN_ROLES.includes(CURRENT_ROLE);
+const CHANNEL_OPTIONS = [
+  "WHATSAPP",
+  "EMAIL",
+  "SMS",
+  "PHONE",
+  "PORTAL",
+  "WEBSITE_CHAT",
+  "FACEBOOK",
+  "INSTAGRAM",
+];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
+const CATEGORY_OPTIONS = [
+  "GREETING",
+  "INQUIRY",
+  "DOCUMENT_REQUEST",
+  "APPOINTMENT",
+  "FOLLOW_UP",
+  "VISA_UPDATE",
+  "APPLICATION_UPDATE",
+  "PAYMENT_REMINDER",
+  "INTERVIEW_PREP",
+  "COMPLAINT",
+  "HOLIDAY",
+  "GENERAL",
+];
 
-function parseVariables(raw: string): { name: string }[] {
-  try {
-    const parsed = JSON.parse(raw || "[]");
-    if (Array.isArray(parsed)) return parsed;
-    return [];
-  } catch {
-    return [];
-  }
-}
-
-function extractVariablesFromText(text: string): string[] {
-  const matches = text.match(/\{\{([^}]+)\}\}/g) || [];
-  return Array.from(new Set(matches.map((m) => m.trim())));
-}
-
-function suggestTemplateId(category: string, channel: string, language: string): string {
-  if (!category || !channel) return "";
-  const cat = category.split("_")[0];
-  const ch = channel.slice(0, 2);
-  const lang = (language || "en").toLowerCase();
-  return `${cat}_${ch}_${lang}_V1`.toUpperCase();
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Template form state
-// ─────────────────────────────────────────────────────────────────────────────
-
-interface TemplateFormState {
-  templateId: string;
-  name: string;
-  category: string;
-  channel: string;
-  language: string;
-  subject: string;
-  body: string;
-  variables: string; // JSON
-  status: string;
-  isLocked: boolean;
-}
-
-const EMPTY_FORM: TemplateFormState = {
-  templateId: "",
-  name: "",
-  category: "DOCUMENT_REQUEST",
-  channel: "WHATSAPP",
-  language: "en",
-  subject: "",
-  body: "",
-  variables: "[]",
-  status: "DRAFT",
-  isLocked: false,
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main component
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Main Component ────────────────────────────────────────────────────────
 
 export function CommTemplates() {
   const { toast } = useToast();
-
-  // ── Template state ──────────────────────────────────────────────────────
   const [templates, setTemplates] = React.useState<Template[]>([]);
-  const [tplLoading, setTplLoading] = React.useState(true);
-  const [tplError, setTplError] = React.useState<string | null>(null);
+  const [quickReplies, setQuickReplies] = React.useState<QuickReply[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+  const [channel, setChannel] = React.useState("ALL");
+  const [category, setCategory] = React.useState("ALL");
+  const [status, setStatus] = React.useState("ALL");
+  const [createTemplateOpen, setCreateTemplateOpen] = React.useState(false);
+  const [editingTemplate, setEditingTemplate] = React.useState<Template | null>(null);
+  const [createQuickReplyOpen, setCreateQuickReplyOpen] = React.useState(false);
 
-  // Filters
-  const [fChannel, setFChannel] = React.useState<string>("ALL");
-  const [fCategory, setFCategory] = React.useState<string>("ALL");
-  const [fStatus, setFStatus] = React.useState<string>("ALL");
-  const [fSearch, setFSearch] = React.useState<string>("");
-
-  // Dialog state
-  const [createOpen, setCreateOpen] = React.useState(false);
-  const [editTarget, setEditTarget] = React.useState<Template | null>(null);
-  const [saving, setSaving] = React.useState(false);
-
-  // ── Quick replies state ─────────────────────────────────────────────────
-  const [replies, setReplies] = React.useState<QuickReply[]>([]);
-  const [qrLoading, setQrLoading] = React.useState(true);
-  const [qrError, setQrError] = React.useState<string | null>(null);
-  const [qrCreateOpen, setQrCreateOpen] = React.useState(false);
-  const [qrSaving, setQrSaving] = React.useState(false);
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // Fetch templates
-  // ─────────────────────────────────────────────────────────────────────────
-  const loadTemplates = React.useCallback(async () => {
-    setTplLoading(true);
-    setTplError(null);
+  const fetchAll = React.useCallback(async () => {
+    setLoading(true);
+    setError(false);
     try {
-      const params = new URLSearchParams();
-      if (fChannel !== "ALL") params.set("channel", fChannel);
-      if (fCategory !== "ALL") params.set("category", fCategory);
-      if (fStatus !== "ALL") params.set("status", fStatus);
-      const res = await fetch(`/api/communications/templates?${params.toString()}`, {
-        cache: "no-store",
+      const [tplRes, qrRes] = await Promise.all([
+        fetchJson<{ templates: Template[] }>("/api/communications/templates"),
+        fetchJson<{ quickReplies: QuickReply[] }>("/api/communications/quick-replies"),
+      ]);
+      setTemplates(tplRes.templates || []);
+      setQuickReplies(qrRes.quickReplies || []);
+    } catch (err) {
+      console.error("[comm-templates]", err);
+      setError(true);
+      toast({
+        title: "Failed to load templates",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setTemplates(Array.isArray(data.templates) ? data.templates : []);
-    } catch (e: any) {
-      setTplError(e?.message || "Failed to load templates");
     } finally {
-      setTplLoading(false);
+      setLoading(false);
     }
-  }, [fChannel, fCategory, fStatus]);
+  }, [toast]);
 
   React.useEffect(() => {
-    loadTemplates();
-  }, [loadTemplates]);
+    void fetchAll();
+  }, [fetchAll]);
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // Fetch quick replies
-  // ─────────────────────────────────────────────────────────────────────────
-  const loadReplies = React.useCallback(async () => {
-    setQrLoading(true);
-    setQrError(null);
-    try {
-      const res = await fetch(`/api/communications/quick-replies`, { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setReplies(Array.isArray(data.quickReplies) ? data.quickReplies : []);
-    } catch (e: any) {
-      setQrError(e?.message || "Failed to load quick replies");
-    } finally {
-      setQrLoading(false);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    loadReplies();
-  }, [loadReplies]);
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // KPIs
-  // ─────────────────────────────────────────────────────────────────────────
-  const kpis = React.useMemo(() => {
-    const total = templates.length;
-    const approved = templates.filter((t) => t.status === "APPROVED").length;
-    const pending = templates.filter((t) => t.status === "PENDING_APPROVAL").length;
-    const locked = templates.filter((t) => t.isLocked || t.status === "LOCKED").length;
-    const drafts = templates.filter((t) => t.status === "DRAFT").length;
-    const archived = templates.filter((t) => t.status === "ARCHIVED").length;
-    return { total, approved, pending, locked, drafts, archived };
-  }, [templates]);
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // Filtered templates (client-side search on top of server filters)
-  // ─────────────────────────────────────────────────────────────────────────
-  const filteredTemplates = React.useMemo(() => {
-    const q = fSearch.trim().toLowerCase();
-    if (!q) return templates;
-    return templates.filter(
-      (t) =>
+  const filteredTemplates = templates.filter((t) => {
+    if (channel !== "ALL" && t.channel !== channel) return false;
+    if (category !== "ALL" && t.category !== category) return false;
+    if (status !== "ALL" && t.status !== status) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return (
         t.name.toLowerCase().includes(q) ||
-        t.templateId.toLowerCase().includes(q) ||
-        t.body.toLowerCase().includes(q),
-    );
-  }, [templates, fSearch]);
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // Create / Update / Archive handlers
-  // ─────────────────────────────────────────────────────────────────────────
-  const handleCreate = async (form: TemplateFormState) => {
-    setSaving(true);
-    try {
-      const variables = extractVariablesFromText(form.body).map((name) => ({ name }));
-      const res = await fetch(`/api/communications/templates`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          templateId: form.templateId,
-          name: form.name,
-          category: form.category,
-          channel: form.channel,
-          language: form.language,
-          subject: form.channel === "EMAIL" ? form.subject : undefined,
-          body: form.body,
-          variables,
-          createdBy: "session-user",
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `HTTP ${res.status}`);
-      }
-      toast({ title: "Template created", description: `${form.name} saved as Draft.` });
-      setCreateOpen(false);
-      await loadTemplates();
-    } catch (e: any) {
-      toast({
-        title: "Failed to create template",
-        description: e?.message || "Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
+        t.body.toLowerCase().includes(q) ||
+        (t.subject || "").toLowerCase().includes(q)
+      );
     }
-  };
+    return true;
+  });
 
-  const handleUpdate = async (id: string, form: TemplateFormState, patch: Record<string, unknown> = {}) => {
-    setSaving(true);
+  const handleArchive = async (t: Template) => {
     try {
-      const variables = extractVariablesFromText(form.body).map((name) => ({ name }));
-      const body: Record<string, unknown> = {
-        name: form.name,
-        category: form.category,
-        channel: form.channel,
-        language: form.language,
-        subject: form.channel === "EMAIL" ? form.subject : null,
-        body: form.body,
-        variables,
-        status: form.status,
-        ...patch,
-        actionById: "session-user",
-      };
-      const res = await fetch(`/api/communications/templates/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `HTTP ${res.status}`);
-      }
-      toast({ title: "Template updated", description: `${form.name} saved successfully.` });
-      setEditTarget(null);
-      await loadTemplates();
-    } catch (e: any) {
-      toast({
-        title: "Failed to update template",
-        description: e?.message || "Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleArchive = async (id: string, name: string) => {
-    if (!confirm(`Archive template "${name}"? It will be hidden from active lists but preserved in history.`)) return;
-    setSaving(true);
-    try {
-      const res = await fetch(`/api/communications/templates/${id}`, { method: "DELETE" });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `HTTP ${res.status}`);
-      }
-      toast({ title: "Template archived", description: `${name} was archived.` });
-      setEditTarget(null);
-      await loadTemplates();
-    } catch (e: any) {
+      await fetchJson(`/api/communications/templates/${t.id}`, { method: "DELETE" });
+      toast({ title: "Template archived", description: t.name });
+      setTemplates((arr) => arr.filter((x) => x.id !== t.id));
+    } catch (err) {
       toast({
         title: "Failed to archive template",
-        description: e?.message || "Please try again.",
+        description: err instanceof Error ? err.message : "Unknown error.",
         variant: "destructive",
       });
-    } finally {
-      setSaving(false);
     }
   };
 
-  const handleLock = async (tpl: Template) => {
-    if (!isAdmin) {
-      toast({ title: "Not authorized", description: "Only admins can lock templates.", variant: "destructive" });
-      return;
-    }
-    if (tpl.status !== "APPROVED") {
-      toast({
-        title: "Cannot lock template",
-        description: "Template must be Approved before it can be locked.",
-        variant: "destructive",
-      });
-      return;
-    }
-    setSaving(true);
+  const handleToggleLock = async (t: Template) => {
     try {
-      const res = await fetch(`/api/communications/templates/${tpl.id}`, {
+      await fetchJson(`/api/communications/templates/${t.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          isLocked: true,
-          approvedById: "session-user",
-          actionById: "session-user",
-        }),
+        body: JSON.stringify({ isLocked: !t.isLocked }),
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `HTTP ${res.status}`);
-      }
-      toast({ title: "Template locked", description: `${tpl.name} is now an official locked template.` });
-      setEditTarget(null);
-      await loadTemplates();
-    } catch (e: any) {
+      toast({ title: t.isLocked ? "Template unlocked" : "Template locked" });
+      void fetchAll();
+    } catch (err) {
       toast({
-        title: "Failed to lock template",
-        description: e?.message || "Please try again.",
+        title: "Failed to update template",
+        description: err instanceof Error ? err.message : "Unknown error.",
         variant: "destructive",
       });
-    } finally {
-      setSaving(false);
     }
   };
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // Quick reply create
-  // ─────────────────────────────────────────────────────────────────────────
-  const handleCreateReply = async (form: {
-    title: string;
-    body: string;
-    category: string;
-    channel: string;
-    shortcut: string;
-  }) => {
-    setQrSaving(true);
+  const handleApprove = async (t: Template) => {
     try {
-      const res = await fetch(`/api/communications/quick-replies`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: form.title,
-          body: form.body,
-          category: form.category,
-          channel: form.channel,
-          shortcut: form.shortcut || undefined,
-          isActive: true,
-          createdBy: "session-user",
-        }),
+      await fetchJson(`/api/communications/templates/${t.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "APPROVED", isLocked: true, approvedById: "manager-placeholder" }),
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `HTTP ${res.status}`);
-      }
-      toast({ title: "Quick reply created", description: `${form.title} added.` });
-      setQrCreateOpen(false);
-      await loadReplies();
-    } catch (e: any) {
+      toast({ title: "Template approved & locked" });
+      void fetchAll();
+    } catch (err) {
       toast({
-        title: "Failed to create quick reply",
-        description: e?.message || "Please try again.",
+        title: "Failed to approve template",
+        description: err instanceof Error ? err.message : "Unknown error.",
         variant: "destructive",
       });
-    } finally {
-      setQrSaving(false);
     }
   };
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // DataTable columns
-  // ─────────────────────────────────────────────────────────────────────────
-  const tplColumns: Column<Template>[] = [
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <PageHeader title="Communication Templates" subtitle="Manage reusable message templates with variables and approval workflow." icon="FileText" />
+        <LoadingGrid count={5} />
+      </div>
+    );
+  }
+
+  if (error && templates.length === 0) {
+    return (
+      <div className="space-y-6">
+        <PageHeader title="Communication Templates" subtitle="Manage reusable message templates with variables and approval workflow." icon="FileText" />
+        <div className="rounded-2xl border border-dashed border-rose-200 bg-rose-50/50 px-6 py-10 text-center">
+          <p className="text-sm font-semibold text-[#991B1B]">Failed to load templates</p>
+          <Button onClick={() => void fetchAll()} className="mt-3" size="sm">Retry</Button>
+        </div>
+      </div>
+    );
+  }
+
+  const counts = {
+    total: templates.length,
+    approved: templates.filter((t) => t.status === "APPROVED").length,
+    pending: templates.filter((t) => t.status === "PENDING_APPROVAL").length,
+    locked: templates.filter((t) => t.isLocked).length,
+    drafts: templates.filter((t) => t.status === "DRAFT").length,
+    archived: templates.filter((t) => t.status === "ARCHIVED").length,
+  };
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Communication Templates"
+        subtitle="Manage reusable message templates with variables and approval workflow."
+        icon="FileText"
+        action={
+          <Button
+            onClick={() => setCreateTemplateOpen(true)}
+            className="h-10 bg-[#0057B8] text-white hover:bg-[#003a7a]"
+          >
+            <Icon name="Plus" className="mr-2 size-4" />
+            New Template
+          </Button>
+        }
+      />
+
+      {/* KPI row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <KpiCard label="Total" value={counts.total} icon="FileText" accent="blue" />
+        <KpiCard label="Approved" value={counts.approved} icon="CheckCircle2" accent="emerald" />
+        <KpiCard label="Pending Approval" value={counts.pending} icon="Clock" accent="amber" />
+        <KpiCard label="Locked" value={counts.locked} icon="Lock" accent="violet" />
+        <KpiCard label="Drafts" value={counts.drafts} icon="FileEdit" accent="orange" />
+        <KpiCard label="Archived" value={counts.archived} icon="Archive" accent="rose" />
+      </div>
+
+      {/* Filter bar */}
+      <div className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 sm:flex-row sm:items-center">
+        <SearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder="Search templates…"
+          className="sm:w-72"
+        />
+        <div className="flex flex-wrap gap-2">
+          <Select value={channel} onValueChange={setChannel}>
+            <SelectTrigger className="h-9 w-full sm:w-40">
+              <SelectValue placeholder="Channel" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All channels</SelectItem>
+              {CHANNEL_OPTIONS.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {channelMeta(c).label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="h-9 w-full sm:w-44">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All categories</SelectItem>
+              {CATEGORY_OPTIONS.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c.replace(/_/g, " ").toLowerCase()}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="h-9 w-full sm:w-40">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All statuses</SelectItem>
+              {["DRAFT", "PENDING_APPROVAL", "APPROVED", "LOCKED", "ARCHIVED"].map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s.replace(/_/g, " ").toLowerCase()}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Templates table */}
+      <SectionCard
+        title="Templates"
+        description={`${filteredTemplates.length} of ${templates.length} template(s)`}
+        icon="FileText"
+      >
+        <TemplatesTable
+          templates={filteredTemplates}
+          onEdit={(t) => setEditingTemplate(t)}
+          onArchive={(t) => void handleArchive(t)}
+          onToggleLock={(t) => void handleToggleLock(t)}
+          onApprove={(t) => void handleApprove(t)}
+        />
+      </SectionCard>
+
+      {/* Quick Replies */}
+      <SectionCard
+        title="Quick Replies"
+        description={`${quickReplies.length} quick reply snippet(s)`}
+        icon="Zap"
+        action={
+          <Button
+            onClick={() => setCreateQuickReplyOpen(true)}
+            className="h-9 bg-[#0057B8] text-white hover:bg-[#003a7a]"
+          >
+            <Icon name="Plus" className="mr-1.5 size-4" />
+            New Quick Reply
+          </Button>
+        }
+      >
+        <QuickRepliesTable quickReplies={quickReplies} />
+      </SectionCard>
+
+      <TemplateEditDialog
+        open={createTemplateOpen || !!editingTemplate}
+        template={editingTemplate}
+        onOpenChange={(o) => {
+          if (!o) setEditingTemplate(null);
+          setCreateTemplateOpen(o);
+        }}
+        onSaved={() => void fetchAll()}
+      />
+      <QuickReplyDialog
+        open={createQuickReplyOpen}
+        onOpenChange={setCreateQuickReplyOpen}
+        onSaved={() => void fetchAll()}
+      />
+    </div>
+  );
+}
+
+// ─── Sub-components ────────────────────────────────────────────────────────
+
+function KpiCard({
+  label,
+  value,
+  icon,
+  accent,
+}: {
+  label: string;
+  value: React.ReactNode;
+  icon: string;
+  accent: "blue" | "orange" | "emerald" | "amber" | "violet" | "rose";
+}) {
+  const accentMap: Record<string, string> = {
+    blue: "bg-[#EFF6FF] text-[#0057B8]",
+    orange: "bg-[#FFF7ED] text-[#C2410C]",
+    emerald: "bg-[#DCFCE7] text-[#15803D]",
+    amber: "bg-[#FEF3C7] text-[#92400E]",
+    violet: "bg-violet-50 text-violet-600",
+    rose: "bg-[#FEE2E2] text-[#991B1B]",
+  };
+  return (
+    <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4 alo-shadow">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">{label}</p>
+          <p className="mt-1 text-lg font-bold tabular-nums text-[#0F172A] sm:text-xl">{value}</p>
+        </div>
+        <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-xl", accentMap[accent])}>
+          <Icon name={icon} className="size-4" />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function TemplatesTable({
+  templates,
+  onEdit,
+  onArchive,
+  onToggleLock,
+  onApprove,
+}: {
+  templates: Template[];
+  onEdit: (t: Template) => void;
+  onArchive: (t: Template) => void;
+  onToggleLock: (t: Template) => void;
+  onApprove: (t: Template) => void;
+}) {
+  const columns: DataTableColumn<Template>[] = [
     {
       key: "name",
       header: "Name",
-      sortable: true,
-      sortAccessor: (r) => r.name.toLowerCase(),
-      cell: (r) => (
-        <div className="min-w-0">
-          <p className="font-semibold text-[var(--alo-text)]">{r.name}</p>
-          <p className="font-mono text-xs text-[var(--alo-muted)]">{r.templateId}</p>
+      render: (t) => (
+        <div>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-semibold text-[#0F172A]">{t.name}</p>
+            {t.isLocked && (
+              <Icon name="Lock" className="size-3 text-violet-600" />
+            )}
+          </div>
+          {t.subject && <p className="text-[11px] text-[#64748B]">Subject: {t.subject}</p>}
         </div>
-      ),
-    },
-    {
-      key: "category",
-      header: "Category",
-      cell: (r) => (
-        <Badge variant="neutral" className="whitespace-nowrap">
-          {CATEGORIES.find((c) => c.value === r.category)?.label || r.category}
-        </Badge>
       ),
     },
     {
       key: "channel",
       header: "Channel",
-      cell: (r) => {
-        const meta = CHANNEL_META[r.channel] || CHANNEL_META.PORTAL;
+      render: (t) => {
+        const m = channelMeta(t.channel);
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] px-2 py-0.5 text-xs font-medium text-[var(--alo-text)]">
-            <Icon name={meta.icon} className="size-3.5" />
-            {meta.label}
-          </span>
+          <Pill className={cn("gap-1", m.bg, m.text)}>
+            <Icon name={m.icon} className="size-3" />
+            {m.label}
+          </Pill>
         );
       },
     },
     {
-      key: "language",
-      header: "Lang",
-      cell: (r) => (
-        <span className="font-mono text-xs uppercase text-[var(--alo-text-secondary)]">{r.language}</span>
+      key: "category",
+      header: "Category",
+      render: (t) => (
+        <span className="text-xs">{t.category.replace(/_/g, " ").toLowerCase()}</span>
       ),
     },
     {
-      key: "version",
-      header: "Ver",
-      cell: (r) => <span className="font-mono text-xs text-[var(--alo-muted)]">v{r.version}</span>,
+      key: "language",
+      header: "Lang",
+      render: (t) => <span className="text-xs">{t.language || "en"}</span>,
     },
     {
       key: "status",
       header: "Status",
-      cell: (r) => (
-        <StatusBadge
-          status={r.status}
-          colorMap={TEMPLATE_STATUS_ACCENT}
-          labels={TEMPLATE_STATUS_LABELS}
-        />
+      render: (t) => (
+        <Pill className={STATUS_COLORS[t.status] || "bg-slate-100 text-slate-700"}>
+          {t.status.replace(/_/g, " ").toLowerCase()}
+        </Pill>
       ),
-    },
-    {
-      key: "isLocked",
-      header: "Lock",
-      cell: (r) =>
-        r.isLocked ? (
-          <span className="inline-flex items-center gap-1 text-[var(--alo-blue-strong)]" title="Official locked template">
-            <Icon name="Lock" className="size-4" />
-            <span className="sr-only">Locked</span>
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-[var(--alo-muted)]" title="Not locked">
-            <Icon name="LockOpen" className="size-4" />
-            <span className="sr-only">Unlocked</span>
-          </span>
-        ),
     },
     {
       key: "updatedAt",
       header: "Updated",
-      sortable: true,
-      sortAccessor: (r) => new Date(r.updatedAt).getTime(),
-      cell: (r) => (
-        <span className="text-xs text-[var(--alo-muted)]" title={fmtDate(r.updatedAt)}>
-          {timeAgo(r.updatedAt)}
-        </span>
+      render: (t) => <span className="text-xs">{timeAgoShort(t.updatedAt)}</span>,
+    },
+    {
+      key: "actions",
+      header: "",
+      align: "right",
+      render: (t) => (
+        <div className="flex justify-end gap-1">
+          {t.status === "PENDING_APPROVAL" && (
+            <Button
+              size="sm"
+              className="h-7 bg-emerald-600 px-2 text-[10px] hover:bg-emerald-700"
+              onClick={() => onApprove(t)}
+            >
+              Approve
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 px-2 text-[10px]"
+            onClick={() => onToggleLock(t)}
+            disabled={t.status === "ARCHIVED"}
+          >
+            <Icon name={t.isLocked ? "Unlock" : "Lock"} className="mr-1 size-3" />
+            {t.isLocked ? "Unlock" : "Lock"}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 px-2 text-[10px]"
+            onClick={() => onEdit(t)}
+            disabled={t.isLocked}
+          >
+            <Icon name="Edit" className="mr-1 size-3" />
+            Edit
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 border-rose-200 px-2 text-[10px] text-rose-600 hover:bg-rose-50"
+            onClick={() => onArchive(t)}
+          >
+            <Icon name="Archive" className="size-3" />
+          </Button>
+        </div>
       ),
     },
   ];
+  return (
+    <DataTable
+      columns={columns}
+      rows={templates}
+      rowKey={(t) => t.id}
+      emptyTitle="No templates found"
+      emptyDescription="Create your first communication template to standardize counselor responses."
+      emptyIcon="FileText"
+      maxHeight="520px"
+    />
+  );
+}
 
-  const qrColumns: Column<QuickReply>[] = [
+function QuickRepliesTable({ quickReplies }: { quickReplies: QuickReply[] }) {
+  const columns: DataTableColumn<QuickReply>[] = [
     {
       key: "title",
       header: "Title",
-      sortable: true,
-      sortAccessor: (r) => r.title.toLowerCase(),
-      cell: (r) => (
-        <div className="min-w-0">
-          <p className="font-semibold text-[var(--alo-text)]">{r.title}</p>
-          {r.shortcut && (
-            <p className="font-mono text-xs text-[var(--alo-blue-strong)]">{r.shortcut}</p>
+      render: (q) => (
+        <div>
+          <p className="text-sm font-semibold text-[#0F172A]">{q.title}</p>
+          {q.shortcut && (
+            <p className="font-mono text-[11px] text-[#64748B]">/{q.shortcut}</p>
           )}
         </div>
       ),
@@ -641,696 +564,398 @@ export function CommTemplates() {
     {
       key: "body",
       header: "Body",
-      cell: (r) => (
-        <p className="line-clamp-2 max-w-md text-xs text-[var(--alo-text-secondary)]" title={r.body}>
-          {r.body}
-        </p>
+      render: (q) => (
+        <span className="line-clamp-2 text-xs text-[#475569]">{q.body}</span>
       ),
     },
     {
       key: "category",
       header: "Category",
-      cell: (r) => (
-        <Badge variant="neutral">{QUICK_REPLY_CATEGORIES.find((c) => c.value === r.category)?.label || r.category}</Badge>
+      render: (q) => (
+        <span className="text-xs">{q.category?.replace(/_/g, " ").toLowerCase() || "—"}</span>
       ),
     },
     {
       key: "channel",
       header: "Channel",
-      cell: (r) => (
-        <span className="text-xs text-[var(--alo-text-secondary)]">
-          {CHANNEL_META[r.channel]?.label || r.channel}
-        </span>
-      ),
-    },
-    {
-      key: "shortcut",
-      header: "Shortcut",
-      cell: (r) => (
-        <span className="font-mono text-xs text-[var(--alo-muted)]">{r.shortcut || "—"}</span>
-      ),
+      render: (q) => <span className="text-xs">{q.channel || "ALL"}</span>,
     },
     {
       key: "isActive",
       header: "Active",
-      cell: (r) =>
-        r.isActive ? (
-          <Badge variant="success">Active</Badge>
+      render: (q) =>
+        q.isActive ? (
+          <Pill className="bg-emerald-100 text-emerald-700">Yes</Pill>
         ) : (
-          <Badge variant="neutral">Inactive</Badge>
+          <Pill className="bg-slate-100 text-slate-600">No</Pill>
         ),
     },
-    {
-      key: "usedCount",
-      header: "Used",
-      sortable: true,
-      sortAccessor: (r) => r.usedCount,
-      cell: (r) => (
-        <span className="font-mono text-xs tabular-nums text-[var(--alo-text-secondary)]">{r.usedCount}</span>
-      ),
-    },
   ];
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // Render
-  // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-6 p-4 lg:p-6">
-      <PageHeader
-        title="Communication Templates"
-        subtitle="Official approved templates for WhatsApp, Email & SMS"
-        icon="FileText"
-        action={
-          <Button variant="alo" onClick={() => setCreateOpen(true)}>
-            <Icon name="Plus" className="size-4" /> Create Template
-          </Button>
-        }
-      />
-
-      {/* KPI row */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <KpiCard label="Total Templates" value={kpis.total} icon="FileText" accent="blue" />
-        <KpiCard label="Approved" value={kpis.approved} icon="CheckCircle2" accent="emerald" />
-        <KpiCard label="Pending Approval" value={kpis.pending} icon="Clock" accent="amber" />
-        <KpiCard label="Locked (Official)" value={kpis.locked} icon="Lock" accent="violet" />
-        <KpiCard label="Drafts" value={kpis.drafts} icon="FilePen" accent="sky" />
-        <KpiCard label="Archived" value={kpis.archived} icon="Archive" accent="rose" />
-      </div>
-
-      {/* Filter bar */}
-      <SectionCard>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[var(--alo-muted)]">Channel</Label>
-            <Select value={fChannel} onValueChange={setFChannel}>
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="All channels" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All channels</SelectItem>
-                {CHANNELS.map((c) => (
-                  <SelectItem key={c.value} value={c.value}>
-                    {c.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[var(--alo-muted)]">Category</Label>
-            <Select value={fCategory} onValueChange={setFCategory}>
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="All categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All categories</SelectItem>
-                {CATEGORIES.map((c) => (
-                  <SelectItem key={c.value} value={c.value}>
-                    {c.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[var(--alo-muted)]">Status</Label>
-            <Select value={fStatus} onValueChange={setFStatus}>
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="All statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All statuses</SelectItem>
-                {STATUSES.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
-                    {s.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[var(--alo-muted)]">Search</Label>
-            <SearchInput
-              placeholder="Search by name, ID, body…"
-              value={fSearch}
-              onClear={() => setFSearch("")}
-              onChange={(e) => setFSearch(e.target.value)}
-            />
-          </div>
-        </div>
-      </SectionCard>
-
-      {/* Templates table */}
-      <SectionCard
-        title="Templates"
-        description={`${filteredTemplates.length} of ${templates.length} templates`}
-        icon="FileText"
-        action={
-          <Button variant="outline" size="sm" onClick={() => loadTemplates()}>
-            <Icon name="RefreshCw" className="size-3.5" /> Refresh
-          </Button>
-        }
-      >
-        {tplLoading ? (
-          <LoadingGrid count={4} />
-        ) : tplError ? (
-          <ErrorState error={tplError} onRetry={loadTemplates} />
-        ) : filteredTemplates.length === 0 ? (
-          <EmptyState
-            icon="FileText"
-            title="No templates found"
-            description="Try adjusting filters, or create your first template."
-            action={
-              <Button variant="alo" size="sm" onClick={() => setCreateOpen(true)}>
-                <Icon name="Plus" className="size-4" /> Create Template
-              </Button>
-            }
-          />
-        ) : (
-          <DataTable
-            columns={tplColumns}
-            data={filteredTemplates}
-            pageSize={10}
-            onRowClick={(row) => setEditTarget(row)}
-            emptyMessage="No templates match your filters."
-          />
-        )}
-      </SectionCard>
-
-      {/* Quick Replies section */}
-      <SectionCard
-        title="Quick Replies"
-        description="Pre-approved short responses for counselors"
-        icon="Zap"
-        action={
-          <Button variant="alo" size="sm" onClick={() => setQrCreateOpen(true)}>
-            <Icon name="Plus" className="size-4" /> Create Quick Reply
-          </Button>
-        }
-      >
-        {qrLoading ? (
-          <LoadingGrid count={3} />
-        ) : qrError ? (
-          <ErrorState error={qrError} onRetry={loadReplies} />
-        ) : replies.length === 0 ? (
-          <EmptyState
-            icon="Zap"
-            title="No quick replies yet"
-            description="Create quick replies to help counselors respond faster."
-            action={
-              <Button variant="alo" size="sm" onClick={() => setQrCreateOpen(true)}>
-                <Icon name="Plus" className="size-4" /> Create Quick Reply
-              </Button>
-            }
-          />
-        ) : (
-          <DataTable
-            columns={qrColumns}
-            data={replies}
-            pageSize={10}
-            emptyMessage="No quick replies match."
-          />
-        )}
-      </SectionCard>
-
-      {/* Create dialog */}
-      <TemplateFormDialog
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        onSubmit={(form) => handleCreate(form)}
-        saving={saving}
-        mode="create"
-      />
-
-      {/* Edit dialog */}
-      <TemplateFormDialog
-        open={!!editTarget}
-        onOpenChange={(o) => !o && setEditTarget(null)}
-        template={editTarget}
-        onSubmit={(form, patch) => editTarget && handleUpdate(editTarget.id, form, patch ?? {})}
-        onArchive={editTarget ? () => handleArchive(editTarget.id, editTarget.name) : undefined}
-        onLock={editTarget ? () => handleLock(editTarget) : undefined}
-        saving={saving}
-        mode="edit"
-      />
-
-      {/* Quick reply create dialog */}
-      <QuickReplyFormDialog
-        open={qrCreateOpen}
-        onOpenChange={setQrCreateOpen}
-        onSubmit={handleCreateReply}
-        saving={qrSaving}
-      />
-    </div>
+    <DataTable
+      columns={columns}
+      rows={quickReplies}
+      rowKey={(q) => q.id}
+      emptyTitle="No quick replies"
+      emptyDescription="Quick replies are short, ready-to-send snippets for fast counselor responses."
+      emptyIcon="Zap"
+      maxHeight="420px"
+    />
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Template form dialog — used for both Create and Edit modes
-// ═══════════════════════════════════════════════════════════════════════════
-
-interface TemplateFormDialogProps {
-  open: boolean;
-  onOpenChange: (o: boolean) => void;
-  template?: Template | null;
-  onSubmit: (form: TemplateFormState, patch?: Record<string, unknown>) => void;
-  onArchive?: () => void;
-  onLock?: () => void;
-  saving?: boolean;
-  mode: "create" | "edit";
-}
-
-function TemplateFormDialog({
+function TemplateEditDialog({
   open,
-  onOpenChange,
   template,
-  onSubmit,
-  onArchive,
-  onLock,
-  saving = false,
-  mode,
-}: TemplateFormDialogProps) {
-  const [form, setForm] = React.useState<TemplateFormState>(EMPTY_FORM);
-  const [bodyKey, setBodyKey] = React.useState(0); // force RichTextEditor remount
+  onOpenChange,
+  onSaved,
+}: {
+  open: boolean;
+  template: Template | null;
+  onOpenChange: (o: boolean) => void;
+  onSaved: () => void;
+}) {
+  const { toast } = useToast();
+  const [name, setName] = React.useState("");
+  const [category, setCategory] = React.useState("GREETING");
+  const [channel, setChannel] = React.useState("WHATSAPP");
+  const [language, setLanguage] = React.useState("en");
+  const [subject, setSubject] = React.useState("");
+  const [body, setBody] = React.useState("");
+  const [status, setStatus] = React.useState("DRAFT");
+  const [submitting, setSubmitting] = React.useState(false);
 
-  // Hydrate form when template changes (edit mode)
   React.useEffect(() => {
     if (template) {
-      setForm({
-        templateId: template.templateId,
-        name: template.name,
-        category: template.category,
-        channel: template.channel,
-        language: template.language,
-        subject: template.subject || "",
-        body: template.body,
-        variables: template.variables,
-        status: template.status,
-        isLocked: template.isLocked,
-      });
-      setBodyKey((k) => k + 1);
-    } else if (open && mode === "create") {
-      setForm({ ...EMPTY_FORM });
-      setBodyKey((k) => k + 1);
+      setName(template.name);
+      setCategory(template.category);
+      setChannel(template.channel);
+      setLanguage(template.language || "en");
+      setSubject(template.subject || "");
+      setBody(template.body);
+      setStatus(template.status);
+    } else {
+      setName("");
+      setCategory("GREETING");
+      setChannel("WHATSAPP");
+      setLanguage("en");
+      setSubject("");
+      setBody("");
+      setStatus("DRAFT");
     }
-  }, [template, open, mode]);
+  }, [template, open]);
 
-  // Auto-suggest templateId on create when category/channel/lang changes
-  React.useEffect(() => {
-    if (mode !== "create") return;
-    const suggested = suggestTemplateId(form.category, form.channel, form.language);
-    // Only auto-fill if the user hasn't manually customized
-    setForm((f) => {
-      const isAuto = !f.templateId || /^([A-Z]+_[A-Z]{2}_[A-Z]{2}_V\d+)$/.test(f.templateId);
-      if (!isAuto) return f;
-      return { ...f, templateId: suggested };
-    });
-  }, [form.category, form.channel, form.language, mode]);
-
-  const isLocked = template?.isLocked || form.isLocked;
-  const isArchived = template?.status === "ARCHIVED";
-  const isEmail = form.channel === "EMAIL";
-  const variables = parseVariables(form.variables);
-  const detectedVars = extractVariablesFromText(form.body);
-
-  const insertVariable = (token: string) => {
-    setForm((f) => ({ ...f, body: `${f.body}${f.body ? " " : ""}${token}` }));
-    setBodyKey((k) => k + 1);
+  const insertVariable = (v: string) => {
+    setBody((b) => b + v);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.templateId || !form.name || !form.body) return;
-    onSubmit({ ...form, variables: JSON.stringify(detectedVars.map((name) => ({ name }))) });
+  const submit = async () => {
+    if (!name.trim() || !body.trim()) {
+      toast({ title: "Name and body are required", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      if (template) {
+        await fetchJson(`/api/communications/templates/${template.id}`, {
+          method: "PATCH",
+          body: JSON.stringify({
+            name: name.trim(),
+            category,
+            channel,
+            language,
+            subject: subject.trim() || null,
+            body: body.trim(),
+            status,
+          }),
+        });
+        toast({ title: "Template updated" });
+      } else {
+        await fetchJson("/api/communications/templates", {
+          method: "POST",
+          body: JSON.stringify({
+            name: name.trim(),
+            category,
+            channel,
+            language,
+            subject: subject.trim() || undefined,
+            body: body.trim(),
+            status,
+          }),
+        });
+        toast({ title: "Template created" });
+      }
+      onOpenChange(false);
+      onSaved();
+    } catch (err) {
+      toast({
+        title: "Failed to save template",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] w-full max-w-3xl overflow-y-auto alo-scroll">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[var(--alo-text)]">
-            <Icon name={mode === "create" ? "Plus" : "PenLine"} className="size-5 text-[var(--alo-blue)]" />
-            {mode === "create" ? "Create Communication Template" : "Edit Template"}
-          </DialogTitle>
-          <DialogDescription className="text-[var(--alo-muted)]">
-            {mode === "create"
-              ? "Define a reusable template for WhatsApp, Email or SMS communication."
-              : `Edit ${template?.name} (${template?.templateId}).`}
+          <DialogTitle>{template ? "Edit Template" : "New Template"}</DialogTitle>
+          <DialogDescription>
+            Use variables like &#123;&#123;student_name&#125;&#125; for personalization at send time.
           </DialogDescription>
         </DialogHeader>
-
-        {isLocked && !isAdmin && (
-          <Notification type="warning" title="This is an official locked template" message="Editing requires admin authorization. Fields are read-only." />
-        )}
-
-        {isArchived && (
-          <Notification type="info" title="This template is archived" message="Archived templates are read-only. Create a new template to replace it." />
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Row 1: Template ID + Name */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="tpl-id" className="text-xs">Template ID</Label>
-              <Input
-                id="tpl-id"
-                value={form.templateId}
-                onChange={(e) => setForm({ ...form, templateId: e.target.value })}
-                placeholder="DOCREQ_WH_EN_V1"
-                disabled={!!isLocked || isArchived || mode === "edit"}
-                className="font-mono"
-                required
-              />
-              <p className="text-xs text-[var(--alo-muted)]">Auto-suggested: CATEGORY_CHANNEL_LANG_V1</p>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="tpl-name" className="text-xs">Template Name</Label>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="tpl-name">Template Name</Label>
               <Input
                 id="tpl-name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Document Request — Passport"
-                disabled={!!isLocked || isArchived}
-                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. WhatsApp Welcome Message"
+                className="mt-1"
               />
             </div>
-          </div>
-
-          {/* Row 2: Category + Channel + Language */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Category</Label>
-              <Select
-                value={form.category}
-                onValueChange={(v) => setForm({ ...form, category: v })}
-                disabled={!!isLocked || isArchived}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
+            <div>
+              <Label>Channel</Label>
+              <Select value={channel} onValueChange={setChannel}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  {CHANNEL_OPTIONS.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {channelMeta(c).label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Channel</Label>
-              <Select
-                value={form.channel}
-                onValueChange={(v) => setForm({ ...form, channel: v })}
-                disabled={!!isLocked || isArchived}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <Label>Category</Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {CHANNELS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  {CATEGORY_OPTIONS.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c.replace(/_/g, " ").toLowerCase()}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Language</Label>
-              <Select
-                value={form.language}
-                onValueChange={(v) => setForm({ ...form, language: v })}
-                disabled={!!isLocked || isArchived}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
+            <div>
+              <Label>Language</Label>
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="bn">বাংলা (Bangla)</SelectItem>
+                  {["en", "bn", "hi"].map((l) => (
+                    <SelectItem key={l} value={l}>{l}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Status</Label>
+              <Select value={status} onValueChange={setStatus}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {["DRAFT", "PENDING_APPROVAL", "APPROVED"].map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s.replace(/_/g, " ").toLowerCase()}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-
-          {/* Row 3: Subject (only for EMAIL) */}
-          {isEmail && (
-            <div className="space-y-1.5">
-              <Label htmlFor="tpl-subject" className="text-xs">Subject (Email only)</Label>
+          {channel === "EMAIL" && (
+            <div>
+              <Label htmlFor="tpl-subject">Subject (Email only)</Label>
               <Input
                 id="tpl-subject"
-                value={form.subject}
-                onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                placeholder="Action required: submit your passport scan"
-                disabled={!!isLocked || isArchived}
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                placeholder="Email subject line"
+                className="mt-1"
               />
             </div>
           )}
-
-          {/* Row 4: Body with variable insertion */}
-          <div className="space-y-1.5">
-            <Label className="text-xs">Body</Label>
-            <div className="flex flex-wrap gap-1.5">
-              {VARIABLE_SUGGESTIONS.map((v) => (
-                <button
-                  key={v.token}
-                  type="button"
-                  onClick={() => insertVariable(v.token)}
-                  disabled={!!isLocked || isArchived}
-                  title={`Insert ${v.label}`}
-                  className="inline-flex items-center gap-1 rounded-full border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] px-2 py-0.5 text-xs font-mono text-[var(--alo-text-secondary)] hover:border-[var(--alo-blue)] hover:bg-[var(--alo-blue-soft)] hover:text-[var(--alo-blue-strong)] disabled:opacity-50"
-                >
-                  <Icon name="Plus" className="size-3" />
-                  {v.token}
-                </button>
-              ))}
+          <div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="tpl-body">Body</Label>
+              <div className="flex flex-wrap gap-1">
+                {VARIABLE_SUGGESTIONS.map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => insertVariable(v)}
+                    className="rounded bg-[#EFF6FF] px-1.5 py-0.5 font-mono text-[10px] font-medium text-[#0057B8] hover:bg-[#DBEAFE]"
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
             </div>
-            <RichTextEditor
-              key={bodyKey}
-              value={form.body}
-              onChange={(html) => setForm((f) => ({ ...f, body: html }))}
-              placeholder="Write the template body. Use {{variables}} for dynamic content."
-              minHeight={180}
+            <Textarea
+              id="tpl-body"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Hello {{student_name}}, this is {{counselor_name}} from ALO Education…"
+              className="mt-1 min-h-[180px] font-mono text-sm"
             />
+            <p className="mt-1 text-[11px] text-[#94A3B8]">
+              Click a variable above to insert it into your message.
+            </p>
           </div>
-
-          {/* Row 5: Detected variables */}
-          <div className="space-y-1.5">
-            <Label className="text-xs">Variables (auto-detected)</Label>
-            <div className="flex flex-wrap gap-1.5 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3">
-              {detectedVars.length === 0 ? (
-                <span className="text-xs text-[var(--alo-muted)]">
-                  No variables detected. Insert variables using the chips above.
-                </span>
-              ) : (
-                detectedVars.map((v) => (
-                  <Badge key={v} variant="blue" className="font-mono">{v}</Badge>
-                ))
-              )}
-            </div>
-            {variables.length > 0 && (
-              <p className="text-xs text-[var(--alo-muted)]">
-                Stored variables: {variables.map((v) => v.name).join(", ")}
-              </p>
-            )}
-          </div>
-
-          {/* Row 6: Status + Lock checkbox */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Status</Label>
-              <Select
-                value={form.status}
-                onValueChange={(v) => setForm({ ...form, status: v })}
-                disabled={!!isLocked || isArchived}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {STATUSES.filter((s) => s.value !== "ARCHIVED").map((s) => (
-                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2 pt-6">
-              <Checkbox
-                id="tpl-locked"
-                checked={form.isLocked}
-                onCheckedChange={(v) => setForm({ ...form, isLocked: v === true })}
-                disabled={!isAdmin || mode === "create" || form.status !== "APPROVED"}
-              />
-              <Label htmlFor="tpl-locked" className="text-sm">
-                Lock as official template
-                {!isAdmin && <span className="ml-1 text-xs text-[var(--alo-muted)]">(admin only)</span>}
-              </Label>
-            </div>
-          </div>
-
-          <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-            <div className="flex gap-2">
-              {mode === "edit" && onArchive && (
-                <Button type="button" variant="outline" onClick={onArchive} disabled={saving || isLocked}>
-                  <Icon name="Archive" className="size-4" /> Archive
-                </Button>
-              )}
-              {mode === "edit" && onLock && isAdmin && !isLocked && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onLock}
-                  disabled={saving || template?.status !== "APPROVED"}
-                  title={template?.status !== "APPROVED" ? "Template must be Approved before locking" : "Lock this template as official"}
-                >
-                  <Icon name="Lock" className="size-4" /> Lock Template
-                </Button>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={saving}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="alo"
-                disabled={saving || !!isLocked || isArchived || !form.templateId || !form.name || !form.body}
-              >
-                {saving ? (
-                  <>
-                    <Icon name="Loader2" className="size-4 animate-spin" /> Saving…
-                  </>
-                ) : (
-                  <>
-                    <Icon name={mode === "create" ? "Plus" : "Save"} className="size-4" />
-                    {mode === "create" ? "Create Template" : "Save Changes"}
-                  </>
-                )}
-              </Button>
-            </div>
-          </DialogFooter>
-        </form>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button
+            className="bg-[#0057B8] text-white hover:bg-[#003a7a]"
+            disabled={submitting}
+            onClick={() => void submit()}
+          >
+            {submitting ? "Saving…" : template ? "Save Changes" : "Create Template"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Quick reply form dialog
-// ═══════════════════════════════════════════════════════════════════════════
-
-interface QuickReplyFormDialogProps {
+function QuickReplyDialog({
+  open,
+  onOpenChange,
+  onSaved,
+}: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  onSubmit: (form: { title: string; body: string; category: string; channel: string; shortcut: string }) => void;
-  saving?: boolean;
-}
-
-function QuickReplyFormDialog({ open, onOpenChange, onSubmit, saving = false }: QuickReplyFormDialogProps) {
+  onSaved: () => void;
+}) {
+  const { toast } = useToast();
   const [title, setTitle] = React.useState("");
   const [body, setBody] = React.useState("");
   const [category, setCategory] = React.useState("GENERAL");
   const [channel, setChannel] = React.useState("ALL");
   const [shortcut, setShortcut] = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
 
-  React.useEffect(() => {
-    if (open) {
+  const submit = async () => {
+    if (!title.trim() || !body.trim()) {
+      toast({ title: "Title and body are required", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await fetchJson("/api/communications/quick-replies", {
+        method: "POST",
+        body: JSON.stringify({
+          title: title.trim(),
+          body: body.trim(),
+          category,
+          channel,
+          shortcut: shortcut.trim() || undefined,
+          isActive: true,
+        }),
+      });
+      toast({ title: "Quick reply created" });
       setTitle("");
       setBody("");
-      setCategory("GENERAL");
-      setChannel("ALL");
       setShortcut("");
+      onOpenChange(false);
+      onSaved();
+    } catch (err) {
+      toast({
+        title: "Failed to create quick reply",
+        description: err instanceof Error ? err.message : "Unknown error.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
     }
-  }, [open]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !body) return;
-    onSubmit({ title, body, category, channel, shortcut });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] w-full max-w-xl overflow-y-auto alo-scroll">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[var(--alo-text)]">
-            <Icon name="Zap" className="size-5 text-[var(--alo-orange)]" />
-            Create Quick Reply
-          </DialogTitle>
-          <DialogDescription className="text-[var(--alo-muted)]">
-            Pre-approved short responses counselors can insert with a shortcut.
+          <DialogTitle>New Quick Reply</DialogTitle>
+          <DialogDescription>
+            A short, ready-to-send snippet that counselors can use to respond quickly.
           </DialogDescription>
         </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="qr-title" className="text-xs">Title</Label>
+        <div className="space-y-3">
+          <div>
+            <Label htmlFor="qr-title">Title</Label>
             <Input
               id="qr-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Passport upload reminder"
-              required
+              placeholder="e.g. Office Hours"
+              className="mt-1"
             />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="qr-body" className="text-xs">Body</Label>
+          <div>
+            <Label htmlFor="qr-body">Body</Label>
             <Textarea
               id="qr-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="Hi {{student_name}}, please upload a clear scan of your passport. Let us know if you need help."
-              rows={4}
-              required
+              placeholder="Our office is open Sunday–Thursday, 9 AM – 6 PM."
+              className="mt-1 min-h-[80px]"
             />
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Category</Label>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <Label>Category</Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {QUICK_REPLY_CATEGORIES.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  {CATEGORY_OPTIONS.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Channel</Label>
+            <div>
+              <Label>Channel</Label>
               <Select value={channel} onValueChange={setChannel}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ALL">All channels</SelectItem>
-                  {CHANNELS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  <SelectItem value="ALL">All</SelectItem>
+                  {CHANNEL_OPTIONS.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="qr-shortcut" className="text-xs">Shortcut</Label>
+            <div>
+              <Label htmlFor="qr-shortcut">Shortcut</Label>
               <Input
                 id="qr-shortcut"
                 value={shortcut}
                 onChange={(e) => setShortcut(e.target.value)}
-                placeholder="/passport"
-                className="font-mono"
+                placeholder="hours"
+                className="mt-1 font-mono"
               />
             </div>
           </div>
-
-          <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={saving}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="alo" disabled={saving || !title || !body}>
-              {saving ? (
-                <>
-                  <Icon name="Loader2" className="size-4 animate-spin" /> Saving…
-                </>
-              ) : (
-                <>
-                  <Icon name="Plus" className="size-4" /> Create
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button
+            className="bg-[#0057B8] text-white hover:bg-[#003a7a]"
+            disabled={submitting}
+            onClick={() => void submit()}
+          >
+            {submitting ? "Creating…" : "Create Quick Reply"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-export default CommTemplates;

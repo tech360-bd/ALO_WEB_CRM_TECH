@@ -3,7 +3,13 @@ import { db } from "@/lib/db";
 
 // GET — partner packages
 export async function GET() {
-  const packages = await db.partnerPackage.findMany({ orderBy: { name: "asc" } });
+  const packages = await db.partnerPackage.findMany({
+    include: {
+      assignments: { include: { partner: { select: { fullName: true, employeeCode: true, companyEmail: true } } } },
+      _count: { select: { assignments: true } },
+    },
+    orderBy: { name: "asc" },
+  });
   return NextResponse.json({ packages });
 }
 

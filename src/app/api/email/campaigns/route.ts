@@ -1,56 +1,114 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { logAuditAction, withAuth } from '@/lib/auth-middleware';
-import { createDraftCampaign, listCampaigns, parseDraftInput } from '@/lib/email-marketing/campaigns';
-import { EmailConfigError, publicEmailConfigSummary, readEmailMarketingConfig } from '@/lib/email-marketing/config';
+import { db } from '@/lib/db';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+/* ------------------------------------------------------------------ */
+/*  GET — List email campaigns                                          */
+/* ------------------------------------------------------------------ */
 
-function configOrError() {
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const status = searchParams.get('status');
+  const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+  const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('pageSize') || '20', 10)));
+
+  const where: any = {};
+  if (status) where.status = status;
+
   try {
-    const config = readEmailMarketingConfig();
-    return { ok: true as const, config };
-  } catch (error) {
-    const variable = error instanceof EmailConfigError ? error.variable : 'UNKNOWN';
-    return { ok: false as const, variable };
+    const [campaigns, total] = await Promise.all([
+      db.campaign.findMany({
+        where: {
+          ...where,
+          type: 'EMAIL',
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      db.campaign.count({
+        where: {
+          ...where,
+          type: 'EMAIL',
+        },
+      }),
+    ]);
+
+    // Compute aggregate stats from completed email campaigns
+    const completedCampaigns = campaigns.filter((c: any) => c.status === 'COMPLETED');
+    const avgOpenRate = completedCampaigns.length > 0
+      ? completedCampaigns.reduce((a: number, c: any) => a + (c.openRate || 0), 0) / completedCampaigns.length
+      : 0;
+    const avgClickRate = completedCampaigns.length > 0
+      ? completedCampaigns.reduce((a: number, c: any) => a + (c.clickRate || 0), 0) / completedCampaigns.length
+      : 0;
+
+    return NextResponse.json({
+      success: true,
+      campaigns,
+      stats: {
+        avgOpenRate: avgOpenRate.toFixed(1),
+        avgClickRate: avgClickRate.toFixed(1),
+        totalCampaigns: total,
+      },
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message || 'Failed to fetch email campaigns' },
+      { status: 500 },
+    );
   }
 }
 
-export async function GET(request: NextRequest) {
-  return withAuth(async () => {
-    const campaigns = await listCampaigns();
-    const loaded = configOrError();
-    const config = loaded.ok ? publicEmailConfigSummary(loaded.config) : { error: 'EMAIL_CONFIG_INVALID', variable: loaded.variable };
-    return NextResponse.json({ success: true, campaigns, config });
-  }, { requirePermissions: ['marketing.email.view'] })(request);
-}
+/* ------------------------------------------------------------------ */
+/*  POST — Create an email campaign                                     */
+/* ------------------------------------------------------------------ */
 
-export async function POST(request: NextRequest) {
-  return withAuth(async (req, auth) => {
-    const body = await req.json().catch(() => null);
-    const parsed = parseDraftInput(body);
-    if (!parsed.ok) {
-      return NextResponse.json({ success: false, error: parsed.error, detail: parsed.detail }, { status: parsed.status });
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { name, subject, templateId, subscriberListId, scheduledAt, fromEmail, fromName } = body;
+
+    if (!name || typeof name !== 'string' || name.trim().length < 2) {
+      return NextResponse.json(
+        { success: false, error: 'Campaign name is required.' },
+        { status: 400 },
+      );
     }
 
-    const loaded = configOrError();
-    if (!loaded.ok) {
-      return NextResponse.json({ success: false, error: 'EMAIL_CONFIG_INVALID', variable: loaded.variable }, { status: 503 });
+    if (!subject || typeof subject !== 'string' || subject.trim().length < 2) {
+      return NextResponse.json(
+        { success: false, error: 'Email subject is required.' },
+        { status: 400 },
+      );
     }
 
-    const result = await createDraftCampaign(parsed.value, { userId: auth.userId }, loaded.config);
-    if (!result.ok) {
-      return NextResponse.json({ success: false, error: result.error, detail: result.detail }, { status: result.status });
-    }
-
-    await logAuditAction(auth, 'EMAIL_CAMPAIGN_DRAFTED', 'EmailCampaign', result.value.campaignId, {
-      recipientCount: result.value.recipientCount,
-      skipped: result.value.skipped,
-      testMode: parsed.value.testMode,
-      testModeRestricted: result.value.testModeRestricted,
-      consentBasis: parsed.value.consentBasis,
+    const campaign = await db.campaign.create({
+      data: {
+        name: name.trim(),
+        type: 'EMAIL',
+        channel: 'EMAIL',
+        status: scheduledAt ? 'SCHEDULED' : 'DRAFT',
+        budget: 0,
+        startDate: scheduledAt ? new Date(scheduledAt) : new Date(),
+        endDate: scheduledAt ? new Date(scheduledAt) : null,
+      },
     });
 
-    return NextResponse.json({ success: true, ...result.value }, { status: 201 });
-  }, { requirePermissions: ['marketing.email.manage'] })(request);
+    return NextResponse.json({
+      success: true,
+      message: 'Email campaign created',
+      campaign,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message || 'Failed to create email campaign' },
+      { status: 500 },
+    );
+  }
 }

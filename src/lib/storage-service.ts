@@ -1,4 +1,3 @@
-import path from 'path';
 // ALO Education — Central Storage Service (Task 22)
 // The single abstraction for all file operations across the platform.
 // Every upload/download/delete MUST go through this service.
@@ -19,31 +18,37 @@ import path from 'path';
 import { db } from "@/lib/db";
 import crypto from "crypto";
 import { promises as fs } from "fs";
+import path from "path";
 import { randomUUID } from "crypto";
 
 // ─── Storage Pool Configuration ──────────────────────────────
 // In production these would be separate mounted volumes. In the
 // sandbox they're directories under /home/z/my-project/storage/.
+// In production, they use the STORAGE_POOL_A/B/C env vars (VPS mount points).
+const POOL_A_BASE = process.env.STORAGE_POOL_A || path.join(process.cwd(), "storage", "student-partner");
+const POOL_B_BASE = process.env.STORAGE_POOL_B || path.join(process.cwd(), "storage", "official");
+const POOL_C_BASE = process.env.STORAGE_POOL_C || path.join(process.cwd(), "storage", "operational");
+
 export const POOLS = {
   STUDENT_PARTNER: {
     key: "STUDENT_PARTNER",
     name: "Student & Partner Private Storage",
     description: "Student documents, partner documents, passports, certificates, financial docs. Pool A (~120GB SSD).",
-    basePath: path.join(process.cwd(), "storage", "student-partner"),
+    basePath: POOL_A_BASE,
     capacityBytes: 120 * 1024 * 1024 * 1024, // 120 GB
   },
   OFFICIAL: {
     key: "OFFICIAL",
     name: "ALO Official Documents & Project Archives",
     description: "Company policies, SOPs, Knowledge Center, brand assets, project archives. Pool B (~120GB SSD).",
-    basePath: path.join(process.cwd(), "storage", "official"),
+    basePath: POOL_B_BASE,
     capacityBytes: 120 * 1024 * 1024 * 1024,
   },
   OPERATIONAL: {
     key: "OPERATIONAL",
     name: "Employee & Production & General Operational Storage",
     description: "Employee work files, marketing media, AI-generated media, reports. Pool C (~500GB HDD).",
-    basePath: path.join(process.cwd(), "storage", "operational"),
+    basePath: POOL_C_BASE,
     capacityBytes: 500 * 1024 * 1024 * 1024,
   },
 } as const;

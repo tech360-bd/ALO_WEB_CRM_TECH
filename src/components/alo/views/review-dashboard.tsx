@@ -104,7 +104,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
         subtitle="Collect, moderate, and publish student reviews. Multi-channel invitations (Website + Google + Facebook). Never fabricated — students submit their own reviews."
         icon="Star"
         action={
-          <Button onClick={() => setInviteOpen(true)} className="h-10 bg-[#F97316] hover:bg-[#F97316]/90">
+          <Button onClick={() => setInviteOpen(true)} className="h-10 bg-[#F37021] hover:bg-[#F37021]/90">
             <Icon name="Plus" className="mr-2 h-4 w-4" /> Send Review Invitation
           </Button>
         }
@@ -129,9 +129,9 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                 <div key={r.rating} className="flex items-center gap-3 text-sm">
                   <div className="flex items-center gap-1 w-16">
                     <span className="font-semibold text-slate-700">{r.rating}</span>
-                    <Icon name="Star" className="h-3 w-3 fill-[#F97316] text-[#F97316]" />
+                    <Icon name="Star" className="h-3 w-3 fill-[#F37021] text-[#F37021]" />
                   </div>
-                  <div className="flex-1"><MiniBar value={r.count} max={Math.max(...data.ratingDistribution.map((x: any) => x.count), 1)} color="#F97316" /></div>
+                  <div className="flex-1"><MiniBar value={r.count} max={Math.max(...data.ratingDistribution.map((x: any) => x.count), 1)} color="#F37021" /></div>
                   <div className="w-8 text-right text-xs text-slate-600">{r.count}</div>
                 </div>
               ))
@@ -212,7 +212,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                       <TableCell className="align-top">
                         <div className="flex items-center gap-0.5">
                           {[1,2,3,4,5].map((s) => (
-                            <Icon key={s} name="Star" className={`h-3 w-3 ${r.rating >= s ? "fill-[#F97316] text-[#F97316]" : "text-slate-200"}`} />
+                            <Icon key={s} name="Star" className={`h-3 w-3 ${r.rating >= s ? "fill-[#F37021] text-[#F37021]" : "text-slate-200"}`} />
                           ))}
                         </div>
                       </TableCell>
@@ -255,14 +255,14 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Icon name="MessageSquare" className="h-5 w-5 text-[#2563EB]" />
+                  <Icon name="MessageSquare" className="h-5 w-5 text-[#0057B8]" />
                   Review by {selectedReview.studentName}
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   {[1,2,3,4,5].map((s) => (
-                    <Icon key={s} name="Star" className={`h-5 w-5 ${selectedReview.rating >= s ? "fill-[#F97316] text-[#F97316]" : "text-slate-200"}`} />
+                    <Icon key={s} name="Star" className={`h-5 w-5 ${selectedReview.rating >= s ? "fill-[#F37021] text-[#F37021]" : "text-slate-200"}`} />
                   ))}
                   <span className="text-sm text-slate-600 ml-2">{selectedReview.rating}/5</span>
                 </div>
@@ -306,7 +306,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Icon name="Send" className="h-5 w-5 text-[#F97316]" /> Send Review Invitation
+              <Icon name="Send" className="h-5 w-5 text-[#F37021]" /> Send Review Invitation
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
@@ -342,17 +342,16 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
               <Input className="h-10" value={inviteForm.facebookRecommendUrl} onChange={(e) => setInviteForm({ ...inviteForm, facebookRecommendUrl: e.target.value })} placeholder="https://facebook.com/aloeducation/reviews" />
             </div>
             <div className="rounded-lg bg-blue-50 p-2 text-xs text-slate-600">
-              <Icon name="Info" className="h-3 w-3 inline mr-1 text-[#2563EB]" />
+              <Icon name="Info" className="h-3 w-3 inline mr-1 text-[#0057B8]" />
               The student will receive a unique link. They submit the review themselves — we never post on their behalf.
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setInviteOpen(false)}>Cancel</Button>
-            <Button onClick={createInvitation} className="bg-[#F97316] hover:bg-[#F97316]/90">Create Invitation</Button>
+            <Button onClick={createInvitation} className="bg-[#F37021] hover:bg-[#F37021]/90">Create Invitation</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
-export default ReviewDashboard;

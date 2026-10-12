@@ -1,62 +1,110 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireStudentResource } from '@/lib/student-resource-auth';
-import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere } from '@/lib/public-catalog';
-// Saved comparisons only ever return courses that are currently public (verified + published).
-export async function GET(req: NextRequest) {
+import { NextRequest, NextResponse } from 'next/server';
+
+// Explicit selects with NO commission fields
+const COURSE_COMPARE_SELECT = {
+  slug: true,
+  name: true,
+  countrySlug: true,
+  city: true,
+  level: true,
+  subject: true,
+  duration: true,
+  intake: true,
+  tuition: true,
+  tuitionCurrency: true,
+  scholarshipAvailable: true,
+  englishRequirement: true,
+  academicRequirement: true,
+  gpaRequirement: true,
+  deliveryMode: true,
+  degreeType: true,
+  universitySlug: true,
+  university: {
+    select: {
+      name: true,
+      slug: true,
+      city: true,
+      logo: true,
+      countrySlug: true,
+    },
+  },
+};
+
+const UNIVERSITY_COMPARE_SELECT = {
+  slug: true,
+  name: true,
+  countrySlug: true,
+  city: true,
+  ranking: true,
+  studentsCount: true,
+  tuitionRange: true,
+  scholarshipAvailable: true,
+  logo: true,
+  country: {
+    select: { name: true, shortName: true, flag: true, slug: true },
+  },
+};
+
+export async function POST(request: NextRequest) {
   try {
-    const access = await requireStudentResource(req, req.nextUrl.searchParams.get('studentId'));
-    if (access instanceof NextResponse) return access;
-    const userId = access.studentId;
-    const comparison = await db.courseComparisonList.findFirst({ where: { studentId: userId }, orderBy: { updatedAt: 'desc' } }).catch(()=>null);
-    if (comparison) {
-      const courseIds = (()=>{ try{ return JSON.parse(comparison.courseIds); }catch{ return []; } })();
-      const courses = await db.crmCourse.findMany({ where: { AND: [publicCourseWhere(), { courseId: { in: courseIds } }] } as any, include: { university: { select: { name: true, country: true } }, intakeFees: { where: publicIntakeWhere() as any, take:1 }, requirements: { where: publicRequirementWhere() as any, take:1 } } }).catch(()=>[]);
-      return NextResponse.json({ success: true, courses, total: courses.length, message: 'Compare max sensible number — columns: University, Course, Country, Study level, Duration, Tuition, Scholarship, Deposit, App fee, Intake, Deadline, English, Academic requirement, Eligibility, Match score' });
+    const body = await request.json();
+    const { itemType, items, sessionId: bodySessionId } = body;
+
+    if (!itemType || !items || !Array.isArray(items)) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-    const legacy = await db.courseComparison.findFirst({ where: { studentId: userId } }).catch(()=>null);
-    if (legacy) {
-      const courseIds = (()=>{ try{ return JSON.parse(legacy.courseIds); }catch{ return []; } })();
-      const courses = await db.crmCourse.findMany({ where: { AND: [publicCourseWhere(), { courseId: { in: courseIds } }] } as any }).catch(()=>[]);
-      return NextResponse.json({ success: true, courses, total: courses.length });
+
+    if (!['COURSE', 'UNIVERSITY'].includes(itemType)) {
+      return NextResponse.json({ error: 'Invalid itemType' }, { status: 400 });
     }
-    return NextResponse.json({ success: true, courses: [], total: 0, message: 'No courses to compare — add from course finder, max sensible number' });
-  } catch(e:any){ return NextResponse.json({ success:false, error:e.message }, { status:500 }); }
-}
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { studentId: requestedStudentId, courseIds, courseSlug } = body;
-    const access = await requireStudentResource(req, requestedStudentId);
-    if (access instanceof NextResponse) return access;
-    const studentId = access.studentId;
-    const normalizedCourseIds = Array.isArray(courseIds) ? courseIds : courseSlug ? [courseSlug] : null;
-    if (!normalizedCourseIds) return NextResponse.json({ success:false, error:'courseIds array or courseSlug required' }, { status:400 });
-    if (normalizedCourseIds.length > 4) return NextResponse.json({ success:false, error:'Compare max sensible number is 4' }, { status:400 });
-    const existing = await db.courseComparisonList.findFirst({ where: { studentId } }).catch(()=>null);
-    let result;
-    if (existing) {
-      result = await db.courseComparisonList.update({ where: { id: existing.id }, data: { courseIds: JSON.stringify(normalizedCourseIds) } });
-    } else {
-      result = await db.courseComparisonList.create({ data: { studentId, courseIds: JSON.stringify(normalizedCourseIds) } });
+
+    if (items.length > 4) {
+      return NextResponse.json({ error: 'Maximum 4 items' }, { status: 400 });
     }
-    return NextResponse.json({ success:true, data: result, message: 'Comparison saved — unique per student, max 4 courses' });
-  } catch(e:any){ return NextResponse.json({ success:false, error:e.message }, { status:500 }); }
+
+    // Compare is client-side only — just return confirmation
+    return NextResponse.json({ success: true, compared: items, count: items.length });
+  } catch (error) {
+    console.error('Compare POST error:', error);
+    return NextResponse.json({ error: 'Failed to set compare list' }, { status: 500 });
+  }
 }
 
-export async function DELETE(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const body = await req.json().catch(() => ({}));
-    const access = await requireStudentResource(req, body.studentId);
-    if (access instanceof NextResponse) return access;
-    const existing = await db.courseComparisonList.findFirst({ where: { studentId: access.studentId } });
-    if (!existing) return NextResponse.json({ success: true, removed: false });
-    const ids = (() => { try { return JSON.parse(existing.courseIds) as string[]; } catch { return []; } })();
-    const nextIds = ids.filter((id) => id !== body.courseSlug);
-    await db.courseComparisonList.update({ where: { id: existing.id }, data: { courseIds: JSON.stringify(nextIds) } });
-    return NextResponse.json({ success: true, removed: nextIds.length !== ids.length });
-  } catch (e: any) {
-    console.error('[api/course-finder/compare] error', e);
-    return NextResponse.json({ success: false, error: 'Unable to update comparison' }, { status: 500 });
+    const { searchParams } = new URL(request.url);
+    const itemType = searchParams.get('itemType');
+    const itemsParam = searchParams.get('items');
+
+    if (!itemType || !itemsParam) {
+      return NextResponse.json({ error: 'itemType and items required' }, { status: 400 });
+    }
+
+    if (!['COURSE', 'UNIVERSITY'].includes(itemType)) {
+      return NextResponse.json({ error: 'Invalid itemType' }, { status: 400 });
+    }
+
+    const slugs = itemsParam.split(',').filter(Boolean).slice(0, 4);
+    if (slugs.length === 0) {
+      return NextResponse.json({ items: [] });
+    }
+
+    if (itemType === 'COURSE') {
+      const courses = await db.coursePage.findMany({
+        where: { slug: { in: slugs }, approvalStatus: 'PUBLISHED' },
+        select: COURSE_COMPARE_SELECT,
+      });
+      return NextResponse.json({ items: courses, type: 'COURSE' });
+    }
+
+    const universities = await db.universityPage.findMany({
+      where: { slug: { in: slugs }, approvalStatus: 'PUBLISHED' },
+      select: UNIVERSITY_COMPARE_SELECT,
+    });
+    return NextResponse.json({ items: universities, type: 'UNIVERSITY' });
+  } catch (error) {
+    console.error('Compare GET error:', error);
+    return NextResponse.json({ error: 'Failed to load compare data' }, { status: 500 });
   }
 }

@@ -1,77 +1,198 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { requireAuth as requireAuthApi, requireRole } from '@/lib/api-auth';
+import { requireAuth, requirePermission, isErrorResponse, auditLog, parsePagination } from '@/lib/access-control';
 
-export const GET = withAuth(async (req: Request, auth: AuthContext) => {
+const VISA_STATUS_TRANSITIONS: Record<string, string[]> = {
+  NOT_STARTED: ['IN_PROGRESS', 'SUBMITTED'],
+  IN_PROGRESS: ['SUBMITTED', 'ON_HOLD'],
+  SUBMITTED: ['DECISION_PENDING', 'WITHDRAWN'],
+  DECISION_PENDING: ['APPROVED', 'REJECTED', 'WITHDRAWN'],
+  APPROVED: [],
+  REJECTED: ['RE_APPLIED'],
+  WITHDRAWN: ['NOT_STARTED', 'IN_PROGRESS'],
+  ON_HOLD: ['IN_PROGRESS', 'WITHDRAWN'],
+  RE_APPLIED: ['SUBMITTED'],
+};
+
+// ─── GET: List visa applications ─────────────────────────────
+
+export async function GET(req: NextRequest) {
+  const apiAuth = await requireAuthApi(req);
+  if (apiAuth.error) return apiAuth.error;
+  const auth = await requireAuth(req);
+  if (isErrorResponse(auth)) return auth;
+
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Visa view requires permission — visa.dashboard.view cases.view' }, { status: 403 });
+    const sp = req.nextUrl.searchParams;
 
-    const { searchParams } = new URL(req.url);
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
-    const limit = Math.min(200, Math.max(1, parseInt(searchParams.get('limit') || '20')));
-
-    let where: any = {};
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    const isVisa = auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isSuper && isVisa) {
-      where.visaOfficerId = auth.userId;
+    // Permission: applications.view_all or own
+    if (auth.user.role !== 'SUPER_ADMIN' && auth.user.role !== 'ADMIN') {
+      const perm = await requirePermission(req, 'applications.view_all');
+      if (isErrorResponse(perm)) {
+        // Allow students to see their own visa applications
+        if (auth.user.role !== 'STUDENT') return perm;
+      }
     }
 
-    const [cases, total] = await Promise.all([
-      db.visaCase.findMany({ where, orderBy: { updatedAt: 'desc' }, take: limit, skip: (page-1)*limit }),
-      db.visaCase.count({ where }),
+    const { page, limit, skip } = parsePagination(sp);
+
+    const where: Record<string, unknown> = {};
+    if (sp.get('status')) where.status = sp.get('status');
+    if (sp.get('country')) where.country = sp.get('country');
+
+    // Students see only own
+    if (auth.user.role === 'STUDENT') {
+      const student = await db.student.findFirst({ where: { email: auth.user.email } });
+      if (student) where.studentId = student.id;
+    }
+
+    const [data, total] = await Promise.all([
+      db.visaApplication.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      db.visaApplication.count({ where }),
     ]);
 
-    await logAuditAction(auth, 'VISA_CASES_LIST', 'VisaCase', 'list', { count: cases.length });
-
-    return NextResponse.json({
-      success: true,
-      data: cases,
-      visaCases: cases,
-      total,
-      pagination: { page, limit, total, pages: Math.ceil(total/limit) },
-      emptyState: cases.length === 0 ? 'No visa cases — proper empty state — real database metrics — no fake numbers' : null,
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return NextResponse.json({ success: true, data, meta: { page, limit, total } });
+  } catch (error) {
+    console.error('Error listing visa applications:', error);
+    return NextResponse.json({ success: false, error: 'Failed to list visa applications.' }, { status: 500 });
   }
+}
+
+// ─── POST: Create visa application ───────────────────────────
+
+const createVisaSchema = z.object({
+  applicationId: z.string().min(1, 'Application ID is required'),
+  country: z.string().min(1, 'Country is required'),
+  visaType: z.string().optional(),
+  notes: z.string().optional(),
 });
 
-export const PATCH = withAuth(async (req: Request, auth: AuthContext) => {
+export async function POST(req: NextRequest) {
+  const auth = await requirePermission(req, 'applications.update_all');
+  if (isErrorResponse(auth)) return auth;
+
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('VISA_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Visa stage update requires visa officer' }, { status: 403 });
-
     const body = await req.json();
-    const { id, visaStage, currentStage, reason } = body;
-    const stage = visaStage || currentStage;
-    if (!id || !stage) return NextResponse.json({ success: false, error: 'id and visaStage/currentStage required — pipeline 16 stages NOT_STARTED→CLOSED' }, { status: 400 });
-
-    const existing = await db.visaCase.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ success: false, error: 'Case not found' }, { status: 404 });
-
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    if (!isSuper && existing.visaOfficerId && existing.visaOfficerId !== auth.userId) {
-      return NextResponse.json({ success: false, error: 'Cannot update unassigned case — IDOR blocked' }, { status: 403 });
+    const parsed = createVisaSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: parsed.error.issues[0].message }, { status: 400 });
     }
 
-    const updated = await db.visaCase.update({ where: { id }, data: { currentStage: stage } });
+    // Validate linked application exists
+    const app = await db.application.findUnique({ where: { id: parsed.data.applicationId } });
+    if (!app) {
+      return NextResponse.json({ success: false, error: 'Application not found.' }, { status: 404 });
+    }
 
-    await db.timelineEvent.create({
+    const appNo = `VISA-${Date.now().toString(36).toUpperCase()}`;
+    const visa = await db.visaApplication.create({
       data: {
-        studentId: updated.studentId,
-        stage: 'VISA_STAGE_UPDATED',
-        title: `Visa stage updated to ${stage} by ${auth.name} — reason ${reason || 'officer decision'}`,
-        description: `Visa case ${updated.caseCode} moved to ${stage} — pipeline 16 stages NOT_STARTED→CLOSED — internal READY/NEEDS_PRACTICE/NEEDS_DOCUMENTS/HIGH_RISK/HUMAN_REVIEW_REQUIRED NOT visa decision`,
+        applicationId: appNo,
+        studentId: app.studentId,
+        country: parsed.data.country,
+        visaType: parsed.data.visaType || undefined,
+        notes: parsed.data.notes || undefined,
       },
-    }).catch(() => {});
+    });
 
-    await logAuditAction(auth, 'VISA_STAGE_UPDATE', 'VisaCase', id, { before: { stage: existing.currentStage }, after: { stage }, reason, studentId: existing.studentId });
+    await auditLog({
+      userId: auth.user.id,
+      action: 'VISA_CREATE',
+      resource: 'VisaApplication',
+      resourceId: visa.id,
+      details: { country: parsed.data.country, studentId: app.studentId },
+    });
 
-    return NextResponse.json({ success: true, visaCase: updated, data: updated });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return NextResponse.json({ success: true, data: visa }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating visa application:', error);
+    return NextResponse.json({ success: false, error: 'Failed to create visa application.' }, { status: 500 });
   }
+}
+
+// ─── PATCH: Update visa status/info ──────────────────────────
+
+const patchVisaSchema = z.object({
+  id: z.string().min(1),
+  status: z.string().optional(),
+  submissionDate: z.string().optional(),
+  decisionDate: z.string().optional(),
+  outcome: z.string().optional(),
+  visaGrantDate: z.string().optional(),
+  expiryDate: z.string().optional(),
+  casNumber: z.string().optional(),
+  gwfNumber: z.string().optional(),
+  notes: z.string().optional(),
+  documentsJson: z.string().optional(),
 });
+
+export async function PATCH(req: NextRequest) {
+  const apiAuth = await requireAuthApi(req);
+  if (apiAuth.error) return apiAuth.error;
+  const auth = await requireAuth(req);
+  if (isErrorResponse(auth)) return auth;
+
+  // Only VISA_OFFICER, VISA_INTERVIEW_OFFICER, or higher roles
+  const allowedRoles = ['SUPER_ADMIN', 'ADMIN', 'VISA_OFFICER', 'VISA_INTERVIEW_OFFICER', 'APPLICATION_TEAM'];
+  if (!allowedRoles.includes(auth.user.role)) {
+    return NextResponse.json({ success: false, error: 'Permission denied. Visa officer or higher role required.' }, { status: 403 });
+  }
+
+  try {
+    const body = await req.json();
+    const parsed = patchVisaSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ success: false, error: parsed.error.issues[0].message }, { status: 400 });
+    }
+
+    const existing = await db.visaApplication.findUnique({ where: { id: parsed.data.id } });
+    if (!existing) {
+      return NextResponse.json({ success: false, error: 'Visa application not found.' }, { status: 404 });
+    }
+
+    // Validate status transitions
+    if (parsed.data.status && parsed.data.status !== existing.status) {
+      const allowed = VISA_STATUS_TRANSITIONS[existing.status] || [];
+      if (!allowed.includes(parsed.data.status)) {
+        return NextResponse.json({ success: false, error: `Invalid transition: ${existing.status} → ${parsed.data.status}` }, { status: 400 });
+      }
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (parsed.data.status) updateData.status = parsed.data.status;
+    if (parsed.data.submissionDate) updateData.submissionDate = new Date(parsed.data.submissionDate);
+    if (parsed.data.decisionDate) updateData.decisionDate = new Date(parsed.data.decisionDate);
+    if (parsed.data.outcome) updateData.outcome = parsed.data.outcome;
+    if (parsed.data.visaGrantDate) updateData.visaGrantDate = new Date(parsed.data.visaGrantDate);
+    if (parsed.data.expiryDate) updateData.expiryDate = new Date(parsed.data.expiryDate);
+    if (parsed.data.casNumber) updateData.casNumber = parsed.data.casNumber;
+    if (parsed.data.gwfNumber) updateData.gwfNumber = parsed.data.gwfNumber;
+    if (parsed.data.notes) updateData.notes = parsed.data.notes;
+    if (parsed.data.documentsJson) updateData.documentsJson = parsed.data.documentsJson;
+
+    const visa = await db.visaApplication.update({
+      where: { id: parsed.data.id },
+      data: updateData,
+    });
+
+    await auditLog({
+      userId: auth.user.id,
+      action: 'VISA_UPDATE',
+      resource: 'VisaApplication',
+      resourceId: parsed.data.id,
+      details: { from: existing.status, to: parsed.data.status || existing.status },
+    });
+
+    return NextResponse.json({ success: true, data: visa });
+  } catch (error) {
+    console.error('Error updating visa application:', error);
+    return NextResponse.json({ success: false, error: 'Failed to update visa application.' }, { status: 500 });
+  }
+}

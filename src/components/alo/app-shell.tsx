@@ -1,196 +1,291 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Icon } from "./shared";
-import { CommandPalette, CommandPaletteTrigger } from "./command-palette";
-import { NAV_ITEMS, ROLES, type ViewKey } from "@/lib/alo-types";
+import React, { useState, useCallback, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 
-interface AppShellProps {
-  view: ViewKey;
-  role: string;
-  onViewChange: (v: ViewKey) => void;
-  onRoleChange: (r: string) => void;
-  children: React.ReactNode;
+// ─── Navbar & Footer (loaded immediately as they're always shown) ──────
+const PublicNavbar = dynamic(() => import('@/components/public/public-navbar').then(m => ({ default: m.PublicNavbar })), { ssr: false });
+const PublicFooter = dynamic(() => import('@/components/public/public-footer').then(m => ({ default: m.PublicFooter })), { ssr: false });
+
+// ─── View groups — loaded on demand ─────────────────────────────────────
+const PublicViews = dynamic(() => import('@/components/alo/views/public-views').then(m => ({ default: m.PublicViews })), { ssr: false });
+const CourseViews = dynamic(() => import('@/components/alo/views/course-views').then(m => ({ default: m.CourseViews })), { ssr: false });
+const PortalViews = dynamic(() => import('@/components/alo/views/portal-views').then(m => ({ default: m.PortalViews })), { ssr: false });
+const ToolViews = dynamic(() => import('@/components/alo/views/tool-views').then(m => ({ default: m.ToolViews })), { ssr: false });
+const StudioViews = dynamic(() => import('@/components/alo/views/studio-views').then(m => ({ default: m.StudioViews })), { ssr: false });
+const DiagramViews = dynamic(() => import('@/components/alo/views/diagram-views').then(m => ({ default: m.DiagramViews })), { ssr: false });
+const CommunicationViews = dynamic(() => import('@/components/alo/views/communication-views').then(m => ({ default: m.CommunicationViews })), { ssr: false });
+
+// Modals + Command Palette
+const AuthModal = dynamic(() => import('@/components/platform/auth-modal'), { ssr: false });
+const LeadModal = dynamic(() => import('@/components/platform/lead-modal'), { ssr: false });
+const CommandPalette = dynamic(() => import('@/components/alo/new/platform/command-palette').then(m => ({ default: m.CommandPalette })), { ssr: false });
+
+// ─── Types ──────────────────────────────────────────────────────────────
+type PublicViewKey =
+  | 'home' | 'country' | 'about' | 'contact' | 'services' | 'scholarships'
+  | 'info-center' | 'blog' | 'success-stories' | 'faq'
+  | 'destinations' | 'universities' | 'resources' | 'exams'
+  | 'events' | 'news' | 'terms' | 'privacy' | 'cookie-policy'
+  | 'journey' | 'careers' | 'partners';
+
+type CourseViewKey = 'course-finder' | 'course-detail' | 'university-detail';
+type PortalViewKey = 'student-dashboard' | 'crm-dashboard' | 'crm-kanban' | 'marketing-kit';
+type ToolViewKey = 'ai-assistant' | 'visa-guide' | 'cost-planner' | 'loan-comparison' | 'cv-sop-builder';
+type StudioViewKey = 'video-studio' | 'seo-dashboard' | 'omnichannel';
+type DiagramViewKey = 'diagram-showcase' | 'student-journey' | 'application-flow';
+type CommunicationViewKey = 'app-communication';
+
+type PageView =
+  | PublicViewKey | CourseViewKey | PortalViewKey
+  | ToolViewKey | StudioViewKey | DiagramViewKey | CommunicationViewKey;
+
+// ─── View group membership ─────────────────────────────────────────────
+const PUBLIC_VIEWS = new Set<string>([
+  'home', 'country', 'about', 'contact', 'services', 'scholarships',
+  'info-center', 'blog', 'success-stories', 'faq',
+  'destinations', 'universities', 'resources', 'exams',
+  'events', 'news', 'terms', 'privacy', 'cookie-policy',
+  'journey', 'careers', 'partners',
+]);
+const COURSE_VIEWS = new Set<string>(['course-finder', 'course-detail', 'university-detail']);
+const PORTAL_VIEWS_SET = new Set<string>(['student-dashboard', 'crm-dashboard', 'crm-kanban', 'marketing-kit']);
+const TOOL_VIEWS = new Set<string>(['ai-assistant', 'visa-guide', 'cost-planner', 'loan-comparison', 'cv-sop-builder']);
+const STUDIO_VIEWS = new Set<string>(['video-studio', 'seo-dashboard', 'omnichannel']);
+const DIAGRAM_VIEWS = new Set<string>(['diagram-showcase', 'student-journey', 'application-flow']);
+const COMMUNICATION_VIEWS = new Set<string>(['app-communication']);
+
+const NO_NAV_FOOTER = new Set<string>([
+  'student-dashboard', 'crm-dashboard', 'crm-kanban', 'marketing-kit',
+  'ai-assistant', 'video-studio', 'seo-dashboard', 'omnichannel',
+]);
+
+// ─── Hash routing ──────────────────────────────────────────────────────
+const VIEW_FROM_HASH: Record<string, PageView> = {
+  '': 'home', '0': 'home',
+  'course-finder': 'course-finder', 'app-communication': 'app-communication',
+  'about': 'about', 'contact': 'contact', 'services': 'services',
+  'scholarships': 'scholarships', 'info-center': 'info-center',
+  'blog': 'blog', 'success-stories': 'success-stories', 'faq': 'faq',
+  'student-dashboard': 'student-dashboard', 'crm-dashboard': 'crm-dashboard',
+  'destinations': 'destinations', 'universities': 'universities',
+  'resources': 'resources', 'exams': 'exams', 'events': 'events', 'news': 'news',
+  'terms': 'terms', 'privacy': 'privacy', 'cookie-policy': 'cookie-policy',
+  'journey': 'journey', 'careers': 'careers', 'partners': 'partners',
+  'diagram-showcase': 'diagram-showcase', 'student-journey': 'student-journey', 'application-flow': 'application-flow',
+  'crm-kanban': 'crm-kanban', 'marketing-kit': 'marketing-kit',
+  'ai-assistant': 'ai-assistant', 'visa-guide': 'visa-guide', 'cost-planner': 'cost-planner',
+  'loan-comparison': 'loan-comparison', 'cv-sop-builder': 'cv-sop-builder',
+  'video-studio': 'video-studio', 'seo-dashboard': 'seo-dashboard', 'omnichannel': 'omnichannel',
+};
+
+function parseHash(hash: string): { view: PageView; slug?: string } {
+  const h = hash.replace('#', '');
+  if (!h || h === '0') return { view: 'home' };
+  if (h.startsWith('country/')) return { view: 'country', slug: h.replace('country/', '') };
+  if (h.startsWith('course/')) return { view: 'course-detail', slug: h.replace('course/', '') };
+  if (h.startsWith('university/')) return { view: 'university-detail', slug: h.replace('university/', '') };
+  const mapped = VIEW_FROM_HASH[h];
+  if (mapped) return { view: mapped };
+  return { view: 'home' };
 }
 
-function Logo() {
+// Loading fallback for view groups
+function ViewLoading() {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="flex size-10 items-center justify-center rounded-xl bg-alo-gradient text-white alo-shadow">
-        <span className="text-lg font-black tracking-tight">A</span>
-      </div>
-      <div className="leading-tight">
-        <p className="text-base font-black text-[#2563EB]">ALO Education</p>
-        <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Study Abroad OS</p>
+    <div className="min-h-[60vh] flex items-center justify-center bg-[#f5f5f5]">
+      <div className="flex flex-col items-center gap-3">
+        <div className="size-8 animate-spin rounded-full border-2 border-[#0066CC] border-t-transparent" />
+        <span className="text-sm text-[#5A7299]">Loading...</span>
       </div>
     </div>
   );
 }
 
-function NavList({ view, onViewChange, role, onNavigate }: { view: ViewKey; onViewChange: (v: ViewKey) => void; role: string; onNavigate?: () => void }) {
-  const groups = Array.from(new Set(NAV_ITEMS.map((n) => n.group)));
+// ─── App Shell ─────────────────────────────────────────────────────────
+export function AppShell() {
+  const [initial] = useState(() => {
+    if (typeof window === 'undefined') return { view: 'home' as PageView, slug: undefined as string | undefined };
+    return parseHash(window.location.hash);
+  });
+  const [view, setView] = useState<PageView>(initial.view);
+  const [countrySlug, setCountrySlug] = useState(initial.slug || 'uk');
+  const [courseSlug, setCourseSlug] = useState(initial.slug || '');
+  const [universitySlug, setUniversitySlug] = useState(initial.slug || '');
+  const [leadOpen, setLeadOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+
+  const navigateTo = useCallback((page: string, slug?: string) => {
+    const hashMap: Record<string, string> = {
+      country: `country/${slug}`, 'course-finder': 'course-finder', home: '',
+      course: `course/${slug}`, university: `university/${slug}`,
+      'app-communication': 'app-communication', about: 'about', contact: 'contact',
+      services: 'services', scholarships: 'scholarships', 'info-center': 'info-center',
+      blog: 'blog', 'success-stories': 'success-stories', faq: 'faq',
+      'student-dashboard': 'student-dashboard', 'crm-dashboard': 'crm-dashboard',
+      destinations: 'destinations', universities: 'universities',
+      resources: 'resources', exams: 'exams', events: 'events', news: 'news',
+      terms: 'terms', privacy: 'privacy', 'cookie-policy': 'cookie-policy',
+      journey: 'journey', careers: 'careers', partners: 'partners',
+      'diagram-showcase': 'diagram-showcase', 'student-journey': 'student-journey', 'application-flow': 'application-flow',
+      'crm-kanban': 'crm-kanban', 'marketing-kit': 'marketing-kit',
+      'ai-assistant': 'ai-assistant', 'visa-guide': 'visa-guide', 'cost-planner': 'cost-planner',
+      'loan-comparison': 'loan-comparison', 'cv-sop-builder': 'cv-sop-builder',
+      'video-studio': 'video-studio', 'seo-dashboard': 'seo-dashboard', 'omnichannel': 'omnichannel',
+    };
+    const hash = hashMap[page];
+    if (hash === undefined) return;
+    if (page === 'country' && slug) setCountrySlug(slug);
+    if (page === 'course' && slug) setCourseSlug(slug);
+    if (page === 'university' && slug) setUniversitySlug(slug);
+    setView(page as PageView);
+    window.location.hash = hash;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleBack = useCallback(() => {
+    setView('home'); window.location.hash = ''; window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleLeadOpen = useCallback(() => setLeadOpen(true), []);
+  const handleFinderOpen = useCallback(() => navigateTo('course-finder'), [navigateTo]);
+  const handleLoginSuccess = useCallback((role: string) => {
+    navigateTo(role === 'STUDENT' ? 'student-dashboard' : 'crm-dashboard');
+  }, [navigateTo]);
+
+  useEffect(() => {
+    const handler = () => {
+      const { view: v, slug } = parseHash(window.location.hash);
+      if (v === 'country' && slug) setCountrySlug(slug);
+      if (v === 'course-detail' && slug) setCourseSlug(slug);
+      if (v === 'university-detail' && slug) setUniversitySlug(slug);
+      setView(v);
+    };
+    window.addEventListener('hashchange', handler);
+    return () => window.removeEventListener('hashchange', handler);
+  }, []);
+
+  const isNoNavFooter = NO_NAV_FOOTER.has(view);
+
+  // Render the appropriate view group
+  function renderView() {
+    if (PUBLIC_VIEWS.has(view)) {
+      return (
+        <Suspense fallback={<ViewLoading />}>
+          <PublicViews
+            view={view as PublicViewKey}
+            countrySlug={countrySlug}
+            onBack={handleBack}
+            onNavigate={navigateTo}
+            onLeadOpen={handleLeadOpen}
+            onFinderOpen={handleFinderOpen}
+          />
+        </Suspense>
+      );
+    }
+    if (COURSE_VIEWS.has(view)) {
+      return (
+        <Suspense fallback={<ViewLoading />}>
+          <CourseViews
+            view={view as CourseViewKey}
+            courseSlug={courseSlug}
+            universitySlug={universitySlug}
+            onBack={handleBack}
+            onNavigate={navigateTo}
+            onLeadOpen={handleLeadOpen}
+          />
+        </Suspense>
+      );
+    }
+    if (PORTAL_VIEWS_SET.has(view)) {
+      return (
+        <Suspense fallback={<ViewLoading />}>
+          <PortalViews
+            view={view as PortalViewKey}
+            onBack={handleBack}
+            onNavigate={navigateTo}
+          />
+        </Suspense>
+      );
+    }
+    if (TOOL_VIEWS.has(view)) {
+      return (
+        <Suspense fallback={<ViewLoading />}>
+          <ToolViews
+            view={view as ToolViewKey}
+            onBack={handleBack}
+            onNavigate={navigateTo}
+            onLeadOpen={handleLeadOpen}
+          />
+        </Suspense>
+      );
+    }
+    if (STUDIO_VIEWS.has(view)) {
+      return (
+        <Suspense fallback={<ViewLoading />}>
+          <StudioViews
+            view={view as StudioViewKey}
+            onBack={handleBack}
+            onNavigate={navigateTo}
+          />
+        </Suspense>
+      );
+    }
+    if (DIAGRAM_VIEWS.has(view)) {
+      return (
+        <Suspense fallback={<ViewLoading />}>
+          <DiagramViews
+            view={view as DiagramViewKey}
+            onBack={handleBack}
+            onNavigate={navigateTo}
+            onLeadOpen={handleLeadOpen}
+          />
+        </Suspense>
+      );
+    }
+    if (COMMUNICATION_VIEWS.has(view)) {
+      return (
+        <Suspense fallback={<ViewLoading />}>
+          <CommunicationViews
+            view={view as CommunicationViewKey}
+            onBack={handleBack}
+          />
+        </Suspense>
+      );
+    }
+    // Fallback — home
+    return (
+      <Suspense fallback={<ViewLoading />}>
+        <PublicViews
+          view="home"
+          onBack={handleBack}
+          onNavigate={navigateTo}
+          onLeadOpen={handleLeadOpen}
+          onFinderOpen={handleFinderOpen}
+        />
+      </Suspense>
+    );
+  }
+
   return (
-    <nav className="flex flex-col gap-5 px-3 py-4">
-      {groups.map((group) => {
-        const items = NAV_ITEMS.filter((n) => n.group === group && (n.roles.includes("*") || n.roles.includes(role)));
-        if (items.length === 0) return null;
-        return (
-          <div key={group}>
-            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{group}</p>
-            <div className="flex flex-col gap-0.5">
-              {items.map((item) => {
-                const active = view === item.key;
-                return (
-                  <button
-                    key={item.key}
-                    onClick={() => {
-                      onViewChange(item.key);
-                      onNavigate?.();
-                    }}
-                    className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all",
-                      active ? "bg-alo-gradient text-white shadow-md" : "text-foreground hover:bg-[#EAF3FF] hover:text-[#2563EB]"
-                    )}
-                  >
-                    <Icon name={item.icon} className="size-4 shrink-0" />
-                    <span className="truncate">{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-    </nav>
-  );
-}
+    <div className="min-h-screen flex flex-col">
+      {!isNoNavFooter && <PublicNavbar onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
 
-export function AppShell({ view, onViewChange, role, onRoleChange, children }: AppShellProps) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [paletteSignal, setPaletteSignal] = React.useState(0);
-  const currentRole = ROLES.find((r) => r.value === role);
+      <main className="flex-1">
+        {renderView()}
+      </main>
 
-  return (
-    <div className="flex min-h-screen flex-col bg-[#f7f9fc]">
-      {/* Top header */}
-      <header className="sticky top-0 z-40 border-b border-[#2563EB]/10 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-        <div className="flex h-16 items-center justify-between gap-3 px-4 lg:px-6">
-          <div className="flex items-center gap-2">
-            {/* Mobile menu */}
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger asChild>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden">
-                  <Icon name="Menu" className="size-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-72 p-0">
-                <SheetHeader className="px-4 py-4">
-                  <SheetTitle asChild>
-                    <div><Logo /></div>
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="overflow-y-auto alo-scroll">
-                  <NavList view={view} onViewChange={onViewChange} role={role} onNavigate={() => setMobileOpen(false)} />
-                </div>
-              </SheetContent>
-            </Sheet>
-            <Logo />
-            {/* Command Palette trigger */}
-            <CommandPaletteTrigger
-              onClick={() => setPaletteSignal((s) => s + 1)}
-              className="ml-2 hidden md:flex"
-            />
-          </div>
+      {!isNoNavFooter && <PublicFooter onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
 
-          <div className="flex items-center gap-2">
-            {/* Mobile command palette trigger */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setPaletteSignal((s) => s + 1)}
-              aria-label="Search"
-            >
-              <Icon name="Search" className="size-5" />
-            </Button>
-            {/* Role switcher */}
-            <div className="hidden items-center gap-2 rounded-xl border border-[#2563EB]/15 bg-[#EAF3FF]/60 px-3 py-1.5 sm:flex">
-              <Icon name="ShieldCheck" className="size-4 text-[#2563EB]" />
-              <Select value={role} onValueChange={onRoleChange}>
-                <SelectTrigger className="h-7 w-[170px] border-0 bg-transparent p-0 text-xs font-semibold text-[#2563EB] focus:ring-0">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ROLES.map((r) => (
-                    <SelectItem key={r.value} value={r.value}>
-                      {r.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {/* Mobile role switcher */}
-            <Select value={role} onValueChange={onRoleChange}>
-              <SelectTrigger className="h-9 w-[130px] border-[#2563EB]/15 text-xs font-semibold text-[#2563EB] sm:hidden">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {ROLES.map((r) => (
-                  <SelectItem key={r.value} value={r.value}>
-                    {r.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative">
-              <Icon name="Bell" className="size-5 text-muted-foreground" />
-              <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#F97316]" />
-            </Button>
-            <div className="flex size-9 items-center justify-center rounded-full bg-alo-gradient text-sm font-bold text-white">
-              {currentRole?.label?.[0] ?? "U"}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex flex-1">
-        {/* Desktop sidebar */}
-        <aside className="hidden w-64 shrink-0 border-r border-[#2563EB]/10 bg-white lg:block">
-          <div className="sticky top-16 max-h-[calc(100vh-4rem)] overflow-y-auto alo-scroll">
-            <NavList view={view} onViewChange={onViewChange} role={role} />
-          </div>
-        </aside>
-
-        {/* Main content */}
-        <main className="min-w-0 flex-1">
-          <div className="mx-auto w-full max-w-[1400px] px-4 py-6 lg:px-8 lg:py-8">{children}</div>
-        </main>
-      </div>
-
-      {/* Sticky footer */}
-      <footer className="mt-auto border-t border-[#2563EB]/10 bg-white">
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:flex-row lg:px-8">
-          <p>
-            <span className="font-semibold text-[#2563EB]">ALO Education</span> — Complete Student Management, CRM, Admission & Visa Workflow System
-          </p>
-          <p className="flex items-center gap-1.5">
-            <span className="size-1.5 rounded-full bg-emerald-500" />
-            System operational · {new Date().getFullYear()} · Bangladesh-focused
-          </p>
-        </div>
-      </footer>
-
-      {/* Command Palette — global Cmd+K / Ctrl+K */}
-      <CommandPalette
-        role={role}
-        onViewChange={onViewChange}
-        openSignal={paletteSignal}
-      />
+      <Suspense fallback={null}>
+        <LeadModal open={leadOpen} onClose={() => setLeadOpen(false)} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onLoginSuccess={handleLoginSuccess} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CommandPalette onNavigate={navigateTo} />
+      </Suspense>
     </div>
   );
 }

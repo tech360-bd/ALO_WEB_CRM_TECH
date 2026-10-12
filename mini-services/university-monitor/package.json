@@ -1,17 +1,13 @@
 {
   "name": "alo-university-monitor",
   "version": "1.0.0",
-  "description": "Legacy unverified worker; not enabled in Hostinger production.",
+  "description": "ALO University & Official Data Monitoring Agent — 7-day scheduler mini-service",
   "scripts": {
-    "dev": "node -e \"throw new Error('Worker disabled pending Node 22 and lifecycle verification')\"",
-    "start": "node -e \"throw new Error('Worker disabled pending Node 22 and lifecycle verification')\""
+    "dev": "bun --hot index.ts",
+    "start": "bun index.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
     "z-ai-web-dev-sdk": "^0.0.18"
-  },
-  "engines": {
-    "node": "22.x",
-    "npm": ">=10"
   }
 }

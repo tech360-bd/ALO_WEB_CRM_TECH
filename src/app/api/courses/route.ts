@@ -1,72 +1,113 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getOptionalAuth } from '@/lib/auth-middleware';
-import { publicCourseWhere } from '@/lib/public-catalog';
+import { NextRequest, NextResponse } from 'next/server';
 
-// Public GET /api/courses — Course Finder database engine (Part 9 & 46)
-// Filters: country, universityId, level, subject, intake, tuition, scholarship, englishRequirement, status
-// Public visibility: anonymous visitors only receive published, VERIFIED,
-// source-linked courses (publicCourseWhere). ?status=all is honored only for
-// privileged staff; for everyone else it is ignored.
-export async function GET(req: NextRequest) {
+const PUBLIC_COURSE_FIELDS = {
+  slug: true,
+  name: true,
+  countrySlug: true,
+  city: true,
+  campus: true,
+  level: true,
+  subject: true,
+  discipline: true,
+  studyArea: true,
+  deliveryMode: true,
+  degreeType: true,
+  duration: true,
+  intake: true,
+  tuition: true,
+  tuitionCurrency: true,
+  applicationFee: true,
+  deposit: true,
+  scholarshipAvailable: true,
+  englishRequirement: true,
+  academicRequirement: true,
+  gpaRequirement: true,
+  backlogPolicy: true,
+  workExperience: true,
+  portfolioRequired: true,
+  interviewRequired: true,
+  moiAccepted: true,
+  overview: true,
+  internship: true,
+  placement: true,
+  coop: true,
+  visaNotes: true,
+  deadline: true,
+  matchScore: true,
+  metaTitle: true,
+  metaDescription: true,
+};
+
+export async function GET(request: NextRequest) {
   try {
-    const auth = await getOptionalAuth(req);
-    const privileged = (auth?.roles || []).some((role) =>
-      ['SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'STAFF', 'APPLICATION_OFFICER', 'super_admin', 'admin', 'counselor'].includes(role),
+    const { searchParams } = new URL(request.url);
+    const country = searchParams.get('country');
+    const university = searchParams.get('university');
+    const level = searchParams.get('level');
+    const subject = searchParams.get('subject');
+    const search = searchParams.get('search');
+    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const offset = parseInt(searchParams.get('offset') || '0', 10);
+
+    const where: Record<string, unknown> = { approvalStatus: 'PUBLISHED' };
+
+    if (country) {
+      where.countrySlug = country;
+    }
+    if (university) {
+      where.universitySlug = university;
+    }
+    if (level) {
+      where.level = level;
+    }
+    if (subject) {
+      where.subject = subject;
+    }
+    if (search) {
+      where.OR = [
+        { name: { contains: search } },
+        { subject: { contains: search } },
+        { discipline: { contains: search } },
+      ];
+    }
+
+    const [courses, total] = await Promise.all([
+      db.coursePage.findMany({
+        where,
+        select: {
+          ...PUBLIC_COURSE_FIELDS,
+          universitySlug: true,
+          university: {
+            select: {
+              name: true,
+              slug: true,
+              city: true,
+              logo: true,
+              countrySlug: true,
+            },
+          },
+        },
+        orderBy: { matchScore: 'desc' },
+        take: Math.min(limit, 100),
+        skip: offset,
+      }),
+      db.coursePage.count({ where }),
+    ]);
+
+    return NextResponse.json(
+      { courses, total },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
     );
-    const country = req.nextUrl.searchParams.get('country') || '';
-    const universityId = req.nextUrl.searchParams.get('universityId') || '';
-    const level = req.nextUrl.searchParams.get('level') || '';
-    const subject = req.nextUrl.searchParams.get('subject') || '';
-    const search = req.nextUrl.searchParams.get('search') || '';
-    const status = req.nextUrl.searchParams.get('status') || 'active';
-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10) || 50, 100);
-
-    const where: any = privileged ? {} : publicCourseWhere();
-    if (privileged && status !== 'all') where.status = status;
-    if (country && country !== 'all') where.country = country;
-    if (universityId) where.universityId = universityId;
-    if (level && level !== 'all') where.studyLevel = level;
-    if (subject && subject !== 'all') where.subjectArea = { contains: subject };
-    if (search) where.courseTitle = { contains: search };
-
-    // No .catch(()=>[]) here: DB failures must surface as 500, not empty lists.
-    const courses = await db.crmCourse.findMany({
-      where,
-      take: limit,
-      orderBy: { courseTitle: 'asc' },
-      include: {
-        university: { select: { name: true, slug: true } },
-        intakeFees: { take: 1 },
-        englishRequirements: { take: 1 },
-      },
-    });
-
-    const safe = courses.map((c: any) => ({
-      id: c.id,
-      courseId: c.courseId,
-      courseTitle: c.courseTitle,
-      universityId: c.universityId,
-      universityName: c.university?.name || '',
-      universitySlug: c.university?.slug || '',
-      country: c.country,
-      city: c.city,
-      studyLevel: c.studyLevel || c.programLevel,
-      subjectArea: c.subjectArea,
-      durationMonths: c.durationMonths,
-      tuitionFee: c.tuitionFee,
-      currency: c.currency,
-      status: c.status,
-      verificationStatus: c.verificationStatus,
-      intakeFees: c.intakeFees || [],
-      englishRequirement: c.englishRequirements?.[0] || null,
-    }));
-
-    return NextResponse.json({ success: true, courses: safe, data: safe, total: safe.length });
-  } catch (e: any) {
-    // Log full diagnostics server-side; never echo raw driver/Prisma messages
-    // (they contain DB usernames/hosts) to the public client.
-    console.error('[api/courses] error', e);
-    return NextResponse.json({ success: false, error: 'Failed to load courses' }, { status: 500 });
+  } catch (error) {
+    console.error('Courses API error:', error);
+    return NextResponse.json(
+      { error: 'Failed to load courses' },
+      { status: 500 }
+    );
   }
 }

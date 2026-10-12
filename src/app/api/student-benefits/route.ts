@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { requireStudentResource } from "@/lib/student-resource-auth";
 
 // GET — student benefits (entitlements + vouchers)
 export async function GET(req: NextRequest) {
-  const requestedStudentId = req.nextUrl.searchParams.get("studentId");
-  if (!requestedStudentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
-
-  const access = await requireStudentResource(req, requestedStudentId);
-  if (access instanceof NextResponse) return access;
-  const studentId = access.studentId;
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const studentId = req.nextUrl.searchParams.get("studentId");
+  if (!studentId) return NextResponse.json({ error: "studentId required" }, { status: 400 });
 
   const [entitlements, vouchers] = await Promise.all([
     db.studentBenefitEntitlement.findMany({ where: { studentId } }),
@@ -17,8 +18,8 @@ export async function GET(req: NextRequest) {
   ]);
 
   // Check eligibility — student must have active ALO application
-  const applications = await db.application.findMany({ where: { studentId } });
-  const hasActiveApp = applications.some((application) => !["VISA_REFUSED", "ENROLLED", "CANCELLED"].includes(application.stage));
+  const student = await db.student.findUnique({ where: { id: studentId }, include: { applications: true } });
+  const hasActiveApp = student?.applications.some((a) => !["VISA_REFUSED", "ENROLLED", "CANCELLED"].includes(a.stage)) || false;
 
   return NextResponse.json({
     eligible: hasActiveApp,

@@ -1,0 +1,4246 @@
+// ALO Education - Complete Student Management, CRM, Admission & Visa Workflow System
+// Prisma schema (MySQL 8)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// USERS & RBAC
+// ============================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  phone         String?
+  passwordHash  String    @default("alo-temporary")
+  name          String
+  role          String    @default("STUDENT") // SUPER_ADMIN, ADMIN, HR_MANAGER, BRANCH_MANAGER, COUNSELOR, APPLICATION_TEAM, VISA_OFFICER, VISA_INTERVIEW_OFFICER, FINANCE, MARKETING_MANAGER, MARKETING, FRONT_DESK, SUPPORT_STAFF, PARTNER, STUDENT, ENGLISH_TRAINER, MOCK_TEST_ADMIN
+  status        String    @default("ACTIVE") // ACTIVE, SUSPENDED, RESIGNED, TERMINATED, PENDING
+  avatar        String?
+  mustChangePwd Boolean   @default(false)
+  lastLoginAt   DateTime?
+  permissions   String    @default("[]") // JSON array of permission strings
+  partnerId     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  leadsAssigned    Lead[]                @relation("CounselorLeads")
+  studentsAssigned Student[]             @relation("CounselorStudents")
+  auditLogs        AuditLog[]
+  timelineEvents   TimelineEvent[]
+  marketingAccess  MarketingUserAccess[]
+
+  @@index([role])
+  @@index([status])
+}
+
+// ============================================================
+// LEADS - First touch point (website, whatsapp, sms, facebook, etc.)
+// ============================================================
+
+model Lead {
+  id               String   @id @default(cuid())
+  leadId           String   @unique // ALO-L-XXXXX
+  fullName         String
+  email            String?
+  phone            String
+  altPhone         String?
+  source           String   @default("WEBSITE") // WEBSITE, WHATSAPP, SMS, FACEBOOK, INSTAGRAM, PHONE_CALL, PARTNER_REFERRAL, OFFICE_VISIT, EVENT, MOCK_TEST, COURSE_FINDER
+  sourceDetail     String? // campaign name, partner name, etc.
+  preferredCountry String?
+  preferredCourse  String?
+  notes            String?
+  counselorId      String?
+  counselor        User?    @relation("CounselorLeads", fields: [counselorId], references: [id])
+  status           String   @default("NEW") // NEW, CONTACTED, QUALIFIED, CONVERTED, LOST, DUPLICATE
+  duplicateOfId    String?
+  studentId        String? // converted to student
+  welcomeSent      Boolean  @default(false)
+  // ─── Automation fields ───
+  preferredLevel   String? // Foundation, Bachelor, Masters, MBA, PhD
+  preferredIntake  String? // September 2026, January 2027, etc.
+  budget           String? // e.g. "£20000"
+  englishTest      String? // IELTS, PTE, TOEFL, etc.
+  englishScore     String? // e.g. "7.0"
+  currentQualification String? // HSC, BSc, etc.
+  cgpa             String? // e.g. "3.45"
+  leadScore        Int      @default(0) // 0-100
+  leadTier         String   @default("COLD") // HOT, WARM, COLD, URGENT, AT_RISK
+  assignedReason   String? // why this counselor was assigned
+  branch           String?
+  priority         String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  followUpDate      DateTime?
+  utmSource        String?
+  utmMedium        String?
+  utmCampaign      String?
+  rawSubmission    String? // JSON: complete raw form data
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  timelineEvents TimelineEvent[]
+  leadOutreach   LeadOutreach[]
+
+  @@index([source])
+  @@index([status])
+  @@index([counselorId])
+}
+
+// ============================================================
+// STUDENT - Full profile (mission control data source)
+// ============================================================
+
+model Student {
+  id        String  @id @default(cuid())
+  studentId String  @unique // ALO-S-XXXXX
+  userId    String? // linked login account
+  leadId    String? // origin lead
+
+  // B. Personal Information
+  firstName        String
+  lastName         String
+  fullName         String
+  nationality      String  @default("Bangladeshi")
+  dateOfBirth      String?
+  gender           String?
+  maritalStatus    String?
+  cityOfBirth      String?
+  countryOfBirth   String  @default("Bangladesh")
+  presentAddress   String?
+  permanentAddress String?
+
+  // C. Contact Information
+  email             String
+  altEmail          String?
+  mobile            String
+  altMobile         String?
+  emergencyName     String?
+  emergencyRelation String?
+  emergencyPhone    String?
+
+  // D. Education History (JSON array)
+  educationHistory     String  @default("[]")
+  // E. Passport
+  hasPassport          Boolean @default(false)
+  passportNumber       String?
+  passportIssuePlace   String?
+  passportIssueCountry String?
+  passportIssueDate    String?
+  passportExpiryDate   String?
+
+  // F. English Test (JSON array)
+  englishTests      String @default("[]")
+  englishTestStatus String @default("YET_TO_RECEIVE") // YET_TO_RECEIVE, PLANNING, RECEIVED
+
+  // G. Work Experience (JSON array)
+  workExperience String @default("[]")
+
+  // H. Recommendations (JSON array)
+  recommendations String @default("[]")
+
+  // I. Background & Visa History
+  hasPreviousVisa  Boolean @default(false)
+  visaHistory      String  @default("[]")
+  previousRefusal  Boolean @default(false)
+  refusalDetail    String?
+  dependentStatus  String?
+  dependentsCount  Int     @default(0)
+  medicalCondition String?
+  criminalOffense  String?
+  riskNote         String?
+
+  // J. Funding & Sponsor
+  fundingStatus       String  @default("SELF_FUNDED")
+  sponsorRelation     String  @default("APPLICANT")
+  sourceOfFund        String?
+  bankStatementStatus String  @default("NOT_STARTED")
+  sponsorDocStatus    String  @default("NOT_STARTED")
+
+  // K. Admission Preference
+  studyDestination     String?
+  programTitle         String?
+  studyLevel           String?
+  studyArea            String?
+  intake               String?
+  universityPreference String?
+
+  // Profile meta
+  profileCompletion Int      @default(0) // 0-100
+  counselorId       String?
+  counselor         User?    @relation("CounselorStudents", fields: [counselorId], references: [id])
+  partnerId         String?
+  status            String   @default("ACTIVE") // ACTIVE, INACTIVE, GRADUATED
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  documents           Document[]
+  applications        Application[]
+  interviews          InterviewSession[]
+  mockTests           MockTest[]
+  visaCases           VisaCase[]
+  timelineEvents      TimelineEvent[]
+  payments            Payment[]
+  benefitEntitlements StudentBenefitEntitlement[]
+  mockTestVouchers    StudentMockTestVoucher[]
+  aiMemory            AiStudentMemory[]
+  referralsMade       Referral[] @relation("ReferralsMade")
+  visaChecklistItems  VisaChecklistItem[]
+  visaReadiness       VisaReadinessAssessment[]
+  notifications       StudentNotification[]
+  helpTickets         StudentHelpTicket[]
+
+  @@index([counselorId])
+  @@index([status])
+}
+
+// ============================================================
+// DOCUMENTS - Secure Document Hub
+// ============================================================
+
+model Document {
+  id              String    @id @default(cuid())
+  studentId       String
+  student         Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  category        String // PASSPORT, NID, ACADEMIC_CERT, TRANSCRIPT, CV, SOP, BANK_STATEMENT, SPONSOR_DOC, VISA_DOC, REFUSAL_LETTER, MEDICAL, IELTS_CERT, OTHER
+  name            String
+  required        Boolean   @default(true)
+  fileName        String?
+  fileType        String?
+  fileSize        Int?
+  // Security: no public URL. Stored path only, accessed via private download route with permission check.
+  storagePath     String?
+  status          String    @default("PENDING") // PENDING, UPLOADED, UNDER_REVIEW, APPROVED, REJECTED
+  rejectionReason String?
+  reviewedById    String?
+  reviewedAt      DateTime?
+  uploadedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+  @@index([category])
+}
+
+// ============================================================
+// APPLICATIONS - Application Pipeline
+// ============================================================
+
+model Application {
+  id               String   @id @default(cuid())
+  applicationId    String   @unique // ALO-APP-XXXXX
+  studentId        String
+  student          Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  university       String
+  course           String
+  country          String
+  intake           String
+  studyLevel       String
+  deadline         String?
+  counselorId      String?
+  appTeamOfficerId String?
+  visaOfficerId    String?
+  stage            String   @default("COUNSELING") // COUNSELING, ELIGIBILITY_CHECKED, DOCUMENTS_PENDING, DOCUMENTS_RECEIVED, UNIVERSITY_SHORTLISTED, APPLICATION_PREPARING, APPLICATION_SUBMITTED, CONDITIONAL_OFFFER, UNCONDITIONAL_OFFER, DEPOSIT_PENDING, CAS_INTERVIEW, CAS_PENDING, CAS_ISSUED, VISA_DOCUMENTS, VISA_SUBMITTED, VISA_DECISION_PENDING, VISA_APPROVED, VISA_REFUSED, PRE_DEPARTURE, ENROLLED
+  priority         String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  emails        EmailLog[]
+
+  @@index([studentId])
+  @@index([stage])
+  @@index([country])
+}
+
+// ============================================================
+// AI INTERVIEW SESSIONS
+// ============================================================
+
+model InterviewSession {
+  id          String    @id @default(cuid())
+  sessionId   String    @unique
+  studentId   String
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  type        String // UNIVERSITY_CREDIBILITY, VISA_INTERVIEW, PRE_CAS, SCHOLARSHIP, GENERAL_ENGLISH
+  status      String    @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
+  transcript  String    @default("[]") // JSON array of Q&A
+  scores      String? // JSON: { communication, confidence, courseKnowledge, ... }
+  readiness   String? // ready, needs_practice, high_risk, human_review_required
+  riskLevel   String?
+  feedback    String?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([studentId])
+  @@index([type])
+}
+
+// ============================================================
+// ENGLISH MOCK TESTS
+// ============================================================
+
+model MockTest {
+  id             String    @id @default(cuid())
+  testId         String    @unique
+  studentId      String?
+  student        Student?  @relation(fields: [studentId], references: [id])
+  guestName      String?
+  guestPhone     String?
+  testType       String // IELTS, IELTS_UKVI, PTE, TOEFL, DET, OIETC, GRE, GMAT, SAT, ACT, PLACEMENT
+  isFree         Boolean   @default(true)
+  status         String    @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+  overallScore   Float?
+  listeningScore Float?
+  readingScore   Float?
+  writingScore   Float?
+  speakingScore  Float?
+  weakAreas      String? // JSON
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([studentId])
+  @@index([testType])
+}
+
+// ============================================================
+// VISA CASES - Visa Interview Officer Dashboard
+// ============================================================
+
+model VisaCase {
+  id                String   @id @default(cuid())
+  caseId            String   @unique // ALO-V-XXXXX
+  studentId         String
+  student           Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  applicationId     String?
+  country           String
+  university        String
+  course            String
+  intake            String?
+  casStatus         String   @default("PENDING") // PENDING, ISSUED
+  visaStage         String   @default("VISA_DOCUMENTS") // VISA_DOCUMENTS, VISA_SUBMITTED, VISA_DECISION_PENDING, VISA_APPROVED, VISA_REFUSED
+  interviewStatus   String   @default("NOT_SCHEDULED") // NOT_SCHEDULED, SCHEDULED, COMPLETED
+  interviewDate     String?
+  docStatus         String   @default("PENDING")
+  assignedOfficerId String?
+  priority          String   @default("NORMAL")
+  deadline          String?
+  aiReadinessScore  Float?
+  financialRisk     String? // LOW, MEDIUM, HIGH
+  studyGapRisk      String?
+  sponsorRisk       String?
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([visaStage])
+  @@index([assignedOfficerId])
+}
+
+// ============================================================
+// TIMELINE - Student journey events (CRM timeline)
+// ============================================================
+
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  studentId   String?
+  student     Student? @relation(fields: [studentId], references: [id])
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  userId      String? // who performed the action
+  user        User?    @relation(fields: [userId], references: [id])
+  type        String // LEAD_CREATED, PROFILE_UPDATED, DOC_UPLOADED, DOC_APPROVED, APP_STATUS_CHANGED, VISA_STATUS_CHANGED, INTERVIEW_COMPLETED, MOCK_TEST_DONE, AI_ACTION, MESSAGE_SENT, PAYMENT, NOTE
+  title       String
+  description String?
+  meta        String? // JSON
+  createdAt   DateTime @default(now())
+
+  @@index([studentId])
+  @@index([leadId])
+}
+
+// ============================================================
+// AUDIT LOG - Security & compliance
+// ============================================================
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String // LOGIN, FAILED_LOGIN, LOGOUT, PROFILE_UPDATE, DOC_UPLOAD, DOC_APPROVE, DOC_REJECT, APP_STATUS_CHANGE, VISA_STATUS_CHANGE, MOCK_CREDIT_CHANGE, PAYMENT_UPDATE, COMMISSION_APPROVE, SALARY_ACCESS, ROLE_CHANGE, PERMISSION_CHANGE, AI_ACTION, MESSAGE_ACTION, DATA_IMPORT, PUBLIC_PUBLISH
+  resource   String?
+  resourceId String?
+  details    String? // JSON
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+}
+
+// ============================================================
+// MARKETING CAMPAIGNS
+// ============================================================
+
+model Campaign {
+  id               String   @id @default(cuid())
+  name             String
+  channel          String // FACEBOOK, INSTAGRAM, WHATSAPP, WEBSITE, GOOGLE, EMAIL, EVENT
+  status           String   @default("DRAFT") // DRAFT, ACTIVE, PAUSED, COMPLETED
+  budget           Float?
+  spent            Float    @default(0)
+  leadsCount       Int      @default(0)
+  conversionsCount Int      @default(0)
+  startDate        String?
+  endDate          String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([channel])
+  @@index([status])
+}
+
+// ============================================================
+// PAYMENTS / COMMISSION / FINANCE
+// ============================================================
+
+model Payment {
+  id               String   @id @default(cuid())
+  paymentId        String   @unique
+  studentId        String
+  student          Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  type             String // APPLICATION_FEE, DEPOSIT, TUITION, SERVICE_CHARGE, MOCK_TEST, COMMISSION
+  amount           Float
+  currency         String   @default("BDT")
+  status           String   @default("PENDING") // PENDING, PAID, REFUNDED
+  method           String? // CASH, BANK_TRANSFER, CARD, MOBILE_BANKING
+  partnerId        String?
+  commissionAmount Float?
+  commissionStatus String? // PENDING, APPROVED, PAID
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  invoices      Invoice[]
+
+  @@index([studentId])
+
+  @@index([status])
+}
+
+// ============================================================
+// AI COMMAND CENTER - Departments & Agents
+// ============================================================
+
+model AiAgent {
+  id               String    @id @default(cuid())
+  department       String // Student Admission, Counseling, Application, Visa, Marketing, WhatsApp, Social Media, English Test, AI Interview, Document Checking, SOP/CV, University Data, Course Finder, Finance, HRM, Reports, Security/RBAC, Audit
+  agentName        String
+  agentCode        String
+  description      String?
+  status           String    @default("ACTIVE") // ACTIVE, IDLE, PAUSED
+  jobsProcessed    Int       @default(0)
+  pendingApprovals Int       @default(0)
+  lastRunAt        DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([department])
+}
+
+// ============================================================
+// PUBLIC WEBSITE CONTENT - Country / University / Course / Exam pages
+// All content is ALO-original, with source verification metadata.
+// ============================================================
+
+model CountryPage {
+  id                 String    @id @default(cuid())
+  slug               String    @unique // uk, canada, australia, usa, germany
+  name               String // United Kingdom
+  shortName          String // UK
+  flag               String // emoji
+  capital            String
+  currency           String
+  intro              String // hero subtitle
+  quickFacts         String    @default("{}") // JSON: cities, intakes, studyLevels, duration, tuitionRange, livingCost, workRights, postStudyRoute, englishTests, visaType
+  whyStudy           String    @default("[]") // JSON array: [{icon, heading, explanation}]
+  pathway            String    @default("{}") // JSON education pathway
+  popularCourses     String    @default("[]") // JSON: [{name, level, career}]
+  entryRequirements  String    @default("{}") // JSON by level: foundation/bachelor/topup/masters/mba/phd
+  documents          String    @default("[]") // JSON: [{category, name, required, explanation}]
+  visaProcess        String    @default("[]") // JSON array of steps
+  interviewTypes     String    @default("[]") // JSON
+  workRights         String    @default("{}") // JSON: termTimeWork, vacationWork, postStudyRoute, sourceUrl
+  scholarships       String    @default("[]") // JSON array
+  cities             String    @default("[]") // JSON: [{name, costLevel, vibe, universities, transport, jobs, livingCost}]
+  faqs               String    @default("[]") // JSON: [{q, a}]
+  sourceUrl          String?
+  lastVerifiedAt     DateTime?
+  verificationStatus String    @default("VERIFIED") // VERIFIED, NEEDS_REVIEW, UNVERIFIED
+  approvalStatus     String    @default("PUBLISHED") // DRAFT, PENDING_REVIEW, PUBLISHED
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  universities UniversityPage[]
+}
+
+model UniversityPage {
+  id                 String      @id @default(cuid())
+  slug               String      @unique
+  name               String
+  countrySlug        String
+  country            CountryPage @relation(fields: [countrySlug], references: [slug])
+  city               String
+  overview           String // ALO-written summary
+  strengths          String      @default("[]") // JSON array
+  quickFacts         String      @default("{}") // JSON: intakes, tuitionRange, englishTests, scholarship, applicationStatus
+  entryRequirements  String      @default("{}") // JSON by level
+  tuition            String      @default("{}") // JSON: ug, pg, mba, deposit, scholarship, paymentPlan
+  applicationSteps   String      @default("[]") // JSON
+  documents          String      @default("[]") // JSON
+  faqs               String      @default("[]")
+  sourceUrl          String?
+  lastVerifiedAt     DateTime?
+  verificationStatus String      @default("VERIFIED")
+  approvalStatus     String      @default("PUBLISHED")
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  courses CoursePage[]
+
+  // ─── Enhanced fields from sandbox rebuild ───
+  state                String?
+  address              String?
+  ranking              String?
+  rankingSource        String?
+  studentsCount        String?
+  accommodation        String?
+  popularSubjects      String      @default("[]")
+  logo                 String?
+  campusImage          String?
+  internationalInfo    String?
+  whyChoose            String?
+  studentSupport       String?
+  studentLife          String?
+  careerInfo           String?
+  applicationProcess   String?
+  tuitionRange         String?
+  scholarshipAvailable Boolean     @default(false)
+  applicationFee       String?
+  depositInfo          String?
+  requiredDocuments    String      @default("[]")
+  importantDeadlines   String      @default("[]")
+  officialWebsite      String?
+  internationalUrl     String?
+  applicationUrl       String?
+  scholarshipUrl       String?
+  contactEmail         String?
+  metaTitle            String?
+  metaDescription      String?
+  sourceType           String?
+}
+
+model CoursePage {
+  id                  String         @id @default(cuid())
+  slug                String         @unique
+  name                String
+  universitySlug      String
+  university          UniversityPage @relation(fields: [universitySlug], references: [slug])
+  countrySlug         String
+  city                String
+  level               String // Foundation, Bachelor, Masters, MBA, PhD
+  subject             String // Computer Science, Business, etc.
+  duration            String
+  intake              String
+  tuition             String
+  scholarship         String?
+  englishRequirement  String
+  academicRequirement String
+  overview            String
+  modules             String         @default("[]") // JSON
+  careerOutcomes      String         @default("[]") // JSON
+  documents           String         @default("[]") // JSON
+  faqs                String         @default("[]")
+  deadline            String?
+  sourceUrl           String?
+  lastVerifiedAt      DateTime?
+  verificationStatus  String         @default("VERIFIED")
+  approvalStatus      String         @default("PUBLISHED")
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  // ─── Enhanced fields from sandbox rebuild ───
+  campus              String?
+  discipline           String?
+  studyArea            String?
+  deliveryMode         String?
+  degreeType           String?
+  tuitionCurrency      String      @default("GBP")
+  applicationFee       String?
+  deposit              String?
+  scholarshipAvailable Boolean     @default(false)
+  gpaRequirement       String?
+  backlogPolicy        String?
+  workExperience       String?
+  portfolioRequired    Boolean     @default(false)
+  interviewRequired    Boolean     @default(false)
+  moiAccepted          Boolean     @default(false)
+  internship           String?
+  placement            String?
+  coop                 String?
+  requiredDocuments    String      @default("[]")
+  visaNotes            String?
+  matchScore           Int         @default(0)
+  metaTitle            String?
+  metaDescription      String?
+  sourceType           String?
+}
+
+model ExamPage {
+  id                 String    @id @default(cuid())
+  slug               String    @unique // ielts, pte, toefl, duolingo, ellt, gre, gmat, sat, act, placement
+  name               String // IELTS, PTE Academic
+  fullName           String // International English Language Testing System
+  intro              String
+  whatIs             String // ALO-written explanation
+  modules            String    @default("[]") // JSON
+  mockRules          String    @default("[]") // JSON
+  freeQuota          String    @default("{}") // JSON: aloStudents, guestStudents
+  examExperience     String    @default("[]") // JSON: timer, audio, etc.
+  aiScoring          String    @default("{}") // JSON
+  speakingPractice   String    @default("{}")
+  writingReview      String    @default("{}")
+  resultReport       String    @default("[]") // JSON
+  pricing            String    @default("{}") // JSON
+  faqs               String    @default("[]")
+  disclaimer         String
+  sourceUrl          String?
+  lastVerifiedAt     DateTime?
+  verificationStatus String    @default("VERIFIED")
+  approvalStatus     String    @default("PUBLISHED")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // ─── Enhanced fields from sandbox rebuild ───
+  shortName           String?
+  description         String?
+  whoShouldTake       String?
+  testFormat          String?
+  duration            String?
+  scoring             String?
+  results             String?
+  cost                String?
+  acceptedCountries   String?
+  universityAcceptance String?
+  visaRelevance       String?
+  minScoreByDest      String?
+  prepStrategy        String?
+  listeningPrep       String?
+  readingPrep         String?
+  writingPrep         String?
+  speakingPrep        String?
+  mockTestStrategy    String?
+  commonMistakes      String?
+  retakeInfo          String?
+  scoreValidity       String?
+  registration        String?
+  testDayChecklist    String?
+  aloSupport          String?
+  bestFor             String?
+  acceptance          String?
+  deliveryMode        String?
+  metaTitle           String?
+  metaDescription     String?
+  sourceType          String?
+}
+
+// ============================================================
+// COUNSELOR PORTAL & EMPLOYEE HR MODELS
+// ============================================================
+
+model EmployeeHR {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  employeeId         String   @unique // AE-EMP-XXXXX
+  officialEmail      String
+  officialPhone      String
+  branch             String   @default("Dhaka HQ")
+  designation        String
+  department         String
+  joiningDate        String
+  employmentType     String   @default("FULL_TIME") // FULL_TIME, PART_TIME, CONTRACT, PROBATION
+  status             String   @default("ACTIVE") // ACTIVE, ON_LEAVE, RESIGNED, TERMINATED
+  // Salary & compensation (private — visible only with permission)
+  baseSalary         Float    @default(0)
+  salaryCurrency     String   @default("BDT")
+  // Performance
+  performanceScore   Float    @default(0) // 0-100
+  targetLeads        Int      @default(0)
+  achievedLeads      Int      @default(0)
+  targetConversion   Float    @default(0)
+  achievedConversion Float    @default(0)
+  // Manager
+  managerId          String?
+  // Documents
+  documents          String   @default("[]") // JSON array of {name, type, uploadedAt}
+  warnings           String   @default("[]") // JSON
+  managerFeedback    String   @default("[]") // JSON
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([userId])
+  @@index([branch])
+}
+
+model EmployeeAttendance {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String // YYYY-MM-DD
+  checkIn   String?
+  checkOut  String?
+  status    String   @default("PRESENT") // PRESENT, ABSENT, LEAVE, LATE, HALF_DAY, HOLIDAY
+  workHours Float    @default(0)
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([date])
+}
+
+model EmployeeCommission {
+  id            String   @id @default(cuid())
+  userId        String
+  studentId     String?
+  applicationId String?
+  amount        Float
+  currency      String   @default("BDT")
+  status        String   @default("PENDING") // PENDING, APPROVED, PAID
+  month         String // YYYY-MM
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model EmployeeBonus {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Float
+  currency  String   @default("BDT")
+  reason    String
+  month     String
+  status    String   @default("PENDING") // PENDING, APPROVED, PAID
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model EmployeeIncrement {
+  id            String   @id @default(cuid())
+  userId        String
+  oldSalary     Float
+  newSalary     Float
+  percentage    Float
+  effectiveDate String
+  reason        String?
+  approvedBy    String?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+}
+
+model EmployeePerformance {
+  id                String   @id @default(cuid())
+  userId            String
+  period            String // YYYY-MM or YYYY-Qn
+  score             Float // 0-100
+  leadsHandled      Int      @default(0)
+  conversionRate    Float    @default(0)
+  satisfactionScore Float    @default(0)
+  slaCompliance     Float    @default(0) // percentage
+  notes             String?
+  createdAt         DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ============================================================
+// PERMISSION & RBAC MODELS
+// ============================================================
+
+model Permission {
+  id              String           @id @default(cuid())
+  module          String // Student, Documents, Communication, Application, Visa, Marketing, HR Self, Private HR
+  feature         String // e.g. "students.view_assigned"
+  action          String // view, create, update, approve, export, download
+  description     String
+  defaultRoles    String           @default("[]") // JSON array of roles that get this by default
+  rolePermissions RolePermission[]
+  createdAt       DateTime         @default(now())
+
+  @@unique([module, feature, action])
+  @@index([module])
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  role         String // SUPER_ADMIN, ADMIN, COUNSELOR, etc.
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  scope        String     @default("ASSIGNED_ONLY") // OWN_ONLY, ASSIGNED_ONLY, ALL
+  grantedBy    String?
+  createdAt    DateTime   @default(now())
+
+  @@unique([role, permissionId])
+  @@index([role])
+}
+
+// ============================================================
+// TASKS, APPOINTMENTS, SLA
+// ============================================================
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  assigneeId  String // employee userId
+  studentId   String?
+  type        String    @default("FOLLOW_UP") // FOLLOW_UP, DOCUMENT_REQUEST, CALL, MEETING, SOP_REVIEW, VISA_CHECK, OTHER
+  priority    String    @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  status      String    @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, CANCELLED
+  dueDate     String?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([assigneeId])
+  @@index([status])
+  @@index([studentId])
+}
+
+model Appointment {
+  id              String   @id @default(cuid())
+  counselorId     String
+  studentId       String?
+  title           String
+  type            String   @default("CONSULTATION") // CONSULTATION, FOLLOW_UP, VISA_PREP, INTERVIEW_PRACTICE
+  scheduledAt     String // ISO datetime
+  durationMinutes Int      @default(30)
+  location        String? // office, online, phone
+  status          String   @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED, NO_SHOW
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  @@index([counselorId])
+  @@index([scheduledAt])
+}
+
+model SlaEvent {
+  id              String    @id @default(cuid())
+  communicationId String?
+  channel         String // WHATSAPP, SMS, EMAIL, SOCIAL, PORTAL
+  studentId       String?
+  counselorId     String?
+  receivedAt      DateTime  @default(now())
+  firstResponseAt DateTime?
+  status          String    @default("UNREAD") // UNREAD, PENDING, RESPONDED, ESCALATED_40, ESCALATED_50, AI_HANDLED, MISSED
+  slaMinutes      Int       @default(30)
+  escalatedAt     DateTime?
+  escalatedTo     String?
+  aiHandled       Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+
+  @@index([counselorId])
+  @@index([status])
+}
+
+// ============================================================
+// COMMUNICATION & UNIFIED INBOX
+// ============================================================
+
+model CommunicationMessage {
+  id            String    @id @default(cuid())
+  channel       String // WHATSAPP, SMS, EMAIL, WEBSITE_CHAT, FACEBOOK, INSTAGRAM, MESSENGER, PORTAL
+  direction     String    @default("INBOUND") // INBOUND, OUTBOUND
+  fromPhone     String?
+  fromEmail     String?
+  fromName      String?
+  toPhone       String?
+  toEmail       String?
+  body          String
+  attachments   String    @default("[]") // JSON
+  studentId     String?
+  counselorId   String?
+  leadId        String?
+  aiAssisted    Boolean   @default(false)
+  humanApproved Boolean   @default(false)
+  read          Boolean   @default(false)
+  externalId    String? // message ID from provider
+  receivedAt    DateTime  @default(now())
+  sentAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([channel])
+  @@index([studentId])
+  @@index([counselorId])
+  @@index([read])
+}
+
+model PartnerEmailUpdate {
+  id                   String    @id @default(cuid())
+  studentId            String?
+  applicationId        String?
+  partnerName          String
+  partnerEmail         String
+  subject              String
+  body                 String
+  parsedUpdate         String? // JSON: {status, offer, deadline, etc.}
+  studentFacingMessage String? // clean message for student
+  reviewedBy           String?
+  reviewedAt           DateTime?
+  status               String    @default("PENDING") // PENDING, REVIEWED, SENT_TO_STUDENT, ARCHIVED
+  receivedAt           DateTime  @default(now())
+  createdAt            DateTime  @default(now())
+
+  @@index([studentId])
+  @@index([status])
+}
+
+// ============================================================
+// COMMENTS — Student-visible vs Internal
+// ============================================================
+
+model InternalComment {
+  id            String   @id @default(cuid())
+  studentId     String?
+  applicationId String?
+  documentId    String?
+  authorId      String
+  authorRole    String
+  body          String
+  visibility    String   @default("INTERNAL_ONLY") // INTERNAL_ONLY, APPLICATION_TEAM_ONLY, VISA_TEAM_ONLY, FINANCE_ONLY, SUPER_ADMIN_ONLY, COUNSELOR_VISIBLE
+  commentType   String   @default("COUNSELOR_NOTE") // COUNSELOR_NOTE, APPLICATION_TEAM_NOTE, VISA_OFFICER_NOTE, PARTNER_SUBMISSION_NOTE, FINANCE_NOTE, RISK_NOTE, FRAUD_NOTE, REFUSAL_ANALYSIS, COMMISSION_NOTE
+  editHistory   String   @default("[]") // JSON
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([visibility])
+  @@index([authorId])
+}
+
+model StudentVisibleComment {
+  id              String   @id @default(cuid())
+  studentId       String
+  authorId        String
+  authorRole      String
+  body            String
+  isAutoGenerated Boolean  @default(false)
+  readByStudent   Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([studentId])
+}
+
+// ============================================================
+// SOP / CV / DOCUMENT GENERATION
+// ============================================================
+
+model SopDraft {
+  id               String   @id @default(cuid())
+  studentId        String
+  counselorId      String?
+  university       String?
+  course           String?
+  type             String   @default("SOP") // SOP, PERSONAL_STATEMENT, GTE, GS, COVER_LETTER, STUDY_GAP, SPONSOR, REFUSAL_EXPLANATION, INTERVIEW_ANSWER
+  content          String
+  wordCount        Int      @default(0)
+  version          Int      @default(1)
+  status           String   @default("DRAFT") // DRAFT, STUDENT_REVIEW, COUNSELOR_REVIEW, APPROVED, SENT
+  originalityScore Float?   @default(0) // 0-100
+  reviewChecklist  String   @default("[]") // JSON
+  aiGenerated      Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([counselorId])
+  @@index([status])
+}
+
+model CvDraft {
+  id          String   @id @default(cuid())
+  studentId   String
+  counselorId String?
+  template    String   @default("STANDARD")
+  content     String
+  version     Int      @default(1)
+  status      String   @default("DRAFT")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([studentId])
+}
+
+// ============================================================
+// MARKETING AI CAMPAIGN
+// ============================================================
+
+model ContentCalendar {
+  id          String   @id @default(cuid())
+  title       String
+  platform    String // FACEBOOK, INSTAGRAM, LINKEDIN, WHATSAPP, EMAIL
+  type        String   @default("POST") // POST, REEL, STORY, LIVE, EMAIL
+  scheduledAt String
+  status      String   @default("IDEA") // IDEA, DRAFT, APPROVED, SCHEDULED, PUBLISHED, CANCELLED
+  content     String?
+  caption     String?
+  assignedTo  String?
+  createdAt   DateTime @default(now())
+
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+model CreativeAsset {
+  id             String   @id @default(cuid())
+  title          String
+  type           String // IMAGE, VIDEO, CAROUSEL, POSTER
+  brief          String?
+  aiGenerated    Boolean  @default(false)
+  brandCompliant Boolean  @default(true)
+  status         String   @default("DRAFT") // DRAFT, IN_REVIEW, APPROVED, REJECTED
+  campaignId     String?
+  createdAt      DateTime @default(now())
+
+  @@index([status])
+}
+
+model AiReplyLog {
+  id              String    @id @default(cuid())
+  channel         String
+  originalMessage String
+  suggestedReply  String
+  approvedBy      String?
+  sentAt          DateTime?
+  status          String    @default("SUGGESTED") // SUGGESTED, APPROVED, SENT, REJECTED, EDITED
+  studentId       String?
+  createdAt       DateTime  @default(now())
+
+  @@index([status])
+  @@index([channel])
+}
+
+// ============================================================
+// WEEKLY REPORTS
+// ============================================================
+
+model WeeklyReport {
+  id          String   @id @default(cuid())
+  type        String // COUNSELOR, MARKETING, VISA, PARTNER, BRANCH
+  periodStart String
+  periodEnd   String
+  recipientId String? // employee userId, null = company-wide
+  summary     String   @default("{}") // JSON with all metrics
+  insights    String? // AI-generated insights
+  status      String   @default("GENERATED") // GENERATED, SENT, VIEWED
+  createdAt   DateTime @default(now())
+
+  @@index([type])
+  @@index([recipientId])
+}
+
+model ApplicationStageHistory {
+  id            String   @id @default(cuid())
+  applicationId String
+  fromStage     String?
+  toStage       String
+  changedBy     String?
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+}
+
+// ============================================================
+// ALO EMPLOYEE ACCESS SYSTEM — Full HR, Access Control, Partner Packages
+// ============================================================
+
+model Department {
+  id          String     @id @default(cuid())
+  name        String
+  code        String     @unique
+  description String?
+  status      String     @default("ACTIVE")
+  createdAt   DateTime   @default(now())
+  employees   Employee[]
+}
+
+model Office {
+  id        String     @id @default(cuid())
+  name      String
+  code      String     @unique
+  address   String?
+  city      String?
+  country   String?
+  phone     String?
+  status    String     @default("ACTIVE")
+  createdAt DateTime   @default(now())
+  employees Employee[]
+}
+
+model Employee {
+  id                  String      @id @default(cuid())
+  employeeCode        String      @unique // AE-EMP-XXXXX
+  userId              String? // link to User (for login)
+  fullName            String
+  companyEmail        String      @unique
+  personalEmail       String?
+  phone               String?
+  designation         String // Chairman, CEO, Director, Office Manager, Country Manager, Counselor, Senior Counselor, Application Manager, Application Team, Visa Officer, Finance Officer, Marketing Manager, Marketing Officer, Front Desk, HR Manager, Support Staff, Viewer
+  departmentId        String?
+  department          Department? @relation(fields: [departmentId], references: [id])
+  officeId            String?
+  office              Office?     @relation(fields: [officeId], references: [id])
+  joiningDate         String
+  employmentType      String      @default("FULL_TIME") // FULL_TIME, PART_TIME, CONTRACT, PROBATION
+  reportingManagerId  String?
+  profileStatus       String      @default("INCOMPLETE") // INCOMPLETE, SUBMITTED, UNDER_REVIEW, APPROVED, CORRECTION_REQUIRED, SUSPENDED, INACTIVE, TERMINATED
+  status              String      @default("ACTIVE") // ACTIVE, SUSPENDED, INACTIVE, TERMINATED
+  workSchedule        String?
+  weeklyHoliday       String?
+  role                String      @default("STAFF") // maps to User.role for RBAC
+  permissionPackageId String? // assigned partner/employee package
+  createdById         String? // who created this employee (Super Admin)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  profile            EmployeeProfile?
+  education          EmployeeEducation[]
+  emergencyContacts  EmployeeEmergencyContact[]
+  salary             EmployeeSalary?
+  documents          EmployeeDocument[]
+  activationTokens   EmployeeActivationToken[]
+  packageAssignments PartnerPackageAssignment[]
+  quotaRequests      ExtraQuotaRequest[]
+
+  @@index([designation])
+  @@index([departmentId])
+  @@index([officeId])
+  @@index([profileStatus])
+  @@index([status])
+}
+
+model EmployeeProfile {
+  id               String   @id @default(cuid())
+  employeeId       String   @unique
+  dob              String?
+  gender           String?
+  maritalStatus    String?
+  nationality      String   @default("Bangladeshi")
+  presentAddress   String?
+  permanentAddress String?
+  photo            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model EmployeeEducation {
+  id              String   @id @default(cuid())
+  employeeId      String
+  degree          String
+  institution     String
+  passingYear     String
+  result          String?
+  certificatePath String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+}
+
+model EmployeeEmergencyContact {
+  id         String   @id @default(cuid())
+  employeeId String
+  name       String
+  relation   String
+  phone      String
+  address    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+}
+
+model EmployeeSalary {
+  id            String   @id @default(cuid())
+  employeeId    String   @unique
+  salaryAmount  Float
+  allowance     Float    @default(0)
+  bonus         Float    @default(0)
+  bankName      String?
+  bankAccount   String?
+  paymentMethod String   @default("BANK_TRANSFER")
+  effectiveDate String
+  visibility    String   @default("RESTRICTED") // RESTRICTED, PRIVATE
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model EmployeeDocument {
+  id           String   @id @default(cuid())
+  employeeId   String
+  documentType String // NID, PASSPORT, ACADEMIC_CERT, EXPERIENCE_LETTER, APPOINTMENT_LETTER, CONTRACT, NDA, OTHER
+  filePath     String? // private storage path
+  status       String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  reviewerId   String?
+  reviewNote   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([documentType])
+  @@index([status])
+}
+
+model EmployeeActivationToken {
+  id         String    @id @default(cuid())
+  employeeId String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  status     String    @default("ACTIVE") // ACTIVE, USED, EXPIRED
+  createdAt  DateTime  @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+// ─── B2B Partner Packages ────────────────────────────────────
+
+model PartnerPackage {
+  id                        String   @id @default(cuid())
+  name                      String // Starter Partner, Growth Partner, Premium Partner
+  description               String?
+  defaultUserLimit          Int      @default(3) // 1 super admin + 2 employees for Starter
+  monthlyImageLimit         Int      @default(15)
+  monthlyVideoLimit         Int      @default(10)
+  videoDurationLimitSeconds Int      @default(30)
+  englishMockVoucherLimit   Int      @default(3)
+  interviewPrepLimit        Int      @default(1)
+  autoPublishAllowed        Boolean  @default(false)
+  requiresAloApproval       Boolean  @default(true)
+  status                    String   @default("ACTIVE") // ACTIVE, ARCHIVED
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  assignments PartnerPackageAssignment[]
+}
+
+model PartnerPackageAssignment {
+  id         String    @id @default(cuid())
+  partnerId  String // partner employee id
+  partner    Employee  @relation(fields: [partnerId], references: [id])
+  packageId  String
+  assignedBy String
+  startsAt   DateTime  @default(now())
+  expiresAt  DateTime?
+  status     String    @default("ACTIVE") // ACTIVE, EXPIRED, SUSPENDED
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  package PartnerPackage @relation(fields: [packageId], references: [id])
+
+  @@index([partnerId])
+  @@index([status])
+}
+
+model FeatureAccessRule {
+  id               String   @id @default(cuid())
+  ownerType        String // EMPLOYEE, PARTNER, PARTNER_USER
+  ownerId          String // employeeId or partnerId
+  featureKey       String // e.g. "marketing.image.generate", "employee.salary.view", "partner.student.benefit"
+  isEnabled        Boolean  @default(true)
+  limitValue       Int? // monthly quota if applicable
+  requiresApproval Boolean  @default(false)
+  createdBy        String?
+  updatedBy        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([ownerType, ownerId, featureKey])
+  @@index([ownerType, ownerId])
+  @@index([featureKey])
+}
+
+model ExtraQuotaRequest {
+  id             String   @id @default(cuid())
+  partnerId      String
+  partner        Employee @relation(fields: [partnerId], references: [id])
+  requestType    String // EXTRA_SEAT, EXTRA_IMAGE_QUOTA, EXTRA_VIDEO_QUOTA, EXTRA_MOCK_VOUCHER
+  currentLimit   Int
+  requestedLimit Int
+  reason         String?
+  status         String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  reviewedBy     String?
+  reviewNote     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([status])
+}
+
+model FeatureUsageLog {
+  id         String   @id @default(cuid())
+  ownerType  String // EMPLOYEE, PARTNER
+  ownerId    String
+  featureKey String
+  action     String // e.g. "image_generated", "video_generated", "mock_voucher_used"
+  metadata   String? // JSON
+  createdAt  DateTime @default(now())
+
+  @@index([ownerType, ownerId, featureKey])
+  @@index([createdAt])
+}
+
+// ============================================================
+// B2B PARTNER SUPER ADMIN PORTAL — Users, Marketing, Vouchers
+// ============================================================
+
+model PartnerUser {
+  id                String   @id @default(cuid())
+  partnerEmployeeId String // links to Employee record (partner's own employee)
+  partnerId         String // the parent partner Employee id
+  role              String   @default("PARTNER_COUNSELOR") // PARTNER_SUPER_ADMIN, PARTNER_COUNSELOR, PARTNER_APPLICATION_ASSISTANT, PARTNER_MARKETING_ASSISTANT, PARTNER_DOCUMENT_ASSISTANT, PARTNER_VIEWER
+  fullName          String
+  email             String   @unique
+  phone             String?
+  status            String   @default("ACTIVE") // ACTIVE, SUSPENDED, INACTIVE
+  permissions       String   @default("[]") // JSON array of feature keys
+  createdBy         String // partner super admin employee id
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([role])
+  @@index([status])
+}
+
+model PartnerUserSeatRequest {
+  id                  String   @id @default(cuid())
+  partnerId           String
+  requestedBy         String
+  currentLimit        Int
+  requestedExtraSeats Int
+  reason              String?
+  status              String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  reviewedBy          String?
+  reviewNote          String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([status])
+}
+
+model PartnerMarketingQuota {
+  id                        String   @id @default(cuid())
+  partnerId                 String   @unique
+  monthlyImageLimit         Int      @default(15)
+  monthlyVideoLimit         Int      @default(10)
+  videoDurationLimitSeconds Int      @default(30)
+  autoPublishAllowed        Boolean  @default(false)
+  requiresAloApproval       Boolean  @default(true)
+  status                    String   @default("ACTIVE")
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}
+
+model PartnerMarketingUsage {
+  id             String   @id @default(cuid())
+  partnerId      String
+  monthYear      String // YYYY-MM
+  imagesUsed     Int      @default(0)
+  videosUsed     Int      @default(0)
+  ideasSubmitted Int      @default(0)
+  postsScheduled Int      @default(0)
+  postsPublished Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([partnerId, monthYear])
+  @@index([partnerId])
+}
+
+model PartnerMarketingRequest {
+  id               String   @id @default(cuid())
+  partnerId        String
+  requestedBy      String
+  idea             String // marketing idea
+  country          String?
+  university       String?
+  course           String?
+  intake           String?
+  targetAudience   String?
+  language         String   @default("English")
+  cta              String?
+  platform         String // FACEBOOK, INSTAGRAM, LINKEDIN
+  preferredStyle   String?
+  // AI-generated content
+  facebookCaption  String?
+  instagramCaption String?
+  hashtags         String? // JSON array
+  imagePrompt      String?
+  videoPrompt      String?
+  videoScript      String?
+  reelCaption      String?
+  ctaText          String?
+  assetUrl         String?
+  // Workflow
+  approvalStatus   String   @default("DRAFT") // DRAFT, PENDING_APPROVAL, APPROVED, REJECTED, SCHEDULED, PUBLISHED
+  publishedUrl     String?
+  scheduledAt      String?
+  createdBy        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([approvalStatus])
+}
+
+model PartnerSocialAccount {
+  id                String    @id @default(cuid())
+  partnerId         String
+  platform          String // FACEBOOK, INSTAGRAM
+  accountName       String
+  accountId         String?
+  accessTokenMasked String? // masked, encrypted in production
+  tokenExpiry       String?
+  connectionStatus  String    @default("DISCONNECTED") // CONNECTED, DISCONNECTED, EXPIRED
+  lastSync          DateTime?
+  connectedBy       String?
+  approvedByAlo     Boolean   @default(false)
+  status            String    @default("ACTIVE")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([partnerId])
+}
+
+model StudentBenefitEntitlement {
+  id            String   @id @default(cuid())
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  partnerId     String?
+  applicationId String?
+  benefitType   String // UKVI_INTERVIEW_PREP, UNIVERSITY_INTERVIEW_PREP, ENGLISH_MOCK_TEST, AI_SPEAKING_PRACTICE, DOCUMENT_CHECKLIST, APPLICATION_GUIDANCE
+  limitCount    Int      @default(1)
+  usedCount     Int      @default(0)
+  status        String   @default("ACTIVE") // ACTIVE, USED_UP, EXPIRED, CANCELLED
+  createdBy     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([partnerId])
+  @@index([benefitType])
+}
+
+model StudentMockTestVoucher {
+  id            String    @id @default(cuid())
+  voucherCode   String    @unique
+  studentId     String
+  student       Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  partnerId     String?
+  applicationId String?
+  testType      String    @default("IELTS") // IELTS, PTE, TOEFL, etc.
+  usageLimit    Int       @default(1)
+  usedCount     Int       @default(0)
+  expiresAt     DateTime?
+  status        String    @default("AVAILABLE") // AVAILABLE, USED, EXPIRED, CANCELLED
+  createdBy     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([partnerId])
+  @@index([status])
+}
+
+// ============================================================
+// ENHANCED COURSE FINDER — Shortlist, Compare, Scholarships, Commissions, Import
+// ============================================================
+
+model CourseShortlist {
+  id         String   @id @default(cuid())
+  studentId  String
+  courseSlug String
+  createdAt  DateTime @default(now())
+
+  @@unique([studentId, courseSlug])
+  @@index([studentId])
+}
+
+model CourseComparison {
+  id         String   @id @default(cuid())
+  studentId  String
+  courseSlug String
+  createdAt  DateTime @default(now())
+
+  @@unique([studentId, courseSlug])
+  @@index([studentId])
+}
+
+model CourseView {
+  id         String   @id @default(cuid())
+  userId     String?
+  role       String
+  courseSlug String
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([courseSlug])
+  @@index([userId])
+}
+
+model Commission {
+  id               String   @id @default(cuid())
+  commissionCode   String   @unique
+  partnerId        String?
+  countrySlug      String?
+  universitySlug   String?
+  courseSlug       String?
+  studyLevel       String?
+  intakeYear       String?
+  commissionAmount Float
+  commissionType   String   @default("PERCENTAGE") // PERCENTAGE, FIXED
+  currency         String   @default("USD")
+  bonusAmount      Float    @default(0)
+  paymentCondition String?
+  claimStage       String   @default("ENROLMENT") // APPLICATION, OFFER, CAS, VISA, ENROLMENT
+  visibility       String   @default("PARTNER_ONLY") // PUBLIC, STUDENT, PARTNER_ONLY, STAFF_ONLY, ADMIN_ONLY
+  status           String   @default("ACTIVE")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([partnerId])
+  @@index([universitySlug])
+  @@index([courseSlug])
+}
+
+model ImportBatch {
+  id          String   @id @default(cuid())
+  type        String // countries, universities, courses, scholarships, commissions
+  fileName    String
+  uploadedBy  String?
+  status      String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  totalRows   Int      @default(0)
+  successRows Int      @default(0)
+  errorRows   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  errors ImportError[]
+}
+
+model ImportError {
+  id           String      @id @default(cuid())
+  batchId      String
+  batch        ImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  rowNumber    Int
+  fieldName    String?
+  errorMessage String
+  rawData      String?
+  createdAt    DateTime    @default(now())
+
+  @@index([batchId])
+}
+
+// ============================================================
+// HOMEPAGE CONTENT — Hero slides, services, stories, team, FAQs
+// ============================================================
+
+model HomeHeroSlide {
+  id                   String    @id @default(cuid())
+  countrySlug          String
+  headline             String
+  subtitle             String
+  accentColor          String    @default("#0057B8")
+  popularCity          String?
+  popularIntake        String?
+  universityCountLabel String?
+  courseCountLabel     String?
+  scholarshipLabel     String?
+  ctaPrimaryLabel      String    @default("Book Free Consultation")
+  ctaPrimaryUrl        String    @default("/book-consultation")
+  ctaSecondaryLabel    String    @default("Find Courses")
+  ctaSecondaryUrl      String    @default("/course-finder")
+  sortOrder            Int       @default(0)
+  status               String    @default("ACTIVE")
+  lastVerifiedAt       DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([status])
+}
+
+model HomeSection {
+  id         String   @id @default(cuid())
+  sectionKey String   @unique
+  title      String
+  subtitle   String?
+  content    String?
+  sortOrder  Int      @default(0)
+  status     String   @default("ACTIVE")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model SuccessStory {
+  id             String   @id @default(cuid())
+  studentName    String
+  homeDistrict   String?
+  countrySlug    String?
+  universityName String?
+  courseName     String?
+  outcome        String?
+  testimonial    String
+  photo          String?
+  consentStatus  String   @default("APPROVED") // APPROVED, PENDING, DENIED
+  status         String   @default("ACTIVE")
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([status])
+  @@index([consentStatus])
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  specialty String?
+  bio       String?
+  photo     String?
+  sortOrder Int      @default(0)
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+model HomepageFaq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  sortOrder Int      @default(0)
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+model LeadForm {
+  id                  String   @id @default(cuid())
+  name                String
+  phone               String
+  email               String?
+  preferredCountry    String?
+  preferredLevel      String?
+  preferredSubject    String?
+  intake              String?
+  budget              String?
+  englishTest         String?
+  englishScore        String?
+  message             String?
+  source              String   @default("homepage")
+  sourceSection       String?
+  status              String   @default("NEW")
+  assignedCounselorId String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([status])
+  @@index([source])
+}
+
+model SearchLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  sessionId   String?
+  countrySlug String?
+  studyLevel  String?
+  subject     String?
+  intake      String?
+  budget      String?
+  source      String   @default("homepage")
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([countrySlug])
+}
+
+// ============================================================
+// MARKETING AUTOMATION SYSTEM — Brand, Social, WhatsApp, AI, n8n
+// ============================================================
+
+model BrandAsset {
+  id         String   @id @default(cuid())
+  type       String // LOGO, COLOR_PALETTE, FONT, TEMPLATE, IMAGE
+  name       String
+  filePath   String? // private storage path
+  fileUrl    String? // CDN URL if available
+  mimeType   String?
+  fileSize   Int?
+  metadata   String? // JSON: {colors: [...], dimensions: ...}
+  status     String   @default("ACTIVE") // ACTIVE, ARCHIVED
+  uploadedBy String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([type])
+  @@index([status])
+}
+
+model SocialInboxMessage {
+  id                   String    @id @default(cuid())
+  platform             String // FACEBOOK, INSTAGRAM, MESSENGER, WHATSAPP, EMAIL, SMS, WEBSITE_CHAT
+  direction            String    @default("INBOUND") // INBOUND, OUTBOUND
+  senderId             String? // social user ID or phone
+  senderName           String?
+  senderAvatar         String?
+  recipientId          String? // official ALO account ID
+  messageText          String?
+  messageMediaUrl      String?
+  messageMediaMetadata String? // JSON
+  commentId            String? // for comments
+  postId               String? // for comments on a post
+  conversationId       String? // grouped conversation
+  leadId               String?
+  studentId            String?
+  partnerId            String?
+  employeeId           String? // assigned employee
+  aiHandled            Boolean   @default(false)
+  aiDraftReply         String?
+  humanApproved        Boolean   @default(false)
+  isRead               Boolean   @default(false)
+  keywordTriggered     String? // which keyword triggered automation
+  externalId           String? // message ID from platform
+  receivedAt           DateTime  @default(now())
+  sentAt               DateTime?
+  createdAt            DateTime  @default(now())
+
+  @@index([platform])
+  @@index([leadId])
+  @@index([studentId])
+  @@index([employeeId])
+  @@index([isRead])
+}
+
+model KeywordTrigger {
+  id                  String   @id @default(cuid())
+  keyword             String   @unique // Study Abroad, IELTS, Visa, UK, Canada, etc.
+  keywordType         String   @default("EXACT") // EXACT, CONTAINS, REGEX
+  platform            String   @default("ALL") // ALL, FACEBOOK, INSTAGRAM, WHATSAPP
+  autoReplyText       String
+  autoDmText          String?
+  autoCreateLead      Boolean  @default(true)
+  autoAssignCounselor Boolean  @default(true)
+  sendPortalLink      Boolean  @default(true)
+  status              String   @default("ACTIVE")
+  triggerCount        Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([keyword])
+  @@index([status])
+}
+
+model CampaignPost {
+  id                String    @id @default(cuid())
+  title             String
+  category          String // COUNTRY, UNIVERSITY, VISA_TIPS, SCHOLARSHIP, IELTS_PTE, SUCCESS_STORY, FAQ, CONSULTATION_OFFER, DEADLINE, LEAD_GEN
+  platform          String // FACEBOOK, INSTAGRAM, LINKEDIN, TIKTOK, YOUTUBE, WHATSAPP_STATUS, BLOG
+  caption           String?
+  hashtags          String? // JSON array
+  ctaText           String?
+  ctaUrl            String?
+  imageUrl          String?
+  videoUrl          String?
+  videoScript       String?
+  reelCaption       String?
+  landingLink       String?
+  campaignObjective String? // AWARENESS, LEAD_GEN, ENGAGEMENT, TRAFFIC
+  platformSize      String? // SQUARE, PORTRAIT, LANDSCAPE, STORY
+  scheduledAt       String?
+  publishedAt       DateTime?
+  publishedUrl      String?
+  approvalStatus    String    @default("DRAFT") // DRAFT, PENDING_APPROVAL, APPROVED, REJECTED, SCHEDULED, PUBLISHED
+  approvedBy        String?
+  approvedAt        DateTime?
+  rejectionReason   String?
+  createdBy         String? // employee ID
+  brandAssetApplied Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([platform])
+  @@index([category])
+  @@index([approvalStatus])
+}
+
+model N8nWorkflow {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  webhookUrl      String
+  webhookSecret   String?
+  triggerType     String // LEAD_CREATED, FOLLOW_UP, WHATSAPP_REPLY, CAMPAIGN_REPORT, COUNSELOR_NOTIFY
+  isActive        Boolean   @default(true)
+  lastTriggeredAt DateTime?
+  triggerCount    Int       @default(0)
+  createdBy       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([isActive])
+  @@index([triggerType])
+}
+
+model LeadOutreach {
+  id              String    @id @default(cuid())
+  leadId          String?
+  lead            Lead?     @relation(fields: [leadId], references: [id])
+  sourceName      String // Google Maps, Facebook, Instagram, Referral, etc.
+  sourceType      String // ORGANIC, PAID, OUTREACH, REFERRAL
+  channel         String // WHATSAPP, EMAIL, SMS, PHONE
+  consentStatus   String    @default("UNKNOWN") // OPTED_IN, OPTED_OUT, UNKNOWN
+  outreachHistory String? // JSON array of {date, channel, message, result}
+  optOutDate      DateTime?
+  status          String    @default("ACTIVE") // ACTIVE, BLOCKED, OPTED_OUT
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([leadId])
+  @@index([status])
+}
+
+model MarketingUserAccess {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  accessLevel String    @default("LIMITED") // FULL (Marketing Manager), LIMITED (3 approved users), NONE
+  approvedBy  String?
+  approvedAt  DateTime?
+  status      String    @default("ACTIVE") // ACTIVE, REVOKED
+  permissions String    @default("[]") // JSON array of allowed features
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId])
+  @@index([status])
+}
+
+// ============================================================
+// ENTERPRISE HR MANAGEMENT — Leave, Payroll, Devices, Notice, Exit
+// ============================================================
+
+model LeaveRequest {
+  id         String    @id @default(cuid())
+  employeeId String // Employee HR id
+  leaveType  String // CASUAL, ANNUAL, MEDICAL, MATERNITY, PATERNITY, WITHOUT_PAY, COMPENSATORY
+  startDate  String
+  endDate    String
+  days       Int
+  reason     String?
+  status     String    @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
+  approvedBy String?
+  approvedAt DateTime?
+  reviewNote String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+  @@index([leaveType])
+}
+
+model Payroll {
+  id                 String    @id @default(cuid())
+  employeeId         String
+  monthYear          String // YYYY-MM
+  basicSalary        Float
+  allowances         Float     @default(0)
+  bonus              Float     @default(0)
+  overtime           Float     @default(0)
+  loanDeduction      Float     @default(0)
+  advanceDeduction   Float     @default(0)
+  taxDeduction       Float     @default(0)
+  providentFund      Float     @default(0)
+  insuranceDeduction Float     @default(0)
+  totalEarnings      Float
+  totalDeductions    Float
+  netPay             Float
+  status             String    @default("DRAFT") // DRAFT, APPROVED, PAID
+  approvedBy         String?
+  paidAt             DateTime?
+  salarySlipPath     String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@unique([employeeId, monthYear])
+  @@index([employeeId])
+  @@index([status])
+  @@index([monthYear])
+}
+
+model DeviceManagement {
+  id             String   @id @default(cuid())
+  employeeId     String
+  deviceType     String // LAPTOP, DESKTOP, TABLET, PHONE
+  deviceName     String
+  serialNumber   String
+  assetTag       String?
+  assignedDate   String
+  warrantyExpiry String?
+  status         String   @default("ASSIGNED") // ASSIGNED, RETURNED, LOST, DAMAGED
+  returnedDate   String?
+  condition      String?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+  @@index([deviceType])
+}
+
+model LoginSecurity {
+  id                String    @id @default(cuid())
+  userId            String
+  ipAddress         String
+  browser           String?
+  operatingSystem   String?
+  deviceFingerprint String?
+  location          String?
+  loginTime         DateTime  @default(now())
+  logoutTime        DateTime?
+  sessionStatus     String    @default("ACTIVE") // ACTIVE, LOGGED_OUT, EXPIRED
+  failedAttempts    Int       @default(0)
+  createdAt         DateTime  @default(now())
+
+  @@index([userId])
+  @@index([sessionStatus])
+}
+
+model NoticeManagement {
+  id                    String   @id @default(cuid())
+  employeeId            String
+  noticeType            String // RESIGNATION, TERMINATION, ABSCONDING
+  noticeDate            String
+  noticePeriodDays      Int      @default(90)
+  remainingDays         Int
+  lastWorkingDay        String?
+  handoverChecklist     String? // JSON
+  assetReturnStatus     String   @default("PENDING")
+  clearanceStatus       String   @default("PENDING")
+  finalSettlementStatus String   @default("PENDING")
+  status                String   @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+model ExitManagement {
+  id                   String   @id @default(cuid())
+  employeeId           String
+  exitType             String // RESIGNATION, TERMINATION, ABSCONDING
+  exitDate             String
+  exitInterview        String? // JSON: {conducted, notes, feedback}
+  clearanceStatus      String   @default("PENDING")
+  finalSettlement      Float?
+  experienceLetterPath String?
+  relievingLetterPath  String?
+  status               String   @default("PENDING") // PENDING, COMPLETED
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+// ============================================================
+// APPLICATION MANAGER PORTAL — B2B, Applications, Comments, Deadlines
+// ============================================================
+
+model B2bProvider {
+  id                 String    @id @default(cuid())
+  providerCode       String    @unique
+  name               String
+  providerType       String // GLOBAL_B2B, COUNTRY_SPECIFIC, UNIVERSITY_REPRESENTATIVE, PATHWAY_PROVIDER, AGGREGATOR, SUB_AGENT, DIRECT_UNIVERSITY
+  countryCoverage    String? // JSON array
+  universityCoverage String? // JSON array
+  contactPerson      String?
+  email              String?
+  phone              String?
+  portalUrl          String?
+  loginNote          String? // encrypted in production
+  agreementFile      String?
+  commissionRule     String?
+  paymentCondition   String?
+  claimStage         String?
+  status             String    @default("ACTIVE")
+  createdBy          String?
+  approvedBy         String?
+  lastReviewedAt     DateTime?
+  internalNote       String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  b2bApplications B2bApplication[]
+
+  @@index([status])
+  @@index([providerType])
+}
+
+model B2bApplication {
+  id                    String      @id @default(cuid())
+  applicationId         String // links to Application
+  b2bProviderId         String
+  b2bProvider           B2bProvider @relation(fields: [b2bProviderId], references: [id])
+  b2bType               String // INBOUND, OUTBOUND
+  b2bReference          String?
+  submissionRoute       String?
+  submittedDate         String?
+  acknowledgementNumber String?
+  b2bStatus             String      @default("SUBMITTED") // SUBMITTED, ACKNOWLEDGED, IN_REVIEW, DECISION_PENDING, OFFERED, REJECTED, COMMISSION_DUE, COMMISSION_PAID
+  b2bCommissionType     String?
+  b2bCommissionAmount   Float?
+  b2bPaymentCondition   String?
+  b2bClaimStage         String?
+  b2bInternalNote       String?
+  lastFollowupAt        DateTime?
+  nextFollowupAt        DateTime?
+  createdBy             String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@index([b2bProviderId])
+  @@index([b2bType])
+  @@index([b2bStatus])
+}
+
+model ApplicationStatusLog {
+  id            String   @id @default(cuid())
+  applicationId String
+  oldStatus     String?
+  newStatus     String
+  safeStatus    String
+  changedBy     String?
+  visibility    String   @default("PUBLIC") // PUBLIC, INTERNAL, B2B_CONFIDENTIAL
+  note          String?
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+}
+
+model ApplicationComment {
+  id                String   @id @default(cuid())
+  applicationId     String
+  userId            String?
+  role              String?
+  commentType       String   @default("INTERNAL") // STUDENT_VISIBLE, PARTNER_VISIBLE, COUNSELOR_VISIBLE, INTERNAL, B2B_CONFIDENTIAL, UNIVERSITY, FINANCE, VISA_HANDOVER
+  visibility        String   @default("INTERNAL")
+  commentText       String
+  attachmentPath    String?
+  isB2bConfidential Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([applicationId])
+  @@index([commentType])
+  @@index([visibility])
+}
+
+model ApplicationDocument {
+  id            String   @id @default(cuid())
+  applicationId String
+  studentId     String?
+  documentId    String?
+  documentType  String
+  status        String   @default("MISSING") // MISSING, UPLOADED, UNDER_REVIEW, APPROVED, REJECTED, EXPIRED, REQUEST_AGAIN, VERIFIED, LOCKED
+  reviewerId    String?
+  reviewNote    String?
+  visibility    String   @default("PUBLIC") // PUBLIC, INTERNAL
+  version       Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([applicationId])
+  @@index([status])
+}
+
+model ApplicationDeadline {
+  id            String   @id @default(cuid())
+  applicationId String
+  deadlineType  String // APPLICATION, DOCUMENT, OFFER_CONDITION, DEPOSIT, CAS_I20_COE, B2B_FOLLOWUP, UNIVERSITY_FOLLOWUP
+  deadlineDate  String
+  status        String   @default("PENDING") // PENDING, MET, MISSED
+  assignedTo    String?
+  reminderSent  Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([applicationId])
+  @@index([status])
+}
+
+model ApplicationTask {
+  id              String   @id @default(cuid())
+  applicationId   String
+  taskTitle       String
+  taskDescription String?
+  assignedTo      String?
+  priority        String   @default("NORMAL")
+  status          String   @default("PENDING")
+  dueDate         String?
+  createdBy       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([applicationId])
+  @@index([status])
+}
+
+model ApplicationNotification {
+  id            String    @id @default(cuid())
+  applicationId String
+  recipientType String // STUDENT, PARTNER, COUNSELOR, APPLICATION_TEAM, VISA_OFFICER, FINANCE, SUPER_ADMIN
+  recipientId   String?
+  channel       String    @default("PORTAL") // PORTAL, WHATSAPP, EMAIL, SMS
+  templateName  String
+  message       String
+  status        String    @default("PENDING") // PENDING, SENT, FAILED
+  sentAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([applicationId])
+  @@index([status])
+}
+
+// ============================================================
+// ENTERPRISE AI COMMAND CENTER — 100 Depts, 2000 Agents, DCC
+// ============================================================
+
+model EnterpriseDepartment {
+  id                       String    @id @default(cuid())
+  deptCode                 String    @unique // DEPT-001 to DEPT-100
+  name                     String
+  description              String?
+  parentDeptId             String? // for sub-departments
+  headAgentId              String?
+  aiEmployeeCount          Int       @default(20) // ~20 per dept
+  skillCount               Int       @default(100) // ~100 per dept
+  promptCount              Int       @default(500) // ~500 per dept
+  sopCount                 Int       @default(5)
+  constitutionalRulesCount Int       @default(5)
+  // DCC Certification metrics
+  sopCoverage              Float     @default(95.0)
+  knowledgeCoverage        Float     @default(95.0)
+  skillCoverage            Float     @default(95.0)
+  testPassRate             Float     @default(95.0)
+  kpiAchievement           Float     @default(90.0)
+  securityCompliance       Float     @default(100.0)
+  auditCompliance          Float     @default(100.0)
+  selfRecoverySuccess      Float     @default(90.0)
+  humanEscalationRate      Float     @default(10.0)
+  dccCertified             Boolean   @default(false)
+  dccCertifiedAt           DateTime?
+  canCreateAgents          Boolean   @default(false)
+  status                   String    @default("ACTIVE")
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  @@index([status])
+  @@index([dccCertified])
+}
+
+model AiEmployee {
+  id              String    @id @default(cuid())
+  employeeCode    String    @unique // AI-EMP-XXXXX
+  departmentId    String
+  name            String
+  role            String // SPECIALIST, MANAGER, SUPERVISOR, COORDINATOR
+  status          String    @default("ACTIVE") // ACTIVE, IDLE, TRAINING, MAINTENANCE
+  skillIds        String    @default("[]") // JSON array of skill IDs
+  promptIds       String    @default("[]") // JSON array of prompt template IDs
+  jobsProcessed   Int       @default(0)
+  successRate     Float     @default(95.0)
+  avgResponseTime Float     @default(0) // ms
+  lastActiveAt    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([departmentId])
+  @@index([status])
+  @@index([role])
+}
+
+model AiSkill {
+  id               String   @id @default(cuid())
+  skillCode        String   @unique // SKILL-XXXXX
+  name             String
+  description      String?
+  category         String // TECHNICAL, COMMUNICATION, ANALYTICAL, DOMAIN, SECURITY, COMPLIANCE
+  departmentId     String?
+  proficiencyLevel String   @default("EXPERT") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT, MASTER
+  status           String   @default("ACTIVE")
+  createdAt        DateTime @default(now())
+
+  @@index([category])
+  @@index([departmentId])
+}
+
+model PromptTemplate {
+  id           String   @id @default(cuid())
+  templateCode String   @unique // PROMPT-XXXXX
+  name         String
+  description  String?
+  category     String // SYSTEM, USER, FEW_SHOT, CHAIN_OF_THOUGHT, RAG, FUNCTION_CALLING
+  departmentId String?
+  promptText   String
+  variables    String   @default("[]") // JSON array of variable names
+  version      Int      @default(1)
+  status       String   @default("ACTIVE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([category])
+  @@index([departmentId])
+}
+
+model ConstitutionalRule {
+  id          String   @id @default(cuid())
+  ruleCode    String   @unique // RULE-XXXXX
+  title       String
+  description String
+  category    String // SAFETY, PRIVACY, FAIRNESS, TRANSPARENCY, ACCOUNTABILITY, COMPLIANCE
+  enforcement String   @default("BLOCK") // BLOCK, WARN, LOG, ESCALATE
+  priority    Int      @default(1) // 1=highest
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+}
+
+model AiSop {
+  id           String   @id @default(cuid())
+  sopCode      String   @unique // SOP-XXXXX
+  title        String
+  description  String?
+  departmentId String?
+  steps        String   @default("[]") // JSON array of steps
+  version      Int      @default(1)
+  status       String   @default("ACTIVE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([departmentId])
+}
+
+model AiEngine {
+  id              String    @id @default(cuid())
+  engineCode      String    @unique
+  name            String
+  type            String // KNOWLEDGE_GRAPH, RAG, MULTI_AGENT_COLLABORATION, MEMORY, PLANNING, REFLECTION, SELF_HEALING, SELF_OPTIMIZATION, EVALUATION, GOVERNANCE, SECURITY, AUDIT, COMPLIANCE, OBSERVABILITY, WORKFLOW_ORCHESTRATION, EVENT_BUS, API_GATEWAY, MCP_INTEGRATION, DATA_LAKE, IDENTITY_RBAC
+  description     String?
+  status          String    @default("ACTIVE") // ACTIVE, IDLE, MAINTENANCE
+  healthStatus    String    @default("HEALTHY") // HEALTHY, DEGRADED, CRITICAL
+  metrics         String? // JSON: {requests, errors, latency, uptime}
+  lastHealthCheck DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([type])
+  @@index([status])
+}
+
+// ============================================================
+// ENTERPRISE OMNICHANNEL COMMUNICATION CENTER
+// ============================================================
+
+model ConnectedAccount {
+  id               String    @id @default(cuid())
+  platform         String // FACEBOOK, INSTAGRAM, WHATSAPP, TELEGRAM, LINKEDIN, TIKTOK, YOUTUBE, GOOGLE_BUSINESS, GMAIL, OUTLOOK, SKYPE, ZOOM, SMS_GATEWAY, CALL_CENTER
+  accountName      String
+  accountId        String?
+  accessTokenEnc   String?
+  refreshTokenEnc  String?
+  tokenExpiry      DateTime?
+  connectionStatus String    @default("DISCONNECTED")
+  lastSync         DateTime?
+  lastActivity     DateTime?
+  assignedTo       String?
+  assignedBranch   String?
+  autoSync         Boolean   @default(true)
+  metadata         String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([platform])
+  @@index([connectionStatus])
+}
+
+model PhoneCallLog {
+  id              String   @id @default(cuid())
+  callType        String // INCOMING, OUTGOING, MISSED
+  fromNumber      String
+  toNumber        String
+  duration        Int      @default(0)
+  recordingPath   String?
+  callNotes       String?
+  disposition     String?
+  studentId       String?
+  leadId          String?
+  partnerId       String?
+  employeeId      String?
+  timelineEventId String?
+  createdAt       DateTime @default(now())
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([fromNumber])
+}
+
+model EmailSync {
+  id                 String   @id @default(cuid())
+  connectedAccountId String?
+  folder             String   @default("INBOX")
+  messageId          String?
+  fromEmail          String
+  toEmail            String
+  subject            String
+  bodyText           String?
+  bodyHtml           String?
+  attachments        String?
+  threadId           String?
+  studentId          String?
+  leadId             String?
+  partnerId          String?
+  employeeId         String?
+  isRead             Boolean  @default(false)
+  matchedToCRM       Boolean  @default(false)
+  syncedAt           DateTime @default(now())
+  createdAt          DateTime @default(now())
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([fromEmail])
+  @@index([threadId])
+}
+
+model SmsLog {
+  id             String    @id @default(cuid())
+  direction      String    @default("OUTBOUND")
+  fromNumber     String
+  toNumber       String
+  messageText    String
+  deliveryStatus String    @default("PENDING")
+  readStatus     Boolean   @default(false)
+  campaignId     String?
+  studentId      String?
+  leadId         String?
+  partnerId      String?
+  employeeId     String?
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([toNumber])
+}
+
+model DocumentVersion {
+  id           String    @id @default(cuid())
+  documentId   String
+  version      Int       @default(1)
+  filePath     String
+  fileSize     Int?
+  fileType     String?
+  uploadedBy   String?
+  uploadedAt   DateTime  @default(now())
+  reviewStatus String    @default("PENDING")
+  reviewerId   String?
+  reviewerNote String?
+  reviewedAt   DateTime?
+  isLatest     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+
+  @@index([documentId])
+  @@index([reviewStatus])
+}
+
+model DocumentReview {
+  id                String   @id @default(cuid())
+  documentId        String
+  documentVersionId String?
+  reviewerId        String
+  reviewType        String // APPROVE, REJECT, REQUEST_REUPLOAD
+  reviewNote        String?
+  notifyStudent     Boolean  @default(true)
+  createdAt         DateTime @default(now())
+
+  @@index([documentId])
+  @@index([reviewType])
+}
+
+model AiDocumentClassification {
+  id                String   @id @default(cuid())
+  documentId        String
+  documentVersionId String?
+  detectedType      String // PASSPORT, NID, BIRTH_CERT, SSC, HSC, TRANSCRIPT, CV, OFFER_LETTER, CAS, VISA, IELTS, BANK_STATEMENT, SPONSOR_LETTER, PHOTO, UNKNOWN
+  confidence        Float    @default(0)
+  extractedData     String? // JSON
+  ocrText           String?
+  matchedStudentId  String?
+  autoFilled        Boolean  @default(false)
+  humanVerified     Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  @@index([documentId])
+  @@index([detectedType])
+}
+
+model NotificationEngine {
+  id            String    @id @default(cuid())
+  recipientType String // STUDENT, PARTNER, EMPLOYEE, SUPER_ADMIN, CHAIRMAN
+  recipientId   String?
+  channel       String // IN_APP, EMAIL, SMS, WHATSAPP, BROWSER_PUSH
+  title         String
+  message       String
+  category      String // COMMUNICATION, DOCUMENT, APPLICATION, VISA, DEADLINE, MARKETING, SYSTEM
+  priority      String    @default("NORMAL")
+  isRead        Boolean   @default(false)
+  actionUrl     String?
+  metadata      String?
+  sentAt        DateTime?
+  readAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([recipientType])
+  @@index([recipientId])
+  @@index([isRead])
+}
+
+model ConsentRecord {
+  id                String    @id @default(cuid())
+  studentId         String?
+  leadId            String?
+  partnerId         String?
+  channel           String // WHATSAPP, SMS, EMAIL, CALL
+  consentStatus     String    @default("UNKNOWN")
+  preferredLanguage String?
+  preferredChannel  String?
+  consentDate       DateTime?
+  optOutDate        DateTime?
+  consentSource     String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([leadId])
+  @@index([consentStatus])
+}
+
+// ============================================================
+// EMPLOYEE KNOWLEDGE CENTER + CENTRAL AI COMMAND CENTER
+// ============================================================
+
+model KnowledgeCategory {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  parentId  String? // for subcategories (folders)
+  icon      String?
+  sortOrder Int      @default(0)
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([status])
+}
+
+model KnowledgeDocument {
+  id             String    @id @default(cuid())
+  categoryId     String
+  title          String
+  description    String?
+  fileType       String // PDF, DOCX, PPT, XLSX, IMAGE, ZIP, VIDEO, AUDIO, LINK
+  filePath       String? // private storage path
+  fileUrl        String? // external link if LINK type
+  fileSize       Int?
+  mimeType       String?
+  tags           String? // JSON array
+  authorId       String?
+  version        Int       @default(1)
+  uploadDate     DateTime  @default(now())
+  expiryDate     DateTime?
+  visibility     String    @default("EMPLOYEE") // EMPLOYEE, MANAGER, COUNSELOR, MARKETING, VISA, FINANCE, HR, SUPER_ADMIN
+  approvalStatus String    @default("APPROVED") // PENDING, APPROVED, REJECTED
+  approvedBy     String?
+  downloadCount  Int       @default(0)
+  isFeatured     Boolean   @default(false)
+  isPinned       Boolean   @default(false)
+  aiSummary      String?
+  aiTags         String? // JSON array — AI-generated tags
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([categoryId])
+  @@index([fileType])
+  @@index([visibility])
+  @@index([approvalStatus])
+  @@index([isFeatured])
+}
+
+model KnowledgeNews {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  category    String // OFFICE_ANNOUNCEMENT, UNIVERSITY_UPDATE, SCHOLARSHIP_UPDATE, COUNTRY_UPDATE, IMMIGRATION_UPDATE, TRAINING_NEWS, MEETING_NOTES, POLICY_UPDATE, HR_NOTICE, MARKETING_NOTICE, SALES_NOTICE, VISA_NOTICE
+  country     String? // UK, Australia, etc.
+  isPinned    Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  authorId    String?
+  attachments String? // JSON array of file paths
+  tags        String? // JSON array
+  status      String   @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([country])
+  @@index([status])
+  @@index([isPinned])
+}
+
+model TrainingMaterial {
+  id                 String   @id @default(cuid())
+  title              String
+  description        String?
+  type               String // RECORDED_TRAINING, LIVE_TRAINING, QUIZ, CERTIFICATE, HANDBOOK, SALES_TRAINING, COUNSELING_TRAINING, VISA_TRAINING, CRM_TRAINING, AI_TRAINING
+  videoUrl           String?
+  documentPath       String?
+  duration           Int? // minutes
+  trainerId          String?
+  passScore          Int? // for quizzes
+  certificateEnabled Boolean  @default(false)
+  enrolledCount      Int      @default(0)
+  completedCount     Int      @default(0)
+  tags               String? // JSON
+  status             String   @default("ACTIVE")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([type])
+  @@index([status])
+}
+
+model AiAgentRegistry {
+  id              String    @id @default(cuid())
+  agentCode       String    @unique
+  agentName       String
+  agentType       String // ADMISSIONS, VISA, COURSE_RECOMMENDATION, SCHOLARSHIP, UNIVERSITY_MATCHING, LEAD_QUALIFICATION, CRM_ASSISTANT, MARKETING, CONTENT, SEO, TRANSLATION, DOCUMENT_OCR, EMAIL, WHATSAPP, ANALYTICS, REPORTING, INTERVIEW_COACH, TRAINING, KNOWLEDGE_SEARCH
+  description     String?
+  status          String    @default("ACTIVE") // ACTIVE, IDLE, PAUSED, ERROR
+  version         String    @default("1.0.0")
+  promptTemplate  String? // system prompt
+  apiUsed         String    @default("z-ai-web-dev-sdk")
+  fallbackApi     String?
+  dailyRequests   Int       @default(0)
+  monthlyRequests Int       @default(0)
+  totalRequests   Int       @default(0)
+  successRate     Float     @default(95.0)
+  avgResponseTime Float     @default(0)
+  lastExecutedAt  DateTime?
+  errorCount      Int       @default(0)
+  lastError       String?
+  executionLog    String? // JSON array of recent executions
+  config          String? // JSON: temperature, maxTokens, etc.
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([agentType])
+  @@index([status])
+}
+
+model KnowledgeBookmark {
+  id         String   @id @default(cuid())
+  userId     String
+  documentId String?
+  newsId     String?
+  trainingId String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([documentId])
+}
+
+// ============================================================
+// UNIVERSITY & OFFICIAL DATA MONITORING SYSTEM (Task 21)
+// AI-powered 7-day monitoring agent for university/course data
+// ============================================================
+
+// Official source URL registered for a university, course, or government authority.
+// One university may have multiple official sources (course catalogue, admissions,
+// scholarships, international office, government visa page, etc.)
+model OfficialSource {
+  id                  String    @id @default(cuid())
+  // What entity this source describes
+  entityType          String // UNIVERSITY | COURSE | COUNTRY | GOVERNMENT | AUTHORITY
+  universitySlug      String? // set when entityType = UNIVERSITY or COURSE
+  courseSlug          String? // set when entityType = COURSE
+  countrySlug         String? // set when entityType = COUNTRY / GOVERNMENT / AUTHORITY
+  // Source metadata
+  sourceUrl           String    @unique // the official URL to monitor
+  sourceName          String // human label e.g. "University of Oxford — Course Catalogue"
+  sourceType          String    @default("UNIVERSITY_OFFICIAL") // UNIVERSITY_OFFICIAL | GOVERNMENT | AUTHORITY | ADMISSIONS_PORTAL | PDF | APPROVED_INSTITUTIONAL
+  category            String? // CATALOGUE | ADMISSIONS | SCHOLARSHIPS | VISAS | FEES | INTAKES | REQUIREMENTS | POLICY
+  priority            Int       @default(1) // 1 = official university, 2 = government, 3 = authority, 4 = portal, 5 = PDF, 6 = approved institutional
+  // Monitoring config
+  monitoringEnabled   Boolean   @default(true)
+  checkFrequencyDays  Int       @default(7)
+  lastCheckedAt       DateTime?
+  lastHttpStatus      Int?
+  lastContentHash     String? // SHA-256 of normalized page content
+  lastError           String?
+  consecutiveFailures Int       @default(0)
+  // Lifecycle
+  status              String    @default("ACTIVE") // ACTIVE | PAUSED | RETIRED | BROKEN
+  discoveredAt        DateTime  @default(now())
+  lastVerifiedAt      DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  snapshots SourceSnapshot[]
+  changes   DataChange[]
+  documents OfficialDocument[]
+
+  @@index([entityType])
+  @@index([universitySlug])
+  @@index([courseSlug])
+  @@index([countrySlug])
+  @@index([status])
+  @@index([priority])
+}
+
+// A point-in-time snapshot of an official source's content.
+// Used for change detection (diff against previous snapshot).
+model SourceSnapshot {
+  id                String         @id @default(cuid())
+  sourceId          String
+  source            OfficialSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  capturedAt        DateTime       @default(now())
+  httpStatus        Int
+  contentHash       String // SHA-256 of normalized content
+  contentLength     Int            @default(0)
+  title             String? // <title> or detected heading
+  contentType       String? // text/html, application/pdf, etc.
+  // We store a truncated normalized text extract (not raw HTML) to keep DB size sane.
+  // Full raw HTML is optionally stored in object storage in production.
+  textExtract       String // normalized plain text (truncated to 50KB)
+  // AI-generated structured summary of what the page currently says
+  aiSummary         String? // short AI summary of key facts found on the page
+  aiKeyFacts        String         @default("{}") // JSON of {field: value} extracted by AI
+  // Snapshot metadata
+  captureDurationMs Int            @default(0)
+  fetchError        String?
+  createdAt         DateTime       @default(now())
+
+  @@index([sourceId])
+  @@index([capturedAt])
+}
+
+// A detected change between two snapshots. One change record per field that changed.
+model DataChange {
+  id                 String         @id @default(cuid())
+  runId              String // VerificationRun id
+  sourceId           String
+  source             OfficialSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  // What entity changed
+  entityType         String // UNIVERSITY | COURSE | FACULTY | SCHOLARSHIP | GOVERNMENT_POLICY
+  universitySlug     String?
+  courseSlug         String?
+  countrySlug        String?
+  // Change classification (one of the 27 change types from the spec)
+  changeType         String // NEW_UNIVERSITY | UNIVERSITY_UPDATED | UNIVERSITY_CLOSED | NEW_FACULTY | FACULTY_UPDATED | NEW_COURSE | COURSE_UPDATED | COURSE_CLOSED | COURSE_RENAMED | COURSE_CODE_CHANGED | FEE_CHANGED | INTAKE_CHANGED | DEADLINE_CHANGED | REQUIREMENT_CHANGED | ENGLISH_REQUIREMENT_CHANGED | SCHOLARSHIP_NEW | SCHOLARSHIP_UPDATED | SCHOLARSHIP_CLOSED | DURATION_CHANGED | CAMPUS_CHANGED | STUDY_MODE_CHANGED | APPLICATION_PROCESS_CHANGED | OFFICIAL_POLICY_CHANGE | GOVERNMENT_POLICY_CHANGE | SOURCE_CHANGED | SOURCE_UNAVAILABLE | POSSIBLE_DATA_CONFLICT | NEEDS_MANUAL_REVIEW
+  fieldName          String // e.g. "tuition", "intake", "deadline", "englishRequirement"
+  // Values (preserved for history — NEVER destroy old value)
+  oldValue           String? // previous verified value (NULL if field didn't exist before)
+  newValue           String? // newly detected value (NULL if field removed)
+  // Evidence
+  sourceUrl          String // official URL where the change was detected
+  sourcePageTitle    String?
+  detectedAt         DateTime       @default(now())
+  previousVerifiedAt DateTime? // when the OLD value was last verified
+  newSourceDate      String? // publication date if detectable from the source page
+  // AI analysis
+  aiExplanation      String? // human-readable AI explanation of the change
+  confidence         Float          @default(0) // 0.0–1.0
+  impactLevel        String         @default("LOW") // LOW | MEDIUM | HIGH | CRITICAL
+  // Approval workflow
+  status             String         @default("PENDING") // PENDING | APPROVED | REJECTED | NEEDS_REVIEW | RECHECK_REQUESTED | SUPERSEDED
+  reviewedBy         String? // userId of Super Admin
+  reviewedAt         DateTime?
+  reviewNotes        String?
+  // When approved, the production database mutation is applied and recorded here
+  appliedAt          DateTime?
+  appliedBy          String?
+  // Supersession: if a newer change supersedes this one, link it
+  supersededBy       String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  values    DataChangeValue[]
+  approvals ApprovalAction[]
+
+  @@index([runId])
+  @@index([sourceId])
+  @@index([entityType])
+  @@index([universitySlug])
+  @@index([courseSlug])
+  @@index([changeType])
+  @@index([status])
+  @@index([impactLevel])
+  @@index([detectedAt])
+}
+
+// Full versioned history of every field value for a change (supports multi-field changes).
+model DataChangeValue {
+  id           String     @id @default(cuid())
+  changeId     String
+  change       DataChange @relation(fields: [changeId], references: [id], onDelete: Cascade)
+  fieldName    String // e.g. "tuition.international", "intake.september", "english.ielts"
+  oldValue     String?
+  newValue     String?
+  oldValueHash String? // for fast comparison
+  newValueHash String?
+  createdAt    DateTime   @default(now())
+
+  @@index([changeId])
+  @@index([fieldName])
+}
+
+// A single monitoring run (executed every 7 days by the scheduler).
+model VerificationRun {
+  id                  String        @id @default(cuid())
+  jobId               String // MonitoringJob id
+  job                 MonitoringJob @relation(fields: [jobId], references: [id])
+  runId               String        @unique // human-readable run identifier e.g. "VR-2026-08-08-001"
+  status              String        @default("PENDING") // PENDING | RUNNING | COMPLETED | FAILED | PARTIAL
+  startedAt           DateTime      @default(now())
+  completedAt         DateTime?
+  // Scope
+  universitiesChecked Int           @default(0)
+  coursesChecked      Int           @default(0)
+  sourcesChecked      Int           @default(0)
+  // Results
+  changesDetected     Int           @default(0)
+  newUniversities     Int           @default(0)
+  newCourses          Int           @default(0)
+  updatedCourses      Int           @default(0)
+  closedCourses       Int           @default(0)
+  feeChanges          Int           @default(0)
+  intakeChanges       Int           @default(0)
+  deadlineChanges     Int           @default(0)
+  requirementChanges  Int           @default(0)
+  scholarshipChanges  Int           @default(0)
+  governmentChanges   Int           @default(0)
+  criticalChanges     Int           @default(0)
+  failedSources       Int           @default(0)
+  conflicts           Int           @default(0)
+  manualReviewItems   Int           @default(0)
+  // Error tracking
+  errorMessage        String?
+  retryCount          Int           @default(0)
+  // AI-generated 7-day report summary
+  aiReportSummary     String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@index([jobId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// Approval queue entry — one per pending DataChange that needs Super Admin review.
+model ApprovalQueueItem {
+  id          String    @id @default(cuid())
+  changeId    String    @unique // one queue entry per change
+  queueType   String    @default("STANDARD") // STANDARD | CRITICAL | CONFLICT | RECHECK | MANUAL_REVIEW
+  priority    Int       @default(0) // higher = more urgent
+  status      String    @default("PENDING") // PENDING | APPROVED | REJECTED | RECHECK_REQUESTED | RESOLVED
+  assignedTo  String? // userId of assigned Super Admin (optional)
+  requestedBy String? // userId who requested recheck (if applicable)
+  enqueuedAt  DateTime  @default(now())
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([queueType])
+  @@index([priority])
+}
+
+// Audit trail of every approval/rejection/recheck/manual-edit action.
+model ApprovalAction {
+  id              String     @id @default(cuid())
+  changeId        String
+  change          DataChange @relation(fields: [changeId], references: [id], onDelete: Cascade)
+  action          String // APPROVE | REJECT | REQUEST_RECHECK | MARK_VERIFIED | MANUAL_EDIT | FORCE_PUBLISH | ESCALATE
+  performedBy     String // userId
+  performedAt     DateTime   @default(now())
+  notes           String?
+  // For MANUAL_EDIT actions, record what was edited
+  editedFieldName String?
+  editedOldValue  String?
+  editedNewValue  String?
+  // Snapshot of approval context
+  metadata        String? // JSON: {ip, userAgent, role, ...}
+  createdAt       DateTime   @default(now())
+
+  @@index([changeId])
+  @@index([action])
+  @@index([performedBy])
+}
+
+// Persistent scheduler job record. Survives server restarts.
+// The mini-service reads this to know when to run next and to acquire locks.
+model MonitoringJob {
+  id                 String    @id @default(cuid())
+  jobId              String    @unique // stable identifier e.g. "university-monitor-7d"
+  name               String // "ALO University & Official Data Monitoring Agent"
+  description        String?
+  schedule           String    @default("0 3 * * 1") // cron: every Monday 03:00
+  enabled            Boolean   @default(true)
+  // Locking (prevents duplicate concurrent execution)
+  lockedBy           String? // process ID / instance ID holding the lock
+  lockedAt           DateTime?
+  lockExpiresAt      DateTime? // lock auto-expires after this time (crash recovery)
+  // Last run info
+  lastRunId          String? // VerificationRun.id
+  lastRunStartedAt   DateTime?
+  lastRunCompletedAt DateTime?
+  lastRunStatus      String?
+  nextRunAt          DateTime?
+  // Stats
+  totalRuns          Int       @default(0)
+  successfulRuns     Int       @default(0)
+  failedRuns         Int       @default(0)
+  // Retry config
+  maxRetries         Int       @default(3)
+  retryDelayMs       Int       @default(60000)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  runs VerificationRun[]
+
+  @@index([enabled])
+  @@index([nextRunAt])
+}
+
+// Per-run log entries for debugging and audit.
+model MonitoringLog {
+  id         String   @id @default(cuid())
+  runId      String? // VerificationRun.id (null for scheduler-level logs)
+  jobId      String? // MonitoringJob.id
+  level      String   @default("INFO") // INFO | WARN | ERROR | DEBUG | AUDIT
+  message    String
+  entityType String? // UNIVERSITY | COURSE | SOURCE
+  entitySlug String?
+  sourceUrl  String?
+  metadata   String? // JSON
+  createdAt  DateTime @default(now())
+
+  @@index([runId])
+  @@index([jobId])
+  @@index([level])
+  @@index([createdAt])
+}
+
+// When two official sources disagree about the same fact, a conflict is created.
+model DataConflict {
+  id                String    @id @default(cuid())
+  entityType        String // UNIVERSITY | COURSE | SCHOLARSHIP | POLICY
+  universitySlug    String?
+  courseSlug        String?
+  countrySlug       String?
+  fieldName         String // the disputed field
+  // Conflicting values from different official sources
+  conflictingValues String    @default("[]") // JSON array of {sourceUrl, sourceName, value, detectedAt}
+  status            String    @default("PENDING") // PENDING | RESOLVED | ESCALATED
+  resolution        String? // SUPERSEDED | MERGED | MANUAL_OVERRIDE
+  resolvedBy        String?
+  resolvedAt        DateTime?
+  resolutionNotes   String?
+  detectedAt        DateTime  @default(now())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([entityType])
+  @@index([universitySlug])
+  @@index([courseSlug])
+  @@index([status])
+}
+
+// Official documents (PDFs, handbooks, guides) discovered on official sources.
+// Versioned — never replace without preserving previous version.
+model OfficialDocument {
+  id              String         @id @default(cuid())
+  sourceId        String
+  source          OfficialSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  universitySlug  String?
+  courseSlug      String?
+  countrySlug     String?
+  title           String // document title
+  documentType    String // ADMISSION_GUIDE | APPLICATION_GUIDE | SCHOLARSHIP_PDF | INTERNATIONAL_GUIDE | PROGRAMME_HANDBOOK | POLICY_PDF | COUNTRY_REQUIREMENT | PROSPECTUS | FEES_PDF | VISA_PDF
+  sourceUrl       String // direct URL to the document
+  publicationDate String? // detected publication date if available
+  discoveredAt    DateTime       @default(now())
+  lastCheckedAt   DateTime?
+  fileHash        String? // SHA-256 of the file content (for versioning)
+  fileSizeBytes   Int?
+  mimeType        String?
+  version         String? // version label if detectable
+  approvalStatus  String         @default("DISCOVERED") // DISCOVERED | APPROVED | REJECTED | SUPERSEDED
+  storageLocation String? // local path or object storage key
+  supersededBy    String? // id of newer version
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([sourceId])
+  @@index([universitySlug])
+  @@index([courseSlug])
+  @@index([documentType])
+  @@index([approvalStatus])
+}
+
+// Faculty / School / Department directory for a university.
+// Populated during monitoring when the official catalogue is traversed.
+model UniversityFaculty {
+  id                 String    @id @default(cuid())
+  universitySlug     String
+  facultyName        String // e.g. "Faculty of Engineering"
+  facultyType        String    @default("FACULTY") // FACULTY | SCHOOL | DEPARTMENT | COLLEGE | INSTITUTE
+  parentFacultyId    String? // for nested departments
+  officialUrl        String? // official faculty page URL
+  programmeCount     Int       @default(0) // count of discovered programmes
+  lastVerifiedAt     DateTime?
+  verificationStatus String    @default("UNVERIFIED")
+  approvalStatus     String    @default("PENDING")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([universitySlug])
+  @@index([facultyType])
+  @@index([approvalStatus])
+}
+
+// ============================================================
+// STORAGE ARCHITECTURE (Task 22)
+// Server-side file storage with three pools, checksums, audit
+// ============================================================
+
+// Central file metadata record. Every file uploaded, generated,
+// or received by the platform gets a FileMetadata row. The actual
+// file bytes live on disk in the configured storage pool; the DB
+// stores the metadata + checksum + access policy + audit trail.
+model FileMetadata {
+  id                 String         @id @default(cuid())
+  uuid               String         @unique // UUID-based storage name (never trust client filename)
+  originalName       String // client-provided filename (sanitized)
+  storedName         String // actual on-disk filename (uuid + extension)
+  mimeType           String // server-validated MIME type (never trust client)
+  extension          String // lowercase extension without dot
+  sizeBytes          BigInt // verified file size
+  checksumSha256     String // SHA-256 of file content (for integrity + dedup)
+  // Storage routing
+  storagePool        String // STUDENT_PARTNER | OFFICIAL | OPERATIONAL
+  storagePath        String // relative path within pool, e.g. "student/STU-000001/documents/passport/uuid.pdf"
+  absolutePath       String? // computed absolute path (for server-side access)
+  // Entity linkage (who/what this file belongs to)
+  entityType         String // STUDENT | PARTNER | EMPLOYEE | APPLICATION | EXAM | INTERVIEW | CAMPAIGN | OFFICIAL | PROJECT | LEAD | COMMUNICATION | REVIEW | BRAND
+  entityId           String? // the entity ID (studentId, partnerId, etc.)
+  studentId          String?
+  partnerId          String?
+  employeeId         String?
+  applicationId      String?
+  projectId          String?
+  // Upload context
+  uploadedBy         String? // userId
+  uploadedAt         DateTime       @default(now())
+  uploadedFromIp     String?
+  source             String         @default("WEB_UPLOAD") // WEB_UPLOAD | API | WHATSAPP | EMAIL | AI_GENERATED | IMPORT | EXTERNAL
+  // Access control
+  visibility         String         @default("STUDENT_VISIBLE") // STUDENT_VISIBLE | INTERNAL_ONLY | PARTNER_VISIBLE | B2B_CONFIDENTIAL | PUBLIC | ARCHIVED
+  accessPolicy       String         @default("OWNER_AND_STAFF") // OWNER_ONLY | OWNER_AND_STAFF | STAFF_ONLY | PARTNER_ONLY | PUBLIC | SUPER_ADMIN_ONLY
+  // Lifecycle
+  status             String         @default("ACTIVE") // ACTIVE | QUARANTINED | ARCHIVED | DELETED
+  isDeleted          Boolean        @default(false)
+  deletedAt          DateTime?
+  deletedBy          String?
+  deletionReason     String?
+  // Versioning
+  version            Int            @default(1)
+  previousVersionId  String? // link to previous version if this is a replacement
+  previousVersion    FileMetadata?  @relation("FileVersions", fields: [previousVersionId], references: [id])
+  versions           FileMetadata[] @relation("FileVersions")
+  // Retention
+  retentionPolicy    String? // STUDENT_PERMANENT | EMPLOYEE_5Y | MARKETING_2Y | PROJECT_PERMANENT | EXAM_PERMANENT
+  retentionExpiresAt DateTime?
+  // Metadata
+  metadata           String? // JSON: {dimensions, duration, pages, altText, ...}
+  tags               String? // JSON array of string tags
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  events FileEvent[]
+
+  @@index([storagePool])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([studentId])
+  @@index([partnerId])
+  @@index([employeeId])
+  @@index([applicationId])
+  @@index([uploadedBy])
+  @@index([status])
+  @@index([visibility])
+  @@index([checksumSha256])
+  @@index([createdAt])
+}
+
+// Audit trail for every file event (upload/download/view/delete/etc).
+model FileEvent {
+  id              String       @id @default(cuid())
+  fileId          String
+  file            FileMetadata @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  action          String // UPLOAD | DOWNLOAD | VIEW | SHARE | MOVE | COPY | VERSION | ARCHIVE | RESTORE | DELETE | FAILED_UPLOAD | QUARANTINE
+  performedBy     String? // userId
+  performedAt     DateTime     @default(now())
+  performedFromIp String?
+  result          String       @default("SUCCESS") // SUCCESS | FAILURE | DENIED
+  details         String? // JSON: {reason, error, ...}
+  createdAt       DateTime     @default(now())
+
+  @@index([fileId])
+  @@index([action])
+  @@index([performedBy])
+  @@index([createdAt])
+}
+
+// Storage pool configuration (capacity, usage, warnings).
+model StoragePool {
+  id                String    @id @default(cuid())
+  poolKey           String    @unique // STUDENT_PARTNER | OFFICIAL | OPERATIONAL
+  name              String // "Student & Partner Private Storage"
+  description       String?
+  mountPath         String // absolute path on server, e.g. "/home/alo/storage/student-partner"
+  capacityBytes     BigInt    @default(0) // 0 = unlimited
+  usedBytes         BigInt    @default(0)
+  fileCount         Int       @default(0)
+  warningThreshold  Int       @default(70) // percent
+  highThreshold     Int       @default(85)
+  criticalThreshold Int       @default(95)
+  status            String    @default("HEALTHY") // HEALTHY | WARNING | HIGH | CRITICAL | OFFLINE
+  lastHealthCheck   DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([poolKey])
+}
+
+// ============================================================
+// STUDENT REVIEW SYSTEM (Task 22)
+// Review collection, consent, moderation, publication
+// ============================================================
+
+// A review invitation sent to a student. Each invitation has a
+// unique secure token so the student can submit without logging in.
+model ReviewInvitation {
+  id                   String    @id @default(cuid())
+  token                String    @unique // secure random token for /review/{token}
+  studentId            String?
+  studentName          String
+  studentEmail         String?
+  studentPhone         String?
+  counselorId          String?
+  country              String? // destination country
+  serviceType          String? // ADMISSIONS | VISA | ENGLISH_TEST | SOP | GENERAL
+  // Campaign context
+  campaignId           String? // which review campaign this belongs to
+  // Multi-channel links (student chooses where to submit)
+  googleReviewUrl      String? // official Google review link
+  facebookRecommendUrl String? // official Facebook recommendation link
+  // Status
+  status               String    @default("SENT") // SENT | OPENED | SUBMITTED | EXPIRED | REVOKED
+  sentAt               DateTime  @default(now())
+  openedAt             DateTime?
+  submittedAt          DateTime?
+  expiresAt            DateTime?
+  // Linking
+  reviewId             String? // link to StudentReview once submitted
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+  @@index([token])
+  @@index([sentAt])
+}
+
+// A student review submission. Never published without explicit consent.
+model StudentReview {
+  id                  String    @id @default(cuid())
+  invitationId        String? // link back to the invitation
+  studentId           String?
+  studentName         String // display name (may be anonymized based on consent)
+  studentEmail        String?
+  country             String? // destination country
+  counselorName       String?
+  serviceType         String? // ADMISSIONS | VISA | ENGLISH_TEST | SOP | GENERAL
+  // Review content
+  rating              Int // 1-5 stars
+  reviewText          String
+  photoFileId         String? // link to FileMetadata if student uploaded a photo
+  // Consent (all three must be explicitly captured)
+  consentPublish      Boolean   @default(false) // publish on ALO website
+  consentMarketing    Boolean   @default(false) // use in marketing materials
+  consentShowName     Boolean   @default(false) // show name/profile image
+  consentCapturedAt   DateTime?
+  consentIp           String?
+  // Moderation
+  aiSpamScore         Float     @default(0) // 0-1
+  aiFlags             String    @default("[]") // JSON array of flags
+  aiSentiment         String? // POSITIVE | NEUTRAL | NEGATIVE
+  moderationStatus    String    @default("PENDING") // PENDING | APPROVED | REJECTED | NEEDS_REVIEW
+  moderatedBy         String?
+  moderatedAt         DateTime?
+  moderationNotes     String?
+  // Publication
+  publicationStatus   String    @default("INTERNAL") // INTERNAL | PUBLISHED | UNPUBLISHED
+  publishedAt         DateTime?
+  unpublishedAt       DateTime?
+  // Multi-channel tracking (which platforms the student submitted to)
+  googleSubmitted     Boolean   @default(false) // student clicked Google link
+  googleSubmittedAt   DateTime?
+  facebookSubmitted   Boolean   @default(false)
+  facebookSubmittedAt DateTime?
+  // Lifecycle
+  isVerifiedStudent   Boolean   @default(false) // confirmed to be a real ALO student
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([invitationId])
+  @@index([studentId])
+  @@index([moderationStatus])
+  @@index([publicationStatus])
+  @@index([rating])
+  @@index([createdAt])
+}
+
+// ============================================================
+// MARKETING BRAND PROFILE + MODEL/VOICE LIBRARY (Task 22)
+// ============================================================
+
+// The single ALO Education brand profile. Marketing Manager configures
+// this once; every creative generator uses it. Never hard-code branding.
+model BrandProfile {
+  id              String   @id @default(cuid())
+  name            String   @default("ALO Education")
+  // Brand colors
+  primaryColor    String   @default("#F37021") // ALO Orange
+  secondaryColor  String   @default("#0066CC") // Education Blue
+  accentColor     String   @default("#FFB347") // Sunshine Accent
+  // Identity
+  logoFileId      String? // link to FileMetadata
+  logoUrl         String?
+  tagline         String?
+  // Contact information (auto-applied to every creative)
+  website         String   @default("https://aloeducation.com")
+  phone           String   @default("01805020101")
+  email           String   @default("info@aloeducation.com")
+  address         String?
+  // Social handles
+  facebookHandle  String?
+  instagramHandle String?
+  linkedinHandle  String?
+  youtubeHandle   String?
+  tiktokHandle    String?
+  // Legal
+  legalDisclaimer String? // auto-appended to promotional content
+  qrCodeUrl       String?
+  // Typography
+  primaryFont     String   @default("Inter")
+  headingFont     String   @default("Inter")
+  // Status
+  isActive        Boolean  @default(true)
+  version         Int      @default(1)
+  createdBy       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+// Reusable marketing model profiles for video/image generation.
+// 10 profiles (5 male, 5 female) — culturally appropriate for Bangladesh.
+// Must NOT represent real people unless consent is explicitly recorded.
+model MarketingModel {
+  id                   String    @id @default(cuid())
+  modelId              String    @unique // MM-0001
+  displayName          String
+  gender               String // MALE | FEMALE
+  ageRange             String // "25-30"
+  appearanceDesc       String // culturally appropriate description
+  voiceProfile         String? // link to VoiceProfile
+  language             String    @default("bn") // bn | en | banglish
+  accent               String? // "dhaka" | "standard-bengali" | "bangladeshi-english"
+  wardrobe             String? // JSON array of approved wardrobe options
+  // Rights & consent
+  brandUsageRights     Boolean   @default(false)
+  consentStatus        String    @default("PENDING") // PENDING | GRANTED | REVOKED
+  consentDocumentId    String? // link to signed consent FileMetadata
+  consentDate          DateTime?
+  consentExpiresAt     DateTime?
+  approvedPlatforms    String    @default("[]") // JSON array
+  // Reference image (only stored if consent granted)
+  referenceImageFileId String?
+  isSynthetic          Boolean   @default(true) // true = AI-generated avatar, not a real person
+  // Status
+  status               String    @default("ACTIVE") // ACTIVE | INACTIVE | ARCHIVED
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([gender])
+  @@index([status])
+  @@index([consentStatus])
+}
+
+// Voice profiles for TTS in marketing creatives.
+// Must not impersonate a real person's voice without explicit consent.
+model VoiceProfile {
+  id                String    @id @default(cuid())
+  voiceId           String    @unique // VP-0001
+  displayName       String
+  language          String    @default("bn") // bn | en | banglish
+  accent            String? // "dhaka" | "standard-bengali" | "bangladeshi-english"
+  gender            String // MALE | FEMALE
+  voiceStyle        String? // "warm" | "professional" | "energetic" | "calm"
+  // Consent
+  consentStatus     String    @default("PENDING") // PENDING | GRANTED | REVOKED
+  consentDocumentId String?
+  consentDate       DateTime?
+  usageRights       String? // JSON describing permitted usage
+  isSynthetic       Boolean   @default(true) // true = synthetic voice, not a real person's voice
+  // Status
+  status            String    @default("ACTIVE")
+  providerVoiceId   String? // TTS provider's voice ID
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([language])
+  @@index([status])
+  @@index([consentStatus])
+}
+
+// ============================================================
+// PUBLIC WEBSITE CONTENT MODELS (Blog, News, Events)
+// ============================================================
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String
+  content     String    @default("[]") // JSON array of {type: "p"|"h2"|"h3"|"quote"|"list", text/items}
+  coverImage  String?
+  category    String    @default("General") // Study Tips, Visa Guide, Career, Country Guide, Scholarships, English Tests, Application, Student Life
+  tags        String    @default("[]") // JSON array
+  authorName  String?
+  authorRole  String?
+  readMinutes Int       @default(3)
+  status      String    @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  featured    Boolean   @default(false)
+  publishedAt DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([featured])
+
+  // ─── Enhanced fields from sandbox rebuild ───
+  heroImage         String?
+  author            String?
+  readingTime       Int      @default(5)
+  keyTakeaways      String   @default("[]")
+  whoAppliesTo      String?
+  requirements      String?
+  stepByStep        String?
+  documents         String?
+  timeline          String?
+  fees              String?
+  importantDates    String?
+  commonMistakes    String?
+  aloGuidance       String?
+  officialSources   String?
+  metaTitle         String?
+  metaDescription   String?
+  sourceUrl         String?
+  sourceType        String?
+  lastVerifiedAt    DateTime?
+  verificationStatus String   @default("NOT_VERIFIED")
+}
+
+model NewsArticle {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String
+  content     String    @default("[]") // JSON array of content blocks
+  coverImage  String?
+  category    String    @default("Announcement") // Announcement, University Update, Immigration Update, Scholarship Update, Country Update, Event
+  country     String? // UK, USA, Australia etc.
+  tags        String    @default("[]") // JSON array
+  authorName  String?
+  isPinned    Boolean   @default(false)
+  status      String    @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  publishedAt DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([country])
+  @@index([isPinned])
+}
+
+model EventPage {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  title         String
+  subtitle      String?
+  description   String
+  content       String    @default("[]") // JSON content blocks for detail page
+  coverImage    String?
+  eventType     String    @default("WEBINAR") // WEBINAR, WORKSHOP, INFO_SESSION, EXPO, MEETUP, ONLINE, IN_PERSON
+  category      String    @default("General") // Career, Country, University, English Test, Visa, Scholarship, Application
+  eventDate     DateTime
+  eventEndDate  DateTime?
+  location      String    @default("Online") // Online, Dhaka office, venue address
+  city          String?
+  country       String?
+  onlineLink    String? // Zoom/Meet link (only revealed after registration)
+  capacity      Int?
+  registeredCount Int   @default(0)
+  isFree        Boolean   @default(true)
+  price         String?
+  status        String    @default("PUBLISHED") // DRAFT, PUBLISHED, COMPLETED, CANCELLED
+  isFeatured    Boolean   @default(false)
+  publishedAt   DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([eventDate])
+  @@index([isFeatured])
+}
+
+// ============================================================
+// SERVICES — 14 study-abroad services with detail pages, FAQs
+// ============================================================
+
+model Service {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  title             String
+  shortDescription  String
+  description       String
+  icon              String
+  heroImage         String?
+  content           String   // JSON: { whatItIs, whyItMatters, whoNeedsIt, whatAloHelpsWith, process[], timeline, fees }
+  eligibility       String?
+  requirements      String?  // JSON array
+  documents         String?  // JSON array
+  faqEnabled        Boolean  @default(true)
+  ctaLabel          String?
+  ctaUrl            String?
+  status            String   @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  sortOrder         Int      @default(0)
+  lastVerifiedAt    DateTime?
+  sourceUrl         String?
+  verificationStatus String  @default("VERIFIED")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  faqs                ServiceFaq[]
+  relationships       ContentRelationship[] @relation("ServiceSource")
+  reverseRelationships ContentRelationship[] @relation("ServiceTarget")
+
+  @@index([status])
+  @@index([sortOrder])
+}
+
+model ServiceFaq {
+  id         String   @id @default(cuid())
+  serviceId  String
+  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  question   String
+  answer     String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([serviceId])
+}
+
+// ============================================================
+// SCHOLARSHIPS — verified scholarship listings
+// ============================================================
+
+model Scholarship {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  scholarshipCode    String   @unique
+  name                String
+  countrySlug         String?
+  universitySlug      String?
+  courseSlug          String?
+  studyLevel          String?
+  subject             String?
+  fundingType         String   // FULLY_FUNDED, PARTIAL, TUITION_REDUCTION, MERIT_BASED, NEED_BASED
+  amount              String?
+  currency            String?
+  coverage            String?  // JSON: { tuition, living, accommodation, travel, insurance, other }
+  eligibility         String?
+  minimumRequirements String?  // JSON
+  documentsRequired   String?  // JSON array
+  applicationMethod   String?  // SEPARATE_APPLICATION, AUTOMATIC_WITH_ADMISSION
+  applicationUrl      String?
+  openingDate         String?
+  deadline            String?
+  decisionDate        String?
+  status              String   @default("OPEN") // OPEN, CLOSING_SOON, CLOSED, UPCOMING, NEEDS_VERIFICATION
+  verificationStatus  String   @default("VERIFIED")
+  sourceUrl           String?
+  sourceName          String?
+  lastVerifiedAt      DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  faqs                ScholarshipFaq[]
+  relationships       ContentRelationship[] @relation("ScholarshipSource")
+  reverseRelationships ContentRelationship[] @relation("ScholarshipTarget")
+
+  @@index([status])
+  @@index([countrySlug])
+  @@index([universitySlug])
+  @@index([studyLevel])
+}
+
+model ScholarshipFaq {
+  id             String   @id @default(cuid())
+  scholarshipId  String
+  scholarship    Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+  question       String
+  answer         String
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@index([scholarshipId])
+}
+
+// ============================================================
+// RESOURCES — articles/guides organized by category
+// ============================================================
+
+model ResourceCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  icon        String?
+  sortOrder   Int      @default(0)
+  status      String   @default("ACTIVE")
+  resources   Resource[]
+
+  @@index([status])
+}
+
+model Resource {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  categoryId       String
+  category         ResourceCategory @relation(fields: [categoryId], references: [id])
+  title            String
+  excerpt          String?
+  content          String   // Full article content (HTML or Markdown)
+  authorId         String?
+  featuredImage    String?
+  countrySlug      String?
+  studyLevel        String?
+  readingTime      Int      @default(5) // minutes
+  status           String   @default("PUBLISHED") // DRAFT, PUBLISHED, SCHEDULED, ARCHIVED
+  publishedAt      DateTime?
+  lastVerifiedAt   DateTime?
+  sourceUrl        String?
+  sourceName       String?
+  verificationStatus String @default("VERIFIED")
+  seoTitle         String?
+  seoDescription   String?
+  tags             String   @default("[]") // JSON array of tags
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  faqs              ResourceFaq[]
+  relationships     ContentRelationship[] @relation("ResourceSource")
+  reverseRelationships ContentRelationship[] @relation("ResourceTarget")
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([countrySlug])
+  @@index([publishedAt])
+}
+
+model ResourceFaq {
+  id          String   @id @default(cuid())
+  resourceId  String
+  resource    Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  question    String
+  answer      String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([resourceId])
+}
+
+// ============================================================
+// CONTENT RELATIONSHIPS — unified related-content engine
+// Connects SERVICES, SCHOLARSHIPS, RESOURCES, COURSES, UNIVERSITIES, COUNTRIES
+// ============================================================
+
+model ContentRelationship {
+  id               String   @id @default(cuid())
+  sourceType       String   // SERVICE, SCHOLARSHIP, RESOURCE, COURSE, UNIVERSITY, COUNTRY
+  sourceId         String
+  targetType       String   // SERVICE, SCHOLARSHIP, RESOURCE, COURSE, UNIVERSITY, COUNTRY
+  targetId         String
+  relationshipType String   // RELATED, FAQ_REFERENCE, REQUIREMENT_REFERENCE
+  sortOrder        Int      @default(0)
+  status           String   @default("ACTIVE")
+  createdAt        DateTime @default(now())
+
+  // Optional relations — only populated for entities that have Prisma models.
+  // For COURSE / UNIVERSITY / COUNTRY targets, the relations stay null and the
+  // string IDs are resolved at query time by the consumer.
+  serviceSource      Service?      @relation("ServiceSource", fields: [sourceId], references: [id], onDelete: Cascade, map: "ContentRelationship_serviceSource_fkey")
+  scholarshipSource  Scholarship?  @relation("ScholarshipSource", fields: [sourceId], references: [id], onDelete: Cascade, map: "ContentRelationship_scholarshipSource_fkey")
+  resourceSource     Resource?     @relation("ResourceSource", fields: [sourceId], references: [id], onDelete: Cascade, map: "ContentRelationship_resourceSource_fkey")
+  serviceTarget      Service?      @relation("ServiceTarget", fields: [targetId], references: [id], onDelete: Cascade, map: "ContentRelationship_serviceTarget_fkey")
+  scholarshipTarget  Scholarship?  @relation("ScholarshipTarget", fields: [targetId], references: [id], onDelete: Cascade, map: "ContentRelationship_scholarshipTarget_fkey")
+  resourceTarget     Resource?     @relation("ResourceTarget", fields: [targetId], references: [id], onDelete: Cascade, map: "ContentRelationship_resourceTarget_fkey")
+
+  @@index([sourceType, sourceId])
+  @@index([targetType, targetId])
+}
+
+// ============================================================
+// AI TASK QUEUE + AI ACTIONS + AUTOMATION
+// ============================================================
+
+model AiTask {
+  id              String   @id @default(cuid())
+  taskCode        String   @unique // ALO-AITASK-XXXXX
+  agentId         String? // AiAgent.id
+  agentName       String   // e.g. "Lead Intake Agent"
+  department      String   // e.g. "Lead Management"
+  crmId           String? // Lead.studentId or Lead.leadId
+  crmType         String? // LEAD, STUDENT, APPLICATION
+  applicationId   String?
+  priority        String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  status          String   @default("QUEUED") // QUEUED, RUNNING, WAITING, COMPLETED, FAILED, ESCALATED, CANCELLED
+  action          String   // e.g. "qualify_lead", "score_lead", "assign_counselor"
+  input           String?  @default("{}") // JSON: task input data
+  result          String?  @default("{}") // JSON: task result
+  errorMessage    String?
+  retryCount      Int      @default(0)
+  maxRetries      Int      @default(3)
+  approvalRequired Boolean @default(false)
+  approvedById    String?
+  approvedAt      DateTime?
+  deadline        DateTime?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  actions         AiAction[]
+
+  @@index([status])
+  @@index([agentId])
+  @@index([crmId])
+  @@index([priority])
+  @@index([createdAt])
+}
+
+model AiAction {
+  id              String   @id @default(cuid())
+  taskId          String
+  task            AiTask   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  agentName       String
+  actionType      String   // TOOL_CALL, LLM_CALL, CRM_UPDATE, NOTIFICATION, ESCALATION
+  toolName        String?  // e.g. "create_lead", "search_course"
+  toolInput       String?  @default("{}") // JSON
+  toolResult      String?  @default("{}") // JSON
+  crmId           String?
+  crmType         String?
+  success         Boolean  @default(true)
+  errorMessage    String?
+  duration        Int?     // milliseconds
+  createdAt       DateTime @default(now())
+
+  @@index([taskId])
+  @@index([agentName])
+  @@index([actionType])
+  @@index([createdAt])
+}
+
+model FormSubmission {
+  id              String   @id @default(cuid())
+  submissionCode  String   @unique // ALO-FS-XXXXX
+  source          String   // WEBSITE, WHATSAPP, FACEBOOK, etc.
+  channel         String?  // form name, page URL
+  sourceUrl       String?
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  rawPayload      String   @default("{}") // JSON: complete raw form data
+  normalizedData  String?  @default("{}") // JSON: normalized fields
+  crmId           String? // linked Lead.leadId or Student.studentId
+  crmType         String? // LEAD, STUDENT
+  processingStatus String @default("PENDING") // PENDING, PROCESSED, DUPLICATE, ERROR
+  errorMessage    String?
+  ipAddress       String?
+  createdAt       DateTime @default(now())
+
+  @@index([source])
+  @@index([crmId])
+  @@index([processingStatus])
+}
+
+model AutomationMetric {
+  id              String   @id @default(cuid())
+  category        String   // lead_intake, data_entry, lead_qualification, assignment, course_matching, document_processing, follow_up, deadline_tracking, communication, reporting, qa
+  totalTasks      Int      @default(0)
+  automatedTasks  Int      @default(0)
+  aiAssistedTasks Int      @default(0)
+  humanTasks      Int      @default(0)
+  failedTasks     Int      @default(0)
+  date            DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  @@index([category])
+  @@index([date])
+}
+
+// ============================================================
+// STUDENT PORTAL EXTENSION MODELS
+// ============================================================
+
+model AiStudentMemory {
+  id              String   @id @default(cuid())
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  memoryType     String   // IDENTITY, PROFILE, PREFERENCES, APPLICATIONS, DOCUMENTS, COMMUNICATION, ENGLISH, INTERVIEW, VISA
+  memoryKey       String
+  memoryValue     String   @default("{}") // JSON
+  confidence      String   @default("CONFIRMED") // CONFIRMED, INFERRED, UNKNOWN
+  lastUpdated     DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  @@index([studentId])
+  @@index([memoryType])
+  @@unique([studentId, memoryType, memoryKey])
+}
+
+model Referral {
+  id              String   @id @default(cuid())
+  referralCode    String   @unique // AEFR-XXXXXX
+  referrerStudentId String
+  referrerStudent Student  @relation("ReferralsMade", fields: [referrerStudentId], references: [id], onDelete: Cascade)
+  referredLeadId  String? // linked Lead.id when someone uses the code
+  referredName    String?
+  referredPhone   String?
+  referredEmail   String?
+  status          String   @default("PENDING") // PENDING, QUALIFIED, CONSULTATION_DONE, APPLICATION_SUBMITTED, ENROLLED, REWARDED
+  campaign        String?
+  source          String?  // WHATSAPP, MESSENGER, LINK, DIRECT
+  rewardOffered   String?
+  rewardStatus    String?  // PENDING, ELIGIBLE, AWARDED, EXPIRED
+  qualifiedAt     DateTime?
+  enrolledAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([referrerStudentId])
+  @@index([status])
+  @@index([referralCode])
+}
+
+model VisaChecklistItem {
+  id              String   @id @default(cuid())
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  applicationId   String?
+  category        String   // IDENTITY, ACADEMIC, ENGLISH, UNIVERSITY, FINANCE, VISA, INTERVIEW, COMMUNICATION
+  itemName        String  // e.g. "Passport valid", "Bank statement 28-day"
+  status          String   @default("NOT_UPLOADED") // NOT_UPLOADED, UPLOADED, AI_CHECKING, PENDING_REVIEW, APPROVED, REJECTED, NEEDS_UPDATE, EXPIRED
+  documentId      String? // linked Document.id
+  verifiedAt      DateTime?
+  verifiedById     String?
+  notes           String?
+  isBlocking      Boolean  @default(true) // blocks final visa submission if true and not approved
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([applicationId])
+  @@index([status])
+}
+
+model VisaReadinessAssessment {
+  id              String   @id @default(cuid())
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  applicationId   String?
+  overallScore    Int      @default(0) // 0-100
+  documentsScore  Int      @default(0)
+  financialScore  Int      @default(0)
+  academicScore   Int      @default(0)
+  courseKnowledgeScore Int @default(0)
+  universityKnowledgeScore Int @default(0)
+  studyPlanScore  Int      @default(0)
+  interviewReadinessScore Int @default(0)
+  riskLevel       String   @default("UNKNOWN") // READY, NEEDS_DOCUMENT_UPDATE, NEEDS_INTERVIEW_PRACTICE, HIGH_RISK, HUMAN_REVIEW_REQUIRED
+  riskFlags       String   @default("[]") // JSON array of risk flag strings
+  recommendations String  @default("[]") // JSON array
+  assessedAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  @@index([studentId])
+  @@index([riskLevel])
+}
+
+model StudentNotification {
+  id              String   @id @default(cuid())
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  type            String   // APPLICATION_SUBMITTED, DOCUMENT_APPROVED, DOCUMENT_REJECTED, OFFER_RECEIVED, CAS_ISSUED, VISA_UPDATE, MESSAGE, APPOINTMENT, PAYMENT, DEADLINE, REFERRAL, SYSTEM
+  title           String
+  message         String
+  isRead          Boolean  @default(false)
+  actionUrl       String?  // route to navigate to
+  priority        String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  relatedId       String?  // applicationId, documentId, etc.
+  createdAt       DateTime @default(now())
+
+  @@index([studentId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model StudentHelpTicket {
+  id              String   @id @default(cuid())
+  ticketCode      String   @unique // ALO-HELP-XXXXX
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject         String
+  message         String
+  category        String   // TECHNICAL, ADMISSION, VISA, PAYMENT, DOCUMENT, GENERAL
+  status          String   @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  priority        String   @default("NORMAL")
+  response        String?
+  resolvedById    String?
+  resolvedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+}
+
+
+// ============================================================
+// MODELS FROM SANDBOX REBUILD (23 new models)
+// ============================================================
+
+model AcademicRecord {
+  id         String  @id @default(cuid())
+  studentId  String
+  degree     String
+  institution String
+  gpa        String?
+  scale      String?
+  year       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([studentId])
+}
+
+model Attendance {
+  id              String   @id @default(cuid())
+  employeeId      String
+  date            DateTime
+  checkIn         DateTime?
+  checkOut        DateTime?
+  status          String   @default("ABSENT") // PRESENT, ABSENT, LATE, HALF_DAY, LEAVE, HOLIDAY
+  workHours       Float?
+  notes           String?
+  approvedBy      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([employeeId, date])
+  @@index([employeeId])
+  @@index([date])
+  @@index([status])
+}
+
+model AutomationRule {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  eventType       String   // e.g., "LEAD_CREATED", "APPLICATION_SUBMITTED", "SLA_BREACH"
+  conditions      String   // JSON conditions
+  actions         String   // JSON actions
+  priority        Int      @default(5)
+  status          String   @default("ACTIVE") // ACTIVE, INACTIVE
+  executionCount  Int      @default(0)
+  lastExecutedAt  DateTime?
+  createdBy       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([eventType])
+  @@index([status])
+}
+
+model ConflictRecord {
+  id            String   @id @default(cuid())
+  userId        String
+  entity        String
+  entityId      String
+  localVersion  String   // JSON
+  serverVersion String   // JSON
+  localData     String   // JSON
+  serverData    String   // JSON
+  resolution    String?  // KEEP_LOCAL, KEEP_SERVER, MERGE
+  resolvedBy    String?
+  resolvedAt    DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([userId, entity])
+  @@index([entity, entityId])
+}
+
+model Conversation {
+  id         String   @id @default(cuid())
+  studentId  String?
+  participantIds String  @default("[]")
+  type       String   @default("GENERAL")
+  title      String?
+  status     String   @default("ACTIVE")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  messages   Message[]
+
+  @@index([studentId])
+  @@index([type])
+}
+
+model CountryEducationGuide {
+  id                String   @id @default(cuid())
+  countrySlug       String   @unique
+  title             String
+  slug              String   @unique
+  shortDescription  String?
+  heroImage         String?
+  pdfUrl            String?
+  isPublished       Boolean  @default(false)
+  version           Int      @default(1)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  steps             CountryGuideStep[]
+}
+
+model CountryGuideStep {
+  id              String   @id @default(cuid())
+  guideId         String
+  guide           CountryEducationGuide @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  stepNumber      Int
+  title           String
+  description     String?
+  requirements    String   @default("[]")
+  documents       String   @default("[]")
+  timeline        String?
+  tips            String?
+  officialLinks   String   @default("[]")
+  image           String?
+  isPublished     Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([guideId, stepNumber])
+}
+
+model CourseEligibilityRule {
+  id                  String   @id @default(cuid())
+  courseSlug          String   @unique
+  universitySlug      String
+  countrySlug         String
+  studyLevel          String?
+  minGpa              String?
+  minIelts            String?
+  minPte              String?
+  minToefl            String?
+  academicRequirement String?
+  englishRequirement  String?
+  additionalRequirement String?
+  eligibilityNotes    String?
+  verificationStatus  String   @default("NEEDS_REVIEW")
+  lastVerifiedAt      DateTime?
+  verifiedBy          String?
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([countrySlug])
+  @@index([universitySlug])
+  @@index([courseSlug])
+}
+
+model CourseIntake {
+  id                String   @id @default(cuid())
+  courseSlug        String
+  universitySlug    String
+  countrySlug       String
+  year              Int
+  month             Int
+  applicationDeadline String?
+  decisionDate      String?
+  startDate         String?
+  status            String   @default("OPEN") // OPEN, CLOSED, TENTATIVE, CONFIRMED
+  sourceUrl         String?
+  sourceType        String?
+  verificationStatus String   @default("NOT_VERIFIED") // NOT_VERIFIED, VERIFIED, NEEDS_REVIEW
+  lastVerifiedAt    DateTime?
+  verifiedBy        String?
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([courseSlug, year, month])
+  @@index([countrySlug])
+  @@index([universitySlug])
+  @@index([year, month])
+  @@index([status])
+}
+
+model EmailLog {
+  id            String   @id @default(cuid())
+  applicationId String?
+  studentId     String?
+  toEmail       String
+  ccEmail       String?
+  subject       String
+  body          String
+  status        String   @default("DRAFT")
+  type          String   @default("DOCUMENT_REQUEST")
+  sentAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  application   Application? @relation(fields: [applicationId], references: [applicationId])
+}
+
+model EnglishScore {
+  id         String   @id @default(cuid())
+  studentId  String
+  testType   String
+  overallScore String
+  readingScore  String?
+  writingScore  String?
+  listeningScore String?
+  speakingScore String?
+  testDate    DateTime?
+  expiryDate  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([studentId])
+}
+
+model Escalation {
+  id              String   @id @default(cuid())
+  slaId           String
+  sla             SLA      @relation(fields: [slaId], references: [id], onDelete: Cascade)
+  entityType      String
+  entityId        String?
+  level           Int      @default(1)
+  triggeredAt     DateTime @default(now())
+  reason          String?
+  assignedTo      String?
+  status          String   @default("ACTIVE") // ACTIVE, RESOLVED, SUPPRESSED
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  notes           String?
+}
+
+model Invoice {
+  id             String   @id @default(cuid())
+  invoiceNo      String   @unique
+  paymentId      String?
+  studentId      String
+  partnerId      String?
+  amount         Float
+  tax            Float    @default(0)
+  totalAmount    Float
+  currency       String   @default("BDT")
+  status         String   @default("DRAFT")
+  dueDate        DateTime?
+  paidAt         DateTime?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  payment        Payment? @relation(fields: [paymentId], references: [id])
+
+  @@index([studentId])
+  @@index([partnerId])
+  @@index([status])
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  senderId       String
+  senderRole     String?
+  content        String
+  type           String   @default("TEXT")
+  isRead         Boolean  @default(false)
+  readAt         DateTime?
+  createdAt      DateTime @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([senderId])
+}
+
+model Note {
+  id              String   @id @default(cuid())
+  entityType      String   // STUDENT, LEAD, APPLICATION, PARTNER, EMPLOYEE
+  entityId        String
+  content         String
+  noteType        String   @default("GENERAL") // GENERAL, CALL, MEETING, SYSTEM, AI
+  createdBy       String?
+  isPinned        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([entityType, entityId])
+  @@index([createdBy])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // STUDENT_CREATED, DOCUMENT_UPLOADED, APPLICATION_SUBMITTED, etc.
+  title       String
+  message     String
+  data        String?  // JSON with related IDs
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+  channel     String   @default("IN_APP") // IN_APP, EMAIL, SMS, WHATSAPP
+  createdAt   DateTime @default(now())
+
+  @@index([userId, isRead, createdAt])
+  @@index([type])
+}
+
+model Offer {
+  id             String   @id @default(cuid())
+  applicationId  String   @unique
+  studentId      String
+  universityName String
+  courseName     String
+  country        String
+  offerType      String   @default("CONDITIONAL")
+  status         String   @default("PENDING_RESPONSE")
+  conditions     String?
+  scholarshipAmount String?
+  scholarshipCurrency String?
+  tuitionFee     String?
+  responseDeadline DateTime?
+  respondedAt    DateTime?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([applicationId])
+  @@index([status])
+}
+
+model Partner {
+  id              String   @id @default(cuid())
+  partnerId       String   @unique
+  name            String
+  contactPerson   String?
+  email           String?
+  phone           String?
+  address         String?
+  city            String?
+  country         String?
+  type            String   @default("RECRUITMENT_PARTNER") // RECRUITMENT_PARTNER, INSTITUTION, AGENT
+  commissionRate  Float?
+  status          String   @default("ACTIVE") // ACTIVE, INACTIVE, SUSPENDED
+  assignedCounselor String?
+  notes           String?
+  dataIsolationId String?  // For B2B data isolation
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([type])
+  @@index([dataIsolationId])
+}
+
+model SLA {
+  id              String   @id @default(cuid())
+  name            String
+  entityType      String   // LEAD, APPLICATION, VISA, SUPPORT
+  priority        String   @default("NORMAL") // URGENT, HIGH, NORMAL, LOW
+  responseTimeMinutes Int   @default(60)
+  resolutionTimeMinutes Int @default(1440) // 24h
+  businessHoursOnly Boolean @default(true)
+  status          String   @default("ACTIVE") // ACTIVE, INACTIVE
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  escalations     Escalation[]
+
+  @@unique([entityType, priority])
+}
+
+model SavedItem {
+  id        String   @id @default(cuid())
+  userId    String?
+  sessionId String?
+  itemType  String
+  itemSlug  String
+  createdAt DateTime @default(now())
+
+  @@index([userId, itemType])
+  @@index([sessionId, itemType])
+  @@unique([sessionId, itemType, itemSlug])
+  @@unique([userId, itemType, itemSlug])
+}
+
+model SyncOperation {
+  id          String   @id @default(cuid())
+  userId      String
+  entity      String   // students, leads, applications, etc.
+  entityId    String
+  operation   String   // CREATE, UPDATE, DELETE
+  payload     String   // JSON
+  status      String   @default("PENDING") // PENDING, SYNCED, FAILED
+  clientTimestamp DateTime
+  serverTimestamp  DateTime @default(now())
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId, status])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+model VisaApplication {
+  id             String   @id @default(cuid())
+  applicationId  String   @unique
+  studentId      String
+  country        String
+  visaType       String?
+  status         String   @default("NOT_STARTED")
+  submissionDate DateTime?
+  decisionDate   DateTime?
+  outcome        String?
+  visaGrantDate  DateTime?
+  expiryDate     DateTime?
+  casNumber      String?
+  gwfNumber      String?
+  notes          String?
+  documentsJson  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+  @@index([country])
+}
+
+model Workflow {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  entityType      String   // APPLICATION, LEAD, VISA, DOCUMENT
+  triggerEvent    String?  // e.g., "application.stage_changed"
+  status          String   @default("ACTIVE") // ACTIVE, INACTIVE, DRAFT
+  version         Int      @default(1)
+  definition      String   // JSON workflow definition
+  createdBy       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([entityType])
+  @@index([status])
+}

@@ -1,130 +1,81 @@
-import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { PUBLIC_SCHOLARSHIP_STATUSES } from '@/lib/website/public-content';
-import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { NextRequest, NextResponse } from 'next/server';
 
-// GET /api/scholarships — unified scholarship system DB-driven per spec section 10
-// Supports filters: country, universityId, fundingType, search, featured, limit
-// Only publish verified scholarship information
-export async function GET(req: Request) {
+const PUBLIC_SCHOLARSHIP_FIELDS = {
+  scholarshipCode: true,
+  name: true,
+  slug: true,
+  countrySlug: true,
+  universitySlug: true,
+  courseSlug: true,
+  studyLevel: true,
+  subject: true,
+  amount: true,
+  currency: true,
+  fundingType: true,
+  eligibility: true,
+  minimumRequirements: true,
+  coverage: true,
+  openingDate: true,
+  deadline: true,
+  decisionDate: true,
+  documentsRequired: true,
+  applicationMethod: true,
+  applicationUrl: true,
+};
+
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const country = searchParams.get('country') || '';
-    const universityId = searchParams.get('universityId') || '';
-    const fundingType = searchParams.get('fundingType') || '';
-    const search = searchParams.get('search') || '';
-    const featured = searchParams.get('featured');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200);
-    // §15 filters
-    const studyLevel = searchParams.get('studyLevel') || '';
-    const subject = searchParams.get('subject') || '';
-    const scholarshipType = searchParams.get('scholarshipType') || '';
-    const intake = searchParams.get('intake') || '';
-    const applicationOpen = searchParams.get('applicationOpen') === 'true';
+    const { searchParams } = new URL(request.url);
+    const country = searchParams.get('country');
+    const university = searchParams.get('university');
 
-    // Build where for new Scholarship model
-    const where: any = { status: { in: PUBLIC_SCHOLARSHIP_STATUSES } };
-    if (country) where.country = { contains: country };
-    if (universityId) where.universityId = universityId;
-    if (fundingType) where.fundingType = fundingType;
-    if (studyLevel) where.studyLevel = studyLevel;
-    if (subject) where.subject = { contains: subject };
-    if (scholarshipType) where.scholarshipType = scholarshipType;
-    if (intake) where.intake = { contains: intake };
-    if (applicationOpen) where.deadlineDate = { gte: new Date() };
-    if (featured === 'true') where.isFeatured = true;
-    if (search) {
-      where.OR = [
-        { name: { contains: search } },
-        { university: { contains: search } },
-        { overview: { contains: search } },
-        { eligibility: { contains: search } },
-      ];
+    const where: Record<string, unknown> = { status: 'OPEN' };
+
+    if (country) {
+      where.countrySlug = country;
+    }
+    if (university) {
+      where.universitySlug = university;
     }
 
-    // Fetch from new Scholarship model (29 sections) + CrmScholarship (course-specific)
-    const [scholarships, crmScholarships] = await Promise.all([
+    const [scholarships, total] = await Promise.all([
       db.scholarship.findMany({
         where,
-        orderBy: [{ isFeatured: 'desc' }, { sortOrder: 'asc' }, { createdAt: 'desc' }],
-        take: limit,
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          country: true,
-          university: true,
-          universityId: true,
-          fundingAmount: true,
-          fundingType: true,
-          fundingCurrency: true,
-          amount: true,
-          currency: true,
-          eligibility: true,
-          deadline: true,
-          deadlineDate: true,
-          overview: true,
-          verificationStatus: true,
-          lastVerifiedAt: true,
-          officialSourceUrl: true,
-          status: true,
-          isFeatured: true,
-          sortOrder: true,
-          // §15/§16 additions
-          studyLevel: true,
-          subject: true,
-          scholarshipType: true,
-          intake: true,
-          applicationMethod: true,
-          fundingAmountNumber: true,
-          nationalityRequirements: true,
-          openingDate: true,
-        },
-      }).catch(() => []),
-      db.crmScholarship.findMany({
-        where: { status: 'active', ...(country ? { university: { country: { contains: country } } } : {}), ...(universityId ? { universityId } : {}) },
-        include: {
-          university: { select: { universityId: true, name: true, country: true, city: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-        take: limit,
-      }).catch(() => []),
+        select: PUBLIC_SCHOLARSHIP_FIELDS,
+        orderBy: { name: 'asc' },
+      }),
+      db.scholarship.count({ where }),
     ]);
 
-    // Merge results — new scholarships first
-    const crmMapped = crmScholarships.map((s: any) => ({
-      id: s.id,
-      slug: `crm-${s.id}`,
-      name: s.scholarshipName,
-      country: s.university?.country || '',
-      university: s.university?.name || '',
-      universityId: s.universityId,
-      courseId: s.courseId,
-      fundingAmount: s.scholarshipAmount ? `${s.scholarshipCurrency || ''} ${s.scholarshipAmount}` : 'Check eligibility',
-      fundingType: s.coverageType || 'tuition_waiver',
-      eligibility: `Eligible countries: ${s.eligibleCountries || 'All'} — Levels: ${s.eligibleLevels || 'All'}`,
-      deadline: s.deadline || '',
-      verificationStatus: s.verificationStatus || 'NEEDS_REVIEW',
-      lastVerifiedAt: s.lastCheckedAt || null,
-      officialSourceUrl: s.officialScholarshipUrl || '',
-      source: 'crm',
-      universityData: s.university,
+    // Enrich with university names
+    const universitySlugs = [...new Set(scholarships.map((s) => s.universitySlug).filter(Boolean))] as string[];
+    const universities = universitySlugs.length > 0
+      ? await db.universityPage.findMany({
+          where: { slug: { in: universitySlugs } },
+          select: { slug: true, name: true },
+        })
+      : [];
+    const uniMap = new Map(universities.map((u) => [u.slug, u.name]));
+
+    const safeScholarships = scholarships.map((s) => ({
+      ...s,
+      universityName: s.universitySlug ? uniMap.get(s.universitySlug) ?? null : null,
     }));
 
-    const allScholarships = [...scholarships, ...crmMapped];
-
-    return NextResponse.json({
-      success: true,
-      scholarships: allScholarships,
-      total: allScholarships.length,
-      verified: allScholarships.filter((s: any) => s.verificationStatus === 'verified' || s.verificationStatus === 'VERIFIED').length,
-      message: allScholarships.length === 0 ? 'No verified scholarships yet. Only publish verified scholarship information per spec.' : `${allScholarships.length} scholarships found — DB-driven, verified only`,
-    });
-  } catch (error: any) {
-    console.error('[scholarships.list] error', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch scholarships' }, { status: 500 });
+    return NextResponse.json(
+      { scholarships: safeScholarships, total },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    );
+  } catch (error) {
+    console.error('Scholarships API error:', error);
+    return NextResponse.json(
+      { error: 'Failed to load scholarships' },
+      { status: 500 }
+    );
   }
 }
-
-// Keep legacy creation URLs on the same authenticated, audited implementation.
-export { POST } from "../admin/scholarships/route";

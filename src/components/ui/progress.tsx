@@ -5,17 +5,11 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 
 import { cn } from "@/lib/utils"
 
-type ProgressProps = React.ComponentProps<typeof ProgressPrimitive.Root> & {
-  /** Optional CSS colour used by legacy CRM dashboards. */
-  indicatorColor?: string;
-};
-
 function Progress({
   className,
   value,
-  indicatorColor,
   ...props
-}: ProgressProps) {
+}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
@@ -28,10 +22,7 @@ function Progress({
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
         className="bg-primary h-full w-full flex-1 transition-all"
-        style={{
-          transform: `translateX(-${100 - (value || 0)}%)`,
-          ...(indicatorColor ? { backgroundColor: indicatorColor } : {}),
-        }}
+        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
       />
     </ProgressPrimitive.Root>
   )

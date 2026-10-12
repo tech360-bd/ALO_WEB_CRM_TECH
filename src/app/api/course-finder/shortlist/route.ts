@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireStudentResource } from "@/lib/student-resource-auth";
 
 // Shortlist (save) a course for a student
 export async function GET(req: NextRequest) {
-  const access = await requireStudentResource(req, req.nextUrl.searchParams.get("studentId"));
-  if (access instanceof NextResponse) return access;
-  const studentId = access.studentId;
+  const studentId = req.nextUrl.searchParams.get("studentId");
+  if (!studentId) return NextResponse.json({ shortlisted: [] });
   const shortlisted = await db.courseShortlist.findMany({
     where: { studentId },
     orderBy: { createdAt: "desc" },
@@ -15,13 +13,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const { studentId: requestedStudentId, courseSlug } = await req.json();
-  const access = await requireStudentResource(req, requestedStudentId);
-  if (access instanceof NextResponse) return access;
-  const studentId = access.studentId;
-  if (!courseSlug) return NextResponse.json({ error: "courseSlug required" }, { status: 400 });
+  const { studentId, courseSlug } = await req.json();
+  if (!studentId || !courseSlug) return NextResponse.json({ error: "studentId and courseSlug required" }, { status: 400 });
   try {
-    await db.courseShortlist.create({ data: { studentId, courseId: courseSlug, courseSlug } });
+    await db.courseShortlist.create({ data: { studentId, courseSlug } });
     return NextResponse.json({ saved: true });
   } catch {
     // Already shortlisted — remove it (toggle)
@@ -31,10 +26,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const { studentId: requestedStudentId, courseSlug } = await req.json();
-  const access = await requireStudentResource(req, requestedStudentId);
-  if (access instanceof NextResponse) return access;
-  if (!courseSlug) return NextResponse.json({ error: "courseSlug required" }, { status: 400 });
-  await db.courseShortlist.deleteMany({ where: { studentId: access.studentId, courseSlug } });
+  const { studentId, courseSlug } = await req.json();
+  await db.courseShortlist.deleteMany({ where: { studentId, courseSlug } });
   return NextResponse.json({ removed: true });
 }

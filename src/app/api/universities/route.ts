@@ -1,65 +1,104 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { publicUniversityWhere } from '@/lib/public-catalog';
-import { getOptionalAuth } from '@/lib/auth-middleware';
+import { NextRequest, NextResponse } from 'next/server';
 
-// Public GET /api/universities — proxies to approved, verified CrmUniversity (Part 46)
-// Query: ?search=&country=&status=&limit=50
-// Publish safety: by default only rows with status 'active' are returned
-// (seeders write status:'active'; unverified rows stay 'needs_official_source').
-// Pass ?status=all only from internal/admin contexts that must see everything.
-export async function GET(req: NextRequest) {
+const PUBLIC_UNIVERSITY_FIELDS = {
+  slug: true,
+  name: true,
+  countrySlug: true,
+  city: true,
+  state: true,
+  address: true,
+  ranking: true,
+  studentsCount: true,
+  accommodation: true,
+  popularSubjects: true,
+  logo: true,
+  campusImage: true,
+  overview: true,
+  internationalInfo: true,
+  whyChoose: true,
+  studentSupport: true,
+  studentLife: true,
+  careerInfo: true,
+  applicationProcess: true,
+  strengths: true,
+  quickFacts: true,
+  tuition: true,
+  tuitionRange: true,
+  scholarshipAvailable: true,
+  applicationFee: true,
+  depositInfo: true,
+  requiredDocuments: true,
+  importantDeadlines: true,
+  officialWebsite: true,
+  internationalUrl: true,
+  applicationUrl: true,
+  scholarshipUrl: true,
+  contactEmail: true,
+  metaTitle: true,
+  metaDescription: true,
+  approvalStatus: true,
+};
+
+export async function GET(request: NextRequest) {
   try {
-    const search = req.nextUrl.searchParams.get('search') || '';
-    const country = req.nextUrl.searchParams.get('country') || '';
-    const status = req.nextUrl.searchParams.get('status') || 'active';
-    const limit = Math.max(1, Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10) || 50, 100));
-    const auth = await getOptionalAuth(req);
-    const privileged = auth?.roles.some(role => ['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(role));
+    const { searchParams } = new URL(request.url);
+    const country = searchParams.get('country');
+    const search = searchParams.get('search');
+    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const offset = parseInt(searchParams.get('offset') || '0', 10);
 
-    const where: any = {};
-    if (!privileged) {
-      where.AND = [publicUniversityWhere()];
-      where.status = 'active';
-      where.verificationStatus = 'VERIFIED';
-      where.publicationStatus = { in: ['published', 'PUBLISHED'] };
-    } else if (status !== 'all') where.status = status;
-    if (search) where.OR = [{ name: { contains: search } }, { city: { contains: search } }, { country: { contains: search } }];
-    if (country && country !== 'all') where.country = { contains: country };
+    const where: Record<string, unknown> = { approvalStatus: 'PUBLISHED' };
 
-    // No .catch(()=>[]) here: a DB failure must surface as a 500, not as an
-    // empty list that renders as "no universities exist".
+    if (country) {
+      where.countrySlug = country;
+    }
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search } },
+        { city: { contains: search } },
+      ];
+    }
+
     const [universities, total] = await Promise.all([
-      db.crmUniversity.findMany({
+      db.universityPage.findMany({
         where,
-        take: limit,
+        select: {
+          ...PUBLIC_UNIVERSITY_FIELDS,
+          country: {
+            select: { name: true, shortName: true, flag: true, slug: true },
+          },
+          _count: {
+            select: { courses: { where: { approvalStatus: 'PUBLISHED' } } },
+          },
+        },
         orderBy: { name: 'asc' },
+        take: Math.min(limit, 100),
+        skip: offset,
       }),
-      db.crmUniversity.count({ where }),
+      db.universityPage.count({ where }),
     ]);
 
-    // Never expose internal notes/source artifacts; return whitelisted fields
-    const safe = universities.map((u: any) => ({
-      id: u.id,
-      universityId: u.universityId,
-      name: u.name,
-      slug: u.slug,
-      country: u.country,
-      city: u.city,
-      campusName: u.campusName,
-      website: u.website,
-      officialUrl: u.officialUrl,
-      ranking: u.ranking || u.worldRanking,
-      status: u.status,
-      verificationStatus: u.verificationStatus,
-      lastVerifiedAt: u.lastVerifiedAt,
+    const safeUniversities = universities.map((u) => ({
+      ...u,
+      courseCount: u._count.courses,
+      _count: undefined,
     }));
 
-    // `total` is the real matching-row count (not the page size), so the UI
-    // can show honest, DB-driven statistics instead of hardcoded claims.
-    return NextResponse.json({ success: true, universities: safe, data: safe, total });
-  } catch (e: any) {
-    console.error('[api/universities] error', e);
-    return NextResponse.json({ success: false, error: 'Failed to load universities' }, { status: 500 });
+    return NextResponse.json(
+      { universities: safeUniversities, total },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    );
+  } catch (error) {
+    console.error('Universities API error:', error);
+    return NextResponse.json(
+      { error: 'Failed to load universities' },
+      { status: 500 }
+    );
   }
 }

@@ -1,18 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { aiChat } from "@/lib/ai";
-import { authenticateRequest } from "@/lib/auth-middleware";
-
-const MARKETING_ROLES = new Set(["SUPER_ADMIN", "ADMIN", "super_admin", "admin", "MARKETING_MANAGER", "marketing_manager", "MARKETING", "marketing"]);
 
 // Marketing content generator (captions, post copy, ad copy, video scripts)
 export async function POST(req: NextRequest) {
-  const auth = await authenticateRequest(req);
-  if (auth instanceof NextResponse) return auth;
-  if (!MARKETING_ROLES.has(auth.userType) && !auth.roles.some((role) => MARKETING_ROLES.has(role))) {
-    return NextResponse.json({ error: "Marketing access required" }, { status: 403 });
-  }
-
-  const body = await req.json().catch(() => ({}));
+  const body = await req.json();
   const { contentType, topic, platform, tone, targetAudience, keyMessage, cta } = body;
 
   const systemPrompt = `You are the ALO Education AI Marketing Content Generator. Create ${contentType} for ${platform} about: ${topic}.
