@@ -63,11 +63,17 @@ FLUSH PRIVILEGES;
 
 ---
 
-### Step 5: Run `bash deploy.sh`
-Execute the automated deployment script to install dependencies, push database schema, compile production assets, and start PM2:
-```bash
-bash deploy.sh
-```
+### Step 5: Database schema and seed (do NOT run `deploy.sh`)
+`deploy.sh` is permanently disabled and exits without doing anything. Never use
+a data-loss-authorizing schema push or a seed command whose failure is ignored.
+Follow `docs/HOSTINGER-PRODUCTION-DEPLOYMENT.md` instead:
+
+- Schema: take and verify a backup, inspect with `npx prisma migrate status`,
+  then run `npx prisma migrate deploy` only after migration review and release
+  approval.
+- Seed: not part of deployment. `prisma/seed-complete.ts` resets the Super Admin
+  password on every run, so it is a separate, one-time, manual operator step
+  (runbook section 5). If it fails, stop and investigate; do not continue.
 
 ---
 

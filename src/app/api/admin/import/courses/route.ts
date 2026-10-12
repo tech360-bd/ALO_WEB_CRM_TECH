@@ -1,22 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 
 export async function POST(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
-      const isAuthorized = auth.roles.some((r) => ['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(r));
+      const isAuthorized = ['user', 'portal'].includes(auth.identityDomain || '') && ['ADMIN', 'SUPER_ADMIN'].includes(auth.userType.toUpperCase());
       if (!isAuthorized) {
         return NextResponse.json({ success: false, error: 'UNAUTHORIZED: Admin authority required' }, { status: 403 });
       }
 
-      const body = await req.json();
+      if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required' }, { status: 403 });
+      const body = await req.json().catch(() => null);
+      if (!body || typeof body !== 'object') return NextResponse.json({ success: false, error: 'Invalid import body' }, { status: 400 });
       const { rows, dryRun } = body;
 
       if (!Array.isArray(rows) || rows.length === 0 || rows.length > 500) {
         return NextResponse.json({ success: false, error: 'Provide between 1 and 500 rows' }, { status: 400 });
       }
 
+      if (rows.some(row => !row || typeof row !== 'object' || Array.isArray(row) || Object.values(row).some(value => typeof value !== 'string' || value.length > 191))) return NextResponse.json({ success: false, error: 'Import cells must be strings of at most 191 characters' }, { status: 400 });
       const validRows: any[] = [];
       const duplicateRows: any[] = [];
       const invalidRows: any[] = [];
@@ -89,6 +93,7 @@ export async function POST(request: NextRequest) {
               yearlyTuition: tuitionFee,
               tuitionCurrency: currency,
               feeSourceUrl: (r.source_url || '').trim(),
+              verificationStatus: 'NEEDS_REVIEW',
             },
           });
         }

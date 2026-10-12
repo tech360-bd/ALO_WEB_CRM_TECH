@@ -1,10 +1,11 @@
 'use client';
+import RegistrationEnquiries from '@/components/crm/RegistrationEnquiries';
 
 /**
  * Counselor lead queue — /counselor/leads
  *
  * Backed by GET /api/employee/leads, which scopes the list to the signed-in
- * counselor's own assignments on the server. Scope, status and search are sent
+ * User account's own created leads on the server. Scope, status and search are sent
  * as query parameters; nothing is filtered client-side only.
  */
 
@@ -102,7 +103,7 @@ export default function CounselorLeadsPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const path = useMemo(() => {
-    const params = new URLSearchParams({ scope: 'assigned', limit: '100' });
+    const params = new URLSearchParams({ scope: 'created', limit: '100' });
     if (status) params.set('status', status);
     if (search) params.set('search', search);
     return `/api/employee/leads?${params.toString()}`;
@@ -175,7 +176,7 @@ export default function CounselorLeadsPage() {
           <div className="min-w-0">
             <h1 className="text-[20px] font-bold leading-tight tracking-[-0.01em] text-slate-900">My Leads</h1>
             <p className="mt-1 text-[13px] text-slate-500">
-              Leads assigned to you. The list is scoped to your account on the server.
+              Leads you created. Assignment and team views remain unavailable until identity mapping is verified.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
@@ -185,9 +186,10 @@ export default function CounselorLeadsPage() {
             </Button>
           </div>
         </header>
+        <RegistrationEnquiries/>
 
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Metric label="Total assigned" value={total} />
+          <Metric label="Total created" value={total} />
           <Metric label="Loaded" value={leads.length} />
           <Metric label="Hot leads" value={hotCount} tone={hotCount > 0 ? 'warning' : 'neutral'} />
           <Metric label="Follow-ups due" value={awaitingFollowUp} tone={awaitingFollowUp > 0 ? 'info' : 'neutral'} />
@@ -247,7 +249,7 @@ export default function CounselorLeadsPage() {
           <div className="rounded-xl border border-slate-200 bg-white px-6 py-16 text-center">
             <Users className="mx-auto mb-3 h-10 w-10 text-slate-300" aria-hidden="true" />
             <h2 className="text-[15px] font-semibold text-slate-900">
-              {status || search ? 'No leads match those filters' : 'No leads assigned to you yet'}
+              {status || search ? 'No leads match those filters' : 'No leads created by you yet'}
             </h2>
             <p className="mx-auto mt-1 max-w-[460px] text-[13px] leading-relaxed text-slate-500">
               {status || search

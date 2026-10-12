@@ -1,3 +1,4 @@
+import { testDatabaseUrl } from '../helpers/test-database';
 // ============================================================
 // ALO Education — University & Course Monitoring: integration tests
 // ============================================================
@@ -29,7 +30,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 // The suite uses real persistence, so it is loaded only when the runner has
 // explicitly received a disposable TEST_DATABASE_URL. Otherwise it is skipped
 // without initializing Prisma or any DB-backed service modules.
-const integrationDescribe = process.env.TEST_DATABASE_URL ? describe : describe.skip;
+const integrationDescribe = testDatabaseUrl() ? describe : describe.skip;
 if (!process.env.TEST_DATABASE_URL) {
   console.warn('[integration] university-monitoring tests skipped: TEST_DATABASE_URL is not set.');
 }
@@ -58,6 +59,7 @@ let countrySlug = '';
 
 /** Minimal, explicitly synthetic fixtures — never written to production tables. */
 beforeAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
   const user = await db.user.create({
     data: {
       email: `itest-superadmin-${SUFFIX}@aloedu.test`,
@@ -133,6 +135,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
   // Clean up only the rows this test created.
   await db.courseHistory.deleteMany({ where: { courseSlug: COURSE_SLUG } }).catch(() => undefined);
   await db.universityHistory.deleteMany({ where: { universitySlug: UNI_SLUG } }).catch(() => undefined);

@@ -39,7 +39,6 @@ export default function UniversitiesListing() {
   const [search, setSearch] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
@@ -162,7 +161,7 @@ export default function UniversitiesListing() {
                     </span>
                   </Card>
                 </Link>
-                );
+                ;
               })}
             </div>
             {totalPages > 1 && (

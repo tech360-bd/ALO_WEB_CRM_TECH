@@ -18,7 +18,8 @@ vi.mock('@/lib/db', () => ({ db: {
 
 import { POST } from '@/app/api/whatsapp/ai-reply/route';
 
-const staff = { userId: 'staff-1', userType: 'COUNSELOR', roles: ['COUNSELOR'], permissions: [], name: 'Counselor', email: 'staff@example.test' };
+// Canonical administrator test only. Counselor workflows are deliberately blocked pending domain-aware UCC ownership.
+const staff = { identityDomain:'user', userId: 'staff-1', userType: 'ADMIN', roles: ['ADMIN'], permissions: [], name: 'Counselor', email: 'staff@example.test' };
 
 beforeEach(() => {
   vi.resetAllMocks();

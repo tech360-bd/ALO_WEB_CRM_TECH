@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { assignVerifiedRegistration } from '@/lib/crm/verified-registration-assignment';
 import { consumeEmailOtp, getRequestIp, issueEmailOtp } from '@/lib/auth/email-otp';
 
 export async function POST(request: Request) {
@@ -10,26 +11,30 @@ export async function POST(request: Request) {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^\d{6}$/.test(code)) {
       return NextResponse.json({ success: false, error: 'A valid email and six-digit code are required.' }, { status: 400 });
     }
-    const user = await db.portalUser.findUnique({ where: { email }, select: { id: true, userType: true, status: true } });
-    if (!user || !await consumeEmailOtp({ userId: user.id, email, code, purpose: 'email_verification' })) {
-      return NextResponse.json({ success: false, error: 'Invalid or expired code.' }, { status: 400 });
-    }
-
-    const isStudent = user.userType === 'STUDENT';
-    const nextStatus = isStudent && user.status === 'pending_verification' ? 'active' : user.status;
-    await db.portalUser.update({
-      where: { id: user.id },
-      data: { emailVerified: true, status: nextStatus },
-    });
-    const approvalRequired = user.userType === 'PARTNER' && nextStatus !== 'active';
+    const outcome = await db.$transaction(async tx => {
+      const user = await tx.portalUser.findUnique({ where: { email }, select: { id: true, userType: true, status: true, emailVerified: true } });
+      // Verification is not a way to reactivate suspended/deactivated accounts.
+      if (!user || user.emailVerified || !['pending_verification', 'pending', 'active'].includes(user.status)) return null;
+      const consumed = await consumeEmailOtp({ userId: user.id, email, code: code, purpose: 'email_verification' }, tx);
+      // Resolve normally on invalid codes so attempt counters COMMIT.
+      if (!consumed) return null;
+      const isStudent = user.userType.toUpperCase() === 'STUDENT';
+      const nextStatus = isStudent && user.status === 'pending_verification' ? 'active' : user.status;
+      const claimed = await tx.portalUser.updateMany({
+        where: { id: user.id, emailVerified: false, status: user.status },
+        data: { emailVerified: true, status: nextStatus },
+      });
+      // Roll back OTP consumption on a concurrent account/status change.
+      if (claimed.count !== 1) throw new Error('Verification state changed. Retry.');
+      if (isStudent && user.status === 'pending_verification') await assignVerifiedRegistration(tx, { domain: 'portal', userId: user.id });
+      await tx.portalAuditLog.create({ data: { actorUserId: user.id, action: 'EMAIL_VERIFIED', entityType: 'PortalUser', entityId: user.id,
+        metadata: JSON.stringify({ identityDomain: 'portal', status: nextStatus }) } });
+      return { nextStatus, approvalRequired: user.userType.toUpperCase() === 'PARTNER' && nextStatus !== 'active' };
+    }, { maxWait: 5000, timeout: 15000 });
+    if (!outcome) return NextResponse.json({ success: false, error: 'Invalid or expired code, or account cannot be verified.' }, { status: 400 });
     return NextResponse.json({
-      success: true,
-      emailVerified: true,
-      approvalRequired,
-      userStatus: nextStatus,
-      message: approvalRequired
-        ? 'Email verified. Partner access remains pending separate staff approval.'
-        : 'Email verified. You can now sign in.',
+      success: true, emailVerified: true, approvalRequired: outcome.approvalRequired, userStatus: outcome.nextStatus,
+      message: outcome.approvalRequired ? 'Email verified. Partner access remains pending separate staff approval.' : 'Email verified. You can now sign in.',
     });
   } catch {
     return NextResponse.json({ success: false, error: 'Verification could not be completed.' }, { status: 500 });

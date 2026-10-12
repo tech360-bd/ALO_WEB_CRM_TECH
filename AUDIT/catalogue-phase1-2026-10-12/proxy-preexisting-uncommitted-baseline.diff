@@ -1,0 +1,101 @@
+diff --git a/src/proxy.ts b/src/proxy.ts
+index 3189175b..3077484f 100644
+--- a/src/proxy.ts
++++ b/src/proxy.ts
+@@ -89,6 +89,7 @@ const PUBLIC_ROUTES = [
+   // names, but real pages also need to be reachable without a session).
+   "/student/login",
+   "/student/register",
++  "/verify-email",
+   "/partner/login",
+   "/partner/register",
+   "/partner/activate",
+@@ -121,6 +122,7 @@ const PUBLIC_ROUTES = [
+   // Auth entry points that live inside otherwise-gated portal prefixes:
+   "/student/login",
+   "/student/register",
++  "/verify-email",
+ ];
+ 
+ const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+@@ -198,6 +200,8 @@ const PUBLIC_API_READ_ROUTES = [
+ ];
+ 
+ const PUBLIC_API_WRITE_ROUTES = [
++  // Provider authentication (HS256 JWT), bounded body and dedupe enforced by route.
++  "/api/integrations/httpsms/webhook",
+   // RFC 8058 one-click unsubscribe POST and confirm form. Token-verified in the route.
+   "/api/email/unsubscribe",
+   // Outbox worker trigger (Bearer CRON_SECRET, verified by requireCron).
+@@ -461,8 +465,48 @@ export function getDashboardRoute(role: string): string {
+ export default async function proxy(request: NextRequest) {
+   const { pathname } = request.nextUrl;
+ 
++  // Never serve legacy private uploads, including image extensions and nested
++  // public copies. This must precede the static-asset bypass below and be
++  // explicitly included in the matcher (which otherwise excludes extensions).
++  function isPrivateUploadUrl(value: string): boolean {
++    let decoded = value;
++    for (let attempt = 0; attempt < 5; attempt++) {
++      try {
++        const next = decodeURIComponent(decoded);
++        if (next === decoded) break;
++        decoded = next;
++        if (attempt === 4) return true; // excessive encoding: fail closed
++      } catch { return true; }
++    }
++    if (/[\u0000-\u001f\u007f;]/.test(decoded)) return true;
++    // Image optimizer URLs can be absolute or protocol-relative as well as local.
++    if (/^(?:https?:)?\/\//i.test(decoded)) {
++      try { decoded = new URL(decoded, 'https://local.invalid').pathname; }
++      catch { return true; }
++    }
++    const segments: string[] = [];
++    for (const segment of decoded.replace(/\\/g, '/').split('/')) {
++      if (!segment || segment === '.') continue;
++      if (segment === '..') segments.pop();
++      else segments.push(segment.toLowerCase());
++    }
++    while (segments[0] === 'public') segments.shift();
++    return segments[0] === 'uploads';
++  }
++  const imageSources = pathname === '/_next/image' ? request.nextUrl.searchParams.getAll('url') : [];
++  if (isPrivateUploadUrl(pathname) || imageSources.some(isPrivateUploadUrl)) {
++    return new NextResponse(null, {
++      status: 403,
++      headers: { 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' },
++    });
++  }
++
+   // Allow static assets and Next internals
+   if (
++    // These were previously excluded by the matcher. Preserve their existing
++    // behavior only AFTER the private-upload check, not before it.
++    pathname.includes('.') ||
++    pathname.startsWith('/public') ||
+     pathname.startsWith("/_next/") ||
+     pathname.startsWith("/static/") ||
+     pathname.endsWith(".js") ||
+@@ -478,7 +522,12 @@ export default async function proxy(request: NextRequest) {
+   }
+ 
+   const method = request.method.toUpperCase();
+-  const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
++  const userToken = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
++  const navigationHint = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET, cookieName:'alo_page_session' });
++  // A page role hint never becomes a canonical User session. Expire unlabelled
++  // legacy JWTs by requiring re-login, rather than guessing their identity table.
++  const token = userToken?.identityDomain === 'user' ? userToken
++    : navigationHint && ['portal','student'].includes(String(navigationHint.identityDomain)) ? navigationHint : null;
+   // Role claims are resolved through the shared vocabulary before any
+   // authorisation decision. Tokens minted before the alias fix still carry
+   // legacy claims (`HR`, `SUPPORT_AGENT`) that ROLE_ROUTES does not key on; left
+@@ -556,7 +605,5 @@ export default async function proxy(request: NextRequest) {
+ }
+ 
+ export const config = {
+-  matcher: [
+-    "/((?!_next/static|_next/image|favicon.ico|public|.*\\..*).*)",
+-  ],
++  matcher: ["/:path*"],
+ };

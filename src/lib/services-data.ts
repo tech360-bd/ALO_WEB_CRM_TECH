@@ -66,14 +66,14 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
     id: "srv-02",
     slug: "university-course-selection",
     title: "University & Course Selection",
-    shortDesc: "Data-driven selection from our verified directory of partner universities and thousands of courses across UK, USA, Canada, Australia & Europe.",
+    shortDesc: "Course and university shortlisting based on your profile, using official university information and counsellor review.",
     longDescription: "Choosing the right university and course is critical for your future employability and visa success. We analyze global university rankings, course modules, tuition fees, location advantages, and industry links to ensure the perfect academic match.",
     heroImage: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80",
     iconName: "Building2",
     seoTitle: "University & Course Selection Guidance | ALO Education",
     seoDescription: "Data-driven university and course selection across our global partner university network in UK, USA, Canada, Australia, Germany, and Ireland.",
     benefits: [
-      "Access to a verified directory of international universities and degree programs.",
+      "Guidance on international universities and degree programmes, based on official university information.",
       "Detailed tuition fee, living cost, and location comparison.",
       "Matching entry requirements (GPA, IELTS/PTE, work experience).",
       "High offer acceptance and scholarship probability matching."

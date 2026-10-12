@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 type Row = Record<string, any>;
 const state = vi.hoisted(() => ({
   rows: [] as Row[],
-  sent: [] as Array<{ to: string; message: string }>,
+  sent: [] as Array<{ to: string; message: string; sensitive?: boolean }>,
   sendImpl: null as null | (() => Promise<unknown>),
   auditRows: [] as Row[],
   seq: 0,
@@ -64,9 +64,10 @@ vi.mock('@/lib/db', () => ({
 }));
 
 vi.mock('@/lib/sms-gateway', () => ({
-  sendSms: async (opts: { to: string; message: string }) => {
+  SmsDeliveryError: class extends Error { constructor(readonly outcome: string, message: string) { super(message); } },
+  sendSms: async (opts: { to: string; message: string; sensitive?: boolean }) => {
     if (state.sendImpl) return state.sendImpl();
-    state.sent.push({ to: opts.to, message: opts.message });
+    state.sent.push({ ...opts });
     return { messageId: 'm1', provider: 'generic', status: 'sent' };
   },
 }));
@@ -100,6 +101,7 @@ describe('phone OTP: generation and delivery', () => {
     const errSpy = vi.spyOn(console, 'error');
     const result = await generateOtp({ ownerType: 'student', ownerId: 's1', phone: PHONE });
     expect(state.sent).toHaveLength(1);
+    expect(state.sent[0].sensitive).toBe(true);
     expect(state.sent[0].to).toBe('8801712345678');
     expect(sentCode()).toMatch(/^\d{6}$/);
     expect(result).not.toHaveProperty('otp');

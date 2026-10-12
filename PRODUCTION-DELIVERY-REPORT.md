@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — NOT A SOURCE OF TRUTH** (labelled 2026-10-12).
+> Unsupported: States database contents such as '400 Universities', 13 students and 34 leads as 'preserved'. No database query output backs these counts, and the 400 university rows correspond to generated synthetic catalogue data, not verified records.
+> See AUDIT/historical-catalogue-reports-2026-10-12/README.md.
+
 > LEGACY / NOT USED FOR CURRENT PRODUCTION where conflicting: Hostinger + Node.js 22.x + npm is the only current production architecture. Historical instructions below are retained as evidence, not executable release guidance. See root HOSTINGER-RUNTIME-STANDARD.md.
 
 # ALO Education — Production Delivery Report

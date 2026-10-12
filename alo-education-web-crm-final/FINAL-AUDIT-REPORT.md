@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — NOT A SOURCE OF TRUTH** (labelled 2026-10-12).
+> Unsupported: Section 4 lists per-country database totals (for example United Kingdom: 150 universities, 3,120 courses; 7 published countries) and states route/handler counts and server checks as verified. No database query output, reviewer or run log backs these figures; the catalogue rows behind such counts are generated synthetic data (see AUDIT/course-finder-2026-10-12/synthetic-catalogue-manifest.json).
+> See AUDIT/historical-catalogue-reports-2026-10-12/README.md.
+
 # ALO Education — Final Delivery Acceptance Audit Report
 
 **Audit Date:** August 12, 2026  

@@ -1,0 +1,2310 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /home/user/alo_education_z....ai
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > creates an UNVERIFIED DRAFT with only supplied values, and it is not publicly visible
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > refuses to create without the identifying fields instead of inventing them
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > rejects AI payloads that try to set verification or publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > an AI update to a VERIFIED published page downgrades it and takes it out of publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > an unsupported target fails instead of reporting a fake deployment
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts (28 tests | 27 failed) 248ms
+     × /api/admin/courses/create: a sourceUrl no longer marks anything VERIFIED and no facts are invented 25ms
+     × /api/admin/courses: a sourceUrl no longer marks anything VERIFIED and no facts are invented 6ms
+     × /api/admin/courses/create: control fields requesting publication or verification are refused with no write 4ms
+     × /api/admin/courses: control fields requesting publication or verification are refused with no write 3ms
+     × /api/admin/courses/create: fees need an explicit currency and intake; nothing is assumed 4ms
+     × /api/admin/courses: fees need an explicit currency and intake; nothing is assumed 2ms
+     × /api/admin/courses/create: a lowercase admin role claim on a non-admin user type is refused 2ms
+     × /api/admin/courses: a lowercase admin role claim on a non-admin user type is refused 2ms
+     × every CoursePage/UniversityPage/CountryPage/ExamPage create in src/ is a reviewed path that sets both status fields 158ms
+     × creates an UNVERIFIED DRAFT with only supplied values, and it is not publicly visible 5ms
+     × refuses to create without the identifying fields instead of inventing them 3ms
+     × rejects AI payloads that try to set verification or publication 2ms
+     × an AI update to a VERIFIED published page downgrades it and takes it out of publication 2ms
+     × an unsupported target fails instead of reporting a fake deployment 2ms
+     × GET (lists payloads) now requires an ADMIN/SUPER_ADMIN session 1ms
+     × CrmCourse: a sourceUrl in the body no longer upgrades NEEDS_REVIEW to VERIFIED 3ms
+     × CrmCourse: a fact edit of a VERIFIED course sends it to NEEDS_REVIEW; a status-only edit keeps VERIFIED; neither re-dates it 2ms
+     × CrmCourse: fee changes need a currency (no GBP default) and mark fee rows NEEDS_REVIEW 2ms
+     × CrmCourse/CrmUniversity: control fields are refused 2ms
+     × CrmUniversity: same rules; an unchanged legacy http website does not block the edit 2ms
+     × scholarship import never marks rows verified or dated, and invents no currency or amount text 2ms
+     × course-finder admin: re-sending normalised values ("" for null) is not a change and does not unpublish 2ms
+     ✓ portal identities are not written to the User foreign key 1ms
+     × import-center records the session actor, never a fallback email or "system" id 3ms
+     × crm/scholarships POST: no GBP default, a currency is required with an amount, control fields are refused 2ms
+     × crm/scholarships PUT: a fact edit of a VERIFIED scholarship returns it to NEEDS_REVIEW; a status edit does not 2ms
+     × admin/countries POST: an ordinary save no longer stamps lastVerifiedAt (shown publicly as "Last verified") 2ms
+     × admin/website/cms country upsert: static check that no lastVerifiedAt is written on save 2ms
+stderr | tests/unit/catalogue-phase1-security.test.ts > K3 /api/source-logs and /api/data-quality permissions and side effects > error responses do not leak driver messages
+[data-quality] error Error
+
+ ❯ tests/unit/catalogue-phase1-security.test.ts (23 tests | 1 failed) 148ms
+     ✓ reject and approve change approvalStatus only, never verificationStatus 29ms
+     ✓ refuses to publish an unverified item or one without an https official source 18ms
+     ✓ publishes a VERIFIED item with a source, guarded against concurrent change 10ms
+     ✓ verify is SUPER_ADMIN only, needs an https official source, and does not publish 17ms
+     ✓ rejects unknown actions, unknown types, control fields and cross-origin writes 6ms
+     ✓ a lowercase admin role claim on a non-admin user type no longer grants access 3ms
+     × APPROVE applies the field and history but leaves verificationStatus untouched 14ms
+     ✓ create always stores UNVERIFIED with no verification date, ignoring client control fields 3ms
+     ✓ create refuses client verification/publication and invalid sources 4ms
+     ✓ update never spreads the body: id, timestamps, relations and unknown keys are not written 3ms
+     ✓ editing facts of a VERIFIED published page sends it back to review and never refreshes lastVerifiedAt 1ms
+     ✓ re-sending identical form values is a no-op (legacy values do not block edits) 2ms
+     ✓ verification can only be downgraded by editing, never granted 10ms
+     ✓ publishing via the toggle needs ADMIN/SUPER_ADMIN and a VERIFIED record with an https source 4ms
+     ✓ rejects object ids (operator injection) and stale writes 1ms
+     ✓ DELETE is limited to ADMIN/SUPER_ADMIN; students and partners are refused everywhere 2ms
+     ✓ students, partners and ordinary staff cannot read or write source logs 3ms
+     ✓ POST records a pending source attributed to the session, never a verification 1ms
+     ✓ POST rejects client-set verification/attribution, bad URLs, bad types and cross-origin 3ms
+     ✓ data-quality GET is admin-only and performs no writes; persisting is an explicit POST 4ms
+     ✓ error responses do not leak driver messages 2ms
+     ✓ accepts only https, credential-free, non-synthetic source URLs 1ms
+     ✓ drops unknown keys and never passes control fields through 2ms
+stderr | tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > direct /courses/[slug] URLs 404 for every hidden case
+div: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts (17 tests | 12 failed) 107ms
+     ✓ only the verified, published, https-sourced, conflict-free course of a public university passes 5ms
+     ✓ the JS re-check rejects synthetic hosts that pass the SQL startsWith filter 1ms
+     × homepage lists and counts only public catalogue pages 20ms
+     × search cannot surface hidden records even when the query matches them 6ms
+     × student eligibility scoring only uses public course pages 11ms
+     × the public study-guide endpoint no longer returns drafts or unverified pages by slug 2ms
+     × direct /courses/[slug] URLs 404 for every hidden case 38ms
+     × legacy /course/[slug] only redirects to a public course page 4ms
+     × direct /universities/[slug] URLs 404 unless public, and embed only public courses 2ms
+     × sitemap omits pages named by an open conflict 2ms
+     × fails closed (no catalogue rows) when the conflict lookup errors 4ms
+     × student-portal course finder excludes inactive, unverified, draft, source-less and conflicting rows 4ms
+     × student-portal scholarships require a source-verified scholarship of a public university 2ms
+     ✓ publicCourseWhere itself rejects every non-public Crm case 1ms
+     × a dotted path under a gated page outside ROLE_ROUTES no longer skips the proxy 1ms
+     ✓ real static locations still bypass 1ms
+     ✓ API and role-gated prefixes never bypass, whatever the encoding 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 40 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > homepage lists and counts only public catalogue pages
+AssertionError: expected [ 'c-conflicting-status', …(9) ] to deeply equal [ 'c-ok' ]
+
+- Expected
++ Received
+
+  [
++   "c-conflicting-status",
++   "c-empty-source",
++   "c-hidden-university",
++   "c-http-source",
++   "c-needs-review",
++   "c-no-source",
+    "c-ok",
++   "c-open-conflict",
++   "c-synthetic-source",
++   "c-unverified",
+  ]
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:161:33
+    159|   it('homepage lists and counts only public catalogue pages', async ()…
+    160|     const body = await (await homepageGET()).json();
+    161|     expect(slugs(body.courses)).toEqual([PUBLIC_COURSE]);
+       |                                 ^
+    162|     expect(slugs(body.universities)).toEqual(['uni-ok']);
+    163|     expect(body.stats.totalCourses).toBe(2); // SQL count: c-ok + c-sy…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > search cannot surface hidden records even when the query matches them
+AssertionError: expected [ 'c-conflicting-status', …(7) ] to deeply equal [ 'c-ok' ]
+
+- Expected
++ Received
+
+  [
++   "c-conflicting-status",
++   "c-empty-source",
++   "c-http-source",
++   "c-needs-review",
++   "c-no-source",
+    "c-ok",
++   "c-synthetic-source",
++   "c-unverified",
+  ]
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:169:33
+    167|   it('search cannot surface hidden records even when the query matches…
+    168|     const body = await (await searchGET(new NextRequest('https://alo.t…
+    169|     expect(slugs(body.courses)).toEqual([PUBLIC_COURSE]);
+       |                                 ^
+    170|     expect(slugs(body.universities)).toEqual(['uni-ok']);
+    171|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > student eligibility scoring only uses public course pages
+AssertionError: c-unverified: expected '{"student":{"id":"stu-1","name":"Synt…' not to contain '"c-unverified"'
+
+Expected: ""c-unverified""
+Received: "{"student":{"id":"stu-1","name":"Synthetic Student","profileCompletion":true},"results":[{"courseSlug":"c-ok","courseName":"Course c-ok","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-unverified","courseName":"Course c-unverified","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-needs-review","courseName":"Course c-needs-review","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-conflicting-status","courseName":"Course c-conflicting-status","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-no-source","courseName":"Course c-no-source","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-empty-source","courseName":"Course c-empty-source","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-http-source","courseName":"Course c-http-source","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-synthetic-source","courseName":"Course c-synthetic-source","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-open-conflict","courseName":"Course c-open-conflict","university":"uni-ok","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]},{"courseSlug":"c-hidden-university","courseName":"Course c-hidden-university","university":"uni-unverified","eligibilityScore":0,"status":"MISSING_INFO","reasons":[],"missing":["Education history not provided","English test score not provided","Preferred destination not set","Preferred study level not set","Preferred subject area not set"]}],"summary":{"total":10,"eligible":0,"likelyEligible":0,"needReview":0,"notEligible":0,"missingInfo":10}}"
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:178:82
+    176|     const listed = JSON.stringify(body);
+    177|     expect(listed).toContain(PUBLIC_COURSE);
+    178|     for (const hidden of Object.keys(HIDDEN_COURSES)) expect(listed, h…
+       |                                                                                  ^
+    179|   });
+    180|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > the public study-guide endpoint no longer returns drafts or unverified pages by slug
+TypeError: db.coursePage.findUnique is not a function
+ ❯ Module.generateStudyGuide src/lib/study-guide.ts:80:38
+     78|
+     79| export async function generateStudyGuide(courseSlug: string): Promise<…
+     80|   const course = await db.coursePage.findUnique({
+       |                                      ^
+     81|     where: { slug: courseSlug },
+     82|     include: { university: true },
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:182:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > direct /courses/[slug] URLs 404 for every hidden case
+AssertionError: promise resolved "{ …(10) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ <main
++   className="min-h-screen bg-slate-50 px-4 pb-16 pt-24 sm:px-6"
++ >
++   <script
++     dangerouslySetInnerHTML={
++       {
++         "__html": "{\"@context\":\"https://schema.org\",\"@type\":\"Course\",\"name\":\"Course c-unverified\",\"description\":\"c-unverified overview\",\"url\":\"https://aloeducation.com/courses/c-unverified\",\"provider\":{\"@type\":\"CollegeOrUniversity\",\"name\":\"uni-ok\"}}",
++       }
+      }
++     type="application/ld+json"
++   />
++   <div
++     className="mx-auto max-w-5xl"
++   >
++     <nav
++       aria-label="Breadcrumb"
++       className="mb-5 flex flex-wrap items-center gap-2 text-xs text-slate-500"
++     >
++       <ForwardRef(LinkComponent)
++         className="hover:text-blue-700"
++         href="/"
++       >
++         Home
++       </ForwardRef(LinkComponent)>
++       <span>
++         ›
++       </span>
++       <ForwardRef(LinkComponent)
++         className="hover:text-blue-700"
++         href="/courses"
++       >
++         Courses
++       </ForwardRef(LinkComponent)>
++       <React.Fragment>
++         <span>
++           ›
++         </span>
++         <ForwardRef(LinkComponent)
++           className="hover:text-blue-700"
++           href="/destinations/new-zealand"
++         >
++           New Zealand
++         </ForwardRef(LinkComponent)>
++       </React.Fragment>
++       <React.Fragment>
++         <span>
++           ›
++         </span>
++         <ForwardRef(LinkComponent)
++           className="hover:text-blue-700"
++           href="/universities/uni-ok"
++         >
++           uni-ok
++         </ForwardRef(LinkComponent)>
++       </React.Fragment>
++       <span>
++         ›
++       </span>
++       <span
++         className="font-semibold text-slate-800"
++       >
++         Course c-unverified
++       </span>
++     </nav>
++     <header
++       className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-9"
++     >
++       <div
++         className="flex flex-wrap items-center gap-2"
++       >
++         <span
++           className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1.5 text-[9px] font-bold text-blue-800"
++         >
++           <BookOpen
++             className="h-3 w-3"
++           />
++           COURSE RECORD
++         </span>
++         <span
++           className="rounded-full px-2.5 py-1.5 text-[9px] font-bold bg-amber-50 text-amber-700"
++         >
++           UNVERIFIED
++         </span>
++       </div>
++       <h1
++         className="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl"
++       >
++         Course c-unverified
++       </h1>
++       <p
++         className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-600"
++       >
++         uni-ok
++          · Auckland
++         <React.Fragment>
++           <span>
++             ·
++           </span>
++           <span
++             className="inline-flex items-center gap-1"
++           >
++             <MapPin
++               className="h-3.5 w-3.5"
++             />
++             New Zealand
++           </span>
++         </React.Fragment>
++       </p>
++       <p
++         className="mt-4 max-w-3xl text-sm leading-6 text-slate-600"
++       >
++         c-unverified overview
++       </p>
++       <div
++         className="mt-5 flex flex-wrap gap-2"
++       >
++         <a
++           className="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-4 text-[10px] font-bold text-white hover:bg-slate-800"
++           href="https://www.auckland.ac.nz/en/study/x.html"
++           rel="noopener noreferrer"
++           target="_blank"
++         >
++           <ExternalLink
++             className="h-3.5 w-3.5"
++           />
++           Open official source
++         </a>
++         <ForwardRef(LinkComponent)
++           className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 text-[10px] font-bold text-slate-700 hover:bg-slate-50"
++           href="/universities/uni-ok"
++         >
++           University page
++         </ForwardRef(LinkComponent)>
++         <ForwardRef(LinkComponent)
++           className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 text-[10px] font-bold text-slate-700 hover:bg-slate-50"
++           href="/course-finder"
++         >
++           Course search
++         </ForwardRef(LinkComponent)>
++       </div>
++     </header>
++     <section
++       className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-[10px] leading-4 text-amber-900"
++     >
++       <div
++         className="flex items-center gap-2 font-bold"
++       >
++         <ShieldCheck
++           className="h-4 w-4"
++         />
++         Evidence and verification
++       </div>
++       <p
++         className="mt-1"
++       >
++         This page reflects one published database record. The verification label applies to the record as a whole; it is not evidence that every field was independently confirmed unless the official source supports it. Missing fields remain “Not recorded.”
++       </p>
++       <div
++         className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-amber-950"
++       >
++         <span>
++           Source: 
++           <a
++             className="underline"
++             href="https://www.auckland.ac.nz/en/study/x.html"
++             rel="noopener noreferrer"
++             target="_blank"
++           >
++             www.auckland.ac.nz
++           </a>
++         </span>
++         <span>
++           Last checked: 
++           Not recorded
++         </span>
++         <span>
++           Record status: 
++           UNVERIFIED
++         </span>
++       </div>
++     </section>
++     <section
++       className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
++     >
++       <div
++         className="flex items-center gap-2"
++       >
++         <FileSearch
++           className="h-4 w-4 text-blue-700"
++         />
++         <h2
++           className="text-lg font-black text-slate-900"
++         >
++           Course information
++         </h2>
++       </div>
++       <div
++         className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
++       >
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             Study level
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Masters
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             Subject area
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Data
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             Duration
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Not recorded
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             Tuition
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Not recorded
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             Recorded intake
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Not recorded
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             Deadline
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Not recorded
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             English requirement
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Not recorded
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             Academic requirement
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Not recorded
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++         <div
++           className="rounded-xl border border-slate-100 bg-slate-50 p-3"
++         >
++           <div
++             className="text-[9px] font-bold uppercase tracking-wide text-slate-500"
++           >
++             Scholarship note
++           </div>
++           <div
++             className="mt-1.5 break-words text-xs font-semibold text-slate-800"
++           >
++             Not recorded
++           </div>
++           <div
++             className="mt-2 text-[8px] font-bold text-amber-700"
++           >
++             UNVERIFIED
++           </div>
++         </div>
++       </div>
++     </section>
++     <section
++       className="mt-5 grid gap-4 lg:grid-cols-2"
++     >
++       <div
++         className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
++       >
++         <div
++           className="flex items-center gap-2"
++         >
++           <BookOpen
++             className="h-4 w-4 text-purple-700"
++           />
++           <h2
++             className="text-sm font-bold text-slate-900"
++           >
++             Modules and outcomes
++           </h2>
++         </div>
++         <div
++           className="mt-3"
++         >
++           <h3
++             className="text-[10px] font-bold text-slate-700"
++           >
++             Recorded modules
++           </h3>
++           <p
++             className="mt-1 whitespace-pre-line text-xs leading-5 text-slate-600"
++           >
++             []
++           </p>
++           <h3
++             className="mt-4 text-[10px] font-bold text-slate-700"
++           >
++             Career outcomes
++           </h3>
++           <p
++             className="mt-1 whitespace-pre-line text-xs leading-5 text-slate-600"
++           >
++             []
++           </p>
++           <h3
++             className="mt-4 text-[10px] font-bold text-slate-700"
++           >
++             Course documents
++           </h3>
++           <p
++             className="mt-1 whitespace-pre-line text-xs leading-5 text-slate-600"
++           >
++             []
++           </p>
++         </div>
++       </div>
++       <div
++         className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
++       >
++         <div
++           className="flex items-center gap-2"
++         >
++           <CalendarDays
++             className="h-4 w-4 text-orange-600"
++           />
++           <h2
++             className="text-sm font-bold text-slate-900"
++           >
++             Dates and application
++           </h2>
++         </div>
++         <p
++           className="mt-3 text-xs leading-5 text-slate-600"
++         >
++           Intake and deadline values shown above come only from the published record. An empty field means no date was recorded; it does not indicate that an intake is open.
++         </p>
++         <p
++           className="mt-3 text-xs text-slate-600"
++         >
++           Application URL: 
++           <a
++             className="text-blue-700 underline"
++             href="https://www.auckland.ac.nz/en/study/x.html"
++             rel="noopener noreferrer"
++             target="_blank"
++           >
++             Institution source
++           </a>
++         </p>
++         <div
++           className="mt-4 rounded-xl bg-slate-50 p-3 text-[10px] leading-4 text-slate-600"
++         >
++           No dedicated course image is recorded for this page. Image coverage remains a separate page-health issue.
++         </div>
++       </div>
++     </section>
++     <footer
++       className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 text-[9px] text-slate-500"
++     >
++       <span>
++         Record updated 
++         10/12/2026
++       </span>
++       <ForwardRef(LinkComponent)
++         className="font-bold text-blue-700 hover:underline"
++         href="/course-finder"
++       >
++         Search more courses →
++       </ForwardRef(LinkComponent)>
++     </footer>
++   </div>
++ </main>
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:189:91
+    187|     await expect(CoursePageRoute({ params: Promise.resolve({ slug: PUB…
+    188|     for (const hidden of Object.keys(HIDDEN_COURSES)) {
+    189|       await expect(CoursePageRoute({ params: Promise.resolve({ slug: h…
+       |                                                                                           ^
+    190|     }
+    191|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > legacy /course/[slug] only redirects to a public course page
+AssertionError: c-unverified: expected [Function] to throw error including 'NEXT_NOT_FOUND' but got 'NEXT_REDIRECT:/courses/c-unverified'
+
+Expected: "NEXT_NOT_FOUND"
+Received: "NEXT_REDIRECT:/courses/c-unverified"
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:196:93
+    194|     await expect(LegacyCourseRoute({ params: Promise.resolve({ slug: P…
+    195|     for (const hidden of ['c-draft', 'c-unverified', 'c-http-source', …
+    196|       await expect(LegacyCourseRoute({ params: Promise.resolve({ slug:…
+       |                                                                                             ^
+    197|     }
+    198|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > direct /universities/[slug] URLs 404 unless public, and embed only public courses
+AssertionError: expected [ Array(5) ] to deeply equal [ 'c-ok' ]
+
+- Expected
++ Received
+
+  [
++   "c-http-source",
++   "c-no-source",
+    "c-ok",
++   "c-open-conflict",
++   "c-synthetic-source",
+  ]
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:203:22
+    201|     const el: any = await UniversityPageRoute({ params: Promise.resolv…
+    202|     const embedded = slugs(el.props.university.courses);
+    203|     expect(embedded).toEqual([PUBLIC_COURSE]);
+       |                      ^
+    204|     for (const hidden of ['uni-unverified', 'uni-draft', 'uni-no-sourc…
+    205|       await expect(UniversityPageRoute({ params: Promise.resolve({ slu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > sitemap omits pages named by an open conflict
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:212:70
+    210|     const urls = (await sitemap()).map((e) => e.url);
+    211|     expect(urls.some((u) => u.endsWith(`/courses/${PUBLIC_COURSE}`))).…
+    212|     expect(urls.some((u) => u.endsWith('/courses/c-open-conflict'))).t…
+       |                                                                      ^
+    213|     expect(urls.some((u) => u.endsWith('/universities/uni-conflict')))…
+    214|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C public surfaces apply the policy > fails closed (no catalogue rows) when the conflict lookup errors
+AssertionError: promise resolved "Response { status: 200, statusText: '', headers: Headers { 'content-type': 'application/json' }, body: ReadableStream { locked: false, state: 'readable', supportsBYOB: true }, bodyUsed: false, ok: true, redirected: false, type: 'default', url: '' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ NextResponse {
++   Symbol(state): {
++     "aborted": false,
++     "body": {
++       "length": null,
++       "source": null,
++       "stream": ReadableStream {
++         Symbol(kType): "ReadableStream",
++         Symbol(kState): {
++           "controller": ReadableByteStreamController {
++             Symbol(kType): "ReadableByteStreamController",
++             Symbol(kState): {
++               "autoAllocateChunkSize": undefined,
++               "byobRequest": null,
++               "cancelAlgorithm": [Function nonOpCancel],
++               "closeRequested": false,
++               "highWaterMark": 0,
++               "pendingPullIntos": [],
++               "pullAgain": false,
++               "pullAlgorithm": [Function anonymous],
++               "pulling": false,
++               "queue": [],
++               "queueTotalSize": 0,
++               "started": true,
++               "stream": [Circular],
++             },
++           },
++           "disturbed": false,
++           "reader": undefined,
++           "state": "readable",
++           "storedError": undefined,
++           "transfer": {
++             "port1": undefined,
++             "port2": undefined,
++             "promise": undefined,
++             "writable": undefined,
++           },
++         },
++         Symbol(nodejs.webstream.isClosedPromise): {
++           "promise": Promise {},
++           "reject": [Function anonymous],
++           "resolve": [Function anonymous],
++         },
++         Symbol(nodejs.webstream.controllerErrorFunction): [Function anonymous],
++       },
++     },
++     "cacheState": "",
++     "headersList": HeadersList {
++       "cookies": null,
++       Symbol(headers map): Map {
++         "content-type" => {
++           "name": "content-type",
++           "value": "application/json",
++         },
++       },
++       Symbol(headers map sorted): null,
++     },
++     "rangeRequested": false,
++     "requestIncludesCredentials": false,
++     "status": 200,
++     "statusText": "",
++     "timingAllowPassed": false,
++     "timingInfo": null,
++     "type": "default",
++     "urlList": [],
++   },
++   Symbol(headers): Headers {},
++   Symbol(internal response): {
++     "cookies": bound ResponseCookies {
++       "_headers": Headers {},
++       "_parsed": Map {},
++     },
++     "url": undefined,
++   },
+  }
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:218:32
+    216|   it('fails closed (no catalogue rows) when the conflict lookup errors…
+    217|     (h.db.dataConflict.findMany as any).mockRejectedValueOnce(new Erro…
+    218|     await expect(homepageGET()).rejects.toThrow('db down');
+       |                                ^
+    219|   });
+    220| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C Crm* student surfaces use the canonical public gate > student-portal course finder excludes inactive, unverified, draft, source-less and conflicting rows
+AssertionError: expected [ 'ok', 'unverified', …(4) ] to deeply equal [ 'ok' ]
+
+- Expected
++ Received
+
+  [
+    "ok",
++   "unverified",
++   "conflicting",
++   "draft",
++   "nosource",
++   "hidden-uni",
+  ]
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:234:51
+    232|     const res = await studentCourseFinderGET(new Request('https://alo.…
+    233|     const body = await res.json();
+    234|     expect(body.data.map((c: Rec) => c.courseId)).toEqual(['ok']);
+       |                                                   ^
+    235|     expect(body.total).toBe(1);
+    236|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > P0-C Crm* student surfaces use the canonical public gate > student-portal scholarships require a source-verified scholarship of a public university
+AssertionError: expected [ 's1', 's2', 's3' ] to deeply equal [ 's1' ]
+
+- Expected
++ Received
+
+  [
+    "s1",
++   "s2",
++   "s3",
+  ]
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:245:45
+    243|     ];
+    244|     const body = await (await studentScholarshipsGET(new Request('http…
+    245|     expect(body.data.map((s: Rec) => s.id)).toEqual(['s1']);
+       |                                             ^
+    246|   });
+    247|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-publication.test.ts > K4 review: static bypass is an allow-list > a dotted path under a gated page outside ROLE_ROUTES no longer skips the proxy
+AssertionError: /guides/x.pdf: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/catalogue-phase1-review-publication.test.ts:259:41
+    257|   it('a dotted path under a gated page outside ROLE_ROUTES no longer s…
+    258|     for (const p of ['/guides/x.pdf', '/guides/a.b', '/dashboard/x.jso…
+    259|       expect(isStaticAssetBypass(p), p).toBe(false);
+       |                                         ^
+    260|     }
+    261|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > /api/admin/courses/create: a sourceUrl no longer marks anything VERIFIED and no facts are invented
+AssertionError: expected { courseId: 'CRS-1-MV4V0XJU', …(22) } to match object { …(4) }
+(19 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "lastVerifiedAt": "",
++   "lastVerifiedAt": "2026-10-12T06:17:18.810Z",
+    "publicationStatus": "draft",
+-   "status": "draft",
+-   "verificationStatus": "NEEDS_REVIEW",
++   "status": "verified",
++   "verificationStatus": "VERIFIED",
+  }
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:109:20
+    107|     expect(res.status).toBe(200);
+    108|     const course = m.calls.find((c) => c.op === 'crmCourse.create')!.a…
+    109|     expect(course).toMatchObject({ verificationStatus: 'NEEDS_REVIEW',…
+       |                    ^
+    110|     // Previously defaulted to Postgraduate / General / MSc / 12 / Ful…
+    111|     expect(course).toMatchObject({ studyLevel: '', subjectArea: '', qu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > /api/admin/courses: a sourceUrl no longer marks anything VERIFIED and no facts are invented
+AssertionError: expected { courseId: 'CRS-1-MV4V0XKE', …(20) } to match object { …(4) }
+(18 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "lastVerifiedAt": "",
+-   "publicationStatus": "draft",
+-   "status": "draft",
+-   "verificationStatus": "NEEDS_REVIEW",
++   "lastVerifiedAt": "2026-10-12T06:17:18.830Z",
++   "status": "verified",
++   "verificationStatus": "VERIFIED",
+  }
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:109:20
+    107|     expect(res.status).toBe(200);
+    108|     const course = m.calls.find((c) => c.op === 'crmCourse.create')!.a…
+    109|     expect(course).toMatchObject({ verificationStatus: 'NEEDS_REVIEW',…
+       |                    ^
+    110|     // Previously defaulted to Postgraduate / General / MSc / 12 / Ful…
+    111|     expect(course).toMatchObject({ studyLevel: '', subjectArea: '', qu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > /api/admin/courses/create: control fields requesting publication or verification are refused with no write
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > /api/admin/courses: control fields requesting publication or verification are refused with no write
+AssertionError: {"publicationStatus":"published"}: expected 200 to be greater than or equal to 400
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:125:49
+    123|       resetDb();
+    124|       const res = await handler(json(url, 'POST', { courseTitle: 'MSc …
+    125|       expect(res.status, JSON.stringify(extra)).toBeGreaterThanOrEqual…
+       |                                                 ^
+    126|       expect(writes(), JSON.stringify(extra)).toHaveLength(0);
+    127|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > /api/admin/courses/create: fees need an explicit currency and intake; nothing is assumed
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > /api/admin/courses: fees need an explicit currency and intake; nothing is assumed
+AssertionError: expected 200 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 200
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:132:24
+    130|   it.each(routes)('%s: fees need an explicit currency and intake; noth…
+    131|     let res = await handler(json(url, 'POST', { courseTitle: 'MSc Data…
+    132|     expect(res.status).toBe(400);
+       |                        ^
+    133|     expect(writes()).toHaveLength(0);
+    134|     resetDb();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > /api/admin/courses/create: a lowercase admin role claim on a non-admin user type is refused
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > /api/admin/courses: a lowercase admin role claim on a non-admin user type is refused
+AssertionError: expected 200 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 200
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:148:24
+    146|     m.auth.mockResolvedValue(counselorWithAdminClaim);
+    147|     const res = await handler(json(url, 'POST', { courseTitle: 'MSc Da…
+    148|     expect(res.status).toBe(403);
+       |                        ^
+    149|     expect(writes()).toHaveLength(0);
+    150|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-A manual CrmCourse creation is never verification, publication or invention > every CoursePage/UniversityPage/CountryPage/ExamPage create in src/ is a reviewed path that sets both status fields
+AssertionError: expected [ …(3) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
++   "src/app/api/ai-command/execute/route.ts",
+    "src/app/api/course-finder/admin/route.ts",
+    "src/lib/course-finder/ai-content-fallback.ts",
+  ]
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:164:22
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > creates an UNVERIFIED DRAFT with only supplied values, and it is not publicly visible
+AssertionError: expected { name: 'MSc Data', …(13) } to match object { …(4) }
+(12 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "approvalStatus": "DRAFT",
+-   "lastVerifiedAt": null,
+    "tuition": "NZD 40000",
+-   "verificationStatus": "UNVERIFIED",
+  }
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:186:21
+    184|     expect(res.status).toBe(200);
+    185|     const created = m.calls.find((c) => c.op === 'coursePage.create')!…
+    186|     expect(created).toMatchObject({ verificationStatus: 'UNVERIFIED', …
+       |                     ^
+    187|     expect(created).toMatchObject({ city: '', level: '', duration: '',…
+    188|     expect(JSON.stringify(created)).not.toMatch(/aalborg|denmark|IELTS…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > refuses to create without the identifying fields instead of inventing them
+AssertionError: expected 200 to be 500 // Object.is equality
+
+- Expected
++ Received
+
+- 500
++ 200
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:195:24
+    193|   it('refuses to create without the identifying fields instead of inve…
+    194|     const res = await approve({ name: 'MSc Data' });
+    195|     expect(res.status).toBe(500);
+       |                        ^
+    196|     expect(m.calls.some((c) => c.op === 'coursePage.create')).toBe(fal…
+    197|     expect(actionStatus()).toContain('FAILED');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > rejects AI payloads that try to set verification or publication
+AssertionError: {"name":"X","slug":"x","universitySlug":"u","countrySlug":"nz","verificationStatus":"VERIFIED"}: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:207:90
+    205|       resetDb();
+    206|       await approve(payload);
+    207|       expect(m.calls.some((c) => c.op === 'coursePage.create'), JSON.s…
+       |                                                                                          ^
+    208|     }
+    209|     resetDb();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > an AI update to a VERIFIED published page downgrades it and takes it out of publication
+TypeError: Cannot read properties of undefined (reading 'args')
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:217:70
+    215|     const res = await approve({ data: { tuition: 'NZD 41000' } }, 'cp1…
+    216|     expect(res.status).toBe(200);
+    217|     const upd = m.calls.find((c) => c.op === 'coursePage.updateMany')!…
+       |                                                                      ^
+    218|     expect(upd.where).toMatchObject({ id: 'cp1', updatedAt: coursePage…
+    219|     expect(upd.data).toEqual({ tuition: 'NZD 41000', verificationStatu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > an unsupported target fails instead of reporting a fake deployment
+AssertionError: expected 200 to be 500 // Object.is equality
+
+- Expected
++ Received
+
+- 500
++ 200
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:224:24
+    222|   it('an unsupported target fails instead of reporting a fake deployme…
+    223|     const res = await approve({ title: 'x' }, null, 'UniversityPage');
+    224|     expect(res.status).toBe(500);
+       |                        ^
+    225|     expect(actionStatus()).toContain('FAILED');
+    226|     expect(writes().filter((w) => !w.op.startsWith('aiCommandAction'))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > GET (lists payloads) now requires an ADMIN/SUPER_ADMIN session
+AssertionError: expected 200 to be 401 // Object.is equality
+
+- Expected
++ Received
+
+- 401
++ 200
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:231:87
+    229|   it('GET (lists payloads) now requires an ADMIN/SUPER_ADMIN session',…
+    230|     m.session.mockResolvedValueOnce(null);
+    231|     expect((await aiGET(new NextRequest(`${ORIGIN}/api/ai-command/exec…
+       |                                                                                       ^
+    232|     m.session.mockResolvedValueOnce({ user: { id: 's', role: 'STUDENT'…
+    233|     expect((await aiGET(new NextRequest(`${ORIGIN}/api/ai-command/exec…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P1-D ordinary edits never certify a record or advance its verification date > CrmCourse: a sourceUrl in the body no longer upgrades NEEDS_REVIEW to VERIFIED
+AssertionError: expected 'VERIFIED' to be 'NEEDS_REVIEW' // Object.is equality
+
+Expected: "NEEDS_REVIEW"
+Received: "VERIFIED"
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:247:37
+    245|     expect(res.status).toBe(200);
+    246|     const data = m.calls.find((c) => c.op === 'crmCourse.update')!.arg…
+    247|     expect(data.verificationStatus).toBe('NEEDS_REVIEW');
+       |                                     ^
+    248|     expect(data).not.toHaveProperty('lastVerifiedAt');
+    249|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P1-D ordinary edits never certify a record or advance its verification date > CrmCourse: a fact edit of a VERIFIED course sends it to NEEDS_REVIEW; a status-only edit keeps VERIFIED; neither re-dates it
+AssertionError: expected { courseTitle: 'MSc Data', …(13) } to match object { durationMonths: 18, …(1) }
+(12 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "durationMonths": 18,
+-   "verificationStatus": "NEEDS_REVIEW",
++   "verificationStatus": "VERIFIED",
+  }
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:254:18
+    252|     await put(coursePUT, '/api/admin/courses/c1', 'c1', { durationMont…
+    253|     let data = m.calls.find((c) => c.op === 'crmCourse.update')!.args.…
+    254|     expect(data).toMatchObject({ durationMonths: 18, verificationStatu…
+       |                  ^
+    255|     expect(data).not.toHaveProperty('lastVerifiedAt');
+    256|     resetDb();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P1-D ordinary edits never certify a record or advance its verification date > CrmCourse: fee changes need a currency (no GBP default) and mark fee rows NEEDS_REVIEW
+AssertionError: expected 200 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 200
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:264:93
+    262|
+    263|   it('CrmCourse: fee changes need a currency (no GBP default) and mark…
+    264|     expect((await put(coursePUT, '/api/admin/courses/c1', 'c1', { tuit…
+       |                                                                                             ^
+    265|     expect(writes()).toHaveLength(0);
+    266|     await put(coursePUT, '/api/admin/courses/c1', 'c1', { tuitionFee: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P1-D ordinary edits never certify a record or advance its verification date > CrmCourse/CrmUniversity: control fields are refused
+AssertionError: expected 200 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 200
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:274:82
+    272|     for (const body of [{ verificationStatus: 'VERIFIED' }, { lastVeri…
+    273|       resetDb();
+    274|       expect((await put(coursePUT, '/api/admin/courses/c1', 'c1', body…
+       |                                                                                  ^
+    275|       expect((await put(universityPUT, '/api/admin/universities/u1', '…
+    276|       expect(writes()).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P1-D ordinary edits never certify a record or advance its verification date > CrmUniversity: same rules; an unchanged legacy http website does not block the edit
+AssertionError: expected { name: 'Uni One', …(16) } to match object { description: 'New overview', …(1) }
+(15 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "description": "New overview",
+-   "verificationStatus": "NEEDS_REVIEW",
++   "verificationStatus": "VERIFIED",
+  }
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:285:18
+    283|     expect(res.status).toBe(200);
+    284|     const data = m.calls.find((c) => c.op === 'crmUniversity.update')!…
+    285|     expect(data).toMatchObject({ description: 'New overview', verifica…
+       |                  ^
+    286|     expect(data).not.toHaveProperty('lastVerifiedAt');
+    287|     resetDb();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P1-D ordinary edits never certify a record or advance its verification date > scholarship import never marks rows verified or dated, and invents no currency or amount text
+AssertionError: expected { slug: 'merit-award', …(15) } to match object { verificationStatus: 'pending', …(3) }
+(12 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "currency": "",
+-   "fundingAmount": "",
+-   "lastVerifiedAt": null,
+-   "verificationStatus": "pending",
++   "currency": "GBP",
++   "fundingAmount": "Check eligibility",
++   "lastVerifiedAt": 2026-10-12T06:17:19.034Z,
++   "verificationStatus": "verified",
+  }
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:295:17
+    293|     expect(res.status).toBe(200);
+    294|     const row = m.calls.find((c) => c.op === 'scholarship.create')!.ar…
+    295|     expect(row).toMatchObject({ verificationStatus: 'pending', lastVer…
+       |                 ^
+    296|   });
+    297|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > P1-D ordinary edits never certify a record or advance its verification date > course-finder admin: re-sending normalised values ("" for null) is not a change and does not unpublish
+AssertionError: expected 'Course updated successfully.' to be 'No changes.' // Object.is equality
+
+Expected: "No changes."
+Received: "Course updated successfully."
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:301:40
+    299|     coursePage.verificationStatus = 'UNVERIFIED'; // legacy published-…
+    300|     const res = await cfaPATCH(json('/api/course-finder/admin', 'PATCH…
+    301|     expect((await res.json()).message).toBe('No changes.');
+       |                                        ^
+    302|     expect(writes()).toHaveLength(0);
+    303|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > audit attribution from the session > import-center records the session actor, never a fallback email or "system" id
+AssertionError: expected undefined to match object { userId: 'u-admin', …(1) }
+
+- Expected:
+{
+  "identityDomain": "user",
+  "userId": "u-admin",
+}
+
++ Received:
+undefined
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:319:43
+    317|     const log = m.calls.find((c) => c.op === 'auditLog.create')!.args.…
+    318|     expect(log.userId).toBe('u-admin');
+    319|     expect(JSON.parse(log.details).actor).toMatchObject({ userId: 'u-a…
+       |                                           ^
+    320|   });
+    321| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > remaining catalogue writers (crm/scholarships, country destination saves) > crm/scholarships POST: no GBP default, a currency is required with an amount, control fields are refused
+AssertionError: expected 201 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 201
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:340:24
+    338|   it('crm/scholarships POST: no GBP default, a currency is required wi…
+    339|     let res = await crmScholarshipPOST(json('/api/crm/scholarships', '…
+    340|     expect(res.status).toBe(400);
+       |                        ^
+    341|     for (const extra of [{ verificationStatus: 'VERIFIED' }, { status:…
+    342|       res = await crmScholarshipPOST(json('/api/crm/scholarships', 'PO…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > remaining catalogue writers (crm/scholarships, country destination saves) > crm/scholarships PUT: a fact edit of a VERIFIED scholarship returns it to NEEDS_REVIEW; a status edit does not
+AssertionError: expected { scholarshipAmount: 6000 } to deeply equal { scholarshipAmount: 6000, …(1) }
+
+- Expected
++ Received
+
+  {
+    "scholarshipAmount": 6000,
+-   "verificationStatus": "NEEDS_REVIEW",
+  }
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:357:78
+    355|     let res = await crmScholarshipPUT(json('/api/crm/scholarships', 'P…
+    356|     expect(res.status).toBe(200);
+    357|     expect(m.calls.find((c) => c.op === 'crmScholarship.update')!.args…
+       |                                                                              ^
+    358|     m.calls.length = 0;
+    359|     res = await crmScholarshipPUT(json('/api/crm/scholarships', 'PUT',…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > remaining catalogue writers (crm/scholarships, country destination saves) > admin/countries POST: an ordinary save no longer stamps lastVerifiedAt (shown publicly as "Last verified")
+AssertionError: expected { Object (name, code, ...) } to not have property "lastVerifiedAt"
+
+- Expected:
+undefined
+
++ Received:
+2026-10-12T06:17:19.046Z
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:375:29
+    373|     expect(res.status).toBe(200);
+    374|     const args = m.calls.find((c) => c.op === 'country.upsert')!.args;
+    375|     expect(args.update).not.toHaveProperty('lastVerifiedAt');
+       |                             ^
+    376|     expect(args.create).not.toHaveProperty('lastVerifiedAt');
+    377|     resetDb();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-review-writes.test.ts > remaining catalogue writers (crm/scholarships, country destination saves) > admin/website/cms country upsert: static check that no lastVerifiedAt is written on save
+AssertionError: expected '// ==================================…' not to match /lastVerifiedAt:\s*new Date\(\)/
+
+- Expected:
+/lastVerifiedAt:\s*new Date\(\)/
+
++ Received:
+"// ============================================================
+// /api/admin/website/cms — Super Admin Website CMS Master API
+// Full CRUD for all website content models
+// Allows Super Admin to edit any part of website directly
+// Real DB operations, audit logs, RBAC, validation
+// ============================================================
+
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { authenticateRequest, logAuditAction } from '@/lib/auth-middleware';
+import {
+  sanitizeCmsInput,
+  captureBeforeImage,
+  saveDraft,
+  listRevisions,
+  previewRevision,
+  publishDraft,
+  rollbackTo,
+  getRevision,
+} from '@/lib/cms-revisions';
+
+/** SUPER_ADMIN/ADMIN gate shared by every revision action. */
+async function requireCmsAdmin(auth: any): Promise<NextResponse | null> {
+  const ok =
+    ['SUPER_ADMIN', 'ADMIN'].includes(auth.userType) ||
+    auth.roles.includes('super_admin') ||
+    auth.roles.includes('admin');
+  if (!ok) {
+    return NextResponse.json({ success: false, error: 'Forbidden — SUPER_ADMIN or ADMIN only' }, { status: 403 });
+  }
+  return null;
+}
+
+const ALLOWED_TYPES = [
+  'hero-slides',
+  'home-services',
+  'success-stories',
+  'team-members',
+  'faqs',
+  'home-sections',
+  'english-tests',
+  'countries',
+  'country-quick-facts',
+  'country-cities',
+  'country-pathways',
+  'country-reasons',
+  'country-entry-reqs',
+  'country-english-tests',
+  'country-visa-steps',
+  'country-work-rights',
+  'country-faqs',
+  'country-sources',
+  'services',
+  'service-faqs',
+] as const;
+
+type CmsType = typeof ALLOWED_TYPES[number];
+
+function mapTypeToModel(type: string) {
+  switch (type) {
+    case 'hero-slides': return 'homeHeroSlide';
+    case 'home-services': return 'homeService';
+    case 'success-stories': return 'successStory';
+    case 'team-members': return 'teamMember';
+    case 'faqs': return 'homepageFaq';
+    case 'home-sections': return 'homeSection';
+    case 'english-tests': return 'websiteEnglishTest';
+    case 'countries': return 'country';
+    case 'country-quick-facts': return 'countryQuickFact';
+    case 'country-cities': return 'countryCity';
+    case 'country-pathways': return 'countryEducationPathway';
+    case 'country-reasons': return 'countryStudyReason';
+    case 'country-entry-reqs': return 'countryEntryRequirement';
+    case 'country-english-tests': return 'countryEnglishTest';
+    case 'country-visa-steps': return 'countryVisaStep';
+    case 'country-work-rights': return 'countryWorkRight';
+    case 'country-faqs': return 'countryFaq';
+    case 'country-sources': return 'countrySource';
+    case 'services': return 'service';
+    case 'service-faqs': return 'serviceFaq';
+    default: return null;
+  }
+}
+
+// GET /api/admin/website/cms?type=hero-slides&search=&status=&limit=
+// Returns list for any website entity
+export async function GET(request: Request) {
+  try {
+    const auth = await authenticateRequest(request);
+    if (auth instanceof NextResponse) return auth;
+
+    const primaryRole = auth.roles[0] || auth.userType || '';
+    if (!['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(primaryRole)) {
+      // Also allow any admin-level via withAuth logic
+      if (!auth.roles.includes('super_admin') && !auth.roles.includes('admin') && auth.userType !== 'SUPER_ADMIN' && auth.userType !== 'ADMIN') {
+        return NextResponse.json({ success: false, error: 'Forbidden — SUPER_ADMIN or ADMIN only' }, { status: 403 });
+      }
+    }
+
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type') as CmsType | null;
+    const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
+    const limit = Math.min(parseInt(searchParams.get('limit') || '200', 10), 500);
+    const countryId = searchParams.get('countryId') || '';
+
+    // ── Virtual Editor revision endpoints ──────────────────────
+    const action = searchParams.get('action');
+    if (action === 'revisions') {
+      if (!type || !ALLOWED_TYPES.includes(type as any)) {
+        return NextResponse.json({ success: false, error: 'Valid type required' }, { status: 400 });
+      }
+      const id = searchParams.get('id');
+      if (!id) return NextResponse.json({ success: false, error: 'id query param required' }, { status: 400 });
+      const revisions = await listRevisions(type, id);
+      return NextResponse.json({ success: true, type, id, revisions });
+    }
+    if (action === 'preview') {
+      const revisionId = searchParams.get('revisionId');
+      if (!revisionId) return NextResponse.json({ success: false, error: 'revisionId required' }, { status: 400 });
+      const preview = await previewRevision(revisionId);
+      return NextResponse.json({ success: true, preview });
+    }
+    if (action === 'revision') {
+      const revisionId = searchParams.get('revisionId');
+      if (!revisionId) return NextResponse.json({ success: false, error: 'revisionId required' }, { status: 400 });
+      const revision = await getRevision(revisionId);
+      if (!revision) return NextResponse.json({ success: false, error: 'Revision not found' }, { status: 404 });
+      return NextResponse.json({ success: true, revision });
+    }
+
+    if (!type) {
+      return NextResponse.json({
+        success: true,
+        availableTypes: ALLOWED_TYPES,
+        message: 'Provide ?type= one of availableTypes',
+      });
+    }
+
+    if (!ALLOWED_TYPES.includes(type as any)) {
+      return NextResponse.json({ success: false, error: `Invalid type. Allowed: ${ALLOWED_TYPES.join(', ')}` }, { status: 400 });
+    }
+
+    let data: any[] = [];
+
+    // Build where clauses based on type
+    const baseWhere: any = {};
+    if (status) baseWhere.status = status;
+    
+    // Search handling per model
+    const searchWhere = search ? {
+      OR: [
+        { title: { contains: search } },
+        { name: { contains: search } },
+        { headline: { contains: search } },
+        { question: { contains: search } },
+        { studentName: { contains: search } },
+      ]
+    } : {};
+
+    const where = { ...baseWhere, ...(search ? searchWhere : {}) };
+    if (countryId && type.startsWith('country-')) {
+      where.countryId = countryId;
+    }
+
+    switch (type) {
+      case 'hero-slides':
+        data = await db.homeHeroSlide.findMany({
+          where: search ? { OR: [{ headline: { contains: search } }, { countryCode: { contains: search } }, { popularCity: { contains: search } }] } : {},
+          orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+          take: limit,
+        });
+        break;
+      case 'home-services':
+        data = await db.homeService.findMany({
+          where,
+          orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
+          take: limit,
+        });
+        break;
+      case 'success-stories':
+        data = await db.successStory.findMany({
+          where: search ? { OR: [{ studentName: { contains: search } }, { university: { contains: search } }, { course: { contains: search } }] } : (status ? { status } : {}),
+          orderBy: { createdAt: 'desc' },
+          take: limit,
+        });
+        break;
+      case 'team-members':
+        data = await db.teamMember.findMany({
+          where,
+          orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+          take: limit,
+        });
+        break;
+      case 'faqs':
+        data = await db.homepageFaq.findMany({
+          where: search ? { OR: [{ question: { contains: search } }, { answer: { contains: search } }] } : (status ? { status } : {}),
+          orderBy: { sortOrder: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'home-sections':
+        data = await db.homeSection.findMany({
+          where: search ? { OR: [{ title: { contains: search } }, { sectionKey: { contains: search } }] } : (status ? { status } : {}),
+          orderBy: { sortOrder: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'english-tests':
+        data = await db.websiteEnglishTest.findMany({
+          where,
+          orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+          take: limit,
+        });
+        break;
+      case 'countries':
+        data = await db.country.findMany({
+          where: search ? { OR: [{ name: { contains: search } }, { slug: { contains: search } }, { code: { contains: search } }] } : (status ? { status } : {}),
+          orderBy: { sortOrder: 'asc' },
+          take: limit,
+          include: {
+            _count: { select: { quickFacts: true, cities: true, faqs: true } }
+          }
+        });
+        break;
+      case 'country-quick-facts':
+        data = await db.countryQuickFact.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}), ...(search ? { OR: [{ factLabel: { contains: search } }, { factValue: { contains: search } }] } : {}) },
+          orderBy: { createdAt: 'desc' },
+          take: limit,
+        });
+        break;
+      case 'country-cities':
+        data = await db.countryCity.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}), ...(search ? { cityName: { contains: search } } : {}) },
+          orderBy: { cityName: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'country-pathways':
+        data = await db.countryEducationPathway.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}) },
+          orderBy: { sortOrder: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'country-reasons':
+        data = await db.countryStudyReason.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}) },
+          orderBy: { sortOrder: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'country-entry-reqs':
+        data = await db.countryEntryRequirement.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}) },
+          orderBy: { studyLevel: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'country-english-tests':
+        data = await db.countryEnglishTest.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}) },
+          orderBy: { testName: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'country-visa-steps':
+        data = await db.countryVisaStep.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}) },
+          orderBy: { stepNumber: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'country-work-rights':
+        data = await db.countryWorkRight.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}) },
+          orderBy: { createdAt: 'desc' },
+          take: limit,
+        });
+        break;
+      case 'country-faqs':
+        data = await db.countryFaq.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}), ...(search ? { OR: [{ question: { contains: search } }, { answer: { contains: search } }] } : {}) },
+          orderBy: { sortOrder: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'country-sources':
+        data = await db.countrySource.findMany({
+          where: { ...(countryId ? { countryId } : {}), ...(status ? { status } : {}), ...(search ? { sourceName: { contains: search } } : {}) },
+          orderBy: { dataSection: 'asc' },
+          take: limit,
+        });
+        break;
+      case 'services':
+        data = await db.service.findMany({
+          where: search ? { OR: [{ title: { contains: search } }, { slug: { contains: search } }] } : (status ? { status } : {}),
+          orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
+          take: limit,
+        });
+        break;
+      case 'service-faqs':
+        data = await db.serviceFaq.findMany({
+          where: search ? { question: { contains: search } } : {},
+          orderBy: { sortOrder: 'asc' },
+          take: limit,
+        });
+        break;
+      default:
+        return NextResponse.json({ success: false, error: 'Type not implemented yet' }, { status: 400 });
+    }
+
+    return NextResponse.json({ success: true, type, data, total: data.length });
+  } catch (error: any) {
+    console.error('[admin.website.cms GET] error:', error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+// POST /api/admin/website/cms?type=hero-slides
+// Create new item
+export async function POST(request: Request) {
+  try {
+    const auth = await authenticateRequest(request);
+    if (auth instanceof NextResponse) return auth;
+
+    const primaryRole = auth.roles[0] || auth.userType || '';
+    if (!['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(primaryRole)) {
+      if (!auth.roles.includes('super_admin') && !auth.roles.includes('admin') && auth.userType !== 'SUPER_ADMIN' && auth.userType !== 'ADMIN') {
+        return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      }
+    }
+
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type') as CmsType;
+    let body = await request.json();
+
+    // ── Virtual Editor revision actions (draft/publish/rollback) ──
+    const revisionAction = (body as any)?.action;
+    if (revisionAction && ['save-draft', 'publish-draft', 'rollback'].includes(revisionAction)) {
+      const actor = auth.userId || auth.email || 'unknown';
+      try {
+        if (revisionAction === 'save-draft') {
+          const revision = await saveDraft({
+            entityType: type,
+            entityId: (body as any).entityId,
+            data: (body as any).data || {},
+            label: (body as any).label,
+            actor,
+          });
+          await logAuditAction(auth, 'CMS_SAVE_DRAFT', type, (body as any).entityId || '', { revisionId: revision.id }).catch(() => {});
+          return NextResponse.json({ success: true, revision: { id: revision.id, kind: revision.kind, label: revision.label } });
+        }
+        if (revisionAction === 'publish-draft') {
+          const revision = await publishDraft((body as any).revisionId, actor);
+          await logAuditAction(auth, 'CMS_PUBLISH_DRAFT', revision.revision.entityType, revision.revision.entityId, { revisionId: revision.revision.id }).catch(() => {});
+          return NextResponse.json({ success: true, published: true, revisionId: revision.revision.id });
+        }
+        const rollback = await rollbackTo((body as any).revisionId, actor);
+        await logAuditAction(auth, 'CMS_ROLLBACK', rollback.rollbackRecord.entityType, rollback.rollbackRecord.entityId, { revisionId: (body as any).revisionId }).catch(() => {});
+        return NextResponse.json({ success: true, rolledBack: true, rollbackRevisionId: rollback.rollbackRecord.id });
+      } catch (error: any) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+      }
+    }
+
+    if (!type || !ALLOWED_TYPES.includes(type as any)) {
+      return NextResponse.json({ success: false, error: 'Invalid or missing type' }, { status: 400 });
+    }
+
+    // XSS defense-in-depth: sanitize every string in the payload before storage.
+    body = sanitizeCmsInput(body);
+
+    let created: any;
+
+    switch (type) {
+      case 'hero-slides':
+        created = await db.homeHeroSlide.create({
+          data: {
+            countryId: body.countryId || '',
+            countryCode: body.countryCode || body.code || '',
+            headline: body.headline || body.title || '',
+            subtitle: body.subtitle || '',
+            imageUrl: body.imageUrl || body.heroImage || '',
+            imageAlt: body.imageAlt || '',
+            accentColor: body.accentColor || '#2563EB',
+            popularCity: body.popularCity || body.heroCity || '',
+            popularIntake: body.popularIntake || body.heroIntake || '',
+            universityCountLabel: body.universityCountLabel || '',
+            courseCountLabel: body.courseCountLabel || '',
+            scholarshipLabel: body.scholarshipLabel || '',
+            ctaPrimaryLabel: body.ctaPrimaryLabel || 'Explore Courses',
+            ctaPrimaryUrl: body.ctaPrimaryUrl || '',
+            ctaSecondaryLabel: body.ctaSecondaryLabel || 'Book Consultation',
+            ctaSecondaryUrl: body.ctaSecondaryUrl || '',
+            sourceUrl: body.sourceUrl || '',
+            licenseNote: body.licenseNote || '',
+            sortOrder: body.sortOrder ?? 0,
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'home-services':
+        if (!body.title || !body.slug) return NextResponse.json({ success: false, error: 'title and slug required' }, { status: 400 });
+        created = await db.homeService.create({
+          data: {
+            title: body.title,
+            slug: body.slug.toLowerCase().trim(),
+            icon: body.icon || '🎓',
+            description: body.description || '',
+            ctaLabel: body.ctaLabel || '',
+            ctaUrl: body.ctaUrl || '',
+            sortOrder: body.sortOrder ?? 0,
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'success-stories':
+        if (!body.studentName) return NextResponse.json({ success: false, error: 'studentName required' }, { status: 400 });
+        created = await db.successStory.create({
+          data: {
+            studentName: body.studentName,
+            homeDistrict: body.homeDistrict || '',
+            countryId: body.countryId || '',
+            university: body.university || '',
+            course: body.course || '',
+            outcome: body.outcome || '',
+            testimonial: body.testimonial || '',
+            photo: body.photo || '',
+            consentStatus: body.consentStatus || 'verified',
+            status: body.status || 'published',
+          }
+        });
+        break;
+      case 'team-members':
+        if (!body.name || !body.role) return NextResponse.json({ success: false, error: 'name and role required' }, { status: 400 });
+        created = await db.teamMember.create({
+          data: {
+            name: body.name,
+            role: body.role,
+            specialty: body.specialty || '',
+            bio: body.bio || '',
+            photo: body.photo || '',
+            sortOrder: body.sortOrder ?? 0,
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'faqs':
+        if (!body.question || !body.answer) return NextResponse.json({ success: false, error: 'question and answer required' }, { status: 400 });
+        created = await db.homepageFaq.create({
+          data: {
+            question: body.question,
+            answer: body.answer,
+            sortOrder: body.sortOrder ?? 0,
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'home-sections':
+        if (!body.sectionKey) return NextResponse.json({ success: false, error: 'sectionKey required' }, { status: 400 });
+        created = await db.homeSection.upsert({
+          where: { sectionKey: body.sectionKey },
+          update: {
+            title: body.title || '',
+            subtitle: body.subtitle || '',
+            content: body.content || '',
+            sortOrder: body.sortOrder ?? 0,
+            status: body.status || 'active',
+          },
+          create: {
+            sectionKey: body.sectionKey,
+            title: body.title || '',
+            subtitle: body.subtitle || '',
+            content: body.content || '',
+            sortOrder: body.sortOrder ?? 0,
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'english-tests':
+        if (!body.name || !body.slug) return NextResponse.json({ success: false, error: 'name and slug required' }, { status: 400 });
+        created = await db.websiteEnglishTest.create({
+          data: {
+            name: body.name,
+            slug: body.slug.toLowerCase().trim(),
+            shortDescription: body.shortDescription || '',
+            bestFor: body.bestFor || '',
+            acceptedDest: body.acceptedDest || '',
+            resultTime: body.resultTime || '',
+            scoreRange: body.scoreRange || '',
+            format: body.format || '',
+            status: body.status || 'active',
+            sortOrder: body.sortOrder ?? 0,
+          }
+        });
+        break;
+      case 'countries':
+        if (!body.name || !body.slug) return NextResponse.json({ success: false, error: 'name and slug required' }, { status: 400 });
+        created = await db.country.upsert({
+          where: { slug: body.slug.toLowerCase().trim() },
+          update: {
+            name: body.name,
+            code: body.code || body.countryCode || '',
+            countryCode: body.countryCode || body.code || '',
+            flag: body.flag || '🌐',
+            capital: body.capital || '',
+            currency: body.currency || '',
+            heroTitle: body.heroTitle || '',
+            heroSubtitle: body.heroSubtitle || '',
+            overview: body.overview || body.description || '',
+            description: body.description || body.overview || '',
+            visaOverview: body.visaOverview || '',
+            visaType: body.visaType || '',
+            workRights: body.workRights || '',
+            costOfLiving: body.costOfLiving || '',
+            livingCost: body.livingCost || '',
+            whyStudySummary: body.whyStudySummary || '',
+            tuitionRange: body.tuitionRange || '',
+            heroImage: body.heroImage || '',
+            heroCity: body.heroCity || '',
+            heroIntake: body.heroIntake || '',
+            seoTitle: body.seoTitle || '',
+            seoDescription: body.seoDescription || '',
+            status: body.status || 'active',
+            sortOrder: body.sortOrder ?? 0,
+            accentColor: body.accentColor || '#2563EB',
+            lastVerifiedAt: new Date(),
+          },
+          create: {
+            name: body.name,
+            slug: body.slug.toLowerCase().trim(),
+            code: body.code || body.countryCode || '',
+            countryCode: body.countryCode || body.code || '',
+            flag: body.flag || '🌐',
+            capital: body.capital || '',
+            currency: body.currency || '',
+            heroTitle: body.heroTitle || '',
+            heroSubtitle: body.heroSubtitle || '',
+            overview: body.overview || body.description || '',
+            description: body.description || body.overview || '',
+            visaOverview: body.visaOverview || '',
+            visaType: body.visaType || '',
+            workRights: body.workRights || '',
+            costOfLiving: body.costOfLiving || '',
+            livingCost: body.livingCost || '',
+            whyStudySummary: body.whyStudySummary || '',
+            tuitionRange: body.tuitionRange || '',
+            heroImage: body.heroImage || '',
+            heroCity: body.heroCity || '',
+            heroIntake: body.heroIntake || '',
+            seoTitle: body.seoTitle || '',
+            seoDescription: body.seoDescription || '',
+            status: body.status || 'active',
+            sortOrder: body.sortOrder ?? 0,
+            accentColor: body.accentColor || '#2563EB',
+            lastVerifiedAt: new Date(),
+          }
+        });
+        break;
+      case 'country-quick-facts':
+        if (!body.countryId || !body.factKey) return NextResponse.json({ success: false, error: 'countryId and factKey required' }, { status: 400 });
+        created = await db.countryQuickFact.create({
+          data: {
+            countryId: body.countryId,
+            factKey: body.factKey,
+            factLabel: body.factLabel || body.factKey,
+            factValue: body.factValue || '',
+            sourceUrl: body.sourceUrl || '',
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'country-cities':
+        if (!body.countryId || !body.cityName) return NextResponse.json({ success: false, error: 'countryId and cityName required' }, { status: 400 });
+        created = await db.countryCity.create({
+          data: {
+            countryId: body.countryId,
+            cityName: body.cityName,
+            slug: body.slug || body.cityName.toLowerCase().replace(/\\s+/g, '-'),
+            costLevel: body.costLevel || 'Medium',
+            studentVibe: body.studentVibe || '',
+            popularUniversities: body.popularUniversities || '[]',
+            transportSummary: body.transportSummary || '',
+            jobOpportunitySummary: body.jobOpportunitySummary || '',
+            livingCostEstimate: body.livingCostEstimate || '',
+            sourceUrl: body.sourceUrl || '',
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'country-reasons':
+        if (!body.countryId || !body.heading) return NextResponse.json({ success: false, error: 'countryId and heading required' }, { status: 400 });
+        created = await db.countryStudyReason.create({
+          data: {
+            countryId: body.countryId,
+            icon: body.icon || '🎓',
+            heading: body.heading,
+            description: body.description || '',
+            ctaLabel: body.ctaLabel || 'Explore Courses',
+            ctaUrl: body.ctaUrl || '',
+            sortOrder: body.sortOrder ?? 0,
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'country-entry-reqs':
+        if (!body.countryId || !body.studyLevel) return NextResponse.json({ success: false, error: 'countryId and studyLevel required' }, { status: 400 });
+        created = await db.countryEntryRequirement.create({
+          data: {
+            countryId: body.countryId,
+            studyLevel: body.studyLevel,
+            academicRequirement: body.academicRequirement || '',
+            englishRequirement: body.englishRequirement || '',
+            documentsRequired: body.documentsRequired || '[]',
+            remarks: body.remarks || '',
+            sourceUrl: body.sourceUrl || '',
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'country-english-tests':
+        if (!body.countryId || !body.testName) return NextResponse.json({ success: false, error: 'countryId and testName required' }, { status: 400 });
+        created = await db.countryEnglishTest.create({
+          data: {
+            countryId: body.countryId,
+            testName: body.testName,
+            acceptedSummary: body.acceptedSummary || '',
+            minimumNote: body.minimumNote || '',
+            sourceUrl: body.sourceUrl || '',
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'country-visa-steps':
+        if (!body.countryId || !body.stepTitle) return NextResponse.json({ success: false, error: 'countryId and stepTitle required' }, { status: 400 });
+        created = await db.countryVisaStep.create({
+          data: {
+            countryId: body.countryId,
+            stepNumber: body.stepNumber ?? 1,
+            stepTitle: body.stepTitle,
+            stepDescription: body.stepDescription || '',
+            sourceUrl: body.sourceUrl || '',
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'country-work-rights':
+        if (!body.countryId) return NextResponse.json({ success: false, error: 'countryId required' }, { status: 400 });
+        created = await db.countryWorkRight.create({
+          data: {
+            countryId: body.countryId,
+            termTimeRule: body.termTimeRule || '',
+            vacationRule: body.vacationRule || '',
+            courseLevelCondition: body.courseLevelCondition || '',
+            postStudyRouteSummary: body.postStudyRouteSummary || '',
+            sourceUrl: body.sourceUrl || '',
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'country-faqs':
+        if (!body.countryId || !body.question) return NextResponse.json({ success: false, error: 'countryId and question required' }, { status: 400 });
+        created = await db.countryFaq.create({
+          data: {
+            countryId: body.countryId,
+            question: body.question,
+            answer: body.answer || '',
+            sortOrder: body.sortOrder ?? 0,
+            status: body.status || 'active',
+          }
+        });
+        break;
+      case 'country-sources':
+        if (!body.countryId || !body.sourceName || !body.sourceUrl) return NextResponse.json({ success: false, error: 'countryId, sourceName, sourceUrl required' }, { status: 400 });
+        created = await db.countrySource.create({
+          data: {
+            countryId: body.countryId,
+            dataSection: body.dataSection || 'general',
+            sourceName: body.sourceName,
+            sourceUrl: body.sourceUrl,
+            verifiedBy: body.verifiedBy || 'ALO Compliance Team',
+            notes: body.notes || '',
+            status: body.status || 'active',
+          }
+        });
+        break;
+      default:
+        return NextResponse.json({ success: false, error: `Create not implemented for ${type}` }, { status: 400 });
+    }
+
+    await logAuditAction(auth, `CREATE_${type.toUpperCase()}`, mapTypeToModel(type) || type, created.id, { type, id: created.id }).catch(()=>{});
+
+    return NextResponse.json({ success: true, type, data: created }, { status: 201 });
+  } catch (error: any) {
+    console.error('[admin.website.cms POST] error:', error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+// PUT /api/admin/website/cms?type=hero-slides&id=xxx
+export async function PUT(request: Request) {
+  try {
+    const auth = await authenticateRequest(request);
+    if (auth instanceof NextResponse) return auth;
+
+    // SECURITY: CMS mutation is SUPER_ADMIN/ADMIN only (same rule as GET/POST).
+    const forbidden = await requireCmsAdmin(auth);
+    if (forbidden) return forbidden;
+
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type') as CmsType;
+    const id = searchParams.get('id');
+    let body = await request.json();
+
+    if (!type || !ALLOWED_TYPES.includes(type as any)) {
+      return NextResponse.json({ success: false, error: 'Invalid type' }, { status: 400 });
+    }
+    if (!id) {
+      return NextResponse.json({ success: false, error: 'id query param required' }, { status: 400 });
+    }
+
+    // Virtual Editor: capture the pre-update state (version history).
+    await captureBeforeImage(type, id, auth.userId || auth.email || 'unknown').catch(() => {});
+    // XSS defense-in-depth: sanitize every string in the payload before storage.
+    body = sanitizeCmsInput(body);
+
+    let updated: any;
+
+    switch (type) {
+      case 'hero-slides':
+        updated = await db.homeHeroSlide.update({ where: { id }, data: { ...body, updatedAt: new Date() } });
+        break;
+      case 'home-services':
+        updated = await db.homeService.update({ where: { id }, data: body });
+        break;
+      case 'success-stories':
+        updated = await db.successStory.update({ where: { id }, data: body });
+        break;
+      case 'team-members':
+        updated = await db.teamMember.update({ where: { id }, data: body });
+        break;
+      case 'faqs':
+        updated = await db.homepageFaq.update({ where: { id }, data: body });
+        break;
+      case 'home-sections':
+        updated = await db.homeSection.update({ where: { id }, data: body });
+        break;
+      case 'english-tests':
+        updated = await db.websiteEnglishTest.update({ where: { id }, data: body });
+        break;
+      case 'countries':
+        updated = await db.country.update({ where: { id }, data: { ...body, lastVerifiedAt: new Date() } });
+        break;
+      case 'country-quick-facts':
+        updated = await db.countryQuickFact.update({ where: { id }, data: body });
+        break;
+      case 'country-cities':
+        updated = await db.countryCity.update({ where: { id }, data: body });
+        break;
+      case 'country-pathways':
+        updated = await db.countryEducationPathway.update({ where: { id }, data: body });
+        break;
+      case 'country-reasons':
+        updated = await db.countryStudyReason.update({ where: { id }, data: body });
+        break;
+      case 'country-entry-reqs':
+        updated = await db.countryEntryRequirement.update({ where: { id }, data: body });
+        break;
+      case 'country-english-tests':
+        updated = await db.countryEnglishTest.update({ where: { id }, data: body });
+        break;
+      case 'country-visa-steps':
+        updated = await db.countryVisaStep.update({ where: { id }, data: body });
+        break;
+      case 'country-work-rights':
+        updated = await db.countryWorkRight.update({ where: { id }, data: body });
+        break;
+      case 'country-faqs':
+        updated = await db.countryFaq.update({ where: { id }, data: body });
+        break;
+      case 'country-sources':
+        updated = await db.countrySource.update({ where: { id }, data: body });
+        break;
+      case 'services':
+        updated = await db.service.update({ where: { id }, data: body });
+        break;
+      case 'service-faqs':
+        updated = await db.serviceFaq.update({ where: { id }, data: body });
+        break;
+      default:
+        return NextResponse.json({ success: false, error: 'Update not implemented' }, { status: 400 });
+    }
+
+    await logAuditAction(auth, `UPDATE_${type.toUpperCase()}`, mapTypeToModel(type) || type, id, { type, id }).catch(()=>{});
+
+    return NextResponse.json({ success: true, type, data: updated });
+  } catch (error: any) {
+    console.error('[admin.website.cms PUT] error:', error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+// DELETE /api/admin/website/cms?type=hero-slides&id=xxx
+export async function DELETE(request: Request) {
+  try {
+    const auth = await authenticateRequest(request);
+    if (auth instanceof NextResponse) return auth;
+
+    // SECURITY: CMS deletion is SUPER_ADMIN/ADMIN only (same rule as GET/POST).
+    const forbidden = await requireCmsAdmin(auth);
+    if (forbidden) return forbidden;
+
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type') as CmsType;
+    const id = searchParams.get('id');
+
+    if (!type || !ALLOWED_TYPES.includes(type as any)) {
+      return NextResponse.json({ success: false, error: 'Invalid type' }, { status: 400 });
+    }
+    if (!id) return NextResponse.json({ success: false, error: 'id required' }, { status: 400 });
+
+    // Virtual Editor: snapshot the row before deletion so it can be restored.
+    await captureBeforeImage(type, id, auth.userId || auth.email || 'unknown').catch(() => {});
+
+    switch (type) {
+      case 'hero-slides':
+        await db.homeHeroSlide.delete({ where: { id } });
+        break;
+      case 'home-services':
+        await db.homeService.delete({ where: { id } });
+        break;
+      case 'success-stories':
+        await db.successStory.delete({ where: { id } });
+        break;
+      case 'team-members':
+        await db.teamMember.delete({ where: { id } });
+        break;
+      case 'faqs':
+        await db.homepageFaq.delete({ where: { id } });
+        break;
+      case 'home-sections':
+        await db.homeSection.delete({ where: { id } });
+        break;
+      case 'english-tests':
+        await db.websiteEnglishTest.delete({ where: { id } });
+        break;
+      case 'countries':
+        await db.country.delete({ where: { id } });
+        break;
+      case 'country-quick-facts':
+        await db.countryQuickFact.delete({ where: { id } });
+        break;
+      case 'country-cities':
+        await db.countryCity.delete({ where: { id } });
+        break;
+      case 'country-pathways':
+        await db.countryEducationPathway.delete({ where: { id } });
+        break;
+      case 'country-reasons':
+        await db.countryStudyReason.delete({ where: { id } });
+        break;
+      case 'country-entry-reqs':
+        await db.countryEntryRequirement.delete({ where: { id } });
+        break;
+      case 'country-english-tests':
+        await db.countryEnglishTest.delete({ where: { id } });
+        break;
+      case 'country-visa-steps':
+        await db.countryVisaStep.delete({ where: { id } });
+        break;
+      case 'country-work-rights':
+        await db.countryWorkRight.delete({ where: { id } });
+        break;
+      case 'country-faqs':
+        await db.countryFaq.delete({ where: { id } });
+        break;
+      case 'country-sources':
+        await db.countrySource.delete({ where: { id } });
+        break;
+      case 'services':
+        await db.service.delete({ where: { id } });
+        break;
+      case 'service-faqs':
+        await db.serviceFaq.delete({ where: { id } });
+        break;
+      default:
+        return NextResponse.json({ success: false, error: 'Delete not implemented' }, { status: 400 });
+    }
+
+    await logAuditAction(auth, `DELETE_${type.toUpperCase()}`, mapTypeToModel(type) || type, id, { type, id }).catch(()=>{});
+
+    return NextResponse.json({ success: true, message: `${type} ${id} deleted` });
+  } catch (error: any) {
+    console.error('[admin.website.cms DELETE] error:', error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+"
+
+ ❯ tests/unit/catalogue-phase1-review-writes.test.ts:382:21
+    380|   it('admin/website/cms country upsert: static check that no lastVerif…
+    381|     const src = readFileSync('src/app/api/admin/website/cms/route.ts',…
+    382|     expect(src).not.toMatch(/lastVerifiedAt:\s*new Date\(\)/);
+       |                     ^
+    383|   });
+    384| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/40]⎯
+
+ FAIL  tests/unit/catalogue-phase1-security.test.ts > K1 university-monitoring approval does not mark the whole record VERIFIED > APPROVE applies the field and history but leaves verificationStatus untouched
+AssertionError: expected { …(2) } to not have property "lastVerifiedAt"
+
+- Expected:
+undefined
+
++ Received:
+2026-10-12T06:17:19.599Z
+
+ ❯ tests/unit/catalogue-phase1-security.test.ts:210:39
+    208|     // Phase 1 review (P1-D): a single-field approval no longer refres…
+    209|     // record-level verification date either.
+    210|     expect(pageUpdate?.args.data).not.toHaveProperty('lastVerifiedAt');
+       |                                       ^
+    211|     expect(txCalls.some((c) => c.op === 'courseHistory.create')).toBe(…
+    212|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/40]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  40 failed | 28 passed (68)
+   Start at  06:17:17
+   Duration  2.88s (transform 1.10s, setup 75ms, import 1.70s, tests 504ms, environment 0ms)
+
+exit=1

@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — labelled 2026-10-12 (safety remediation).** Kept for history only; do not cite as evidence.
+> Unsupported claims in this file: the 560 universities / 11,200 courses / 800 courses / 250 scholarships counts describe generated synthetic CSV and TypeScript data (see `AUDIT/course-finder-2026-10-12/synthetic-catalogue-manifest.json`), not verified university records.
+> Current evidence-based status: `AUDIT/course-finder-2026-10-12/` and `AUDIT/historical-catalogue-reports-2026-10-12/README.md`.
+
 # ALO Education — Course Finder Platform: Verification & Remediation Report
 
 **Date:** 2026-10-09

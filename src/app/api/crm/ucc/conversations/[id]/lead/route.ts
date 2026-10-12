@@ -1,100 +1,90 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { authenticateRequest, logAuditAction } from '@/lib/auth-middleware';
-import { canAccessUccConversation, canUseUccCommunication } from '@/lib/ucc/document-access';
-import { canViewUccConversationB2B } from '@/lib/ucc/conversation-visibility';
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { canReadLegacyLeadDashboard } from '@/lib/crm/lead-access';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 
-function digits(value: string | null | undefined): string {
-  return (value || '').replace(/\D/g, '');
-}
+const identifier = z.string().trim().min(1).max(191);
+const inputSchema = z.object({
+  existingLeadId: identifier.optional(), createNew: z.boolean().optional(),
+  leadData: z.object({
+    name: z.string().trim().max(191).optional(), phone: z.string().trim().max(50).optional(),
+    email: z.union([z.literal(''), z.email().max(191)]).optional(), destination: z.string().trim().max(191).optional(),
+  }).strict().optional(),
+}).strict().refine(v => Boolean(v.existingLeadId) !== (v.createNew === true), 'Choose an existing lead or create a new one');
+const leadSelect = { id: true, name: true, phone: true, email: true, destination: true, status: true, source: true } as const;
 
-async function loadAuthorizedConversation(request: Request, id: string) {
+async function authorize(request: Request, mutation = false) {
   const auth = await authenticateRequest(request);
-  if (auth instanceof NextResponse) return { response: auth } as const;
-  if (!canUseUccCommunication(auth)) return { response: NextResponse.json({ success: false, error: 'Communication access is not permitted.' }, { status: 403 }) } as const;
-  const conversation = await db.uccConversation.findUnique({ where: { id } });
-  if (!conversation || !canAccessUccConversation(auth, conversation) || !(await canViewUccConversationB2B(auth, conversation))) {
-    return { response: NextResponse.json({ success: false, error: 'Conversation not found or access denied.' }, { status: 404 }) } as const;
-  }
-  return { auth, conversation } as const;
-}
-
-export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const access = await loadAuthorizedConversation(request, id);
-  if ('response' in access) return access.response;
-  const body = await request.json().catch(() => null);
-  const existingLeadId = typeof body?.existingLeadId === 'string' ? body.existingLeadId.trim() : '';
-  const createNew = body?.createNew === true;
-  const leadData = body?.leadData && typeof body.leadData === 'object' && !Array.isArray(body.leadData) ? body.leadData : {};
-  if (existingLeadId && createNew) return NextResponse.json({ success: false, error: 'Choose an existing lead or create a new one, not both.' }, { status: 400 });
-  if (!existingLeadId && !createNew) return NextResponse.json({ success: false, error: 'Provide existingLeadId or set createNew=true.' }, { status: 400 });
-
-  try {
-    if (existingLeadId) {
-      const lead = await db.marketingLead.findUnique({ where: { id: existingLeadId }, select: { id: true, name: true, phone: true, email: true, destination: true, status: true, counselorId: true } });
-      if (!lead) return NextResponse.json({ success: false, error: 'Lead not found.' }, { status: 404 });
-      const isSupervisor = ['SUPER_ADMIN', 'ADMIN', 'BRANCH_MANAGER', 'DEPARTMENT_MANAGER'].some((role) =>
-        [...access.auth.roles, access.auth.userType].some((value) => value.toUpperCase() === role),
-      );
-      const contactMatches = (!!digits(access.conversation.participantPhone) && digits(access.conversation.participantPhone) === digits(lead.phone)) ||
-        (!!access.conversation.participantEmail && access.conversation.participantEmail.toLowerCase() === lead.email.toLowerCase());
-      if (!isSupervisor && lead.counselorId !== access.auth.userId && !contactMatches) {
-        return NextResponse.json({ success: false, error: 'Lead access is not permitted for this conversation.' }, { status: 403 });
-      }
-      const phoneComparable = !!access.conversation.participantPhone && !!lead.phone;
-      const emailComparable = !!access.conversation.participantEmail && !!lead.email;
-      if (!isSupervisor && ((phoneComparable && digits(access.conversation.participantPhone) !== digits(lead.phone)) ||
-          (emailComparable && access.conversation.participantEmail!.toLowerCase() !== lead.email.toLowerCase()))) {
-        return NextResponse.json({ success: false, error: 'Lead contact details do not match this conversation.' }, { status: 403 });
-      }
-      const updated = await db.uccConversation.update({ where: { id }, data: { leadId: lead.id } });
-      await logAuditAction(access.auth, 'CONVERSATION_LINKED_TO_LEAD', 'UccConversation', id, { leadId: lead.id });
-      return NextResponse.json({ success: true, message: 'Conversation linked to an authorized lead.', lead: { id: lead.id, name: lead.name, phone: lead.phone, email: lead.email, destination: lead.destination, status: lead.status }, conversation: updated });
-    }
-
-    const suppliedPhone = typeof leadData.phone === 'string' ? leadData.phone.trim() : '';
-    const suppliedEmail = typeof leadData.email === 'string' ? leadData.email.trim().toLowerCase() : '';
-    if (suppliedPhone && access.conversation.participantPhone && digits(suppliedPhone) !== digits(access.conversation.participantPhone)) {
-      return NextResponse.json({ success: false, error: 'Lead phone must match the conversation contact.' }, { status: 400 });
-    }
-    if (suppliedEmail && access.conversation.participantEmail && suppliedEmail !== access.conversation.participantEmail.toLowerCase()) {
-      return NextResponse.json({ success: false, error: 'Lead email must match the conversation contact.' }, { status: 400 });
-    }
-    const lead = await db.marketingLead.create({
-      data: {
-        name: typeof leadData.name === 'string' && leadData.name.trim() ? leadData.name.trim().slice(0, 191) : access.conversation.participantName,
-        phone: access.conversation.participantPhone || suppliedPhone,
-        email: access.conversation.participantEmail || suppliedEmail,
-        destination: typeof leadData.destination === 'string' ? leadData.destination.trim().slice(0, 191) : access.conversation.destinationCountry || '',
-        source: `ucc_${access.conversation.channel}`,
-        status: 'new',
-        counselorId: access.auth.userId,
-        counselorName: access.auth.name || access.auth.email || 'Staff',
-        createdById: access.auth.userId,
-      },
-    });
-    const updated = await db.uccConversation.update({ where: { id }, data: { leadId: lead.id } });
-    await logAuditAction(access.auth, 'LEAD_CREATED_FROM_CONVERSATION', 'UccConversation', id, { leadId: lead.id, channel: access.conversation.channel });
-    return NextResponse.json({ success: true, message: 'Lead created from the authorized conversation and linked.', lead: { id: lead.id, name: lead.name, phone: lead.phone, email: lead.email, destination: lead.destination, status: lead.status }, conversation: updated }, { status: 201 });
-  } catch {
-    return NextResponse.json({ success: false, error: 'Conversation could not be linked to a lead.' }, { status: 503 });
-  }
+  if (auth instanceof NextResponse) return auth;
+  // Both conversation assignment and student links lack typed identity FKs.
+  // Creator-scoping a lead cannot secure a foreign conversation. No staff,
+  // Portal, matching-contact or assignee-ID fallback until mapping is verified.
+  if (!canReadLegacyLeadDashboard(auth)) return NextResponse.json({ success: false, code: 'CONVERSATION_IDENTITY_MAPPING_UNVERIFIED', error: 'User administrator required for this legacy lead bridge.' }, { status: 403 });
+  if (mutation && !mutationOriginAllowed(request, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
+  return auth;
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const access = await loadAuthorizedConversation(request, id);
-  if ('response' in access) return access.response;
   try {
-    const lead = access.conversation.leadId
-      ? await db.marketingLead.findUnique({
-          where: { id: access.conversation.leadId },
-          select: { id: true, name: true, phone: true, email: true, destination: true, status: true, source: true, counselorId: true },
-        })
-      : null;
-    return NextResponse.json({ success: true, leadId: access.conversation.leadId, lead: lead ? { id: lead.id, name: lead.name, phone: lead.phone, email: lead.email, destination: lead.destination, status: lead.status, source: lead.source } : null });
+    const auth = await authorize(request);
+    if (auth instanceof NextResponse) return auth;
+    const parsedId = identifier.safeParse((await params).id);
+    if (!parsedId.success) return NextResponse.json({ success: false, error: 'Invalid conversation ID' }, { status: 400 });
+    const conversation = await db.uccConversation.findUnique({ where: { id: parsedId.data }, select: { leadId: true } });
+    if (!conversation) return NextResponse.json({ success: false, error: 'Conversation not found' }, { status: 404 });
+    const lead = conversation.leadId ? await db.marketingLead.findUnique({ where: { id: conversation.leadId }, select: leadSelect }) : null;
+    return NextResponse.json({ success: true, leadId: lead?.id || null, lead });
   } catch {
     return NextResponse.json({ success: false, error: 'Lead information is temporarily unavailable.' }, { status: 503 });
+  }
+}
+
+class BridgeError extends Error {
+  constructor(readonly status: number, message: string) { super(message); }
+}
+
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const auth = await authorize(request, true);
+    if (auth instanceof NextResponse) return auth;
+    const parsedId = identifier.safeParse((await params).id);
+    const parsed = inputSchema.safeParse(await request.json().catch(() => null));
+    if (!parsedId.success || !parsed.success) return NextResponse.json({ success: false, error: 'Valid conversation ID and one explicit lead action required.' }, { status: 400 });
+    const id = parsedId.data;
+    const { existingLeadId, createNew, leadData = {} } = parsed.data;
+    const result = await db.$transaction(async tx => {
+      const conversation = await tx.uccConversation.findUnique({ where: { id } });
+      if (!conversation) throw new BridgeError(404, 'Conversation not found');
+      if (conversation.leadId) throw new BridgeError(409, 'Conversation already has a lead; it was not overwritten.');
+      // Version claim serializes concurrent links/creates; rolls back with audit.
+      const claimed = await tx.uccConversation.updateMany({
+        where: { id, updatedAt: conversation.updatedAt, OR: [{ leadId: null }, { leadId: '' }] },
+        data: { updatedAt: new Date(Math.max(Date.now(), conversation.updatedAt.getTime() + 1)) },
+      });
+      if (claimed.count !== 1) throw new BridgeError(409, 'Conversation changed; reload before linking.');
+      const lead = existingLeadId
+        ? await tx.marketingLead.findUnique({ where: { id: existingLeadId }, select: leadSelect })
+        : await tx.marketingLead.create({ data: {
+          name: leadData.name || conversation.participantName,
+          phone: conversation.participantPhone || leadData.phone || '',
+          email: conversation.participantEmail || leadData.email || '',
+          destination: leadData.destination || conversation.destinationCountry || '',
+          source: `ucc_${conversation.channel}`, status: 'new', consent: false, createdById: auth.userId,
+        }, select: leadSelect });
+      if (!lead) throw new BridgeError(404, 'Lead not found');
+      await tx.uccConversation.update({ where: { id }, data: { leadId: lead.id } });
+      await tx.portalAuditLog.create({ data: {
+        actorUserId: auth.actorUserId, action: createNew ? 'LEAD_CREATED_FROM_CONVERSATION' : 'CONVERSATION_LINKED_TO_LEAD',
+        entityType: 'UccConversation', entityId: id,
+        metadata: JSON.stringify({ identityDomain: auth.identityDomain, effectiveUserId: auth.userId, leadId: lead.id }),
+      } });
+      return { lead, conversation: { id, leadId: lead.id } };
+    });
+    return NextResponse.json({ success: true, ...result }, { status: createNew ? 201 : 200 });
+  } catch (error) {
+    if (error instanceof BridgeError) return NextResponse.json({ success: false, error: error.message }, { status: error.status });
+    return NextResponse.json({ success: false, error: 'Conversation could not be linked to a lead.' }, { status: 503 });
   }
 }

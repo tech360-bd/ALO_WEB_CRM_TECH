@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — NOT A SOURCE OF TRUTH** (labelled 2026-10-12).
+> Unsupported: Claims "153 verified universities", "11,185 verified courses" and a "source-verified" database. No verification evidence (reviewer, date, database query) exists in the repository; the underlying CSV/JSON datasets are generated (17,182 of 18,053 URLs in ALO_URL_VERIFICATION_REPORT.csv are PLACEHOLDER_URL). Contradicted by ALO_FINAL_MASTER_DATA_REPORT.md, which reports 1 verified university.
+> See AUDIT/historical-catalogue-reports-2026-10-12/README.md.
+
 # ALO Education — Data Collection & Completeness Audit Report
 
 ## Executive Summary

@@ -25,10 +25,10 @@ export default function StudentLoginPage() {
   // If already logged in, redirect
   useEffect(() => {
     localStorage.removeItem('student_token');
-    const token = document.cookie.includes('alo_student_session=');
-    if (token) {
-      router.replace('/student/dashboard');
-    }
+    // HttpOnly cookies are not visible to document.cookie. Verify server-side.
+    fetch('/api/student/auth/me', { credentials: 'include' })
+      .then(async res => { if (res.ok && (await res.json()).success) router.replace('/student/dashboard'); })
+      .catch(() => {});
   }, [router]);
 
   // OTP countdown

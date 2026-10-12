@@ -1,0 +1,44 @@
+[
+  {
+    "name": "checksum_https",
+    "url": "https://binaries.prisma.sh/all_commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/schema-engine.gz.sha256",
+    "exitCode": 35,
+    "response": [
+      "http_code=000 ssl_verify_result=1 remote_ip=104.20.43.103"
+    ],
+    "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to binaries.prisma.sh:443"
+  },
+  {
+    "name": "engine_https",
+    "url": "https://binaries.prisma.sh/all_commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/schema-engine.gz",
+    "exitCode": 35,
+    "response": [
+      "http_code=000 ssl_verify_result=1 remote_ip=172.66.156.100"
+    ],
+    "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to binaries.prisma.sh:443"
+  },
+  {
+    "name": "npm_control",
+    "url": "https://registry.npmjs.org/@prisma%2fengines/6.19.3",
+    "exitCode": 0,
+    "response": [
+      "HTTP/2 200 ",
+      "content-type: application/json",
+      "server: cloudflare",
+      "http_code=200 ssl_verify_result=0 remote_ip=104.16.2.34"
+    ],
+    "error": ""
+  },
+  {
+    "name": "github_control",
+    "url": "https://api.github.com/repos/prisma/prisma-engines/commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7",
+    "exitCode": 0,
+    "response": [
+      "HTTP/2 200 ",
+      "content-type: application/json; charset=utf-8",
+      "server: github.com",
+      "http_code=200 ssl_verify_result=0 remote_ip=20.29.134.17"
+    ],
+    "error": ""
+  }
+]

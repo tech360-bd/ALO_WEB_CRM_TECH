@@ -9,7 +9,7 @@ const { mockDb, mockAuthenticateRequest, mockCheckRateLimit } = vi.hoisted(() =>
     mockDb: {
       employee: { findUnique: fn(), findMany: fn() },
       marketingLead: { count: fn(), findMany: fn() },
-      crmAuditLog: { create: fn() },
+      portalAuditLog: { create: fn() },
       $transaction: fn(),
     },
   };
@@ -22,16 +22,17 @@ vi.mock('@/lib/rate-limiter', () => ({ checkRateLimit: mockCheckRateLimit }));
 import { GET, POST } from '@/app/api/employee/leads/route';
 
 const auth = {
-  userId: 'portal-user-id',
+  identityDomain: 'user', authenticationMethod: 'cookie', permissions: ['s8', 's9'],
+  userId: 'user-id',
   userType: 'EMPLOYEE',
   roles: ['COUNSELOR'],
   name: 'Test Counselor',
-  actorUserId: 'portal-user-id',
+  actorUserId: 'user-id',
   actorEmail: 'counselor@example.test',
   actorName: 'Test Counselor',
 };
 const employee = {
-  id: 'employee-id', userId: 'portal-user-id', employeeId: 'EMP-1',
+  id: 'employee-id', userId: 'user-id', employeeId: 'EMP-1',
   status: 'active', branch: 'Dhaka', role: 'counselor',
 };
 
@@ -46,6 +47,7 @@ function setAuthorizedMocks() {
 describe('employee leads API scope and defaults', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv('NEXTAUTH_URL', 'https://alo.test');
     setAuthorizedMocks();
     mockCheckRateLimit.mockReturnValue({ allowed: true, remaining: 4, resetAt: Date.now() + 60_000 });
   });
@@ -56,11 +58,11 @@ describe('employee leads API scope and defaults', () => {
     expect(mockDb.marketingLead.findMany).not.toHaveBeenCalled();
   });
 
-  it('filters assigned lead reads by authenticated assignment identities', async () => {
-    const response = await GET(new NextRequest('https://alo.test/api/employee/leads?scope=assigned'));
+  it('filters created lead reads only by the verified User FK', async () => {
+    const response = await GET(new NextRequest('https://alo.test/api/employee/leads?scope=created'));
     expect(response.status).toBe(200);
-    expect(mockDb.marketingLead.findMany.mock.calls[0]?.[0]?.where?.counselorId?.in)
-      .toEqual(expect.arrayContaining(['portal-user-id', 'employee-id', 'EMP-1']));
+    expect(mockDb.marketingLead.findMany.mock.calls[0]?.[0]?.where).toEqual({ createdById: 'user-id' });
+    expect(mockDb.employee.findUnique).not.toHaveBeenCalled();
   });
 
   it('blocks cross-origin cookie-authenticated lead creation', async () => {
@@ -70,14 +72,14 @@ describe('employee leads API scope and defaults', () => {
       body: JSON.stringify({ fullName: 'Test Lead', phone: '+8801712345678' }),
     }));
     expect(response.status).toBe(403);
-    expect(mockAuthenticateRequest).not.toHaveBeenCalled();
+    expect(mockDb.$transaction).not.toHaveBeenCalled();
   });
 
   it('does not invent a destination, level, intake, hot score, or consent on creation', async () => {
     const lead = { id: 'lead-1', name: 'Test Lead', phone: '+8801712345678', destination: '', level: '', intake: '', status: 'new' };
     const tx = {
       marketingLead: { create: vi.fn().mockResolvedValue(lead) },
-      crmAuditLog: { create: vi.fn().mockResolvedValue({ id: 'audit-1' }) },
+      portalAuditLog: { create: vi.fn().mockResolvedValue({ id: 'audit-1' }) },
     };
     mockDb.$transaction.mockImplementation(async (callback: (client: typeof tx) => unknown) => callback(tx));
 
@@ -93,11 +95,26 @@ describe('employee leads API scope and defaults', () => {
     const createData = tx.marketingLead.create.mock.calls[0]?.[0]?.data;
     expect(createData).toMatchObject({
       destination: '', level: '', intake: '', source: 'employee_direct_contact',
-      counselorId: 'portal-user-id', status: 'new',
+      createdById: 'user-id', status: 'new', consent: false,
     });
     expect(createData).not.toHaveProperty('hotLead');
     expect(createData).not.toHaveProperty('score');
-    expect(createData).not.toHaveProperty('consent');
-    expect(tx.crmAuditLog.create).toHaveBeenCalledOnce();
+    expect(createData).not.toHaveProperty('counselorId');
+    expect(tx.portalAuditLog.create).toHaveBeenCalledOnce();
   });
+});
+
+it('denies PortalUser IDs even if an Employee row has matching IDs', async () => {
+  mockAuthenticateRequest.mockResolvedValue({ ...auth, identityDomain: 'portal' });
+  mockDb.employee.findUnique.mockClear();
+  const response = await GET(new NextRequest('https://alo.test/api/employee/leads'));
+  expect(response.status).toBe(403);
+  expect(mockDb.employee.findUnique).not.toHaveBeenCalled();
+});
+it('reports assigned/team mapping unavailable instead of widening results', async () => {
+  setAuthorizedMocks(); mockDb.marketingLead.findMany.mockClear();
+  for (const scope of ['assigned', 'team']) {
+    expect((await GET(new NextRequest(`https://alo.test/api/employee/leads?scope=${scope}`))).status).toBe(409);
+  }
+  expect(mockDb.marketingLead.findMany).not.toHaveBeenCalled();
 });

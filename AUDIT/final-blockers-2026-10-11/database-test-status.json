@@ -1,0 +1,450 @@
+{
+  "method": "TypeScript AST discovery of literal it/test declarations, not test execution. Vitest list excludes skipped suites and returned zero; no fake TEST_DATABASE_URL was supplied to enable collection.",
+  "total": 63,
+  "passed": 0,
+  "failed": 0,
+  "blocked": 63,
+  "tests": [
+    {
+      "file": "tests/integration/consultation-workflow.test.ts",
+      "line": 35,
+      "name": "creates a lead with valid input",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/consultation-workflow.test.ts",
+      "line": 58,
+      "name": "detects duplicate leads by email",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/consultation-workflow.test.ts",
+      "line": 90,
+      "name": "updates an existing lead instead of creating a duplicate",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/consultation-workflow.test.ts",
+      "line": 120,
+      "name": "creates an audit log entry when a lead is created",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/consultation-workflow.test.ts",
+      "line": 151,
+      "name": "creates a notification for the assigned counselor",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/consultation-workflow.test.ts",
+      "line": 200,
+      "name": "allows status updates on a lead",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/consultation-workflow.test.ts",
+      "line": 226,
+      "name": "persists leads across DB reconnects",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/content-publication-security.test.ts",
+      "line": 37,
+      "name": "persists a resource and its audit without invalid null text values",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/content-publication-security.test.ts",
+      "line": 44,
+      "name": "rolls back the resource when audit persistence fails",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/content-publication-security.test.ts",
+      "line": 50,
+      "name": "rejects foreign origins even with an admin session",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/content-publication-security.test.ts",
+      "line": 54,
+      "name": "returns exact published relationships and omits archived targets",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/content-publication-security.test.ts",
+      "line": 65,
+      "name": "revalidates disabled accounts instead of trusting stale session roles",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 169,
+      "name": "allows the Starter package of 1 Partner Super Admin + 2 employees",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 182,
+      "name": "keeps the two tenants separate",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 192,
+      "name": "resolves partnerId and partnerRole from the session, not from client input",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 202,
+      "name": "rejects an anonymous caller",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 208,
+      "name": "rejects an authenticated user with no partner organisation",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 217,
+      "name": "blocks a cross-tenant partnerId supplied by the client",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 226,
+      "name": "permits a supplied partnerId that matches the session tenant",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 232,
+      "name": "scopes voucher reads to the caller tenant",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 262,
+      "name": "allows the Partner Super Admin",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 267,
+      "name": "denies a partner counselor",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 273,
+      "name": "identifies partner roles correctly",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 284,
+      "name": "rejects an anonymous approval attempt",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 291,
+      "name": "rejects a Partner Super Admin approving their own request",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 297,
+      "name": "allows an ALO Education Super Admin",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 305,
+      "name": "normalises every accepted spelling",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 313,
+      "name": "returns the Starter allowance for the key the generate endpoint uses",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 320,
+      "name": "reports quota as available on a fresh month rather than \"0/0\"",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 326,
+      "name": "defaults an unconfigured partner to the Starter seat limit",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 333,
+      "name": "never grants more than the limit when requests race",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 359,
+      "name": "records usage against the YYYY-MM period",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 366,
+      "name": "permits exactly one redemption of a single-use voucher under concurrency",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 413,
+      "name": "counts only the caller tenant's students and applications",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/partner-b2b-security.test.ts",
+      "line": 449,
+      "name": "reports seats used as real users, not as seat requests",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 108,
+      "name": "denies an unauthenticated caller the Super Admin actions",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 117,
+      "name": "denies an unauthenticated caller read access to the queue",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 125,
+      "name": "allows SUPER_ADMIN and returns the session-derived actor",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 135,
+      "name": "denies EMPLOYEE the approve/reject/trigger actions (403, not 401)",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 141,
+      "name": "denies STUDENT privileged actions",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 147,
+      "name": "denies PARTNER privileged actions",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 155,
+      "name": "allows EMPLOYEE to view monitoring data",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 161,
+      "name": "allows SUPER_ADMIN to view monitoring data",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 166,
+      "name": "denies STUDENT — students must never see unapproved detected changes",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 172,
+      "name": "denies PARTNER read access to the verification queue",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 180,
+      "name": "rejects a revoked session",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 191,
+      "name": "rejects a forged/unknown token",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring-rbac.test.ts",
+      "line": 197,
+      "name": "a client-supplied performedBy in the body cannot grant privileges",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 155,
+      "name": "creates the monitoring job with a stable id (idempotent across restarts)",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 167,
+      "name": "computes the next run exactly 7 days ahead",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 176,
+      "name": "persists nextRunAt so the schedule survives a process restart",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 190,
+      "name": "reports due when nextRunAt has elapsed",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 205,
+      "name": "only one of two concurrent lock attempts succeeds",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 234,
+      "name": "reclaims a lock orphaned by a crashed process and fails its run",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 262,
+      "name": "does not reclaim a lock that is still valid",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 286,
+      "name": "stores old value, new value, source URL, detection time, impact and confidence",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 324,
+      "name": "a detected change does NOT mutate production data before approval",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 380,
+      "name": "APPROVE writes history, applies the new value, and emits an audit event",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 470,
+      "name": "REJECT never mutates production data",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 496,
+      "name": "history remains searchable as an ordered value timeline",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 515,
+      "name": "records consecutive failures on the source but preserves the entity",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 541,
+      "name": "creates a PENDING conflict and resolves it with attribution",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    },
+    {
+      "file": "tests/integration/university-monitoring.test.ts",
+      "line": 581,
+      "name": "excludes records that are not both VERIFIED and PUBLISHED",
+      "status": "BLOCKED_NOT_EXECUTED",
+      "reason": "No verified isolated MySQL service or TEST_DATABASE_URL; Prisma engine unavailable; cleanup verification incomplete"
+    }
+  ]
+}

@@ -45,7 +45,7 @@ export function roundedOrthoPath(pts: DiagramPoint[], r = 8): string {
   let d = `M ${first.x} ${first.y}`;
   for (let i = 1; i < pts.length - 1; i += 1) {
     const p = pts[i];
-    const pin = pointAlong(pts[i - 1], p, rr);
+    const pin = pointAlong(p, pts[i - 1], rr);
     const pout = pointAlong(p, pts[i + 1], rr);
     d += ` L ${pin.x} ${pin.y}`;
     // Screen coords (y down): cross > 0 → clockwise turn → sweep = 1.
@@ -295,12 +295,14 @@ export function DiagramRoot({
     <svg
       viewBox={`0 0 ${width} ${height}`}
       width="100%"
-      height="auto"
+      height={height}
       role="img"
-      aria-label={label}
+      aria-labelledby={`${idPrefix}-title`} aria-describedby={`${idPrefix}-desc`}
       className={className}
       style={{ maxWidth: '100%', height: 'auto' }}
     >
+      <title id={`${idPrefix}-title`}>{label}</title>
+      <desc id={`${idPrefix}-desc`}>ALO Education process diagram. Labels and annotations describe each stage and connection.</desc>
       <DiagramArrowDefs idPrefix={idPrefix} />
       <rect width="100%" height="100%" fill={T.paper} rx={12} />
       {children}

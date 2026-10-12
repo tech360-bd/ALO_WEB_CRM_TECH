@@ -1,0 +1,446 @@
+{
+  "date": "2026-10-10",
+  "scope": "Expanded request references, grouped by source; repeat counts retained from conversation. Not the original pasted order. Supplements, does not replace prior 164- and 28-occurrence reports.",
+  "occurrences": [
+    {
+      "occurrence": 1,
+      "url": "https://www.aloeducation.com",
+      "repeatIndex": 1,
+      "evidence": "Public homepage chunk 0/4 read in earlier reconnaissance",
+      "applicableFeatures": "Current ALO public finder, English-test funnel, services",
+      "openWork": "Remaining chunks, routes, production data and journeys not fully verified"
+    },
+    {
+      "occurrence": 2,
+      "url": "https://github.com/engralaminn-collab/alo-education-uk-final",
+      "repeatIndex": 1,
+      "evidence": "HTTP 403 on GitHub metadata check",
+      "applicableFeatures": "Private ALO feature/source comparison",
+      "openWork": "GitHub connection repository access needs attention; source archive or permission required"
+    },
+    {
+      "occurrence": 3,
+      "url": "https://github.com/engralaminn-collab/alo-education-uk-final",
+      "repeatIndex": 2,
+      "evidence": "HTTP 403 on GitHub metadata check",
+      "applicableFeatures": "Private ALO feature/source comparison",
+      "openWork": "GitHub connection repository access needs attention; source archive or permission required"
+    },
+    {
+      "occurrence": 4,
+      "url": "https://github.com/engralaminn-collab/alo-education-last",
+      "repeatIndex": 1,
+      "evidence": "HTTP 403 on GitHub metadata check",
+      "applicableFeatures": "Private ALO feature/source comparison",
+      "openWork": "GitHub connection repository access needs attention; source archive or permission required"
+    },
+    {
+      "occurrence": 5,
+      "url": "https://github.com/engralaminn-collab/alo-ukvi-ai-markting-platform-copy",
+      "repeatIndex": 1,
+      "evidence": "HTTP 403 on GitHub metadata check",
+      "applicableFeatures": "Private ALO feature/source comparison",
+      "openWork": "GitHub connection repository access needs attention; source archive or permission required"
+    },
+    {
+      "occurrence": 6,
+      "url": "https://github.com/engralaminn-collab/ALO-Education_LAST-TRY",
+      "repeatIndex": 1,
+      "evidence": "HTTP 403 on GitHub metadata check",
+      "applicableFeatures": "Private ALO feature/source comparison",
+      "openWork": "GitHub connection repository access needs attention; source archive or permission required"
+    },
+    {
+      "occurrence": 7,
+      "url": "https://github.com/msitarzewski/agency-agents",
+      "repeatIndex": 1,
+      "evidence": "MIT; pinned README/license/orchestrator/reality-checker prompts selected-file review",
+      "applicableFeatures": "Evidence-based task gates and role-specialized agent workflows",
+      "openWork": "Not a CRM runtime; not all prompts reviewed or installed; no autonomous publish"
+    },
+    {
+      "occurrence": 8,
+      "url": "https://alo-global-navigator-copy-copy-4edeed1b.base44.app",
+      "repeatIndex": 1,
+      "evidence": "Public page chunk 0/2 read",
+      "applicableFeatures": "ALO destinations, university profiles, services and team layout",
+      "openWork": "Authenticated runtime unverified; statistics/team photos/rankings not accepted as facts"
+    },
+    {
+      "occurrence": 9,
+      "url": "https://alo-global-navigator-copy-copy-4edeed1b.base44.app",
+      "repeatIndex": 2,
+      "evidence": "Public page chunk 0/2 read",
+      "applicableFeatures": "ALO destinations, university profiles, services and team layout",
+      "openWork": "Authenticated runtime unverified; statistics/team photos/rankings not accepted as facts"
+    },
+    {
+      "occurrence": 10,
+      "url": "https://alocrm.base44.app",
+      "repeatIndex": 1,
+      "evidence": "Public page chunk 0/2 read",
+      "applicableFeatures": "ALO landing/services/university detail reference",
+      "openWork": "Authenticated runtime unverified; remaining chunks unread"
+    },
+    {
+      "occurrence": 11,
+      "url": "https://alo-education-855918120103.us-west1.run.app",
+      "repeatIndex": 1,
+      "evidence": "Returned 500 Server Error page",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source or restored deployment required"
+    },
+    {
+      "occurrence": 12,
+      "url": "https://www.tclglobal.co.uk/",
+      "repeatIndex": 1,
+      "evidence": "Homepage chunk 0/2 read",
+      "applicableFeatures": "Recommendations, save/compare/apply, document vault, tracking and partner/referral zones",
+      "openWork": "Homepage is not complete course database or backend verification"
+    },
+    {
+      "occurrence": 13,
+      "url": "https://www.tclglobal.co.uk",
+      "repeatIndex": 1,
+      "evidence": "Homepage chunk 0/2 read",
+      "applicableFeatures": "Recommendations, save/compare/apply, document vault, tracking and partner/referral zones",
+      "openWork": "Homepage is not complete course database or backend verification"
+    },
+    {
+      "occurrence": 14,
+      "url": "https://gostudyin.com",
+      "repeatIndex": 1,
+      "evidence": "Homepage chunk 0/10 read",
+      "applicableFeatures": "Event filters, fairs, multi-region course/destination discovery and counseling",
+      "openWork": "Nine further homepage chunks and internal routes not reviewed; complete university/course feed not obtained"
+    },
+    {
+      "occurrence": 15,
+      "url": "https://gostudyin.com",
+      "repeatIndex": 2,
+      "evidence": "Homepage chunk 0/10 read",
+      "applicableFeatures": "Event filters, fairs, multi-region course/destination discovery and counseling",
+      "openWork": "Nine further homepage chunks and internal routes not reviewed; complete university/course feed not obtained"
+    },
+    {
+      "occurrence": 16,
+      "url": "https://gostudyin.com",
+      "repeatIndex": 3,
+      "evidence": "Homepage chunk 0/10 read",
+      "applicableFeatures": "Event filters, fairs, multi-region course/destination discovery and counseling",
+      "openWork": "Nine further homepage chunks and internal routes not reviewed; complete university/course feed not obtained"
+    },
+    {
+      "occurrence": 17,
+      "url": "https://www.studies-overseas.com/contact-us/study-abroad-consultants-in-dhaka",
+      "repeatIndex": 1,
+      "evidence": "Dhaka branch page chunk 0/2 read",
+      "applicableFeatures": "Seven-step counseling/application/test/loan/visa/travel/predeparture journey",
+      "openWork": "Branch page not university/course database; partner and outcome claims are not ALO facts"
+    },
+    {
+      "occurrence": 18,
+      "url": "https://z12k65gvz620-d.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Working StudyBridge landing",
+      "applicableFeatures": "Role zones, matching, vault, chat, tracking",
+      "openWork": "Authenticated dashboards unreviewed; counts unverified"
+    },
+    {
+      "occurrence": 19,
+      "url": "https://j1nke5hsck41-d.space-z.ai/#top",
+      "repeatIndex": 1,
+      "evidence": "Expired/recycled",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source required"
+    },
+    {
+      "occurrence": 20,
+      "url": "https://e1uk35zgw510-d.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Expired/recycled",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source required"
+    },
+    {
+      "occurrence": 21,
+      "url": "https://q10ea5kfyva0-d.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Deployment failed",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source required"
+    },
+    {
+      "occurrence": 22,
+      "url": "https://q10ea5kfyva0-d.space-z.ai",
+      "repeatIndex": 2,
+      "evidence": "Deployment failed",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source required"
+    },
+    {
+      "occurrence": 23,
+      "url": "https://b15kz88wvuj1-d.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "ALO landing chunk 0/2 read",
+      "applicableFeatures": "Destinations/cards/layout",
+      "openWork": "Unverified statistics/prices/team; remaining chunk unread"
+    },
+    {
+      "occurrence": 24,
+      "url": "https://b15kz88wvuj1-d.space-z.ai",
+      "repeatIndex": 2,
+      "evidence": "ALO landing chunk 0/2 read",
+      "applicableFeatures": "Destinations/cards/layout",
+      "openWork": "Unverified statistics/prices/team; remaining chunk unread"
+    },
+    {
+      "occurrence": 25,
+      "url": "https://m10ku8p1tjy0-d.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "CRM login landing",
+      "applicableFeatures": "CRM/SEO/agents entry points",
+      "openWork": "Authenticated backend and demo setup not executed"
+    },
+    {
+      "occurrence": 26,
+      "url": "https://p1pkx86z3391-d.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Deployment failed",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source required"
+    },
+    {
+      "occurrence": 27,
+      "url": "https://h1ekr8jsa0m0-d.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Deployment failed",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source required"
+    },
+    {
+      "occurrence": 28,
+      "url": "https://z1kkw801m7m0-d.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Finder landing; 0 of 0 courses",
+      "applicableFeatures": "Finder/compare/scholarships tabs",
+      "openWork": "No dataset obtained"
+    },
+    {
+      "occurrence": 29,
+      "url": "https://englishaloeducation.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Old ALO English landing",
+      "applicableFeatures": "Test categories",
+      "openWork": "Placeholder phone and inflated stats not adopted"
+    },
+    {
+      "occurrence": 30,
+      "url": "https://alo01.space-z.ai/#top",
+      "repeatIndex": 1,
+      "evidence": "ALO finder chunk 0/5 read",
+      "applicableFeatures": "Finder/destination/course/scholarship layout",
+      "openWork": "Dataset and immigration facts unverified; remaining chunks unread"
+    },
+    {
+      "occurrence": 31,
+      "url": "https://alo01.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Same host as prior anchored occurrence",
+      "applicableFeatures": "Same finder reference",
+      "openWork": "Duplicate retained; no separate backend evidence"
+    },
+    {
+      "occurrence": 32,
+      "url": "https://aloeduefe.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Deployment failed",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source required"
+    },
+    {
+      "occurrence": 33,
+      "url": "https://acudeola.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Deployment failed",
+      "applicableFeatures": "Unavailable",
+      "openWork": "Source required"
+    },
+    {
+      "occurrence": 34,
+      "url": "https://preview-chat-dce97255-2426-49b8-b6fd-977d09eb7819.space-z.ai",
+      "repeatIndex": 1,
+      "evidence": "Logo-only extracted page",
+      "applicableFeatures": "Unavailable feature content",
+      "openWork": "Feature/source review not possible from extracted page"
+    },
+    {
+      "occurrence": 35,
+      "url": "https://softifybd.com",
+      "repeatIndex": 1,
+      "evidence": "Earlier home/ManagerialCRM/Talkify pages reviewed",
+      "applicableFeatures": "Subscription/renewals/invoices/tickets/IVR/calls",
+      "openWork": "Not full backend/source parity or proprietary code licence"
+    },
+    {
+      "occurrence": 36,
+      "url": "https://softifybd.com",
+      "repeatIndex": 2,
+      "evidence": "Earlier home/ManagerialCRM/Talkify pages reviewed",
+      "applicableFeatures": "Subscription/renewals/invoices/tickets/IVR/calls",
+      "openWork": "Not full backend/source parity or proprietary code licence"
+    },
+    {
+      "occurrence": 37,
+      "url": "https://edufy.com.bd",
+      "repeatIndex": 1,
+      "evidence": "Earlier home/features reviewed",
+      "applicableFeatures": "Admissions/attendance/academic/guardian/finance/staff/SMS/biometrics",
+      "openWork": "Provider hardware and authenticated app not tested"
+    },
+    {
+      "occurrence": 38,
+      "url": "https://kiro.dev",
+      "repeatIndex": 1,
+      "evidence": "Homepage chunk 0/6 read",
+      "applicableFeatures": "Specs/hooks/context/development workflow",
+      "openWork": "Development reference, not admissions runtime; remaining chunks unread"
+    },
+    {
+      "occurrence": 39,
+      "url": "https://alfapte.com",
+      "repeatIndex": 1,
+      "evidence": "Homepage chunk 0/7 read",
+      "applicableFeatures": "Academic/UKVI/Core practice, timed/section/full mocks, progress analytics",
+      "openWork": "Proprietary questions/scoring not imported/licensed; remaining chunks unread"
+    },
+    {
+      "occurrence": 40,
+      "url": "https://github.com/melgarafael/DeskcommCRM",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence MIT",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 41,
+      "url": "https://github.com/Django-CRM/Django-CRM",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence MIT",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 42,
+      "url": "https://github.com/Odoo-mobile/crm",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence None",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 43,
+      "url": "https://github.com/thu-ml/CRM",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence MIT",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 44,
+      "url": "https://github.com/dennisivy/crash-course-CRM",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence None",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 45,
+      "url": "https://github.com/oroinc/crm-application",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence NOASSERTION",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 46,
+      "url": "https://github.com/trycompai/crm",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence MIT",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 47,
+      "url": "https://github.com/frappe/crm",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence AGPL-3.0",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 48,
+      "url": "https://github.com/ChurchCRM/CRM",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence MIT",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 49,
+      "url": "https://github.com/crmeb/CRMEB",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence Apache-2.0",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 50,
+      "url": "https://github.com/idurar/idurar-erp-crm",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence AGPL-3.0",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 51,
+      "url": "https://github.com/oroinc/crm",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence NOASSERTION",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 52,
+      "url": "https://github.com/fatfreecrm/fat_free_crm",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: accessible; licence NOASSERTION",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 53,
+      "url": "https://github.com/engralaminn-collab/ukvi-ai-markting_n8n",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: blocked; licence not verified",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 54,
+      "url": "https://github.com/engralaminn-collab/Ai-Markting-crm",
+      "repeatIndex": 1,
+      "evidence": "Prior selected-file review: blocked; licence not verified",
+      "applicableFeatures": "See prior supplied-reference implementation table; CRM patterns reused only where applicable",
+      "openWork": "Not whole-repository review or feature parity; source unavailable for blocked repositories"
+    },
+    {
+      "occurrence": 55,
+      "url": "https://aloeducation.com",
+      "repeatIndex": 1,
+      "evidence": "User-designated final production domain",
+      "applicableFeatures": "Existing final-domain configuration retained",
+      "openWork": "No DNS, hosting, deploy or live DB changes executed"
+    }
+  ]
+}

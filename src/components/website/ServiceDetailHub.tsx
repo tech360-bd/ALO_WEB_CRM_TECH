@@ -169,7 +169,7 @@ export default function ServiceDetailHub({ slug }: Props) {
             {/* Scholarship Guidance (spec §8): direct link to the Scholarships directory */}
             {service.slug === 'scholarship-guidance' && (
               <Card className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl">
-                <p className="text-xs text-gray-700">Ready to explore? Browse the verified directory: <Link href="/scholarships" className="font-bold text-[#0057B8] hover:underline">/scholarships — verified scholarships only</Link></p>
+                <p className="text-xs text-gray-700">Ready to explore? Browse the scholarship directory: <Link href="/scholarships" className="font-bold text-[#0057B8] hover:underline">/scholarships — verified scholarships only</Link></p>
               </Card>
             )}
 

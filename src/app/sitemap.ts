@@ -35,6 +35,8 @@ async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
       db.service.findMany({ select: { slug: true, updatedAt: true }, where: { status: { in: ['active', 'PUBLISHED'] } }, take: 5000 }),
       db.resource.findMany({ select: { slug: true, updatedAt: true, category: { select: { slug: true } } }, where: { status: { in: ['active', 'PUBLISHED'] }, category: { is: { status: 'active' } } }, take: 5000 }),
     ]);
+    const courses = coursesRaw.filter((row) => passesPublicPagePolicy(row, conflicts.courseSlugs));
+    const universities = universitiesRaw.filter((row) => passesPublicPagePolicy(row, conflicts.universitySlugs));
     const guides = guideRows.flatMap((row) => {
       let tags: unknown[] = [];
       try {

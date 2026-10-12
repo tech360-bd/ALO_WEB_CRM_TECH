@@ -466,22 +466,21 @@
 {"file":"src/app/api/admin/faqs/[id]/route.ts","kind":"CRUD/query call sites","modelDelegate":"unifiedFaq","operation":"delete","line":62,"status":"NOT VERIFIED"}
 {"file":"src/app/api/admin/faqs/route.ts","kind":"CRUD/query call sites","modelDelegate":"unifiedFaq","operation":"findMany","line":30,"status":"NOT VERIFIED"}
 {"file":"src/app/api/admin/faqs/route.ts","kind":"CRUD/query call sites","modelDelegate":"unifiedFaq","operation":"create","line":45,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"findMany","line":40,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"create","line":77,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findMany","line":93,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"findMany","line":94,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importStagingStudent","operation":"create","line":140,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"update","line":174,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalAuditLog","operation":"create","line":185,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"findUnique","line":224,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"count","line":240,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"(client)","operation":"$transaction","line":244,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importStagingStudent","operation":"update","line":252,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"create","line":265,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"create","line":277,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importStagingStudent","operation":"update","line":293,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"update","line":301,"status":"NOT VERIFIED"}
-{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalAuditLog","operation":"create","line":307,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"findMany","line":41,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"create","line":78,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findMany","line":94,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"findMany","line":95,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importStagingStudent","operation":"create","line":141,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"update","line":175,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalAuditLog","operation":"create","line":186,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"findUnique","line":225,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"(client)","operation":"$transaction","line":240,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importStagingStudent","operation":"update","line":248,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"create","line":262,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"create","line":274,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importStagingStudent","operation":"update","line":290,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"update","line":298,"status":"NOT VERIFIED"}
+{"file":"src/app/api/admin/import-center/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalAuditLog","operation":"create","line":304,"status":"NOT VERIFIED"}
 {"file":"src/app/api/admin/import/batches/[id]/approve/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"findUnique","line":16,"status":"NOT VERIFIED"}
 {"file":"src/app/api/admin/import/batches/[id]/approve/route.ts","kind":"CRUD/query call sites","modelDelegate":"importBatch","operation":"update","line":21,"status":"NOT VERIFIED"}
 {"file":"src/app/api/admin/import/batches/[id]/approve/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":26,"status":"NOT VERIFIED"}
@@ -1448,10 +1447,10 @@
 {"file":"src/app/api/counselor/whatsapp/route.ts","kind":"CRUD/query call sites","modelDelegate":"whatsAppMessageArchive","operation":"findMany","line":17,"status":"NOT VERIFIED"}
 {"file":"src/app/api/countries/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"countryPage","operation":"findUnique","line":6,"status":"NOT VERIFIED"}
 {"file":"src/app/api/countries/route.ts","kind":"CRUD/query call sites","modelDelegate":"countryPage","operation":"findMany","line":5,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findFirst","line":18,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findMany","line":40,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":70,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":88,"status":"NOT VERIFIED"}
+{"file":"src/app/api/course-finder/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findFirst","line":33,"status":"NOT VERIFIED"}
+{"file":"src/app/api/course-finder/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findMany","line":48,"status":"NOT VERIFIED"}
+{"file":"src/app/api/course-finder/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":78,"status":"NOT VERIFIED"}
+{"file":"src/app/api/course-finder/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":90,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/admin/route.ts","kind":"CRUD/query call sites","modelDelegate":"coursePage","operation":"findMany","line":20,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/admin/route.ts","kind":"CRUD/query call sites","modelDelegate":"countryPage","operation":"findMany","line":31,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/admin/route.ts","kind":"CRUD/query call sites","modelDelegate":"coursePage","operation":"count","line":39,"status":"NOT VERIFIED"}
@@ -1487,12 +1486,8 @@
 {"file":"src/app/api/course-finder/pro/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourseIntakeFee","operation":"findMany","line":100,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/pro/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmScholarship","operation":"findMany","line":118,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/pro/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCommission","operation":"findMany","line":129,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findMany","line":50,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourseRequirement","operation":"findMany","line":94,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":116,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":117,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findMany","line":130,"status":"NOT VERIFIED"}
-{"file":"src/app/api/course-finder/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourseIntakeFee","operation":"findMany","line":133,"status":"NOT VERIFIED"}
+{"file":"src/app/api/course-finder/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":40,"status":"NOT VERIFIED"}
+{"file":"src/app/api/course-finder/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":41,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/saved/route.ts","kind":"CRUD/query call sites","modelDelegate":"courseShortlist","operation":"findMany","line":9,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/saved/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":12,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/saved/route.ts","kind":"CRUD/query call sites","modelDelegate":"savedCourse","operation":"findMany","line":15,"status":"NOT VERIFIED"}
@@ -1510,11 +1505,11 @@
 {"file":"src/app/api/course-finder/universities/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":75,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/universities/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"count","line":104,"status":"NOT VERIFIED"}
 {"file":"src/app/api/course-finder/universities/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findMany","line":105,"status":"NOT VERIFIED"}
-{"file":"src/app/api/courses/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":23,"status":"NOT VERIFIED"}
-{"file":"src/app/api/courses/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":90,"status":"NOT VERIFIED"}
-{"file":"src/app/api/courses/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":27,"status":"NOT VERIFIED"}
-{"file":"src/app/api/courses/search/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":109,"status":"NOT VERIFIED"}
-{"file":"src/app/api/courses/search/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":110,"status":"NOT VERIFIED"}
+{"file":"src/app/api/courses/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":33,"status":"NOT VERIFIED"}
+{"file":"src/app/api/courses/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":94,"status":"NOT VERIFIED"}
+{"file":"src/app/api/courses/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":34,"status":"NOT VERIFIED"}
+{"file":"src/app/api/courses/search/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":110,"status":"NOT VERIFIED"}
+{"file":"src/app/api/courses/search/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":111,"status":"NOT VERIFIED"}
 {"file":"src/app/api/crm/ai/dashboard/route.ts","kind":"CRUD/query call sites","modelDelegate":"sopDraft","operation":"findMany","line":8,"status":"NOT VERIFIED"}
 {"file":"src/app/api/crm/ai/dashboard/route.ts","kind":"CRUD/query call sites","modelDelegate":"cvReview","operation":"findMany","line":13,"status":"NOT VERIFIED"}
 {"file":"src/app/api/crm/ai/dashboard/route.ts","kind":"CRUD/query call sites","modelDelegate":"savedCourse","operation":"count","line":18,"status":"NOT VERIFIED"}
@@ -3433,14 +3428,14 @@
 {"file":"src/app/api/partner/resources/route.ts","kind":"CRUD/query call sites","modelDelegate":"resource","operation":"findMany","line":14,"status":"NOT VERIFIED"}
 {"file":"src/app/api/partner/resources/route.ts","kind":"CRUD/query call sites","modelDelegate":"partnerMarketingQuota","operation":"findUnique","line":36,"status":"NOT VERIFIED"}
 {"file":"src/app/api/partner/resources/route.ts","kind":"CRUD/query call sites","modelDelegate":"partnerMarketingUsage","operation":"findFirst","line":41,"status":"NOT VERIFIED"}
+{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":32,"status":"NOT VERIFIED"}
 {"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":33,"status":"NOT VERIFIED"}
-{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":34,"status":"NOT VERIFIED"}
+{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":62,"status":"NOT VERIFIED"}
 {"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":63,"status":"NOT VERIFIED"}
-{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":64,"status":"NOT VERIFIED"}
-{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"(client)","operation":"$transaction","line":73,"status":"NOT VERIFIED"}
-{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"update","line":74,"status":"NOT VERIFIED"}
-{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"updateMany","line":75,"status":"NOT VERIFIED"}
-{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalAuditLog","operation":"create","line":76,"status":"NOT VERIFIED"}
+{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"(client)","operation":"$transaction","line":72,"status":"NOT VERIFIED"}
+{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"update","line":73,"status":"NOT VERIFIED"}
+{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"updateMany","line":74,"status":"NOT VERIFIED"}
+{"file":"src/app/api/partner/settings/email/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalAuditLog","operation":"create","line":75,"status":"NOT VERIFIED"}
 {"file":"src/app/api/partner/settings/route.ts","kind":"CRUD/query call sites","modelDelegate":"partnerProfile","operation":"findUnique","line":33,"status":"NOT VERIFIED"}
 {"file":"src/app/api/partner/settings/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":34,"status":"NOT VERIFIED"}
 {"file":"src/app/api/partner/settings/route.ts","kind":"CRUD/query call sites","modelDelegate":"communicationPreference","operation":"findFirst","line":35,"status":"NOT VERIFIED"}
@@ -3488,9 +3483,9 @@
 {"file":"src/app/api/portal-auth/acting-as/stop/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"updateMany","line":12,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/acting-as/stop/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalAuditLog","operation":"create","line":18,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/forgot-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":18,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/forgot-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"otpCode","operation":"count","line":27,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/forgot-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"otpCode","operation":"create","line":55,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/forgot-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"passwordResetToken","operation":"create","line":71,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/forgot-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"passwordResetToken","operation":"count","line":23,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/forgot-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"passwordResetToken","operation":"updateMany","line":42,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/forgot-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"passwordResetToken","operation":"create","line":47,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/login/route.ts","kind":"CRUD/query call sites","modelDelegate":"loginAttempt","operation":"count","line":102,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/login/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":113,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/login/route.ts","kind":"CRUD/query call sites","modelDelegate":"loginAttempt","operation":"create","line":118,"status":"NOT VERIFIED"}
@@ -3506,31 +3501,29 @@
 {"file":"src/app/api/portal-auth/logout/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"updateMany","line":47,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/logout/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"findUnique","line":65,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/logout/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"update","line":76,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":69,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"user","operation":"findUnique","line":73,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"create","line":101,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"findUnique","line":129,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"create","line":140,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"update","line":174,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"findUnique","line":185,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"user","operation":"findUnique","line":189,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"update","line":190,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":199,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"count","line":212,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"create","line":213,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"timelineEvent","operation":"create","line":226,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"user","operation":"findUnique","line":242,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"update","line":243,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":261,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":273,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":291,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"partnerProfile","operation":"findFirst","line":310,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"partnerProfile","operation":"create","line":321,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":23,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"otpCode","operation":"findFirst","line":35,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"otpCode","operation":"update","line":54,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"update","line":63,"status":"NOT VERIFIED"}
-{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"updateMany","line":69,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":54,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"user","operation":"findUnique","line":58,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"create","line":86,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"create","line":112,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"update","line":146,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"findUnique","line":157,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"user","operation":"findUnique","line":161,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"update","line":162,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":171,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"count","line":184,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"create","line":185,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"timelineEvent","operation":"create","line":198,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"user","operation":"findUnique","line":214,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"update","line":215,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":233,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":245,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":263,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/register/route.ts","kind":"CRUD/query call sites","modelDelegate":"partnerProfile","operation":"create","line":280,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"passwordResetToken","operation":"findUnique","line":27,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"passwordResetToken","operation":"updateMany","line":34,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"update","line":43,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"updateMany","line":49,"status":"NOT VERIFIED"}
+{"file":"src/app/api/portal-auth/reset-password/route.ts","kind":"CRUD/query call sites","modelDelegate":"passwordResetToken","operation":"updateMany","line":53,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/session/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":24,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/session/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalSession","operation":"count","line":121,"status":"NOT VERIFIED"}
 {"file":"src/app/api/portal-auth/verify-otp/route.ts","kind":"CRUD/query call sites","modelDelegate":"portalUser","operation":"findUnique","line":13,"status":"NOT VERIFIED"}
@@ -3978,14 +3971,15 @@
 {"file":"src/app/api/unified-communication/route.ts","kind":"CRUD/query call sites","modelDelegate":"marketingLead","operation":"create","line":136,"status":"NOT VERIFIED"}
 {"file":"src/app/api/unified-communication/route.ts","kind":"CRUD/query call sites","modelDelegate":"whatsAppContact","operation":"create","line":153,"status":"NOT VERIFIED"}
 {"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findFirst","line":37,"status":"NOT VERIFIED"}
+{"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":152,"status":"NOT VERIFIED"}
 {"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":153,"status":"NOT VERIFIED"}
 {"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":154,"status":"NOT VERIFIED"}
 {"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":155,"status":"NOT VERIFIED"}
 {"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":156,"status":"NOT VERIFIED"}
 {"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":157,"status":"NOT VERIFIED"}
-{"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"count","line":158,"status":"NOT VERIFIED"}
-{"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":159,"status":"NOT VERIFIED"}
-{"file":"src/app/api/universities/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findMany","line":30,"status":"NOT VERIFIED"}
+{"file":"src/app/api/universities/[slug]/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":158,"status":"NOT VERIFIED"}
+{"file":"src/app/api/universities/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findMany","line":31,"status":"NOT VERIFIED"}
+{"file":"src/app/api/universities/route.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"count","line":36,"status":"NOT VERIFIED"}
 {"file":"src/app/api/university-agreements/route.ts","kind":"CRUD/query call sites","modelDelegate":"universityAgreement","operation":"findMany","line":10,"status":"NOT VERIFIED"}
 {"file":"src/app/api/university-agreements/route.ts","kind":"CRUD/query call sites","modelDelegate":"universityAgreement","operation":"create","line":18,"status":"NOT VERIFIED"}
 {"file":"src/app/api/university-agreements/route.ts","kind":"CRUD/query call sites","modelDelegate":"universityAgreement","operation":"update","line":28,"status":"NOT VERIFIED"}
@@ -4533,9 +4527,8 @@
 {"file":"src/app/counselor/login/page.tsx","kind":"Buttons/actions","tag":"Input","line":106,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/app/counselor/login/page.tsx","kind":"Buttons/actions","tag":"button","line":115,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/app/counselor/login/page.tsx","kind":"Buttons/actions","tag":"Button","line":126,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/app/course/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":16,"status":"NOT VERIFIED"}
-{"file":"src/app/course/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":47,"status":"NOT VERIFIED"}
-{"file":"src/app/course/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"coursePage","operation":"findFirst","line":58,"status":"NOT VERIFIED"}
+{"file":"src/app/course/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":15,"status":"NOT VERIFIED"}
+{"file":"src/app/course/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"coursePage","operation":"findFirst","line":54,"status":"NOT VERIFIED"}
 {"file":"src/app/courses/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":38,"status":"NOT VERIFIED"}
 {"file":"src/app/courses/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"coursePage","operation":"findFirst","line":42,"status":"NOT VERIFIED"}
 {"file":"src/app/courses/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findFirst","line":59,"status":"NOT VERIFIED"}
@@ -4763,15 +4756,15 @@
 {"file":"src/app/student/layout.tsx","kind":"Buttons/actions","tag":"Link","line":212,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/app/student/layout.tsx","kind":"Buttons/actions","tag":"button","line":239,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/app/student/layout.tsx","kind":"Buttons/actions","tag":"button","line":253,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":183,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":191,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Forms","tag":"form","line":201,"handlers":["onSubmit"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"input","line":211,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"input","line":238,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":246,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"input","line":266,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":274,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":300,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":184,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":192,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Forms","tag":"form","line":202,"handlers":["onSubmit"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"input","line":212,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"input","line":239,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":247,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"input","line":267,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":275,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/app/student/login/page.tsx","kind":"Buttons/actions","tag":"button","line":301,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/app/student/referrals/[id]/page.tsx","kind":"Buttons/actions","tag":"Button","line":17,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/app/student/shortlist/page.tsx","kind":"Buttons/actions","tag":"Button","line":32,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/app/student/shortlist/page.tsx","kind":"Buttons/actions","tag":"Button","line":40,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
@@ -4785,10 +4778,10 @@
 {"file":"src/app/success-stories/[slug]/page.tsx","kind":"Buttons/actions","tag":"Button","line":165,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/app/success-stories/[slug]/page.tsx","kind":"Buttons/actions","tag":"Button","line":189,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/app/team/[slug]/page.tsx","kind":"Buttons/actions","tag":"Button","line":62,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/app/universities/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findFirst","line":21,"status":"NOT VERIFIED"}
-{"file":"src/app/universities/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"universityPage","operation":"findFirst","line":25,"status":"NOT VERIFIED"}
-{"file":"src/app/universities/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findFirst","line":41,"status":"NOT VERIFIED"}
-{"file":"src/app/universities/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"universityPage","operation":"findFirst","line":49,"status":"NOT VERIFIED"}
+{"file":"src/app/universities/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findFirst","line":16,"status":"NOT VERIFIED"}
+{"file":"src/app/universities/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"universityPage","operation":"findFirst","line":20,"status":"NOT VERIFIED"}
+{"file":"src/app/universities/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findFirst","line":36,"status":"NOT VERIFIED"}
+{"file":"src/app/universities/[slug]/page.tsx","kind":"CRUD/query call sites","modelDelegate":"universityPage","operation":"findFirst","line":44,"status":"NOT VERIFIED"}
 {"file":"src/components/admin/AICommandingCenter.tsx","kind":"Buttons/actions","tag":"Button","line":351,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/admin/AICommandingCenter.tsx","kind":"Buttons/actions","tag":"Button","line":354,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/admin/AICommandingCenter.tsx","kind":"Buttons/actions","tag":"button","line":381,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
@@ -7093,14 +7086,12 @@
 {"file":"src/components/auth/RegisterPage.tsx","kind":"Buttons/actions","tag":"button","line":508,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/auth/RegisterPage.tsx","kind":"Buttons/actions","tag":"Button","line":526,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/auth/RegisterPage.tsx","kind":"Buttons/actions","tag":"button","line":544,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Button","line":49,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Button","line":67,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Forms","tag":"form","line":72,"handlers":["onSubmit"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Input","line":75,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Input","line":79,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Input","line":83,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Input","line":87,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Button","line":89,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Button","line":54,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Button","line":72,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Forms","tag":"form","line":77,"handlers":["onSubmit"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Input","line":85,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Input","line":89,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/auth/ResetPasswordPage.tsx","kind":"Buttons/actions","tag":"Button","line":91,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/communication/AIDraftButton.tsx","kind":"Buttons/actions","tag":"Button","line":35,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/communication/AIDraftButton.tsx","kind":"Buttons/actions","tag":"Button","line":43,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/communication/BroadcastBuilder.tsx","kind":"Buttons/actions","tag":"Input","line":23,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
@@ -7231,31 +7222,31 @@
 {"file":"src/components/counselor/CounselorPortalShell.tsx","kind":"Buttons/actions","tag":"Button","line":120,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/counselor/CounselorPortalShell.tsx","kind":"Buttons/actions","tag":"Button","line":159,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/counselor/CounselorPortalShell.tsx","kind":"Buttons/actions","tag":"Button","line":182,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":83,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":85,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":86,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":88,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":90,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":91,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":93,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":95,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":96,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":99,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":100,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":103,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":104,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":106,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":107,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":108,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":109,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":110,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":111,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":142,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":144,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":145,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":146,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":155,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":156,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":243,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":249,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":256,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":261,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":266,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":277,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":282,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":286,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":291,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":298,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":310,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":314,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":320,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":327,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":336,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":343,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"select","line":353,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Input","line":368,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":372,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":390,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":399,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":440,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":443,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":452,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/course-finder/EnhancedCourseFinder.tsx","kind":"Buttons/actions","tag":"Button","line":453,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/course-finder/course-compare-enhanced.tsx","kind":"Buttons/actions","tag":"Input","line":192,"handlers":["onChange","onFocus"],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/course-finder/course-compare-enhanced.tsx","kind":"Buttons/actions","tag":"button","line":205,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/course-finder/course-compare-enhanced.tsx","kind":"Buttons/actions","tag":"Input","line":253,"handlers":["onChange","onFocus"],"disabledAttribute":true,"status":"NOT VERIFIED"}
@@ -7644,13 +7635,14 @@
 {"file":"src/components/crm/CrmEnglishPrepCounselorView.tsx","kind":"Buttons/actions","tag":"Button","line":56,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/CrmEnglishPrepCounselorView.tsx","kind":"Buttons/actions","tag":"Button","line":96,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/CrmEnglishPrepCounselorView.tsx","kind":"Buttons/actions","tag":"Button","line":97,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"button","line":47,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"div","line":48,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Button","line":120,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Select","line":121,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Button","line":122,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Input","line":125,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Select","line":126,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"button","line":45,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"button","line":47,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"select","line":54,"handlers":["onChange"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Button","line":137,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Select","line":138,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Button","line":139,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Input","line":142,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/KanbanPipeline.tsx","kind":"Buttons/actions","tag":"Select","line":143,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/SalesHierarchy.tsx","kind":"Buttons/actions","tag":"Button","line":33,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/SalesHierarchy.tsx","kind":"Buttons/actions","tag":"Button","line":34,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/SalesHierarchy.tsx","kind":"Buttons/actions","tag":"Button","line":43,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
@@ -7736,11 +7728,13 @@
 {"file":"src/components/crm/pages/CrmAnalyticsPage.tsx","kind":"Buttons/actions","tag":"Button","line":171,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/pages/CrmAnalyticsPage.tsx","kind":"Buttons/actions","tag":"button","line":184,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/pages/CrmAnalyticsPage.tsx","kind":"Buttons/actions","tag":"Button","line":195,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Input","line":72,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Select","line":74,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Button","line":110,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Button","line":111,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Button","line":112,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Button","line":73,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Button","line":73,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Input","line":82,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Select","line":84,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Button","line":120,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Button","line":121,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/crm/pages/CrmApplicationsPage.tsx","kind":"Buttons/actions","tag":"Button","line":122,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/pages/CrmAppointmentsPage.tsx","kind":"Buttons/actions","tag":"Button","line":101,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/pages/CrmAppointmentsPage.tsx","kind":"Buttons/actions","tag":"Input","line":114,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/crm/pages/CrmAppointmentsPage.tsx","kind":"Buttons/actions","tag":"select","line":116,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
@@ -8213,14 +8207,18 @@
 {"file":"src/components/language-prep/TestDetailView.tsx","kind":"Buttons/actions","tag":"Button","line":554,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/language-prep/TestDetailView.tsx","kind":"Buttons/actions","tag":"Button","line":580,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/language-prep/TestDetailView.tsx","kind":"Buttons/actions","tag":"Button","line":587,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"Button","line":130,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"Button","line":235,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"button","line":255,"handlers":["onClick","onKeyDown"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"button","line":294,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"Button","line":322,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"input","line":389,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"button","line":424,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"Button","line":441,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/CampaignCreativeComposer.tsx","kind":"Buttons/actions","tag":"select","line":64,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/CampaignCreativeComposer.tsx","kind":"Buttons/actions","tag":"textarea","line":70,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/CampaignCreativeComposer.tsx","kind":"Buttons/actions","tag":"Button","line":75,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/CampaignCreativeComposer.tsx","kind":"Buttons/actions","tag":"Button","line":76,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"Button","line":131,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"Button","line":236,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"button","line":256,"handlers":["onClick","onKeyDown"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"button","line":295,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"Button","line":323,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"input","line":391,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"button","line":426,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/MarketingKitPanel.tsx","kind":"Buttons/actions","tag":"Button","line":443,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/marketing/hub/AIContentStudioView.tsx","kind":"Buttons/actions","tag":"Input","line":57,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/marketing/hub/AIContentStudioView.tsx","kind":"Buttons/actions","tag":"Select","line":58,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/marketing/hub/AIContentStudioView.tsx","kind":"Buttons/actions","tag":"Select","line":59,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
@@ -8277,52 +8275,7 @@
 {"file":"src/components/marketing/hub/ApprovalQueueView.tsx","kind":"Buttons/actions","tag":"Textarea","line":477,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/marketing/hub/ApprovalQueueView.tsx","kind":"Buttons/actions","tag":"Button","line":487,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/marketing/hub/ApprovalQueueView.tsx","kind":"Buttons/actions","tag":"Button","line":495,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":213,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":287,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":290,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":302,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"div","line":345,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":366,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Switch","line":435,"handlers":["onCheckedChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":461,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":485,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Select","line":501,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Textarea","line":523,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Input","line":546,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":551,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Select","line":571,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Input","line":586,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Input","line":599,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Input","line":603,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":619,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Switch","line":636,"handlers":["onCheckedChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":707,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":711,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":714,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Textarea","line":744,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Select","line":756,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Select","line":776,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Select","line":795,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Select","line":812,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":827,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":848,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":851,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Textarea","line":858,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":870,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Input","line":876,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Textarea","line":896,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":908,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Textarea","line":914,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":926,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Textarea","line":932,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":938,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":941,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Select","line":990,"handlers":["onValueChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":1000,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":1048,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":1051,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":1054,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":1067,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/marketing/hub/BrandAssetsPostCreatorView.tsx","kind":"Buttons/actions","tag":"Button","line":40,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/marketing/hub/CampaignBuilderCalendarView.tsx","kind":"Buttons/actions","tag":"Button","line":326,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/marketing/hub/CampaignBuilderCalendarView.tsx","kind":"Buttons/actions","tag":"Button","line":329,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/marketing/hub/CampaignBuilderCalendarView.tsx","kind":"Buttons/actions","tag":"Button","line":333,"handlers":[],"disabledAttribute":true,"status":"NOT VERIFIED"}
@@ -9195,19 +9148,21 @@
 {"file":"src/components/website/CountryComparisonClient.tsx","kind":"Buttons/actions","tag":"button","line":206,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/CountryComparisonClient.tsx","kind":"Buttons/actions","tag":"Button","line":286,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/CountryComparisonClient.tsx","kind":"Buttons/actions","tag":"Button","line":289,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":34,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":61,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":62,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":63,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":64,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":65,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":175,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":176,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":177,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":184,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":184,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":184,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":184,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":50,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":50,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":51,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":78,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":79,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":80,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":81,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":82,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":192,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":193,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":194,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":201,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":201,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":201,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/CourseDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":201,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/EnglishExamCta.tsx","kind":"Buttons/actions","tag":"a","line":46,"handlers":["onClick"],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/EnglishTestHub.tsx","kind":"Buttons/actions","tag":"Button","line":155,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/EnglishTestHub.tsx","kind":"Buttons/actions","tag":"Button","line":160,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
@@ -9442,10 +9397,10 @@
 {"file":"src/components/website/ServiceDetailHub.tsx","kind":"Buttons/actions","tag":"Button","line":230,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/TestPreparationMiniCard.tsx","kind":"Buttons/actions","tag":"Button","line":49,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/TestPreparationMiniCard.tsx","kind":"Buttons/actions","tag":"Button","line":99,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/UniversitiesListing.tsx","kind":"Buttons/actions","tag":"Input","line":114,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/UniversitiesListing.tsx","kind":"Buttons/actions","tag":"select","line":122,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
-{"file":"src/components/website/UniversitiesListing.tsx","kind":"Buttons/actions","tag":"Button","line":183,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
-{"file":"src/components/website/UniversitiesListing.tsx","kind":"Buttons/actions","tag":"Button","line":185,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/website/UniversitiesListing.tsx","kind":"Buttons/actions","tag":"Input","line":102,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/UniversitiesListing.tsx","kind":"Buttons/actions","tag":"select","line":110,"handlers":["onChange"],"disabledAttribute":false,"status":"NOT VERIFIED"}
+{"file":"src/components/website/UniversitiesListing.tsx","kind":"Buttons/actions","tag":"Button","line":168,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
+{"file":"src/components/website/UniversitiesListing.tsx","kind":"Buttons/actions","tag":"Button","line":170,"handlers":["onClick"],"disabledAttribute":true,"status":"NOT VERIFIED"}
 {"file":"src/components/website/UniversityHub.tsx","kind":"Buttons/actions","tag":"Button","line":71,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/UniversityHub.tsx","kind":"Buttons/actions","tag":"Button","line":122,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
 {"file":"src/components/website/UniversityHub.tsx","kind":"Buttons/actions","tag":"Button","line":123,"handlers":[],"disabledAttribute":false,"status":"NOT VERIFIED"}
@@ -10278,16 +10233,17 @@
 {"file":"src/lib/communication/broadcast-engine.ts","kind":"CRUD/query call sites","modelDelegate":"broadcastRecipient","operation":"updateMany","line":180,"status":"NOT VERIFIED"}
 {"file":"src/lib/communication/broadcast-engine.ts","kind":"CRUD/query call sites","modelDelegate":"communicationMessage","operation":"create","line":185,"status":"NOT VERIFIED"}
 {"file":"src/lib/communication/broadcast-engine.ts","kind":"CRUD/query call sites","modelDelegate":"communicationThread","operation":"create","line":187,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"findMany","line":17,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"create","line":26,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpCode","operation":"create","line":45,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"findFirst","line":61,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"findFirst","line":68,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"update","line":73,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"update","line":78,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"update","line":85,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":91,"status":"NOT VERIFIED"}
-{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"findFirst","line":108,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"count","line":57,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"findFirst","line":64,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"updateMany","line":73,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"create","line":77,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"update","line":100,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"findFirst","line":116,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"updateMany","line":129,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"updateMany","line":134,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"updateMany","line":141,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":148,"status":"NOT VERIFIED"}
+{"file":"src/lib/communication/otp-engine.ts","kind":"CRUD/query call sites","modelDelegate":"otpLog","operation":"findFirst","line":168,"status":"NOT VERIFIED"}
 {"file":"src/lib/communication/template-engine.ts","kind":"CRUD/query call sites","modelDelegate":"communicationTemplate","operation":"findFirst","line":88,"status":"NOT VERIFIED"}
 {"file":"src/lib/communication/template-engine.ts","kind":"CRUD/query call sites","modelDelegate":"communicationTemplate","operation":"create","line":90,"status":"NOT VERIFIED"}
 {"file":"src/lib/communication/template-engine.ts","kind":"CRUD/query call sites","modelDelegate":"communicationTemplate","operation":"findFirst","line":110,"status":"NOT VERIFIED"}
@@ -10352,16 +10308,16 @@
 {"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"findUnique","line":86,"status":"NOT VERIFIED"}
 {"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"user","operation":"findMany","line":91,"status":"NOT VERIFIED"}
 {"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"count","line":105,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"update","line":121,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"timelineEvent","operation":"create","line":131,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"aiTask","operation":"create","line":162,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"aiAction","operation":"create","line":195,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"formSubmission","operation":"create","line":226,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"findFirst","line":254,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"update","line":268,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"automationMetric","operation":"findFirst","line":283,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"automationMetric","operation":"update","line":294,"status":"NOT VERIFIED"}
-{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"automationMetric","operation":"create","line":296,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"update","line":137,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"timelineEvent","operation":"create","line":147,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"aiTask","operation":"create","line":178,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"aiAction","operation":"create","line":211,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"formSubmission","operation":"create","line":242,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"findFirst","line":270,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"lead","operation":"update","line":284,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"automationMetric","operation":"findFirst","line":299,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"automationMetric","operation":"update","line":310,"status":"NOT VERIFIED"}
+{"file":"src/lib/crm-automation.ts","kind":"CRUD/query call sites","modelDelegate":"automationMetric","operation":"create","line":312,"status":"NOT VERIFIED"}
 {"file":"src/lib/dashboard-alarm-service.ts","kind":"CRUD/query call sites","modelDelegate":"portalNotification","operation":"findMany","line":10,"status":"NOT VERIFIED"}
 {"file":"src/lib/dashboard-alarm-service.ts","kind":"CRUD/query call sites","modelDelegate":"employee","operation":"findFirst","line":36,"status":"NOT VERIFIED"}
 {"file":"src/lib/dashboard-alarm-service.ts","kind":"CRUD/query call sites","modelDelegate":"dashboardAlarm","operation":"findMany","line":43,"status":"NOT VERIFIED"}
@@ -10526,6 +10482,12 @@
 {"file":"src/lib/hrms/notifications.ts","kind":"CRUD/query call sites","modelDelegate":"notificationEngine","operation":"create","line":30,"status":"NOT VERIFIED"}
 {"file":"src/lib/hrms/notifications.ts","kind":"CRUD/query call sites","modelDelegate":"employeeDocument","operation":"findMany","line":53,"status":"NOT VERIFIED"}
 {"file":"src/lib/hrms/notifications.ts","kind":"CRUD/query call sites","modelDelegate":"employeeHR","operation":"findMany","line":68,"status":"NOT VERIFIED"}
+{"file":"src/lib/httpsms-receipts.ts","kind":"CRUD/query call sites","modelDelegate":"(client)","operation":"$transaction","line":32,"status":"NOT VERIFIED"}
+{"file":"src/lib/httpsms-receipts.ts","kind":"CRUD/query call sites","modelDelegate":"webhookEvent","operation":"findUnique","line":33,"status":"NOT VERIFIED"}
+{"file":"src/lib/httpsms-receipts.ts","kind":"CRUD/query call sites","modelDelegate":"smsLog","operation":"findUnique","line":35,"status":"NOT VERIFIED"}
+{"file":"src/lib/httpsms-receipts.ts","kind":"CRUD/query call sites","modelDelegate":"smsLog","operation":"updateMany","line":44,"status":"NOT VERIFIED"}
+{"file":"src/lib/httpsms-receipts.ts","kind":"CRUD/query call sites","modelDelegate":"webhookEvent","operation":"create","line":45,"status":"NOT VERIFIED"}
+{"file":"src/lib/identity/student-id.ts","kind":"CRUD/query call sites","modelDelegate":"(client)","operation":"$transaction","line":84,"status":"NOT VERIFIED"}
 {"file":"src/lib/keyword-research-engine.ts","kind":"CRUD/query call sites","modelDelegate":"keywordResearch","operation":"findFirst","line":32,"status":"NOT VERIFIED"}
 {"file":"src/lib/keyword-research-engine.ts","kind":"CRUD/query call sites","modelDelegate":"keywordResearch","operation":"update","line":58,"status":"NOT VERIFIED"}
 {"file":"src/lib/keyword-research-engine.ts","kind":"CRUD/query call sites","modelDelegate":"keywordResearch","operation":"create","line":60,"status":"NOT VERIFIED"}
@@ -10574,7 +10536,7 @@
 {"file":"src/lib/marketing-consent.ts","kind":"CRUD/query call sites","modelDelegate":"auditLog","operation":"create","line":317,"status":"NOT VERIFIED"}
 {"file":"src/lib/marketing/audit.ts","kind":"CRUD/query call sites","modelDelegate":"marketingAuditLog","operation":"create","line":16,"status":"NOT VERIFIED"}
 {"file":"src/lib/marketing/audit.ts","kind":"CRUD/query call sites","modelDelegate":"marketingAuditLog","operation":"findMany","line":34,"status":"NOT VERIFIED"}
-{"file":"src/lib/marketing/brand-kit.ts","kind":"CRUD/query call sites","modelDelegate":"brandAsset","operation":"findMany","line":26,"status":"NOT VERIFIED"}
+{"file":"src/lib/marketing/brand-kit.ts","kind":"CRUD/query call sites","modelDelegate":"brandAsset","operation":"findMany","line":39,"status":"NOT VERIFIED"}
 {"file":"src/lib/populate-slugs.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"findMany","line":16,"status":"NOT VERIFIED"}
 {"file":"src/lib/populate-slugs.ts","kind":"CRUD/query call sites","modelDelegate":"crmUniversity","operation":"update","line":24,"status":"NOT VERIFIED"}
 {"file":"src/lib/populate-slugs.ts","kind":"CRUD/query call sites","modelDelegate":"crmCourse","operation":"findMany","line":34,"status":"NOT VERIFIED"}
@@ -10712,8 +10674,8 @@
 {"file":"src/lib/sla-engine.ts","kind":"CRUD/query call sites","modelDelegate":"communicationSlaEvent","operation":"updateMany","line":291,"status":"NOT VERIFIED"}
 {"file":"src/lib/sla-engine.ts","kind":"CRUD/query call sites","modelDelegate":"slaEvent","operation":"updateMany","line":296,"status":"NOT VERIFIED"}
 {"file":"src/lib/sla-engine.ts","kind":"CRUD/query call sites","modelDelegate":"dashboardAlarm","operation":"updateMany","line":301,"status":"NOT VERIFIED"}
-{"file":"src/lib/sms-gateway.ts","kind":"CRUD/query call sites","modelDelegate":"smsLog","operation":"create","line":60,"status":"NOT VERIFIED"}
-{"file":"src/lib/sms-gateway.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":69,"status":"NOT VERIFIED"}
+{"file":"src/lib/sms-gateway.ts","kind":"CRUD/query call sites","modelDelegate":"smsLog","operation":"create","line":78,"status":"NOT VERIFIED"}
+{"file":"src/lib/sms-gateway.ts","kind":"CRUD/query call sites","modelDelegate":"smsLog","operation":"update","line":85,"status":"NOT VERIFIED"}
 {"file":"src/lib/social/token-encryption.ts","kind":"CRUD/query call sites","modelDelegate":"socialIntegration","operation":"findMany","line":54,"status":"NOT VERIFIED"}
 {"file":"src/lib/social/token-encryption.ts","kind":"CRUD/query call sites","modelDelegate":"socialIntegration","operation":"update","line":60,"status":"NOT VERIFIED"}
 {"file":"src/lib/social/token-encryption.ts","kind":"CRUD/query call sites","modelDelegate":"socialIntegration","operation":"update","line":65,"status":"NOT VERIFIED"}
@@ -10950,8 +10912,6 @@
 {"file":"src/lib/verified-metrics.ts","kind":"CRUD/query call sites","modelDelegate":"country","operation":"findMany","line":99,"status":"NOT VERIFIED"}
 {"file":"src/lib/verified-metrics.ts","kind":"CRUD/query call sites","modelDelegate":"verifiedMetric","operation":"findMany","line":134,"status":"NOT VERIFIED"}
 {"file":"src/lib/verified-metrics.ts","kind":"CRUD/query call sites","modelDelegate":"verifiedMetric","operation":"upsert","line":176,"status":"NOT VERIFIED"}
-{"file":"src/lib/voip/linphone.ts","kind":"CRUD/query call sites","modelDelegate":"socialIntegration","operation":"create","line":14,"status":"NOT VERIFIED"}
-{"file":"src/lib/voip/linphone.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":20,"status":"NOT VERIFIED"}
 {"file":"src/lib/wacrm-broadcast.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":35,"status":"NOT VERIFIED"}
 {"file":"src/lib/wacrm-broadcast.ts","kind":"CRUD/query call sites","modelDelegate":"timelineEvent","operation":"create","line":38,"status":"NOT VERIFIED"}
 {"file":"src/lib/wacrm-broadcast.ts","kind":"CRUD/query call sites","modelDelegate":"crmAuditLog","operation":"create","line":78,"status":"NOT VERIFIED"}
@@ -11004,6 +10964,3 @@
 {"file":"src/lib/whatsapp-number-pool.ts","kind":"CRUD/query call sites","modelDelegate":"employee","operation":"findFirst","line":136,"status":"NOT VERIFIED"}
 {"file":"src/lib/whatsapp-number-pool.ts","kind":"CRUD/query call sites","modelDelegate":"whatsAppOfficialNumber","operation":"findFirst","line":147,"status":"NOT VERIFIED"}
 {"file":"src/lib/whatsapp-number-pool.ts","kind":"CRUD/query call sites","modelDelegate":"whatsAppNumberAssignmentAudit","operation":"create","line":173,"status":"NOT VERIFIED"}
-{"file":"src/lib/whatsapp-webhook-handler.ts","kind":"CRUD/query call sites","modelDelegate":"student","operation":"findFirst","line":128,"status":"NOT VERIFIED"}
-{"file":"src/lib/whatsapp-webhook-handler.ts","kind":"CRUD/query call sites","modelDelegate":"portalStudentProfile","operation":"findFirst","line":129,"status":"NOT VERIFIED"}
-{"file":"src/lib/whatsapp-webhook-handler.ts","kind":"CRUD/query call sites","modelDelegate":"student","operation":"count","line":137,"status":"NOT VERIFIED"}

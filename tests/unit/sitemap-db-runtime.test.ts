@@ -56,7 +56,8 @@ describe('database-backed sitemap generation', () => {
   it('includes published database routes and removes duplicate URLs', async () => {
     const updatedAt = new Date('2026-10-08T00:00:00Z');
     mocks.blogs.mockResolvedValue([{ slug: 'visa-guide', updatedAt }, { slug: 'visa-guide', updatedAt }]);
-    mocks.courses.mockResolvedValue([{ slug: 'data-science', updatedAt }]);
+    // Phase 1 review: catalogue pages need an https source URL to be listed.
+    mocks.courses.mockResolvedValue([{ slug: 'data-science', updatedAt, sourceUrl: 'https://www.auckland.ac.nz/en/study.html' }]);
     mocks.scholarships.mockResolvedValue([{ slug: 'merit-award', updatedAt }]);
     mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt }]);
     mocks.services.mockResolvedValue([{ slug: 'visa-guidance', updatedAt }]);

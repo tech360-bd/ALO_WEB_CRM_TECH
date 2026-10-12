@@ -14,6 +14,8 @@
  * Pure functions only (no database access) so the rules are unit-testable.
  */
 
+import { NON_PUBLIC_INTERNATIONAL_VALUES } from './course-finder/eligibility-rules';
+
 export const PUBLISHED_STATUSES = ['published', 'PUBLISHED'] as const;
 export const SOURCE_VERIFIED_STATUSES = ['VERIFIED', 'verified'] as const;
 
@@ -48,6 +50,9 @@ export function publicCourseWhere() {
       { verificationStatus: 'VERIFIED' },
       { publicationStatus: { in: [...PUBLISHED_STATUSES] } },
       hasSourceLink(),
+      // Courses recorded as closed to international students or home/domestic-only
+      // are never public. Unverified status stays visible but is labelled as such.
+      { internationalEligibility: { notIn: [...NON_PUBLIC_INTERNATIONAL_VALUES] } },
       { university: { is: publicUniversityWhere() } },
     ],
   };
@@ -64,6 +69,45 @@ export function publicRequirementWhere() {
 
 export function publicScholarshipWhere() {
   return { status: 'active', verificationStatus: { in: [...SOURCE_VERIFIED_STATUSES] } };
+}
+
+/**
+ * Destination (country) scoping for public lists. Matches the stored country
+ * name or code on the course or its university, always combined with the
+ * public visibility rules above.
+ */
+export function publicCoursesInCountryWhere(countryName: string, countryCode: string) {
+  return {
+    AND: [
+      publicCourseWhere(),
+      {
+        OR: [
+          { country: { contains: countryName } },
+          { country: { contains: countryCode } },
+          { university: { is: { country: { contains: countryName } } } },
+          { university: { is: { country: { contains: countryCode } } } },
+        ],
+      },
+    ],
+  };
+}
+
+export function publicUniversitiesInCountryWhere(countryName: string, countryCode: string) {
+  return {
+    AND: [
+      publicUniversityWhere(),
+      { OR: [{ country: { contains: countryName } }, { country: { contains: countryCode } }] },
+    ],
+  };
+}
+
+export function publicScholarshipsInCountryWhere(countryName: string, countryCode: string) {
+  return {
+    AND: [
+      publicScholarshipWhere(),
+      { university: { is: publicUniversitiesInCountryWhere(countryName, countryCode) } },
+    ],
+  };
 }
 
 /** Identifier lookup for a single public course. Exact matches only — never fuzzy. */

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { outboundReplyPolicyBlock } from '@/lib/inbox/outbound-reply-policy';
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import { visibleUccAttachmentsByMessage } from '@/lib/ucc/visible-attachments';
 import { withAuth } from '@/lib/auth-middleware';
 import { sendWhatsAppMessage } from '@/lib/whatsapp-cloud-api';
-import { normalizePhone } from '@/lib/phone-normalization';
 import { canUseUccCommunication, isUccDocumentSupervisor } from '@/lib/ucc/document-access';
 import { canViewUccConversationB2B, filterUccConversationsByB2B } from '@/lib/ucc/conversation-visibility';
 
@@ -47,7 +49,7 @@ export const GET = withAuth(async (req, auth) => {
         where: uccWhere,
         orderBy: { lastMessageAt: 'desc' },
         take: 100,
-        include: { messages: { orderBy: { createdAt: 'desc' }, take: 50, include: { attachments: true } } },
+        include: { messages: { orderBy: { createdAt: 'desc' }, take: 50 } },
       }),
     ]);
     const [visibleThreads, uccThreads] = await Promise.all([
@@ -63,21 +65,18 @@ export const GET = withAuth(async (req, auth) => {
     const allLeadIds = [...new Set([...visibleThreads.map((thread) => thread.leadId), ...uccThreads.map((thread) => thread.leadId)].filter((value): value is string => typeof value === 'string' && value.length > 0))];
     const leads = allLeadIds.length ? await db.lead.findMany({ where: { id: { in: allLeadIds } }, select: { id: true, fullName: true, phone: true } }) : [];
     const leadMap = new Map<string, InboxLead>((leads as InboxLead[]).map((lead) => [lead.id, lead]));
-    const uccStudentIds = new Set(uccThreads.map((thread) => thread.studentId).filter((value): value is string => !!value));
-    const uccLeadIds = new Set(uccThreads.map((thread) => thread.leadId).filter((value): value is string => !!value));
-    const uccPhoneKeys = new Set(uccThreads.map((thread) => normalizePhone(thread.participantPhone)).filter(Boolean));
-    const legacyThreads = visibleThreads.filter((thread) => {
-      const student = studentMap.get(thread.studentId);
-      const lead = leadMap.get(thread.leadId);
-      const phone = normalizePhone(student?.phone || lead?.phone);
-      return !(thread.studentId && uccStudentIds.has(thread.studentId)) && !(thread.leadId && uccLeadIds.has(thread.leadId)) && !(phone && uccPhoneKeys.has(phone));
-    });
+    // Two independently persisted threads can share a channel and contact but
+    // carry different history. No authoritative cross-system mapping exists;
+    // preserve both with namespaced IDs rather than dropping legacy messages.
+    const legacyThreads = visibleThreads;
 
+    const visibleAttachmentMaps = new Map(await Promise.all(uccThreads.map(async thread => [thread.id,
+      await visibleUccAttachmentsByMessage(auth, thread.id, thread.messages.map(message=>message.id))] as const)));
     const conversationList = [
       ...legacyThreads.map((thread) => {
         const student = studentMap.get(thread.studentId);
         const lead = leadMap.get(thread.leadId);
-        const messages = [...thread.messages].map((message) => ({
+        const messages = [...thread.messages].reverse().map((message) => ({
           id: message.id,
           channel: String(message.channel || thread.channel).toUpperCase(),
           direction: String(message.direction || '').toLowerCase() === 'inbound' ? 'INBOUND' : 'OUTBOUND',
@@ -92,7 +91,7 @@ export const GET = withAuth(async (req, auth) => {
           attachmentsJson: '[]',
         }));
         return {
-          key: thread.id,
+          key: `communication_thread:${thread.id}`,
           id: thread.id,
           source: 'communication_thread',
           channel: String(thread.channel || 'whatsapp').toUpperCase(),
@@ -108,13 +107,13 @@ export const GET = withAuth(async (req, auth) => {
       ...uccThreads.map((thread) => {
         const student = thread.studentId ? studentMap.get(thread.studentId) : null;
         const lead = thread.leadId ? leadMap.get(thread.leadId) : null;
-        const messages = [...thread.messages].map((message) => {
-          const attachments = message.attachments.map((attachment) => ({
+        const messages = [...thread.messages].reverse().map((message) => {
+          const attachments = (visibleAttachmentMaps.get(thread.id)?.get(message.id) || []).map((attachment) => ({
             id: attachment.id,
             name: attachment.fileName,
             type: attachment.mimeType,
             size: attachment.fileSize,
-            url: attachment.fileUrl,
+            url: `/api/crm/ucc/documents/${encodeURIComponent(attachment.id)}/download`,
           }));
           return {
             id: message.id,
@@ -132,7 +131,7 @@ export const GET = withAuth(async (req, auth) => {
           };
         });
         return {
-          key: thread.id,
+          key: `ucc_conversation:${thread.id}`,
           id: thread.id,
           source: 'ucc_conversation',
           channel: String(thread.channel || 'whatsapp').toUpperCase(),
@@ -147,13 +146,14 @@ export const GET = withAuth(async (req, auth) => {
       }),
     ].sort((left, right) => new Date(right.lastMessageAt).getTime() - new Date(left.lastMessageAt).getTime());
 
-    return NextResponse.json({ success: true, conversations: conversationList, totalMessages: conversationList.reduce((total, item) => total + item.messages.length, 0), total: conversationList.length });
+    return NextResponse.json({ success: true, conversations: conversationList, totalMessages: conversationList.reduce((total, item) => total + item.messages.length, 0), total: conversationList.length, limits:{perSource:100,messagesPerConversation:50}, historyComplete:false }, {headers:{'Cache-Control':'private, no-store'}});
   } catch {
     return NextResponse.json({ success: false, error: 'Inbox data is temporarily unavailable.' }, { status: 503 });
   }
 });
 
 export const POST = withAuth(async (req, auth) => {
+  if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ error: 'Same-origin request required.' }, { status: 403 });
   if (!canUseUccCommunication(auth)) return NextResponse.json({ success: false, error: 'Reply permission is not permitted.' }, { status: 403 });
   try {
     const body = await req.json();
@@ -185,7 +185,10 @@ export const POST = withAuth(async (req, auth) => {
       const lead = await db.lead.findUnique({ where: { id: thread.leadId }, select: { phone: true } });
       recipient = lead?.phone || '';
     }
-    if (!recipient) return NextResponse.json({ success: false, error: 'The conversation has no verified recipient phone number.' }, { status: 422 });
+    if (!recipient) return NextResponse.json({ success: false, error: 'The conversation has no recipient phone number.' }, { status: 422 });
+
+    const policyBlock = outboundReplyPolicyBlock();
+    if (policyBlock) return NextResponse.json(policyBlock, {status:503});
 
     const providerSend = await sendWhatsAppMessage({ to: recipient, text: content });
     if (!providerSend.success || !providerSend.messageId) {

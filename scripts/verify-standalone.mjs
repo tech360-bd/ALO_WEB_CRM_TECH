@@ -1,6 +1,9 @@
 import { existsSync, lstatSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
+import { assertNoPublicUploads } from './lib/public-upload-guard.mjs';
 const root = resolve(import.meta.dirname, '..');
+assertNoPublicUploads(join(root, 'public'));
+assertNoPublicUploads(join(root, '.next/standalone/public'));
 for (const [relative, directory] of [
   ['.next/standalone/server.js', false],
   ['.next/standalone/.next/static', true],

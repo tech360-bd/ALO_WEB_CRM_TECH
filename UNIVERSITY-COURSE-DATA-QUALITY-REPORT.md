@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — NOT A SOURCE OF TRUTH** (labelled 2026-10-12).
+> Unsupported: Claims 27 universities and 26 courses with VERIFIED status in CrmUniversity/CrmCourse, with per-country counts. No database query output supports these numbers (no MySQL database has been inspected in this repository's evidence). Superseded by AUDIT/course-finder-2026-10-12/UNIVERSITY-COURSE-DATA-QUALITY-REPORT.md.
+> See AUDIT/historical-catalogue-reports-2026-10-12/README.md.
+
 # 📊 UNIVERSITY & COURSE DATA QUALITY REPORT — ALO EDUCATION
 
 This report certifies the data hygiene, provenance tracking, freshness intervals, and publication approval workflow implemented within the ALO Education University Directory and Course Finder platform.

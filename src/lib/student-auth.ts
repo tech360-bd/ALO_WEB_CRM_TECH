@@ -131,18 +131,22 @@ export async function authenticateStudentRequest(
     );
   }
 
-  if (student.suspended) {
+  if (student.suspended || student.status !== 'active') {
     return NextResponse.json(
       { success: false, error: 'Your account has been suspended. Please contact ALO Education.' },
       { status: 403 }
     );
   }
 
-  // Touch lastActiveAt
-  await db.studentSession.update({
-    where: { id: session.id },
-    data: { createdAt: new Date() },
-  });
+  // A valid session must not outlive revocation/deactivation of its canonical
+  // account. Never infer a linked User from email or a coincident ID.
+  if (student.userId) {
+    const owner = await db.user.findUnique({where:{id:student.userId}, select:{role:true,status:true,emailVerified:true}});
+    if (!owner || owner.role.toUpperCase() !== 'STUDENT' || owner.status !== 'ACTIVE' || !owner.emailVerified) {
+      return NextResponse.json({success:false,error:'Student account is not active.'},{status:403});
+    }
+  }
+  // createdAt is session creation time, not a last-active field. Do not mutate.
 
   return {
     studentId: student.id,

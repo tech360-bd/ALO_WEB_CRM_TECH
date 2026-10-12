@@ -81,35 +81,28 @@ export default function StudentPortalLayout({
       return;
     }
 
-    const savedStudent = localStorage.getItem('student_user');
-
-    try {
-      if (savedStudent) setStudent(JSON.parse(savedStudent));
-      setToken(null);
-      // The HttpOnly session cookie is sent automatically; never read a
-      // session token from JavaScript or localStorage.
-      fetch('/api/student/auth/me', { credentials: 'include' }).then(async (res) => {
-        if (!res.ok) {
-          // Token invalid → logout
-          localStorage.removeItem('student_token');
-          localStorage.removeItem('student_user');
-          router.replace('/student/login');
-          return;
-        }
-        const data = await res.json();
-        if (data.success && data.student) {
-          setStudent(data.student);
-          localStorage.setItem('student_user', JSON.stringify(data.student));
-          setUnreadCount(data.unreadMessages || 0);
-        }
-      }).catch(() => {
-        // Network error — use cached data
-      });
-    } catch {
+    let cancelled = false;
+    setLoading(true);
+    setStudent(null);
+    setToken(null);
+    // Cached profile is not evidence of an authenticated session. Fail closed
+    // on HTTP errors AND network failures; never display another cached user.
+    fetch('/api/student/auth/me', { credentials: 'include' }).then(async (res) => {
+      const data = await res.json();
+      if (!res.ok || !data.success || !data.student) throw new Error('Invalid student session');
+      if (cancelled) return;
+      setStudent(data.student);
+      localStorage.setItem('student_user', JSON.stringify(data.student));
+      setUnreadCount(data.unreadMessages || 0);
+      setLoading(false);
+    }).catch(() => {
+      if (cancelled) return;
       localStorage.removeItem('student_token');
       localStorage.removeItem('student_user');
+      setStudent(null);
       router.replace('/student/login');
-    }
+    });
+    return () => { cancelled = true; };
   }, [pathname, isPublicStudentPage, router]);
 
   const logout = async () => {

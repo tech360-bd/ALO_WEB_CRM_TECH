@@ -1,0 +1,27 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /home/user/alo_education_z....ai
+
+ ✓ tests/unit/integration-runner-safety.test.mjs (11 tests) 1135ms
+ ✓ tests/unit/registration-acquisition.test.ts (18 tests) 74ms
+ ✓ tests/unit/auth-cookie-namespace.test.ts (9 tests) 43ms
+ ✓ tests/unit/counselor-student-boundary.test.ts (11 tests) 24ms
+ ✓ tests/unit/registration-verification.test.ts (18 tests) 49ms
+ ✓ tests/unit/private-storage-filesystem.test.ts (8 tests) 26ms
+ ✓ tests/unit/ucc-private-download-policy.test.ts (12 tests) 33ms
+ ✓ tests/unit/inbox-outbound-policy.test.ts (2 tests) 12ms
+ ✓ tests/unit/page-session-namespace.test.ts (5 tests) 21ms
+ ✓ tests/unit/student-session-response.test.ts (6 tests) 29ms
+ ✓ tests/unit/unified-inbox-history.test.ts (7 tests) 15ms
+ ✓ tests/unit/ucc-namespace-containment.test.ts (5 tests) 13ms
+ ✓ tests/unit/test-database-safety.test.ts (9 tests) 8ms
+
+ Test Files  13 passed (13)
+      Tests  121 passed (121)
+   Start at  10:16:40
+   Duration  6.37s (transform 832ms, setup 147ms, import 2.21s, tests 1.48s, environment 2ms)
+
+
+EXIT_CODE=0

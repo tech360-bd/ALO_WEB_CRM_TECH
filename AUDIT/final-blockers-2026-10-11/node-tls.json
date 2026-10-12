@@ -1,0 +1,13 @@
+[
+  {
+    "host": "binaries.prisma.sh",
+    "errorCode": "ECONNRESET",
+    "error": "Client network socket disconnected before secure TLS connection was established"
+  },
+  {
+    "host": "registry.npmjs.org",
+    "httpStatus": 200,
+    "tlsAuthorized": true,
+    "protocol": "TLSv1.2"
+  }
+]

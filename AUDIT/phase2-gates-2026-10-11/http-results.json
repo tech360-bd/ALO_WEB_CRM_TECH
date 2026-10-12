@@ -1,0 +1,149 @@
+{
+  "scope": "Local Next dev HTTP. No DB, no deployed proxy/CDN, no production data.",
+  "results": [
+    {
+      "pathname": "/uploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/uploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/uploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.jpg",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/uploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.jpg",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/%75ploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/%75ploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/%2575ploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/%2575ploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/uploads%2fsynthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/uploads%2fsynthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/uploads%5csynthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/uploads%5csynthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/public/uploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/public/uploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/public/public/uploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/public/public/uploads/synthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/_next/image?url=%2Fuploads%2Fsynthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt&w=64&q=75",
+      "method": "GET",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    },
+    {
+      "pathname": "/_next/image?url=%2Fuploads%2Fsynthetic-gate2-7e3a3f90-0b90-43d3-a628-7c2e1642a49e.txt&w=64&q=75",
+      "method": "HEAD",
+      "status": 403,
+      "cacheControl": "private, no-store",
+      "markerExposed": false,
+      "pass": true
+    }
+  ]
+}

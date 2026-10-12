@@ -28,12 +28,12 @@ const LAYER_GAP = 6;
 const HEADER_H = 40;
 const LEGEND_H = 40;
 const MAX_W = 380;
-const MIN_W = 96;
+
 const CX = 250;
 const LABEL_X = 560;
 
 export default function FunnelDiagram({
-  idPrefix,
+  idPrefix: requestedPrefix,
   title,
   eyebrow,
   stages,
@@ -43,10 +43,14 @@ export default function FunnelDiagram({
   eyebrow?: string;
   stages: FunnelStage[];
 }) {
-  const top = stages[0]?.value ?? 0;
-  const widths = stages.map((s) =>
-    top > 0 ? Math.max(MIN_W, Math.round(MAX_W * (s.value / top))) : MIN_W,
-  );
+  const idPrefix = `${requestedPrefix}-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const invalid = stages.some((stage) => !Number.isFinite(stage.value) || stage.value < 0);
+  const maximum = Math.max(0, ...stages.map((stage) => stage.value));
+  if (!stages.length || invalid) {
+    return <figure className="rounded-2xl border border-slate-200 bg-white p-6"><figcaption className="font-semibold">{title}</figcaption><p className="mt-2 text-sm text-slate-500">{invalid ? 'Counts unavailable: each stage needs a finite, non-negative value.' : 'No funnel counts available yet.'}</p></figure>;
+  }
+  // Scale to the largest stage, not the first. Zero really has zero width.
+  const widths = stages.map((stage) => maximum > 0 ? MAX_W * (stage.value / maximum) : 0);
   // Last layer bottom matches its own top (honest rectangle, no fake taper).
   const bottomWidths = [...widths.slice(1), widths[widths.length - 1]];
   const bodyH = stages.length * LAYER_H + (stages.length - 1) * LAYER_GAP;
@@ -64,7 +68,7 @@ export default function FunnelDiagram({
           <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
         </div>
         <span className="rounded-full border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-500">
-          live CRM counts
+          supplied counts
         </span>
       </figcaption>
       <div className="overflow-x-auto">
@@ -174,7 +178,7 @@ export default function FunnelDiagram({
                     </text>
                   </g>
                 )}
-                {drop !== null ? (
+                {drop !== null && Number.isFinite(drop) ? (
                   <text
                     x={CX + wTop / 2 + 12}
                     y={yTop + 14}
@@ -204,10 +208,11 @@ export default function FunnelDiagram({
             conversion stage
           </text>
           <text x={CX + 60} y={height - 15} className="font-mono text-[8px]" fill={T.soft}>
-            widths proportional to live counts · −% = drop-off vs previous stage
+            stage-edge widths proportional to counts · −% = drop-off vs previous stage
           </text>
         </DiagramRoot>
       </div>
+      <table className="sr-only"><caption>{title} — stage counts</caption><thead><tr><th scope="col">Stage</th><th scope="col">Count</th></tr></thead><tbody>{stages.map((stage, i) => <tr key={i}><th scope="row">{stage.label}</th><td>{stage.value}</td></tr>)}</tbody></table>
     </figure>
   );
 }

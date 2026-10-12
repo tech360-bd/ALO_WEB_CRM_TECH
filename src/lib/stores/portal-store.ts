@@ -267,17 +267,18 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   register: async (regData) => {
     set({ loginLoading: true, loginError: null });
     try {
-      const res = await fetch('/api/portal-auth/register', {
+      const canonicalStudent = regData.portalType === 'student';
+      const res = await fetch(canonicalStudent ? '/api/auth/register' : '/api/portal-auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(regData),
+        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT' } : regData),
       });
       const data = await res.json();
       if (data.success) {
-        if (data.requireVerification) {
+        if (data.requireVerification || canonicalStudent) {
           if (typeof window !== 'undefined') {
             localStorage.setItem('portal_otp_email', String(regData.email).trim().toLowerCase());
-            localStorage.setItem('portal_otp_type', String(regData.portalType));
+            localStorage.setItem('portal_otp_type', canonicalStudent ? 'canonical-student' : String(regData.portalType));
           }
           set({ loginLoading: false, currentView: 'verify-otp', authMessage: data.message });
           return true;
@@ -303,6 +304,11 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           localStorage.setItem('portal_user', JSON.stringify(data.user));
         }
         return true;
+      }
+      if (data.accountCreated && typeof window !== 'undefined') {
+        localStorage.setItem('portal_otp_email', String(regData.email).trim().toLowerCase());
+        localStorage.setItem('portal_otp_type', canonicalStudent ? 'canonical-student' : String(regData.portalType));
+        set({ currentView: 'verify-otp' });
       }
       set({ loginLoading: false, loginError: data.error || 'Registration failed' });
       return false;

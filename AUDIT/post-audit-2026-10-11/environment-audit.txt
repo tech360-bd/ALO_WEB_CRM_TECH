@@ -1,0 +1,12 @@
+
+> alo-education-erp@0.3.0 audit:env
+> node scripts/audit-env-vars.mjs
+
+Wrote docs/environment-classification.json
+{
+  "UNUSED": 80,
+  "REFERENCED_WITH_FALLBACK": 135,
+  "REFERENCED_FAIL_CLOSED": 14,
+  "REFERENCED": 97,
+  "PUBLIC": 8
+}
