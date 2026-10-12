@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   crmCourses: vi.fn(),
   crmUniversities: vi.fn(),
   guides: vi.fn(), services: vi.fn(), resources: vi.fn(),
+  conflicts: vi.fn(),
 }));
 vi.mock('@/lib/db', () => ({
   db: {
@@ -19,6 +20,7 @@ vi.mock('@/lib/db', () => ({
     crmUniversity: { findMany: mocks.crmUniversities },
     contentAsset: { findMany: mocks.guides },
     service: { findMany: mocks.services }, resource: { findMany: mocks.resources },
+    dataConflict: { findMany: mocks.conflicts },
   },
 }));
 
@@ -35,6 +37,7 @@ describe('database-backed sitemap generation', () => {
     mocks.crmUniversities.mockResolvedValue([]);
     mocks.guides.mockResolvedValue([]);
     mocks.services.mockResolvedValue([]); mocks.resources.mockResolvedValue([]);
+    mocks.conflicts.mockResolvedValue([]);
   });
 
   it('is intentionally rendered at request time', () => {
@@ -59,7 +62,7 @@ describe('database-backed sitemap generation', () => {
     // Phase 1 review: catalogue pages need an https source URL to be listed.
     mocks.courses.mockResolvedValue([{ slug: 'data-science', updatedAt, sourceUrl: 'https://www.auckland.ac.nz/en/study.html' }]);
     mocks.scholarships.mockResolvedValue([{ slug: 'merit-award', updatedAt }]);
-    mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt }]);
+    mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt, sourceUrl: 'https://www.example-university.ac.uk/' }]);
     mocks.services.mockResolvedValue([{ slug: 'visa-guidance', updatedAt }]);
     mocks.resources.mockResolvedValue([{ slug: 'build-a-budget', updatedAt, category: { slug: 'financial-planning' } }]);
 

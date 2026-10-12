@@ -110,10 +110,10 @@ describe('POST /api/course-finder/eligibility-engine', () => {
   it('rejects malformed bodies and hides internal error details', async () => {
     expect((await POST(new Request('http://localhost/x', { method: 'POST', body: 'not json' }))).status).toBe(400);
     expect((await POST(request([1, 2]))).status).toBe(400);
-    mocks.courseFindMany.mockRejectedValueOnce(new Error('mysql://user:secret@host'));
+    mocks.courseFindMany.mockRejectedValueOnce(new Error('mysql://user:password@host'));
     const res = await POST(request(profile));
     expect(res.status).toBe(500);
-    expect(JSON.stringify(await res.json())).not.toContain('secret');
+    expect(JSON.stringify(await res.json())).not.toContain('mysql://');
   });
 
   it('reports an empty verified catalogue honestly instead of inventing results', async () => {

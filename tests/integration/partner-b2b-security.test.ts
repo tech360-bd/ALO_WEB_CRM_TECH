@@ -23,6 +23,11 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { testDatabaseUrl } from '../helpers/test-database';
+
+// Runs only against an explicitly configured disposable test database; the
+// DB-less unit job reports this file as skipped (never as passed).
+const HAS_TEST_DB = testDatabaseUrl() !== null;
 import {
   getQuota,
   reserveQuota,
@@ -72,6 +77,7 @@ async function makeUser(
       name: `Test ${label}`,
       userType,
       status: 'active',
+      emailVerified: true,
       passwordHash: 'x',
       ...(partner
         ? {
@@ -122,6 +128,7 @@ let partnerBSuperAdmin: Fixture;
 let aloSuperAdmin: Fixture;
 
 beforeAll(async () => {
+  if (!HAS_TEST_DB) return;
   partnerASuperAdmin = await makeUser('a-sa', 'PARTNER', 'partner', {
     partnerId: PARTNER_A,
     partnerRole: 'PARTNER_SUPER_ADMIN',
@@ -147,6 +154,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  if (!HAS_TEST_DB) return;
   await db.partnerMarketingUsage.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
   await db.partnerMarketingQuota.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
   await db.studentMockTestVoucher.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
@@ -159,7 +167,7 @@ afterAll(async () => {
 });
 
 // ------------------------------------------------------------
-describe('Tenant model: a partner company can hold multiple users', () => {
+describe.skipIf(!HAS_TEST_DB)('Tenant model: a partner company can hold multiple users', () => {
   it('allows the Starter package of 1 Partner Super Admin + 2 employees', async () => {
     // Previously impossible: PartnerProfile.partnerId was UNIQUE, so the
     // second user in a tenant failed with a unique-constraint error.
@@ -182,7 +190,7 @@ describe('Tenant model: a partner company can hold multiple users', () => {
 });
 
 // ------------------------------------------------------------
-describe('Auth context carries the server-derived partner tenant', () => {
+describe.skipIf(!HAS_TEST_DB)('Auth context carries the server-derived partner tenant', () => {
   it('resolves partnerId and partnerRole from the session, not from client input', async () => {
     const ctx = await requirePartnerContext(reqAs(partnerASuperAdmin.token));
     expect(ctx).not.toBeInstanceOf(NextResponse);
@@ -207,7 +215,7 @@ describe('Auth context carries the server-derived partner tenant', () => {
 });
 
 // ------------------------------------------------------------
-describe('Tenant isolation: Partner A cannot reach Partner B', () => {
+describe.skipIf(!HAS_TEST_DB)('Tenant isolation: Partner A cannot reach Partner B', () => {
   it('blocks a cross-tenant partnerId supplied by the client', async () => {
     const ctx = await requirePartnerContext(reqAs(partnerASuperAdmin.token));
     if (ctx instanceof NextResponse) throw new Error('expected a partner context');
@@ -252,7 +260,7 @@ describe('Tenant isolation: Partner A cannot reach Partner B', () => {
 });
 
 // ------------------------------------------------------------
-describe('Partner RBAC: privileged partner actions are Super Admin only', () => {
+describe.skipIf(!HAS_TEST_DB)('Partner RBAC: privileged partner actions are Super Admin only', () => {
   it('allows the Partner Super Admin', async () => {
     const ctx = await requirePartnerSuperAdmin(reqAs(partnerASuperAdmin.token));
     expect(ctx).not.toBeInstanceOf(NextResponse);
@@ -274,7 +282,7 @@ describe('Partner RBAC: privileged partner actions are Super Admin only', () => 
 });
 
 // ------------------------------------------------------------
-describe('Seat-request approval cannot be self-granted', () => {
+describe.skipIf(!HAS_TEST_DB)('Seat-request approval cannot be self-granted', () => {
   it('rejects an anonymous approval attempt', async () => {
     // The original handler accepted {id, status:"APPROVED"} from anyone.
     const result = await requireAloSuperAdmin(anonReq());
@@ -295,7 +303,7 @@ describe('Seat-request approval cannot be self-granted', () => {
 });
 
 // ------------------------------------------------------------
-describe('Quota feature keys resolve to real limits', () => {
+describe.skipIf(!HAS_TEST_DB)('Quota feature keys resolve to real limits', () => {
   it('normalises every accepted spelling', () => {
     expect(normalizeQuotaKey('marketing_images')).toBe(QUOTA_IMAGE);
     expect(normalizeQuotaKey('MARKETING_IMAGE_GENERATION')).toBe(QUOTA_IMAGE);
@@ -323,7 +331,7 @@ describe('Quota feature keys resolve to real limits', () => {
 });
 
 // ------------------------------------------------------------
-describe('Quota enforcement survives concurrent requests', () => {
+describe.skipIf(!HAS_TEST_DB)('Quota enforcement survives concurrent requests', () => {
   it('never grants more than the limit when requests race', async () => {
     const racePartner = `race-${SUFFIX}`;
     await db.partnerMarketingQuota.create({
@@ -342,8 +350,14 @@ describe('Quota enforcement survives concurrent requests', () => {
       });
       expect(usage?.imagesUsed).toBe(5);
 
-      const denial = results.find((r) => !r.allowed);
-      expect(denial?.message).toContain('Request extra quota from ALO Education');
+      // Every loser must fail closed (never allowed). Under 20-way contention
+      // InnoDB may abort some transactions with a deadlock, which reserveQuota
+      // reports as 'Quota service unavailable' — also a denial. The exhausted
+      // message itself is asserted deterministically with a serial call.
+      expect(results.filter((r) => !r.allowed)).toHaveLength(15);
+      const denial = await reserveQuota('PARTNER', racePartner, 'marketing_images');
+      expect(denial.allowed).toBe(false);
+      expect(denial.message).toContain('Request extra quota from ALO Education');
     } finally {
       await db.partnerMarketingUsage.deleteMany({ where: { partnerId: racePartner } }).catch(() => undefined);
       await db.partnerMarketingQuota.deleteMany({ where: { partnerId: racePartner } }).catch(() => undefined);
@@ -356,7 +370,7 @@ describe('Quota enforcement survives concurrent requests', () => {
 });
 
 // ------------------------------------------------------------
-describe('Voucher redemption is atomic', () => {
+describe.skipIf(!HAS_TEST_DB)('Voucher redemption is atomic', () => {
   it('permits exactly one redemption of a single-use voucher under concurrency', async () => {
     const voucher = await db.studentMockTestVoucher.create({
       data: {
@@ -394,7 +408,7 @@ describe('Voucher redemption is atomic', () => {
 });
 
 // ------------------------------------------------------------
-describe('Partner dashboard metrics are tenant-scoped', () => {
+describe.skipIf(!HAS_TEST_DB)('Partner dashboard metrics are tenant-scoped', () => {
   const profileIds: string[] = [];
   const appIds: string[] = [];
 
