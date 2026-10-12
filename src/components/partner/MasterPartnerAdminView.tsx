@@ -28,6 +28,7 @@ import {
   Lock,
 } from 'lucide-react';
 import Link from 'next/link';
+import { PartnerMarketingStudio } from '@/components/alo/views/partner-marketing-studio';
 
 interface MasterPartnerAdminViewProps {
   currentPath?: string;
@@ -142,6 +143,43 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
     { path: '/partner-admin/company-profile', label: 'Company Profile', icon: Building },
     { path: '/partner-admin/settings', label: 'Partner Settings', icon: Settings },
   ];
+  // Portal Navigation Bar — shared by the dashboard body and the Marketing Studio route.
+  const portalNav = (
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-2 text-xs font-semibold overflow-x-auto">
+          {routesList.map((r) => {
+            const Icon = r.icon;
+            const isActive = currentPath === r.path;
+            return (
+              <Link key={r.path} href={r.path}>
+                <div
+                  className={`px-4 py-2 rounded-xl flex items-center gap-2 shrink-0 transition cursor-pointer ${
+                    isActive ? 'bg-[#2563EB] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" /> {r.label}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+  );
+
+
+  // /partner-admin/marketing-studio renders the real, API-backed Marketing Studio
+  // (quota, AI draft generation, approval and scheduling workflow) instead of the
+  // generic partner dashboard body. The portal chrome is shared via portalNav.
+  const isMarketingStudioPath =
+    currentPath === '/partner-admin/marketing-studio' ||
+    currentPath === '/partner-admin/content-generator';
+
+  if (isMarketingStudioPath) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto space-y-6 text-slate-900">
+        {portalNav}
+        <PartnerMarketingStudio />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 text-slate-900">
@@ -150,7 +188,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-slate-900">B2B Partner Super Admin Portal</h1>
-            <Badge className="bg-[#0057B8] text-white text-[10px] font-extrabold">VERIFIED B2B PARTNER</Badge>
+            <Badge className="bg-[#2563EB] text-white text-[10px] font-extrabold">VERIFIED B2B PARTNER</Badge>
           </div>
           <p className="text-xs text-slate-500 mt-1">
             Manage your company users, assigned student applications, marketing studio quotas, and student test vouchers.
@@ -168,24 +206,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         </div>
       </div>
 
-      {/* Portal Navigation Bar */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 text-xs font-semibold overflow-x-auto">
-        {routesList.map((r) => {
-          const Icon = r.icon;
-          const isActive = currentPath === r.path;
-          return (
-            <Link key={r.path} href={r.path}>
-              <div
-                className={`px-4 py-2 rounded-xl flex items-center gap-2 shrink-0 transition cursor-pointer ${
-                  isActive ? 'bg-[#0057B8] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                <Icon className="w-4 h-4" /> {r.label}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+      {portalNav}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -291,7 +312,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             <Button
               onClick={handleSeatRequest}
               disabled={requestingSeats}
-              className="w-full bg-[#0057B8] hover:bg-blue-700 text-white text-xs rounded-xl py-2 flex items-center justify-center gap-1.5"
+              className="w-full bg-[#2563EB] hover:bg-blue-700 text-white text-xs rounded-xl py-2 flex items-center justify-center gap-1.5"
             >
               {requestingSeats ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               {requestingSeats ? 'Submitting Request...' : 'Submit Request to ALO Super Admin'}
@@ -368,7 +389,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             <Button
               onClick={handleGenerateMarketing}
               disabled={mGenerating}
-              className="w-full bg-[#E8501A] hover:bg-orange-600 text-white text-xs font-bold rounded-xl py-2.5 flex items-center justify-center gap-2"
+              className="w-full bg-[#F97316] hover:bg-orange-600 text-white text-xs font-bold rounded-xl py-2.5 flex items-center justify-center gap-2"
             >
               {mGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               {mGenerating ? 'Generating AI Draft...' : 'Generate AI Marketing Package'}

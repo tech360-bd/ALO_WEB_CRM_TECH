@@ -1,4 +1,5 @@
 'use client';
+import SeoEvidencePanel from './SeoEvidencePanel';
 
 import { useState } from 'react';
 import {
@@ -273,7 +274,10 @@ function SeverityBadge({ severity }: { severity: 'High' | 'Medium' | 'Low' }) {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function CrmSeoKeywordTracker() {
+export default function CrmSeoKeywordTracker() { return <SeoEvidencePanel mode="keywords"/>; }
+
+/** Historical design fixture, deliberately not rendered as operational evidence. */
+function LegacyUnverifiedCrmSeoKeywordTracker() {
   const [search, setSearch] = useState('');
   const [intentFilter, setIntentFilter] = useState<string>('all');
   const [destFilter, setDestFilter] = useState<string>('all');
@@ -303,10 +307,10 @@ export default function CrmSeoKeywordTracker() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="gap-1.5">
             <Upload className="size-4" /> Import Keywords
           </Button>
-          <Button size="sm" className="gap-1.5">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="gap-1.5">
             <Plus className="size-4" /> Add Keyword
           </Button>
         </div>
@@ -483,7 +487,7 @@ export default function CrmSeoKeywordTracker() {
                         <Badge variant={ACTION_STATUS_VARIANTS[kw.actionStatus]}>{kw.actionStatus}</Badge>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" className="size-8">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="size-8">
                           <MoreHorizontal className="size-4" />
                         </Button>
                       </TableCell>
@@ -595,7 +599,7 @@ export default function CrmSeoKeywordTracker() {
                       </TableCell>
                       <TableCell><SeverityBadge severity={alert.severity} /></TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" className="size-8">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="size-8">
                           <Merge className="size-4" />
                         </Button>
                       </TableCell>

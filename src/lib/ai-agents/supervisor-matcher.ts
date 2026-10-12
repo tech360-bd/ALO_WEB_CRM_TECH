@@ -1,10 +1,10 @@
 // ALO Education - Supervisor Matcher for MRes/PhD
 import * as fs from 'fs';
-import * as path from 'path';
 import { parse } from 'csv-parse/sync';
+import { syntheticAgentDataAllowed, syntheticFixturePath } from './synthetic-data-guard';
 export interface Supervisor { supervisor_id:string; university_id:string; campus_id:string; name:string; title:string; department:string; research_interests:string; email:string; profile_url:string; available_for_level:string; }
 export interface SupervisorMatch { supervisor:Supervisor; matchScore:number; matchedInterests:string[]; reason:string; }
-function loadSupervisors(): Supervisor[] { const csvPath=path.resolve(process.cwd(),'supervisors.csv'); if(!fs.existsSync(csvPath)) return []; const content=fs.readFileSync(csvPath,'utf-8'); return parse(content,{columns:true,skip_empty_lines:true}); }
+function loadSupervisors(): Supervisor[] { if(!syntheticAgentDataAllowed()) return []; const csvPath=syntheticFixturePath('supervisors.csv'); if(!csvPath||!fs.existsSync(csvPath)) return []; const content=fs.readFileSync(csvPath,'utf-8'); return parse(content,{columns:true,skip_empty_lines:true}); }
 export async function findSupervisorsForProfile(params:{ universityId?:string; campusId?:string; researchInterest:string; desiredLevel:'MRes'|'PhD'|string; departmentHint?:string; limit?:number; }):Promise<SupervisorMatch[]>{
   const {universityId,campusId,researchInterest,desiredLevel,departmentHint,limit=5}=params;
   const stopwords=new Set(['in','for','and','the','of','on','with','a','an','to','for','-']);
@@ -24,5 +24,5 @@ export async function findSupervisorsForProfile(params:{ universityId?:string; c
   scored.sort((a,b)=>b.matchScore-a.matchScore); return scored.slice(0,limit);
 }
 export async function getSupervisorsForCourse(courseId:string, researchInterest?:string):Promise<SupervisorMatch[]>{
-  const csvPath=path.resolve(process.cwd(),'courses.csv'); if(!fs.existsSync(csvPath)) return []; const content=fs.readFileSync(csvPath,'utf-8'); const courses:any[]=parse(content,{columns:true,skip_empty_lines:true}); const course=courses.find(c=>c.course_id===courseId); if(!course) return []; const isResearch=course.program_level==='MRes'||course.program_level==='PhD'; if(!isResearch && !researchInterest) return []; return findSupervisorsForProfile({universityId:course.university_id,campusId:course.campus_id,researchInterest:researchInterest||course.subject_area,desiredLevel:course.program_level as any});
+  if(!syntheticAgentDataAllowed()) return []; const csvPath=syntheticFixturePath('courses.csv'); if(!csvPath||!fs.existsSync(csvPath)) return []; const content=fs.readFileSync(csvPath,'utf-8'); const courses:any[]=parse(content,{columns:true,skip_empty_lines:true}); const course=courses.find(c=>c.course_id===courseId); if(!course) return []; const isResearch=course.program_level==='MRes'||course.program_level==='PhD'; if(!isResearch && !researchInterest) return []; return findSupervisorsForProfile({universityId:course.university_id,campusId:course.campus_id,researchInterest:researchInterest||course.subject_area,desiredLevel:course.program_level as any});
 }

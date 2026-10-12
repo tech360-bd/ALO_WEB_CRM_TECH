@@ -120,7 +120,7 @@ export default function CrmTasksPage() {
             <Button variant={viewMode === 'list' ? 'default' : 'ghost'} size="sm" className={viewMode === 'list' ? 'bg-alo-brand text-white' : 'text-alo-text-muted'} onClick={() => setViewMode('list')}>List</Button>
             <Button variant={viewMode === 'kanban' ? 'default' : 'ghost'} size="sm" className={viewMode === 'kanban' ? 'bg-alo-brand text-white' : 'text-alo-text-muted'} onClick={() => setViewMode('kanban')}>Kanban</Button>
           </div>
-          <Button className="bg-alo-brand hover:bg-alo-brand/90 text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-alo-brand hover:bg-alo-brand/90 text-white">
             <Plus className="mr-2 h-4 w-4" />New Task
           </Button>
         </div>
@@ -251,7 +251,7 @@ export default function CrmTasksPage() {
                         <td className="py-3"><Badge className={statusColors[task.status]}>{task.status}</Badge></td>
                         <td className="py-3 text-alo-text-muted">{task.dueDate}</td>
                         <td className="py-3 text-right">
-                          <Button variant="ghost" size="sm" className="text-alo-brand"><ArrowUpRight className="h-4 w-4" /></Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-alo-brand"><ArrowUpRight className="h-4 w-4" /></Button>
                         </td>
                       </tr>
                     );

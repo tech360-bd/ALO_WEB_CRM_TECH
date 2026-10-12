@@ -40,7 +40,7 @@ export default function AIDraftButton({
           <div className="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">{draft}</div>
           {risks.length > 0 && <div className="flex flex-wrap gap-1">{risks.map((r:string)=><Badge key={r} variant="outline" className="text-[10px] bg-amber-50 text-amber-700 border-amber-200"><ShieldAlert className="w-3 h-3 mr-1" />{r}</Badge>)}</div>}
           <div className="text-[10px] text-gray-500">AI draft respects visibility, never exposes B2B/internal data, never guarantees visa/admission, never sends without human approval unless safe automation enabled.</div>
-          {onApprove && <Button size="sm" className="h-7 text-xs bg-[#0057B8]" onClick={onApprove}>Approve & Send</Button>}
+          {onApprove && <Button size="sm" className="h-7 text-xs bg-[#2563EB]" onClick={onApprove}>Approve & Send</Button>}
         </div>
       )}
     </div>

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { publicUniversityWhere } from '@/lib/public-catalog';
+import { getOptionalAuth } from '@/lib/auth-middleware';
 
 // Public GET /api/universities — proxies to approved, verified CrmUniversity (Part 46)
 // Query: ?search=&country=&status=&limit=50
@@ -11,20 +13,30 @@ export async function GET(req: NextRequest) {
     const search = req.nextUrl.searchParams.get('search') || '';
     const country = req.nextUrl.searchParams.get('country') || '';
     const status = req.nextUrl.searchParams.get('status') || 'active';
-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10) || 50, 100);
+    const limit = Math.max(1, Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10) || 50, 100));
+    const auth = await getOptionalAuth(req);
+    const privileged = auth?.roles.some(role => ['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(role));
 
     const where: any = {};
-    if (status !== 'all') where.status = status;
+    if (!privileged) {
+      where.AND = [publicUniversityWhere()];
+      where.status = 'active';
+      where.verificationStatus = 'VERIFIED';
+      where.publicationStatus = { in: ['published', 'PUBLISHED'] };
+    } else if (status !== 'all') where.status = status;
     if (search) where.OR = [{ name: { contains: search } }, { city: { contains: search } }, { country: { contains: search } }];
     if (country && country !== 'all') where.country = { contains: country };
 
     // No .catch(()=>[]) here: a DB failure must surface as a 500, not as an
     // empty list that renders as "no universities exist".
-    const universities = await db.crmUniversity.findMany({
-      where,
-      take: limit,
-      orderBy: { name: 'asc' },
-    });
+    const [universities, total] = await Promise.all([
+      db.crmUniversity.findMany({
+        where,
+        take: limit,
+        orderBy: { name: 'asc' },
+      }),
+      db.crmUniversity.count({ where }),
+    ]);
 
     // Never expose internal notes/source artifacts; return whitelisted fields
     const safe = universities.map((u: any) => ({
@@ -43,9 +55,11 @@ export async function GET(req: NextRequest) {
       lastVerifiedAt: u.lastVerifiedAt,
     }));
 
-    return NextResponse.json({ success: true, universities: safe, data: safe, total: safe.length });
+    // `total` is the real matching-row count (not the page size), so the UI
+    // can show honest, DB-driven statistics instead of hardcoded claims.
+    return NextResponse.json({ success: true, universities: safe, data: safe, total });
   } catch (e: any) {
     console.error('[api/universities] error', e);
-    return NextResponse.json({ success: false, error: e?.message || 'Failed to load universities' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to load universities' }, { status: 500 });
   }
 }

@@ -73,6 +73,7 @@ node_modules/
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # Archives / exported packages
 *.zip
@@ -110,6 +111,7 @@ build/
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # Archives / exported packages
 *.zip
@@ -246,3 +248,21 @@ _reference_repos/*
 
 !docs/BRANCH-MERGE-LEDGER.csv
 !docs/BRANCH-MERGE-*.csv
+
+# Offline dev-sqlite sandbox artifacts (see docs/DEV-SQLITE-SANDBOX.md)
+prisma/schema.dev.prisma
+prisma/dev.db*
+# ALO AI Workforce offline verification scratch (fake engine, sqlite mirror db, generated DDL)
+.awf-tmp/
+
+# Read-only catalogue audit evidence (not a local runtime artifact)
+!AUDIT/local-catalog-quality-*.json
+
+# Downloaded local verification runtimes are never release artifacts.
+/.cache/
+
+# Course Finder import template and clearly-labelled synthetic example (documentation, not data)
+!docs/catalogue-import/*.csv
+
+# Synthetic generator output (scripts/lib/synthetic-output-guard.*) - never commit
+/staging/synthetic/

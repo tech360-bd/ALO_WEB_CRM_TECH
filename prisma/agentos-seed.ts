@@ -19,7 +19,7 @@ const DEPARTMENTS: Array<{
   color: string;
 }> = [
   // Core Operations (10)
-  { slug: "command-center", name: "Command Center & Governance", category: "Core Operations", description: "Master AI orchestration, governance, policy enforcement, and super-admin AI assistant", icon: "🛡️", color: "#0057B8" },
+  { slug: "command-center", name: "Command Center & Governance", category: "Core Operations", description: "Master AI orchestration, governance, policy enforcement, and super-admin AI assistant", icon: "🛡️", color: "#0B5ED7" },
   { slug: "ai-engineering", name: "AI Engineering", category: "Core Operations", description: "Local and cloud AI model management, fine-tuning, deployment, and performance optimization", icon: "🤖", color: "#6366F1" },
   { slug: "memory-knowledge", name: "Memory & Knowledge Core", category: "Core Operations", description: "Vector memory, RAG pipeline, knowledge graph, and persistent agent memory management", icon: "🧠", color: "#8B5CF6" },
   { slug: "crm-automation", name: "CRM & Automation", category: "Core Operations", description: "Lead lifecycle management, contact automation, pipeline orchestration, and CRM intelligence", icon: "⚡", color: "#F59E0B" },
@@ -31,7 +31,7 @@ const DEPARTMENTS: Array<{
   { slug: "enterprise-data-lake", name: "Enterprise Data Lake", category: "Core Operations", description: "Centralized data storage, ETL pipelines, data quality enforcement, and analytics foundation", icon: "🏔️", color: "#64748B" },
 
   // Marketing & Sales (10)
-  { slug: "digital-marketing", name: "Digital Marketing", category: "Marketing & Sales", description: "Campaign strategy, digital advertising, marketing analytics, and growth automation", icon: "📊", color: "#F37021" },
+  { slug: "digital-marketing", name: "Digital Marketing", category: "Marketing & Sales", description: "Campaign strategy, digital advertising, marketing analytics, and growth automation", icon: "📊", color: "#F97316" },
   { slug: "social-media", name: "Social Media", category: "Marketing & Sales", description: "Post scheduling, engagement monitoring, social inbox management, and viral campaign execution", icon: "📱", color: "#E1306C" },
   { slug: "paid-ads", name: "Paid Ads", category: "Marketing & Sales", description: "Meta Ads, Google Ads, TikTok ads planning, execution, and ROI optimization", icon: "💰", color: "#FBBC04" },
   { slug: "content-writing", name: "Content Writing", category: "Marketing & Sales", description: "SEO-optimized copy, blog articles, social captions, email sequences, and marketing materials", icon: "✍️", color: "#059669" },
@@ -44,7 +44,7 @@ const DEPARTMENTS: Array<{
 
   // Web & Tech (10)
   { slug: "website-design", name: "Website Design", category: "Web & Tech", description: "UI/UX design for web platforms, design systems, prototyping, and user research", icon: "🎨", color: "#F97316" },
-  { slug: "website-development", name: "Website Development", category: "Web & Tech", description: "Next.js frontend development, component architecture, performance optimization, and web standards", icon: "💻", color: "#0066CC" },
+  { slug: "website-development", name: "Website Development", category: "Web & Tech", description: "Next.js frontend development, component architecture, performance optimization, and web standards", icon: "💻", color: "#0B5ED7" },
   { slug: "software-development", name: "Software Development", category: "Web & Tech", description: "Custom application development, architecture design, code review, and technical documentation", icon: "⚙️", color: "#4F46E5" },
   { slug: "devops-security", name: "DevOps & Security", category: "Web & Tech", description: "CI/CD pipelines, infrastructure management, security hardening, and deployment automation", icon: "🔐", color: "#DC2626" },
   { slug: "data-analytics", name: "Data & Analytics", category: "Web & Tech", description: "Business intelligence dashboards, data visualization, statistical analysis, and reporting automation", icon: "📉", color: "#0891B2" },
@@ -67,8 +67,8 @@ const DEPARTMENTS: Array<{
   { slug: "creative-writing", name: "Creative Writing", category: "Creative Studios", description: "Storytelling, creative content, scriptwriting, and narrative development for ALO brand", icon: "📖", color: "#1D4ED8" },
 
   // Education Services (10)
-  { slug: "study-academic-ai", name: "Study & Academic AI", category: "Education Services", description: "AI-powered learning support, tutoring assistance, academic content curation, and study planning", icon: "📚", color: "#0057B8" },
-  { slug: "education-agency", name: "Education Agency Operations", category: "Education Services", description: "Student counseling workflows, university application processing, and international admission management", icon: "🎓", color: "#F37021" },
+  { slug: "study-academic-ai", name: "Study & Academic AI", category: "Education Services", description: "AI-powered learning support, tutoring assistance, academic content curation, and study planning", icon: "📚", color: "#0B5ED7" },
+  { slug: "education-agency", name: "Education Agency Operations", category: "Education Services", description: "Student counseling workflows, university application processing, and international admission management", icon: "🎓", color: "#F97316" },
   { slug: "student-visa", name: "Student Visa Consultancy", category: "Education Services", description: "Student visa guidance, document checklist management, visa readiness scoring, and case tracking", icon: "🛂", color: "#DC2626" },
   { slug: "university-research", name: "University Research", category: "Education Services", description: "University programme research, course catalogue verification, and official data monitoring", icon: "🏛️", color: "#4F46E5" },
   { slug: "lms-course", name: "LMS & Course Management", category: "Education Services", description: "Learning management system operations, course creation, content delivery, and enrollment management", icon: "📝", color: "#059669" },
@@ -91,7 +91,7 @@ const DEPARTMENTS: Array<{
   { slug: "executive-reporting", name: "Executive Reporting", category: "Business Operations", description: "Board-level reporting, executive dashboards, strategic KPI tracking, and business intelligence", icon: "📋", color: "#B45309" },
 
   // Specialized Services (10)
-  { slug: "partner-management", name: "Partner Network Management", category: "Specialized Services", description: "Partner onboarding, commission management, partner portal operations, and B2B relationship management", icon: "🤝", color: "#F37021" },
+  { slug: "partner-management", name: "Partner Network Management", category: "Specialized Services", description: "Partner onboarding, commission management, partner portal operations, and B2B relationship management", icon: "🤝", color: "#F97316" },
   { slug: "commission-tracking", name: "Commission & Revenue", category: "Specialized Services", description: "Commission calculation, revenue attribution, partner payout processing, and financial reconciliation", icon: "💎", color: "#059669" },
   { slug: "document-intelligence", name: "Document Intelligence", category: "Specialized Services", description: "Document classification, OCR extraction, authenticity verification, and intelligent document routing", icon: "📄", color: "#4F46E5" },
   { slug: "knowledge-center", name: "Knowledge Center", category: "Specialized Services", description: "Internal knowledge base management, FAQ maintenance, training material organization, and search optimization", icon: "📚", color: "#0891B2" },
@@ -99,7 +99,7 @@ const DEPARTMENTS: Array<{
   { slug: "interview-training", name: "AI Interview Training", category: "Specialized Services", description: "University, visa, and scholarship interview preparation, AI scoring, and feedback generation", icon: "🎤", color: "#7C3AED" },
   { slug: "sop-cv-studio", name: "SOP & CV Studio", category: "Specialized Services", description: "Statement of purpose generation, CV creation, cover letter writing, and application essay editing", icon: "✍️", color: "#B45309" },
   { slug: "scholarship-matching", name: "Scholarship Matching", category: "Specialized Services", description: "Scholarship eligibility screening, application guidance, deadline tracking, and award optimization", icon: "🏆", color: "#F59E0B" },
-  { slug: "course-finder", name: "Intelligent Course Finder", category: "Specialized Services", description: "AI-powered course matching, university shortlisting, eligibility checking, and comparison tools", icon: "🔍", color: "#0057B8" },
+  { slug: "course-finder", name: "Intelligent Course Finder", category: "Specialized Services", description: "AI-powered course matching, university shortlisting, eligibility checking, and comparison tools", icon: "🔍", color: "#0B5ED7" },
   { slug: "accommodation", name: "Accommodation Services", category: "Specialized Services", description: "Student accommodation search, booking facilitation, cost comparison, and pre-departure briefings", icon: "🏠", color: "#16A34A" },
 
   // Infrastructure & Security (10)
@@ -112,7 +112,7 @@ const DEPARTMENTS: Array<{
   { slug: "notification-engine", name: "Notification Engine", category: "Infrastructure", description: "Multi-channel notification delivery (email, SMS, WhatsApp, push), preference management, and analytics", icon: "🔔", color: "#F59E0B" },
   { slug: "identity-rbac", name: "Identity & RBAC", category: "Infrastructure", description: "Role-based access control, permission management, SSO integration, and identity governance", icon: "👤", color: "#7C3AED" },
   { slug: "cron-scheduler", name: "Cron & Scheduler", category: "Infrastructure", description: "Scheduled job management, cron expression management, job monitoring, and retry logic", icon: "⏰", color: "#B45309" },
-  { slug: "cdn-performance", name: "CDN & Performance", category: "Infrastructure", description: "Content delivery optimization, image compression, caching strategies, and page speed improvement", icon: "⚡", color: "#F37021" },
+  { slug: "cdn-performance", name: "CDN & Performance", category: "Infrastructure", description: "Content delivery optimization, image compression, caching strategies, and page speed improvement", icon: "⚡", color: "#F97316" },
 
   // Innovation & R&D (10)
   { slug: "ai-research-lab", name: "AI Research Lab", category: "Innovation & R&D", description: "Emerging AI technology research, model evaluation, prompt engineering, and AI capability expansion", icon: "🔬", color: "#4F46E5" },

@@ -1,26 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
+import { useState, useEffect, useCallback, Fragment } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
-import { cn } from '@/lib/utils';
-import {
-  Search, GraduationCap, Plane, Phone, User as UserIcon,
-  Clock, Filter, Users, ChevronDown, ChevronUp, Eye,
-} from 'lucide-react';
+import { Search, Plane, GraduationCap, Clock, Filter, Users, ChevronDown, ChevronUp, Eye, RefreshCw } from 'lucide-react';
 
-/* ── Types ──────────────────────────────────────────── */
-
-type StudentStatus = 'active' | 'enrolled' | 'visa_processing' | 'offer_received' | 'application_submitted' | 'inactive' | 'withdrawn';
-
+const PAGE_SIZE = 20;
 interface Student {
   id: string;
   studentId: string;
@@ -28,340 +17,140 @@ interface Student {
   phone: string;
   email: string;
   destination: string;
-  program: string;
-  status: StudentStatus;
+  level: string;
+  subject: string;
+  journeyStage: string;
   counselor: string;
-  lastUpdate: string;
+  updatedAt: string;
+  profileCompletion: number;
+  applicationCount: number;
+}
+interface Application {
+  id: string;
+  university: string;
+  course: string;
+  country: string;
+  intake: string;
+  stage: string;
+  updatedAt: string;
 }
 
-/* ── Mock Data ─────────────────────────────────────── */
-
-const mockStudents: Student[] = [
-  { id: '1', studentId: 'STU-2025-001', name: 'Arif Rahman', phone: '+880 1712-345678', email: 'arif@mail.com', destination: 'UK', program: 'MSc Data Science', status: 'visa_processing', counselor: 'Sarah Khan', lastUpdate: '2025-01-17' },
-  { id: '2', studentId: 'STU-2025-002', name: 'Mitu Sarkar', phone: '+880 1898-123456', email: 'mitu@mail.com', destination: 'USA', program: 'MS Computer Science', status: 'offer_received', counselor: 'Rahim Uddin', lastUpdate: '2025-01-16' },
-  { id: '3', studentId: 'STU-2025-003', name: 'Shakib Hasan', phone: '+880 1534-987654', email: 'shakib@mail.com', destination: 'Canada', program: 'MBA', status: 'enrolled', counselor: 'Fatima Akter', lastUpdate: '2025-01-15' },
-  { id: '4', studentId: 'STU-2025-004', name: 'Priya Das', phone: '+880 1678-456789', email: 'priya@mail.com', destination: 'UK', program: 'MSc Finance', status: 'enrolled', counselor: 'Sarah Khan', lastUpdate: '2025-01-14' },
-  { id: '5', studentId: 'STU-2025-005', name: 'Nayeem Islam', phone: '+880 1345-789012', email: 'nayeem@mail.com', destination: 'Australia', program: 'Diploma IT', status: 'application_submitted', counselor: 'Rahim Uddin', lastUpdate: '2025-01-13' },
-  { id: '6', studentId: 'STU-2025-006', name: 'Taslima Akter', phone: '+880 1567-234567', email: 'taslima@mail.com', destination: 'USA', program: 'MS MIS', status: 'active', counselor: 'Fatima Akter', lastUpdate: '2025-01-12' },
-  { id: '7', studentId: 'STU-2025-007', name: 'Jamil Hossain', phone: '+880 1890-345678', email: 'jamil@mail.com', destination: 'Canada', program: 'BEng Civil', status: 'inactive', counselor: 'Sarah Khan', lastUpdate: '2025-01-08' },
-  { id: '8', studentId: 'STU-2025-008', name: 'Sumaiya Begum', phone: '+880 1711-567890', email: 'sumaiya@mail.com', destination: 'UK', program: 'PhD Biotech', status: 'active', counselor: 'Rahim Uddin', lastUpdate: '2025-01-09' },
-  { id: '9', studentId: 'STU-2025-009', name: 'Rafiq Ahmed', phone: '+880 1522-678901', email: 'rafiq@mail.com', destination: 'Australia', program: 'MSc IT', status: 'withdrawn', counselor: 'Fatima Akter', lastUpdate: '2025-01-06' },
-  { id: '10', studentId: 'STU-2025-010', name: 'Farzana Mimi', phone: '+880 1833-789012', email: 'farzana@mail.com', destination: 'UK', program: 'MSc Public Health', status: 'offer_received', counselor: 'Sarah Khan', lastUpdate: '2025-01-07' },
-];
-
-const statusConfig: Record<StudentStatus, { variant: 'success' | 'brand' | 'warning' | 'outline' | 'secondary' | 'muted' | 'danger'; label: string }> = {
-  active: { variant: 'success', label: 'Active' },
-  enrolled: { variant: 'brand', label: 'Enrolled' },
-  visa_processing: { variant: 'warning', label: 'Visa Processing' },
-  offer_received: { variant: 'outline', label: 'Offer Received' },
-  application_submitted: { variant: 'secondary', label: 'Application Submitted' },
-  inactive: { variant: 'muted', label: 'Inactive' },
-  withdrawn: { variant: 'danger', label: 'Withdrawn' },
-};
-
-/* ── Component ─────────────────────────────────────── */
+function label(value: string) {
+  const normalized = value.toLowerCase().replace(/[_-]+/g, ' ').trim();
+  return normalized ? normalized.replace(/\b\w/g, (character) => character.toUpperCase()) : 'Not recorded';
+}
+function formatDate(value: string) {
+  if (!value) return '—';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
 export default function PartnerStudentsPage() {
-  const { user } = usePortalStore();
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [destFilter, setDestFilter] = useState<string>('All');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
-
+  const [stageFilter, setStageFilter] = useState('all');
+  const [countryFilter, setCountryFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [expandedStudent, setExpandedStudent] = useState<string | null>(null);
-  const [studentApps, setStudentApps] = useState<any[]>([]);
+  const [studentApps, setStudentApps] = useState<Application[]>([]);
+  const [appsLoading, setAppsLoading] = useState(false);
+  const [appsError, setAppsError] = useState<string | null>(null);
 
-  const fetchStudents = useCallback(async (status?: string, dest?: string) => {
+  const fetchStudents = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
-      const token = usePortalStore.getState().token;
-      const headers: HeadersInit = token
-        ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-        : { 'Content-Type': 'application/json' };
-      const params = new URLSearchParams({ partnerId: user?.id || '' });
-      if (status && status !== 'all') params.set('status', status);
-      if (dest && dest !== 'All') params.set('destination', dest);
-      const res = await fetch(`/api/partner/students?${params.toString()}`, { headers });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        setStudents(data.data);
-      } else {
-        setStudents(mockStudents);
+      const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
+      if (search.trim()) params.set('search', search.trim());
+      if (stageFilter !== 'all') params.set('stage', stageFilter);
+      if (countryFilter !== 'all') params.set('destinationCountry', countryFilter);
+      const response = await fetch(`/api/partner/students?${params}`, { credentials: 'include' });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.success || !Array.isArray(payload.data)) {
+        throw new Error(payload.error || `Could not load student records (HTTP ${response.status})`);
       }
-    } catch {
-      setStudents(mockStudents);
+      setStudents(payload.data.map((student: any): Student => ({
+        id: String(student.id || ''),
+        studentId: String(student.studentId || ''),
+        name: String(student.fullName || 'Student name unavailable'),
+        phone: String(student.user?.phone || ''),
+        email: String(student.user?.email || ''),
+        destination: String(student.preferredCountry || ''),
+        level: String(student.preferredLevel || ''),
+        subject: String(student.preferredSubject || ''),
+        journeyStage: String(student.journeyStage || ''),
+        counselor: String(student.counselorName || ''),
+        updatedAt: String(student.updatedAt || ''),
+        profileCompletion: Number(student.profileCompletion || 0),
+        applicationCount: Number(student._count?.applications || 0),
+      })));
+      setTotal(Number(payload.pagination?.total || 0));
+      setTotalPages(Math.max(1, Number(payload.pagination?.totalPages || 1)));
+    } catch (caught) {
+      setStudents([]);
+      setTotal(0);
+      setTotalPages(1);
+      setError(caught instanceof Error ? caught.message : 'Could not load partner student records.');
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [page, search, stageFilter, countryFilter]);
 
-  useEffect(() => { fetchStudents(); }, [fetchStudents]);
+  useEffect(() => { void fetchStudents(); }, [fetchStudents]);
 
-  const handleExpandStudent = async (studentId: string) => {
-    if (expandedStudent === studentId) {
+  const handleExpandStudent = async (student: Student) => {
+    if (expandedStudent === student.id) {
       setExpandedStudent(null);
       setStudentApps([]);
+      setAppsError(null);
       return;
     }
-    setExpandedStudent(studentId);
+    setExpandedStudent(student.id);
+    setStudentApps([]);
+    setAppsError(null);
+    setAppsLoading(true);
     try {
-      const token = usePortalStore.getState().token;
-      const headers: HeadersInit = token
-        ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-        : { 'Content-Type': 'application/json' };
-      const res = await fetch(`/api/partner/applications?studentId=${studentId}`, { headers });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.applications)) {
-        setStudentApps(data.applications);
-      } else {
-        setStudentApps([
-          { id: 'app-mock-1', university: 'University of Manchester', program: 'MSc Data Science', stage: 'submitted', updatedAt: '2025-01-17' },
-          { id: 'app-mock-2', university: 'University of Birmingham', program: 'MSc Finance', stage: 'offer', updatedAt: '2025-01-10' },
-        ]);
+      const params = new URLSearchParams({ studentProfileId: student.id, page: '1', limit: '20' });
+      const response = await fetch(`/api/partner/applications?${params}`, { credentials: 'include' });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.success || !Array.isArray(payload.data)) {
+        throw new Error(payload.error || 'Could not load this student’s applications.');
       }
-    } catch {
-      setStudentApps([
-        { id: 'app-mock-1', university: 'University of Manchester', program: 'MSc Data Science', stage: 'submitted', updatedAt: '2025-01-17' },
-        { id: 'app-mock-2', university: 'University of Birmingham', program: 'MSc Finance', stage: 'offer', updatedAt: '2025-01-10' },
-      ]);
+      setStudentApps(payload.data.map((application: any): Application => ({
+        id: String(application.id || ''),
+        university: String(application.university || 'University not recorded'),
+        course: String(application.course || 'Course not recorded'),
+        country: String(application.country || ''),
+        intake: String(application.intake || ''),
+        stage: String(application.stage || ''),
+        updatedAt: String(application.updatedAt || ''),
+      })));
+    } catch (caught) {
+      setAppsError(caught instanceof Error ? caught.message : 'Could not load applications.');
+    } finally {
+      setAppsLoading(false);
     }
   };
 
-  const filtered = students
-    .filter((s) => {
-      if (statusFilter !== 'all' && s.status !== statusFilter) return false;
-      if (destFilter !== 'All' && s.destination !== destFilter) return false;
-      if (search) {
-        const q = search.toLowerCase();
-        return s.name.toLowerCase().includes(q) || s.studentId.toLowerCase().includes(q) || s.email.toLowerCase().includes(q);
-      }
-      return true;
-    })
-    .sort((a, b) => {
-      const da = new Date(a.lastUpdate).getTime();
-      const db = new Date(b.lastUpdate).getTime();
-      return sortDir === 'desc' ? db - da : da - db;
-    });
-
-  const statusCounts: Record<string, number> = {
-    all: students.length,
-    active: students.filter((s) => s.status === 'active').length,
-    enrolled: students.filter((s) => s.status === 'enrolled').length,
-    visa_processing: students.filter((s) => s.status === 'visa_processing').length,
-    offer_received: students.filter((s) => s.status === 'offer_received').length,
-    application_submitted: students.filter((s) => s.status === 'application_submitted').length,
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-6 p-1">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-xl" />
-        </div>
-        <Skeleton className="h-[400px] w-full rounded-xl" />
-      </div>
-    );
-  }
+  if (loading) return <div className="space-y-6 p-1"><Skeleton className="h-8 w-48" /><div className="grid grid-cols-2 sm:grid-cols-4 gap-4"><Skeleton className="h-20 w-full rounded-xl" /><Skeleton className="h-20 w-full rounded-xl" /><Skeleton className="h-20 w-full rounded-xl" /><Skeleton className="h-20 w-full rounded-xl" /></div><Skeleton className="h-[400px] w-full rounded-xl" /></div>;
 
   return (
     <div className="space-y-6 p-1">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-alo-text">My Students</h1>
-          <p className="text-sm text-alo-text-muted mt-0.5">Track all students referred through your agency</p>
-        </div>
-        <Badge variant="muted" className="text-xs w-fit">{filtered.length} students shown</Badge>
-      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><div><h1 className="text-2xl font-bold text-alo-text">My Students</h1><p className="text-sm text-alo-text-muted mt-0.5">Student profiles linked to your partner account</p></div><Badge variant="muted" className="text-xs w-fit"><Users className="mr-1 h-3 w-3" />{total} students</Badge></div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><Users className="w-4 h-4 text-alo-brand" /><span className="text-xs text-alo-text-muted">Total</span></div>
-            <p className="text-2xl font-bold text-alo-text">{students.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><GraduationCap className="w-4 h-4 text-emerald-500" /><span className="text-xs text-alo-text-muted">Enrolled</span></div>
-            <p className="text-2xl font-bold text-alo-text">{statusCounts.enrolled}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><Plane className="w-4 h-4 text-amber-500" /><span className="text-xs text-alo-text-muted">Visa Processing</span></div>
-            <p className="text-2xl font-bold text-alo-text">{statusCounts.visa_processing}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><Eye className="w-4 h-4 text-blue-500" /><span className="text-xs text-alo-text-muted">Offers</span></div>
-            <p className="text-2xl font-bold text-alo-text">{statusCounts.offer_received}</p>
-          </CardContent>
-        </Card>
-      </div>
+      {error && <Card className="border-amber-200 bg-amber-50"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4"><p className="text-sm text-amber-900">{error}</p><Button variant="outline" size="sm" onClick={() => void fetchStudents()}><RefreshCw className="mr-2 h-3.5 w-3.5" />Retry</Button></CardContent></Card>}
 
-      {/* Filters */}
-      <Card className="bg-white rounded-xl border border-alo-border">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-alo-text-muted" />
-              <Input placeholder="Search by name, student ID, or email..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-alo-text-muted hidden sm:block" />
-              <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); fetchStudents(v, destFilter); }}>
-                <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="enrolled">Enrolled</SelectItem>
-                  <SelectItem value="visa_processing">Visa Processing</SelectItem>
-                  <SelectItem value="offer_received">Offer Received</SelectItem>
-                  <SelectItem value="application_submitted">Application Submitted</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="withdrawn">Withdrawn</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={destFilter} onValueChange={(v) => { setDestFilter(v); fetchStudents(statusFilter, v); }}>
-                <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {['All', 'UK', 'USA', 'Canada', 'Australia', 'New Zealand', 'Germany', 'Ireland'].map((d) => (
-                    <SelectItem key={d} value={d}>{d}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button variant="outline" size="sm" onClick={() => setSortDir(sortDir === 'desc' ? 'asc' : 'desc')} title="Sort by last update">
-                <Clock className="w-4 h-4" />
-                {sortDir === 'desc' ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <Card className="bg-white rounded-xl border border-alo-border"><CardContent className="flex flex-col lg:flex-row gap-3 p-4"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-alo-text-muted" /><Input placeholder="Search this list by student name, ID, or email..." className="pl-9" value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></div><div className="flex flex-wrap items-center gap-2"><Filter className="w-4 h-4 text-alo-text-muted hidden sm:block" /><Select value={stageFilter} onValueChange={(value) => { setStageFilter(value); setPage(1); }}><SelectTrigger className="w-[190px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All journey stages</SelectItem><SelectItem value="lead_created">Lead created</SelectItem><SelectItem value="profile_incomplete">Profile incomplete</SelectItem><SelectItem value="application_drafted">Application drafted</SelectItem><SelectItem value="application_submitted">Application submitted</SelectItem><SelectItem value="offer_received">Offer received</SelectItem><SelectItem value="visa_preparation">Visa preparation</SelectItem><SelectItem value="enrolled">Enrolled</SelectItem></SelectContent></Select><Select value={countryFilter} onValueChange={(value) => { setCountryFilter(value); setPage(1); }}><SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All destinations</SelectItem><SelectItem value="United Kingdom">United Kingdom</SelectItem><SelectItem value="United States">United States</SelectItem><SelectItem value="Canada">Canada</SelectItem><SelectItem value="Australia">Australia</SelectItem><SelectItem value="New Zealand">New Zealand</SelectItem></SelectContent></Select></div></CardContent></Card>
 
-      {/* Students Table */}
-      <Card className="bg-white rounded-xl border border-alo-border">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto max-h-[520px] overflow-y-auto custom-scrollbar">
-            <Table>
-              <TableHeader className="sticky top-0 bg-white z-10">
-                <TableRow>
-                  <TableHead className="w-[120px]">Student ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="hidden md:table-cell">Phone</TableHead>
-                  <TableHead>Destination</TableHead>
-                  <TableHead className="hidden lg:table-cell">Program</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="hidden sm:table-cell">Counselor</TableHead>
-                  <TableHead>Last Update</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="h-32 text-center text-alo-text-muted">
-                      No students found matching your criteria.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filtered.map((student) => {
-                    const cfg = statusConfig[student.status];
-                    const isExpanded = expandedStudent === student.id;
-                    return (
-                      <>
-                      <TableRow key={student.id} className={cn('hover:bg-alo-brand-light/20 transition-colors cursor-pointer', isExpanded && 'bg-alo-brand-light/10')}>
-                        <TableCell className="font-mono text-xs text-alo-text-muted">
-                          <button onClick={() => handleExpandStudent(student.id)} className="flex items-center gap-1">
-                            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                            {student.studentId}
-                          </button>
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="text-sm font-medium text-alo-text">{student.name}</p>
-                            <p className="text-xs text-alo-text-muted md:hidden">{student.phone}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          <span className="text-sm text-alo-text-secondary inline-flex items-center gap-1">
-                            <Phone className="w-3 h-3" /> {student.phone}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className="inline-flex items-center gap-1 text-xs text-alo-text-secondary">
-                            <Plane className="w-3 h-3" /> {student.destination}
-                          </span>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell text-xs text-alo-text-secondary">{student.program}</TableCell>
-                        <TableCell>
-                          <Badge variant={cfg.variant} className="text-[11px]">{cfg.label}</Badge>
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell text-xs text-alo-text-secondary">{student.counselor}</TableCell>
-                        <TableCell className="text-xs text-alo-text-muted">
-                          {formatDate(student.lastUpdate)}
-                        </TableCell>
-                      </TableRow>
-                      {isExpanded && (
-                        <TableRow key={`${student.id}-detail`}>
-                          <TableCell colSpan={8} className="bg-alo-brand-light/5 px-8 py-4">
-                            <div className="space-y-3">
-                              <p className="text-sm font-semibold text-alo-text">Application History</p>
-                              {studentApps.length === 0 ? (
-                                <p className="text-xs text-alo-text-muted">No applications found.</p>
-                              ) : (
-                                <div className="space-y-2">
-                                  {studentApps.map((app: any) => (
-                                    <div key={app.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-white border border-alo-border">
-                                      <div>
-                                        <p className="text-sm font-medium text-alo-text">{app.university}</p>
-                                        <p className="text-xs text-alo-text-muted">{app.program}</p>
-                                      </div>
-                                      <div className="flex items-center gap-3">
-                                        <Badge variant={app.stage === 'enrolled' ? 'success' : app.stage === 'offer' ? 'warning' : app.stage === 'visa' ? 'brand' : 'outline'} className="text-[11px]">
-                                          {app.stage || app.status}
-                                        </Badge>
-                                        <span className="text-[11px] text-alo-text-muted">{app.updatedAt ? formatDate(app.updatedAt) : ''}</span>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                      </>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      <Card className="bg-white rounded-xl border border-alo-border"><CardHeader><CardTitle className="text-base font-semibold text-alo-text">Student Records</CardTitle></CardHeader><CardContent className="p-0"><div className="overflow-x-auto"><table className="w-full text-sm"><thead className="sticky top-0 bg-white z-10"><tr className="border-b text-left text-xs text-alo-text-muted"><th className="p-3">Student</th><th className="p-3">Destination</th><th className="hidden md:table-cell p-3">Study preference</th><th className="p-3">Journey stage</th><th className="hidden sm:table-cell p-3">Applications</th><th className="hidden lg:table-cell p-3">Updated</th><th className="p-3">Details</th></tr></thead><tbody>
+        {students.length === 0 ? <tr><td colSpan={7} className="h-32 text-center text-alo-text-muted">{error ? 'Student records could not be loaded.' : 'No student profiles match this page and filter.'}</td></tr> : students.map((student) => <Fragment key={student.id}><tr className="border-b last:border-0 hover:bg-alo-brand-light/20"><td className="p-3"><p className="font-medium text-alo-text">{student.name}</p><p className="text-[11px] text-alo-text-muted">{student.studentId || 'Student ID not recorded'}</p><p className="text-[11px] text-alo-text-muted">{student.email || student.phone || 'Contact not recorded'}</p></td><td className="p-3"><span className="inline-flex items-center gap-1 text-xs text-alo-text-secondary"><Plane className="h-3 w-3" />{student.destination || 'Not recorded'}</span></td><td className="hidden md:table-cell p-3 text-xs text-alo-text-secondary"><span className="inline-flex items-center gap-1"><GraduationCap className="h-3.5 w-3.5" />{[student.level, student.subject].filter(Boolean).join(' · ') || 'Not recorded'}</span></td><td className="p-3"><Badge variant="outline" className="text-[11px]">{label(student.journeyStage)}</Badge><p className="mt-1 text-[11px] text-alo-text-muted">Profile {Math.max(0, Math.min(100, student.profileCompletion))}%</p></td><td className="hidden sm:table-cell p-3 text-sm text-alo-text-secondary">{student.applicationCount}</td><td className="hidden lg:table-cell p-3"><span className="inline-flex items-center gap-1 text-xs text-alo-text-muted"><Clock className="h-3 w-3" />{formatDate(student.updatedAt)}</span></td><td className="p-3"><Button variant="ghost" size="sm" aria-label={`${expandedStudent === student.id ? 'Hide' : 'Show'} applications for ${student.name}`} onClick={() => void handleExpandStudent(student)}>{expandedStudent === student.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}<Eye className="ml-1 h-3.5 w-3.5" /></Button></td></tr>{expandedStudent === student.id && <tr key={`${student.id}-applications`} className="bg-slate-50"><td colSpan={7} className="p-4"><div className="rounded-lg border border-alo-border bg-white p-4"><h3 className="mb-3 text-sm font-semibold text-alo-text">Applications for {student.name}</h3>{appsLoading ? <Skeleton className="h-16 w-full" /> : appsError ? <p className="text-sm text-amber-800">{appsError}</p> : studentApps.length === 0 ? <p className="text-sm text-alo-text-muted">No applications are recorded for this student.</p> : <div className="space-y-2">{studentApps.map((application) => <div key={application.id} className="flex flex-wrap items-center justify-between gap-2 border-b last:border-0 py-2"><div><p className="text-sm font-medium text-alo-text">{application.university} · {application.course}</p><p className="text-xs text-alo-text-muted">{[application.country, application.intake].filter(Boolean).join(' · ') || 'Destination and intake not recorded'}</p></div><div className="text-right"><Badge variant="outline" className="text-[11px]">{label(application.stage)}</Badge><p className="mt-1 text-[11px] text-alo-text-muted">{formatDate(application.updatedAt)}</p></div></div>)}</div>}</div></td></tr>}</Fragment>)}
+        </tbody></table></div></CardContent></Card>
 
-      <p className="text-xs text-alo-text-muted text-center">
-        Showing {filtered.length} of {students.length} students
-      </p>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-alo-text-muted"><p>Showing {students.length} records on page {page} · {total} total student profiles</p><div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page <= 1}>Previous</Button><span>{page} / {totalPages}</span><Button variant="outline" size="sm" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page >= totalPages}>Next</Button></div></div>
     </div>
   );
-}
-
-/* ── Helpers ───────────────────────────────────────── */
-
-function formatDate(dateStr: string) {
-  try {
-    return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
 }

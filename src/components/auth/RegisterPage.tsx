@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,13 +24,14 @@ import {
 } from 'lucide-react';
 
 const BULLET_POINTS = [
-  'Access hundreds of courses worldwide',
+  'Search courses and compare options',
   'AI-powered university matching',
   'Dedicated counselor support',
   'End-to-end application tracking',
 ];
 
 export default function RegisterPage() {
+  const router = useRouter();
   const { selectedPortal, loginLoading, loginError, register, setView, clearLoginError } =
     usePortalStore();
 
@@ -121,7 +123,11 @@ export default function RegisterPage() {
       portalType: selectedPortal,
     });
 
-    if (success && !isStudent) {
+    if (usePortalStore.getState().currentView === 'verify-otp') {
+      router.push('/verify-email');
+      return;
+    }
+    if (success && !isStudent && usePortalStore.getState().currentView !== 'verify-otp') {
       setRegistrationSuccess(true);
     }
   };

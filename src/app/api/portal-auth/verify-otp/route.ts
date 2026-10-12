@@ -1,70 +1,63 @@
-import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { db } from '@/lib/db';
+import { NextResponse } from 'next/server';
+import { assignVerifiedRegistration } from '@/lib/crm/verified-registration-assignment';
+import { consumeEmailOtp, getRequestIp, issueEmailOtp } from '@/lib/auth/email-otp';
 
 export async function POST(request: Request) {
   try {
-    const { email, otp, type } = await request.json();
-
-    if (!email || !otp) {
-      return NextResponse.json(
-        { success: false, error: "Email and OTP are required." },
-        { status: 400 }
-      );
+    const body = await request.json().catch(() => null);
+    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const code = typeof body?.otp === 'string' ? body.otp.trim() : '';
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^\d{6}$/.test(code)) {
+      return NextResponse.json({ success: false, error: 'A valid email and six-digit code are required.' }, { status: 400 });
     }
-
-    const user = await db.portalUser.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Invalid or expired code." },
-        { status: 400 }
-      );
-    }
-
-    const otpRecord = await db.otpCode.findFirst({
-      where: {
-        userId: user.id,
-        code: otp,
-        type: type || "account_activation",
-        used: false,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!otpRecord) {
-      return NextResponse.json(
-        { success: false, error: "Invalid or expired code." },
-        { status: 400 }
-      );
-    }
-
-    // Mark OTP as used
-    await db.otpCode.update({
-      where: { id: otpRecord.id },
-      data: { used: true },
-    });
-
-    // If account activation OTP, activate the user
-    if (type === "account_activation" && user.status === "pending") {
-      await db.portalUser.update({
-        where: { id: user.id },
-        data: { status: "active" },
+    const outcome = await db.$transaction(async tx => {
+      const user = await tx.portalUser.findUnique({ where: { email }, select: { id: true, userType: true, status: true, emailVerified: true } });
+      // Verification is not a way to reactivate suspended/deactivated accounts.
+      if (!user || user.emailVerified || !['pending_verification', 'pending', 'active'].includes(user.status)) return null;
+      const consumed = await consumeEmailOtp({ userId: user.id, email, code: code, purpose: 'email_verification' }, tx);
+      // Resolve normally on invalid codes so attempt counters COMMIT.
+      if (!consumed) return null;
+      const isStudent = user.userType.toUpperCase() === 'STUDENT';
+      const nextStatus = isStudent && user.status === 'pending_verification' ? 'active' : user.status;
+      const claimed = await tx.portalUser.updateMany({
+        where: { id: user.id, emailVerified: false, status: user.status },
+        data: { emailVerified: true, status: nextStatus },
       });
-    }
-
+      // Roll back OTP consumption on a concurrent account/status change.
+      if (claimed.count !== 1) throw new Error('Verification state changed. Retry.');
+      if (isStudent && user.status === 'pending_verification') await assignVerifiedRegistration(tx, { domain: 'portal', userId: user.id });
+      await tx.portalAuditLog.create({ data: { actorUserId: user.id, action: 'EMAIL_VERIFIED', entityType: 'PortalUser', entityId: user.id,
+        metadata: JSON.stringify({ identityDomain: 'portal', status: nextStatus }) } });
+      return { nextStatus, approvalRequired: user.userType.toUpperCase() === 'PARTNER' && nextStatus !== 'active' };
+    }, { maxWait: 5000, timeout: 15000 });
+    if (!outcome) return NextResponse.json({ success: false, error: 'Invalid or expired code, or account cannot be verified.' }, { status: 400 });
     return NextResponse.json({
-      success: true,
-      message: "Verification successful.",
-      userStatus: user.status,
+      success: true, emailVerified: true, approvalRequired: outcome.approvalRequired, userStatus: outcome.nextStatus,
+      message: outcome.approvalRequired ? 'Email verified. Partner access remains pending separate staff approval.' : 'Email verified. You can now sign in.',
     });
-  } catch (error) {
-    console.error("OTP verify error:", error);
-    return NextResponse.json(
-      { success: false, error: "Internal server error." },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ success: false, error: 'Verification could not be completed.' }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json().catch(() => null);
+    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ success: false, error: 'A valid email is required.' }, { status: 400 });
+    }
+    const user = await db.portalUser.findUnique({ where: { email }, select: { id: true, emailVerified: true } });
+    if (!user || user.emailVerified) {
+      return NextResponse.json({ success: true, message: 'If the account can receive verification, a new code will be sent.' });
+    }
+    const result = await issueEmailOtp({ userId: user.id, email, ipAddress: getRequestIp(request) });
+    if (!result.ok) {
+      return NextResponse.json({ success: false, error: result.reason === 'rate_limited' ? 'Verification email limit reached. Try later.' : 'Verification email could not be delivered.' }, { status: result.reason === 'rate_limited' ? 429 : 503 });
+    }
+    return NextResponse.json({ success: true, message: 'A new verification code has been sent.' });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Verification email could not be sent.' }, { status: 500 });
   }
 }

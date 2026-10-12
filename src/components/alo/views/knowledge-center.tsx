@@ -665,7 +665,7 @@ export function KnowledgeCenter() {
                   className={cn(
                     "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                     docCategoryFilter === "all"
-                      ? "bg-[#0057B8] text-white"
+                      ? "bg-[#2563EB] text-white"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   )}
                 >
@@ -678,7 +678,7 @@ export function KnowledgeCenter() {
                     className={cn(
                       "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-colors",
                       docCategoryFilter === c.id
-                        ? "bg-[#0057B8] text-white"
+                        ? "bg-[#2563EB] text-white"
                         : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     )}
                   >
@@ -804,7 +804,7 @@ export function KnowledgeCenter() {
                           <Button
                             size="sm"
                             onClick={() => handleDownload(doc)}
-                            className="h-8 bg-[#0057B8] text-white hover:bg-[#004494]"
+                            className="h-8 bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
                           >
                             <Icon name="Download" className="size-3.5" />
                             Download
@@ -833,7 +833,7 @@ export function KnowledgeCenter() {
                 className={cn(
                   "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                   newsCategoryFilter === "all"
-                    ? "bg-[#0057B8] text-white"
+                    ? "bg-[#2563EB] text-white"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 )}
               >
@@ -846,7 +846,7 @@ export function KnowledgeCenter() {
                   className={cn(
                     "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                     newsCategoryFilter === c
-                      ? "bg-[#0057B8] text-white"
+                      ? "bg-[#2563EB] text-white"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   )}
                 >
@@ -957,7 +957,7 @@ export function KnowledgeCenter() {
                               {t.completedCount ?? 0} / {t.enrolledCount ?? 0}
                             </span>
                           </div>
-                          <Progress value={completionPct} className="mt-1.5 h-1.5" indicatorColor="#0057B8" />
+                          <Progress value={completionPct} className="mt-1.5 h-1.5" indicatorColor="#2563EB" />
                           <div className="mt-1 flex items-center justify-between badge-text text-[#64748B]">
                             <span>{completionPct}% completed</span>
                             {t.passScore != null && <span>Pass score: {t.passScore}%</span>}
@@ -1024,7 +1024,7 @@ export function KnowledgeCenter() {
               <Button
                 onClick={() => handleAskAi()}
                 disabled={aiSearching}
-                className="h-11 bg-[#0057B8] text-white hover:bg-[#004494]"
+                className="h-11 bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
               >
                 {aiSearching ? (
                   <Icon name="Loader2" className="size-4 animate-spin" />
@@ -1042,7 +1042,7 @@ export function KnowledgeCenter() {
                 <button
                   key={q}
                   onClick={() => handleAskAi(q)}
-                  className="inline-flex items-center gap-1 rounded-full border border-[#E2E8F0] bg-white px-3 py-1 text-xs font-medium text-[#0057B8] transition-colors hover:bg-[#EFF6FF]"
+                  className="inline-flex items-center gap-1 rounded-full border border-[#E2E8F0] bg-white px-3 py-1 text-xs font-medium text-[#2563EB] transition-colors hover:bg-[#EFF6FF]"
                 >
                   <Icon name="Lightbulb" className="size-3" />
                   {q}
@@ -1083,7 +1083,7 @@ export function KnowledgeCenter() {
                 {aiAnswer.documents.length > 0 && (
                   <div>
                     <p className="card-title flex items-center gap-1.5 text-[#0F172A]">
-                      <Icon name="Files" className="size-4 text-[#0057B8]" />
+                      <Icon name="Files" className="size-4 text-[#2563EB]" />
                       Matching Documents
                     </p>
                     <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -1190,7 +1190,7 @@ export function KnowledgeCenter() {
                   </div>
                   <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
                     <p className="badge-text text-[#64748B]">Documents</p>
-                    <p className="text-xl font-bold text-[#0057B8]">{esResults.results.documents}</p>
+                    <p className="text-xl font-bold text-[#2563EB]">{esResults.results.documents}</p>
                   </div>
                   <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
                     <p className="badge-text text-[#64748B]">News</p>
@@ -1216,7 +1216,7 @@ export function KnowledgeCenter() {
                             size="sm"
                             variant="ghost"
                             onClick={() => handleDownload(d)}
-                            className="h-8 shrink-0 text-[#0057B8]"
+                            className="h-8 shrink-0 text-[#2563EB]"
                           >
                             <Icon name="Download" className="size-3.5" />
                           </Button>
@@ -1349,7 +1349,7 @@ export function KnowledgeCenter() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Icon name="Upload" className="size-5 text-[#0057B8]" />
+              <Icon name="Upload" className="size-5 text-[#2563EB]" />
               Upload Document
             </DialogTitle>
             <DialogDescription>
@@ -1459,7 +1459,7 @@ export function KnowledgeCenter() {
             <Button variant="outline" onClick={() => setUploadOpen(false)} disabled={uploading} className="h-10">
               Cancel
             </Button>
-            <Button onClick={handleUpload} disabled={uploading} className="h-10 bg-[#0057B8] text-white hover:bg-[#004494]">
+            <Button onClick={handleUpload} disabled={uploading} className="h-10 bg-[#2563EB] text-white hover:bg-[#1D4ED8]">
               {uploading ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Upload" className="size-4" />}
               {uploading ? "Uploading…" : "Upload & AI-process"}
             </Button>

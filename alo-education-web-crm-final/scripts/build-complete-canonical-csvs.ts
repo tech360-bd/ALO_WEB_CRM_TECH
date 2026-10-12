@@ -5,6 +5,12 @@ import { ukUniversitiesPart2 } from '../src/lib/university-data-uk2';
 import { allIntlUniversities } from '../src/lib/university-data-intl';
 import execa from 'child_process';
 
+// ARCHIVED COPY — PERMANENTLY DISABLED (2026-10-12). It writes generated rows into a relative
+// docs/import-templates/ and would overwrite the live repository's blank templates if run from the root.
+// Use scripts/build-complete-canonical-csvs.ts (guarded: writes only under ALO_SYNTHETIC_OUTPUT_DIR).
+console.error('[build-complete-canonical-csvs.ts] DISABLED: archived copy; no files were written.');
+process.exit(1);
+
 const outputDir = 'docs/import-templates';
 mkdirSync(outputDir, { recursive: true });
 

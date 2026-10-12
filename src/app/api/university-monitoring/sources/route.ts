@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireMonitoringAdmin, requireMonitoringViewer } from "@/lib/university-monitoring-auth";
 
 // GET /api/university-monitoring/sources
 // Returns registered official sources with filters.
 export async function GET(req: NextRequest) {
+  const guard = await requireMonitoringViewer(req);
+  if (!guard.ok) return guard.response;
+
   const entityType = req.nextUrl.searchParams.get("entityType");
   const countrySlug = req.nextUrl.searchParams.get("country");
   const universitySlug = req.nextUrl.searchParams.get("university");
@@ -49,7 +53,11 @@ export async function GET(req: NextRequest) {
 // POST /api/university-monitoring/sources
 // Super Admin: register a new official source.
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  // Spec: "Modify source configuration" is Super Admin only.
+  const guard = await requireMonitoringAdmin(req);
+  if (!guard.ok) return guard.response;
+
+  const body = await req.json().catch(() => ({}));
   const { sourceUrl, sourceName, sourceType, category, entityType, universitySlug, courseSlug, countrySlug, priority, checkFrequencyDays } = body;
 
   if (!sourceUrl || !sourceName || !entityType) {
@@ -80,7 +88,7 @@ export async function POST(req: NextRequest) {
 
   await db.auditLog.create({
     data: {
-      userId: body.performedBy || "system",
+      userId: guard.actor.userId,
       action: "OFFICIAL_SOURCE_REGISTERED",
       resource: "OfficialSource",
       resourceId: source.id,
@@ -94,7 +102,12 @@ export async function POST(req: NextRequest) {
 // PATCH /api/university-monitoring/sources
 // Super Admin: update source config (pause/resume/retire).
 export async function PATCH(req: NextRequest) {
-  const body = await req.json();
+  // Spec: "Modify source configuration" / "Change monitoring frequency" are
+  // Super Admin only.
+  const guard = await requireMonitoringAdmin(req);
+  if (!guard.ok) return guard.response;
+
+  const body = await req.json().catch(() => ({}));
   const { id, status, monitoringEnabled, checkFrequencyDays } = body;
   if (!id) return NextResponse.json({ error: "id is required" }, { status: 400 });
 
@@ -107,7 +120,7 @@ export async function PATCH(req: NextRequest) {
 
   await db.auditLog.create({
     data: {
-      userId: body.performedBy || "system",
+      userId: guard.actor.userId,
       action: "OFFICIAL_SOURCE_UPDATED",
       resource: "OfficialSource",
       resourceId: id,

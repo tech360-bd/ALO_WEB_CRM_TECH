@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 const { db, getServerSession } = vi.hoisted(() => ({
   getServerSession: vi.fn(),
   db: {
-    user: { findUnique: vi.fn() }, portalSession: { findUnique: vi.fn() }, portalStudentProfile: { findUnique: vi.fn() },
+    user: { findUnique: vi.fn() }, employee: { findFirst: vi.fn().mockResolvedValue(null) }, portalSession: { findUnique: vi.fn() }, portalStudentProfile: { findUnique: vi.fn() },
     aloPayment: { findMany: vi.fn(), count: vi.fn(), create: vi.fn() },
     student: { findMany: vi.fn() }, portalAuditLog: { create: vi.fn() }, $transaction: vi.fn(),
   },
@@ -15,8 +15,8 @@ import { GET as crmGet, POST as crmPost } from '@/app/api/crm/finance/route';
 import { GET as studentGet, POST as studentPost } from '@/app/api/student-portal/payments/route';
 const req = (url: string, body?: unknown) => new NextRequest(`https://example.com${url}`, body === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 function actor(role: string) {
-  getServerSession.mockResolvedValue({ user: { id: 'user-1' } });
-  db.user.findUnique.mockResolvedValue({ id: 'user-1', email: 'test@example.com', name: 'Test', role, permissions: '[]', status: 'ACTIVE' });
+  getServerSession.mockResolvedValue({ user: { identityDomain: 'user', id: 'user-1' } });
+  db.user.findUnique.mockResolvedValue({ id: 'user-1', email: 'test@example.com', name: 'Test', role, permissions: '[]', status: 'ACTIVE', emailVerified: true });
 }
 beforeEach(() => {
   vi.resetAllMocks(); actor('STUDENT');
@@ -43,7 +43,7 @@ describe('payment paths with real authorization middleware', () => {
   it.each(['finance', 'finance_officer', 'ceo'])('allows seeded EMPLOYEE role %s, not just legacy user types', async role => {
     db.portalSession.findUnique.mockResolvedValue({
       expiresAt: new Date(Date.now() + 60000), revokedAt: null,
-      user: { id: 'staff-1', userType: 'EMPLOYEE', status: 'active', email: 'staff@example.com', name: 'Staff', roles: [{ role: { name: role, permissions: [] } }] },
+      user: { id: 'staff-1', userType: 'EMPLOYEE', status: 'active', emailVerified: true, email: 'staff@example.com', name: 'Staff', roles: [{ role: { name: role, permissions: [] } }] },
     });
     const request = req('/api/crm/finance'); request.headers.set('Authorization', 'Bearer isolated-test-session');
     expect((await crmGet(request)).status).toBe(200);
@@ -51,7 +51,7 @@ describe('payment paths with real authorization middleware', () => {
   it.each(['counselor', 'partner_manager', 'branch_manager', 'hr', 'student'])('denies seeded non-finance role %s', async role => {
     db.portalSession.findUnique.mockResolvedValue({
       expiresAt: new Date(Date.now() + 60000), revokedAt: null,
-      user: { id: 'staff-1', userType: 'EMPLOYEE', status: 'active', roles: [{ role: { name: role, permissions: [] } }] },
+      user: { id: 'staff-1', userType: 'EMPLOYEE', status: 'active', emailVerified: true, roles: [{ role: { name: role, permissions: [] } }] },
     });
     const request = req('/api/crm/finance'); request.headers.set('Authorization', 'Bearer isolated-test-session');
     expect((await crmGet(request)).status).toBe(403); expect(db.aloPayment.findMany).not.toHaveBeenCalled();

@@ -1,0 +1,11 @@
+
+> alo-education-erp@0.3.0 typecheck:references
+> npm run db:verify-client && tsc --project tsconfig.supplied-references.json --noEmit
+
+
+> alo-education-erp@0.3.0 db:verify-client
+> node scripts/verify-prisma-client.mjs
+
+Verified generated Prisma client: 532 models
+
+EXIT_CODE=0

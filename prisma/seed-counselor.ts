@@ -81,8 +81,8 @@ async function main() {
   await db.applicationStageHistory.deleteMany();
   await db.weeklyReport.deleteMany();
   await db.aiReplyLog.deleteMany();
-  await db.creativeAsset.deleteMany();
-  await db.contentCalendar.deleteMany();
+  // creativeAsset / contentCalendar models were replaced by the Marketing*
+  // models (MarketingAsset / MarketingCalendar), seeded by seed-marketing.ts.
   await db.cvDraft.deleteMany();
   await db.sopDraft.deleteMany();
   await db.studentVisibleComment.deleteMany();
@@ -104,8 +104,10 @@ async function main() {
   // === PERMISSIONS ===
   const permMap: Record<string, any> = {};
   for (const p of PERMISSION_MATRIX) {
+    // Permission model no longer carries defaultRoles — role grants live in
+    // RolePermission rows created below.
     const perm = await db.permission.create({
-      data: { module: p.module, feature: p.feature, action: p.action, description: p.description, defaultRoles: J(p.defaultRoles) },
+      data: { module: p.module, feature: p.feature, action: p.action, description: p.description },
     });
     permMap[`${p.module}.${p.feature}.${p.action}`] = perm;
     // Grant to default roles
@@ -170,12 +172,13 @@ async function main() {
       const status = i === 5 ? "LEAVE" : i === 6 ? "HOLIDAY" : pick(["PRESENT", "PRESENT", "PRESENT", "LATE"]);
       await db.employeeAttendance.create({
         data: {
-          userId: u.id,
+          employeeId: emp.id,
           date: day,
-          checkIn: status === "PRESENT" ? "09:15" : status === "LATE" ? "10:05" : null,
-          checkOut: status === "PRESENT" || status === "LATE" ? "18:30" : null,
-          status,
-          workHours: status === "PRESENT" || status === "LATE" ? 8.5 : 0,
+          checkIn: status === "PRESENT" ? "09:15" : status === "LATE" ? "10:05" : "",
+          checkOut: status === "PRESENT" || status === "LATE" ? "18:30" : "",
+          status: status.toLowerCase(),
+          isLate: status === "LATE",
+          hoursWorked: status === "PRESENT" || status === "LATE" ? 8.5 : 0,
         },
       });
     }
@@ -185,34 +188,34 @@ async function main() {
       for (let i = 0; i < 4; i++) {
         await db.employeeCommission.create({
           data: {
-            userId: u.id,
+            employeeId: emp.id,
             amount: pick([8000, 12000, 15000, 10000]),
-            month: `2024-${String(10 + Math.floor(i / 2)).padStart(2, "0")}`,
-            status: pick(["PENDING", "APPROVED", "PAID", "PENDING"]),
-            notes: pick(["Student placed at University of Manchester", "Student placed at Fanshawe College", "Student placed at TU Munich"]),
+            period: `2024-${String(10 + Math.floor(i / 2)).padStart(2, "0")}`,
+            status: pick(["pending", "approved", "paid", "pending"]),
+            note: pick(["Student placed at University of Manchester", "Student placed at Fanshawe College", "Student placed at TU Munich"]),
           },
         });
       }
       // Bonus
       await db.employeeBonus.create({
-        data: { userId: u.id, amount: 15000, reason: "Exceeded Q3 conversion target", month: "2024-09", status: "APPROVED" },
+        data: { employeeId: emp.id, amount: 15000, reason: "Exceeded Q3 conversion target", period: "2024-09", status: "approved" },
       });
       // Increment
       await db.employeeIncrement.create({
-        data: { userId: u.id, oldSalary: 38000, newSalary: 45000, percentage: 18.4, effectiveDate: "2024-07-01", reason: "Annual performance increment", approvedBy: "superadmin@aloedu.com" },
+        data: { employeeId: emp.id, previousAmount: 38000, newAmount: 45000, incrementType: "annual", effectiveFrom: "2024-07-01", reason: "Annual performance increment", approvedBy: "superadmin@aloedu.com" },
       });
     }
 
     // Performance
     await db.employeePerformance.create({
       data: {
-        userId: u.id,
+        employeeId: emp.id,
         period: "2024-12",
         score: 65 + Math.floor(Math.random() * 30),
-        leadsHandled: 20 + Math.floor(Math.random() * 30),
-        conversionRate: 15 + Math.floor(Math.random() * 20),
-        satisfactionScore: 4 + Math.random(),
-        slaCompliance: 75 + Math.floor(Math.random() * 20),
+        targetLeads: 50,
+        achievedLeads: 20 + Math.floor(Math.random() * 30),
+        targetConversion: 30,
+        achievedConversion: 15 + Math.floor(Math.random() * 20),
       },
     });
   }
@@ -221,6 +224,11 @@ async function main() {
   // === COUNSELOR STUDENT ASSIGNMENTS + COMMENTS ===
   const counselors = users.filter((u) => u.role === "COUNSELOR");
   const students = await db.student.findMany({ take: 12 });
+
+  if (counselors.length === 0 || students.length === 0) {
+    console.log(`Skipping counselor-student fixtures (counselors: ${counselors.length}, students: ${students.length}) — seed counselor users and students first.`);
+    return;
+  }
 
   for (let si = 0; si < students.length; si++) {
     const student = students[si];
@@ -450,11 +458,9 @@ async function main() {
     { title: "Story: Scholarship deadline this week", platform: "INSTAGRAM", type: "STORY", status: "PUBLISHED", scheduledAt: new Date(Date.now() - 86400000).toISOString() },
     { title: "Email: September intake newsletter", platform: "EMAIL", type: "EMAIL", status: "SCHEDULED", scheduledAt: new Date(Date.now() + 4 * 86400000).toISOString() },
   ];
-  for (const c of contentItems) {
-    await db.contentCalendar.create({
-      data: { title: c.title, platform: c.platform, type: c.type, scheduledAt: c.scheduledAt, status: c.status, content: "AI-generated content preview...", caption: "Caption goes here" },
-    });
-  }
+  // contentCalendar model removed — marketing calendar entries are seeded by
+  // seed-marketing.ts against the MarketingCalendar model.
+  void contentItems;
 
   // === AI REPLY LOGS ===
   for (let i = 0; i < 8; i++) {
@@ -490,7 +496,6 @@ async function main() {
   console.log(`- CV drafts: ${await db.cvDraft.count()}`);
   console.log(`- Partner email updates: ${await db.partnerEmailUpdate.count()}`);
   console.log(`- Weekly reports: ${await db.weeklyReport.count()}`);
-  console.log(`- Content calendar: ${await db.contentCalendar.count()}`);
   console.log(`- AI reply logs: ${await db.aiReplyLog.count()}`);
 }
 

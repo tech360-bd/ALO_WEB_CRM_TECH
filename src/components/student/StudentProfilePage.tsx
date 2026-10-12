@@ -911,7 +911,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
         <Button
           type="button"
           onClick={addEducation}
-          className="bg-[#0057B8] hover:bg-[#003d82] text-white shrink-0"
+          className="bg-[#2563EB] hover:bg-[#003d82] text-white shrink-0"
         >
           <Plus className="size-4 mr-1.5" />
           Add Education
@@ -1216,16 +1216,16 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
       ) : (
         <Card className="border border-blue-200 bg-blue-50 rounded-xl p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="size-5 text-[#0057B8] mt-0.5 shrink-0" />
+            <AlertCircle className="size-5 text-[#2563EB] mt-0.5 shrink-0" />
             <div>
               <p className="text-sm font-medium text-slate-900 mb-1">Apply for Passport</p>
               <p className="text-sm text-slate-600 mb-4">
                 You will need a valid passport to apply for a student visa. We recommend applying as soon as possible as it can take 2-4 weeks to process.
               </p>
-              <Button
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                 type="button"
                 variant="outline"
-                className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8] hover:text-white"
+                className="border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white"
               >
                 <Bell className="size-4 mr-1.5" />
                 Set Reminder
@@ -1469,7 +1469,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
       {testStatus === 'No' && (
         <Card className="border border-blue-200 bg-blue-50 rounded-xl p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="size-5 text-[#0057B8] mt-0.5 shrink-0" />
+            <AlertCircle className="size-5 text-[#2563EB] mt-0.5 shrink-0" />
             <div>
               <p className="text-sm font-medium text-slate-900 mb-1">English Test Required</p>
               <p className="text-sm text-slate-600">
@@ -1551,7 +1551,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
           <Button
             type="button"
             onClick={addWorkExp}
-            className="bg-[#0057B8] hover:bg-[#003d82] text-white"
+            className="bg-[#2563EB] hover:bg-[#003d82] text-white"
           >
             <Plus className="size-4 mr-1.5" />
             Add Work Experience
@@ -2499,7 +2499,7 @@ export default function StudentProfilePage() {
                       className={`
                         flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors
                         ${isActive
-                          ? 'bg-[#0057B8] text-white shadow-sm'
+                          ? 'bg-[#2563EB] text-white shadow-sm'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }
                       `}
@@ -2526,7 +2526,7 @@ export default function StudentProfilePage() {
                       className={`
                         w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left
                         ${isActive
-                          ? 'bg-[#0057B8] text-white shadow-sm'
+                          ? 'bg-[#2563EB] text-white shadow-sm'
                           : 'text-slate-600 hover:bg-slate-100'
                         }
                       `}

@@ -271,10 +271,10 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
             description="This university page may have been moved or is being updated. Browse all universities to find a partner near you."
             action={
               <div className="flex gap-2">
-                <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-11" onClick={() => onNavigate("public-universities")}>
+                <Button className="bg-[#F97316] text-white hover:bg-[#F97316]/90 h-11" onClick={() => onNavigate("public-universities")}>
                   <Icon name="Building2" className="size-4" /> All universities
                 </Button>
-                <Button variant="outline" className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-11" onClick={() => onNavigate("public-courses")}>
+                <Button variant="outline" className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-11" onClick={() => onNavigate("public-courses")}>
                   <Icon name="BookOpen" className="size-4" /> Browse courses
                 </Button>
               </div>
@@ -298,17 +298,17 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
       />
 
       {/* 2. Hero */}
-      <section className="mt-5 overflow-hidden rounded-2xl border-2 border-[#0057B8]/15 bg-gradient-to-br from-[#e8f0fb]/60 via-white to-white">
+      <section className="mt-5 overflow-hidden rounded-2xl border-2 border-[#2563EB]/15 bg-gradient-to-br from-[#e8f0fb]/60 via-white to-white">
         <div className="p-5 lg:p-7">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#0057B8] shadow-sm">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#2563EB] shadow-sm">
                   <span className="text-base leading-none">{university.country.flag}</span>
                   {university.country.name}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
-                  <Icon name="MapPin" className="size-3 text-[#E8501A]" />
+                  <Icon name="MapPin" className="size-3 text-[#F97316]" />
                   {university.city}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
@@ -316,13 +316,13 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                   Verified {university.lastVerifiedAt ? fmtDate(university.lastVerifiedAt) : "recently"}
                 </span>
               </div>
-              <h1 className="mt-3 text-2xl font-black text-[#0057B8] sm:text-3xl lg:text-4xl">{university.name}</h1>
+              <h1 className="mt-3 text-2xl font-black text-[#2563EB] sm:text-3xl lg:text-4xl">{university.name}</h1>
               {university.sourceUrl && (
                 <a
                   href={university.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-[#0057B8] hover:underline"
+                  className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-[#2563EB] hover:underline"
                 >
                   <Icon name="ExternalLink" className="size-3.5" />
                   Official website
@@ -334,12 +334,12 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
 
           {/* Action buttons */}
           <div className="mt-5 flex flex-wrap gap-2">
-            <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={() => scrollToId("apply")}>
+            <Button className="bg-[#F97316] text-white hover:bg-[#F97316]/90 h-12" onClick={() => scrollToId("apply")}>
               <Icon name="Send" className="size-4" /> Apply through ALO
             </Button>
             <Button
               variant="outline"
-              className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-12"
+              className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-12"
               onClick={() => scrollToId("courses")}
             >
               <Icon name="BookOpen" className="size-4" /> View Courses
@@ -363,9 +363,9 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
           {/* Hero cards */}
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
             {heroCards.map((c, i) => (
-              <div key={i} className="rounded-xl border border-[#0057B8]/10 bg-white p-3">
+              <div key={i} className="rounded-xl border border-[#2563EB]/10 bg-white p-3">
                 <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  <Icon name={c.icon} className="size-3 text-[#0057B8]" />
+                  <Icon name={c.icon} className="size-3 text-[#2563EB]" />
                   <span className="line-clamp-1">{c.label}</span>
                 </div>
                 <p className="mt-1.5 text-xs font-bold text-foreground line-clamp-2">{c.value}</p>
@@ -380,7 +380,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
         <p className="text-sm leading-relaxed text-muted-foreground">{university.overview}</p>
         {strengths.length > 0 && (
           <div className="mt-5">
-            <h4 className="text-sm font-semibold text-[#0057B8]">University strengths</h4>
+            <h4 className="text-sm font-semibold text-[#2563EB]">University strengths</h4>
             <ul className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
               {strengths.map((s, i) => (
                 <li key={i} className="flex items-start gap-2.5 rounded-xl bg-[#e8f0fb]/50 p-3">
@@ -427,7 +427,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
             <Button
               variant="outline"
               size="sm"
-              className="h-10 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+              className="h-10 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
               onClick={() => { setCourseLevelFilter("all"); setCourseSubjectFilter("all"); }}
             >
               <Icon name="RotateCcw" className="size-3.5" /> Reset
@@ -442,7 +442,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
               title="No courses match these filters"
               description="Try removing a filter or browse all courses across universities."
               action={
-                <Button variant="outline" className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10" onClick={() => onNavigate("public-courses")}>
+                <Button variant="outline" className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-10" onClick={() => onNavigate("public-courses")}>
                   <Icon name="BookOpen" className="size-4" /> All courses
                 </Button>
               }
@@ -451,19 +451,19 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
         ) : (
           <div className="mt-4 space-y-3">
             {filteredCourses.map((c) => (
-              <div key={c.slug} className="rounded-2xl border-2 border-[#0057B8]/10 p-4 transition-colors hover:border-[#0057B8]/30">
+              <div key={c.slug} className="rounded-2xl border-2 border-[#2563EB]/10 p-4 transition-colors hover:border-[#2563EB]/30">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <Badge className="bg-[#e8f0fb] text-[#0057B8] hover:bg-[#e8f0fb]">{c.level}</Badge>
-                      <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">{c.subject}</Badge>
+                      <Badge className="bg-[#e8f0fb] text-[#2563EB] hover:bg-[#e8f0fb]">{c.level}</Badge>
+                      <Badge variant="outline" className="border-[#2563EB]/30 text-[#2563EB]">{c.subject}</Badge>
                       {c.scholarship && (
-                        <Badge className="bg-[#fdece4] text-[#E8501A] hover:bg-[#fdece4]">
+                        <Badge className="bg-[#fdece4] text-[#F97316] hover:bg-[#fdece4]">
                           <Icon name="Award" className="mr-1 size-3" /> Scholarship
                         </Badge>
                       )}
                     </div>
-                    <h4 className="mt-2 text-base font-bold text-[#0057B8]">{c.name}</h4>
+                    <h4 className="mt-2 text-base font-bold text-[#2563EB]">{c.name}</h4>
                     <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-4">
                       <p className="flex items-center gap-1.5"><Icon name="Clock" className="size-3.5 text-muted-foreground" /> <span className="font-medium text-foreground">{c.duration}</span></p>
                       <p className="flex items-center gap-1.5"><Icon name="Calendar" className="size-3.5 text-muted-foreground" /> <span className="font-medium text-foreground">{c.intake}</span></p>
@@ -472,7 +472,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                     </div>
                     {c.englishRequirement && (
                       <p className="mt-2 flex items-start gap-1.5 text-xs text-muted-foreground">
-                        <Icon name="Languages" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                        <Icon name="Languages" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                         <span><span className="font-semibold">English:</span> <span className="font-medium text-foreground">{c.englishRequirement}</span></span>
                       </p>
                     )}
@@ -481,14 +481,14 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-9"
+                      className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-9"
                       onClick={() => onNavigate("public-course", c.slug)}
                     >
                       <Icon name="FileText" className="size-4" /> View Details
                     </Button>
                     <Button
                       size="sm"
-                      className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-9"
+                      className="bg-[#F97316] text-white hover:bg-[#F97316]/90 h-9"
                       onClick={() => {
                         setSelectedCourseSlug(c.slug);
                         toast({ title: "Course selected", description: `${c.name} pre-filled in the application form below.` });
@@ -513,7 +513,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
           <Tabs defaultValue={Object.keys(entryReqs)[0]} className="w-full">
             <TabsList className="flex w-full flex-wrap justify-start gap-1 bg-[#e8f0fb]/60 h-auto">
               {Object.entries(entryReqs).map(([key]) => (
-                <TabsTrigger key={key} value={key} className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8] text-xs">
+                <TabsTrigger key={key} value={key} className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB] text-xs">
                   {LEVEL_LABELS[key] || key}
                 </TabsTrigger>
               ))}
@@ -521,20 +521,20 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
             {Object.entries(entryReqs).map(([key, req]) => (
               <TabsContent key={key} value={key} className="mt-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <div className="rounded-xl border border-[#0057B8]/10 bg-[#f7f9fc] p-4">
-                    <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#0057B8]">
+                  <div className="rounded-xl border border-[#2563EB]/10 bg-[#f7f9fc] p-4">
+                    <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#2563EB]">
                       <Icon name="GraduationCap" className="size-3.5" /> Academic
                     </p>
                     <p className="mt-2 text-sm text-foreground">{req.academic || "Confirm with counselor"}</p>
                   </div>
-                  <div className="rounded-xl border border-[#0057B8]/10 bg-[#f7f9fc] p-4">
-                    <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#0057B8]">
+                  <div className="rounded-xl border border-[#2563EB]/10 bg-[#f7f9fc] p-4">
+                    <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#2563EB]">
                       <Icon name="Languages" className="size-3.5" /> English
                     </p>
                     <p className="mt-2 text-sm text-foreground">{req.english || "IELTS / PTE / TOEFL accepted"}</p>
                   </div>
-                  <div className="rounded-xl border border-[#0057B8]/10 bg-[#f7f9fc] p-4">
-                    <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#0057B8]">
+                  <div className="rounded-xl border border-[#2563EB]/10 bg-[#f7f9fc] p-4">
+                    <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[#2563EB]">
                       <Icon name="FolderCheck" className="size-3.5" /> Documents
                     </p>
                     <p className="mt-2 text-sm text-foreground">{req.documents || "Standard document checklist"}</p>
@@ -550,27 +550,27 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
       {/* 6. Tuition, Deposit, Scholarship */}
       <SectionCard title="Tuition, Deposit & Scholarship" icon="Wallet" className="mt-6">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-xl border-2 border-[#0057B8]/10 p-4">
+          <div className="rounded-xl border-2 border-[#2563EB]/10 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Undergraduate</p>
-            <p className="mt-1 text-lg font-bold text-[#0057B8]">{tuition.ug || "—"}</p>
+            <p className="mt-1 text-lg font-bold text-[#2563EB]">{tuition.ug || "—"}</p>
           </div>
-          <div className="rounded-xl border-2 border-[#0057B8]/10 p-4">
+          <div className="rounded-xl border-2 border-[#2563EB]/10 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Postgraduate</p>
-            <p className="mt-1 text-lg font-bold text-[#0057B8]">{tuition.pg || "—"}</p>
+            <p className="mt-1 text-lg font-bold text-[#2563EB]">{tuition.pg || "—"}</p>
           </div>
-          <div className="rounded-xl border-2 border-[#0057B8]/10 p-4">
+          <div className="rounded-xl border-2 border-[#2563EB]/10 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">MBA</p>
-            <p className="mt-1 text-lg font-bold text-[#0057B8]">{tuition.mba || "—"}</p>
+            <p className="mt-1 text-lg font-bold text-[#2563EB]">{tuition.mba || "—"}</p>
           </div>
-          <div className="rounded-xl border-2 border-[#E8501A]/15 bg-[#fdece4]/30 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#E8501A]">Deposit</p>
+          <div className="rounded-xl border-2 border-[#F97316]/15 bg-[#fdece4]/30 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#F97316]">Deposit</p>
             <p className="mt-1 text-lg font-bold text-foreground">{tuition.deposit || "—"}</p>
           </div>
-          <div className="rounded-xl border-2 border-[#E8501A]/15 bg-[#fdece4]/30 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#E8501A]">Scholarship</p>
+          <div className="rounded-xl border-2 border-[#F97316]/15 bg-[#fdece4]/30 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#F97316]">Scholarship</p>
             <p className="mt-1 text-sm font-bold text-foreground">{tuition.scholarship || quickFacts.scholarship || "—"}</p>
           </div>
-          <div className="rounded-xl border-2 border-[#0057B8]/10 p-4">
+          <div className="rounded-xl border-2 border-[#2563EB]/10 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Payment plan</p>
             <p className="mt-1 text-sm font-bold text-foreground">{tuition.paymentPlan || "Ask counselor"}</p>
           </div>
@@ -591,8 +591,8 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                 <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-alo-gradient text-sm font-bold text-white alo-shadow">
                   {s.step || idx + 1}
                 </div>
-                <div className="min-w-0 flex-1 rounded-xl border border-[#0057B8]/10 bg-white p-3">
-                  <p className="text-sm font-bold text-[#0057B8]">{s.title}</p>
+                <div className="min-w-0 flex-1 rounded-xl border border-[#2563EB]/10 bg-white p-3">
+                  <p className="text-sm font-bold text-[#2563EB]">{s.title}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{s.detail}</p>
                 </div>
               </li>
@@ -611,7 +611,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
           <Button
             variant="outline"
             size="sm"
-            className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-9"
+            className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-9"
             onClick={() => onNavigate("student-dashboard")}
           >
             <Icon name="Upload" className="size-4" /> Upload in Portal
@@ -623,15 +623,15 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
         ) : (
           <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {documents.map((d, i) => (
-              <li key={i} className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/10 p-3">
-                <Icon name={d.required ? "CircleCheck" : "CircleDashed"} className={cn("mt-0.5 size-4 shrink-0", d.required ? "text-[#E8501A]" : "text-muted-foreground")} />
+              <li key={i} className="flex items-start gap-2.5 rounded-xl border border-[#2563EB]/10 p-3">
+                <Icon name={d.required ? "CircleCheck" : "CircleDashed"} className={cn("mt-0.5 size-4 shrink-0", d.required ? "text-[#F97316]" : "text-muted-foreground")} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <p className="text-sm font-semibold text-foreground">{d.name}</p>
-                    <Badge className={cn("text-[10px]", d.required ? "bg-[#fdece4] text-[#E8501A] hover:bg-[#fdece4]" : "bg-slate-100 text-slate-600 hover:bg-slate-100")}>
+                    <Badge className={cn("text-[10px]", d.required ? "bg-[#fdece4] text-[#F97316] hover:bg-[#fdece4]" : "bg-slate-100 text-slate-600 hover:bg-slate-100")}>
                       {d.required ? "Required" : "Optional"}
                     </Badge>
-                    <Badge variant="outline" className="border-[#0057B8]/20 text-[10px] text-muted-foreground">{d.category}</Badge>
+                    <Badge variant="outline" className="border-[#2563EB]/20 text-[10px] text-muted-foreground">{d.category}</Badge>
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">{d.explanation}</p>
                 </div>
@@ -660,16 +660,16 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
             <button
               key={i}
               onClick={tool.action}
-              className="group flex h-full flex-col items-start gap-2 rounded-2xl border-2 border-[#0057B8]/10 p-4 text-left transition-all hover:border-[#0057B8]/40 hover:bg-[#e8f0fb]/30"
+              className="group flex h-full flex-col items-start gap-2 rounded-2xl border-2 border-[#2563EB]/10 p-4 text-left transition-all hover:border-[#2563EB]/40 hover:bg-[#e8f0fb]/30"
             >
-              <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8] transition-colors group-hover:bg-[#0057B8] group-hover:text-white">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB] transition-colors group-hover:bg-[#2563EB] group-hover:text-white">
                 <Icon name={tool.icon} className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#0057B8]">{tool.title}</p>
+                <p className="text-sm font-bold text-[#2563EB]">{tool.title}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{tool.desc}</p>
               </div>
-              <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[#E8501A]">
+              <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[#F97316]">
                 Open <Icon name="ArrowRight" className="size-3 transition-transform group-hover:translate-x-0.5" />
               </span>
             </button>
@@ -678,10 +678,10 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
 
         {/* Inline AI Eligibility Checker */}
         {eligOpen && (
-          <div id="eligibility" className="mt-6 scroll-mt-20 rounded-2xl border-2 border-[#0057B8]/15 bg-[#f7f9fc] p-4">
+          <div id="eligibility" className="mt-6 scroll-mt-20 rounded-2xl border-2 border-[#2563EB]/15 bg-[#f7f9fc] p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h4 className="flex items-center gap-1.5 text-sm font-bold text-[#0057B8]">
+                <h4 className="flex items-center gap-1.5 text-sm font-bold text-[#2563EB]">
                   <Icon name="Sparkles" className="size-4" /> AI Eligibility Checker
                 </h4>
                 <p className="mt-1 text-xs text-muted-foreground">Tell us about your profile — AI will assess your fit for {university.name}.</p>
@@ -722,7 +722,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
               </div>
             </div>
             <Button
-              className="mt-3 h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+              className="mt-3 h-11 bg-[#F97316] text-white hover:bg-[#F97316]/90"
               disabled={eligLoading || !eligForm.academicLevel}
               onClick={runEligibility}
             >
@@ -730,7 +730,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
             </Button>
 
             {eligResult && (
-              <div className="mt-4 rounded-xl border border-[#0057B8]/15 bg-white p-4">
+              <div className="mt-4 rounded-xl border border-[#2563EB]/15 bg-white p-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold", STATUS_TONE[eligResult.status] || STATUS_TONE.NEEDS_COUNSELOR_REVIEW)}>
                     <Icon name="Sparkles" className="size-3" />
@@ -752,8 +752,8 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                 )}
                 {eligResult.recommendedNextSteps && eligResult.recommendedNextSteps.length > 0 && (
                   <div className="mt-3">
-                    <p className="text-xs font-semibold text-[#0057B8]">Recommended next steps</p>
-                    <ol className="mt-1 space-y-1">{eligResult.recommendedNextSteps.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><span className="font-bold text-[#0057B8]">{i + 1}.</span><span>{s}</span></li>)}</ol>
+                    <p className="text-xs font-semibold text-[#2563EB]">Recommended next steps</p>
+                    <ol className="mt-1 space-y-1">{eligResult.recommendedNextSteps.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><span className="font-bold text-[#2563EB]">{i + 1}.</span><span>{s}</span></li>)}</ol>
                   </div>
                 )}
                 {eligResult.visaRiskNote && (
@@ -761,7 +761,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                 )}
                 <Button
                   variant="outline"
-                  className="mt-4 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10"
+                  className="mt-4 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-10"
                   onClick={() => scrollToId("apply")}
                 >
                   <Icon name="Send" className="size-4" /> Talk to a counselor
@@ -780,7 +780,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((f, i) => (
               <AccordionItem key={i} value={`faq-${i}`}>
-                <AccordionTrigger className="text-left text-sm font-semibold text-[#0057B8] hover:no-underline">
+                <AccordionTrigger className="text-left text-sm font-semibold text-[#2563EB] hover:no-underline">
                   {f.q}
                 </AccordionTrigger>
                 <AccordionContent className="text-sm text-muted-foreground">{f.a}</AccordionContent>
@@ -796,7 +796,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
           icon="Send"
           title={`Apply to ${university.name}`}
           description="One form — counselor assigned in 24 hours. We handle documents, application, and visa."
-          className="border-2 border-[#0057B8]/15 bg-gradient-to-br from-[#e8f0fb]/60 to-white"
+          className="border-2 border-[#2563EB]/15 bg-gradient-to-br from-[#e8f0fb]/60 to-white"
         >
           <PublicLeadForm
             sourceTag={`${university.name} university page`}

@@ -25,13 +25,13 @@ export default function StudentComparePage() {
     <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 shadow-sm">
-          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-3">Student Compare — course_comparisons, max sensible number</Badge>
+          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-3">Student Compare — course_comparisons, max sensible number</Badge>
           <h1 className="text-3xl font-bold text-[#0F172A]">Compare Courses</h1>
           <p className="text-sm text-gray-600 mt-2">Compare up to 4 courses side-by-side on tuition, scholarship, deposit, app fee, intake, deadline, English, academic requirement, eligibility, match score — no fake data.</p>
         </div>
 
         {loading ? <div className="h-64 bg-white border border-[#E2E8F0] rounded-2xl animate-pulse" /> : courses.length === 0 ? (
-          <Card className="p-12 bg-white border-[#E2E8F0] rounded-2xl text-center"><GitCompare className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No courses to compare — add from course finder.</p><Link href="/student/course-finder"><Button className="mt-4 bg-[#0057B8] text-white h-11">Find Courses</Button></Link></Card>
+          <Card className="p-12 bg-white border-[#E2E8F0] rounded-2xl text-center"><GitCompare className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No courses to compare — add from course finder.</p><Link href="/student/course-finder"><Button className="mt-4 bg-[#2563EB] text-white h-11">Find Courses</Button></Link></Card>
         ) : (
           <Card className="p-0 bg-white border-[#E2E8F0] rounded-2xl shadow-sm overflow-x-auto">
             <div className="min-w-[1000px]">
@@ -50,7 +50,7 @@ export default function StudentComparePage() {
         )}
 
         <div className="flex gap-3 justify-center">
-          <Link href="/student/course-finder"><Button className="bg-[#0057B8] text-white h-12 px-6 font-bold">Back to Finder</Button></Link>
+          <Link href="/student/course-finder"><Button className="bg-[#2563EB] text-white h-12 px-6 font-bold">Back to Finder</Button></Link>
           <Link href="/student/shortlist"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">View Shortlist</Button></Link>
         </div>
       </div>

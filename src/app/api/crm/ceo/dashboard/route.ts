@@ -1,8 +1,10 @@
+import { canReadLegacyLeadDashboard } from '@/lib/crm/lead-access';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
 
-export const GET = withAuth(async () => {
+export const GET = withAuth(async (req, auth) => {
+    if (!canReadLegacyLeadDashboard(auth) && !(auth.identityDomain === 'user' && auth.userType.toUpperCase() === 'CEO')) return NextResponse.json({ success: false, code: 'LEGACY_DASHBOARD_SCOPE_UNVERIFIED', error: 'User administrator required until dashboard ownership mapping is verified.' }, { status: 403 });
   try {
     const [applications, leads, students, highRiskCases] = await Promise.all([
       db.portalStudentApplication.count(), db.marketingLead.count(), db.portalStudentProfile.count(),

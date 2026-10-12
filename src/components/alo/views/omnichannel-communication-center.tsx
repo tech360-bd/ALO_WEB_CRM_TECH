@@ -205,6 +205,7 @@ interface DashboardResponse {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ACCOUNT_STATUS_COLORS: Record<string, string> = {
+  NOT_VERIFIED: "bg-slate-100 text-slate-700 border border-slate-200",
   CONNECTED: "bg-emerald-100 text-emerald-700 border border-emerald-200",
   DISCONNECTED: "bg-slate-100 text-slate-700 border border-slate-200",
   EXPIRED: "bg-amber-100 text-amber-700 border border-amber-200",
@@ -213,6 +214,7 @@ const ACCOUNT_STATUS_COLORS: Record<string, string> = {
 };
 
 const ACCOUNT_STATUS_LABELS: Record<string, string> = {
+  NOT_VERIFIED: "Not verified",
   CONNECTED: "Connected",
   DISCONNECTED: "Disconnected",
   EXPIRED: "Expired",
@@ -397,26 +399,19 @@ export function OmnichannelCommunicationCenter() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: account.id, action }),
       });
-      if (!res.ok) throw new Error("Action failed");
-      const result = await res.json();
+      const result = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(result?.error || "Provider action is not available.");
       toast({
-        title: action === "sync" ? "Sync complete" : action === "disconnect" ? "Disconnected" : "Reconnected",
+        title: action === "disconnect" ? "Local access disabled" : "Provider action completed",
         description: result?.message || `${account.platform} account updated.`,
       });
-      // Optimistic local update
-      if (data) {
+      // Only local disconnection has an implemented effect; never synthesize a
+      // provider sync, reconnect, or connected state in the browser.
+      if (data && action === "disconnect") {
         setData({
           ...data,
           connectedAccounts: data.connectedAccounts.map((a) =>
-            a.id === account.id
-              ? {
-                  ...a,
-                  connectionStatus:
-                    action === "disconnect" ? "DISCONNECTED" : "CONNECTED",
-                  lastSync: action !== "disconnect" ? new Date().toISOString() : a.lastSync,
-                  lastActivity: action !== "disconnect" ? new Date().toISOString() : a.lastActivity,
-                }
-              : a
+            a.id === account.id ? { ...a, connectionStatus: "DISCONNECTED" } : a
           ),
         });
       }
@@ -434,7 +429,7 @@ export function OmnichannelCommunicationCenter() {
       <div className="space-y-6">
         <PageHeader
           title="Omnichannel Communication Center"
-          subtitle="Unified communication across all channels — WhatsApp, Facebook, Instagram, Email, SMS, Calls, and more. Every interaction auto-saves to CRM timeline."
+          subtitle="Administrator view of locally stored communication records. Provider connections, external delivery, and live synchronization are not verified."
           icon="Radio"
         />
         <LoadingGrid count={6} />
@@ -448,7 +443,7 @@ export function OmnichannelCommunicationCenter() {
     <div className="space-y-6">
       <PageHeader
         title="Omnichannel Communication Center"
-        subtitle="Unified communication across all channels — WhatsApp, Facebook, Instagram, Email, SMS, Calls, and more. Every interaction auto-saves to CRM timeline."
+        subtitle="Administrator view of locally stored communication records. Provider connections, external delivery, and live synchronization are not verified."
         icon="Radio"
         action={
           <Button
@@ -554,28 +549,28 @@ export function OmnichannelCommunicationCenter() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5">
         <div className="overflow-x-auto alo-scroll rounded-xl border border-[#E2E8F0] bg-white p-1.5">
           <TabsList className="h-auto w-max gap-1 bg-transparent">
-            <TabsTrigger value="connected-accounts" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="connected-accounts" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#2563EB]">
               <Icon name="Link" className="size-3.5 mr-1.5" /> Connected Accounts
             </TabsTrigger>
-            <TabsTrigger value="unified-timeline" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="unified-timeline" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#2563EB]">
               <Icon name="Layers" className="size-3.5 mr-1.5" /> Unified Timeline
             </TabsTrigger>
-            <TabsTrigger value="phone-calls" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="phone-calls" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#2563EB]">
               <Icon name="Phone" className="size-3.5 mr-1.5" /> Phone Calls
             </TabsTrigger>
-            <TabsTrigger value="emails" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="emails" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#2563EB]">
               <Icon name="Mail" className="size-3.5 mr-1.5" /> Emails
             </TabsTrigger>
-            <TabsTrigger value="sms" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="sms" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#2563EB]">
               <Icon name="MessageSquare" className="size-3.5 mr-1.5" /> SMS
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#2563EB]">
               <Icon name="Bell" className="size-3.5 mr-1.5" /> Notifications
             </TabsTrigger>
-            <TabsTrigger value="consent" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="consent" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#2563EB]">
               <Icon name="ShieldCheck" className="size-3.5 mr-1.5" /> Consent Management
             </TabsTrigger>
-            <TabsTrigger value="ai-classification" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="ai-classification" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#2563EB]">
               <Icon name="Sparkles" className="size-3.5 mr-1.5" /> AI Document Classification
             </TabsTrigger>
           </TabsList>
@@ -602,7 +597,7 @@ export function OmnichannelCommunicationCenter() {
         </TabsContent>
 
         <TabsContent value="sms" className="space-y-4">
-          <SmsTab sms={data.sms} onSent={() => void fetchData()} />
+          <SmsTab sms={data.sms} />
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">
@@ -622,7 +617,7 @@ export function OmnichannelCommunicationCenter() {
       <SectionCard
         title="Chairman Command Center"
         icon="Crown"
-        className="border-[#0057B8]/20 bg-[#EFF6FF]/40"
+        className="border-[#2563EB]/20 bg-[#EFF6FF]/40"
       >
         <p className="body-text text-[#0F172A]">
           Chairman can monitor all official communication accounts, assign channels to branches,
@@ -691,17 +686,19 @@ function ConnectedAccountsTab({
   onCreated,
 }: {
   accounts: ConnectedAccount[];
-  onAction: (a: ConnectedAccount, action: "sync" | "disconnect" | "reconnect") => void;
+  onAction: (a: ConnectedAccount, action: "disconnect") => Promise<void>;
   onCreated: () => void;
 }) {
-  const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [busyId, setBusyId] = React.useState<string | null>(null);
 
-  const handleAction = (account: ConnectedAccount, action: "sync" | "disconnect" | "reconnect") => {
+  const handleAction = async (account: ConnectedAccount) => {
     setBusyId(account.id);
-    onAction(account, action);
-    setTimeout(() => setBusyId(null), 600);
+    try {
+      await onAction(account, "disconnect");
+    } finally {
+      setBusyId(null);
+    }
   };
 
   return (
@@ -710,8 +707,7 @@ function ConnectedAccountsTab({
         <div>
           <p className="card-title text-[#0F172A]">Connected Communication Accounts</p>
           <p className="body-text text-[#64748B]">
-            OAuth 2.0 — connect WhatsApp Business, Facebook Pages, Instagram, Gmail, SMS gateway, and
-            more.
+            Account records are disconnected placeholders until official provider OAuth and live verification are implemented.
           </p>
         </div>
         <Button
@@ -719,16 +715,15 @@ function ConnectedAccountsTab({
           onClick={() => setOpen(true)}
         >
           <Icon name="Plus" className="size-4 mr-2" />
-          Connect Account
+          Create placeholder
         </Button>
       </div>
 
       <div className="rounded-xl border border-[#E2E8F0] bg-[#EFF6FF]/30 px-4 py-3">
         <div className="flex items-start gap-2.5">
-          <Icon name="ShieldCheck" className="size-4 mt-0.5 text-[#0057B8] shrink-0" />
+          <Icon name="ShieldCheck" className="size-4 mt-0.5 text-[#2563EB] shrink-0" />
           <p className="body-text text-[#0F172A]">
-            <strong>Security:</strong> Tokens are encrypted. Passwords are never stored. OAuth 2.0
-            only.
+            <strong>Integration status:</strong> No provider token is collected here. Existing provider states are NOT VERIFIED, and local disconnect does not revoke access at the provider.
           </p>
         </div>
       </div>
@@ -736,8 +731,8 @@ function ConnectedAccountsTab({
       {accounts.length === 0 ? (
         <EmptyState
           icon="Link"
-          title="No accounts connected"
-          description="Connect your first communication channel to start receiving messages."
+          title="No account placeholders"
+          description="Provider connections are not configured. Creating a placeholder does not connect a channel or receive messages."
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -750,7 +745,6 @@ function ConnectedAccountsTab({
               text: "text-slate-700",
             };
             const status = acc.connectionStatus;
-            const needsReconnect = status === "EXPIRED" || status === "PERMISSION_ERROR" || status === "RECONNECT_REQUIRED";
             const isDisconnected = status === "DISCONNECTED";
             return (
               <Card key={acc.id} className="rounded-2xl border border-[#E2E8F0] bg-white alo-shadow">
@@ -792,43 +786,21 @@ function ConnectedAccountsTab({
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-9 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
-                      disabled={busyId === acc.id || isDisconnected}
-                      onClick={() => handleAction(acc, "sync")}
-                    >
-                      <Icon name="RefreshCw" className="size-3.5 mr-1.5" />
-                      Sync
+                    <Button size="sm" variant="outline" disabled title="Provider sync is not implemented or verified">
+                      <Icon name="ShieldAlert" className="size-3.5 mr-1.5" />
+                      Sync unavailable
                     </Button>
-                    {needsReconnect && (
-                      <Button
-                        size="sm"
-                        className="h-9 bg-[#C2410C] text-white hover:bg-[#C2410C]/90"
-                        disabled={busyId === acc.id}
-                        onClick={() => handleAction(acc, "reconnect")}
-                      >
-                        <Icon name="Link2" className="size-3.5 mr-1.5" />
-                        Reconnect
-                      </Button>
-                    )}
                     {!isDisconnected && (
                       <Button
                         size="sm"
                         variant="outline"
                         className="h-9 border-rose-200 text-rose-700 hover:bg-rose-50"
                         disabled={busyId === acc.id}
-                        onClick={() => {
-                          toast({
-                            title: "Disconnect account?",
-                            description: "Tokens will be revoked. You can reconnect later.",
-                          });
-                          handleAction(acc, "disconnect");
-                        }}
+                        onClick={() => void handleAction(acc)}
+                        title="Clears local credentials only; no provider-side revocation is performed"
                       >
                         <Icon name="Unplug" className="size-3.5 mr-1.5" />
-                        Disconnect
+                        {busyId === acc.id ? "Clearing…" : "Clear local credentials"}
                       </Button>
                     )}
                   </div>
@@ -873,18 +845,15 @@ function ConnectAccountDialog({
         body: JSON.stringify({
           platform,
           accountName: accountName.trim(),
-          accountId: accountId.trim() || `${platform.toLowerCase()}_${Date.now()}`,
+          accountId: accountId.trim() || undefined,
           assignedTo,
-          accessTokenEnc: "sim_oauth_token",
-          refreshTokenEnc: "sim_oauth_refresh",
-          tokenExpiry: new Date(Date.now() + 30 * 86400000).toISOString(),
         }),
       });
-      if (!res.ok) throw new Error("Failed to connect");
-      const result = await res.json();
+      const result = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(result?.error || "Provider setup is not available.");
       toast({
-        title: "Account connected",
-        description: result?.message || `${platform} account connected.`,
+        title: "Configuration placeholder created",
+        description: result?.message || `${platform} is not connected or verified.`,
       });
       onOpenChange(false);
       setAccountName("");
@@ -906,11 +875,11 @@ function ConnectAccountDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="Link" className="size-5 text-[#0057B8]" />
+            <Icon name="Link" className="size-5 text-[#2563EB]" />
             Connect Communication Account
           </DialogTitle>
           <DialogDescription>
-            OAuth 2.0 connection. Tokens encrypted at rest. Passwords are never stored.
+            Create a disconnected configuration placeholder. Provider OAuth and live verification are not configured; no tokens are collected here.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -948,7 +917,7 @@ function ConnectAccountDialog({
             <Label className="text-[#0F172A]">Account ID (optional)</Label>
             <Input
               className="h-11"
-              placeholder="auto-generated if blank"
+              placeholder="Optional account identifier, if known"
               value={accountId}
               onChange={(e) => setAccountId(e.target.value)}
             />
@@ -968,10 +937,10 @@ function ConnectAccountDialog({
               </SelectContent>
             </Select>
           </div>
-          <div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2">
-            <p className="text-xs text-[#64748B]">
-              <Icon name="Lock" className="size-3 inline mr-1" />
-              You will be redirected to the platform&apos;s OAuth consent screen in production.
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+            <p className="text-xs text-amber-800">
+              <Icon name="ShieldAlert" className="size-3 inline mr-1" />
+              This creates a disconnected configuration placeholder only. OAuth, token storage, and provider verification are not implemented.
             </p>
           </div>
         </div>
@@ -990,7 +959,7 @@ function ConnectAccountDialog({
               </>
             ) : (
               <>
-                <Icon name="Plug" className="size-4 mr-2" /> Connect
+                <Icon name="Plus" className="size-4 mr-2" /> Create placeholder
               </>
             )}
           </Button>
@@ -1022,22 +991,40 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
     });
   }, [events, query, channel]);
 
+  const exportFiltered = () => {
+    if (filtered.length === 0) {
+      toast({ title: "Nothing to export", description: "No timeline records match the current filter." });
+      return;
+    }
+    const escapeCsv = (value: unknown) => {
+      let text = String(value ?? '').replaceAll(String.fromCharCode(13), ' ').replaceAll(String.fromCharCode(10), ' ');
+      if (/^[=+@-]/.test(text) || text.startsWith(String.fromCharCode(9))) text = `'${text}`;
+      return `"${text.replace(/"/g, '""')}"`;
+    };
+    const rows = [
+      ['Type', 'Title', 'Description', 'Timestamp', 'Channel', 'Actor'],
+      ...filtered.map((event) => [event.type, event.title, event.description || '', event.timestamp, event.channel, event.user || '']),
+    ];
+    const csv = rows.map((row) => row.map(escapeCsv).join(',')).join(String.fromCharCode(13, 10));
+    const url = URL.createObjectURL(new Blob([String.fromCharCode(0xfeff) + csv], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `alo-communication-timeline-${new Date().toISOString().slice(0, 10)}.csv`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-4">
       <SectionCard
         title="Unified Communication Timeline"
         icon="Layers"
-        description="Every interaction — phone calls, WhatsApp, Messenger, Facebook, Instagram, email, SMS, notes, tasks, documents, payments, applications, visa, offers, CAS, COE — is permanently saved to the unified CRM timeline."
+        description="This view merges available local CRM records. External channels, live ingestion, and synchronization are not verified; it does not represent every interaction."
         action={
           <Button
             variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
-            onClick={() =>
-              toast({
-                title: "Timeline exported",
-                description: `${filtered.length} events exported to CSV.`,
-              })
-            }
+            className="h-11 border-[#E2E8F0] text-[#2563EB] hover:bg-[#EFF6FF]"
+            onClick={exportFiltered}
           >
             <Icon name="Download" className="size-4 mr-2" />
             Export Timeline
@@ -1083,7 +1070,7 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
           <div className="relative max-h-[40rem] overflow-y-auto alo-scroll pr-2">
             <div className="relative pl-6">
               {/* Vertical connector */}
-              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#0057B8] via-[#2563EB] to-[#E2E8F0]" />
+              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#2563EB] via-[#2563EB] to-[#E2E8F0]" />
               <ul className="space-y-5">
                 {filtered.map((ev, idx) => {
                   const meta =
@@ -1237,7 +1224,7 @@ function LogCallDialog({
 }) {
   const { toast } = useToast();
   const [callType, setCallType] = React.useState("OUTGOING");
-  const [fromNumber, setFromNumber] = React.useState("+8801805020101");
+  const [fromNumber, setFromNumber] = React.useState("");
   const [toNumber, setToNumber] = React.useState("");
   const [duration, setDuration] = React.useState("60");
   const [disposition, setDisposition] = React.useState("ANSWERED");
@@ -1245,21 +1232,22 @@ function LogCallDialog({
   const [submitting, setSubmitting] = React.useState(false);
 
   const submit = async () => {
-    if (!toNumber.trim()) {
-      toast({ title: "Destination number required", variant: "destructive" });
+    if (!fromNumber.trim() || !toNumber.trim()) {
+      toast({ title: "Both phone numbers are required", variant: "destructive" });
       return;
     }
     setSubmitting(true);
     try {
-      // Reuse the dashboard endpoint pattern — create via direct DB call through
-      // the closest existing API surface. We simulate by saving through a generic
-      // POST to /api/omnichannel/notifications (no direct call-log API). For
-      // production wiring, add /api/omnichannel/phone-calls route. Here we
-      // demonstrate the user flow and notify success.
-      await new Promise((r) => setTimeout(r, 600));
+      const response = await fetch("/api/omnichannel/phone-calls", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ callType, fromNumber, toNumber, duration: Number(duration), disposition, callNotes }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(result?.error || "Manual call log could not be saved.");
       toast({
-        title: "Call logged",
-        description: `${callType} call to ${toNumber} saved to CRM timeline.`,
+        title: "Manual call log saved",
+        description: "Saved in the call log only. No telephone call was placed and no CRM timeline link was created.",
       });
       onOpenChange(false);
       setToNumber("");
@@ -1281,11 +1269,11 @@ function LogCallDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="PhoneCall" className="size-5 text-[#0057B8]" />
+            <Icon name="PhoneCall" className="size-5 text-[#2563EB]" />
             Log Phone Call
           </DialogTitle>
           <DialogDescription>
-            Manual call entry. Saved to CRM timeline automatically.
+            Create a manual call-log record only. This does not place a telephone call or link a person to the CRM timeline.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
@@ -1321,7 +1309,7 @@ function LogCallDialog({
             </div>
             <div className="space-y-1.5">
               <Label className="text-[#0F172A]">To *</Label>
-              <Input className="h-11 font-mono" placeholder="+8801XXXXXXXXX" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
+              <Input className="h-11 font-mono" placeholder="+8801805020100" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
             </div>
           </div>
           <div className="space-y-1.5">
@@ -1388,7 +1376,7 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
           </Select>
           <Button
             variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
+            className="h-11 border-[#E2E8F0] text-[#2563EB] hover:bg-[#EFF6FF]"
             onClick={() => toast({ title: "Email sync started", description: "Checking for new messages…" })}
           >
             <Icon name="RefreshCw" className="size-4 mr-2" />
@@ -1465,15 +1453,7 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
 // SMS Tab
 // ─────────────────────────────────────────────────────────────────────────────
 
-function SmsTab({
-  sms,
-  onSent,
-}: {
-  sms: SmsLog[];
-  onSent: () => void;
-}) {
-  const [open, setOpen] = React.useState(false);
-
+function SmsTab({ sms }: { sms: SmsLog[] }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -1481,9 +1461,9 @@ function SmsTab({
           <p className="card-title text-[#0F172A]">SMS Log</p>
           <p className="body-text text-[#64748B]">Outbound & inbound SMS with delivery status.</p>
         </div>
-        <Button className="h-12 bg-[#C2410C] text-white hover:bg-[#C2410C]/90" onClick={() => setOpen(true)}>
-          <Icon name="Send" className="size-4 mr-2" />
-          Send SMS
+        <Button className="h-12" variant="outline" disabled title="No authorized SMS provider is configured">
+          <Icon name="ShieldAlert" className="size-4 mr-2" />
+          SMS not configured
         </Button>
       </div>
 
@@ -1545,103 +1525,7 @@ function SmsTab({
         </SectionCard>
       )}
 
-      <SendSmsDialog open={open} onOpenChange={setOpen} onSent={onSent} />
     </div>
-  );
-}
-
-function SendSmsDialog({
-  open,
-  onOpenChange,
-  onSent,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  onSent: () => void;
-}) {
-  const { toast } = useToast();
-  const [toNumber, setToNumber] = React.useState("");
-  const [messageText, setMessageText] = React.useState("");
-  const [submitting, setSubmitting] = React.useState(false);
-
-  const submit = async () => {
-    if (!toNumber.trim() || !messageText.trim()) {
-      toast({ title: "Number and message are required", variant: "destructive" });
-      return;
-    }
-    if (messageText.length > 320) {
-      toast({ title: "Message too long", description: "Max 320 characters.", variant: "destructive" });
-      return;
-    }
-    setSubmitting(true);
-    try {
-      await new Promise((r) => setTimeout(r, 600));
-      toast({
-        title: "SMS sent",
-        description: `Message queued to ${toNumber}. Consent verified.`,
-      });
-      onOpenChange(false);
-      setToNumber("");
-      setMessageText("");
-      onSent();
-    } catch (err) {
-      toast({
-        title: "Send failed",
-        description: err instanceof Error ? err.message : "Unknown error.",
-        variant: "destructive",
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Icon name="Send" className="size-5 text-[#0057B8]" />
-            Send SMS
-          </DialogTitle>
-          <DialogDescription>
-            Consent is checked before sending. STOP / UNSUBSCRIBE / BLOCK auto-respected.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label className="text-[#0F172A]">Recipient Number *</Label>
-            <Input className="h-11 font-mono" placeholder="+8801XXXXXXXXX" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-[#0F172A]">Message *</Label>
-            <Textarea
-              className="min-h-[100px]"
-              placeholder="Type your SMS… (max 320 chars)"
-              value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
-              maxLength={320}
-            />
-            <p className="badge-text text-[#64748B] text-right">{messageText.length}/320</p>
-          </div>
-          <div className="rounded-lg border border-amber-200 bg-amber-50/50 px-3 py-2">
-            <p className="text-xs text-amber-700">
-              <Icon name="ShieldCheck" className="size-3 inline mr-1" />
-              Recipient must have OPTED_IN consent. System will auto-block if OPTED_OUT.
-            </p>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[#C2410C] text-white hover:bg-[#C2410C]/90" disabled={submitting} onClick={submit}>
-            {submitting ? (
-              <><Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Sending…</>
-            ) : (
-              <><Icon name="Send" className="size-4 mr-2" /> Send SMS</>
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   );
 }
 
@@ -1673,16 +1557,19 @@ function NotificationsTab({
     }
     setBusy(true);
     try {
-      await Promise.all(
-        unread.map((n) =>
-          fetch("/api/omnichannel/notifications", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: n.id, isRead: true }),
-          })
-        )
+      const responses = await Promise.all(
+        unread.map((n) => fetch("/api/omnichannel/notifications", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: n.id, isRead: true }),
+        }))
       );
-      toast({ title: "Marked all as read", description: `${unread.length} notifications updated.` });
+      const failed = responses.find((response) => !response.ok);
+      if (failed) {
+        const result = await failed.json().catch(() => null);
+        throw new Error(result?.error || "One or more notifications could not be updated.");
+      }
+      toast({ title: "Notifications updated", description: `${unread.length} notifications marked read.` });
       onMarkRead();
     } catch {
       toast({ title: "Failed to mark read", variant: "destructive" });
@@ -1693,14 +1580,16 @@ function NotificationsTab({
 
   const markOne = async (id: string, isRead: boolean) => {
     try {
-      await fetch("/api/omnichannel/notifications", {
+      const response = await fetch("/api/omnichannel/notifications", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, isRead: !isRead }),
       });
+      const result = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(result?.error || "Notification could not be updated.");
       onMarkRead();
-    } catch {
-      toast({ title: "Failed to update", variant: "destructive" });
+    } catch (error) {
+      toast({ title: "Failed to update", description: error instanceof Error ? error.message : "Notification could not be updated.", variant: "destructive" });
     }
   };
 
@@ -1729,7 +1618,7 @@ function NotificationsTab({
           </Select>
           <Button
             variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
+            className="h-11 border-[#E2E8F0] text-[#2563EB] hover:bg-[#EFF6FF]"
             disabled={busy}
             onClick={markAllRead}
           >
@@ -1751,7 +1640,7 @@ function NotificationsTab({
                   "rounded-xl border px-4 py-3 transition",
                   n.isRead
                     ? "border-[#E2E8F0] bg-white"
-                    : "border-[#0057B8]/30 bg-[#EFF6FF]/40"
+                    : "border-[#2563EB]/30 bg-[#EFF6FF]/40"
                 )}
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -1774,7 +1663,7 @@ function NotificationsTab({
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-8 text-[#0057B8] hover:bg-[#EFF6FF]"
+                    className="h-8 text-[#2563EB] hover:bg-[#EFF6FF]"
                     onClick={() => markOne(n.id, n.isRead)}
                   >
                     {n.isRead ? "Mark unread" : "Mark read"}
@@ -1912,12 +1801,16 @@ function UpdateConsentDialog({
   const [studentId, setStudentId] = React.useState("");
   const [channel, setChannel] = React.useState("WHATSAPP");
   const [consentStatus, setConsentStatus] = React.useState("OPTED_IN");
-  const [consentSource, setConsentSource] = React.useState("MANUAL");
+  const [evidenceReference, setEvidenceReference] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
 
   const submit = async () => {
     if (!studentId.trim()) {
-      toast({ title: "Student ID required", variant: "destructive" });
+      toast({ title: "Student or lead ID required", variant: "destructive" });
+      return;
+    }
+    if (["OPTED_IN", "OPTED_OUT"].includes(consentStatus) && evidenceReference.trim().length < 4) {
+      toast({ title: "Evidence reference required", description: "Add a record reference or evidence note for an opt-in/opt-out entry.", variant: "destructive" });
       return;
     }
     setSubmitting(true);
@@ -1929,17 +1822,18 @@ function UpdateConsentDialog({
           studentId: studentId.trim(),
           channel,
           consentStatus,
-          consentSource,
+          evidenceReference: evidenceReference.trim(),
         }),
       });
-      if (!res.ok) throw new Error("Failed to update consent");
-      const result = await res.json();
+      const result = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(result?.error || "Failed to update consent");
       toast({
-        title: "Consent updated",
-        description: result?.message || `Status set to ${consentStatus}.`,
+        title: "Manual consent record saved",
+        description: result?.message || `Status saved as ${consentStatus}; evidence was not independently verified.`,
       });
       onOpenChange(false);
       setStudentId("");
+      setEvidenceReference("");
       onUpdated();
     } catch (err) {
       toast({
@@ -1957,11 +1851,11 @@ function UpdateConsentDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="ShieldCheck" className="size-5 text-[#0057B8]" />
+            <Icon name="ShieldCheck" className="size-5 text-[#2563EB]" />
             Update Consent
           </DialogTitle>
           <DialogDescription>
-            Record consent manually. System also captures STOP / UNSUBSCRIBE / BLOCK automatically.
+            Manual administrator entry only. STOP/UNSUBSCRIBE provider ingestion is not configured; recorded evidence is not independently verified.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
@@ -1998,17 +1892,9 @@ function UpdateConsentDialog({
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#0F172A]">Source</Label>
-            <Select value={consentSource} onValueChange={setConsentSource}>
-              <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="MANUAL">Manual entry</SelectItem>
-                <SelectItem value="WHATSAPP">WhatsApp STOP/UNSUBSCRIBE</SelectItem>
-                <SelectItem value="SMS">SMS STOP/BLOCK</SelectItem>
-                <SelectItem value="EMAIL">Email unsubscribe link</SelectItem>
-                <SelectItem value="WEB">Web form</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label className="text-[#0F172A]">Evidence note or record reference</Label>
+            <Input className="h-11" maxLength={250} placeholder="Required for opt-in or opt-out" value={evidenceReference} onChange={(e) => setEvidenceReference(e.target.value)} />
+            <p className="text-xs text-[#64748B]">Stored in the audit trail as a manual assertion; it does not prove provider-side consent.</p>
           </div>
         </div>
         <DialogFooter>
@@ -2051,7 +1937,7 @@ function AiClassificationTab({
         <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4">
           <div className="flex items-center justify-between">
             <p className="badge-text uppercase tracking-wide text-[#64748B]">Classified</p>
-            <Icon name="Sparkles" className="size-5 text-[#0057B8]" />
+            <Icon name="Sparkles" className="size-5 text-[#2563EB]" />
           </div>
           <p className="mt-1 text-3xl font-bold text-[#0F172A] tabular-nums">{classifications.length}</p>
         </div>
@@ -2073,7 +1959,7 @@ function AiClassificationTab({
         </div>
         <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4">
           <div className="flex items-center justify-between">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Auto-filled</p>
+            <p className="badge-text uppercase tracking-wide text-[#64748B]">Not human verified</p>
             <Icon name="Wand2" className="size-5 text-violet-600" />
           </div>
           <p className="mt-1 text-3xl font-bold text-violet-600 tabular-nums">
@@ -2085,11 +1971,11 @@ function AiClassificationTab({
       <div className="flex items-center justify-between">
         <div>
           <p className="card-title text-[#0F172A]">AI Document Classification</p>
-          <p className="body-text text-[#64748B]">AI classifies documents and extracts data via OCR.</p>
+          <p className="body-text text-[#64748B]">Classification is disabled until an approved private OCR/AI pipeline and data-retention controls are configured.</p>
         </div>
-        <Button className="h-12 bg-[#C2410C] text-white hover:bg-[#C2410C]/90" onClick={() => setOpen(true)}>
-          <Icon name="Sparkles" className="size-4 mr-2" />
-          Run AI Classification
+        <Button className="h-12" variant="outline" disabled title="OCR/AI pipeline is not configured">
+          <Icon name="ShieldAlert" className="size-4 mr-2" />
+          Not configured
         </Button>
       </div>
 
@@ -2117,7 +2003,7 @@ function AiClassificationTab({
                   <TableRow key={c.id} className="border-[#E2E8F0]">
                     <TableCell className="font-mono text-xs text-[#0F172A]">{c.documentId}</TableCell>
                     <TableCell>
-                      <Badge className="bg-[#EFF6FF] text-[#0057B8] border border-[#2563EB]/30">
+                      <Badge className="bg-[#EFF6FF] text-[#2563EB] border border-[#2563EB]/30">
                         {c.detectedType}
                       </Badge>
                     </TableCell>
@@ -2160,7 +2046,7 @@ function AiClassificationTab({
               key={t.code}
               className="flex items-center gap-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2"
             >
-              <Icon name="FileCheck2" className="size-3.5 text-[#0057B8] shrink-0" />
+              <Icon name="FileCheck2" className="size-3.5 text-[#2563EB] shrink-0" />
               <div className="min-w-0">
                 <p className="badge-text font-mono text-[#0F172A] truncate">{t.code}</p>
                 <p className="text-[11px] text-[#64748B] truncate">{t.label}</p>
@@ -2263,7 +2149,7 @@ function RunClassificationDialog({
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="Sparkles" className="size-5 text-[#0057B8]" />
+            <Icon name="Sparkles" className="size-5 text-[#2563EB]" />
             Run AI Document Classification
           </DialogTitle>
           <DialogDescription>
@@ -2293,11 +2179,11 @@ function RunClassificationDialog({
           </div>
 
           {result && (
-            <div className="rounded-xl border border-[#0057B8]/30 bg-[#EFF6FF]/40 p-4">
+            <div className="rounded-xl border border-[#2563EB]/30 bg-[#EFF6FF]/40 p-4">
               <div className="flex items-center justify-between">
                 <p className="card-title text-[#0F172A]">AI Result</p>
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-[#0057B8] text-white">{result.detectedType}</Badge>
+                  <Badge className="bg-[#2563EB] text-white">{result.detectedType}</Badge>
                   <Badge className="bg-emerald-100 text-emerald-700">
                     {Math.round(result.confidence * 100)}% confidence
                   </Badge>

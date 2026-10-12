@@ -1,6 +1,6 @@
 'use client';
 
-import { usePortalStore } from '@/lib/stores/portal-store';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,355 +8,378 @@ import { Progress } from '@/components/ui/progress';
 import {
   Users,
   FileText,
-  DollarSign,
-  Plus,
   ShieldAlert,
-  Settings,
-  ClipboardList,
   Activity,
-  UserPlus,
-  UserCog,
   ScrollText,
-  ChevronRight,
-  ArrowUpRight,
-  ArrowDownRight,
   AlertTriangle,
-  Clock,
-  UserCheck,
-  UserX,
   GraduationCap,
-  Plane,
-  Briefcase,
-  Building2,
-  Globe,
-  CheckCircle2,
-  Stethoscope,
   BarChart3,
+  RefreshCw,
+  Info,
+  Handshake,
+  UserCheck,
+  BookOpen,
+  Award,
+  Target,
+  CheckCircle,
+  Clock,
+  FileCheck,
+  MessageSquare,
 } from 'lucide-react';
 
-// ── Mock Data ──────────────────────────────────────────────
+// ============================================================
+// Types — mirror GET /api/crm/dashboard
+// ============================================================
 
-const funnelStages = [
-  { label: 'Leads', count: 2460, pct: '100%', color: 'bg-alo-brand', width: '100%' },
-  { label: 'Counseling', count: 1480, pct: '60.2%', color: 'bg-[#0369a1]', width: '85%' },
-  { label: 'Applications', count: 810, pct: '32.9%', color: 'bg-[#0e7490]', width: '65%' },
-  { label: 'Offers', count: 523, pct: '21.3%', color: 'bg-emerald-500', width: '45%' },
-  { label: 'Enrolled', count: 387, pct: '15.7%', color: 'bg-emerald-600', width: '30%' },
-];
-
-const recentActivity = [
-  { event: 'New student registered — Arif Rahman', time: '5 min ago', icon: UserPlus, color: 'text-emerald-600 bg-emerald-50' },
-  { event: 'Application submitted — University of Manchester', time: '12 min ago', icon: FileText, color: 'text-blue-600 bg-blue-50' },
-  { event: 'Visa approved — Mitu Sarkar (Canada)', time: '30 min ago', icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
-  { event: 'SLA escalation — Tanvir Ahmed (6h+ wait)', time: '45 min ago', icon: AlertTriangle, color: 'text-amber-600 bg-amber-50' },
-  { event: 'New partner registered — Stellar Education', time: '1 hour ago', icon: Briefcase, color: 'text-purple-600 bg-purple-50' },
-  { event: 'Employee attendance marked — Dhaka Branch', time: '2 hours ago', icon: UserCheck, color: 'text-sky-600 bg-sky-50' },
-  { event: 'Commission payout processed — ৳4,20,000', time: '3 hours ago', icon: DollarSign, color: 'text-emerald-600 bg-emerald-50' },
-  { event: 'Document expired — Nusrat Jahan passport', time: '4 hours ago', icon: AlertTriangle, color: 'text-red-600 bg-red-50' },
-];
-
-const departments = [
-  { name: 'Counseling', employees: 14, activeTasks: 67, icon: Stethoscope },
-  { name: 'Marketing', employees: 8, activeTasks: 34, icon: BarChart3 },
-  { name: 'Operations', employees: 7, activeTasks: 29, icon: Settings },
-  { name: 'Finance', employees: 5, activeTasks: 18, icon: DollarSign },
-  { name: 'IT & Support', employees: 4, activeTasks: 22, icon: Globe },
-];
-
-const alerts = [
-  { message: '3 SLA escalations pending review', severity: 'high' as const, action: 'Review Now' },
-  { message: '2 student documents have expired', severity: 'medium' as const, action: 'View Details' },
-  { message: '1 partner pending approval', severity: 'low' as const, action: 'Review Partner' },
-];
-
-// ── Helpers ────────────────────────────────────────────────
-
-function alertStyle(severity: 'high' | 'medium' | 'low') {
-  switch (severity) {
-    case 'high':
-      return { border: 'border-red-200 bg-red-50', badge: <Badge variant="danger" className="text-[10px]">High</Badge> };
-    case 'medium':
-      return { border: 'border-amber-200 bg-amber-50', badge: <Badge variant="warning" className="text-[10px]">Medium</Badge> };
-    case 'low':
-      return { border: 'border-alo-brand/20 bg-alo-brand-light/30', badge: <Badge variant="brand" className="text-[10px]">Low</Badge> };
-  }
+interface Kpi {
+  label: string;
+  value: string;
+  change: string | null;
+  changeMeasured: boolean;
+  icon: string;
 }
 
-// ── Component ──────────────────────────────────────────────
+interface DashboardTable {
+  title: string;
+  columns: string[];
+  rows: string[][];
+}
+
+interface DashboardAlert {
+  message: string;
+  severity: 'warning' | 'error' | 'success';
+  action: string;
+}
+
+interface ChartPoint {
+  label: string;
+  value: number;
+}
+
+interface DashboardChart {
+  title: string;
+  data: ChartPoint[];
+}
+
+interface AuditEntry {
+  id: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  createdAt: string;
+}
+
+interface DashboardPayload {
+  kpis: Kpi[];
+  tables: DashboardTable[];
+  alerts: DashboardAlert[];
+  charts: DashboardChart[];
+  recentLogs: AuditEntry[];
+  meta: { generatedAt: string; role: string; user: string | null };
+}
+
+interface LoadState {
+  loading: boolean;
+  error: string | null;
+}
+
+const KPI_ICONS: Record<string, React.ElementType> = {
+  Users,
+  FileText,
+  Handshake,
+  UserCheck,
+  GraduationCap,
+  BookOpen,
+  Award,
+  Target,
+  CheckCircle,
+  Clock,
+  FileCheck,
+  MessageSquare,
+};
+
+const ALERT_STYLES: Record<DashboardAlert['severity'], { border: string; label: string }> = {
+  error: { border: 'border-red-200 bg-red-50', label: 'High' },
+  warning: { border: 'border-amber-200 bg-amber-50', label: 'Medium' },
+  success: { border: 'border-emerald-200 bg-emerald-50', label: 'OK' },
+};
+
+function formatTimestamp(value?: string | null): string {
+  if (!value) return 'Not recorded';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
 
 export default function CrmAdminDashboard() {
-  const { user } = usePortalStore();
+  const [data, setData] = useState<DashboardPayload | null>(null);
+  const [state, setState] = useState<LoadState>({ loading: true, error: null });
+
+  const load = useCallback(async () => {
+    setState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/crm/dashboard');
+      if (!response.ok) throw new Error(`Could not load the dashboard (HTTP ${response.status})`);
+      const payload = await response.json();
+      if (!payload?.success) throw new Error(payload?.error || 'The dashboard returned no data');
+      setData(payload.data);
+      setState({ loading: false, error: null });
+    } catch (error) {
+      setData(null);
+      setState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load the dashboard',
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const stageChart = data?.charts.find((chart) => /stage/i.test(chart.title)) || null;
+  const stageMax = stageChart
+    ? Math.max(1, ...stageChart.data.map((point) => point.value))
+    : 1;
 
   return (
-    <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6">
-      {/* ── Header ─────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div className="bg-alo-page min-h-screen space-y-6 p-4 lg:p-6">
+      {/* ── Header ── */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-alo-text">System Overview</h1>
-          <div className="flex flex-wrap items-center gap-2 mt-1.5">
+          <h1 className="text-alo-text text-2xl font-bold">System Overview</h1>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <Badge variant="danger" className="text-[11px]">
-              <ShieldAlert className="w-3 h-3 mr-1" />Super Admin
+              <ShieldAlert className="mr-1 h-3 w-3" />
+              Super Admin
             </Badge>
-            <span className="inline-flex items-center gap-1.5 text-sm text-alo-text-muted">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              All systems operational
-            </span>
+            {data?.meta.user ? (
+              <span className="text-alo-text-muted text-sm">Signed in as {data.meta.user}</span>
+            ) : null}
+            {data?.meta.generatedAt ? (
+              <span className="text-alo-text-muted text-xs">
+                Generated {formatTimestamp(data.meta.generatedAt)}
+              </span>
+            ) : null}
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <BarChart3 className="w-4 h-4" /> Reports
-          </Button>
-          <Button variant="brand" size="sm">
-            <Plus className="w-4 h-4" /> Quick Add
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" onClick={() => void load()}>
+          <RefreshCw className={`h-4 w-4 ${state.loading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
 
-      {/* ── KPI Row (5 cols) ──────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        {/* Total Students */}
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <GraduationCap className="w-5 h-5 text-alo-brand" />
-              <span className="inline-flex items-center text-[11px] text-emerald-600 font-medium">
-                <ArrowUpRight className="w-3 h-3" />+23
-              </span>
+      {state.error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+              <p className="font-medium">{state.error}</p>
+              <button
+                type="button"
+                className="mt-1 underline underline-offset-2"
+                onClick={() => void load()}
+              >
+                Try again
+              </button>
             </div>
-            <p className="text-2xl font-bold text-alo-text">1,247</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">Total Students</p>
-            <p className="text-[11px] text-alo-text-muted">+23 this month</p>
           </CardContent>
         </Card>
+      )}
 
-        {/* Active Applications */}
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <FileText className="w-5 h-5 text-alo-brand" />
-              <span className="text-[11px] text-red-600 font-medium bg-red-50 px-1.5 py-0.5 rounded">
-                12 overdue
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-alo-text">483</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">Active Applications</p>
-            <p className="text-[11px] text-alo-text-muted">Processing this cycle</p>
+      {state.loading && !data && (
+        <Card>
+          <CardContent className="text-alo-text-muted py-12 text-center text-sm">
+            Loading dashboard…
           </CardContent>
         </Card>
+      )}
 
-        {/* Visa Success Rate */}
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Plane className="w-5 h-5 text-alo-brand" />
-              <span className="inline-flex items-center text-[11px] text-emerald-600 font-medium">
-                <ArrowUpRight className="w-3 h-3" />+1.3%
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-alo-text">94.2%</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">Visa Success Rate</p>
-            <Progress value={94.2} className="h-1.5 mt-2" />
+      {!state.loading && !data && !state.error && (
+        <Card>
+          <CardContent className="text-alo-text-muted py-12 text-center text-sm">
+            No dashboard data is available.
           </CardContent>
         </Card>
+      )}
 
-        {/* Revenue Monthly */}
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="w-5 h-5 text-alo-brand" />
-              <span className="inline-flex items-center text-[11px] text-emerald-600 font-medium">
-                <ArrowUpRight className="w-3 h-3" />+8%
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-alo-text">৳12.5L</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">Revenue (Monthly)</p>
-            <p className="text-[11px] text-alo-text-muted">vs last month</p>
-          </CardContent>
-        </Card>
-
-        {/* Active Employees */}
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Users className="w-5 h-5 text-alo-brand" />
-              <span className="text-[11px] text-amber-600 font-medium bg-amber-50 px-1.5 py-0.5 rounded">
-                4 on leave
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-alo-text">38</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">Active Employees</p>
-            <p className="text-[11px] text-alo-text-muted">Across all branches</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ── Main Content Grid ──────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ── Left Column (col-span-2) ─────────────────────── */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Conversion Funnel Card */}
-          <Card className="bg-white rounded-xl border border-alo-border">
-            <CardHeader className="pb-0">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold text-alo-text">Conversion Funnel</CardTitle>
-                <span className="text-xs text-alo-text-muted">Last 90 days</span>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="space-y-3">
-                {funnelStages.map((stage, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="w-28 shrink-0 text-right">
-                      <p className="text-sm font-medium text-alo-text">{stage.label}</p>
+      {data && (
+        <>
+          {/* ── KPI row ── */}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {data.kpis.map((kpi) => {
+              const Icon = KPI_ICONS[kpi.icon] || Activity;
+              return (
+                <Card key={kpi.label} className="rounded-xl border border-alo-border bg-white">
+                  <CardContent className="p-4">
+                    <div className="mb-2 flex items-center justify-between">
+                      <Icon className="text-alo-brand h-5 w-5" />
                     </div>
-                    <div className="flex-1">
-                      <div className="relative h-9 rounded-lg bg-gray-100 overflow-hidden">
-                        <div
-                          className={`h-full ${stage.color} rounded-lg flex items-center justify-end pr-3 transition-all duration-500`}
-                          style={{ width: stage.width }}
-                        >
-                          <span className="text-xs font-bold text-white">{stage.count.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-14 shrink-0 text-right">
-                      <span className="text-xs font-semibold text-alo-text-secondary">{stage.pct}</span>
-                    </div>
-                  </div>
-                ))}
-                {/* Conversion rate summary */}
-                <div className="flex items-center gap-2 pt-2 px-32">
-                  <ArrowDownRight className="w-3.5 h-3.5 text-emerald-500" />
-                  <span className="text-xs text-alo-text-muted">
-                    Overall conversion: <span className="font-semibold text-alo-text">15.7%</span> (Lead → Enrolled)
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                    <p className="text-alo-text text-2xl font-bold">{kpi.value}</p>
+                    <p className="text-alo-text-muted mt-0.5 text-xs">{kpi.label}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
 
-          {/* Recent Activity Card */}
-          <Card className="bg-white rounded-xl border border-alo-border">
-            <CardHeader className="pb-0">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold text-alo-text">Recent Activity</CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs text-alo-brand">
-                  View All <ChevronRight className="w-3.5 h-3.5" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="relative">
-                <div className="absolute left-[15px] top-2 bottom-2 w-px bg-alo-border" />
-                <div className="space-y-1 max-h-96 overflow-y-auto">
-                  {recentActivity.map((item, i) => (
-                    <div key={i} className="relative flex items-start gap-3 pl-1 py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/20 transition-colors">
-                      <div className={`relative z-10 mt-0.5 w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 ${item.color}`}>
-                        <item.icon className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-alo-text leading-snug">{item.event}</p>
-                        <p className="text-[11px] text-alo-text-muted mt-0.5">{item.time}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* ── Right Column (col-span-1) ────────────────────── */}
-        <div className="space-y-6">
-          {/* Quick Actions */}
-          <Card className="bg-white rounded-xl border border-alo-border">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold text-alo-text">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="brand" className="w-full justify-start text-sm">
-                  <UserPlus className="w-4 h-4" /> Create Employee
-                </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
-                  <UserCog className="w-4 h-4" /> Manage Roles
-                </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
-                  <ScrollText className="w-4 h-4" /> View Audit Logs
-                </Button>
-                <Button variant="outline" className="w-full justify-start text-sm">
-                  <Settings className="w-4 h-4" /> System Settings
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Department Summary */}
-          <Card className="bg-white rounded-xl border border-alo-border">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold text-alo-text">Departments</CardTitle>
-                <Badge variant="muted" className="text-[11px]">5 total</Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-1">
-                {departments.map((dept, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/30 transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-alo-brand-light flex items-center justify-center shrink-0">
-                        <dept.icon className="w-4 h-4 text-alo-brand" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-alo-text truncate">{dept.name}</p>
-                        <p className="text-[11px] text-alo-text-muted">{dept.employees} employees</p>
-                      </div>
-                    </div>
-                    <Badge variant="muted" className="text-[11px] shrink-0">{dept.activeTasks} tasks</Badge>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Alerts Card */}
-          <Card className="bg-white rounded-xl border border-alo-border">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" /> Alerts
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* ── Application stages ── */}
+            <Card className="border-alo-border bg-white lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="text-alo-text flex items-center gap-2 text-base">
+                  <BarChart3 className="text-alo-brand h-4 w-4" />
+                  {stageChart?.title || 'Applications by Stage'}
                 </CardTitle>
-                <Badge variant="danger" className="text-[11px]">3</Badge>
-              </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {!stageChart || stageChart.data.length === 0 ? (
+                  <p className="text-alo-text-muted py-8 text-center text-sm">
+                    No application stage data is available.
+                  </p>
+                ) : (
+                  stageChart.data.map((point) => (
+                    <div key={point.label}>
+                      <div className="mb-1 flex items-center justify-between text-xs">
+                        <span className="text-alo-text capitalize">{point.label}</span>
+                        <span className="text-alo-text-muted">{point.value}</span>
+                      </div>
+                      <Progress value={(point.value / stageMax) * 100} className="h-2" />
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
+
+            {/* ── Alerts ── */}
+            <Card className="border-alo-border bg-white">
+              <CardHeader>
+                <CardTitle className="text-alo-text flex items-center gap-2 text-base">
+                  <AlertTriangle className="text-amber-600 h-4 w-4" />
+                  Alerts
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.alerts.length === 0 ? (
+                  <p className="text-alo-text-muted py-8 text-center text-sm">No alerts.</p>
+                ) : (
+                  data.alerts.map((alert, index) => {
+                    const style = ALERT_STYLES[alert.severity] || ALERT_STYLES.success;
+                    return (
+                      <div
+                        key={`${alert.message}-${index}`}
+                        className={`flex items-center justify-between rounded-lg border p-3 ${style.border}`}
+                      >
+                        <p className="text-alo-text truncate text-xs">{alert.message}</p>
+                        <Badge variant="outline" className="ml-2 shrink-0 text-[10px]">
+                          {style.label}
+                        </Badge>
+                      </div>
+                    );
+                  })
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* ── Tables ── */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            {data.tables.map((table) => (
+              <Card key={table.title} className="border-alo-border bg-white">
+                <CardHeader>
+                  <CardTitle className="text-alo-text text-base">{table.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {table.rows.length === 0 ? (
+                    <p className="text-alo-text-muted py-8 text-center text-sm">
+                      Nothing recorded yet.
+                    </p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead>
+                          <tr className="border-alo-border text-alo-text-muted border-b">
+                            {table.columns.map((column) => (
+                              <th key={column} className="py-2 pr-3 font-medium">
+                                {column}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {table.rows.map((row, rowIndex) => (
+                            <tr
+                              key={`${table.title}-${rowIndex}`}
+                              className="border-alo-border border-b last:border-0"
+                            >
+                              {row.map((cell, cellIndex) => (
+                                <td key={`${table.title}-${rowIndex}-${cellIndex}`} className="text-alo-text py-2 pr-3">
+                                  {cell || '—'}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* ── Recent audit activity ── */}
+          <Card className="border-alo-border bg-white">
+            <CardHeader>
+              <CardTitle className="text-alo-text flex items-center gap-2 text-base">
+                <ScrollText className="text-alo-brand h-4 w-4" />
+                Recent platform activity
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {alerts.map((alert, i) => {
-                  const style = alertStyle(alert.severity);
-                  return (
-                    <div
-                      key={i}
-                      className={`flex items-center justify-between p-3 rounded-lg border ${style.border}`}
+              {data.recentLogs.length === 0 ? (
+                <p className="text-alo-text-muted py-8 text-center text-sm">
+                  No audit activity has been recorded yet.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {data.recentLogs.map((entry) => (
+                    <li
+                      key={entry.id}
+                      className="border-alo-border flex flex-wrap items-center justify-between gap-2 border-b pb-2 last:border-0"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        {style.badge}
-                        <p className="text-xs text-alo-text truncate">{alert.message}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline" className="text-[10px]">
+                          {entry.action.replace(/_/g, ' ')}
+                        </Badge>
+                        <span className="text-alo-text-muted text-xs">
+                          {entry.entityType || 'unspecified entity'}
+                          {entry.entityId ? ` · ${entry.entityId}` : ''}
+                        </span>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-[11px] text-alo-brand shrink-0 ml-2">
-                        {alert.action}
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
+                      <span className="text-alo-text-muted text-xs">
+                        {formatTimestamp(entry.createdAt)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </CardContent>
           </Card>
-        </div>
-      </div>
+
+          <Card className="border-alo-border bg-white">
+            <CardContent className="text-alo-text-muted flex items-start gap-2 p-4 text-xs">
+              <Info className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>
+                Every figure above is a live count from the database. Period-over-period change is
+                not shown because no historical baseline is stored. Departmental headcounts and a
+                lead-to-enrolment funnel are not listed because nothing on this platform measures
+                them.
+              </span>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }

@@ -1,15 +1,14 @@
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/resources/[id]/faqs — list FAQs for a resource
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -37,7 +36,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 // POST /api/admin/resources/[id]/faqs — add a FAQ to a resource
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -70,11 +69,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       order = last ? last.sortOrder + 1 : 0;
     }
 
-    const faq = await db.resourceFaq.create({
+    const faq = await db.$transaction(async tx => {
+      const faq = await tx.resourceFaq.create({
       data: { resourceId: id, question, answer, sortOrder: order },
     });
-
-    await contentAuditLog.create({
+      await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_FAQ_CREATE",
@@ -82,7 +81,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         resourceId: faq.id,
         details: JSON.stringify({ resourceId: id, resourceTitle: resource.title }),
       },
-    }).catch(() => {});
+    }, tx);
+      return faq;
+    });
 
     return NextResponse.json({ faq }, { status: 201 });
   } catch (err: any) {

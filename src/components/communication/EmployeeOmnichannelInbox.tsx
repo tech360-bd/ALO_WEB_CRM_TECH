@@ -64,6 +64,9 @@ export default function EmployeeOmnichannelInbox() {
   const [activeChannel, setActiveChannel] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [messageInput, setMessageInput] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedApplicationId, setSelectedApplicationId] = useState('');
+  const [sendError, setSendError] = useState('');
   const [isInternalNote, setIsInternalNote] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -73,6 +76,7 @@ export default function EmployeeOmnichannelInbox() {
   const [officeOpen, setOfficeOpen] = useState<boolean | null>(null);
   const [creatingLead, setCreatingLead] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ── Data fetchers ──────────────────────────────────────────
   const fetchConversations = useCallback(async () => {
@@ -108,12 +112,23 @@ export default function EmployeeOmnichannelInbox() {
   const selectConversation = async (conv: any) => {
     setSelectedConv(conv);
     setMessages([]);
+    setSelectedFile(null);
+    setSelectedApplicationId('');
+    setSendError('');
     setShowAi(false);
     setAiSuggestions([]);
     try {
       const res = await fetch(`/api/crm/ucc/conversations?id=${conv.id}`);
       const data = await res.json();
-      if (data.success && data.messages) setMessages(data.messages);
+      if (data.success && data.messages) {
+        setMessages(data.messages);
+        setSelectedApplicationId((current) => data.applications?.some((application: any) => application.id === current)
+          ? current
+          : data.applications?.[0]?.id || '');
+        setSelectedConv((current: any) => current?.id === conv.id
+          ? { ...current, ...data.conversation, applications: data.applications || [] }
+          : current);
+      }
     } catch {}
 
     // Fetch AI suggestions
@@ -134,21 +149,51 @@ export default function EmployeeOmnichannelInbox() {
   };
 
   const sendMessage = async () => {
-    if (!selectedConv || !messageInput.trim() || sending) return;
+    if (!selectedConv || (!messageInput.trim() && !selectedFile) || sending) return;
     setSending(true);
+    setSendError('');
     try {
+      let attachmentId: string | undefined;
+      if (selectedFile) {
+        if (isInternalNote) throw new Error('Internal notes cannot include attachments.');
+        if (selectedConv.channel !== 'whatsapp') throw new Error('Private document sending is currently available only on WhatsApp.');
+        const form = new FormData();
+        form.append('file', selectedFile);
+        form.append('conversationId', selectedConv.id);
+        if (selectedConv.studentId) form.append('studentId', selectedConv.studentId);
+        if (selectedApplicationId) form.append('applicationId', selectedApplicationId);
+        const uploadResponse = await fetch('/api/crm/ucc/documents/upload', { method: 'POST', body: form });
+        const uploadData = await uploadResponse.json().catch(() => ({}));
+        if (!uploadResponse.ok || !uploadData.success || !uploadData.attachment?.id) {
+          throw new Error(uploadData.error || 'Private document upload failed.');
+        }
+        attachmentId = uploadData.attachment.id;
+      }
+
       const res = await fetch(`/api/crm/ucc/conversations/${selectedConv.id}/reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: messageInput, isInternalNote }),
+        body: JSON.stringify({
+          content: messageInput,
+          isInternalNote,
+          ...(attachmentId ? { attachment: { attachmentId, caption: messageInput } } : {}),
+        }),
       });
-      const data = await res.json();
-      if (data.success) {
-        setMessages((prev) => [...prev, data.message]);
-        setMessageInput('');
-      }
-    } catch {}
-    setSending(false);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) throw new Error(data.error || 'Reply could not be sent.');
+      setMessageInput('');
+      setSelectedFile(null);
+      const [detailResponse] = await Promise.all([
+        fetch(`/api/crm/ucc/conversations?id=${encodeURIComponent(selectedConv.id)}`),
+        fetchConversations(),
+      ]);
+      const detail = await detailResponse.json().catch(() => ({}));
+      if (detail.success) setMessages(detail.messages || []);
+    } catch (error: any) {
+      setSendError(error?.message || 'Reply could not be sent.');
+    } finally {
+      setSending(false);
+    }
   };
 
   const createLead = async () => {
@@ -208,7 +253,7 @@ export default function EmployeeOmnichannelInbox() {
         <div className="px-4 pt-4 pb-3 border-b border-[#E2E8F0] space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-[#0057B8] rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-[#2563EB] rounded-lg flex items-center justify-center">
                 <MessageSquare className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold text-sm text-[#0F172A]">Unified Inbox</span>
@@ -239,7 +284,7 @@ export default function EmployeeOmnichannelInbox() {
               placeholder="Search by name, phone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0057B8]/20 focus:border-[#0057B8]"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
             />
           </div>
 
@@ -251,8 +296,8 @@ export default function EmployeeOmnichannelInbox() {
                 onClick={() => setActiveChannel(ch)}
                 className={`text-[10px] font-semibold px-2.5 py-1 rounded-full transition ${
                   activeChannel === ch
-                    ? 'bg-[#0057B8] text-white shadow-sm'
-                    : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500 hover:border-[#0057B8] hover:text-[#0057B8]'
+                    ? 'bg-[#2563EB] text-white shadow-sm'
+                    : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500 hover:border-[#2563EB] hover:text-[#2563EB]'
                 }`}
               >
                 {ch === 'all' ? 'All Channels' : CHANNEL_LABELS[ch] || ch}
@@ -269,7 +314,7 @@ export default function EmployeeOmnichannelInbox() {
               onClick={() => setActiveFilter(f.key)}
               className={`text-[10px] font-semibold px-3 py-2.5 whitespace-nowrap border-b-2 transition ${
                 activeFilter === f.key
-                  ? 'border-[#0057B8] text-[#0057B8]'
+                  ? 'border-[#2563EB] text-[#2563EB]'
                   : 'border-transparent text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -282,7 +327,7 @@ export default function EmployeeOmnichannelInbox() {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="p-8 text-center">
-              <div className="w-6 h-6 border-2 border-[#0057B8] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <div className="w-6 h-6 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               <p className="text-xs text-slate-400">Loading conversations...</p>
             </div>
           ) : conversations.length === 0 ? (
@@ -297,7 +342,7 @@ export default function EmployeeOmnichannelInbox() {
                 onClick={() => selectConversation(conv)}
                 className={`w-full text-left px-4 py-3 border-b border-[#E2E8F0] hover:bg-[#F8FAFC] transition-all ${
                   selectedConv?.id === conv.id
-                    ? 'bg-blue-50 border-l-2 border-l-[#0057B8]'
+                    ? 'bg-blue-50 border-l-2 border-l-[#2563EB]'
                     : 'border-l-2 border-l-transparent'
                 }`}
               >
@@ -310,12 +355,12 @@ export default function EmployeeOmnichannelInbox() {
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {conv.unreadCount > 0 && (
-                      <span className="min-w-[16px] h-4 bg-[#0057B8] text-white text-[9px] font-bold rounded-full px-1 flex items-center justify-center">
+                      <span className="min-w-[16px] h-4 bg-[#2563EB] text-white text-[9px] font-bold rounded-full px-1 flex items-center justify-center">
                         {conv.unreadCount > 9 ? '9+' : conv.unreadCount}
                       </span>
                     )}
                     {(conv.priority === 'urgent' || conv.priority === 'high') && (
-                      <AlertTriangle className="w-3 h-3 text-[#E8501A]" />
+                      <AlertTriangle className="w-3 h-3 text-[#F97316]" />
                     )}
                   </div>
                 </div>
@@ -343,7 +388,7 @@ export default function EmployeeOmnichannelInbox() {
             {/* Conversation header */}
             <div className="px-5 py-3.5 bg-white border-b border-[#E2E8F0] flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0057B8] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                   {(selectedConv.participantName || 'U')[0].toUpperCase()}
                 </div>
                 <div className="min-w-0">
@@ -422,10 +467,20 @@ export default function EmployeeOmnichannelInbox() {
                         )}
                         <div className={`px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
                           msg.direction === 'outbound'
-                            ? 'bg-[#0057B8] text-white rounded-br-none'
+                            ? 'bg-[#2563EB] text-white rounded-br-none'
                             : 'bg-white border border-[#E2E8F0] text-[#0F172A] rounded-bl-none shadow-sm'
                         }`}>
                           {msg.content}
+                          {msg.attachments?.map((attachment: any) => (
+                            <a
+                              key={attachment.id}
+                              href={`/api/crm/ucc/documents/${encodeURIComponent(attachment.id)}/download`}
+                              className="mt-2 flex items-center gap-2 rounded-lg bg-black/10 px-2 py-1.5 underline underline-offset-2"
+                            >
+                              <Paperclip className="w-3 h-3" />
+                              <span className="truncate">{attachment.fileName}</span>
+                            </a>
+                          ))}
                         </div>
                         <div className={`text-[9px] text-slate-400 ${msg.direction === 'outbound' ? 'text-right' : 'text-left'}`}>
                           {msg.senderName} • {new Date(msg.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -465,17 +520,49 @@ export default function EmployeeOmnichannelInbox() {
 
             {/* Reply Box */}
             <div className="p-4 bg-white border-t border-[#E2E8F0]">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                className="hidden"
+                onChange={(event) => {
+                  setSelectedFile(event.currentTarget.files?.[0] || null);
+                  event.currentTarget.value = '';
+                }}
+              />
+              {selectedConv.studentId && selectedConv.applications?.length > 0 && (
+                <select
+                  aria-label="Link the document to an application"
+                  value={selectedApplicationId}
+                  onChange={(event) => setSelectedApplicationId(event.target.value)}
+                  className="mb-2 max-w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[10px] text-slate-700"
+                >
+                  <option value="">Choose related application</option>
+                  {selectedConv.applications.map((application: any) => (
+                    <option key={application.id} value={application.id}>
+                      {application.isB2bConfidential ? '[B2B confidential] ' : ''}{application.applicationCode || application.id} · {application.universityName} · {application.courseName}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {selectedFile && (
+                <div className="mb-2 flex items-center justify-between gap-2 text-[10px] text-slate-600">
+                  <span className="truncate">Private attachment: {selectedFile.name}</span>
+                  <button type="button" onClick={() => setSelectedFile(null)} className="text-rose-600 hover:underline">Remove</button>
+                </div>
+              )}
+              {sendError && <p role="alert" className="mb-2 text-[10px] text-rose-600">{sendError}</p>}
               <div className="flex items-center gap-2 mb-2">
                 <button
                   onClick={() => setIsInternalNote(false)}
                   className={`text-[10px] font-semibold px-3 py-1 rounded-full transition ${
-                    !isInternalNote ? 'bg-[#0057B8] text-white' : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500'
+                    !isInternalNote ? 'bg-[#2563EB] text-white' : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500'
                   }`}
                 >
                   Reply to Customer
                 </button>
                 <button
-                  onClick={() => setIsInternalNote(true)}
+                  onClick={() => { setIsInternalNote(true); setSelectedFile(null); }}
                   className={`text-[10px] font-semibold px-3 py-1 rounded-full transition flex items-center gap-1 ${
                     isInternalNote ? 'bg-amber-500 text-white' : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500'
                   }`}
@@ -489,6 +576,16 @@ export default function EmployeeOmnichannelInbox() {
                 )}
               </div>
               <div className="flex gap-2">
+                <button
+                  type="button"
+                  aria-label="Attach private document"
+                  disabled={isInternalNote || selectedConv.channel !== 'whatsapp' || sending}
+                  title="Upload a private PDF/JPEG/PNG and send it via WhatsApp"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="h-10 w-10 self-end flex items-center justify-center rounded-xl border border-[#E2E8F0] text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+                >
+                  <Paperclip className="w-4 h-4" />
+                </button>
                 <textarea
                   rows={2}
                   placeholder={isInternalNote ? 'Add an internal staff note...' : 'Type your reply to the customer...'}
@@ -498,13 +595,13 @@ export default function EmployeeOmnichannelInbox() {
                   className={`flex-1 text-xs resize-none p-3 rounded-xl border focus:outline-none focus:ring-2 transition ${
                     isInternalNote
                       ? 'bg-amber-50 border-amber-200 focus:ring-amber-300 focus:border-amber-400'
-                      : 'bg-[#F8FAFC] border-[#E2E8F0] focus:ring-[#0057B8]/20 focus:border-[#0057B8]'
+                      : 'bg-[#F8FAFC] border-[#E2E8F0] focus:ring-[#2563EB]/20 focus:border-[#2563EB]'
                   }`}
                 />
                 <button
                   onClick={sendMessage}
-                  disabled={!messageInput.trim() || sending}
-                  className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[#0057B8] hover:bg-blue-700 disabled:opacity-40 text-white transition shadow-sm"
+                  disabled={(!messageInput.trim() && !selectedFile) || sending}
+                  className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[#2563EB] hover:bg-blue-700 disabled:opacity-40 text-white transition shadow-sm"
                 >
                   {sending ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -534,7 +631,7 @@ export default function EmployeeOmnichannelInbox() {
         <div className="w-64 flex-shrink-0 bg-white border-l border-[#E2E8F0] flex flex-col overflow-y-auto">
           {/* Contact card */}
           <div className="p-4 border-b border-[#E2E8F0] text-center">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0057B8] to-blue-400 mx-auto flex items-center justify-center text-white font-bold text-xl mb-2">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#2563EB] to-blue-400 mx-auto flex items-center justify-center text-white font-bold text-xl mb-2">
               {(selectedConv.participantName || 'U')[0].toUpperCase()}
             </div>
             <p className="font-bold text-sm text-[#0F172A]">{selectedConv.participantName}</p>
@@ -580,7 +677,7 @@ export default function EmployeeOmnichannelInbox() {
             {selectedConv.leadId && (
               <div>
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Lead ID</label>
-                <p className="mt-1 text-[#0057B8] font-mono text-[10px]">{selectedConv.leadId.substring(0, 16)}...</p>
+                <p className="mt-1 text-[#2563EB] font-mono text-[10px]">{selectedConv.leadId.substring(0, 16)}...</p>
               </div>
             )}
 
@@ -598,16 +695,21 @@ export default function EmployeeOmnichannelInbox() {
 
           {/* Actions */}
           <div className="p-4 space-y-2 border-t border-[#E2E8F0]">
-            <button className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button
+              disabled={selectedConv.channel !== 'whatsapp' || isInternalNote || sending}
+              title={selectedConv.channel === 'whatsapp' ? 'Choose a private PDF/JPEG/PNG to send with your reply' : 'Document sending is currently available only on WhatsApp'}
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition disabled:opacity-40"
+            >
               <Paperclip className="w-3 h-3" /> Upload Document
             </button>
-            <button className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Tag className="w-3 h-3" /> Add Tag
             </button>
-            <button className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
               <AlertTriangle className="w-3 h-3" /> Escalate
             </button>
-            <button className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-[#E2E8F0] text-slate-500 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-[#E2E8F0] text-slate-500 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Clock className="w-3 h-3" /> Snooze
             </button>
           </div>

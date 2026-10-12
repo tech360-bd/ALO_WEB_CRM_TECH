@@ -62,8 +62,8 @@ export default function DataManagerDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Upload className="w-4 h-4" /> Import CSV</Button>
-          <Button variant="brand" size="sm"><Plus className="w-4 h-4" /> Add Entry</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Upload className="w-4 h-4" /> Import CSV</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Plus className="w-4 h-4" /> Add Entry</Button>
         </div>
       </div>
 
@@ -123,8 +123,8 @@ export default function DataManagerDashboard() {
                         <TableCell className="text-sm text-alo-text-muted text-right">{a.date}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex gap-1 justify-end">
-                            <Button variant="brand" size="sm" className="text-[10px] h-6 px-2">Approve</Button>
-                            <Button variant="outline" size="sm" className="text-[10px] h-6 px-2">Review</Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[10px] h-6 px-2">Approve</Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[10px] h-6 px-2">Review</Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -209,10 +209,10 @@ export default function DataManagerDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 gap-2">
-                <Button variant="outline" className="w-full justify-start text-sm"><GraduationCap className="w-4 h-4" /> Add University</Button>
-                <Button variant="outline" className="w-full justify-start text-sm"><BookOpen className="w-4 h-4" /> Add Course</Button>
-                <Button variant="outline" className="w-full justify-start text-sm"><Award className="w-4 h-4" /> Add Scholarship</Button>
-                <Button variant="brand" className="w-full justify-start text-sm"><Upload className="w-4 h-4" /> Bulk Import CSV</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm"><GraduationCap className="w-4 h-4" /> Add University</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm"><BookOpen className="w-4 h-4" /> Add Course</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start text-sm"><Award className="w-4 h-4" /> Add Scholarship</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" className="w-full justify-start text-sm"><Upload className="w-4 h-4" /> Bulk Import CSV</Button>
               </div>
             </CardContent>
           </Card>

@@ -1,352 +1,57 @@
-import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { db } from '@/lib/db';
+import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+import { getRequestIp, issueEmailOtp } from '@/lib/auth/email-otp';
+import { allocateIdentifier } from '@/lib/identity/student-id';
+import { createRegistrationLead } from '@/lib/crm/registration-lead';
 
-const BCRYPT_ROUNDS = 12;
-
-function generateStudentId(): string {
-  const year = new Date().getFullYear().toString().slice(-2);
-  const random = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, "0");
-  return `ALO-S-${year}${random}`;
-}
-
-function generatePartnerId(): string {
-  const year = new Date().getFullYear().toString().slice(-2);
-  const random = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, "0");
-  return `ALO-P-${year}${random}`;
-}
-
-function isValidEmail(email: string): boolean {
-  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
-}
+const schema = z.object({
+  name: z.string().trim().min(1).max(191), email: z.string().trim().max(191).pipe(z.email()).transform(s => s.toLowerCase()),
+  password: z.string().min(8).max(200), phone: z.string().trim().max(40).optional(),
+  portalType: z.enum(['student', 'partner']),
+}).strict();
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { name, email, phone, password, portalType } = body;
-
-    if (!name || !email || !password || !portalType) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Name, email, password, and portalType are required.",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate email format on server side
-    if (!isValidEmail(email)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Please provide a valid email address.",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Employees cannot self-register
-    if (portalType === "employee") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Employee registration is not allowed. Contact admin.",
-        },
-        { status: 403 }
-      );
-    }
-
-    const normalizedEmail = email.toLowerCase().trim();
-
-    // Check if email already exists
-    const existingUser = await db.portalUser.findUnique({
-      where: { email: normalizedEmail },
-    });
-
-    if (existingUser) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "An account with this email already exists.",
-        },
-        { status: 409 }
-      );
-    }
-
-    // Determine user type and status based on portal type
-    let userType: string;
-    let status: string;
-
-    if (portalType === "student") {
-      userType = "STUDENT";
-      status = "active";
-    } else if (portalType === "partner") {
-      userType = "PARTNER";
-      status = "pending";
-    } else {
-      return NextResponse.json(
-        { success: false, error: "Invalid portal type." },
-        { status: 400 }
-      );
-    }
-
-    // Hash the password with bcrypt before storing
-    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
-
-    // Create the portal user
-    const user = await db.portalUser.create({
-      data: {
-        email: normalizedEmail,
-        name: name.trim(),
-        phone: phone?.trim() || "",
-        passwordHash,
-        userType,
-        status,
-        firstLoginRequired: true,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        phone: true,
-        userType: true,
-        status: true,
-        firstLoginRequired: true,
-      },
-    });
-
-    // Create the corresponding profile
-    if (portalType === "student") {
-      // Generate a unique student ID with retry on collision
-      let studentId = generateStudentId();
-      let isUnique = false;
-      let attempts = 0;
-      while (!isUnique && attempts < 10) {
-        const existing = await db.portalStudentProfile.findUnique({
-          where: { studentId },
-        });
-        if (!existing) {
-          isUnique = true;
-        } else {
-          studentId = generateStudentId();
-          attempts++;
-        }
+    const raw = await request.json().catch(() => null);
+    if (raw?.portalType === 'employee') return NextResponse.json({ success: false, error: 'Employee registration is not allowed. Contact admin.' }, { status: 403 });
+    const parsed = schema.safeParse(raw);
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Valid name, email, password (8–200 characters), phone and portal type are required.' }, { status: 400 });
+    const p = parsed.data;
+    const passwordHash = await bcrypt.hash(p.password, 12);
+    const result = await db.$transaction(async tx => {
+      if (await tx.portalUser.findUnique({ where: { email: p.email } }) || await tx.user.findUnique({ where: { email: p.email } })) {
+        throw Object.assign(new Error('Duplicate account'), { code: 'EMAIL_EXISTS' });
       }
-
-      await db.portalStudentProfile.create({
-        data: {
-          userId: user.id,
-          studentId,
-          fullName: name.trim(),
-        },
-      });
-
-      // ─── CRM INTEGRATION: create the corresponding CRM Lead record and
-      // run it through the existing lead-scoring / counselor auto-assignment
-      // pipeline so that every self-registered student is represented in the
-      // CRM (Lead table) and gets a counselor the same way leads created via
-      // /api/leads do. This uses the SAME automation functions as the rest
-      // of the CRM (no new/duplicate assignment logic) so behaviour stays
-      // consistent across every lead-entry point.
-      //
-      // This block must never fail (or block) account creation itself — the
-      // portal account has already been created successfully above. Any
-      // failure here is recorded (never silently ignored, never a random
-      // counselor fallback) via console.error + a CrmAuditLog entry so it is
-      // discoverable and repairable.
-      try {
-        const { findDuplicateLead, scoreLead, autoAssignCounselor, createFollowUpTask } =
-          await import("@/lib/crm-automation");
-
-        const duplicateLeadId = await findDuplicateLead({
-          email: normalizedEmail,
-          phone: phone?.trim() || undefined,
-        });
-
-        if (duplicateLeadId) {
-          // A lead already exists for this email/phone (e.g. came in earlier
-          // via the website inquiry form). Link it to the new student
-          // instead of creating a second, duplicate Lead record.
-          await db.lead.update({
-            where: { id: duplicateLeadId },
-            data: { studentId },
-          }).catch((linkErr) => {
-            console.error("[registration->crm] failed to link existing lead to new student", {
-              studentId,
-              duplicateLeadId,
-              error: linkErr instanceof Error ? linkErr.message : String(linkErr),
-            });
-          });
-
-          const existingLead = await db.lead.findUnique({ where: { id: duplicateLeadId } });
-          if (existingLead && !existingLead.counselorId) {
-            const assignment = await autoAssignCounselor(duplicateLeadId);
-            if (assignment.counselorId) {
-              const counselor = await db.user.findUnique({ where: { id: assignment.counselorId } });
-              await db.portalStudentProfile.update({
-                where: { studentId },
-                data: {
-                  counselorId: assignment.counselorId,
-                  counselorName: counselor?.name || "",
-                  journeyStage: "assigned",
-                },
-              });
-            } else {
-              await db.crmAuditLog.create({
-                data: {
-                  actorUserId: "system",
-                  actorRole: "SYSTEM",
-                  action: "COUNSELOR_AUTO_ASSIGN_FAILED",
-                  targetCollection: "Lead",
-                  targetId: duplicateLeadId,
-                  afterData: JSON.stringify({ studentId, reason: assignment.reason }),
-                },
-              }).catch(() => {});
-            }
-          }
-        } else {
-          const leadCount = await db.lead.count();
-          const lead = await db.lead.create({
-            data: {
-              leadId: `ALO-L-${(10001 + leadCount + 1).toString()}`,
-              fullName: name.trim(),
-              email: normalizedEmail,
-              phone: phone?.trim() || "",
-              source: "STUDENT_PORTAL_REGISTRATION",
-              sourceDetail: "Self-registered via public student registration form",
-              status: "NEW",
-              studentId,
-            },
-          });
-
-          await db.timelineEvent.create({
-            data: {
-              studentId,
-              leadId: lead.id,
-              stage: "lead",
-              type: "LEAD_CREATED",
-              title: "Student self-registered",
-              description: "Lead auto-created from student portal registration",
-            },
-          }).catch(() => {});
-
-          await scoreLead(lead.id).catch(() => {});
-          const assignment = await autoAssignCounselor(lead.id);
-          await createFollowUpTask(lead.id, 1).catch(() => {});
-
-          if (assignment.counselorId) {
-            const counselor = await db.user.findUnique({ where: { id: assignment.counselorId } });
-            await db.portalStudentProfile.update({
-              where: { studentId },
-              data: {
-                counselorId: assignment.counselorId,
-                counselorName: counselor?.name || "",
-                journeyStage: "assigned",
-              },
-            });
-          } else {
-            // Explicitly record the auto-assignment failure. Do NOT fall
-            // back to assigning a random counselor — the student remains
-            // unassigned (journeyStage stays "lead_created") until an
-            // admin/counselor is available and assignment can be retried.
-            console.error("[registration->crm] counselor auto-assignment failed", {
-              studentId,
-              leadId: lead.id,
-              reason: assignment.reason,
-            });
-            await db.crmAuditLog.create({
-              data: {
-                actorUserId: "system",
-                actorRole: "SYSTEM",
-                action: "COUNSELOR_AUTO_ASSIGN_FAILED",
-                targetCollection: "Lead",
-                targetId: lead.id,
-                afterData: JSON.stringify({ studentId, reason: assignment.reason }),
-              },
-            }).catch(() => {});
-          }
-
-          await db.crmAuditLog.create({
-            data: {
-              actorUserId: "system",
-              actorRole: "SYSTEM",
-              action: "LEAD_CREATED_FROM_REGISTRATION",
-              targetCollection: "Lead",
-              targetId: lead.id,
-              afterData: JSON.stringify({ studentId, email: normalizedEmail, counselorAssigned: !!assignment.counselorId }),
-            },
-          }).catch(() => {});
-        }
-      } catch (crmError) {
-        // Never block or fail account creation because of a CRM-side error.
-        // Record it clearly so it can be found and repaired.
-        console.error("[registration->crm] lead/assignment pipeline failed", {
-          studentId,
-          error: crmError instanceof Error ? crmError.message : String(crmError),
-        });
-        await db.crmAuditLog.create({
-          data: {
-            actorUserId: "system",
-            actorRole: "SYSTEM",
-            action: "REGISTRATION_CRM_PIPELINE_ERROR",
-            targetCollection: "PortalStudentProfile",
-            targetId: studentId,
-            afterData: JSON.stringify({
-              error: crmError instanceof Error ? crmError.message : String(crmError),
-            }),
-          },
-        }).catch(() => {});
+      const user = await tx.portalUser.create({ data: {
+        name: p.name, email: p.email, phone: p.phone || '', passwordHash,
+        userType: p.portalType === 'student' ? 'STUDENT' : 'PARTNER',
+        status: p.portalType === 'student' ? 'pending_verification' : 'pending', firstLoginRequired: true,
+      }, select: { id: true, name: true, email: true, phone: true, userType: true, status: true, firstLoginRequired: true } });
+      if (p.portalType === 'student') {
+        const studentId = await allocateIdentifier(tx, 'AE');
+        const profile = await tx.portalStudentProfile.create({ data: { userId: user.id, studentId, fullName: p.name } });
+        const crm = await createRegistrationLead(tx, { domain: 'portal', userId: user.id, studentId, name: p.name, email: p.email, phone: p.phone || '' });
+        // Lead counselor IDs are User IDs. Do NOT write them into the Portal
+        // profile's untyped counselor field as if they were PortalUser IDs.
+        await tx.portalNotification.create({ data: { userId: user.id, studentProfileId: profile.id,
+          title: 'Registration received', message: 'Verify your email before signing in. Your enquiry is recorded; portal counselor mapping requires staff review.', type: 'info' } });
+        return { user, leadId: crm.leadId, counselorAssigned: Boolean(crm.counselorId), portalCounselorMapped: false };
       }
-    } else if (portalType === "partner") {
-      // Generate a unique partner ID with retry on collision
-      let partnerId = generatePartnerId();
-      let isUnique = false;
-      let attempts = 0;
-      while (!isUnique && attempts < 10) {
-        const existing = await db.partnerProfile.findUnique({
-          where: { partnerId },
-        });
-        if (!existing) {
-          isUnique = true;
-        } else {
-          partnerId = generatePartnerId();
-          attempts++;
-        }
-      }
-
-      await db.partnerProfile.create({
-        data: {
-          userId: user.id,
-          partnerId,
-          contactPerson: name.trim(),
-        },
-      });
-    }
-
-    const message =
-      portalType === "partner"
-        ? "Account created successfully. Your account is pending admin approval."
-        : "Account created successfully";
-
-    return NextResponse.json(
-      {
-        success: true,
-        user,
-        message,
-      },
-      { status: 201 }
-    );
+      await tx.partnerProfile.create({ data: { userId: user.id, partnerId: await allocateIdentifier(tx, 'AEP'), contactPerson: p.name } });
+      return { user };
+    }, { timeout: 20000 });
+    const issued = await issueEmailOtp({ userId: result.user.id, email: p.email, ipAddress: getRequestIp(request) }).catch(() => ({ ok: false as const, reason: 'delivery_failed' as const }));
+    if (!issued.ok) return NextResponse.json({ success: false, accountCreated: true,
+      error: issued.reason === 'rate_limited' ? 'Verification email limit reached. Try later.' : 'Account and enquiry recorded but verification email could not be delivered. Retry verification later.',
+    }, { status: issued.reason === 'rate_limited' ? 429 : 503 });
+    return NextResponse.json({ success: true, requireVerification: true, ...result,
+      message: p.portalType === 'partner' ? 'Verify your email; partner access requires separate staff approval.' : 'Verify your email before signing in. Your enquiry is recorded.',
+    }, { status: 201 });
   } catch (error) {
-    console.error("Registration error:", error);
-    return NextResponse.json(
-      { success: false, error: "Internal server error." },
-      { status: 500 }
-    );
+    const code = (error as { code?: string })?.code;
+    if (['EMAIL_EXISTS', 'P2002'].includes(code || '')) return NextResponse.json({ success: false, error: 'An account with this email already exists or registration conflicted. Sign in or retry.' }, { status: 409 });
+    return NextResponse.json({ success: false, error: 'Registration could not be completed. No account/enquiry transaction committed.' }, { status: 503 });
   }
 }

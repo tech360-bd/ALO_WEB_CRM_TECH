@@ -423,7 +423,7 @@ export default function MarketingDashboardView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#F37021]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#F97316]" />
       </div>
     );
   }
@@ -434,7 +434,7 @@ export default function MarketingDashboardView() {
         <h3 className="font-semibold text-[#0F172A]">Dashboard data unavailable</h3>
         <p className="text-sm text-gray-500 max-w-md">{error || 'No marketing data returned from /api/marketing/dashboard. This view only displays database-backed metrics — no fabricated statistics are shown.'}</p>
         <p className="text-xs text-gray-400">Data source: MarketingLead, MarketingCampaign, MarketingApproval, MarketingCalendar, MarketingAgentJob via Prisma • Period: today • Sync: live</p>
-        <Button onClick={() => location.reload()} className="bg-[#F37021] hover:bg-[#d85f1b] text-white mt-2">Retry</Button>
+        <Button onClick={() => location.reload()} className="bg-[#F97316] hover:bg-[#d85f1b] text-white mt-2">Retry</Button>
       </div>
     );
   }
@@ -706,7 +706,7 @@ export default function MarketingDashboardView() {
                 <Target className="h-4 w-4 text-alo-brand" />
                 Recent Leads
               </CardTitle>
-              <Button variant="outline" size="sm" className="text-xs h-7">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-xs h-7">
                 View All
               </Button>
             </div>
@@ -796,10 +796,10 @@ export default function MarketingDashboardView() {
                     <span className="text-xs text-alo-text-muted">{item.scheduledFor}</span>
                   </div>
                   <div className="flex gap-2 pt-1">
-                    <Button size="sm" className="h-7 text-xs bg-alo-brand hover:bg-alo-brand/90">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 text-xs bg-alo-brand hover:bg-alo-brand/90">
                       Approve
                     </Button>
-                    <Button size="sm" variant="outline" className="h-7 text-xs">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-xs">
                       Review
                     </Button>
                   </div>
@@ -817,19 +817,19 @@ export default function MarketingDashboardView() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 pt-0">
-              <Button className="w-full justify-start gap-2 bg-alo-brand hover:bg-alo-brand/90 h-9">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full justify-start gap-2 bg-alo-brand hover:bg-alo-brand/90 h-9">
                 <Plus className="h-4 w-4" />
                 New Campaign
               </Button>
-              <Button variant="outline" className="w-full justify-start gap-2 h-9">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 h-9">
                 <MessageSquare className="h-4 w-4" />
                 Create Post
               </Button>
-              <Button variant="outline" className="w-full justify-start gap-2 h-9">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 h-9">
                 <Send className="h-4 w-4" />
                 Send WhatsApp Broadcast
               </Button>
-              <Button variant="outline" className="w-full justify-start gap-2 h-9">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 h-9">
                 <Calendar className="h-4 w-4" />
                 View Content Calendar
               </Button>

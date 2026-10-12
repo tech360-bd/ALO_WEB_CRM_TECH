@@ -132,7 +132,7 @@ export default function UnifiedPortalShell({ role, title, subtitle, primaryActio
       <header className="h-14 bg-white border-b border-slate-200 flex items-center gap-3 px-4 sticky top-0 z-30">
         <Button variant="ghost" size="icon" className="hidden lg:flex h-8 w-8" onClick={() => setCollapsed(!collapsed)}><Menu className="w-4 h-4" /></Button>
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild><Button variant="ghost" size="icon" className="lg:hidden h-8 w-8"><Menu className="w-4 h-4" /></Button></SheetTrigger>
+          <SheetTrigger asChild><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden h-8 w-8"><Menu className="w-4 h-4" /></Button></SheetTrigger>
           <SheetContent side="left" className="p-0 w-72">
             <SidebarContent role={role} collapsed={collapsed} navGroups={navGroups} currentView={currentView} user={user} setView={setView} setMobileOpen={setMobileOpen} logout={logout} />
           </SheetContent>
@@ -159,7 +159,7 @@ export default function UnifiedPortalShell({ role, title, subtitle, primaryActio
               {primaryAction.icon && <primaryAction.icon className="w-4 h-4 mr-1" />}{primaryAction.label}
             </Button>
           )}
-          <Button variant="ghost" size="icon" className="h-8 w-8 relative"><Bell className="w-4 h-4" /><span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" /></Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8 relative"><Bell className="w-4 h-4" /><span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" /></Button>
           <Avatar className="w-8 h-8 hidden sm:flex"><AvatarFallback>{user?.name?.[0] || 'U'}</AvatarFallback></Avatar>
         </div>
       </header>

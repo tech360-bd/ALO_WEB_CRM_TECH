@@ -90,7 +90,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
     return (
       <div className="min-h-screen bg-[#FFFFFF] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin text-[#0057B8] mx-auto" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#2563EB] mx-auto" />
           <p className="text-sm text-[#0F172A]">Verifying Application Manager access...</p>
         </div>
       </div>
@@ -107,7 +107,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
           <h2 className="text-lg font-semibold text-[#0F172A]">Access Restricted</h2>
           <p className="text-sm text-gray-600">{authError}</p>
           <div className="flex gap-3 justify-center pt-2">
-            <Link href="/login"><Button className="bg-[#0057B8] hover:bg-[#004494] text-white">Login</Button></Link>
+            <Link href="/login"><Button className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white">Login</Button></Link>
             <Link href="/"><Button variant="outline" className="border-[#E2E8F0]">Home</Button></Link>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
       <aside className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-[280px] bg-[#F8FAFC] border-r border-[#E2E8F0] flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="p-5 border-b border-[#E2E8F0] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#F97316] flex items-center justify-center">
               <FileText className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -144,14 +144,14 @@ export default function ApplicationManagerLayout({ children }: { children: React
             const count = item.countKey ? (metrics?.[item.countKey] ?? null) : null;
             return (
               <Link key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}>
-                <div className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all ${isActive ? 'bg-[#0057B8] text-white shadow-sm' : 'text-gray-700 hover:bg-white hover:shadow-sm border border-transparent hover:border-[#E2E8F0]'}`}>
+                <div className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all ${isActive ? 'bg-[#2563EB] text-white shadow-sm' : 'text-gray-700 hover:bg-white hover:shadow-sm border border-transparent hover:border-[#E2E8F0]'}`}>
                   <div className="flex items-center gap-2.5">
                     <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-gray-500'} ${item.confidential ? 'text-rose-500' : ''}`} />
                     <span className="font-medium truncate">{item.label}</span>
                     {item.confidential && <Lock className="w-3 h-3 text-rose-400" />}
                   </div>
                   {count !== null && count > 0 && (
-                    <Badge className={`${isActive ? 'bg-white/20 text-white border-white/20' : 'bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20'} text-[10px] px-1.5 py-0`}>{count}</Badge>
+                    <Badge className={`${isActive ? 'bg-white/20 text-white border-white/20' : 'bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20'} text-[10px] px-1.5 py-0`}>{count}</Badge>
                   )}
                 </div>
               </Link>
@@ -161,7 +161,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
 
         <div className="p-4 border-t border-[#E2E8F0] space-y-3">
           <div className="bg-white border border-[#E2E8F0] rounded-xl p-3 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#0057B8] flex items-center justify-center text-white text-xs font-bold">{user?.name?.[0] || 'A'}</div>
+            <div className="w-8 h-8 rounded-full bg-[#2563EB] flex items-center justify-center text-white text-xs font-bold">{user?.name?.[0] || 'A'}</div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold truncate">{user?.name || 'Application Manager'}</p>
               <p className="text-[11px] text-gray-500 truncate">{user?.email || ''}</p>

@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireMonitoringViewer } from "@/lib/university-monitoring-auth";
 
 // GET /api/university-monitoring/dashboard
 // Returns the Super Admin monitoring dashboard summary.
 // Public read (data is operational, not student PII) — RBAC enforced at the view layer.
 export async function GET(req: NextRequest) {
+  // Staff-only: this endpoint exposes unapproved, unverified detected changes.
+  const guard = await requireMonitoringViewer(req);
+  if (!guard.ok) return guard.response;
+
   const period = req.nextUrl.searchParams.get("period") || "30d";
   const since = new Date();
   if (period === "7d") since.setDate(since.getDate() - 7);

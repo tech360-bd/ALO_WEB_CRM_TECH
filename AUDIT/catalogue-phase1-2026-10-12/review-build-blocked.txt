@@ -1,0 +1,8 @@
+Build prerequisite check 2026-10-12T06:17:09Z
+npm run build = assert-node22 && prisma generate && db:verify-client && next build --webpack && prepare-standalone
+v22.22.3
+--- require.resolve('.prisma/client/default') from @prisma/client:
+MISSING: MODULE_NOT_FOUND
+--- ls node_modules/.prisma:
+ls: cannot access 'node_modules/.prisma': No such file or directory
+Decision: build NOT run. 'prisma generate' needs engine downloads from binaries.prisma.sh, which is outside the sandbox egress allow-list, and the user constraint forbids forcing Prisma generation or using unofficial binaries. next build cannot succeed without the generated client (same import error as the 5 unit / 3 integration files). Status: BLOCKED (operator: someone with an environment that can run 'prisma generate' from the committed lockfile, e.g. CI).

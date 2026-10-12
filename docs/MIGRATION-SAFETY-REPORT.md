@@ -1,8 +1,42 @@
 # Migration safety review — 2026-10-01
 
-Status: BLOCKED. Static source review only; no database connection, migration or seed executed. MySQL provider. Applied migration history, engine/version, collation, orphan records and backup restore remain unverified.
+> **UPDATE (2026-10-01, re-baseline):** the migration chain was REPLACED today.
+> A column-level simulation of the legacy chain proved it could never be applied
+> to a fresh database: its first migration ALTERed tables before creation, it
+> contained 13 duplicate `ADD COLUMN` statements, and 76 schema models / 404
+> scalar columns had no `CREATE` in any migration. The legacy chain is preserved
+> verbatim in `prisma/legacy-migrations-20261001/` (forensic history, never
+> executed). The active chain is now:
+>
+> | Migration | Content | Generated |
+> |---|---|---|
+> | `0_init` | Full 498-model schema (480 CREATE TABLE incl. `@@map` names + implicit m2m) | `prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script` |
+> | `20261001000001_hrm_holiday_baseline` | The 2 reference holiday rows previously seeded by the HRMS migration | hand-carried, idempotent on fresh DBs |
+> | `20261001000002_accounting_ledger` | ChartOfAccount, FiscalPeriod, JournalEntry, JournalLine | `prisma migrate diff --from-schema-datamodel <prev> --to-schema-datamodel` |
+> | `20261001000003_erp_procurement_assets_models` | Vendor, PurchaseRequest/Line, PurchaseOrder/Line, VendorInvoice, FixedAsset, AssetAssignment, AssetMaintenance, DepreciationEntry, AiModel, AiModelVersion, AiModelEvaluation, AiModelDeployment, AiModelDepartmentAssignment | `prisma migrate diff --from-schema-datamodel <prev> --to-schema-datamodel` |
+>
+> **Guards now in place**
+> * `tests/unit/migration-order.test.ts` statically replays the active chain and
+>   fails CI on any ALTER/FOREIGN KEY before table creation, duplicate columns,
+>   or drift between the chain and `schema.prisma` scalar fields.
+> * The CI `mysql-integration` job applies the chain to a REAL fresh MySQL 8.4
+>   service, asserts `migrate status` reports up to date, and runs the
+>   authoritative `prisma migrate diff --from-migrations --to-schema-datamodel`
+>   check — the build fails if the diff is non-empty.
+>
+> **Baselining an existing database** (only if one is ever confirmed): take and
+>   verify a backup, run `prisma migrate diff --from-url <DATABASE_URL>
+>   --to-schema-datamodel prisma/schema.prisma --script` and reconcile any
+>   output, then `prisma migrate resolve --applied 0_init` (and
+>   `20261001000001_hrm_holiday_baseline` if the holiday rows already exist).
+>   NEVER `prisma migrate reset` on a database with data.
+>
+> The historical review below is retained as evidence of what was found and why
+> the re-baseline was necessary.
 
-## Ordered migration chain
+Status (historical baseline of this report): BLOCKED. Static source review only; no database connection, migration or seed executed. MySQL provider. Applied migration history, engine/version, collation, orphan records and backup restore remain unverified.
+
+## Ordered migration chain (LEGACY — pre re-baseline, preserved in prisma/legacy-migrations-20261001/)
 
 - `20250915000000_hrms_enterprise`: 13 CREATE TABLE; 81 ALTER TABLE statements.
 - `20260731000000_init_mysql`: 212 CREATE TABLE; 52 ALTER TABLE statements.

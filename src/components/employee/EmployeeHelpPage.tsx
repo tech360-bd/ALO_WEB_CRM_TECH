@@ -64,7 +64,7 @@ export default function EmployeeHelpPage() {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="brand" size="sm"><Send className="w-4 h-4" /> Submit Ticket</Button>
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Send className="w-4 h-4" /> Submit Ticket</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Submit Support Ticket</DialogTitle></DialogHeader>

@@ -3,6 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
+// HISTORICAL — PERMANENTLY DISABLED (2026-10-12 safety remediation).
+console.error('[generate-final-packages.ts] DISABLED: historical packager that writes generated catalogue CSVs into docs/import-templates/ and data/, zips them with the whole project, and copies the zips into data/. Use the reviewed packaging scripts instead. No files or database rows were changed.');
+process.exit(1);
+
 const db = new PrismaClient();
 
 // Helper to escape CSV values

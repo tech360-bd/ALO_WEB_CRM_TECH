@@ -1,3 +1,5 @@
+const allocateMock = vi.hoisted(() => vi.fn(async () => 'AE-202600001'));
+vi.mock('@/lib/identity/student-id', () => ({ allocateIdentifierCommitted: allocateMock }));
 import { describe, it, expect, vi } from 'vitest';
 
 // Mock db to avoid PrismaClient init failure in CI (no binary download)
@@ -79,13 +81,11 @@ describe('Consolidated WhatsApp Webhook Handler — lossless', () => {
     expect(detectPriority('GENERAL', 'hello')).toBe('normal');
   });
 
-  it('generateStudentId formats AE-YYYYNNNN', async () => {
-    const fakeDb = {
-      student: { findFirst: async () => ({ studentId: `AE-${new Date().getFullYear()}0005` }), count: async () => 5 },
-      portalStudentProfile: { findFirst: async () => null },
-    };
-    const id = await generateStudentId(fakeDb);
-    expect(id).toMatch(/^AE-\d{4}\d{4}$/);
+  it('generateStudentId delegates to the sequence allocator and returns AE-YYYYNNNNN', async () => {
+    allocateMock.mockClear();
+    const id = await generateStudentId({});
+    expect(allocateMock).toHaveBeenCalledWith('AE');
+    expect(id).toMatch(/^AE-\d{4}\d{5}$/);
   });
 
   it('re-exports number-pool and AI helpers', async () => {

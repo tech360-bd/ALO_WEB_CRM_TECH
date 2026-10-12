@@ -2,8 +2,7 @@ import { pickEditableContentFields } from "@/lib/content-validation";
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,7 +12,7 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -41,9 +40,9 @@ export async function PATCH(
       if (clash) return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
     }
 
-    const updated = await db.resourceCategory.update({ where: { id }, data: patch });
-
-    await contentAuditLog.create({
+    const updated = await db.$transaction(async tx => {
+      const updated = await tx.resourceCategory.update({ where: { id }, data: patch });
+      await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CATEGORY_UPDATE",
@@ -51,7 +50,9 @@ export async function PATCH(
         resourceId: id,
         details: JSON.stringify({ changes: Object.keys(patch) }),
       },
-    }).catch(() => {});
+    }, tx);
+      return updated;
+    });
 
     return NextResponse.json({ category: updated });
   } catch (err: any) {
@@ -66,7 +67,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -78,51 +79,12 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    const force = req.nextUrl.searchParams.get("force") === "1";
-    if (force && role !== "SUPER_ADMIN") {
-      return NextResponse.json({ error: "Only SUPER_ADMIN may force-reassign resources" }, { status: 403 });
-    }
-    const existing = await db.resourceCategory.findUnique({
-      where: { id },
-      include: { _count: { select: { resources: true } } },
+    const existing = await db.resourceCategory.findUnique({ where: { id } });
+    if (!existing) return NextResponse.json({ error: "Category not found" }, { status: 404 });
+    await db.$transaction(async tx => {
+      await tx.resourceCategory.update({ where: { id }, data: { status: "ARCHIVED" } });
+      await contentAuditLog.create({ data: { userId, action: "RESOURCE_CATEGORY_ARCHIVE", resource: "ResourceCategory", resourceId: id, details: { slug: existing.slug } } }, tx);
     });
-    if (!existing) {
-      return NextResponse.json({ error: "Category not found" }, { status: 404 });
-    }
-
-    if (existing._count.resources > 0 && !force) {
-      return NextResponse.json(
-        {
-          error: `Category has ${existing._count.resources} resources. Reassign them first or pass ?force=1 to reassign to 'blogs' fallback.`,
-        },
-        { status: 409 }
-      );
-    }
-
-    if (existing._count.resources > 0 && force) {
-      // Reassign to "blogs" category (assumed to always exist)
-      const fallback = await db.resourceCategory.findUnique({ where: { slug: "blogs" } });
-      const fallbackId = fallback?.id;
-      if (!fallbackId) {
-        return NextResponse.json({ error: "Fallback category 'blogs' not found" }, { status: 500 });
-      }
-      await db.resource.updateMany({
-        where: { categoryId: id },
-        data: { categoryId: fallbackId },
-      });
-    }
-
-    await db.resourceCategory.delete({ where: { id } });
-
-    await contentAuditLog.create({
-      data: {
-        userId,
-        action: "RESOURCE_CATEGORY_DELETE",
-        resource: "ResourceCategory",
-        resourceId: id,
-        details: JSON.stringify({ slug: existing.slug, force, resourcesReassigned: existing._count.resources }),
-      },
-    }).catch(() => {});
 
     return NextResponse.json({ success: true, id });
   } catch (err: any) {

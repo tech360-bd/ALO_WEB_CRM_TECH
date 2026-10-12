@@ -5,14 +5,49 @@
 //        DEPARTMENT_MANAGER, ADMIN, SUPER_ADMIN
 // ============================================================
 
+import { outboundReplyPolicyBlock } from '@/lib/inbox/outbound-reply-policy';
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, logAuditAction } from '@/lib/auth-middleware';
+import { sendWhatsAppMessage, sendWhatsAppPrivateMedia } from '@/lib/whatsapp-cloud-api';
+import { readPrivateFile } from '@/lib/storage/private-file-store';
+import { canAccessUccConversation, canAccessUccDocumentConversation, canUseUccCommunication, canUseUccDocuments, canViewUccB2B } from '@/lib/ucc/document-access';
+import { canViewUccConversationB2B } from '@/lib/ucc/conversation-visibility';
 
 const ALLOWED_ROLES = [
-  'SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'MARKETING_MANAGER',
-  'BRANCH_MANAGER', 'DEPARTMENT_MANAGER', 'SUPPORT', 'VISA_OFFICER',
+  'SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'APPLICATION_TEAM', 'APPLICATION_MANAGER',
+  'APPLICATION_OFFICER', 'DOCUMENT_OFFICER', 'BRANCH_MANAGER', 'DEPARTMENT_MANAGER',
+  'SUPPORT', 'SUPPORT_STAFF', 'FRONT_DESK', 'VISA_OFFICER', 'VISA_INTERVIEW_OFFICER',
 ];
+
+function privateStorageMetadata(value: string) {
+  try {
+    const parsed = JSON.parse(value || '{}');
+    return {
+      storagePath: typeof parsed?.storagePath === 'string' ? parsed.storagePath : '',
+      fileHash: typeof parsed?.fileHash === 'string' ? parsed.fileHash : '',
+    };
+  } catch {
+    return { storagePath: '', fileHash: '' };
+  }
+}
+
+async function latestProviderStatus(providerMessageId: string | null | undefined) {
+  if (!providerMessageId) return null;
+  try {
+    const record = await db.whatsAppMessageStatus.findUnique({
+      where: { messageId: providerMessageId },
+      select: { status: true, statusTimestamp: true, errorMessage: true },
+    });
+    const status = String(record?.status || '').toLowerCase();
+    if (!record || !['sent', 'delivered', 'read', 'failed'].includes(status)) return null;
+    return { status, statusTimestamp: record.statusTimestamp, errorMessage: record.errorMessage };
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(
   request: Request,
@@ -21,9 +56,10 @@ export async function POST(
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (!mutationOriginAllowed(request, auth)) return NextResponse.json({success:false,error:"Same-origin request required."},{status:403});
 
-    const primaryRole = auth.roles?.[0] || auth.userType || '';
-    if (!ALLOWED_ROLES.includes(primaryRole)) {
+    const normalizedRoles = new Set([auth.userType, ...auth.roles].map((role) => role.toUpperCase()));
+    if (!canUseUccCommunication(auth) || !ALLOWED_ROLES.some((role) => normalizedRoles.has(role))) {
       return NextResponse.json(
         { success: false, error: 'Forbidden — insufficient role to reply to conversations.' },
         { status: 403 }
@@ -31,23 +67,34 @@ export async function POST(
     }
 
     const { id } = await params;
-    const body = await request.json();
-    const {
-      content,
-      messageType = 'text',
-      isInternalNote = false,
-      aiGenerated = false,
-      aiApproved = false,
-    } = body as {
-      content: string;
-      messageType?: string;
-      isInternalNote?: boolean;
-      aiGenerated?: boolean;
-      aiApproved?: boolean;
-    };
-
-    if (!content?.trim()) {
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({ success: false, error: 'A valid reply payload is required.' }, { status: 400 });
+    }
+    const content = typeof body.content === 'string' ? body.content.trim() : '';
+    const messageType = typeof body.messageType === 'string' ? body.messageType : 'text';
+    const isInternalNote = body.isInternalNote === true;
+    const aiGenerated = body.aiGenerated === true;
+    const aiApproved = body.aiApproved === true;
+    const attachment = body.attachment && typeof body.attachment === 'object' && !Array.isArray(body.attachment)
+      ? body.attachment as { attachmentId?: string; caption?: string }
+      : null;
+    const attachmentId = typeof attachment?.attachmentId === 'string' ? attachment.attachmentId.trim() : '';
+    if (content.length > 5000) return NextResponse.json({ success: false, error: 'Message text must be 5000 characters or fewer.' }, { status: 400 });
+    if (!content && !attachmentId) {
       return NextResponse.json({ success: false, error: 'Message content is required.' }, { status: 400 });
+    }
+    if (attachment && !attachmentId) {
+      return NextResponse.json({ success: false, error: 'Attachments must reference a privately stored UCC document.' }, { status: 400 });
+    }
+    if (aiGenerated && !aiApproved) {
+      return NextResponse.json({ success: false, error: 'AI-generated text requires an explicit human approval before sending.' }, { status: 403 });
+    }
+    if (!attachment && messageType !== 'text') {
+      return NextResponse.json({ success: false, error: 'Only text replies are available without an approved media attachment.' }, { status: 400 });
+    }
+    if (attachment && isInternalNote) {
+      return NextResponse.json({ success: false, error: 'Internal notes cannot carry attachments.' }, { status: 400 });
     }
 
     const conversation = await db.uccConversation.findUnique({ where: { id } });
@@ -55,54 +102,253 @@ export async function POST(
       return NextResponse.json({ success: false, error: 'Conversation not found.' }, { status: 404 });
     }
 
-    // Non-admin employees can only reply to conversations assigned to them
-    const isAdmin = ['SUPER_ADMIN', 'ADMIN', 'BRANCH_MANAGER', 'DEPARTMENT_MANAGER'].includes(primaryRole);
-    if (!isAdmin && conversation.assignedToUserId && conversation.assignedToUserId !== auth.userId) {
-      return NextResponse.json(
-        { success: false, error: 'You can only reply to conversations assigned to you.' },
-        { status: 403 }
-      );
+    if (!canAccessUccConversation(auth, conversation) || !(await canViewUccConversationB2B(auth, conversation))) {
+      return NextResponse.json({ success: false, error: 'You can only reply to conversations assigned to you.' }, { status: 403 });
+    }
+    if (!isInternalNote || attachment) {
+      const policyBlock = outboundReplyPolicyBlock();
+      if (policyBlock) return NextResponse.json(policyBlock, {status:503});
+    }
+    if (attachment) {
+      if (conversation.channel !== 'whatsapp') {
+        return NextResponse.json(
+          { success: false, code: 'CHANNEL_UNSUPPORTED_FOR_MEDIA', error: `Attachments may only be sent on WhatsApp conversations via the official Cloud API (this is a ${conversation.channel} conversation).` },
+          { status: 422 },
+        );
+      }
+      if (!canUseUccDocuments(auth) || !canAccessUccDocumentConversation(auth, conversation)) {
+        return NextResponse.json({ success: false, error: 'Private document access is not permitted for this user or conversation.' }, { status: 403 });
+      }
+      if (!conversation.participantPhone) {
+        return NextResponse.json({ success: false, error: 'Cannot send attachment — conversation has no recipient phone number.' }, { status: 422 });
+      }
+      const privateAttachment = await db.uccAttachment.findFirst({
+        where: { id: attachmentId, conversationId: id },
+        select: { id: true, fileName: true, fileSize: true, mimeType: true, studentId: true, applicationId: true, ocrExtractedData: true, messageId: true },
+      });
+      if (!privateAttachment || privateAttachment.studentId !== conversation.studentId) {
+        return NextResponse.json({ success: false, error: 'Private document not found in this conversation.' }, { status: 404 });
+      }
+      if (privateAttachment.messageId) {
+        return NextResponse.json({ success: false, error: 'This document is already linked to a message. Upload it again to create a new send action.' }, { status: 409 });
+      }
+      if (privateAttachment.applicationId) {
+        const application = await db.application.findUnique({
+          where: { id: privateAttachment.applicationId },
+          select: { studentId: true, isB2bConfidential: true },
+        });
+        if (!application || application.studentId !== privateAttachment.studentId || (application.isB2bConfidential && !canViewUccB2B(auth))) {
+          return NextResponse.json({ success: false, error: 'Private document not found in this conversation.' }, { status: 404 });
+        }
+      } else if (privateAttachment.studentId) {
+        const confidentialApplication = await db.application.findFirst({
+          where: { studentId: privateAttachment.studentId, isB2bConfidential: true },
+          select: { id: true },
+        });
+        if (confidentialApplication && !canViewUccB2B(auth)) {
+          return NextResponse.json({ success: false, error: 'Private document not found in this conversation.' }, { status: 404 });
+        }
+      }
+      const storedMetadata = privateStorageMetadata(privateAttachment.ocrExtractedData);
+      if (!storedMetadata.storagePath || !/^[a-f0-9]{64}$/i.test(storedMetadata.fileHash)) {
+        return NextResponse.json({ success: false, error: 'This attachment has no verified private file and cannot be sent.' }, { status: 410 });
+      }
+      let privateBytes: Buffer;
+      try {
+        privateBytes = await readPrivateFile(storedMetadata.storagePath);
+      } catch {
+        return NextResponse.json({ success: false, error: 'Private document bytes are unavailable.' }, { status: 410 });
+      }
+      if (privateBytes.byteLength !== privateAttachment.fileSize || createHash('sha256').update(privateBytes).digest('hex') !== storedMetadata.fileHash.toLowerCase()) {
+        return NextResponse.json({ success: false, error: 'Private document integrity check failed.' }, { status: 500 });
+      }
+      const caption = content || (typeof attachment.caption === 'string' ? attachment.caption.trim() : '');
+      if (caption.length > 1024) {
+        return NextResponse.json({ success: false, error: 'WhatsApp document captions must be 1024 characters or fewer.' }, { status: 400 });
+      }
+
+      let pendingMessage: any;
+      try {
+        pendingMessage = await db.$transaction(async (tx) => {
+          const record = await tx.uccMessage.create({
+            data: {
+              conversationId: id,
+              direction: 'outbound',
+              senderId: auth.userId,
+              senderName: auth.name || auth.email || 'Staff',
+              senderRole: 'employee',
+              channel: conversation.channel,
+              content: caption || `[Private document: ${privateAttachment.fileName}]`,
+              messageType: privateAttachment.mimeType === 'application/pdf' ? 'document' : 'image',
+              status: 'pending',
+              aiGenerated,
+              aiApproved: aiGenerated ? aiApproved : true,
+              metadata: JSON.stringify({ attemptedAt: new Date().toISOString(), attachmentId: privateAttachment.id, senderEmail: auth.email }),
+            },
+          });
+          const claim = await tx.uccAttachment.updateMany({
+            where: { id: privateAttachment.id, conversationId: id, messageId: null },
+            data: { messageId: record.id },
+          });
+          if (claim.count !== 1) throw new Error('DOCUMENT_ALREADY_LINKED');
+          return record;
+        });
+      } catch (error: any) {
+        if (error?.message === 'DOCUMENT_ALREADY_LINKED') {
+          return NextResponse.json({ success: false, error: 'This document is already linked to another message.' }, { status: 409 });
+        }
+        throw error;
+      }
+
+      const mediaSend = await sendWhatsAppPrivateMedia({
+        to: conversation.participantPhone,
+        bytes: privateBytes,
+        mimeType: privateAttachment.mimeType,
+        fileName: privateAttachment.fileName,
+        caption: caption || undefined,
+      });
+      if (!mediaSend.success || !mediaSend.messageId) {
+        const sendError = mediaSend.error || 'The provider did not confirm the media message.';
+        await db.$transaction(async (tx) => {
+          await tx.uccMessage.update({
+            where: { id: pendingMessage.id },
+            data: {
+              status: 'failed',
+              metadata: JSON.stringify({ attemptedAt: new Date().toISOString(), attachmentId: privateAttachment.id, providerMediaId: mediaSend.providerMediaId, sendError, senderEmail: auth.email }),
+            },
+          });
+          await tx.uccAttachment.updateMany({ where: { id: privateAttachment.id, messageId: pendingMessage.id }, data: { messageId: null } });
+        });
+        await logAuditAction(auth, 'ATTACHMENT_SEND_FAILED', 'UccConversation', id, { messageId: pendingMessage.id, attachmentId: privateAttachment.id, sendError });
+        return NextResponse.json(
+          { success: false, error: `WhatsApp media send failed: ${sendError}`, messageId: pendingMessage.id },
+          { status: /not configured/i.test(sendError) ? 503 : 502 },
+        );
+      }
+
+      const providerStatus = await latestProviderStatus(mediaSend.messageId);
+      let message: any;
+      try {
+        message = await db.$transaction(async (tx) => {
+          const sentMessage = await tx.uccMessage.update({
+            where: { id: pendingMessage.id },
+            data: {
+              status: providerStatus?.status || 'sent',
+              metadata: JSON.stringify({
+                sentAt: new Date().toISOString(),
+                attachmentId: privateAttachment.id,
+                providerMessageId: mediaSend.messageId,
+                providerMediaId: mediaSend.providerMediaId,
+                deliveryStatus: providerStatus?.status || 'sent',
+                ...(providerStatus?.statusTimestamp ? { providerStatusAt: providerStatus.statusTimestamp.toISOString() } : {}),
+                ...(providerStatus?.errorMessage ? { providerError: providerStatus.errorMessage } : {}),
+                senderEmail: auth.email,
+              }),
+            },
+          });
+          await tx.uccConversation.update({
+            where: { id },
+            data: { lastMessageText: (caption || `[Private document: ${privateAttachment.fileName}]`).slice(0, 200), lastMessageAt: new Date() },
+          });
+          return sentMessage;
+        });
+      } catch {
+        await logAuditAction(auth, 'ATTACHMENT_SEND_PERSISTENCE_WARNING', 'UccConversation', id, { messageId: pendingMessage.id, attachmentId: privateAttachment.id, providerMessageId: mediaSend.messageId }).catch(() => {});
+        return NextResponse.json({ success: true, sent: true, persistenceWarning: true, providerMessageId: mediaSend.messageId, message: { ...pendingMessage, status: 'sent' }, attachment: { id: privateAttachment.id, fileName: privateAttachment.fileName, fileUrl: `/api/crm/ucc/documents/${privateAttachment.id}/download` } }, { status: 202 });
+      }
+      await logAuditAction(auth, 'ATTACHMENT_SENT', 'UccConversation', id, {
+        messageId: message.id,
+        attachmentId: privateAttachment.id,
+        channel: conversation.channel,
+        providerMessageId: mediaSend.messageId,
+      }).catch(() => {});
+      return NextResponse.json({ success: true, message, providerMessageId: mediaSend.messageId, attachment: { id: privateAttachment.id, fileName: privateAttachment.fileName, fileUrl: `/api/crm/ucc/documents/${privateAttachment.id}/download` } });
+    }
+
+    if (!isInternalNote && conversation.channel !== 'whatsapp') {
+      return NextResponse.json({ success: false, error: `No authorized outbound provider is configured for ${conversation.channel}. The message was not sent.` }, { status: 503 });
+    }
+
+    let waTextSend: { messageId: string | null; success: boolean; error?: string; statusRecorded?: boolean } | null = null;
+    if (!isInternalNote) {
+      if (!conversation.participantPhone) {
+        return NextResponse.json({ success: false, error: 'Cannot send reply — conversation has no recipient phone number.' }, { status: 422 });
+      }
+      waTextSend = await sendWhatsAppMessage({ to: conversation.participantPhone, text: content });
+      if (!waTextSend.success || !waTextSend.messageId) {
+        const sendError = waTextSend.error || 'The provider did not confirm message delivery.';
+        const failedMessage = await db.uccMessage.create({
+          data: {
+            conversationId: id,
+            direction: 'outbound',
+            senderId: auth.userId,
+            senderName: auth.name || auth.email || 'Staff',
+            senderRole: 'employee',
+            channel: conversation.channel,
+            content,
+            messageType: 'text',
+            status: 'failed',
+            aiGenerated,
+            aiApproved: aiGenerated ? aiApproved : true,
+            metadata: JSON.stringify({ attemptedAt: new Date().toISOString(), sendError, senderEmail: auth.email }),
+          },
+        });
+        await logAuditAction(auth, 'REPLY_SEND_FAILED', 'UccConversation', id, { messageId: failedMessage.id, channel: conversation.channel, sendError });
+        return NextResponse.json(
+          { success: false, error: `WhatsApp text send failed: ${sendError}`, messageId: failedMessage.id },
+          { status: /not configured/i.test(sendError) ? 503 : 502 },
+        );
+      }
     }
 
     const direction = isInternalNote ? 'internal_note' : 'outbound';
-
-    const message = await db.uccMessage.create({
-      data: {
-        conversationId: id,
-        direction,
-        senderId: auth.userId,
-        senderName: auth.name || auth.email || 'Staff',
-        senderRole: 'employee',
-        channel: conversation.channel,
-        content: content.trim(),
-        messageType,
-        status: 'sent',
-        aiGenerated,
-        aiApproved: aiGenerated ? aiApproved : true,
-        metadata: JSON.stringify({
-          sentAt: new Date().toISOString(),
-          isInternalNote,
-          senderEmail: auth.email,
-        }),
-      },
-    });
-
-    // Update conversation last message timestamp
-    await db.uccConversation.update({
-      where: { id },
-      data: {
-        lastMessageText: content.trim().substring(0, 200),
-        lastMessageAt: new Date(),
-      },
-    });
+    const providerStatus = await latestProviderStatus(waTextSend?.messageId);
+    let message: any;
+    try {
+      message = await db.uccMessage.create({
+        data: {
+          conversationId: id,
+          direction,
+          senderId: auth.userId,
+          senderName: auth.name || auth.email || 'Staff',
+          senderRole: 'employee',
+          channel: conversation.channel,
+          content,
+          messageType: isInternalNote ? 'text' : messageType,
+          status: isInternalNote ? 'sent' : (providerStatus?.status || (waTextSend?.success ? 'sent' : 'failed')),
+          aiGenerated,
+          aiApproved: aiGenerated ? aiApproved : true,
+          metadata: JSON.stringify({
+            sentAt: new Date().toISOString(),
+            isInternalNote,
+            senderEmail: auth.email,
+            ...(waTextSend?.messageId ? { providerMessageId: waTextSend.messageId, deliveryStatus: providerStatus?.status || 'sent' } : {}),
+            ...(providerStatus?.statusTimestamp ? { providerStatusAt: providerStatus.statusTimestamp.toISOString() } : {}),
+            ...(providerStatus?.errorMessage ? { providerError: providerStatus.errorMessage } : {}),
+            ...(waTextSend?.statusRecorded !== undefined ? { statusRecorded: waTextSend.statusRecorded } : {}),
+          }),
+        },
+      });
+      await db.uccConversation.update({
+        where: { id },
+        data: { lastMessageText: content.trim().substring(0, 200), lastMessageAt: new Date() },
+      });
+    } catch (error) {
+      if (waTextSend?.success && waTextSend.messageId) {
+        await logAuditAction(auth, 'REPLY_SEND_PERSISTENCE_WARNING', 'UccConversation', id, { providerMessageId: waTextSend.messageId, error: error instanceof Error ? error.message : 'unknown' }).catch(() => {});
+        return NextResponse.json({ success: true, sent: true, persistenceWarning: true, providerMessageId: waTextSend.messageId, message: null }, { status: 202 });
+      }
+      throw error;
+    }
 
     await logAuditAction(auth, isInternalNote ? 'INTERNAL_NOTE_ADDED' : 'REPLY_SENT', 'UccConversation', id, {
       messageId: message.id,
       channel: conversation.channel,
       aiGenerated,
-    });
+      ...(waTextSend?.messageId ? { providerMessageId: waTextSend.messageId } : {}),
+    }).catch(() => {});
 
-    return NextResponse.json({ success: true, message });
+    return NextResponse.json({ success: true, message, ...(waTextSend?.messageId ? { providerMessageId: waTextSend.messageId } : {}) });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

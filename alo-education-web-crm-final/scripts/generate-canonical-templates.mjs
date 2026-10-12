@@ -1,6 +1,12 @@
 import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
+// ARCHIVED COPY — PERMANENTLY DISABLED (2026-10-12). It writes generated rows into a relative
+// docs/import-templates/ and would overwrite the live repository's blank templates if run from the root.
+// Use scripts/generate-canonical-templates.mjs (guarded: writes only under ALO_SYNTHETIC_OUTPUT_DIR).
+console.error('[generate-canonical-templates.mjs] DISABLED: archived copy; no files were written.');
+process.exit(1);
+
 const docsDir = 'docs/import-templates';
 mkdirSync(docsDir, { recursive: true });
 

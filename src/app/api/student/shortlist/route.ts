@@ -62,15 +62,18 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true, message: 'Course already shortlisted', data: existing });
       }
 
+      // Missing values are stored empty rather than defaulted. Inventing a
+      // country, fee or intake here would put fabricated data into the student's
+      // own shortlist (and later into comparison and finance screens).
       const newSaved = await db.savedCourse.create({
         data: {
           studentId,
           courseName: title,
-          universityName: universityName || 'University',
-          country: country || 'UK',
-          level: level || 'Postgraduate',
-          tuitionFee: tuitionFee || '£16,000',
-          intake: intake || 'September 2026',
+          universityName: universityName || '',
+          country: country || '',
+          level: level || '',
+          tuitionFee: tuitionFee || '',
+          intake: intake || '',
           notes: courseId || '',
         },
       });

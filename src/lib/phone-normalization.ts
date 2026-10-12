@@ -5,9 +5,9 @@
  *
  * Rules (BD):
  *   - "01XXXXXXXXX"           → "8801XXXXXXXXX"
- *   - "+8801XXXXXXXXX"        → "8801XXXXXXXXX"
- *   - "008801XXXXXXXXX"       → "8801XXXXXXXXX"
- *   - "8801XXXXXXXXX"         → unchanged
+ *   - "+8801805020100"        → "8801805020100"
+ *   - "008801805020100"       → "8801805020100"
+ *   - "8801805020100"         → unchanged
  *
  * Rules (intl):
  *   - "00CC..."               → "CC..."   (strip leading 00)
@@ -30,7 +30,7 @@ function isBlank(input: string | null | undefined): input is "" | null | undefin
  * Normalize a phone number into canonical digit-only form.
  *
  * - Returns "" for empty/null/undefined input.
- * - For Bangladesh numbers, always returns the 13-digit form "8801XXXXXXXXX".
+ * - For Bangladesh numbers, always returns the 13-digit form "8801805020100".
  * - For international numbers, returns country-code-prefixed digits
  *   (with leading "00" or "+" removed).
  */
@@ -42,14 +42,14 @@ export function normalizePhone(phone: string | null | undefined): string {
   // ── Bangladesh normalization ──
   // Local format: 01XXXXXXXXX (11 digits) → 8801XXXXXXXXX
   if (/^01\d{9}$/.test(digits)) {
-    return `880${digits}`;
+    return `880${digits.slice(1)}`;
   }
-  // Already BD with country code: 8801XXXXXXXXX
+  // Already BD with country code: 8801805020100
   if (/^8801\d{9}$/.test(digits)) {
     return digits;
   }
-  // +8801XXXXXXXXX becomes 8801XXXXXXXXX (after digit strip already done)
-  // 008801XXXXXXXXX → 8801XXXXXXXXX
+  // +8801805020100 becomes 8801805020100 (after digit strip already done)
+  // 008801805020100 → 8801805020100
   if (/^008801\d{9}$/.test(digits)) {
     return digits.slice(2);
   }
@@ -97,14 +97,11 @@ export function phoneVariants(phone: string | null | undefined): string[] {
   // E.164 form
   variants.add(`+${normalized}`);
 
-  // BD local form: strip leading "880" → "01XXXXXXXXX"
-  if (normalized.startsWith("880") && normalized.length >= 11) {
-    const local = normalized.slice(3);
-    variants.add(local);
-    // also without leading 0
-    if (local.startsWith("0")) {
-      variants.add(local.slice(1));
-    }
+  // Bangladesh trunk zero is not part of the international subscriber number.
+  if (/^8801\d{9}$/.test(normalized)) {
+    const subscriber = normalized.slice(3);
+    variants.add(`0${subscriber}`);
+    variants.add(subscriber);
   }
 
   // 00 international prefix form

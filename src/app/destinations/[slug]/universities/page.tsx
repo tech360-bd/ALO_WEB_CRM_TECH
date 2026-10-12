@@ -4,6 +4,11 @@ import Link from 'next/link';
 import { Building2, Globe, MapPin, Award, ExternalLink, ArrowRight } from 'lucide-react';
 import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
+import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
+import { publicUniversitiesInCountryWhere, stripInternalFields } from '@/lib/public-catalog';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -21,15 +26,14 @@ export default async function CountryUniversitiesPage({ params }: { params: Prom
   const countryData = getCountryDestination(slug);
   if (!countryData) notFound();
 
-  const universities = await db.crmUniversity.findMany({
-    where: {
-      OR: [
-        { country: { contains: countryData.name } },
-        { country: { contains: countryData.code } },
-      ],
-    },
+  const universities = stripInternalFields(await db.crmUniversity.findMany({
+    where: publicUniversitiesInCountryWhere(countryData.name, countryData.code),
     orderBy: { name: 'asc' },
-  }).catch(() => []);
+  }).catch((error) => throwSanitizedDatabaseFailure(
+    'destination-universities',
+    error,
+    'DESTINATION_DATA_UNAVAILABLE',
+  )));
 
   return (
     <div className="bg-slate-50 min-h-screen py-12 text-slate-900">

@@ -18,10 +18,10 @@ function StatCard({ title, value, sub, icon: Icon, href }: any) {
             {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
           </div>
           <div className="w-9 h-9 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center">
-            <Icon className="w-4 h-4 text-[#E8501A]" />
+            <Icon className="w-4 h-4 text-[#F97316]" />
           </div>
         </div>
-        {href && <Link href={href} className="text-xs text-[#E8501A] font-medium mt-2 inline-block hover:underline">View →</Link>}
+        {href && <Link href={href} className="text-xs text-[#F97316] font-medium mt-2 inline-block hover:underline">View →</Link>}
       </CardContent>
     </Card>
   );
@@ -51,7 +51,7 @@ export function HrRoleWidgets({ role }: WidgetProps) {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-800">HR Overview</h3>
-          <Link href="/crm/hrm"><Button size="sm" className="bg-[#E8501A] hover:bg-[#D04010] text-white h-7 text-xs">Open HR Center</Button></Link>
+          <Link href="/crm/hrm"><Button size="sm" className="bg-[#F97316] hover:bg-[#D04010] text-white h-7 text-xs">Open HR Center</Button></Link>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <StatCard title="Headcount" value={widgets.headcount} sub={`${widgets.attendanceRate || 0}% attendance today`} icon={Users} href="/crm/hrm/analytics" />
@@ -113,7 +113,7 @@ export function HrRoleWidgets({ role }: WidgetProps) {
 export function HrmQuickActions({ role }: { role: string }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
-      <Link href="/crm/hrm/attendance"><Button size="sm" className="bg-[#E8501A] hover:bg-[#D04010] text-white h-8 text-xs">Clock In / Out</Button></Link>
+      <Link href="/crm/hrm/attendance"><Button size="sm" className="bg-[#F97316] hover:bg-[#D04010] text-white h-8 text-xs">Clock In / Out</Button></Link>
       <Link href="/crm/hrm/leave"><Button size="sm" variant="outline" className="h-8 text-xs">Apply Leave</Button></Link>
       <Link href="/crm/hrm/documents"><Button size="sm" variant="outline" className="h-8 text-xs">My Documents</Button></Link>
       <Link href="/crm/hrm/profile"><Button size="sm" variant="outline" className="h-8 text-xs">My HR Profile</Button></Link>

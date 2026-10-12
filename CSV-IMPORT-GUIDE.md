@@ -1,5 +1,7 @@
 # CSV Import Guide — ALO Education Data Management Platform
 
+> **Note (2026-10-12):** the numbered files in `docs/import-templates/` were generated and contain synthetic rows, so they are not blank templates and not verified data. Use the header-only `docs/catalogue-import/catalogue-import-TEMPLATE.csv` as the template; see `docs/catalogue-import/README.md`. An import never verifies or publishes a record by itself.
+
 ## Overview
 This document outlines the standard CSV import procedure for university directories, course catalogues, tuition fees, entry criteria, rankings, and source verification metadata.
 

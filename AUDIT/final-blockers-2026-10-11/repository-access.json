@@ -1,0 +1,75 @@
+{
+  "timeUTC": "2026-10-11T10:16:42.236626+00:00",
+  "checks": [
+    {
+      "requestedRepository": "engralaminn-collab/alo_education_z....ai",
+      "exitCode": 0,
+      "status": 200,
+      "message": null,
+      "actualName": "engralaminn-collab/alo_education_z....ai",
+      "defaultBranch": "main",
+      "permissions": {
+        "admin": true,
+        "maintain": true,
+        "push": true,
+        "triage": true,
+        "pull": true
+      }
+    },
+    {
+      "requestedRepository": "engralaminn-collab/alo-education-uk-final",
+      "exitCode": 1,
+      "status": "403",
+      "message": "Resource not accessible by integration",
+      "actualName": null,
+      "defaultBranch": null,
+      "permissions": null
+    },
+    {
+      "requestedRepository": "engralaminn-collab/alo-education-last",
+      "exitCode": 1,
+      "status": "403",
+      "message": "Resource not accessible by integration",
+      "actualName": null,
+      "defaultBranch": null,
+      "permissions": null
+    },
+    {
+      "requestedRepository": "engralaminn-collab/alo-ukvi-ai-markting-platform-copy",
+      "exitCode": 1,
+      "status": "403",
+      "message": "Resource not accessible by integration",
+      "actualName": null,
+      "defaultBranch": null,
+      "permissions": null
+    },
+    {
+      "requestedRepository": "engralaminn-collab/ALO-Education_LAST-TRY",
+      "exitCode": 1,
+      "status": "403",
+      "message": "Resource not accessible by integration",
+      "actualName": null,
+      "defaultBranch": null,
+      "permissions": null
+    },
+    {
+      "requestedRepository": "engralaminn-collab/ukvi-ai-markting_n8n",
+      "exitCode": 1,
+      "status": "403",
+      "message": "Resource not accessible by integration",
+      "actualName": null,
+      "defaultBranch": null,
+      "permissions": null
+    },
+    {
+      "requestedRepository": "engralaminn-collab/Ai-Markting-crm",
+      "exitCode": 1,
+      "status": "403",
+      "message": "Resource not accessible by integration",
+      "actualName": null,
+      "defaultBranch": null,
+      "permissions": null
+    }
+  ],
+  "interpretation": "Current repository metadata works. Six reference grants remain blocked; exact installation/policy reason unavailable. No token values captured."
+}

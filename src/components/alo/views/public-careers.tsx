@@ -21,7 +21,7 @@ export function PublicCareers({ onNavigate }: Props) {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1 rounded-2xl border border-[#DCE8F5] bg-gradient-to-br from-[#EAF3FF] to-white">
           <CardContent className="p-6 text-center">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#0066CC] text-white"><Icon name="Briefcase" className="size-8" /></div>
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#2563EB] text-white"><Icon name="Briefcase" className="size-8" /></div>
             <h3 className="mt-4 text-lg font-bold text-[#0B2447]">Why Join ALO?</h3>
             <p className="mt-2 text-sm text-[#5A7299]">Be part of a fast-growing education consultancy that's transforming how Bangladeshi students study abroad.</p>
           </CardContent>
@@ -33,7 +33,7 @@ export function PublicCareers({ onNavigate }: Props) {
             <div className="mt-4 space-y-3">{positions.map((pos) => (
               <div key={pos.title} className="flex items-center justify-between rounded-xl border border-[#DCE8F5] bg-[#F7FAFE] p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0066CC]"><Icon name="UserCog" className="size-5" /></div>
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#2563EB]"><Icon name="UserCog" className="size-5" /></div>
                   <div>
                     <p className="font-semibold text-[#0B2447]">{pos.title}</p>
                     <div className="flex gap-2 mt-1">

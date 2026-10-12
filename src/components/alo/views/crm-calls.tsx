@@ -109,8 +109,8 @@ export function CrmCalls() {
                           <Badge
                             className={
                               c.direction === "OUTBOUND"
-                                ? "bg-[#FFF3EA] text-[#F37021]"
-                                : "bg-[#EAF3FF] text-[#0066CC]"
+                                ? "bg-[#FFF3EA] text-[#F97316]"
+                                : "bg-[#EAF3FF] text-[#2563EB]"
                             }
                           >
                             <Icon

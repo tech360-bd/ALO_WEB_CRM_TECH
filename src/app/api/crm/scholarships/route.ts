@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, logAuditAction } from '@/lib/auth-middleware';
+import { isVerifiedStatus, presentControlFields, verificationAfterEdit } from '@/lib/course-finder/crm-edit-verification';
 
 export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
@@ -66,14 +67,32 @@ export async function POST(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
       const body = await req.json();
-      const { universityId, courseId, scholarshipName, scholarshipAmount, scholarshipCurrency = 'GBP' } = body;
+      // Phase 1 review (P0-A/P1-D): the currency used to default to GBP, so an
+      // amount typed without a currency was stored as a GBP fact. A currency is
+      // now required whenever an amount is supplied; nothing is assumed. The
+      // record keeps the schema default verificationStatus (NEEDS_REVIEW), so
+      // it stays out of public listings (publicScholarshipWhere requires
+      // VERIFIED). Clients cannot set verification or publication here.
+      const control = presentControlFields(body);
+      if (control.length || Object.prototype.hasOwnProperty.call(body, 'status')) {
+        return NextResponse.json({ success: false, error: `Field(s) not accepted on create: ${[...control, ...(Object.prototype.hasOwnProperty.call(body, 'status') ? ['status'] : [])].join(', ')}` }, { status: 400 });
+      }
+      const { universityId, courseId, scholarshipName, scholarshipAmount } = body;
+      const scholarshipCurrency = typeof body.scholarshipCurrency === 'string' ? body.scholarshipCurrency.trim().toUpperCase() : '';
+      const amount = scholarshipAmount === undefined || scholarshipAmount === null || scholarshipAmount === '' ? 0 : parseFloat(String(scholarshipAmount));
 
       if (!universityId || !scholarshipName) {
         return NextResponse.json({ success: false, error: 'University ID and scholarship name are required' }, { status: 400 });
       }
+      if (!Number.isFinite(amount) || amount < 0) {
+        return NextResponse.json({ success: false, error: 'scholarshipAmount must be a non-negative number' }, { status: 400 });
+      }
+      if (amount > 0 && !/^[A-Z]{3}$/.test(scholarshipCurrency)) {
+        return NextResponse.json({ success: false, error: 'scholarshipCurrency (ISO 4217, e.g. NZD) is required when an amount is given' }, { status: 400 });
+      }
 
       const scholarship = await db.crmScholarship.create({
-        data: { universityId, courseId: courseId || '', scholarshipName, scholarshipAmount: parseFloat(String(scholarshipAmount)) || 0, scholarshipCurrency },
+        data: { universityId, courseId: courseId || '', scholarshipName, scholarshipAmount: amount, scholarshipCurrency },
       });
 
       await logAuditAction(auth, 'create_scholarship', 'CrmScholarship', scholarship.id, { universityId, scholarshipName });
@@ -92,15 +111,42 @@ export async function PUT(request: NextRequest) {
       const body = await req.json();
       const { id, scholarshipName, scholarshipAmount, scholarshipCurrency, status } = body;
 
-      if (!id) {
+      if (!id || typeof id !== 'string') {
         return NextResponse.json({ success: false, error: 'Scholarship ID is required' }, { status: 400 });
+      }
+      const control = presentControlFields(body);
+      if (control.length) {
+        return NextResponse.json({ success: false, error: `Field(s) not accepted on edit: ${control.join(', ')}` }, { status: 400 });
+      }
+      const existing = await db.crmScholarship.findUnique({ where: { id } });
+      if (!existing) {
+        return NextResponse.json({ success: false, error: 'Scholarship not found' }, { status: 404 });
       }
 
       const updateData: Record<string, unknown> = {};
       if (scholarshipName !== undefined) updateData.scholarshipName = scholarshipName;
-      if (scholarshipAmount !== undefined) updateData.scholarshipAmount = parseFloat(String(scholarshipAmount));
-      if (scholarshipCurrency !== undefined) updateData.scholarshipCurrency = scholarshipCurrency;
+      if (scholarshipAmount !== undefined) {
+        const amount = parseFloat(String(scholarshipAmount));
+        if (!Number.isFinite(amount) || amount < 0) {
+          return NextResponse.json({ success: false, error: 'scholarshipAmount must be a non-negative number' }, { status: 400 });
+        }
+        updateData.scholarshipAmount = amount;
+      }
+      if (scholarshipCurrency !== undefined) updateData.scholarshipCurrency = String(scholarshipCurrency).trim().toUpperCase();
       if (status !== undefined) updateData.status = status;
+      const finalAmount = (updateData.scholarshipAmount ?? existing.scholarshipAmount) as number;
+      const finalCurrency = (updateData.scholarshipCurrency ?? existing.scholarshipCurrency) as string;
+      if ((updateData.scholarshipAmount !== undefined || updateData.scholarshipCurrency !== undefined) && finalAmount > 0 && !/^[A-Z]{3}$/.test(finalCurrency)) {
+        return NextResponse.json({ success: false, error: 'scholarshipCurrency (ISO 4217) is required when an amount is set' }, { status: 400 });
+      }
+      // Phase 1 review (P1-D): editing a fact of a VERIFIED scholarship sends
+      // it back to review (and out of public listings) instead of keeping a
+      // verification that no longer describes the stored values.
+      const factsChanged = (['scholarshipName', 'scholarshipAmount', 'scholarshipCurrency'] as const)
+        .some((f) => updateData[f] !== undefined && updateData[f] !== (existing as Record<string, unknown>)[f]);
+      if (factsChanged && isVerifiedStatus(existing.verificationStatus)) {
+        updateData.verificationStatus = verificationAfterEdit(existing.verificationStatus, true);
+      }
 
       const scholarship = await db.crmScholarship.update({
         where: { id },

@@ -48,7 +48,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ slu
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link 
           href="/team" 
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#0057B8] mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#2563EB] mb-8 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Meet the full team
         </Link>
@@ -56,17 +56,17 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ slu
         <Card className="p-8 border-none shadow-md bg-white">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <div className="w-full md:w-1/3 flex flex-col items-center">
-              <div className="h-48 w-48 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d80] flex items-center justify-center text-white font-bold text-6xl shadow-lg mb-6">
+              <div className="h-48 w-48 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d80] flex items-center justify-center text-white font-bold text-6xl shadow-lg mb-6">
                 {member.name[0]}
               </div>
-              <Button className="w-full bg-[#0057B8] hover:bg-[#003d80] text-white flex gap-2">
-                <Mail className="h-4 w-4" /> Contact {member.name.split(' ')[0]}
+              <Button asChild className="w-full bg-[#2563EB] hover:bg-[#003d80] text-white flex gap-2">
+                <Link href="/contact"><Mail className="h-4 w-4" /> Contact {member.name.split(' ')[0]}</Link>
               </Button>
             </div>
 
             <div className="w-full md:w-2/3">
               <h1 className="text-3xl font-bold text-[#0F172A] mb-2">{member.name}</h1>
-              <p className="text-lg font-medium text-[#E8501A] mb-6">{member.role}</p>
+              <p className="text-lg font-medium text-[#F97316] mb-6">{member.role}</p>
               
               <div className="prose prose-slate max-w-none mb-8">
                 <p className="text-slate-600 leading-relaxed">{member.bio}</p>
@@ -75,11 +75,11 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ slu
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-semibold text-slate-800 flex items-center gap-2 mb-3">
-                    <BookOpen className="h-4 w-4 text-[#0057B8]" /> Specializations
+                    <BookOpen className="h-4 w-4 text-[#2563EB]" /> Specializations
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {member.specializations.map((spec) => (
-                      <Badge key={spec} variant="secondary" className="bg-blue-50 text-[#0057B8]">
+                      <Badge key={spec} variant="secondary" className="bg-blue-50 text-[#2563EB]">
                         {spec}
                       </Badge>
                     ))}
@@ -88,11 +88,11 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ slu
 
                 <div>
                   <h3 className="font-semibold text-slate-800 flex items-center gap-2 mb-3">
-                    <GraduationCap className="h-4 w-4 text-[#0057B8]" /> Universities Expertise
+                    <GraduationCap className="h-4 w-4 text-[#2563EB]" /> Universities Expertise
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {member.universitiesExpertise.map((uni) => (
-                      <Badge key={uni} variant="secondary" className="bg-orange-50 text-[#E8501A]">
+                      <Badge key={uni} variant="secondary" className="bg-orange-50 text-[#F97316]">
                         {uni}
                       </Badge>
                     ))}
@@ -101,7 +101,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ slu
                 
                 <div>
                   <h3 className="font-semibold text-slate-800 flex items-center gap-2 mb-3">
-                    <Globe className="h-4 w-4 text-[#0057B8]" /> Languages & Experience
+                    <Globe className="h-4 w-4 text-[#2563EB]" /> Languages & Experience
                   </h3>
                   <p className="text-sm text-slate-600 mb-1">
                     <span className="font-medium text-slate-800">Experience:</span> {member.yearsExperience}

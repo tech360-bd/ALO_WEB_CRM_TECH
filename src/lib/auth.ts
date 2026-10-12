@@ -3,9 +3,11 @@ import { getServerSession, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
+import { decodeCanonicalUserJwt } from "@/lib/auth/canonical-jwt";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db as any),
+  jwt: { decode: decodeCanonicalUserJwt },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -21,17 +23,29 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+      async authorize(credentials, request) {
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const email = credentials.email.toLowerCase().trim();
+        const headers = request?.headers || {};
+        const forwarded = headers['x-forwarded-for'];
+        const ipAddress = String(forwarded || headers['x-real-ip'] || 'unknown').split(',')[0].trim().slice(0, 191) || 'unknown';
+        const userAgent = String(headers['user-agent'] || '').slice(0, 512);
+        const cutoff = new Date(Date.now() - 15 * 60 * 1000);
+        const failures = await db.loginAttempt.count({
+          where: { success: false, createdAt: { gte: cutoff }, OR: [{ email }, ...(ipAddress === 'unknown' ? [] : [{ ipAddress }])] },
+        });
+        if (failures >= 5) return null;
+
+        const user = await db.user.findUnique({ where: { email } });
+        if (!user) {
+          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: 'user_not_found' } });
           return null;
         }
-
-        const user = await db.user.findUnique({
-          where: { email: credentials.email.toLowerCase() },
-        });
-
-        if (!user) return null;
-        if (user.status !== "ACTIVE") return null;
+        if (user.status !== "ACTIVE" || !user.emailVerified) {
+          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: user.status !== 'ACTIVE' ? 'account_inactive' : 'email_not_verified' } });
+          return null;
+        }
 
         // Passwords must always be verified against a real bcrypt hash. Legacy
         // placeholder passwords are rejected rather than accepted globally.
@@ -42,7 +56,12 @@ export const authOptions: NextAuthOptions = {
           isValid = false;
         }
 
-        if (!isValid) return null;
+        if (!isValid) {
+          await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: false, failureReason: 'wrong_password' } });
+          return null;
+        }
+
+        await db.loginAttempt.create({ data: { email, ipAddress, userAgent, success: true } });
 
         // Update last login
         await db.user.update({
@@ -72,14 +91,16 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, account }) {
+      // Never adopt client update payloads or infer a namespace from an ID.
+      if (user && account?.provider === "credentials") {
+        token.identityDomain = "user";
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.status = (user as any).status;
       }
       // Resolve Student identity for STUDENT role (idempotent — only fetches once per token lifetime)
-      if (token.role === "STUDENT" && token.id && !token.studentId) {
+      if (token.identityDomain === "user" && token.role === "STUDENT" && token.id && !token.studentId) {
         try {
           const student = await db.student.findFirst({
             where: { userId: token.id as string },
@@ -97,6 +118,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
+        (session.user as any).identityDomain = token.identityDomain;
         (session.user as any).id = token.id;
         (session.user as any).role = token.role;
         (session.user as any).status = token.status;
@@ -110,7 +132,7 @@ export const authOptions: NextAuthOptions = {
     async signOut(message) {
       // Audit log for logout
       const token = message.token as any;
-      if (token?.id) {
+      if (token?.identityDomain === "user" && token?.id) {
         await db.auditLog.create({
           data: {
             userId: token.id,

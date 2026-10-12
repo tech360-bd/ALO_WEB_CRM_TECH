@@ -56,6 +56,8 @@ import {
   ShieldCheck,
   GitCompare,
   AlertTriangle,
+  BookOpenCheck,
+  Truck,
 } from 'lucide-react';
 
 // ============================================================
@@ -127,6 +129,8 @@ const navGroups: NavGroup[] = [
     title: 'Business',
     items: [
       { icon: Wallet, label: 'Finance', view: 'crm-finance' },
+      { icon: BookOpenCheck, label: 'Accounting', view: 'crm-accounting' },
+      { icon: Truck, label: 'Procurement & Assets', view: 'crm-procurement' },
       { icon: Megaphone, label: 'Marketing', view: 'crm-marketing' },
       { icon: UserCog, label: 'HRM', view: 'crm-hrm' },
       { icon: Bot, label: 'AI Operations', view: 'crm-ai-command' },
@@ -313,7 +317,7 @@ function NotificationDropdown() {
           >
             <Bell className="w-5 h-5 text-alo-text-secondary" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#E8501A] text-white text-[10px] flex items-center justify-center font-bold px-1">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#F97316] text-white text-[10px] flex items-center justify-center font-bold px-1">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
@@ -403,7 +407,7 @@ export default function CrmAdminShell({ children }: { children: ReactNode }) {
           {/* Mobile hamburger */}
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden cursor-pointer">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden cursor-pointer">
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,13 +24,16 @@ const RESEND_COUNTDOWN = 60; // seconds
 
 export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [otp, setOtp] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [resending, setResending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [verified, setVerified] = React.useState(false);
-  const [devOtp, setDevOtp] = React.useState<string | null>(null);
+  const [approvalRequired, setApprovalRequired] = React.useState(false);
+  const [portalVerification, setPortalVerification] = React.useState(false);
+  const [canonicalStudent, setCanonicalStudent] = React.useState(false);
   const [countdown, setCountdown] = React.useState(RESEND_COUNTDOWN);
 
   // AuthRegister stashes the email on `window.__aloOtpEmail` before calling
@@ -38,11 +42,18 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
   // initialEmail — so a side-channel is required to pass context.)
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      const ctx = (window as any).__aloOtpEmail;
-      if (typeof ctx === "string" && ctx) {
-        setEmail(ctx);
-        // Clear after consuming so it doesn't leak across mounts
-        (window as any).__aloOtpEmail = undefined;
+      const portalEmail = localStorage.getItem('portal_otp_email');
+      const portalType = localStorage.getItem('portal_otp_type');
+      if (portalEmail && portalType) {
+        setEmail(portalEmail);
+        setPortalVerification(portalType !== 'canonical-student');
+        setCanonicalStudent(portalType === 'canonical-student');
+      } else {
+        const ctx = (window as any).__aloOtpEmail;
+        if (typeof ctx === "string" && ctx) {
+          setEmail(ctx);
+          (window as any).__aloOtpEmail = undefined;
+        }
       }
     }
   }, []);
@@ -77,10 +88,11 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/verify-otp", {
+      const endpoint = portalVerification ? "/api/portal-auth/verify-otp" : "/api/auth/verify-otp";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), otp }),
+        body: JSON.stringify({ email: email.trim().toLowerCase(), otp, type: "email_verification" }),
       });
       const data = await res.json();
 
@@ -90,10 +102,15 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
         return;
       }
 
+      setApprovalRequired(Boolean(data.approvalRequired));
       setVerified(true);
+      localStorage.removeItem('portal_otp_email');
+      localStorage.removeItem('portal_otp_type');
       toast({
         title: "Email verified!",
-        description: "Your account is now active. You can sign in.",
+        description: data.approvalRequired
+          ? "Your email is verified. Partner access still requires staff approval."
+          : "Your email is verified. You can now sign in.",
       });
       setLoading(false);
     } catch {
@@ -113,7 +130,8 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
 
     setResending(true);
     try {
-      const res = await fetch("/api/auth/verify-otp", {
+      const endpoint = portalVerification ? "/api/portal-auth/verify-otp" : "/api/auth/verify-otp";
+      const res = await fetch(endpoint, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
@@ -130,13 +148,6 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
         title: "OTP resent",
         description: data?.message || "A new 6-digit code has been sent to your email.",
       });
-      if (data?.otp) {
-        setDevOtp(data.otp);
-        toast({
-          title: "Dev mode",
-          description: `Your new OTP is ${data.otp}`,
-        });
-      }
       setOtp("");
       setCountdown(RESEND_COUNTDOWN);
       setResending(false);
@@ -162,7 +173,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                 <Icon name="GraduationCap" className="size-7" />
               </div>
               <div className="text-left">
-                <p className="text-lg font-bold leading-tight text-[#0057B8]">ALO Education</p>
+                <p className="text-lg font-bold leading-tight text-[#2563EB]">ALO Education</p>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   Study Abroad, Done Right
                 </p>
@@ -177,16 +188,17 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                   <Icon name="CheckCircle2" className="size-9 text-emerald-600" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-[#0057B8]">Email Verified!</h1>
+                  <h1 className="text-2xl font-bold text-[#2563EB]">{approvalRequired ? "Email verified — approval pending" : "Email Verified!"}</h1>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Your email address has been verified successfully. Your account is now active
-                    and you can sign in.
+                    {approvalRequired
+                      ? "Your email address is verified. Partner access remains pending separate staff approval."
+                      : "Your email address has been verified successfully. You can now sign in."}
                   </p>
                 </div>
                 <Button
                   type="button"
-                  onClick={() => onNavigate("auth-login")}
-                  className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90"
+                  onClick={() => canonicalStudent ? router.push("/student/login") : onNavigate("auth-login")}
+                  className="h-12 w-full bg-[#F97316] text-sm font-semibold text-white hover:bg-[#F97316]/90"
                 >
                   <Icon name="LogIn" className="size-4" />
                   Sign In
@@ -222,13 +234,13 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
               <Icon name="GraduationCap" className="size-7" />
             </div>
             <div className="text-left">
-              <p className="text-lg font-bold leading-tight text-[#0057B8]">ALO Education</p>
+              <p className="text-lg font-bold leading-tight text-[#2563EB]">ALO Education</p>
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 Study Abroad, Done Right
               </p>
             </div>
           </button>
-          <h1 className="text-2xl font-bold text-[#0057B8] sm:text-3xl">Verify Your Email</h1>
+          <h1 className="text-2xl font-bold text-[#2563EB] sm:text-3xl">Verify Your Email</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Enter the 6-digit code we sent to your email address
           </p>
@@ -290,14 +302,6 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                 </p>
               </div>
 
-              {/* Dev hint */}
-              {devOtp && (
-                <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-center text-xs text-amber-800">
-                  <span className="font-semibold">Dev mode:</span> Your OTP is{" "}
-                  <code className="font-mono font-bold">{devOtp}</code>
-                </div>
-              )}
-
               {/* Error */}
               {error && (
                 <div
@@ -313,7 +317,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
               <Button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90 disabled:opacity-60"
+                className="h-12 w-full bg-[#F97316] text-sm font-semibold text-white hover:bg-[#F97316]/90 disabled:opacity-60"
               >
                 {loading ? (
                   <>
@@ -336,7 +340,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                     type="button"
                     onClick={handleResend}
                     disabled={resending}
-                    className="font-semibold text-[#0057B8] hover:underline disabled:opacity-60"
+                    className="font-semibold text-[#2563EB] hover:underline disabled:opacity-60"
                   >
                     {resending ? "Sending..." : "Resend OTP"}
                   </button>
@@ -358,7 +362,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
             </form>
 
             {/* Security note */}
-            <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0057B8]">
+            <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#2563EB]">
               <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0" />
               <span>
                 OTPs are single-use, expire after 10 minutes, and are audit-logged. Never share

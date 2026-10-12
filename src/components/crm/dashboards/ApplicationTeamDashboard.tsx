@@ -75,8 +75,8 @@ export default function ApplicationTeamDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Upload className="w-4 h-4" /> Batch Upload</Button>
-          <Button variant="brand" size="sm"><Send className="w-4 h-4" /> Submit Application</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Upload className="w-4 h-4" /> Batch Upload</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Send className="w-4 h-4" /> Submit Application</Button>
         </div>
       </div>
 

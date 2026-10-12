@@ -1,0 +1,32 @@
+{
+  "scope": "sandbox process and local files only; not an approved staging environment",
+  "envPresenceOnly": {
+    "DATABASE_URL": false,
+    "TEST_DATABASE_URL": false,
+    "ALLOW_DISPOSABLE_DATABASE_TESTS": false,
+    "NODE_EXTRA_CA_CERTS": false,
+    "SSL_CERT_FILE": false,
+    "SSL_CERT_DIR": false,
+    "NODE_TLS_REJECT_UNAUTHORIZED": false,
+    "HTTP_PROXY": false,
+    "HTTPS_PROXY": false,
+    "ALL_PROXY": false,
+    "NO_PROXY": false,
+    "http_proxy": false,
+    "https_proxy": false,
+    "all_proxy": false,
+    "no_proxy": false,
+    "npm_config_proxy": false,
+    "npm_config_https_proxy": false,
+    "npm_config_cafile": false,
+    "npm_config_strict_ssl": false
+  },
+  "actualEnvFileCount": 0,
+  "mysqlTools": {
+    "mysqld": false,
+    "mariadbd": false,
+    "mysql": false,
+    "docker": false,
+    "podman": false
+  }
+}

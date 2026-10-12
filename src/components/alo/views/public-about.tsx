@@ -115,7 +115,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-[#0066CC]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="relative overflow-hidden border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-20">
           <Breadcrumb
             items={[
@@ -125,12 +125,12 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
           />
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
-              <Badge className="bg-[#FFF3EA] text-[#F37021] border border-[#F37021]/20 hover:bg-[#FFF3EA]">
+              <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
                 <Icon name="Sparkles" className="mr-1 size-3" />
                 Founded February 2023
               </Badge>
               <h1 className="mt-4 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl lg:text-6xl">
-                About <span className="text-[#0066CC]">ALO Education</span>
+                About <span className="text-[#2563EB]">ALO Education</span>
               </h1>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-[#5A7299] sm:text-lg">
                 ALO Education was founded in February 2023 by{" "}
@@ -146,7 +146,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
               <div className="mt-7 flex flex-wrap gap-3">
                 <Button
                   onClick={() => onNavigate("public-contact")}
-                  className="h-12 rounded-xl bg-[#F37021] px-6 text-white hover:bg-[#c8451a]"
+                  className="h-12 rounded-xl bg-[#F97316] px-6 text-white hover:bg-[#c8451a]"
                 >
                   <Icon name="Phone" className="size-4" />
                   Talk to a Counselor
@@ -154,7 +154,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
                 <Button
                   onClick={() => onNavigate("public-team")}
                   variant="outline"
-                  className="h-12 rounded-xl border-[#0066CC]/30 bg-white px-6 text-[#0066CC] hover:bg-[#EAF3FF]"
+                  className="h-12 rounded-xl border-[#2563EB]/30 bg-white px-6 text-[#2563EB] hover:bg-[#EAF3FF]"
                 >
                   <Icon name="Users" className="size-4" />
                   Meet the Team
@@ -163,25 +163,25 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
             </div>
             {/* Decorative gradient card */}
             <div className="relative">
-              <div className="absolute inset-0 -z-10 rotate-3 rounded-3xl bg-gradient-to-br from-[#0066CC]/10 to-[#F37021]/10" />
-              <Card className="overflow-hidden rounded-3xl border-2 border-[#0066CC]/15 bg-white alo-shadow">
+              <div className="absolute inset-0 -z-10 rotate-3 rounded-3xl bg-gradient-to-br from-[#2563EB]/10 to-[#F97316]/10" />
+              <Card className="overflow-hidden rounded-3xl border-2 border-[#2563EB]/15 bg-white alo-shadow">
                 <div className="h-48 bg-alo-gradient" />
                 <CardContent className="p-6">
                   <div className="grid grid-cols-2 gap-4">
                     <Stat>
-                      <span className="text-3xl font-black text-[#0066CC]">800+</span>
+                      <span className="text-3xl font-black text-[#2563EB]">800+</span>
                       <span className="text-xs text-[#5A7299]">Students guided</span>
                     </Stat>
                     <Stat>
-                      <span className="text-3xl font-black text-[#F37021]">13</span>
+                      <span className="text-3xl font-black text-[#F97316]">13</span>
                       <span className="text-xs text-[#5A7299]">Study destinations</span>
                     </Stat>
                     <Stat>
-                      <span className="text-3xl font-black text-[#0066CC]">{stats.totalUniversities || "408"}</span>
+                      <span className="text-3xl font-black text-[#2563EB]">{stats.totalUniversities || "408"}</span>
                       <span className="text-xs text-[#5A7299]">Verified universities</span>
                     </Stat>
                     <Stat>
-                      <span className="text-3xl font-black text-[#F37021]">{stats.totalCourses || "794"}</span>
+                      <span className="text-3xl font-black text-[#F97316]">{stats.totalCourses || "794"}</span>
                       <span className="text-xs text-[#5A7299]">Courses tracked</span>
                     </Stat>
                   </div>
@@ -193,11 +193,11 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       </section>
 
       {/* STORY */}
-      <section className="border-b border-[#0066CC]/10">
+      <section className="border-b border-[#2563EB]/10">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:items-start">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#F37021]">Our Story</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Our Story</p>
               <h2 className="mt-2 text-3xl font-black text-[#0B2447]">From a small Dhaka office to 13 destinations</h2>
             </div>
             <div className="space-y-4 text-[15px] leading-relaxed text-[#5A7299]">
@@ -233,21 +233,21 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       <section className="bg-[#F7FAFE]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="rounded-2xl border-2 border-[#0066CC]/15 bg-white alo-shadow">
+            <Card className="rounded-2xl border-2 border-[#2563EB]/15 bg-white alo-shadow">
               <CardContent className="p-8">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#EAF3FF] text-[#0066CC]">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#EAF3FF] text-[#2563EB]">
                   <Icon name="Target" className="size-6" />
                 </div>
-                <h3 className="mt-5 text-2xl font-black text-[#0066CC]">Our Mission</h3>
+                <h3 className="mt-5 text-2xl font-black text-[#2563EB]">Our Mission</h3>
                 <p className="mt-3 text-[15px] leading-relaxed text-[#5A7299]">{MISSION}</p>
               </CardContent>
             </Card>
-            <Card className="rounded-2xl border-2 border-[#F37021]/15 bg-white alo-shadow">
+            <Card className="rounded-2xl border-2 border-[#F97316]/15 bg-white alo-shadow">
               <CardContent className="p-8">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#FFF3EA] text-[#F37021]">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#FFF3EA] text-[#F97316]">
                   <Icon name="Eye" className="size-6" />
                 </div>
-                <h3 className="mt-5 text-2xl font-black text-[#F37021]">Our Vision</h3>
+                <h3 className="mt-5 text-2xl font-black text-[#F97316]">Our Vision</h3>
                 <p className="mt-3 text-[15px] leading-relaxed text-[#5A7299]">{VISION}</p>
               </CardContent>
             </Card>
@@ -257,9 +257,9 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
           <p className="mt-1 text-sm text-[#5A7299]">The non-negotiable principles that shape every decision at ALO.</p>
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {VALUES.map((v) => (
-              <Card key={v.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0066CC]/30">
+              <Card key={v.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30">
                 <CardContent className="p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0066CC]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#2563EB]">
                     <Icon name={v.icon} className="size-5" />
                   </div>
                   <h4 className="mt-3 text-base font-bold text-[#0B2447]">{v.title}</h4>
@@ -275,15 +275,15 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       <section>
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#F37021]">Why Choose ALO</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Why Choose ALO</p>
             <h2 className="mt-2 text-3xl font-black text-[#0B2447]">8 reasons students choose us</h2>
             <p className="mt-2 text-sm text-[#5A7299]">And why they stay with us from first call to graduation.</p>
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {WHY_CHOOSE.map((w) => (
-              <Card key={w.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#F37021]/30">
+              <Card key={w.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#F97316]/30">
                 <CardContent className="p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#FFF3EA] text-[#F37021]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#FFF3EA] text-[#F97316]">
                     <Icon name={w.icon} className="size-5" />
                   </div>
                   <h4 className="mt-3 text-sm font-bold text-[#0B2447]">{w.title}</h4>
@@ -300,14 +300,14 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0066CC]">Our Team</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">Our Team</p>
               <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Meet the counselors behind your journey</h2>
               <p className="mt-2 text-sm text-[#5A7299]">Specialist counselors, English trainers, visa officers, and application experts.</p>
             </div>
             <Button
               onClick={() => onNavigate("public-team")}
               variant="outline"
-              className="h-11 rounded-xl border-[#0066CC]/30 bg-white text-[#0066CC] hover:bg-[#EAF3FF]"
+              className="h-11 rounded-xl border-[#2563EB]/30 bg-white text-[#2563EB] hover:bg-[#EAF3FF]"
             >
               View Full Team
               <Icon name="ArrowRight" className="size-4" />
@@ -322,7 +322,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
               title="Team profiles will appear here"
               description="Our counselors are updating their bios. In the meantime, contact us directly."
               action={
-                <Button onClick={() => onNavigate("public-contact")} className="bg-[#0066CC] text-white hover:bg-[#0066CC]/90">
+                <Button onClick={() => onNavigate("public-contact")} className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
                   <Icon name="Phone" className="size-4" /> Contact Us
                 </Button>
               }
@@ -330,13 +330,13 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
           ) : (
             <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {team.slice(0, 4).map((m) => (
-                <Card key={m.id} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0066CC]/30">
+                <Card key={m.id} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30">
                   <CardContent className="p-5">
                     <div className="flex size-16 items-center justify-center rounded-2xl bg-alo-gradient text-2xl font-black text-white">
                       {m.name.split(" ").map((p) => p[0]).slice(0, 2).join("")}
                     </div>
                     <h4 className="mt-4 text-base font-bold text-[#0B2447]">{m.name}</h4>
-                    <p className="text-sm font-medium text-[#0066CC]">{m.role}</p>
+                    <p className="text-sm font-medium text-[#2563EB]">{m.role}</p>
                     {m.specialty && (
                       <p className="mt-1 text-xs text-[#5A7299]">{m.specialty}</p>
                     )}
@@ -374,7 +374,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
                 recommend destinations and courses, and outline a clear path to admission — no commitment required.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#F37021] px-6 text-white hover:bg-[#c8451a]">
+                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#F97316] px-6 text-white hover:bg-[#c8451a]">
                   <Icon name="CalendarCheck" className="size-4" />
                   Book Free Consultation
                 </Button>

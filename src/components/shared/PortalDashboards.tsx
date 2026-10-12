@@ -96,7 +96,7 @@ export function AdmissionsDashboard({ stats }: any) {
         <KpiCard title="Offers" value={stats?.offers ?? 14} icon={GraduationCap} />
         <KpiCard title="Rejected/Correction" value={stats?.rejected ?? 6} trend="down" icon={AlertTriangle} />
       </KpiGrid>
-      <SectionCard title="SLA Breaches" description="Applications past deadline"><DataTableFrame><Table><TableHeader><TableRow><TableHead>Application</TableHead><TableHead>Days Open</TableHead><TableHead>Action</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>APP-821 • UAL</TableCell><TableCell>5 days</TableCell><TableCell><Button size="sm" variant="outline">Open</Button></TableCell></TableRow></TableBody></Table></DataTableFrame></SectionCard>
+      <SectionCard title="SLA Breaches" description="Applications past deadline"><DataTableFrame><Table><TableHeader><TableRow><TableHead>Application</TableHead><TableHead>Days Open</TableHead><TableHead>Action</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>APP-821 • UAL</TableCell><TableCell>5 days</TableCell><TableCell><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline">Open</Button></TableCell></TableRow></TableBody></Table></DataTableFrame></SectionCard>
     </div>
   );
 }
@@ -186,14 +186,37 @@ export function PartnerDashboard({ stats }: any) {
 export function DataDashboard({ stats }: any) {
   return (
     <div className="space-y-6">
-      <PageHeader title="University Data Management" subtitle="Coverage, freshness, validation" actions={<Button className="bg-orange-500"><Plus className="w-4 h-4 mr-1"/> Add University</Button>} />
+      <PageHeader title="University Data Management" subtitle="Coverage, freshness, validation" actions={<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500"><Plus className="w-4 h-4 mr-1"/> Add University</Button>} />
       <KpiGrid>
-        <KpiCard title="Universities" value={stats?.unis ?? 342} icon={Building2} />
-        <KpiCard title="Courses" value={stats?.courses ?? 12840} icon={BookOpen} />
-        <KpiCard title="Stale Records" value={stats?.stale ?? 214} trend="down" icon={AlertTriangle} />
-        <KpiCard title="In Validation Queue" value={stats?.queue ?? 18} icon={Database} />
+        <KpiCard title="Universities" value={stats?.unis ?? 0} icon={Building2} />
+        <KpiCard title="Courses" value={stats?.courses ?? 0} icon={BookOpen} />
+        <KpiCard title="Stale Records" value={stats?.stale ?? 0} trend="down" icon={AlertTriangle} />
+        <KpiCard title="In Validation Queue" value={stats?.queue ?? 0} icon={Database} />
       </KpiGrid>
-      <SectionCard title="Validation Metrics"><DataTableFrame><Table><TableHeader><TableRow><TableHead>Source</TableHead><TableHead>Verified</TableHead><TableHead>Conflict</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>UCAS 2027</TableCell><TableCell>92%</TableCell><TableCell>3%</TableCell></TableRow></TableBody></Table></DataTableFrame></SectionCard>
+      <SectionCard title="Validation Metrics">
+        <DataTableFrame>
+          <Table>
+            <TableHeader><TableRow><TableHead>Source</TableHead><TableHead>Verified</TableHead><TableHead>Conflict</TableHead></TableRow></TableHeader>
+            <TableBody>
+              {Array.isArray(stats?.validationSources) && stats.validationSources.length > 0 ? (
+                stats.validationSources.map((row: any) => (
+                  <TableRow key={row.source}>
+                    <TableCell>{row.source}</TableCell>
+                    <TableCell>{row.verified ?? '—'}</TableCell>
+                    <TableCell>{row.conflict ?? '—'}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-muted-foreground">
+                    No source verification metrics have been recorded yet.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </DataTableFrame>
+      </SectionCard>
     </div>
   );
 }
@@ -264,7 +287,7 @@ export function COODashboard({ stats }: any) {
 export function SuperAdminDashboard({ stats }: any) {
   return (
     <div className="space-y-6">
-      <PageHeader title="System Overview" subtitle="Users, branches, workflows, health" actions={<Button variant="outline"><Settings className="w-4 h-4 mr-1"/> Settings</Button>} />
+      <PageHeader title="System Overview" subtitle="Users, branches, workflows, health" actions={<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline"><Settings className="w-4 h-4 mr-1"/> Settings</Button>} />
       <KpiGrid>
         <KpiCard title="Active Users" value={stats?.users ?? 87} icon={Users} />
         <KpiCard title="Branches" value={stats?.branches ?? 4} icon={Building2} />

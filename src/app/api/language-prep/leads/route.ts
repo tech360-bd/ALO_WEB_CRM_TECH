@@ -107,6 +107,14 @@ export async function POST(req: Request) {
       }
     }
 
+    // Never report success unless a lead row was actually stored. Without this
+    // guard a database outage would show visitors "Lead captured" while the
+    // request was silently dropped.
+    if (!lead) {
+      console.error('[language-prep-lead] No lead row was persisted; returning sanitized failure.');
+      return NextResponse.json({ success: false, error: 'Service temporarily unavailable' }, { status: 503 });
+    }
+
     // Also create CRM lead via existing public lead API logic if available — try to create marketing lead
     try {
       await db.marketingLead.create({
@@ -146,7 +154,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      leadId: lead?.id || 'created',
+      leadId: lead.id,
       message: 'Lead captured — our team will contact you shortly',
       data: lead,
     });

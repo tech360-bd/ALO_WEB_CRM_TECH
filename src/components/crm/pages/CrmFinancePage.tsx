@@ -121,7 +121,7 @@ export default function CrmFinancePage() {
                         <td className="py-3"><Badge className={statusColors[p.status] || 'bg-gray-100 text-gray-700'}>{p.status}</Badge></td>
                         <td className="py-3 text-alo-text-muted">{p.createdAt?.substring(0, 10)}</td>
                         <td className="py-3 text-right">
-                          <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
                         </td>
                       </tr>
                     ))}

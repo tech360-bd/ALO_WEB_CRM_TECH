@@ -281,9 +281,16 @@ export async function resolveSlaOnReply(threadId: string, repliedById: string) {
     data: { slaStatus: 'resolved', status: 'open' },
   }).catch(() => {});
 
+  // §150 — record the first staff response precisely (only the FIRST reply
+  // counts; later replies must not overwrite the response timestamp).
+  await db.communicationSlaEvent.updateMany({
+    where: { threadId, firstResponseAt: null },
+    data: { firstResponseAt: now },
+  }).catch(() => {});
+
   await db.communicationSlaEvent.updateMany({
     where: { threadId, slaStatus: { not: 'resolved' } },
-    data: { slaStatus: 'resolved' },
+    data: { slaStatus: 'resolved', resolvedAt: now },
   }).catch(() => {});
 
   await db.slaEvent.updateMany({

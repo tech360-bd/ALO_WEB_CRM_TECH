@@ -219,7 +219,7 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
   onRemove: () => void;
 }) {
   return (
-    <div className={`group relative bg-white rounded-xl border p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-3 ${isSelected ? 'border-[#0057B8] ring-2 ring-[#0057B8]/20' : 'border-slate-200'}`}>
+    <div className={`group relative bg-white rounded-xl border p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-3 ${isSelected ? 'border-[#2563EB] ring-2 ring-[#2563EB]/20' : 'border-slate-200'}`}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3 min-w-0">
           <div className={`shrink-0 size-10 rounded-lg ${course.logoColor} flex items-center justify-center text-white font-bold text-sm`}>
@@ -235,7 +235,7 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
             <Checkbox
               checked={isSelected}
               onCheckedChange={onToggleSelect}
-              className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+              className="data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
             />
           </label>
           <Button variant="ghost" size="icon-sm" className="text-slate-400 hover:text-red-500 h-7 w-7" onClick={onRemove}>
@@ -273,10 +273,10 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
       </div>
 
       <div className="flex items-center gap-2 pt-1 mt-auto">
-        <Button variant="cta" size="sm" className="flex-1 h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 h-8 text-xs">
           Apply
         </Button>
-        <Button variant="outline" size="sm" className="h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs">
           <Bookmark className="size-3 fill-amber-500 text-amber-500 mr-1" />
           Saved
         </Button>
@@ -343,7 +343,7 @@ export default function StudentCompare() {
                   <Bookmark className="size-4" />
                   My Shortlist
                   {shortlist.length > 0 && (
-                    <span className="ml-1 size-5 rounded-full bg-[#0057B8] text-white text-[10px] flex items-center justify-center font-bold">
+                    <span className="ml-1 size-5 rounded-full bg-[#2563EB] text-white text-[10px] flex items-center justify-center font-bold">
                       {shortlist.length}
                     </span>
                   )}
@@ -377,7 +377,7 @@ export default function StudentCompare() {
                   <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
                     Browse courses and click Shortlist to save them here. You can compare up to 5 courses side by side.
                   </p>
-                  <Button variant="cta" className="gap-2">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" className="gap-2">
                     Browse Courses
                     <ArrowRight className="size-4" />
                   </Button>
@@ -426,7 +426,7 @@ export default function StudentCompare() {
                     <p className="text-sm text-slate-500">
                       Comparing <span className="font-semibold text-slate-800">{selectedCourses.length}</span> courses
                     </p>
-                    <Button
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="cta"
                       size="lg"
                       className="gap-2"
@@ -530,7 +530,7 @@ export default function StudentCompare() {
                                 >
                                   <div className={`inline-flex size-12 rounded-full items-center justify-center text-sm font-bold ${
                                     course.matchScore >= 90 ? 'bg-emerald-500 text-white' :
-                                    course.matchScore >= 80 ? 'bg-[#0057B8] text-white' :
+                                    course.matchScore >= 80 ? 'bg-[#2563EB] text-white' :
                                     'bg-amber-500 text-white'
                                   }`}>
                                     {course.matchScore}%
@@ -550,7 +550,7 @@ export default function StudentCompare() {
                       <ArrowRight className="size-4 rotate-180" />
                       Back to Shortlist
                     </Button>
-                    <Button variant="cta" size="lg" className="gap-2">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="lg" className="gap-2">
                       Apply to Selected ({selectedCourses.length})
                       <ArrowRight className="size-4" />
                     </Button>

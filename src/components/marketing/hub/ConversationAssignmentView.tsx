@@ -792,7 +792,7 @@ export default function ConversationAssignmentView() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
             <History className="h-4 w-4 mr-1" />
             Activity Log
           </Button>
@@ -1076,7 +1076,7 @@ export default function ConversationAssignmentView() {
                           )}
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0">
                                 <Eye className="h-3.5 w-3.5" />
                               </Button>
                             </TooltipTrigger>
@@ -1084,7 +1084,7 @@ export default function ConversationAssignmentView() {
                           </Tooltip>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0">
                                 <Send className="h-3.5 w-3.5" />
                               </Button>
                             </TooltipTrigger>
@@ -1114,7 +1114,7 @@ export default function ConversationAssignmentView() {
                   <UserPlus className="h-4 w-4 mr-1" />
                   Bulk Assign
                 </Button>
-                <Button size="sm" variant="outline" className="text-rose-600">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="text-rose-600">
                   <XCircle className="h-4 w-4 mr-1" />
                   Mark Resolved
                 </Button>
@@ -1229,7 +1229,7 @@ export default function ConversationAssignmentView() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0">
                       <Eye className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -1245,7 +1245,7 @@ export default function ConversationAssignmentView() {
             <p className="text-sm text-muted-foreground">
               Configure automatic conversation routing rules. Rules are evaluated in priority order.
             </p>
-            <Button size="sm">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm">
               <Zap className="h-4 w-4 mr-1" />
               Add Rule
             </Button>

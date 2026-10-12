@@ -3,6 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
+// This historical exporter rejected unrelated institutions and invented facts.
+// Fail before constructing a database client: it must never mutate live records.
+throw new Error('Legacy collection disabled: use scripts/collect-official-source-evidence.py for read-only discovery, then review records before import.');
 const db = new PrismaClient();
 
 // Helper to escape CSV values

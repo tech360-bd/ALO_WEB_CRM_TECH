@@ -4,7 +4,8 @@
 # Purpose: CI only. Hostinger owns production deployment outside Actions.
 # No production credentials, hosting transport, or restart commands are used.
 #
-# Triggers: main/development/arena pushes, PRs, manual dispatch, reusable CI.
+# Triggers: main/development pushes, PRs, manual dispatch, reusable CI.
+# Feature branches validate through PRs, avoiding duplicate push + PR jobs.
 # Never deploys. Uses NO repository secrets, so pull requests from forks are
 # safe (fork PRs get a read-only GITHUB_TOKEN and no secrets by design).
 #
@@ -21,7 +22,6 @@ on:
     branches:
       - main
       - development
-      - 'arena/**'
   pull_request:
   workflow_dispatch:
   workflow_call:
@@ -41,6 +41,19 @@ jobs:
     name: Lint · Typecheck · Tests · Prisma · Build
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: alo_quality_ci
+        ports:
+          - '3306:3306'
+        options: >-
+          --health-cmd="mysqladmin ping -proot -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=30
     steps:
       - name: Checkout PR commit
         # actions/checkout v7.0.1 — pinned to immutable SHA
@@ -61,7 +74,7 @@ jobs:
           npm ci
 
       - name: Dependency security audit (high and critical block)
-        run: npm audit --audit-level=high
+        run: node scripts/ci/npm-security-audit.mjs
 
       - name: Secret-leak scan (tracked files)
         run: |
@@ -114,18 +127,22 @@ jobs:
       - name: Deployment ownership safety tests (no production calls)
         run: node --test tests/deployment-ownership.test.mjs tests/runtime-standard.test.mjs
 
+      - name: Environment variable classification is current
+        # docs/environment-classification.json is derived from the code, so it
+        # must be regenerated whenever a process.env reference is added or
+        # removed. Keeps the documented production contract honest.
+        run: npm run audit:env -- --check
+
       - name: Prisma validate
         env:
-          # Dummy value ONLY so the CLI can resolve env("DATABASE_URL") during
-          # schema validation. No connection is made. Scoped to this step so the
-          # Tests step still sees NO DATABASE_URL (DB-integration files then
-          # self-skip with reason instead of hitting a dummy server).
-          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
+          # Use only the disposable MySQL service declared for this CI job.
+          # Scoped to this step; no Hostinger or repository secret is available.
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/alo_quality_ci"
         run: npx prisma validate
 
       - name: Prisma generate (needed for typecheck)
         env:
-          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/alo_quality_ci"
         run: npx prisma generate
 
       - name: Verify generated Prisma client
@@ -156,12 +173,12 @@ jobs:
       - name: Tests (blocking; DB-integration files skip-with-reason when no test DATABASE_URL)
         run: npm test
 
-      - name: Integration tests (isolated DB required for persistence tests)
+      - name: Optional integration tests (requires an explicitly configured disposable TEST_DATABASE_URL)
+        if: ${{ env.TEST_DATABASE_URL != '' }}
         run: npm run test:integration
 
-      - name: Production build (dummy env, runner validation only)
+      - name: Production build (no database connection at build time)
         env:
-          DATABASE_URL: "mysql://user:pass@localhost:3306/dummy_build_check"
           NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
           AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
           JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
@@ -171,8 +188,13 @@ jobs:
           NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
           FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
         run: |
-          set -euo pipefail
-          npm run build
+          set -uo pipefail
+          # Capture the build output so a failure is diagnosable from the job
+          # annotations alone (Actions log blobs are not always reachable).
+          if ! npm run build 2>&1 | tee /tmp/build.log; then
+            echo "::error::Production build failed — $(grep -aiE 'error|failed to compile|type error|cannot find|module not found' /tmp/build.log | head -12 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ' | cut -c1-900)"
+            exit 1
+          fi
           test -f .next/standalone/server.js || { echo "::error::standalone server.js missing"; exit 1; }
           node scripts/verify-standalone.mjs
           echo "✓ Build succeeded"
@@ -184,3 +206,173 @@ jobs:
           echo "- Job conclusion: \`${{ job.status }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- This workflow NEVER deploys. Hostinger production branch mapping is external and must be verified separately." >> "$GITHUB_STEP_SUMMARY"
+
+  # ==========================================================================
+  # MySQL 8 live-database verification.
+  #
+  # Proves on every push/PR, against a REAL disposable MySQL 8.4:
+  #   1. `prisma migrate deploy` succeeds on a FRESH database (the migration
+  #      chain is appliable end-to-end — this was impossible before the
+  #      2026-10-01 re-baseline documented in prisma/migrations/0_init).
+  #   2. The applied migration chain reproduces prisma/schema.prisma exactly
+  #      (no drift; `prisma migrate diff` from-migrations → schema is empty).
+  #   3. DB-integration tests run for real (they self-skip in the job above).
+  #   4. The production standalone build boots, /api/health is green, the
+  #      public consultation workflow persists verifiable rows, validation
+  #      rejects bad input, and protected routes deny anonymous access.
+  # Uses NO repository secrets (fork-safe, disposable localhost-only DB).
+  # ==========================================================================
+  mysql-integration:
+    name: MySQL 8 · Migrate · Integrate · Boot
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: alo_app_ci
+        ports:
+          - '3306:3306'
+        options: >-
+          --health-cmd="mysqladmin ping -proot -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=30
+    env:
+      NODE_VERSION: '22'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies from lockfile (reproducible)
+        run: npm ci
+
+      - name: Fresh-database migration (migrate deploy on empty MySQL 8)
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
+        run: |
+          set -uo pipefail
+          if ! npx prisma migrate deploy 2>&1 | tee /tmp/deploy.log; then # ci-ephemeral-db-only: disposable localhost CI database — never production
+            echo "::error::migrate deploy failed on fresh MySQL 8 — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "✓ Migration chain applies cleanly to a fresh MySQL 8.4 database"
+
+      - name: Migration status must report up to date
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
+        run: |
+          set -euo pipefail
+          npx prisma migrate status | tee /tmp/migrate-status.txt
+          grep -q "Database schema is up to date" /tmp/migrate-status.txt
+
+      - name: No drift between migrations and schema.prisma (authoritative diff)
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
+        run: |
+          set -euo pipefail
+          mysql -h 127.0.0.1 -uroot -proot -e "DROP DATABASE IF EXISTS alo_shadow_ci; CREATE DATABASE alo_shadow_ci;"
+          npx prisma migrate diff \
+            --from-migrations prisma/migrations \
+            --to-schema-datamodel prisma/schema.prisma \
+            --shadow-database-url mysql://root:root@127.0.0.1:3306/alo_shadow_ci \
+            --script > /tmp/drift.sql
+          # Keep the Prisma diff unmodified. The narrow filter suppresses only
+          # proven no-op LOB default re-assertions matching schema.prisma; any
+          # actual table, column, type, nullability, index or default drift fails.
+          node scripts/ci/filter-lob-default-drift.mjs /tmp/drift.sql prisma/schema.prisma
+          echo "✓ Migrations reproduce schema.prisma (no real drift)"
+
+      - name: Integration tests (real MySQL persistence)
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
+        run: |
+          set -euo pipefail
+          mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS alo_test_ci CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          if ! DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npx prisma migrate deploy 2>&1 | tee /tmp/deploy2.log; then # ci-ephemeral-db-only: disposable localhost CI database — never production
+            echo "::error::test-db migrate deploy failed — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy2.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
+          if ! ALLOW_DISPOSABLE_DATABASE_TESTS=1 TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log; then
+            echo "::error::integration tests failed — $(grep -aE '✖|FAIL|Error|AssertionError' /tmp/integration.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
+
+      - name: Production build
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
+          NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          SESSION_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+          NEXTAUTH_URL: "https://aloeducation.com"
+          NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
+          FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
+        run: |
+          set -uo pipefail
+          # Emit useful failure details as a check annotation because Actions
+          # log archives may be unreachable from restricted agent environments.
+          if ! npm run build 2>&1 | tee /tmp/mysql-build.log; then
+            echo "::error::MySQL-job production build failed — $(grep -aiE 'error|failed to compile|type error|cannot find|module not found|killed|out of memory|heap|SIGKILL' /tmp/mysql-build.log | head -12 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ' | cut -c1-900)"
+            exit 1
+          fi
+
+      - name: Boot standalone server + runtime smoke (real DB over HTTP)
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
+          NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          SESSION_SECRET: "dummy-build-secret-for-validation-only-32chars"
+          ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+          NEXTAUTH_URL: "http://127.0.0.1:3100"
+          NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100"
+          FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
+          PORT: '3100'
+        run: |
+          set -uo pipefail
+          node server.js > /tmp/server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:3100/api/health > /dev/null 2>&1; then break; fi
+            sleep 2
+          done
+          if ! curl -sf http://127.0.0.1:3100/api/health > /dev/null 2>&1; then
+            echo "::error::standalone server failed to boot — $(grep -aiE 'error|fail|cannot|EADDR' /tmp/server.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
+            exit 1
+          fi
+          if ! node scripts/runtime-smoke.mjs --base-url http://127.0.0.1:3100 \
+            --database-url mysql://root:root@127.0.0.1:3306/alo_app_ci 2>&1 | tee /tmp/smoke.log; then
+            # Check-run annotations cap at ~10 error lines per step, and job-log
+            # blobs are unreachable from restricted sandboxes — so emit ONLY the
+            # decisive evidence, single-line, highest-signal first.
+            replay=$(curl -si -X POST http://127.0.0.1:3100/api/website/lead \
+              -H 'content-type: application/json' \
+              -d '{"name":"Diag","phone":"+8801700000001","email":"diag@smoke.invalid","preferredCountry":"United Kingdom"}' 2>/dev/null | tr -d '\r')
+            status_line=$(echo "$replay" | head -1)
+            body_line=$(echo "$replay" | sed -n '/^$/,$ p' | tr -d '\n' | head -c 300)
+            echo "::error::runtime smoke failed — lead-replay ${status_line} body: ${body_line}"
+            fail_line=$(grep -aE 'FAIL|body\(400\)' /tmp/smoke.log | tail -1 | head -c 400)
+            echo "::error::smoke-script: $(echo "$fail_line" | sed 's/%/%25/g')"
+            grep -aiE 'lead|prisma|error|warn|unauthor' /tmp/server.log | tail -6 | while IFS= read -r line; do
+              echo "::error::server-log: $(echo "$line" | sed 's/%/%25/g; s/\r//g' | head -c 300)"
+            done
+            exit 1
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### MySQL 8 integration result" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Job conclusion: \`${{ job.status }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Fresh-database migration deploy, migration↔schema drift check, DB-backed integration tests and a booted-server HTTP smoke test all ran against a disposable MySQL 8.4 service." >> "$GITHUB_STEP_SUMMARY"

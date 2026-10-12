@@ -50,7 +50,7 @@ export default function HrmPayrollPage() {
         </div>
         <div className="flex gap-2">
           <input type="month" value={month} onChange={e=> setMonth(e.target.value)} className="h-9 text-xs border border-slate-200 rounded px-2 bg-white" />
-          <Button onClick={generate} disabled={generating} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs">{generating? 'Generating...' : 'Generate Monthly Payroll'}</Button>
+          <Button onClick={generate} disabled={generating} className="bg-[#F97316] hover:bg-[#D04010] text-white h-9 text-xs">{generating? 'Generating...' : 'Generate Monthly Payroll'}</Button>
         </div>
       </div>
 

@@ -346,7 +346,7 @@ export function PhoneCallCenter() {
                 If matched to a student, their name & student ID will appear here.
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                <Button size="sm" variant="default">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="default">
                   <Icon name="UserCircle" className="size-3.5" /> Open Contact
                 </Button>
                 <Button
@@ -1598,10 +1598,10 @@ function CallDetailSheet({
               )}
 
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="flex-1">
                   <Icon name="Phone" className="size-3.5" /> Call Back
                 </Button>
-                <Button variant="alo" size="sm" className="flex-1">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="alo" size="sm" className="flex-1">
                   <Icon name="ClipboardCheck" className="size-3.5" /> Log Outcome
                 </Button>
               </div>

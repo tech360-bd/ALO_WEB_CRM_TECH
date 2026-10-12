@@ -763,7 +763,7 @@ function ApplicationTableRow({
         <CountdownBadge deadline={application.deadline} />
       </TableCell>
       <TableCell>
-        <Button variant="ghost" size="sm" className="gap-1 text-[#C2410C] hover:text-[#C2410C] hover:bg-orange-50">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1 text-[#C2410C] hover:text-[#C2410C] hover:bg-orange-50">
           <Eye className="size-3.5" />
           <span className="sr-only sm:not-sr-only">View</span>
         </Button>

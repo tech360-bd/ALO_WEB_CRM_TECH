@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — labelled 2026-10-12 (safety remediation).** Kept for history only; do not cite as evidence.
+> Unsupported claims in this file: the 'certifies' statement and the ticked compliance boxes (for example '100% custom') are self-declarations with no legal review, code-provenance scan or data-source audit attached; the repository also contained generated synthetic catalogue data.
+> Current evidence-based status: `AUDIT/course-finder-2026-10-12/` and `AUDIT/historical-catalogue-reports-2026-10-12/README.md`.
+
 # 🛡️ CONTENT ORIGINALITY & SOURCE COMPLIANCE REPORT — ALO EDUCATION
 
 This document certifies that the ALO Education University Directory and Course Finder platform complies with intellectual property laws, fair-use principles, anti-scraping standards, and data governance best practices.

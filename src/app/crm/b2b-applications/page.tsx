@@ -25,7 +25,7 @@ export default function CrmB2BApplications() {
 
   useEffect(()=>{ fetchB2B(); },[fetchB2B]);
 
-  if (loading) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#0057B8]" /></div>;
+  if (loading) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#2563EB]" /></div>;
   if (error) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 text-center max-w-md"><Lock className="w-8 h-8 text-rose-500 mx-auto mb-2" /><p className="text-sm text-rose-700">{error}</p></div></div>;
 
   return (

@@ -69,8 +69,8 @@ export default function MarketingDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Calendar className="w-4 h-4" /> Calendar</Button>
-          <Button variant="brand" size="sm"><Plus className="w-4 h-4" /> New Campaign</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Calendar className="w-4 h-4" /> Calendar</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Plus className="w-4 h-4" /> New Campaign</Button>
         </div>
       </div>
 

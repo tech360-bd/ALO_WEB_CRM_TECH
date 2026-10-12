@@ -76,6 +76,7 @@ interface InboxMessage {
 }
 
 interface Attachment {
+  id?: string;
   name: string;
   type: string; // mime type
   size: number;
@@ -84,6 +85,7 @@ interface Attachment {
 
 interface Conversation {
   key: string;
+  source?: 'communication_thread' | 'ucc_conversation';
   channel: string;
   studentId?: string | null;
   studentName?: string | null;
@@ -117,7 +119,10 @@ interface StudentContext {
     universityName?: string | null;
     courseName?: string | null;
     stage: string;
+    isB2bConfidential?: boolean;
   }>;
+  hasB2bConfidentialApplications?: boolean;
+  canManageB2bDocuments?: boolean;
   documents?: Array<{
     id: string;
     name: string;
@@ -167,16 +172,8 @@ interface Template {
 interface AiReplyResponse {
   reply?: string;
   requiresOtp?: boolean;
-  otp?: string;
-  error?: string;
-}
-
-interface DocumentUploadResponse {
-  success?: boolean;
-  document?: { id: string; name: string; category: string };
-  studentId?: string;
-  needsConfirmation?: boolean;
-  message?: string;
+  verificationAvailable?: boolean;
+  requiresHumanApproval?: boolean;
   error?: string;
 }
 
@@ -339,7 +336,6 @@ export function WhatsAppCommandCenter() {
 
   // AI draft
   const [aiDraft, setAiDraft] = React.useState<string | null>(null);
-  const [aiConfidence, setAiConfidence] = React.useState<number | null>(null);
   const [aiLoading, setAiLoading] = React.useState(false);
   const [aiError, setAiError] = React.useState<string | null>(null);
   const [aiOtpRequired, setAiOtpRequired] = React.useState(false);
@@ -351,6 +347,7 @@ export function WhatsAppCommandCenter() {
   // Composer
   const [composerText, setComposerText] = React.useState("");
   const [attachments, setAttachments] = React.useState<File[]>([]);
+  const [outboundApplicationId, setOutboundApplicationId] = React.useState('');
   const [sending, setSending] = React.useState(false);
 
   // Acting user
@@ -376,9 +373,10 @@ export function WhatsAppCommandCenter() {
       const res = await fetch("/api/inbox/unified?channel=WHATSAPP", { cache: "no-store" });
       if (!res.ok) throw new Error(`Failed to fetch inbox (${res.status})`);
       const data = (await res.json()) as InboxResponse;
-      setConversations(data.conversations || []);
-      if (data.conversations.length > 0 && !selectedKey) {
-        setSelectedKey(data.conversations[0].key);
+      const conversations = Array.isArray(data?.conversations) ? data.conversations : [];
+      setConversations(conversations);
+      if (conversations.length > 0 && !selectedKey) {
+        setSelectedKey(conversations[0].key);
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Unknown error";
@@ -412,6 +410,7 @@ export function WhatsAppCommandCenter() {
     () => conversations.find((c) => c.key === selectedKey) || null,
     [conversations, selectedKey]
   );
+  React.useEffect(() => setOutboundApplicationId(''), [selectedKey]);
 
   // ── Filtered list ──────────────────────────────────────────────────────
   const filtered = React.useMemo(() => {
@@ -480,7 +479,6 @@ export function WhatsAppCommandCenter() {
     }
     // Reset AI draft on conversation switch
     setAiDraft(null);
-    setAiConfidence(null);
     setAiError(null);
     setAiOtpRequired(false);
   }, [selected]);
@@ -507,11 +505,10 @@ export function WhatsAppCommandCenter() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          phone: selected.fromPhone || "",
           message: lastInbound.body,
           conversationId: selected.key,
+          conversationSource: selected.source || 'communication_thread',
           studentId: selected.studentId || undefined,
-          isAfterHours: false,
         }),
       });
       if (!res.ok) {
@@ -522,15 +519,16 @@ export function WhatsAppCommandCenter() {
       if (data.error) throw new Error(data.error);
       if (data.requiresOtp) {
         setAiOtpRequired(true);
-        setAiDraft(data.reply || "OTP verification required to share private information.");
+        setAiDraft(data.reply || "For security, use the secure student portal or contact the assigned counselor. No OTP is sent by this drafting flow.");
         toast({
-          title: "OTP required",
-          description: "The student must verify their identity before private data is shared.",
+          title: "Private details blocked",
+          description: data.verificationAvailable
+            ? "Complete the secure verification process before sharing private information."
+            : "This flow cannot send or verify an OTP. Use the secure portal or assigned-counselor process.",
         });
         return;
       }
       setAiDraft(data.reply || "");
-      setAiConfidence(72); // The endpoint doesn't return a confidence; show a sensible default.
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Unknown error";
       setAiError(msg);
@@ -545,97 +543,74 @@ export function WhatsAppCommandCenter() {
   }
 
   // ── Approve & send AI draft ────────────────────────────────────────────
+  async function sendReplyText(text: string, aiAssisted = false) {
+    if (!selected) throw new Error('Select a WhatsApp conversation first.');
+    const isUcc = selected.source === 'ucc_conversation';
+    const endpoint = isUcc
+      ? `/api/crm/ucc/conversations/${encodeURIComponent(selected.key)}/reply`
+      : '/api/inbox/unified';
+    const payload = isUcc
+      ? { content: text, aiGenerated: aiAssisted, aiApproved: aiAssisted }
+      : { threadId: selected.key, channel: 'WHATSAPP', content: text, aiAssisted };
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.success) throw new Error(result.error || `Send failed (${response.status})`);
+    return result;
+  }
+
   async function approveAndSendDraft() {
     if (!selected || !aiDraft) return;
     setSending(true);
+    let providerConfirmed = false;
     try {
-      // Create an approved draft record (audit trail)
-      const draftRes = await fetch("/api/communications/drafts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      // Persist the human-review draft before any external send is attempted.
+      const draftRes = await fetch('/api/communications/drafts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          channel: "WHATSAPP",
+          channel: 'WHATSAPP',
           studentId: selected.studentId || undefined,
+          conversationId: selected.source === 'ucc_conversation' ? selected.key : undefined,
+          threadId: selected.source === 'ucc_conversation' ? undefined : selected.key,
           draftBody: aiDraft,
           aiGenerated: true,
-          aiConfidence: aiConfidence ?? 0,
-          mode: "AI_DRAFT_HUMAN_SEND",
-          status: "DRAFT",
-          createdBy: currentUserId,
+          mode: 'AI_DRAFT_HUMAN_SEND',
         }),
       });
-      let draftId: string | undefined;
-      if (draftRes.ok) {
-        const draftData = await draftRes.json();
-        draftId = draftData?.draft?.id;
-      }
+      const draftData = await draftRes.json().catch(() => ({}));
+      if (!draftRes.ok || !draftData.success || !draftData.draft?.id) throw new Error(draftData.error || `Draft could not be saved (${draftRes.status}); the reply was not sent.`);
 
-      // Mark as approved + sent
-      if (draftId) {
-        await fetch(`/api/communications/drafts/${draftId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            status: "SENT",
-            sentById: currentUserId,
-            approvedBy: currentUserId,
-          }),
-        });
-      }
+      const send = await sendReplyText(aiDraft, true);
+      const providerMessageId = typeof send.providerMessageId === 'string' ? send.providerMessageId : '';
+      if (!providerMessageId) throw new Error('WhatsApp did not return a provider message ID; the draft was not marked as sent.');
+      providerConfirmed = true;
 
-      // Actually send the message
-      const sendRes = await fetch("/api/inbox/unified", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          channel: "WHATSAPP",
-          toPhone: selected.fromPhone || undefined,
-          body: aiDraft,
-          studentId: selected.studentId || undefined,
-          counselorId: currentUserId,
-          aiAssisted: true,
-          humanApproved: true,
-        }),
+      const statusResponse = await fetch(`/api/communications/drafts/${encodeURIComponent(draftData.draft.id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'SENT', providerMessageId }),
       });
-      if (!sendRes.ok) {
-        const err = await sendRes.json().catch(() => ({}));
-        throw new Error(err?.error || `Send failed (${sendRes.status})`);
-      }
-      const send = await sendRes.json();
-      // Optimistically append to the conversation
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.key === selected.key
-            ? {
-                ...c,
-                messages: [
-                  {
-                    id: send?.message?.id || `local-${Date.now()}`,
-                    channel: "WHATSAPP",
-                    direction: "OUTBOUND",
-                    body: aiDraft,
-                    receivedAt: new Date().toISOString(),
-                    sentAt: new Date().toISOString(),
-                    deliveryStatus: "SENT",
-                    read: true,
-                    aiAssisted: true,
-                  },
-                  ...c.messages,
-                ],
-                lastMessageAt: new Date().toISOString(),
-              }
-            : c
-        )
-      );
+      const statusResult = await statusResponse.json().catch(() => ({}));
+      const auditStatusSaved = statusResponse.ok && statusResult.success;
+
+      const sentAt = new Date().toISOString();
+      setConversations((previous) => previous.map((conversation) => conversation.key === selected.key
+        ? { ...conversation, messages: [{ id: send?.message?.id || providerMessageId, channel: 'WHATSAPP', direction: 'OUTBOUND', body: aiDraft, receivedAt: sentAt, sentAt, deliveryStatus: 'SENT', read: true, aiAssisted: true }, ...conversation.messages], lastMessageAt: sentAt }
+        : conversation));
       setAiDraft(null);
-      setAiConfidence(null);
-      toast({
-        title: "Reply sent",
-        description: "Your AI-assisted reply has been delivered.",
-      });
+      toast({ title: auditStatusSaved ? 'Reply sent' : 'Reply sent; audit update pending', description: auditStatusSaved ? 'WhatsApp confirmed the AI-assisted reply.' : 'WhatsApp confirmed the reply, but its draft audit status could not be finalized. Do not resend.' });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      toast({ title: "Failed to send", description: msg, variant: "destructive" });
+      const msg = e instanceof Error ? e.message : 'Unknown error';
+      if (providerConfirmed) {
+        setAiDraft(null);
+        toast({ title: 'Reply sent; audit update pending', description: `${msg} Do not resend this message.`, variant: 'destructive' });
+      } else {
+        toast({ title: 'Failed to send', description: msg, variant: 'destructive' });
+      }
     } finally {
       setSending(false);
     }
@@ -643,7 +618,6 @@ export function WhatsAppCommandCenter() {
 
   function rejectDraft() {
     setAiDraft(null);
-    setAiConfidence(null);
     setAiOtpRequired(false);
     toast({ title: "Draft rejected", description: "You can write a manual reply below." });
   }
@@ -660,55 +634,70 @@ export function WhatsAppCommandCenter() {
     const text = composerText.trim();
     if (!text && attachments.length === 0) return;
     setSending(true);
+    let sentAttachmentCount = 0;
     try {
-      const res = await fetch("/api/inbox/unified", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          channel: "WHATSAPP",
-          toPhone: selected.fromPhone || undefined,
-          body: text || "(attachment)",
-          studentId: selected.studentId || undefined,
-          counselorId: currentUserId,
-          aiAssisted: false,
-          humanApproved: true,
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `Send failed (${res.status})`);
+      const sentMessages: Array<{ id: string; body: string }> = [];
+      if (attachments.length > 0) {
+        if (student?.hasB2bConfidentialApplications && !student.canManageB2bDocuments) throw new Error('This student’s B2B-confidential media must be handled by a B2B-authorized staff member. No attachment was sent.');
+        if (student?.hasB2bConfidentialApplications && student.canManageB2bDocuments && !outboundApplicationId) throw new Error('Select the application for this B2B-confidential media before sending.');
+        if (selected.source !== 'ucc_conversation') throw new Error('Secure media sending requires an assigned UCC WhatsApp conversation. No attachment was sent.');
+        if (attachments.length > 5) throw new Error('Send no more than five attachments in one reply.');
+        for (const file of attachments) {
+          if (file.size > 20 * 1024 * 1024) throw new Error(`${file.name} exceeds the 20 MB WhatsApp document limit.`);
+          if (file.type && !['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+            throw new Error(`${file.name} is not a supported PDF or image file.`);
+          }
+        }
+        const uploaded: Array<{ id: string; fileName: string }> = [];
+        for (const file of attachments) {
+          const form = new FormData();
+          form.append('conversationId', selected.key);
+          form.append('purpose', 'outbound_media');
+          if (selected.studentId) form.append('studentId', selected.studentId);
+          if (outboundApplicationId) form.append('applicationId', outboundApplicationId);
+          form.append('file', file, file.name);
+          const uploadResponse = await fetch('/api/crm/ucc/documents/upload', { method: 'POST', body: form });
+          const upload = await uploadResponse.json().catch(() => ({}));
+          if (!uploadResponse.ok || !upload.success || !upload.attachment?.id) {
+            throw new Error(upload.error || `Private upload failed (${uploadResponse.status}); no message was sent.`);
+          }
+          uploaded.push({ id: upload.attachment.id, fileName: upload.attachment.fileName || file.name });
+        }
+        for (let index = 0; index < uploaded.length; index += 1) {
+          const item = uploaded[index];
+          const response = await fetch(`/api/crm/ucc/conversations/${encodeURIComponent(selected.key)}/reply`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: index === 0 ? text : '', attachment: { attachmentId: item.id } }),
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.success) {
+            throw new Error(result.error || `WhatsApp attachment send failed (${response.status}). Any remaining files are stored privately and were not marked as sent.`);
+          }
+          sentMessages.push({ id: result.message?.id || `local-${Date.now()}-${index}`, body: text && index === 0 ? text : `[Attachment: ${item.fileName}]` });
+          sentAttachmentCount += 1;
+        }
+      } else {
+        const result = await sendReplyText(text, false);
+        sentMessages.push({ id: result?.message?.id || result?.providerMessageId || `local-${Date.now()}`, body: text });
       }
-      const send = await res.json();
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.key === selected.key
-            ? {
-                ...c,
-                messages: [
-                  {
-                    id: send?.message?.id || `local-${Date.now()}`,
-                    channel: "WHATSAPP",
-                    direction: "OUTBOUND",
-                    body: text || "(attachment)",
-                    receivedAt: new Date().toISOString(),
-                    sentAt: new Date().toISOString(),
-                    deliveryStatus: "SENT",
-                    read: true,
-                    aiAssisted: false,
-                  },
-                  ...c.messages,
-                ],
-                lastMessageAt: new Date().toISOString(),
-              }
-            : c
-        )
-      );
-      setComposerText("");
+
+      const sentAt = new Date().toISOString();
+      const optimisticMessages: InboxMessage[] = [...sentMessages].reverse().map((message) => ({ id: message.id, channel: 'WHATSAPP', direction: 'OUTBOUND', body: message.body, receivedAt: sentAt, sentAt, deliveryStatus: 'SENT', read: true, aiAssisted: false }));
+      setConversations((previous) => previous.map((conversation) => conversation.key === selected.key
+        ? { ...conversation, messages: [...optimisticMessages, ...conversation.messages], lastMessageAt: sentAt }
+        : conversation));
+      setComposerText('');
       setAttachments([]);
-      toast({ title: "Message sent", description: "Your reply has been queued for delivery." });
+      toast({ title: 'Message sent', description: 'WhatsApp confirmed the reply.' });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      toast({ title: "Failed to send", description: msg, variant: "destructive" });
+      const msg = e instanceof Error ? e.message : 'Unknown error';
+      if (sentAttachmentCount > 0) {
+        setAttachments(attachments.slice(sentAttachmentCount));
+        setComposerText('');
+        void fetchInbox();
+      }
+      toast({ title: 'Failed to send', description: sentAttachmentCount > 0 ? `${sentAttachmentCount} attachment(s) were confirmed sent. Remaining files stay selected. ${msg}` : msg, variant: 'destructive' });
     } finally {
       setSending(false);
     }
@@ -748,47 +737,35 @@ export function WhatsAppCommandCenter() {
   }
 
   // ── WhatsApp document upload ──────────────────────────────────────────
-  async function createDocumentUploadEvent(fileName: string, fileType: string, fileSize: number) {
-    if (!selected?.fromPhone) {
-      toast({ title: "No phone", description: "Cannot upload document without a sender phone.", variant: "destructive" });
+  async function createDocumentUploadEvent(attachment: Attachment, documentType: string, applicationId?: string) {
+    if (!selected || selected.source !== 'ucc_conversation' || !attachment.id) {
+      toast({ title: 'Attachment unavailable', description: 'This message has no securely stored WhatsApp file ID to link.', variant: 'destructive' });
       return;
     }
     try {
-      const res = await fetch("/api/whatsapp/document-upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: selected.fromPhone,
-          fileName,
-          fileType,
-          fileSize,
-        }),
+      const res = await fetch('/api/whatsapp/document-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId: selected.key, attachmentId: attachment.id, documentType, applicationId }),
       });
-      const data = (await res.json()) as DocumentUploadResponse;
-      if (!res.ok) {
-        throw new Error(data?.error || `Failed (${res.status})`);
-      }
-      if (data.needsConfirmation) {
-        toast({
-          title: "Document match review required",
-          description: data.message || "The document type could not be auto-detected.",
-        });
-        return;
-      }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) throw new Error(data.error || `Failed (${res.status})`);
       toast({
-        title: "Document received",
-        description: `Saved "${data.document?.name || fileName}" to student profile.`,
+        title: data.duplicate ? 'Document already linked' : 'Document attached',
+        description: data.message || `"${attachment.name}" is stored privately and remains pending human review.`,
       });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      toast({ title: "Upload failed", description: msg, variant: "destructive" });
+      const msg = e instanceof Error ? e.message : 'Unknown error';
+      toast({ title: 'Document link failed', description: msg, variant: 'destructive' });
     }
   }
 
   // ── Latest inbound message & its attachments ──────────────────────────
   const lastInbound = React.useMemo(() => {
     if (!selected) return null;
-    return [...selected.messages].reverse().find((m) => m.direction === "INBOUND") || null;
+    return [...selected.messages]
+      .filter((message) => message.direction === 'INBOUND')
+      .sort((a, b) => new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime())[0] || null;
   }, [selected]);
 
   const lastInboundAttachments = React.useMemo(() => {
@@ -1051,16 +1028,18 @@ export function WhatsAppCommandCenter() {
                               {atts.length > 0 && (
                                 <div className="mt-2 flex flex-wrap gap-1.5">
                                   {atts.map((a, i) => (
-                                    <div
-                                      key={i}
-                                      className="flex items-center gap-1.5 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] px-2 py-1 text-xs"
+                                    <a
+                                      key={a.id || i}
+                                      href={a.url || undefined}
+                                      target={a.url ? '_blank' : undefined}
+                                      rel={a.url ? 'noreferrer' : undefined}
+                                      className="flex items-center gap-1.5 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] px-2 py-1 text-xs hover:border-[var(--alo-blue)]"
+                                      aria-label={a.url ? `Open private attachment ${a.name}` : a.name}
                                     >
                                       <Icon name={fileTypeIcon(a.name)} className="size-3.5 text-[var(--alo-blue)]" />
-                                      <span className="truncate max-w-[120px]" title={a.name}>{a.name}</span>
-                                      <span className="text-[10px] text-[var(--alo-muted)]">
-                                        {fileSizeLabel(a.size)}
-                                      </span>
-                                    </div>
+                                      <span className="max-w-[120px] truncate" title={a.name}>{a.name}</span>
+                                      <span className="text-[10px] text-[var(--alo-muted)]">{fileSizeLabel(a.size)}</span>
+                                    </a>
                                   ))}
                                 </div>
                               )}
@@ -1089,9 +1068,6 @@ export function WhatsAppCommandCenter() {
                       <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--alo-blue-strong)]">
                         <Icon name="Sparkles" className="size-3.5" />
                         AI Generated Draft
-                        {aiConfidence !== null && (
-                          <Badge variant="blue" className="text-[10px]">{aiConfidence}% confidence</Badge>
-                        )}
                       </div>
                       <IconButton
                         icon="X"
@@ -1105,7 +1081,7 @@ export function WhatsAppCommandCenter() {
                     {aiOtpRequired && (
                       <div className="flex items-center gap-1.5 rounded-md bg-[var(--alo-warning-soft)] px-2 py-1 text-xs text-[var(--alo-warning-strong)]">
                         <Icon name="ShieldAlert" className="size-3.5" />
-                        OTP verification required to share private information.
+                        Private details are blocked here. This draft flow cannot send or verify an OTP; use the secure student portal or assigned-counselor process.
                       </div>
                     )}
                     <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -1212,6 +1188,27 @@ export function WhatsAppCommandCenter() {
 
                 {/* Composer */}
                 <div className="mt-3 space-y-2">
+                  {attachments.length > 0 && (student?.applications?.length || 0) > 0 && (
+                    <div className="space-y-1">
+                      <Label className="text-xs text-[var(--alo-muted)]">Associate media with an application (optional unless required by access policy)</Label>
+                      <Select value={outboundApplicationId} onValueChange={setOutboundApplicationId}>
+                        <SelectTrigger className="h-8 w-full text-xs" size="sm"><SelectValue placeholder="Choose an application, if relevant…" /></SelectTrigger>
+                        <SelectContent>
+                          {student?.applications?.map((application) => (
+                            <SelectItem key={application.id} value={application.id}>
+                              {application.universityName || 'Application'} · {application.stage.replace(/_/g, ' ').toLowerCase()}{application.isB2bConfidential ? ' · B2B confidential' : ''}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  {attachments.length > 0 && student?.hasB2bConfidentialApplications && !student.canManageB2bDocuments && (
+                    <p role="status" className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">This student has B2B-confidential applications. Media sending is blocked until an authorized B2B user handles the file.</p>
+                  )}
+                  {attachments.length > 0 && student?.hasB2bConfidentialApplications && student.canManageB2bDocuments && !outboundApplicationId && (
+                    <p role="status" className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">Select the relevant application before uploading this media.</p>
+                  )}
                   <Textarea
                     placeholder="Type your reply…"
                     value={composerText}
@@ -1245,7 +1242,7 @@ export function WhatsAppCommandCenter() {
                     <div className="flex items-center gap-1.5">
                       <FileUploader
                         onFiles={(files) => setAttachments((a) => [...a, ...files])}
-                        accept="image/*,application/pdf"
+                        accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
                         multiple
                         maxSizeMB={10}
                         hint=""
@@ -1257,7 +1254,7 @@ export function WhatsAppCommandCenter() {
                         <input
                           type="file"
                           multiple
-                          accept="image/*,application/pdf"
+                          accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
                           className="hidden"
                           onChange={(e) => {
                             const files = Array.from(e.target.files || []);
@@ -1270,7 +1267,7 @@ export function WhatsAppCommandCenter() {
                       variant="alo"
                       size="sm"
                       onClick={sendMessage}
-                      disabled={sending || (!composerText.trim() && attachments.length === 0)}
+                      disabled={sending || (!composerText.trim() && attachments.length === 0) || (attachments.length > 0 && Boolean(student?.hasB2bConfidentialApplications && (!student.canManageB2bDocuments || !outboundApplicationId)))}
                     >
                       {sending ? (
                         <>
@@ -1348,6 +1345,7 @@ export function WhatsAppCommandCenter() {
           {/* WhatsApp Document Receipt */}
           {selected && lastInbound && lastInboundAttachments.length > 0 && (
             <DocumentReceiptPanel
+              key={`${selected.key}-${lastInbound.id}`}
               attachments={lastInboundAttachments}
               studentId={selected.studentId}
               activeApplications={activeApplications}
@@ -1656,7 +1654,7 @@ function DocumentReceiptPanel({
   attachments: Attachment[];
   studentId?: string | null;
   activeApplications: NonNullable<StudentContext["applications"]>;
-  onCreateUploadEvent: (fileName: string, fileType: string, fileSize: number) => void;
+  onCreateUploadEvent: (attachment: Attachment, documentType: string, applicationId?: string) => void;
 }) {
   const [selectedAppId, setSelectedAppId] = React.useState<string>("");
   const [selectedDocRequirement, setSelectedDocRequirement] = React.useState<string>("");
@@ -1687,28 +1685,38 @@ function DocumentReceiptPanel({
                 </p>
               </div>
             </div>
+            {a.url && <a href={a.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex text-xs font-medium text-[var(--alo-blue)] underline underline-offset-2">Open private attachment</a>}
 
             {/* Match-to-application dropdown */}
             <div className="mt-2 space-y-2">
-              {studentId && activeApplications.length > 0 ? (
+              {!studentId ? (
+                <div className="flex items-center gap-1.5 rounded-md bg-[var(--alo-warning-soft)] px-2 py-1 text-xs text-[var(--alo-warning-strong)]">
+                  <Icon name="AlertTriangle" className="size-3.5" />
+                  Sender is not linked to a student. Match the contact before adding this file to a student profile; the private file remains in this conversation.
+                </div>
+              ) : (
                 <>
-                  <div>
-                    <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
-                      Match to application
-                    </Label>
-                    <Select value={selectedAppId} onValueChange={setSelectedAppId}>
-                      <SelectTrigger className="mt-0.5 h-8 w-full text-xs" size="sm">
-                        <SelectValue placeholder="Select an active application…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {activeApplications.map((a2) => (
-                          <SelectItem key={a2.id} value={a2.id}>
-                            {a2.universityName || "—"} · {a2.stage.replace(/_/g, " ").toLowerCase()}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {activeApplications.length > 0 ? (
+                    <div>
+                      <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
+                        Match to application
+                      </Label>
+                      <Select value={selectedAppId} onValueChange={setSelectedAppId}>
+                        <SelectTrigger className="mt-0.5 h-8 w-full text-xs" size="sm">
+                          <SelectValue placeholder="Select an active application…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {activeApplications.map((a2) => (
+                            <SelectItem key={a2.id} value={a2.id}>
+                              {a2.universityName || "—"} · {a2.stage.replace(/_/g, " ").toLowerCase()}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-[var(--alo-muted)]">No active application is available; you can still link this file to the student profile.</p>
+                  )}
                   <div>
                     <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
                       Match to document requirement
@@ -1730,20 +1738,16 @@ function DocumentReceiptPanel({
                     </Select>
                   </div>
                 </>
-              ) : (
-                <div className="flex items-center gap-1.5 rounded-md bg-[var(--alo-warning-soft)] px-2 py-1 text-xs text-[var(--alo-warning-strong)]">
-                  <Icon name="AlertTriangle" className="size-3.5" />
-                  Document match review required — no active application could be auto-determined.
-                </div>
               )}
 
               <Button
                 variant="alo"
                 size="sm"
                 className="w-full"
-                onClick={() => onCreateUploadEvent(a.name, a.type, a.size)}
+                disabled={!studentId || !selectedDocRequirement || (activeApplications.length > 0 && !selectedAppId)}
+                onClick={() => onCreateUploadEvent(a, selectedDocRequirement, selectedAppId || undefined)}
               >
-                <Icon name="FileUp" className="size-3.5" /> Create Document Upload Event
+                <Icon name="FileUp" className="size-3.5" /> Attach to student profile (pending review)
               </Button>
             </div>
           </div>

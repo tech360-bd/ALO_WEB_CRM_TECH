@@ -69,9 +69,9 @@ export function PublicServices({ slug, onNavigate }: Props) {
         <section className="relative overflow-hidden bg-alo-hero">
           <div className="mx-auto max-w-[1280px] px-4 py-16 lg:px-6">
             <div className="flex items-center gap-2 text-sm text-[#5A7299]">
-              <button onClick={() => onNavigate("public-services")} className="hover:text-[#0066CC]">Services</button>
+              <button onClick={() => onNavigate("public-services")} className="hover:text-[#2563EB]">Services</button>
               <Icon name="ChevronRight" className="size-4" />
-              <span className="text-[#0066CC]">{service.title}</span>
+              <span className="text-[#2563EB]">{service.title}</span>
             </div>
             <div className="mt-6 flex items-start gap-5">
               <div className="flex size-16 items-center justify-center rounded-2xl bg-alo-gradient text-white alo-shadow-lg">
@@ -121,7 +121,7 @@ export function PublicServices({ slug, onNavigate }: Props) {
                 <ul className="space-y-2">
                   {details.docs.map((d, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-[#0B2447]">
-                      <Icon name="FileText" className="mt-0.5 size-4 shrink-0 text-[#0066CC]" />
+                      <Icon name="FileText" className="mt-0.5 size-4 shrink-0 text-[#2563EB]" />
                       {d}
                     </li>
                   ))}
@@ -131,7 +131,7 @@ export function PublicServices({ slug, onNavigate }: Props) {
               <div className="rounded-2xl bg-alo-gradient p-6 text-center text-white alo-shadow-lg">
                 <h3 className="text-xl font-bold">Get Started Today</h3>
                 <p className="mt-2 text-sm text-white/90">Book a free consultation with an ALO counselor.</p>
-                <Button onClick={() => onNavigate("public-contact")} className="mt-4 w-full bg-white text-[#0066CC] hover:bg-[#EAF3FF]">Book Free Consultation</Button>
+                <Button onClick={() => onNavigate("public-contact")} className="mt-4 w-full bg-white text-[#2563EB] hover:bg-[#EAF3FF]">Book Free Consultation</Button>
               </div>
             </div>
           </div>
@@ -145,10 +145,10 @@ export function PublicServices({ slug, onNavigate }: Props) {
     <div>
       <section className="relative overflow-hidden bg-alo-hero">
         <div className="mx-auto max-w-[1280px] px-4 py-16 lg:px-6">
-          <Badge variant="outline" className="mb-4 border-[#0066CC]/30 bg-white/80 text-[#0066CC] backdrop-blur-sm">
+          <Badge variant="outline" className="mb-4 border-[#2563EB]/30 bg-white/80 text-[#2563EB] backdrop-blur-sm">
             <Icon name="Sparkles" className="mr-1.5 size-3.5" /> ALO Education Services
           </Badge>
-          <h1 className="text-4xl font-black text-[#0066CC] md:text-5xl">Complete Study Abroad Support</h1>
+          <h1 className="text-4xl font-black text-[#2563EB] md:text-5xl">Complete Study Abroad Support</h1>
           <p className="mt-4 max-w-2xl text-lg text-[#5A7299]">From your first counseling session to post-arrival support — we're with you every step of the way.</p>
         </div>
       </section>
@@ -158,12 +158,12 @@ export function PublicServices({ slug, onNavigate }: Props) {
           {SERVICES.map((s) => (
             <Card key={s.slug} className="alo-card-hover cursor-pointer rounded-2xl border border-[#DCE8F5] bg-white alo-shadow" onClick={() => onNavigate("public-services", s.slug)}>
               <CardContent className="p-6">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0066CC]">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#2563EB]">
                   <Icon name={s.icon} className="size-6" />
                 </div>
                 <h3 className="mt-4 text-lg font-bold text-[#0B2447]">{s.title}</h3>
                 <p className="mt-2 text-sm text-[#5A7299]">{s.desc}</p>
-                <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-[#0066CC]">
+                <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-[#2563EB]">
                   Learn More <Icon name="ArrowRight" className="size-3.5" />
                 </div>
               </CardContent>
@@ -176,7 +176,7 @@ export function PublicServices({ slug, onNavigate }: Props) {
         <div className="mx-auto max-w-[1280px] px-4 text-center lg:px-6">
           <h2 className="text-2xl font-bold text-[#0B2447]">Ready to Start Your Journey?</h2>
           <p className="mt-2 text-[#5A7299]">Book a free consultation today and get a personalized study abroad roadmap.</p>
-          <Button onClick={() => onNavigate("public-contact")} className="mt-6 rounded-xl bg-[#F37021] px-6 py-3 text-white hover:bg-[#D8590E]">
+          <Button onClick={() => onNavigate("public-contact")} className="mt-6 rounded-xl bg-[#F97316] px-6 py-3 text-white hover:bg-[#D8590E]">
             <Icon name="CalendarCheck" className="mr-2 size-4" /> Book Free Consultation
           </Button>
         </div>

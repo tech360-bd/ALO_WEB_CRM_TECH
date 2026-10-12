@@ -1,3 +1,4 @@
+import { canUseUnscopedUccAdmin } from '@/lib/ucc/document-access';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
@@ -20,6 +21,7 @@ function getSlaStatus(slaDueAt: Date | null): 'normal' | 'warning' | 'urgent' | 
 // GET: SLA status overview and per-counselor metrics
 export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
+    if (!canUseUnscopedUccAdmin(auth)) return NextResponse.json({success:false,code:'UCC_OWNERSHIP_SCOPE_PENDING',error:'Private UCC access is restricted to canonical administrators until domain-aware ownership is verified.'},{status:403});
     try {
       const { searchParams } = new URL(req.url);
       const counselorId = searchParams.get('counselorId') || '';
@@ -85,6 +87,7 @@ export async function GET(request: NextRequest) {
 // POST: Trigger SLA check, escalation, or justification actions
 export async function POST(request: NextRequest) {
   return withAuth(async (req, auth) => {
+    if (!canUseUnscopedUccAdmin(auth)) return NextResponse.json({success:false,code:'UCC_OWNERSHIP_SCOPE_PENDING',error:'Private UCC access is restricted to canonical administrators until domain-aware ownership is verified.'},{status:403});
     try {
       const body = await req.json();
       const { action, threadId, incidentId, counselorId, justificationData } = body;

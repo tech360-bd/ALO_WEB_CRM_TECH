@@ -221,11 +221,11 @@ export function NexAbroadDashboard() {
                 </p>
               </div>
               <div className="flex gap-3">
-                <Button className="nx-btn-glow bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white hover:opacity-90 rounded-2xl px-6">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="nx-btn-glow bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white hover:opacity-90 rounded-2xl px-6">
                   <Icon name="Sparkles" className="mr-2 size-4" />
                   Run AI Pipeline
                 </Button>
-                <Button variant="outline" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-2xl px-6">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-2xl px-6">
                   <Icon name="Video" className="mr-2 size-4" />
                   Live Connect
                 </Button>
@@ -306,7 +306,7 @@ function NexAbroadNav() {
             <span className="nx-pulse flex size-2 rounded-full bg-[#F97316]" />
             <span className="text-xs font-semibold text-[#F97316]">AI Engine Active</span>
           </div>
-          <Button variant="ghost" size="icon" className="relative text-[#94A3B8] hover:bg-white/5 hover:text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative text-[#94A3B8] hover:bg-white/5 hover:text-white">
             <Icon name="Bell" className="size-5" />
             <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#F97316]" />
           </Button>
@@ -408,7 +408,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
             </div>
 
             {/* 1-Click Apply */}
-            <Button
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
               size="sm"
               className="shrink-0 bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white hover:opacity-90 rounded-xl"
             >
@@ -422,7 +422,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
         <span className="text-xs text-[#64748B]">Visa probability calculated from 847 data points</span>
-        <button className="text-xs font-semibold text-[#3B82F6] hover:underline">
+        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-xs font-semibold text-[#3B82F6] hover:underline">
           View all 156 matches →
         </button>
       </div>
@@ -484,11 +484,11 @@ function CampusPreviewCard({ university }: { university: MatchedUniversity }) {
 
         {/* Actions */}
         <div className="mt-4 flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1 border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="flex-1 border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
             <Icon name="MapPin" className="mr-1 size-3" />
             Campus Tour
           </Button>
-          <Button size="sm" className="flex-1 bg-[#1E40AF] text-white hover:bg-[#1E3A8A] rounded-xl">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[#1E40AF] text-white hover:bg-[#1E3A8A] rounded-xl">
             <Icon name="BookOpen" className="mr-1 size-3" />
             Courses
           </Button>
@@ -570,7 +570,7 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
       </div>
 
       {/* Upload */}
-      <button className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-2.5 text-xs font-medium text-[#64748B] transition-colors hover:border-[#F97316]/30 hover:text-[#F97316]">
+      <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-2.5 text-xs font-medium text-[#64748B] transition-colors hover:border-[#F97316]/30 hover:text-[#F97316]">
         <Icon name="Upload" className="size-3.5" />
         Upload new document
       </button>
@@ -747,11 +747,11 @@ function CounselorApprovalCard({
 
               {/* Actions */}
               <div className="mt-3 flex gap-2">
-                <Button variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
                   <Icon name="Eye" className="mr-1 size-3" />
                   Preview
                 </Button>
-                <Button variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
                   <Icon name="Pencil" className="mr-1 size-3" />
                   Edit
                 </Button>
@@ -775,7 +775,7 @@ function CounselorApprovalCard({
           <Icon name="Info" className="mr-1 inline size-3" />
           AI prepares 70% · You approve the final 30%
         </span>
-        <Button variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
           <Icon name="Video" className="mr-1 size-3" />
           1:1 Video Connect
         </Button>

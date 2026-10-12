@@ -1,0 +1,7 @@
+
+> alo-education-erp@0.3.0 test:integration
+> node scripts/run-integration-tests.mjs
+
+Integration tests require TEST_DATABASE_URL pointing to an isolated, disposable test database.
+
+EXIT_CODE=1

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -41,21 +40,6 @@ interface Lead {
   createdAt: string;
 }
 
-/* ── Mock Data ─────────────────────────────────────── */
-
-const mockLeads: Lead[] = [
-  { id: 'L-001', name: 'Arif Rahman', phone: '+880 1712-345678', email: 'arif@mail.com', destination: 'UK', studyLevel: 'Masters', intake: 'Sep 2025', message: 'Interested in MSc Data Science', status: 'new', createdAt: '2025-01-17' },
-  { id: 'L-002', name: 'Mitu Sarkar', phone: '+880 1898-123456', email: 'mitu@mail.com', destination: 'USA', studyLevel: 'Bachelors', intake: 'Fall 2025', message: 'Looking for CS programs', status: 'contacted', createdAt: '2025-01-16' },
-  { id: 'L-003', name: 'Shakib Hasan', phone: '+880 1534-987654', email: 'shakib@mail.com', destination: 'Canada', studyLevel: 'Masters', intake: 'Jan 2026', message: 'MBA programs', status: 'converted', createdAt: '2025-01-15' },
-  { id: 'L-004', name: 'Priya Das', phone: '+880 1678-456789', email: 'priya@mail.com', destination: 'UK', studyLevel: 'Masters', intake: 'Sep 2025', message: 'Finance programs', status: 'contacted', createdAt: '2025-01-14' },
-  { id: 'L-005', name: 'Nayeem Islam', phone: '+880 1345-789012', email: 'nayeem@mail.com', destination: 'Australia', studyLevel: 'Diploma', intake: 'Feb 2025', message: 'Hospitality management', status: 'new', createdAt: '2025-01-13' },
-  { id: 'L-006', name: 'Taslima Akter', phone: '+880 1567-234567', email: 'taslima@mail.com', destination: 'USA', studyLevel: 'Masters', intake: 'Fall 2025', message: 'Interested in MIS', status: 'new', createdAt: '2025-01-12' },
-  { id: 'L-007', name: 'Rafiq Ahmed', phone: '+880 1890-345678', email: 'rafiq@mail.com', destination: 'Canada', studyLevel: 'Bachelors', intake: 'Sep 2025', message: 'Engineering programs', status: 'lost', createdAt: '2025-01-10' },
-  { id: 'L-008', name: 'Sumaiya Begum', phone: '+880 1711-567890', email: 'sumaiya@mail.com', destination: 'UK', studyLevel: 'PhD', intake: 'Oct 2025', message: 'Research in Biotech', status: 'contacted', createdAt: '2025-01-09' },
-  { id: 'L-009', name: 'Jamil Hossain', phone: '+880 1522-678901', email: 'jamil@mail.com', destination: 'Australia', studyLevel: 'Masters', intake: 'Mar 2025', message: 'IT management', status: 'converted', createdAt: '2025-01-08' },
-  { id: 'L-010', name: 'Farzana Mimi', phone: '+880 1833-789012', email: 'farzana@mail.com', destination: 'UK', studyLevel: 'Masters', intake: 'Sep 2025', message: 'Public Health', status: 'new', createdAt: '2025-01-07' },
-];
-
 const destinations = ['All', 'UK', 'USA', 'Canada', 'Australia', 'New Zealand', 'Germany', 'Ireland'];
 
 const emptyForm = {
@@ -76,19 +60,19 @@ function statusBadge(status: LeadStatus) {
 }
 
 function formatDate(dateStr: string) {
-  try {
-    return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
+  if (!dateStr) return '—';
+  const date = new Date(dateStr);
+  return Number.isNaN(date.getTime())
+    ? '—'
+    : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 /* ── Component ─────────────────────────────────────── */
 
 export default function PartnerLeadsPage() {
-  const { user } = usePortalStore();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -98,24 +82,34 @@ export default function PartnerLeadsPage() {
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
-      const token = usePortalStore.getState().token;
-      const headers: HeadersInit = token
-        ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-        : { 'Content-Type': 'application/json' };
-      const res = await fetch(`/api/partner/leads?partnerId=${user?.id || ''}`, { headers });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.leads) && data.leads.length > 0) {
-        setLeads(data.leads);
-      } else {
-        setLeads(mockLeads);
+      const res = await fetch('/api/partner/leads?limit=100', { credentials: 'include' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success || !Array.isArray(data.data)) {
+        throw new Error(data.error || `Could not load leads (HTTP ${res.status})`);
       }
-    } catch {
-      setLeads(mockLeads);
+      setLeads(data.data.map((lead: any): Lead => ({
+        id: String(lead.id || ''),
+        name: String(lead.studentName || ''),
+        phone: String(lead.studentPhone || ''),
+        email: String(lead.studentEmail || ''),
+        destination: String(lead.destinationCountry || ''),
+        studyLevel: String(lead.studyLevel || ''),
+        intake: String(lead.intake || ''),
+        message: String(lead.notes || ''),
+        status: (['new', 'contacted', 'converted', 'lost'].includes(String(lead.status).toLowerCase())
+          ? String(lead.status).toLowerCase()
+          : 'new') as LeadStatus,
+        createdAt: lead.createdAt ? String(lead.createdAt) : '',
+      })));
+    } catch (error) {
+      setLeads([]);
+      setLoadError(error instanceof Error ? error.message : 'Could not load leads.');
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, []);
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
@@ -126,16 +120,11 @@ export default function PartnerLeadsPage() {
 
     setSubmitting(true);
     try {
-      const token = usePortalStore.getState().token;
-      const headers: HeadersInit = token
-        ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-        : { 'Content-Type': 'application/json' };
       const res = await fetch('/api/partner/leads', {
         method: 'POST',
-        headers,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          partnerId: user?.id,
-          partnerName: user?.name,
           studentName: form.name,
           studentEmail: form.email,
           studentPhone: form.phone,
@@ -248,20 +237,8 @@ export default function PartnerLeadsPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="leadIntake">Intake</Label>
-                  <Select value={form.intake} onValueChange={(v) => setForm({ ...form, intake: v })}>
-                    <SelectTrigger id="leadIntake"><SelectValue placeholder="Select intake" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Feb 2025">Feb 2025</SelectItem>
-                      <SelectItem value="Mar 2025">Mar 2025</SelectItem>
-                      <SelectItem value="May 2025">May 2025</SelectItem>
-                      <SelectItem value="Jun 2025">Jun 2025</SelectItem>
-                      <SelectItem value="Sep 2025">Sep 2025</SelectItem>
-                      <SelectItem value="Jan 2026">Jan 2026</SelectItem>
-                      <SelectItem value="Fall 2025">Fall 2025</SelectItem>
-                      <SelectItem value="Spring 2026">Spring 2026</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="leadIntake">Preferred Intake</Label>
+                  <Input id="leadIntake" placeholder="e.g. September 2027" value={form.intake} onChange={(e) => setForm({ ...form, intake: e.target.value })} />
                 </div>
               </div>
               <div className="space-y-2">
@@ -278,6 +255,15 @@ export default function PartnerLeadsPage() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {loadError && (
+        <Card className="border-amber-200 bg-amber-50">
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+            <p className="text-sm text-amber-900">{loadError}</p>
+            <Button variant="outline" size="sm" onClick={fetchLeads} disabled={loading}>Retry</Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

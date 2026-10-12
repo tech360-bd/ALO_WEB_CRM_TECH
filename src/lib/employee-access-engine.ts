@@ -5,6 +5,7 @@
 // ============================================================
 
 import { db } from '@/lib/db';
+import { validateRequestAccess, canViewField } from '@/lib/access-control/central-security-engine';
 
 // ------------------------------------------------------------
 // Designations — 17 core per spec
@@ -84,112 +85,56 @@ export async function checkSeparationOfDuties(actorId: string, targetEmployeeId:
 }
 
 export async function canAccessFeatureEngine(userId: string, roles: string[], featureKey: string, action: string = 'view'): Promise<boolean> {
-  // Super admin always
-  if (roles.includes('super_admin') || roles.includes('SUPER_ADMIN') || roles.includes('admin')) return true;
-
-  // Check portal permission
-  try {
-    const permKey = `${featureKey.toUpperCase()}_${action.toUpperCase()}`;
-    const hasPerm = roles.some(r => r.toLowerCase().includes(featureKey.toLowerCase())) || await (db as any).portalUserRole.findFirst({
-      where: { userId, role: { name: { contains: featureKey, mode: 'insensitive' } } }
-    }).then((r: any) => !!r).catch(() => false);
-    if (hasPerm) return true;
-  } catch {}
-
-  // Check temporary permission
-  try {
-    const temp = await (db as any).employeeTemporaryPermission.findFirst({
-      where: { employeeId: userId, featureKey, isActive: true, endDate: { gt: new Date() } }
-    });
-    if (temp) return true;
-  } catch {}
-
-  // Check permission package assignment
-  try {
-    const pkgAssign = await (db as any).employeePermissionPackageAssignment.findFirst({
-      where: { employeeId: userId, isActive: true }
-    });
-    if (pkgAssign) {
-      const pkg = await (db as any).permissionPackage.findUnique({ where: { id: pkgAssign.packageId } }).catch(() => null);
-      if (pkg) {
-        const perms = typeof pkg.permissions === 'string' ? JSON.parse(pkg.permissions) : pkg.permissions;
-        if (Array.isArray(perms) && perms.some((p: any) => (typeof p === 'string' ? p.toLowerCase().includes(featureKey.toLowerCase()) : p.feature?.toLowerCase().includes(featureKey.toLowerCase())))) {
-          return true;
-        }
-      }
-    }
-  } catch {}
-
-  // Check break glass
-  try {
-    const bg = await (db as any).employeeBreakGlassAccess.findFirst({
-      where: { employeeId: userId, status: 'active', expiresAt: { gt: new Date() } }
-    });
-    if (bg) return true;
-  } catch {}
-
-  // Designation matrix
-  const designation = await getEmployeeDesignation(userId);
-  const featureModule = featureKey.toUpperCase();
-  return canPerformAction(designation, featureModule, action.toUpperCase());
+  return (await validateRequestAccess({ userId }, featureKey, action)).allowed;
 }
 
 export async function canViewEmployeePrivateProfileEngine(actorId: string, actorRoles: string[], targetEmployeeId: string): Promise<boolean> {
-  if (actorId === targetEmployeeId) return true;
-  if (actorRoles.includes('super_admin') || actorRoles.includes('SUPER_ADMIN')) return true;
-  if (actorRoles.includes('chairman')) return true;
-  if (actorRoles.includes('hr_manager') || actorRoles.includes('HR')) {
-    // HR explicit permission
-    try {
-      const perm = await (db as any).employeeTemporaryPermission.findFirst({ where: { employeeId: actorId, featureKey: 'employee_private', isActive: true } });
-      if (perm) return true;
-      // HR role itself grants private view per matrix but need explicit check
-      const hasHrAccess = await canAccessFeatureEngine(actorId, actorRoles, 'employee_private', 'view');
-      return hasHrAccess;
-    } catch { return false; }
-  }
-  return false;
+  const employee = await db.employee.findFirst({ where: { OR: [{ id: targetEmployeeId }, { userId: targetEmployeeId }] } });
+  if (!employee) return false;
+  return (await validateRequestAccess({ userId: actorId }, 'employee.profile.private', 'view', { ownerId: employee.userId })).allowed;
 }
 
 export async function canUseStudentBenefitEngine(employeeId: string, roles: string[], benefitType: string): Promise<boolean> {
-  // Student benefits only for students unless employee has explicit permission
-  if (roles.includes('student')) return true;
-  return await canAccessFeatureEngine(employeeId, roles, 'student_benefit', 'use');
+  return (await validateRequestAccess({ userId: employeeId }, `student.benefits.${benefitType}`, 'use')).allowed;
 }
 
 export async function checkQuotaBeforeActionEngine(userId: string, featureKey: string): Promise<{ allowed: boolean, current: number, limit: number }> {
-  try {
-    const current = await (db as any).quotaUsage.count({ where: { userId, featureKey } }).catch(() => 0);
-    // Get limit from package
-    let limit = 100;
-    try {
-      const pkgAssign = await (db as any).employeePermissionPackageAssignment.findFirst({ where: { employeeId: userId, isActive: true } });
-      if (pkgAssign) limit = 200;
-    } catch {}
-    return { allowed: current < limit, current, limit };
-  } catch {
-    return { allowed: true, current: 0, limit: 100 };
+  if (!(await canAccessFeatureEngine(userId, [], featureKey, 'use'))) return { allowed: false, current: 0, limit: 0 };
+  const employee = await db.employee.findFirst({ where: { userId } });
+  if (!employee) return { allowed: false, current: 0, limit: 0 };
+  const rule = await db.featureAccessRule.findFirst({ where: { ownerType: 'EMPLOYEE', ownerId: employee.id, featureKey, isEnabled: true } });
+  const limit = rule?.limitValue || 0;
+  const month = new Date(); month.setUTCDate(1); month.setUTCHours(0, 0, 0, 0);
+  const usages = await db.featureUsageLog.findMany({ where: { ownerType: 'EMPLOYEE', ownerId: employee.id, featureKey, createdAt: { gte: month } } });
+  let current = 0;
+  for (const usage of usages) {
+    try { const amount = JSON.parse(usage.metadata || '{}').amount; current += Number.isSafeInteger(amount) && amount > 0 ? amount : 1; }
+    catch { current += 1; }
   }
+  return { allowed: limit > 0 && current < limit, current, limit };
 }
 
 export async function recordUsageEngine(userId: string, featureKey: string, amount: number = 1) {
-  try {
-    await (db as any).quotaUsage.create({ data: { userId, featureKey, amount } });
-  } catch {}
+  if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error('Usage amount must be a positive integer');
+  const employee = await db.employee.findFirst({ where: { userId } });
+  if (!employee) throw new Error('Employee not found');
+  await db.featureUsageLog.create({ data: { ownerType: 'EMPLOYEE', ownerId: employee.id, featureKey, action: 'use', metadata: JSON.stringify({ amount }) } });
 }
 
 export async function canApproveActionEngine(actorId: string, targetId: string, action: string): Promise<{ allowed: boolean, reason?: string }> {
-  // ACCEPT vs APPROVE separation - distinct semantics, handled via permission matrix
-  if (action === 'ACCEPT' || action === 'APPROVE') {
-    // Both require explicit permission, but different roles; separation of duties still applies
-    return await checkSeparationOfDuties(actorId, targetId, action);
-  }
-  return await checkSeparationOfDuties(actorId, targetId, action);
+  // ACCEPT vs APPROVE require distinct exact permissions, both subject to separation.
+  const separation = await checkSeparationOfDuties(actorId, targetId, action);
+  if (!separation.allowed) return separation;
+  return validateRequestAccess({ userId: actorId }, 'employee.workflow', action.toLowerCase(), { ownerId: targetId });
 }
 
 export async function enforceFieldLevelSecurity(userId: string, roles: string[], field: string, targetEmployeeId: string): Promise<boolean> {
   const sensitiveFields = ['salary','personal_phone','emergency_contact','bank_info','nid','passport_number','private_notes'];
   if (sensitiveFields.includes(field.toLowerCase())) {
+    if (field.toLowerCase() === 'salary') {
+      const employee = await db.employee.findFirst({ where: { OR: [{ id: targetEmployeeId }, { userId: targetEmployeeId }] } });
+      return employee ? canViewField(userId, [], 'salary', employee.id) : false;
+    }
     return await canViewEmployeePrivateProfileEngine(userId, roles, targetEmployeeId);
   }
   return true;
@@ -201,5 +146,5 @@ export async function validateAiAction(aiAction: string, requiresHumanApproval: 
   if (isHighRisk) {
     return { allowed: false, requiresHuman: true };
   }
-  return { allowed: true, requiresHuman: requiresHumanApproval || !isLowRisk };
+  return { allowed: isLowRisk && !requiresHumanApproval, requiresHuman: requiresHumanApproval || !isLowRisk };
 }

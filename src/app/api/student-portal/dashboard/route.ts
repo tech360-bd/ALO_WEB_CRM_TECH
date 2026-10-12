@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
         journeyStage,
         profileCompletion,
       },
-      message: 'Student dashboard — Mission Control Center — Where am I? What completed? What missing? What should I do next? Who handling case? Application status? Am I ready for visa? — real DB, no fake data, no hardcoded student names, consistent 48px CTA buttons, equal-height cards, clear status colors, excellent empty/loading/error states, premium education consultancy design #FFFFFF bg #0057B8 primary #E8501A CTA #0F172A text #F8FAFC soft #E2E8F0 border',
+      message: 'Student dashboard — Mission Control Center — Where am I? What completed? What missing? What should I do next? Who handling case? Application status? Am I ready for visa? — real DB, no fake data, no hardcoded student names, consistent 48px CTA buttons, equal-height cards, clear status colors, excellent empty/loading/error states, premium education consultancy design #FFFFFF bg #2563EB primary #F97316 CTA #0F172A text #F8FAFC soft #E2E8F0 border',
     });
   } catch (e: any) {
     console.error('[student-portal/dashboard] error', e);

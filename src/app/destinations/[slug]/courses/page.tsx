@@ -4,6 +4,11 @@ import Link from 'next/link';
 import { BookOpen, Calendar, DollarSign, Clock, Search, ArrowRight } from 'lucide-react';
 import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
+import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
+import { publicCoursesInCountryWhere, publicIntakeWhere, publicRequirementWhere, stripInternalFields } from '@/lib/public-catalog';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -21,23 +26,20 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
   const countryData = getCountryDestination(slug);
   if (!countryData) notFound();
 
-  const courses = await db.crmCourse.findMany({
-    where: {
-      OR: [
-        { country: { contains: countryData.name } },
-        { country: { contains: countryData.code } },
-        { university: { country: { contains: countryData.name } } },
-        { university: { country: { contains: countryData.code } } },
-      ],
-    },
+  const courses = stripInternalFields(await db.crmCourse.findMany({
+    where: publicCoursesInCountryWhere(countryData.name, countryData.code),
     take: 30,
     orderBy: { courseTitle: 'asc' },
     include: {
       university: true,
-      intakeFees: true,
-      requirements: true,
+      intakeFees: { where: publicIntakeWhere() },
+      requirements: { where: publicRequirementWhere() },
     },
-  }).catch(() => []);
+  }).catch((error) => throwSanitizedDatabaseFailure(
+    'destination-courses',
+    error,
+    'DESTINATION_DATA_UNAVAILABLE',
+  )));
 
   return (
     <div className="bg-slate-50 min-h-screen py-12 text-slate-900">
@@ -120,7 +122,7 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
                   <span className="text-[11px] text-slate-400">Intake: {primaryIntake?.intakeMonth || 'Sept / Jan'}</span>
                   <Link
                     href={`/eligibility-check?courseId=${course.id}`}
-                    className="text-xs bg-[#0057B8] hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-xl flex items-center gap-1"
+                    className="text-xs bg-[#2563EB] hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-xl flex items-center gap-1"
                   >
                     Check Eligibility <ArrowRight className="w-3 h-3" />
                   </Link>

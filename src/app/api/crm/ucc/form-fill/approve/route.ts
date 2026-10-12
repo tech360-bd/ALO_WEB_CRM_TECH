@@ -1,3 +1,5 @@
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import { canUseUnscopedUccAdmin } from '@/lib/ucc/document-access';
 // ============================================================
 // /api/crm/ucc/form-fill/approve
 // POST — Approve or reject an AI-suggested autofill value
@@ -16,6 +18,8 @@ export async function POST(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (request.method !== 'GET' && !mutationOriginAllowed(request, auth)) return NextResponse.json({error:'Same-origin request required.'},{status:403});
+    if (!canUseUnscopedUccAdmin(auth)) return NextResponse.json({success:false,code:'UCC_OWNERSHIP_SCOPE_PENDING',error:'Private UCC access is restricted to canonical administrators until domain-aware ownership is verified.'},{status:403});
 
     const { suggestionId, action, correctedValue, rejectionReason } = await request.json() as {
       suggestionId: string;
@@ -104,6 +108,8 @@ export async function GET(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (request.method !== 'GET' && !mutationOriginAllowed(request, auth)) return NextResponse.json({error:'Same-origin request required.'},{status:403});
+    if (!canUseUnscopedUccAdmin(auth)) return NextResponse.json({success:false,code:'UCC_OWNERSHIP_SCOPE_PENDING',error:'Private UCC access is restricted to canonical administrators until domain-aware ownership is verified.'},{status:403});
 
     const url = new URL(request.url);
     const ocrJobId = url.searchParams.get('ocrJobId');

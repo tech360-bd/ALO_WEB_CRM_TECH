@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.registration-verification.json",
+  "compilerOptions": {"types": ["node", "vitest/globals"]},
+  "files": [
+    "tests/helpers/test-database.ts",
+    "tests/helpers/database-test-setup.ts",
+    "tests/integration/consultation-workflow.test.ts",
+    "tests/integration/content-publication-security.test.ts",
+    "tests/integration/partner-b2b-security.test.ts",
+    "tests/integration/university-monitoring-rbac.test.ts",
+    "tests/integration/university-monitoring.test.ts"
+  ]
+}

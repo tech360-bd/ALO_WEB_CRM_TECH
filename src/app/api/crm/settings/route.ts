@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
           totalPartners: partnerCount,
         },
         brandColors: {
-          primary: '#0057B8',
-          cta: '#E8501A',
+          primary: '#2563EB',
+          cta: '#F97316',
         },
         features: {
           whatsappIntegration: 'configured',

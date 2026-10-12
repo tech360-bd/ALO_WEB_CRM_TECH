@@ -282,7 +282,7 @@ export default function StudentSopCvStudio() {
           <div className="flex gap-4 h-[calc(100vh-16rem)]">
             {/* Left panel: SOP list */}
             <div className="w-1/3 min-w-[260px] max-w-[340px] shrink-0 flex flex-col">
-              <Button className="mb-3 bg-orange-600 hover:bg-orange-700 text-white">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mb-3 bg-orange-600 hover:bg-orange-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Create New SOP
               </Button>
@@ -395,7 +395,7 @@ export default function StudentSopCvStudio() {
                       <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                       AI Suggestions
                     </Button>
-                    <Button
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="outline"
                       size="sm"
                       className="border-blue-200 text-blue-700 hover:bg-blue-50"
@@ -403,7 +403,7 @@ export default function StudentSopCvStudio() {
                       <Send className="w-3.5 h-3.5 mr-1.5" />
                       Request Review
                     </Button>
-                    <Button
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="outline"
                       size="sm"
                       className="border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -531,7 +531,7 @@ export default function StudentSopCvStudio() {
           <div className="flex gap-4 h-[calc(100vh-16rem)]">
             {/* Left panel: CV list + Templates */}
             <div className="w-1/3 min-w-[260px] max-w-[340px] shrink-0 flex flex-col">
-              <Button className="mb-3 bg-orange-600 hover:bg-orange-700 text-white">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mb-3 bg-orange-600 hover:bg-orange-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Create New CV
               </Button>
@@ -609,7 +609,7 @@ export default function StudentSopCvStudio() {
                   <p className="text-xs text-slate-400">Last modified: {cvDrafts[0].lastModified}</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     variant="outline"
                     size="sm"
                     className="border-purple-200 text-purple-700 hover:bg-purple-50"
@@ -617,7 +617,7 @@ export default function StudentSopCvStudio() {
                     <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                     AI Improve CV
                   </Button>
-                  <Button
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     variant="outline"
                     size="sm"
                     className="border-blue-200 text-blue-700 hover:bg-blue-50"
@@ -625,7 +625,7 @@ export default function StudentSopCvStudio() {
                     <Eye className="w-3.5 h-3.5 mr-1.5" />
                     Preview
                   </Button>
-                  <Button
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     size="sm"
                     className="bg-blue-600 hover:bg-blue-700 text-white"
                   >
@@ -695,7 +695,7 @@ export default function StudentSopCvStudio() {
                                           className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1"
                                         >
                                           {trimmed}
-                                          <button className="text-blue-400 hover:text-blue-700">
+                                          <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-blue-400 hover:text-blue-700">
                                             <X className="w-3 h-3" />
                                           </button>
                                         </span>

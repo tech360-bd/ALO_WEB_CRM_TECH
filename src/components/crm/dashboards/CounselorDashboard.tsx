@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { useCrmLabels } from '@/lib/hooks/use-crm-labels';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -59,13 +60,24 @@ export default function CounselorDashboard() {
 
   const { hotLeads = [], todayFollowups = [], applicationReady = [], kpis = {} } = data || {};
 
+  // Virtual Editor: KPI card labels are overridable via CMS 'crm-label'
+  // items (keys below) with these compiled-in defaults as fallback.
+  const labels = useCrmLabels({
+    'crm.kpi.myLeads': 'My Leads',
+    'crm.kpi.myStudents': 'My Students',
+    'crm.kpi.hotLeads': 'Hot Leads',
+    'crm.kpi.followUpTasks': 'Follow-up Tasks',
+    'crm.kpi.profileCompletion': 'Profile Completion',
+    'crm.kpi.applicationReady': 'Application-Ready',
+  });
+
   const kpiItems = [
-    { label: 'My Leads', value: kpis.totalLeads ?? '0', change: '+0', up: true, icon: Users, sub: 'Total assigned' },
-    { label: 'My Students', value: kpis.totalStudents ?? '0', change: '+0', up: true, icon: GraduationCap, sub: 'Active profiles' },
-    { label: 'Hot Leads', value: kpis.hotLeadsCount ?? '0', change: '+0', up: true, icon: Flame, sub: 'Immediate action needed' },
-    { label: 'Follow-up Tasks', value: kpis.pendingTasksCount ?? '0', change: '+0', up: false, icon: Clock, sub: 'Due today/overdue' },
-    { label: 'Profile Completion', value: kpis.profileCompletion ?? '0%', change: '+0%', up: true, icon: CheckCircle2, sub: 'Average completion' },
-    { label: 'Application-Ready', value: kpis.applicationReadyCount ?? '0', change: '+0', up: true, icon: FileText, sub: 'Ready to submit' },
+    { label: labels['crm.kpi.myLeads'], value: kpis.totalLeads ?? '0', change: '+0', up: true, icon: Users, sub: 'Total assigned' },
+    { label: labels['crm.kpi.myStudents'], value: kpis.totalStudents ?? '0', change: '+0', up: true, icon: GraduationCap, sub: 'Active profiles' },
+    { label: labels['crm.kpi.hotLeads'], value: kpis.hotLeadsCount ?? '0', change: '+0', up: true, icon: Flame, sub: 'Immediate action needed' },
+    { label: labels['crm.kpi.followUpTasks'], value: kpis.pendingTasksCount ?? '0', change: '+0', up: false, icon: Clock, sub: 'Due today/overdue' },
+    { label: labels['crm.kpi.profileCompletion'], value: kpis.profileCompletion ?? '0%', change: '+0%', up: true, icon: CheckCircle2, sub: 'Average completion' },
+    { label: labels['crm.kpi.applicationReady'], value: kpis.applicationReadyCount ?? '0', change: '+0', up: true, icon: FileText, sub: 'Ready to submit' },
   ];
 
   if (loading) {
@@ -92,8 +104,8 @@ export default function CounselorDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><Calendar className="w-4 h-4" /> My Calendar</Button>
-          <Button variant="brand" size="sm"><Users className="w-4 h-4" /> Add Lead</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Calendar className="w-4 h-4" /> My Calendar</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Users className="w-4 h-4" /> Add Lead</Button>
         </div>
       </div>
 
@@ -173,8 +185,8 @@ export default function CounselorDashboard() {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Button variant="outline" size="sm" className="h-7 text-xs px-2"><Phone className="w-3 h-3 mr-1" /> Call</Button>
-                        <Button variant="outline" size="sm" className="h-7 text-xs px-2"><MessageSquare className="w-3 h-3 mr-1" /> Chat</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 text-xs px-2"><Phone className="w-3 h-3 mr-1" /> Call</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 text-xs px-2"><MessageSquare className="w-3 h-3 mr-1" /> Chat</Button>
                       </div>
                     </div>
                   ))
@@ -264,7 +276,7 @@ export default function CounselorDashboard() {
                   <p className="text-[11px] text-alo-text-muted">Urgent</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-3 text-xs">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full mt-3 text-xs">
                 <MessageSquare className="w-3.5 h-3.5" /> Open Inbox
               </Button>
             </CardContent>

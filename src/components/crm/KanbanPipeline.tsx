@@ -1,22 +1,20 @@
 'use client';
 // ALO — Kanban Pipeline + Saved Views (extra function from frappe/crm)
-// Adds kanban drag-drop + saved/pinned/public views to existing CRM pipeline
+// Registered drop targets + keyboard/select moves; saved views are local only.
 // Reuses existing models: AloApplication / Lead (stage/status) — no new DB table
 // Stack: @dnd-kit (already in package.json) + shadcn/ui + lucide
 // See docs/final-master/CRM_COMPARISON_EXTRA_FUNCTIONS.md §frappe/crm
 
 import * as React from 'react';
-import { DndContext, DragEndEvent, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, closestCenter, PointerSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Pin, Eye, Lock, Users, GraduationCap, Calendar, GripVertical, Plus, Search } from 'lucide-react';
-import { toast } from 'sonner';
+import { Pin, Eye, Users, GripVertical, Plus, Search } from 'lucide-react';
 
 export type KanbanItem = {
   id: string;
@@ -38,37 +36,54 @@ export type SavedView = {
 
 const STAGES = ['APPLICATION_DRAFT','DOCUMENTS_PENDING','READY_TO_SUBMIT','SUBMITTED','UNDER_REVIEW','OFFER_RECEIVED','PAYMENT_PENDING','VISA_PREPARATION','SUCCESS'] as const;
 
-function SortableCard({ item, onOpen }: { item: KanbanItem; onOpen?: (id:string)=>void }){
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+function SortableCard({ item, onOpen, canMove, moving, onMove, stages }: { item: KanbanItem; onOpen?: (id:string)=>void; canMove: boolean; moving: boolean; onMove: (id:string, stage:string)=>void; stages: readonly string[] }){
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !canMove || moving, data: { stage: item.stage } });
   const style: React.CSSProperties = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging?0.6:1 };
   return (
     <div ref={setNodeRef} style={style} className="bg-white rounded-xl border border-slate-200 p-3 shadow-sm">
       <div className="flex items-start gap-2">
-        <button {...attributes} {...listeners} className="mt-1 text-slate-400 hover:text-slate-600"><GripVertical className="w-3.5 h-3.5"/></button>
-        <div className="flex-1 min-w-0 cursor-pointer" onClick={()=> onOpen?.(item.id)}>
-          <p className="text-sm font-semibold truncate">{item.title}</p>
+        <button type="button" disabled={!canMove || moving} aria-label={`Move ${item.title}`} title={canMove ? "Drag to a column; keyboard users can use the stage selector" : "Stage editing is unavailable in this view"} {...attributes} {...listeners} className="mt-1 rounded text-slate-400 hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-blue-600 disabled:opacity-50"><GripVertical className="w-3.5 h-3.5"/></button>
+        <div className="flex-1 min-w-0">
+          <button type="button" disabled={!onOpen} onClick={()=> onOpen?.(item.id)} className="block max-w-full truncate text-left text-sm font-semibold text-blue-700 focus-visible:outline-2 focus-visible:outline-blue-600 disabled:text-slate-700">{item.title}</button>
           {item.subtitle && <p className="text-xs text-slate-500 truncate">{item.subtitle}</p>}
           <div className="flex gap-1 mt-1 flex-wrap">
             <Badge variant="outline" className="text-[10px]">{item.stage}</Badge>
             {item.meta?.counselor && <Badge className="bg-slate-100 text-slate-700 text-[10px]"><Users className="w-3 h-3 mr-1"/>{item.meta.counselor}</Badge>}
           </div>
+          <label className="mt-2 block text-xs text-slate-500">Move to stage
+            <select aria-label={`Stage for ${item.title}`} value={item.stage} disabled={!canMove || moving} onChange={e => onMove(item.id, e.target.value)} className="mt-1 w-full rounded border bg-white p-1 text-xs">{!stages.includes(item.stage) && <option value={item.stage}>{item.stage}</option>}{stages.map(stage => <option key={stage} value={stage}>{stage.replace(/_/g, " ")}</option>)}</select>
+          </label>
         </div>
       </div>
     </div>
   );
 }
 
-export default function KanbanPipeline({ items: initial, onStageChange, onOpen }: { items: KanbanItem[]; onStageChange?: (id:string, newStage:string)=>Promise<void>|void; onOpen?: (id:string)=>void }){
+function StageColumn({ stage, children }: { stage: string; children: React.ReactNode }) {
+  const { setNodeRef, isOver } = useDroppable({ id: stage, data: { stage } });
+  return <div ref={setNodeRef} className={`min-w-[220px] rounded-xl border p-2 ${isOver ? 'border-blue-500 bg-blue-50' : 'bg-slate-50'}`}>{children}</div>;
+}
+
+export default function KanbanPipeline({ items: initial, onStageChange, onOpen, stages = STAGES, moveTargets }: { moveTargets?: (item: KanbanItem) => readonly string[]; stages?: readonly string[]; items: KanbanItem[]; onStageChange?: (id:string, newStage:string)=>Promise<void>|void; onOpen?: (id:string)=>void }){
   const [items, setItems] = React.useState(initial);
+  const [moving, setMoving] = React.useState(false);
+  const movingRef = React.useRef(false);
+  const [feedback, setFeedback] = React.useState('');
+  const [storageReady, setStorageReady] = React.useState(false);
   const [q, setQ] = React.useState('');
   const [stageFilter, setStageFilter] = React.useState<string>('all');
-  const [views, setViews] = React.useState<SavedView[]>(() => {
-    try { return JSON.parse(localStorage.getItem('alo_kanban_views')||'[]'); } catch { return []; }
-  });
+  const [views, setViews] = React.useState<SavedView[]>([]);
   const [activeView, setActiveView] = React.useState<string | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 }}));
   React.useEffect(()=> setItems(initial), [initial]);
-  React.useEffect(()=> { localStorage.setItem('alo_kanban_views', JSON.stringify(views)); }, [views]);
+  React.useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('alo_kanban_views') || '[]');
+      if (Array.isArray(saved)) setViews(saved.filter(v => v && typeof v.id === 'string' && typeof v.name === 'string' && v.filters && !v.isPublic));
+    } catch { setFeedback('Saved local views are unavailable.'); }
+    setStorageReady(true);
+  }, []);
+  React.useEffect(() => { if (storageReady) try { localStorage.setItem('alo_kanban_views', JSON.stringify(views)); } catch { setFeedback('This browser cannot store local views.'); } }, [views, storageReady]);
 
   const filtered = React.useMemo(()=> items.filter(i=>{
     if(stageFilter!=='all' && i.stage!==stageFilter) return false;
@@ -78,31 +93,34 @@ export default function KanbanPipeline({ items: initial, onStageChange, onOpen }
 
   const byStage = React.useMemo(()=>{
     const m = new Map<string, KanbanItem[]>();
-    STAGES.forEach(s=> m.set(s, []));
-    filtered.forEach(i=> m.get(i.stage as any)?.push(i) ?? m.set(i.stage, [i]));
+    stages.forEach(s=> m.set(s, []));
+    filtered.forEach(item => { const group = m.get(item.stage); if (group) group.push(item); else m.set(item.stage, [item]); });
     return m;
-  }, [filtered]);
+  }, [filtered, stages]);
 
-  const handleDragEnd = async (e: DragEndEvent)=>{
-    const { active, over } = e;
-    if(!over) return;
-    const activeId = String(active.id);
-    const overStage = String(over.id);
-    // if over is a stage column id
-    if((STAGES as readonly string[]).includes(overStage)){
-      const prev = items.find(i=> i.id===activeId);
-      if(prev && prev.stage!==overStage){
-        // optimistic + server auth/validation still required
-        setItems(prevItems=> prevItems.map(i=> i.id===activeId? {...i, stage: overStage}: i));
-        try { await onStageChange?.(activeId, overStage); toast.success(`Moved to ${overStage}`);} catch(err:any){ toast.error(err?.message||'Stage change not allowed'); setItems(prevItems=> prevItems.map(i=> i.id===activeId? {...i, stage: prev!.stage}: i)); }
-      }
-    }
+  const moveStage = async (activeId: string, stage: string) => {
+    if (!onStageChange || movingRef.current || !stages.includes(stage)) return;
+    const item = items.find(item => item.id === activeId);
+    if (!item || item.stage === stage) return;
+    if (moveTargets && !moveTargets(item).includes(stage)) { setFeedback('This transition requires a dedicated workflow or is not permitted.'); return; }
+    movingRef.current = true; setMoving(true); setFeedback('Saving stage change…');
+    try {
+      await onStageChange(activeId, stage);
+      setItems(previous => previous.map(item => item.id === activeId ? { ...item, stage } : item));
+      setFeedback(`Stage saved: ${stage.replace(/_/g, ' ')}`);
+    } catch (error) { setFeedback(error instanceof Error ? error.message : 'Stage change was not saved.'); }
+    finally { movingRef.current = false; setMoving(false); }
+  };
+  const handleDragEnd = (event: DragEndEvent) => {
+    if (!event.over) return;
+    const stage = event.over.data.current?.stage || String(event.over.id);
+    void moveStage(String(event.active.id), stage);
   };
 
   const saveView = ()=>{
-    const name = prompt('View name');
+    const name = prompt('Local view name (do not include private student information)');
     if(!name) return;
-    const v: SavedView = { id: `v_${Date.now()}`, name, filters:{ stage: stageFilter!=='all'?stageFilter:undefined, search: q||undefined }, sort:'createdAt', columns:[...STAGES], pinned:false, isPublic:false };
+    const v: SavedView = { id: `v_${Date.now()}`, name, filters:{ stage: stageFilter!=='all'?stageFilter:undefined, search: q||undefined }, sort:'createdAt', columns:[...stages], pinned:false, isPublic:false };
     setViews([...views, v]); setActiveView(v.id);
   };
   const applyView = (id:string)=>{
@@ -123,29 +141,30 @@ export default function KanbanPipeline({ items: initial, onStageChange, onOpen }
         </div>
         <div className="ml-auto flex items-center gap-2">
           <div className="relative"><Search className="w-3.5 h-3.5 absolute left-2 top-2 text-slate-400"/><Input value={q} onChange={e=> setQ(e.target.value)} placeholder="Search applications" className="pl-7 h-7 w-48"/></div>
-          <Select value={stageFilter} onValueChange={setStageFilter}><SelectTrigger className="h-7 w-[160px] text-xs"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="all">All stages</SelectItem>{STAGES.map(s=> <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select>
+          <Select value={stageFilter} onValueChange={setStageFilter}><SelectTrigger className="h-7 w-[160px] text-xs"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="all">All stages</SelectItem>{stages.map(s=> <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select>
         </div>
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-9 gap-3 overflow-x-auto">
-          {STAGES.map(stage=> (
-            <div key={stage} id={stage as any} className="min-w-[220px] bg-slate-50 rounded-xl border p-2">
+        <div className="flex gap-3 overflow-x-auto pb-2">
+          {[...byStage.keys()].map(stage=> (
+            <StageColumn key={stage} stage={stage}>
               <div className="flex items-center justify-between px-1 pb-2">
                 <span className="text-xs font-bold uppercase tracking-wide">{stage.replace(/_/g,' ')}</span>
                 <Badge variant="secondary" className="text-[10px]">{byStage.get(stage)?.length||0}</Badge>
               </div>
               <SortableContext id={stage} items={(byStage.get(stage)||[]).map(i=> i.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-2 min-h-[120px]">
-                  {(byStage.get(stage)||[]).map(i=> <SortableCard key={i.id} item={i} onOpen={onOpen} />)}
-                  {(byStage.get(stage)||[]).length===0 && <p className="text-xs text-slate-400 p-3 border border-dashed rounded-lg text-center">Drop here</p>}
+                  {(byStage.get(stage)||[]).map(i=> <SortableCard key={i.id} item={i} onOpen={onOpen} canMove={!!onStageChange && (moveTargets ? moveTargets(i).some(target => target !== i.stage) : true)} moving={moving} stages={moveTargets ? moveTargets(i) : stages} onMove={(id, stage) => void moveStage(id, stage)} />)}
+                  {(byStage.get(stage)||[]).length===0 && <p className="text-xs text-slate-400 p-3 border border-dashed rounded-lg text-center">{onStageChange ? "Drop here" : "No records"}</p>}
                 </div>
               </SortableContext>
-            </div>
+            </StageColumn>
           ))}
         </div>
       </DndContext>
-      <p className="text-[11px] text-slate-500">Drag card to column to change stage — server validates transition + audit (frappe sales-hierarchy SLA pattern). Unauthorized change returns safe error, no DB mutation.</p>
+      <p role="status" aria-live="polite" className="text-xs text-slate-600">{feedback}</p>
+      <p className="text-[11px] text-slate-500">Drag or use the stage selector. Changes are shown only after the persistence callback succeeds; its authenticated server API must validate transitions and audit changes. Saved views are local to this browser, not public or shared.</p>
     </div>
   );
 }

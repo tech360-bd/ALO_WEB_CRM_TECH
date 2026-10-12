@@ -16,6 +16,10 @@ This script:
 Run: python3 scripts/generate_missing_universities_and_intakes.py
 """
 import csv, random, pathlib, re, json
+import sys as _alo_sys, pathlib as _alo_pathlib
+_alo_sys.path.insert(0, str(_alo_pathlib.Path(__file__).resolve().parent / "lib"))
+from synthetic_output_guard import refuse_permanently
+refuse_permanently('generate_missing_universities_and_intakes.py', 'historical generator that rewrites src/lib/ source files and repo-root CSVs with invented universities and intakes.')
 from collections import defaultdict, Counter
 
 ROOT = pathlib.Path(".")

@@ -23,6 +23,7 @@ export async function GET(request: Request) {
     const stage = searchParams.get('stage') || '';
     const country = searchParams.get('country') || '';
     const university = searchParams.get('university') || '';
+    const studentProfileId = (searchParams.get('studentProfileId') || '').trim();
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
     const skip = (page - 1) * limit;
@@ -31,6 +32,7 @@ export async function GET(request: Request) {
     const where: Record<string, unknown> = {
       studentProfile: { partnerId: partner.partnerId },
     };
+    if (studentProfileId) where.studentProfileId = studentProfileId;
 
     if (stage) {
       where.stage = stage;

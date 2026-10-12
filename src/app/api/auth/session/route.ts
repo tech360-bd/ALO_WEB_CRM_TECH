@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth-middleware";
-import { db } from "@/lib/db";
 
 export async function GET(request: Request) {
   try {
@@ -9,19 +8,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, user: null, authenticated: false }, { status: 200 });
     }
     const auth = authResult;
-    const user = await db.portalUser.findUnique({
-      where: { id: auth.userId },
-      select: {
-        id: true, email: true, name: true, userType: true, status: true,
-        roles: { select: { role: { select: { name: true, label: true } } } }
-      }
-    });
     return NextResponse.json({
       success: true,
       authenticated: true,
-      user,
-      session: { id: auth.sessionId, userId: auth.userId, roles: auth.roles, permissions: auth.permissions }
-    });
+      user: { id:auth.userId, identityDomain:auth.identityDomain, email:auth.email, name:auth.name, userType:auth.userType },
+      session: { userId: auth.userId, identityDomain:auth.identityDomain, roles: auth.roles, permissions: auth.permissions }
+    }, {headers:{'Cache-Control':'private, no-store'}});
   } catch (e) {
     return NextResponse.json({ success: false, user: null, authenticated: false }, { status: 200 });
   }

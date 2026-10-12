@@ -13,14 +13,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       where: { slug },
       include: {
         category: true,
-        faqs: { orderBy: { sortOrder: "asc" } },
+        faqs: { where: { status: "active" }, orderBy: { sortOrder: "asc" } },
       },
     });
 
     if (!resource) {
       return NextResponse.json({ error: "Resource not found" }, { status: 404 });
     }
-    if (resource.status !== "PUBLISHED") {
+    if (resource.status !== "PUBLISHED" || resource.category?.status !== "ACTIVE") {
       return NextResponse.json({ error: "Resource not found" }, { status: 404 });
     }
 
@@ -102,7 +102,7 @@ async function hydrateRelationships(rels: any[]): Promise<any[]> {
           target = await db.service.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, icon: true, shortDescription: true } });
           break;
         case "SCHOLARSHIP":
-          target = await db.scholarship.findUnique({ where: { id: r.targetId, status: { not: "DRAFT" } }, select: { slug: true, name: true, fundingType: true, amount: true, currency: true } });
+          target = await db.scholarship.findUnique({ where: { id: r.targetId, status: { in: ["active", "PUBLISHED", "OPEN", "CLOSED", "UPCOMING"] } }, select: { slug: true, name: true, fundingType: true, amount: true, currency: true } });
           break;
         case "RESOURCE":
           target = await db.resource.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, excerpt: true, featuredImage: true } });

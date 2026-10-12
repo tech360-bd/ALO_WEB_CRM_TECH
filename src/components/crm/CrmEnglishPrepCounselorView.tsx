@@ -42,7 +42,7 @@ export default function CrmEnglishPrepCounselorView() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8F0] shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#0057B8] text-white flex items-center justify-center"><BookOpen className="w-5 h-5" /></div>
+          <div className="w-10 h-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center"><BookOpen className="w-5 h-5" /></div>
           <div>
             <h1 className="text-xl font-extrabold text-[#0F172A]">CRM — English Prep Leads & Counselor View</h1>
             <p className="text-xs text-slate-500">Counselor view: destination, university, course, required test, current/target, status, test date, missing action — CRM integration</p>
@@ -53,7 +53,7 @@ export default function CrmEnglishPrepCounselorView() {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <Input placeholder="Search name, phone, test, country..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 rounded-xl border-[#E2E8F0] text-xs w-64" />
           </div>
-          <Button onClick={fetchLeads} className="bg-[#0057B8] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs">Refresh</Button>
+          <Button onClick={fetchLeads} className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs">Refresh</Button>
         </div>
       </div>
 
@@ -71,12 +71,12 @@ export default function CrmEnglishPrepCounselorView() {
           ) : (
             <div className="space-y-2 max-h-[calc(100vh-250px)] overflow-y-auto pr-1">
               {filtered.map((lead: any) => (
-                <Card key={lead.id} className="p-4 bg-white border border-[#E2E8F0] rounded-2xl hover:border-[#0057B8]/30 transition">
+                <Card key={lead.id} className="p-4 bg-white border border-[#E2E8F0] rounded-2xl hover:border-[#2563EB]/30 transition">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-bold text-sm text-[#0F172A]">{lead.name}</h3>
-                        <Badge className="bg-blue-50 text-[#0057B8] border-blue-100 text-[10px]">{lead.testName || '—'}</Badge>
+                        <Badge className="bg-blue-50 text-[#2563EB] border-blue-100 text-[10px]">{lead.testName || '—'}</Badge>
                         <Badge className="bg-[#F8FAFC] border border-[#E2E8F0] text-slate-600 text-[10px]">{lead.sourceSection || lead.source || 'language_prep'}</Badge>
                         <span className="text-[11px] text-slate-500">{lead.phone}</span>
                       </div>
@@ -85,7 +85,7 @@ export default function CrmEnglishPrepCounselorView() {
                         <div><span className="text-slate-400 block">University</span><span className="font-semibold">{lead.universityName || '—'}</span></div>
                         <div><span className="text-slate-400 block">Course</span><span className="font-semibold">{lead.courseName || '—'}</span></div>
                         <div><span className="text-slate-400 block">Intake</span><span className="font-semibold">{lead.intake || '—'}</span></div>
-                        <div><span className="text-slate-400 block">Current</span><span className="font-bold text-[#0057B8]">{lead.currentScore || '—'}</span></div>
+                        <div><span className="text-slate-400 block">Current</span><span className="font-bold text-[#2563EB]">{lead.currentScore || '—'}</span></div>
                         <div><span className="text-slate-400 block">Target</span><span className="font-bold text-emerald-600">{lead.targetScore || '—'}</span></div>
                         <div><span className="text-slate-400 block">Status</span><span className="font-semibold">{lead.status || 'new'}</span></div>
                         <div><span className="text-slate-400 block">Created</span><span className="font-semibold">{lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : '—'}</span></div>
@@ -93,8 +93,8 @@ export default function CrmEnglishPrepCounselorView() {
                       <p className="text-[11px] text-slate-500 mt-2 line-clamp-2">{lead.notes || ''}</p>
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <Button size="sm" className="h-7 text-[10px] bg-[#0057B8] hover:bg-[#004494] text-white rounded-lg">View</Button>
-                      <Button size="sm" variant="outline" className="h-7 text-[10px] bg-white border-[#E2E8F0] rounded-lg">Contact</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 text-[10px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg">View</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] bg-white border-[#E2E8F0] rounded-lg">Contact</Button>
                     </div>
                   </div>
                 </Card>
@@ -134,12 +134,12 @@ export default function CrmEnglishPrepCounselorView() {
           <Card className="p-5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl">
             <h4 className="font-bold text-xs text-[#0F172A]">Internal Linking — SEO</h4>
             <div className="flex flex-wrap gap-1.5 mt-3">
-              <a href="/language-prep" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#0057B8]">Language Prep Landing</a>
-              <a href="/language-prep/comparison" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#0057B8]">Comparison</a>
-              <a href="/course-finder" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#0057B8]">Course Finder</a>
-              <a href="/destinations" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#0057B8]">Destinations</a>
-              <a href="/scholarships" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#0057B8]">Scholarships</a>
-              <a href="/visa-support" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#0057B8]">Visa Support</a>
+              <a href="/language-prep" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Language Prep Landing</a>
+              <a href="/language-prep/comparison" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Comparison</a>
+              <a href="/course-finder" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Course Finder</a>
+              <a href="/destinations" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Destinations</a>
+              <a href="/scholarships" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Scholarships</a>
+              <a href="/visa" className="text-[10px] px-2.5 py-1 rounded-full bg-white border border-[#E2E8F0] hover:border-[#2563EB]">Visa Support</a>
             </div>
           </Card>
         </div>

@@ -146,7 +146,7 @@ export default function EmployeeLeavePage() {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="brand" size="sm"><Plus className="w-4 h-4" /> Apply for Leave</Button>
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Plus className="w-4 h-4" /> Apply for Leave</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Apply for Leave</DialogTitle></DialogHeader>

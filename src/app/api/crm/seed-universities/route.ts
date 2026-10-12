@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
+import { syntheticAgentDataAllowed } from '@/lib/ai-agents/synthetic-data-guard';
 import { ukUniversitiesPart1 } from '@/lib/university-data-uk';
 import { ukUniversitiesPart2 } from '@/lib/university-data-uk2';
 import {
@@ -398,6 +399,19 @@ function getRequirements(
 // ─── Main Seed Function ───────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
+  // Containment (Course Finder final safety review, 2026-10-12): this seeder
+  // generates template universities/courses/intakes/fees from hard-coded data
+  // and, with { clear: true }, deletes every catalogue row (and commissions)
+  // without a transaction or audit. It is disabled unless a developer opts in
+  // on a non-production environment; in production it always returns 503
+  // before authentication or any database access.
+  if (!syntheticAgentDataAllowed()) {
+    return NextResponse.json({
+      success: false,
+      code: 'CATALOGUE_SEEDER_DISABLED',
+      error: 'The template catalogue seeder is disabled. It generates unverified catalogue data and can wipe catalogue tables. Use the reviewed CSV import (/admin/data-import).',
+    }, { status: 503 });
+  }
   return withAuth(async (req, auth) => {
   const startTime = Date.now();
 
@@ -610,5 +624,5 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
+  }, { requireUserTypes: ['SUPER_ADMIN'] })(request);
 }

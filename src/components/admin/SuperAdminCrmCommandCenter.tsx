@@ -185,7 +185,7 @@ export function SuperAdminCrmCommandCenter() {
                 {activeModule==="leads" && <button disabled={!!actionLoading} onClick={()=>handleAgentAction("assign_lead", { leadId: it.id, counselorId: "super_admin_assign", counselorName: "Super Admin" })} className="px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded text-[10px]">Assign</button>}
                 {activeModule==="applications" && <><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "READY_TO_SUBMIT", note: "Super Admin moved to ready" })} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded text-[10px]">Ready</button><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "SUBMITTED_TO_UNIVERSITY", note: "Super Admin submitted" })} className="px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded text-[10px]">Submit</button></>}
                 {activeModule==="documents" && <><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "APPROVED", reviewerNote: "Super Admin approved" })} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded text-[10px]">Approve</button><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "REJECTED", reviewerNote: "Super Admin rejected — needs review" })} className="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded text-[10px]">Reject</button></>}
-                <button className="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-[10px]">View</button>
+                <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-[10px]">View</button>
               </td></tr>)}
               {items.length===0 && <tr><td colSpan={4} className="p-8 text-center text-slate-400">No records</td></tr>}
             </tbody>
@@ -209,7 +209,7 @@ export function SuperAdminCrmCommandCenter() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {MODULES.map(m=><button key={m.key} onClick={()=>setActiveModule(m.key)} className={`px-3 py-2.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${activeModule===m.key ? "bg-[#0057B8] text-white border-[#0057B8] shadow" : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"}`}><span>{m.icon}</span>{m.label}</button>)}
+        {MODULES.map(m=><button key={m.key} onClick={()=>setActiveModule(m.key)} className={`px-3 py-2.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${activeModule===m.key ? "bg-[#2563EB] text-white border-[#2563EB] shadow" : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"}`}><span>{m.icon}</span>{m.label}</button>)}
       </div>
 
       {loading ? <div className="bg-white rounded-xl border p-12 text-center text-sm text-slate-400">Loading real CRM data...</div> : activeModule==="overview" ? renderOverview() : renderListModule()}

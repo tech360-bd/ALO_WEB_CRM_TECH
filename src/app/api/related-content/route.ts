@@ -12,7 +12,11 @@ export async function GET(req: NextRequest) {
     const universityId = req.nextUrl.searchParams.get('universityId') || undefined;
     const subjectArea = req.nextUrl.searchParams.get('subjectArea') || undefined;
     const studyLevel = req.nextUrl.searchParams.get('studyLevel') || undefined;
-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '8', 10), 20);
+    const rawLimit = req.nextUrl.searchParams.get('limit') || '8';
+    if (!/^\d+$/.test(rawLimit) || !Number.isSafeInteger(Number(rawLimit)) || Number(rawLimit) < 1 || Number(rawLimit) > 20) {
+      return NextResponse.json({ success: false, error: 'limit must be an integer from 1 to 20' }, { status: 400 });
+    }
+    const limit = Number(rawLimit);
 
     if (!sourceId && !sourceSlug) {
       return NextResponse.json({ success: false, error: 'sourceId or sourceSlug required' }, { status: 400 });
@@ -30,7 +34,9 @@ export async function GET(req: NextRequest) {
       message: related.length === 0 ? 'No related content found. Real DB will populate based on country/university/course/subject/tags priority.' : `${related.length} related items found via priority: exact > same university > same country > same subject > same destination > same tag`,
     });
   } catch (err: any) {
+    // Log full diagnostics server-side; never echo raw driver/Prisma messages
+    // (they contain DB usernames/hosts) to the public client.
     console.error('[related-content] error', err);
-    return NextResponse.json({ error: 'Failed to fetch related content', detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch related content' }, { status: 500 });
   }
 }

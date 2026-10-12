@@ -14,7 +14,7 @@ export default function NewsListingPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="mb-12 text-center max-w-3xl mx-auto">
-          <Badge className="bg-[#0057B8]/10 text-[#0057B8] hover:bg-[#0057B8]/20 border-none mb-4">
+          <Badge className="bg-[#2563EB]/10 text-[#2563EB] hover:bg-[#2563EB]/20 border-none mb-4">
             NEWS & UPDATES
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-[#0F172A] mb-4">Study Abroad News</h1>
@@ -34,14 +34,14 @@ export default function NewsListingPage() {
               </div>
               <div className="p-6 flex flex-col flex-grow">
                 <div className="flex items-center justify-between mb-3">
-                  <Badge variant="outline" className="text-[#E8501A] border-[#E8501A]/30 bg-orange-50">
+                  <Badge variant="outline" className="text-[#F97316] border-[#F97316]/30 bg-orange-50">
                     {article.category}
                   </Badge>
                   <span className="text-xs text-slate-500 flex items-center gap-1">
                     <Calendar className="h-3 w-3" /> {article.date}
                   </span>
                 </div>
-                <h2 className="text-xl font-bold text-[#0F172A] mb-3 group-hover:text-[#0057B8] transition-colors line-clamp-2">
+                <h2 className="text-xl font-bold text-[#0F172A] mb-3 group-hover:text-[#2563EB] transition-colors line-clamp-2">
                   <Link href={`/news/${article.slug}`}>
                     {article.title}
                   </Link>
@@ -50,7 +50,7 @@ export default function NewsListingPage() {
                   {article.excerpt}
                 </p>
                 <Link href={`/news/${article.slug}`}>
-                  <Button variant="ghost" className="w-full justify-between p-0 hover:bg-transparent hover:text-[#E8501A] text-[#0057B8] font-semibold">
+                  <Button variant="ghost" className="w-full justify-between p-0 hover:bg-transparent hover:text-[#F97316] text-[#2563EB] font-semibold">
                     Read full article <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
@@ -60,7 +60,7 @@ export default function NewsListingPage() {
         </div>
 
         {/* Newsletter CTA */}
-        <div className="bg-[#0057B8] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+        <div className="bg-[#2563EB] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
           <div className="md:w-1/2 text-white text-center md:text-left">
             <h3 className="text-2xl md:text-3xl font-bold mb-3">Never miss an update</h3>
             <p className="text-blue-100">
@@ -78,7 +78,7 @@ export default function NewsListingPage() {
                   required
                 />
               </div>
-              <Button type="submit" className="h-12 px-8 bg-[#E8501A] hover:bg-[#d44315] text-white rounded-xl font-bold shrink-0 shadow-md">
+              <Button type="submit" className="h-12 px-8 bg-[#F97316] hover:bg-[#EA580C] text-white rounded-xl font-bold shrink-0 shadow-md">
                 Subscribe
               </Button>
             </form>

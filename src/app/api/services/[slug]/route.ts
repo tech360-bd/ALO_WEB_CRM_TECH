@@ -12,13 +12,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     const service = await db.service.findUnique({
       where: { slug },
       include: {
-        faqs: { orderBy: { sortOrder: "asc" } },
+        faqs: { where: { status: "active" }, orderBy: { sortOrder: "asc" } },
       },
     });
 
-    if (!service) {
-      return NextResponse.json({ error: "Service not found" }, { status: 404 });
-    }
+    if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 });
     if (service.status !== "PUBLISHED") {
       return NextResponse.json({ error: "Service not found" }, { status: 404 });
     }

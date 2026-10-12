@@ -80,7 +80,7 @@ export function StudentTimeline() {
           <div className="max-h-[40rem] space-y-4 overflow-y-auto pr-1">
             {events.map((e, i) => (
               <div key={e.id || i} className="relative flex gap-6 pl-12">
-                <div className="absolute left-0 flex size-8 items-center justify-center rounded-full bg-[#0066CC] text-white">
+                <div className="absolute left-0 flex size-8 items-center justify-center rounded-full bg-[#2563EB] text-white">
                   <Icon name="Check" className="size-4" />
                 </div>
                 <Card className="flex-1 rounded-2xl border border-[#DCE8F5] bg-white">

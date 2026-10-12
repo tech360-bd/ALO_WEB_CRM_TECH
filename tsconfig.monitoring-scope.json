@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "src/lib/university-monitoring-auth.ts",
+    "src/lib/university-monitoring-runner.ts",
+    "src/lib/university-monitoring-sync.ts",
+    "src/lib/university-monitoring-engine.ts",
+    "src/app/api/university-monitoring/**/*.ts",
+    "src/app/api/cron/university-monitoring/route.ts",
+    "src/components/alo/views/university-monitoring.tsx"
+  ]
+}
