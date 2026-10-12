@@ -1,0 +1,19 @@
+[
+ {"country":"United Kingdom","university":"Aston University","url":"https://www.aston.ac.uk/courses-atoz"},
+ {"country":"United States","university":"Arizona State University","url":"https://degrees.asu.edu/"},
+ {"country":"Canada","university":"University of Toronto","url":"https://www.utoronto.ca/academics/programs-directory"},
+ {"country":"Australia","university":"Monash University","url":"https://www.monash.edu/study/courses"},
+ {"country":"Ireland","university":"Trinity College Dublin","url":"https://www.tcd.ie/courses/"},
+ {"country":"New Zealand","university":"University of Auckland","url":"https://www.auckland.ac.nz/en/study/study-options/find-a-study-option.html"},
+ {"country":"United Arab Emirates","university":"United Arab Emirates University","url":"https://www.uaeu.ac.ae/en/catalog/"},
+ {"country":"Germany","university":"Technical University of Munich","url":"https://www.tum.de/en/studies/degree-programs"},
+ {"country":"Netherlands","university":"University of Amsterdam","url":"https://www.uva.nl/en/education/master-s/master-s-programmes/masters-programmes.html"},
+ {"country":"France","university":"Sorbonne University","url":"https://www.sorbonne-universite.fr/en/study"},
+ {"country":"Italy","university":"University of Bologna","url":"https://www.unibo.it/en/study/first-and-single-cycle-degree"},
+ {"country":"Malta","university":"University of Malta","url":"https://www.um.edu.mt/courses/"},
+ {"country":"Cyprus","university":"University of Cyprus","url":"https://www.ucy.ac.cy/study/postgraduate-studies/programmes-of-study/?lang=en"},
+ {"country":"South Korea","university":"Seoul National University","url":"https://en.snu.ac.kr/academics/programs/undergraduate"},
+ {"country":"Denmark","university":"University of Copenhagen","url":"https://www.ku.dk/studies"},
+ {"country":"Sweden","university":"Lund University","url":"https://www.lunduniversity.lu.se/study"},
+ {"country":"Finland","university":"University of Helsinki","url":"https://www.helsinki.fi/en/degree-programmes"}
+]

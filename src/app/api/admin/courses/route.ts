@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { buildManualCourseRecords } from '@/lib/course-finder/manual-course-create';
 
 export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
@@ -74,39 +75,12 @@ export async function POST(request: NextRequest) {
       }
 
       const body = await req.json();
-      const {
-        courseTitle,
-        universityId,
-        studyLevel,
-        subjectArea,
-        disciplineArea,
-        durationMonths,
-        qualification,
-        deliveryMode,
-        campus,
-        city,
-        country,
-        tuitionFee,
-        currency,
-        depositAmount,
-        appFeeAmount,
-        intakes,
-        academicReq,
-        ieltsOverall,
-        ieltsMinBand,
-        pteOverall,
-        toeflOverall,
-        detOverall,
-        moiAccepted,
-        publicTags,
-        placementOption,
-        onlineOption,
-        officialUrl,
-        sourceUrl,
-        forceCreate,
-      } = body;
+      if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
+      }
+      const { courseTitle, universityId, studyLevel, forceCreate } = body;
 
-      if (!courseTitle || !universityId) {
+      if (typeof courseTitle !== 'string' || !courseTitle.trim() || typeof universityId !== 'string' || !universityId) {
         return NextResponse.json({ success: false, error: 'Course title and University ID are required' }, { status: 400 });
       }
 
@@ -143,69 +117,13 @@ export async function POST(request: NextRequest) {
       const genCourseCode = `CRS-${uni.universityId.replace('UNI-', '')}-${Date.now().toString(36).toUpperCase()}`;
       const slug = `${courseTitle}-${uni.name}`.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
-      const newCourse = await db.crmCourse.create({
-        data: {
-          courseId: genCourseCode,
-          universityId: uni.universityId,
-          courseTitle,
-          slug,
-          studyLevel: studyLevel || 'Postgraduate',
-          subjectArea: subjectArea || 'General',
-          disciplineArea: disciplineArea || '',
-          durationMonths: durationMonths || 12,
-          qualification: qualification || 'MSc',
-          deliveryMode: deliveryMode || 'Full-time On Campus',
-          campus: campus || uni.campusName || 'Main Campus',
-          city: city || uni.city,
-          country: country || uni.country,
-          publicTags: Array.isArray(publicTags) ? publicTags.join(', ') : (publicTags || ''),
-          placementOption: placementOption || false,
-          onlineOption: onlineOption || false,
-          officialUrl: officialUrl || '',
-          sourceUrl: sourceUrl || '',
-          status: 'verified',
-          verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
-          lastVerifiedAt: new Date().toISOString(),
-        },
-      });
-
-      if (tuitionFee !== undefined || (intakes && intakes.length > 0)) {
-        const defaultIntake = intakes?.[0] || { intakeMonth: 'September', intakeYear: 2026 };
-        await db.crmCourseIntakeFee.create({
-          data: {
-            universityId: uni.universityId,
-            courseId: newCourse.courseId,
-            intakeYear: defaultIntake.intakeYear || 2026,
-            intakeMonth: defaultIntake.intakeMonth || 'September',
-            applicationDeadline: defaultIntake.deadline || 'Rolling',
-            tuitionCurrency: currency || 'GBP',
-            yearlyTuition: tuitionFee || 0,
-            depositCurrency: currency || 'GBP',
-            depositAmount: depositAmount || 0,
-            appFeeAmount: appFeeAmount || 0,
-            feeSourceUrl: sourceUrl || '',
-            verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
-          },
-        });
-      }
-
-      if (academicReq || ieltsOverall) {
-        await db.crmCourseRequirement.create({
-          data: {
-            universityId: uni.universityId,
-            courseId: newCourse.courseId,
-            academicReq: academicReq || 'Recognized Bachelor degree with minimum 60% or GPA 3.0',
-            ieltsOverall: ieltsOverall || 6.5,
-            ieltsMinBand: ieltsMinBand || 6.0,
-            pteOverall: pteOverall || 58,
-            toeflOverall: toeflOverall || 80,
-            detOverall: detOverall || 115,
-            moiAccepted: moiAccepted || false,
-            officialRequirementUrl: sourceUrl || '',
-            verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
-          },
-        });
-      }
+      // Phase 1 review (P0-A): creation is never verification or publication
+      // and missing facts are never invented. See manual-course-create.ts.
+      const built = buildManualCourseRecords(body, uni, genCourseCode, slug);
+      if (!built.ok) return NextResponse.json({ success: false, error: built.error }, { status: built.status });
+      const newCourse = await db.crmCourse.create({ data: built.course as any });
+      if (built.intake) await db.crmCourseIntakeFee.create({ data: built.intake as any });
+      if (built.requirement) await db.crmCourseRequirement.create({ data: built.requirement as any });
 
       await db.crmAuditLog.create({
         data: {
@@ -218,9 +136,9 @@ export async function POST(request: NextRequest) {
         },
       }).catch(() => null);
 
-      return NextResponse.json({ success: true, data: newCourse });
+      return NextResponse.json({ success: true, data: newCourse, warnings: built.warnings, message: 'Course created as an unpublished draft that needs review.' });
     } catch (error: any) {
       return NextResponse.json({ success: false, error: error?.message || 'Failed to create course' }, { status: 500 });
     }
-  })(request);
+  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
 }

@@ -1,3 +1,5 @@
+import { canReadLegacyLeadDashboard } from '@/lib/crm/lead-access';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 // /api/admin/crm/command-center — Super Admin CRM Master API
 // Real-time aggregated CRM data for Super Admin to operate any agent task
 // No mocks — all real DB queries
@@ -10,6 +12,7 @@ export async function GET(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (!canReadLegacyLeadDashboard(auth)) return NextResponse.json({ success: false, error: 'User administrator required' }, { status: 403 });
 
     const { searchParams } = new URL(request.url);
     const requestedModule = searchParams.get('module') || 'overview'; // overview, leads, students, applications, documents, visa, finance, marketing, hr, partners, universities, courses, communications, reports, tasks, audit
@@ -259,7 +262,9 @@ export async function POST(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (!canReadLegacyLeadDashboard(auth)) return NextResponse.json({ success: false, error: 'User administrator required' }, { status: 403 });
 
+    if (!mutationOriginAllowed(request, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required' }, { status: 403 });
     const body = await request.json();
     const { action, module: targetModule, data, id } = body;
 
@@ -267,18 +272,8 @@ export async function POST(request: Request) {
     await logAuditAction(auth, `SUPER_ADMIN_${action}`, targetModule, id || '', data || {}).catch(()=>{});
 
     switch (action) {
-      case 'assign_lead': {
-        const { leadId, counselorId, counselorName } = data;
-        if (!leadId || !counselorId) return NextResponse.json({ success: false, error: 'leadId and counselorId required' }, { status: 400 });
-        const updated = await db.lead.update({ where: { id: leadId }, data: { counselorId, status: 'assigned' } }).catch(() => null);
-        if (!updated) {
-          // Try marketing lead
-          const mLead = await db.marketingLead.update({ where: { id: leadId }, data: { counselorId, counselorName: counselorName || '', status: 'assigned', assignedAt: new Date() } }).catch(() => null);
-          if (!mLead) return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
-          return NextResponse.json({ success: true, data: mLead });
-        }
-        return NextResponse.json({ success: true, data: updated });
-      }
+      case 'assign_lead':
+        return NextResponse.json({ success: false, code: 'ASSIGNMENT_MAPPING_UNVERIFIED', error: 'Assignment is unavailable until lead and counselor identity namespaces are verified.' }, { status: 409 });
       case 'update_application_stage': {
         const { applicationId, stage, note } = data;
         if (!applicationId || !stage) return NextResponse.json({ success: false, error: 'applicationId and stage required' }, { status: 400 });

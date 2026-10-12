@@ -15,7 +15,12 @@ import {
   SMS_TEMPLATES,
   SOCIAL_CALENDAR,
   CRO_CHECKLIST,
+  MARKETING_KIT_REVIEW_CHECKLIST,
+  buildMarketingKitLibraryMarkdown,
 } from '@/lib/marketing-kit';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import MarketingKitPanel from '@/components/marketing/MarketingKitPanel';
 
 describe('campaign kits', () => {
   it('every kit is complete (hook, copy, CTA, channels)', () => {
@@ -110,5 +115,67 @@ describe('CRO checklist', () => {
       expect(item.action.length).toBeGreaterThan(20);
       expect(item.experiment).toBeTruthy();
     }
+  });
+});
+
+describe('marketing library export and panel', () => {
+  it('exports every library section with an explicit draft and review warning', () => {
+    const markdown = buildMarketingKitLibraryMarkdown();
+
+    expect(markdown).toContain('Draft/reference material only');
+    expect(markdown).toContain(`## Campaign kits (${DEFAULT_MARKETING_KITS.length})`);
+    expect(markdown).toContain(`## Email sequences (${EMAIL_SEQUENCES.length})`);
+    expect(markdown).toContain(`## Lead magnets (${LEAD_MAGNETS.length})`);
+    expect(markdown).toContain(`## SMS & WhatsApp templates (${SMS_TEMPLATES.length})`);
+    expect(markdown).toContain(`## Social calendar (${SOCIAL_CALENDAR.length} posts)`);
+    expect(markdown).toContain(`## CRO checklist (${CRO_CHECKLIST.length} items)`);
+    expect(markdown).toContain('## Human review checklist');
+
+    for (const kit of DEFAULT_MARKETING_KITS) expect(markdown).toContain(kit.name);
+    for (const sequence of EMAIL_SEQUENCES) expect(markdown).toContain(sequence.name);
+    for (const template of SMS_TEMPLATES) expect(markdown).toContain(template.compliance);
+    for (const item of MARKETING_KIT_REVIEW_CHECKLIST) expect(markdown).toContain(item.label);
+  });
+
+  it('keeps review checklist identifiers unique and describes the human approval boundary', () => {
+    const ids = MARKETING_KIT_REVIEW_CHECKLIST.map((item) => item.id);
+    expect(ids.length).toBeGreaterThanOrEqual(5);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const item of MARKETING_KIT_REVIEW_CHECKLIST) {
+      expect(item.label).toBeTruthy();
+      expect(item.detail).toBeTruthy();
+    }
+    expect(MARKETING_KIT_REVIEW_CHECKLIST.map((item) => `${item.label} ${item.detail}`).join(' ')).toMatch(/approv/i);
+  });
+
+  it('renders accurate counts, accessible roving tabs, a linked tab panel, and draft status', () => {
+    const html = renderToStaticMarkup(createElement(MarketingKitPanel));
+
+    expect(html).toContain(`${DEFAULT_MARKETING_KITS.length} campaign kits · ${EMAIL_SEQUENCES.length} sequences · ${LEAD_MAGNETS.length} magnets`);
+    expect(html).not.toContain('6 kits');
+    expect(html).toContain('role="tablist" aria-label="Marketing library categories"');
+    expect((html.match(/aria-selected="true"/g) || []).length).toBe(1);
+    expect((html.match(/aria-selected="false"/g) || []).length).toBe(5);
+    expect(html).toContain('tabindex="0"');
+    expect(html).toContain('tabindex="-1"');
+    expect(html).toContain('role="tabpanel"');
+    expect(html).toContain('Draft material — verify facts and get human approval before live use.');
+    expect(html).toContain('Human review checklist');
+    expect(html).toContain('does not create an approval record or schedule, send, or publish this campaign.');
+  });
+
+  it('gives each panel instance unique tab-panel ids and computes campaign counts from props', () => {
+    const twoPanels = renderToStaticMarkup(
+      createElement('div', null,
+        createElement(MarketingKitPanel, { kits: DEFAULT_MARKETING_KITS.slice(0, 2) }),
+        createElement(MarketingKitPanel, { kits: DEFAULT_MARKETING_KITS.slice(0, 3) }),
+      ),
+    );
+    const panelIds = Array.from(twoPanels.matchAll(/id="([^"]+-tabpanel)"/g), (match) => match[1]);
+
+    expect(panelIds).toHaveLength(2);
+    expect(new Set(panelIds).size).toBe(2);
+    expect(twoPanels).toContain('2 campaign kits');
+    expect(twoPanels).toContain('3 campaign kits');
   });
 });

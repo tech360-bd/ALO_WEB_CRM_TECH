@@ -95,7 +95,7 @@ describe('student identity and credential compatibility', () => {
       name: 'Claimed Name',
       email: 'student@example.com',
       password: 'StrongPass1',
-      pendingVerification: true,
+      pendingVerification: false,
     });
 
     expect(result).toMatchObject({
@@ -106,7 +106,7 @@ describe('student identity and credential compatibility', () => {
     });
     expect(tx.student.update).toHaveBeenCalledWith({
       where: { id: legacyStudent.id },
-      data: { userId: 'new-user-id', status: 'pending_verification' },
+      data: { userId: 'new-user-id', status: 'active' },
       select: { id: true, studentId: true },
     });
     expect(tx.student.create).not.toHaveBeenCalled();
@@ -122,6 +122,8 @@ describe('student identity and credential compatibility', () => {
     }));
 
     expect(response.status).toBe(200);
+    expect(mocks.encode).toHaveBeenCalledWith(expect.objectContaining({token:expect.objectContaining({identityDomain:'student'})}));
+    expect(response.headers.get('set-cookie')).toContain('alo_page_session=');
     expect(mocks.db.student.findFirst).toHaveBeenCalledWith({
       where: { email: 'student@example.com', phone: '+8801700000000' },
     });

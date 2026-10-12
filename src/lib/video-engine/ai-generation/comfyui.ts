@@ -1,106 +1,58 @@
-/**
- * ComfyUI VideoHelperSuite Bridge
- * Repo: https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git
- * ComfyUI custom nodes for video load/save/combine
- * Also integrates: LTX, CogVideo, Hunyuan via ComfyUI workflows
+/** Local ComfyUI provider using an operator-configured API graph.
+ * RunningHub uses its separate OpenAPI adapter. No invented video workflows.
  */
+import type { AIGenerationRequest, AIGenerationResponse, ProviderHealth } from '../types';
+import type { AIVideoProvider } from './providers';
+import { enqueueComfyWorkflow, enqueueComfyGraph, pollComfyWorkflow, requestComfy, type ComfyWorkflowTemplate } from '@/lib/comfyui-client';
 
-import type { AIGenerationRequest, AIGenerationResponse, ProviderHealth } from "../types";
-import type { AIVideoProvider } from "./providers";
-import { checkProviderHealth } from "./providers";
-import { getVideoEngineConfig } from "../config";
-
+function template(): ComfyWorkflowTemplate {
+  const raw = process.env.COMFYUI_VIDEO_WORKFLOW_JSON;
+  if (!raw) throw new Error('A verified COMFYUI_VIDEO_WORKFLOW_JSON API graph and textPrompt binding are required.');
+  const parsed = JSON.parse(raw) as ComfyWorkflowTemplate;
+  if (!parsed.workflow || !parsed.inputBindings?.textPrompt) throw new Error('Video workflow input bindings are not configured.');
+  return parsed;
+}
+const REQUEST_BINDINGS = ['negativePrompt', 'durationSec', 'aspectRatio', 'resolution', 'fps', 'seed', 'steps', 'guidanceScale'] as const;
 export const ComfyUIProvider: AIVideoProvider = {
-  id: "comfyui",
-  name: "ComfyUI-VideoHelperSuite",
-  description: "ComfyUI bridge: run LTX/CogVideo/Hunyuan workflows via ComfyUI API, plus video helper nodes. GPL.",
-  repoUrl: "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git",
-  vramRequiredGB: 12,
-  quality: 4,
-  speed: 3,
-  supports: { t2v: true, i2v: true, longVideo: true, customResolution: true },
-  buildPrompt(b) { return b; },
+  id: 'comfyui', name: 'ComfyUI (configured workflow)',
+  description: 'Local ComfyUI requires a verified installed workflow and ALO output-storage transfer.',
+  repoUrl: 'https://github.com/HM-RunningHub/ComfyUI_RH_APICall',
+  vramRequiredGB: 0, quality: 3, speed: 3,
+  supports: { t2v: false, i2v: false, longVideo: false, customResolution: false },
+  buildPrompt(prompt) { return prompt; },
   async generate(req: AIGenerationRequest): Promise<AIGenerationResponse> {
-    const config = getVideoEngineConfig();
-    const jobId = `comfyui-${Date.now()}`;
-    if (!config.aiProviders.comfyui.enabled) {
-      return { jobId, status: "failed", promptUsed: req.prompt, providerId: "comfyui", metadata: { error: "ComfyUI not enabled, set COMFYUI_ENABLED=true and COMFYUI_URL" } };
-    }
-    // Delegate to LTX/CogVideo/Hunyuan based on request
-    // For generic, use LTX workflow as default
-    try {
-      const res = await fetch(`${config.aiProviders.comfyui.url}/prompt`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: {
-            "1": { class_type: "CLIPTextEncode", inputs: { text: req.prompt } },
-            "2": { class_type: "SaveVideo", inputs: { filename_prefix: jobId } },
-          },
-        }),
-      });
-      const json = await res.json();
-      return { jobId: json.prompt_id || jobId, status: "rendering", promptUsed: req.prompt, providerId: "comfyui", metadata: { comfyPromptId: json.prompt_id } };
-    } catch (e: any) {
-      return { jobId, status: "failed", promptUsed: req.prompt, providerId: "comfyui", metadata: { error: e.message } };
-    }
+    // There is no output-transfer worker installed yet. Do not start a paid or
+    // GPU-intensive task whose outputs cannot be attached to the ALO job.
+    void req;
+    throw new Error('ComfyUI video is unavailable until a verified workflow and ALO output-storage transfer worker are installed. Use the draft creative composer for local exports.');
   },
   async health(): Promise<ProviderHealth> {
-    const config = getVideoEngineConfig();
-    return checkProviderHealth("comfyui", "ComfyUI", config.aiProviders.comfyui.url);
+    let error = 'ComfyUI requires a verified workflow and output-storage transfer worker.';
+    try { template(); error = 'Workflow configured; ALO output-storage transfer worker is not installed.'; } catch (e) { error = e instanceof Error ? e.message : error; }
+    return { id: 'comfyui', name: 'ComfyUI', category: 'ai_generation', status: 'not_configured', lastCheckedAt: new Date().toISOString(), supports: { t2v: false, i2v: false, talkingHead: false, captioning: false, editing: false, streaming: false }, error };
   },
 };
 
-// ─── VideoHelperSuite specific helpers ──────────────────────────────
-
-export interface ComfyUIWorkflow {
-  nodes: Record<string, { class_type: string; inputs: Record<string, any> }>;
+export interface ComfyUIWorkflow { nodes: ComfyWorkflowTemplate['workflow'] }
+/** Internal operator-only graph API. Authentication belongs to the calling API. */
+export async function queueComfyUIWorkflow(workflow: ComfyUIWorkflow, _clientId?: string) {
+  return { promptId: await enqueueComfyGraph(workflow.nodes), status: 'queued' };
 }
-
-export async function queueComfyUIWorkflow(
-  workflow: ComfyUIWorkflow,
-  clientId?: string
-): Promise<{ promptId: string; status: string }> {
-  const config = getVideoEngineConfig();
-  const url = `${config.aiProviders.comfyui.url}/prompt`;
-  const body = { prompt: workflow.nodes, client_id: clientId || `alo-${Date.now()}` };
-  const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  if (!res.ok) throw new Error(`ComfyUI queue failed ${res.status}`);
-  const json = await res.json();
-  return { promptId: json.prompt_id, status: "queued" };
+export async function getComfyUIHistory(promptId: string) { return pollComfyWorkflow(promptId); }
+export async function getComfyUIQueue(): Promise<unknown> { return (await requestComfy('/queue')).json(); }
+// Prebuilt graphs were unverified custom-node guesses. Configure a real exported
+// API graph instead. Low-level poster/image callers may use this explicit helper.
+export async function queueConfiguredVideoWorkflow(req: AIGenerationRequest) {
+  if (req.referenceImageUrl) throw new Error('Reference images require a verified upload binding.');
+  const configured = template();
+  const graph = structuredClone(configured.workflow);
+  const requestBindings = (configured as ComfyWorkflowTemplate & { requestBindings?: Partial<Record<typeof REQUEST_BINDINGS[number], { nodeId: string; field: string }>> }).requestBindings;
+  for (const field of REQUEST_BINDINGS) {
+    const value = req[field];
+    if (value === undefined) continue;
+    const binding = requestBindings?.[field];
+    if (!binding || !Object.prototype.hasOwnProperty.call(graph[binding.nodeId]?.inputs ?? {}, binding.field)) throw new Error(`Missing verified ${field} workflow binding.`);
+    graph[binding.nodeId].inputs[binding.field] = value;
+  }
+  return enqueueComfyWorkflow({ textPrompt: req.prompt }, { ...configured, workflow: graph });
 }
-
-export async function getComfyUIHistory(promptId: string): Promise<any> {
-  const config = getVideoEngineConfig();
-  const res = await fetch(`${config.aiProviders.comfyui.url}/history/${promptId}`);
-  if (!res.ok) throw new Error(`ComfyUI history ${res.status}`);
-  return res.json();
-}
-
-export async function getComfyUIQueue(): Promise<any> {
-  const config = getVideoEngineConfig();
-  const res = await fetch(`${config.aiProviders.comfyui.url}/queue`);
-  if (!res.ok) throw new Error(`ComfyUI queue ${res.status}`);
-  return res.json();
-}
-
-// Pre-built workflows for ALO
-export const COMFYUI_WORKFLOWS = {
-  ltx_text_to_video: (prompt: string, negative: string, width = 768, height = 512, frames = 121) => ({
-    nodes: {
-      "1": { class_type: "LTXVideoModelLoader", inputs: { model: "ltx-video-2b-v0.9.5.safetensors" } },
-      "2": { class_type: "CLIPTextEncode", inputs: { text: prompt, clip: ["1", 1] } },
-      "3": { class_type: "CLIPTextEncode", inputs: { text: negative, clip: ["1", 1] } },
-      "4": { class_type: "LTXVideoSampler", inputs: { model: ["1", 0], positive: ["2", 0], negative: ["3", 0], steps: 30, cfg: 3, width, height, length: frames } },
-      "5": { class_type: "VHS_VideoCombine", inputs: { images: ["4", 0], frame_rate: 24, format: "video/h264-mp4", save_output: true, filename_prefix: `ALO_LTX_${Date.now()}` } },
-    },
-  }),
-  cogvideo_text_to_video: (prompt: string, width = 720, height = 480, frames = 49) => ({
-    nodes: {
-      "1": { class_type: "CogVideoModelLoader", inputs: { model: "cogvideox-5b" } },
-      "2": { class_type: "CLIPTextEncode", inputs: { text: prompt, clip: ["1", 1] } },
-      "3": { class_type: "CogVideoSampler", inputs: { model: ["1", 0], positive: ["2", 0], width, height, length: frames } },
-      "4": { class_type: "VHS_VideoCombine", inputs: { images: ["3", 0], frame_rate: 8, format: "video/h264-mp4", save_output: true } },
-    },
-  }),
-};

@@ -1,5 +1,14 @@
 'use client';
 
+/**
+ * DEMO-ONLY COMPONENT (labelled 2026-10-12). Not used by any route.
+ * The statistics and batches below are invented sample values, not live data.
+ * Live import history is `ImportHistoryTable` in
+ * src/components/admin/data-import/CatalogueImportViews.tsx (/admin/data-import/history).
+ * This component no longer falls back to sample batches when the API fails.
+ */
+export const IMPORT_HISTORY_IS_DEMO = true;
+
 import { useState, useEffect, useCallback } from 'react';
 import {
   Building2, BookOpen, CheckCircle2, AlertCircle, FileQuestion,
@@ -35,7 +44,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   rolled_back: { label: 'Rolled Back', color: 'bg-slate-100 text-slate-600' },
 };
 
-const MOCK_STATS = {
+/** DEMO SAMPLE VALUES — invented, never live counts. */
+const DEMO_SAMPLE_STATS = {
   totalUniversities: 287,
   totalCourses: 4253,
   active: 3180,
@@ -44,7 +54,8 @@ const MOCK_STATS = {
   needsOfficialSource: 230,
 };
 
-const MOCK_BATCHES: ImportBatch[] = [
+/** DEMO SAMPLE BATCHES — invented; never shown as live history. */
+export const DEMO_SAMPLE_BATCHES: ImportBatch[] = [
   {
     batchId: 'BATCH-A7F3K2',
     type: 'Course Finder Combined Upload',
@@ -216,8 +227,9 @@ export function ImportHistory() {
       const data = await res.json();
       setBatches(data.batches || []);
     } catch {
-      // Use mock data
-      setBatches(MOCK_BATCHES);
+      // No silent fallback to sample data: an API failure is shown as an empty, failed load.
+      setBatches([]);
+      toast.error('Import history could not be loaded. No sample data is shown.');
     } finally {
       setLoading(false);
     }
@@ -255,9 +267,12 @@ export function ImportHistory() {
     <div className="min-h-screen bg-white">
       <div className="bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <h1 className="text-2xl sm:text-3xl font-bold">Import History</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Import History (demo)</h1>
           <p className="text-slate-400 mt-1 text-sm">
             Track all CSV imports and manage your course data
+          </p>
+          <p role="note" className="mt-3 rounded-md bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900">
+            Demo component: the statistics cards show invented sample figures, not live counts. Live import history is at /admin/data-import/history.
           </p>
         </div>
       </div>
@@ -265,12 +280,12 @@ export function ImportHistory() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <StatCard icon={Building2} label="Universities" value={MOCK_STATS.totalUniversities} color="bg-emerald-600" />
-          <StatCard icon={BookOpen} label="Total Courses" value={MOCK_STATS.totalCourses} color="bg-emerald-500" />
-          <StatCard icon={CheckCircle2} label="Active" value={MOCK_STATS.active} color="bg-emerald-600" />
-          <StatCard icon={FileQuestion} label="Draft" value={MOCK_STATS.draft} color="bg-slate-400" />
-          <StatCard icon={AlertCircle} label="Needs Review" value={MOCK_STATS.needsReview} color="bg-amber-500" />
-          <StatCard icon={Eye} label="Needs Source" value={MOCK_STATS.needsOfficialSource} color="bg-orange-500" />
+          <StatCard icon={Building2} label="Universities" value={DEMO_SAMPLE_STATS.totalUniversities} color="bg-emerald-600" />
+          <StatCard icon={BookOpen} label="Total Courses" value={DEMO_SAMPLE_STATS.totalCourses} color="bg-emerald-500" />
+          <StatCard icon={CheckCircle2} label="Active" value={DEMO_SAMPLE_STATS.active} color="bg-emerald-600" />
+          <StatCard icon={FileQuestion} label="Draft" value={DEMO_SAMPLE_STATS.draft} color="bg-slate-400" />
+          <StatCard icon={AlertCircle} label="Needs Review" value={DEMO_SAMPLE_STATS.needsReview} color="bg-amber-500" />
+          <StatCard icon={Eye} label="Needs Source" value={DEMO_SAMPLE_STATS.needsOfficialSource} color="bg-orange-500" />
         </div>
 
         {/* Filters */}

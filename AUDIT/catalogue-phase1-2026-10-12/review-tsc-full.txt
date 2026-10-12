@@ -1,0 +1,46 @@
+src/app/api/admin/builder/route.ts(2,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/app/api/storage/list/route.ts(2,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/access-control/central-security-engine.ts(1,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/accounting/ledger.ts(28,10): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/accounting/ledger.ts(141,3): error TS2322: Type 'Map<unknown, unknown>' is not assignable to type 'Map<string, string>'.
+  Type 'unknown' is not assignable to type 'string'.
+src/lib/accounting/ledger.ts(191,64): error TS18046: 'err' is of type 'unknown'.
+src/lib/accounting/ledger.ts(288,30): error TS2339: Property 'type' does not exist on type '{}'.
+src/lib/accounting/ledger.ts(292,31): error TS2339: Property 'name' does not exist on type '{}'.
+src/lib/ai-models/registry.ts(17,10): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/ai-workforce/telemetry.ts(33,20): error TS2365: Operator '+' cannot be applied to types '{}' and '{}'.
+src/lib/ai-workforce/telemetry.ts(36,5): error TS2322: Type '{}' is not assignable to type 'number'.
+src/lib/ai-workforce/telemetry.ts(37,5): error TS2322: Type '{}' is not assignable to type 'number'.
+src/lib/ai-workforce/telemetry.ts(38,5): error TS2322: Type '{}' is not assignable to type 'number'.
+src/lib/ai-workforce/telemetry.ts(39,14): error TS2365: Operator '+' cannot be applied to types '{}' and '{}'.
+src/lib/ai-workforce/telemetry.ts(40,41): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/lib/ai-workforce/telemetry.ts(124,7): error TS2322: Type '{}' is not assignable to type 'number'.
+src/lib/ai-workforce/telemetry.ts(125,7): error TS2322: Type '{}' is not assignable to type 'number'.
+src/lib/ai-workforce/telemetry.ts(126,7): error TS2322: Type '{}' is not assignable to type 'number'.
+src/lib/ai-workforce/telemetry.ts(127,7): error TS2322: Type '{}' is not assignable to type 'number'.
+src/lib/ai-workforce/telemetry.ts(179,20): error TS2365: Operator '+' cannot be applied to types '{}' and '{}'.
+src/lib/ai-workforce/telemetry.ts(179,53): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/lib/ai-workforce/telemetry.ts(179,66): error TS2365: Operator '+' cannot be applied to types '{}' and '{}'.
+src/lib/ai-workforce/tools/handlers.ts(330,65): error TS2339: Property 'name' does not exist on type '{}'.
+src/lib/ai-workforce/tools/handlers.ts(331,59): error TS2339: Property 'ieltsMin' does not exist on type '{}'.
+src/lib/ai-workforce/validation.ts(143,85): error TS2339: Property 'tool' does not exist on type '{}'.
+src/lib/ai-workforce/validation.ts(143,124): error TS2339: Property 'tool' does not exist on type '{}'.
+src/lib/auth/email-otp.ts(3,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/cms-revisions.ts(21,10): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/content-audit.ts(2,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/counselor/student-access.ts(3,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/crm-automation.ts(10,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/crm/lead-access.ts(2,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/crm/lead-handlers.ts(3,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/crm/registration-lead.ts(3,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/crm/verified-registration-assignment.ts(1,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/db.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'PrismaClient'.
+src/lib/email-marketing/broadcast-bridge.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/email-marketing/broadcast-bridge.ts(103,67): error TS18046: 'error' is of type 'unknown'.
+src/lib/identity/student-id.ts(19,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/student/canonical-student.ts(21,10): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/student/public-profile.ts(1,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/transactional-audit.ts(1,15): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+src/lib/verified-metrics.ts(144,37): error TS2345: Argument of type '{}' is not assignable to parameter of type '{ metric: string; value: number; displayValue: string; source: string; status: string; verifiedAt: Date | null; expiresAt: Date | null; }'.
+  Type '{}' is missing the following properties from type '{ metric: string; value: number; displayValue: string; source: string; status: string; verifiedAt: Date | null; expiresAt: Date | null; }': metric, value, displayValue, source, and 3 more.
+exit=2

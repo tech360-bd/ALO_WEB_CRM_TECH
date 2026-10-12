@@ -1,194 +1,72 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { z } from 'zod';
+import { randomUUID } from 'node:crypto';
+import { normalizePhone } from '@/lib/phone-normalization';
+import { rateLimitMiddleware } from '@/lib/rate-limiter';
 
 export async function GET(req: NextRequest) {
-  const status = req.nextUrl.searchParams.get("status");
-  const source = req.nextUrl.searchParams.get("source");
-  const where: any = {};
-  if (status) where.status = status;
-  if (source) where.source = source;
-  const leads = await db.lead.findMany({
-    where,
-
-    orderBy: { createdAt: "desc" },
-  });
-  return NextResponse.json({ leads });
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  // Lead assignments come from verified User counselors, not PortalUser IDs.
+  const type = auth.userType.toUpperCase();
+  if (!auth.userId || auth.identityDomain !== 'user' || !['ADMIN', 'SUPER_ADMIN', 'COUNSELOR', 'BRANCH_MANAGER'].includes(type)) return NextResponse.json({ error: 'User CRM staff access required' }, { status: 403 });
+  const status = req.nextUrl.searchParams.get('status');
+  const source = req.nextUrl.searchParams.get('source');
+  if ((status && !['NEW','CONTACTED','QUALIFIED','CONVERTED','LOST','DUPLICATE'].includes(status)) || (source && source.length > 100)) return NextResponse.json({ error: 'Invalid lead filters' }, { status: 400 });
+  try {
+    const leads = await db.lead.findMany({
+      where: { ...(['ADMIN', 'SUPER_ADMIN'].includes(type) ? {} : { counselorId: auth.userId }), ...(status ? { status } : {}), ...(source ? { source } : {}) },
+      orderBy: { createdAt: 'desc' }, take: 200,
+      select: { id: true, leadId: true, fullName: true, email: true, phone: true, source: true, preferredCountry: true, preferredCourse: true, status: true, counselorId: true, studentId: true, createdAt: true, updatedAt: true, leadScore: true, leadTier: true, notes: true },
+    });
+    return NextResponse.json({ leads }, {headers:{'Cache-Control':'private, no-store'}});
+  } catch { return NextResponse.json({ error: 'Lead data unavailable' }, { status: 503 }); }
 }
 
+// Public enquiry intake intentionally remains public. Staff reads above do not.
+const shortText = z.string().trim().max(191).optional();
+const enquirySchema = z.object({
+  fullName: z.string().trim().min(1).max(191),
+  phone: z.string().trim().min(5).max(40),
+  email: z.string().trim().max(191).pipe(z.union([z.email(), z.literal('')])).optional(),
+  altPhone: shortText, source: shortText, sourceDetail: shortText,
+  preferredCountry: shortText, preferredCourse: shortText, preferredLevel: shortText,
+  preferredIntake: shortText, budget: shortText, englishTest: shortText,
+  englishScore: shortText, currentQualification: shortText, cgpa: shortText, notes: shortText,
+}).strict();
+
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { fullName, email, phone, altPhone, source, sourceDetail, preferredCountry, preferredCourse, preferredLevel, preferredIntake, budget, englishTest, englishScore, currentQualification, cgpa, notes, counselorId } = body;
-
-  if (!fullName || !phone) {
-    return NextResponse.json({ error: "Full name and phone are required" }, { status: 400 });
-  }
-
-  const existing = await db.lead.findFirst({
-    where: { OR: [{ phone }, ...(email ? [{ email }] : [])] },
-  });
-  if (existing) {
-    const dup = await db.lead.create({
-      data: {
-        leadId: `ALO-L-${Date.now().toString().slice(-6)}`,
-        fullName,
-        email,
-        phone,
-        altPhone,
-        source: source || "WEBSITE",
-        sourceDetail: sourceDetail || (preferredCountry ? `From ${preferredCountry} page` : undefined),
-        preferredCountry,
-        preferredCourse,
-        notes: notes ? `${notes}${preferredLevel ? ` | Level: ${preferredLevel}` : ""}${preferredIntake ? ` | Intake: ${preferredIntake}` : ""}${budget ? ` | Budget: ${budget}` : ""}${englishScore ? ` | English: ${englishScore}` : ""}` : `${preferredLevel ? `Level: ${preferredLevel}` : ""}${preferredIntake ? ` | Intake: ${preferredIntake}` : ""}${budget ? ` | Budget: ${budget}` : ""}${englishScore ? ` | English: ${englishScore}` : ""}`.trim(),
-        counselorId,
-        status: "DUPLICATE",
-        duplicateOfId: existing.id,
-      },
-    });
-    return NextResponse.json({ lead: dup, duplicate: true, message: "Duplicate lead detected" });
-  }
-
-  const count = await db.lead.count();
-  const lead = await db.lead.create({
-    data: {
-      leadId: `ALO-L-${(10001 + count + 1).toString()}`,
-      fullName,
-      email,
-      phone,
-      altPhone,
-      source: source || "WEBSITE",
-      sourceDetail: sourceDetail || (preferredCountry ? `From ${preferredCountry} page` : undefined),
-      preferredCountry,
-      preferredCourse,
-      preferredLevel,
-      preferredIntake,
-      budget,
-      englishTest,
-      englishScore,
-      currentQualification,
-      cgpa,
-      utmSource: req.headers.get("x-utm-source") || undefined,
-      utmMedium: req.headers.get("x-utm-medium") || undefined,
-      utmCampaign: req.headers.get("x-utm-campaign") || undefined,
-      rawSubmission: JSON.stringify(body),
-      notes: notes || "",
-      counselorId,
-      status: "NEW",
-      welcomeSent: false,
-    },
-  });
-
-  // ─── AUTOMATION: Save form submission ───
-  const { saveFormSubmission } = await import("@/lib/crm-automation");
-  await saveFormSubmission({
-    source: source || "WEBSITE",
-    channel: "website_form",
-    rawPayload: body,
-    normalizedData: { fullName, email, phone, preferredCountry, preferredCourse, preferredLevel, preferredIntake, budget, englishTest, englishScore, currentQualification, cgpa },
-    crmId: lead.leadId,
-    crmType: "LEAD",
-  });
-
-  await db.timelineEvent.create({
-    data: {
-      studentId: "",
-      leadId: lead.id,
-      stage: "lead",
-      type: "LEAD_CREATED",
-      title: "New lead created",
-      description: `Lead came via ${lead.source}${lead.sourceDetail ? ` (${lead.sourceDetail})` : ""}`,
-    },
-  });
-
-  // ─── AUTOMATION: Score lead ───
-  const { scoreLead, autoAssignCounselor, createFollowUpTask, createAiTask } = await import("@/lib/crm-automation");
-  const scoreResult = await scoreLead(lead.id);
-
-  // ─── AUTOMATION: Auto-assign counselor ───
-  const assignment = await autoAssignCounselor(lead.id);
-
-  // ─── AUTOMATION: Create follow-up task ───
-  await createFollowUpTask(lead.id, 1);
-
-  // ─── AUTOMATION: Create AI qualification task ───
-  await createAiTask({
-    agentName: "Lead Qualification Agent",
-    department: "Lead Management",
-    action: "qualify_lead",
-    crmId: lead.leadId,
-    crmType: "LEAD",
-    priority: scoreResult.tier === "HOT" || scoreResult.tier === "URGENT" ? "HIGH" : "NORMAL",
-    input: { leadId: lead.id, score: scoreResult.score, tier: scoreResult.tier, reasons: scoreResult.reasons },
-  });
-
-  // Log metric
-  const { incrementMetric } = await import("@/lib/crm-automation");
-  await incrementMetric("lead_intake", "automated");
-  await incrementMetric("data_entry", "automated");
-
-  await db.auditLog.create({
-    data: {
-      action: "DATA_IMPORT",
-      resource: "Lead",
-      resourceId: lead.id,
-      details: JSON.stringify({ source: lead.source, name: fullName, automated: true, score: scoreResult.score, tier: scoreResult.tier, assignedTo: assignment.counselorId }),
-    },
-  });
-
-  // ─── AUTOMATION WORKFLOWS via automation-engine (parallel agent RESTORE-CORE) ───
-  // Each workflow is invoked via dynamic import and wrapped in .catch() so failures
-  // never block lead creation. If automation-engine is unavailable, the existing
-  // crm-automation calls above already cover the core pipeline.
+  const limited = rateLimitMiddleware(req, 'lead_create');
+  if (limited) return limited;
+  const parsed = enquirySchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid enquiry fields or length. Assignment and control fields cannot be supplied publicly.' }, { status: 400 });
+  const p = parsed.data;
+  const phone = normalizePhone(p.phone);
+  if (!/^\d{7,15}$/.test(phone || '')) return NextResponse.json({ error: 'A valid phone number is required.' }, { status: 400 });
+  const email = p.email?.toLowerCase() || null;
   try {
-    const engine: any = await import("@/lib/automation-engine");
-    if (typeof engine?.runWorkflow === "function") {
-      await Promise.allSettled([
-        engine.runWorkflow("lead_scoring", { targetId: lead.id, actorId: null }).catch(() => {}),
-        engine.runWorkflow("counselor_assignment", { targetId: lead.id, actorId: null }).catch(() => {}),
-        engine.runWorkflow("follow_up_task_creation", { targetId: lead.id, actorId: null }).catch(() => {}),
-        engine.runWorkflow("lead_welcome_flow", { targetId: lead.id, actorId: null }).catch(() => {}),
-        engine.runWorkflow("lead_tagging", { targetId: lead.id, actorId: null }).catch(() => {}),
-      ]);
-    }
-  } catch {
-    // automation-engine not yet available — silently skip. Existing crm-automation
-    // calls above already performed scoring, assignment, and follow-up creation.
-  }
-
-  // ─── Emit event-bus touchpoint for attribution ───
-  try {
-    const { emitEvent } = await import("@/lib/event-bus");
-    await emitEvent({
-      eventType: "LEAD_CREATED",
-      aggregateType: "Lead",
-      aggregateId: lead.id,
-      leadId: lead.id,
-      actorType: lead.source === "WHATSAPP" ? "WEBHOOK" : lead.source === "FACEBOOK" ? "WEBHOOK" : "USER",
-      payload: {
-        source: lead.source,
-        sourceDetail: lead.sourceDetail,
-        leadScore: scoreResult.score,
-        leadTier: scoreResult.tier,
-        utmSource: lead.utmSource,
-        utmMedium: lead.utmMedium,
-        utmCampaign: lead.utmCampaign,
-      },
+    const receipt = await db.$transaction(async tx => {
+      const candidates = await tx.lead.findMany({ where: { OR: [{ phone }, ...(email ? [{ email }] : [])] }, select: { id: true }, take: 2 });
+      const lead = await tx.lead.create({ data: {
+        ...p, phone: phone!, email, source: 'WEBSITE',
+        leadId: `ALO-L-${randomUUID()}`, status: 'NEW', welcomeSent: false,
+        // rawSubmission is VARCHAR(191) in the existing schema. Store the
+        // bounded payload in the existing LongText audit, not that column.
+      }, select: { id: true, leadId: true } });
+      await tx.portalAuditLog.create({ data: {
+        actorUserId: 'public', action: 'PUBLIC_ENQUIRY_RECEIVED', entityType: 'Lead', entityId: lead.id,
+        metadata: JSON.stringify({ submittedFields: p, contactReviewCandidateIds: candidates.map(c => c.id),
+          duplicateReviewRequired: candidates.length > 0, externalNotificationSent: false,
+          automationDeferred: true, reason: 'Staff review required; supplied contact details are not verified identity or marketing consent.' }),
+      } });
+      return { leadId: lead.leadId };
     });
+    // Same response for contact matches. Do not reveal another person's ID,
+    // ownership, notes, scoring, or whether they are already in the CRM.
+    return NextResponse.json({ lead: receipt, message: 'Enquiry received for staff review.' }, { status: 201 });
   } catch {
-    // best-effort
+    return NextResponse.json({ error: 'Enquiry could not be saved. Please try again.' }, { status: 503 });
   }
-
-  return NextResponse.json({
-    lead,
-    duplicate: false,
-    automation: {
-      leadScore: scoreResult.score,
-      leadTier: scoreResult.tier,
-      scoringReasons: scoreResult.reasons,
-      counselorAssigned: !!assignment.counselorId,
-      assignmentReason: assignment.reason,
-      followUpScheduled: true,
-      aiTaskCreated: true,
-    },
-    message: "Lead created successfully. Auto-scored, auto-assigned, follow-up scheduled, AI qualification task created. Workflow events emitted.",
-  });
 }

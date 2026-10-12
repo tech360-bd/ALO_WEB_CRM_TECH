@@ -26,17 +26,20 @@ export async function POST(request: NextRequest) {
             country: (r.country || r.country_code || '').trim(),
             university: (r.university || '').trim(),
             universityId: (r.university_code || r.university_id || '').trim(),
-            fundingAmount: r.amount ? `${r.currency||''} ${r.amount}` : 'Check eligibility',
+            // Phase 1 review (P1-D): no invented values (previously 'Check eligibility' and a GBP default).
+            fundingAmount: r.amount ? `${r.currency||''} ${r.amount}`.trim() : '',
             amount,
-            currency: (r.currency || 'GBP').trim(),
+            currency: (r.currency || '').trim(),
             fundingType: (r.amount_type || 'tuition_waiver').trim(),
             eligibility: (r.eligibility || '').trim(),
             deadline: (r.deadline || '').trim(),
             overview: (r.description || '').trim(),
             officialSourceUrl: (r.source_url || '').trim(),
             status: 'active',
-            verificationStatus: r.source_url ? 'verified' : 'pending',
-            lastVerifiedAt: r.source_url ? new Date() : null,
+            // An import is not verification: every imported row starts pending
+            // with no verification date, whether or not a source URL was given.
+            verificationStatus: 'pending',
+            lastVerifiedAt: null,
           });
         }
       }

@@ -31,7 +31,11 @@ describe("content PATCH field allowlists", () => {
         },
         "resource",
       ),
-    ).toEqual({ categoryId: "category-1", tags: ["visa", "study"] });
+    ).toEqual({ categoryId: "category-1", tags: JSON.stringify(["visa", "study"]) });
+  });
+
+  it("normalizes JSON sections and rejects executable link protocols", () => {
+    expect(pickEditableContentFields({ processSteps: ["Apply"], ctaUrl: "javascript:alert(1)", sourceUrl: "https://example.org", heroImage: null }, "service")).toEqual({ processSteps: '["Apply"]', sourceUrl: "https://example.org", heroImage: "" });
   });
 
   it("returns an empty patch for non-object JSON", () => {

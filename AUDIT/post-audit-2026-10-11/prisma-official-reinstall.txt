@@ -1,0 +1,7 @@
+
+> @prisma/engines@6.19.3 postinstall
+> node scripts/postinstall.js
+
+rebuilt dependencies successfully
+
+EXIT_CODE=0

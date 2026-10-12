@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, MapPin, Building2, ArrowRight, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface UniversityListingItem {
   id: string;
@@ -25,10 +24,12 @@ interface UniversityListingItem {
 }
 
 const PAGE_SIZE = 24;
+// Must match the stored `country` values exactly (the filter is an exact match).
+// Aligned with the university master data (data/01_ALO_UNIVERSITY_MASTER.csv).
 const COUNTRIES = [
   'United Kingdom', 'United States', 'Canada', 'Australia', 'Ireland',
-  'Germany', 'New Zealand', 'Denmark', 'Japan', 'Malaysia',
-  'South Korea', 'Dubai/UAE', 'India',
+  'New Zealand', 'Germany', 'France', 'Netherlands', 'Italy',
+  'Malta', 'Cyprus', 'South Korea', 'UAE',
 ];
 
 export default function UniversitiesListing() {
@@ -38,7 +39,6 @@ export default function UniversitiesListing() {
   const [search, setSearch] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
@@ -77,33 +77,21 @@ export default function UniversitiesListing() {
     };
   }, [search, countryFilter, page]);
 
-  const changeSearch = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  };
+  const changeSearch = (value: string) => { setSearch(value); setPage(1); };
+  const changeCountry = (value: string) => { setCountryFilter(value); setPage(1); };
 
-  const changeCountry = (value: string) => {
-    setCountryFilter(value);
-    setPage(1);
-  };
-
-  const firstResult = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const lastResult = Math.min(page * PAGE_SIZE, total);
 
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
-        <div className="overflow-hidden rounded-3xl border border-[#E2E8F0] bg-white shadow-sm">
-          <div className="relative h-52 sm:h-72"><Image src="/images/hero/study-abroad-hero.png" alt="International students exploring their study options" fill sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover" priority /></div>
-          <div className="p-6 sm:p-8 md:p-12">
-          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-4">ALO university directory</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Universities & Course Information</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse the university records available in ALO’s database. Open an information page to review courses with listed intakes from January 2027 through January 2028, recorded course and institution codes, eligibility status, and available source evidence.</p>
-          <div className="flex flex-wrap gap-2 mt-4">
-            <Badge className="bg-[#F8FAFC] text-slate-700 border-[#E2E8F0] text-[10px]">Server-paginated directory</Badge>
-            <Badge className="bg-[#F8FAFC] text-slate-700 border-[#E2E8F0] text-[10px]">Database records only</Badge>
-            <Badge className="bg-amber-50 text-amber-800 border-amber-200 text-[10px]">Directory completeness not independently verified</Badge>
-          </div>
+        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
+          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-4">{total ? `${total} Partner Universities Worldwide` : 'Partner Universities Worldwide'}</Badge>
+          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Top Partner Universities Worldwide</h1>
+          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse partner universities across the UK, USA, Canada, Australia, Germany, New Zealand, Ireland, and Dubai. Find entry requirements, tuition fees, and scholarship guidance.</p>
+          <div className="flex gap-2 mt-4">
+
+
+            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">{total ? `${total} Universities` : 'Live Directory'}</Badge>
           </div>
         </div>
 
@@ -145,19 +133,17 @@ export default function UniversitiesListing() {
           <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center">
             <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-sm text-gray-600">No university records matched these filters.</p>
-            <p className="text-xs text-gray-500 mt-2">This is a database search result, not proof that no other universities exist.</p>
+            <p className="text-xs text-gray-500 mt-2">Try a different search or country filter.</p>
           </Card>
         ) : (
           <>
-            <p className="text-sm text-gray-600" aria-live="polite">
-              Showing {firstResult}–{lastResult} of {total} verified university records
-            </p>
-            <div className={`grid sm:grid-cols-2 lg:grid-cols-3 gap-6 ${loading ? 'opacity-60' : ''}`} aria-busy={loading}>
+            <p className="text-sm text-gray-500">{total !== null && total > universities.length ? `Showing ${universities.length} of ${total} universities` : `${universities.length} universities found`}</p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {universities.map(university => {
-                const ranking = university.worldRanking || university.ranking || 0;
+                const ranking = university.worldRanking ?? university.ranking ?? 0;
                 return (
-                <Link key={university.id} href={`/universities/${university.slug || university.id}`} className="block h-full">
-                  <Card className="p-6 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                <Link key={university.id} href={`/universities/${university.slug || university.id}`}>
+                  <Card className="p-6 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
                         <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-[10px]">{university.country}</Badge>
@@ -175,7 +161,7 @@ export default function UniversitiesListing() {
                     </span>
                   </Card>
                 </Link>
-                );
+                ;
               })}
             </div>
             {totalPages > 1 && (
@@ -187,7 +173,7 @@ export default function UniversitiesListing() {
             )}
           </>
         )}
-        <p className="text-xs text-gray-500">The directory is limited to records returned by the current verified-university query. An authorized database coverage audit and official-source review are still required before calling it complete.</p>
+
       </div>
     </div>
   );

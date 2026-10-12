@@ -1,14 +1,17 @@
 import { db } from "@/lib/db";
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
+const INVALID_TOKEN = "This reset link is invalid or has expired. Please request a new one.";
+
 export async function POST(request: Request) {
   try {
-    const { email, otp, newPassword } = await request.json();
+    const { token, newPassword } = await request.json();
 
-    if (!email || !otp || !newPassword) {
+    if (!token || typeof token !== "string" || !newPassword || typeof newPassword !== "string") {
       return NextResponse.json(
-        { success: false, error: "Email, OTP, and new password are required." },
+        { success: false, error: "Reset token and new password are required." },
         { status: 400 }
       );
     }
@@ -20,55 +23,36 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await db.portalUser.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    });
+    const tokenHash = createHash("sha256").update(token).digest("hex");
+    const tokenRow = await db.passwordResetToken.findUnique({ where: { tokenHash } });
 
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Invalid or expired verification code." },
-        { status: 400 }
-      );
+    if (!tokenRow || tokenRow.used || tokenRow.expiresAt.getTime() <= Date.now()) {
+      return NextResponse.json({ success: false, error: INVALID_TOKEN }, { status: 400 });
     }
 
-    // Find valid OTP
-    const otpRecord = await db.otpCode.findFirst({
-      where: {
-        userId: user.id,
-        code: otp,
-        type: "password_reset",
-        used: false,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: { createdAt: "desc" },
+    // Single-use: consume the token before changing the password to prevent races.
+    const consumed = await db.passwordResetToken.updateMany({
+      where: { id: tokenRow.id, used: false },
+      data: { used: true, usedAt: new Date() },
     });
-
-    if (!otpRecord) {
-      return NextResponse.json(
-        { success: false, error: "Invalid or expired verification code." },
-        { status: 400 }
-      );
+    if (consumed.count !== 1) {
+      return NextResponse.json({ success: false, error: INVALID_TOKEN }, { status: 400 });
     }
 
-    // Mark OTP as used
-    await db.otpCode.update({
-      where: { id: otpRecord.id },
-      data: { used: true },
-    });
-
-    // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-
-    // Update user password
+    const passwordHash = await bcrypt.hash(newPassword, 12);
     await db.portalUser.update({
-      where: { id: user.id },
-      data: { passwordHash: hashedPassword },
+      where: { id: tokenRow.userId },
+      data: { passwordHash },
     });
 
-    // Revoke all existing sessions
+    // Revoke all existing portal sessions and any other outstanding reset tokens.
     await db.portalSession.updateMany({
-      where: { userId: user.id, revokedAt: null },
+      where: { userId: tokenRow.userId, revokedAt: null },
       data: { revokedAt: new Date() },
+    });
+    await db.passwordResetToken.updateMany({
+      where: { userId: tokenRow.userId, used: false },
+      data: { used: true, usedAt: new Date() },
     });
 
     return NextResponse.json({
@@ -77,9 +61,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Reset password error:", error);
-    return NextResponse.json(
-      { success: false, error: "Internal server error." },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

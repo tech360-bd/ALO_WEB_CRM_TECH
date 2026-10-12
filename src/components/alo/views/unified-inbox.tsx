@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { inboxReplyRequest } from '@/lib/inbox/reply-request';
 import { cn } from "@/lib/utils";
 import {
   Icon,
@@ -43,6 +44,8 @@ interface InboxMessage {
 
 interface Conversation {
   key: string;
+  id?: string;
+  source?: string;
   channel: string;
   studentId?: string | null;
   studentName?: string | null;
@@ -135,6 +138,7 @@ export function UnifiedInbox() {
   // Reply state
   const [replyText, setReplyText] = React.useState("");
   const [sending, setSending] = React.useState(false);
+  const [aiDraft, setAiDraft] = React.useState(false);
   const [suggesting, setSuggesting] = React.useState(false);
 
   const loadData = React.useCallback(async () => {
@@ -142,6 +146,7 @@ export function UnifiedInbox() {
     try {
       const res = await fetch("/api/inbox/unified", { cache: "no-store" });
       const data: InboxResponse = await res.json();
+      if (!res.ok) throw new Error('Inbox unavailable');
       setConversations(data.conversations || []);
       setSlaStats(data.slaStats || []);
       setTotalMessages(data.totalMessages || 0);
@@ -198,6 +203,7 @@ export function UnifiedInbox() {
       const data = await res.json();
       if (data.suggestedReply) {
         setReplyText(data.suggestedReply);
+        setAiDraft(true);
         toast({ title: "AI suggestion ready", description: "Review and edit before sending." });
       } else {
         toast({ title: "AI could not generate a reply", variant: "destructive" });
@@ -217,26 +223,20 @@ export function UnifiedInbox() {
     }
     setSending(true);
     try {
-      const aiAssisted = replyText.length > 0 && (suggesting || replyText.length > 40);
-      await fetch("/api/inbox/unified", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          channel: selected.channel,
-          toPhone: selected.fromPhone,
-          toEmail: selected.fromEmail,
-          body: replyText.trim(),
-          studentId: selected.studentId,
-          counselorId: null,
-          aiAssisted,
-          humanApproved: true,
-        }),
+      const request = inboxReplyRequest(selected, replyText, aiDraft);
+      const res = await fetch(request.url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request.body),
       });
-      toast({ title: "Reply sent", description: `Message logged to student timeline via ${channelMeta(selected.channel).label}.` });
+      const data = await res.json();
+      if (!res.ok || data.success === false) throw new Error(data.error || 'Provider did not accept the reply.');
+      toast({ title: data.persistenceWarning ? 'Reply accepted; history needs review' : 'Reply accepted',
+        description: data.persistenceWarning ? 'Do not resend. Ask staff to reconcile the provider receipt.' : 'Provider accepted the reply. This is not a delivery or read receipt.' });
+      setAiDraft(false);
       setReplyText("");
       await loadData();
     } catch (e) {
-      toast({ title: "Send failed", description: "Please retry.", variant: "destructive" });
+      toast({ title: "Send failed", description: e instanceof Error ? e.message : "Please retry.", variant: "destructive" });
     } finally {
       setSending(false);
     }
@@ -246,6 +246,7 @@ export function UnifiedInbox() {
     const tpl = QUICK_TEMPLATES.find((t) => t.value === value);
     if (tpl) {
       setReplyText(tpl.body);
+      setAiDraft(false);
       toast({ title: "Template inserted", description: tpl.label });
     }
   }

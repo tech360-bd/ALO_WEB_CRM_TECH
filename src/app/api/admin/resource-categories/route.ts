@@ -1,15 +1,14 @@
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/admin/resource-categories — list all categories for admin
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -48,7 +47,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/admin/resource-categories — create a category
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -71,7 +70,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
     }
 
-    const category = await db.resourceCategory.create({
+    const category = await db.$transaction(async tx => {
+      const category = await tx.resourceCategory.create({
       data: {
         slug, name,
         description: description || null,
@@ -80,8 +80,7 @@ export async function POST(req: NextRequest) {
         status,
       },
     });
-
-    await contentAuditLog.create({
+      await contentAuditLog.create({
       data: {
         userId,
         action: "RESOURCE_CATEGORY_CREATE",
@@ -89,7 +88,9 @@ export async function POST(req: NextRequest) {
         resourceId: category.id,
         details: JSON.stringify({ slug, name }),
       },
-    }).catch(() => {});
+    }, tx);
+      return category;
+    });
 
     return NextResponse.json({ category }, { status: 201 });
   } catch (err: any) {

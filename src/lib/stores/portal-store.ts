@@ -114,6 +114,7 @@ export interface PortalUserData {
   crmRole?: CrmRole;
   department?: string;
   branch?: string;
+  partnerRole?: string;
   roles?: PortalRole[];
 }
 
@@ -144,6 +145,7 @@ interface PortalState {
   setSidebarOpen: (open: boolean) => void;
   clearLoginError: () => void;
   clearAuthMessage: () => void;
+  setNotifications: (notifications: Array<{ id: string; title: string; message: string; type: string; isRead: boolean; createdAt: string }>) => void;
   hasPermission: (module: string, action: string) => boolean;
   hasRole: (roleName: string) => boolean;
 }
@@ -195,7 +197,9 @@ export const usePortalStore = create<PortalState>((set, get) => ({
         user,
         userType: user.userType,
         token: null,
-        currentView: viewMap[user.userType] || 'portals',
+        currentView: user.userType === 'PARTNER' && user.partnerRole?.toUpperCase() === 'PARTNER_SUPER_ADMIN'
+          ? 'partner-admin-dashboard'
+          : viewMap[user.userType] || 'portals',
       });
     } catch {
       localStorage.removeItem('portal_token');
@@ -230,7 +234,9 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           userType: ut,
           token: null,
           loginLoading: false,
-          currentView: viewMap[ut] || 'portals',
+          currentView: ut === 'PARTNER' && data.user.partnerRole?.toUpperCase() === 'PARTNER_SUPER_ADMIN'
+            ? 'partner-admin-dashboard'
+            : viewMap[ut] || 'portals',
         });
         if (typeof window !== 'undefined') {
           localStorage.removeItem('portal_token');
@@ -261,17 +267,18 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   register: async (regData) => {
     set({ loginLoading: true, loginError: null });
     try {
-      const res = await fetch('/api/portal-auth/register', {
+      const canonicalStudent = regData.portalType === 'student';
+      const res = await fetch(canonicalStudent ? '/api/auth/register' : '/api/portal-auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(regData),
+        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT' } : regData),
       });
       const data = await res.json();
       if (data.success) {
-        if (data.requireVerification) {
+        if (data.requireVerification || canonicalStudent) {
           if (typeof window !== 'undefined') {
             localStorage.setItem('portal_otp_email', String(regData.email).trim().toLowerCase());
-            localStorage.setItem('portal_otp_type', String(regData.portalType));
+            localStorage.setItem('portal_otp_type', canonicalStudent ? 'canonical-student' : String(regData.portalType));
           }
           set({ loginLoading: false, currentView: 'verify-otp', authMessage: data.message });
           return true;
@@ -297,6 +304,11 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           localStorage.setItem('portal_user', JSON.stringify(data.user));
         }
         return true;
+      }
+      if (data.accountCreated && typeof window !== 'undefined') {
+        localStorage.setItem('portal_otp_email', String(regData.email).trim().toLowerCase());
+        localStorage.setItem('portal_otp_type', canonicalStudent ? 'canonical-student' : String(regData.portalType));
+        set({ currentView: 'verify-otp' });
       }
       set({ loginLoading: false, loginError: data.error || 'Registration failed' });
       return false;
@@ -341,6 +353,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   clearLoginError: () => set({ loginError: null }),
   clearAuthMessage: () => set({ authMessage: null }),
+  setNotifications: (notifications) => set({ notifications }),
   hasPermission: (module: string, action: string) => {
     const state = get();
     if (!state.user) return false;

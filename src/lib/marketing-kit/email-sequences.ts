@@ -72,7 +72,7 @@ export const EMAIL_SEQUENCES: EmailSequence[] = [
       {
         timing: 'Day 9–11',
         subject: 'Have you tried the course finder yet?',
-        preview: '8,000+ verified courses, filtered to your profile.',
+        preview: 'Verified course records, filtered to your profile.',
         body:
           'The ALO course finder searches verified university courses by subject, budget, intake, and English requirements. Save matches, compare fees, and see exactly what each program asks for — before you apply anywhere.',
         cta: 'Open the course finder',

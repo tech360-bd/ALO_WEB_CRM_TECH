@@ -1,16 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2176,
+  "filesScanned": 2319,
   "summary": {
-    "UNUSED": 81,
-    "REFERENCED_WITH_FALLBACK": 124,
-  "filesScanned": 2158,
-  "summary": {
-    "UNUSED": 73,
-    "REFERENCED_WITH_FALLBACK": 123,
+    "UNUSED": 80,
+    "REFERENCED_WITH_FALLBACK": 135,
     "REFERENCED_FAIL_CLOSED": 14,
-    "REFERENCED": 91,
+    "REFERENCED": 97,
     "PUBLIC": 8
   },
   "productionRequired": [
@@ -118,7 +114,7 @@
       "name": "AI_DEFAULT_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 4,
+      "referenceCount": 5,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -128,9 +124,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/app/api/admin/builder/route.ts",
         "src/app/api/enterprise-ai/route.ts",
-        "src/app/api/workforce/metrics/route.ts",
-        "src/lib/ai.ts"
+        "src/app/api/workforce/metrics/route.ts"
       ]
     },
     {
@@ -202,6 +198,20 @@
       ]
     },
     {
+      "name": "ALO_BUILDER_MODEL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/app/api/admin/builder/route.ts"
+      ]
+    },
+    {
       "name": "ALO_COMPLAINT_WHATSAPP_NUMBER",
       "classification": "UNUSED",
       "referenced": false,
@@ -268,7 +278,7 @@
       "name": "ALO_DB_DRIVER",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 3,
+      "referenceCount": 2,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -276,7 +286,6 @@
       "declaredIn": [],
       "sampleReferences": [
         "scripts/ai-workforce/run-verification.ts",
-        "scripts/run-integration-tests.mjs",
         "src/lib/db.ts"
       ]
     },
@@ -607,6 +616,20 @@
       ]
     },
     {
+      "name": "AUDIT_BASE",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/audit-functional-surface.mjs"
+      ]
+    },
+    {
       "name": "AUTH_SECRET",
       "classification": "UNUSED",
       "referenced": false,
@@ -818,6 +841,22 @@
       ]
     },
     {
+      "name": "CHROMIUM_PATH",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 4,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/verify-leads-browser.mjs",
+        "scripts/verify-module-exports.mjs",
+        "scripts/verify-reference-components.mjs"
+      ]
+    },
+    {
       "name": "COGVIDEO_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
@@ -875,28 +914,32 @@
     },
     {
       "name": "COMFYUI_API_KEY",
-      "classification": "REFERENCED_WITH_FALLBACK",
+      "classification": "REFERENCED",
       "referenced": true,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
-      "hasInlineFallback": true,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
         "src/lib/comfyui-client.ts"
       ]
     },
     {
       "name": "COMFYUI_API_URL",
-      "classification": "REFERENCED_WITH_FALLBACK",
+      "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
-      "hasInlineFallback": true,
+      "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
         "src/lib/comfyui-client.ts"
       ]
@@ -927,6 +970,22 @@
       "declaredIn": [],
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
+      ]
+    },
+    {
+      "name": "COMFYUI_VIDEO_WORKFLOW_JSON",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/video-engine/ai-generation/comfyui.ts"
       ]
     },
     {
@@ -979,7 +1038,7 @@
       "name": "DATABASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 6,
+      "referenceCount": 7,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -991,7 +1050,7 @@
       "sampleReferences": [
         "prisma/seed-university-data.ts",
         "scripts/db-diagnose.mjs",
-        "scripts/run-integration-tests.mjs"
+        "scripts/dev-sqlite/preload.cjs"
       ]
     },
     {
@@ -1125,12 +1184,40 @@
       ]
     },
     {
-      "name": "DOMOVINA_SMS_URL",
-      "classification": "REFERENCED_WITH_FALLBACK",
+      "name": "DEV_ADMIN_PASSWORD",
+      "classification": "REFERENCED",
       "referenced": true,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
-      "hasInlineFallback": true,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/dev-sqlite/seed-dev-fixtures.ts"
+      ]
+    },
+    {
+      "name": "DEV_SQLITE_PATH",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "prisma/dev-sqlite.config.ts"
+      ]
+    },
+    {
+      "name": "DOMOVINA_SMS_URL",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -1909,7 +1996,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referenceCount": 1,
-      "failsClosedWhenMissing": false,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -1923,11 +2010,13 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
         "src/lib/sms-gateway.ts"
       ]
@@ -1941,7 +2030,25 @@
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/sms-gateway.ts"
+      ]
+    },
+    {
+      "name": "HTTPSMS_FROM",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
         "src/lib/sms-gateway.ts"
       ]
@@ -1965,10 +2072,10 @@
     },
     {
       "name": "HTTPSMS_TOKEN",
-      "classification": "REFERENCED_FAIL_CLOSED",
+      "classification": "REFERENCED",
       "referenced": true,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -1978,6 +2085,74 @@
       ],
       "sampleReferences": [
         "src/lib/sms-gateway.ts"
+      ]
+    },
+    {
+      "name": "HTTPSMS_WEBHOOK_PROVIDER",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/httpsms-receipts.ts"
+      ]
+    },
+    {
+      "name": "HTTPSMS_WEBHOOK_SIGNING_KEY",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/app/api/integrations/httpsms/webhook/route.ts",
+        "src/lib/httpsms-webhook.ts"
+      ]
+    },
+    {
+      "name": "HTTPSMS_WEBHOOK_SUBJECT",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 3,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/app/api/integrations/httpsms/webhook/route.ts",
+        "src/lib/httpsms-receipts.ts",
+        "src/lib/httpsms-webhook.ts"
+      ]
+    },
+    {
+      "name": "HTTPSMS_WEBHOOK_URL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/app/api/integrations/httpsms/webhook/route.ts",
+        "src/lib/httpsms-webhook.ts"
       ]
     },
     {
@@ -2893,7 +3068,7 @@
       "name": "NEXTAUTH_SECRET",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 4,
+      "referenceCount": 5,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": true,
@@ -2912,7 +3087,7 @@
       "name": "NEXTAUTH_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 5,
+      "referenceCount": 8,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3122,7 +3297,7 @@
       "name": "NEXT_PUBLIC_SITE_URL",
       "classification": "PUBLIC",
       "referenced": true,
-      "referenceCount": 4,
+      "referenceCount": 11,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -3132,9 +3307,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/seo/health/route.ts",
-        "src/app/robots.ts",
-        "src/app/sitemap.ts"
+        "src/app/api/admin/builder/route.ts",
+        "src/app/api/partner-admin/users/route.ts",
+        "src/app/api/seo/health/route.ts"
       ]
     },
     {
@@ -3169,7 +3344,7 @@
       "name": "NODE_ENV",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 24,
+      "referenceCount": 26,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3179,9 +3354,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "scripts/build-reference-components.mjs",
         "scripts/db-diagnose.mjs",
-        "scripts/seed-all-portal-users.ts",
-        "scripts/seed-portal-admin.ts"
+        "scripts/seed-all-portal-users.ts"
       ]
     },
     {
@@ -3286,14 +3461,15 @@
       "name": "OTP_PEPPER",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/auth/email-otp.ts"
+        "src/lib/auth/email-otp.ts",
+        "src/lib/communication/otp-engine.ts"
       ]
     },
     {
@@ -3534,6 +3710,34 @@
       ]
     },
     {
+      "name": "REFERENCE_ARTIFACT_DIR",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/verify-reference-components.mjs"
+      ]
+    },
+    {
+      "name": "REFERENCE_COMPONENT_URL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/verify-reference-components.mjs"
+      ]
+    },
+    {
       "name": "REMOTION_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
@@ -3682,9 +3886,11 @@
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
-        "src/lib/comfyui-client.ts"
+        "src/lib/runninghub-client.ts"
       ]
     },
     {
@@ -3696,9 +3902,11 @@
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
-        "src/lib/comfyui-client.ts"
+        "src/lib/runninghub-client.ts"
       ]
     },
     {
@@ -3814,14 +4022,16 @@
     },
     {
       "name": "SMS_PROVIDER",
-      "classification": "REFERENCED",
+      "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referenceCount": 1,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
         "src/lib/sms-gateway.ts"
       ]
@@ -3852,7 +4062,25 @@
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/sms-gateway.ts"
+      ]
+    },
+    {
+      "name": "SMS_SENDER_ID",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
         "src/lib/sms-gateway.ts"
       ]
@@ -4079,16 +4307,16 @@
     },
     {
       "name": "TEST_DATABASE_URL",
-      "classification": "REFERENCED_FAIL_CLOSED",
+      "classification": "REFERENCED",
       "referenced": true,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "scripts/run-integration-tests.mjs"
+        "scripts/diagnose-prisma-runtime.mjs"
       ]
     },
     {
@@ -4524,8 +4752,8 @@
       "name": "WHATSAPP_ACCESS_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 4,
-      "failsClosedWhenMissing": false,
+      "referenceCount": 6,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -4536,7 +4764,7 @@
       "sampleReferences": [
         "src/app/api/whatsapp/webhook/route.ts",
         "src/lib/whatsapp-cloud-api.ts",
-        "src/lib/whatsapp-media.ts"
+        "src/lib/whatsapp-inbound-media.ts"
       ]
     },
     {
@@ -4553,6 +4781,20 @@
         ".env.production.example"
       ],
       "sampleReferences": []
+    },
+    {
+      "name": "WHATSAPP_API_VERSION",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/whatsapp-inbound-media.ts"
+      ]
     },
     {
       "name": "WHATSAPP_APP_SECRET",
@@ -4606,19 +4848,35 @@
       ]
     },
     {
+      "name": "WHATSAPP_GRAPH_API_VERSION",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/whatsapp-inbound-media.ts"
+      ]
+    },
+    {
       "name": "WHATSAPP_GRAPH_VERSION",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/whatsapp-media-ingestion.ts"
+      ]
     },
     {
       "name": "WHATSAPP_PHONE_NUMBER_ID",
@@ -4643,8 +4901,8 @@
       "name": "WHATSAPP_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 5,
-      "failsClosedWhenMissing": false,
+      "referenceCount": 7,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -4662,7 +4920,7 @@
       "name": "WHATSAPP_VERIFY_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 5,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -4672,9 +4930,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/webhooks/[provider]/route.ts",
         "src/app/api/crm/ucc/webhooks/whatsapp/route.ts",
-        "src/app/api/whatsapp/status/route.ts"
+        "src/app/api/whatsapp/status/route.ts",
+        "src/app/api/whatsapp/webhook/route.ts"
       ]
     },
     {

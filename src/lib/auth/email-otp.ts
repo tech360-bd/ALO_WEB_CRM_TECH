@@ -1,5 +1,6 @@
 import { createHmac, randomInt, timingSafeEqual } from 'node:crypto';
 import { db } from '@/lib/db';
+import type { Prisma } from '@prisma/client';
 import { sendEmail } from '@/lib/email-service';
 
 const OTP_TTL_MS = 10 * 60 * 1000;
@@ -8,7 +9,7 @@ const MAX_PER_EMAIL_PER_HOUR = 3;
 const MAX_PER_IP_PER_HOUR = 10;
 const MAX_VERIFY_ATTEMPTS = 5;
 
-export type OtpPurpose = 'email_verification' | 'account_activation';
+export type OtpPurpose = 'email_verification' | 'account_activation' | 'email_change';
 
 function otpPepper(): string {
   const pepper = process.env.OTP_PEPPER || process.env.NEXTAUTH_SECRET;
@@ -88,12 +89,12 @@ export async function consumeEmailOtp(input: {
   email: string;
   code: string;
   purpose?: OtpPurpose;
-}): Promise<boolean> {
+}, client: Pick<Prisma.TransactionClient, 'otpCode'> = db): Promise<boolean> {
   const email = input.email.trim().toLowerCase();
   const purpose = input.purpose || 'email_verification';
   if (!/^\d{6}$/.test(input.code)) return false;
   const now = new Date();
-  const record = await db.otpCode.findFirst({
+  const record = await client.otpCode.findFirst({
     where: {
       userId: input.userId,
       email,
@@ -110,14 +111,14 @@ export async function consumeEmailOtp(input: {
   const expected = Buffer.from(otpDigest(email, purpose, input.code), 'hex');
   const matches = actual.length === expected.length && timingSafeEqual(actual, expected);
   if (!matches) {
-    // Compare-and-increment avoids lost updates when many wrong codes race.
-    // A concurrent request that read an older attempt count cannot overwrite it.
-    const incremented = await db.otpCode.updateMany({
-      where: { id: record.id, used: false, attempts: record.attempts, expiresAt: { gt: now } },
+    // Bounded atomic increment counts concurrent wrong guesses against the
+    // current row, rather than discarding those with a stale snapshot.
+    const incremented = await client.otpCode.updateMany({
+      where: { id: record.id, used: false, attempts: { lt: MAX_VERIFY_ATTEMPTS }, expiresAt: { gt: now } },
       data: { attempts: { increment: 1 } },
     });
-    if (incremented.count === 1 && record.attempts + 1 >= MAX_VERIFY_ATTEMPTS) {
-      await db.otpCode.updateMany({
+    if (incremented.count === 1) {
+      await client.otpCode.updateMany({
         where: { id: record.id, used: false, attempts: { gte: MAX_VERIFY_ATTEMPTS } },
         data: { used: true },
       });
@@ -127,7 +128,7 @@ export async function consumeEmailOtp(input: {
 
   // Conditional update makes a challenge single-use even when two verification
   // requests race. Legacy plaintext OTPs are not accepted.
-  const consumed = await db.otpCode.updateMany({
+  const consumed = await client.otpCode.updateMany({
     where: { id: record.id, used: false, attempts: { lt: MAX_VERIFY_ATTEMPTS }, expiresAt: { gt: now } },
     data: { used: true, verifiedAt: now },
   });

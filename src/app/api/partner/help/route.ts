@@ -2,199 +2,128 @@ import { NextResponse } from 'next/server';
 import { authenticateRequest } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
 
-// ============================================================
-// GET — Support tickets and FAQ data for partner
-// ============================================================
+const TICKET_CATEGORIES = new Set(['General Inquiry', 'Lead Issue', 'Application Problem', 'Commission Query', 'Technical Issue', 'Document Request', 'Visa Support', 'Other']);
+const PRIORITIES = new Set(['Low', 'Medium', 'High', 'Urgent']);
+
 export async function GET(request: Request) {
   try {
-    const authResult = await authenticateRequest(request);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult;
-
-    const partner = await db.partnerProfile.findUnique({
-      where: { userId: auth.userId },
-    });
-    if (!partner) {
-      return NextResponse.json({ success: false, error: 'Partner profile not found' }, { status: 404 });
-    }
+    const auth = await authenticateRequest(request);
+    if (auth instanceof NextResponse) return auth;
+    const partner = await db.partnerProfile.findUnique({ where: { userId: auth.userId }, select: { partnerId: true } });
+    if (!partner) return NextResponse.json({ success: false, error: 'Partner profile not found.' }, { status: 404 });
 
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status') || '';
-    const section = searchParams.get('section') || 'all'; // 'tickets', 'faq', or 'all'
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
-    const skip = (page - 1) * limit;
-
+    const section = searchParams.get('section') || 'all';
+    const status = (searchParams.get('status') || '').trim();
+    const requestedPage = Number.parseInt(searchParams.get('page') || '1', 10);
+    const requestedLimit = Number.parseInt(searchParams.get('limit') || '20', 10);
+    const page = Number.isFinite(requestedPage) ? Math.max(1, requestedPage) : 1;
+    const limit = Number.isFinite(requestedLimit) ? Math.min(50, Math.max(1, requestedLimit)) : 20;
     const result: Record<string, unknown> = {};
 
-    // ---- Support tickets (CommunicationThread with channel "partner_support") ----
     if (section === 'all' || section === 'tickets') {
-      const ticketWhere: Record<string, unknown> = {
-        channel: 'partner_support',
-        studentId: auth.userId, // reuse studentId to store the partner user's userId
-      };
-      if (status) {
-        ticketWhere.status = status;
-      }
-
+      const ticketWhere: Record<string, unknown> = { channel: 'partner_support', studentId: auth.userId, partnerId: partner.partnerId };
+      if (status) ticketWhere.status = status;
       const [tickets, ticketCount] = await Promise.all([
         db.communicationThread.findMany({
           where: ticketWhere,
+          select: { id: true, subject: true, status: true, priority: true, intent: true, createdAt: true, updatedAt: true, lastMessageAt: true, lastMessagePreview: true, unreadCount: true },
           orderBy: { lastMessageAt: 'desc' },
-          skip,
+          skip: (page - 1) * limit,
           take: limit,
         }),
         db.communicationThread.count({ where: ticketWhere }),
       ]);
-
-      // Get message count per thread for richer response
-      const threadIds = tickets.map((t) => t.id);
-      const messageCounts = threadIds.length > 0
-        ? await db.communicationMessage.groupBy({
-            by: ['threadId'],
-            where: { threadId: { in: threadIds } },
-            _count: { id: true },
-          })
-        : [];
-
-      const messageCountMap: Record<string, number> = {};
-      for (const mc of messageCounts) {
-        messageCountMap[mc.threadId] = mc._count.id;
-      }
-
-      const enrichedTickets = tickets.map((ticket) => ({
-        ...ticket,
-        messageCount: messageCountMap[ticket.id] || 0,
-      }));
-
-      result.tickets = enrichedTickets;
-      result.ticketPagination = {
-        page,
-        limit,
-        total: ticketCount,
-        totalPages: Math.ceil(ticketCount / limit),
-      };
+      result.tickets = tickets;
+      result.ticketPagination = { page, limit, total: ticketCount, totalPages: Math.ceil(ticketCount / limit) };
     }
 
-    // ---- FAQ data (HomepageFaq) ----
     if (section === 'all' || section === 'faq') {
-      const faqs = await db.homepageFaq.findMany({
+      result.faqs = await db.homepageFaq.findMany({
         where: { status: 'active' },
         orderBy: { sortOrder: 'asc' },
-        select: {
-          id: true,
-          question: true,
-          answer: true,
-          sortOrder: true,
-        },
+        select: { id: true, question: true, answer: true, sortOrder: true },
+        take: 100,
       });
-
-      result.faqs = faqs;
     }
-
     return NextResponse.json({ success: true, data: result });
   } catch (error) {
     console.error('[PARTNER HELP GET] Error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch help data' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Partner help data is temporarily unavailable.' }, { status: 500 });
   }
 }
 
-// ============================================================
-// POST — Create a new support ticket
-// ============================================================
 export async function POST(request: Request) {
   try {
-    const authResult = await authenticateRequest(request);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult;
+    const auth = await authenticateRequest(request);
+    if (auth instanceof NextResponse) return auth;
+    const partner = await db.partnerProfile.findUnique({ where: { userId: auth.userId } });
+    if (!partner) return NextResponse.json({ success: false, error: 'Partner profile not found.' }, { status: 404 });
 
-    const partner = await db.partnerProfile.findUnique({
-      where: { userId: auth.userId },
-    });
-    if (!partner) {
-      return NextResponse.json({ success: false, error: 'Partner profile not found' }, { status: 404 });
+    const body = await request.json().catch(() => ({}));
+    const subject = typeof body.subject === 'string' ? body.subject.trim() : '';
+    const description = typeof body.description === 'string' ? body.description.trim() : '';
+    const category = typeof body.category === 'string' && TICKET_CATEGORIES.has(body.category) ? body.category : '';
+    const priority = typeof body.priority === 'string' && PRIORITIES.has(body.priority) ? body.priority : '';
+    if (!subject || !category || !priority || !description) {
+      return NextResponse.json({ success: false, error: 'Subject, category, priority and description are required.' }, { status: 400 });
+    }
+    if (subject.length > 200 || description.length > 5000) {
+      return NextResponse.json({ success: false, error: 'Subject must be 200 characters or fewer and description 5,000 characters or fewer.' }, { status: 400 });
     }
 
-    const body = await request.json();
-    const { subject, category, priority, description } = body;
-
-    // Validate required fields
-    if (!subject || typeof subject !== 'string' || subject.trim().length === 0) {
-      return NextResponse.json({ success: false, error: 'Subject is required' }, { status: 400 });
-    }
-    if (!description || typeof description !== 'string' || description.trim().length === 0) {
-      return NextResponse.json({ success: false, error: 'Description is required' }, { status: 400 });
-    }
-
-    // Build the message content with category and priority metadata
-    const metadata = JSON.stringify({
-      category: category || 'general',
-      priority: priority || 'medium',
-      partnerId: partner.partnerId,
-      companyName: partner.companyName,
-    });
-
-    const fullContent = description;
-
-    // Create support thread and first message in a transaction
-    const thread = await db.communicationThread.create({
-      data: {
-        studentId: auth.userId, // reuse studentId to store partner user's userId
-        channel: 'partner_support',
-        status: 'open',
-        lastMessageAt: new Date(),
-        lastMessagePreview: subject.trim().substring(0, 200),
-        unreadCount: 0,
-        isAiHandled: false,
-        needsHumanTakeover: false,
-        slaStatus: priority === 'high' ? 'breached' : 'none',
-      },
-    });
-
-    const message = await db.communicationMessage.create({
-      data: {
-        threadId: thread.id,
-        studentId: auth.userId,
-        senderType: 'partner',
-        senderId: auth.userId,
-        senderName: auth.name || partner.companyName,
-        content: fullContent,
-        messageType: 'text',
-        isAiGenerated: false,
-        isRead: false,
-        isInternal: false,
-      },
-    });
-
-    // Create a timeline event for the partner's portal
-    await db.portalTimelineEvent.create({
-      data: {
-        channel: 'portal',
-        messageType: 'support_ticket_created',
-        content: `Support ticket created: ${subject.trim().substring(0, 100)}`,
-        senderName: auth.name || 'Partner',
-        senderType: 'system',
-        // Use an empty string for studentProfileId since this is a partner-level event
-        // Note: This is a workaround since timeline events require a student profile
-        studentProfileId: '',
-      },
-    }).catch(() => {
-      // Silently fail if timeline event creation fails (no student profile context)
-    });
-
-    return NextResponse.json(
-      {
-        success: true,
+    const data = await db.$transaction(async (tx) => {
+      const ticket = await tx.communicationThread.create({
         data: {
-          ticket: thread,
-          message,
-          metadata,
+          partnerId: partner.partnerId,
+          studentId: auth.userId,
+          channel: 'partner_support',
+          subject,
+          intent: category,
+          priority: priority.toLowerCase(),
+          status: 'open',
+          visibility: 'partner_support',
+          lastMessageAt: new Date(),
+          lastMessagePreview: description.slice(0, 200),
+          unreadCount: 0,
+          isAiHandled: false,
+          needsHumanTakeover: false,
+          participants: { create: [{ participantId: partner.partnerId, participantType: 'partner' }, { participantId: auth.userId, participantType: 'partner_user' }] },
         },
-      },
-      { status: 201 }
-    );
+        select: { id: true, subject: true, status: true, priority: true, intent: true, createdAt: true, lastMessageAt: true, lastMessagePreview: true },
+      });
+      const message = await tx.communicationMessage.create({
+        data: {
+          threadId: ticket.id,
+          studentId: auth.userId,
+          partnerId: partner.partnerId,
+          senderType: 'partner',
+          senderId: auth.userId,
+          senderUserId: auth.userId,
+          senderName: auth.name || partner.companyName,
+          direction: 'outbound',
+          source: 'portal',
+          channel: 'partner_support',
+          messageSubject: subject,
+          content: description,
+          messageBody: description,
+          messageType: 'text',
+          type: 'text',
+          status: 'sent',
+          deliveryStatus: 'sent',
+          isRead: true,
+          isInternal: false,
+        },
+      });
+      await tx.portalAuditLog.create({
+        data: { actorUserId: auth.userId, action: 'PARTNER_SUPPORT_TICKET_CREATED', entityType: 'CommunicationThread', entityId: ticket.id, metadata: JSON.stringify({ category, priority }) },
+      });
+      return { ticket, message };
+    });
+
+    return NextResponse.json({ success: true, data, message: 'Support ticket saved. You can continue the conversation in Messages.' }, { status: 201 });
   } catch (error) {
     console.error('[PARTNER HELP POST] Error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to create support ticket' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Support ticket could not be saved.' }, { status: 500 });
   }
 }

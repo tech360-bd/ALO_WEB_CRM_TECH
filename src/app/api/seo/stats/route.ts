@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireSeoStaff } from "@/lib/seo/request-access";
 import { getSeoStats } from "@/lib/seo-engine";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET /api/seo/stats
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(req: Request) {
+  const auth = await requireSeoStaff(req);
+  if (auth instanceof NextResponse) return auth;
 
-  const stats = await getSeoStats();
-  return NextResponse.json(stats);
+  try {
+    const stats = await getSeoStats();
+    return NextResponse.json(stats);
+  } catch { return NextResponse.json({error:'SEO statistics unavailable.'},{status:503}); }
 }

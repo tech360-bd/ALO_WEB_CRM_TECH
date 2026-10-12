@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
+import { publicCourseWhere } from '@/lib/public-catalog';
 
 // ============================================================
 // GET /api/student-portal/course-finder
@@ -22,7 +23,10 @@ export async function GET(request: Request) {
       const sortBy = searchParams.get('sortBy') || 'createdAt';
       const sortOrder = searchParams.get('sortOrder') || 'desc';
 
-      const where: Record<string, unknown> = { status: 'active' };
+      // Phase 1 review (P0-C): students only see courses that pass the shared
+      // public catalogue gate (active + VERIFIED + published + source link +
+      // public university), not every active CRM row.
+      const where: Record<string, unknown> = { AND: [publicCourseWhere()] };
 
       if (search) {
         where.courseTitle = { contains: search };

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireStudentResource } from '@/lib/student-resource-auth';
+import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere } from '@/lib/public-catalog';
+// Saved comparisons only ever return courses that are currently public (verified + published).
 export async function GET(req: NextRequest) {
   try {
     const access = await requireStudentResource(req, req.nextUrl.searchParams.get('studentId'));
@@ -9,13 +11,13 @@ export async function GET(req: NextRequest) {
     const comparison = await db.courseComparisonList.findFirst({ where: { studentId: userId }, orderBy: { updatedAt: 'desc' } }).catch(()=>null);
     if (comparison) {
       const courseIds = (()=>{ try{ return JSON.parse(comparison.courseIds); }catch{ return []; } })();
-      const courses = await db.crmCourse.findMany({ where: { courseId: { in: courseIds } }, include: { university: { select: { name: true, country: true } }, intakeFees: { take:1 }, requirements: { take:1 } } }).catch(()=>[]);
+      const courses = await db.crmCourse.findMany({ where: { AND: [publicCourseWhere(), { courseId: { in: courseIds } }] } as any, include: { university: { select: { name: true, country: true } }, intakeFees: { where: publicIntakeWhere() as any, take:1 }, requirements: { where: publicRequirementWhere() as any, take:1 } } }).catch(()=>[]);
       return NextResponse.json({ success: true, courses, total: courses.length, message: 'Compare max sensible number — columns: University, Course, Country, Study level, Duration, Tuition, Scholarship, Deposit, App fee, Intake, Deadline, English, Academic requirement, Eligibility, Match score' });
     }
     const legacy = await db.courseComparison.findFirst({ where: { studentId: userId } }).catch(()=>null);
     if (legacy) {
       const courseIds = (()=>{ try{ return JSON.parse(legacy.courseIds); }catch{ return []; } })();
-      const courses = await db.crmCourse.findMany({ where: { courseId: { in: courseIds } } }).catch(()=>[]);
+      const courses = await db.crmCourse.findMany({ where: { AND: [publicCourseWhere(), { courseId: { in: courseIds } }] } as any }).catch(()=>[]);
       return NextResponse.json({ success: true, courses, total: courses.length });
     }
     return NextResponse.json({ success: true, courses: [], total: 0, message: 'No courses to compare — add from course finder, max sensible number' });

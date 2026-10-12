@@ -22,18 +22,21 @@ async function setStudentPageSessionCookie(response: NextResponse, student: { id
   const secret = process.env.NEXTAUTH_SECRET;
   if (!secret || secret.length < 32) throw new Error('NEXTAUTH_SECRET must be configured (32+ characters) before portal login');
   const token = await encode({
-    token: { sub: student.id, id: student.id, email: student.email, name: student.name, role: 'STUDENT', status: 'ACTIVE' },
+    token: { identityDomain: 'student', sub: student.id, id: student.id, email: student.email, name: student.name, role: 'STUDENT', status: 'ACTIVE' },
     secret,
     maxAge: 24 * 60 * 60,
   });
   const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
-  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', token, {
+  // Navigation hint is not a NextAuth User credential and must not be
+  // erased by NextAuth's rejection/cleanup of foreign-domain cookies.
+  response.cookies.set('alo_page_session', token, {
     httpOnly: true,
     secure,
     sameSite: 'lax',
     path: '/',
     maxAge: 24 * 60 * 60,
   });
+  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', '', {httpOnly:true,secure,sameSite:'lax',path:'/',maxAge:0});
   return response;
 }
 

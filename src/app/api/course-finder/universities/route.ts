@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { publicUniversityWhere, publicCourseWhere } from '@/lib/public-catalog';
 
 const PAGE_SIZE_DEFAULT = 12;
 const MAX_PAGE_SIZE = 100;
@@ -74,9 +75,7 @@ export async function GET(req: Request) {
       if (tuitionUpper !== null && Number.isFinite(tuitionUpper)) tuitionFilter.lte = tuitionUpper;
       const matchingCourses = await db.crmCourse.findMany({
         where: {
-          status: 'active',
-          verificationStatus: 'VERIFIED',
-          publicationStatus: { in: ['published', 'PUBLISHED'] },
+          ...publicCourseWhere(),
           tuitionFee: tuitionFilter,
         },
         select: { universityId: true },
@@ -89,7 +88,7 @@ export async function GET(req: Request) {
       status: 'active',
       verificationStatus: 'VERIFIED',
       publicationStatus: { in: ['published', 'PUBLISHED'] },
-      ...(andConditions.length ? { AND: andConditions } : {}),
+      AND: [publicUniversityWhere(), ...andConditions],
     };
 
     const orderBy = sort === 'ranking'
@@ -127,11 +126,7 @@ export async function GET(req: Request) {
           _count: {
             select: {
               courses: {
-                where: {
-                  status: 'active',
-                  verificationStatus: 'VERIFIED',
-                  publicationStatus: { in: ['published', 'PUBLISHED'] },
-                },
+                where: publicCourseWhere(),
               },
             },
           },

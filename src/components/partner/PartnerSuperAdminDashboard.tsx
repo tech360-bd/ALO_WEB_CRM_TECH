@@ -20,10 +20,11 @@ interface PartnerKpis {
   submittedApplications: number;
   offerReceived: number;
   visaReadyStudents: number;
-  counselorSeats: {
+  userSeats: {
     limit: number;
     used: number;
     available: number;
+    pendingSeatRequests: number;
   };
   marketingQuota: {
     monthlyImageLimit: number;
@@ -34,10 +35,9 @@ interface PartnerKpis {
     videosRemaining: number;
     videoDurationLimitSeconds: number;
   };
-  vouchersCount: number;
+  vouchers: { total: number; available: number; used: number };
   activeEntitlementsCount: number;
-  commissionStatus: string;
-  supportTicketsCount: number;
+  supportThreadsCount: number;
 }
 
 // StudentMockTestVoucher
@@ -120,7 +120,7 @@ export default function PartnerSuperAdminDashboard() {
   }, [load]);
 
   const quota = kpis?.marketingQuota;
-  const seats = kpis?.counselorSeats;
+  const seats = kpis?.userSeats;
 
   const kpiCards: Array<{ label: string; value: string | number }> = kpis
     ? [
@@ -129,9 +129,9 @@ export default function PartnerSuperAdminDashboard() {
       { label: 'Submitted applications', value: kpis.submittedApplications },
       { label: 'Offers received', value: kpis.offerReceived },
       { label: 'Visa ready', value: kpis.visaReadyStudents },
-      { label: 'Vouchers issued', value: kpis.vouchersCount },
+      { label: 'Vouchers issued', value: kpis.vouchers.total },
       { label: 'Active entitlements', value: kpis.activeEntitlementsCount },
-      { label: 'Support tickets', value: kpis.supportTicketsCount },
+      { label: 'Support threads', value: kpis.supportThreadsCount },
     ]
     : [];
 
@@ -167,7 +167,7 @@ export default function PartnerSuperAdminDashboard() {
             variant="outline"
             size="sm"
             className="h-8 border-slate-300 text-xs text-slate-700"
-            onClick={() => setView('partner-admin-users-create')}
+            onClick={() => setView('partner-admin-users')}
           >
             <Plus className="mr-1 h-3.5 w-3.5" /> Request extra seats
           </Button>
@@ -300,7 +300,7 @@ export default function PartnerSuperAdminDashboard() {
                     Counsellor seats
                   </CardTitle>
                   <CardDescription className="text-xs text-slate-500">
-                    {seats ? `${seats.used} requested of a ${seats.limit}-seat limit · ${seats.available} available` : 'Seat limits unavailable'}
+                    {seats ? `${seats.used} of ${seats.limit} seats in use · ${seats.available} available · ${seats.pendingSeatRequests} requests pending` : 'Seat limits unavailable'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -406,10 +406,9 @@ export default function PartnerSuperAdminDashboard() {
         <CardContent className="flex items-start gap-2 p-4 text-xs text-slate-500">
           <Info className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
-            Every figure here is read from this partner&apos;s own records. Commission status is
-            shown as the platform reports it and is not estimated. Sample campaign copy is not
-            displayed: any scholarship amount or intake claim would need a verified source, and
-            none is attached to a generated post.
+            Figures are read from this partner&apos;s own records. Seat usage counts active user
+            accounts; pending requests and support threads are reported separately. Marketing
+            figures use the current quota period and are not estimated.
           </span>
         </CardContent>
       </Card>

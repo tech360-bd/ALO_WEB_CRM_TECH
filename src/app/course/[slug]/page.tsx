@@ -3,9 +3,21 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import CourseDetailHub from '@/components/website/CourseDetailHub';
 import { db } from '@/lib/db';
+import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from '@/lib/course-finder/public-content-page-policy';
+import { publicCourseIdentifierWhere } from '@/lib/public-catalog';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
+// Same visibility rule as /api/courses/[slug] and the Course Finder (src/lib/public-catalog.ts).
+async function findPublicCourse(slug: string) {
+  const where = publicCourseIdentifierWhere(slug);
+  if (!where) return null;
+  return db.crmCourse.findFirst({
+    where: where as any,
+    select: { id: true, courseTitle: true, slug: true, courseId: true },
+  });
+}
 
 export async function generateMetadata({
   params,
@@ -13,16 +25,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const record = await db.crmCourse.findFirst({
-    where: {
-      OR: [{ slug }, { courseId: slug }], status: 'active', verificationStatus: 'VERIFIED',
-      publicationStatus: { in: ['published', 'PUBLISHED'] },
-      AND: [{ OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] }],
-    },
-    select: { courseTitle: true, slug: true },
-  });
+  const record = await findPublicCourse(slug);
   const name = record?.courseTitle || slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-  const canonicalSlug = record?.slug || slug;
+  const canonicalSlug = record?.slug || record?.courseId || slug;
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
   const description = `Source-linked course information for ${name}. Facts are shown when recorded; missing information is identified clearly.`;
   return {
@@ -44,22 +49,16 @@ export default async function CourseDetailPageRoute({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const record = await db.crmCourse.findFirst({
-    where: {
-      OR: [{ slug }, { courseId: slug }],
-      status: 'active',
-      verificationStatus: 'VERIFIED',
-      publicationStatus: { in: ['published', 'PUBLISHED'] },
-      AND: [{ OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] }],
-    },
-    select: { id: true },
-  });
+  const record = await findPublicCourse(slug);
   if (!record) {
+    // Legacy course-page records keep working via a permanent redirect path.
+    // Phase 1 review (P0-C): only redirect to a page that passes the public policy.
+    const conflicts = await loadOpenConflicts();
     const pageRecord = await db.coursePage.findFirst({
-      where: { slug, approvalStatus: 'PUBLISHED', sourceUrl: { not: '' } },
-      select: { slug: true },
+      where: publicCoursePageWhere(conflicts, [{ slug }]),
+      select: { slug: true, sourceUrl: true },
     });
-    if (pageRecord) redirect(`/courses/${encodeURIComponent(pageRecord.slug)}`);
+    if (pageRecord && passesPublicCoursePagePolicy(pageRecord, conflicts)) redirect(`/courses/${encodeURIComponent(pageRecord.slug)}`);
     notFound();
   }
 

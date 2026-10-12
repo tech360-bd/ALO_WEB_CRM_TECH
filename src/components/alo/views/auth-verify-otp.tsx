@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ const RESEND_COUNTDOWN = 60; // seconds
 
 export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [otp, setOtp] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -31,6 +33,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
   const [verified, setVerified] = React.useState(false);
   const [approvalRequired, setApprovalRequired] = React.useState(false);
   const [portalVerification, setPortalVerification] = React.useState(false);
+  const [canonicalStudent, setCanonicalStudent] = React.useState(false);
   const [countdown, setCountdown] = React.useState(RESEND_COUNTDOWN);
 
   // AuthRegister stashes the email on `window.__aloOtpEmail` before calling
@@ -43,7 +46,8 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
       const portalType = localStorage.getItem('portal_otp_type');
       if (portalEmail && portalType) {
         setEmail(portalEmail);
-        setPortalVerification(true);
+        setPortalVerification(portalType !== 'canonical-student');
+        setCanonicalStudent(portalType === 'canonical-student');
       } else {
         const ctx = (window as any).__aloOtpEmail;
         if (typeof ctx === "string" && ctx) {
@@ -100,10 +104,8 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
 
       setApprovalRequired(Boolean(data.approvalRequired));
       setVerified(true);
-      if (portalVerification) {
-        localStorage.removeItem('portal_otp_email');
-        localStorage.removeItem('portal_otp_type');
-      }
+      localStorage.removeItem('portal_otp_email');
+      localStorage.removeItem('portal_otp_type');
       toast({
         title: "Email verified!",
         description: data.approvalRequired
@@ -195,7 +197,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                 </div>
                 <Button
                   type="button"
-                  onClick={() => onNavigate("auth-login")}
+                  onClick={() => canonicalStudent ? router.push("/student/login") : onNavigate("auth-login")}
                   className="h-12 w-full bg-[#F97316] text-sm font-semibold text-white hover:bg-[#F97316]/90"
                 >
                   <Icon name="LogIn" className="size-4" />

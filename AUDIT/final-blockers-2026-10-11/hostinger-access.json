@@ -1,0 +1,17 @@
+{
+  "connectorLookup": "hostinger",
+  "status": "unsupported",
+  "meaning": "No Hostinger connector available through this tool. No authenticated hosting account access or current plan settings were obtained.",
+  "liveConfiguration": "BLOCKED",
+  "repositoryContractOnly": {
+    "node": "22.x",
+    "install": "npm ci",
+    "build": "npm run build",
+    "start": "npm start",
+    "startupFile": "server.js",
+    "hostBind": "0.0.0.0",
+    "port": "provider-assigned value unknown; no private database ports published",
+    "privateStorage": "STORAGE_POOL_C, absolute persistent path outside public web root; actual provisioned path unknown"
+  },
+  "owner": "Hosting account owner / staging infrastructure operator"
+}

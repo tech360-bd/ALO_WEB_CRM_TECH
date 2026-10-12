@@ -1,3 +1,4 @@
+import { communicationScope } from '@/lib/communication/access-scope';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, AuthContext } from '@/lib/auth-middleware';
@@ -26,21 +27,8 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     if (taskId) where.taskId = taskId;
     if (b2bProviderId) where.b2bProviderId = b2bProviderId;
 
-    // Enforce role-based visibility filter on database side
-    const userType = auth.userType || 'STUDENT';
-    const isSuperAdmin = auth.roles.includes('super_admin');
-
-    if (!isSuperAdmin) {
-      if (userType === 'STUDENT') {
-        where.visibility = { in: ['public_safe', 'student_visible'] };
-      } else if (userType === 'PARTNER') {
-        where.visibility = { in: ['public_safe', 'partner_visible'] };
-      } else if (auth.roles.includes('counselor')) {
-        where.visibility = { notIn: ['b2b_confidential', 'super_admin_only'] };
-      } else if (auth.roles.includes('marketing_manager')) {
-        where.visibility = { in: ['public_safe', 'marketing_visible', 'student_visible'] };
-      }
-    }
+    const scope = await communicationScope(auth);
+    where.AND = [scope.messages];
 
     const messages = await db.communicationMessage.findMany({
       where,
@@ -55,7 +43,7 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to fetch communication timeline' },
+      { success: false, error: 'Failed to fetch communication timeline' },
       { status: 500 }
     );
   }

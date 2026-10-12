@@ -1,15 +1,15 @@
 {
   "auditBase": "HEAD",
-  "files": 2623,
-  "activeSourceFiles": 2108,
-  "textScanned": 2502,
-  "metadataOnly": 121,
-  "pages": 392,
-  "apiFiles": 892,
-  "apiMethods": 1442,
-  "forms": 56,
-  "actions": 5219,
-  "querySites": 5514,
+  "files": 6203,
+  "activeSourceFiles": 2166,
+  "textScanned": 5852,
+  "metadataOnly": 351,
+  "pages": 402,
+  "apiFiles": 899,
+  "apiMethods": 1453,
+  "forms": 60,
+  "actions": 5186,
+  "querySites": 5720,
   "serverActionDirectives": 0,
-  "riskSignals": 6320
+  "riskSignals": 10585
 }

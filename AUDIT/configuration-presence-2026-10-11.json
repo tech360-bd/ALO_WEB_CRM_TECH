@@ -1,0 +1,74 @@
+{
+  "scope": "sandbox shell process only; no provider authentication performed; not Hostinger configuration",
+  "actualEnvFiles": [],
+  "groups": {
+    "core": {
+      "DATABASE_URL": false,
+      "TEST_DATABASE_URL": false,
+      "NEXTAUTH_SECRET": false,
+      "NEXTAUTH_URL": false,
+      "ENCRYPTION_KEY": false,
+      "FILE_SIGN_SECRET": false
+    },
+    "whatsapp": {
+      "WHATSAPP_ACCESS_TOKEN": false,
+      "WHATSAPP_TOKEN": false,
+      "WHATSAPP_PHONE_NUMBER_ID": false,
+      "WHATSAPP_BUSINESS_ACCOUNT_ID": false,
+      "WHATSAPP_APP_SECRET": false,
+      "WHATSAPP_VERIFY_TOKEN": false,
+      "WHATSAPP_GRAPH_VERSION": false
+    },
+    "meta": {
+      "META_APP_ID": false,
+      "META_APP_SECRET": false,
+      "META_VERIFY_TOKEN": false,
+      "FACEBOOK_APP_ID": false,
+      "FACEBOOK_APP_SECRET": false,
+      "FACEBOOK_PAGE_ACCESS_TOKEN": false,
+      "FACEBOOK_VERIFY_TOKEN": false,
+      "FACEBOOK_REDIRECT_URI": false
+    },
+    "seo": {
+      "GOOGLE_CLIENT_ID": false,
+      "GOOGLE_CLIENT_SECRET": false,
+      "GOOGLE_SEARCH_CONSOLE_SITE_URL": false,
+      "GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON": false,
+      "GOOGLE_BUSINESS_ACCOUNT_ID": false,
+      "GA4_MEASUREMENT_ID": false,
+      "NEXT_PUBLIC_GA4_MEASUREMENT_ID": false,
+      "NEXT_PUBLIC_GA4_ENABLED": false
+    },
+    "email": {
+      "SMTP_HOST": false,
+      "SMTP_PORT": false,
+      "SMTP_FROM": false,
+      "SMTP_USER": false,
+      "SMTP_PASSWORD": false,
+      "EMAIL_SENDING_ENABLED": false,
+      "EMAIL_TEST_MODE": false,
+      "EMAIL_TEST_RECIPIENTS": false,
+      "EMAIL_UNSUBSCRIBE_SECRET": false
+    },
+    "sms": {
+      "SMS_PROVIDER": false,
+      "SMS_PROVIDER_URL": false,
+      "SMS_PROVIDER_API_KEY": false,
+      "SMS_SENDER_ID": false,
+      "HTTPSMS_API_KEY": false,
+      "HTTPSMS_FROM": false,
+      "HTTPSMS_BASE_URL": false,
+      "DOMOVINA_SMS_URL": false,
+      "HTTPSMS_WEBHOOK_SIGNING_KEY": false,
+      "HTTPSMS_WEBHOOK_URL": false,
+      "HTTPSMS_WEBHOOK_SUBJECT": false,
+      "HTTPSMS_WEBHOOK_PROVIDER": false
+    },
+    "ai": {
+      "GROQ_API_KEY": false,
+      "OPENROUTER_API_KEY": false,
+      "ZAI_API_KEY": false,
+      "LOCAL_AI_URL": false
+    }
+  }
+}

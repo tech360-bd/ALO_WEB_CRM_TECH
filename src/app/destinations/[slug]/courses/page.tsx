@@ -5,6 +5,7 @@ import { BookOpen, Calendar, DollarSign, Clock, Search, ArrowRight } from 'lucid
 import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
 import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
+import { publicCoursesInCountryWhere, publicIntakeWhere, publicRequirementWhere, stripInternalFields } from '@/lib/public-catalog';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -25,27 +26,20 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
   const countryData = getCountryDestination(slug);
   if (!countryData) notFound();
 
-  const courses = await db.crmCourse.findMany({
-    where: {
-      OR: [
-        { country: { contains: countryData.name } },
-        { country: { contains: countryData.code } },
-        { university: { country: { contains: countryData.name } } },
-        { university: { country: { contains: countryData.code } } },
-      ],
-    },
+  const courses = stripInternalFields(await db.crmCourse.findMany({
+    where: publicCoursesInCountryWhere(countryData.name, countryData.code),
     take: 30,
     orderBy: { courseTitle: 'asc' },
     include: {
       university: true,
-      intakeFees: true,
-      requirements: true,
+      intakeFees: { where: publicIntakeWhere() },
+      requirements: { where: publicRequirementWhere() },
     },
   }).catch((error) => throwSanitizedDatabaseFailure(
     'destination-courses',
     error,
     'DESTINATION_DATA_UNAVAILABLE',
-  ));
+  )));
 
   return (
     <div className="bg-slate-50 min-h-screen py-12 text-slate-900">

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, realpathSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 const require = createRequire(import.meta.url);
@@ -26,7 +26,7 @@ describe('scoped Prisma config merge dependency upgrade', () => {
       const { loadConfigFromFile } = require('@prisma/config');
       const result = await loadConfigFromFile({ configRoot: dir });
       expect(result.error).toBeUndefined();
-      expect(result.config.schema).toBe(join(dir, 'prisma/schema.prisma'));
+      expect(result.config.schema).toBe(join(realpathSync(dir), 'prisma/schema.prisma'));
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

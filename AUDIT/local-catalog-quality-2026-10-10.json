@@ -1,0 +1,473 @@
+{
+  "date": "2026-10-10",
+  "scope": "local CSVs in data/ and docs/import-templates/package-verified/; JSON/ZIP/legacy copies and live DB not reviewed by this script",
+  "method": "streaming CSV parse, counts and template-pattern flags; not official verification",
+  "verifiedByThisAudit": 0,
+  "files": [
+    {
+      "file": "data/01_ALO_COURSE_MASTER.csv",
+      "sha256": "57d9beb168f4850323ade9dccee64823eb3433dc46b2087a3c59fe72295190c9",
+      "rows": 471,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {
+        "generic_modules": 471,
+        "generic_description": 471,
+        "guessed_curriculum_suffix": 471
+      },
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/01_ALO_UNIVERSITY_MASTER.csv",
+      "sha256": "a774fae47023a449ea45ddd82b91df6a4a215176343abc9ba979ca37d04f648a",
+      "rows": 400,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 399,
+        "VERIFIED_OFFICIAL": 1
+      },
+      "suspiciousPatternRowCounts": {
+        "standard_faculty": 400
+      },
+      "blankFieldCounts": {
+        "state": 380,
+        "province": 380,
+        "postcode": 400,
+        "address": 400,
+        "latitude": 400,
+        "longitude": 400,
+        "official_contact_url": 400,
+        "official_phone": 400,
+        "official_email": 400,
+        "international_email": 400,
+        "international_phone": 400,
+        "research_information": 400
+      },
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/02_ALO_CAMPUS_MASTER.csv",
+      "sha256": "01737bf4e8252fbd4658045efdbc2751242aadb9217a4cbe2bac4135d3389b95",
+      "rows": 400,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/02_ALO_COURSE_INTAKES_2027.csv",
+      "sha256": "dc2915ac755d96fe9cc74cb23150e7cb2a73b51bac1da544d2eb6f06ff09fb6d",
+      "rows": 823,
+      "claimedVerificationStatuses": {
+        "REQUIRES_REVIEW": 823
+      },
+      "suspiciousPatternRowCounts": {
+        "future_calendar_not_published": 823
+      },
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/03_ALO_COURSE_REQUIREMENTS.csv",
+      "sha256": "37779d83500b0ff1fb617a65e0a1f64c999aabcf54f150438450a5b6b3454623",
+      "rows": 471,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {
+        "subject_requirements": 404,
+        "math_requirement": 404,
+        "science_requirement": 404,
+        "specific_subject_requirement": 471,
+        "entrance_exam": 471,
+        "GRE": 471,
+        "GMAT": 471,
+        "SAT": 471,
+        "ACT": 471,
+        "other_exam_requirements": 471,
+        "required_documents": 471
+      },
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/03_ALO_UNIVERSITY_SOURCES.csv",
+      "sha256": "afd9b8e5634f06dffa99ab91321d70db5238d13987d37afe6126c95092fb38a2",
+      "rows": 400,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 399,
+        "VERIFIED_OFFICIAL": 1
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/04_ALO_ENGLISH_REQUIREMENTS.csv",
+      "sha256": "a0e219bc21d2e6caa05f415e0ef34f4eb981534bee4e0103dd1a9f127aa375ba",
+      "rows": 1413,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/04_ALO_UNIVERSITY_VERIFICATION.csv",
+      "sha256": "4f151474c89fc2bb8cde56dae1342ca8347124627958c7e8d87e66ae1bb20989",
+      "rows": 400,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 399,
+        "VERIFIED_OFFICIAL": 1
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/05_ALO_TUITION_FEES.csv",
+      "sha256": "1f8acee0a095c359b8a2f4ed176c4b2041e413044db06b8e87eb44ab9aca63d3",
+      "rows": 823,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/05_ALO_UNIVERSITY_COVERAGE.csv",
+      "sha256": "5fc1e91252ac71ff3dbbfc067e221dd8b423c7eaabbbdfc3bb58b83ad15fcbcf",
+      "rows": 400,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/06_ALO_APPLICATION_DEADLINES.csv",
+      "sha256": "f599784a7c69909169fef3317b3de58ddb3e85af5e2a908371713c9f48146646",
+      "rows": 823,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/06_ALO_MISSING_UNIVERSITY_INFO.csv",
+      "sha256": "0794c8d743b762efbcbd7b9f73b4cfa2d43c93d6d1cd0fd33e51b79faf16c14e",
+      "rows": 3600,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 3591,
+        "VERIFIED_OFFICIAL": 9
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/07_ALO_SCHOLARSHIPS.csv",
+      "sha256": "166c1b4f4426b5088fd7874c813039756cdc2f224bfa00e79a2c2383599d9799",
+      "rows": 2,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/08_ALO_COURSE_SOURCES.csv",
+      "sha256": "a09879783283069b3709609cc2122a7d188e59b8230b1d0024415ceab70e64dc",
+      "rows": 471,
+      "claimedVerificationStatuses": {
+        "VERIFIED_OFFICIAL": 471
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/08_ALO_UNIVERSITY_IMPORT_MANIFEST.csv",
+      "sha256": "d30f75c91ef414d829dc0e28dec8a50d978b91cfc10442cfc2bc36148b42e25f",
+      "rows": 2,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/09_ALO_COURSE_VERIFICATION.csv",
+      "sha256": "2a7ee9ce2c18f0c3725ab9d01e74b2e5604b36d3a9e270ed35ede3bf018d67a5",
+      "rows": 471,
+      "claimedVerificationStatuses": {
+        "VERIFIED_OFFICIAL": 471
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/10_ALO_COURSE_COVERAGE.csv",
+      "sha256": "5fc1e91252ac71ff3dbbfc067e221dd8b423c7eaabbbdfc3bb58b83ad15fcbcf",
+      "rows": 400,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/11_ALO_MISSING_COURSES.csv",
+      "sha256": "9f45dddd5620d16b96150cee58154379bebed96e82a46425fbad1788ff847384",
+      "rows": 400,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/12_ALO_DUPLICATE_REPORT.csv",
+      "sha256": "d9b575e00e40be207d754145d49b470f804ad472d083608bf9c39885700ad3b8",
+      "rows": 2,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/13_ALO_CONFLICT_REPORT.csv",
+      "sha256": "6e3a6a9c77d6a2dc664379fe7efa0b538a07804eda34acd03977458a0fa782d4",
+      "rows": 2,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/15_ALO_COURSE_IMPORT_MANIFEST.csv",
+      "sha256": "27bd80772e689af7b1c1a38c5d2959fe7a5239675aed944c295f450881724c0f",
+      "rows": 2,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "data/ALO_UNIVERSITY_COURSE_MASTER.csv",
+      "sha256": "6368922d1b3c607953f15ffb843e1dfc538137dc7ec6e8502aa6e3e823514048",
+      "rows": 823,
+      "claimedVerificationStatuses": {
+        "VERIFIED_OFFICIAL": 823
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {
+        "scholarship_name": 819
+      },
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/01_ALO_UNIVERSITY_MASTER.csv",
+      "sha256": "a774fae47023a449ea45ddd82b91df6a4a215176343abc9ba979ca37d04f648a",
+      "rows": 400,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 399,
+        "VERIFIED_OFFICIAL": 1
+      },
+      "suspiciousPatternRowCounts": {
+        "standard_faculty": 400
+      },
+      "blankFieldCounts": {
+        "state": 380,
+        "province": 380,
+        "postcode": 400,
+        "address": 400,
+        "latitude": 400,
+        "longitude": 400,
+        "official_contact_url": 400,
+        "official_phone": 400,
+        "official_email": 400,
+        "international_email": 400,
+        "international_phone": 400,
+        "research_information": 400
+      },
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/02_ALO_COURSE_MASTER.csv",
+      "sha256": "7f3b4575c0ef7038efeccb6dbb465d87f30fc08fae283763156b18cb96fa6426",
+      "rows": 17653,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {
+        "generic_modules": 17653,
+        "generic_description": 17653,
+        "guessed_curriculum_suffix": 17653
+      },
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/03_ALO_COURSE_INTAKES_2027.csv",
+      "sha256": "fe859551b9edffe2971d706e0846704281e2bb9c7465664268ad59bf36669331",
+      "rows": 32033,
+      "claimedVerificationStatuses": {
+        "REQUIRES_REVIEW": 32033
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/04_ALO_UNIVERSITY_COURSE_MASTER.csv",
+      "sha256": "6588a8eb60924d433f4cc8777b0a74601bf8e18df468e57512c051aed0367af5",
+      "rows": 32033,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 31210,
+        "VERIFIED_OFFICIAL": 823
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {
+        "scholarship_name": 30781
+      },
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/05_ALO_COURSE_REQUIREMENTS.csv",
+      "sha256": "bff01fb3e6adb9717d8b515bf8a254e31dd7316e16801406660d6cbe49e4c865",
+      "rows": 17653,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {
+        "math_requirement": 16088,
+        "science_requirement": 16088,
+        "specific_subject_requirement": 17653,
+        "entrance_exam": 17653,
+        "GRE": 17653,
+        "GMAT": 17653,
+        "SAT": 17653,
+        "ACT": 17653,
+        "other_exam_requirements": 17653,
+        "required_documents": 17653,
+        "subject_requirements": 14798
+      },
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/06_ALO_ENGLISH_REQUIREMENTS.csv",
+      "sha256": "2beb7820f52cefb3fb5f2fdd00ddcbe460b3b9ebf0cb14f8ff341dedc8e2d509",
+      "rows": 52959,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/07_ALO_TUITION_FEES.csv",
+      "sha256": "efca13bd2e7eea538a4a2cd647000771f2bfd178e66674a63e700865fb1c8a26",
+      "rows": 32033,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/08_ALO_APPLICATION_DEADLINES.csv",
+      "sha256": "b406fa3861f5b7fbb6957524f2f0f8113aa2980aaec4facda4b9b2c90fe9e147",
+      "rows": 32033,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/09_ALO_SCHOLARSHIPS.csv",
+      "sha256": "94b75ebf8706c6132520fafeb7883173a67f0ef4455f0e4220dc01ba23978889",
+      "rows": 760,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/10_ALO_CAMPUS_MASTER.csv",
+      "sha256": "01737bf4e8252fbd4658045efdbc2751242aadb9217a4cbe2bac4135d3389b95",
+      "rows": 400,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/11_ALO_SOURCE_PROVENANCE.csv",
+      "sha256": "afdc526dda5eebdedda0c137c85ab3e1f60006c4d84d1cb94db12495b0956940",
+      "rows": 18053,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 17581,
+        "VERIFIED_OFFICIAL": 472
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/12_ALO_VERIFICATION.csv",
+      "sha256": "a67474523605dd9722acfbc1667bc4477dec0ef2d6d7e09549c73ba3e59732cf",
+      "rows": 18053,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 17581,
+        "VERIFIED_OFFICIAL": 472
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/13_ALO_DEDUPLICATION.csv",
+      "sha256": "3466d5fc5ead26e386b739baec6711cef0cb8a964d0174cd698b2cf03a9a76de",
+      "rows": 2,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/14_ALO_CONFLICTS.csv",
+      "sha256": "b8b4dec57abf5269e0e2a223f864fb73508faefdd73c88ae99108fbbd4e7fe38",
+      "rows": 2,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/15_ALO_UNIVERSITY_COVERAGE.csv",
+      "sha256": "a70ba9619d94862a11b1c985a45870225396b4a66f4cfc8371a98fd0e8c12490",
+      "rows": 400,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/16_ALO_MISSING_COURSES.csv",
+      "sha256": "9e546dfe28498b25a7629a333ec684ac4d6cab6b2a3cbbc08eabc24cd0c7b2cc",
+      "rows": 400,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/17_ALO_MISSING_UNIVERSITY_INFO.csv",
+      "sha256": "0794c8d743b762efbcbd7b9f73b4cfa2d43c93d6d1cd0fd33e51b79faf16c14e",
+      "rows": 3600,
+      "claimedVerificationStatuses": {
+        "NEEDS_REVIEW": 3591,
+        "VERIFIED_OFFICIAL": 9
+      },
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    },
+    {
+      "file": "docs/import-templates/package-verified/18_ALO_IMPORT_MANIFEST.csv",
+      "sha256": "2f774df29010810c25ab12d764c8f7f3fe755e73fdcc241ba119f661ce71a230",
+      "rows": 2,
+      "claimedVerificationStatuses": {},
+      "suspiciousPatternRowCounts": {},
+      "blankFieldCounts": {},
+      "publicationDecision": "QUARANTINE_PENDING_FIELD_EVIDENCE"
+    }
+  ]
+}

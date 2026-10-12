@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — NOT A SOURCE OF TRUTH** (labelled 2026-10-12).
+> Unsupported: Instructs operators to import ALO_UNIVERSITY_COURSE_DATA_PACKAGE.zip (generated, unverified catalogue data) with `npm run db:import` and to roll back with `npm run db:rollback`. Neither npm script exists in package.json. Real imports use /admin/data-import (preview, approval, Super Admin apply); see docs/catalogue-import/README.md.
+> See AUDIT/historical-catalogue-reports-2026-10-12/README.md.
+
 # ALO Education — CRM Database Import Guide
 
 ## Overview

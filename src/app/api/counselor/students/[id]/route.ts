@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { authenticateRequest, logAuditAction } from "@/lib/auth-middleware";
+import { requireCanonicalCounselor, visibleCounselorStudent } from '@/lib/counselor/student-access';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 
 // ============================================================
 // SEC-B fix (2026-09-18): this route previously had NO authentication.
@@ -20,25 +21,15 @@ import { authenticateRequest, logAuditAction } from "@/lib/auth-middleware";
 
 const MAX_COMMENT_LENGTH = 4000;
 
-/** Columns that must never leave the server on a student payload. */
-const STUDENT_SENSITIVE_FIELDS = ["password", "otpCode", "otpExpiresAt"] as const;
-
-function stripSensitiveStudent<T extends Record<string, unknown>>(student: T): Record<string, unknown> {
-  const safe: Record<string, unknown> = { ...student };
-  for (const field of STUDENT_SENSITIVE_FIELDS) delete safe[field];
-  return safe;
-}
-
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await authenticateRequest(req);
+  const auth = await requireCanonicalCounselor(req);
   if (auth instanceof NextResponse) return auth;
 
+  try {
   const { id } = await params;
-  const student = await db.student.findUnique({
-    where: { id },
-    include: { documents: { orderBy: { category: "asc" } }, interviewSessions: { orderBy: { startedAt: "desc" } }, payments: true, studentNotifications: { take: 5 } },
-  });
+  const student = await visibleCounselorStudent(db, auth, id);
   if (!student) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const details = await db.student.findUnique({ where:{id}, select:{ documents:{orderBy:{category:'asc'}}, interviewSessions:{orderBy:{startedAt:'desc'}}, payments:true, studentNotifications:{take:5} } });
   const [applications, visaCases, timelineEvents] = await Promise.all([
     db.application.findMany({ where: { studentId: id } }),
     db.visaCase.findMany({ where: { studentId: id } }),
@@ -63,20 +54,22 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   });
 
   return NextResponse.json({
-    student: { ...stripSensitiveStudent(student as unknown as Record<string, unknown>), applications, visaCases, timelineEvents },
-    internalComments,
-    studentComments,
+    student: { ...student, ...details, fullName:student.name, mobile:student.phone, profileCompletion:student.profileComplete, counselor:student.counselorId ? {id:student.counselorId, name:student.counselorName} : null, interviews:details?.interviewSessions, applications, visaCases, timelineEvents },
+    internalComments: internalComments.map(c=>({...c, body:c.content})),
+    studentComments: studentComments.map(c=>({...c, body:c.content})),
     sopDrafts,
     cvDrafts,
     communications,
-  });
+  }, {headers:{'Cache-Control':'private, no-store'}});
+  } catch { return NextResponse.json({error:'Student detail unavailable.'},{status:503}); }
 }
 
 // Add comment (internal or student-visible)
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await authenticateRequest(req);
+  const auth = await requireCanonicalCounselor(req);
   if (auth instanceof NextResponse) return auth;
 
+  if (!mutationOriginAllowed(req, auth)) return NextResponse.json({error:"Same-origin request required."},{status:403});
   const { id } = await params;
   let body: any;
   try {
@@ -85,7 +78,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { type, body: commentBody, visibility, commentType } = body ?? {};
+  const { type, body: commentBody } = body ?? {};
 
   if (typeof commentBody !== "string" || commentBody.trim().length === 0) {
     return NextResponse.json({ error: "Comment body is required" }, { status: 400 });
@@ -94,26 +87,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: `Comment exceeds ${MAX_COMMENT_LENGTH} characters` }, { status: 400 });
   }
 
-  // Authorship comes from the verified session — a client-supplied
-  // authorId/authorRole is ignored entirely.
-  const authorId = auth.userId;
-  const authorRole = auth.roles[0] ?? auth.userType;
-
-  if (type === "internal") {
-    const comment = await db.internalComment.create({
-      data: { studentId: id, authorId, authorRole, content: commentBody, visibility: visibility || "INTERNAL_ONLY", commentType: commentType || "COUNSELOR_NOTE", editHistory: "[]" },
-    });
-    await db.auditLog.create({ data: { userId: authorId, action: "AI_ACTION", resource: "InternalComment", resourceId: comment.id, details: JSON.stringify({ visibility }) } });
-    await logAuditAction(auth, "COMMENT_CREATE", "InternalComment", comment.id);
-    return NextResponse.json({ comment });
-  } else {
-    const comment = await db.studentVisibleComment.create({
-      data: { studentId: id, authorId, authorRole, content: commentBody },
-    });
-    await db.timelineEvent.create({
-      data: { studentId: id, userId: authorId, stage: "communication", type: "MESSAGE_SENT", title: "Student-visible comment added", description: commentBody.slice(0, 100) },
-    });
-    await logAuditAction(auth, "COMMENT_CREATE", "StudentVisibleComment", comment.id);
-    return NextResponse.json({ comment });
-  }
+  if (!['internal','student','visible'].includes(type)) return NextResponse.json({error:'Invalid comment type.'},{status:400});
+  try {
+    return await db.$transaction(async tx => {
+      // Serializable transaction retains the assignment read lock through the
+      // comment+audit write; reassignment cannot race this permission check.
+      if (!await visibleCounselorStudent(tx, auth, id)) return NextResponse.json({error:'Not found'},{status:404});
+      const authorId = auth.userId;
+      const authorRole = auth.userType;
+      const internal = type === 'internal';
+      const comment = internal
+        ? await tx.internalComment.create({data:{studentId:id, authorId, authorRole, content:commentBody.trim(), visibility:'INTERNAL_ONLY', commentType:'COUNSELOR_NOTE', editHistory:'[]'}})
+        : await tx.studentVisibleComment.create({data:{studentId:id, authorId, authorRole, content:commentBody.trim()}});
+      if (!internal) await tx.timelineEvent.create({data:{studentId:id, userId:authorId, stage:'communication', type:'MESSAGE_SENT', title:'Student-visible comment added', description:commentBody.slice(0,100)}});
+      await tx.portalAuditLog.create({data:{actorUserId:auth.actorUserId, action:'COMMENT_CREATE', entityType:internal?'InternalComment':'StudentVisibleComment', entityId:comment.id, metadata:JSON.stringify({identityDomain:'user', studentId:id})}});
+      return NextResponse.json({comment});
+    }, { isolationLevel:'Serializable' });
+  } catch { return NextResponse.json({error:'Comment could not be saved. Refresh before retrying.'},{status:503}); }
 }

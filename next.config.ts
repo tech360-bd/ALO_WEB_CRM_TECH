@@ -18,6 +18,16 @@ const nextConfig: NextConfig = {
   // Public content uses curated Unsplash images through next/image. Keep the
   // allowlist hostname-scoped rather than disabling image optimization.
   images: {
+    // Only curated public images may enter the optimizer. Private documents
+    // and legacy /uploads never become optimizer cache entries.
+    localPatterns: [
+      { pathname: '/images/**' },
+      { pathname: '/icons/**' },
+      { pathname: '/logo.svg' },
+      { pathname: '/public/images/**' },
+      { pathname: '/public/icons/**' },
+      { pathname: '/public/logo.svg' },
+    ],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
     ],
@@ -64,7 +74,9 @@ const nextConfig: NextConfig = {
   // has started rendering, so the legacy URLs would not return a real 308.
   async redirects() {
     return [
+      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
       { source: "/courses", destination: "/course-finder", permanent: true },
+      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
       // Bare /course has no index page — src/app/course/ contains only
       // [slug]/page.tsx, the canonical public course-detail hub. Send the
       // listing intent to the Course Finder exactly as the plural alias above

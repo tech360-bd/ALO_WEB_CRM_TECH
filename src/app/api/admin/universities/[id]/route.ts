@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { changedFields, invalidUrlField, presentControlFields, verificationAfterEdit } from '@/lib/course-finder/crm-edit-verification';
 
 export async function GET(
   request: NextRequest,
@@ -50,6 +51,14 @@ export async function PUT(
 
       const { id } = await params;
       const body = await req.json();
+      if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
+      }
+      // Phase 1 review (P1-D): an edit is not verification or publication.
+      const control = presentControlFields(body);
+      if (control.length) {
+        return NextResponse.json({ success: false, error: `Control fields cannot be set by editing: ${control.join(', ')}` }, { status: 400 });
+      }
 
       const existing = await db.crmUniversity.findFirst({
         where: { OR: [{ id }, { universityId: id }] },
@@ -58,10 +67,10 @@ export async function PUT(
       if (!existing) {
         return NextResponse.json({ success: false, error: 'University not found' }, { status: 404 });
       }
+      const badUrl = invalidUrlField(body, ['sourceUrl', 'officialUrl', 'website'], existing as any);
+      if (badUrl) return NextResponse.json({ success: false, error: `${badUrl} must be an https URL` }, { status: 400 });
 
-      const updated = await db.crmUniversity.update({
-        where: { id: existing.id },
-        data: {
+      const data: Record<string, unknown> = {
           name: body.name !== undefined ? body.name : existing.name,
           country: body.country !== undefined ? body.country : existing.country,
           city: body.city !== undefined ? body.city : existing.city,
@@ -77,9 +86,13 @@ export async function PUT(
           scholarships: body.scholarships !== undefined ? body.scholarships : existing.scholarships,
           description: body.description !== undefined ? body.description : existing.description,
           status: body.status !== undefined ? body.status : existing.status,
-          verificationStatus: body.sourceUrl ? 'VERIFIED' : existing.verificationStatus,
-          lastVerifiedAt: new Date().toISOString(),
-        },
+      };
+      const changed = changedFields(data, existing as any, Object.keys(data).filter((f) => f !== 'status'));
+      // Never upgraded, never re-dated here.
+      data.verificationStatus = verificationAfterEdit(existing.verificationStatus, changed.length > 0);
+      const updated = await db.crmUniversity.update({
+        where: { id: existing.id },
+        data: data as any,
       });
 
       await db.crmAuditLog.create({
@@ -89,8 +102,8 @@ export async function PUT(
           action: 'UPDATE_UNIVERSITY',
           targetCollection: 'CrmUniversity',
           targetId: existing.id,
-          beforeData: JSON.stringify({ name: existing.name, status: existing.status }),
-          afterData: JSON.stringify({ name: updated.name, status: updated.status }),
+          beforeData: JSON.stringify({ name: existing.name, status: existing.status, verificationStatus: existing.verificationStatus }),
+          afterData: JSON.stringify({ name: updated.name, status: updated.status, verificationStatus: updated.verificationStatus, changedFields: changed }),
         },
       }).catch(() => null);
 
@@ -98,7 +111,7 @@ export async function PUT(
     } catch (error: any) {
       return NextResponse.json({ success: false, error: error?.message || 'Failed to update university' }, { status: 500 });
     }
-  })(request);
+  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
 }
 
 export async function DELETE(

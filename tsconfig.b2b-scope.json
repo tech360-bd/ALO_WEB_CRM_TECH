@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/lib/partner-tenant-guard.ts",
+    "src/lib/access-check-engine.ts",
+    "src/lib/auth-middleware.ts",
+    "src/app/api/partner-admin/**/*.ts",
+    "src/app/api/partner/marketing/**/*.ts",
+    "src/app/api/student/vouchers/**/*.ts",
+    "tests/integration/partner-b2b-security.test.ts",
+    "next-env.d.ts"
+  ]
+}

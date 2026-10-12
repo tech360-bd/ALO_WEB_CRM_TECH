@@ -89,6 +89,7 @@ const PUBLIC_ROUTES = [
   // names, but real pages also need to be reachable without a session).
   "/student/login",
   "/student/register",
+  "/verify-email",
   "/partner/login",
   "/partner/register",
   "/partner/activate",
@@ -103,6 +104,25 @@ const PUBLIC_ROUTES = [
   "/account-suspended",
   "/account-pending",
   "/unauthorized",
+  // Public content & lead-generation pages (real routes under src/app that
+  // were previously — and wrongly — redirected to /login, breaking SEO and
+  // lead capture; verified public-by-design 2026-09-28):
+  "/news",
+  "/events",
+  "/eligibility-check",
+  "/eligibility-checker",
+  "/compare",
+  "/student-journey",
+  "/english-test-prep",
+  "/english-tests",
+  "/research-opportunities",
+  "/admission-requirements",
+  "/application-process",
+  "/offline",
+  // Auth entry points that live inside otherwise-gated portal prefixes:
+  "/student/login",
+  "/student/register",
+  "/verify-email",
 ];
 
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
@@ -180,6 +200,8 @@ const PUBLIC_API_READ_ROUTES = [
 ];
 
 const PUBLIC_API_WRITE_ROUTES = [
+  // Provider authentication (HS256 JWT), bounded body and dedupe enforced by route.
+  "/api/integrations/httpsms/webhook",
   // RFC 8058 one-click unsubscribe POST and confirm form. Token-verified in the route.
   "/api/email/unsubscribe",
   // Outbox worker trigger (Bearer CRON_SECRET, verified by requireCron).
@@ -440,27 +462,104 @@ export function getDashboardRoute(role: string): string {
   }
 }
 
+// Static-asset bypass.
+//
+// Phase 1 (2026-10-12): the bypass previously applied to ANY path containing
+// a dot, so a dynamic API or portal segment such as
+// `/api/university-monitoring/changes/x.json` or
+// `/admin/universities/edit/a.b` skipped authentication and role checks
+// entirely; 85 API routes rely on the proxy alone. API routes and role-gated
+// portal prefixes are never static files, so they are now always evaluated by
+// the normal authentication/RBAC rules below, whatever their extension.
+// Public static files (public/, /_next/, robots.txt, sitemap.xml, ...) are
+// unaffected.
+const NON_STATIC_PREFIXES = Array.from(new Set(Object.values(ROLE_ROUTES).flat()))
+  .filter((prefix) => prefix !== "/" && !isPublicPageRequest(prefix));
+
+// Top-level directories that contain only static files (Next internals and
+// the folders shipped in /public). No page routes live under these.
+const STATIC_ROOT_SEGMENTS = new Set(["_next", "static", "public", "docs", "icons", "images"]);
+
+function decodePathForPolicy(pathname: string): string | null {
+  let decoded = pathname;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let next: string;
+    try { next = decodeURIComponent(decoded); } catch { return null; }
+    if (next === decoded) return decoded.replace(/\\/g, "/").replace(/\/{2,}/g, "/").toLowerCase();
+    decoded = next;
+  }
+  return null; // excessive encoding: treat as non-static (fail closed)
+}
+
+export function isStaticAssetBypass(pathname: string): boolean {
+  const normalized = decodePathForPolicy(pathname);
+  if (normalized === null) return false;
+  if (normalized === "/api" || normalized.startsWith("/api/")) return false;
+  if (NON_STATIC_PREFIXES.some((prefix) => matchesPath(normalized, prefix.toLowerCase()))) return false;
+  // Phase 1 review: the bypass is an allow-list of real static locations,
+  // not "any path containing a dot". Previously `/guides/x.pdf` (a gated page
+  // outside every ROLE_ROUTES prefix) skipped the proxy entirely. Anything not
+  // listed here still goes through the normal public-page / auth logic, so a
+  // public page with a dot in its slug keeps working and an unlisted gated
+  // page fails closed.
+  const firstSegment = normalized.split("/")[1] || "";
+  if (STATIC_ROOT_SEGMENTS.has(firstSegment) && normalized.length > firstSegment.length + 1) return true;
+  // Single root-level files: /robots.txt, /sitemap.xml, /sw.js, /logo.svg,
+  // /manifest.json, /favicon.ico.
+  return /^\/[^/]+\.[a-z0-9]{1,8}$/.test(normalized);
+}
+
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow static assets and Next internals
-  if (
-    pathname.startsWith("/_next/") ||
-    pathname.startsWith("/static/") ||
-    pathname.endsWith(".js") ||
-    pathname.endsWith(".css") ||
-    pathname.endsWith(".ico") ||
-    pathname.endsWith(".svg") ||
-    pathname.endsWith(".png") ||
-    pathname.endsWith(".jpg") ||
-    pathname.endsWith(".woff") ||
-    pathname.endsWith(".woff2")
-  ) {
+  // Never serve legacy private uploads, including image extensions and nested
+  // public copies. This must precede the static-asset bypass below and be
+  // explicitly included in the matcher (which otherwise excludes extensions).
+  function isPrivateUploadUrl(value: string): boolean {
+    let decoded = value;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      try {
+        const next = decodeURIComponent(decoded);
+        if (next === decoded) break;
+        decoded = next;
+        if (attempt === 4) return true; // excessive encoding: fail closed
+      } catch { return true; }
+    }
+    if (/[\u0000-\u001f\u007f;]/.test(decoded)) return true;
+    // Image optimizer URLs can be absolute or protocol-relative as well as local.
+    if (/^(?:https?:)?\/\//i.test(decoded)) {
+      try { decoded = new URL(decoded, 'https://local.invalid').pathname; }
+      catch { return true; }
+    }
+    const segments: string[] = [];
+    for (const segment of decoded.replace(/\\/g, '/').split('/')) {
+      if (!segment || segment === '.') continue;
+      if (segment === '..') segments.pop();
+      else segments.push(segment.toLowerCase());
+    }
+    while (segments[0] === 'public') segments.shift();
+    return segments[0] === 'uploads';
+  }
+  const imageSources = pathname === '/_next/image' ? request.nextUrl.searchParams.getAll('url') : [];
+  if (isPrivateUploadUrl(pathname) || imageSources.some(isPrivateUploadUrl)) {
+    return new NextResponse(null, {
+      status: 403,
+      headers: { 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' },
+    });
+  }
+
+  // Allow static assets and Next internals (see isStaticAssetBypass).
+  if (isStaticAssetBypass(pathname)) {
     return NextResponse.next();
   }
 
   const method = request.method.toUpperCase();
-  const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
+  const userToken = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
+  const navigationHint = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET, cookieName:'alo_page_session' });
+  // A page role hint never becomes a canonical User session. Expire unlabelled
+  // legacy JWTs by requiring re-login, rather than guessing their identity table.
+  const token = userToken?.identityDomain === 'user' ? userToken
+    : navigationHint && ['portal','student'].includes(String(navigationHint.identityDomain)) ? navigationHint : null;
   // Role claims are resolved through the shared vocabulary before any
   // authorisation decision. Tokens minted before the alias fix still carry
   // legacy claims (`HR`, `SUPPORT_AGENT`) that ROLE_ROUTES does not key on; left
@@ -538,7 +637,5 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|public|.*\\..*).*)",
-  ],
+  matcher: ["/:path*"],
 };

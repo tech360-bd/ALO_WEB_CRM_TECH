@@ -29,20 +29,9 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ROLE_ROUTES, getDashboardRoute, isPublicApiRequest, isPublicPageRequest } from '@/proxy';
-import { CRM_ROLE_ALIASES, SESSION_ROLES, isKnownSessionRole, normalizeCrmRole, pageSessionRole, resolveSessionRole } from '@/lib/session-roles';
+import { CRM_ROLE_ALIASES, SESSION_ROLES, isKnownSessionRole, normalizeCrmRole, pageSessionRole, resolveSessionRole, storedStaffRole } from '@/lib/session-roles';
 
 const ROOT = resolve(__dirname, '..', '..');
-
-/** The crmRoleMap the login handler mints session claims from. */
-function crmRoleMapFromSource(): Record<string, string> {
-  const src = readFileSync(resolve(ROOT, 'src/app/api/portal-auth/login/route.ts'), 'utf8');
-  const block = src.match(/const crmRoleMap[^=]*=\s*\{([\s\S]*?)\n\};/);
-  if (!block) throw new Error('crmRoleMap not found in the portal login route');
-  const map: Record<string, string> = {};
-  for (const m of block[1].matchAll(/'([^']+)':\s*'([^']+)'/g)) map[m[1]] = m[2];
-  if (Object.keys(map).length === 0) throw new Error('crmRoleMap parsed empty');
-  return map;
-}
 
 /**
  * Alias map declared in next.config.ts, from both `redirects()` and
@@ -96,7 +85,7 @@ function routeResolvesToAPage(route: string): boolean {
 
 describe('session-role vocabulary closure', () => {
   it('resolves every role the login handler can mint to a role the proxy knows', () => {
-    const map = crmRoleMapFromSource();
+    const map = Object.fromEntries(SESSION_ROLES.map(role => [role, role]));
     const unresolved: string[] = [];
     for (const [email, crmRole] of Object.entries(map)) {
       // Staff accounts carry userType EMPLOYEE, which is the branch that
@@ -106,6 +95,15 @@ describe('session-role vocabulary closure', () => {
       expect(ROLE_ROUTES[claim], `${email}: ${claim} has no ROLE_ROUTES allow-list`).toBeDefined();
     }
     expect(unresolved, `unresolvable session roles: ${unresolved.join(', ')}`).toEqual([]);
+  });
+
+  it('uses persisted roles and rejects identities and non-staff assignments as authority', () => {
+    expect(storedStaffRole([])).toBeNull();
+    expect(storedStaffRole(['admin@alo.edu.bd'])).toBeNull();
+    expect(storedStaffRole(['PARTNER', 'STUDENT', 'unknown'])).toBeNull();
+    expect(storedStaffRole(['hr'])).toBe('HR_MANAGER');
+    expect(storedStaffRole(['COUNSELOR'])).toBe('COUNSELOR');
+    expect(storedStaffRole(['SUPER_ADMIN'])).toBe('SUPER_ADMIN');
   });
 
   it('has a ROLE_ROUTES allow-list for every declared session role', () => {

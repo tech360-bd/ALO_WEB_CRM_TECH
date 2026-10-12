@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireStudentResource } from '@/lib/student-resource-auth';
+import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
 export async function GET(req: NextRequest) {
   try {
     const access = await requireStudentResource(req, req.nextUrl.searchParams.get('studentId'));
@@ -9,7 +10,8 @@ export async function GET(req: NextRequest) {
     const shortlist = await db.courseShortlist.findMany({ where: { studentId: userId }, take: 50 }).catch(()=>[]);
     if (shortlist.length > 0) {
       const courseIds = shortlist.map((s:any)=> s.courseId);
-      const courses = await db.crmCourse.findMany({ where: { courseId: { in: courseIds } }, include: { university: { select: { name: true, country: true } }, intakeFees: { take:1 } } }).catch(()=>[]);
+      // Phase 1 review (P0-C): a shortlisted course is shown only while it passes the public gate; its intake row must be verified too.
+      const courses = await db.crmCourse.findMany({ where: { AND: [{ courseId: { in: courseIds } }, publicCourseWhere()] }, include: { university: { select: { name: true, country: true } }, intakeFees: { where: publicIntakeWhere(), take:1 } } }).catch(()=>[]);
       return NextResponse.json({ success: true, courses, total: courses.length });
     }
     const saved = await db.savedCourse.findMany({ where: { studentId: userId }, take: 50 }).catch(()=>[]);

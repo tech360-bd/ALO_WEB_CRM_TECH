@@ -78,7 +78,7 @@ function nodeRect(step: number, lane: number): DiagramRect {
 }
 
 export default function ProcessDiagram({
-  idPrefix,
+  idPrefix: requestedPrefix,
   title,
   eyebrow,
   lanes,
@@ -94,6 +94,7 @@ export default function ProcessDiagram({
   nodes: ProcessNodeSpec[];
   arrows: ProcessArrow[];
 }) {
+  const idPrefix = `${requestedPrefix}-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const { width, height } = processDiagramSize(steps.length, lanes.length);
   const rects = new Map<string, DiagramRect>();
   nodes.forEach((n) => rects.set(`${n.lane}:${n.step}`, nodeRect(n.step, n.lane)));

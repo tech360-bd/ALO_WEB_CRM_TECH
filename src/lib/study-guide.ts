@@ -11,6 +11,7 @@
  */
 
 import { db } from "@/lib/db";
+import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from './course-finder/public-content-page-policy';
 
 export interface StudyGuide {
   courseSlug: string;
@@ -77,10 +78,15 @@ function safeParseObj(s: string | null | undefined): any {
 }
 
 export async function generateStudyGuide(courseSlug: string): Promise<StudyGuide | null> {
-  const course = await db.coursePage.findUnique({
-    where: { slug: courseSlug },
+  // Phase 1 review (P0-C): the public guide endpoint previously returned any
+  // CoursePage by slug, including drafts and unverified records. It now uses
+  // the shared public catalogue policy.
+  const conflicts = await loadOpenConflicts();
+  const loaded = await db.coursePage.findFirst({
+    where: publicCoursePageWhere(conflicts, [{ slug: courseSlug }]),
     include: { university: true },
   });
+  const course = passesPublicCoursePagePolicy(loaded, conflicts) ? loaded : null;
 
   if (!course) return null;
 

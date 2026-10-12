@@ -85,6 +85,18 @@ describe('AstonAdapter official-source parsing', () => {
     expect(adapter.validateRecord(course).errors).toContain('Missing source check evidence');
   });
 
+  it('does not promote a successfully fetched heuristic parse to verified', async () => {
+    const adapter = new AstonAdapter(async () => new Response(courseFixture, { status: 200 }));
+    const url = 'https://www.aston.ac.uk/courses/postgraduate/artificial-intelligence-msc';
+    const check = await adapter.fetchSourceCheck(url, 'INDIVIDUAL_COURSE');
+    expect(check.ok).toBe(true);
+    const course = adapter.parseCoursePage(courseFixture, url, check);
+    expect(course.verificationStatus).toBe('NEEDS_REVIEW');
+    expect(course.lastVerifiedTimestamp).toBe('');
+    expect(course.extractedTimestamp).not.toBe('');
+    expect(course.parseWarnings).toContain('Heuristic extraction requires field-level review before verification.');
+  });
+
   it('rejects non-Aston official-source checks', async () => {
     const adapter = new AstonAdapter(async () => {
       throw new Error('Should not fetch non-Aston URL');

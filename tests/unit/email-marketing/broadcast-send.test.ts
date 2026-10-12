@@ -93,6 +93,13 @@ describe('sendBroadcast channel gate', () => {
     expect(db.broadcastRecipient.updateMany).not.toHaveBeenCalled();
   });
 
+  it('refuses portal delivery without creating false sent records', async () => {
+    state.broadcast = { ...APPROVED, channel: 'portal' };
+    await expect(sendBroadcast('b1', 'user-1')).rejects.toThrow(/CHANNEL_NOT_CONNECTED: portal/);
+    expect(state.recipientWrites).toBe(0);
+    expect(db.communicationMessage.create).not.toHaveBeenCalled();
+  });
+
   it('refuses SMS the same way', async () => {
     state.broadcast = { ...APPROVED, channel: 'sms' };
     await expect(sendBroadcast('b1', 'user-1')).rejects.toThrow(/CHANNEL_NOT_CONNECTED: sms/);

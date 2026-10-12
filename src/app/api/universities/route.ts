@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { publicUniversityWhere } from '@/lib/public-catalog';
 import { getOptionalAuth } from '@/lib/auth-middleware';
 
 // Public GET /api/universities — proxies to approved, verified CrmUniversity (Part 46)
@@ -18,6 +19,7 @@ export async function GET(req: NextRequest) {
 
     const where: any = {};
     if (!privileged) {
+      where.AND = [publicUniversityWhere()];
       where.status = 'active';
       where.verificationStatus = 'VERIFIED';
       where.publicationStatus = { in: ['published', 'PUBLISHED'] };
@@ -27,11 +29,14 @@ export async function GET(req: NextRequest) {
 
     // No .catch(()=>[]) here: a DB failure must surface as a 500, not as an
     // empty list that renders as "no universities exist".
-    const universities = await db.crmUniversity.findMany({
-      where,
-      take: limit,
-      orderBy: { name: 'asc' },
-    });
+    const [universities, total] = await Promise.all([
+      db.crmUniversity.findMany({
+        where,
+        take: limit,
+        orderBy: { name: 'asc' },
+      }),
+      db.crmUniversity.count({ where }),
+    ]);
 
     // Never expose internal notes/source artifacts; return whitelisted fields
     const safe = universities.map((u: any) => ({
@@ -50,7 +55,9 @@ export async function GET(req: NextRequest) {
       lastVerifiedAt: u.lastVerifiedAt,
     }));
 
-    return NextResponse.json({ success: true, universities: safe, data: safe, total: safe.length });
+    // `total` is the real matching-row count (not the page size), so the UI
+    // can show honest, DB-driven statistics instead of hardcoded claims.
+    return NextResponse.json({ success: true, universities: safe, data: safe, total });
   } catch (e: any) {
     console.error('[api/universities] error', e);
     return NextResponse.json({ success: false, error: 'Failed to load universities' }, { status: 500 });

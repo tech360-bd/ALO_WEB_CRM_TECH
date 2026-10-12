@@ -1,3 +1,4 @@
+import { testDatabaseUrl } from '../helpers/test-database';
 // ============================================================
 // ALO Education — Monitoring RBAC / authentication tests
 // ============================================================
@@ -20,7 +21,7 @@ import { NextResponse } from 'next/server';
 
 // These tests use real sessions and database-backed authorization. Skip before
 // importing the DB client when no disposable test database was requested.
-const integrationDescribe = process.env.TEST_DATABASE_URL ? describe : describe.skip;
+const integrationDescribe = testDatabaseUrl() ? describe : describe.skip;
 if (!process.env.TEST_DATABASE_URL) {
   console.warn('[integration] university-monitoring RBAC tests skipped: TEST_DATABASE_URL is not set.');
 }
@@ -88,6 +89,7 @@ let student: Fixture;
 let partner: Fixture;
 
 beforeAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
   superAdmin = await makeUser('SUPER_ADMIN', 'super_admin', 'superadmin');
   employee = await makeUser('EMPLOYEE', 'employee', 'employee');
   student = await makeUser('STUDENT', 'student', 'student');
@@ -95,6 +97,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
   await db.portalSession.deleteMany({ where: { token: { in: tokens } } }).catch(() => undefined);
   await db.portalUserRole.deleteMany({ where: { userId: { in: made } } }).catch(() => undefined);
   await db.portalRole.deleteMany({ where: { id: { in: roleIds } } }).catch(() => undefined);

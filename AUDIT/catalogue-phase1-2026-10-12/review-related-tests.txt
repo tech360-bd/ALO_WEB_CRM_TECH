@@ -1,0 +1,72 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /home/user/alo_education_z....ai
+
+ ✓ tests/unit/critical-safety-remediation.test.ts (46 tests) 826ms
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > creates an UNVERIFIED DRAFT with only supplied values, and it is not publicly visible
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > refuses to create without the identifying fields instead of inventing them
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > rejects AI payloads that try to set verification or publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > rejects AI payloads that try to set verification or publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > rejects AI payloads that try to set verification or publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > an AI update to a VERIFIED published page downgrades it and takes it out of publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > an unsupported target fails instead of reporting a fake deployment
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+ ✓ tests/unit/catalogue-phase1-review-writes.test.ts (28 tests) 204ms
+stderr | tests/unit/catalogue-phase1-security.test.ts > K3 /api/source-logs and /api/data-quality permissions and side effects > error responses do not leak driver messages
+[data-quality] error Error
+
+ ✓ tests/unit/catalogue-phase1-security.test.ts (23 tests) 80ms
+ ✓ tests/unit/catalogue-phase1-real-auth.test.ts (9 tests) 68ms
+ ✓ tests/unit/catalogue-phase1-review-publication.test.ts (17 tests) 62ms
+ ✓ tests/unit/department-rollout.test.ts (12 tests) 72ms
+stderr | tests/unit/course-finder-review-compare.test.ts > admin catalogue review API > reports database failure honestly instead of showing figures
+[admin/catalog-review] failed Error
+
+ ✓ tests/unit/course-finder-review-compare.test.ts (12 tests) 38ms
+ ✓ tests/unit/public-course-routes.test.ts (15 tests) 31ms
+stderr | tests/unit/course-finder-eligibility-route.test.ts > POST /api/course-finder/eligibility-engine > rejects malformed bodies and hides internal error details
+[eligibility-engine] evaluation failed Error
+
+ ✓ tests/unit/course-finder-eligibility-route.test.ts (7 tests) 25ms
+ ✓ tests/unit/university-detail-intake-window.test.ts (4 tests) 23ms
+ ✓ tests/unit/private-upload-direct-url.test.ts (19 tests) 25ms
+ ✓ tests/unit/employee-access-acceptance.test.ts (21 tests) 47ms
+ ✓ tests/unit/services-scholarships-resources.test.ts (30 tests) 26ms
+ ✓ tests/unit/security-hardening.test.ts (17 tests) 12ms
+ ✓ tests/unit/sitemap-db-runtime.test.ts (3 tests) 18ms
+ ✓ tests/unit/public-catalog.test.ts (28 tests) 17ms
+stderr | tests/unit/destination-public-catalogue.test.ts > /api/destinations/[slug] > does not leak database error details
+[api/destinations] lookup failed Error
+
+ ✓ tests/unit/destination-public-catalogue.test.ts (5 tests) 19ms
+ ✓ tests/unit/page-session-namespace.test.ts (5 tests) 18ms
+ ✓ tests/unit/public-route-matrix.test.mjs (14 tests) 11ms
+ ✓ tests/unit/university-directory-route.test.ts (2 tests) 14ms
+ ✓ tests/unit/session-role-vocabulary.test.ts (15 tests) 11ms
+ ✓ tests/unit/proxy-security.test.ts (15 tests) 11ms
+ ✓ tests/unit/email-marketing/proxy-public-routes.test.ts (10 tests) 6ms
+ ✓ tests/unit/related-catalog-publication.test.ts (4 tests) 8ms
+ ✓ tests/unit/catalogue-phase1-proxy.test.ts (4 tests) 5ms
+ ✓ tests/unit/public-chrome-policy.test.ts (19 tests) 6ms
+ ✓ tests/unit/public-routes-english-funnel.test.ts (10 tests) 5ms
+
+ Test Files  27 passed (27)
+      Tests  394 passed (394)
+   Start at  06:12:31
+   Duration  9.35s (transform 1.27s, setup 187ms, import 3.68s, tests 1.69s, environment 3ms)
+

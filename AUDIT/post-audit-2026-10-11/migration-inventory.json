@@ -1,0 +1,95 @@
+{
+  "provider": "mysql",
+  "migrationFiles": [
+    {
+      "path": "prisma/migrations/0_init/migration.sql",
+      "sha256": "f0f6687673741d425a33a8e669fc47e9d1e597e5cf93843bdd23140e13e9162c"
+    },
+    {
+      "path": "prisma/migrations/20260928060000_audit_log_nullable_user/migration.sql",
+      "sha256": "9d48a2ac0fbb1f44d5ac52efda1735182f5f47ccf2fb94c66fc747fb9861e038"
+    },
+    {
+      "path": "prisma/migrations/20261001000001_hrm_holiday_baseline/migration.sql",
+      "sha256": "0b2b24cdb75dd42a46333e8b7a78170d4ba86d8a7f1a97ae2476bf930a665bb4"
+    },
+    {
+      "path": "prisma/migrations/20261001000002_accounting_ledger/migration.sql",
+      "sha256": "43b42a951dad77c5c7a3cc0c93c7217de37c9d705e487d6eb110543a7e144496"
+    },
+    {
+      "path": "prisma/migrations/20261001000003_erp_procurement_assets_models/migration.sql",
+      "sha256": "5d92632b00c23df5f5e793a685279c4e17a75604b866d3fc2dd9d8b54286ab2b"
+    },
+    {
+      "path": "prisma/migrations/20261002000000_verified_metrics/migration.sql",
+      "sha256": "33076bf507bbb374f1203246426a8d50a9036b0fc5c48147e898d1eb1853519f"
+    },
+    {
+      "path": "prisma/migrations/20261002010000_reconciliation_missing_tables/migration.sql",
+      "sha256": "f25e1c0f27fefcc5a6077bdd8ffac1cea0a4a4dd5cd14ce75423e1e905d95640"
+    },
+    {
+      "path": "prisma/migrations/20261002020000_cms_revisions/migration.sql",
+      "sha256": "079ad2609f937a0f07c878df8d20cce8ff5dfc66cfe9ed098de779c8974f3e72"
+    },
+    {
+      "path": "prisma/migrations/20261002030000_cms_managed_content/migration.sql",
+      "sha256": "b9902fdcc8e86c2abfbed135168b3ce5957630b1c9ff488f3a7036df847dc1ce"
+    },
+    {
+      "path": "prisma/migrations/20261002040000_ai_workforce/migration.sql",
+      "sha256": "82ff6b46038a6b919fcecb884ec87f02e3ed132aded6df3a96805168319a5bdc"
+    },
+    {
+      "path": "prisma/migrations/20261002050000_awf_fk_and_homehero_reconciliation/migration.sql",
+      "sha256": "9a20136242d8fcc01ae506e861f29dae8eb7bc5a6dedd8da18c0e619addf7afe"
+    },
+    {
+      "path": "prisma/migrations/20261003010000_ucc_compliance_fields/migration.sql",
+      "sha256": "6394c53a07484cf3794840fa4cc97f3e064e87a5eafdf42f4e54729ab4fe77c0"
+    },
+    {
+      "path": "prisma/migrations/20261003020000_employee_access_gaps/migration.sql",
+      "sha256": "4db9a755e7bace72b483265a17e014646c2cc69a1d4ecc4d95ee40236a31138a"
+    },
+    {
+      "path": "prisma/migrations/20261003030000_ssr_scholarship_filters/migration.sql",
+      "sha256": "929db9e5b1ef4248bdd8d3c7156092202c7c90ac403c78ab4d4904fd7f658804"
+    },
+    {
+      "path": "prisma/migrations/20261007010000_university_monitoring_history/migration.sql",
+      "sha256": "53d3963fe64b2494f0a49898a24a5929323238a5ebd8c9c4fc308cab1947721e"
+    },
+    {
+      "path": "prisma/migrations/20261008010000_partner_tenant_seats/migration.sql",
+      "sha256": "080a8c69f705f494c6cb988c27df2d9b045333519d47b1be56380ad010369244"
+    },
+    {
+      "path": "prisma/migrations/20261008010000_secure_auth_and_private_documents/migration.sql",
+      "sha256": "e04fc3df7a7db08025c7080a21032325ca4d6176614c20c48d4c52db9f29d51e"
+    },
+    {
+      "path": "prisma/migrations/20261008020000_monitoring_job_description_text/migration.sql",
+      "sha256": "ab9142174dd5a162e1890db5c34f62e194b10344180113cfdbd1e6a52803184b"
+    },
+    {
+      "path": "prisma/migrations/20261008030000_data_conflict_values_longtext/migration.sql",
+      "sha256": "91768e482e470f09bbd02c91fa4975befd5ebbcb24397c20015dfdd73483852a"
+    },
+    {
+      "path": "prisma/migrations/20261008040000_email_marketing_core/migration.sql",
+      "sha256": "f1ba828bbdf03329821edb8cf9b75725e6f0ce1823aa6c6d4fd6a053b6d254e0"
+    },
+    {
+      "path": "prisma/migrations/20261010120000_student_id_sequence/migration.sql",
+      "sha256": "a4f35cc47fd431753375fb8b818989a7934398f905cd546585d3aecddaf05da6"
+    },
+    {
+      "path": "prisma/migrations/20261010130000_sms_provider_correlation/migration.sql",
+      "sha256": "fd0b4a78f6bc0e91c7465f6130e4b3b4e514c81c58bb91cbc78702b2801f4a96"
+    }
+  ],
+  "status": "NOT EXECUTED: no test database and schema engine download blocked",
+  "diffThisRemediation": "No schema, generator, dependency version or migration changes in this post-audit pass. Previous uncommitted migration preserved."
+}

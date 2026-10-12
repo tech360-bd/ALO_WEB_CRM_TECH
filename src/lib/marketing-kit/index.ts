@@ -20,3 +20,6 @@ export { SOCIAL_CALENDAR } from './social-calendar';
 export type { SocialPost } from './social-calendar';
 export { CRO_CHECKLIST } from './cro-checklist';
 export type { CroItem } from './cro-checklist';
+export { MARKETING_KIT_REVIEW_CHECKLIST } from './review-checklist';
+export type { MarketingKitReviewItem } from './review-checklist';
+export { buildMarketingKitLibraryMarkdown } from './export';

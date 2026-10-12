@@ -15,6 +15,20 @@ const ASSIGNABLE_PARTNER_ROLES = [
   'PARTNER_VIEWER',
 ];
 
+function sameOrigin(request: Request) {
+  const origin = request.headers.get('origin');
+  return !origin || new URL(origin).origin === new URL(request.url).origin;
+}
+
+/** Partner-side roles a Partner Super Admin is allowed to grant (§6). */
+const ASSIGNABLE_PARTNER_ROLES = [
+  'PARTNER_COUNSELOR',
+  'PARTNER_APPLICATION_ASSISTANT',
+  'PARTNER_MARKETING_ASSISTANT',
+  'PARTNER_DOCUMENT_ASSISTANT',
+  'PARTNER_VIEWER',
+];
+
 // GET: List users in partner tenant
 export async function GET(req: NextRequest) {
   const ctx = await requirePartnerContext(req);
@@ -39,12 +53,14 @@ export async function GET(req: NextRequest) {
     });
 
     const seatLimit = await getQuota('PARTNER', partnerId, 'user_seats');
+    const currentCount = users.filter((user) => ['active', 'pending_activation'].includes(user.status.toLowerCase())).length;
 
     return NextResponse.json({
       success: true,
       partnerId,
+      callerRole: ctx.partnerRole,
       seatLimit,
-      currentCount: users.length,
+      currentCount,
       users,
     });
   } catch {
@@ -100,10 +116,7 @@ export async function POST(req: NextRequest) {
     // the partner's limit.
     let created;
     try {
-      created = await db.$transaction(async (tx) => {
-        // Lock a stable tenant row before counting; concurrent invitations
-        // cannot both consume the final available seat.
-        await tx.partnerProfile.update({ where: { userId: ctx.userId }, data: { updatedAt: new Date() } });
+      created = await db.$transaction(async (tx: any) => {
         const currentUsers = await tx.portalUser.count({
           where: { partnerProfile: { partnerId } },
         });
@@ -155,10 +168,6 @@ export async function POST(req: NextRequest) {
 
     const currentCount = await db.portalUser.count({ where: { partnerProfile: { partnerId } } });
 
-    const token = randomBytes(32).toString('hex');
-    await db.passwordResetToken.create({ data: { userId: created.id, token: '', tokenHash: createHash('sha256').update(`partner-activation:${token}`).digest('hex'), expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) } });
-    const activationUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com'}/partner/activate?token=${token}`;
-    const delivery = await sendEmail({ to: email, subject: 'Activate your ALO Education partner account', text: `Your partner organisation invited you to ALO Education. Set your own password at ${activationUrl}. This invitation expires in 24 hours.`, html: `<p>Your partner organisation invited you to ALO Education.</p><p><a href="${activationUrl}">Activate your account and set a password</a></p><p>This invitation expires in 24 hours.</p>` });
     await logAuditAction(ctx, 'PARTNER_USER_CREATED', 'PortalUser', created.id, {
       partnerId,
       email,
@@ -170,8 +179,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: delivery.success ? 'Invitation sent. The user can activate their account and set a password.' : 'Account created, but the activation email could not be delivered. Please retry the invitation.',
-      invitationSent: delivery.success,
+      message: 'Partner user created. An activation invitation is required before they can sign in.',
       user: { ...created, partnerRole: requestedRole },
       seatUsage: {
         current: currentCount,

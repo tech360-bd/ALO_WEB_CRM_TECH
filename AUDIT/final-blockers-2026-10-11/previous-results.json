@@ -1,0 +1,38 @@
+{
+  "phase": "post-audit remediation, separate from baseline",
+  "date": "2026-10-11",
+  "branch": "arena/8b727e17-alo-education-z-ai",
+  "head": "c5bfcbbaef4e612eddb55f5f8516e5b1526e68cc",
+  "baseline": {
+    "passed": 1594,
+    "skipped": 63,
+    "source": "baseline-results.json"
+  },
+  "current": {
+    "unitAndMockTestsPassed": 1625,
+    "testsSkipped": 63,
+    "testFilesPassed": 156,
+    "testFilesSkipped": 5,
+    "failures": 0,
+    "durationSeconds": 86.94,
+    "lint": "PASS",
+    "focusedRegistrationTypes": "PASS",
+    "focusedReferenceTypes": "PASS",
+    "focusedDatabaseSuiteTypes": "PASS",
+    "prismaClientModelCount": 532,
+    "deploymentContractAssertionsPassed": 16,
+    "realPrivateFilesystemTestsPassed": 8,
+    "securitySelectionTestsPassed": 104,
+    "fullAppTypecheck": "NOT RERUN: previous sandbox OOM remains blocker",
+    "browserContracts": "PASS, synthetic only",
+    "databaseIntegration": "BLOCKED: zero DB tests executed; 63 skipped",
+    "prismaGenerate": "BLOCKED exit 1",
+    "prismaValidate": "BLOCKED exit 1",
+    "productionBuild": "BLOCKED exit 1 before Next",
+    "officialEngineReinstall": "Exit 0 but engine files missing and generation still fails; not a fix",
+    "providerVerification": "NOT TESTED",
+    "hostingerStaging": "NOT TESTED",
+    "deployment": "NOT PERFORMED",
+    "release": "HOLD"
+  }
+}

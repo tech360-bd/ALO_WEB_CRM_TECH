@@ -32,7 +32,8 @@ describe('Services system — spec §3-§12', () => {
     expect(page).toContain('Provide professional guidance from course selection and university applications to visa preparation, pre-departure planning and post-arrival support');
     expect(page).toContain('Book Free Consultation');
     expect(page).toContain('Explore Course Finder');
-    expect(page).toContain('14 Services');
+    expect(page).toContain('services.length');
+    expect(page).not.toContain('Verified content');
     expect(page).toContain('href={`/services/${s.slug}`}');
   });
 
@@ -73,12 +74,14 @@ describe('Services system — spec §3-§12', () => {
     expect(hub).toContain('/scholarships — verified scholarships only');
   });
 
-  it('API guarantees: /api/services unions DB + catalog; [slug] falls back to spec catalog with aliases', () => {
+  it('published database is authoritative; missing services return 404', () => {
     const list = read('src/app/api/services/route.ts');
     const detail = read('src/app/api/services/[slug]/route.ts');
-    expect(list).toContain('SPEC_SERVICES');
-    expect(detail).toContain('getSpecService');
-    expect(detail).toContain('specServiceToPayload');
+    expect(list).not.toContain('SPEC_SERVICES');
+    expect(list).toContain('const status = "PUBLISHED"');
+    expect(detail).not.toContain('getSpecService');
+    expect(detail).toContain('status: 404');
+    expect(detail).not.toContain('specServiceToPayload');
   });
 
   it('legacy slugs resolve to canonical spec slugs', () => {
@@ -97,8 +100,9 @@ describe('Services system — spec §3-§12', () => {
     const page = read('src/app/services/[slug]/page.tsx');
     expect(page).toContain("'@type': 'Service'");
     expect(page).toContain("'@type': 'BreadcrumbList'");
-    expect(page).toContain('generateStaticParams');
-    expect(page).toContain('SPEC_SERVICES');
+    expect(page).toContain('getPublishedService');
+    expect(page).toContain('notFound');
+    expect(page).not.toContain('generateStaticParams');
   });
 });
 

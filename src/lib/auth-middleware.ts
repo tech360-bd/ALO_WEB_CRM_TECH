@@ -6,6 +6,9 @@ import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
 export interface AuthContext {
+  /** Server-resolved ID namespace. Never infer it from request headers or matching IDs. */
+  identityDomain?: 'user' | 'portal';
+  authenticationMethod?: 'cookie' | 'bearer';
   userId: string;
   email: string;
   name: string;
@@ -15,6 +18,16 @@ export interface AuthContext {
   sessionId: string;
   branch?: string;
   partnerId?: string;
+  partnerRole?: string;
+
+  // B2B tenant scope. Resolved server-side from the user's PartnerProfile and
+  // NEVER from a client-supplied value — every partner-scoped query must filter
+  // on this. Previously these fields did not exist at all, so routes reading
+  // `auth.partnerId` always saw `undefined` and rejected every request with
+  // "Partner identity required" (partner user management and voucher
+  // generation were therefore entirely non-functional).
+  partnerId?: string;
+  /** Role WITHIN the partner tenant, e.g. PARTNER_SUPER_ADMIN. */
   partnerRole?: string;
 
   // Actor info for audit logs (especially when actingAs is used)
@@ -32,7 +45,7 @@ function cookieValue(request: Request, name: string): string | null {
   return pair ? decodeURIComponent(pair.slice(name.length + 1)) : null;
 }
 
-export async function authenticateRequest(request: Request): Promise<AuthContext | NextResponse> {
+async function authenticateSession(request: Request): Promise<AuthContext | NextResponse> {
   const authHeader = request.headers.get('authorization');
   const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
   // New portal logins use an HttpOnly cookie. Bearer remains supported for
@@ -45,10 +58,21 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
   // database-backed Bearer session. Support both without accepting fabricated
   // tokens or bypassing the database checks.
   if (!token) {
-    const { getServerSession } = await import('next-auth');
-    const { authOptions } = await import('@/lib/auth');
-    const nextAuthSession = await getServerSession(authOptions).catch(() => null);
+    // `getServerSession` reads `next/headers`, which throws outside a request
+    // scope instead of simply reporting "no session". An unauthenticated call
+    // must produce a clean 401, never an unhandled exception that surfaces as
+    // a 500 and leaks a stack trace, so this fails closed to "no session".
+    const nextAuthSession = await (async () => {
+      try {
+        const { getServerSession } = await import('next-auth');
+        const { authOptions } = await import('@/lib/auth');
+        return await getServerSession(authOptions);
+      } catch {
+        return null;
+      }
+    })();
     const nextAuthUser = nextAuthSession?.user as {
+      identityDomain?: string;
       id?: string;
       email?: string | null;
       name?: string | null;
@@ -63,6 +87,8 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       );
     }
 
+    if (nextAuthUser.identityDomain !== 'user') return NextResponse.json({success:false,error:'Canonical User session required. Please sign in again.'},{status:403});
+
     const user = await db.user.findUnique({ where: { id: nextAuthUser.id } });
     if (!user || user.status !== 'ACTIVE' || !user.emailVerified) {
       return NextResponse.json(
@@ -72,7 +98,10 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     }
 
     const role = user.role || nextAuthUser.role || 'STUDENT';
+    const naPartner = await resolvePartnerScope(user.email);
     return {
+      identityDomain: 'user',
+      authenticationMethod: 'cookie',
       userId: user.id,
       email: user.email,
       name: user.name || user.email,
@@ -80,7 +109,8 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
       roles: [role, role.toLowerCase()],
       permissions: JSON.parse(user.permissions || '[]'),
       sessionId: `nextauth:${user.id}`,
-      partnerId: user.partnerId || undefined,
+      partnerId: naPartner?.partnerId,
+      partnerRole: naPartner?.partnerRole,
       actorUserId: user.id,
       actorEmail: user.email,
       actorName: user.name || user.email,
@@ -233,7 +263,14 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     }
   }
 
+  // Tenant scope follows the EFFECTIVE user (so Super-Admin "acting as" a
+  // partner is correctly confined to that partner's tenant), while the audit
+  // fields below still record the real actor.
+  const partnerScope = await resolvePartnerScopeByUserId(actingUserId);
+
   return {
+    identityDomain: 'portal',
+    authenticationMethod: bearerToken && bearerToken !== 'null' && bearerToken !== 'undefined' ? 'bearer' : 'cookie',
     userId: actingUserId,
     email: actingEmail,
     name: actingName,
@@ -241,12 +278,76 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     roles,
     permissions,
     sessionId: session.id,
-    partnerId: actingPartnerId,
-    partnerRole: actingPartnerRole,
+    partnerId: partnerScope?.partnerId,
+    partnerRole: partnerScope?.partnerRole,
     actorUserId: session.user.id,
     actorEmail: session.user.email,
     actorName: session.user.name,
   };
+}
+
+/** Revalidate employee lifecycle for every employee/HR request. */
+export async function authenticateRequest(request: Request): Promise<AuthContext | NextResponse> {
+  const result = await authenticateSession(request);
+  if (result instanceof NextResponse) return result;
+  const pathname = new URL(request.url).pathname;
+  const employeeRoute = pathname.startsWith('/api/employee-access/') || pathname.startsWith('/api/admin/employees') || pathname.startsWith('/api/admin/payroll') || pathname === '/api/finance' || pathname.startsWith('/api/finance/') || pathname.startsWith('/api/crm/finance');
+  if (employeeRoute) {
+    if (['STUDENT', 'PARTNER'].includes(result.userType.toUpperCase())) {
+      return NextResponse.json({ success: false, error: 'Employee access required.' }, { status: 403 });
+    }
+    const employee = await db.employee.findFirst({ where: { userId: result.userId }, select: { status: true } });
+    if (employee && employee.status.toLowerCase() !== 'active') {
+      return NextResponse.json({ success: false, error: 'Employee account is not active.' }, { status: 403 });
+    }
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
+      const origin = request.headers.get('origin');
+      if (origin && origin !== new URL(process.env.NEXTAUTH_URL || request.url).origin) {
+        return NextResponse.json({ success: false, error: 'Cross-origin employee mutation denied.' }, { status: 403 });
+      }
+    }
+  }
+  return result;
+}
+
+// ============================================================
+// Partner tenant scope resolution (server-side only)
+// ============================================================
+
+/** Look up the B2B tenant a PortalUser belongs to. */
+async function resolvePartnerScopeByUserId(
+  userId: string,
+): Promise<{ partnerId: string; partnerRole: string } | null> {
+  try {
+    const profile = await db.partnerProfile.findUnique({
+      where: { userId },
+      select: { partnerId: true, partnerRole: true },
+    });
+    if (!profile?.partnerId) return null;
+    return { partnerId: profile.partnerId, partnerRole: profile.partnerRole || 'PARTNER_SUPER_ADMIN' };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * NextAuth sessions authenticate against `User`, while partner tenancy hangs
+ * off `PortalUser`. Bridge the two by email so a partner signing in through
+ * either path gets the same tenant scope.
+ */
+async function resolvePartnerScope(
+  email: string,
+): Promise<{ partnerId: string; partnerRole: string } | null> {
+  try {
+    const portalUser = await db.portalUser.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+    if (!portalUser) return null;
+    return resolvePartnerScopeByUserId(portalUser.id);
+  } catch {
+    return null;
+  }
 }
 
 // ============================================================
@@ -414,6 +515,8 @@ export async function getOptionalAuth(request: Request): Promise<AuthContext | n
     }
     if (session.user.userType === 'PARTNER' && !['approved', 'active'].includes((session.user.partnerProfile?.approvalStatus || '').toLowerCase())) return null;
     return {
+      identityDomain: 'portal',
+      authenticationMethod: 'bearer',
       userId: session.user.id,
       email: session.user.email,
       name: session.user.name || '',

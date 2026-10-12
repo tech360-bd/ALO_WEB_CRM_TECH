@@ -1,0 +1,1545 @@
+{
+  "checkedAt": "2026-10-10T07:31:39.588079+00:00",
+  "method": "Pinned GitHub metadata, recursive tree, README and selected implementation files. Not exhaustive code review; no upstream source executed or imported.",
+  "results": [
+    {
+      "repository": "melgarafael/DeskcommCRM",
+      "url": "https://github.com/melgarafael/DeskcommCRM.git",
+      "access": "accessible",
+      "description": "Open-source AI sales OS \u2014 self-hosted CRM with native AI agents + WhatsApp (WAHA). Open alternative to Kommo, Octadesk & Intercom for any business that sells by chat. MCP-ready, multi-tenant, LGPD.",
+      "license": "MIT",
+      "defaultBranch": "main",
+      "commit": "2ed0a2e2dbedf696034ba87604afab2802f62721",
+      "treeTruncated": false,
+      "fileCount": 8007,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 36088,
+          "sha256": "4f2e6ee779fae03ff2bae184878018dec7f7758b12941f259af8a91b0e643fe4",
+          "url": "https://github.com/melgarafael/DeskcommCRM/blob/2ed0a2e2dbedf696034ba87604afab2802f62721/README.md",
+          "headings": [
+            "\ud83d\udee0\ufe0f DeskcommCRM \u2014 o Sistema Operacional de Vendas com IA, open source, pro WhatsApp",
+            "\u26a1 Instalar na sua VPS (o caminho principal)",
+            "1. Entre na sua VPS",
+            "2. Rode o instalador",
+            "O que voc\u00ea precisa ter em m\u00e3os",
+            "O que o instalador faz por voc\u00ea",
+            "Outra hospedagem? (Hostinger, Coolify, Dokploy, CapRover\u2026)",
+            "Primeiro acesso",
+            "\ud83e\udd16 Prefere que uma IA instale pra voc\u00ea?",
+            "\ud83d\udd04 Atualizar",
+            "Pela tela (recomendado)",
+            "Pelo terminal",
+            "Outros comandos do kit",
+            "\ud83e\uddf9 Desinstalar (tirar esta aplica\u00e7\u00e3o do Docker)",
+            "\u2728 O que \u00e9",
+            "Diferenciais",
+            "\ud83d\udd0c Webhooks & Automa\u00e7\u00f5es",
+            "\ud83d\udda5\ufe0f O que voc\u00ea opera (as telas)",
+            "\ud83e\uddf1 Stack",
+            "\ud83e\uddd1\u200d\ud83d\udcbb Desenvolvimento (s\u00f3 pra contribuir com o c\u00f3digo)",
+            "Schema: aplique o baseline, N\u00c3O as migrations.",
+            "As migrations 0001-0009 e 0013 s\u00e3o stubs `SELECT 1;` \u2014 a cadeia n\u00e3o sobe do zero.",
+            "O schema real vive no baseline.sql, o mesmo que o install.sh aplica na VPS.",
+            "`supabase db push` \"passa\" e deixa o banco vazio."
+          ]
+        },
+        {
+          "path": "scripts/seed-e2e-kanban.ts",
+          "bytes": 5182,
+          "sha256": "a2089c62d426f5d6930b216c11996eda3ecdc7c691c03b5d6060864b33af7b75",
+          "url": "https://github.com/melgarafael/DeskcommCRM/blob/2ed0a2e2dbedf696034ba87604afab2802f62721/scripts/seed-e2e-kanban.ts",
+          "headings": []
+        },
+        {
+          "path": "scripts/seed-e2e-nascimento-do-lead.ts",
+          "bytes": 4055,
+          "sha256": "990b7c7356e165b73665f1580b69707200c15457233019263fab09698ea07a54",
+          "url": "https://github.com/melgarafael/DeskcommCRM/blob/2ed0a2e2dbedf696034ba87604afab2802f62721/scripts/seed-e2e-nascimento-do-lead.ts",
+          "headings": []
+        },
+        {
+          "path": "lib/types/leads.ts",
+          "bytes": 5882,
+          "sha256": "e67f031a988c12af405281cb69e0b23410d7a5646e836d21c951c2ab55d95928",
+          "url": "https://github.com/melgarafael/DeskcommCRM/blob/2ed0a2e2dbedf696034ba87604afab2802f62721/lib/types/leads.ts",
+          "headings": []
+        },
+        {
+          "path": "ARCHITECTURE.md",
+          "bytes": 8070,
+          "sha256": "ae5cfda6df9a8634c697347db4c73977a5c128675662301dc1187f29149a1048",
+          "url": "https://github.com/melgarafael/DeskcommCRM/blob/2ed0a2e2dbedf696034ba87604afab2802f62721/ARCHITECTURE.md",
+          "headings": [
+            "Architecture \u2014 DeskcommCRM",
+            "Camadas",
+            "Multi-tenancy",
+            "API REST `/api/v1/`",
+            "Fluxo de uma requisi\u00e7\u00e3o",
+            "Event log + workers",
+            "Integra\u00e7\u00f5es externas",
+            "Hardening",
+            "Onde olhar a fundo"
+          ]
+        },
+        {
+          "path": "components/kanban/KanbanBoard.tsx",
+          "bytes": 14631,
+          "sha256": "39a34ac693e4197c6c16773262ad5cf371f8ee58b2fbc027d7ce7e1ebe5fe2cd",
+          "url": "https://github.com/melgarafael/DeskcommCRM/blob/2ed0a2e2dbedf696034ba87604afab2802f62721/components/kanban/KanbanBoard.tsx"
+        },
+        {
+          "path": "components/kanban/KanbanCard.tsx",
+          "bytes": 14408,
+          "sha256": "e7f8e5bcaa26b8cede3ce01fdaefad3314278219270249c2a6142c3e99be6235",
+          "url": "https://github.com/melgarafael/DeskcommCRM/blob/2ed0a2e2dbedf696034ba87604afab2802f62721/components/kanban/KanbanCard.tsx"
+        }
+      ]
+    },
+    {
+      "repository": "Django-CRM/Django-CRM",
+      "url": "https://github.com/Django-CRM/Django-CRM.git",
+      "access": "accessible",
+      "description": "Open Source CRM for Startups and enterprises. Django + SvelteKit \u00b7 Self-hosted \u00b7 Multi-tenant \u00b7 Free forever",
+      "license": "MIT",
+      "defaultBranch": "master",
+      "commit": "5d71f263681b42b1225a8faf27ef560dfcc25f03",
+      "treeTruncated": false,
+      "fileCount": 2132,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 5570,
+          "sha256": "d1e4d1d192d49701ffa504b3d76b2e7bd641dd1e06a665ffbb0abb78b4a5dc8b",
+          "url": "https://github.com/Django-CRM/Django-CRM/blob/5d71f263681b42b1225a8faf27ef560dfcc25f03/README.md",
+          "headings": [
+            "BottleCRM: Open Source Django CRM for Startups & Enterprises",
+            "Why BottleCRM",
+            "How it compares",
+            "Quick start",
+            "Documentation",
+            "Contributing",
+            "Community",
+            "License",
+            "Sponsors",
+            "Contributors"
+          ]
+        },
+        {
+          "path": "backend/leads/apps.py",
+          "bytes": 85,
+          "sha256": "b985ca305ae60b4f9e9104394fc24a14137701d6a082fd3da737d161f39d4f3f",
+          "url": "https://github.com/Django-CRM/Django-CRM/blob/5d71f263681b42b1225a8faf27ef560dfcc25f03/backend/leads/apps.py",
+          "headings": []
+        },
+        {
+          "path": "backend/leads/urls.py",
+          "bytes": 2776,
+          "sha256": "9cd47893477af7db06650a468793242f9f4f65f1bace10506c5a5159243182c1",
+          "url": "https://github.com/Django-CRM/Django-CRM/blob/5d71f263681b42b1225a8faf27ef560dfcc25f03/backend/leads/urls.py",
+          "headings": []
+        },
+        {
+          "path": "backend/leads/admin.py",
+          "bytes": 526,
+          "sha256": "dca42d7007962f78a2b1327a0d3e725179ebd5440efc2ad73dc43a6420f71511",
+          "url": "https://github.com/Django-CRM/Django-CRM/blob/5d71f263681b42b1225a8faf27ef560dfcc25f03/backend/leads/admin.py",
+          "headings": []
+        },
+        {
+          "path": "docs/architecture/overview.md",
+          "bytes": 7827,
+          "sha256": "3fde4f983016cf2a33ac3384cb4efa8892ba1512a1182d76ed1049948fb066bb",
+          "url": "https://github.com/Django-CRM/Django-CRM/blob/5d71f263681b42b1225a8faf27ef560dfcc25f03/docs/architecture/overview.md",
+          "headings": [
+            "Architecture overview",
+            "The three clients",
+            "Request lifecycle",
+            "Backend layout"
+          ]
+        },
+        {
+          "path": "backend/leads/models.py",
+          "bytes": 12159,
+          "sha256": "e6596db5ad2b35a09aff63aaa60b2b440a7ff1aeedb6811c78620ff917c69c41",
+          "url": "https://github.com/Django-CRM/Django-CRM/blob/5d71f263681b42b1225a8faf27ef560dfcc25f03/backend/leads/models.py"
+        },
+        {
+          "path": "backend/leads/views/lead_views.py",
+          "bytes": 47190,
+          "sha256": "096c8e7a5aea7c9f6a412aa0a107c5f140a1e85f39d324d05559f098687cedfc",
+          "url": "https://github.com/Django-CRM/Django-CRM/blob/5d71f263681b42b1225a8faf27ef560dfcc25f03/backend/leads/views/lead_views.py"
+        },
+        {
+          "path": "backend/leads/views/kanban_views.py",
+          "bytes": 28994,
+          "sha256": "824c87d1a8f0cdfbb9c4e60d0942f637d5b68434caf66525ac8d1fe78c31fd5f",
+          "url": "https://github.com/Django-CRM/Django-CRM/blob/5d71f263681b42b1225a8faf27ef560dfcc25f03/backend/leads/views/kanban_views.py"
+        }
+      ]
+    },
+    {
+      "repository": "Odoo-mobile/crm",
+      "url": "https://github.com/Odoo-mobile/crm.git",
+      "access": "accessible",
+      "description": "Odoo CRM",
+      "license": null,
+      "defaultBranch": "master",
+      "commit": "b25516b8f745cb840705f16ba5d2f47bcad897af",
+      "treeTruncated": false,
+      "fileCount": 662,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 1483,
+          "sha256": "623efdd9010a1166a4095879cd3755796acc036be90e5e74e8e5345d349fa847",
+          "url": "https://github.com/Odoo-mobile/crm/blob/b25516b8f745cb840705f16ba5d2f47bcad897af/README.md",
+          "headings": []
+        },
+        {
+          "path": "app/src/main/java/odoo/controls/IOnChangeCallback.java",
+          "bytes": 1027,
+          "sha256": "2440f8a38c93cd9ab9e24111b447c7eef3e5a35860761823b37ef4a56de24103",
+          "url": "https://github.com/Odoo-mobile/crm/blob/b25516b8f745cb840705f16ba5d2f47bcad897af/app/src/main/java/odoo/controls/IOnChangeCallback.java",
+          "headings": []
+        },
+        {
+          "path": "app/src/main/java/odoo/controls/IOnDomainFilterCallbacks.java",
+          "bytes": 1068,
+          "sha256": "86edef3548420eae4223fc4ec52cb9b46deb3e2bc2b1b1a740d7870684b0b893",
+          "url": "https://github.com/Odoo-mobile/crm/blob/b25516b8f745cb840705f16ba5d2f47bcad897af/app/src/main/java/odoo/controls/IOnDomainFilterCallbacks.java",
+          "headings": []
+        },
+        {
+          "path": "app/src/main/java/com/odoo/addons/crm/CRMLeads.java",
+          "bytes": 18219,
+          "sha256": "be947fc50fc61dbbb2e3483d7a81483a0548e73255d8c904676193adf84c05d8",
+          "url": "https://github.com/Odoo-mobile/crm/blob/b25516b8f745cb840705f16ba5d2f47bcad897af/app/src/main/java/com/odoo/addons/crm/CRMLeads.java",
+          "headings": []
+        },
+        {
+          "path": "app/src/main/res/layout/crm_convert_to_opportunity.xml",
+          "bytes": 4975,
+          "sha256": "7503f6d5137251eb7c6233c8b375c75c430ac3d66a22ed43ba69072e30add067",
+          "url": "https://github.com/Odoo-mobile/crm/blob/b25516b8f745cb840705f16ba5d2f47bcad897af/app/src/main/res/layout/crm_convert_to_opportunity.xml"
+        },
+        {
+          "path": "app/src/main/java/com/odoo/addons/crm/CRMOpportunities.java",
+          "bytes": 22174,
+          "sha256": "35ace99f220f294431e4e0d9372227b5addeb774371ca87924931c2421d94b4c",
+          "url": "https://github.com/Odoo-mobile/crm/blob/b25516b8f745cb840705f16ba5d2f47bcad897af/app/src/main/java/com/odoo/addons/crm/CRMOpportunities.java"
+        }
+      ]
+    },
+    {
+      "repository": "thu-ml/CRM",
+      "url": "https://github.com/thu-ml/CRM.git",
+      "access": "accessible",
+      "description": "[ECCV 2024] Single Image to 3D Textured Mesh in 10 seconds with Convolutional Reconstruction Model.",
+      "license": "MIT",
+      "defaultBranch": "main",
+      "commit": "4964e36a593070a3045eb0f300935a771ff5c172",
+      "treeTruncated": false,
+      "fileCount": 119,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 4648,
+          "sha256": "4722673e24fe8d1b6515d86e85e98a3e34a11c32c0c084cef8c492bbf249a208",
+          "url": "https://github.com/thu-ml/CRM/blob/4964e36a593070a3045eb0f300935a771ff5c172/README.md",
+          "headings": [
+            "Convolutional Reconstruction Model",
+            "[Project Page](https://ml.cs.tsinghua.edu.cn/~zhengyi/CRM/) | [Arxiv](https://arxiv.org/abs/2403.05034) | [HF-Demo](https://huggingface.co/spaces/Zhengyi/CRM) | [Weights](https://huggingface.co/Zhengyi/CRM)",
+            "Try CRM \ud83c\udf7b",
+            "Install",
+            "Step 1 - Base",
+            "Step 2 - Nvdiffrast",
+            "Inference",
+            "Train",
+            "data prepare",
+            "Todo List",
+            "Acknowledgement",
+            "Citation"
+          ]
+        },
+        {
+          "path": "train.py",
+          "bytes": 13660,
+          "sha256": "0041a8faae1f91643a27508475ddcbbdd6d6e317dd230b0b815f85d27bcc569f",
+          "url": "https://github.com/thu-ml/CRM/blob/4964e36a593070a3045eb0f300935a771ff5c172/train.py",
+          "headings": []
+        },
+        {
+          "path": "inference.py",
+          "bytes": 3634,
+          "sha256": "00735693811bff260e0bd72761abf14ed740301320476c9312da191f23a8141f",
+          "url": "https://github.com/thu-ml/CRM/blob/4964e36a593070a3045eb0f300935a771ff5c172/inference.py",
+          "headings": []
+        },
+        {
+          "path": "pipelines.py",
+          "bytes": 8703,
+          "sha256": "8dcb9ad3f6b52308bc54a39a59c2d25c0220071fe97b38b705245cdefe10443b",
+          "url": "https://github.com/thu-ml/CRM/blob/4964e36a593070a3045eb0f300935a771ff5c172/pipelines.py",
+          "headings": []
+        }
+      ]
+    },
+    {
+      "repository": "dennisivy/crash-course-CRM",
+      "url": "https://github.com/dennisivy/crash-course-CRM.git",
+      "access": "accessible",
+      "description": "Django customer management platform",
+      "license": null,
+      "defaultBranch": "master",
+      "commit": "f250e3984e3045b41b421f7c7e1078c9ea2c03f8",
+      "treeTruncated": false,
+      "fileCount": 32,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 6373,
+          "sha256": "0494b95c09862b67e9afcf940fdb04cb49955545b11f5eaaa24b1534ae5b2830",
+          "url": "https://github.com/dennisivy/crash-course-CRM/blob/f250e3984e3045b41b421f7c7e1078c9ea2c03f8/README.md",
+          "headings": [
+            "crash-course-CRM",
+            "Features",
+            "Technologies Used",
+            "Prerequisites",
+            "Installation & Setup",
+            "1. Clone the Repository",
+            "2. Create a Virtual Environment",
+            "Create virtual environment",
+            "Activate virtual environment",
+            "On Windows:",
+            "On macOS/Linux:",
+            "3. Install Dependencies",
+            "4. Navigate to Project Directory",
+            "5. Run Database Migrations",
+            "6. Create a Superuser (Optional)",
+            "7. Run the Development Server",
+            "Usage",
+            "Accessing the Application",
+            "Managing Data",
+            "Creating Orders",
+            "Updating Orders",
+            "Deleting Orders",
+            "Filtering Orders",
+            "Adding Initial Data"
+          ]
+        },
+        {
+          "path": "crm/accounts/models.py",
+          "bytes": 1455,
+          "sha256": "8ea8e4d814b7ed628b0e8d12bcb4d5dc22f55f7e8fd91c578903c0737a89347c",
+          "url": "https://github.com/dennisivy/crash-course-CRM/blob/f250e3984e3045b41b421f7c7e1078c9ea2c03f8/crm/accounts/models.py"
+        },
+        {
+          "path": "crm/accounts/views.py",
+          "bytes": 2549,
+          "sha256": "5c6c313f39ebcc3a163f7f3d5135c4287a4122b4613e5bce314e59e264e0baee",
+          "url": "https://github.com/dennisivy/crash-course-CRM/blob/f250e3984e3045b41b421f7c7e1078c9ea2c03f8/crm/accounts/views.py"
+        },
+        {
+          "path": "crm/accounts/templates/accounts/dashboard.html",
+          "bytes": 1547,
+          "sha256": "37e74d39ddded8fec1a33394ed443d20aa17fcd4e93a7e02692cf1de028283d9",
+          "url": "https://github.com/dennisivy/crash-course-CRM/blob/f250e3984e3045b41b421f7c7e1078c9ea2c03f8/crm/accounts/templates/accounts/dashboard.html"
+        }
+      ]
+    },
+    {
+      "repository": "oroinc/crm-application",
+      "url": "https://github.com/oroinc/crm-application.git",
+      "access": "accessible",
+      "description": "OroCRM - an open-source Customer Relationship Management application.",
+      "license": "NOASSERTION",
+      "defaultBranch": "master",
+      "commit": "e3e6bbba79044e6e0d4dd7a20d6601f1312f23f5",
+      "treeTruncated": false,
+      "fileCount": 75,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 2146,
+          "sha256": "8a70a011759264f1b68fd04e1d53a541f95a80f761bdfd280bf3af90bcec0159",
+          "url": "https://github.com/oroinc/crm-application/blob/e3e6bbba79044e6e0d4dd7a20d6601f1312f23f5/README.md",
+          "headings": []
+        },
+        {
+          "path": "LICENSE",
+          "bytes": 127,
+          "sha256": "60b44a4926ff360f485c5d12b6360837b7901cc345a8ea0ff33859eb5f22a9f7",
+          "url": "https://github.com/oroinc/crm-application/blob/e3e6bbba79044e6e0d4dd7a20d6601f1312f23f5/LICENSE"
+        },
+        {
+          "path": "composer.json",
+          "bytes": 8859,
+          "sha256": "d4bcf65f552df4e82fd8abb7576ae0f363141e1a488a9ce0c668b009326668a5",
+          "url": "https://github.com/oroinc/crm-application/blob/e3e6bbba79044e6e0d4dd7a20d6601f1312f23f5/composer.json"
+        }
+      ]
+    },
+    {
+      "repository": "trycompai/crm",
+      "url": "https://github.com/trycompai/crm.git",
+      "access": "accessible",
+      "description": "Comp AI CRM is an open source, CRM designed for AI agents. Agentic-first CRM.",
+      "license": "MIT",
+      "defaultBranch": "release",
+      "commit": "6d4793dd6d7aeea91aa6a034e00b17d7408a2d08",
+      "treeTruncated": false,
+      "fileCount": 1493,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 19189,
+          "sha256": "01f54b4c1eeaca8a2c80e3411bed9cae2be2e578d75389046878cfa433a08e54",
+          "url": "https://github.com/trycompai/crm/blob/6d4793dd6d7aeea91aa6a034e00b17d7408a2d08/README.md",
+          "headings": [
+            "What this is",
+            "Screenshots",
+            "The agent",
+            "The stack",
+            "Layout",
+            "Three rules the codebase holds to",
+            "Quick start",
+            "The values to set",
+            "Configuration",
+            "Tasks",
+            "Deploying",
+            "Contributing",
+            "Licence"
+          ]
+        },
+        {
+          "path": "apps/app/lib/contact-facts.ts",
+          "bytes": 505,
+          "sha256": "ac7f44d03eb22c17219feb48f8109d7092063f7ccc10775a272e727d00f936e4",
+          "url": "https://github.com/trycompai/crm/blob/6d4793dd6d7aeea91aa6a034e00b17d7408a2d08/apps/app/lib/contact-facts.ts",
+          "headings": []
+        },
+        {
+          "path": "apps/app/components/crm/contact-name.ts",
+          "bytes": 173,
+          "sha256": "9a707509f4310a6032e21e2dd9bb52e3746d0c1539d81ba407c65527a9dcfca0",
+          "url": "https://github.com/trycompai/crm/blob/6d4793dd6d7aeea91aa6a034e00b17d7408a2d08/apps/app/components/crm/contact-name.ts",
+          "headings": []
+        },
+        {
+          "path": "apps/api/src/contacts/contacts.module.ts",
+          "bytes": 560,
+          "sha256": "cd6c9e639b3dddc62475cce97f355c7236c954536df4327302e3d0edd0db909d",
+          "url": "https://github.com/trycompai/crm/blob/6d4793dd6d7aeea91aa6a034e00b17d7408a2d08/apps/api/src/contacts/contacts.module.ts",
+          "headings": []
+        },
+        {
+          "path": ".agents/skills/nestjs-best-practices/rules/arch-feature-modules.md",
+          "bytes": 2316,
+          "sha256": "672ef1a9b10230c3437f5c1ec27ff78a8a49263667f6240e300adf474ff0ec6a",
+          "url": "https://github.com/trycompai/crm/blob/6d4793dd6d7aeea91aa6a034e00b17d7408a2d08/.agents/skills/nestjs-best-practices/rules/arch-feature-modules.md",
+          "headings": [
+            "Organize by Feature Modules"
+          ]
+        },
+        {
+          "path": "apps/api/src/contacts/contacts.service.ts",
+          "bytes": 23453,
+          "sha256": "b2712dc5589eb169873a9d46a368aa371e8a14f9906d190aa5127e198692fa74",
+          "url": "https://github.com/trycompai/crm/blob/6d4793dd6d7aeea91aa6a034e00b17d7408a2d08/apps/api/src/contacts/contacts.service.ts"
+        },
+        {
+          "path": "apps/app/components/crm/timeline/activity-composer.tsx",
+          "bytes": 4194,
+          "sha256": "3fc1dda8f766de5903e8065587925bb45e68f07153903b39d552f2389c10bf5a",
+          "url": "https://github.com/trycompai/crm/blob/6d4793dd6d7aeea91aa6a034e00b17d7408a2d08/apps/app/components/crm/timeline/activity-composer.tsx"
+        }
+      ]
+    },
+    {
+      "repository": "frappe/crm",
+      "url": "https://github.com/frappe/crm.git",
+      "access": "accessible",
+      "description": "Fully featured, open source CRM",
+      "license": "AGPL-3.0",
+      "defaultBranch": "develop",
+      "commit": "9d1f27301b81adca3b1437b55154cf78472126b7",
+      "treeTruncated": false,
+      "fileCount": 1058,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 9092,
+          "sha256": "93af6b9746f3c4ccf045cac003cb612740e13b7c3f8328c66b5e9b6764864528",
+          "url": "https://github.com/frappe/crm/blob/9d1f27301b81adca3b1437b55154cf78472126b7/README.md",
+          "headings": [
+            "Frappe CRM",
+            "Motivation",
+            "Key Features",
+            "Integrations",
+            "Under the Hood",
+            "Compatibility",
+            "Getting Started (Production)",
+            "Managed Hosting",
+            "Self Hosting",
+            "Getting Started (Development)",
+            "Local Setup",
+            "Docker",
+            "Learn and connect"
+          ]
+        },
+        {
+          "path": "crm/demo/leads.py",
+          "bytes": 7504,
+          "sha256": "f86f85cb87e2c4bd958e06d7233582ca8bf9937911b3332d0a1e2547cc036442",
+          "url": "https://github.com/frappe/crm/blob/9d1f27301b81adca3b1437b55154cf78472126b7/crm/demo/leads.py",
+          "headings": [
+            "Days ago each lead was created \u2014 index matches leads_data order",
+            "Last-activity date per lead (used for modified so active leads sort to top).",
+            "Converted leads will be overwritten by create_demo_deals anyway.",
+            "Index: [0]alice [1]bob [2]carol [3]david [4]eve [5]frank [6]grace [7]henry [8]iris [9]jack [10]karen [11]leo"
+          ]
+        },
+        {
+          "path": "crm/api/contact.py",
+          "bytes": 4221,
+          "sha256": "36a8f5534eae73d8e56c8bef7196385658043d01871647befeb3ccd7c4b8f4bc",
+          "url": "https://github.com/frappe/crm/blob/9d1f27301b81adca3b1437b55154cf78472126b7/crm/api/contact.py",
+          "headings": []
+        },
+        {
+          "path": "crm/demo/call_logs.py",
+          "bytes": 3665,
+          "sha256": "6def3f89654da6bfcb3968248c984512e0a9da1f1304d17781648a59987fc4e0",
+          "url": "https://github.com/frappe/crm/blob/9d1f27301b81adca3b1437b55154cf78472126b7/crm/demo/call_logs.py",
+          "headings": []
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+          "bytes": 595,
+          "sha256": "1f48c52f209a971b8e7eae4120144d28fcf8ee38a7778a7b4d8cf1ab356617d2",
+          "url": "https://github.com/frappe/crm/blob/9d1f27301b81adca3b1437b55154cf78472126b7/.github/ISSUE_TEMPLATE/feature_request.md",
+          "headings": []
+        },
+        {
+          "path": "frontend/src/components/Kanban/KanbanView.vue",
+          "bytes": 9039,
+          "sha256": "ecce88a363b35b170a45aea68aa1f4d5a11b384c92393db9b5683f648267508d",
+          "url": "https://github.com/frappe/crm/blob/9d1f27301b81adca3b1437b55154cf78472126b7/frontend/src/components/Kanban/KanbanView.vue"
+        },
+        {
+          "path": "crm/fcrm/doctype/crm_lead/crm_lead.json",
+          "bytes": 10658,
+          "sha256": "442cfd2c847b6684848075d2a3d8483a51fff9df67b1d9bb23ae8040f9eb223a",
+          "url": "https://github.com/frappe/crm/blob/9d1f27301b81adca3b1437b55154cf78472126b7/crm/fcrm/doctype/crm_lead/crm_lead.json"
+        }
+      ]
+    },
+    {
+      "repository": "ChurchCRM/CRM",
+      "url": "https://github.com/ChurchCRM/CRM.git",
+      "access": "accessible",
+      "description": "Free, open-source church management software for people, families, groups, events, attendance, giving, volunteers, and more. No subscription. Your data is yours.",
+      "license": "MIT",
+      "defaultBranch": "master",
+      "commit": "6e28f4bf35bab197a9823342cdf340e95a4b3b62",
+      "treeTruncated": false,
+      "fileCount": 3902,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 5526,
+          "sha256": "2876bd6c3d2dc141b43395c8dcb6e88da59afbaea5d4911864aa04f3c2684197",
+          "url": "https://github.com/ChurchCRM/CRM/blob/6e28f4bf35bab197a9823342cdf340e95a4b3b62/README.md",
+          "headings": [
+            "ChurchCRM",
+            "Try it or install it",
+            "What churches use it for",
+            "\ud83d\ude80 Development quick start",
+            "\ud83c\udf10 Localization Support",
+            "\ud83d\udca1 Contributing",
+            "\ud83d\udcda Documentation",
+            "\ud83e\udd1d Community",
+            "\ud83d\ude4f Thank You",
+            "Recent Contribution History",
+            "Star History",
+            "\ud83c\udf10 Stay Connected"
+          ]
+        },
+        {
+          "path": "src/VolunteerOpportunityEditor.php",
+          "bytes": 23515,
+          "sha256": "8449f9781b11a4fa628ed863dbbb35ebb2342c3e3de8a71ffd14a46f91892b92",
+          "url": "https://github.com/ChurchCRM/CRM/blob/6e28f4bf35bab197a9823342cdf340e95a4b3b62/src/VolunteerOpportunityEditor.php",
+          "headings": []
+        },
+        {
+          "path": "webpack/portal/volunteer-opportunities.ts",
+          "bytes": 13668,
+          "sha256": "ddfe38683d8c61cc47984e73274df718b8802831483c269f9cb5ae4e55d60e57",
+          "url": "https://github.com/ChurchCRM/CRM/blob/6e28f4bf35bab197a9823342cdf340e95a4b3b62/webpack/portal/volunteer-opportunities.ts",
+          "headings": []
+        },
+        {
+          "path": "src/ChurchCRM/model/ChurchCRM/VolunteerOpportunity.php",
+          "bytes": 491,
+          "sha256": "2ad09e2987596f4953bd4c77d973c69662c72741a67352f8775134010bbefa46",
+          "url": "https://github.com/ChurchCRM/CRM/blob/6e28f4bf35bab197a9823342cdf340e95a4b3b62/src/ChurchCRM/model/ChurchCRM/VolunteerOpportunity.php",
+          "headings": []
+        },
+        {
+          "path": ".agents/skills/churchcrm/git-workflow.md",
+          "bytes": 5423,
+          "sha256": "f5af52ec0e9d565d9102fd8c7e964ad796fd5db9ed5c7b18adb4c4a55d88dc53",
+          "url": "https://github.com/ChurchCRM/CRM/blob/6e28f4bf35bab197a9823342cdf340e95a4b3b62/.agents/skills/churchcrm/git-workflow.md",
+          "headings": [
+            "Git Workflow",
+            "Must",
+            "Commit freely, push only on approval",
+            "Mandatory Pre-Push Biome Check",
+            "Pre-Push Checkpoint Owns Local Deterministic Validation",
+            "After push"
+          ]
+        },
+        {
+          "path": ".agents/skills/churchcrm/marketing-visuals-pipeline.md",
+          "bytes": 20351,
+          "sha256": "19244937e8115790f60b93b9f3f4421245ee3c02c65c9da8c8b19505709f08f6",
+          "url": "https://github.com/ChurchCRM/CRM/blob/6e28f4bf35bab197a9823342cdf340e95a4b3b62/.agents/skills/churchcrm/marketing-visuals-pipeline.md"
+        }
+      ]
+    },
+    {
+      "repository": "crmeb/CRMEB",
+      "url": "https://github.com/crmeb/CRMEB.git",
+      "access": "accessible",
+      "description": "\ud83d\udd25CRMEB\u5f00\u6e90\u5546\u57ce\u514d\u8d39\u5f00\u6e90\u591a\u8bed\u8a00\u5546\u57ce\u7cfb\u7edf\uff0cTp6\u6846\u67b6\u5546\u57ce\uff0c\u7cfb\u7edf\u53ef\u5546\u7528\uff1b\u5305\u542b\u5c0f\u7a0b\u5e8f\u5546\u57ce\u3001H5\u5546\u57ce\u3001\u516c\u4f17\u53f7\u5546\u57ce\u3001PC\u5546\u57ce\u3001App\uff0c\u652f\u6301\u5206\u9500\u3001\u62fc\u56e2\u3001\u780d\u4ef7\u3001\u79d2\u6740\u3001\u4f18\u60e0\u5238\u3001\u79ef\u5206\u3001\u4f1a\u5458\u7b49\u7ea7\u3001\u5c0f\u7a0b\u5e8f\u76f4\u64ad\u3001\u9875\u9762DIY\uff0c\u524d\u540e\u7aef\u5206\u79bb\uff0c\u65b9\u4fbf\u4e8c\u5f00\uff0c\u66f4\u6709\u8be6\u7ec6\u4f7f\u7528\u6587\u6863\u3001\u63a5\u53e3\u6587\u6863\u3001\u6570\u636e\u5b57\u5178\u3001\u4e8c\u5f00\u6587\u6863/\u89c6\u9891\u6559\u7a0b\uff0c\u6b22\u8fce\u5927\u5bb6\u63d0\u51fa\u5b9d\u8d35\u610f\u89c1\u548c\u5efa\u8bae",
+      "license": "Apache-2.0",
+      "defaultBranch": "master",
+      "commit": "da8d3b93400f3c660aa54d38b54ada387c963cd9",
+      "treeTruncated": false,
+      "fileCount": 14287,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 20472,
+          "sha256": "be8bbcc34de805d937b8b282217758cb7775037ab460ba0c6c78593307116462",
+          "url": "https://github.com/crmeb/CRMEB/blob/da8d3b93400f3c660aa54d38b54ada387c963cd9/README.md",
+          "headings": [
+            "<div align=\"center\">",
+            "<div align=\"center\">",
+            "\ud83d\udcdd **Project Introduction**",
+            "\ud83d\udcdd **Theme Market**",
+            "docker one-click experience",
+            "Pull and run the CRMEB Docker image",
+            "Access service",
+            "\ud83e\udee7 Technical Features",
+            "\ud83d\udcd6 System Features",
+            "\ud83d\udcd6 UI Interface Display",
+            "\ud83d\udcd6 Backend Interface Display",
+            "\ud83d\udcf1 System Demo",
+            "\ud83d\udd10 **Operating environment**",
+            "\ud83d\udcfa **Development Environment and Technologies Used**",
+            "**Development environment\uff1a**",
+            "Back-end technology stack",
+            "Mobile technology stack",
+            "Admin End Technology Stack",
+            "PC End Technology Stack",
+            "Want a quick installation? The tutorial is here to help!",
+            "Development Documents\uff1a",
+            "\ud83d\udcde CRMEB Interaction",
+            "CRMEB Open Source Technology Exchange Group (Scan the code to join the group and get the open source version interface document, product function list, and mind map!) )",
+            "Technical community! Find methods, report bugs, check official news, and win active rewards!All are <a href=\"https://www.crmeb.com/ask/?from=giteephp\" target=\"_blank\">CRMEB Technology Community</a> Everything you need is available"
+          ]
+        },
+        {
+          "path": "crmeb/app/api/middleware/CustomerMiddleware.php",
+          "bytes": 1912,
+          "sha256": "2b94042705ecb6f2c40f23eb88ffee7e1a36eeeff84a56da86efe95bb9945023",
+          "url": "https://github.com/crmeb/CRMEB/blob/da8d3b93400f3c660aa54d38b54ada387c963cd9/crmeb/app/api/middleware/CustomerMiddleware.php",
+          "headings": []
+        },
+        {
+          "path": "template/uni-app/subpackage/diyComponents/customerService.vue",
+          "bytes": 2697,
+          "sha256": "ed6cbb40cab6d9e92d9532d8718b9f31d4b1981480d28b54a8d0a98316d7fa1b",
+          "url": "https://github.com/crmeb/CRMEB/blob/da8d3b93400f3c660aa54d38b54ada387c963cd9/template/uni-app/subpackage/diyComponents/customerService.vue",
+          "headings": []
+        },
+        {
+          "path": "crmeb/public/static/js/pages-extension-customer_list-chat.dae77ce8.js",
+          "bytes": 32730,
+          "sha256": "12857b450046ce5eaccf6ee2a573ec60798b5fc606676f7ba33f3345b65b7d80",
+          "url": "https://github.com/crmeb/CRMEB/blob/da8d3b93400f3c660aa54d38b54ada387c963cd9/crmeb/public/static/js/pages-extension-customer_list-chat.dae77ce8.js",
+          "headings": []
+        },
+        {
+          "path": "crmeb/vendor/phpoffice/phpexcel/Documentation/markdown/Overview/02-Architecture.md",
+          "bytes": 3737,
+          "sha256": "110ea7b8fd4573e0ff890ef71b091625edfb9d3b002358d779a5ba31ecf28597",
+          "url": "https://github.com/crmeb/CRMEB/blob/da8d3b93400f3c660aa54d38b54ada387c963cd9/crmeb/vendor/phpoffice/phpexcel/Documentation/markdown/Overview/02-Architecture.md",
+          "headings": [
+            "PHPExcel Developer Documentation",
+            "Architecture",
+            "Schematical",
+            "Lazy Loader",
+            "Spreadsheet in memory",
+            "Readers and writers",
+            "Fluent interfaces"
+          ]
+        },
+        {
+          "path": "template/admin/src/pages/order/invoice/index.vue",
+          "bytes": 18937,
+          "sha256": "046273db690cd57c58dac9c3793072ea9300a9e3ab7460201099033934812a57",
+          "url": "https://github.com/crmeb/CRMEB/blob/da8d3b93400f3c660aa54d38b54ada387c963cd9/template/admin/src/pages/order/invoice/index.vue"
+        },
+        {
+          "path": "crmeb/app/services/order/StoreOrderInvoiceServices.php",
+          "bytes": 15049,
+          "sha256": "7b6b414ab8da5d9bd38daad487e2abcb28ca6c7ad45ff536d401ff3c0721db34",
+          "url": "https://github.com/crmeb/CRMEB/blob/da8d3b93400f3c660aa54d38b54ada387c963cd9/crmeb/app/services/order/StoreOrderInvoiceServices.php"
+        }
+      ]
+    },
+    {
+      "repository": "idurar/idurar-erp-crm",
+      "url": "https://github.com/idurar/idurar-erp-crm.git",
+      "access": "accessible",
+      "description": "Free Open Source ERP CRM Software Accounting Invoicing | Node.Js React",
+      "license": "AGPL-3.0",
+      "defaultBranch": "master",
+      "commit": "e935dec13cf8b6082a7e7fc4736669e5151a80a3",
+      "treeTruncated": false,
+      "fileCount": 460,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 3822,
+          "sha256": "fb22038affb24c7371c38d3c5db7a0e35a97da6134b963848af7fb3e0d73d9d5",
+          "url": "https://github.com/idurar/idurar-erp-crm/blob/e935dec13cf8b6082a7e7fc4736669e5151a80a3/README.md",
+          "headings": [
+            "Features :",
+            "May i can use IDURAR for Commercial use :",
+            "Our Sponsors",
+            "<img width=\"1403\" alt=\"Open Source ERP CRM\" src=\"https://github.com/idurar/idurar-erp-crm/assets/136928179/a6712286-7ca6-4822-8902-fb7523533ee8\">",
+            "Free Open Source ERP / CRM App",
+            "Getting started",
+            "Contributing",
+            "Show your support",
+            "License",
+            "Maintainers"
+          ]
+        },
+        {
+          "path": "frontend/src/pages/Customer/config.js",
+          "bytes": 230,
+          "sha256": "d9454510ffeef31963120abb70de38a2e183a47d17ced345d5e79d8fe5daa8eb",
+          "url": "https://github.com/idurar/idurar-erp-crm/blob/e935dec13cf8b6082a7e7fc4736669e5151a80a3/frontend/src/pages/Customer/config.js",
+          "headings": []
+        },
+        {
+          "path": "features/zh_cn_\u514d\u8d39\u5f00\u6e90ERP CRM\u8f6f\u4ef6.md",
+          "bytes": 3239,
+          "sha256": "c1166d63634717eb109d65bb59b9dc0f4e529b15e23c27b617968b6589c07219",
+          "url": "https://github.com/idurar/idurar-erp-crm/blob/e935dec13cf8b6082a7e7fc4736669e5151a80a3/features/zh_cn_\u514d\u8d39\u5f00\u6e90ERP CRM\u8f6f\u4ef6.md",
+          "headings": [
+            "IDURAR \u5f00\u6e90 ERP & CRM \u8f6f\u4ef6",
+            "\u8f6f\u4ef6\u5806\u6808",
+            "\u7528\u6237\u7ba1\u7406:",
+            "\u5ba2\u6237\u5173\u7cfb\u7ba1\u7406 (CRM):",
+            "\u9500\u552e\u7ba1\u7406:",
+            "\u91c7\u8d2d\u7ba1\u7406:",
+            "\u5e93\u5b58\u7ba1\u7406:",
+            "\u8d22\u52a1\u7ba1\u7406:",
+            "\u9879\u76ee\u7ba1\u7406:",
+            "\u62a5\u544a\u548c\u5206\u6790:",
+            "\u96c6\u6210\u548c\u5b9a\u5236:",
+            "\u7528\u6237\u53cb\u597d\u754c\u9762:"
+          ]
+        },
+        {
+          "path": "backend/src/models/appModels/Invoice.js",
+          "bytes": 3109,
+          "sha256": "8dbe2e5ec87d20f0f35939bd69f200b8e64b4adedfd3301327738fc038ae7a97",
+          "url": "https://github.com/idurar/idurar-erp-crm/blob/e935dec13cf8b6082a7e7fc4736669e5151a80a3/backend/src/models/appModels/Invoice.js"
+        },
+        {
+          "path": "frontend/src/modules/InvoiceModule/Forms/InvoiceForm.jsx",
+          "bytes": 8635,
+          "sha256": "13212c998e4c2268953fee04ab28acbdc3d5f6b3037ef6237bcd29790d1c8eed",
+          "url": "https://github.com/idurar/idurar-erp-crm/blob/e935dec13cf8b6082a7e7fc4736669e5151a80a3/frontend/src/modules/InvoiceModule/Forms/InvoiceForm.jsx"
+        }
+      ]
+    },
+    {
+      "repository": "oroinc/crm",
+      "url": "https://github.com/oroinc/crm.git",
+      "access": "accessible",
+      "description": "Main OroCRM package with core functionality.",
+      "license": "NOASSERTION",
+      "defaultBranch": "master",
+      "commit": "29076068a5ae2ffe5ee51ae09c34ba74debbfa47",
+      "treeTruncated": false,
+      "fileCount": 1905,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 1351,
+          "sha256": "2241ca8596a93e4f5cd5aead2f54c30f85fe1b2322ecc64a5b0c5e44a8350cbd",
+          "url": "https://github.com/oroinc/crm/blob/29076068a5ae2ffe5ee51ae09c34ba74debbfa47/README.md",
+          "headings": [
+            "OroCRM",
+            "Installation"
+          ]
+        },
+        {
+          "path": "src/Oro/Bridge/CallCRM/OroCallCRMBridgeBundle.php",
+          "bytes": 135,
+          "sha256": "3af6d4ff8ab527df44afc06472cea49beec23c161ac5838e6f0f43fad7fddf29",
+          "url": "https://github.com/oroinc/crm/blob/29076068a5ae2ffe5ee51ae09c34ba74debbfa47/src/Oro/Bridge/CallCRM/OroCallCRMBridgeBundle.php",
+          "headings": []
+        },
+        {
+          "path": "src/Oro/Bundle/ContactBundle/OroContactBundle.php",
+          "bytes": 631,
+          "sha256": "e68ad80c931a09755dcf86b9d8d72d5edf5316381020f669a54c12ff1b731ac1",
+          "url": "https://github.com/oroinc/crm/blob/29076068a5ae2ffe5ee51ae09c34ba74debbfa47/src/Oro/Bundle/ContactBundle/OroContactBundle.php",
+          "headings": []
+        },
+        {
+          "path": "src/Oro/Bundle/ContactUsBundle/OroContactUsBundle.php",
+          "bytes": 619,
+          "sha256": "8bdf54c4150de19be50ee1a7163e2318459897060974aceb9712746c787da949",
+          "url": "https://github.com/oroinc/crm/blob/29076068a5ae2ffe5ee51ae09c34ba74debbfa47/src/Oro/Bundle/ContactUsBundle/OroContactUsBundle.php",
+          "headings": []
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/2_feature_request.md",
+          "bytes": 293,
+          "sha256": "26a26f9705c49e104cb43360803589bd8bc38734994e9a2fa3ed17b4804e8cf3",
+          "url": "https://github.com/oroinc/crm/blob/29076068a5ae2ffe5ee51ae09c34ba74debbfa47/.github/ISSUE_TEMPLATE/2_feature_request.md",
+          "headings": []
+        },
+        {
+          "path": "src/Oro/Bundle/ContactBundle/Entity/Contact.php",
+          "bytes": 34413,
+          "sha256": "0dd02532c14bf055a766b610849776e54e99228bc9baa6dcaa25c1273562c25c",
+          "url": "https://github.com/oroinc/crm/blob/29076068a5ae2ffe5ee51ae09c34ba74debbfa47/src/Oro/Bundle/ContactBundle/Entity/Contact.php"
+        },
+        {
+          "path": "LICENSE",
+          "bytes": 126,
+          "sha256": "79bb80a81717d2721653e6252f0b369915391ef924b5d8569359e1a9d9b11961",
+          "url": "https://github.com/oroinc/crm/blob/29076068a5ae2ffe5ee51ae09c34ba74debbfa47/LICENSE"
+        }
+      ]
+    },
+    {
+      "repository": "fatfreecrm/fat_free_crm",
+      "url": "https://github.com/fatfreecrm/fat_free_crm.git",
+      "access": "accessible",
+      "description": "Ruby on Rails CRM platform",
+      "license": "NOASSERTION",
+      "defaultBranch": "master",
+      "commit": "91595c40a6baaa70512296157aab4bd56009e9b5",
+      "treeTruncated": false,
+      "fileCount": 1107,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 6867,
+          "sha256": "b6cde27add550251807f08fcbda2bd355cf0750ab78949699c21c8fc8dfbb7f3",
+          "url": "https://github.com/fatfreecrm/fat_free_crm/blob/91595c40a6baaa70512296157aab4bd56009e9b5/README.md",
+          "headings": [
+            "Fat Free CRM [![Discord][discord-img-url]][discord-url]",
+            "An open source, Ruby on Rails [customer relationship management][crm-wiki] platform (CRM).",
+            "System Requirements",
+            "Installation",
+            "[Setup Linux or Mac OS](http://guides.fatfreecrm.com/Setup-Linux-or-Mac-OS)",
+            "[Setup Heroku](http://guides.fatfreecrm.com/Setup-Heroku)",
+            "[Setup Microsoft Windows](http://guides.fatfreecrm.com/Setup-Microsoft-Windows)",
+            "[Running Fat Free CRM as a Rails Engine](http://guides.fatfreecrm.com/Running-as-a-Rails-Engine)",
+            "Upgrading from previous versions of Fat Free CRM",
+            "Resources",
+            "For Developers",
+            "Main contributors",
+            "License"
+          ]
+        },
+        {
+          "path": "app/helpers/leads_helper.rb",
+          "bytes": 3482,
+          "sha256": "21d05b1a48c6bb0582fcae5f0903d993c5b7f903616ebe1fbaa0e2fa7694caad",
+          "url": "https://github.com/fatfreecrm/fat_free_crm/blob/91595c40a6baaa70512296157aab4bd56009e9b5/app/helpers/leads_helper.rb",
+          "headings": [
+            "frozen_string_literal: true",
+            "Copyright (c) 2008-2013 Michael Dvorkin and contributors.",
+            "# Fat Free CRM is freely distributable under the terms of MIT license.",
+            "See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php"
+          ]
+        },
+        {
+          "path": "lib/fat_free_crm/callback.rb",
+          "bytes": 5643,
+          "sha256": "cd94ec6d82432f51cdfe24b1227877f559810e6d3ac3c25b5e6549f9f85bf8c9",
+          "url": "https://github.com/fatfreecrm/fat_free_crm/blob/91595c40a6baaa70512296157aab4bd56009e9b5/lib/fat_free_crm/callback.rb",
+          "headings": [
+            "frozen_string_literal: true",
+            "Copyright (c) 2008-2013 Michael Dvorkin and contributors.",
+            "# Fat Free CRM is freely distributable under the terms of MIT license.",
+            "See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php"
+          ]
+        },
+        {
+          "path": "app/helpers/contacts_helper.rb",
+          "bytes": 2135,
+          "sha256": "3eb85b07b3d6514c01372134a0c99041f004ad03742bcc5dce23caf917302a75",
+          "url": "https://github.com/fatfreecrm/fat_free_crm/blob/91595c40a6baaa70512296157aab4bd56009e9b5/app/helpers/contacts_helper.rb",
+          "headings": [
+            "frozen_string_literal: true",
+            "Copyright (c) 2008-2013 Michael Dvorkin and contributors.",
+            "# Fat Free CRM is freely distributable under the terms of MIT license.",
+            "See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php"
+          ]
+        },
+        {
+          "path": "app/models/entities/opportunity.rb",
+          "bytes": 7992,
+          "sha256": "cfe6c73134c74a0e27201ffebf54aa6d171ff44720c71b9ab682558db0f08bda",
+          "url": "https://github.com/fatfreecrm/fat_free_crm/blob/91595c40a6baaa70512296157aab4bd56009e9b5/app/models/entities/opportunity.rb"
+        },
+        {
+          "path": "app/views/opportunities/_index_long.html.haml",
+          "bytes": 1119,
+          "sha256": "8651fae7d9c7bb55fd577a4eeac85ed198d12e917dc03875913d8b2fcb184adb",
+          "url": "https://github.com/fatfreecrm/fat_free_crm/blob/91595c40a6baaa70512296157aab4bd56009e9b5/app/views/opportunities/_index_long.html.haml"
+        },
+        {
+          "path": "MIT-LICENSE",
+          "bytes": 1095,
+          "sha256": "4c5401d8291b60f4db5ce2c255446bdac132e9ced8c9f5b86a152e3ec0987002",
+          "url": "https://github.com/fatfreecrm/fat_free_crm/blob/91595c40a6baaa70512296157aab4bd56009e9b5/MIT-LICENSE"
+        }
+      ]
+    },
+    {
+      "repository": "engralaminn-collab/alo-education-uk-final",
+      "url": "https://github.com/engralaminn-collab/alo-education-uk-final.git",
+      "access": "blocked",
+      "error": "gh: Resource not accessible by integration (HTTP 403)"
+    },
+    {
+      "repository": "engralaminn-collab/ukvi-ai-markting_n8n",
+      "url": "https://github.com/engralaminn-collab/ukvi-ai-markting_n8n.git",
+      "access": "blocked",
+      "error": "gh: Resource not accessible by integration (HTTP 403)"
+    },
+    {
+      "repository": "engralaminn-collab/Ai-Markting-crm",
+      "url": "https://github.com/engralaminn-collab/Ai-Markting-crm.git",
+      "access": "blocked",
+      "error": "gh: Resource not accessible by integration (HTTP 403)"
+    },
+    {
+      "repository": "domovinatv/sms.domovina.ai",
+      "url": "https://github.com/domovinatv/sms.domovina.ai.git",
+      "access": "accessible",
+      "description": "Free SMS gateway for domovina.ai \u2014 built on NdoleStudio/httpsms (git subtree), deployed via Coolify on Oracle Cloud ARM behind Cloudflare Tunnel.",
+      "license": null,
+      "defaultBranch": "main",
+      "commit": "51403b576e913d2eca56fd4836a7c14c60a5b09d",
+      "treeTruncated": false,
+      "fileCount": 489,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 9346,
+          "sha256": "2c9f7a333212b9ebd52dae4ba21503086cc2d7a4d240568ba01c7e7d7e33b86a",
+          "url": "https://github.com/domovinatv/sms.domovina.ai/blob/51403b576e913d2eca56fd4836a7c14c60a5b09d/README.md",
+          "headings": [
+            "sms.domovina.ai",
+            "What's in this repo",
+            "Architecture",
+            "Deploying the server",
+            "Building & releasing the Android app",
+            "Sideload to a connected device",
+            "Publish a GitHub release with the APK attached",
+            "Reverse OTP service",
+            "Upstream maintenance",
+            "Fetch the latest from NdoleStudio/httpsms into the httpsms/ folder",
+            "Filed upstream issues",
+            "License"
+          ]
+        },
+        {
+          "path": "webhook/index.ts",
+          "bytes": 2286,
+          "sha256": "1b768084e4f35c689c6124354046a69dd5f829c362761945ec8a0f15d682d3f0",
+          "url": "https://github.com/domovinatv/sms.domovina.ai/blob/51403b576e913d2eca56fd4836a7c14c60a5b09d/webhook/index.ts",
+          "headings": []
+        },
+        {
+          "path": "httpsms/README.md",
+          "bytes": 13276,
+          "sha256": "2420025822dd1023c595de465b6cf55b6b7d93c0b24510adc105d7a9ce1d63a4",
+          "url": "https://github.com/domovinatv/sms.domovina.ai/blob/51403b576e913d2eca56fd4836a7c14c60a5b09d/httpsms/README.md",
+          "headings": [
+            "httpSMS",
+            "Table Of Contents",
+            "Why?",
+            "Web UI",
+            "API",
+            "Android App",
+            "Chat/forum",
+            "Features",
+            "End-to-end Encryption",
+            "Webhook",
+            "Back Pressure",
+            "Message Expiration",
+            "API Clients",
+            "Flows",
+            "Sending an SMS Message",
+            "Self Host Setup - Docker",
+            "1. Setup Firebase",
+            "2. Setup SMTP Email service",
+            "3. Setup Cloudflare Turnstile",
+            "4. Download the code",
+            "5. Setup the environment variables",
+            "Cloudflare Turnstile site key from step 3",
+            "SMTP email server settings",
+            "Firebase service account credentials"
+          ]
+        },
+        {
+          "path": "webhook/src/app.ts",
+          "bytes": 18008,
+          "sha256": "5f1e5c771957c10b6d023269cd328641fb5da0bbced1d866caba0a937200a375",
+          "url": "https://github.com/domovinatv/sms.domovina.ai/blob/51403b576e913d2eca56fd4836a7c14c60a5b09d/webhook/src/app.ts"
+        }
+      ]
+    },
+    {
+      "repository": "NdoleStudio/httpsms",
+      "url": "https://github.com/NdoleStudio/httpsms.git",
+      "access": "accessible",
+      "description": "Send and receive SMS messages using your Android phone programmatically via a simple HTTP API",
+      "license": "AGPL-3.0",
+      "defaultBranch": "main",
+      "commit": "b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca",
+      "treeTruncated": false,
+      "fileCount": 554,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 13457,
+          "sha256": "6060784a03db84f6d8540c39260675c18a902550b7924910e6ca76f57c3c6dc6",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/README.md",
+          "headings": [
+            "httpSMS",
+            "Table Of Contents",
+            "Why?",
+            "Web UI",
+            "API",
+            "Android App",
+            "Chat/forum",
+            "Features",
+            "End-to-end Encryption",
+            "Webhook",
+            "Back Pressure",
+            "Message Expiration",
+            "API Clients",
+            "Flows",
+            "Sending an SMS Message",
+            "Self Host Setup - Docker",
+            "1. Setup Firebase",
+            "2. Setup SMTP Email service",
+            "3. Setup Cloudflare Turnstile",
+            "4. Download the code",
+            "5. Setup the environment variables",
+            "Cloudflare Turnstile site key from step 3",
+            "SMTP email server settings",
+            "Firebase service account credentials"
+          ]
+        },
+        {
+          "path": "api/pkg/entities/webhook.go",
+          "bytes": 992,
+          "sha256": "eaee8161eb921576afd7034213d442e02773b3a86ef17bbc3b59b7f6df31c7f8",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/entities/webhook.go",
+          "headings": []
+        },
+        {
+          "path": "api/pkg/handlers/message_handler.go",
+          "bytes": 25059,
+          "sha256": "2768def5bbf4dc9bad619fcd80d7123ecda95471ca632a0cbf3acea57e1e3ab5",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/handlers/message_handler.go",
+          "headings": []
+        },
+        {
+          "path": "api/pkg/handlers/webhook_handler.go",
+          "bytes": 8871,
+          "sha256": "4d71fd630b4a0c0eb703727a43d2cbde3d1ec075fc41213e17216d33716417e7",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/handlers/webhook_handler.go",
+          "headings": []
+        },
+        {
+          "path": "api/pkg/listeners/webhook_listener.go",
+          "bytes": 7913,
+          "sha256": "e6d97400614d616ecefd4177b8651bfa84f6698c1d2aca957acb14c56330d92d",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/listeners/webhook_listener.go"
+        },
+        {
+          "path": "api/pkg/services/webhook_service.go",
+          "bytes": 13657,
+          "sha256": "e9fc4abbc42615614da27c32737af5b50b6724e5f06885f51e682ea056090785",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/services/webhook_service.go"
+        },
+        {
+          "path": "api/pkg/events/message_phone_delivered_event.go",
+          "bytes": 784,
+          "sha256": "73fa8ca2b395a9a804158bc812fbd0e2c1d182f7bf0c3bccb51eb6277cc9d415",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_phone_delivered_event.go"
+        },
+        {
+          "path": "api/pkg/events/message_phone_received_event.go",
+          "bytes": 820,
+          "sha256": "6484d76ce173188779e2f930eefeb785b4727080a15216abe9d277693fdad121",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_phone_received_event.go"
+        },
+        {
+          "path": "api/pkg/events/message_phone_sending_event.go",
+          "bytes": 788,
+          "sha256": "de59eeb69bf083b6ca059497bc100f210b0080417551bf6eb4f1898d743c926c",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_phone_sending_event.go"
+        },
+        {
+          "path": "api/pkg/events/message_phone_sent_event.go",
+          "bytes": 751,
+          "sha256": "9961398c1f2f5f2d94f5ce73cebb5d85d6b721a80e2667e3890798ceaf8950b6",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_phone_sent_event.go"
+        },
+        {
+          "path": "api/pkg/events/message_send_expired_check_event.go",
+          "bytes": 561,
+          "sha256": "155b91dbe65c13ab9dd3093d2bcb6e113081c66413defba92ce6b209ffc7e6f8",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_send_expired_check_event.go"
+        },
+        {
+          "path": "api/pkg/events/message_send_expired_event.go",
+          "bytes": 950,
+          "sha256": "0b69fd7f1703b9504a0583fc023127a5ec7141f2d3b31215b9c507156826ce1e",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_send_expired_event.go"
+        },
+        {
+          "path": "api/pkg/events/message_send_failed_event.go",
+          "bytes": 835,
+          "sha256": "f00ecbe27e3294e621f6cea20cb87b12b64d23930b2067a47cdd13b4c0816a29",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_send_failed_event.go"
+        },
+        {
+          "path": "api/pkg/events/message_send_retry_event.go",
+          "bytes": 735,
+          "sha256": "f41b46393bd40ea1d171a2f4b8612f8426ae5a4ac16e08e968ee374d174c2829",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_send_retry_event.go"
+        },
+        {
+          "path": "api/pkg/events/message_send_schedule_deleted_event.go",
+          "bytes": 569,
+          "sha256": "781f47020ff18509c27f2be2518d97c62aec300458df8ce00c355ab2b88382e4",
+          "url": "https://github.com/NdoleStudio/httpsms/blob/b4527e8a572eb0d12ca1b75ad5ee2f25a94808ca/api/pkg/events/message_send_schedule_deleted_event.go"
+        }
+      ]
+    },
+    {
+      "repository": "NdoleStudio/httpsms-node",
+      "url": "https://github.com/NdoleStudio/httpsms-node.git",
+      "access": "accessible",
+      "description": "Node client for the httpSMS API https://httpsms.com",
+      "license": "MIT",
+      "defaultBranch": "main",
+      "commit": "0a6f5ee2de5680dd778ac1795270a11bc0778e54",
+      "treeTruncated": false,
+      "fileCount": 16,
+      "filesRead": [
+        {
+          "path": "readme.md",
+          "bytes": 2525,
+          "sha256": "f1e60eb96f041db0dccfcc31c9b1f5302218775d1ca70e15e40010b122d4b755",
+          "url": "https://github.com/NdoleStudio/httpsms-node/blob/0a6f5ee2de5680dd778ac1795270a11bc0778e54/readme.md",
+          "headings": [
+            "httpsms-node",
+            "Install",
+            "or",
+            "Implemented",
+            "Usage",
+            "Initializing the Client",
+            "Error handling",
+            "Messages",
+            "`POST /v1/messages/send`: Send an SMS Message",
+            "Encrypt an SMS message before sending",
+            "Testing",
+            "License"
+          ]
+        },
+        {
+          "path": "src/models.ts",
+          "bytes": 3096,
+          "sha256": "08125b9680a226f6ffc8c2bd25f83b3fba9c422fde82a36920869ec18a803413",
+          "url": "https://github.com/NdoleStudio/httpsms-node/blob/0a6f5ee2de5680dd778ac1795270a11bc0778e54/src/models.ts",
+          "headings": []
+        },
+        {
+          "path": "src/message-service.ts",
+          "bytes": 624,
+          "sha256": "b92eac2efe6d117b7ddb249f4955bdf5843ea9d007b7fdc3b74d488f4a22db28",
+          "url": "https://github.com/NdoleStudio/httpsms-node/blob/0a6f5ee2de5680dd778ac1795270a11bc0778e54/src/message-service.ts",
+          "headings": []
+        }
+      ]
+    },
+    {
+      "repository": "HM-RunningHub/ComfyUI_RH_APICall",
+      "url": "https://github.com/HM-RunningHub/ComfyUI_RH_APICall.git",
+      "access": "accessible",
+      "description": "This is a ComfyUI plugin that makes it easier to call and run workflows from RunningHub in your local ComfyUI setup.",
+      "license": null,
+      "defaultBranch": "main",
+      "commit": "8fc4f5482123fe416513392551d9ea5070fd2026",
+      "treeTruncated": false,
+      "fileCount": 25,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 2964,
+          "sha256": "ec4acb62368ed916acbd969ab6a639261754ca231cc2390fc787198b8b252e08",
+          "url": "https://github.com/HM-RunningHub/ComfyUI_RH_APICall/blob/8fc4f5482123fe416513392551d9ea5070fd2026/README.md",
+          "headings": [
+            "\u66f4\u65b0\u8bf4\u660e - [2025-10-15]\r",
+            "\u4e3b\u8981\u66f4\u65b0\r",
+            "\u66f4\u65b0\u8bf4\u660e - [2025-07-18]\r",
+            "\u66f4\u65b0\u8bf4\u660e - [2025-05-05]\r",
+            "\u4e3b\u8981\u66f4\u65b0\u4eae\u70b9\r",
+            "ComfyUI \u63d2\u4ef6\uff1a\u8c03\u7528\u548c\u6267\u884c RunningHub \u5de5\u4f5c\u6d41\r",
+            "\u53ef\u4ee5\u901a\u8fc7\u672c\u63d2\u4ef6\uff0c\u5c06RunningHub\u65b9\u4fbf\u7684\u63a5\u5165[Photoshop](https://github.com/NimaNzrii/comfyui-photoshop)\uff0c[\u53d8\u73b0\u5b9d](https://github.com/zhulu111/ComfyUI_Bxb) \u7b49\u5404\u79cd\u63d2\u4ef6\r",
+            "\u4f7f\u7528\u6b65\u9aa4\r",
+            "1. \u5b89\u88c5\u63d2\u4ef6\r",
+            "2. \u6ce8\u518c\u5e76\u83b7\u53d6 API Key\r",
+            "3. \u5728 ComfyUI \u4e2d\u8c03\u7528 RunningHub \u4e0a\u7684\u4e2a\u4eba\u5de5\u4f5c\u6d41\r",
+            "4. \u672c\u5730\u5de5\u4f5c\u6d41\u4e0eRunningHub\u5de5\u4f5c\u6d41\u8282\u70b9\u5bf9\u5e94\u5173\u7cfb\u4e0e\u914d\u7f6e\u8bf4\u660e\u3002\r",
+            "5. \u5b9e\u4f8b(\u5de5\u4f5c\u6d41json\u5728examples\u76ee\u5f55\u4e0b)\r",
+            "ALL IN One\r",
+            "\u6587\u751f\u56fe\uff1a\r",
+            "\u56fe\u751f\u56fe\uff1a\r",
+            "\u8fde\u63a5Photoshop\r"
+          ]
+        },
+        {
+          "path": "RH_ExecuteNode.py",
+          "bytes": 115612,
+          "sha256": "c21b8572f44b8b2494ed7e4b30c162c68a16c4b439ecf85843aacfa7eb0c96ae",
+          "url": "https://github.com/HM-RunningHub/ComfyUI_RH_APICall/blob/8fc4f5482123fe416513392551d9ea5070fd2026/RH_ExecuteNode.py"
+        },
+        {
+          "path": "RH_AudioUploader.py",
+          "bytes": 6048,
+          "sha256": "39eae13864dda8802afeae3430de6341f887e755c3e4f63da7fea7f104323cb9",
+          "url": "https://github.com/HM-RunningHub/ComfyUI_RH_APICall/blob/8fc4f5482123fe416513392551d9ea5070fd2026/RH_AudioUploader.py",
+          "headings": [
+            "Try importing folder_paths safely"
+          ]
+        },
+        {
+          "path": "RH_VideoUploader.py",
+          "bytes": 9366,
+          "sha256": "f3181ad5d0381e9add537cd8d4ce76a193c7395d7854704431d36ebdf3a4e49e",
+          "url": "https://github.com/HM-RunningHub/ComfyUI_RH_APICall/blob/8fc4f5482123fe416513392551d9ea5070fd2026/RH_VideoUploader.py",
+          "headings": [
+            "Try importing folder_paths safely for potential future use, though not strictly needed for this node's core logic",
+            "Mappings for ComfyUI",
+            "Moved to __init__.py typically, but included here for completeness if run standalone initially",
+            "NODE_CLASS_MAPPINGS = {",
+            "\"VideoUploaderNode_RH\": VideoUploaderNode",
+            "}",
+            "NODE_DISPLAY_NAME_MAPPINGS = {",
+            "\"VideoUploaderNode_RH\": \"RunningHub Video Uploader\"",
+            "} "
+          ]
+        },
+        {
+          "path": "RH_ImageUploaderNode.py",
+          "bytes": 7001,
+          "sha256": "844df2c1be0d5a89dadf3ba7fb6c01787642446993aa8242374471a3f11ab705",
+          "url": "https://github.com/HM-RunningHub/ComfyUI_RH_APICall/blob/8fc4f5482123fe416513392551d9ea5070fd2026/RH_ImageUploaderNode.py"
+        }
+      ]
+    },
+    {
+      "repository": "BelledonneCommunications/linphone-iphone",
+      "url": "https://github.com/BelledonneCommunications/linphone-iphone.git",
+      "access": "accessible",
+      "description": "Linphone is a free VoIP and video softphone based on the SIP protocol. Mirror of linphone-iphone (git://git.linphone.org/linphone-iphone.git)",
+      "license": "GPL-3.0",
+      "defaultBranch": "master",
+      "commit": "520d51addf408bec96670d105a014d8b7b83e6ec",
+      "treeTruncated": false,
+      "fileCount": 645,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 10505,
+          "sha256": "bc9b32d0b7b88762943b7912fe8651310b3148e862f879a3ccfe634faab71a1e",
+          "url": "https://github.com/BelledonneCommunications/linphone-iphone/blob/520d51addf408bec96670d105a014d8b7b83e6ec/README.md",
+          "headings": [
+            "License",
+            "Documentation",
+            "How can I contribute?",
+            "Help on translations",
+            "Report bugs and submit patchs",
+            "How to be a beta tester ?",
+            "Building the application",
+            "What's new",
+            "Building the app",
+            "Using a remote Linphone SDK (Optional)",
+            "Using a local linphone SDK (Optional)",
+            "MDM (Mobile Device Management) configuration",
+            "Testing MDM configuration",
+            "UI tests (end-to-end)",
+            "edit scripts/test-credentials.env, fill in LINPHONE_TEST_USERNAME /",
+            "LINPHONE_TEST_HA1 / LINPHONE_TEST_CONFIG_URI",
+            "Unit tests (MDMManager)"
+          ]
+        },
+        {
+          "path": "Linphone/Contacts/ContactsManager.swift",
+          "bytes": 28671,
+          "sha256": "224a2f5862782e841e8a0717124d7a606609b189f512328d6887e4c9fb20d095",
+          "url": "https://github.com/BelledonneCommunications/linphone-iphone/blob/520d51addf408bec96670d105a014d8b7b83e6ec/Linphone/Contacts/ContactsManager.swift",
+          "headings": []
+        },
+        {
+          "path": "Linphone/Utils/EditContactController.swift",
+          "bytes": 3414,
+          "sha256": "86756fc3e74acd40159726bf122132bb7fa0fb03e4305c4b8a6ae3741adca6f3",
+          "url": "https://github.com/BelledonneCommunications/linphone-iphone/blob/520d51addf408bec96670d105a014d8b7b83e6ec/Linphone/Utils/EditContactController.swift",
+          "headings": []
+        },
+        {
+          "path": "Linphone/UI/Call/CallView.swift",
+          "bytes": 65938,
+          "sha256": "7a3204420fc7c82744e5a2c95aa59d602ce9a9f5cf5fbeb86e752ca3f40bc3ef",
+          "url": "https://github.com/BelledonneCommunications/linphone-iphone/blob/520d51addf408bec96670d105a014d8b7b83e6ec/Linphone/UI/Call/CallView.swift",
+          "headings": []
+        }
+      ]
+    },
+    {
+      "repository": "0perationPrivacy/VoIP",
+      "url": "https://github.com/0perationPrivacy/VoIP.git",
+      "access": "accessible",
+      "description": "Web Base Telnyx/Twilio VoIP Interface enabling SMS, MMS and Voice calls using the providers API Keys and self-hosting the application.",
+      "license": "GPL-3.0",
+      "defaultBranch": "main",
+      "commit": "e4a3885e0c5891de126c5f0c1dde759b713666e8",
+      "treeTruncated": false,
+      "fileCount": 168,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 1023,
+          "sha256": "bdf77a6b99ba22fad8bb85d4edb1a369e9261561779536d8bdc0b6348187e5b8",
+          "url": "https://github.com/0perationPrivacy/VoIP/blob/e4a3885e0c5891de126c5f0c1dde759b713666e8/README.md",
+          "headings": []
+        },
+        {
+          "path": "app/routes/call.route.js",
+          "bytes": 1008,
+          "sha256": "8a5eb808ba7ad72c2e1bc45adddcb244956b58b1f2cffabffed6651a55589be9",
+          "url": "https://github.com/0perationPrivacy/VoIP/blob/e4a3885e0c5891de126c5f0c1dde759b713666e8/app/routes/call.route.js",
+          "headings": []
+        },
+        {
+          "path": "app/model/contact.model.js",
+          "bytes": 352,
+          "sha256": "de193b9cb68ecd38dc860da6293857a217bc33984b6a70dbe7ad6010ae00a8ea",
+          "url": "https://github.com/0perationPrivacy/VoIP/blob/e4a3885e0c5891de126c5f0c1dde759b713666e8/app/model/contact.model.js",
+          "headings": []
+        },
+        {
+          "path": "app/routes/contact.route.js",
+          "bytes": 617,
+          "sha256": "029a207da3182f2c29c778ee1258fd8b8d5e44467c6511381f06330aea227766",
+          "url": "https://github.com/0perationPrivacy/VoIP/blob/e4a3885e0c5891de126c5f0c1dde759b713666e8/app/routes/contact.route.js",
+          "headings": []
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/feature-request.md",
+          "bytes": 721,
+          "sha256": "346cceadcbda2127ef784fe1431fbec27f643092a1d7974505743d756b30e66c",
+          "url": "https://github.com/0perationPrivacy/VoIP/blob/e4a3885e0c5891de126c5f0c1dde759b713666e8/.github/ISSUE_TEMPLATE/feature-request.md",
+          "headings": []
+        },
+        {
+          "path": "app/controller/call.controller.js",
+          "bytes": 14478,
+          "sha256": "5f97e3cc6a3b64a56ff0b7c5330e6e6e03c77a12b3a1b5a098b1b5cc65c8ad7e",
+          "url": "https://github.com/0perationPrivacy/VoIP/blob/e4a3885e0c5891de126c5f0c1dde759b713666e8/app/controller/call.controller.js"
+        }
+      ]
+    },
+    {
+      "repository": "YutaroHayakawa/ipftrace2",
+      "url": "https://github.com/YutaroHayakawa/ipftrace2.git",
+      "access": "accessible",
+      "description": "A packet oriented Linux kernel function call tracer",
+      "license": "NOASSERTION",
+      "defaultBranch": "master",
+      "commit": "4bd7dcfbbd8b30b134b9b989d509bab479ea0df0",
+      "treeTruncated": false,
+      "fileCount": 73,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 7568,
+          "sha256": "a72728646747ccb9a3e261565814e2e3a72438d24c28d46425d6a3510fe469ea",
+          "url": "https://github.com/YutaroHayakawa/ipftrace2/blob/4bd7dcfbbd8b30b134b9b989d509bab479ea0df0/README.md",
+          "headings": [
+            "ipftrace2",
+            "Requirements",
+            "Install",
+            "Basic usage",
+            "Mark packets from/to 1.1.1.1",
+            "Feature highlight",
+            "Function tracer",
+            "Function graph tracer",
+            "Raw JSON output",
+            "Custom tracing output",
+            "Usage",
+            "Further reading"
+          ]
+        },
+        {
+          "path": "src/output_json.c",
+          "bytes": 1592,
+          "sha256": "5cc63f253d6063f3f37ca26a3cb9f714d878199a26f67077ff321a3e0bfb641a",
+          "url": "https://github.com/YutaroHayakawa/ipftrace2/blob/4bd7dcfbbd8b30b134b9b989d509bab479ea0df0/src/output_json.c"
+        },
+        {
+          "path": "docs/internals.md",
+          "bytes": 2498,
+          "sha256": "b60b30e02f0338fad52c018856877772e2dc30aea83eafaad67c4d357ee8f65e",
+          "url": "https://github.com/YutaroHayakawa/ipftrace2/blob/4bd7dcfbbd8b30b134b9b989d509bab479ea0df0/docs/internals.md"
+        },
+        {
+          "path": "LICENSE",
+          "bytes": 29,
+          "sha256": "7c588754d5e81e92e2a12e47cf78949d485c9c22b4850f12d21b3835c85947d1",
+          "url": "https://github.com/YutaroHayakawa/ipftrace2/blob/4bd7dcfbbd8b30b134b9b989d509bab479ea0df0/LICENSE"
+        }
+      ]
+    },
+    {
+      "repository": "developerspace-samples/VoIP-Call-Sample",
+      "url": "https://github.com/developerspace-samples/VoIP-Call-Sample.git",
+      "access": "accessible",
+      "description": "An android application that includes ConnectionService binding to handle incoming & outgoing calls. It helps to know the use ConnectionService in Android.",
+      "license": "Apache-2.0",
+      "defaultBranch": "master",
+      "commit": "6151e003e467cc3c5c569c84eca5452b9b8875bd",
+      "treeTruncated": false,
+      "fileCount": 477,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 2332,
+          "sha256": "53dbf5d1b9c24fcbcf4b42018c88154fa4b3b5ae86aafb966fb758e54f69be06",
+          "url": "https://github.com/developerspace-samples/VoIP-Call-Sample/blob/6151e003e467cc3c5c569c84eca5452b9b8875bd/README.md",
+          "headings": [
+            "VoIP-Call-Sample",
+            "Pre-requisites",
+            "Setup :hammer:"
+          ]
+        },
+        {
+          "path": "uikit/src/main/java/com/cometchat/pro/uikit/ui_resources/utils/CallUtils.java",
+          "bytes": 7590,
+          "sha256": "bf78f468f43902c80bbf00bdda03699a83125894b3a379a5716a00116df05929",
+          "url": "https://github.com/developerspace-samples/VoIP-Call-Sample/blob/6151e003e467cc3c5c569c84eca5452b9b8875bd/uikit/src/main/java/com/cometchat/pro/uikit/ui_resources/utils/CallUtils.java",
+          "headings": []
+        },
+        {
+          "path": "uikit/src/main/java/com/cometchat/pro/uikit/ui_components/calls/call_list/AllCall.java",
+          "bytes": 10555,
+          "sha256": "d47f50a433c9219f36be41cdaaf7458dd460755816ecd530ae98eedf127ce9b8",
+          "url": "https://github.com/developerspace-samples/VoIP-Call-Sample/blob/6151e003e467cc3c5c569c84eca5452b9b8875bd/uikit/src/main/java/com/cometchat/pro/uikit/ui_components/calls/call_list/AllCall.java",
+          "headings": []
+        },
+        {
+          "path": "uikit/src/main/java/com/cometchat/pro/uikit/ui_components/calls/call_list/MissedCall.java",
+          "bytes": 10288,
+          "sha256": "f805e9494144eaa970bba54ad6f31c86bfa7833969d0b2cce842581578354ef8",
+          "url": "https://github.com/developerspace-samples/VoIP-Call-Sample/blob/6151e003e467cc3c5c569c84eca5452b9b8875bd/uikit/src/main/java/com/cometchat/pro/uikit/ui_components/calls/call_list/MissedCall.java",
+          "headings": []
+        },
+        {
+          "path": "app/src/main/java/com/developerspace/voipcalling/utils/CallConnectionService.kt",
+          "bytes": 3262,
+          "sha256": "f9dd12a85435834dbdc7edef319f16cb2522f6744b5bb61f3a98325b66546f88",
+          "url": "https://github.com/developerspace-samples/VoIP-Call-Sample/blob/6151e003e467cc3c5c569c84eca5452b9b8875bd/app/src/main/java/com/developerspace/voipcalling/utils/CallConnectionService.kt"
+        }
+      ]
+    },
+    {
+      "repository": "sibnerian/electron-promise-ipc",
+      "url": "https://github.com/sibnerian/electron-promise-ipc.git",
+      "access": "accessible",
+      "description": "Promise-flavored IPC calls in Electron. 100% test coverage.",
+      "license": "MIT",
+      "defaultBranch": "master",
+      "commit": "72bb077904aec3113cf20b6924989670a2cb8999",
+      "treeTruncated": false,
+      "fileCount": 23,
+      "filesRead": [
+        {
+          "path": "README.md",
+          "bytes": 3879,
+          "sha256": "625982fa98c56eed87f8dc02ed348c65c316fdcb751b7592f13de94045a24c27",
+          "url": "https://github.com/sibnerian/electron-promise-ipc/blob/72bb077904aec3113cf20b6924989670a2cb8999/README.md",
+          "headings": [
+            "electron-promise-ipc",
+            "Promise-y IPC calls in Electron.",
+            "Installation",
+            "Usage",
+            "Preload",
+            "Advanced usage",
+            "Timeouts",
+            "Removing Listeners",
+            "License"
+          ]
+        },
+        {
+          "path": "src/index.ts",
+          "bytes": 513,
+          "sha256": "2f26a5434a2d2fb4ff35540f8ea552871e0f5e1dba04b9743849397cc580b2ba",
+          "url": "https://github.com/sibnerian/electron-promise-ipc/blob/72bb077904aec3113cf20b6924989670a2cb8999/src/index.ts",
+          "headings": []
+        },
+        {
+          "path": "src/renderer.ts",
+          "bytes": 813,
+          "sha256": "402ecb30241cd0c0ae879b48121221ce95253dabbfd6746cdc3a602de65ead7e",
+          "url": "https://github.com/sibnerian/electron-promise-ipc/blob/72bb077904aec3113cf20b6924989670a2cb8999/src/renderer.ts",
+          "headings": []
+        },
+        {
+          "path": "src/mainProcess.ts",
+          "bytes": 834,
+          "sha256": "99ed22cd7652293c33ea764cfcdd81da3f63741f14abd8c8b5f1a34377e71538",
+          "url": "https://github.com/sibnerian/electron-promise-ipc/blob/72bb077904aec3113cf20b6924989670a2cb8999/src/mainProcess.ts",
+          "headings": []
+        }
+      ]
+    }
+  ]
+}

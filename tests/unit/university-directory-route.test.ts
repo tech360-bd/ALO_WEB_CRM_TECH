@@ -13,6 +13,7 @@ vi.mock('@/lib/db', () => ({
   },
 }));
 
+import { publicUniversityWhere } from '@/lib/public-catalog';
 import { GET } from '@/app/api/course-finder/universities/route';
 
 beforeEach(() => {
@@ -42,7 +43,7 @@ describe('public university directory API', () => {
         status: 'active',
         verificationStatus: 'VERIFIED',
         publicationStatus: { in: ['published', 'PUBLISHED'] },
-        AND: [{ country: { in: ['United Kingdom'] } }],
+        AND: [publicUniversityWhere(), { country: { in: ['United Kingdom'] } }],
       }),
     }));
   });

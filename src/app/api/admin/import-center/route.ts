@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, AuthContext } from '@/lib/auth-middleware';
+import { allocateIdentifier } from '@/lib/identity/student-id';
 
 type OldCrmImportRow = {
   studentName?: string;
@@ -234,13 +235,8 @@ export const PATCH = withAuth(
       }
 
       if (action === 'approve') {
-        const year = new Date().getFullYear();
         let importedCount = 0;
         let skippedCount = 0;
-        const existingYearStudentCount = await db.portalStudentProfile.count({
-          where: { studentId: { startsWith: `AE-${year}` } },
-        });
-
         await db.$transaction(async (tx) => {
         for (const st of batch.students) {
           if (st.status === 'imported') continue;
@@ -260,7 +256,8 @@ export const PATCH = withAuth(
               continue;
             }
 
-            const studentCode = `AE-${year}${String(existingYearStudentCount + importedCount + 1).padStart(6, '0')}`;
+            // Allocated inside this transaction: a rollback releases the number, nothing is reused.
+            const studentCode = await allocateIdentifier(tx, 'AE');
 
             const newUser = await tx.portalUser.create({
               data: {

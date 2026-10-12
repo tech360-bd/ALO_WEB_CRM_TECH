@@ -37,7 +37,7 @@ describe('email OTP concurrent attempt accounting', () => {
     process.env.OTP_PEPPER = secret;
   });
 
-  it('uses a compare-and-increment for a wrong code', async () => {
+  it('uses a bounded atomic increment for a wrong code', async () => {
     mocks.db.otpCode.findFirst.mockResolvedValue(challenge(2));
     mocks.db.otpCode.updateMany.mockResolvedValue({ count: 1 });
 
@@ -45,7 +45,7 @@ describe('email OTP concurrent attempt accounting', () => {
 
     expect(consumed).toBe(false);
     expect(mocks.db.otpCode.updateMany).toHaveBeenCalledWith({
-      where: { id: 'otp-id', used: false, attempts: 2, expiresAt: expect.objectContaining({ gt: expect.any(Date) }) },
+      where: { id: 'otp-id', used: false, attempts: { lt: 5 }, expiresAt: expect.objectContaining({ gt: expect.any(Date) }) },
       data: { attempts: { increment: 1 } },
     });
   });
@@ -59,7 +59,7 @@ describe('email OTP concurrent attempt accounting', () => {
     await consumeEmailOtp({ userId: 'user-id', email, code: '000000' });
 
     expect(mocks.db.otpCode.updateMany).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      where: expect.objectContaining({ attempts: 4 }),
+      where: expect.objectContaining({ attempts: { lt: 5 } }),
       data: { attempts: { increment: 1 } },
     }));
     expect(mocks.db.otpCode.updateMany).toHaveBeenNthCalledWith(2, {
@@ -68,7 +68,7 @@ describe('email OTP concurrent attempt accounting', () => {
     });
   });
 
-  it('does not overwrite a newer attempt count after another request wins the race', async () => {
+  it('does not overwrite a locked or consumed challenge', async () => {
     mocks.db.otpCode.findFirst.mockResolvedValue(challenge(1));
     mocks.db.otpCode.updateMany.mockResolvedValue({ count: 0 });
 
@@ -76,7 +76,7 @@ describe('email OTP concurrent attempt accounting', () => {
 
     expect(mocks.db.otpCode.updateMany).toHaveBeenCalledTimes(1);
     expect(mocks.db.otpCode.updateMany).toHaveBeenCalledWith(expect.objectContaining({
-      where: expect.objectContaining({ attempts: 1 }),
+      where: expect.objectContaining({ attempts: { lt: 5 } }),
       data: { attempts: { increment: 1 } },
     }));
   });

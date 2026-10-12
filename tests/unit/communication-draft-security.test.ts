@@ -32,7 +32,8 @@ vi.mock('@/lib/db', () => ({
 import { POST as createDraft } from '@/app/api/communications/drafts/route';
 import { PATCH as updateDraft } from '@/app/api/communications/drafts/[id]/route';
 
-const staff = { userId: 'staff-1', userType: 'COUNSELOR', roles: ['COUNSELOR'], permissions: [], name: 'Counselor', email: 'staff@example.test' };
+// Canonical administrator test only. Counselor workflows are deliberately blocked pending domain-aware UCC ownership.
+const staff = { identityDomain:'user', userId: 'staff-1', userType: 'ADMIN', roles: ['ADMIN'], permissions: [], name: 'Counselor', email: 'staff@example.test' };
 const existingDraft = { id: 'draft-1', createdBy: 'staff-1', studentId: null, leadId: null, applicationId: null, channel: 'WHATSAPP', status: 'DRAFT', mode: 'AI_DRAFT_HUMAN_SEND', riskLevel: 'LOW', riskFlags: '[]', draftBody: 'Hello', approvedBy: null, createdAt: new Date('2026-01-01T00:00:00Z') };
 
 beforeEach(() => {
