@@ -370,10 +370,10 @@ describe('K3 /api/source-logs and /api/data-quality permissions and side effects
   });
 
   it('error responses do not leak driver messages', async () => {
-    (m.db.dataQualityScore.findMany as any).mockImplementationOnce(() => { throw new Error('mysql://user:secret@host'); });
+    (m.db.dataQualityScore.findMany as any).mockImplementationOnce(() => { throw new Error('mysql://user:password@host'); });
     const res = await dataQualityGET(req('/api/data-quality'));
     expect(res.status).toBe(500);
-    expect(await res.text()).not.toContain('secret');
+    expect(await res.text()).not.toContain('mysql://');
   });
 });
 

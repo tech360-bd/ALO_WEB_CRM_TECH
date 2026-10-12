@@ -58,10 +58,10 @@ describe('/api/destinations/[slug]', () => {
   });
 
   it('does not leak database error details', async () => {
-    m.countryFindFirst.mockRejectedValue(new Error('mysql://user:secret@db'));
+    m.countryFindFirst.mockRejectedValue(new Error('mysql://user:password@db'));
     const res = await GET(new Request('http://x/api/destinations/uk'), params('uk'));
     expect(res.status).toBe(500);
-    expect(JSON.stringify(await res.json())).not.toContain('secret');
+    expect(JSON.stringify(await res.json())).not.toContain('mysql://');
   });
 });
 
