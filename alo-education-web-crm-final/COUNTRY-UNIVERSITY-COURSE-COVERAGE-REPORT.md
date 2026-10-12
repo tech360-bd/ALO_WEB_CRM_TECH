@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — NOT A SOURCE OF TRUTH** (labelled 2026-10-12).
+> Unsupported: Lists a "Current Verified Seed Count" per country (e.g. United Kingdom: 9). No verification evidence or database query supports these counts; none of the coverage floors (140 UK / 20 per country) is met by verified data.
+> See AUDIT/historical-catalogue-reports-2026-10-12/README.md.
+
 # 🌍 COUNTRY, UNIVERSITY & COURSE COVERAGE REPORT — ALO EDUCATION
 
 This report provides the master audit for international study destination coverage, university thresholds, degree level spectrums, ranking provider integration, and data ingestion governance for ALO Education.

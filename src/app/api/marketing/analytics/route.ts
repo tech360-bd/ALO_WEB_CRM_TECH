@@ -1,3 +1,4 @@
+import { leadAccess } from '@/lib/crm/lead-access';
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { withAuth, AuthContext } from "@/lib/auth-middleware";
@@ -11,6 +12,8 @@ export const dynamic = "force-dynamic";
 
 // GET — unified analytics across all marketing channels + CRM pipeline
 export const GET = withAuth(async (_req: Request, _auth: AuthContext) => {
+  const leadScope = leadAccess(_auth);
+  if (!leadScope) return NextResponse.json({ error: 'Verified User lead access required' }, { status: 403 });
   const [
     inboxMessages,
     campaignPosts,
@@ -23,7 +26,7 @@ export const GET = withAuth(async (_req: Request, _auth: AuthContext) => {
   ] = await Promise.all([
     db.socialInboxMessage.findMany({ take: 500, orderBy: { receivedAt: "desc" } }).catch(() => []),
     db.campaignPost.findMany({}).catch(() => []),
-    db.marketingLead.findMany({ take: 1000 }).catch(() => []),
+    db.marketingLead.findMany({ where: leadScope.where, take: 1000 }).catch(() => []),
     db.leadOutreach.findMany({ take: 500 }).catch(() => []),
     db.marketingCalendar.findMany({ take: 500 }).catch(() => []),
     db.keywordTrigger.findMany({}).catch(() => []),

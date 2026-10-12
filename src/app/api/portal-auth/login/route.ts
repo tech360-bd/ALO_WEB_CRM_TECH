@@ -55,6 +55,7 @@ async function setPageSessionCookie(response: NextResponse, user: { id: string; 
 
   const token = await encode({
     token: {
+      identityDomain: 'portal',
       sub: user.id,
       id: user.id,
       email: user.email,
@@ -66,13 +67,16 @@ async function setPageSessionCookie(response: NextResponse, user: { id: string; 
     maxAge: 7 * 24 * 60 * 60,
   });
   const secure = process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https://');
-  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', token, {
+  // Navigation hint is not a NextAuth User credential and must not be
+  // erased by NextAuth's rejection/cleanup of foreign-domain cookies.
+  response.cookies.set('alo_page_session', token, {
     httpOnly: true,
     secure,
     sameSite: 'lax',
     path: '/',
     maxAge: 7 * 24 * 60 * 60,
   });
+  response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', '', {httpOnly:true,secure,sameSite:'lax',path:'/',maxAge:0});
   return response;
 }
 

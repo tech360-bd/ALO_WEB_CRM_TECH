@@ -1,0 +1,62 @@
+[
+  {
+    "requestedRepository": "engralaminn-collab/alo-education-uk-final",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "full_name": null,
+    "default_branch": null,
+    "permissions": null,
+    "branches": null
+  },
+  {
+    "requestedRepository": "engralaminn-collab/alo-education-last",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "full_name": null,
+    "default_branch": null,
+    "permissions": null,
+    "branches": null
+  },
+  {
+    "requestedRepository": "engralaminn-collab/alo-ukvi-ai-markting-platform-copy",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "full_name": null,
+    "default_branch": null,
+    "permissions": null,
+    "branches": null
+  },
+  {
+    "requestedRepository": "engralaminn-collab/ALO-Education_LAST-TRY",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "full_name": null,
+    "default_branch": null,
+    "permissions": null,
+    "branches": null
+  },
+  {
+    "requestedRepository": "engralaminn-collab/ukvi-ai-markting_n8n",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "full_name": null,
+    "default_branch": null,
+    "permissions": null,
+    "branches": null
+  },
+  {
+    "requestedRepository": "engralaminn-collab/Ai-Markting-crm",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "full_name": null,
+    "default_branch": null,
+    "permissions": null,
+    "branches": null
+  }
+]

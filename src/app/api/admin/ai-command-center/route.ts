@@ -2,13 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import fs from 'fs';
-import path from 'path';
 
 const execAsync = promisify(exec);
 const BASE_DIR = process.cwd();
-const SCHEMA_PATH = path.join(BASE_DIR, 'prisma', 'schema.prisma');
-const BACKUP_PATH = '/tmp/schema.prisma.backup';
+
+/**
+ * Schema mutation over HTTP is permanently disabled (2026-10-12 safety
+ * remediation). These actions used to rewrite prisma/schema.prisma, run
+ * `prisma generate`, and apply the schema with a data-loss-authorizing push.
+ * Schema changes must go through a reviewed migration applied with
+ * `prisma migrate deploy` after backup and release approval.
+ */
+const DISABLED_SCHEMA_ACTIONS = new Set(['approve-plan', 'rollback']);
+
+function schemaMutationDisabled() {
+  return NextResponse.json(
+    {
+      success: false,
+      code: 'SCHEMA_MUTATION_DISABLED',
+      error: 'Schema changes cannot be applied from the AI Command Center. Use a reviewed Prisma migration with backup and release approval.',
+      logs: 'Disabled: no files, schema or database were changed.',
+    },
+    { status: 503 },
+  );
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -114,8 +131,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden. Super Admin access required.' }, { status: 403 });
     }
 
-    const body = await req.json();
-    const { action, command, planId } = body;
+    const body = await req.json().catch(() => ({}));
+    const { action, command } = body ?? {};
+
+    // Disabled for every caller, including Super Admin. Nothing below this
+    // point can write the schema file or run Prisma schema commands.
+    if (DISABLED_SCHEMA_ACTIONS.has(String(action))) return schemaMutationDisabled();
 
     // --- Action 1: Execute Terminal Commands ---
     if (action === 'execute-terminal') {
@@ -193,107 +214,11 @@ export async function POST(req: NextRequest) {
         };
       }
 
-      return NextResponse.json({ success: true, plan });
-    }
-
-    // --- Action 3: Approve & Execute Plan ---
-    if (action === 'approve-plan') {
-      if (!planId) return NextResponse.json({ error: 'planId is required' }, { status: 400 });
-
-      // Backup schema file
-      if (fs.existsSync(SCHEMA_PATH)) {
-        fs.copyFileSync(SCHEMA_PATH, BACKUP_PATH);
-      }
-
-      let fileModified = false;
-      let logs = '';
-
-      try {
-        if (planId === 'add-source-column') {
-          let schemaContent = fs.readFileSync(SCHEMA_PATH, 'utf-8');
-          // Add crmSource column right after status String @default("new")
-          if (!schemaContent.includes('crmSource')) {
-            schemaContent = schemaContent.replace(
-              'status          String    @default("new")',
-              'status          String    @default("new")\n  crmSource       String    @default("CommandCenter")'
-            );
-            fs.writeFileSync(SCHEMA_PATH, schemaContent, 'utf-8');
-            fileModified = true;
-            logs += 'Modified prisma/schema.prisma. Added crmSource column.\n';
-          } else {
-            logs += 'crmSource column already exists in schema.prisma.\n';
-          }
-        } else if (planId === 'add-qualified-status') {
-          let schemaContent = fs.readFileSync(SCHEMA_PATH, 'utf-8');
-          if (!schemaContent.includes('isQualified')) {
-            schemaContent = schemaContent.replace(
-              'status          String    @default("new")',
-              'status          String    @default("new")\n  isQualified     Boolean   @default(false)'
-            );
-            fs.writeFileSync(SCHEMA_PATH, schemaContent, 'utf-8');
-            fileModified = true;
-            logs += 'Modified prisma/schema.prisma. Added isQualified column.\n';
-          } else {
-            logs += 'isQualified column already exists in schema.prisma.\n';
-          }
-        }
-
-        // Run validation gates
-        if (fileModified) {
-          logs += 'Validating schema...\n';
-          await execAsync('npx prisma validate', { cwd: BASE_DIR });
-
-          logs += 'Generating prisma client...\n';
-          await execAsync('npx prisma generate', { cwd: BASE_DIR });
-
-          logs += 'Running database push...\n';
-          await execAsync('npx prisma db push --accept-data-loss', { cwd: BASE_DIR });
-
-          logs += 'Running quality checks (Typecheck)...\n';
-          await execAsync('npx tsc --noEmit --skipLibCheck', { cwd: BASE_DIR });
-
-          logs += 'Running quality checks (Linter)...\n';
-          await execAsync('npm run lint', { cwd: BASE_DIR });
-
-          logs += 'Running tests...\n';
-          await execAsync('npx vitest run', { cwd: BASE_DIR });
-        }
-
-        return NextResponse.json({
-          success: true,
-          logs: logs + 'Quality gates PASSED. Code modification deployed successfully.',
-        });
-      } catch (err: any) {
-        logs += `Error occurred: ${err.message}\nReverting changes...\n`;
-        // Rollback
-        if (fs.existsSync(BACKUP_PATH)) {
-          fs.copyFileSync(BACKUP_PATH, SCHEMA_PATH);
-          await execAsync('npx prisma generate', { cwd: BASE_DIR });
-          logs += 'Rollback completed. Restored schema.prisma and generated types.\n';
-        }
-        return NextResponse.json({
-          success: false,
-          logs,
-          error: err.message,
-        });
-      }
-    }
-
-    // --- Action 4: Manual Rollback ---
-    if (action === 'rollback') {
-      if (fs.existsSync(BACKUP_PATH)) {
-        fs.copyFileSync(BACKUP_PATH, SCHEMA_PATH);
-        await execAsync('npx prisma generate', { cwd: BASE_DIR });
-        return NextResponse.json({
-          success: true,
-          logs: 'Database schema successfully rolled back to previous checkpoint.',
-        });
-      } else {
-        return NextResponse.json({
-          success: false,
-          logs: 'No backup checkpoint found to rollback.',
-        });
-      }
+      // Preview text only. Applying a plan is disabled (see DISABLED_SCHEMA_ACTIONS).
+      return NextResponse.json({
+        success: true,
+        plan: { ...plan, applyDisabled: true, applyDisabledReason: 'Preview only. Schema and code changes must go through a reviewed migration or pull request.' },
+      });
     }
 
     return NextResponse.json({ error: 'Invalid action parameter' }, { status: 400 });

@@ -11,6 +11,7 @@ import RegisterPage from '@/components/auth/RegisterPage';
 import { AccountSuspended, AccountPending, Unauthorized } from '@/components/auth/AuthStatusPages';
 import ForgotPasswordPage from '@/components/auth/ForgotPasswordPage';
 import ResetPasswordPage from '@/components/auth/ResetPasswordPage';
+import VerifyEmailPage from '@/app/verify-email/page';
 
 // ---- Public Website Homepage ----
 
@@ -203,7 +204,7 @@ function PublicView({ view }: { view: PortalView }) {
     case 'unauthorized': return <Unauthorized />;
     case 'forgot-password': return <ForgotPasswordPage />;
     case 'reset-password': return <ResetPasswordPage />;
-    case 'verify-otp': return <ResetPasswordPage />;
+    case 'verify-otp': return <VerifyEmailPage />;
     case 'website': return <PublicHomepage />;
     // Public sub-pages
     case 'public-consultation': return <PublicConsultationPage />;

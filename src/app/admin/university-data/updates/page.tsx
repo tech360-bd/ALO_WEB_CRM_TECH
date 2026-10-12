@@ -43,6 +43,9 @@ export default function UniversityUpdatesCenter() {
       if (res.ok) {
         const json = await res.json();
         setUpdates(json.updates || []);
+      } else {
+        const json = await res.json();
+        setMessage({ type: 'error', text: json.error || 'Unable to load proposals' });
       }
     } catch (err) {
       console.error(err);
@@ -87,7 +90,7 @@ export default function UniversityUpdatesCenter() {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
-        setMessage({ type: 'success', text: 'Update approved!' });
+        setMessage({ type: 'success', text: 'Proposal reviewed, not verified or published. Official field evidence is still required.' });
         fetchUpdates();
       }
     } catch (err: any) {
@@ -104,6 +107,9 @@ export default function UniversityUpdatesCenter() {
       if (res.ok) {
         setMessage({ type: 'success', text: 'Update published to live Course Finder and catalog!' });
         fetchUpdates();
+      } else {
+        const json = await res.json();
+        setMessage({ type: 'error', text: json.error || 'Action unavailable' });
       }
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
@@ -119,6 +125,9 @@ export default function UniversityUpdatesCenter() {
       if (res.ok) {
         setMessage({ type: 'success', text: 'Update rejected.' });
         fetchUpdates();
+      } else {
+        const json = await res.json();
+        setMessage({ type: 'error', text: json.error || 'Action unavailable' });
       }
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
@@ -136,7 +145,7 @@ export default function UniversityUpdatesCenter() {
             </div>
             <div>
               <h1 className="text-2xl font-bold">Weekly AI University Update Center</h1>
-              <p className="text-gray-400 text-sm">Super Admin Change Detection, Provenance Review & Atomic Publishing</p>
+              <p className="text-gray-400 text-sm">Human proposal review — official verification and publication remain required</p>
             </div>
           </div>
         </div>
@@ -173,14 +182,14 @@ export default function UniversityUpdatesCenter() {
         </div>
         <div className="text-xs text-blue-200">
           <p className="font-semibold text-white text-sm">Human-in-the-Loop AI Architecture Active</p>
-          <p className="mt-0.5">The Weekly Research Agent verifies official university URLs and flags diffs. No changes are published automatically without Super Admin approval.</p>
+          <p className="mt-0.5">This queue contains unverified proposals. Legacy scan and publication actions are unavailable until official field-level evidence and versioned publication are implemented.</p>
         </div>
       </div>
 
       {/* Table */}
       <Card className="bg-[#0d1526] border-white/10 text-white">
         <CardHeader className="p-4 border-b border-white/10">
-          <CardTitle className="text-base font-semibold">Pending Update Requests ({updates.length})</CardTitle>
+          <CardTitle className="text-base font-semibold">Review Queue ({updates.length})</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -247,7 +256,7 @@ export default function UniversityUpdatesCenter() {
                                 className="bg-blue-600 hover:bg-blue-700 text-white"
                               >
                                 <Check className="w-3.5 h-3.5 mr-1" />
-                                Approve
+                                Review Only
                               </Button>
                               <Button
                                 size="sm"

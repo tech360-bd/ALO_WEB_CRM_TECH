@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   crmCourses: vi.fn(),
   crmUniversities: vi.fn(),
   guides: vi.fn(),
+  conflicts: vi.fn(),
 }));
 vi.mock('@/lib/db', () => ({
   db: {
@@ -18,6 +19,9 @@ vi.mock('@/lib/db', () => ({
     crmCourse: { findMany: mocks.crmCourses },
     crmUniversity: { findMany: mocks.crmUniversities },
     contentAsset: { findMany: mocks.guides },
+    // Phase 1 review: the sitemap now applies the shared public catalogue
+    // policy, which excludes slugs named by open DataConflict rows.
+    dataConflict: { findMany: mocks.conflicts },
   },
 }));
 
@@ -33,6 +37,7 @@ describe('database-backed sitemap generation', () => {
     mocks.crmCourses.mockResolvedValue([]);
     mocks.crmUniversities.mockResolvedValue([]);
     mocks.guides.mockResolvedValue([]);
+    mocks.conflicts.mockResolvedValue([]);
   });
 
   it('is intentionally rendered at request time', () => {
@@ -54,9 +59,10 @@ describe('database-backed sitemap generation', () => {
   it('includes published database routes and removes duplicate URLs', async () => {
     const updatedAt = new Date('2026-10-08T00:00:00Z');
     mocks.blogs.mockResolvedValue([{ slug: 'visa-guide', updatedAt }, { slug: 'visa-guide', updatedAt }]);
-    mocks.courses.mockResolvedValue([{ slug: 'data-science', updatedAt }]);
+    // Phase 1 review: catalogue pages need an https source URL to be listed.
+    mocks.courses.mockResolvedValue([{ slug: 'data-science', updatedAt, sourceUrl: 'https://www.auckland.ac.nz/en/study.html' }]);
     mocks.scholarships.mockResolvedValue([{ slug: 'merit-award', updatedAt }]);
-    mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt }]);
+    mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt, sourceUrl: 'https://www.auckland.ac.nz/en.html' }]);
 
     const entries = await sitemap();
     expect(entries.filter((entry) => entry.url.endsWith('/blog/visa-guide'))).toHaveLength(1);

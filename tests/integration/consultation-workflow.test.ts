@@ -4,26 +4,20 @@ import { describe, it, expect, afterAll } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
 
-// CI safety: this file requires a real (disposable, NEVER production) MySQL database.
-// Without DATABASE_URL the whole file is skipped and reported as skipped — not passed.
-// Run with: DATABASE_URL="mysql://localhost:3306/test" npm test
-// Guard matches the documented contract above: only a MySQL URL counts as a
-// test DB (a sqlite `file:` dev URL cannot run this suite's native client).
-const HAS_TEST_DB = Boolean(process.env.DATABASE_URL?.startsWith('mysql://'));
-const db = HAS_TEST_DB ? new PrismaClient() : (undefined as unknown as PrismaClient);
-
-beforeAll(async () => {
-  if (!HAS_TEST_DB) return;
-  // Ensure clean state
-  await db.leadForm.deleteMany({});
-  await db.searchLog.deleteMany({});
-  await db.internalComment.deleteMany({});
-  await db.portalNotification.deleteMany({});
-  await db.portalAuditLog.deleteMany({});
-  // Clean up any leftover test users from previous runs
-  await db.portalUser.deleteMany({ where: { email: { contains: 'test@example.com' } } });
-  await db.portalUser.deleteMany({ where: { email: { contains: '@example.com' }, NOT: { email: { in: ['rahim@example.com', 'admin@alo-education.local'] } } } });
-});
+import { testDatabaseUrl } from '../helpers/test-database';
+const databaseUrl = testDatabaseUrl();
+const HAS_TEST_DB = Boolean(databaseUrl);
+const client = databaseUrl ? new PrismaClient({ datasourceUrl: databaseUrl }) : null;
+const runId = `consultation-${randomUUID()}`;
+const ids = {
+  lead: () => `${runId}-${randomUUID()}`,
+  user: `${runId}-user`, audit: `${runId}-audit`, notification: `${runId}-notification`,
+};
+function requireClient(): PrismaClient {
+  if (!client) throw new Error('Disposable test database required');
+  return client;
+}
+// No table-wide cleanup. Only exact IDs/prefix created by this invocation.
 
 afterAll(async () => {
   if (!client) return;

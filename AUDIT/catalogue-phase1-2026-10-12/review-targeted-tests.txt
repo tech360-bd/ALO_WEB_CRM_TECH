@@ -1,0 +1,42 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 /home/user/alo_education_z....ai
+
+ ✓ tests/unit/catalogue-phase1-review-publication.test.ts (17 tests) 71ms
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > creates an UNVERIFIED DRAFT with only supplied values, and it is not publicly visible
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > refuses to create without the identifying fields instead of inventing them
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > rejects AI payloads that try to set verification or publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > rejects AI payloads that try to set verification or publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > rejects AI payloads that try to set verification or publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > an AI update to a VERIFIED published page downgrades it and takes it out of publication
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+stderr | tests/unit/catalogue-phase1-review-writes.test.ts > P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails > an unsupported target fails instead of reporting a fake deployment
+[ai-command.execute PATCH] executor unavailable: primary executor failed
+
+ ✓ tests/unit/catalogue-phase1-review-writes.test.ts (28 tests) 307ms
+ ✓ tests/unit/catalogue-phase1-real-auth.test.ts (9 tests) 88ms
+stderr | tests/unit/catalogue-phase1-security.test.ts > K3 /api/source-logs and /api/data-quality permissions and side effects > error responses do not leak driver messages
+[data-quality] error Error
+
+ ✓ tests/unit/catalogue-phase1-security.test.ts (23 tests) 104ms
+ ✓ tests/unit/sitemap-db-runtime.test.ts (3 tests) 21ms
+ ✓ tests/unit/catalogue-phase1-proxy.test.ts (4 tests) 8ms
+
+ Test Files  6 passed (6)
+      Tests  84 passed (84)
+   Start at  06:12:22
+   Duration  3.41s (transform 882ms, setup 73ms, import 1.66s, tests 599ms, environment 1ms)
+

@@ -1,31 +1,12 @@
-// ============================================================
-// Electron promise IPC (sibnerian/electron-promise-ipc)
-// For desktop counselor app wrapping the web CRM (Electron)
-// Renderer ↔ Main with promise, instead of callback `ipcRenderer.on`
-// ============================================================
-
-export async function setupMainIpc(mainWindow?: any){
-  try {
-    // @ts-ignore - electron is optional, only available in desktop app
-    const { ipcMain } = await import('electron');
-    // expose `alo:crm-call` that renderer can `await ipcRenderer.invoke('alo:crm-call', { to })`
-    ipcMain.handle('alo:crm-call', async (_e:any, args:{ to:string })=>{
-      const { clickToCall } = await import('@/lib/softphone-engine');
-      return clickToCall('desktop', args.to);
-    });
-    ipcMain.handle('alo:sms-send', async (_e:any, args:{ to:string; message:string })=>{
-      const { sendSms } = await import('@/lib/sms-gateway');
-      return sendSms({ to: args.to, message: args.message, provider:'httpsms' });
-    });
-  } catch { /* not in Electron — no-op for web */ }
+/** The web deployment does not ship an Electron main/preload application.
+ * Do not install unauthenticated IPC handlers that directly send paid SMS or
+ * calls. A future desktop bridge must validate senderFrame/origin and call the
+ * authenticated HTTP APIs with the user's session, not server transports.
+ */
+export async function setupMainIpc(_mainWindow?: unknown) {
+  return { available: false, status: 'not_configured' as const,
+    reason: 'No audited Electron preload/main bridge is installed. Use authenticated web APIs.' };
 }
-
-export async function invokeMain<T>(channel: string, args:any): Promise<T>{
-  try {
-    // @ts-ignore - electron is optional, only available in desktop app
-    const { ipcRenderer } = await import('electron');
-    return await ipcRenderer.invoke(channel, args);
-  } catch {
-    throw new Error(`Electron IPC not available in browser (channel ${channel}) — fallback to HTTP API`);
-  }
+export async function invokeMain<T>(_channel: string, _args: unknown): Promise<T> {
+  throw new Error('Electron IPC is unavailable. Use the authenticated web interface.');
 }

@@ -1,4 +1,6 @@
-# ALO Education — Hostinger Production Deployment (authoritative)
+# ALO Education — Hostinger Production Deployment (repository contract)
+
+> Post-audit 2026-10-11: actual Hostinger account settings and current platform requirements remain NOT VERIFIED. See `POST-AUDIT-STAGING-VERIFICATION.md`. RELEASE HOLD; no automatic deployment or main merge is authorized. Branch mappings below describe the intended contract, not live evidence.
 
 This is the single authoritative deployment document. Where any other file in
 this repository disagrees with it, this file wins and the other file is
@@ -224,15 +226,11 @@ It has been corrected in place to the expression-default form Prisma itself
 emits (`DEFAULT (_utf8mb4'{}')`). Correcting the file was the only option: a
 later migration cannot repair a migration that aborts the chain.
 
-**If this migration is already recorded as applied on production**, Prisma will
-refuse the next `migrate deploy` with a checksum mismatch. Resolve it, after
-confirming the tables really do exist:
-
-```bash
-npx prisma migrate status                                   # confirm what is recorded
-npx prisma migrate resolve --applied 20261002010000_reconciliation_missing_tables
-npx prisma migrate deploy
-```
+**If recorded migration checksums differ from these files, STOP.** Compare the
+migration ledger, original applied SQL and actual schema on an isolated restored
+copy. `migrate resolve --applied` is not a generic repair for editing an already
+applied migration. Do not change the ledger, mark a migration applied, or deploy
+until a database owner has reviewed and approved a recovery plan and restore test.
 
 ---
 

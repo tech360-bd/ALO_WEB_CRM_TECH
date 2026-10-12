@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getOptionalAuth } from '@/lib/auth-middleware';
-import { publicCourseIdentifierWhere, publicCourseWhere, stripInternalFields } from '@/lib/public-catalog';
+import { publicCourseIdentifierWhere, publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere, stripInternalFields } from '@/lib/public-catalog';
 
 export async function GET(
   request: NextRequest,
@@ -63,15 +63,15 @@ export async function GET(
           },
         },
         intakeFees: {
-          ...(!isPrivileged ? { where: { status: 'active', verificationStatus: 'VERIFIED' } } : {}),
+          ...(!isPrivileged ? { where: publicIntakeWhere() } : {}),
           orderBy: [{ intakeYear: 'asc' }, { intakeMonth: 'asc' }],
         },
         requirements: {
-          ...(!isPrivileged ? { where: { verificationStatus: 'VERIFIED' } } : {}),
+          ...(!isPrivileged ? { where: publicRequirementWhere() } : {}),
         },
         scholarshipRecords: {
           where: !isPrivileged
-            ? { status: 'active', verificationStatus: { in: ['VERIFIED', 'verified'] } }
+            ? publicScholarshipWhere()
             : { status: 'active' },
         },
         // Commission data is internal: only staff/admin roles receive it.
@@ -119,6 +119,8 @@ export async function GET(
           },
         },
         intakeFees: {
+          ...(!isPrivileged ? { where: publicIntakeWhere() } : {}),
+          orderBy: [{ intakeYear: 'asc' }, { intakeMonth: 'asc' }],
           take: 1,
           select: {
             yearlyTuition: true,

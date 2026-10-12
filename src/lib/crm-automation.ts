@@ -7,6 +7,7 @@ import { measureAutomation, readAutomationBuckets } from '@/lib/automation-measu
  */
 
 import { db } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
 
 // ─── Lead Scoring ──────────────────────────────────────────────
 
@@ -82,16 +83,18 @@ export async function scoreLead(leadId: string): Promise<LeadScoreResult> {
 
 // ─── Counselor Auto-Assignment ──────────────────────────────────
 
-export async function autoAssignCounselor(leadId: string): Promise<{ counselorId: string | null; reason: string }> {
-  const lead = await db.lead.findUnique({ where: { id: leadId } });
+export async function autoAssignCounselor(leadId: string, tx?: Prisma.TransactionClient): Promise<{ counselorId: string | null; reason: string }> {
+  const client = tx ?? db;
+  const lead = await client.lead.findUnique({ where: { id: leadId } });
   if (!lead) return { counselorId: null, reason: "Lead not found" };
   if (lead.counselorId) return { counselorId: lead.counselorId, reason: "Already assigned" };
 
   // Find counselors with least active leads
-  const counselors = await db.user.findMany({
+  const counselors = await client.user.findMany({
     where: {
       role: { in: ["COUNSELOR", "BRANCH_MANAGER", "ADMIN", "SUPER_ADMIN"] },
       status: "ACTIVE",
+      emailVerified: true,
     },
     select: { id: true, name: true, role: true },
   });
@@ -102,7 +105,7 @@ export async function autoAssignCounselor(leadId: string): Promise<{ counselorId
   const leadCounts = await Promise.all(
     counselors.map(async (c) => ({
       ...c,
-      activeLeads: await db.lead.count({
+      activeLeads: await client.lead.count({
         where: {
           counselorId: c.id,
           status: { in: ["NEW", "CONTACTED", "QUALIFIED"] },
@@ -134,17 +137,18 @@ export async function autoAssignCounselor(leadId: string): Promise<{ counselorId
   const assigned = pool[0];
   const reason = `Auto-assigned to ${assigned.name} (${assigned.role}) — least workload (${assigned.activeLeads} active leads)`;
 
-  await db.lead.update({
-    where: { id: leadId },
-    data: {
-      counselorId: assigned.id,
-      assignedReason: reason,
-      status: lead.status === "NEW" ? "CONTACTED" : lead.status,
-    },
-  });
+  const assignmentData = { counselorId: assigned.id, assignedReason: reason,
+    status: tx ? lead.status : lead.status === "NEW" ? "CONTACTED" : lead.status };
+  if (tx) {
+    // Do not overwrite a simultaneous staff assignment or workflow change.
+    const claim = await tx.lead.updateMany({ where: { id: leadId, counselorId: null, status: lead.status }, data: assignmentData });
+    if (claim.count !== 1) throw new Error('Lead assignment changed. Retry verification.');
+  } else {
+    await client.lead.update({ where: { id: leadId }, data: assignmentData });
+  }
 
   // Create timeline event
-  await db.timelineEvent.create({
+  const recordTimeline = client.timelineEvent.create({
     data: {
       studentId: "",
       leadId: lead.id,
@@ -154,10 +158,12 @@ export async function autoAssignCounselor(leadId: string): Promise<{ counselorId
       description: reason,
       meta: JSON.stringify({ counselorId: assigned.id, counselorName: assigned.name, automated: true }),
     },
-  }).catch(() => {});
+  });
+  if (tx) await recordTimeline;
+  else await recordTimeline.catch(() => {});
 
-  // Log metric
-  await incrementMetric("assignment", "automated");
+  // Legacy metrics are not part of a registration transaction.
+  if (!tx) await incrementMetric("assignment", "automated");
 
   return { counselorId: assigned.id, reason };
 }

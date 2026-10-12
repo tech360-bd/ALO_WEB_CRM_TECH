@@ -2,58 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
 import { checkRateLimit } from '@/lib/rate-limiter';
+import { leadAccess } from '@/lib/crm/lead-access';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 
-const ADMIN_ROLES = new Set(['SUPER_ADMIN', 'ADMIN']);
-const CREATE_ROLES = new Set([
-  'COUNSELOR', 'SENIOR_COUNSELOR', 'MARKETING', 'MARKETING_MANAGER',
-  'FRONT_DESK', 'BRANCH_MANAGER', 'OFFICE_MANAGER',
-]);
-const TEAM_SCOPE_ROLES = new Set(['BRANCH_MANAGER', 'OFFICE_MANAGER', 'HR_MANAGER']);
-
-function normalizeRole(value: string): string {
-  return value.trim().replace(/[\s-]+/g, '_').toUpperCase();
-}
-
-function uniqueIds(values: Array<string | null | undefined>): string[] {
-  return [...new Set(values.map((value) => value?.trim()).filter((value): value is string => Boolean(value)))];
-}
-
-function sameOriginForCookieMutation(request: NextRequest): boolean {
-  const authorization = request.headers.get('authorization') || '';
-  const bearerToken = authorization.startsWith('Bearer ') ? authorization.slice(7).trim() : '';
-  const hasBearer = Boolean(bearerToken && bearerToken !== 'null' && bearerToken !== 'undefined');
-  if (hasBearer) return true;
-  const origin = request.headers.get('origin');
-  if (!origin) return false;
-  try {
-    return new URL(origin).origin === new URL(request.url).origin;
-  } catch {
-    return false;
-  }
-}
-
-async function authorizeEmployee(request: NextRequest): Promise<
-  | { auth: AuthContext; roles: Set<string>; employee: { id: string; userId: string; employeeId: string; status: string; branch: string } | null; isAdmin: boolean }
-  | NextResponse
-> {
-  const authResult = await authenticateRequest(request);
-  if (authResult instanceof NextResponse) return authResult;
-  const auth = authResult as AuthContext;
-  const roles = new Set([auth.userType, ...auth.roles].map(normalizeRole));
-  const isAdmin = [...roles].some((role) => ADMIN_ROLES.has(role));
-  if (['STUDENT', 'PARTNER'].includes(normalizeRole(auth.userType)) && !isAdmin) {
-    return NextResponse.json({ success: false, error: 'Employee access is required.' }, { status: 403 });
-  }
-
-  const employee = await db.employee.findUnique({
-    where: { userId: auth.userId },
-    select: { id: true, userId: true, employeeId: true, status: true, branch: true, role: true },
-  });
-  if (!isAdmin && (!employee || employee.status.toLowerCase() !== 'active')) {
-    return NextResponse.json({ success: false, error: 'An active employee record is required.' }, { status: 403 });
-  }
-  if (employee?.role) roles.add(normalizeRole(employee.role));
-  return { auth, roles, employee, isAdmin };
+async function authorizeEmployee(request: NextRequest) {
+  const auth = await authenticateRequest(request);
+  if (auth instanceof NextResponse) return auth;
+  const access = leadAccess(auth);
+  if (!access) return NextResponse.json({ success: false, error: 'Verified User lead access is required.' }, { status: 403 });
+  return { auth, access };
 }
 
 function parseLimit(value: string | null): number | null {
@@ -67,18 +24,14 @@ export async function GET(request: NextRequest) {
   try {
     const access = await authorizeEmployee(request);
     if (access instanceof NextResponse) return access;
-    const { auth, roles, employee, isAdmin } = access;
+    const { auth, access: leadScope } = access;
     const params = new URL(request.url).searchParams;
-    const scope = params.get('scope') || 'assigned';
-    if (!['assigned', 'team', 'all'].includes(scope)) {
-      return NextResponse.json({ success: false, error: 'Invalid lead scope.' }, { status: 400 });
+    const scope = params.get('scope') || 'created';
+    if (['assigned', 'team'].includes(scope)) {
+      return NextResponse.json({ success: false, code: 'ASSIGNMENT_MAPPING_UNVERIFIED', error: 'Assignment/team identity mapping is unverified. Use the created-leads view.' }, { status: 409 });
     }
-    if (scope === 'all' && !isAdmin) {
-      return NextResponse.json({ success: false, error: 'Organization-wide lead access is not permitted.' }, { status: 403 });
-    }
-    if (scope === 'team' && !isAdmin && (![...roles].some((role) => TEAM_SCOPE_ROLES.has(role)) || !employee?.branch.trim())) {
-      return NextResponse.json({ success: false, error: 'Branch-scoped lead access is not assigned.' }, { status: 403 });
-    }
+    if (!['created', 'all'].includes(scope)) return NextResponse.json({ success: false, error: 'Invalid lead scope.' }, { status: 400 });
+    if (scope === 'all' && !leadScope.admin) return NextResponse.json({ success: false, error: 'Organization-wide lead access is not permitted.' }, { status: 403 });
 
     const limit = parseLimit(params.get('limit'));
     if (limit == null) return NextResponse.json({ success: false, error: 'Limit must be an integer from 1 to 100.' }, { status: 400 });
@@ -91,18 +44,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Search text is invalid or too long.' }, { status: 400 });
     }
 
-    let where: any = {};
-    if (scope !== 'all') {
-      let assignedIds = uniqueIds([auth.userId, employee?.id, employee?.userId, employee?.employeeId]);
-      if (scope === 'team' && !isAdmin && employee) {
-        const team = await db.employee.findMany({
-          where: { branch: employee.branch, status: { in: ['active', 'ACTIVE'] } },
-          select: { id: true, userId: true, employeeId: true },
-        });
-        assignedIds = uniqueIds(team.flatMap((item) => [item.id, item.userId, item.employeeId]));
-      }
-      where.counselorId = { in: assignedIds };
-    }
+    const where: any = scope === 'all' ? {} : { createdById: auth.userId };
     if (status) where.status = status;
     if (search) {
       where.OR = [
@@ -116,24 +58,19 @@ export async function GET(request: NextRequest) {
       db.marketingLead.count({ where }),
       db.marketingLead.findMany({ where, orderBy: { createdAt: 'desc' }, take: limit }),
     ]);
-    return NextResponse.json({ success: true, total, leads: leads.map((lead) => ({ ...lead, fullName: lead.name })) });
+    return NextResponse.json({ success: true, scopeApplied: scope, total, leads: leads.map((lead) => ({ ...lead, fullName: lead.name })) });
   } catch {
     return NextResponse.json({ success: false, error: 'Employee leads are temporarily unavailable.' }, { status: 503 });
   }
 }
 
 export async function POST(request: NextRequest) {
-  if (!sameOriginForCookieMutation(request)) {
-    return NextResponse.json({ success: false, error: 'A same-origin request or explicit bearer authorization is required.' }, { status: 403 });
-  }
-
   try {
     const access = await authorizeEmployee(request);
     if (access instanceof NextResponse) return access;
-    const { auth, roles, isAdmin } = access;
-    if (!isAdmin && ![...roles].some((role) => CREATE_ROLES.has(role))) {
-      return NextResponse.json({ success: false, error: 'Lead creation is not permitted for this employee role.' }, { status: 403 });
-    }
+    const { auth, access: leadScope } = access;
+    if (!mutationOriginAllowed(request, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
+    if (!leadScope.writable) return NextResponse.json({ success: false, error: 'Lead creation permission required.' }, { status: 403 });
 
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
     const rate = checkRateLimit(`${auth.userId}:${ip}`, 'lead_create');
@@ -149,6 +86,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'A valid request body is required.' }, { status: 400 });
     }
     const input = body as Record<string, unknown>;
+    const allowed = ['fullName', 'name', 'phone', 'email', 'destination', 'country', 'level', 'intake'];
+    if (Object.keys(input).some(key => !allowed.includes(key))) return NextResponse.json({ success: false, error: 'Unsupported lead fields; ownership and assignment cannot be submitted.' }, { status: 400 });
     const leadName = typeof input.fullName === 'string' ? input.fullName.trim() : typeof input.name === 'string' ? input.name.trim() : '';
     const phone = typeof input.phone === 'string' ? input.phone.trim() : '';
     const email = typeof input.email === 'string' ? input.email.trim().toLowerCase() : '';
@@ -180,19 +119,18 @@ export async function POST(request: NextRequest) {
           level,
           intake,
           source: 'employee_direct_contact',
-          counselorId: auth.userId,
-          counselorName: auth.name,
+          createdById: auth.userId,
+          consent: false,
           status: 'new',
         },
       });
-      await tx.crmAuditLog.create({
+      await tx.portalAuditLog.create({
         data: {
           actorUserId: auth.actorUserId || auth.userId,
-          actorRole: auth.roles[0] || auth.userType,
           action: 'LEAD_CREATED',
-          targetCollection: 'MarketingLead',
-          targetId: created.id,
-          afterData: JSON.stringify({ assignedCounselorId: auth.userId, source: 'employee_direct_contact' }),
+          entityType: 'MarketingLead',
+          entityId: created.id,
+          metadata: JSON.stringify({ identityDomain: auth.identityDomain, effectiveUserId: auth.userId, source: 'employee_direct_contact' }),
         },
       });
       return created;

@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — labelled 2026-10-12 (safety remediation).** Kept for history only; do not cite as evidence.
+> Unsupported claims in this file: 'production-ready implementation' and the 'certifies that' statements are self-declarations with no test, review or deployment evidence attached.
+> Current evidence-based status: `AUDIT/course-finder-2026-10-12/` and `AUDIT/historical-catalogue-reports-2026-10-12/README.md`.
+
 # 🔍 REFERENCE FUNCTION AUDIT — ALO EDUCATION
 
 This document provides a comprehensive audit comparing functional concepts analyzed from three industry reference platforms against ALO Education's original, production-ready implementation.

@@ -1,4 +1,5 @@
 'use client';
+import SeoEvidencePanel from './SeoEvidencePanel';
 
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -116,7 +117,10 @@ const vitalColor = (s: string) => {
   return 'bg-red-500';
 };
 
-export default function CrmSeoTechnicalAudit() {
+export default function CrmSeoTechnicalAudit() { return <SeoEvidencePanel mode="technical"/>; }
+
+/** Historical design fixture, deliberately not rendered as operational evidence. */
+function LegacyUnverifiedCrmSeoTechnicalAudit() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const overallScore = 72;
   const circumference = 2 * Math.PI * 54;

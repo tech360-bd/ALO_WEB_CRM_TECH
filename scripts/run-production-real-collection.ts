@@ -3,6 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
+// HISTORICAL — PERMANENTLY DISABLED (2026-10-12 safety remediation).
+console.error('[run-production-real-collection.ts] DISABLED: historical one-off that bulk-updates CrmCourse/CrmCourseIntakeFee verificationStatus in the database and writes repo-root master CSV/JSON files. Database changes need a reviewed, approved plan. No files or database rows were changed.');
+process.exit(1);
+
 const db = new PrismaClient();
 
 // Helper to escape CSV values

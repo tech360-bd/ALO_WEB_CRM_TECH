@@ -11,14 +11,27 @@ export interface BrandKit {
   cta: string; // #F97316
 }
 
+function parseAsset(value?: string): Record<string, unknown> {
+  try { const parsed = JSON.parse(value || '{}'); return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {}; } catch { return {}; }
+}
+function safeText(value: unknown, max: number): string { return typeof value === 'string' && value.length <= max && !/[\x00-\x1f]/.test(value) ? value.trim() : ''; }
+function safeUrl(value: unknown): string {
+  if (typeof value !== 'string' || value.length > 2048) return '';
+  if (/^\/(?!\/)[a-zA-Z0-9/_.-]+$/.test(value) && !value.split('/').includes('..')) return value;
+  try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password ? url.toString() : ''; } catch { return ''; }
+}
+function safePhone(value: unknown): string { return typeof value === 'string' && /^\+[1-9]\d{7,14}$/.test(value) ? value : ''; }
+function safeColor(value: unknown): string { return typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value) ? value : ''; }
+
 export async function getBrandKit(): Promise<BrandKit> {
+  // Never imprint invented contact details when brand settings are unavailable.
   const fallback: BrandKit = {
     logoUrl: "",
     logoName: "",
-    address: "House 12, Road 12, Dhanmondi, Dhaka-1209, Bangladesh",
-    phone: "+8809611-123456",
-    whatsapp: "+8801712345678",
-    website: "https://alo-education.com",
+    address: "",
+    phone: "",
+    whatsapp: "",
+    website: "",
     primary: "#2563EB",
     cta: "#F97316",
   };
@@ -26,20 +39,16 @@ export async function getBrandKit(): Promise<BrandKit> {
     const assets = await db.brandAsset.findMany({ where: { isActive: true } });
     const logo = assets.find(a => a.assetType === "LOGO");
     const kit = assets.find(a => a.assetType === "BRAND_KIT");
-    let kitVal: any = {};
-    if (kit) try { kitVal = JSON.parse(kit.value || "{}"); } catch {}
-    let logoVal: any = {};
-    if (logo) try { logoVal = JSON.parse(logo.value || "{}"); } catch {}
-    // support both value.fileUrl or value.url
+    const kitVal = parseAsset(kit?.value);
+    const logoVal = parseAsset(logo?.value);
     return {
-      logoUrl: kitVal.logoUrl || logoVal.fileUrl || logoVal.url || fallback.logoUrl,
-      logoName: kitVal.logoName || logo?.name || fallback.logoName,
-      address: kitVal.address || fallback.address,
-      phone: kitVal.phone || fallback.phone,
-      whatsapp: kitVal.whatsapp || fallback.whatsapp,
-      website: kitVal.website || fallback.website,
-      primary: kitVal.primary || fallback.primary,
-      cta: kitVal.cta || fallback.cta,
+      logoUrl: safeUrl(kitVal.logoUrl) || safeUrl(logoVal.fileUrl) || safeUrl(logoVal.url),
+      logoName: safeText(kitVal.logoName, 120) || safeText(logo?.name, 120),
+      address: safeText(kitVal.address, 240),
+      phone: safePhone(kitVal.phone), whatsapp: safePhone(kitVal.whatsapp),
+      website: safeUrl(kitVal.website),
+      primary: safeColor(kitVal.primary) || fallback.primary,
+      cta: safeColor(kitVal.cta) || fallback.cta,
     };
   } catch {
     return fallback;
@@ -66,5 +75,5 @@ export const SIZE_MATRIX: Record<string, { w: number; h: number; label: string; 
 
 export function promptWithBrand(basePrompt: string, kit: BrandKit, size: string) {
   const overlay = composeBrandOverlayText(kit);
-  return `${basePrompt}\n\nBrand requirements (must follow): ALO Education logo at bottom-right 8% padding, footer bar ${kit.primary} with white text: "${overlay}". Address only on BLOG/LANDSCAPE. Size ${size}. Professional, clean, student-focused, Bangladesh audience. Do not guarantee visa.`;
+  return `${basePrompt}\n\nBrand requirements (must follow): ${kit.logoUrl ? 'Use the configured ALO logo at bottom-right with 8% padding' : 'No verified logo supplied: use the ALO Education name, do not invent a logo'}, footer bar ${kit.primary} with white text: "${overlay}". Address only on BLOG/LANDSCAPE. Size ${size}. Professional, clean, student-focused, Bangladesh audience. Do not guarantee visa.`;
 }

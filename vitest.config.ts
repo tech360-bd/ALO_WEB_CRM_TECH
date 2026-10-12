@@ -8,6 +8,7 @@ import { resolve } from 'path';
 export default defineConfig({
   test: {
     environment: 'node',
+    setupFiles: ['tests/helpers/database-test-setup.ts'],
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.mjs', 'tests/integration/**/*.test.ts'],
     exclude: ['tests/e2e/**', 'node_modules/**'],
     globals: true,

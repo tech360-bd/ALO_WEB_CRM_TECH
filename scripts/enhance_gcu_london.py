@@ -7,7 +7,11 @@ https://www.gcu.ac.uk/study/courses/msc-international-management-and-business-de
 Adds all required info like same for all universities.
 """
 import csv, json, pathlib
-ROOT = pathlib.Path("/home/user/alo_education_z....ai")
+import sys as _alo_sys, pathlib as _alo_pathlib
+_alo_sys.path.insert(0, str(_alo_pathlib.Path(__file__).resolve().parent / "lib"))
+from synthetic_output_guard import require_synthetic_output_dir
+# SYNTHETIC GENERATOR: reads and writes only under ALO_SYNTHETIC_OUTPUT_DIR (fixtures/staging); never the repo root.
+ROOT = require_synthetic_output_dir("enhance_gcu_london")
 
 # GCU London real courses extracted from fetches
 GCU_LONDON_COURSES = [

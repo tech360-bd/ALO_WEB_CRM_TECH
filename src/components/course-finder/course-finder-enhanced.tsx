@@ -306,8 +306,8 @@ function HeroSection({
             Find Your Perfect Course with ALO Education
           </h1>
           <p className="mt-4 text-white/80 text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl">
-            Explore thousands of verified courses from top universities across the UK, USA, Canada, Australia,
-            Ireland, New Zealand, and Europe. Get matched based on your profile or browse manually.
+            Search published course records and see each one's verification status and last-checked date.
+            Get matched based on your profile or browse manually.
           </p>
         </div>
         <div className="mt-8 max-w-5xl">
@@ -354,7 +354,7 @@ function HeroSection({
             </Button>
           </div>
           <div className="mt-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-            <p className="text-white/60 text-xs">Over 5,000+ courses from 150+ verified universities worldwide</p>
+            <p className="text-white/60 text-xs">Only records that pass source verification are shown; counts depend on the live catalogue.</p>
             <Button className="h-9 px-4 text-xs font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={onCounsellor}>
               <Phone className="size-3.5 mr-1.5" />Talk to a Counsellor
             </Button>

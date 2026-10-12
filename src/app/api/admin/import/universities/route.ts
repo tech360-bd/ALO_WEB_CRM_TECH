@@ -1,22 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 
 export async function POST(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
-      const isAuthorized = auth.roles.some((r) => ['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(r));
+      const isAuthorized = ['user', 'portal'].includes(auth.identityDomain || '') && ['ADMIN', 'SUPER_ADMIN'].includes(auth.userType.toUpperCase());
       if (!isAuthorized) {
         return NextResponse.json({ success: false, error: 'UNAUTHORIZED: Admin authority required' }, { status: 403 });
       }
 
-      const body = await req.json();
+      if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required' }, { status: 403 });
+      const body = await req.json().catch(() => null);
+      if (!body || typeof body !== 'object') return NextResponse.json({ success: false, error: 'Invalid import body' }, { status: 400 });
       const { rows, dryRun } = body;
 
-      if (!Array.isArray(rows) || rows.length === 0) {
-        return NextResponse.json({ success: false, error: 'Rows array is required' }, { status: 400 });
+      if (!Array.isArray(rows) || rows.length === 0 || rows.length > 500) {
+        return NextResponse.json({ success: false, error: 'Provide between 1 and 500 rows' }, { status: 400 });
       }
 
+      if (rows.some(row => !row || typeof row !== 'object' || Array.isArray(row) || Object.values(row).some(value => typeof value !== 'string' || value.length > 191))) return NextResponse.json({ success: false, error: 'Import cells must be strings of at most 191 characters' }, { status: 400 });
       const validRows: any[] = [];
       const duplicateRows: any[] = [];
       const invalidRows: any[] = [];
@@ -52,16 +56,17 @@ export async function POST(request: NextRequest) {
             slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
             country,
             city: (r.city || '').trim(),
-            campusName: (r.campus || r.campus_name || 'Main Campus').trim(),
+            campusName: (r.campus || r.campus_name || '').trim(),
             website,
             officialUrl: website,
             sourceUrl: (r.source_url || '').trim(),
             ranking: parseInt(r.ranking || '0', 10) || 0,
             worldRanking: parseInt(r.worldRanking || r.world_ranking || '0', 10) || 0,
-            type: (r.type || 'Public').trim(),
-            status: 'verified',
-            verificationStatus: r.source_url ? 'VERIFIED' : 'NEEDS_REVIEW',
-            lastVerifiedAt: new Date().toISOString(),
+            type: (r.type || '').trim(),
+            status: 'draft',
+              publicationStatus: 'draft',
+            verificationStatus: 'NEEDS_REVIEW',
+            lastVerifiedAt: '', // Import time is not official verification time.
           });
         }
       }
@@ -81,22 +86,25 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      let importedCount = 0;
-      for (const uniData of validRows) {
-        await db.crmUniversity.create({ data: uniData });
-        importedCount++;
-      }
+      const importedCount = await db.$transaction(async tx => {
+        let count = 0;
+        for (const uniData of validRows) {
+          await tx.crmUniversity.create({ data: uniData });
+          count++;
+        }
 
-      await db.crmAuditLog.create({
-        data: {
-          actorUserId: auth.userId || 'system',
-          actorRole: auth.roles[0] || 'ADMIN',
-          action: 'BATCH_IMPORT_UNIVERSITIES',
-          targetCollection: 'CrmUniversity',
-          targetId: `BATCH-${Date.now()}`,
-          afterData: JSON.stringify({ importedCount, skippedDuplicates: duplicateRows.length }),
-        },
-      }).catch(() => null);
+        await tx.portalAuditLog.create({
+          data: {
+            actorUserId: auth.actorUserId,
+            action: 'BATCH_IMPORT_UNIVERSITIES',
+            entityType: 'CrmUniversity',
+            entityId: `BATCH-${Date.now()}`,
+            metadata: JSON.stringify({ identityDomain: auth.identityDomain, effectiveUserId: auth.userId, importedCount: count, skippedDuplicates: duplicateRows.length }),
+          },
+        });
+
+        return count;
+      }, { maxWait: 5000, timeout: 60000 });
 
       return NextResponse.json({
         success: true,
@@ -106,7 +114,8 @@ export async function POST(request: NextRequest) {
         errors: invalidRows,
       });
     } catch (error: any) {
-      return NextResponse.json({ success: false, error: error?.message || 'Failed import' }, { status: 500 });
+      console.error('[catalog.admin-import]', error);
+      return NextResponse.json({ success: false, error: 'Import failed; no batch changes committed' }, { status: 500 });
     }
   })(request);
 }

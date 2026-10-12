@@ -1,3 +1,4 @@
+import { leadAccess } from '@/lib/crm/lead-access';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { withAuth, AuthContext } from '@/lib/auth-middleware';
@@ -9,6 +10,8 @@ const MARKETING_AUTH = {
 const todayStart = () => new Date(new Date().setHours(0, 0, 0, 0));
 
 export const GET = withAuth(async (_request: Request, _auth: AuthContext) => {
+  const leadScope = leadAccess(_auth);
+  if (!leadScope) return NextResponse.json({ error: 'Verified User lead access required' }, { status: 403 });
   try {
     const today = todayStart();
     const now = new Date();
@@ -36,13 +39,13 @@ export const GET = withAuth(async (_request: Request, _auth: AuthContext) => {
       recentLeads,
       recentApprovals,
     ] = await Promise.all([
-      db.marketingLead.count({ where: { createdAt: { gte: today } } }),
-      db.marketingLead.count({ where: { hotLead: true } }),
+      db.marketingLead.count({ where: { ...leadScope.where, createdAt: { gte: today } } }),
+      db.marketingLead.count({ where: { ...leadScope.where, hotLead: true } }),
       db.marketingLead.count({
-        where: { source: 'dm', createdAt: { gte: today } },
+        where: { ...leadScope.where, source: 'dm', createdAt: { gte: today } },
       }),
       db.marketingLead.count({
-        where: { source: 'comment', createdAt: { gte: today } },
+        where: { ...leadScope.where, source: 'comment', createdAt: { gte: today } },
       }),
       db.marketingSocialMessage.count({
         where: {
@@ -51,16 +54,16 @@ export const GET = withAuth(async (_request: Request, _auth: AuthContext) => {
         },
       }),
       db.marketingLead.count({
-        where: { source: 'website_chat', createdAt: { gte: today } },
+        where: { ...leadScope.where, source: 'website_chat', createdAt: { gte: today } },
       }),
       db.marketingCampaign.count({ where: { status: 'active' } }),
       db.marketingApproval.count({ where: { status: 'pending' } }),
       db.marketingComment.count({ where: { status: 'new' } }),
       db.marketingCalendar.count({ where: { status: 'scheduled' } }),
       db.marketingCalendar.count({ where: { status: 'failed' } }),
-      db.marketingLead.count({ where: { counselorId: { not: null } } }),
+      db.marketingLead.count({ where: { ...leadScope.where, counselorId: { not: null } } }),
       db.marketingLead.count({
-        where: {
+        where: { ...leadScope.where,
           followUpDueAt: { lt: now },
           followUpDone: false,
         },
@@ -71,14 +74,15 @@ export const GET = withAuth(async (_request: Request, _auth: AuthContext) => {
         where: { status: 'active' },
         select: { costPerLead: true },
       }),
-      db.marketingLead.count(),
-      db.marketingLead.count({ where: { status: 'converted' } }),
+      db.marketingLead.count({ where: leadScope.where }),
+      db.marketingLead.count({ where: { ...leadScope.where, status: 'converted' } }),
       db.marketingCampaign.findMany({
         where: { status: 'active' },
         orderBy: { createdAt: 'desc' },
         take: 5,
       }),
       db.marketingLead.findMany({
+        where: leadScope.where,
         orderBy: { createdAt: 'desc' },
         take: 10,
       }),

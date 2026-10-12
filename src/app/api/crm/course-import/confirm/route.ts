@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 import { buildDuplicateKey } from '@/lib/crm/import-constants';
 
 function getVal(row: Record<string, string>, field: string): string {
@@ -9,8 +10,9 @@ function getVal(row: Record<string, string>, field: string): string {
 
 function getNum(row: Record<string, string>, field: string, fallback: number = 0): number {
   const v = getVal(row, field);
+  if (!v) return fallback;
   const n = Number(v);
-  return isNaN(n) ? fallback : n;
+  return !Number.isFinite(n) ? fallback : n;
 }
 
 function getBool(row: Record<string, string>, field: string, fallback: boolean = false): boolean {
@@ -20,24 +22,23 @@ function getBool(row: Record<string, string>, field: string, fallback: boolean =
   return fallback;
 }
 
-function determineStatus(row: Record<string, string>, defaultStatus: string): string {
-  const explicitStatus = getVal(row, 'status').toLowerCase();
-  if (['active', 'draft', 'archived', 'needs_review', 'needs_official_source'].includes(explicitStatus)) {
-    return explicitStatus;
-  }
-  const sourceUrl = getVal(row, 'source_url');
-  if (!sourceUrl) return 'needs_official_source';
-  return defaultStatus;
-}
-
 export async function POST(request: Request) {
   return withAuth(async (req, auth) => {
   try {
-    const body = await req.json();
+    if (!['ADMIN', 'SUPER_ADMIN'].includes(auth.userType.toUpperCase()) || !mutationOriginAllowed(req, auth)) return NextResponse.json({ error: 'Administrator and same-origin request required' }, { status: 403 });
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== 'object') return NextResponse.json({ error: 'Invalid import body' }, { status: 400 });
     const { importType, rows, batchName } = body;
 
-    if (!rows || !Array.isArray(rows) || rows.length === 0) {
-      return NextResponse.json({ error: 'No rows to import' }, { status: 400 });
+    if (!rows || !Array.isArray(rows) || rows.length === 0 || rows.length > 500) {
+      return NextResponse.json({ error: 'Provide between 1 and 500 rows' }, { status: 400 });
+    }
+
+    if (rows.some(row => !row || typeof row !== 'object' || Array.isArray(row)
+      || Object.values(row).some(value => typeof value !== 'string' || value.length > 191)
+      || !['university_id', 'course_id', 'university_name', 'course_title', 'intake_year', 'intake_month'].every(key => getVal(row, key))
+      || !/^\d{4}$/.test(getVal(row, 'intake_year')))) {
+      return NextResponse.json({ error: 'Each row needs string cells (maximum 191 characters), identifiers, names and a four-digit intake year/month' }, { status: 400 });
     }
 
     const batchId = `batch_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -86,16 +87,23 @@ export async function POST(request: Request) {
       csvKeys.add(key);
 
       try {
+        await db.$transaction(async tx => {
         // 1. Upsert University
-        const existingUni = await db.crmUniversity.findUnique({
+        const existingUni = await tx.crmUniversity.findUnique({
           where: { universityId: uid },
         });
 
-        const uniStatus = determineStatus(row, 'active');
+        // An import is never verification. Do not overwrite approved/public rows;
+        // those require the existing reviewed update workflow.
+        const existingCourse = await tx.crmCourse.findFirst({ where: { universityId: uid, courseId: cid } });
+        if ([existingUni, existingCourse].some(record => record && (record.verificationStatus.toUpperCase().startsWith('VERIFIED') || record.publicationStatus.toUpperCase() === 'PUBLISHED'))) {
+          throw new Error('Reviewed or published catalogue records require a reviewed update request, not bulk overwrite');
+        }
+        const uniStatus = 'draft';
 
         if (existingUni) {
-          await db.crmUniversity.update({
-            where: { universityId: uid },
+          const updated = await tx.crmUniversity.updateMany({
+            where: { id: existingUni.id, updatedAt: existingUni.updatedAt, publicationStatus: { notIn: ['published', 'PUBLISHED'] }, verificationStatus: { notIn: ['VERIFIED', 'verified', 'VERIFIED_OFFICIAL'] } },
             data: {
               name: getVal(row, 'university_name') || existingUni.name,
               country: getVal(row, 'country') || existingUni.country,
@@ -112,13 +120,16 @@ export async function POST(request: Request) {
               website: getVal(row, 'website') || existingUni.website,
               officialUrl: getVal(row, 'official_url') || existingUni.officialUrl,
               sourceUrl: getVal(row, 'source_url') || existingUni.sourceUrl,
-              lastVerifiedAt: new Date().toISOString().split('T')[0],
+              lastVerifiedAt: '',
+              verificationStatus: 'NEEDS_REVIEW',
+              publicationStatus: 'draft',
               status: uniStatus,
-              updatedAt: new Date(),
+              updatedAt: new Date(Math.max(Date.now(), existingUni.updatedAt.getTime() + 1)),
             },
           });
+          if (updated.count !== 1) throw new Error('University changed during import; retry after review');
         } else {
-          await db.crmUniversity.create({
+          await tx.crmUniversity.create({
             data: {
               universityId: uid,
               name: getVal(row, 'university_name') || 'Unknown University',
@@ -127,7 +138,7 @@ export async function POST(request: Request) {
               campusName: getVal(row, 'campus_name'),
               ranking: getNum(row, 'ranking'),
               worldRanking: getNum(row, 'world_ranking'),
-              type: getVal(row, 'university_type') || 'Public',
+              type: getVal(row, 'university_type'),
               founded: getNum(row, 'founded'),
               students: getVal(row, 'students'),
               ieltsMin: getNum(row, 'ielts_min'),
@@ -136,22 +147,20 @@ export async function POST(request: Request) {
               website: getVal(row, 'website'),
               officialUrl: getVal(row, 'official_url'),
               sourceUrl: getVal(row, 'source_url'),
-              lastVerifiedAt: new Date().toISOString().split('T')[0],
+              lastVerifiedAt: '',
+              verificationStatus: 'NEEDS_REVIEW',
+              publicationStatus: 'draft',
               status: uniStatus,
             },
           });
         }
 
         // 2. Upsert Course
-        const existingCourse = await db.crmCourse.findFirst({
-          where: { universityId: uid, courseId: cid },
-        });
-
-        const courseStatus = determineStatus(row, 'active');
+        const courseStatus = 'draft';
 
         if (existingCourse) {
-          await db.crmCourse.update({
-            where: { id: existingCourse.id },
+          const updated = await tx.crmCourse.updateMany({
+            where: { id: existingCourse.id, updatedAt: existingCourse.updatedAt, publicationStatus: { notIn: ['published', 'PUBLISHED'] }, verificationStatus: { notIn: ['VERIFIED', 'verified', 'VERIFIED_OFFICIAL'] } },
             data: {
               courseTitle: getVal(row, 'course_title') || existingCourse.courseTitle,
               studyLevel: getVal(row, 'study_level') || existingCourse.studyLevel,
@@ -161,13 +170,16 @@ export async function POST(request: Request) {
               durationMonths: getNum(row, 'duration_months', existingCourse.durationMonths),
               publicTags: getVal(row, 'public_tags') || existingCourse.publicTags,
               sourceUrl: getVal(row, 'source_url') || existingCourse.sourceUrl,
-              lastVerifiedAt: new Date().toISOString().split('T')[0],
+              lastVerifiedAt: '',
+              verificationStatus: 'NEEDS_REVIEW',
+              publicationStatus: 'draft',
               status: courseStatus,
-              updatedAt: new Date(),
+              updatedAt: new Date(Math.max(Date.now(), existingCourse.updatedAt.getTime() + 1)),
             },
           });
+          if (updated.count !== 1) throw new Error('Course changed during import; retry after review');
         } else {
-          await db.crmCourse.create({
+          await tx.crmCourse.create({
             data: {
               universityId: uid,
               courseId: cid,
@@ -179,14 +191,21 @@ export async function POST(request: Request) {
               durationMonths: getNum(row, 'duration_months'),
               publicTags: getVal(row, 'public_tags'),
               sourceUrl: getVal(row, 'source_url'),
-              lastVerifiedAt: new Date().toISOString().split('T')[0],
+              lastVerifiedAt: '',
+              verificationStatus: 'NEEDS_REVIEW',
+              publicationStatus: 'draft',
               status: courseStatus,
             },
           });
         }
 
+        // Course writes above serialize this importer's duplicate check. Unique
+        // universityId/courseId constraints reject concurrent creates. No retry
+        // after ambiguous failures; row transaction rolls back before reporting.
+        const duplicateIntake = await tx.crmCourseIntakeFee.findFirst({ where: { universityId: uid, courseId: cid, intakeYear: iyear, intakeMonth: imonth }, select: { id: true } });
+        if (duplicateIntake) throw new Error('Intake already exists; not duplicated');
         // 3. Create CourseIntakeFee
-        await db.crmCourseIntakeFee.create({
+        await tx.crmCourseIntakeFee.create({
           data: {
             universityId: uid,
             courseId: cid,
@@ -202,12 +221,13 @@ export async function POST(request: Request) {
             depositCurrency: getVal(row, 'deposit_currency').toUpperCase(),
             depositAmount: getNum(row, 'deposit_amount'),
             batchId,
-            status: 'active',
+            status: 'draft',
+            verificationStatus: 'NEEDS_REVIEW',
           },
         });
 
         // 4. Create CourseRequirement
-        await db.crmCourseRequirement.create({
+        await tx.crmCourseRequirement.create({
           data: {
             universityId: uid,
             courseId: cid,
@@ -225,21 +245,23 @@ export async function POST(request: Request) {
             portfolioRequired: getBool(row, 'portfolio_required'),
             interviewRequired: getBool(row, 'interview_required'),
             batchId,
+            verificationStatus: 'NEEDS_REVIEW',
           },
         });
 
         // 5. Create Scholarship if data provided
         const scholarshipName = getVal(row, 'scholarship_name');
         if (scholarshipName) {
-          await db.crmScholarship.create({
+          await tx.crmScholarship.create({
             data: {
               universityId: uid,
               courseId: cid,
               scholarshipName,
               scholarshipAmount: getNum(row, 'scholarship_amount'),
-              scholarshipCurrency: getVal(row, 'tuition_currency').toUpperCase() || 'GBP',
+              scholarshipCurrency: getVal(row, 'tuition_currency').toUpperCase(),
               batchId,
-              status: 'active',
+              status: 'draft',
+            verificationStatus: 'NEEDS_REVIEW',
             },
           });
         }
@@ -247,7 +269,7 @@ export async function POST(request: Request) {
         // 6. Create Commission if internal data provided
         const internalExpected = getNum(row, 'internal_expected');
         if (internalExpected > 0) {
-          await db.crmCommission.create({
+          await tx.crmCommission.create({
             data: {
               universityId: uid,
               courseId: cid,
@@ -262,10 +284,17 @@ export async function POST(request: Request) {
           });
         }
 
+        await tx.portalAuditLog.create({ data: {
+          actorUserId: auth.actorUserId, action: 'CATALOG_ROW_IMPORTED', entityType: 'CrmCourse', entityId: cid,
+          metadata: JSON.stringify({ identityDomain: auth.identityDomain, effectiveUserId: auth.userId, batchId, universityId: uid, publicationStatus: 'draft' }),
+        } });
+        }, { maxWait: 5000, timeout: 20000 });
+
         rowsImported++;
       } catch (rowError) {
         rowsFailed++;
-        const msg = rowError instanceof Error ? rowError.message : 'Unknown error';
+        console.error('[catalog.import.row]', rowError);
+        const msg = rowError instanceof Error && /^(Reviewed or published|University changed|Course changed|Intake already)/.test(rowError.message) ? rowError.message : 'Row import failed; no row changes committed';
         importErrors.push({
           rowNumber,
           universityId: uid,
@@ -290,7 +319,7 @@ export async function POST(request: Request) {
         rowsDuplicate,
         rowsWarning: 0,
         rowsBlocked: rowsFailed + rowsDuplicate,
-        rollbackAvailable: rowsImported > 0,
+        rollbackAvailable: false, // No before-image snapshot exists for updated draft rows
         status: 'completed',
       },
     });
@@ -314,8 +343,8 @@ export async function POST(request: Request) {
     // Create AuditLog
     await db.crmAuditLog.create({
       data: {
-        actorUserId: '',
-        actorRole: 'system',
+        actorUserId: auth.actorUserId,
+        actorRole: auth.userType,
         action: 'import_batch_completed',
         targetCollection: 'CrmImportBatch',
         targetId: batchId,
@@ -339,8 +368,8 @@ export async function POST(request: Request) {
       errors: importErrors,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error('[catalog.import]', error);
+    return NextResponse.json({ error: 'Catalogue import failed' }, { status: 500 });
   }
   }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
 }

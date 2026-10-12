@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: 1: Integration pushes and PRs run CI without duplicate arena push jobs
+ok 1 - 1: Integration pushes and PRs run CI without duplicate arena push jobs
+  ---
+  duration_ms: 1.144814
+  type: 'test'
+  ...
+# Subtest: 2: Arena
+ok 2 - 2: Arena
+  ---
+  duration_ms: 0.521858
+  type: 'test'
+  ...
+# Subtest: 3: feature
+ok 3 - 3: feature
+  ---
+  duration_ms: 0.226119
+  type: 'test'
+  ...
+# Subtest: 4: PR
+ok 4 - 4: PR
+  ---
+  duration_ms: 0.201806
+  type: 'test'
+  ...
+# Subtest: 4b: PR even with main ref
+ok 5 - 4b: PR even with main ref
+  ---
+  duration_ms: 0.147426
+  type: 'test'
+  ...
+# Subtest: 5: main explicit action (refusal notice ONLY)
+ok 6 - 5: main explicit action (refusal notice ONLY)
+  ---
+  duration_ms: 0.133735
+  type: 'test'
+  ...
+# Subtest: 8: main push cannot select a deployment job
+ok 7 - 8: main push cannot select a deployment job
+  ---
+  duration_ms: 0.226152
+  type: 'test'
+  ...
+# Subtest: 8b: development
+ok 8 - 8b: development
+  ---
+  duration_ms: 0.149323
+  type: 'test'
+  ...
+# Subtest: 6: every legacy shell boundary refuses all branches BEFORE old overrides/commands
+ok 9 - 6: every legacy shell boundary refuses all branches BEFORE old overrides/commands
+  ---
+  duration_ms: 652.293667
+  type: 'test'
+  ...
+# Subtest: 7: Actions contain only approved CI/diagnostic commands, never active deployment transport
+ok 10 - 7: Actions contain only approved CI/diagnostic commands, never active deployment transport
+  ---
+  duration_ms: 2.693725
+  type: 'test'
+  ...
+# Subtest: 8: direct alternate runtime boundaries disabled; container does not migrate at startup
+ok 11 - 8: direct alternate runtime boundaries disabled; container does not migrate at startup
+  ---
+  duration_ms: 112.805672
+  type: 'test'
+  ...
+# Subtest: root runtime and lockfile select only Node 22 and npm
+ok 12 - root runtime and lockfile select only Node 22 and npm
+  ---
+  duration_ms: 11.598591
+  type: 'test'
+  ...
+# Subtest: runtime guard rejects unsupported majors and accepts 22
+ok 13 - runtime guard rejects unsupported majors and accepts 22
+  ---
+  duration_ms: 6.900418
+  type: 'test'
+  ...
+# Subtest: startup fails closed and invokes only verified standalone with provider port
+ok 14 - startup fails closed and invokes only verified standalone with provider port
+  ---
+  duration_ms: 1.807408
+  type: 'test'
+  ...
+# Subtest: deployment validator and development launcher use the current contract
+ok 15 - deployment validator and development launcher use the current contract
+  ---
+  duration_ms: 0.592542
+  type: 'test'
+  ...
+# Subtest: legacy installers and packagers cannot be mistaken for Hostinger paths
+ok 16 - legacy installers and packagers cannot be mistaken for Hostinger paths
+  ---
+  duration_ms: 0.512963
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 941.729919

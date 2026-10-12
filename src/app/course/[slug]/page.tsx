@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import CourseDetailHub from '@/components/website/CourseDetailHub';
 import { db } from '@/lib/db';
+import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from '@/lib/course-finder/public-content-page-policy';
 import { publicCourseIdentifierWhere } from '@/lib/public-catalog';
 
 export const dynamic = 'force-dynamic';
@@ -51,11 +52,13 @@ export default async function CourseDetailPageRoute({
   const record = await findPublicCourse(slug);
   if (!record) {
     // Legacy course-page records keep working via a permanent redirect path.
+    // Phase 1 review (P0-C): only redirect to a page that passes the public policy.
+    const conflicts = await loadOpenConflicts();
     const pageRecord = await db.coursePage.findFirst({
-      where: { slug, approvalStatus: 'PUBLISHED', sourceUrl: { not: '' } },
-      select: { slug: true },
+      where: publicCoursePageWhere(conflicts, [{ slug }]),
+      select: { slug: true, sourceUrl: true },
     });
-    if (pageRecord) redirect(`/courses/${encodeURIComponent(pageRecord.slug)}`);
+    if (pageRecord && passesPublicCoursePagePolicy(pageRecord, conflicts)) redirect(`/courses/${encodeURIComponent(pageRecord.slug)}`);
     notFound();
   }
 

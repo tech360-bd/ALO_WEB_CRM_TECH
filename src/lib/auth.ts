@@ -3,9 +3,11 @@ import { getServerSession, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
+import { decodeCanonicalUserJwt } from "@/lib/auth/canonical-jwt";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db as any),
+  jwt: { decode: decodeCanonicalUserJwt },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -89,14 +91,16 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, account }) {
+      // Never adopt client update payloads or infer a namespace from an ID.
+      if (user && account?.provider === "credentials") {
+        token.identityDomain = "user";
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.status = (user as any).status;
       }
       // Resolve Student identity for STUDENT role (idempotent — only fetches once per token lifetime)
-      if (token.role === "STUDENT" && token.id && !token.studentId) {
+      if (token.identityDomain === "user" && token.role === "STUDENT" && token.id && !token.studentId) {
         try {
           const student = await db.student.findFirst({
             where: { userId: token.id as string },
@@ -114,6 +118,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
+        (session.user as any).identityDomain = token.identityDomain;
         (session.user as any).id = token.id;
         (session.user as any).role = token.role;
         (session.user as any).status = token.status;
@@ -127,7 +132,7 @@ export const authOptions: NextAuthOptions = {
     async signOut(message) {
       // Audit log for logout
       const token = message.token as any;
-      if (token?.id) {
+      if (token?.identityDomain === "user" && token?.id) {
         await db.auditLog.create({
           data: {
             userId: token.id,

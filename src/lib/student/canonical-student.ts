@@ -17,6 +17,7 @@
 
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { createRegistrationLead } from "@/lib/crm/registration-lead";
 import { Prisma } from "@prisma/client";
 
 const CANONICAL_STUDENT_REGEX = /^AE-(\d{4})(\d{6})$/;
@@ -197,7 +198,7 @@ export async function registerStudentAtomically(
 
       // 2. Existing Student record pre-check
       const existingStudent = await tx.student.findFirst({ where: { email } });
-      if (existingStudent && existingStudent.userId) {
+      if (existingStudent && (existingStudent.userId || params.pendingVerification)) {
         throw Object.assign(new Error("Student exists with a different owner"), {
           code: "STUDENT_EXISTS_DIFFERENT_OWNER",
         });
@@ -267,6 +268,18 @@ export async function registerStudentAtomically(
         });
       }
 
+      // Preserve legacy internal callers; public pending registration always
+      // commits the acquisition record with its account, never best-effort.
+      if (params.pendingVerification) {
+        const crm = await createRegistrationLead(tx, { domain: 'user', userId: user.id,
+          studentId: studentRec.studentId, name: fullName, email, phone: params.phone || '' });
+        await tx.student.update({ where: { id: studentRec.id }, data: {
+          leadId: crm.leadId, counselorId: crm.counselorId,
+          journeyStage: crm.counselorId ? 'assigned' : 'lead_created',
+        } });
+        await tx.studentNotification.create({ data: { studentId: studentRec.id, type: 'SYSTEM',
+          title: 'Registration received', message: 'Verify your email before signing in. Your enquiry is recorded for counseling.', relatedId: crm.leadId } });
+      }
       return { userId: user.id, studentId: studentRec.studentId, studentDbId: studentRec.id };
     });
 
@@ -286,7 +299,7 @@ export async function registerStudentAtomically(
     }
     return {
       success: false,
-      error: e?.message || "Internal error",
+      error: "Registration could not be completed",
       errorCode: "INTERNAL_ERROR",
     };
   }

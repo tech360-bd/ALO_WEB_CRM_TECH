@@ -236,9 +236,17 @@ async function recordHistory(tx: any, change: any, userId: string, approvalId: s
 
 // Apply an approved change to the production database.
 // This is the ONLY place where approved changes mutate UniversityPage / CoursePage.
+//
+// Phase 1 (2026-10-12): approving ONE field change must not mark the WHOLE
+// record VERIFIED. The record's verificationStatus is left as it was; the
+// approved field value, its source URL and the approver are kept in the
+// University/Course history written by recordHistory().
+// Phase 1 review (P1-D): lastVerifiedAt is a RECORD-level claim, so a
+// single-field approval no longer refreshes it either; the field-level check
+// date lives in the history row. An unmapped field writes nothing.
 async function applyChangeToProduction(tx: any, change: any) {
   if (change.entityType === "UNIVERSITY" && change.universitySlug) {
-    const data: any = { lastVerifiedAt: new Date(), verificationStatus: "VERIFIED" };
+    const data: any = {};
     // Map fieldName to the UniversityPage column
     if (change.fieldName === "overview") data.overview = change.newValue || "";
     else if (change.fieldName === "city") data.city = change.newValue || "";
@@ -250,9 +258,9 @@ async function applyChangeToProduction(tx: any, change: any) {
     else if (change.fieldName === "applicationSteps") data.applicationSteps = change.newValue || "[]";
     else if (change.fieldName === "documents") data.documents = change.newValue || "[]";
     else if (change.fieldName === "faqs") data.faqs = change.newValue || "[]";
-    await tx.universityPage.update({ where: { slug: change.universitySlug }, data });
+    if (Object.keys(data).length) await tx.universityPage.update({ where: { slug: change.universitySlug }, data });
   } else if (change.entityType === "COURSE" && change.courseSlug) {
-    const data: any = { lastVerifiedAt: new Date(), verificationStatus: "VERIFIED" };
+    const data: any = {};
     if (change.fieldName === "tuition") data.tuition = change.newValue || "";
     else if (change.fieldName === "intake") data.intake = change.newValue || "";
     else if (change.fieldName === "deadline") data.deadline = change.newValue;
@@ -266,6 +274,6 @@ async function applyChangeToProduction(tx: any, change: any) {
     else if (change.fieldName === "name") data.name = change.newValue || "";
     else if (change.fieldName === "level") data.level = change.newValue || "";
     else if (change.fieldName === "subject") data.subject = change.newValue || "";
-    await tx.coursePage.update({ where: { slug: change.courseSlug }, data });
+    if (Object.keys(data).length) await tx.coursePage.update({ where: { slug: change.courseSlug }, data });
   }
 }

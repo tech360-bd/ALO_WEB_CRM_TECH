@@ -6,6 +6,9 @@ import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
 export interface AuthContext {
+  /** Server-resolved ID namespace. Never infer it from request headers or matching IDs. */
+  identityDomain?: 'user' | 'portal';
+  authenticationMethod?: 'cookie' | 'bearer';
   userId: string;
   email: string;
   name: string;
@@ -49,6 +52,7 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
     const { authOptions } = await import('@/lib/auth');
     const nextAuthSession = await getServerSession(authOptions).catch(() => null);
     const nextAuthUser = nextAuthSession?.user as {
+      identityDomain?: string;
       id?: string;
       email?: string | null;
       name?: string | null;
@@ -63,6 +67,8 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
       );
     }
 
+    if (nextAuthUser.identityDomain !== 'user') return NextResponse.json({success:false,error:'Canonical User session required. Please sign in again.'},{status:403});
+
     const user = await db.user.findUnique({ where: { id: nextAuthUser.id } });
     if (!user || user.status !== 'ACTIVE' || !user.emailVerified) {
       return NextResponse.json(
@@ -71,8 +77,10 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
       );
     }
 
-    const role = user.role || nextAuthUser.role || 'STUDENT';
+    const role = user.role || 'STUDENT';
     return {
+      identityDomain: 'user',
+      authenticationMethod: 'cookie',
       userId: user.id,
       email: user.email,
       name: user.name || user.email,
@@ -234,6 +242,8 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
   }
 
   return {
+    identityDomain: 'portal',
+    authenticationMethod: bearerToken && bearerToken !== 'null' && bearerToken !== 'undefined' ? 'bearer' : 'cookie',
     userId: actingUserId,
     email: actingEmail,
     name: actingName,
@@ -438,6 +448,8 @@ export async function getOptionalAuth(request: Request): Promise<AuthContext | n
     }
     if (session.user.userType === 'PARTNER' && !['approved', 'active'].includes((session.user.partnerProfile?.approvalStatus || '').toLowerCase())) return null;
     return {
+      identityDomain: 'portal',
+      authenticationMethod: 'bearer',
       userId: session.user.id,
       email: session.user.email,
       name: session.user.name || '',

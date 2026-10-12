@@ -331,6 +331,10 @@ function SourceVerificationPanel() {
 // ── Main Component ───────────────────────────────────────────────────────────
 
 export default function CrmSeoContentWorkflow() {
+ return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Content Workflow</h1><p role="status">The historical workflow mock is not a persisted publishing queue. Use the existing draft workbench; approval is not publication.</p><a href="/crm/seo-manager" className="text-blue-700 underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
+}
+/** Historical design fixture; not an operational dashboard. */
+function LegacyUnverifiedCrmSeoContentWorkflow() {
   const [activeTab, setActiveTab] = useState('kanban');
 
   return (

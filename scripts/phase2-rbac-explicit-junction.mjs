@@ -16,6 +16,15 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { execSync } from 'node:child_process';
 
+// HISTORICAL ONE-OFF — PERMANENTLY DISABLED (2026-10-12 safety remediation).
+// This script rewrote prisma/schema.prisma in place and applied it with a
+// data-loss-authorizing schema push (dropping the implicit join table). It is
+// kept only as evidence of how the PortalRolePermission junction was created.
+// Schema changes must go through a reviewed migration + `prisma migrate deploy`
+// after backup and release approval (docs/HOSTINGER-PRODUCTION-DEPLOYMENT.md).
+console.error('[phase2-rbac] DISABLED: historical one-off schema rewrite; no changes performed.');
+process.exit(1);
+
 const SCHEMA = '/home/z/my-project/prisma/schema.prisma';
 
 console.log('[phase2-rbac] Step 1: read existing role-permission assignments');
@@ -87,7 +96,7 @@ try {
 }
 
 console.log('\n[phase2-rbac] Step 4: push schema (drops implicit join table, creates new junction)');
-execSync('npx prisma db push --accept-data-loss', { cwd: '/home/z/my-project', stdio: 'inherit' });
+throw new Error('[phase2-rbac] Schema push removed: use a reviewed migration instead.');
 
 console.log('\n[phase2-rbac] Step 5: re-insert role-permission assignments into new junction');
 const insertScript = `

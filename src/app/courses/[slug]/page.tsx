@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { BookOpen, CalendarDays, ExternalLink, FileSearch, MapPin, ShieldCheck } from 'lucide-react';
 import { db } from '@/lib/db';
+import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from '@/lib/course-finder/public-content-page-policy';
 import { getCountryDestination } from '@/lib/country-destinations-data';
 
 export const dynamic = 'force-dynamic';
@@ -39,7 +40,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       where: { OR: [{ slug }, { courseId: slug }], status: 'active', verificationStatus: 'VERIFIED', publicationStatus: { in: ['published', 'PUBLISHED'] }, AND: [{ OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] } ] },
       select: { slug: true, courseId: true, courseTitle: true, sourceUrl: true, officialUrl: true },
     }),
-    db.coursePage.findFirst({ where: { slug, approvalStatus: 'PUBLISHED' }, select: { slug: true, name: true, overview: true } }),
+    // Phase 1 review (P0-C): metadata uses the same public policy as the page.
+    loadOpenConflicts().then((conflicts) => db.coursePage.findFirst({ where: publicCoursePageWhere(conflicts, [{ slug }]), select: { slug: true, name: true, overview: true, sourceUrl: true } })
+      .then((row) => (passesPublicCoursePagePolicy(row, conflicts) ? row : null))),
   ]);
   if (crmCourse) {
     const canonicalSlug = crmCourse.slug || crmCourse.courseId;
@@ -68,8 +71,12 @@ export default async function PublishedCoursePage({ params }: { params: Promise<
   });
   if (crmCourse) redirect(`/course/${encodeURIComponent(crmCourse.slug || crmCourse.courseId)}`);
 
-  const course = await db.coursePage.findFirst({
-    where: { slug, approvalStatus: 'PUBLISHED', sourceUrl: { not: '' } },
+  // Phase 1 review (P0-C): a direct URL is subject to the same public policy
+  // as listings (published + VERIFIED + https source + no open conflict +
+  // public university); anything else is a 404.
+  const conflicts = await loadOpenConflicts();
+  const loadedCourse = await db.coursePage.findFirst({
+    where: publicCoursePageWhere(conflicts, [{ slug }]),
     include: {
       university: {
         select: {
@@ -80,6 +87,7 @@ export default async function PublishedCoursePage({ params }: { params: Promise<
       },
     },
   });
+  const course = passesPublicCoursePagePolicy(loadedCourse, conflicts) ? loadedCourse : null;
   const sourceUrl = safeHttpUrl(course?.sourceUrl);
   if (!course || !sourceUrl) notFound();
 

@@ -1,4 +1,6 @@
 'use client';
+import SeoEvidencePanel from '@/components/crm/seo/SeoEvidencePanel';
+import Link from 'next/link';
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +10,10 @@ import { Loader2, Search, FileText, Globe, BarChart3, Wrench, Link2, Sparkles } 
 import { Textarea } from '@/components/ui/textarea';
 
 export default function SEOBlogManagerView() {
+ return <div className="space-y-6"><SeoEvidencePanel mode="keywords"/><SeoEvidencePanel mode="technical"/><Link href="/crm/seo-manager" className="inline-block rounded border p-3 text-blue-700">Open existing SEO draft and approval workbench</Link><p className="text-sm">AI generation requires a configured provider and human factual review. No provider test has been performed.</p></div>;
+}
+/** Historical mock-only presentation. No fallback AI call or fake success is used. */
+function LegacyUnverifiedSEOBlogManagerView() {
   const [keyword, setKeyword] = useState('study in UK from Bangladesh');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);

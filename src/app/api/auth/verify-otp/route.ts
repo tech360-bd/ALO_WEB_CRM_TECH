@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { assignVerifiedRegistration } from '@/lib/crm/verified-registration-assignment';
 import { consumeEmailOtp, getRequestIp, issueEmailOtp } from '@/lib/auth/email-otp';
 
 export const runtime = 'nodejs';
@@ -14,40 +15,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'A valid email and six-digit code are required' }, { status: 400 });
     }
 
-    const user = await db.user.findUnique({ where: { email }, select: { id: true, role: true, status: true, emailVerified: true } });
-    if (!user) return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 });
-    const consumed = await consumeEmailOtp({ userId: user.id, email, code: otp, purpose: 'email_verification' });
-    if (!consumed) return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 });
-
-    const isStudent = user.role.toUpperCase() === 'STUDENT';
-    await db.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: user.id },
-        data: { emailVerified: true, ...(isStudent && user.status === 'PENDING' ? { status: 'ACTIVE' } : {}) },
+    const outcome = await db.$transaction(async tx => {
+      const user = await tx.user.findUnique({ where: { email }, select: { id: true, role: true, status: true, emailVerified: true } });
+      // Verification is not a way to reactivate suspended/deactivated accounts.
+      if (!user || user.emailVerified || !['PENDING', 'ACTIVE'].includes(user.status)) return null;
+      const consumed = await consumeEmailOtp({ userId: user.id, email, code: otp, purpose: 'email_verification' }, tx);
+      // Resolve normally on invalid codes so attempt counters COMMIT.
+      if (!consumed) return null;
+      const isStudent = user.role.toUpperCase() === 'STUDENT';
+      const nextStatus = isStudent && user.status === 'PENDING' ? 'ACTIVE' : user.status;
+      const claimed = await tx.user.updateMany({
+        where: { id: user.id, emailVerified: false, status: user.status },
+        data: { emailVerified: true, status: nextStatus },
       });
-      if (isStudent) {
-        await tx.student.updateMany({ where: { userId: user.id }, data: { status: 'active' } });
+      // Roll back OTP consumption on a concurrent account/status change.
+      if (claimed.count !== 1) throw new Error('Verification state changed. Retry.');
+      if (isStudent && user.status === 'PENDING') await assignVerifiedRegistration(tx, { domain: 'user', userId: user.id });
+      if (isStudent && nextStatus === 'ACTIVE') {
+        await tx.student.updateMany({ where: { userId: user.id, suspended: false }, data: { status: 'active' } });
       }
-      await tx.auditLog.create({
-        data: {
-          userId: user.id,
-          action: 'PROFILE_UPDATE',
-          resource: 'User',
-          resourceId: user.id,
-          details: JSON.stringify({ type: 'email_verified' }),
-        },
-      });
-    });
-
-    const partnerNeedsApproval = user.role.toUpperCase() === 'PARTNER' && user.status !== 'ACTIVE';
+      await tx.portalAuditLog.create({ data: { actorUserId: user.id, action: 'EMAIL_VERIFIED', entityType: 'User', entityId: user.id,
+        metadata: JSON.stringify({ identityDomain: 'user', status: nextStatus }) } });
+      return { nextStatus, approvalRequired: user.role.toUpperCase() === 'PARTNER' && nextStatus !== 'ACTIVE' };
+    }, { maxWait: 5000, timeout: 15000 });
+    if (!outcome) return NextResponse.json({ success: false, error: 'Invalid or expired code, or account cannot be verified.' }, { status: 400 });
     return NextResponse.json({
-      success: true,
-      emailVerified: true,
-      approvalRequired: partnerNeedsApproval,
-      userStatus: isStudent ? 'ACTIVE' : user.status,
-      message: partnerNeedsApproval
-        ? 'Email verified. Partner access remains pending separate staff approval.'
-        : 'Email verified. You can now sign in.',
+      success: true, emailVerified: true, approvalRequired: outcome.approvalRequired, userStatus: outcome.nextStatus,
+      message: outcome.approvalRequired ? 'Email verified. Partner access remains pending separate staff approval.' : 'Email verified. You can now sign in.',
     });
   } catch {
     return NextResponse.json({ error: 'Verification could not be completed' }, { status: 500 });

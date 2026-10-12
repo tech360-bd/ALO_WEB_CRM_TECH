@@ -1,3 +1,7 @@
+> **HISTORICAL / UNVERIFIED — NOT A SOURCE OF TRUTH** (labelled 2026-10-12).
+> Unsupported: Claims the site went live with "27 Verified Institutions" from genuine verified CRM data. There is no live deployment or database evidence; the launch remains BLOCKED. Superseded by AUDIT/course-finder-2026-10-12/INITIAL-LAUNCH-DATA-REPORT.md.
+> See AUDIT/historical-catalogue-reports-2026-10-12/README.md.
+
 # Initial Launch Data Report — ALO Education Platform
 
 ## Overview

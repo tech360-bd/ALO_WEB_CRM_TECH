@@ -1,0 +1,36 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/home/user/alo_education_z....ai[39m
+
+ [32m✓[39m tests/unit/private-storage-filesystem.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+ [31m❯[39m tests/unit/private-upload-direct-url.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[32m 12[2mms[22m[39m
+[31m   [31m×[31m matcher includes and proxy denies direct URL /uploads[39m[32m 3[2mms[22m[39m
+[31m   [31m×[31m matcher includes and proxy denies direct URL /uploads/synthetic.pdf[39m[32m 0[2mms[22m[39m
+[31m   [31m×[31m matcher includes and proxy denies direct URL /uploads/synthetic.jpg[39m[32m 0[2mms[22m[39m
+[31m   [31m×[31m matcher includes and proxy denies direct URL /uploads/nested/fixture.png[39m[32m 0[2mms[22m[39m
+[31m   [31m×[31m matcher includes and proxy denies direct URL /public/uploads/fixture.pdf[39m[32m 0[2mms[22m[39m
+[31m   [31m×[31m matcher includes and proxy denies direct URL /public/public/uploads/fixture.jpg[39m[32m 0[2mms[22m[39m
+   [32m✓[39m does not deny a curated public image outside uploads[32m 6[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 6 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/private-upload-direct-url.test.ts[2m > [22mmatcher includes and proxy denies direct URL /uploads
+[41m[1m FAIL [22m[49m tests/unit/private-upload-direct-url.test.ts[2m > [22mmatcher includes and proxy denies direct URL /uploads/synthetic.pdf
+[41m[1m FAIL [22m[49m tests/unit/private-upload-direct-url.test.ts[2m > [22mmatcher includes and proxy denies direct URL /uploads/synthetic.jpg
+[41m[1m FAIL [22m[49m tests/unit/private-upload-direct-url.test.ts[2m > [22mmatcher includes and proxy denies direct URL /uploads/nested/fixture.png
+[41m[1m FAIL [22m[49m tests/unit/private-upload-direct-url.test.ts[2m > [22mmatcher includes and proxy denies direct URL /public/uploads/fixture.pdf
+[41m[1m FAIL [22m[49m tests/unit/private-upload-direct-url.test.ts[2m > [22mmatcher includes and proxy denies direct URL /public/public/uploads/fixture.jpg
+[31m[1mTypeError[22m: unstable_doesProxyMatch is not a function[39m
+[36m [2m❯[22m tests/unit/private-upload-direct-url.test.ts:[2m19:51[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[90m (20)[39m
+[2m   Start at [22m 10:38:39
+[2m   Duration [22m 1.22s[2m (transform 151ms, setup 48ms, import 795ms, tests 47ms, environment 0ms)[22m
+

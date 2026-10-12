@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, MapPin, Building2, ArrowRight, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface UniversityListingItem {
   id: string;
@@ -34,14 +33,13 @@ const COUNTRIES = [
 ];
 
 export default function UniversitiesListing() {
-  const [universities, setUniversities] = useState<any[]>([]);
+  const [universities, setUniversities] = useState<UniversityListingItem[]>([]);
   const [total, setTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
@@ -80,15 +78,8 @@ export default function UniversitiesListing() {
     };
   }, [search, countryFilter, page]);
 
-    fetch(`/api/universities?${params.toString()}`)
-      .then(r => r.json())
-      .then(d => {
-        setUniversities(d.universities || []);
-        setTotal(typeof d.total === 'number' ? d.total : null);
-      })
-      .catch(() => setUniversities([]))
-      .finally(() => setLoading(false));
-  }, [search, countryFilter]);
+  const changeSearch = (value: string) => { setSearch(value); setPage(1); };
+  const changeCountry = (value: string) => { setCountryFilter(value); setPage(1); };
 
   return (
     <div className="bg-white">
@@ -148,8 +139,9 @@ export default function UniversitiesListing() {
           <>
             <p className="text-sm text-gray-500">{total !== null && total > universities.length ? `Showing ${universities.length} of ${total} universities — DB-driven` : `${universities.length} universities found — DB-driven`}</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {universities.map((u: any) => (
-                <Link key={u.universityId || u.id} href={`/universities/${u.slug || u.universityId}`}>
+              {universities.map((university) => {
+                const ranking = university.worldRanking || university.ranking || 0;
+                return <Link key={university.id} href={`/universities/${university.slug}`}>
                   <Card className="p-6 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
@@ -168,7 +160,7 @@ export default function UniversitiesListing() {
                     </span>
                   </Card>
                 </Link>
-                );
+                ;
               })}
             </div>
             {totalPages > 1 && (

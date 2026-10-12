@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-11T09:46:38.313Z",
+  "mode": "actual CrmLeadsPage and registration queue; mocked API in browser memory, no DB or authentication",
+  "checks": [
+    "registration queue rendered fetched fixture",
+    "supported stage selector only",
+    "PATCH includes optimistic version",
+    "updated stage survives reload from mocked server",
+    "409 failure preserves stage",
+    "pointer drag persists via PATCH",
+    "terminal stage locked",
+    "missing update capability disables controls"
+  ],
+  "mutations": 4
+}

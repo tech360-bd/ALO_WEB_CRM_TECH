@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Clock, Globe, Calendar, Award, Filter, AlertTriangle, Building2 } from 'lucide-react';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
+import { COMPARE_MAX, readCompareList, subscribeCompare, toggleCompare } from '@/lib/course-finder/compare-list';
 
 // ============================================================
 // PUBLIC COURSE FINDER (/course-finder)
@@ -442,6 +443,7 @@ export default function EnhancedCourseFinder() {
                         <Link href="/eligibility-check" className="block col-span-1">
                           <Button variant="outline" className="w-full h-11 text-xs border-[#E2E8F0]">Check eligibility</Button>
                         </Link>
+                        <CompareToggle id={c.slug || c.courseId} title={c.courseTitle} />
                       </div>
                     </Card>
                   ))}
@@ -458,6 +460,41 @@ export default function EnhancedCourseFinder() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Adds/removes a course from the browser-side compare list (max 4) and links to /compare. */
+function CompareToggle({ id, title }: { id: string; title: string }) {
+  const [list, setList] = useState<string[]>([]);
+  const [full, setFull] = useState(false);
+  useEffect(() => {
+    const sync = () => setList(readCompareList());
+    sync();
+    return subscribeCompare(sync);
+  }, []);
+  const inList = list.includes(id);
+  return (
+    <div className="col-span-2 flex items-center justify-between gap-2 text-xs">
+      <Button
+        type="button"
+        variant="outline"
+        className="h-11 px-4 text-xs border-[#E2E8F0]"
+        aria-pressed={inList}
+        aria-label={inList ? `Remove ${title} from comparison` : `Add ${title} to comparison`}
+        onClick={() => {
+          const next = toggleCompare(id);
+          if (next === null) { setFull(true); return; }
+          setFull(false);
+          setList(next);
+        }}
+      >
+        {inList ? 'Remove from compare' : 'Add to compare'}
+      </Button>
+      {full && <span role="status" className="text-red-700">You can compare up to {COMPARE_MAX} courses.</span>}
+      {list.length > 0 && !full && (
+        <Link href={`/compare?courses=${encodeURIComponent(list.join(','))}`} className="text-[#2563EB] underline">Compare ({list.length})</Link>
+      )}
     </div>
   );
 }

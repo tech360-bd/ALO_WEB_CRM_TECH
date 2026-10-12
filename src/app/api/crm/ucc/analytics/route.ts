@@ -1,3 +1,4 @@
+import { canUseUnscopedUccAdmin } from '@/lib/ucc/document-access';
 // ============================================================
 // /api/crm/ucc/analytics
 // GET — Communication KPI dashboard for supervisors and admins
@@ -13,6 +14,7 @@ export async function GET(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (!canUseUnscopedUccAdmin(auth)) return NextResponse.json({success:false,code:'UCC_OWNERSHIP_SCOPE_PENDING',error:'Private UCC access is restricted to canonical administrators until domain-aware ownership is verified.'},{status:403});
 
     const url = new URL(request.url);
     const days = Math.min(parseInt(url.searchParams.get('days') || '7'), 90);

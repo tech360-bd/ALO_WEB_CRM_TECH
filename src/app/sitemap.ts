@@ -21,15 +21,20 @@ type DatabaseEntries = {
 async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
   const { db } = await import('@/lib/db');
   try {
-    const [blogs, courses, crmCourseRows, scholarships, universities, crmUniversityRows, guideRows] = await Promise.all([
+    // Phase 1 review (P0-C): catalogue pages follow the shared public policy.
+    const { loadOpenConflicts, passesPublicPagePolicy, publicCoursePageWhere, publicUniversityPageWhere } = await import('@/lib/course-finder/public-content-page-policy');
+    const conflicts = await loadOpenConflicts();
+    const [blogs, coursesRaw, crmCourseRows, scholarships, universitiesRaw, crmUniversityRows, guideRows] = await Promise.all([
       db.blogPost.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 5000 }),
-      db.coursePage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: { not: '' } }, take: 5000 }),
+      db.coursePage.findMany({ select: { slug: true, updatedAt: true, sourceUrl: true }, where: publicCoursePageWhere(conflicts), take: 5000 }),
       db.crmCourse.findMany({ select: { slug: true, courseId: true, updatedAt: true }, where: { status: 'active', verificationStatus: 'VERIFIED', publicationStatus: { in: ['published', 'PUBLISHED'] }, OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] }, take: 5000 }),
       db.scholarship.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 2000 }),
-      db.universityPage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: { not: '' } }, take: 5000 }),
+      db.universityPage.findMany({ select: { slug: true, updatedAt: true, sourceUrl: true }, where: publicUniversityPageWhere(conflicts), take: 5000 }),
       db.crmUniversity.findMany({ select: { slug: true, universityId: true, updatedAt: true }, where: { status: 'active', verificationStatus: 'VERIFIED', publicationStatus: { in: ['published', 'PUBLISHED'] }, OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] }, take: 5000 }),
       db.contentAsset.findMany({ select: { slug: true, updatedAt: true, body: true, tags: true }, where: { contentType: 'ALO_PAGE', status: 'PUBLISHED', tags: { contains: 'alo-short-form-builder' } }, take: 5000 }),
     ]);
+    const courses = coursesRaw.filter((row) => passesPublicPagePolicy(row, conflicts.courseSlugs));
+    const universities = universitiesRaw.filter((row) => passesPublicPagePolicy(row, conflicts.universitySlugs));
     const guides = guideRows.flatMap((row) => {
       let tags: unknown[] = [];
       try {

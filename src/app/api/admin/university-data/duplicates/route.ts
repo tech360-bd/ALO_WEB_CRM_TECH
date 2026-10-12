@@ -1,11 +1,18 @@
-import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
 
-export const GET = withAuth(async (request: Request, auth: AuthContext) => {
-  try {
-    return NextResponse.json({ success: true, data: [] });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
-});
+/**
+ * Legacy duplicate list. It previously always returned an empty list, which
+ * read as "no duplicates". Real analysis now lives at
+ * GET /api/admin/catalog-review?view=duplicates (admin-only, read-only).
+ */
+export async function GET() {
+  return NextResponse.json(
+    {
+      success: false,
+      code: 'MOVED_TO_CATALOG_REVIEW',
+      data: [],
+      error: 'Duplicate analysis moved to /admin/data-review/duplicates (GET /api/admin/catalog-review?view=duplicates). This legacy endpoint does not compute duplicates.',
+    },
+    { status: 410 },
+  );
+}

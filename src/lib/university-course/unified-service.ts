@@ -1,7 +1,9 @@
 // UNIFIED UNIVERSITY, COURSE, SCHOLARSHIP, SERVICE, RESOURCE SYSTEM
-// DB-first with static fallback, source verification, related content engine
+// Public catalogue queries reuse canonical publication/source rules; no university demo fallback.
 
 import { db } from '@/lib/db';
+import type { AuthContext } from '@/lib/auth-middleware';
+import { publicUniversityWhere, publicCourseWhere, publicUniversityIdentifierWhere, publicCourseIdentifierWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere, stripInternalFields } from '@/lib/public-catalog';
 
 // Information not verified message per spec
 export const NOT_VERIFIED_MSG = "Information not currently verified. Please check with an ALO Education counselor.";
@@ -25,7 +27,8 @@ export async function getRelatedContent(
   sourceSlug: string,
   options?: { country?: string; universityId?: string; subjectArea?: string; studyLevel?: string; tags?: string[]; limit?: number }
 ): Promise<RelatedContentItem[]> {
-  const limit = options?.limit || 8;
+  const requested = options?.limit ?? 8;
+  const limit = Number.isSafeInteger(requested) ? Math.max(1, Math.min(20, requested)) : 8;
   const related: RelatedContentItem[] = [];
 
   try {
@@ -35,7 +38,7 @@ export async function getRelatedContent(
       const identity = sourceId ? { id: sourceId } : { slug: sourceSlug };
       if (type === 'SERVICE') source = await db.service.findFirst({ where: { ...identity, status: 'PUBLISHED' }, select: { id: true } });
       if (type === 'RESOURCE') source = await db.resource.findFirst({ where: { ...identity, status: 'PUBLISHED', category: { status: 'ACTIVE' } }, select: { id: true } });
-      if (type === 'SCHOLARSHIP') source = await db.scholarship.findFirst({ where: { ...identity, status: { in: ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'] } }, select: { id: true } });
+      if (type === 'SCHOLARSHIP') source = await db.scholarship.findFirst({ where: { ...identity, ...publicScholarshipWhere() }, select: { id: true } });
       if (!source) return [];
       const links = await db.contentRelationship.findMany({ where: { status: 'ACTIVE', OR: [{ sourceType: type, sourceId: source.id }, { targetType: type, targetId: source.id }] }, orderBy: { sortOrder: 'asc' }, take: limit });
       for (const link of links) {
@@ -51,7 +54,7 @@ export async function getRelatedContent(
           if (item?.category) related.push({ id: item.id, slug: `${item.category.slug}/${item.slug}`, title: item.title, type: 'resource', relation: link.relationshipType, score: 1 });
         }
         if (targetType === 'SCHOLARSHIP') {
-          const item = await db.scholarship.findFirst({ where: { id: targetId, status: { in: ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'] } }, select: { id: true, slug: true, name: true } });
+          const item = await db.scholarship.findFirst({ where: { id: targetId, ...publicScholarshipWhere() }, select: { id: true, slug: true, name: true } });
           if (item) related.push({ id: item.id, slug: item.slug, title: item.name, type: 'scholarship', relation: link.relationshipType, score: 1 });
         }
       }
@@ -63,7 +66,7 @@ export async function getRelatedContent(
     // 1. Exact relationship — same university courses
     if (universityId) {
       const coursesSameUni = await db.crmCourse.findMany({
-        where: { universityId, publicationStatus: 'published' },
+        where: { AND: [publicCourseWhere(), { universityId }] },
         take: 4,
         select: { courseId: true, courseTitle: true, slug: true, country: true, universityId: true, subjectArea: true, studyLevel: true },
       }).catch(() => []);
@@ -75,7 +78,7 @@ export async function getRelatedContent(
     // 2. Same country
     if (country && related.length < limit) {
       const unisSameCountry = await db.crmUniversity.findMany({
-        where: { country, publicationStatus: 'published' },
+        where: { AND: [publicUniversityWhere(), { country }] },
         take: 4,
         select: { universityId: true, name: true, slug: true, country: true },
       }).catch(() => []);
@@ -89,7 +92,7 @@ export async function getRelatedContent(
     // 3. Same subject
     if (subjectArea && related.length < limit) {
       const coursesSameSubject = await db.crmCourse.findMany({
-        where: { subjectArea, publicationStatus: 'published' },
+        where: { AND: [publicCourseWhere(), { subjectArea }] },
         take: 4,
         select: { courseId: true, courseTitle: true, slug: true, subjectArea: true },
       }).catch(() => []);
@@ -103,7 +106,7 @@ export async function getRelatedContent(
     // 4. Same study level
     if (studyLevel && related.length < limit) {
       const coursesSameLevel = await db.crmCourse.findMany({
-        where: { studyLevel, publicationStatus: 'published' },
+        where: { AND: [publicCourseWhere(), { studyLevel }] },
         take: 4,
         select: { courseId: true, courseTitle: true, slug: true, studyLevel: true },
       }).catch(() => []);
@@ -116,7 +119,7 @@ export async function getRelatedContent(
 
     // 5. Related scholarships — same country/university
     if (related.length < limit) {
-      const where: any = { status: { in: ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'] } };
+      const where: any = { ...publicScholarshipWhere() };
       if (country) where.country = country;
       if (universityId) where.universityId = universityId;
       const scholarships = await db.scholarship.findMany({ where, take: 3, select: { id: true, slug: true, name: true, country: true } }).catch(() => []);
@@ -150,44 +153,22 @@ export async function getRelatedContent(
   }
 }
 
+/** Public helper only. Staff must use their separately authorized APIs. */
 export async function getUniversityBySlugDB(slug: string): Promise<any | null> {
+  const where = publicUniversityIdentifierWhere(slug);
+  if (!where) return null;
   try {
-    // DB first
     const uni = await db.crmUniversity.findFirst({
-      where: { OR: [{ slug }, { universityId: slug }, { name: { contains: slug.replace(/-/g, ' ') } }], publicationStatus: { not: 'draft' } },
+      where,
       include: {
-        courses: { where: { publicationStatus: 'published' }, take: 20, select: { courseId: true, courseTitle: true, slug: true, studyLevel: true, subjectArea: true, country: true } },
-        scholarshipRecords: { where: { status: 'active' }, take: 10 },
-        requirements: { take: 10 },
-        intakeFees: { where: { status: 'active' }, take: 20, orderBy: { intakeYear: 'desc' } },
-        rankingRecords: { take: 5, orderBy: { rankingYear: 'desc' } },
+        courses: { where: publicCourseWhere(), take: 20, select: { courseId: true, courseTitle: true, slug: true, studyLevel: true, subjectArea: true, country: true } },
+        scholarshipRecords: { where: publicScholarshipWhere(), take: 10 },
+        requirements: { where: publicRequirementWhere(), take: 10 },
+        intakeFees: { where: publicIntakeWhere(), take: 20, orderBy: { intakeYear: 'desc' } },
+        rankingRecords: { where: { verificationStatus: 'VERIFIED' }, take: 5, orderBy: { rankingYear: 'desc' } },
       },
     });
-    if (uni) return uni;
-
-    // Fallback to static
-    const { getUniversityBySlug } = await import('@/lib/all-universities');
-    const staticUni = getUniversityBySlug(slug);
-    if (staticUni) {
-      return {
-        universityId: staticUni.slug,
-        name: staticUni.name,
-        slug: staticUni.slug,
-        country: staticUni.country,
-        city: staticUni.city,
-        worldRanking: staticUni.worldRanking,
-        type: staticUni.type,
-        ieltsMin: staticUni.ieltsMin,
-        tuitionRange: staticUni.tuitionRange,
-        description: '',
-        website: staticUni.website,
-        verificationStatus: 'NEEDS_REVIEW',
-        lastVerifiedAt: null,
-        sourceUrl: '',
-        isStaticFallback: true,
-      };
-    }
-    return null;
+    return uni ? stripInternalFields(uni) : null;
   } catch (e) {
     console.error('getUniversityBySlugDB error', e);
     return null;
@@ -195,23 +176,19 @@ export async function getUniversityBySlugDB(slug: string): Promise<any | null> {
 }
 
 export async function getCourseBySlugDB(slug: string): Promise<any | null> {
+  const where = publicCourseIdentifierWhere(slug);
+  if (!where) return null;
   try {
     const course = await db.crmCourse.findFirst({
-      where: { OR: [{ slug }, { courseId: slug }] },
+      where,
       include: {
         university: { select: { universityId: true, name: true, slug: true, country: true, city: true, website: true } },
-        intakeFees: { where: { status: 'active' }, orderBy: { intakeYear: 'desc' }, take: 20 },
-        requirements: { take: 10 },
-        scholarshipRecords: { where: { status: 'active' }, take: 10 },
-        commissions: { take: 1 }, // For internal, but will be blocked for public
+        intakeFees: { where: publicIntakeWhere(), orderBy: { intakeYear: 'desc' }, take: 20 },
+        requirements: { where: publicRequirementWhere(), take: 10 },
+        scholarshipRecords: { where: publicScholarshipWhere(), take: 10 },
       },
     });
-    if (course) {
-      // Block commission for public API
-      const { commissions, ...safe } = course as any;
-      return safe;
-    }
-    return null;
+    return course ? stripInternalFields(course) : null;
   } catch (e) {
     console.error('getCourseBySlugDB error', e);
     return null;
@@ -307,61 +284,35 @@ export async function getResourceBySlugDB(slug: string): Promise<any | null> {
   }
 }
 
-// Weekly update workflow per spec section 25
-export async function createWeeklyUpdateCheck(targetType: string, targetId: string, targetName: string, fieldName: string, oldValue: string, newValue: string, sourceUrl: string, evidence: string, aiConfidence: number) {
-  try {
-    const existing = await db.weeklyUpdateRequest.findFirst({
+// Creates proposals only, never verifies or publishes catalogue data. Legacy
+// queue mirroring and a namespace-aware audit commit with the proposal or fail.
+export async function createWeeklyUpdateCheck(targetType: string, targetId: string, targetName: string, fieldName: string, oldValue: string, newValue: string, sourceUrl: string, evidence: string, aiConfidence: number, auth: AuthContext) {
+  return db.$transaction(async tx => {
+    const existing = await tx.weeklyUpdateRequest.findFirst({
       where: { targetType, targetId, fieldName, status: 'PENDING_REVIEW' },
     });
-    if (existing) return existing; // Avoid duplicate pending
+    if (existing) return existing; // Best-effort deduplication, not a unique constraint.
 
-    const request = await db.weeklyUpdateRequest.create({
-      data: {
-        targetType,
-        targetId,
-        targetName,
-        fieldName,
-        oldValue,
-        newValue,
-        sourceUrl,
-        evidence,
-        aiConfidence,
-        status: 'PENDING_REVIEW',
-      },
+    const proposal = await tx.weeklyUpdateRequest.create({
+      data: { targetType, targetId, targetName, fieldName, oldValue, newValue, sourceUrl, evidence, aiConfidence, status: 'PENDING_REVIEW' },
     });
-
-    // Also create UniversityUpdateRequest for backward compatibility
     if (targetType === 'university' || targetType === 'course') {
-      await db.universityUpdateRequest.create({
+      await tx.universityUpdateRequest.create({
         data: {
           universityId: targetType === 'university' ? targetId : '',
           courseId: targetType === 'course' ? targetId : '',
-          entityType: targetType,
-          entityName: targetName,
-          fieldName,
-          oldValue,
-          newValue,
-          evidenceUrl: sourceUrl,
-          aiConfidence,
-          status: 'pending_approval',
+          entityType: targetType, entityName: targetName, fieldName, oldValue,
+          newValue, evidenceUrl: sourceUrl, aiConfidence, status: 'pending_approval',
         },
-      }).catch(() => {});
+      });
     }
-
-    await db.auditLog.create({
+    await tx.portalAuditLog.create({
       data: {
-        userId: 'system',
-        action: 'WEEKLY_UPDATE_DETECTED',
-        resource: targetType,
-        resourceId: targetId,
-        details: JSON.stringify({ fieldName, oldValue, newValue, sourceUrl, aiConfidence }),
-        actorRole: 'system',
+        actorUserId: auth.actorUserId,
+        action: 'CATALOG_UPDATE_PROPOSED', entityType: 'WeeklyUpdateRequest', entityId: proposal.id,
+        metadata: JSON.stringify({ identityDomain: auth.identityDomain, effectiveUserId: auth.userId, targetType, targetId, fieldName }),
       },
-    }).catch(() => {});
-
-    return request;
-  } catch (e) {
-    console.error('createWeeklyUpdateCheck error', e);
-    return null;
-  }
+    });
+    return proposal;
+  });
 }

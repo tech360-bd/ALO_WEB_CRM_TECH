@@ -18,6 +18,16 @@ const nextConfig: NextConfig = {
   // Public content uses curated Unsplash images through next/image. Keep the
   // allowlist hostname-scoped rather than disabling image optimization.
   images: {
+    // Only curated public images may enter the optimizer. Private documents
+    // and legacy /uploads never become optimizer cache entries.
+    localPatterns: [
+      { pathname: '/images/**' },
+      { pathname: '/icons/**' },
+      { pathname: '/logo.svg' },
+      { pathname: '/public/images/**' },
+      { pathname: '/public/icons/**' },
+      { pathname: '/public/logo.svg' },
+    ],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
     ],
@@ -59,20 +69,12 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  async redirects() {
-    return [
-      // Index URLs that only have [slug] children — redirect to the real
-      // listing pages instead of 404ing (live-production defect, 2026-09-28
-      // audit: https://aloeducation.com/courses returned 404).
-      { source: "/courses", destination: "/course-finder", permanent: true },
-      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
-    ];
-  },
   // Permanent (308) redirects are configured here, not in page components. A
   // page-level redirect can be streamed as a 200 HTML response after the shell
   // has started rendering, so the legacy URLs would not return a real 308.
   async redirects() {
     return [
+      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
       { source: "/courses", destination: "/course-finder", permanent: true },
       // Bare /course has no index page — src/app/course/ contains only
       // [slug]/page.tsx, the canonical public course-detail hub. Send the

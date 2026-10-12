@@ -5756,6 +5756,7 @@ model AuditLog {
   // on every system-generated audit row, turning successful lead submissions
   // into HTTP 500s (found live, 2026-09-28).
   userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   action       String
   resource     String   @default("")
   resourceId   String   @default("")
@@ -7597,6 +7598,8 @@ model ThreeCxIntegration {
 }
 
 model SmsLog {
+  provider       String?
+  providerMessageId String?
   id             String    @id @default(cuid())
   direction      String    @default("OUTBOUND")
   fromNumber     String
@@ -7615,6 +7618,7 @@ model SmsLog {
   @@index([studentId])
   @@index([leadId])
   @@index([toNumber])
+  @@unique([provider, providerMessageId])
 }
 
 model CallOutcome {

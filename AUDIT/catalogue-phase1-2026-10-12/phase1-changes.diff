@@ -1,0 +1,1551 @@
+diff --git a/src/app/api/import-center/route.ts b/src/app/api/import-center/route.ts
+index 4688c0a9..8e9958ba 100755
+--- a/src/app/api/import-center/route.ts
++++ b/src/app/api/import-center/route.ts
+@@ -1,24 +1,16 @@
+ import { NextRequest, NextResponse } from "next/server";
+ import { db } from "@/lib/db";
+-import { authenticateRequest } from "@/lib/auth-middleware";
++import { requireCatalogAdmin } from "@/lib/course-finder/catalog-admin-auth";
++import { isAcceptableSourceUrl } from "@/lib/course-finder/content-page-guards";
+ 
+ // Import Center — for importing courses/universities/scholarships from external sources
+-// Also handles public data approval workflow (SUPER_ADMIN/ADMIN only — publishing
+-// content as VERIFIED is an approval decision and must never be reachable by
+-// ordinary accounts)
++// Also handles the public content approval workflow (SUPER_ADMIN/ADMIN only).
++// Approval and publication are NOT verification; see PATCH below.
++// Uses the shared catalogue-admin guard: ADMIN/SUPER_ADMIN by verified
++// userType only (a lowercase "admin" role claim on another user type no longer
++// qualifies), and same-origin for mutations.
+ async function requireImportAdmin(req: NextRequest) {
+-  const auth = await authenticateRequest(req);
+-  if (auth instanceof NextResponse) return auth;
+-  const role = (auth.userType || auth.roles?.[0] || "").toUpperCase();
+-  const ok =
+-    role === "SUPER_ADMIN" ||
+-    role === "ADMIN" ||
+-    (auth.roles || []).includes("super_admin") ||
+-    (auth.roles || []).includes("admin");
+-  if (!ok) {
+-    return NextResponse.json({ error: "Forbidden — SUPER_ADMIN or ADMIN only" }, { status: 403 });
+-  }
+-  return auth;
++  return requireCatalogAdmin(req, { level: "admin", mutation: false });
+ }
+ 
+ export async function GET(req: NextRequest) {
+@@ -44,24 +36,101 @@ export async function GET(req: NextRequest) {
+   });
+ }
+ 
+-// Approve / publish a content item
++// Approve / reject / publish / verify a content item.
++//
++// Phase 1 (2026-10-12): approval, rejection and publication NEVER change
++// verificationStatus. Previously every action (including "reject") wrote
++// verificationStatus="VERIFIED". Now:
++//   approve -> approvalStatus PENDING_REVIEW (verification unchanged)
++//   reject  -> approvalStatus DRAFT          (verification unchanged)
++//   publish -> approvalStatus PUBLISHED, only if the record is already
++//              VERIFIED and carries an https official source URL
++//   verify  -> verificationStatus VERIFIED + lastVerifiedAt, SUPER_ADMIN only
++//              (not while impersonating), only with an https official source
++//              URL on the record. It is an explicit evidence decision and
++//              never changes approvalStatus.
++const PATCH_ACTIONS = new Set(["approve", "reject", "publish", "verify"]);
++const CONTROL_FIELDS = ["verificationStatus", "approvalStatus", "lastVerifiedAt", "status"];
++
+ export async function PATCH(req: NextRequest) {
+-  const auth = await requireImportAdmin(req);
++  const auth = await requireCatalogAdmin(req, { level: "admin", mutation: true });
+   if (auth instanceof NextResponse) return auth;
+-  const body = await req.json();
+-  const { type, slug, action } = body; // type: country|university|course|exam, action: approve|reject|publish
+-  // Attribution comes from the authenticated session, never the request body.
+-  const userId = auth.userId || auth.email || "system";
+-  const modelMap: any = { country: db.countryPage, university: db.universityPage, course: db.coursePage, exam: db.examPage };
+-  const model = modelMap[type];
++  let body: any;
++  try {
++    body = await req.json();
++  } catch {
++    return NextResponse.json({ error: "A JSON body is required" }, { status: 400 });
++  }
++  if (!body || typeof body !== "object" || Array.isArray(body)) {
++    return NextResponse.json({ error: "A JSON object body is required" }, { status: 400 });
++  }
++  const { type, slug, action } = body; // type: country|university|course|exam
++  const present = CONTROL_FIELDS.filter((f) => Object.prototype.hasOwnProperty.call(body, f));
++  if (present.length) {
++    return NextResponse.json({ error: `Control fields cannot be set directly: ${present.join(", ")}` }, { status: 400 });
++  }
++  if (typeof action !== "string" || !PATCH_ACTIONS.has(action)) {
++    return NextResponse.json({ error: "action must be approve, reject, publish or verify" }, { status: 400 });
++  }
++  if (typeof slug !== "string" || !slug || slug.length > 200) {
++    return NextResponse.json({ error: "slug is required" }, { status: 400 });
++  }
++  const modelMap: Record<string, any> = { country: db.countryPage, university: db.universityPage, course: db.coursePage, exam: db.examPage };
++  const model = typeof type === "string" && Object.prototype.hasOwnProperty.call(modelMap, type) ? modelMap[type] : null;
+   if (!model) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+ 
+-  const status = action === "publish" ? "PUBLISHED" : action === "reject" ? "DRAFT" : "PENDING_REVIEW";
+-  const updated = await model.update({ where: { slug }, data: { approvalStatus: status, verificationStatus: "VERIFIED" } });
++  if (action === "verify") {
++    const superAdmin = await requireCatalogAdmin(req, { level: "superAdmin", mutation: true });
++    if (superAdmin instanceof NextResponse) return superAdmin;
++  }
++
++  const existing = await model.findUnique({ where: { slug } });
++  if (!existing) return NextResponse.json({ error: "Item not found" }, { status: 404 });
++
++  let data: Record<string, unknown>;
++  if (action === "verify") {
++    if (!isAcceptableSourceUrl(existing.sourceUrl)) {
++      return NextResponse.json(
++        { error: "Verification requires an https official source URL recorded on the item" },
++        { status: 409 },
++      );
++    }
++    data = { verificationStatus: "VERIFIED", lastVerifiedAt: new Date() };
++  } else if (action === "publish") {
++    if (existing.verificationStatus !== "VERIFIED" || !isAcceptableSourceUrl(existing.sourceUrl)) {
++      return NextResponse.json(
++        { error: "Only VERIFIED items with an https official source URL can be published", verificationStatus: existing.verificationStatus },
++        { status: 409 },
++      );
++    }
++    data = { approvalStatus: "PUBLISHED" };
++  } else {
++    data = { approvalStatus: action === "reject" ? "DRAFT" : "PENDING_REVIEW" };
++  }
++
++  // Guard against concurrent edits between the read above and this write.
++  const guard: Record<string, unknown> = { slug, updatedAt: existing.updatedAt };
++  if (action === "publish") guard.verificationStatus = "VERIFIED";
++  const result = await model.updateMany({ where: guard, data });
++  if (result.count !== 1) {
++    return NextResponse.json({ error: "Item changed since it was loaded. Reload and try again." }, { status: 409 });
++  }
++  const updated = await model.findUnique({ where: { slug } });
+ 
++  // Attribution comes from the authenticated session, never the request body.
++  const userId = auth.userId || auth.email || "system";
+   await db.auditLog.create({
+-    data: { userId, action: "PUBLIC_PUBLISH", resource: type, resourceId: slug, details: JSON.stringify({ action, status }) },
++    data: {
++      userId,
++      action: action === "verify" ? "PUBLIC_VERIFY" : "PUBLIC_PUBLISH",
++      resource: type,
++      resourceId: slug,
++      actorRole: auth.userType || "",
++      details: JSON.stringify({ action, ...data }),
++      beforeValue: JSON.stringify({ approvalStatus: existing.approvalStatus, verificationStatus: existing.verificationStatus }),
++      afterValue: JSON.stringify({ approvalStatus: updated?.approvalStatus, verificationStatus: updated?.verificationStatus }),
++    },
+   });
+ 
+-  return NextResponse.json({ item: updated, message: `${type} ${action}d successfully` });
++  return NextResponse.json({ item: updated, message: `${type} ${action} recorded` });
+ }
+diff --git a/src/app/api/course-finder/admin/route.ts b/src/app/api/course-finder/admin/route.ts
+index 946a9c70..1662e91e 100755
+--- a/src/app/api/course-finder/admin/route.ts
++++ b/src/app/api/course-finder/admin/route.ts
+@@ -1,6 +1,15 @@
+ import { NextRequest, NextResponse } from "next/server";
+ import { db } from "@/lib/db";
+ import { withAuth, type AuthContext } from "@/lib/auth-middleware";
++import {
++  EDITOR_APPROVAL_STATES,
++  EDITOR_VERIFICATION_DOWNGRADES,
++  NEEDS_REVIEW,
++  UNVERIFIED,
++  changesFacts,
++  isAcceptableSourceUrl,
++  sanitizeCoursePageFields,
++} from "@/lib/course-finder/content-page-guards";
+ 
+ // Super Admin / Staff course management — CRUD
+ async function listAdminCourses(req: Request, _auth: AuthContext) {
+@@ -44,68 +53,198 @@ async function listAdminCourses(req: Request, _auth: AuthContext) {
+   });
+ }
+ 
+-// Create course
+-async function createAdminCourse(req: Request, _auth: AuthContext) {
+-  const body = await req.json();
++// Create course.
++// Phase 1 (2026-10-12): creation never marks content VERIFIED and never sets a
++// verification date. The CoursePage schema defaults are VERIFIED/PUBLISHED, so
++// both values are always written explicitly. Only allow-listed content fields
++// are accepted; publication goes through the publish transition below.
++async function createAdminCourse(req: Request, auth: AuthContext) {
++  const body = await readJsonObject(req);
++  if (!body) return NextResponse.json({ error: "A JSON object body is required" }, { status: 400 });
++  const controlError = rejectControlFields(body, ["verificationStatus", "lastVerifiedAt"]);
++  if (controlError) return controlError;
++  const approvalStatus = body.approvalStatus === undefined ? "DRAFT" : body.approvalStatus;
++  if (!EDITOR_APPROVAL_STATES.includes(approvalStatus as any)) {
++    return NextResponse.json(
++      { error: "New course pages start as DRAFT or PENDING_REVIEW. Publishing requires a verified record." },
++      { status: 422 },
++    );
++  }
++  const sanitized = sanitizeCoursePageFields(body);
++  if (!sanitized.ok) return NextResponse.json({ error: sanitized.error }, { status: 400 });
++  const data = sanitized.data;
++  for (const required of ["slug", "name", "universitySlug", "countrySlug"]) {
++    if (!data[required]) return NextResponse.json({ error: `${required} is required` }, { status: 400 });
++  }
+   const course = await db.coursePage.create({
+     data: {
+-      slug: body.slug,
+-      name: body.name,
+-      universitySlug: body.universitySlug,
+-      countrySlug: body.countrySlug,
+-      city: body.city,
+-      level: body.level,
+-      subject: body.subject,
+-      duration: body.duration,
+-      intake: body.intake,
+-      tuition: body.tuition,
+-      scholarship: body.scholarship,
+-      englishRequirement: body.englishRequirement,
+-      academicRequirement: body.academicRequirement,
+-      overview: body.overview,
+-      modules: JSON.stringify(body.modules || []),
+-      careerOutcomes: JSON.stringify(body.careerOutcomes || []),
+-      documents: JSON.stringify(body.documents || []),
+-      faqs: JSON.stringify(body.faqs || []),
+-      deadline: body.deadline,
+-      sourceUrl: body.sourceUrl,
+-      lastVerifiedAt: new Date(),
+-      verificationStatus: "VERIFIED",
+-      approvalStatus: body.approvalStatus || "DRAFT",
+-    },
++      city: "",
++      level: "",
++      subject: "",
++      duration: "",
++      intake: "",
++      tuition: "",
++      englishRequirement: "",
++      academicRequirement: "",
++      overview: "",
++      ...data,
++      lastVerifiedAt: null,
++      verificationStatus: UNVERIFIED,
++      approvalStatus: approvalStatus as string,
++    } as any,
+   });
+   await db.auditLog.create({
+-    data: { action: "DATA_IMPORT", resource: "CoursePage", resourceId: course.id, details: JSON.stringify({ name: body.name, slug: body.slug }) },
++    data: {
++      action: "DATA_IMPORT",
++      resource: "CoursePage",
++      resourceId: course.id,
++      actorRole: auth.userType || "",
++      details: JSON.stringify({ name: data.name, slug: data.slug, verificationStatus: UNVERIFIED, approvalStatus }),
++    },
+   });
+-  return NextResponse.json({ course, message: "Course created successfully." });
++  return NextResponse.json({ course, message: "Course created as an unverified draft." });
+ }
+ 
+-// Update course
+-async function updateAdminCourse(req: Request, _auth: AuthContext) {
+-  const body = await req.json();
+-  const { id, ...data } = body;
+-  const course = await db.coursePage.update({
+-    where: { id },
+-    data: { ...data, lastVerifiedAt: new Date() },
+-  });
++// Update course.
++// Phase 1: the body is never spread into Prisma. Content fields are
++// allow-listed and validated; verification can only be downgraded here;
++// approval can move to DRAFT/PENDING_REVIEW, and to PUBLISHED only for
++// ADMIN/SUPER_ADMIN on a record that is already VERIFIED with a source URL.
++// Editing a factual field of a VERIFIED record sends it back to review.
++async function updateAdminCourse(req: Request, auth: AuthContext) {
++  const body = await readJsonObject(req);
++  if (!body) return NextResponse.json({ error: "A JSON object body is required" }, { status: 400 });
++  const id = body.id;
++  if (typeof id !== "string" || !id || id.length > 191) {
++    return NextResponse.json({ error: "id is required" }, { status: 400 });
++  }
++  const controlError = rejectControlFields(body, ["lastVerifiedAt"]);
++  if (controlError) return controlError;
++
++  const existing = await db.coursePage.findUnique({ where: { id } });
++  if (!existing) return NextResponse.json({ error: "Course not found" }, { status: 404 });
++
++  // The admin form re-sends every field. Values identical to the stored record
++  // are not changes, so legacy values (e.g. an old http source URL) do not
++  // block unrelated edits.
++  const changedFields: Record<string, unknown> = {};
++  for (const [field, value] of Object.entries(body)) {
++    if ((value ?? null) !== ((existing as any)[field] ?? null)) changedFields[field] = value;
++  }
++  const sanitized = sanitizeCoursePageFields(changedFields);
++  if (!sanitized.ok) return NextResponse.json({ error: sanitized.error }, { status: 400 });
++
++  const data: Record<string, unknown> = { ...sanitized.data };
++  const factsChanged = changesFacts(data, existing as any);
++  let verificationStatus: string = existing.verificationStatus;
++  let approvalStatus: string = existing.approvalStatus;
++
++  // Verification: unchanged, or an explicit downgrade. Never an upgrade.
++  if (body.verificationStatus !== undefined && body.verificationStatus !== existing.verificationStatus) {
++    if (!EDITOR_VERIFICATION_DOWNGRADES.includes(body.verificationStatus as any)) {
++      return NextResponse.json(
++        { error: "Verification cannot be granted by editing. Use the evidence-backed verify action." },
++        { status: 403 },
++      );
++    }
++    verificationStatus = body.verificationStatus as string;
++  }
++  if (factsChanged && verificationStatus === "VERIFIED") verificationStatus = NEEDS_REVIEW;
++
++  // Approval transitions.
++  const requestedApproval = body.approvalStatus;
++  const approvalRequested = requestedApproval !== undefined && requestedApproval !== existing.approvalStatus;
++  if (approvalRequested) {
++    if (requestedApproval === "PUBLISHED") {
++      if (!["ADMIN", "SUPER_ADMIN"].includes((auth.userType || "").toUpperCase())) {
++        return NextResponse.json({ error: "Only ADMIN or SUPER_ADMIN can publish course pages" }, { status: 403 });
++      }
++    } else if (!EDITOR_APPROVAL_STATES.includes(requestedApproval as any)) {
++      return NextResponse.json({ error: "Unsupported approvalStatus" }, { status: 400 });
++    }
++    approvalStatus = requestedApproval as string;
++  }
++
++  if (Object.keys(data).length === 0 && !approvalRequested && verificationStatus === existing.verificationStatus) {
++    return NextResponse.json({ course: existing, message: "No changes." });
++  }
++
++  const sourceUrl = (data.sourceUrl !== undefined ? data.sourceUrl : existing.sourceUrl) as string | null;
++  if (approvalStatus === "PUBLISHED" && (verificationStatus !== "VERIFIED" || !isAcceptableSourceUrl(sourceUrl))) {
++    if (!approvalRequested) {
++      // An edit to a live page that leaves it unverified takes it out of
++      // publication for review instead of keeping unverified content live.
++      approvalStatus = "PENDING_REVIEW";
++    } else {
++      return NextResponse.json(
++        { error: "Only VERIFIED course pages with an https official source URL can be published", verificationStatus },
++        { status: 409 },
++      );
++    }
++  }
++
++  if (verificationStatus !== existing.verificationStatus) data.verificationStatus = verificationStatus;
++  if (approvalStatus !== existing.approvalStatus) data.approvalStatus = approvalStatus;
++
++  // Optimistic concurrency: only apply if the record has not changed since it was read.
++  const result = await db.coursePage.updateMany({ where: { id, updatedAt: existing.updatedAt }, data: data as any });
++  if (result.count !== 1) {
++    return NextResponse.json({ error: "Course changed since it was loaded. Reload and try again." }, { status: 409 });
++  }
++  const course = await db.coursePage.findUnique({ where: { id } });
+   await db.auditLog.create({
+-    data: { action: "PROFILE_UPDATE", resource: "CoursePage", resourceId: id, details: JSON.stringify(Object.keys(data)) },
++    data: {
++      action: "PROFILE_UPDATE",
++      resource: "CoursePage",
++      resourceId: id,
++      actorRole: auth.userType || "",
++      details: JSON.stringify({ fields: Object.keys(data), factsChanged }),
++      beforeValue: JSON.stringify({ verificationStatus: existing.verificationStatus, approvalStatus: existing.approvalStatus }),
++      afterValue: JSON.stringify({ verificationStatus, approvalStatus }),
++    },
++  });
++  return NextResponse.json({
++    course,
++    message: factsChanged && existing.verificationStatus === "VERIFIED"
++      ? "Course updated. Verified facts changed, so it now needs review."
++      : "Course updated successfully.",
+   });
+-  return NextResponse.json({ course, message: "Course updated successfully." });
+ }
+ 
+-// Delete course
+-async function deleteAdminCourse(req: Request, _auth: AuthContext) {
+-  const { id } = await req.json();
++// Delete course (ADMIN/SUPER_ADMIN only; marketing roles cannot delete).
++async function deleteAdminCourse(req: Request, auth: AuthContext) {
++  const body = await readJsonObject(req);
++  const id = body?.id;
++  if (typeof id !== "string" || !id || id.length > 191) {
++    return NextResponse.json({ error: "id is required" }, { status: 400 });
++  }
+   await db.coursePage.delete({ where: { id } });
+   await db.auditLog.create({
+-    data: { action: "DATA_IMPORT", resource: "CoursePage", resourceId: id, details: JSON.stringify({ deleted: true }) },
++    data: { action: "DATA_IMPORT", resource: "CoursePage", resourceId: id, actorRole: auth.userType || "", details: JSON.stringify({ deleted: true }) },
+   });
+   return NextResponse.json({ message: "Course deleted successfully." });
+ }
+ 
++async function readJsonObject(req: Request): Promise<Record<string, unknown> | null> {
++  try {
++    const parsed = await req.json();
++    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? (parsed as Record<string, unknown>) : null;
++  } catch {
++    return null;
++  }
++}
++
++function rejectControlFields(body: Record<string, unknown>, extra: string[]): NextResponse | null {
++  const forbidden = [...extra, "createdAt", "updatedAt", "university", "universityId"];
++  const present = forbidden.filter((f) => Object.prototype.hasOwnProperty.call(body, f));
++  if (present.length) {
++    return NextResponse.json({ error: `Control fields cannot be set from a request body: ${present.join(", ")}` }, { status: 400 });
++  }
++  return null;
++}
++
+ const ADMIN_COURSE_ACCESS = { requireUserTypes: ["ADMIN", "SUPER_ADMIN", "MARKETING_MANAGER"] };
+ export const GET = withAuth(listAdminCourses, ADMIN_COURSE_ACCESS);
+ export const POST = withAuth(createAdminCourse, ADMIN_COURSE_ACCESS);
+ export const PATCH = withAuth(updateAdminCourse, ADMIN_COURSE_ACCESS);
+-export const DELETE = withAuth(deleteAdminCourse, ADMIN_COURSE_ACCESS);
++export const DELETE = withAuth(deleteAdminCourse, { requireUserTypes: ["ADMIN", "SUPER_ADMIN"] });
+diff --git a/src/app/api/source-logs/route.ts b/src/app/api/source-logs/route.ts
+index 98272716..a822692c 100644
+--- a/src/app/api/source-logs/route.ts
++++ b/src/app/api/source-logs/route.ts
+@@ -1,16 +1,49 @@
+ import { NextRequest, NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+-import { authenticateRequest } from '@/lib/auth-middleware';
++import { requireCatalogAdmin } from '@/lib/course-finder/catalog-admin-auth';
++import { isAcceptableSourceUrl } from '@/lib/course-finder/content-page-guards';
++
++// Catalogue source logs.
++//
++// Phase 1 (2026-10-12):
++//  - Previously ANY authenticated account (including STUDENT and PARTNER)
++//    could read every source log and create source records. Both methods now
++//    require a catalogue administrator (ADMIN / SUPER_ADMIN by verified user
++//    type); POST also requires a same-origin request.
++//  - POST no longer trusts the client for verification or attribution:
++//    `verificationStatus` and `checkedBy` from the body are rejected, every new
++//    log starts as "pending", lastVerifiedAt is never set here, and the
++//    checker is the authenticated actor. Recording a source is not verifying it.
++//  - The source URL must be an https official URL (no synthetic hosts).
++
++const MAX_TEXT = 2000;
++// The entity types documented on the SourceLog model.
++const ENTITY_TYPES = new Set(['university', 'course', 'scholarship', 'country']);
++const SOURCE_TYPES: Record<string, string> = {
++  'Official University': 'official_university',
++  Government: 'official_government',
++  'Official Visa Authority': 'official_government',
++  'Official Scholarship': 'official_scholarship',
++  'Other Approved Source': 'other',
++};
++
++function boundedParam(value: string | null, max = 200): string | null {
++  if (value === null || value === '') return null;
++  return value.length <= max ? value : null;
++}
++
+ export async function GET(req: NextRequest) {
+   try {
+-    const auth = await authenticateRequest(req);
++    const auth = await requireCatalogAdmin(req, { level: 'admin', mutation: false });
+     if (auth instanceof NextResponse) return auth;
+-    const entityType = req.nextUrl.searchParams.get('entityType');
+-    const entityId = req.nextUrl.searchParams.get('entityId');
+-    const sourceType = req.nextUrl.searchParams.get('sourceType');
+-    const verificationStatus = req.nextUrl.searchParams.get('verificationStatus');
+-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10), 200);
+-    const where: any = {};
++    const params = req.nextUrl.searchParams;
++    const entityType = boundedParam(params.get('entityType'));
++    const entityId = boundedParam(params.get('entityId'));
++    const sourceType = boundedParam(params.get('sourceType'));
++    const verificationStatus = boundedParam(params.get('verificationStatus'));
++    const parsedLimit = Number.parseInt(params.get('limit') || '50', 10);
++    const limit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 200) : 50;
++    const where: Record<string, string> = {};
+     if (entityType) where.entityType = entityType;
+     if (entityId) where.entityId = entityId;
+     if (sourceType) where.sourceType = sourceType;
+@@ -30,50 +63,83 @@ export async function GET(req: NextRequest) {
+       total: sourceLogs.length + officialSources.length,
+       message: 'Source logs — Official University, Government, Official Visa Authority, Official Scholarship, Other Approved Source — Prefer official university source',
+     });
+-  } catch (err: any) {
+-    console.error('[source-logs] error', err);
+-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
++  } catch (err: unknown) {
++    console.error('[source-logs] error', err instanceof Error ? err.name : 'unknown');
++    return NextResponse.json({ success: false, error: 'Source logs are temporarily unavailable' }, { status: 500 });
+   }
+ }
++
+ export async function POST(req: NextRequest) {
+   try {
+-    const auth = await authenticateRequest(req);
++    const auth = await requireCatalogAdmin(req, { level: 'admin', mutation: true });
+     if (auth instanceof NextResponse) return auth;
+-    const body = await req.json();
+-    const { entityType, entityId, sourceName = '', sourceUrl = '', sourceType = 'Official University', verificationStatus = 'pending', notes = '', checkedBy = '' } = body;
+-    if (!entityType || !entityId || !sourceUrl) return NextResponse.json({ success: false, error: 'entityType, entityId, sourceUrl required' }, { status: 400 });
++    let body: Record<string, unknown>;
++    try {
++      const parsed = await req.json();
++      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('not an object');
++      body = parsed as Record<string, unknown>;
++    } catch {
++      return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
++    }
++    const forbidden = ['verificationStatus', 'checkedBy', 'verifiedBy', 'lastVerifiedAt'].filter((f) => Object.prototype.hasOwnProperty.call(body, f));
++    if (forbidden.length) {
++      return NextResponse.json({ success: false, error: `These fields are set by the server, not the request: ${forbidden.join(', ')}` }, { status: 400 });
++    }
++    const { entityType, entityId } = body;
++    const sourceName = body.sourceName ?? '';
++    const sourceUrl = body.sourceUrl;
++    const sourceType = body.sourceType ?? 'Official University';
++    const notes = body.notes ?? '';
++    if (typeof entityType !== 'string' || !ENTITY_TYPES.has(entityType)) {
++      return NextResponse.json({ success: false, error: `entityType must be one of: ${[...ENTITY_TYPES].join(', ')}` }, { status: 400 });
++    }
++    if (typeof entityId !== 'string' || !entityId || entityId.length > 191) {
++      return NextResponse.json({ success: false, error: 'entityId is required' }, { status: 400 });
++    }
++    if (!isAcceptableSourceUrl(sourceUrl)) {
++      return NextResponse.json({ success: false, error: 'sourceUrl must be an https official source URL' }, { status: 400 });
++    }
++    if (typeof sourceType !== 'string' || !Object.prototype.hasOwnProperty.call(SOURCE_TYPES, sourceType)) {
++      return NextResponse.json({ success: false, error: `sourceType must be one of: ${Object.keys(SOURCE_TYPES).join(', ')}` }, { status: 400 });
++    }
++    if (typeof sourceName !== 'string' || sourceName.length > 300 || typeof notes !== 'string' || notes.length > MAX_TEXT) {
++      return NextResponse.json({ success: false, error: 'sourceName or notes is invalid' }, { status: 400 });
++    }
++    const actor = auth.actorUserId || auth.userId;
++    const url = sourceUrl.trim();
+     const log = await db.sourceLog.create({
+       data: {
+         entityType,
+         entityId,
+         sourceName,
+-        sourceUrl,
++        sourceUrl: url,
+         sourceType,
+-        checkedBy: checkedBy || auth.userId || 'system',
+-        verificationStatus,
++        checkedBy: actor,
++        verificationStatus: 'pending',
+         notes,
+         checkedAt: new Date(),
+       },
+     });
++    let officialSourceRecorded = true;
+     await db.officialSource.create({
+       data: {
+-        sourceUrl,
+-        sourceType: sourceType === 'Official University' ? 'official_university' : sourceType === 'Government' ? 'official_government' : sourceType === 'Official Scholarship' ? 'official_scholarship' : 'other',
++        sourceUrl: url,
++        sourceType: SOURCE_TYPES[sourceType],
+         sourceTitle: sourceName,
+         targetType: entityType,
+         targetId: entityId,
+         dataSection: 'general',
+-        verificationStatus,
+-        verifiedBy: checkedBy || auth.userId || 'system',
+-        lastVerifiedAt: verificationStatus === 'verified' ? new Date() : null,
++        verificationStatus: 'pending',
++        verifiedBy: '',
++        lastVerifiedAt: null,
+         notes,
+-        entityType: String(entityType).toUpperCase(),
+-        sourceName: sourceName || sourceUrl,
++        entityType: entityType.toUpperCase(),
++        sourceName: sourceName || url,
+       },
+-    }).catch(() => {});
+-    return NextResponse.json({ success: true, sourceLog: log }, { status: 201 });
+-  } catch (err: any) {
+-    console.error('[source-logs.create] error', err);
+-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
++    }).catch(() => { officialSourceRecorded = false; });
++    return NextResponse.json({ success: true, sourceLog: log, officialSourceRecorded, verified: false }, { status: 201 });
++  } catch (err: unknown) {
++    console.error('[source-logs.create] error', err instanceof Error ? err.name : 'unknown');
++    return NextResponse.json({ success: false, error: 'Source log could not be recorded' }, { status: 500 });
+   }
+ }
+diff --git a/src/app/api/data-quality/route.ts b/src/app/api/data-quality/route.ts
+index 56053bfb..3e3a181a 100644
+--- a/src/app/api/data-quality/route.ts
++++ b/src/app/api/data-quality/route.ts
+@@ -1,45 +1,98 @@
+ import { NextRequest, NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+-import { authenticateRequest } from '@/lib/auth-middleware';
++import { requireCatalogAdmin } from '@/lib/course-finder/catalog-admin-auth';
+ import { calculateDataQualityScore } from '@/lib/university-course/eligibility-engine';
++
++// Internal catalogue data-quality scores.
++//
++// Phase 1 (2026-10-12):
++//  - Previously ANY authenticated account (including STUDENT and PARTNER)
++//    could call GET, and GET wrote to dataQualityScore (an upsert on read).
++//  - Both methods now require a catalogue administrator (ADMIN / SUPER_ADMIN).
++//  - GET is read-only: it computes and returns a score but never writes.
++//  - Persisting a recalculated score is an explicit POST (same-origin only).
++
++type Scored = { entityType: 'course' | 'university'; entityId: string; score: number; grade: string; factors: unknown };
++
++function parseEntity(entityTypeRaw: unknown, entityIdRaw: unknown):
++  | { ok: true; entityType: 'course' | 'university'; entityId: string }
++  | { ok: false; response: NextResponse } {
++  const entityType = entityTypeRaw ?? 'course';
++  if (entityType !== 'course' && entityType !== 'university') {
++    return { ok: false, response: NextResponse.json({ success: false, error: 'entityType must be course or university' }, { status: 400 }) };
++  }
++  if (typeof entityIdRaw !== 'string' || !entityIdRaw || entityIdRaw.length > 191) {
++    return { ok: false, response: NextResponse.json({ success: false, error: 'entityId is required' }, { status: 400 }) };
++  }
++  return { ok: true, entityType, entityId: entityIdRaw };
++}
++
++/** Compute a score from current records. Performs reads only. */
++async function computeScore(entityType: 'course' | 'university', entityId: string): Promise<Scored | null> {
++  if (entityType === 'course') {
++    const course = await db.crmCourse.findFirst({ where: { OR: [{ courseId: entityId }, { id: entityId }] }, include: { intakeFees: true, requirements: true, scholarshipRecords: true, university: true } });
++    if (!course) return null;
++    const entryReqs = await db.entryRequirement.findMany({ where: { courseId: course.courseId } }).catch(() => []);
++    const englishReqs = await db.englishRequirement.findMany({ where: { courseId: course.courseId } }).catch(() => []);
++    const sourceLogs = await db.sourceLog.findMany({ where: { entityType: 'course', entityId: course.courseId } }).catch(() => []);
++    const { score, grade, factors } = calculateDataQualityScore(course.university, course, course.intakeFees, entryReqs, englishReqs, course.scholarshipRecords, sourceLogs);
++    return { entityType, entityId: course.courseId, score, grade, factors };
++  }
++  const uni = await db.crmUniversity.findFirst({ where: { OR: [{ universityId: entityId }, { id: entityId }] }, include: { courses: { take: 5 }, scholarshipRecords: { take: 5 } } });
++  if (!uni) return null;
++  const intakes = await db.crmCourseIntakeFee.findMany({ where: { universityId: uni.universityId }, take: 10 }).catch(() => []);
++  const { score, grade, factors } = calculateDataQualityScore(uni, uni, intakes, [], [], uni.scholarshipRecords, []);
++  return { entityType, entityId: uni.universityId, score, grade, factors };
++}
++
+ export async function GET(req: NextRequest) {
+   try {
+-    const auth = await authenticateRequest(req);
++    const auth = await requireCatalogAdmin(req, { level: 'admin', mutation: false });
+     if (auth instanceof NextResponse) return auth;
+-    const entityType = req.nextUrl.searchParams.get('entityType') || 'course';
+-    const entityId = req.nextUrl.searchParams.get('entityId');
+-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '20', 10), 100);
+-    if (entityId) {
+-      if (entityType === 'course') {
+-        const course = await db.crmCourse.findFirst({ where: { OR: [{ courseId: entityId }, { id: entityId }] }, include: { intakeFees: true, requirements: true, scholarshipRecords: true, university: true } });
+-        if (!course) return NextResponse.json({ success: false, error: 'Course not found' }, { status: 404 });
+-        const entryReqs = await db.entryRequirement.findMany({ where: { courseId: course.courseId } }).catch(() => []);
+-        const englishReqs = await db.englishRequirement.findMany({ where: { courseId: course.courseId } }).catch(() => []);
+-        const sourceLogs = await db.sourceLog.findMany({ where: { entityType: 'course', entityId: course.courseId } }).catch(() => []);
+-        const { score, grade, factors } = calculateDataQualityScore(course.university, course, course.intakeFees, entryReqs, englishReqs, course.scholarshipRecords, sourceLogs);
+-        await db.dataQualityScore.upsert({
+-          where: { entityType_entityId: { entityType, entityId: course.courseId } },
+-          create: { entityType, entityId: course.courseId, score, grade, factors: JSON.stringify(factors) },
+-          update: { score, grade, factors: JSON.stringify(factors), lastCalculatedAt: new Date() },
+-        }).catch(() => {});
+-        return NextResponse.json({ success: true, entityType, entityId: course.courseId, score, grade, factors, message: 'Data quality score calculated — internal unless explicitly configured for public display' });
+-      } else if (entityType === 'university') {
+-        const uni = await db.crmUniversity.findFirst({ where: { OR: [{ universityId: entityId }, { id: entityId }] }, include: { courses: { take: 5 }, scholarshipRecords: { take: 5 } } });
+-        if (!uni) return NextResponse.json({ success: false, error: 'University not found' }, { status: 404 });
+-        const intakes = await db.crmCourseIntakeFee.findMany({ where: { universityId: uni.universityId }, take: 10 }).catch(() => []);
+-        const { score, grade, factors } = calculateDataQualityScore(uni, uni, intakes, [], [], uni.scholarshipRecords, []);
+-        await db.dataQualityScore.upsert({
+-          where: { entityType_entityId: { entityType, entityId: uni.universityId } },
+-          create: { entityType, entityId: uni.universityId, score, grade, factors: JSON.stringify(factors) },
+-          update: { score, grade, factors: JSON.stringify(factors), lastCalculatedAt: new Date() },
+-        }).catch(() => {});
+-        return NextResponse.json({ success: true, entityType, entityId: uni.universityId, score, grade, factors });
+-      }
++    const params = req.nextUrl.searchParams;
++    const parsedLimit = Number.parseInt(params.get('limit') || '20', 10);
++    const limit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 100) : 20;
++    if (params.get('entityId')) {
++      const parsed = parseEntity(params.get('entityType') || 'course', params.get('entityId'));
++      if (!parsed.ok) return parsed.response;
++      const scored = await computeScore(parsed.entityType, parsed.entityId);
++      if (!scored) return NextResponse.json({ success: false, error: `${parsed.entityType === 'course' ? 'Course' : 'University'} not found` }, { status: 404 });
++      return NextResponse.json({ success: true, ...scored, persisted: false, message: 'Data quality score calculated (not saved). Internal only.' });
+     }
+     const scores = await db.dataQualityScore.findMany({ orderBy: { score: 'asc' }, take: limit }).catch(() => []);
+     return NextResponse.json({ success: true, scores, total: scores.length, message: 'Data quality scores — 90-100 Excellent, 70-89 Good, 50-69 Needs Review, Below 50 Incomplete — internal' });
+-  } catch (err: any) {
+-    console.error('[data-quality] error', err);
+-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
++  } catch (err: unknown) {
++    console.error('[data-quality] error', err instanceof Error ? err.name : 'unknown');
++    return NextResponse.json({ success: false, error: 'Data quality scores are temporarily unavailable' }, { status: 500 });
++  }
++}
++
++// Explicitly recalculate and persist one score.
++export async function POST(req: NextRequest) {
++  try {
++    const auth = await requireCatalogAdmin(req, { level: 'admin', mutation: true });
++    if (auth instanceof NextResponse) return auth;
++    let body: Record<string, unknown>;
++    try {
++      const raw = await req.json();
++      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('not an object');
++      body = raw as Record<string, unknown>;
++    } catch {
++      return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
++    }
++    const parsed = parseEntity(body.entityType, body.entityId);
++    if (!parsed.ok) return parsed.response;
++    const scored = await computeScore(parsed.entityType, parsed.entityId);
++    if (!scored) return NextResponse.json({ success: false, error: 'Record not found' }, { status: 404 });
++    const factors = JSON.stringify(scored.factors);
++    await db.dataQualityScore.upsert({
++      where: { entityType_entityId: { entityType: scored.entityType, entityId: scored.entityId } },
++      create: { entityType: scored.entityType, entityId: scored.entityId, score: scored.score, grade: scored.grade, factors },
++      update: { score: scored.score, grade: scored.grade, factors, lastCalculatedAt: new Date() },
++    });
++    return NextResponse.json({ success: true, ...scored, persisted: true });
++  } catch (err: unknown) {
++    console.error('[data-quality.recalculate] error', err instanceof Error ? err.name : 'unknown');
++    return NextResponse.json({ success: false, error: 'Score could not be saved' }, { status: 500 });
+   }
+ }
+diff --git a/src/app/api/university-monitoring/changes/[id]/route.ts b/src/app/api/university-monitoring/changes/[id]/route.ts
+index d0f49d32..54452544 100755
+--- a/src/app/api/university-monitoring/changes/[id]/route.ts
++++ b/src/app/api/university-monitoring/changes/[id]/route.ts
+@@ -236,9 +236,15 @@ async function recordHistory(tx: any, change: any, userId: string, approvalId: s
+ 
+ // Apply an approved change to the production database.
+ // This is the ONLY place where approved changes mutate UniversityPage / CoursePage.
++//
++// Phase 1 (2026-10-12): approving ONE field change must not mark the WHOLE
++// record VERIFIED. The record's verificationStatus is left as it was; the
++// approved field value, its source URL and the approver are kept in the
++// University/Course history written by recordHistory(). lastVerifiedAt is
++// still refreshed because the changed field was checked against a source.
+ async function applyChangeToProduction(tx: any, change: any) {
+   if (change.entityType === "UNIVERSITY" && change.universitySlug) {
+-    const data: any = { lastVerifiedAt: new Date(), verificationStatus: "VERIFIED" };
++    const data: any = { lastVerifiedAt: new Date() };
+     // Map fieldName to the UniversityPage column
+     if (change.fieldName === "overview") data.overview = change.newValue || "";
+     else if (change.fieldName === "city") data.city = change.newValue || "";
+@@ -252,7 +258,7 @@ async function applyChangeToProduction(tx: any, change: any) {
+     else if (change.fieldName === "faqs") data.faqs = change.newValue || "[]";
+     await tx.universityPage.update({ where: { slug: change.universitySlug }, data });
+   } else if (change.entityType === "COURSE" && change.courseSlug) {
+-    const data: any = { lastVerifiedAt: new Date(), verificationStatus: "VERIFIED" };
++    const data: any = { lastVerifiedAt: new Date() };
+     if (change.fieldName === "tuition") data.tuition = change.newValue || "";
+     else if (change.fieldName === "intake") data.intake = change.newValue || "";
+     else if (change.fieldName === "deadline") data.deadline = change.newValue;
+diff --git a/src/app/api/crm/course-import/download-errors/route.ts b/src/app/api/crm/course-import/download-errors/route.ts
+index dc74a80b..fe9effaa 100755
+--- a/src/app/api/crm/course-import/download-errors/route.ts
++++ b/src/app/api/crm/course-import/download-errors/route.ts
+@@ -1,13 +1,18 @@
+ import { NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+ import { COURSE_COLUMNS, escapeCsvField } from '@/lib/crm/import-constants';
++import { withAuth } from '@/lib/auth-middleware';
+ 
+-export async function GET(req: Request) {
++// Phase 1 (2026-10-12): this route previously had no handler-level check and
++// relied on the proxy alone, which also admits APPLICATION_TEAM. It returns
++// the raw rows of failed imports, so it now uses the same ADMIN/SUPER_ADMIN
++// check as its sibling /api/crm/course-import/errors.
++async function downloadErrors(req: Request) {
+   try {
+     const { searchParams } = new URL(req.url);
+     const batchId = searchParams.get('batchId');
+ 
+-    if (!batchId) {
++    if (!batchId || batchId.length > 191 || !/^[A-Za-z0-9_-]+$/.test(batchId)) {
+       return NextResponse.json({ error: 'batchId query parameter is required' }, { status: 400 });
+     }
+ 
+@@ -55,4 +60,6 @@ export async function GET(req: Request) {
+     const message = error instanceof Error ? error.message : 'Unknown error';
+     return NextResponse.json({ error: message }, { status: 500 });
+   }
+-}
+\ No newline at end of file
++}
++
++export const GET = withAuth(downloadErrors, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] });
+--- a/src/proxy.ts
++++ b/src/proxy.ts
+@@ -462,6 +462,54 @@
+   }
+ }
+ 
++// Static-asset bypass.
++//
++// Phase 1 (2026-10-12): the bypass previously applied to ANY path containing
++// a dot, so a dynamic API or portal segment such as
++// `/api/university-monitoring/changes/x.json` or
++// `/admin/universities/edit/a.b` skipped authentication and role checks
++// entirely; 85 API routes rely on the proxy alone. API routes and role-gated
++// portal prefixes are never static files, so they are now always evaluated by
++// the normal authentication/RBAC rules below, whatever their extension.
++// Public static files (public/, /_next/, robots.txt, sitemap.xml, ...) are
++// unaffected.
++const NON_STATIC_PREFIXES = Array.from(new Set(Object.values(ROLE_ROUTES).flat()))
++  .filter((prefix) => prefix !== "/" && !isPublicPageRequest(prefix));
++
++function decodePathForPolicy(pathname: string): string | null {
++  let decoded = pathname;
++  for (let attempt = 0; attempt < 5; attempt++) {
++    let next: string;
++    try { next = decodeURIComponent(decoded); } catch { return null; }
++    if (next === decoded) return decoded.replace(/\\/g, "/").replace(/\/{2,}/g, "/").toLowerCase();
++    decoded = next;
++  }
++  return null; // excessive encoding: treat as non-static (fail closed)
++}
++
++export function isStaticAssetBypass(pathname: string): boolean {
++  const normalized = decodePathForPolicy(pathname);
++  if (normalized === null) return false;
++  if (normalized === "/api" || normalized.startsWith("/api/")) return false;
++  if (NON_STATIC_PREFIXES.some((prefix) => matchesPath(normalized, prefix.toLowerCase()))) return false;
++  return (
++    // These were previously excluded by the matcher. Preserve their existing
++    // behavior only AFTER the private-upload check, not before it.
++    pathname.includes('.') ||
++    pathname.startsWith('/public') ||
++    pathname.startsWith("/_next/") ||
++    pathname.startsWith("/static/") ||
++    pathname.endsWith(".js") ||
++    pathname.endsWith(".css") ||
++    pathname.endsWith(".ico") ||
++    pathname.endsWith(".svg") ||
++    pathname.endsWith(".png") ||
++    pathname.endsWith(".jpg") ||
++    pathname.endsWith(".woff") ||
++    pathname.endsWith(".woff2")
++  );
++}
++
+ export default async function proxy(request: NextRequest) {
+   const { pathname } = request.nextUrl;
+ 
+@@ -501,23 +549,8 @@
+     });
+   }
+ 
+-  // Allow static assets and Next internals
+-  if (
+-    // These were previously excluded by the matcher. Preserve their existing
+-    // behavior only AFTER the private-upload check, not before it.
+-    pathname.includes('.') ||
+-    pathname.startsWith('/public') ||
+-    pathname.startsWith("/_next/") ||
+-    pathname.startsWith("/static/") ||
+-    pathname.endsWith(".js") ||
+-    pathname.endsWith(".css") ||
+-    pathname.endsWith(".ico") ||
+-    pathname.endsWith(".svg") ||
+-    pathname.endsWith(".png") ||
+-    pathname.endsWith(".jpg") ||
+-    pathname.endsWith(".woff") ||
+-    pathname.endsWith(".woff2")
+-  ) {
++  // Allow static assets and Next internals (see isStaticAssetBypass).
++  if (isStaticAssetBypass(pathname)) {
+     return NextResponse.next();
+   }
+ 
+diff --git a/src/lib/course-finder/content-page-guards.ts b/src/lib/course-finder/content-page-guards.ts
+new file mode 100644
+index 00000000..7af2ed38
+--- /dev/null
++++ b/src/lib/course-finder/content-page-guards.ts
+@@ -0,0 +1,145 @@
++/**
++ * Guards for the *Page content records (CountryPage, UniversityPage,
++ * CoursePage, ExamPage) that are still edited through legacy admin APIs.
++ *
++ * Rules enforced here (Phase 1 catalogue remediation, 2026-10-12):
++ *  - Approval, rejection, publication and ordinary edits never mark a record
++ *    VERIFIED. Verification is a separate, explicit, evidence-backed action.
++ *  - Request bodies are reduced to an explicit allow-list of content fields;
++ *    control fields (verificationStatus, lastVerifiedAt, approvalStatus, id,
++ *    relations, timestamps) can never be mass-assigned from a request body.
++ *  - Editing a factual field of a VERIFIED record downgrades it to
++ *    NEEDS_REVIEW (and a PUBLISHED record to PENDING_REVIEW) instead of
++ *    silently keeping, or refreshing, its verified state.
++ *
++ * NOTE: the Prisma schema defaults for CoursePage are
++ * verificationStatus="VERIFIED" / approvalStatus="PUBLISHED". Schema changes
++ * were not authorised in Phase 1, so every create path must set both values
++ * explicitly. See AUDIT/catalogue-phase1-2026-10-12/.
++ */
++import { isSyntheticHost } from './catalogue-import-service';
++
++export const UNVERIFIED = 'UNVERIFIED';
++export const NEEDS_REVIEW = 'NEEDS_REVIEW';
++
++/** Approval states an editor may request directly (publishing is separate). */
++export const EDITOR_APPROVAL_STATES = ['DRAFT', 'PENDING_REVIEW'] as const;
++
++/** Verification states an editor may set: only downgrades, never VERIFIED. */
++export const EDITOR_VERIFICATION_DOWNGRADES = [UNVERIFIED, NEEDS_REVIEW, 'STALE'] as const;
++
++/**
++ * An acceptable evidence URL: absolute https, parseable, no embedded
++ * credentials and not a reserved/synthetic host. This proves only that a
++ * source is recorded, not that the content matches it.
++ */
++export function isAcceptableSourceUrl(raw: unknown): raw is string {
++  if (typeof raw !== 'string' || raw.length > 2048) return false;
++  let url: URL;
++  try {
++    url = new URL(raw.trim());
++  } catch {
++    return false;
++  }
++  if (url.protocol !== 'https:') return false;
++  if (url.username || url.password) return false;
++  if (!url.hostname.includes('.')) return false;
++  return !isSyntheticHost(url.toString());
++}
++
++type FieldKind = 'string' | 'nullableString' | 'jsonList' | 'slug' | 'url';
++
++/** Editable CoursePage content fields and how each is validated. */
++export const COURSE_PAGE_FIELDS: Record<string, FieldKind> = {
++  name: 'string',
++  slug: 'slug',
++  universitySlug: 'slug',
++  countrySlug: 'slug',
++  city: 'string',
++  level: 'string',
++  subject: 'string',
++  duration: 'string',
++  intake: 'string',
++  tuition: 'string',
++  scholarship: 'nullableString',
++  englishRequirement: 'string',
++  academicRequirement: 'string',
++  overview: 'string',
++  modules: 'jsonList',
++  careerOutcomes: 'jsonList',
++  documents: 'jsonList',
++  faqs: 'jsonList',
++  deadline: 'nullableString',
++  sourceUrl: 'url',
++};
++
++/** Fields whose change alters a factual claim (everything except presentation-only identity). */
++export const COURSE_PAGE_FACT_FIELDS = new Set([
++  'universitySlug', 'countrySlug', 'city', 'level', 'subject', 'duration', 'intake', 'tuition',
++  'scholarship', 'englishRequirement', 'academicRequirement', 'overview', 'modules',
++  'careerOutcomes', 'documents', 'faqs', 'deadline', 'sourceUrl', 'name',
++]);
++
++/** Control fields that must never be accepted from a request body. */
++export const COURSE_PAGE_CONTROL_FIELDS = new Set([
++  'verificationStatus', 'lastVerifiedAt', 'approvalStatus', 'id', 'createdAt', 'updatedAt',
++  'university', 'universityId',
++]);
++
++const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
++const MAX_TEXT = 20000;
++
++export type SanitizeResult =
++  | { ok: true; data: Record<string, string | null> }
++  | { ok: false; error: string };
++
++/**
++ * Reduce a request body to allow-listed CoursePage content fields.
++ * Unknown keys are ignored except control fields, which are handled by the
++ * caller (they are validated as transitions, never copied).
++ */
++export function sanitizeCoursePageFields(body: Record<string, unknown>): SanitizeResult {
++  const data: Record<string, string | null> = {};
++  for (const [field, kind] of Object.entries(COURSE_PAGE_FIELDS)) {
++    if (!Object.prototype.hasOwnProperty.call(body, field)) continue;
++    const value = body[field];
++    switch (kind) {
++      case 'string':
++        if (typeof value !== 'string' || value.length > MAX_TEXT) return { ok: false, error: `${field} must be text` };
++        data[field] = value;
++        break;
++      case 'nullableString':
++        if (value !== null && (typeof value !== 'string' || value.length > MAX_TEXT)) return { ok: false, error: `${field} must be text or null` };
++        data[field] = value === '' ? null : (value as string | null);
++        break;
++      case 'slug':
++        if (typeof value !== 'string' || !SLUG_RE.test(value) || value.length > 200) return { ok: false, error: `${field} must be a lowercase slug` };
++        data[field] = value;
++        break;
++      case 'url':
++        if (value === null || value === '') { data[field] = null; break; }
++        if (!isAcceptableSourceUrl(value)) return { ok: false, error: `${field} must be an https official source URL` };
++        data[field] = (value as string).trim();
++        break;
++      case 'jsonList': {
++        let list: unknown = value;
++        if (typeof value === 'string') {
++          try { list = JSON.parse(value); } catch { return { ok: false, error: `${field} must be a JSON list` }; }
++        }
++        if (!Array.isArray(list)) return { ok: false, error: `${field} must be a list` };
++        const json = JSON.stringify(list);
++        if (json.length > MAX_TEXT) return { ok: false, error: `${field} is too long` };
++        data[field] = json;
++        break;
++      }
++    }
++  }
++  return { ok: true, data };
++}
++
++/** True when a sanitized patch changes at least one factual field of `existing`. */
++export function changesFacts(patch: Record<string, unknown>, existing: Record<string, unknown>): boolean {
++  return Object.keys(patch).some(
++    (field) => COURSE_PAGE_FACT_FIELDS.has(field) && (patch[field] ?? null) !== (existing[field] ?? null),
++  );
++}
+diff --git a/tests/unit/catalogue-phase1-security.test.ts b/tests/unit/catalogue-phase1-security.test.ts
+new file mode 100644
+index 00000000..ef23e446
+--- /dev/null
++++ b/tests/unit/catalogue-phase1-security.test.ts
+@@ -0,0 +1,388 @@
++/**
++ * Catalogue Phase 1 security regressions (2026-10-12), K1–K3.
++ *
++ * Mocked: `@/lib/db` (recording fakes) and `@/lib/auth-middleware`
++ * (`authenticateRequest` returns the test identity; `withAuth` reproduces the
++ * real `requireUserTypes` check). These are handler-logic tests, not database
++ * or end-to-end proof. Unauthenticated behaviour with the REAL auth middleware
++ * is covered in catalogue-phase1-real-auth.test.ts.
++ */
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++const m = vi.hoisted(() => {
++  const calls: Array<{ op: string; args: any }> = [];
++  const rec = (op: string, impl?: (args: any) => any) => vi.fn(async (args: any) => {
++    calls.push({ op, args });
++    return impl ? impl(args) : null;
++  });
++  return { calls, rec, auth: vi.fn(), db: {} as any };
++});
++
++vi.mock('@/lib/auth-middleware', () => ({
++  authenticateRequest: (...args: unknown[]) => m.auth(...args),
++  withAuth: (handler: any, opts?: { requireUserTypes?: string[] }) => async (req: Request) => {
++    const auth = await m.auth(req);
++    if (auth instanceof Response) return auth;
++    if (opts?.requireUserTypes?.length && !opts.requireUserTypes.includes(auth.userType)) {
++      return new Response(JSON.stringify({ error: 'Insufficient access level.' }), { status: 403 });
++    }
++    return handler(req, auth);
++  },
++}));
++vi.mock('@/lib/db', () => ({ db: m.db }));
++vi.mock('@/lib/university-monitoring-sync', () => ({ syncApprovedChange: vi.fn(async () => ({ ok: true })) }));
++
++import { PATCH as importCenterPATCH, GET as importCenterGET } from '@/app/api/import-center/route';
++import { POST as cfaPOST, PATCH as cfaPATCH, DELETE as cfaDELETE } from '@/app/api/course-finder/admin/route';
++import { GET as sourceLogsGET, POST as sourceLogsPOST } from '@/app/api/source-logs/route';
++import { GET as dataQualityGET, POST as dataQualityPOST } from '@/app/api/data-quality/route';
++import { PATCH as monitoringPATCH } from '@/app/api/university-monitoring/changes/[id]/route';
++import { isAcceptableSourceUrl, sanitizeCoursePageFields } from '@/lib/course-finder/content-page-guards';
++import { NextRequest } from 'next/server';
++
++const ORIGIN = 'https://alo.test';
++const admin = { userId: 'u-admin', actorUserId: 'u-admin', userType: 'ADMIN', identityDomain: 'user', authenticationMethod: 'cookie', roles: [], email: 'a@alo.test' };
++const superAdmin = { ...admin, userId: 'u-super', actorUserId: 'u-super', userType: 'SUPER_ADMIN' };
++const marketing = { ...admin, userId: 'u-mkt', actorUserId: 'u-mkt', userType: 'MARKETING_MANAGER' };
++const student = { ...admin, userId: 'u-stu', actorUserId: 'u-stu', userType: 'STUDENT', identityDomain: 'student' };
++const partner = { ...admin, userId: 'u-par', actorUserId: 'u-par', userType: 'PARTNER', identityDomain: 'portal' };
++const staffWithAdminRoleClaim = { ...admin, userType: 'COUNSELOR', roles: ['admin', 'super_admin'] };
++
++const VERIFIED_PAGE = {
++  id: 'cp1', slug: 'msc-data', name: 'MSc Data', universitySlug: 'uni-a', countrySlug: 'uk', city: 'London',
++  level: 'Masters', subject: 'Data', duration: '1 year', intake: 'September', tuition: 'GBP 20000',
++  scholarship: null, englishRequirement: 'IELTS 6.5', academicRequirement: '2:1', overview: 'Overview',
++  modules: '[]', careerOutcomes: '[]', documents: '[]', faqs: '[]', deadline: null,
++  sourceUrl: 'https://www.uni-a.ac.uk/msc-data', verificationStatus: 'VERIFIED', approvalStatus: 'PUBLISHED',
++  updatedAt: new Date('2026-10-01T00:00:00Z'), lastVerifiedAt: new Date('2026-09-01T00:00:00Z'),
++};
++
++function req(url: string, method = 'GET', body?: unknown, origin: string | null = ORIGIN) {
++  const headers: Record<string, string> = { 'content-type': 'application/json' };
++  if (origin) headers.origin = origin;
++  return new NextRequest(`${ORIGIN}${url}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
++}
++const writes = () => m.calls.filter((c) => /\.(create|update|updateMany|upsert|delete)$/.test(c.op));
++
++function resetDb(pageRecord: any = VERIFIED_PAGE) {
++  m.calls.length = 0;
++  const page = (name: string) => ({
++    findUnique: m.rec(`${name}.findUnique`, () => (pageRecord ? { ...pageRecord } : null)),
++    findMany: m.rec(`${name}.findMany`, () => []),
++    count: m.rec(`${name}.count`, () => 0),
++    create: m.rec(`${name}.create`, (a) => ({ id: 'new', ...a.data })),
++    update: m.rec(`${name}.update`, (a) => ({ ...pageRecord, ...a.data })),
++    updateMany: m.rec(`${name}.updateMany`, () => ({ count: 1 })),
++    delete: m.rec(`${name}.delete`, () => ({})),
++  });
++  Object.assign(m.db, {
++    countryPage: page('countryPage'), universityPage: page('universityPage'), coursePage: page('coursePage'), examPage: page('examPage'),
++    auditLog: { create: m.rec('auditLog.create', () => ({})) },
++    sourceLog: { findMany: m.rec('sourceLog.findMany', () => []), create: m.rec('sourceLog.create', (a) => ({ id: 'sl1', ...a.data })) },
++    officialSource: { findMany: m.rec('officialSource.findMany', () => []), create: m.rec('officialSource.create', () => ({})) },
++    countrySource: { findMany: m.rec('countrySource.findMany', () => []) },
++    crmSourceLog: { findMany: m.rec('crmSourceLog.findMany', () => []) },
++    crmCourse: { findFirst: m.rec('crmCourse.findFirst', () => ({ courseId: 'C1', university: {}, intakeFees: [], requirements: [], scholarshipRecords: [] })) },
++    crmUniversity: { findFirst: m.rec('crmUniversity.findFirst', () => null) },
++    crmCourseIntakeFee: { findMany: m.rec('crmCourseIntakeFee.findMany', () => []) },
++    entryRequirement: { findMany: m.rec('entryRequirement.findMany', () => []) },
++    englishRequirement: { findMany: m.rec('englishRequirement.findMany', () => []) },
++    dataQualityScore: { findMany: m.rec('dataQualityScore.findMany', () => []), upsert: m.rec('dataQualityScore.upsert', () => ({})) },
++  });
++}
++
++beforeEach(() => {
++  vi.stubEnv('NEXTAUTH_URL', ORIGIN);
++  m.auth.mockReset();
++  m.auth.mockResolvedValue(admin);
++  resetDb();
++});
++
++// ---------------------------------------------------------------- K1
++describe('K1 /api/import-center PATCH never verifies through approval, rejection or publication', () => {
++  it('reject and approve change approvalStatus only, never verificationStatus', async () => {
++    for (const [action, status] of [['reject', 'DRAFT'], ['approve', 'PENDING_REVIEW']] as const) {
++      resetDb({ ...VERIFIED_PAGE, verificationStatus: 'UNVERIFIED', approvalStatus: 'PENDING_REVIEW' });
++      const res = await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action }));
++      expect(res.status, action).toBe(200);
++      const upd = m.calls.find((c) => c.op === 'coursePage.updateMany');
++      expect(upd?.args.data).toEqual({ approvalStatus: status });
++      expect(JSON.stringify(writes().map((w) => w.args.data))).not.toContain('"verificationStatus":"VERIFIED"');
++    }
++  });
++
++  it('refuses to publish an unverified item or one without an https official source', async () => {
++    for (const record of [
++      { ...VERIFIED_PAGE, verificationStatus: 'UNVERIFIED', approvalStatus: 'DRAFT' },
++      { ...VERIFIED_PAGE, approvalStatus: 'DRAFT', sourceUrl: 'http://www.uni-a.ac.uk/x' },
++      { ...VERIFIED_PAGE, approvalStatus: 'DRAFT', sourceUrl: 'https://catalogue.example.com/x' },
++      { ...VERIFIED_PAGE, approvalStatus: 'DRAFT', sourceUrl: null },
++    ]) {
++      resetDb(record);
++      const res = await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'university', slug: 'msc-data', action: 'publish' }));
++      expect(res.status).toBe(409);
++      expect(writes()).toHaveLength(0);
++    }
++  });
++
++  it('publishes a VERIFIED item with a source, guarded against concurrent change', async () => {
++    resetDb({ ...VERIFIED_PAGE, approvalStatus: 'DRAFT' });
++    const res = await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'publish' }));
++    expect(res.status).toBe(200);
++    const upd = m.calls.find((c) => c.op === 'coursePage.updateMany');
++    expect(upd?.args).toMatchObject({ where: { slug: 'msc-data', verificationStatus: 'VERIFIED' }, data: { approvalStatus: 'PUBLISHED' } });
++    (m.db.coursePage.updateMany as any).mockResolvedValueOnce({ count: 0 });
++    const raced = await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'publish' }));
++    expect(raced.status).toBe(409);
++  });
++
++  it('verify is SUPER_ADMIN only, needs an https official source, and does not publish', async () => {
++    resetDb({ ...VERIFIED_PAGE, verificationStatus: 'UNVERIFIED', approvalStatus: 'DRAFT' });
++    expect((await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'verify' }))).status).toBe(403);
++    expect(writes()).toHaveLength(0);
++
++    m.auth.mockResolvedValue({ ...superAdmin, actorUserId: 'someone-else' }); // impersonating
++    expect((await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'verify' }))).status).toBe(403);
++
++    m.auth.mockResolvedValue(superAdmin);
++    resetDb({ ...VERIFIED_PAGE, verificationStatus: 'UNVERIFIED', approvalStatus: 'DRAFT', sourceUrl: '' });
++    expect((await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'verify' }))).status).toBe(409);
++
++    resetDb({ ...VERIFIED_PAGE, verificationStatus: 'UNVERIFIED', approvalStatus: 'DRAFT' });
++    const ok = await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'verify' }));
++    expect(ok.status).toBe(200);
++    const upd = m.calls.find((c) => c.op === 'coursePage.updateMany');
++    expect(upd?.args.data.verificationStatus).toBe('VERIFIED');
++    expect(upd?.args.data).not.toHaveProperty('approvalStatus');
++    const audit = m.calls.find((c) => c.op === 'auditLog.create');
++    expect(audit?.args.data).toMatchObject({ action: 'PUBLIC_VERIFY', userId: 'u-super' });
++  });
++
++  it('rejects unknown actions, unknown types, control fields and cross-origin writes', async () => {
++    const bad = [
++      { type: 'course', slug: 'msc-data', action: 'approve', verificationStatus: 'VERIFIED' },
++      { type: 'course', slug: 'msc-data', action: 'approve', approvalStatus: 'PUBLISHED' },
++      { type: 'course', slug: 'msc-data', action: 'delete' },
++      { type: '__proto__', slug: 'msc-data', action: 'approve' },
++      { type: 'course', slug: { contains: '' }, action: 'approve' },
++    ];
++    for (const body of bad) expect((await importCenterPATCH(req('/api/import-center', 'PATCH', body))).status, JSON.stringify(body)).toBe(400);
++    expect((await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'approve' }, 'https://attacker.test'))).status).toBe(403);
++    expect(writes()).toHaveLength(0);
++  });
++
++  it('a lowercase admin role claim on a non-admin user type no longer grants access', async () => {
++    m.auth.mockResolvedValue(staffWithAdminRoleClaim);
++    expect((await importCenterGET(req('/api/import-center'))).status).toBe(403);
++    expect((await importCenterPATCH(req('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'approve' }))).status).toBe(403);
++    expect(writes()).toHaveLength(0);
++  });
++});
++
++describe('K1 university-monitoring approval does not mark the whole record VERIFIED', () => {
++  it('APPROVE applies the field and history but leaves verificationStatus untouched', async () => {
++    const txCalls: Array<{ op: string; args: any }> = [];
++    const tx = new Proxy({}, {
++      get: (_t, model: string) => new Proxy({}, {
++        get: (_m, op: string) => async (args: any) => {
++          txCalls.push({ op: `${model}.${op}`, args });
++          if (op === 'create') return { id: `${model}-1`, ...args?.data };
++          if (op === 'update') return { id: 'chg1', entityType: 'COURSE', courseSlug: 'msc-data', universitySlug: 'uni-a', fieldName: 'tuition', newValue: 'GBP 21000', oldValue: 'GBP 20000', sourceUrl: 'https://www.uni-a.ac.uk/fees', changeType: 'FEE', detectedAt: new Date(), ...args?.data };
++          if (op === 'findUnique' || op === 'findFirst') return { ...VERIFIED_PAGE };
++          return { count: 1 };
++        },
++      }),
++    });
++    m.db.dataChange = { findUnique: m.rec('dataChange.findUnique', () => ({ id: 'chg1', status: 'PENDING', entityType: 'COURSE', courseSlug: 'msc-data' })) };
++    m.db.$transaction = vi.fn(async (fn: any) => fn(tx));
++    m.db.user = { findUnique: vi.fn(async () => ({ id: 'u-super', userType: 'SUPER_ADMIN', email: 's@alo.test', status: 'ACTIVE' })) };
++    m.auth.mockResolvedValue(superAdmin);
++    const res = await monitoringPATCH(req('/api/university-monitoring/changes/chg1', 'PATCH', { action: 'APPROVE' }), { params: Promise.resolve({ id: 'chg1' }) });
++    if (res.status !== 200) {
++      // The monitoring guard has its own identity checks; report rather than mask.
++      throw new Error(`monitoring PATCH returned ${res.status}: ${await res.text()}`);
++    }
++    const pageUpdate = txCalls.find((c) => c.op === 'coursePage.update');
++    expect(pageUpdate?.args.data.tuition).toBe('GBP 21000');
++    expect(pageUpdate?.args.data).not.toHaveProperty('verificationStatus');
++    expect(txCalls.some((c) => c.op === 'courseHistory.create')).toBe(true);
++  });
++});
++
++// ---------------------------------------------------------------- K2
++describe('K2 /api/course-finder/admin: no auto-VERIFIED, no body mass-assignment', () => {
++  it('create always stores UNVERIFIED with no verification date, ignoring client control fields', async () => {
++    m.auth.mockResolvedValue(marketing);
++    const res = await cfaPOST(req('/api/course-finder/admin', 'POST', {
++      slug: 'msc-ai', name: 'MSc AI', universitySlug: 'uni-a', countrySlug: 'uk', modules: ['A'], approvalStatus: 'DRAFT',
++      currency: 'GBP', isAdmin: true,
++    }));
++    expect(res.status).toBe(200);
++    const create = m.calls.find((c) => c.op === 'coursePage.create');
++    expect(create?.args.data).toMatchObject({ verificationStatus: 'UNVERIFIED', lastVerifiedAt: null, approvalStatus: 'DRAFT', modules: '["A"]' });
++    expect(create?.args.data).not.toHaveProperty('isAdmin');
++    expect(create?.args.data).not.toHaveProperty('currency');
++  });
++
++  it('create refuses client verification/publication and invalid sources', async () => {
++    for (const body of [
++      { slug: 'x', name: 'X', universitySlug: 'u', countrySlug: 'uk', verificationStatus: 'VERIFIED' },
++      { slug: 'x', name: 'X', universitySlug: 'u', countrySlug: 'uk', lastVerifiedAt: '2026-01-01' },
++      { slug: 'x', name: 'X', universitySlug: 'u', countrySlug: 'uk', approvalStatus: 'PUBLISHED' },
++      { slug: 'x', name: 'X', universitySlug: 'u', countrySlug: 'uk', sourceUrl: 'javascript:alert(1)' },
++      { slug: 'Bad Slug', name: 'X', universitySlug: 'u', countrySlug: 'uk' },
++    ]) {
++      const res = await cfaPOST(req('/api/course-finder/admin', 'POST', body));
++      expect([400, 422], JSON.stringify(body)).toContain(res.status);
++    }
++    expect(writes()).toHaveLength(0);
++  });
++
++  it('update never spreads the body: id, timestamps, relations and unknown keys are not written', async () => {
++    resetDb({ ...VERIFIED_PAGE, verificationStatus: 'UNVERIFIED', approvalStatus: 'DRAFT' });
++    const res = await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', overview: 'New text', foo: 'bar', universityId: 'x' }));
++    expect(res.status).toBe(400); // universityId is a control field
++    const res2 = await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', overview: 'New text', foo: 'bar' }));
++    expect(res2.status).toBe(200);
++    const upd = m.calls.find((c) => c.op === 'coursePage.updateMany');
++    expect(upd?.args.where).toEqual({ id: 'cp1', updatedAt: VERIFIED_PAGE.updatedAt });
++    expect(Object.keys(upd?.args.data).sort()).toEqual(['overview']);
++    expect(m.calls.some((c) => c.op === 'coursePage.update')).toBe(false);
++  });
++
++  it('editing facts of a VERIFIED published page sends it back to review and never refreshes lastVerifiedAt', async () => {
++    const res = await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { ...VERIFIED_PAGE, tuition: 'GBP 25000', updatedAt: undefined, lastVerifiedAt: undefined }));
++    expect(res.status).toBe(200);
++    const upd = m.calls.find((c) => c.op === 'coursePage.updateMany');
++    expect(upd?.args.data).toMatchObject({ tuition: 'GBP 25000', verificationStatus: 'NEEDS_REVIEW', approvalStatus: 'PENDING_REVIEW' });
++    expect(upd?.args.data).not.toHaveProperty('lastVerifiedAt');
++  });
++
++  it('re-sending identical form values is a no-op (legacy values do not block edits)', async () => {
++    resetDb({ ...VERIFIED_PAGE, sourceUrl: 'http://legacy.uni-a.ac.uk' });
++    const res = await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', slug: 'msc-data', sourceUrl: 'http://legacy.uni-a.ac.uk', verificationStatus: 'VERIFIED', approvalStatus: 'PUBLISHED' }));
++    expect(res.status).toBe(200);
++    expect(writes()).toHaveLength(0);
++  });
++
++  it('verification can only be downgraded by editing, never granted', async () => {
++    resetDb({ ...VERIFIED_PAGE, verificationStatus: 'UNVERIFIED', approvalStatus: 'DRAFT' });
++    expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', verificationStatus: 'VERIFIED' }))).status).toBe(403);
++    expect(writes()).toHaveLength(0);
++    resetDb();
++    expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', verificationStatus: 'STALE' }))).status).toBe(200);
++  });
++
++  it('publishing via the toggle needs ADMIN/SUPER_ADMIN and a VERIFIED record with an https source', async () => {
++    resetDb({ ...VERIFIED_PAGE, approvalStatus: 'DRAFT' });
++    m.auth.mockResolvedValue(marketing);
++    expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', approvalStatus: 'PUBLISHED' }))).status).toBe(403);
++    m.auth.mockResolvedValue(admin);
++    resetDb({ ...VERIFIED_PAGE, verificationStatus: 'UNVERIFIED', approvalStatus: 'DRAFT' });
++    expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', approvalStatus: 'PUBLISHED' }))).status).toBe(409);
++    expect(writes()).toHaveLength(0);
++    resetDb({ ...VERIFIED_PAGE, approvalStatus: 'DRAFT' });
++    expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', approvalStatus: 'PUBLISHED' }))).status).toBe(200);
++    // Unpublishing stays available to marketing.
++    m.auth.mockResolvedValue(marketing);
++    resetDb();
++    expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', approvalStatus: 'DRAFT' }))).status).toBe(200);
++  });
++
++  it('rejects object ids (operator injection) and stale writes', async () => {
++    expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: { not: '' }, overview: 'x' }))).status).toBe(400);
++    (m.db.coursePage.updateMany as any).mockResolvedValueOnce({ count: 0 });
++    expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', overview: 'changed' }))).status).toBe(409);
++  });
++
++  it('DELETE is limited to ADMIN/SUPER_ADMIN; students and partners are refused everywhere', async () => {
++    m.auth.mockResolvedValue(marketing);
++    expect((await cfaDELETE(req('/api/course-finder/admin', 'DELETE', { id: 'cp1' }))).status).toBe(403);
++    for (const who of [student, partner]) {
++      m.auth.mockResolvedValue(who);
++      expect((await cfaPOST(req('/api/course-finder/admin', 'POST', { slug: 'x', name: 'X', universitySlug: 'u', countrySlug: 'uk' }))).status).toBe(403);
++      expect((await cfaPATCH(req('/api/course-finder/admin', 'PATCH', { id: 'cp1', overview: 'x' }))).status).toBe(403);
++    }
++    expect(writes()).toHaveLength(0);
++    m.auth.mockResolvedValue(admin);
++    expect((await cfaDELETE(req('/api/course-finder/admin', 'DELETE', { id: 'cp1' }))).status).toBe(200);
++  });
++});
++
++// ---------------------------------------------------------------- K3
++describe('K3 /api/source-logs and /api/data-quality permissions and side effects', () => {
++  it('students, partners and ordinary staff cannot read or write source logs', async () => {
++    for (const who of [student, partner, marketing, staffWithAdminRoleClaim]) {
++      m.auth.mockResolvedValue(who);
++      expect((await sourceLogsGET(req('/api/source-logs'))).status).toBe(403);
++      expect((await sourceLogsPOST(req('/api/source-logs', 'POST', { entityType: 'course', entityId: 'C1', sourceUrl: 'https://www.uni-a.ac.uk/x' }))).status).toBe(403);
++    }
++    expect(m.calls).toHaveLength(0);
++  });
++
++  it('POST records a pending source attributed to the session, never a verification', async () => {
++    const res = await sourceLogsPOST(req('/api/source-logs', 'POST', { entityType: 'course', entityId: 'C1', sourceUrl: 'https://www.uni-a.ac.uk/x', sourceName: 'Course page' }));
++    expect(res.status).toBe(201);
++    expect(await res.json()).toMatchObject({ verified: false, officialSourceRecorded: true });
++    const log = m.calls.find((c) => c.op === 'sourceLog.create');
++    expect(log?.args.data).toMatchObject({ verificationStatus: 'pending', checkedBy: 'u-admin' });
++    const src = m.calls.find((c) => c.op === 'officialSource.create');
++    expect(src?.args.data).toMatchObject({ verificationStatus: 'pending', lastVerifiedAt: null, verifiedBy: '' });
++  });
++
++  it('POST rejects client-set verification/attribution, bad URLs, bad types and cross-origin', async () => {
++    const base = { entityType: 'course', entityId: 'C1', sourceUrl: 'https://www.uni-a.ac.uk/x' };
++    for (const body of [
++      { ...base, verificationStatus: 'verified' },
++      { ...base, checkedBy: 'super-admin' },
++      { ...base, sourceUrl: 'http://www.uni-a.ac.uk/x' },
++      { ...base, sourceUrl: 'https://fake.example.com/x' },
++      { ...base, entityType: 'student' },
++      { ...base, entityId: { not: '' } },
++      { ...base, sourceType: 'Aggregator' },
++    ]) {
++      expect((await sourceLogsPOST(req('/api/source-logs', 'POST', body))).status, JSON.stringify(body)).toBe(400);
++    }
++    expect((await sourceLogsPOST(req('/api/source-logs', 'POST', base, 'https://attacker.test'))).status).toBe(403);
++    expect(writes()).toHaveLength(0);
++  });
++
++  it('data-quality GET is admin-only and performs no writes; persisting is an explicit POST', async () => {
++    for (const who of [student, partner, marketing]) {
++      m.auth.mockResolvedValue(who);
++      expect((await dataQualityGET(req('/api/data-quality?entityType=course&entityId=C1'))).status).toBe(403);
++    }
++    m.auth.mockResolvedValue(admin);
++    const res = await dataQualityGET(req('/api/data-quality?entityType=course&entityId=C1'));
++    expect(res.status).toBe(200);
++    expect(await res.json()).toMatchObject({ persisted: false });
++    expect(writes()).toHaveLength(0);
++
++    expect((await dataQualityPOST(req('/api/data-quality', 'POST', { entityType: 'course', entityId: 'C1' }, 'https://attacker.test'))).status).toBe(403);
++    expect(writes()).toHaveLength(0);
++    const post = await dataQualityPOST(req('/api/data-quality', 'POST', { entityType: 'course', entityId: 'C1' }));
++    expect(post.status).toBe(200);
++    expect(m.calls.filter((c) => c.op === 'dataQualityScore.upsert')).toHaveLength(1);
++    expect((await dataQualityPOST(req('/api/data-quality', 'POST', { entityType: 'student', entityId: 'C1' }))).status).toBe(400);
++  });
++
++  it('error responses do not leak driver messages', async () => {
++    (m.db.dataQualityScore.findMany as any).mockImplementationOnce(() => { throw new Error('mysql://user:secret@host'); });
++    const res = await dataQualityGET(req('/api/data-quality'));
++    expect(res.status).toBe(500);
++    expect(await res.text()).not.toContain('secret');
++  });
++});
++
++describe('content-page guards', () => {
++  it('accepts only https, credential-free, non-synthetic source URLs', () => {
++    expect(isAcceptableSourceUrl('https://www.auckland.ac.nz/en/study.html')).toBe(true);
++    for (const bad of ['http://www.auckland.ac.nz', 'https://user:pw@www.auckland.ac.nz', 'https://localhost/x', 'https://x.example.org', 'https://site.test', 'ftp://a.b', 'not a url', '', null, 42]) {
++      expect(isAcceptableSourceUrl(bad as any), String(bad)).toBe(false);
++    }
++  });
++  it('drops unknown keys and never passes control fields through', () => {
++    const r = sanitizeCoursePageFields({ overview: 'x', verificationStatus: 'VERIFIED', approvalStatus: 'PUBLISHED', lastVerifiedAt: 'now', id: 'z', extra: 1 });
++    expect(r).toEqual({ ok: true, data: { overview: 'x' } });
++  });
++});
+diff --git a/tests/unit/catalogue-phase1-real-auth.test.ts b/tests/unit/catalogue-phase1-real-auth.test.ts
+new file mode 100644
+index 00000000..b4593a3a
+--- /dev/null
++++ b/tests/unit/catalogue-phase1-real-auth.test.ts
+@@ -0,0 +1,56 @@
++/**
++ * Catalogue Phase 1 (2026-10-12): unauthenticated requests against the REAL
++ * auth middleware. Only `@/lib/db` and `next-auth` are mocked, so this proves
++ * the handlers themselves refuse anonymous and forged-bearer callers before
++ * any catalogue read or write, independent of the proxy.
++ */
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++const h = vi.hoisted(() => {
++  const calls: string[] = [];
++  const any = (name: string) => new Proxy({}, {
++    get: (_t, op: string) => (..._args: unknown[]) => { calls.push(`${name}.${op}`); return Promise.resolve(op.startsWith('findMany') ? [] : null); },
++  });
++  const db = new Proxy({}, { get: (_t, model: string) => any(model) });
++  return { calls, db };
++});
++
++vi.mock('@/lib/db', () => ({ db: h.db }));
++vi.mock('next-auth', () => ({ getServerSession: vi.fn(() => Promise.resolve(null)), NextAuth: vi.fn() }));
++
++import { NextRequest } from 'next/server';
++import { GET as downloadErrors } from '@/app/api/crm/course-import/download-errors/route';
++import { GET as sourceLogsGET, POST as sourceLogsPOST } from '@/app/api/source-logs/route';
++import { GET as dataQualityGET, POST as dataQualityPOST } from '@/app/api/data-quality/route';
++import { PATCH as importCenterPATCH } from '@/app/api/import-center/route';
++import { POST as cfaPOST, PATCH as cfaPATCH } from '@/app/api/course-finder/admin/route';
++
++const CATALOGUE_TABLES = /^(crmImportError|sourceLog|officialSource|dataQualityScore|crmCourse|crmUniversity|coursePage|universityPage|countryPage|examPage|auditLog)\./;
++
++beforeEach(() => { h.calls.length = 0; });
++
++describe('catalogue handlers refuse unauthenticated callers with the real auth middleware', () => {
++  const cases: Array<[string, () => Promise<Response>]> = [
++    ['download-errors GET', () => downloadErrors(new NextRequest('https://alo.test/api/crm/course-import/download-errors?batchId=b1') as never)],
++    ['source-logs GET', () => sourceLogsGET(new NextRequest('https://alo.test/api/source-logs'))],
++    ['source-logs POST', () => sourceLogsPOST(new NextRequest('https://alo.test/api/source-logs', { method: 'POST', body: '{"entityType":"course","entityId":"C1","sourceUrl":"https://u.ac.uk"}' }))],
++    ['data-quality GET', () => dataQualityGET(new NextRequest('https://alo.test/api/data-quality?entityId=C1'))],
++    ['data-quality POST', () => dataQualityPOST(new NextRequest('https://alo.test/api/data-quality', { method: 'POST', body: '{"entityId":"C1"}' }))],
++    ['import-center PATCH', () => importCenterPATCH(new NextRequest('https://alo.test/api/import-center', { method: 'PATCH', body: '{"type":"course","slug":"x","action":"publish"}' }))],
++    ['course-finder/admin POST', () => cfaPOST(new NextRequest('https://alo.test/api/course-finder/admin', { method: 'POST', body: '{}' }) as never)],
++    ['course-finder/admin PATCH', () => cfaPATCH(new NextRequest('https://alo.test/api/course-finder/admin', { method: 'PATCH', body: '{"id":"x"}' }) as never)],
++  ];
++  for (const [name, call] of cases) {
++    it(`${name}: 401 and no catalogue access`, async () => {
++      const res = await call();
++      expect(res.status).toBe(401);
++      expect(h.calls.filter((c) => CATALOGUE_TABLES.test(c))).toEqual([]);
++    });
++  }
++
++  it('a forged bearer token is also refused before catalogue access', async () => {
++    const res = await downloadErrors(new NextRequest('https://alo.test/api/crm/course-import/download-errors?batchId=b1', { headers: { authorization: 'Bearer forged' } }) as never);
++    expect(res.status).toBe(401);
++    expect(h.calls.filter((c) => CATALOGUE_TABLES.test(c))).toEqual([]);
++  });
++});
+diff --git a/tests/unit/catalogue-phase1-proxy.test.ts b/tests/unit/catalogue-phase1-proxy.test.ts
+new file mode 100644
+index 00000000..e54c7e60
+--- /dev/null
++++ b/tests/unit/catalogue-phase1-proxy.test.ts
+@@ -0,0 +1,72 @@
++/**
++ * Catalogue Phase 1 (2026-10-12), K4: the proxy's static-asset bypass must
++ * not apply to API routes or role-gated portal pages just because the path
++ * contains a dot. Pure policy-function tests (no running server).
++ */
++import { describe, expect, it } from 'vitest';
++import { isStaticAssetBypass, isPublicApiRequest } from '@/proxy';
++
++describe('K4 dotted-path bypass', () => {
++  it('never bypasses authentication for catalogue API paths with a dot or extension', () => {
++    for (const path of [
++      '/api/university-monitoring/changes/abc.json',
++      '/api/admin/universities/u1.json',
++      '/api/admin/courses/c.1',
++      '/api/admin/import/batches/b1.csv/preview',
++      '/api/crm/course-import/download-errors.csv',
++      '/api/source-logs.js',
++      '/api/data-quality.png',
++      '/api/import-center/x.css',
++      '/api/course-finder/admin.woff2',
++      '/api/official-sources/s.svg',
++      '/API/admin/universities/u1.json',
++      '/api/%61dmin/universities/u1.json',
++      '/api%2Fadmin/universities/u1.json',
++      '/api/%252e%252e/admin.json',
++      '/api',
++    ]) {
++      expect(isStaticAssetBypass(path), path).toBe(false);
++    }
++  });
++
++  it('never bypasses role-gated catalogue admin and CRM pages', () => {
++    for (const path of [
++      '/admin/universities/edit/a.b',
++      '/admin/courses/edit/x.json',
++      '/admin/data-import/batch.1',
++      '/crm/university/u.1',
++      '/crm/course/c.json',
++      '/super-admin/x.js',
++      '/partner-admin/report.csv',
++      '/student/documents/file.pdf',
++      '/%61dmin/universities/edit/a.b',
++    ]) {
++      expect(isStaticAssetBypass(path), path).toBe(false);
++    }
++  });
++
++  it('still bypasses real public static files and Next internals', () => {
++    for (const path of [
++      '/logo.svg',
++      '/manifest.json',
++      '/sw.js',
++      '/robots.txt',
++      '/sitemap.xml',
++      '/icons/icon-192.png',
++      '/images/hero.jpg',
++      '/docs/guide.pdf',
++      '/_next/static/chunks/main.js',
++      '/_next/image',
++      '/public/x.png',
++      '/favicon.ico',
++    ]) {
++      expect(isStaticAssetBypass(path), path).toBe(true);
++    }
++  });
++
++  it('dotted catalogue API paths fall through to the normal public/protected API policy', () => {
++    // Not public: these now reach the 401/403 gate instead of the bypass.
++    expect(isPublicApiRequest('/api/university-monitoring/changes/abc.json', 'GET')).toBe(false);
++    expect(isPublicApiRequest('/api/admin/universities/u1.json', 'GET')).toBe(false);
++  });
++});

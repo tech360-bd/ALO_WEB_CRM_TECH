@@ -15,7 +15,7 @@ import { GET as crmGet, POST as crmPost } from '@/app/api/crm/finance/route';
 import { GET as studentGet, POST as studentPost } from '@/app/api/student-portal/payments/route';
 const req = (url: string, body?: unknown) => new NextRequest(`https://example.com${url}`, body === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 function actor(role: string) {
-  getServerSession.mockResolvedValue({ user: { id: 'user-1' } });
+  getServerSession.mockResolvedValue({ user: { identityDomain: 'user', id: 'user-1' } });
   db.user.findUnique.mockResolvedValue({ id: 'user-1', email: 'test@example.com', name: 'Test', role, permissions: '[]', status: 'ACTIVE', emailVerified: true });
 }
 beforeEach(() => {

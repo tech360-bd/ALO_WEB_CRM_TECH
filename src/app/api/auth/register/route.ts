@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const phone = typeof body?.phone === 'string' ? body.phone.trim() : undefined;
     const role = typeof body?.role === 'string' ? body.role.toUpperCase() : 'STUDENT';
 
-    if (!name || name.length > 191 || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8 || password.length > 200) {
+    if (!name || name.length > 191 || !email || email.length > 191 || (phone?.length || 0) > 40 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8 || password.length > 200) {
       return NextResponse.json({ error: 'Valid name, email, and password (8–200 characters) are required' }, { status: 400 });
     }
     if (!['STUDENT', 'PARTNER'].includes(role)) {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       userId = user.id;
     }
 
-    const issued = await issueEmailOtp({ userId, email, ipAddress: getRequestIp(req) });
+    const issued = await issueEmailOtp({ userId, email, ipAddress: getRequestIp(req) }).catch(() => ({ ok: false as const, reason: 'delivery_failed' as const }));
     if (!issued.ok) {
       return NextResponse.json({
         success: false,

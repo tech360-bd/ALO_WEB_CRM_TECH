@@ -145,7 +145,7 @@ const ELIGIBILITY_NODES: FlowNode[] = [
     id: 'win',
     kind: 'end',
     rect: { x: 170, y: 516, w: 260, h: 60 },
-    titleLines: ['Eligible — book a', 'free consultation'],
+    titleLines: ['Eligible — book a', 'a consultation'],
   },
   {
     id: 'pathway',
@@ -163,7 +163,7 @@ const ELIGIBILITY_NODES: FlowNode[] = [
     id: 'retake',
     kind: 'end-muted',
     rect: { x: 560, y: 396, w: 250, h: 52 },
-    titleLines: ['Free retake', 'plan'],
+    titleLines: ['Test retake', 'plan'],
   },
 ];
 

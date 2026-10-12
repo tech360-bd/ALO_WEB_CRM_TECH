@@ -10,7 +10,7 @@ vi.mock('@/lib/auth', () => ({ authOptions: {} }));
 import { GET, POST, PATCH } from '@/app/api/documents/route';
 const request = (method = 'GET', query = '', body?: unknown) => new NextRequest(`https://example.com/api/documents${query}`, { method, headers: { 'x-portal-request': 'true', 'content-type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) });
 beforeEach(() => {
-  vi.resetAllMocks(); getServerSession.mockResolvedValue({ user: { id: 'unit-owner' } });
+  vi.resetAllMocks(); getServerSession.mockResolvedValue({ user: { identityDomain: 'user', id: 'unit-owner' } });
   db.$transaction.mockImplementation(async (callback: (tx: typeof db) => unknown) => callback(db));
   db.user.findUnique.mockResolvedValue({ id: 'unit-owner', role: 'STUDENT', status: 'ACTIVE', emailVerified: true, permissions: '[]' });
   db.student.findFirst.mockResolvedValue({ id: 'own-student' });
@@ -18,8 +18,8 @@ beforeEach(() => {
   db.document.create.mockImplementation(async ({ data }) => ({ id: 'unit-document', ...data }));
   db.document.findUnique.mockResolvedValue({ id: 'other-document', studentId: 'other-student', name: 'Document' });
 });
-describe('document ownership applies to portal students, not just StudentSession auth', () => {
-  it('scopes portal-student list to canonical own Student.id when no target supplied', async () => {
+describe('document ownership applies to canonical NextAuth students, not just StudentSession auth', () => {
+  it('scopes canonical-student list to canonical own Student.id when no target supplied', async () => {
     expect((await GET(request())).status).toBe(200);
     expect(db.document.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { studentId: 'own-student' } }));
   });
@@ -48,14 +48,14 @@ describe('document ownership applies to portal students, not just StudentSession
   });
   it('dedicated StudentSession bearer retains the same own-record boundary', async () => {
     db.studentSession.findUnique.mockResolvedValue({ id: 'unit-session', studentId: 'own-student', expiresAt: new Date(Date.now() + 60000), revokedAt: null });
-    db.student.findUnique.mockResolvedValue({ id: 'own-student', studentId: 'unit-code', suspended: false });
+    db.student.findUnique.mockResolvedValue({ id: 'own-student', studentId: 'unit-code', suspended: false, status:'active' });
     const req = new NextRequest('https://example.com/api/documents', { headers: { Authorization: 'Bearer isolated-test-session' } });
     expect((await GET(req)).status).toBe(200);
     expect(db.document.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { studentId: 'own-student' } }));
     const other = new NextRequest('https://example.com/api/documents?studentId=other-student', { headers: { Authorization: 'Bearer isolated-test-session' } });
     expect((await GET(other)).status).toBe(403);
   });
-  it('retains admin review behavior while denying portal students', async () => {
+  it('retains admin review behavior while denying canonical students', async () => {
     db.user.findUnique.mockResolvedValue({ id: 'unit-admin', role: 'SUPER_ADMIN', status: 'ACTIVE', emailVerified: true, permissions: '[]' });
     db.student.findUnique.mockResolvedValue({ id: 'other-student', userId: null, counselorId: null });
     db.document.update.mockResolvedValue({ id: 'other-document', status: 'APPROVED' });
