@@ -7,7 +7,8 @@ const dirs: string[] = [];
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), 'alo-standalone-test-'));
   dirs.push(root);
-  mkdirSync(join(root, 'scripts'));
+  mkdirSync(join(root, 'scripts/lib'), { recursive: true });
+  cpSync('scripts/lib/public-upload-guard.mjs', join(root, 'scripts/lib/public-upload-guard.mjs'));
   cpSync('scripts/verify-standalone.mjs', join(root, 'scripts/verify-standalone.mjs'));
   return root;
 }
