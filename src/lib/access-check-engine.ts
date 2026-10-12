@@ -198,6 +198,7 @@ export async function reserveQuota(
     return { allowed: false, remaining: 0, used: 0, limit, message: quotaExceededMessage(featureKey, 0, limit) };
   }
 
+  for (let attempt = 0; attempt < 3; attempt += 1) {
   try {
     return await db.$transaction(async (tx: any) => {
       // Ensure the period row exists before the conditional update.
@@ -237,10 +238,16 @@ export async function reserveQuota(
         message: 'Quota reserved.',
       };
     });
-  } catch {
+  } catch (error) {
+    const code = error && typeof error === 'object' && 'code' in error ? error.code : undefined;
+    // MySQL upsert can race when the monthly row is first created. Retry the
+    // entire rolled-back transaction; the conditional increment remains atomic.
+    if (attempt < 2 && (code === 'P2002' || code === 'P2034')) continue;
     // Fail closed: never allow an action when the quota ledger is unavailable.
     return { allowed: false, remaining: 0, used: 0, limit, message: 'Quota service unavailable. Please try again.' };
   }
+  }
+  return { allowed: false, remaining: 0, used: 0, limit, message: 'Quota service unavailable. Please try again.' };
 }
 
 /**

@@ -76,6 +76,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/english-tests", destination: "/english-test-prep", permanent: true },
       { source: "/courses", destination: "/course-finder", permanent: true },
+      { source: "/english-tests", destination: "/english-test-prep", permanent: true },
       // Bare /course has no index page — src/app/course/ contains only
       // [slug]/page.tsx, the canonical public course-detail hub. Send the
       // listing intent to the Course Finder exactly as the plural alias above

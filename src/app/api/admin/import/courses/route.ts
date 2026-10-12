@@ -39,7 +39,14 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        const uni = await db.crmUniversity.findUnique({ where: { universityId } });
+        const uni = await db.crmUniversity.findFirst({
+          where: {
+            OR: [
+              { universityId },
+              { name: universityId },
+            ],
+          },
+        });
 
         if (!uni) {
           invalidRows.push({ rowIndex: i + 1, row: r, reason: `University '${universityId}' not found in database.` });
@@ -73,10 +80,10 @@ export async function POST(request: NextRequest) {
               city: uni.city,
               country: uni.country,
               sourceUrl: (r.source_url || '').trim(),
-              status: 'draft',
+              status: 'active',
               publicationStatus: 'draft',
               verificationStatus: 'NEEDS_REVIEW',
-              lastVerifiedAt: '', // Import time is not official verification time.
+              lastVerifiedAt: '',
             },
             feeData: {
               universityId: uni.universityId,
@@ -107,28 +114,29 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      const importedCount = await db.$transaction(async tx => {
-        let count = 0;
+      const importedCount = await db.$transaction(async (tx) => {
+        let importedCount = 0;
         for (const item of validRows) {
           await tx.crmCourse.create({ data: item.courseData });
           if (item.feeData.yearlyTuition > 0 && item.feeData.intakeYear > 0 && item.feeData.intakeMonth && item.feeData.tuitionCurrency) {
-            await tx.crmCourseIntakeFee.create({ data: item.feeData });
+            await tx.crmCourseIntakeFee.create({ data: { ...item.feeData, verificationStatus: 'NEEDS_REVIEW' } });
           }
-          count++;
+          importedCount++;
         }
 
-        await tx.portalAuditLog.create({
+        await tx.crmAuditLog.create({
           data: {
-            actorUserId: auth.actorUserId,
+            actorUserId: auth.userId || 'system',
+            actorRole: auth.roles[0] || 'ADMIN',
             action: 'BATCH_IMPORT_COURSES',
-            entityType: 'CrmCourse',
-            entityId: `BATCH-CRS-${Date.now()}`,
-            metadata: JSON.stringify({ identityDomain: auth.identityDomain, effectiveUserId: auth.userId, importedCount: count, skippedDuplicates: duplicateRows.length }),
+            targetCollection: 'CrmCourse',
+            targetId: `BATCH-CRS-${Date.now()}`,
+            afterData: JSON.stringify({ importedCount, skippedDuplicates: duplicateRows.length }),
           },
         });
 
-        return count;
-      }, { maxWait: 5000, timeout: 60000 });
+        return importedCount;
+      }, { timeout: 30000 });
 
       return NextResponse.json({
         success: true,
@@ -137,9 +145,8 @@ export async function POST(request: NextRequest) {
         skippedDuplicates: duplicateRows.length,
         errors: invalidRows,
       });
-    } catch (error: any) {
-      console.error('[catalog.admin-import]', error);
-      return NextResponse.json({ success: false, error: 'Import failed; no batch changes committed' }, { status: 500 });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Import failed; no batch records were committed.' }, { status: 500 });
     }
   })(request);
 }

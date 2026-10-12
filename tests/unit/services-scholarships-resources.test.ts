@@ -32,7 +32,8 @@ describe('Services system — spec §3-§12', () => {
     expect(page).toContain('Provide professional guidance from course selection and university applications to visa preparation, pre-departure planning and post-arrival support');
     expect(page).toContain('Book Free Consultation');
     expect(page).toContain('Explore Course Finder');
-    expect(page).toContain('14 Services');
+    expect(page).toContain('services.length');
+    expect(page).not.toContain('Verified content');
     expect(page).toContain('href={`/services/${s.slug}`}');
   });
 

@@ -119,34 +119,6 @@ export class UccService {
     senderUserId: string;
     recipientContact: string;
   }) {
-    const thread = await db.communicationThread.findUnique({ where: { id: params.threadId } });
-    if (!thread) throw new Error("Thread not found");
-
-    // Here we would integrate with Twilio/Meta API to actually send the message.
-    // For now, we assume success and log it.
-
-    const message = await db.communicationMessage.create({
-      data: {
-        threadId: thread.id,
-        channel: thread.channel,
-        direction: 'outbound',
-        senderUserId: params.senderUserId,
-        recipientContact: params.recipientContact,
-        content: params.content,
-        messageType: 'text',
-        messageBody: params.content,
-        status: 'sent',
-      }
-    });
-
-    await db.communicationThread.update({
-      where: { id: thread.id },
-      data: {
-        lastMessageAt: new Date(),
-        lastMessagePreview: `You: ${params.content.substring(0, 45)}`,
-      }
-    });
-
-    return message;
+    throw new Error('CHANNEL_NOT_CONNECTED: outbound transport is not connected. Nothing was sent.');
   }
 }

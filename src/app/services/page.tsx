@@ -41,9 +41,7 @@ export default function ServicesDirectoryPage() {
               <Link href="/course-finder"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6 font-bold text-[#0057B8]">Explore Course Finder</Button></Link>
             </div>
             <div className="flex gap-2 mt-4">
-              <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">14 Services</Badge>
-              <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">Database-driven</Badge>
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">Verified content</Badge>
+              <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">{loading ? 'Loading services' : `${services.length} Services`}</Badge>
             </div>
           </div>
 

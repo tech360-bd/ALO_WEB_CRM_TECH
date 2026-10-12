@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         const existing = await db.crmUniversity.findFirst({
           where: {
             OR: [
-              { name: { contains: name.toLowerCase() } },
+              { name },
               { universityId: universityCode },
               website ? { website: { contains: website.replace(/^https?:\/\//, '').split('/')[0] } } : undefined,
             ].filter(Boolean) as any,
@@ -63,10 +63,10 @@ export async function POST(request: NextRequest) {
             ranking: parseInt(r.ranking || '0', 10) || 0,
             worldRanking: parseInt(r.worldRanking || r.world_ranking || '0', 10) || 0,
             type: (r.type || '').trim(),
-            status: 'draft',
+            status: 'active',
               publicationStatus: 'draft',
             verificationStatus: 'NEEDS_REVIEW',
-            lastVerifiedAt: '', // Import time is not official verification time.
+            lastVerifiedAt: '',
           });
         }
       }
@@ -86,25 +86,26 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      const importedCount = await db.$transaction(async tx => {
-        let count = 0;
+      const importedCount = await db.$transaction(async (tx) => {
+        let importedCount = 0;
         for (const uniData of validRows) {
           await tx.crmUniversity.create({ data: uniData });
-          count++;
+          importedCount++;
         }
 
-        await tx.portalAuditLog.create({
+        await tx.crmAuditLog.create({
           data: {
-            actorUserId: auth.actorUserId,
+            actorUserId: auth.userId || 'system',
+            actorRole: auth.roles[0] || 'ADMIN',
             action: 'BATCH_IMPORT_UNIVERSITIES',
-            entityType: 'CrmUniversity',
-            entityId: `BATCH-${Date.now()}`,
-            metadata: JSON.stringify({ identityDomain: auth.identityDomain, effectiveUserId: auth.userId, importedCount: count, skippedDuplicates: duplicateRows.length }),
+            targetCollection: 'CrmUniversity',
+            targetId: `BATCH-${Date.now()}`,
+            afterData: JSON.stringify({ importedCount, skippedDuplicates: duplicateRows.length }),
           },
         });
 
-        return count;
-      }, { maxWait: 5000, timeout: 60000 });
+        return importedCount;
+      }, { timeout: 30000 });
 
       return NextResponse.json({
         success: true,
@@ -113,9 +114,8 @@ export async function POST(request: NextRequest) {
         skippedDuplicates: duplicateRows.length,
         errors: invalidRows,
       });
-    } catch (error: any) {
-      console.error('[catalog.admin-import]', error);
-      return NextResponse.json({ success: false, error: 'Import failed; no batch changes committed' }, { status: 500 });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Import failed; no batch records were committed.' }, { status: 500 });
     }
   })(request);
 }

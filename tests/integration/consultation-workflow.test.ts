@@ -4,20 +4,15 @@ import { describe, it, expect, afterAll } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
 
-import { testDatabaseUrl } from '../helpers/test-database';
-const databaseUrl = testDatabaseUrl();
-const HAS_TEST_DB = Boolean(databaseUrl);
-const client = databaseUrl ? new PrismaClient({ datasourceUrl: databaseUrl }) : null;
-const runId = `consultation-${randomUUID()}`;
-const ids = {
-  lead: () => `${runId}-${randomUUID()}`,
-  user: `${runId}-user`, audit: `${runId}-audit`, notification: `${runId}-notification`,
-};
+const databaseUrl = process.env.DATABASE_URL;
+const HAS_TEST_DB = Boolean(databaseUrl?.startsWith('mysql://') && new URL(databaseUrl).pathname.startsWith('/alo_test_'));
+const client = HAS_TEST_DB ? new PrismaClient() : undefined;
+const runId = `consultation-${randomUUID()}-`;
+const ids = { lead: () => `${runId}${randomUUID()}`, user: `${runId}user`, audit: `${runId}audit`, notification: `${runId}notification` };
 function requireClient(): PrismaClient {
-  if (!client) throw new Error('Disposable test database required');
+  if (!client) throw new Error('A disposable alo_test_ MySQL database is required');
   return client;
 }
-// No table-wide cleanup. Only exact IDs/prefix created by this invocation.
 
 afterAll(async () => {
   if (!client) return;

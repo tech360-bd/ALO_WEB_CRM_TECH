@@ -74,14 +74,20 @@ export async function approveBroadcast(params: { broadcastId: string; approvedBy
   const broadcast = await db.broadcast.findUnique({ where: { id: params.broadcastId } }).catch(()=>null) as any;
   if (!broadcast) throw new Error('Broadcast not found');
 
-  const isSuperAdmin = ['super_admin','super admin','chairman'].includes((params.approverRole||'').toLowerCase());
+  const isSuperAdmin = ['super_admin'].includes((params.approverRole||'').toLowerCase());
   const isMarketingManager = ['marketing_manager','marketing manager'].includes((params.approverRole||'').toLowerCase());
 
   if (!isSuperAdmin && !isMarketingManager) throw new Error('Only Marketing Manager or Super Admin can approve broadcasts');
 
+  if (broadcast.createdBy === params.approvedBy) throw new Error('A different authorized user must approve the broadcast');
+
   // For mass audience > limit, only Super Admin
   let estimatedRecipients = 0;
-  try { estimatedRecipients = await db.broadcastRecipient.count({ where: { broadcastId: params.broadcastId } }); } catch {}
+  if (broadcast.audienceType === 'all_leads') estimatedRecipients = await db.marketingLead.count();
+  else if (broadcast.audienceType === 'hot_leads') estimatedRecipients = await db.marketingLead.count({ where: { hotLead: true } });
+  else if (broadcast.audienceType === 'students') estimatedRecipients = await db.student.count();
+  else if (broadcast.audienceType === 'partner_students') estimatedRecipients = await db.portalStudentProfile.count();
+  else throw new Error('Unsupported broadcast audience');
   if (estimatedRecipients > MASS_AUDIENCE_LIMIT && !isSuperAdmin) {
     throw new Error(`Mass send audience ${estimatedRecipients} > ${MASS_AUDIENCE_LIMIT} requires Super Admin approval`);
   }
@@ -137,81 +143,5 @@ export async function sendBroadcast(broadcastId: string, actorId: string = '') {
     throw new Error(`CHANNEL_NOT_CONNECTED: ${broadcast.channel} sending is not connected. Nothing was sent.`);
   }
 
-  // Resolve audience respecting opt-out / consent
-  let recipients: any[] = [];
-  if (['all_leads','hot_leads'].includes(broadcast.audienceType)) {
-    const leads = await db.marketingLead.findMany({ where: filter, take: 1000 }).catch(()=>[]);
-    for (const l of leads as any[]) {
-      const pref = await db.communicationPreference.findFirst({ where: { ownerType: 'lead', ownerId: l.id } }).catch(()=>null) as any;
-      const allowed = broadcast.channel === 'email' ? (pref?.emailAllowed ?? true) :
-                     broadcast.channel === 'whatsapp' ? (pref?.whatsappAllowed ?? true) :
-                     broadcast.channel === 'sms' ? (pref?.smsAllowed ?? true) : true;
-      if (!allowed) continue;
-      if (pref?.marketingAllowed === false && broadcast.audienceType !== 'transactional') continue;
-      if (pref?.optOutAt) continue;
-      recipients.push({ ownerType: 'lead', ownerId: l.id, contact: l.phone || l.email });
-    }
-  } else if (['students','partner_students'].includes(broadcast.audienceType)) {
-    const students = await db.student.findMany({ take: 1000 }).catch(()=>[]);
-    for (const s of students as any[]) {
-      const pref = await db.communicationPreference.findFirst({ where: { ownerType: 'student', ownerId: s.id } }).catch(()=>null) as any;
-      if (pref?.optOutAt) continue;
-      recipients.push({ ownerType: 'student', ownerId: s.id, contact: s.phone || s.email });
-    }
-  }
-
-  // Create recipient logs
-  for (const r of recipients) {
-    await db.broadcastRecipient.create({
-      data: {
-        broadcastId,
-        ownerType: r.ownerType,
-        ownerId: r.ownerId,
-        recipientContact: r.contact || '',
-        status: 'queued',
-      }
-    }).catch(()=>{});
-  }
-
-  // Simulate send (integration-ready placeholder if API keys not configured)
-  const sentAt = new Date();
-  await db.broadcast.update({ where: { id: broadcastId }, data: { sentAt } }).catch(()=>{});
-  for (const r of recipients) {
-    await db.broadcastRecipient.updateMany({
-      where: { broadcastId, ownerId: r.ownerId },
-      data: { status: 'sent', sentAt }
-    }).catch(()=>{});
-    // Also log to communication message for timeline (linked)
-    await db.communicationMessage.create({
-      data: {
-        threadId: (await db.communicationThread.create({
-          data: {
-            channel: broadcast.channel,
-            subject: `Broadcast: ${broadcast.title}`,
-            visibility: 'public_safe',
-            intent: 'general',
-            status: 'open',
-            lastMessageAt: sentAt,
-            lastMessagePreview: broadcast.messageBody.substring(0,100),
-          }
-        }).catch(()=>({ id: 'unknown' } as any))).id,
-        channel: broadcast.channel,
-        direction: 'outbound',
-        senderName: 'ALO Broadcast',
-        recipientContact: r.contact,
-        studentId: r.ownerType === 'student' ? r.ownerId : '',
-        leadId: r.ownerType === 'lead' ? r.ownerId : '',
-        campaignId: broadcastId,
-        messageBody: broadcast.messageBody,
-        content: broadcast.messageBody,
-        visibility: 'public_safe',
-        intent: 'general',
-        status: 'sent',
-        deliveryStatus: 'sent',
-        createdBy: broadcast.createdBy,
-      }
-    }).catch(()=>{});
-  }
-
-  return { sent: recipients.length, total: recipients.length, broadcastId };
+  throw new Error('CHANNEL_NOT_CONNECTED: portal broadcast delivery is not connected. Nothing was sent.');
 }

@@ -3,10 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
-// HISTORICAL — PERMANENTLY DISABLED (2026-10-12 safety remediation).
-console.error('[run-production-real-collection.ts] DISABLED: historical one-off that bulk-updates CrmCourse/CrmCourseIntakeFee verificationStatus in the database and writes repo-root master CSV/JSON files. Database changes need a reviewed, approved plan. No files or database rows were changed.');
-process.exit(1);
-
+// This historical exporter rejected unrelated institutions and invented facts.
+// Fail before constructing a database client: it must never mutate live records.
+throw new Error('Legacy collection disabled: use scripts/collect-official-source-evidence.py for read-only discovery, then review records before import.');
 const db = new PrismaClient();
 
 // Helper to escape CSV values
