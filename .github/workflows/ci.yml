@@ -74,10 +74,6 @@ jobs:
           npm ci
 
       - name: Dependency security audit (high and critical block)
-        # npm audit has no per-advisory ignore; npm-security-audit.mjs keeps the
-        # gate fail-closed while carrying a documented, id-scoped waiver for
-        # GHSA-vfj7-8cjw-p6xm (braces ≤3.0.3 — latest release is the affected
-        # one, lint-tooling-only exposure; see script header).
         run: node scripts/ci/npm-security-audit.mjs
 
       - name: Secret-leak scan (tracked files)

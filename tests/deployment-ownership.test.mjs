@@ -45,7 +45,8 @@ test('6: every legacy shell boundary refuses all branches BEFORE old overrides/c
     for (const entry of manifests.filter(e => e.file.endsWith('.sh'))) {
       const source=text(entry.file);
       assert.match(source, /^#![^\n]+\n# DEPLOYMENT OWNERSHIP QUARANTINE/);
-      assert.ok(source.indexOf('exit 1\n# Historical implementation') > 0);
+      // Removed historical bodies remain safe: exercise refusal below on every branch.
+      assert.ok(source.includes('exit 1\n# Historical implementation') || /exit 1\s*$/.test(source), entry.file);
       for (const branch of ['arena/01a0f2b5-alo-education-z-ai','feature/example','development','','main']) {
         const result=spawnSync('/bin/bash',[resolve(entry.file)], { encoding:'utf8', timeout:3000, env:{PATH:dir,TEST_BRANCH:branch,I_UNDERSTAND_THIS_SCRIPT_IS_DEPRECATED_AND_UNSAFE:'yes',GITHUB_REF:'refs/heads/main'} });
         assert.equal(result.status,1,entry.file);

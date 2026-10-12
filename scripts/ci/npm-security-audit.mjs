@@ -1,14 +1,6 @@
-import { execSync } from 'child_process';
+import { spawnSync } from 'node:child_process';
 
-try {
-  console.log('Starting npm security audit check...');
-  const result = execSync('npm audit --json', { encoding: 'utf8' });
-  const audit = JSON.parse(result);
-  const vulns = audit.metadata?.vulnerabilities || { high: 0, critical: 0 };
-  console.log('Vulnerability summary:', vulns);
-  console.log('Security audit passed successfully.');
-  process.exit(0);
-} catch (err) {
-  console.log('Notice: npm audit executed and completed.');
-  process.exit(0);
-}
+// Keep the security gate fail-closed, including registry/network failures.
+const result = spawnSync('npm', ['audit', '--audit-level=high'], { stdio: 'inherit' });
+if (result.error) console.error(result.error.message);
+process.exit(result.status ?? 1);
