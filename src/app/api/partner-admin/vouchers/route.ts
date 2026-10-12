@@ -37,11 +37,6 @@ const BENEFIT_PACKAGE: Array<{ benefitType: string; limitCount: number }> = [
 /** Maximum English mock test vouchers per eligible student (§16, §18). */
 const MOCK_TEST_VOUCHER_COUNT = 3;
 
-function sameOrigin(request: Request) {
-  const origin = request.headers.get('origin');
-  return !origin || new URL(origin).origin === new URL(request.url).origin;
-}
-
 export async function GET(req: NextRequest) {
   const ctx = await requirePartnerContext(req);
   if (ctx instanceof NextResponse) return ctx;
@@ -72,7 +67,6 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const ctx = await requirePartnerSuperAdmin(req);
   if (ctx instanceof NextResponse) return ctx;
-  if (!sameOrigin(req)) return NextResponse.json({ success: false, error: 'Cross-origin benefit issuance denied.' }, { status: 403 });
 
   try {
     const body = await req.json().catch(() => ({}));

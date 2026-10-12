@@ -24,11 +24,6 @@ import { getQuota, STARTER_SEAT_LIMIT } from '@/lib/access-check-engine';
 
 const MAX_EXTRA_SEATS = 50;
 
-function sameOrigin(request: Request) {
-  const origin = request.headers.get('origin');
-  return !origin || new URL(origin).origin === new URL(request.url).origin;
-}
-
 // GET — seat requests for the caller's own tenant only.
 export async function GET(req: NextRequest) {
   const ctx = await requirePartnerContext(req);
@@ -53,7 +48,6 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const ctx = await requirePartnerSuperAdmin(req);
   if (ctx instanceof NextResponse) return ctx;
-  if (!sameOrigin(req)) return NextResponse.json({ success: false, error: 'Cross-origin seat request denied.' }, { status: 403 });
 
   try {
     const body = await req.json().catch(() => ({}));
@@ -75,7 +69,7 @@ export async function POST(req: NextRequest) {
 
     // Only one open request per tenant, so a partner cannot flood ALO review.
     const pending = await db.partnerUserSeatRequest.findFirst({
-      where: { partnerId: ctx.partnerId, status: { in: ['pending', 'PENDING'] } },
+      where: { partnerId: ctx.partnerId, status: 'PENDING' },
     });
     if (pending) {
       return NextResponse.json(
@@ -122,7 +116,6 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const auth = await requireAloSuperAdmin(req);
   if (auth instanceof NextResponse) return auth;
-  if (!sameOrigin(req)) return NextResponse.json({ success: false, error: 'Cross-origin seat request review denied.' }, { status: 403 });
 
   try {
     const body = await req.json().catch(() => ({}));
@@ -144,7 +137,7 @@ export async function PATCH(req: NextRequest) {
     if (!existing) {
       return NextResponse.json({ success: false, error: 'Seat request not found.' }, { status: 404 });
     }
-    if (existing.status.toUpperCase() !== 'PENDING') {
+    if (existing.status !== 'PENDING') {
       return NextResponse.json(
         { success: false, error: `This request has already been ${existing.status.toLowerCase()}.` },
         { status: 409 },
@@ -163,21 +156,12 @@ export async function PATCH(req: NextRequest) {
         const assignment = await tx.partnerPackageAssignment.findFirst({
           where: { partnerId: existing.partnerId, status: 'active' },
         });
-        const currentLimit = existing.currentLimit > 0 ? existing.currentLimit : STARTER_SEAT_LIMIT;
-        const newLimit = currentLimit + existing.requestedExtraSeats;
+        const newLimit = (existing.currentLimit || STARTER_SEAT_LIMIT) + existing.requestedExtraSeats;
         if (assignment) {
           await tx.partnerPackageAssignment.update({
             where: { id: assignment.id },
             data: { seatOverride: newLimit },
-          });
-        } else {
-          // A tenant without a package-assignment row still gets a real limit
-          // increase; getQuota reads this authoritative PartnerQuota value.
-          await tx.partnerQuota.upsert({
-            where: { partnerId: existing.partnerId },
-            update: { maxUsers: newLimit },
-            create: { partnerId: existing.partnerId, maxUsers: newLimit },
-          });
+          }).catch(() => null);
         }
       }
       return updated;

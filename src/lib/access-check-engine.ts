@@ -97,11 +97,11 @@ export async function getQuota(ownerType: string, ownerId: string, rawFeatureKey
   const featureKey = normalizeQuotaKey(rawFeatureKey);
   if (featureKey === 'monthly_images' || featureKey === 'MARKETING_IMAGE_GENERATION') {
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
-    return quota?.monthlyImageLimit ?? STARTER_IMAGE_LIMIT;
+    return quota?.monthlyImageLimit || STARTER_IMAGE_LIMIT;
   }
   if (featureKey === 'monthly_videos' || featureKey === 'MARKETING_VIDEO_GENERATION') {
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
-    return quota?.monthlyVideoLimit ?? STARTER_VIDEO_LIMIT;
+    return quota?.monthlyVideoLimit || STARTER_VIDEO_LIMIT;
   }
   if (featureKey === 'user_seats' || featureKey === 'partner_max_users') {
     const assignment = await db.partnerPackageAssignment.findFirst({
@@ -114,15 +114,11 @@ export async function getQuota(ownerType: string, ownerId: string, rawFeatureKey
       const pkg = await db.partnerPackage.findUnique({ where: { id: assignment.packageId } }).catch(() => null);
       if (pkg?.maxUsers) return pkg.maxUsers;
     }
-    // Legacy/admin quota assignment is also an authoritative package limit.
-    // Seat-approval flows write here when a tenant has no package assignment.
-    const partnerQuota = await db.partnerQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
-    if (partnerQuota?.maxUsers && partnerQuota.maxUsers > 0) return partnerQuota.maxUsers;
     return STARTER_SEAT_LIMIT; // Starter package = 3 (1 Partner Super Admin + 2 Employees)
   }
   if (featureKey === 'video_duration_limit_seconds') {
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: ownerId } }).catch(() => null);
-    return quota?.videoDurationLimitSeconds ?? STARTER_VIDEO_DURATION_SECONDS;
+    return quota?.videoDurationLimitSeconds || STARTER_VIDEO_DURATION_SECONDS;
   }
   return 0;
 }
@@ -198,7 +194,6 @@ export async function reserveQuota(
     return { allowed: false, remaining: 0, used: 0, limit, message: quotaExceededMessage(featureKey, 0, limit) };
   }
 
-  for (let attempt = 0; attempt < 3; attempt += 1) {
   try {
     return await db.$transaction(async (tx: any) => {
       // Ensure the period row exists before the conditional update.
@@ -238,16 +233,10 @@ export async function reserveQuota(
         message: 'Quota reserved.',
       };
     });
-  } catch (error) {
-    const code = error && typeof error === 'object' && 'code' in error ? error.code : undefined;
-    // MySQL upsert can race when the monthly row is first created. Retry the
-    // entire rolled-back transaction; the conditional increment remains atomic.
-    if (attempt < 2 && (code === 'P2002' || code === 'P2034')) continue;
+  } catch {
     // Fail closed: never allow an action when the quota ledger is unavailable.
     return { allowed: false, remaining: 0, used: 0, limit, message: 'Quota service unavailable. Please try again.' };
   }
-  }
-  return { allowed: false, remaining: 0, used: 0, limit, message: 'Quota service unavailable. Please try again.' };
 }
 
 /**

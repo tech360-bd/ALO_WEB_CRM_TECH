@@ -1,4 +1,3 @@
-import { testDatabaseUrl } from '../helpers/test-database';
 // ============================================================
 // ALO Education — B2B Partner security & tenant isolation tests
 // ============================================================
@@ -45,8 +44,6 @@ import {
   isPartnerSuperAdmin,
 } from '@/lib/partner-tenant-guard';
 
-const describeDb = testDatabaseUrl() ? describe : describe.skip;
-
 const SUFFIX = `b2b-${Date.now().toString(36)}`;
 const PARTNER_A = `partner-a-${SUFFIX}`;
 const PARTNER_B = `partner-b-${SUFFIX}`;
@@ -75,7 +72,6 @@ async function makeUser(
       name: `Test ${label}`,
       userType,
       status: 'active',
-      emailVerified: true,
       passwordHash: 'x',
       ...(partner
         ? {
@@ -126,7 +122,6 @@ let partnerBSuperAdmin: Fixture;
 let aloSuperAdmin: Fixture;
 
 beforeAll(async () => {
-  if (!process.env.TEST_DATABASE_URL) return;
   partnerASuperAdmin = await makeUser('a-sa', 'PARTNER', 'partner', {
     partnerId: PARTNER_A,
     partnerRole: 'PARTNER_SUPER_ADMIN',
@@ -152,7 +147,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  if (!process.env.TEST_DATABASE_URL) return;
   await db.partnerMarketingUsage.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
   await db.partnerMarketingQuota.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
   await db.studentMockTestVoucher.deleteMany({ where: { partnerId: { in: [PARTNER_A, PARTNER_B] } } }).catch(() => undefined);
@@ -165,7 +159,7 @@ afterAll(async () => {
 });
 
 // ------------------------------------------------------------
-describeDb('Tenant model: a partner company can hold multiple users', () => {
+describe('Tenant model: a partner company can hold multiple users', () => {
   it('allows the Starter package of 1 Partner Super Admin + 2 employees', async () => {
     // Previously impossible: PartnerProfile.partnerId was UNIQUE, so the
     // second user in a tenant failed with a unique-constraint error.
@@ -188,7 +182,7 @@ describeDb('Tenant model: a partner company can hold multiple users', () => {
 });
 
 // ------------------------------------------------------------
-describeDb('Auth context carries the server-derived partner tenant', () => {
+describe('Auth context carries the server-derived partner tenant', () => {
   it('resolves partnerId and partnerRole from the session, not from client input', async () => {
     const ctx = await requirePartnerContext(reqAs(partnerASuperAdmin.token));
     expect(ctx).not.toBeInstanceOf(NextResponse);
@@ -213,7 +207,7 @@ describeDb('Auth context carries the server-derived partner tenant', () => {
 });
 
 // ------------------------------------------------------------
-describeDb('Tenant isolation: Partner A cannot reach Partner B', () => {
+describe('Tenant isolation: Partner A cannot reach Partner B', () => {
   it('blocks a cross-tenant partnerId supplied by the client', async () => {
     const ctx = await requirePartnerContext(reqAs(partnerASuperAdmin.token));
     if (ctx instanceof NextResponse) throw new Error('expected a partner context');
@@ -258,7 +252,7 @@ describeDb('Tenant isolation: Partner A cannot reach Partner B', () => {
 });
 
 // ------------------------------------------------------------
-describeDb('Partner RBAC: privileged partner actions are Super Admin only', () => {
+describe('Partner RBAC: privileged partner actions are Super Admin only', () => {
   it('allows the Partner Super Admin', async () => {
     const ctx = await requirePartnerSuperAdmin(reqAs(partnerASuperAdmin.token));
     expect(ctx).not.toBeInstanceOf(NextResponse);
@@ -280,7 +274,7 @@ describeDb('Partner RBAC: privileged partner actions are Super Admin only', () =
 });
 
 // ------------------------------------------------------------
-describeDb('Seat-request approval cannot be self-granted', () => {
+describe('Seat-request approval cannot be self-granted', () => {
   it('rejects an anonymous approval attempt', async () => {
     // The original handler accepted {id, status:"APPROVED"} from anyone.
     const result = await requireAloSuperAdmin(anonReq());
@@ -301,7 +295,7 @@ describeDb('Seat-request approval cannot be self-granted', () => {
 });
 
 // ------------------------------------------------------------
-describeDb('Quota feature keys resolve to real limits', () => {
+describe('Quota feature keys resolve to real limits', () => {
   it('normalises every accepted spelling', () => {
     expect(normalizeQuotaKey('marketing_images')).toBe(QUOTA_IMAGE);
     expect(normalizeQuotaKey('MARKETING_IMAGE_GENERATION')).toBe(QUOTA_IMAGE);
@@ -329,7 +323,7 @@ describeDb('Quota feature keys resolve to real limits', () => {
 });
 
 // ------------------------------------------------------------
-describeDb('Quota enforcement survives concurrent requests', () => {
+describe('Quota enforcement survives concurrent requests', () => {
   it('never grants more than the limit when requests race', async () => {
     const racePartner = `race-${SUFFIX}`;
     await db.partnerMarketingQuota.create({
@@ -362,7 +356,7 @@ describeDb('Quota enforcement survives concurrent requests', () => {
 });
 
 // ------------------------------------------------------------
-describeDb('Voucher redemption is atomic', () => {
+describe('Voucher redemption is atomic', () => {
   it('permits exactly one redemption of a single-use voucher under concurrency', async () => {
     const voucher = await db.studentMockTestVoucher.create({
       data: {
@@ -400,12 +394,11 @@ describeDb('Voucher redemption is atomic', () => {
 });
 
 // ------------------------------------------------------------
-describeDb('Partner dashboard metrics are tenant-scoped', () => {
+describe('Partner dashboard metrics are tenant-scoped', () => {
   const profileIds: string[] = [];
   const appIds: string[] = [];
 
   afterAll(async () => {
-  if (!process.env.TEST_DATABASE_URL) return;
     await db.portalStudentApplication.deleteMany({ where: { id: { in: appIds } } }).catch(() => undefined);
     await db.portalStudentProfile.deleteMany({ where: { id: { in: profileIds } } }).catch(() => undefined);
   });

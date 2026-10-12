@@ -69,7 +69,7 @@ export async function requirePartnerContext(
   if (authResult instanceof NextResponse) return authResult;
   const auth = authResult as AuthContext;
 
-  if (auth.userType !== 'PARTNER' || !auth.partnerId) {
+  if (!auth.partnerId) {
     return jsonError(
       'Partner identity required. This account is not linked to a partner organisation.',
       403,

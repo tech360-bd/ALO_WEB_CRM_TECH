@@ -20,6 +20,16 @@ export interface AuthContext {
   partnerId?: string;
   partnerRole?: string;
 
+  // B2B tenant scope. Resolved server-side from the user's PartnerProfile and
+  // NEVER from a client-supplied value — every partner-scoped query must filter
+  // on this. Previously these fields did not exist at all, so routes reading
+  // `auth.partnerId` always saw `undefined` and rejected every request with
+  // "Partner identity required" (partner user management and voucher
+  // generation were therefore entirely non-functional).
+  partnerId?: string;
+  /** Role WITHIN the partner tenant, e.g. PARTNER_SUPER_ADMIN. */
+  partnerRole?: string;
+
   // Actor info for audit logs (especially when actingAs is used)
   actorUserId: string;
   actorEmail: string;
@@ -48,9 +58,19 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
   // database-backed Bearer session. Support both without accepting fabricated
   // tokens or bypassing the database checks.
   if (!token) {
-    const { getServerSession } = await import('next-auth');
-    const { authOptions } = await import('@/lib/auth');
-    const nextAuthSession = await getServerSession(authOptions).catch(() => null);
+    // `getServerSession` reads `next/headers`, which throws outside a request
+    // scope instead of simply reporting "no session". An unauthenticated call
+    // must produce a clean 401, never an unhandled exception that surfaces as
+    // a 500 and leaks a stack trace, so this fails closed to "no session".
+    const nextAuthSession = await (async () => {
+      try {
+        const { getServerSession } = await import('next-auth');
+        const { authOptions } = await import('@/lib/auth');
+        return await getServerSession(authOptions);
+      } catch {
+        return null;
+      }
+    })();
     const nextAuthUser = nextAuthSession?.user as {
       identityDomain?: string;
       id?: string;
@@ -77,7 +97,8 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
       );
     }
 
-    const role = user.role || 'STUDENT';
+    const role = user.role || nextAuthUser.role || 'STUDENT';
+    const naPartner = await resolvePartnerScope(user.email);
     return {
       identityDomain: 'user',
       authenticationMethod: 'cookie',
@@ -88,7 +109,8 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
       roles: [role, role.toLowerCase()],
       permissions: JSON.parse(user.permissions || '[]'),
       sessionId: `nextauth:${user.id}`,
-      partnerId: user.partnerId || undefined,
+      partnerId: naPartner?.partnerId,
+      partnerRole: naPartner?.partnerRole,
       actorUserId: user.id,
       actorEmail: user.email,
       actorName: user.name || user.email,
@@ -241,6 +263,11 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
     }
   }
 
+  // Tenant scope follows the EFFECTIVE user (so Super-Admin "acting as" a
+  // partner is correctly confined to that partner's tenant), while the audit
+  // fields below still record the real actor.
+  const partnerScope = await resolvePartnerScopeByUserId(actingUserId);
+
   return {
     identityDomain: 'portal',
     authenticationMethod: bearerToken && bearerToken !== 'null' && bearerToken !== 'undefined' ? 'bearer' : 'cookie',
@@ -251,8 +278,8 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
     roles,
     permissions,
     sessionId: session.id,
-    partnerId: actingPartnerId,
-    partnerRole: actingPartnerRole,
+    partnerId: partnerScope?.partnerId,
+    partnerRole: partnerScope?.partnerRole,
     actorUserId: session.user.id,
     actorEmail: session.user.email,
     actorName: session.user.name,
@@ -281,6 +308,46 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
     }
   }
   return result;
+}
+
+// ============================================================
+// Partner tenant scope resolution (server-side only)
+// ============================================================
+
+/** Look up the B2B tenant a PortalUser belongs to. */
+async function resolvePartnerScopeByUserId(
+  userId: string,
+): Promise<{ partnerId: string; partnerRole: string } | null> {
+  try {
+    const profile = await db.partnerProfile.findUnique({
+      where: { userId },
+      select: { partnerId: true, partnerRole: true },
+    });
+    if (!profile?.partnerId) return null;
+    return { partnerId: profile.partnerId, partnerRole: profile.partnerRole || 'PARTNER_SUPER_ADMIN' };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * NextAuth sessions authenticate against `User`, while partner tenancy hangs
+ * off `PortalUser`. Bridge the two by email so a partner signing in through
+ * either path gets the same tenant scope.
+ */
+async function resolvePartnerScope(
+  email: string,
+): Promise<{ partnerId: string; partnerRole: string } | null> {
+  try {
+    const portalUser = await db.portalUser.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+    if (!portalUser) return null;
+    return resolvePartnerScopeByUserId(portalUser.id);
+  } catch {
+    return null;
+  }
 }
 
 // ============================================================
