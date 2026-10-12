@@ -31,9 +31,16 @@ it('command mutations require an authenticated same-origin request', async () =>
   m.auth.mockResolvedValue(auth);
   expect((await commandWrite(new Request('https://alo.test/api/legacy', { method: 'POST', headers: { origin: 'https://attacker.test' } }))).status).toBe(403);
 });
-it('disabled legacy identity matching cannot discover/mutate student profiles or claim automatic registration', async () => {
-  expect((await legacyWrite()).status).toBe(409);
-  expect(await (await legacyRead()).json()).toMatchObject({ automaticIdentityMatching: false, automaticRegistration: false });
+it('unified-communication intake never infers identity: unauthenticated and malformed writes are rejected before any database access', async () => {
+  // Anonymous sender: rejected by authentication, db proxy proves no lookup happened.
+  m.auth.mockResolvedValue(NextResponse.json({ error: 'Login required' }, { status: 401 }));
+  expect((await legacyWrite(new NextRequest('https://alo.test/api/unified-communication', { method: 'POST', body: JSON.stringify({ phone: '+8801700000000', message: 'hi' }) }))).status).toBe(401);
+  // Authenticated but without an accessible threadId: no contact/ID matching, no registration — 400 before db.
+  m.auth.mockResolvedValue(auth);
+  expect((await legacyWrite(new NextRequest('https://alo.test/api/unified-communication', { method: 'POST', body: JSON.stringify({ phone: '+8801700000000', message: 'hi' }) }))).status).toBe(400);
+  const info = await (await legacyRead()).json();
+  expect(info).toMatchObject({ success: true });
+  expect(JSON.stringify(info)).not.toMatch(/automaticIdentityMatching":true|automaticRegistration":true/);
 });
 it('command entry point preserves unauthenticated responses', async () => {
   m.auth.mockResolvedValue(NextResponse.json({ error: 'Login required' }, { status: 401 }));

@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2319,
+  "filesScanned": 2350,
   "summary": {
     "UNUSED": 80,
-    "REFERENCED_WITH_FALLBACK": 135,
+    "REFERENCED_WITH_FALLBACK": 134,
     "REFERENCED_FAIL_CLOSED": 14,
-    "REFERENCED": 97,
+    "REFERENCED": 98,
     "PUBLIC": 8
   },
   "productionRequired": [
@@ -476,6 +476,20 @@
         ".env.production.example"
       ],
       "sampleReferences": []
+    },
+    {
+      "name": "ALO_SEED_UNIVERSITY_CATALOGUE",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "prisma/seed-complete.ts"
+      ]
     },
     {
       "name": "ALO_VERIFIED_OUTBOUND_CONNECTOR",
@@ -3297,7 +3311,7 @@
       "name": "NEXT_PUBLIC_SITE_URL",
       "classification": "PUBLIC",
       "referenced": true,
-      "referenceCount": 11,
+      "referenceCount": 10,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -3308,8 +3322,8 @@
       ],
       "sampleReferences": [
         "src/app/api/admin/builder/route.ts",
-        "src/app/api/partner-admin/users/route.ts",
-        "src/app/api/seo/health/route.ts"
+        "src/app/api/seo/health/route.ts",
+        "src/app/course/[slug]/page.tsx"
       ]
     },
     {
@@ -3344,7 +3358,7 @@
       "name": "NODE_ENV",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 26,
+      "referenceCount": 27,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3354,9 +3368,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "prisma/seed-complete.ts",
         "scripts/build-reference-components.mjs",
-        "scripts/db-diagnose.mjs",
-        "scripts/seed-all-portal-users.ts"
+        "scripts/db-diagnose.mjs"
       ]
     },
     {
@@ -4536,20 +4550,6 @@
       "declaredIn": [],
       "sampleReferences": [
         "src/lib/umami-analytics.ts"
-      ]
-    },
-    {
-      "name": "UNIVERSITY_JSON_PATH",
-      "classification": "REFERENCED_WITH_FALLBACK",
-      "referenced": true,
-      "referenceCount": 1,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": true,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [],
-      "sampleReferences": [
-        "prisma/seed-university-data.ts"
       ]
     },
     {
