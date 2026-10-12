@@ -1,75 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
-import { aiChat, extractJson } from "@/lib/ai";
-import { db } from "@/lib/db";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { authenticateRequest } from '@/lib/auth-middleware';
 
-// POST — AI document classification + OCR extraction
+const ADMIN_ROLES = new Set(['SUPER_ADMIN', 'ADMIN']);
+function isAdministrator(auth: { userType: string; roles: string[] }) {
+  return [auth.userType, ...auth.roles].some((role) => ADMIN_ROLES.has(role.toUpperCase()));
+}
+
+// Fail closed until an approved private OCR/AI pipeline and its retention controls are configured.
+// Document text is deliberately not forwarded to an external AI provider by this route.
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { documentId, fileName, documentText } = body;
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  if (!isAdministrator(auth)) return NextResponse.json({ success: false, error: 'Administrator access is required.' }, { status: 403 });
 
-  if (!documentId || !fileName) {
-    return NextResponse.json({ error: "documentId and fileName required" }, { status: 400 });
+  let body: Record<string, unknown>;
+  try {
+    const value: unknown = await req.json();
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return NextResponse.json({ success: false, error: 'Invalid request body.' }, { status: 400 });
+    body = value as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ success: false, error: 'Invalid JSON body.' }, { status: 400 });
+  }
+  const documentId = typeof body.documentId === 'string' ? body.documentId.trim() : '';
+  if (!documentId || documentId.length > 100) return NextResponse.json({ success: false, error: 'A valid document ID is required.' }, { status: 400 });
+
+  try {
+    const document = await db.document.findUnique({ where: { id: documentId }, select: { id: true } });
+    if (!document) return NextResponse.json({ success: false, error: 'Document not found.' }, { status: 404 });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Document validation is temporarily unavailable.' }, { status: 503 });
   }
 
-  const systemPrompt = `You are the ALO Education AI Document Classifier. Analyze the uploaded document and classify it.
-
-Document filename: ${fileName}
-Document text (OCR): ${documentText || "No OCR text available — classify by filename only"}
-
-Classify into one of these types:
-PASSPORT, NID, BIRTH_CERT, SSC, HSC, DIPLOMA, BACHELOR, MASTERS, TRANSCRIPT, RECOMMENDATION, CV, EMPLOYMENT_LETTER, OFFER_LETTER, CAS, COE, VISA, IELTS, TOEFL, PTE, MOI, POLICE_CLEARANCE, MEDICAL, BANK_STATEMENT, FINANCIAL_AFFIDAVIT, SPONSOR_LETTER, PHOTO, SIGNATURE, UNKNOWN
-
-Also extract any available data:
-- fullName, dob, gender, nationality
-- passportNumber, issueDate, expiryDate
-- institution, certificateNumber, cgpa, percentage
-- bandScore, testType
-- accountNumber, bankName, branch
-
-Return ONLY valid JSON:
-{
-  "detectedType": "<TYPE>",
-  "confidence": <0-1>,
-  "extractedData": {
-    "fullName": "...",
-    "dob": "...",
-    "passportNumber": "...",
-    "institution": "...",
-    "cgpa": "...",
-    "bandScore": "...",
-    "accountNumber": "..."
-  },
-  "ocrText": "<summarized OCR text>"
-}`;
-
-  const raw = await aiChat([
-    { role: "assistant", content: systemPrompt },
-    { role: "user", content: "Classify this document and extract data." },
-  ], { temperature: 0.2 });
-
-  const parsed = extractJson(raw);
-
-  const classification = await db.aiDocumentClassification.create({
-    data: {
-      documentId,
-      detectedType: parsed?.detectedType || "UNKNOWN",
-      confidence: parsed?.confidence || 0.5,
-      extractedData: JSON.stringify(parsed?.extractedData || {}),
-      ocrText: parsed?.ocrText || raw.slice(0, 500),
-      autoFilled: false,
-      humanVerified: false,
-    },
-  });
-
-  await db.auditLog.create({
-    data: { action: "AI_ACTION", resource: "AiDocumentClassification", resourceId: classification.id, details: JSON.stringify({ detectedType: parsed?.detectedType, confidence: parsed?.confidence }) },
-  });
-
   return NextResponse.json({
-    classification,
-    detectedType: parsed?.detectedType || "UNKNOWN",
-    confidence: parsed?.confidence || 0.5,
-    extractedData: parsed?.extractedData || {},
-    message: `Document classified as ${parsed?.detectedType || "UNKNOWN"} with ${Math.round((parsed?.confidence || 0.5) * 100)}% confidence.`,
-  });
+    success: false,
+    error: 'Document classification is not configured. No OCR text was processed or sent to an AI provider.',
+    status: 'NOT_CONFIGURED',
+  }, { status: 501, headers: { 'Cache-Control': 'no-store' } });
 }

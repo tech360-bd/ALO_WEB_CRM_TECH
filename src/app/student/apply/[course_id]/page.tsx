@@ -53,7 +53,7 @@ export default function StudentApplyPage() {
     <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-16">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 shadow-sm">
-          <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-xs mb-3">Student Apply — Creates Application Draft with Validation</Badge>
+          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-3">Student Apply — Creates Application Draft with Validation</Badge>
           <h1 className="text-3xl font-bold text-[#0F172A]">Apply for Course</h1>
           <p className="text-sm text-gray-600 mt-2">When Apply clicked: Verify authentication, Load student profile, Validate course, Validate intake, Check required documents, Create application draft, Link student_id/course_id/university_id/campus_id/intake_id, Create document checklist, Create timeline entry, Notify counselor, Redirect to student applications. Do not create duplicate drafts for same student/course/intake unless allowed.</p>
         </div>
@@ -72,7 +72,7 @@ export default function StudentApplyPage() {
             {result && (
               <div className={`mt-4 p-4 rounded-xl border text-xs ${result.success ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
                 {result.success ? <><CheckCircle2 className="w-4 h-4 inline mr-1" />Application draft created: {result.data?.applicationCode || result.data?.id} — linked student_id/course_id/university_id/intake_id, document checklist created, timeline entry created, counselor notified.</> : <><AlertTriangle className="w-4 h-4 inline mr-1" />{result.error || 'Failed'}</>}
-                {result.success && <Link href="/student/applications" className="block mt-3"><Button className="bg-[#0B5ED7] text-white h-11 w-full">View My Applications</Button></Link>}
+                {result.success && <Link href="/student/applications" className="block mt-3"><Button className="bg-[#2563EB] text-white h-11 w-full">View My Applications</Button></Link>}
               </div>
             )}
           </Card>

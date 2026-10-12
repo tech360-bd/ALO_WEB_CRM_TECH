@@ -1,0 +1,43 @@
+SourceFile,FormCount,DetectedApiTargets,Validation,LoadingState,LiveRuntime
+src/app/admin/import-center/students/page.tsx,1,/api/admin/import/batches; /api/admin/import/batches/${batch.id}; /api/admin/import/batches/${batchId}/approve; /api/admin/import/batches/${batchId}/execute; /api/admin/import/batches/${batchId}/rollback; /api/admin/import/student-batch,YES,YES,NOT LIVE VERIFIED
+src/app/application-manager/application/[id]/page.tsx,1,/api/applications/${applicationId}; /api/applications/${applicationId}/b2b; /api/applications/${applicationId}/cas-i20-coe; /api/applications/${applicationId}/comments; /api/applications/${applicationId}/offer; /api/applications/${applicationId}/status; /api/applications/${applicationId}/visa-handover,YES,YES,NOT LIVE VERIFIED
+src/app/application-manager/b2b/create/page.tsx,1,/api/applications/b2b; /api/b2b/providers,YES,YES,NOT LIVE VERIFIED
+src/app/application-manager/create/page.tsx,1,/api/applications,YES,YES,NOT LIVE VERIFIED
+src/app/crm/hrm/profile/page.tsx,1,/api/hrm/profile,REVIEW,YES,NOT LIVE VERIFIED
+src/app/employee/activate/activation-form.tsx,1,/api/employee/activate,YES,YES,NOT LIVE VERIFIED
+src/app/employee/login/page.tsx,1,,YES,YES,NOT LIVE VERIFIED
+src/app/news/page.tsx,1,,YES,REVIEW,NOT LIVE VERIFIED
+src/app/partner/login/page.tsx,1,,YES,YES,NOT LIVE VERIFIED
+src/app/resources/page.tsx,1,/api/resources/categories; /api/resources?${params.toString()},REVIEW,YES,NOT LIVE VERIFIED
+src/app/student/login/page.tsx,1,/api/student/auth/login; /api/student/auth/otp,YES,YES,NOT LIVE VERIFIED
+src/components/admin/AICommandingCenter.tsx,1,/api/admin/ai-command-center,YES,YES,NOT LIVE VERIFIED
+src/components/admin/AdminCountryBuilderView.tsx,1,/api/admin/countries,YES,YES,NOT LIVE VERIFIED
+src/components/admin/AdminLanguageTestsView.tsx,1,/api/admin/language-prep/tests,YES,YES,NOT LIVE VERIFIED
+src/components/alo/public-lead-form.tsx,1,/api/leads,YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/access-control-center.tsx,1,/api/access-control; /api/employees; /api/employees/${emp.id}; /api/partner-packages; /api/quota/extra-requests; /api/quota/usage?ownerType=PARTNER&ownerId=${encodeURIComponent(partnerId)},YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/auth-login.tsx,1,/api/auth/session,YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/auth-register.tsx,1,/api/auth/register,YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/auth-reset-password.tsx,2,/api/auth/reset-password,YES,REVIEW,NOT LIVE VERIFIED
+src/components/alo/views/auth-verify-otp.tsx,1,,YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/comm-templates.tsx,2,/api/communications/quick-replies; /api/communications/templates; /api/communications/templates/${id}; /api/communications/templates/${tpl.id}; /api/communications/templates?${params.toString()},YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/employee-management.tsx,1,/api/admin/employees/resend-activation; /api/employees; /api/employees${qs}; /api/employees/${emp.id}; /api/employees/${emp.id}?viewerId=${SUPER_ADMIN_ID},YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/landing.tsx,1,/api/leads,YES,REVIEW,NOT LIVE VERIFIED
+src/components/alo/views/partner-comm-hub.tsx,2,/api/applications; /api/communications/tasks; /api/communications/tasks?assignedTo=${PARTNER_ID}; /api/documents; /api/inbox/unified,YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/public-contact.tsx,1,/api/leads,YES,YES,NOT LIVE VERIFIED
+src/components/alo/views/public-search.tsx,1,/api/search?q=${encodeURIComponent(q.trim())},REVIEW,YES,NOT LIVE VERIFIED
+src/components/auth/LoginPage.tsx,1,,YES,YES,NOT LIVE VERIFIED
+src/components/auth/ForgotPasswordPage.tsx,1,/api/portal-auth/forgot-password,YES,YES,NOT LIVE VERIFIED
+src/components/auth/RegisterPage.tsx,1,,YES,YES,NOT LIVE VERIFIED
+src/components/auth/ResetPasswordPage.tsx,1,/api/portal-auth/reset-password,YES,YES,NOT LIVE VERIFIED
+src/components/employee/UnifiedEmployeeDashboard.tsx,1,/api/employee/leads,YES,YES,NOT LIVE VERIFIED
+src/components/language-prep/TestDetailView.tsx,1,/api/language-prep/leads; /api/language-prep/tests/${slug},YES,YES,NOT LIVE VERIFIED
+src/components/language-prep/PremiumLandingView.tsx,1,/api/language-prep/leads; /api/language-prep/requirements?${params}; /api/language-prep/tests,YES,YES,NOT LIVE VERIFIED
+src/components/student/StudentEnglishPrepProfile.tsx,1,/api/language-prep/student-profile,REVIEW,YES,NOT LIVE VERIFIED
+src/components/website/FloatingActionWidget.tsx,1,,REVIEW,REVIEW,NOT LIVE VERIFIED
+src/components/website/HomepagePart4.tsx,1,/api/website/homepage; /api/website/lead,YES,YES,NOT LIVE VERIFIED
+src/components/website/MasterCountryDestinationView.tsx,1,/api/crm/leads/public,YES,REVIEW,NOT LIVE VERIFIED
+src/components/website/MasterLanguagePrepLandingView.tsx,1,/api/crm/leads/public,YES,YES,NOT LIVE VERIFIED
+src/components/website/MasterTestPrepView.tsx,1,/api/crm/leads/public,YES,REVIEW,NOT LIVE VERIFIED
+src/components/website/PremiumCountryPage.tsx,1,/api/crm/leads/public,YES,YES,NOT LIVE VERIFIED
+src/components/website/ResourcesCategoryListing.tsx,1,/api/resources?${params.toString()},REVIEW,YES,NOT LIVE VERIFIED
+src/components/website/public-pages/PublicConsultationPage.tsx,1,/api/metrics; /api/website/lead,YES,REVIEW,NOT LIVE VERIFIED

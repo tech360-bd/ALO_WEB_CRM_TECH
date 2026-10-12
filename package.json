@@ -18,7 +18,7 @@
     "awf:audit": "ALO_DB_DRIVER=sqlite DATABASE_URL=\"file:$PWD/.awf-tmp/verify.db\" tsx scripts/ai-workforce/audit-independent.ts",
     "typecheck": "npm run db:verify-client && tsc --noEmit",
     "test": "vitest run",
-    "test:integration": "vitest run tests/integration",
+    "test:integration": "node scripts/run-integration-tests.mjs",
     "test:e2e": "playwright test",
     "db:format": "prisma format",
     "db:validate": "prisma validate",
@@ -35,7 +35,8 @@
     "remotion:render": "npx remotion render src/lib/video-engine/remotion/entry.tsx",
     "db:verify-client": "node scripts/verify-prisma-client.mjs",
     "db:diagnose": "node scripts/db-diagnose.mjs",
-    "audit:env": "node scripts/audit-env-vars.mjs"
+    "audit:env": "node scripts/audit-env-vars.mjs",
+    "typecheck:references": "npm run db:verify-client && tsc --project tsconfig.supplied-references.json --noEmit"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
@@ -43,7 +44,9 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.1.1",
+    "@libsql/client": "0.14.0",
     "@mdxeditor/editor": "^4.1.1",
+    "@prisma/adapter-libsql": "6.19.3",
     "@prisma/client": "^6.19.3",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -97,6 +100,7 @@
     "framer-motion": "^12.42.2",
     "input-otp": "^1.4.2",
     "ioredis": "^6.0.0",
+    "jose": "^6.2.12",
     "js-yaml": "^5.2.2",
     "lucide-react": "^0.525.0",
     "mysql2": "^3.24.4",
@@ -141,10 +145,10 @@
     "@playwright/test": "^1.62.0",
     "@prisma/adapter-libsql": "^6.19.3",
     "@types/nodemailer": "8.0.2",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "4.1.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
-    "vitest": "^4.1.10"
+    "vitest": "4.1.11"
   },
   "overrides": {
     "postcss": "8.5.25",

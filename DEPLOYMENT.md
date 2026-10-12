@@ -51,6 +51,8 @@ AUTH_SECRET=same-or-different-random-secret
 JWT_SECRET=same-or-different-random-secret
 SESSION_SECRET=same-or-different-random-secret
 ENCRYPTION_KEY=64-char-hex-for-AES-256
+# REQUIRED in production: keys the OTP HMAC digest. The OTP engine fails closed when it is missing.
+OTP_PEPPER=<value>
 
 SEED_SUPER_ADMIN_EMAIL=admin@aloeducation.com
 SEED_SUPER_ADMIN_PASSWORD=UniqueOneTimePassword123!

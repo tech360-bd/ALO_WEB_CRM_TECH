@@ -36,16 +36,16 @@ export default function ComparisonView() {
       <section className="bg-white border-b border-[#E2E8F0] pt-10 pb-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6">
-            <a href="/" className="hover:text-[#0B5ED7]">Home</a><span>›</span>
-            <a href="/language-prep" className="hover:text-[#0B5ED7]">Language Prep</a><span>›</span>
-            <span className="text-[#0B5ED7] font-bold">Comparison</span>
+            <a href="/" className="hover:text-[#2563EB]">Home</a><span>›</span>
+            <a href="/language-prep" className="hover:text-[#2563EB]">Language Prep</a><span>›</span>
+            <span className="text-[#2563EB] font-bold">Comparison</span>
           </nav>
           <h1 className="text-4xl font-extrabold tracking-tight text-[#0F172A]">Compare English Tests</h1>
           <p className="text-sm text-slate-600 mt-3 max-w-3xl leading-relaxed">
-            Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats. No fake data — Check current provider information where not verified. Acceptance varies by university, course and visa route.
+            Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats. Check the current provider information where it is not yet verified. Acceptance varies by university, course and visa route.
           </p>
           <p className="text-[11px] text-amber-700 mt-3 p-3 rounded-xl bg-amber-50 border border-amber-100">
-            Do not hardcode current price/result time unless verified. If not verified: "Check current provider information" — Do not invent data. Every factual information supports source_url, source_name, last_verified_at.
+            Prices and result times change. Check the current provider information before you decide.
           </p>
         </div>
       </section>
@@ -72,7 +72,7 @@ export default function ComparisonView() {
                 key={t.slug}
                 onClick={() => toggleTest(t.slug)}
                 className={`px-4 py-2 rounded-full text-xs font-bold border transition ${
-                  selected.includes(t.slug) ? 'bg-[#0B5ED7] text-white border-[#0B5ED7]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:border-[#0B5ED7]'
+                  selected.includes(t.slug) ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:border-[#2563EB]'
                 }`}
               >
                 {t.name} {selected.includes(t.slug) && '✓'}
@@ -83,7 +83,7 @@ export default function ComparisonView() {
 
         {loading ? (
           <div className="text-center py-20">
-            <div className="w-8 h-8 border-2 border-[#0B5ED7] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <div className="w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <p className="text-sm text-slate-500">Loading comparison — database-driven...</p>
           </div>
         ) : (
@@ -107,7 +107,7 @@ export default function ComparisonView() {
                   {filtered.map((t: any) => (
                     <tr key={t.slug} className="hover:bg-[#F8FAFC]">
                       <td className="p-4">
-                        <a href={`/language-prep/${t.slug}`} className="font-bold text-[#0B5ED7] hover:underline">{t.name}</a>
+                        <a href={`/language-prep/${t.slug}`} className="font-bold text-[#2563EB] hover:underline">{t.name}</a>
                         <p className="text-[10px] text-slate-500 mt-1">{t.provider}</p>
                         {t.isPopular && <Badge className="bg-[#F97316] text-white text-[9px] mt-1">Popular</Badge>}
                       </td>
@@ -129,7 +129,7 @@ export default function ComparisonView() {
               {filtered.map((t: any) => (
                 <Card key={t.slug} className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
                   <div className="flex items-start justify-between mb-3">
-                    <h4 className="font-bold text-sm text-[#0B5ED7]"><a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a></h4>
+                    <h4 className="font-bold text-sm text-[#2563EB]"><a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a></h4>
                     {t.isPopular && <Badge className="bg-[#F97316] text-white text-[9px]">Popular</Badge>}
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-[11px]">
@@ -141,8 +141,8 @@ export default function ComparisonView() {
                     <div className="col-span-2"><span className="text-slate-500 block">Best For</span><span className="font-medium">{t.bestFor}</span></div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <a href={`/language-prep/${t.slug}`} className="flex-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#0B5ED7] hover:bg-[#004494] text-white font-bold h-9 rounded-xl text-xs">Learn More</Button></a>
-                    <a href={t.officialUrl} target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[#E2E8F0] h-9 rounded-xl text-xs">Official ↗</Button></a>
+                    <Button asChild className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold h-9 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
+                    <Button asChild variant="outline" className="bg-white border-[#E2E8F0] h-9 rounded-xl text-xs"><a href={t.officialUrl} target="_blank">Official ↗</a></Button>
                   </div>
                 </Card>
               ))}
@@ -151,13 +151,13 @@ export default function ComparisonView() {
             <Card className="mt-8 p-6 bg-amber-50 border border-amber-200 rounded-2xl">
               <h4 className="font-bold text-sm text-amber-900 flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Source Verification & Disclaimer</h4>
               <p className="text-xs text-amber-800 mt-2 leading-relaxed">
-                Every factual test information should support source_url, source_name, last_verified_at, verified_by, verification_status. For duration, scoring, result timeline, acceptance, requirements, visa relevance, test format, cost — If not verified: DO NOT invent. Show "Check official provider information" or "Information requires verification." Acceptance varies by university, course and visa route. Visa requirements vary by country and route. MOI Guidance is guidance resource, not an English proficiency test.
+                Test information is taken from official provider sources where available. Check the official provider for current duration, scoring, fees and requirements. Acceptance varies by university, course and visa route. Visa requirements vary by country and route. MOI is a guidance resource, not an English proficiency test.
               </p>
               <div className="mt-4 grid sm:grid-cols-3 gap-3 text-[11px]">
                 {filtered.slice(0,3).map((t: any) => (
                   <div key={t.slug} className="p-3 rounded-xl bg-white border border-amber-100">
                     <p className="font-bold text-[#0F172A]">{t.name}</p>
-                    <p className="text-slate-500 mt-1">Source: {t.sourceUrl ? <a href={t.sourceUrl} target="_blank" className="text-[#0B5ED7] hover:underline">{t.sourceUrl}</a> : 'Check official provider'}</p>
+                    <p className="text-slate-500 mt-1">Source: {t.sourceUrl ? <a href={t.sourceUrl} target="_blank" className="text-[#2563EB] hover:underline">{t.sourceUrl}</a> : 'Check official provider'}</p>
                     <p className="text-slate-500">Last verified: {t.lastVerifiedAt || 'Information requires verification'}</p>
                   </div>
                 ))}

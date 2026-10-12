@@ -36,7 +36,7 @@ export default function SubmissionQueuePage() {
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
       <div><h1 className="text-xl font-bold text-[#0F172A]">Submission Queue — Real DB Status</h1><p className="text-sm text-gray-500">Ready/Missing Doc/Fee Pending/Waiting Counselor/Partner/B2B follow-up/University follow-up/Deadline urgent</p></div>
-      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0B5ED7]" /></div> : (
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#2563EB]" /></div> : (
         <div className="grid grid-cols-12 gap-4">
           {queues.map((q, idx)=>(
             <div key={idx} className="col-span-12 md:col-span-6 lg:col-span-4">

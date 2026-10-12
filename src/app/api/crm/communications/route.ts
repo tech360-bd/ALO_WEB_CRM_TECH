@@ -1,3 +1,4 @@
+import { communicationScope } from '@/lib/communication/access-scope';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, logAuditAction } from '@/lib/auth-middleware';
@@ -13,7 +14,8 @@ export async function GET(request: NextRequest) {
       const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
       const skip = (page - 1) * limit;
 
-      const where: Record<string, unknown> = {};
+      const scope = await communicationScope(auth);
+      const where: Record<string, unknown> = { AND: [scope.messages] };
       if (search) {
         where.OR = [
           { content: { contains: search } },
@@ -46,9 +48,6 @@ export async function GET(request: NextRequest) {
       });
     } catch (error) {
       console.error('Communications API error:', error);
-      if (String(error).includes('Unknown table')) {
-        return NextResponse.json({ success: true, data: [], total: 0, page: 1, totalPages: 0 });
-      }
       return NextResponse.json({ success: false, error: 'Failed to load communications' }, { status: 500 });
     }
   })(request);

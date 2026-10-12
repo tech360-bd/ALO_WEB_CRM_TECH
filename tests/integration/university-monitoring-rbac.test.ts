@@ -1,3 +1,4 @@
+import { testDatabaseUrl } from '../helpers/test-database';
 // ============================================================
 // ALO Education — Monitoring RBAC / authentication tests
 // ============================================================
@@ -17,11 +18,19 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import {
-  authorizeMonitoringAdmin,
-  authorizeMonitoringViewer,
-} from '@/lib/university-monitoring-auth';
+
+// These tests use real sessions and database-backed authorization. Skip before
+// importing the DB client when no disposable test database was requested.
+const integrationDescribe = testDatabaseUrl() ? describe : describe.skip;
+if (!process.env.TEST_DATABASE_URL) {
+  console.warn('[integration] university-monitoring RBAC tests skipped: TEST_DATABASE_URL is not set.');
+}
+const testModules = process.env.TEST_DATABASE_URL
+  ? await Promise.all([import('@/lib/db'), import('@/lib/university-monitoring-auth')])
+  : [];
+const db = testModules[0]?.db as typeof import('@/lib/db').db;
+const monitoringAuth = (testModules[1] ?? {}) as typeof import('@/lib/university-monitoring-auth');
+const { authorizeMonitoringAdmin, authorizeMonitoringViewer } = monitoringAuth;
 
 const SUFFIX = `rbac-${Date.now().toString(36)}`;
 
@@ -43,7 +52,7 @@ const roleIds: string[] = [];
 async function makeUser(userType: string, roleName: string, label: string): Promise<Fixture> {
   const email = `itest-${label}-${SUFFIX}@aloedu.test`;
   const user = await db.portalUser.create({
-    data: { email, name: `Test ${label}`, userType, status: 'active', passwordHash: 'x' },
+    data: { email, name: `Test ${label}`, userType, status: 'active', emailVerified: true, passwordHash: 'x' },
   });
   made.push(user.id);
 
@@ -80,6 +89,7 @@ let student: Fixture;
 let partner: Fixture;
 
 beforeAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
   superAdmin = await makeUser('SUPER_ADMIN', 'super_admin', 'superadmin');
   employee = await makeUser('EMPLOYEE', 'employee', 'employee');
   student = await makeUser('STUDENT', 'student', 'student');
@@ -87,13 +97,14 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  if (!process.env.TEST_DATABASE_URL) return;
   await db.portalSession.deleteMany({ where: { token: { in: tokens } } }).catch(() => undefined);
   await db.portalUserRole.deleteMany({ where: { userId: { in: made } } }).catch(() => undefined);
   await db.portalRole.deleteMany({ where: { id: { in: roleIds } } }).catch(() => undefined);
   await db.portalUser.deleteMany({ where: { id: { in: made } } }).catch(() => undefined);
 });
 
-describe('Authentication: anonymous access is rejected', () => {
+integrationDescribe('Authentication: anonymous access is rejected', () => {
   it('denies an unauthenticated caller the Super Admin actions', async () => {
     const result = await authorizeMonitoringAdmin(anonymousReq());
     expect(result.ok).toBe(false);
@@ -110,7 +121,7 @@ describe('Authentication: anonymous access is rejected', () => {
   });
 });
 
-describe('RBAC: privileged monitoring actions are Super Admin only', () => {
+integrationDescribe('RBAC: privileged monitoring actions are Super Admin only', () => {
   it('allows SUPER_ADMIN and returns the session-derived actor', async () => {
     const result = await authorizeMonitoringAdmin(reqWithSession(superAdmin.token));
     expect(result.ok).toBe(true);
@@ -140,7 +151,7 @@ describe('RBAC: privileged monitoring actions are Super Admin only', () => {
   });
 });
 
-describe('RBAC: read access is staff-only (queue exposes unapproved data)', () => {
+integrationDescribe('RBAC: read access is staff-only (queue exposes unapproved data)', () => {
   it('allows EMPLOYEE to view monitoring data', async () => {
     const result = await authorizeMonitoringViewer(reqWithSession(employee.token));
     expect(result.ok).toBe(true);
@@ -165,7 +176,7 @@ describe('RBAC: read access is staff-only (queue exposes unapproved data)', () =
   });
 });
 
-describe('Session integrity', () => {
+integrationDescribe('Session integrity', () => {
   it('rejects a revoked session', async () => {
     const victim = await makeUser('SUPER_ADMIN', 'super_admin', 'revoked');
     await db.portalSession.update({

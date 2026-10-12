@@ -12,7 +12,7 @@ export function SuperAdminMasterCommandCenter() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Top banner */}
-      <div className="bg-gradient-to-r from-[#0B5ED7] to-[#003d82] text-white px-6 py-4">
+      <div className="bg-gradient-to-r from-[#2563EB] to-[#003d82] text-white px-6 py-4">
         <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">🛡️ Super Admin — Master Command Center <span className="text-xs bg-white/20 px-2 py-1 rounded-full font-medium">Paid-App Quality</span></h1>
@@ -36,7 +36,7 @@ export function SuperAdminMasterCommandCenter() {
             { key: "system", label: "System & Audit", icon: "🔧", desc: "Health, Audit, Permissions, PWA Status" },
             { key: "mobile", label: "Mobile PWA", icon: "📱", desc: "Native app-like experience verification" },
           ].map(t => (
-            <button key={t.key} onClick={()=>setActiveTab(t.key as Tab)} className={`flex-1 min-w-[140px] text-left px-4 py-3 rounded-xl border transition-all ${activeTab===t.key ? "bg-[#0B5ED7] text-white border-[#0B5ED7] shadow-md" : "bg-slate-50 hover:bg-white border-slate-200 text-slate-700"}`}>
+            <button key={t.key} onClick={()=>setActiveTab(t.key as Tab)} className={`flex-1 min-w-[140px] text-left px-4 py-3 rounded-xl border transition-all ${activeTab===t.key ? "bg-[#2563EB] text-white border-[#2563EB] shadow-md" : "bg-slate-50 hover:bg-white border-slate-200 text-slate-700"}`}>
               <div className="flex items-center gap-2 font-semibold text-sm"><span>{t.icon}</span>{t.label}</div>
               <div className={`text-[11px] mt-1 ${activeTab===t.key ? "text-blue-100" : "text-slate-500"}`}>{t.desc}</div>
             </button>
@@ -141,7 +141,7 @@ export function SuperAdminMasterCommandCenter() {
                   <div className="border rounded-xl p-5 bg-slate-50">
                     <h3 className="font-semibold text-sm">What Makes It Native-like (Implemented)</h3>
                     <ul className="mt-3 space-y-2 text-xs text-slate-700">
-                      <li>✅ <b>manifest.json:</b> name, short_name, start_url /?pwa=1, display standalone, theme_color #0B5ED7, background_color #fff, icons 72-512 maskable, screenshots, shortcuts (Student, CRM, Knowledge, International), orientation any, categories education/business/productivity</li>
+                      <li>✅ <b>manifest.json:</b> name, short_name, start_url /?pwa=1, display standalone, theme_color #2563EB, background_color #fff, icons 72-512 maskable, screenshots, shortcuts (Student, CRM, Knowledge, International), orientation any, categories education/business/productivity</li>
                       <li>✅ <b>Service Worker sw.js:</b> Install cache static shell, activate clean old, fetch strategies — API network-first with cache fallback, static cache-first, navigation network-first with offline fallback, background sync for leads/messages, push notification ready, notificationclick handler</li>
                       <li>✅ <b>Offline Page /offline:</b> Friendly offline UI with retry, cached home link, PWA branding</li>
                       <li>✅ <b>PwaRegister Component:</b> Registers /sw.js on load, listens beforeinstallprompt, shows install banner, handles appinstalled event, checks standalone mode</li>
@@ -170,7 +170,7 @@ export function SuperAdminMasterCommandCenter() {
                   </div>
                 </div>
 
-                <div className="mt-6 bg-gradient-to-r from-[#0B5ED7] to-[#003d82] rounded-xl p-5 text-white">
+                <div className="mt-6 bg-gradient-to-r from-[#2563EB] to-[#003d82] rounded-xl p-5 text-white">
                   <h3 className="font-bold text-sm">Verification: Super Admin Can Edit Any Part from Mobile</h3>
                   <p className="text-xs text-blue-100 mt-2">Super Admin logs in on mobile browser → Installs PWA → Opens Super Admin Master Command Center → Website CMS tab → Edits hero slides, services, stories, team, FAQs, countries (with 9 sub-tables) → Saves → Real DB updated, audit logged. CRM Command tab → Views leads, students, applications, documents, visa cases → Performs agent tasks (assign lead, move application stage, verify document, update visa case) → Real DB, realistic workflow with knowledge/skills checks, nothing overlooked. All mobile-responsive, touch-friendly, offline-capable, push-ready — paid-app quality.</p>
                 </div>

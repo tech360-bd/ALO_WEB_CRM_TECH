@@ -41,6 +41,9 @@ function applySql(state: SqlState, sql: string, dir: string, violations: string[
     }
     state.set(table, cols);
   }
+  // One pass handles both single-column and multi-column ADD COLUMN statements.
+  // Keeping a separate single-column pass here would visit each column from a
+  // multi-column ALTER twice and report false duplicate-column violations.
   for (const m of sql.matchAll(/ALTER TABLE `(\w+)`(?:\s*\n|\s+)((?:\s*ADD COLUMN [^\n]+\n?)+)/g)) {
     const table = m[1];
     if (!state.has(table)) { violations.push(`${dir}: ALTER TABLE ${table} before it exists`); continue; }
@@ -49,12 +52,6 @@ function applySql(state: SqlState, sql: string, dir: string, violations: string[
       if (state.get(table)!.has(col)) violations.push(`${dir}: ADD COLUMN ${table}.${col} duplicates an existing column`);
       else state.get(table)!.add(col);
     }
-  }
-  for (const m of sql.matchAll(/ALTER TABLE `(\w+)`\s+ADD COLUMN `(\w+)`/g)) {
-    const [, table, col] = m;
-    if (!state.has(table)) { violations.push(`${dir}: ALTER TABLE ${table} before it exists`); continue; }
-    if (state.get(table)!.has(col)) violations.push(`${dir}: ADD COLUMN ${table}.${col} duplicates an existing column`);
-    else state.get(table)!.add(col);
   }
   for (const m of sql.matchAll(/DROP TABLE (?:IF EXISTS )?`(\w+)`/g)) state.delete(m[1]);
   for (const m of sql.matchAll(/REFERENCES `(\w+)`\s*\(/g)) {
@@ -106,6 +103,19 @@ describe('prisma migration chain (re-baselined 2026-10-01)', () => {
     expect(existsSync(join(repoRoot, 'prisma', 'legacy-migrations-20261001'))).toBe(true);
   });
 
+  it('parses single- and multi-column ADD COLUMN statements once while still rejecting duplicates', () => {
+    const state: SqlState = new Map([['User', new Set(['id'])], ['Document', new Set(['id'])]]);
+    const violations: string[] = [];
+    applySql(state, 'ALTER TABLE `User`\n  ADD COLUMN `emailVerified` BOOLEAN NOT NULL DEFAULT false;\nALTER TABLE `Document`\n  ADD COLUMN `mimeType` VARCHAR(191) NULL,\n  ADD COLUMN `fileHash` VARCHAR(191) NULL;', 'parser-fixture', violations);
+    expect(violations).toEqual([]);
+    expect(state.get('User')?.has('emailVerified')).toBe(true);
+    expect(state.get('Document')).toEqual(new Set(['id', 'mimeType', 'fileHash']));
+
+    const duplicateViolations: string[] = [];
+    applySql(state, 'ALTER TABLE `User`\n  ADD COLUMN `emailVerified` BOOLEAN NOT NULL DEFAULT false;', 'parser-duplicate-fixture', duplicateViolations);
+    expect(duplicateViolations).toContain('parser-duplicate-fixture: ADD COLUMN User.emailVerified duplicates an existing column');
+  });
+
   it('applies every ALTER TABLE only after the target exists, with no duplicate columns', () => {
     const { violations } = simulateChain();
     expect(violations, violations.join('\n')).toEqual([]);
@@ -123,6 +133,53 @@ describe('prisma migration chain (re-baselined 2026-10-01)', () => {
     }
     expect(missingTables).toEqual([]);
     expect(missingColumns).toEqual([]);
+  });
+
+  it('keeps history value and evidence URL fields as TEXT in Prisma and the migration', () => {
+    const schema = readFileSync(schemaPath, 'utf8');
+    const migration = readFileSync(join(migrationsDir, '20261007010000_university_monitoring_history', 'migration.sql'), 'utf8');
+    const newline = String.fromCharCode(10);
+
+    for (const table of ['UniversityHistory', 'CourseHistory', 'ScholarshipHistory']) {
+      const modelText = schema.split('model ' + table + ' {')[1];
+      const modelBody = modelText?.split(newline + '}')[0];
+      const tableText = migration.split('CREATE TABLE IF NOT EXISTS `' + table + '` (')[1];
+      const tableBody = tableText?.split(newline + ')')[0];
+      expect(modelBody, `${table} Prisma model`).toBeDefined();
+      expect(tableBody, `${table} migration table`).toBeDefined();
+
+      for (const column of ['oldValue', 'newValue']) {
+        const field = modelBody?.split(newline).find((line) => line.trimStart().startsWith(column + ' '));
+        expect(field, `${table}.${column}`).toContain('@db.Text');
+        expect(tableBody).toContain('`' + column + '` TEXT NULL');
+      }
+
+      const sourceUrl = modelBody?.split(newline).find((line) => line.trimStart().startsWith('sourceUrl '));
+      expect(sourceUrl, `${table}.sourceUrl`).toContain('@db.Text');
+      expect(tableBody).toContain('`sourceUrl` TEXT NOT NULL');
+    }
+  });
+
+  it('stores the monitoring job description as TEXT for long operator guidance', () => {
+    const schema = readFileSync(schemaPath, 'utf8');
+    const modelText = schema.split('model MonitoringJob {')[1];
+    const modelBody = modelText?.split(String.fromCharCode(10) + '}')[0];
+    const description = modelBody?.split(String.fromCharCode(10)).find((line) => line.trimStart().startsWith('description '));
+    const migration = readFileSync(join(migrationsDir, '20261008020000_monitoring_job_description_text', 'migration.sql'), 'utf8');
+
+    expect(description).toContain('@db.Text');
+    expect(migration).toContain('ALTER TABLE `MonitoringJob` MODIFY `description` TEXT NULL;');
+  });
+
+  it('stores complete conflict evidence in long text while preserving its default', () => {
+    const schema = readFileSync(schemaPath, 'utf8');
+    const modelText = schema.split('model DataConflict {')[1];
+    const modelBody = modelText?.split(String.fromCharCode(10) + '}')[0];
+    const field = modelBody?.split(String.fromCharCode(10)).find((line) => line.trimStart().startsWith('conflictingValues '));
+    const migration = readFileSync(join(migrationsDir, '20261008030000_data_conflict_values_longtext', 'migration.sql'), 'utf8');
+
+    expect(field).toContain('@db.LongText');
+    expect(migration).toContain("MODIFY `conflictingValues` LONGTEXT NOT NULL DEFAULT (_utf8mb4'[]')");
   });
 
   it('0_init is unedited Prisma-generated SQL (regenerated header intact)', () => {

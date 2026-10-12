@@ -160,7 +160,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0B5ED7]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -174,7 +174,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
               Search 794 courses, 408 universities, 13 countries
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Search ALO <span className="text-[#0B5ED7]">Education</span>
+              Search ALO <span className="text-[#2563EB]">Education</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Find universities, courses, blog posts, news, events, countries, and English tests — all in one search.
@@ -190,7 +190,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search universities, courses, blog posts, news, events..."
-                className="h-14 w-full rounded-xl border-2 border-[#0B5ED7]/15 bg-white pl-12 pr-4 text-base text-[#0B2447] placeholder:text-[#5A7299] focus:border-[#0B5ED7] focus:outline-none focus:ring-4 focus:ring-[#0B5ED7]/10"
+                className="h-14 w-full rounded-xl border-2 border-[#2563EB]/15 bg-white pl-12 pr-4 text-base text-[#0B2447] placeholder:text-[#5A7299] focus:border-[#2563EB] focus:outline-none focus:ring-4 focus:ring-[#2563EB]/10"
                 autoFocus
               />
             </div>
@@ -209,7 +209,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
                   <button
                     key={q}
                     onClick={() => onPopular(q)}
-                    className="rounded-full border border-[#0B5ED7]/20 bg-white px-3 py-1.5 text-xs font-medium text-[#0B5ED7] transition-colors hover:bg-[#EAF3FF]"
+                    className="rounded-full border border-[#2563EB]/20 bg-white px-3 py-1.5 text-xs font-medium text-[#2563EB] transition-colors hover:bg-[#EAF3FF]"
                   >
                     {q}
                   </button>
@@ -241,7 +241,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
                   <button
                     key={q}
                     onClick={() => onPopular(q)}
-                    className="rounded-full border border-[#0B5ED7]/20 bg-white px-3 py-1.5 text-xs font-medium text-[#0B5ED7] hover:bg-[#EAF3FF]"
+                    className="rounded-full border border-[#2563EB]/20 bg-white px-3 py-1.5 text-xs font-medium text-[#2563EB] hover:bg-[#EAF3FF]"
                   >
                     {q}
                   </button>
@@ -253,7 +253,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
           <>
             <p className="mb-6 text-sm text-[#5A7299]">
               <span className="font-semibold text-[#0B2447]">{results.total} results</span> found for{" "}
-              <span className="font-semibold text-[#0B5ED7]">"{query}"</span>
+              <span className="font-semibold text-[#2563EB]">"{query}"</span>
             </p>
 
             {/* Tabs */}
@@ -265,8 +265,8 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
                   className={cn(
                     "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
                     activeTab === t.key
-                      ? "bg-[#0B5ED7] text-white"
-                      : "border border-[#0B5ED7]/20 bg-white text-[#0B5ED7] hover:bg-[#EAF3FF]"
+                      ? "bg-[#2563EB] text-white"
+                      : "border border-[#2563EB]/20 bg-white text-[#2563EB] hover:bg-[#EAF3FF]"
                   )}
                 >
                   {t.label} ({t.count})
@@ -403,7 +403,7 @@ function ResultGroup({ title, icon, accent, children }: { title: string; icon: s
       <div className="mb-4 flex items-center gap-2">
         <div className={cn(
           "flex size-8 items-center justify-center rounded-xl",
-          accent === "blue" ? "bg-[#EAF3FF] text-[#0B5ED7]" : "bg-[#FFF3EA] text-[#F97316]"
+          accent === "blue" ? "bg-[#EAF3FF] text-[#2563EB]" : "bg-[#FFF3EA] text-[#F97316]"
         )}>
           <Icon name={icon} className="size-4" />
         </div>
@@ -418,13 +418,13 @@ function ResultCard({ title, subtitle, description, onClick }: { title: string; 
   return (
     <Card
       onClick={onClick}
-      className="alo-card-hover group cursor-pointer rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0B5ED7]/30 hover:shadow-lg"
+      className="alo-card-hover group cursor-pointer rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30 hover:shadow-lg"
     >
       <CardContent className="p-5">
-        <h3 className="line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#0B5ED7]">{title}</h3>
-        <p className="mt-1 text-xs font-medium text-[#0B5ED7]">{subtitle}</p>
+        <h3 className="line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#2563EB]">{title}</h3>
+        <p className="mt-1 text-xs font-medium text-[#2563EB]">{subtitle}</p>
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{description}</p>
-        <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#0B5ED7]">
+        <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#2563EB]">
           View details
           <Icon name="ArrowRight" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </div>

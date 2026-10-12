@@ -1,3 +1,5 @@
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import { canUseUnscopedUccAdmin } from '@/lib/ucc/document-access';
 // ============================================================
 // /api/crm/ucc/ocr/process
 // POST — Start or reprocess an OCR job
@@ -46,6 +48,8 @@ export async function POST(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (request.method !== 'GET' && !mutationOriginAllowed(request, auth)) return NextResponse.json({error:'Same-origin request required.'},{status:403});
+    if (!canUseUnscopedUccAdmin(auth)) return NextResponse.json({success:false,code:'UCC_OWNERSHIP_SCOPE_PENDING',error:'Private UCC access is restricted to canonical administrators until domain-aware ownership is verified.'},{status:403});
 
     const { ocrJobId, forceReprocess } = await request.json() as {
       ocrJobId: string;
@@ -130,6 +134,8 @@ export async function GET(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (request.method !== 'GET' && !mutationOriginAllowed(request, auth)) return NextResponse.json({error:'Same-origin request required.'},{status:403});
+    if (!canUseUnscopedUccAdmin(auth)) return NextResponse.json({success:false,code:'UCC_OWNERSHIP_SCOPE_PENDING',error:'Private UCC access is restricted to canonical administrators until domain-aware ownership is verified.'},{status:403});
 
     const url = new URL(request.url);
     const jobId = url.searchParams.get('jobId');

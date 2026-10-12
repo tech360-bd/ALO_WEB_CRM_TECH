@@ -54,6 +54,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
 }, {
   ignores: [
     "node_modules/**",
+    "_reference_repos/**",
     ".next/**",
     "out/**",
     "build/**",

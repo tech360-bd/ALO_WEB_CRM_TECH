@@ -26,6 +26,8 @@ import {
   type UccConversationView,
   type UccMessageView,
 } from '@/lib/ucc/ai-assistant-core';
+import { canViewUccConversationB2B } from '@/lib/ucc/conversation-visibility';
+import { canUseUccCommunication } from '@/lib/ucc/document-access';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,6 +65,9 @@ export async function POST(request: Request) {
   try {
     const auth = await authenticateRequest(request);
     if (auth instanceof NextResponse) return auth;
+    if (!canUseUccCommunication(auth)) {
+      return NextResponse.json({ success: false, error: 'Communication assistant access is not permitted.' }, { status: 403 });
+    }
 
     const body = await request.json().catch(() => ({}));
     const { action, conversationId, text, targetLanguage = 'en' } = body;
@@ -86,10 +91,10 @@ export async function POST(request: Request) {
         { status: 404 },
       );
     }
-    if (!canAccessConversation(actorFromAuth(auth), conversation)) {
+    if (!canAccessConversation(actorFromAuth(auth), conversation) || !(await canViewUccConversationB2B(auth, conversation))) {
       return NextResponse.json(
-        { success: false, error: "Forbidden — conversation is not assigned to you (§166: permission is enforced before retrieval)" },
-        { status: 403 },
+        { success: false, error: "Conversation not found or access denied (§166: permission is enforced before retrieval)" },
+        { status: 404 },
       );
     }
 

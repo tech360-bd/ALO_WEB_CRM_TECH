@@ -29,11 +29,11 @@ async function getPartnerId(userId: string): Promise<string | null> {
 const MAX_VIDEO_DURATION = 30;
 
 export async function POST(request: Request) {
-  const authResult = await authenticateRequest(request);
-  if (authResult instanceof NextResponse) return authResult;
-  const auth = authResult as AuthContext;
+  const body = await request.json().catch(() => null);
+  const requestId = typeof body?.requestId === 'string' ? body.requestId.trim() : '';
+  const generateType = typeof body?.generateType === 'string' ? body.generateType.trim().toLowerCase() : '';
 
-  if (!isPartnerRole(auth)) {
+  if (!requestId || !['image', 'video', 'content'].includes(generateType)) {
     return NextResponse.json(
       {
         success: false,
@@ -43,9 +43,7 @@ export async function POST(request: Request) {
       { status: 403 },
     );
   }
-
-  const partnerId = await getPartnerId(auth.userId);
-  if (!partnerId) {
+  if (generateType === 'content') {
     return NextResponse.json(
       { success: false, message: "Partner profile not found.", status: 404 },
       { status: 404 },
@@ -209,4 +207,15 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+
+  const url = new URL('/api/partner-admin/marketing', request.url);
+  const delegatedRequest = new NextRequest(url, {
+    method: 'PATCH',
+    headers: request.headers,
+    body: JSON.stringify({
+      id: requestId,
+      action: generateType === 'image' ? 'generate_image' : 'generate_video',
+    }),
+  });
+  return patchPartnerMarketing(delegatedRequest);
 }

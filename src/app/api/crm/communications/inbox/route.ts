@@ -1,3 +1,4 @@
+import { communicationScope } from '@/lib/communication/access-scope';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
@@ -21,7 +22,8 @@ export async function GET(request: NextRequest) {
       const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
       const limit = Math.min(100, parseInt(searchParams.get('limit') || '25'));
 
-      const where: any = { status: { not: 'closed' } };
+      const scope = await communicationScope(auth);
+      const where: any = { AND: [scope.threads], status: { not: 'closed' } };
       if (channel && channel !== 'all') where.channel = channel;
       if (priority) where.priority = priority;
       if (slaStatus) where.slaStatus = slaStatus;
@@ -46,6 +48,7 @@ export async function GET(request: NextRequest) {
           take: limit,
           include: {
             messages: {
+              where: scope.messages,
               orderBy: { createdAt: 'desc' },
               take: 1,
               select: {
@@ -147,12 +150,12 @@ export async function GET(request: NextRequest) {
       // Channel summaries for sidebar
       const channelSummary = await db.communicationThread.groupBy({
         by: ['channel'],
-        where: { status: { not: 'closed' } },
+        where: { AND: [scope.threads], status: { not: 'closed' } },
         _count: { id: true },
       }).catch(() => []);
 
       const overdueCount = await db.communicationThread.count({
-        where: { slaDueAt: { lt: now }, status: { not: 'closed' } },
+        where: { AND: [scope.threads], slaDueAt: { lt: now }, status: { not: 'closed' } },
       });
 
       return NextResponse.json({
@@ -165,7 +168,7 @@ export async function GET(request: NextRequest) {
         overdueCount,
       });
     } catch (error: any) {
-      return NextResponse.json({ success: false, error: error?.message || 'Failed to load inbox' }, { status: 500 });
+      return NextResponse.json({ success: false, error: 'Failed to load inbox' }, { status: 500 });
     }
   })(request);
 }
@@ -175,50 +178,68 @@ export async function POST(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
       const body = await req.json();
-      const { action, threadId, assigneeId, assigneeName, resolution, taskData } = body;
+      const { action, threadId, assigneeId, resolution, taskData } = body;
 
+      if (!['mark_resolved', 'assign', 'view', 'create_task'].includes(action) || typeof threadId !== 'string') {
+        return NextResponse.json({ success: false, error: 'Invalid inbox action' }, { status: 400 });
+      }
+      const scope = await communicationScope(auth);
+      const thread = await db.communicationThread.findFirst({ where: { AND: [{ id: threadId }, scope.threads] } });
+      if (!thread) return NextResponse.json({ success: false, error: 'Thread not found' }, { status: 404 });
+      if (!scope.master && (!scope.staff || !auth.permissions.includes(action === 'assign' ? 'communication.assign' : 'communication.reply'))) {
+        return NextResponse.json({ success: false, error: 'Communication action not permitted' }, { status: 403 });
+      }
+      if (!scope.master && action === 'create_task' && assigneeId && assigneeId !== auth.userId) {
+        return NextResponse.json({ success: false, error: 'Task assignment not permitted' }, { status: 403 });
+      }
+      if (action === 'assign') {
+        const target = typeof assigneeId === 'string' ? await db.employee.findUnique({ where: { userId: assigneeId }, select: { status: true, name: true } }) : null;
+        if (!target || target.status.toLowerCase() !== 'active') return NextResponse.json({ success: false, error: 'Active employee required' }, { status: 400 });
+        body.assigneeName = target.name;
+      }
+      return await db.$transaction(async tx => {
+        await tx.portalAuditLog.create({ data: { actorUserId: auth.actorUserId, action: `COMMUNICATION_${action.toUpperCase()}`, entityType: 'CommunicationThread', entityId: threadId } });
       if (action === 'mark_resolved') {
-        await db.communicationThread.update({
+        await tx.communicationThread.update({
           where: { id: threadId },
           data: { status: 'resolved', unreadCount: 0 },
         });
-        await db.communicationSlaEvent.updateMany({
+        await tx.communicationSlaEvent.updateMany({
           where: { threadId, slaStatus: { not: 'resolved' } },
           data: { slaStatus: 'resolved', resolvedAt: new Date() },
-        }).catch(() => null);
+        });
         return NextResponse.json({ success: true, message: `Thread marked as ${resolution || 'resolved'}` });
       }
 
       if (action === 'assign') {
-        await db.communicationThread.update({
+        await tx.communicationThread.update({
           where: { id: threadId },
-          data: { assignedToId: assigneeId || '', assignedToName: assigneeName || '' },
+          data: { assignedToId: assigneeId || '', assignedToName: body.assigneeName || '' },
         });
         // §150 — record when the conversation was assigned; keep the FIRST
         // assignment timestamp (later re-assignment must not rewrite history).
-        await db.communicationSlaEvent.updateMany({
+        await tx.communicationSlaEvent.updateMany({
           where: { threadId, assignedAt: null },
           data: {
             assignedAt: new Date(),
             counselorId: assigneeId || '',
-            counselorName: assigneeName || '',
+            counselorName: body.assigneeName || '',
           },
-        }).catch(() => {});
+        });
         return NextResponse.json({ success: true, message: 'Thread reassigned' });
       }
 
       if (action === 'view') {
         // §150 — record when the conversation was FIRST opened by staff.
-        await db.communicationSlaEvent.updateMany({
+        await tx.communicationSlaEvent.updateMany({
           where: { threadId, firstViewedAt: null },
           data: { firstViewedAt: new Date() },
-        }).catch(() => {});
+        });
         return NextResponse.json({ success: true, message: 'First view recorded' });
       }
 
       if (action === 'create_task' && taskData) {
-        const thread = await db.communicationThread.findUnique({ where: { id: threadId } });
-        await db.counselorTask.create({
+        await tx.counselorTask.create({
           data: {
             employeeId: assigneeId || auth.userId || '',
             studentId: thread?.studentId || '',
@@ -230,13 +251,14 @@ export async function POST(request: NextRequest) {
             status: 'pending',
             dueDate: taskData.dueDate || '',
           },
-        }).catch(() => null);
+        });
         return NextResponse.json({ success: true, message: 'Task created from communication' });
       }
 
       return NextResponse.json({ success: false, error: 'Unknown inbox action' }, { status: 400 });
+      });
     } catch (error: any) {
-      return NextResponse.json({ success: false, error: error?.message || 'Inbox action failed' }, { status: 500 });
+      return NextResponse.json({ success: false, error: 'Inbox action failed' }, { status: 500 });
     }
   })(request);
 }

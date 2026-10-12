@@ -1,0 +1,141 @@
+[
+  {
+    "requested": "alo_education_z....ai",
+    "exitCode": 0,
+    "status": "200",
+    "message": null,
+    "fullName": "engralaminn-collab/alo_education_z....ai",
+    "defaultBranch": "main",
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "push": true,
+      "triage": true,
+      "pull": true
+    },
+    "headers": {
+      "X-Accepted-Github-Permissions": "metadata=read",
+      "X-Accepted-Oauth-Scopes": "repo",
+      "X-Github-Request-Id": "CF5A:0C75:C9AF4:2C0A1C:6ACB580F",
+      "X-Oauth-Scopes": "",
+      "X-Ratelimit-Remaining": "6249"
+    }
+  },
+  {
+    "requested": "alo-education-uk-final",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "fullName": null,
+    "defaultBranch": null,
+    "permissions": null,
+    "headers": {
+      "X-Accepted-Github-Permissions": "metadata=read",
+      "X-Accepted-Oauth-Scopes": "repo",
+      "X-Github-Request-Id": "CF62:1EFE55:728D57:108E233:6ACB580F",
+      "X-Oauth-Scopes": "",
+      "X-Ratelimit-Remaining": "6248"
+    }
+  },
+  {
+    "requested": "alo-education-last",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "fullName": null,
+    "defaultBranch": null,
+    "permissions": null,
+    "headers": {
+      "X-Accepted-Github-Permissions": "metadata=read",
+      "X-Accepted-Oauth-Scopes": "repo",
+      "X-Github-Request-Id": "BD98:CA5B3:1B0D93D:2042C2B:6ACB580F",
+      "X-Oauth-Scopes": "",
+      "X-Ratelimit-Remaining": "6247"
+    }
+  },
+  {
+    "requested": "alo-ukvi-ai-markting-platform-copy",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "fullName": null,
+    "defaultBranch": null,
+    "permissions": null,
+    "headers": {
+      "X-Accepted-Github-Permissions": "metadata=read",
+      "X-Accepted-Oauth-Scopes": "repo",
+      "X-Github-Request-Id": "BD9E:3EDF6F:210FEB8:26456BA:6ACB5810",
+      "X-Oauth-Scopes": "",
+      "X-Ratelimit-Remaining": "6246"
+    }
+  },
+  {
+    "requested": "ALO-Education_LAST-TRY",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "fullName": null,
+    "defaultBranch": null,
+    "permissions": null,
+    "headers": {
+      "X-Accepted-Github-Permissions": "metadata=read",
+      "X-Accepted-Oauth-Scopes": "repo",
+      "X-Github-Request-Id": "BDA0:1C5797:1C04505:21393BF:6ACB5810",
+      "X-Oauth-Scopes": "",
+      "X-Ratelimit-Remaining": "6245"
+    }
+  },
+  {
+    "requested": "ukvi-ai-markting_n8n",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "fullName": null,
+    "defaultBranch": null,
+    "permissions": null,
+    "headers": {
+      "X-Accepted-Github-Permissions": "metadata=read",
+      "X-Accepted-Oauth-Scopes": "repo",
+      "X-Github-Request-Id": "BDA4:CA5B3:1B0DA2F:2042D71:6ACB5811",
+      "X-Oauth-Scopes": "",
+      "X-Ratelimit-Remaining": "6244"
+    }
+  },
+  {
+    "requested": "Ai-Markting-crm",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "fullName": null,
+    "defaultBranch": null,
+    "permissions": null,
+    "headers": {
+      "X-Accepted-Github-Permissions": "metadata=read",
+      "X-Accepted-Oauth-Scopes": "repo",
+      "X-Github-Request-Id": "BDA6:12161:2D684BD:34CCADA:6ACB5811",
+      "X-Oauth-Scopes": "",
+      "X-Ratelimit-Remaining": "6243"
+    }
+  },
+  {
+    "probe": "installation/repositories",
+    "exitCode": 1,
+    "status": "403",
+    "message": "Resource not accessible by integration",
+    "installationRepositoryCount": null
+  },
+  {
+    "probe": "user",
+    "exitCode": 0,
+    "status": "200",
+    "message": null,
+    "installationRepositoryCount": null
+  },
+  {
+    "probe": "orgs/engralaminn-collab",
+    "exitCode": 1,
+    "status": "404",
+    "message": "Not Found",
+    "installationRepositoryCount": null
+  }
+]

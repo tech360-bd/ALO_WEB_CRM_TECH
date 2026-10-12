@@ -40,18 +40,24 @@ async function handlePost(request: Request, auth: any) {
       );
     }
 
-    if (employee.userType !== 'EMPLOYEE') {
+    if (employee.userType !== 'EMPLOYEE' || !employee.employeeProfile) {
       return NextResponse.json(
-        { success: false, error: 'User is not an employee' },
+        { success: false, error: 'Eligible employee profile was not found.' },
         { status: 400 }
       );
     }
 
-    // --- Check if account is already active ---
-    if (employee.status === 'active' && !employee.firstLoginRequired) {
+    const normalizedStatus = employee.status.toLowerCase();
+    if (['terminated', 'resigned', 'blocked', 'rejected'].includes(normalizedStatus)) {
       return NextResponse.json(
-        { success: false, error: 'Account is already active. No activation needed.' },
-        { status: 400 }
+        { success: false, error: 'A terminal employee account cannot be reactivated by resending an activation link.' },
+        { status: 403 }
+      );
+    }
+    if (!employee.firstLoginRequired) {
+      return NextResponse.json(
+        { success: false, error: 'This employee already completed activation. Use the audited employee status workflow instead.' },
+        { status: 409 }
       );
     }
 
@@ -113,10 +119,16 @@ async function handlePost(request: Request, auth: any) {
         companyEmail: employee.email,
         expiryHours: 48,
       }
-    );
+    ).catch(() => ({ success: false, error: 'ACTIVATION_EMAIL_FAILED' }));
 
     if (!emailResult.success) {
-      return NextResponse.json({ success: false, error: emailResult.error, message: 'Activation token rotated, but email was not sent. Retry after correcting SMTP.' }, { status: 502 });
+      // Do not leave a bearer token usable when SMTP did not acknowledge the
+      // message; administrators can issue a fresh, audited link after repair.
+      await db.employeeActivationToken.updateMany({
+        where: { id: result.newToken.id, status: 'active' },
+        data: { status: 'expired' },
+      });
+      return NextResponse.json({ success: false, error: emailResult.error, message: 'Activation token was retired because SMTP did not acknowledge delivery. Retry after correcting SMTP.' }, { status: 502 });
     }
 
     return NextResponse.json({
@@ -131,11 +143,10 @@ async function handlePost(request: Request, auth: any) {
         newTokenExpiry: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
       },
     });
-  } catch (error: any) {
-    console.error('Resend activation error:', error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to resend activation email' },
-      { status: 500 }
+      { success: false, error: 'Activation email could not be resent. Check the audit trail and email configuration.' },
+      { status: 503 }
     );
   }
 }

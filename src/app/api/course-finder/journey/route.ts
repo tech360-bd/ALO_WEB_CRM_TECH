@@ -9,6 +9,7 @@ export async function GET() {
   try {
     return NextResponse.json({ success: true, ...buildJourneyVisualDocument() });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed to build journey visual' }, { status: 500 });
+    console.error('[api/course-finder/journey] error', error);
+    return NextResponse.json({ success: false, error: 'Failed to build journey visual' }, { status: 500 });
   }
 }

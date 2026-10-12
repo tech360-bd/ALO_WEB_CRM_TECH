@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 /**
  * Keyword Research Engine — stores and clusters SEO keyword intelligence.
  *
@@ -41,14 +42,14 @@ export async function recordKeyword(params: RecordKeywordParams) {
     keyword: params.keyword,
     country: params.country || null,
     course: params.course || null,
-    universitySlug: params.universitySlug || null,
-    searchVolume: params.searchVolume || 0,
-    difficulty: params.difficulty || 0,
-    cpc: params.cpc || 0,
-    competition: params.competition || "UNKNOWN",
-    intent: params.intent || "INFORMATIONAL",
-    relatedKeywords: JSON.stringify(params.relatedKeywords || []),
-    serpFeatures: JSON.stringify(params.serpFeatures || []),
+    universitySlug: params.universitySlug ?? existing?.universitySlug ?? null,
+    searchVolume: params.searchVolume ?? existing?.searchVolume ?? 0,
+    difficulty: params.difficulty ?? existing?.difficulty ?? 0,
+    cpc: params.cpc ?? existing?.cpc ?? 0,
+    competition: params.competition ?? existing?.competition ?? "UNKNOWN",
+    intent: params.intent ?? existing?.intent ?? "INFORMATIONAL",
+    relatedKeywords: params.relatedKeywords === undefined ? existing?.relatedKeywords ?? "[]" : JSON.stringify(params.relatedKeywords),
+    serpFeatures: params.serpFeatures === undefined ? existing?.serpFeatures ?? "[]" : JSON.stringify(params.serpFeatures),
     status: params.status || existing?.status || "NEW",
     priority: params.priority || existing?.priority || "MEDIUM",
     contentAssetId: params.contentAssetId || existing?.contentAssetId || null,
@@ -61,7 +62,7 @@ export async function recordKeyword(params: RecordKeywordParams) {
 }
 
 export async function clusterKeywords(keywordIds: string[], clusterName: string) {
-  const clusterId = `cluster-${Date.now().toString().slice(-6)}`;
+  const clusterId = `cluster-${randomUUID()}`;
   const result = await db.keywordResearch.updateMany({
     where: { id: { in: keywordIds } },
     data: { clusterId, clusterName },

@@ -384,7 +384,7 @@ export async function POST(request: Request) {
             subtitle: body.subtitle || '',
             imageUrl: body.imageUrl || body.heroImage || '',
             imageAlt: body.imageAlt || '',
-            accentColor: body.accentColor || '#0B5ED7',
+            accentColor: body.accentColor || '#2563EB',
             popularCity: body.popularCity || body.heroCity || '',
             popularIntake: body.popularIntake || body.heroIntake || '',
             universityCountLabel: body.universityCountLabel || '',
@@ -525,8 +525,9 @@ export async function POST(request: Request) {
             seoDescription: body.seoDescription || '',
             status: body.status || 'active',
             sortOrder: body.sortOrder ?? 0,
-            accentColor: body.accentColor || '#0B5ED7',
-            lastVerifiedAt: new Date(),
+            accentColor: body.accentColor || '#2563EB',
+            // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
+            // the public country page shows it as "Last verified".
           },
           create: {
             name: body.name,
@@ -554,8 +555,9 @@ export async function POST(request: Request) {
             seoDescription: body.seoDescription || '',
             status: body.status || 'active',
             sortOrder: body.sortOrder ?? 0,
-            accentColor: body.accentColor || '#0B5ED7',
-            lastVerifiedAt: new Date(),
+            accentColor: body.accentColor || '#2563EB',
+            // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
+            // the public country page shows it as "Last verified".
           }
         });
         break;
@@ -751,7 +753,13 @@ export async function PUT(request: Request) {
         updated = await db.websiteEnglishTest.update({ where: { id }, data: body });
         break;
       case 'countries':
-        updated = await db.country.update({ where: { id }, data: { ...body, lastVerifiedAt: new Date() } });
+        {
+          // Phase 1 review (P1-D): an ordinary edit no longer stamps (or lets the
+          // client set) lastVerifiedAt, which the public country page shows as
+          // "Last verified". The rest of the body is passed through as before.
+          const { lastVerifiedAt: _ignoredLastVerifiedAt, ...countryData } = body as Record<string, unknown>;
+          updated = await db.country.update({ where: { id }, data: countryData as any });
+        }
         break;
       case 'country-quick-facts':
         updated = await db.countryQuickFact.update({ where: { id }, data: body });

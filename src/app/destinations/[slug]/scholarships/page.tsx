@@ -5,6 +5,7 @@ import { Award, Calendar, DollarSign, ExternalLink, ArrowRight, ShieldCheck } fr
 import { getCountryDestination } from '@/lib/country-destinations-data';
 import { db } from '@/lib/db';
 import { throwSanitizedDatabaseFailure } from '@/lib/safe-db-error';
+import { publicScholarshipsInCountryWhere, stripInternalFields } from '@/lib/public-catalog';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -25,15 +26,8 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
   const countryData = getCountryDestination(slug);
   if (!countryData) notFound();
 
-  const scholarships = await db.crmScholarship.findMany({
-    where: {
-      university: {
-        OR: [
-          { country: { contains: countryData.name } },
-          { country: { contains: countryData.code } },
-        ],
-      },
-    },
+  const scholarships = stripInternalFields(await db.crmScholarship.findMany({
+    where: publicScholarshipsInCountryWhere(countryData.name, countryData.code),
     take: 20,
     orderBy: { createdAt: 'desc' },
     include: {
@@ -43,7 +37,7 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
     'destination-scholarships',
     error,
     'DESTINATION_DATA_UNAVAILABLE',
-  ));
+  )));
 
   return (
     <div className="bg-slate-50 min-h-screen py-12 text-slate-900">

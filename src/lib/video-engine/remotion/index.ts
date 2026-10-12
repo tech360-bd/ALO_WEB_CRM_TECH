@@ -33,7 +33,7 @@ export const REMOTION_COMPOSITIONS: RemotionComposition[] = [
       logoUrl: "/brand/alo-logo.png",
       images: [],
       primaryColor: "#F97316",
-      secondaryColor: "#0B5ED7",
+      secondaryColor: "#2563EB",
       studentName: "",
       cta: "Apply for 2027 Intake",
     },
@@ -189,7 +189,7 @@ export const REMOTION_COMPOSITIONS: RemotionComposition[] = [
     defaultProps: {
       texts: ["Study in UK", "2027 Intake Open", "Scholarships Available"],
       animation: "typewriter",
-      backgroundColor: "#0B5ED7",
+      backgroundColor: "#2563EB",
       textColor: "#FFFFFF",
     },
   },
@@ -307,7 +307,7 @@ export const ${compositionId}: React.FC<any> = ({ title = "${prompt.description.
   const titleScale = spring({ frame, fps, config: { damping: 100 } });
   
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0B5ED7", justifyContent: "center", alignItems: "center" }}>
+    <AbsoluteFill style={{ backgroundColor: "#2563EB", justifyContent: "center", alignItems: "center" }}>
       <Sequence from={0} durationInFrames={${(prompt.durationSec || 30) * 30}}>
         <div style={{ opacity: titleOpacity, transform: \`scale(\${titleScale})\`, color: "white", fontSize: 80, fontWeight: 800, textAlign: "center", padding: 40 }}>
           {title}

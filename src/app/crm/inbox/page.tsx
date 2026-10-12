@@ -52,21 +52,13 @@ export default function InboxPage() {
     const activeThread = conversations.find(c => c.id === activeThreadId);
     if (!activeThread) return;
 
-    // find the recipient contact from the first message in the thread
-    // Assuming messages were fetched
-    const recipientContact = messages.find(m => m.direction === 'inbound')?.senderContact || 'unknown';
-
     try {
-      const res = await fetch("/api/crm/ucc/conversations", {
+      const res = await fetch(`/api/crm/ucc/conversations/${activeThreadId}/reply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          threadId: activeThreadId,
-          content: input,
-          recipientContact
-        })
+        body: JSON.stringify({ content: input, messageType: 'text' })
       });
       const json = await res.json();
       if (json.success) {
@@ -84,7 +76,7 @@ export default function InboxPage() {
       <div className="w-1/3 border-r border-gray-200 bg-white flex flex-col">
         <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
           <h2 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-[#0B5ED7]" />
+            <MessageSquare className="w-5 h-5 text-[#2563EB]" />
             Unified Inbox
           </h2>
         </div>
@@ -100,7 +92,7 @@ export default function InboxPage() {
                 <div
                   key={c.id}
                   onClick={() => setActiveThreadId(c.id)}
-                  className={`p-4 cursor-pointer transition-colors hover:bg-gray-50 ${activeThreadId === c.id ? 'bg-blue-50/50 border-l-4 border-[#0B5ED7]' : 'border-l-4 border-transparent'}`}
+                  className={`p-4 cursor-pointer transition-colors hover:bg-gray-50 ${activeThreadId === c.id ? 'bg-blue-50/50 border-l-4 border-[#2563EB]' : 'border-l-4 border-transparent'}`}
                 >
                   <div className="flex justify-between items-start mb-1">
                     <span className="font-semibold text-gray-900 capitalize flex items-center gap-2">
@@ -140,7 +132,7 @@ export default function InboxPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((m) => (
                 <div key={m.id} className={`flex ${m.direction === 'outbound' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[70%] p-3 rounded-2xl ${m.direction === 'outbound' ? 'bg-[#0B5ED7] text-white rounded-tr-none shadow-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none shadow-sm'}`}>
+                  <div className={`max-w-[70%] p-3 rounded-2xl ${m.direction === 'outbound' ? 'bg-[#2563EB] text-white rounded-tr-none shadow-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none shadow-sm'}`}>
                     <p className="text-sm whitespace-pre-wrap">{m.content}</p>
                     <div className={`text-xs mt-1 text-right ${m.direction === 'outbound' ? 'text-blue-200' : 'text-gray-400'}`}>
                       {new Date(m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
@@ -158,11 +150,11 @@ export default function InboxPage() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Type your message..."
-                  className="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0B5ED7]/50 focus:border-[#0B5ED7] transition-all"
+                  className="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all"
                 />
                 <button
                   onClick={handleSend}
-                  className="bg-[#0B5ED7] hover:bg-[#0052a3] text-white p-3 rounded-xl transition-colors flex items-center justify-center shadow-sm"
+                  className="bg-[#2563EB] hover:bg-[#0052a3] text-white p-3 rounded-xl transition-colors flex items-center justify-center shadow-sm"
                 >
                   <Send className="w-5 h-5" />
                 </button>

@@ -1,7 +1,19 @@
+// QUARANTINED: this legacy exporter fabricates URLs, faculty/module descriptions
+// and future calendars, and upgrades verification based on university name.
+// Preserve source for audit; do not regenerate misleading VERIFIED packages.
+throw new Error('Legacy synthetic catalogue exporter disabled. Use scripts/audit-local-catalog.py for read-only quality checks and official field evidence before importing.');
+
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
+import { requireSyntheticOutputDir, syntheticOutputPath } from './lib/synthetic-output-guard.mjs';
+
+// SYNTHETIC / UNVERIFIED GENERATOR (2026-10-12 safety remediation): every file this script writes goes
+// under ALO_SYNTHETIC_OUTPUT_DIR (fixtures/synthetic-catalogue/** or staging/synthetic/**). It refuses
+// to run otherwise and never writes the repository root, docs/import-templates/, data/ or public/.
+const SYNTH_OUT = requireSyntheticOutputDir('run-real-data-audit');
+const synthOut = (rel: string) => syntheticOutputPath(SYNTH_OUT, rel);
 
 const db = new PrismaClient();
 
@@ -63,7 +75,7 @@ async function main() {
   console.log('========================================\n');
 
   try {
-    const pkgDir = path.join(__dirname, '../docs/import-templates/package-verified');
+    const pkgDir = synthOut('docs/import-templates/package-verified');
     if (!fs.existsSync(pkgDir)) {
       fs.mkdirSync(pkgDir, { recursive: true });
     }
@@ -506,13 +518,13 @@ async function main() {
     fs.writeFileSync(path.join(pkgDir, '18_ALO_IMPORT_MANIFEST.csv'), csv18);
 
     // Write audited reports to root folder
-    fs.writeFileSync(path.join(__dirname, '../ALO_COURSE_COMPLETENESS_AUDIT.csv'), csvCompletenessAudit);
-    fs.writeFileSync(path.join(__dirname, '../ALO_2027_INTAKE_VERIFICATION.csv'), csvIntakeVerification);
-    fs.writeFileSync(path.join(__dirname, '../ALO_URL_VERIFICATION_REPORT.csv'), csvUrlVerification);
-    fs.writeFileSync(path.join(__dirname, '../ALO_DATA_INTEGRITY_AUDIT.csv'), csvDataIntegrityAudit);
-    fs.writeFileSync(path.join(__dirname, '../ALO_MISSING_UNIVERSITY_INFO.csv'), csv17);
-    fs.writeFileSync(path.join(__dirname, '../ALO_DUPLICATE_REPORT.csv'), csv13.replace('log_id,', 'duplicate_id,original_id,type,similarity_score,resolution_action,merged_at\n'));
-    fs.writeFileSync(path.join(__dirname, '../ALO_CONFLICT_REPORT.csv'), csv14.replace('log_id,', 'conflict_id,field,source_a_value,source_b_value,selected_value,justification,resolved_at\n'));
+    fs.writeFileSync(synthOut('ALO_COURSE_COMPLETENESS_AUDIT.csv'), csvCompletenessAudit);
+    fs.writeFileSync(synthOut('ALO_2027_INTAKE_VERIFICATION.csv'), csvIntakeVerification);
+    fs.writeFileSync(synthOut('ALO_URL_VERIFICATION_REPORT.csv'), csvUrlVerification);
+    fs.writeFileSync(synthOut('ALO_DATA_INTEGRITY_AUDIT.csv'), csvDataIntegrityAudit);
+    fs.writeFileSync(synthOut('ALO_MISSING_UNIVERSITY_INFO.csv'), csv17);
+    fs.writeFileSync(synthOut('ALO_DUPLICATE_REPORT.csv'), csv13.replace('log_id,', 'duplicate_id,original_id,type,similarity_score,resolution_action,merged_at\n'));
+    fs.writeFileSync(synthOut('ALO_CONFLICT_REPORT.csv'), csv14.replace('log_id,', 'conflict_id,field,source_a_value,source_b_value,selected_value,justification,resolved_at\n'));
 
     console.log('Generated all audit CSVs in root.');
 
@@ -624,13 +636,13 @@ async function main() {
       };
     });
 
-    fs.writeFileSync(path.join(__dirname, '../ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json'), JSON.stringify(jsonOutput, null, 2));
+    fs.writeFileSync(synthOut('ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json'), JSON.stringify(jsonOutput, null, 2));
     console.log('  ✓ Wrote ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json');
 
     // 3. Zip package files into ALO_UNIVERSITY_COURSE_DATA_PACKAGE_VERIFIED.zip
     console.log('Creating ALO_UNIVERSITY_COURSE_DATA_PACKAGE_VERIFIED.zip...');
     const zipCmd = `zip -j ALO_UNIVERSITY_COURSE_DATA_PACKAGE_VERIFIED.zip docs/import-templates/package-verified/*.csv`;
-    execSync(zipCmd, { cwd: path.join(__dirname, '..') });
+    execSync(zipCmd, { cwd: SYNTH_OUT });
     console.log('  ✓ Created ALO_UNIVERSITY_COURSE_DATA_PACKAGE_VERIFIED.zip');
 
     // ==========================================
@@ -723,7 +735,7 @@ For every unverified university/course record, see the generated audit CSV logs:
 3. [ALO_URL_VERIFICATION_REPORT.csv](file:///Users/alaminn/Downloads/workspace-39fb1a01-5f16-4a6f-ab7d-88429dec6466%20(9)/ALO_URL_VERIFICATION_REPORT.csv)
 4. [ALO_2027_INTAKE_VERIFICATION.csv](file:///Users/alaminn/Downloads/workspace-39fb1a01-5f16-4a6f-ab7d-88429dec6466%20(9)/ALO_2027_INTAKE_VERIFICATION.csv)
 `;
-    fs.writeFileSync(path.join(__dirname, '../ALO_FINAL_DATA_AUDIT.md'), reportMdToDoc(auditReportMd));
+    fs.writeFileSync(synthOut('ALO_FINAL_DATA_AUDIT.md'), reportMdToDoc(auditReportMd));
 
     console.log('\n========================================');
     console.log('  REAL DATA AUDIT COMPLETED SUCCESSFULLY!');

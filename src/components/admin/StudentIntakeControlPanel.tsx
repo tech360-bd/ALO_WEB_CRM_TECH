@@ -64,7 +64,7 @@ export default function StudentIntakeControlPanel() {
           <p className="font-bold text-[12px]">Contract</p>
           <p className="text-[11px] text-gray-300 mt-1"><code className="bg-white/10 px-1 rounded">POST /api/ai/student-intake</code> {'{'} channel, senderId, text, mediaType, mediaInfo {'}'}</p>
           <p className="text-[11px] text-gray-300">Webhooks: <code className="bg-white/10 px-1 rounded">POST /api/whatsapp/webhook</code> and <code className="bg-white/10 px-1 rounded">POST /api/facebook/webhook</code> (Messenger) → same intake brain.</p>
-          <p className="text-[11px] text-gray-300 mt-1">Docs auto: <code className="bg-white/10 px-1 rounded">POST /api/documents/auto-upload</code> multipart with fullApplication — creates AE-YYYYXXXXXX + portal profile + Application(APPLICATION_DRAFT).</p>
+          <p className="text-[11px] text-gray-300 mt-1">Document upload accepts actual file bytes and stores them privately; it does not create student IDs, portal profiles, or applications. Use the authenticated student upload route or assigned-staff workflow.</p>
         </div>
         <div className="flex flex-col md:flex-row gap-2 items-end">
           <div className="flex-1 w-full"><label className="text-[11px] font-bold">Probe — test ID verification (super-admin only)</label><Input placeholder="AE-2025000123" value={probeId} onChange={e=>setProbeId(e.target.value)} className="h-9 text-xs mt-1" /></div>
@@ -75,7 +75,7 @@ export default function StudentIntakeControlPanel() {
         <div className="flex gap-2">
           <Link href="/super-admin/dashboard"><Button variant="outline" className="h-8 text-[11px] border-[#E2E8F0]">Super-Admin Dashboard</Button></Link>
           <Link href="/admin/ai-command-center"><Button variant="outline" className="h-8 text-[11px] border-[#E2E8F0]">AI Command Center</Button></Link>
-          <a href="/admin/document-security"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="h-8 text-[11px] border-[#E2E8F0]">Auto-create Docs</Button></a>
+          <Button asChild variant="outline" className="h-8 text-[11px] border-[#E2E8F0]"><a href="/admin/document-security">Document Security</a></Button>
         </div>
       </CardContent>
     </Card>

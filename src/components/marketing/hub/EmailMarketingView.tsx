@@ -1,63 +1,410 @@
 'use client';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Mail, Send, Users, ShieldCheck, Loader2, Eye, Palette } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Mail, Loader2, ShieldCheck, AlertTriangle } from 'lucide-react';
+
+/**
+ * Email marketing console. Every control calls a real route under /api/email/campaigns.
+ * Nothing is marked sent here. Sending happens only in the outbox worker, and only when
+ * EMAIL_SENDING_ENABLED=true. The banner shows the live send state.
+ */
+
+interface ConfigSummary {
+  sendingEnabled: boolean;
+  testMode: boolean;
+  testRecipientCount: number;
+  hourlyCap: number;
+  dailyCap: number;
+  batchSize: number;
+  maxAttempts: number;
+  unsubscribeConfigured: boolean;
+  publicLinksConfigured: boolean;
+  smtpConfigured: boolean;
+}
+
+interface CampaignRow {
+  id: string;
+  name: string;
+  subject: string;
+  status: string;
+  testMode: boolean;
+  recipientCount: number;
+  consentBasis: string | null;
+  queuedAt: string | null;
+  completedAt: string | null;
+  lastErrorCode: string | null;
+  createdAt: string;
+}
+
+interface CampaignDetail {
+  campaign: CampaignRow;
+  outbox: Record<string, number>;
+  events: Record<string, number>;
+}
+
+interface ApiResult<T> {
+  ok: boolean;
+  status: number;
+  data: T & { success?: boolean; error?: string; detail?: unknown; config?: unknown };
+}
+
+const TERMINAL = new Set(['sent', 'cancelled']);
+const OUTBOX_ORDER = ['queued', 'sending', 'sent', 'failed', 'suppressed', 'skipped', 'draft'];
+
+async function call<T>(path: string, init?: RequestInit): Promise<ApiResult<T>> {
+  const res = await fetch(path, {
+    ...init,
+    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+    cache: 'no-store',
+  });
+  const data = (await res.json().catch(() => ({}))) as ApiResult<T>['data'];
+  return { ok: res.ok, status: res.status, data };
+}
+
+function parseRecipientLines(raw: string): Array<{ email: string; first_name?: string; last_name?: string; company?: string }> {
+  return raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => {
+      const [email, first_name, last_name, company] = line.split(',').map((part) => part.trim());
+      return { email: email ?? '', first_name, last_name, company };
+    });
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const tone =
+    status === 'sent'
+      ? 'bg-emerald-50 text-emerald-700'
+      : status === 'paused' || status === 'cancelled'
+        ? 'bg-amber-50 text-amber-700'
+        : status === 'sending' || status === 'queued'
+          ? 'bg-blue-50 text-blue-700'
+          : 'bg-gray-100 text-gray-700';
+  return <Badge className={tone}>{status}</Badge>;
+}
 
 export default function EmailMarketingView() {
-  const [campaign, setCampaign] = useState({ template:'newsletter', subject:'UK January 2027 — Last chance for scholarships', html:'<h1>Study in UK — Jan 2027</h1><p>Dear {{name}}, UK universities are closing Jan intake. Scholarships up to 50%. Book free counseling.</p>', segment:'all_consent', sender:'noreply@aloeducation.com' });
-  const [sending, setSending] = useState(false);
-  const [log, setLog] = useState<string|null>(null);
+  const [config, setConfig] = useState<ConfigSummary | null>(null);
+  const [configError, setConfigError] = useState<string | null>(null);
+  const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [detail, setDetail] = useState<CampaignDetail | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSend = async () => {
-    setSending(true); setLog(null);
-    try{
-      const res = await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'send_campaign', ...campaign, dryRun:true })});
-      const j = await res.json();
-      if(!res.ok) throw new Error(j.error || 'Email gateway not configured — set MAIL_HOST/MAIL_USERNAME/MAIL_PASSWORD');
-      setLog(`Prepared ${j.count||0} emails — segmentation + personalization + unsubscribe list checked. Requires approval.`);
-    }catch(e:any){ setLog('Error: '+e.message+' — Task preserved in MarketingCalendar. Email respects consent/unsubscribe/bounce handling.');}
-    finally{ setSending(false);}
+  const [draft, setDraft] = useState({
+    name: '',
+    subject: '',
+    html: '<p>Hi {{first_name}},</p>\n<p>Your message here.</p>\n<p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>',
+    text: '',
+    recipients: '',
+    consentBasis: '',
+    consentConfirmed: false,
+    testMode: true,
+  });
+  const [queueConfirm, setQueueConfirm] = useState({ recipientCount: '', subject: '' });
+
+  const loadCampaigns = useCallback(async () => {
+    const result = await call<{ campaigns?: CampaignRow[]; config?: ConfigSummary & { error?: string; variable?: string } }>('/api/email/campaigns');
+    if (!result.ok) {
+      setError(`Could not load campaigns (${result.data.error ?? result.status}).`);
+      return;
+    }
+    setCampaigns((result.data.campaigns as CampaignRow[]) ?? []);
+    const cfg = result.data.config as (ConfigSummary & { error?: string; variable?: string }) | undefined;
+    if (cfg?.error) setConfigError(`Email configuration is invalid (${cfg.variable ?? 'unknown variable'}).`);
+    else if (cfg) setConfig(cfg);
+  }, []);
+
+  const loadDetail = useCallback(async (id: string) => {
+    const result = await call<CampaignDetail>(`/api/email/campaigns/${encodeURIComponent(id)}`);
+    if (result.ok) setDetail(result.data as unknown as CampaignDetail);
+    else setError(`Could not load campaign (${result.data.error ?? result.status}).`);
+  }, []);
+
+  useEffect(() => {
+    void loadCampaigns();
+  }, [loadCampaigns]);
+
+  useEffect(() => {
+    if (selectedId) void loadDetail(selectedId);
+    else setDetail(null);
+    setQueueConfirm({ recipientCount: '', subject: '' });
+  }, [selectedId, loadDetail]);
+
+  const sendBanner = useMemo(() => {
+    if (configError) return { tone: 'red', text: configError };
+    if (!config) return { tone: 'gray', text: 'Loading email settings…' };
+    if (!config.smtpConfigured) return { tone: 'amber', text: 'SMTP is not configured. Nothing can be delivered until SMTP_HOST, SMTP_USER, SMTP_PASSWORD and SMTP_FROM are set.' };
+    if (!config.sendingEnabled) return { tone: 'amber', text: 'Sending is OFF (EMAIL_SENDING_ENABLED is not "true"). Queued campaigns wait until it is enabled. Nothing is sent.' };
+    if (config.testMode) return { tone: 'amber', text: `Test mode ON: only the ${config.testRecipientCount} test recipient(s) can receive email.` };
+    return {
+      tone: 'emerald',
+      text: `Live sending enabled. Configured ceilings: ${config.hourlyCap} SMTP attempts per hour and ${config.dailyCap} per 24 hours. These are settings, not your provider's limits.`,
+    };
+  }, [config, configError]);
+
+  const createDraft = async () => {
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    const result = await call<{ campaignId?: string; recipientCount?: number; skipped?: Record<string, number>; testModeRestricted?: boolean }>(
+      '/api/email/campaigns',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          name: draft.name,
+          subject: draft.subject,
+          html: draft.html,
+          text: draft.text.trim() ? draft.text : null,
+          recipients: parseRecipientLines(draft.recipients),
+          testMode: draft.testMode,
+          consentBasis: draft.consentBasis,
+          consentConfirmed: draft.consentConfirmed,
+        }),
+      }
+    );
+    setBusy(false);
+    if (!result.ok) {
+      setError(`Draft not created: ${result.data.error ?? result.status}${result.data.detail ? ` (${JSON.stringify(result.data.detail)})` : ''}`);
+      return;
+    }
+    const d = result.data as unknown as { campaignId: string; recipientCount: number; skipped: Record<string, number>; testModeRestricted: boolean };
+    setMessage(
+      `Draft saved with ${d.recipientCount} recipient(s). Skipped: ${Object.entries(d.skipped).map(([k, v]) => `${k} ${v}`).join(', ')}. Nothing has been sent. Review it, then queue it.`
+    );
+    setSelectedId(d.campaignId);
+    await loadCampaigns();
   };
+
+  const queueCampaign = async () => {
+    if (!detail) return;
+    setBusy(true);
+    setError(null);
+    const result = await call<{ queued?: number; sendingEnabled?: boolean }>(`/api/email/campaigns/${encodeURIComponent(detail.campaign.id)}/queue`, {
+      method: 'POST',
+      body: JSON.stringify({ recipientCount: Number(queueConfirm.recipientCount), subject: queueConfirm.subject }),
+    });
+    setBusy(false);
+    if (!result.ok) {
+      setError(`Not queued: ${result.data.error ?? result.status}`);
+      return;
+    }
+    const r = result.data as unknown as { queued: number; sendingEnabled: boolean };
+    setMessage(
+      r.sendingEnabled
+        ? `Queued ${r.queued} email(s). The outbox worker sends them in batches under the caps.`
+        : `Queued ${r.queued} email(s). Sending is OFF, so nothing will be delivered until EMAIL_SENDING_ENABLED is "true".`
+    );
+    await Promise.all([loadCampaigns(), loadDetail(detail.campaign.id)]);
+  };
+
+  const changeStatus = async (action: 'pause' | 'resume' | 'cancel') => {
+    if (!detail) return;
+    if (action === 'cancel' && !window.confirm('Cancel this campaign? Unsent recipients will be skipped and this cannot be undone.')) return;
+    setBusy(true);
+    setError(null);
+    const result = await call<{ status?: string }>(`/api/email/campaigns/${encodeURIComponent(detail.campaign.id)}/status`, {
+      method: 'POST',
+      body: JSON.stringify({ action }),
+    });
+    setBusy(false);
+    if (!result.ok) {
+      setError(`Could not ${action}: ${result.data.error ?? result.status}`);
+      return;
+    }
+    setMessage(`Campaign ${action === 'cancel' ? 'cancelled' : action === 'pause' ? 'paused' : 'resumed'}.`);
+    await Promise.all([loadCampaigns(), loadDetail(detail.campaign.id)]);
+  };
+
+  const campaign = detail?.campaign ?? null;
+  const confirmReady =
+    campaign !== null &&
+    campaign.status === 'draft' &&
+    queueConfirm.recipientCount === String(campaign.recipientCount) &&
+    queueConfirm.subject === campaign.subject;
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Mail className="w-6 h-6 text-[#F97316]" />Email Marketing</h2>
-        <p className="text-sm text-gray-500">HTML templates, personalized content, segmentation, automated journeys, scheduled campaigns, delivery/bounce/unsubscribe, performance analytics.</p>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2">
+          <Mail className="w-6 h-6 text-[#F97316]" />Email Marketing
+        </h2>
+        <p className="text-sm text-gray-500">
+          Drafts, confirmation, and a queue that sends under caps. Nothing is marked sent until the SMTP server accepts the message.
+        </p>
       </div>
+
+      <div
+        className={`rounded-xl border p-3 text-sm flex gap-2 items-start ${
+          sendBanner.tone === 'emerald'
+            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+            : sendBanner.tone === 'red'
+              ? 'bg-red-50 border-red-200 text-red-800'
+              : sendBanner.tone === 'amber'
+                ? 'bg-amber-50 border-amber-200 text-amber-800'
+                : 'bg-gray-50 border-gray-200 text-gray-700'
+        }`}
+      >
+        <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+        <span>{sendBanner.text}</span>
+      </div>
+
+      {error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3">{error}</p>}
+      {message && <p className="text-sm text-gray-800 bg-[#F8FAFC] border rounded-lg p-3">{message}</p>}
+
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm">Compose Email Campaign</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle className="text-sm">New draft</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid md:grid-cols-2 gap-3">
-                <div><label className="text-xs font-semibold">Template Type</label><Select value={campaign.template} onValueChange={v=>setCampaign({...campaign, template:v})}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="newsletter">Newsletter</SelectItem><SelectItem value="journey">Automated Journey</SelectItem><SelectItem value="announcement">Announcement</SelectItem></SelectContent></Select></div>
-                <div><label className="text-xs font-semibold">Sender</label><Input value={campaign.sender} onChange={e=>setCampaign({...campaign, sender:e.target.value})} className="mt-1 h-9" /></div>
+                <div>
+                  <label className="text-xs font-semibold">Campaign name</label>
+                  <Input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} className="mt-1 h-9" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold">Subject</label>
+                  <Input value={draft.subject} onChange={(e) => setDraft({ ...draft, subject: e.target.value })} className="mt-1 h-9" />
+                </div>
               </div>
-              <div><label className="text-xs font-semibold">Subject</label><Input value={campaign.subject} onChange={e=>setCampaign({...campaign, subject:e.target.value})} className="mt-1 h-9" /></div>
-              <div><label className="text-xs font-semibold">HTML Content (supports {'{{name}}'} personalization)</label><Textarea value={campaign.html} onChange={e=>setCampaign({...campaign, html:e.target.value})} className="mt-1 min-h-[140px] font-mono text-xs" /></div>
-              <div className="flex gap-2">
-                <Button onClick={handleSend} disabled={sending} className="bg-[#F97316] text-white">{sending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Campaign</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="h-9"><Eye className="w-4 h-4 mr-2" />Preview</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="h-9"><Palette className="w-4 h-4 mr-2" />Brand Check</Button>
+              <div>
+                <label className="text-xs font-semibold">HTML body (placeholders: {'{{first_name}} {{last_name}} {{company}} {{email}} {{campaign_name}}'}; {'{{unsubscribe_url}}'} is required)</label>
+                <Textarea value={draft.html} onChange={(e) => setDraft({ ...draft, html: e.target.value })} className="mt-1 min-h-[140px] font-mono text-xs" />
               </div>
-              {log && <p className="text-xs bg-[#F8FAFC] border rounded-lg p-3 whitespace-pre-wrap">{log}</p>}
-              <p className="text-[11px] text-gray-500 flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Enforcement: MarketingConsent (email) + unsubscribe list; bounce handling; rate limits; suppression lists server-enforced.</p>
+              <div>
+                <label className="text-xs font-semibold">Plain-text body (optional; leave empty to derive from HTML)</label>
+                <Textarea value={draft.text} onChange={(e) => setDraft({ ...draft, text: e.target.value })} className="mt-1 min-h-[70px] font-mono text-xs" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold">Recipients (one per line: email,first_name,last_name,company)</label>
+                <Textarea value={draft.recipients} onChange={(e) => setDraft({ ...draft, recipients: e.target.value })} className="mt-1 min-h-[90px] font-mono text-xs" placeholder="ann@example.com,Ann,Rahman,ABC School" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold">How were these people opted in? (required, at least 10 characters)</label>
+                <Input value={draft.consentBasis} onChange={(e) => setDraft({ ...draft, consentBasis: e.target.value })} className="mt-1 h-9" placeholder="e.g. Newsletter sign-up form on aloeducation.com, 2026" />
+              </div>
+              <label className="flex items-start gap-2 text-xs">
+                <input type="checkbox" className="mt-0.5" checked={draft.consentConfirmed} onChange={(e) => setDraft({ ...draft, consentConfirmed: e.target.checked })} />
+                <span>I confirm every recipient in this list gave consent to receive this marketing email, and I have described the basis above.</span>
+              </label>
+              <label className="flex items-start gap-2 text-xs">
+                <input type="checkbox" className="mt-0.5" checked={draft.testMode} onChange={(e) => setDraft({ ...draft, testMode: e.target.checked })} />
+                <span>Test campaign: keep only the configured test recipients. Turn this off only for a real send.</span>
+              </label>
+              <Button onClick={createDraft} disabled={busy} className="bg-[#F97316] text-white">
+                {busy ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}Create draft (nothing is sent)
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center justify-between">
+                <span>Campaigns</span>
+                <Button size="sm" variant="outline" onClick={() => void loadCampaigns()} className="h-7 text-xs">Refresh</Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {campaigns.length === 0 ? (
+                <p className="text-xs text-gray-500">No campaigns yet.</p>
+              ) : (
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="text-left text-gray-500">
+                      <th className="py-1">Name</th>
+                      <th>Status</th>
+                      <th>Recipients</th>
+                      <th />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {campaigns.map((row) => (
+                      <tr key={row.id} className={`border-t ${selectedId === row.id ? 'bg-orange-50' : ''}`}>
+                        <td className="py-1.5 pr-2">
+                          {row.name}
+                          {row.testMode && <span className="ml-1 text-[10px] text-amber-700">[test]</span>}
+                        </td>
+                        <td><StatusBadge status={row.status} /></td>
+                        <td>{row.recipientCount}</td>
+                        <td className="text-right">
+                          <Button size="sm" variant="outline" className="h-6 text-[11px]" onClick={() => setSelectedId(row.id)}>Open</Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </CardContent>
           </Card>
         </div>
+
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0B5ED7]" />Segmentation & Journeys</CardTitle></CardHeader>
-            <CardContent className="text-xs space-y-3">
-              <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Segments</p><p className="text-gray-600 mt-1">UK interest, HSC 2025, IELTS pending, Hot leads — via MarketingLead.destination/level/status.</p></div>
-              <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Automated Journeys</p><p className="text-gray-600 mt-1">Welcome → Nurture (Day 3,7) → Deadline reminder — MarketingCalendar scheduledAt with idempotency.</p></div>
-              <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Analytics</p><p className="text-gray-600 mt-1">Delivered / Bounced / Unsubscribed / CTR — from MarketingAnalytics / MarketingReport.</p></div>
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />Campaign detail
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-xs">
+              {!campaign && <p className="text-gray-500">Select a campaign to see its queue, events, and actions.</p>}
+              {campaign && detail && (
+                <>
+                  <div>
+                    <p className="font-semibold text-sm">{campaign.name}</p>
+                    <p className="text-gray-600">Subject: {campaign.subject}</p>
+                    <p className="mt-1"><StatusBadge status={campaign.status} />{campaign.testMode && <span className="ml-2 text-amber-700">test campaign</span>}</p>
+                    {campaign.lastErrorCode && <p className="text-amber-700 mt-1">Reason: {campaign.lastErrorCode}</p>}
+                    {campaign.consentBasis && <p className="text-gray-600 mt-1">Consent basis: {campaign.consentBasis}</p>}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    {OUTBOX_ORDER.map((status) => (
+                      <div key={status} className="p-2 bg-white border rounded-lg">
+                        <p className="text-gray-500">{status}</p>
+                        <p className="font-semibold text-sm">{detail.outbox[status] ?? 0}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {Object.keys(detail.events).length > 0 && (
+                    <p className="text-gray-600">Events: {Object.entries(detail.events).map(([k, v]) => `${k} ${v}`).join(' · ')}</p>
+                  )}
+
+                  {campaign.status === 'draft' && (
+                    <div className="border rounded-lg p-3 space-y-2">
+                      <p className="font-semibold">Confirm before queueing</p>
+                      <p className="text-gray-600">Type the exact recipient count ({campaign.recipientCount}) and subject to queue this campaign.</p>
+                      <Input value={queueConfirm.recipientCount} onChange={(e) => setQueueConfirm({ ...queueConfirm, recipientCount: e.target.value })} placeholder={`Recipient count: ${campaign.recipientCount}`} className="h-8" />
+                      <Input value={queueConfirm.subject} onChange={(e) => setQueueConfirm({ ...queueConfirm, subject: e.target.value })} placeholder="Subject (exact)" className="h-8" />
+                      <Button size="sm" onClick={queueCampaign} disabled={busy || !confirmReady} className="bg-[#F97316] text-white">
+                        Queue {campaign.recipientCount} email(s)
+                      </Button>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2">
+                    {(campaign.status === 'queued' || campaign.status === 'sending') && (
+                      <Button size="sm" variant="outline" onClick={() => changeStatus('pause')} disabled={busy}>Pause</Button>
+                    )}
+                    {campaign.status === 'paused' && (
+                      <Button size="sm" variant="outline" onClick={() => changeStatus('resume')} disabled={busy}>Resume</Button>
+                    )}
+                    {!TERMINAL.has(campaign.status) && (
+                      <Button size="sm" variant="outline" className="text-red-700" onClick={() => changeStatus('cancel')} disabled={busy}>Cancel campaign</Button>
+                    )}
+                    <Button size="sm" variant="outline" onClick={() => void loadDetail(campaign.id)} disabled={busy}>Refresh detail</Button>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>

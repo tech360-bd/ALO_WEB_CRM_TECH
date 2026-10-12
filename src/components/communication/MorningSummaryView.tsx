@@ -87,7 +87,7 @@ export default function MorningSummaryView() {
     return (
       <div className="flex items-center justify-center min-h-64 text-slate-400">
         <div className="text-center space-y-3">
-          <div className="w-8 h-8 border-2 border-[#0B5ED7] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs">Loading your briefing...</p>
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function MorningSummaryView() {
       <div className="p-8 text-center">
         <AlertTriangle className="w-8 h-8 text-[#EF4444] mx-auto mb-2" />
         <p className="text-sm font-medium text-[#EF4444]">{error}</p>
-        <button onClick={fetchSummary} className="mt-3 text-xs text-[#0B5ED7] hover:underline">Retry</button>
+        <button onClick={fetchSummary} className="mt-3 text-xs text-[#2563EB] hover:underline">Retry</button>
       </div>
     );
   }
@@ -141,7 +141,7 @@ export default function MorningSummaryView() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           {
-            icon: <MessageSquare className="w-6 h-6 text-[#0B5ED7]" />,
+            icon: <MessageSquare className="w-6 h-6 text-[#2563EB]" />,
             value: summary.overnight.newConversations,
             label: 'New Conversations',
             bg: 'bg-blue-50',
@@ -218,7 +218,7 @@ export default function MorningSummaryView() {
       {Object.keys(summary.overnight.byChannel).length > 0 && (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-4 h-4 text-[#0B5ED7]" />
+            <BarChart3 className="w-4 h-4 text-[#2563EB]" />
             <h2 className="font-bold text-sm text-[#0F172A]">Overnight Channel Breakdown</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -230,7 +230,7 @@ export default function MorningSummaryView() {
                     {CHANNEL_ICONS[channel] || <Globe className="w-3.5 h-3.5 text-slate-400" />}
                     <span className="text-xs font-medium capitalize text-[#0F172A]">{channel}</span>
                   </div>
-                  <span className="text-sm font-extrabold text-[#0B5ED7]">{count}</span>
+                  <span className="text-sm font-extrabold text-[#2563EB]">{count}</span>
                 </div>
               ))}
           </div>

@@ -14,8 +14,8 @@ vi.mock('@/lib/auth', () => ({ authOptions: {} }));
 import { GET } from '@/app/api/crm/ceo/dashboard/route';
 const request = () => new NextRequest('https://example.com/api/crm/ceo/dashboard');
 beforeEach(() => {
-  vi.resetAllMocks(); getServerSession.mockResolvedValue({ user: { id: 'unit-ceo' } });
-  db.user.findUnique.mockResolvedValue({ id: 'unit-ceo', role: 'CEO', status: 'ACTIVE', permissions: '[]' });
+  vi.resetAllMocks(); getServerSession.mockResolvedValue({ user: { identityDomain: 'user', id: 'unit-ceo' } });
+  db.user.findUnique.mockResolvedValue({ id: 'unit-ceo', role: 'CEO', status: 'ACTIVE', emailVerified: true, permissions: '[]' });
   db.aloPayment.aggregate.mockResolvedValue({ _sum: { amount: null } });
   db.portalStudentApplication.count.mockResolvedValue(0); db.marketingLead.count.mockResolvedValue(0);
   db.portalStudentProfile.count.mockResolvedValue(0); db.portalUser.findMany.mockResolvedValue([]); db.visaCase.findMany.mockResolvedValue([]);

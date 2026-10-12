@@ -1,9 +1,11 @@
+import { canReadLegacyLeadDashboard } from '@/lib/crm/lead-access';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
 
 export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
+    if (!canReadLegacyLeadDashboard(auth)) return NextResponse.json({ success: false, code: 'LEGACY_DASHBOARD_SCOPE_UNVERIFIED', error: 'User administrator required until dashboard ownership mapping is verified.' }, { status: 403 });
     try {
       const campaigns = await db.marketingCampaign.findMany({
         take: 6,

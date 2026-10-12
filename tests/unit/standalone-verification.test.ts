@@ -11,10 +11,14 @@ function fixture() {
   cpSync('scripts/verify-standalone.mjs', join(root, 'scripts/verify-standalone.mjs'));
   return root;
 }
-function file(root: string, relative: string) {
+function file(root: string, relative: string, content = 'test fixture') {
   const p = join(root, relative);
   mkdirSync(join(p, '..'), { recursive: true });
-  writeFileSync(p, 'test fixture');
+  writeFileSync(p, content);
+}
+function manifests(root: string) {
+  file(root, '.next/standalone/.next/BUILD_ID', 'test-build-id');
+  for (const name of ['routes-manifest.json', 'prerender-manifest.json', 'required-server-files.json', 'server/pages-manifest.json', 'server/app-paths-manifest.json']) file(root, `.next/standalone/.next/${name}`, '{}');
 }
 function verify(root: string) {
   return spawnSync(process.execPath, [join(root, 'scripts/verify-standalone.mjs')], { encoding: 'utf8' });
@@ -44,6 +48,13 @@ describe('Standalone artifact verifier', () => {
     const root = fixture(); file(root, '.next/standalone/server.js');
     file(root, '.next/standalone/.next/static/test.js'); file(root, 'public/logo.svg');
     file(root, '.next/standalone/public/logo.svg');
+    manifests(root);
     expect(verify(root).status).toBe(0);
+  });
+  it.each(['', '{"/404":'])('rejects truncated runtime manifests even when assets and server exist', content => {
+    const root = fixture(); file(root, '.next/standalone/server.js');
+    file(root, '.next/standalone/.next/static/test.js'); manifests(root);
+    file(root, '.next/standalone/.next/server/pages-manifest.json', content);
+    expect(verify(root).stderr).toContain('invalid server/pages-manifest.json');
   });
 });

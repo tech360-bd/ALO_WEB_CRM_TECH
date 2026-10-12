@@ -8,6 +8,10 @@ Regenerates:
 - Regenerates universities.csv, courses.csv, course_intakes.csv, course_requirements.csv, english_requirements.csv, tuition_fees.csv
 """
 import pathlib, csv, re, random
+import sys as _alo_sys, pathlib as _alo_pathlib
+_alo_sys.path.insert(0, str(_alo_pathlib.Path(__file__).resolve().parent / "lib"))
+from synthetic_output_guard import refuse_permanently
+refuse_permanently('generate_full_dataset.py', 'historical generator that rewrites src/lib/university-data-*.ts and src/lib/all-universities.ts and repo-root CSVs with invented universities.')
 from collections import defaultdict
 
 ROOT = pathlib.Path("/home/user/alo_education_z....ai")

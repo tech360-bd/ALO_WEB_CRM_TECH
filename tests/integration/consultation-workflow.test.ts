@@ -3,18 +3,16 @@
 import { describe, it, expect, afterAll } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
-import { testDatabaseUrl } from '../helpers/test-database';
 
-const databaseUrl = testDatabaseUrl();
-const HAS_TEST_DB = databaseUrl !== null;
-const client = databaseUrl ? new PrismaClient({ datasourceUrl: databaseUrl }) : null;
-// Lazily resolve only inside non-skipped tests; no fabricated client or unsafe cast.
+const databaseUrl = process.env.DATABASE_URL;
+const HAS_TEST_DB = Boolean(databaseUrl?.startsWith('mysql://') && new URL(databaseUrl).pathname.startsWith('/alo_test_'));
+const client = HAS_TEST_DB ? new PrismaClient() : undefined;
+const runId = `consultation-${randomUUID()}-`;
+const ids = { lead: () => `${runId}${randomUUID()}`, user: `${runId}user`, audit: `${runId}audit`, notification: `${runId}notification` };
 function requireClient(): PrismaClient {
-  if (!client) throw new Error('TEST_DATABASE_URL is not configured');
+  if (!client) throw new Error('A disposable alo_test_ MySQL database is required');
   return client;
 }
-const runId = `consultation-${randomUUID()}`;
-const ids = { lead: () => `${runId}-${randomUUID()}`, user: `${runId}-user`, audit: `${runId}-audit`, notification: `${runId}-notification` };
 
 afterAll(async () => {
   if (!client) return;

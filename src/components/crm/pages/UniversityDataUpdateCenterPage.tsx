@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Sparkles, CheckCircle2, XCircle, Globe, RefreshCw, ExternalLink, ShieldCheck, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { PROPOSAL_STATUS_LABELS } from '@/lib/course-finder/catalog-change-status';
 
 export default function UniversityDataUpdateCenterPage() {
   const { token } = usePortalStore();
@@ -127,7 +128,7 @@ export default function UniversityDataUpdateCenterPage() {
       <Card className="bg-white border-slate-200 shadow-xs">
         <CardHeader className="pb-3 border-b border-slate-100">
           <CardTitle className="text-sm font-bold text-slate-900">Pending University Data Update Requests</CardTitle>
-          <CardDescription className="text-xs text-slate-500">Super Admin must review old vs new values before publishing changes to Course Finder, Country pages &amp; CRM.</CardDescription>
+          <CardDescription className="text-xs text-slate-500">Review old vs new values here. Approving changes nothing live; a Super Admin applies approved changes at <a className="underline" href="/admin/change-approval">/admin/change-approval</a>, and approval never marks a record verified.</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
@@ -175,18 +176,18 @@ export default function UniversityDataUpdateCenterPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      {u.status === 'pending_approval' ? (
+                      {['pending_approval', 'pending', 'apply_failed', 'approved'].includes(u.status) || (u.status === 'reviewed_unverified' && u.approvalFingerprint && u.approvalFingerprint !== 'valid') ? (
                         <div className="flex items-center justify-end gap-1">
                           <Button size="sm" className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApproveUpdate(u.id)}>
-                            Approve &amp; Publish
+                            {u.status === 'pending_approval' || u.status === 'pending' ? 'Approve (not applied)' : 'Re-approve'}
                           </Button>
                           <Button size="sm" variant="outline" className="h-7 text-xs text-rose-600 border-rose-200" onClick={() => handleRejectUpdate(u.id)}>
                             Reject
                           </Button>
                         </div>
                       ) : (
-                        <Badge className={`text-[10px] ${u.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
-                          {u.status.toUpperCase()}
+                        <Badge className={`text-[10px] ${u.status === 'applied' || u.status === 'reviewed_unverified' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                          {PROPOSAL_STATUS_LABELS[u.status] ?? u.status}
                         </Badge>
                       )}
                     </TableCell>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,6 @@ import {
   BarChart3,
   MessageSquare,
   BookOpen,
-  Share2,
   Settings,
   HelpCircle,
   LogOut,
@@ -28,6 +28,7 @@ import {
   Bell,
   ChevronRight,
   Handshake,
+  Users,
 } from 'lucide-react';
 
 interface NavItem {
@@ -37,10 +38,87 @@ interface NavItem {
   badge?: string;
 }
 
+const PARTNER_ADMIN_PATH_TO_VIEW: Record<string, PortalView> = {
+  '/partner-admin/dashboard': 'partner-admin-dashboard',
+  '/partner-admin/users': 'partner-admin-users',
+  '/partner-admin/users/create': 'partner-admin-users-create',
+  '/partner-admin/students': 'partner-admin-students',
+  '/partner-admin/applications': 'partner-admin-applications',
+  '/partner-admin/marketing-studio': 'partner-admin-marketing-studio',
+  '/partner-admin/content-generator': 'partner-admin-content-generator',
+  '/partner-admin/company-profile': 'partner-admin-company-profile',
+  '/partner-admin/settings': 'partner-admin-settings',
+  '/partner-admin/reports': 'partner-admin-reports',
+  '/partner-admin/documents': 'partner-admin-documents',
+  '/partner-admin/leads': 'partner-admin-leads',
+  '/partner-admin/roles': 'partner-admin-roles',
+  '/partner-admin/voucher-codes': 'partner-admin-voucher-codes',
+  '/partner-admin/mock-tests': 'partner-admin-mock-tests',
+  '/partner-admin/usage-quota': 'partner-admin-usage-quota',
+  '/partner-admin/support-request': 'partner-admin-support-request',
+  '/partner-admin/course-finder': 'partner-admin-course-finder',
+  '/partner-admin/image-generator': 'partner-admin-image-generator',
+  '/partner-admin/video-generator': 'partner-admin-video-generator',
+  '/partner-admin/interview-prep': 'partner-admin-interview-prep',
+  '/partner-admin/social-scheduler': 'partner-admin-social-scheduler',
+};
+
+const PARTNER_ROUTE_BY_VIEW: Partial<Record<PortalView, string>> = {
+  'partner-dashboard': '/partner/dashboard',
+  'partner-profile': '/partner/profile',
+  'partner-leads': '/partner/leads',
+  'partner-referrals': '/partner/referrals',
+  'partner-students': '/partner/students',
+  'partner-applications': '/partner/applications',
+  'partner-documents': '/partner/documents',
+  'partner-commission': '/partner/commission',
+  'partner-reports': '/partner/reports',
+  'partner-messages': '/partner/messages',
+  'partner-resources': '/partner/resources',
+  'partner-notifications': '/partner/notifications',
+  'partner-settings': '/partner/settings',
+  'partner-help': '/partner/help',
+};
+
+const PARTNER_ADMIN_ROUTE_BY_VIEW: Partial<Record<PortalView, string>> = {
+  'partner-admin-dashboard': '/partner-admin/dashboard',
+  'partner-admin-company-profile': '/partner-admin/company-profile',
+  'partner-admin-users': '/partner-admin/users',
+  'partner-admin-users-create': '/partner-admin/users/create',
+  'partner-admin-roles': '/partner-admin/roles',
+  'partner-admin-students': '/partner-admin/students',
+  'partner-admin-leads': '/partner-admin/leads',
+  'partner-admin-applications': '/partner-admin/applications',
+  'partner-admin-documents': '/partner-admin/documents',
+  'partner-admin-course-finder': '/partner-admin/course-finder',
+  'partner-admin-marketing-studio': '/partner-admin/marketing-studio',
+  'partner-admin-content-generator': '/partner-admin/content-generator',
+  'partner-admin-image-generator': '/partner-admin/image-generator',
+  'partner-admin-video-generator': '/partner-admin/video-generator',
+  'partner-admin-social-scheduler': '/partner-admin/social-scheduler',
+  'partner-admin-mock-tests': '/partner-admin/mock-tests',
+  'partner-admin-interview-prep': '/partner-admin/interview-prep',
+  'partner-admin-voucher-codes': '/partner-admin/voucher-codes',
+  'partner-admin-usage-quota': '/partner-admin/usage-quota',
+  'partner-admin-reports': '/partner-admin/reports',
+  'partner-admin-support-request': '/partner-admin/support-request',
+  'partner-admin-settings': '/partner-admin/settings',
+  'partner-dashboard': '/partner-admin/dashboard',
+  'partner-profile': '/partner-admin/company-profile',
+  'partner-leads': '/partner-admin/leads',
+  'partner-referrals': '/partner-admin/leads',
+  'partner-students': '/partner-admin/students',
+  'partner-applications': '/partner-admin/applications',
+  'partner-documents': '/partner-admin/documents',
+  'partner-reports': '/partner-admin/reports',
+  'partner-settings': '/partner-admin/settings',
+  'partner-help': '/partner-admin/support-request',
+};
+
 const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', view: 'partner-dashboard' },
   { icon: User, label: 'Profile', view: 'partner-profile' },
-  { icon: UserPlus, label: 'Submit Lead', view: 'partner-leads' },
+  { icon: UserPlus, label: 'Leads & Referrals', view: 'partner-leads' },
   { icon: GraduationCap, label: 'My Students', view: 'partner-students' },
   { icon: FileText, label: 'Applications', view: 'partner-applications' },
   { icon: FileUp, label: 'Documents', view: 'partner-documents' },
@@ -48,21 +126,64 @@ const navItems: NavItem[] = [
   { icon: BarChart3, label: 'Reports', view: 'partner-reports' },
   { icon: MessageSquare, label: 'Messages', view: 'partner-messages' },
   { icon: BookOpen, label: 'Resources', view: 'partner-resources' },
-  { icon: Share2, label: 'Referrals', view: 'partner-referrals' },
   { icon: Settings, label: 'Settings', view: 'partner-settings' },
   { icon: HelpCircle, label: 'Help', view: 'partner-help' },
 ];
 
 export default function PartnerPortalShell({ children }: { children: React.ReactNode }) {
-  const { user, currentView, setView, logout, hydrate, notifications, sidebarOpen, setSidebarOpen } =
+  const { user, currentView, setView, logout, hydrate, notifications, setNotifications, sidebarOpen, setSidebarOpen } =
     usePortalStore();
+  const pathname = usePathname();
+  const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const isDirectPortalPath = pathname.startsWith('/partner/') || pathname.startsWith('/partner-admin/');
+  const navigate = (view: PortalView) => {
+    if (isDirectPortalPath) {
+      const route = pathname.startsWith('/partner-admin/')
+        ? PARTNER_ADMIN_ROUTE_BY_VIEW[view] || PARTNER_ROUTE_BY_VIEW[view]
+        : PARTNER_ROUTE_BY_VIEW[view] || PARTNER_ADMIN_ROUTE_BY_VIEW[view];
+      if (route) {
+        setSidebarOpen(false);
+        setShowNotifications(false);
+        router.push(route);
+        return;
+      }
+    }
+    setView(view);
+  };
+  const handleLogout = () => {
+    logout();
+    if (isDirectPortalPath) router.replace('/partner/login');
+  };
 
   useEffect(() => {
     hydrate();
-  }, [hydrate]);
+    if (typeof window !== 'undefined') {
+      const routeView = PARTNER_ADMIN_PATH_TO_VIEW[window.location.pathname];
+      if (routeView) setView(routeView);
+    }
+  }, [hydrate, setView]);
+
+  useEffect(() => {
+    let active = true;
+    void fetch('/api/partner/notifications?page=1&limit=5', { credentials: 'include' })
+      .then(async (response) => {
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.success || !Array.isArray(payload.data)) return;
+        if (active) setNotifications(payload.data.map((item: any) => ({
+          id: String(item.id || ''),
+          title: String(item.title || 'Notification'),
+          message: String(item.message || ''),
+          type: String(item.type || 'system'),
+          isRead: Boolean(item.isRead),
+          createdAt: String(item.createdAt || ''),
+        })));
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [setNotifications]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -90,11 +211,14 @@ export default function PartnerPortalShell({ children }: { children: React.React
         <nav className="px-3 space-y-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentView === item.view;
+            const itemView = user?.partnerRole?.toUpperCase() === 'PARTNER_SUPER_ADMIN' && item.view === 'partner-dashboard'
+              ? 'partner-admin-dashboard'
+              : item.view;
+            const isActive = currentView === itemView;
             return (
               <button
-                key={item.view}
-                onClick={() => setView(item.view)}
+                key={itemView}
+                onClick={() => navigate(itemView)}
                 className={cn(
                   'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
                   isActive
@@ -116,8 +240,22 @@ export default function PartnerPortalShell({ children }: { children: React.React
                 )}
                 {isActive && <ChevronRight className="w-3.5 h-3.5 text-alo-brand" />}
               </button>
-            );
-          })}
+              );
+            })}
+          {user?.partnerRole?.toUpperCase() === 'PARTNER_SUPER_ADMIN' && (
+            <button
+              onClick={() => navigate('partner-admin-users')}
+              className={cn(
+                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
+                currentView === 'partner-admin-users' || currentView === 'partner-admin-users-create'
+                  ? 'bg-alo-brand-light text-alo-brand font-semibold'
+                  : 'text-alo-text-secondary hover:bg-alo-page hover:text-alo-text'
+              )}
+            >
+              <Users className="w-[18px] h-[18px] text-alo-text-muted/60" />
+              <span className="flex-1 text-left">Team &amp; Seats</span>
+            </button>
+          )}
         </nav>
       </ScrollArea>
       <Separator />
@@ -125,7 +263,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
         <Button
           variant="ghost"
           className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 h-10"
-          onClick={logout}
+          onClick={handleLogout}
         >
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
@@ -140,7 +278,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
         <div className="flex items-center gap-3">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open partner navigation">
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>
@@ -184,7 +322,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
                   <span className="font-semibold text-sm text-alo-text">Notifications</span>
                   <button
                     onClick={() => {
-                      setView('partner-notifications');
+                      navigate('partner-notifications');
                       setShowNotifications(false);
                     }}
                     className="text-xs text-alo-brand hover:text-alo-brand font-medium"

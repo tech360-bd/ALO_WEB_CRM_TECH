@@ -1,125 +1,28 @@
-// ============================================================
-// /api/crm/ucc/webhooks/[provider]
-// GET, POST — Universal Provider Webhook Endpoint
-// Handlers for Meta (WhatsApp/FB/IG), Telegram, Google, Custom Gateways
-// ============================================================
-
 import { NextRequest, NextResponse } from 'next/server';
-import * as crypto from 'crypto';
-import { db } from '@/lib/db';
+import { GET as canonicalWhatsAppVerification, POST as canonicalWhatsAppWebhook } from '@/app/api/whatsapp/webhook/route';
 
-// GET — Webhook Verification (e.g. Meta hub.verify_token)
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ provider: string }> }
-) {
-  try {
-    const { provider } = await params;
-    const { searchParams } = new URL(request.url);
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-    if (provider === 'whatsapp' || provider === 'meta_business' || provider === 'facebook_page' || provider === 'instagram') {
-      const mode = searchParams.get('hub.mode');
-      const token = searchParams.get('hub.verify_token');
-      const challenge = searchParams.get('hub.challenge');
-
-      const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN;
-      if (!expectedToken) {
-        console.error('[webhook][provider] WHATSAPP_VERIFY_TOKEN not configured — refusing verification (fail-closed)');
-        return new Response('Server not configured', { status: 500 });
-      }
-
-      // Constant-time comparison to avoid timing leak; still need length check
-      const tokensMatch = token !== null && token.length === expectedToken.length && token === expectedToken;
-      if (mode === 'subscribe' && tokensMatch) {
-        return new Response(challenge, { status: 200 });
-      }
-      return new Response('Verification failed', { status: 403 });
-    }
-
-    return NextResponse.json({ success: true, provider, status: 'listening' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
+/** Compatibility alias for old Meta/WhatsApp webhook URLs. Keep the exact same
+ * signature verification, media validation, idempotency and private-storage
+ * pipeline as the canonical WhatsApp route; never ingest an unverified copy. */
+function isWhatsAppProvider(provider: string): boolean {
+  return ['whatsapp', 'meta_business'].includes(provider.toLowerCase());
 }
 
-// POST — Inbound Webhook Payload Processing
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ provider: string }> }
-) {
-  try {
-    const { provider } = await params;
-    const bodyText = await request.text();
-    let body: any = {};
-    try {
-      body = JSON.parse(bodyText);
-    } catch {
-      body = { raw: bodyText };
-    }
-
-    // Record Webhook Event in DB
-    const webhookEvent = await db.uccWebhookEvent.create({
-      data: {
-        provider,
-        eventType: body.entry?.[0]?.changes?.[0]?.field || body.event || 'incoming_message',
-        payload: JSON.stringify(body),
-        status: 'processed',
-      },
-    });
-
-    // Auto-Process Inbound WhatsApp / Meta Message
-    if (provider === 'whatsapp' || provider === 'meta_business') {
-      const entry = body.entry?.[0];
-      const change = entry?.changes?.[0]?.value;
-      const message = change?.messages?.[0];
-
-      if (message) {
-        const fromPhone = message.from;
-        const msgText = message.text?.body || '[Attachment Received]';
-        const senderName = change?.contacts?.[0]?.profile?.name || `Phone ${fromPhone}`;
-
-        // Find or create conversation
-        let conversation = await db.uccConversation.findFirst({
-          where: { participantPhone: `+${fromPhone}` },
-        });
-
-        if (!conversation) {
-          conversation = await db.uccConversation.create({
-            data: {
-              channel: 'whatsapp',
-              externalId: fromPhone,
-              participantName: senderName,
-              participantPhone: `+${fromPhone}`,
-              status: 'open',
-              lastMessageText: msgText,
-              lastMessageAt: new Date(),
-              unreadCount: 1,
-            },
-          });
-        }
-
-        // Save Inbound Message
-        await db.uccMessage.create({
-          data: {
-            conversationId: conversation.id,
-            direction: 'inbound',
-            senderName,
-            senderRole: 'student',
-            channel: 'whatsapp',
-            content: msgText,
-            messageType: message.type || 'text',
-          },
-        });
-      }
-    }
-
-    return NextResponse.json({
-      success: true,
-      provider,
-      eventId: webhookEvent.id,
-      message: 'Webhook payload received and processed.',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+export async function GET(request: NextRequest, context: { params: Promise<{ provider: string }> }) {
+  const { provider } = await context.params;
+  if (!isWhatsAppProvider(provider)) {
+    return NextResponse.json({ success: false, error: 'No verified webhook handler is configured for this provider.' }, { status: 404 });
   }
+  return canonicalWhatsAppVerification(request);
+}
+
+export async function POST(request: NextRequest, context: { params: Promise<{ provider: string }> }) {
+  const { provider } = await context.params;
+  if (!isWhatsAppProvider(provider)) {
+    return NextResponse.json({ success: false, error: 'No verified webhook handler is configured for this provider.' }, { status: 404 });
+  }
+  return canonicalWhatsAppWebhook(request);
 }

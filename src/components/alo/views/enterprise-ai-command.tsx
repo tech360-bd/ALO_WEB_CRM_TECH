@@ -279,7 +279,7 @@ const CAPABILITIES: { title: string; engine: string; icon: string; description: 
   { title: "50,000+ Prompt Templates", engine: "Prompt Library", icon: "FileText", description: "Approximately 500 prompt templates per department — system, user, few-shot, chain-of-thought, RAG & function-calling." },
   { title: "Enterprise Knowledge Graph", engine: "Knowledge Graph Engine", icon: "Network", description: "Unified entity graph linking students, courses, universities, countries, documents, and outcomes." },
   { title: "Enterprise RAG", engine: "Retrieval Augmented Generation", icon: "Database", description: "Vector-indexed retrieval across SOPs, prompts, university data, visa rules, and historical cases." },
-  { title: "Multi-Agent Collaboration", engine: "Multi-Agent Engine", icon: "Bot", description: "Agents hand off tasks, share context, and orchestrate multi-step workflows across 100 departments." },
+  { title: "Multi-Agent Collaboration", engine: "Multi-Agent Engine", icon: "Bot", description: "Agents hand off tasks, share context, and orchestrate multi-step workflows across registered departments." },
   { title: "Memory Engine", engine: "Memory Engine", icon: "Brain", description: "Short-term, long-term, and episodic memory for every AI employee — context preserved across sessions." },
   { title: "Planning Engine", engine: "Planning Engine", icon: "Map", description: "Goal decomposition, task sequencing, and dependency-aware plan generation for complex workflows." },
   { title: "Reflection Engine", engine: "Reflection Engine", icon: "RefreshCw", description: "Self-evaluation of outputs, identification of weaknesses, and iterative improvement before delivery." },
@@ -296,7 +296,7 @@ const CAPABILITIES: { title: string; engine: string; icon: string; description: 
   { title: "API Gateway", engine: "API Gateway Engine", icon: "Plug", description: "Unified, rate-limited, authenticated entry point for all AI service consumers." },
   { title: "MCP Integration Layer", engine: "MCP Integration Engine", icon: "Cable", description: "Model Context Protocol integration — standardised tool & context injection across agents." },
   { title: "Enterprise Data Lake", engine: "Data Lake Engine", icon: "DatabaseZap", description: "Centralised, governed storage for raw, curated, and gold-tier AI telemetry and training data." },
-  { title: "Enterprise Identity & RBAC", engine: "Identity & RBAC Engine", icon: "Fingerprint", description: "Role-based access control across 100 departments, 2,000 agents, and every engine." },
+  { title: "Enterprise Identity & RBAC", engine: "Identity & RBAC Engine", icon: "Fingerprint", description: "Role-based access control across every department, agent, and engine." },
   { title: "Department Capability Certification (DCC)", engine: "DCC Framework", icon: "BadgeCheck", description: "A department may create new AI agents only when it passes all 9 DCC criteria — guaranteeing self-sufficient, self-improving operation." },
 ];
 
@@ -473,23 +473,29 @@ export function EnterpriseAiCommand() {
   const engines = data?.engines ?? [];
   const dccCriteria = data?.dccCriteria;
 
-  // Stats — derive total jobs (estimate: 50 jobs per AI employee avg) & avg success rate (95%)
-  const totalJobs = summary ? summary.totalEmployees * 50 : 0;
-  const avgSuccessRate = 95;
+  // Stats — derived only from fields the API actually returns.
+  // (Previously this invented "50 jobs per employee" and a hard-coded 95%
+  // success rate; neither exists in the data, so both are gone.)
 
-  // Top 5 departments by jobs processed (estimate using employee count × 50)
+  // Top 5 departments by real AI employee count (not an estimated job volume).
   const topDepartments = React.useMemo(() => {
     return [...departments]
-      .map((d) => ({ ...d, jobs: d.aiEmployeeCount * 50 }))
-      .sort((a, b) => b.jobs - a.jobs)
+      .sort((a, b) => b.aiEmployeeCount - a.aiEmployeeCount)
       .slice(0, 5);
   }, [departments]);
-  const maxDeptJobs = topDepartments[0]?.jobs || 1;
+  const maxDeptEmployees = topDepartments[0]?.aiEmployeeCount || 1;
 
-  // AI employee distribution — derive from departments (assume avg split: 80% active, 12% idle, 8% training)
-  const activeEmployees = Math.round((summary?.totalEmployees ?? 0) * 0.8);
-  const idleEmployees = Math.round((summary?.totalEmployees ?? 0) * 0.12);
-  const trainingEmployees = (summary?.totalEmployees ?? 0) - activeEmployees - idleEmployees;
+  // Engine distribution — counted from actual engine status values.
+  const engineByStatus = React.useMemo(() => {
+    const counts = { ACTIVE: 0, IDLE: 0, MAINTENANCE: 0, OTHER: 0 };
+    for (const engine of engines) {
+      const key = (engine.status || '').toUpperCase();
+      if (key in counts) counts[key as 'ACTIVE'] += 1;
+      else counts.OTHER += 1;
+    }
+    return counts;
+  }, [engines]);
+  const engineTotal = engines.length;
 
   // Filtered departments for table
   const filteredDepartments = React.useMemo(() => {
@@ -586,10 +592,10 @@ export function EnterpriseAiCommand() {
       {/* Enterprise Scale Stats (12 cards)                                    */}
       {/* ------------------------------------------------------------------- */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-        <StatCard label="Departments" value={fmt(summary.totalDepartments)} icon="Building2" accent="blue" hint="100 enterprise departments" />
-        <StatCard label="AI Employees" value={fmt(summary.totalEmployees)} icon="Users" accent="violet" hint="~20 per department" />
-        <StatCard label="Skills" value={fmt(summary.totalSkills)} icon="Zap" accent="emerald" hint="~100 per department" />
-        <StatCard label="Prompt Templates" value={fmt(summary.totalPrompts)} icon="FileText" accent="orange" hint="~500 per department" />
+        <StatCard label="Departments" value={fmt(summary.totalDepartments)} icon="Building2" accent="blue" hint="Registered with the platform" />
+        <StatCard label="AI Employees" value={fmt(summary.totalEmployees)} icon="Users" accent="violet" hint="Across all departments" />
+        <StatCard label="Skills" value={fmt(summary.totalSkills)} icon="Zap" accent="emerald" hint="Across all departments" />
+        <StatCard label="Prompt Templates" value={fmt(summary.totalPrompts)} icon="FileText" accent="orange" hint="Across all departments" />
         <StatCard label="Constitutional Rules" value={`${fmt(summary.totalRules)}+`} icon="Shield" accent="rose" hint="Governance Engine" />
         <StatCard label="SOPs" value={`${fmt(summary.totalSops)}+`} icon="BookOpen" accent="amber" hint="Standard procedures" />
         <StatCard
@@ -620,8 +626,8 @@ export function EnterpriseAiCommand() {
           accent="emerald"
           hint="All systems green"
         />
-        <StatCard label="Total Jobs" value={fmt(totalJobs)} icon="Activity" accent="blue" hint="Processed by AI employees" />
-        <StatCard label="Avg Success Rate" value={`${avgSuccessRate}%`} icon="TrendingUp" accent="blue" hint="Across all agents" />
+        <StatCard label="Idle Engines" value={fmt(engineByStatus.IDLE)} icon="Activity" accent="amber" hint="Registered but not running" />
+        <StatCard label="Engines in Maintenance" value={fmt(engineByStatus.MAINTENANCE)} icon="TrendingUp" accent="rose" hint="Taken offline for work" />
       </div>
 
       {/* ------------------------------------------------------------------- */}
@@ -652,7 +658,7 @@ export function EnterpriseAiCommand() {
             <div className="space-y-3">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-[#0B5ED7]">
+                  <p className="text-3xl font-bold text-[#2563EB]">
                     {Math.round((summary.dccCertified / summary.totalDepartments) * 100)}%
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -679,17 +685,18 @@ export function EnterpriseAiCommand() {
           {/* AI employee distribution + Top departments */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <SectionCard
-              title="AI Employee Distribution"
-              description={`${fmt(summary.totalEmployees)} AI employees across 100 departments`}
+              title="Engine Status Distribution"
+              description={`${fmt(engineTotal)} engines registered with the platform`}
               icon="Users"
             >
               <div className="space-y-3">
                 {[
-                  { label: "Active", value: activeEmployees, color: "#10b981", icon: "CircleDot" },
-                  { label: "Idle", value: idleEmployees, color: "#f59e0b", icon: "Circle" },
-                  { label: "Training", value: trainingEmployees, color: "#8b5cf6", icon: "GraduationCap" },
+                  { label: "Active", value: engineByStatus.ACTIVE, color: "#10b981", icon: "CircleDot" },
+                  { label: "Idle", value: engineByStatus.IDLE, color: "#f59e0b", icon: "Circle" },
+                  { label: "Maintenance", value: engineByStatus.MAINTENANCE, color: "#8b5cf6", icon: "GraduationCap" },
+                  { label: "Other / unreported", value: engineByStatus.OTHER, color: "#94a3b8", icon: "Circle" },
                 ].map((row) => {
-                  const pctVal = summary.totalEmployees > 0 ? (row.value / summary.totalEmployees) * 100 : 0;
+                  const pctVal = engineTotal > 0 ? (row.value / engineTotal) * 100 : 0;
                   return (
                     <div key={row.label} className="space-y-1.5">
                       <div className="flex items-center justify-between text-sm">
@@ -709,8 +716,8 @@ export function EnterpriseAiCommand() {
             </SectionCard>
 
             <SectionCard
-              title="Top Departments by Jobs Processed"
-              description="Estimated throughput across all departments"
+              title="Top Departments by AI Employees"
+              description="Actual AI employee counts per department"
               icon="BarChart3"
             >
               {topDepartments.length === 0 ? (
@@ -721,17 +728,17 @@ export function EnterpriseAiCommand() {
                     <div key={d.id} className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2 truncate">
-                          <span className="flex size-5 items-center justify-center rounded bg-[#e8f0fb] text-[10px] font-bold text-[#0B5ED7]">
+                          <span className="flex size-5 items-center justify-center rounded bg-[#e8f0fb] text-[10px] font-bold text-[#2563EB]">
                             {idx + 1}
                           </span>
                           <span className="truncate font-medium">{d.name}</span>
                           <span className="font-mono text-[10px] text-muted-foreground">{d.deptCode}</span>
                         </span>
-                        <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-[#0B5ED7]">
-                          {fmt(d.jobs)} jobs
+                        <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-[#2563EB]">
+                          {fmt(d.aiEmployeeCount)} employees
                         </span>
                       </div>
-                      <MiniBar value={d.jobs} max={maxDeptJobs} color="#0B5ED7" />
+                      <MiniBar value={d.aiEmployeeCount} max={maxDeptEmployees} color="#2563EB" />
                     </div>
                   ))}
                 </div>
@@ -742,7 +749,7 @@ export function EnterpriseAiCommand() {
           {/* 20 engine status cards */}
           <SectionCard
             title="Enterprise Engine Status"
-            description="All 20 enterprise engines — health, status, and key metrics"
+            description="Every registered enterprise engine — health, status, and key metrics"
             icon="Cpu"
           >
             {engines.length === 0 ? (
@@ -766,7 +773,7 @@ export function EnterpriseAiCommand() {
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[#0B5ED7] shadow-sm">
+                          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[#2563EB] shadow-sm">
                             <Icon name={meta.icon} className="size-4" />
                           </div>
                           <div className="min-w-0">
@@ -841,7 +848,7 @@ export function EnterpriseAiCommand() {
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {DCC_CRITERIA.map((c) => (
                   <div key={c.key} className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/20 p-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[#e8f0fb] text-[#0B5ED7]">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[#e8f0fb] text-[#2563EB]">
                       <Icon name={c.icon} className="size-3.5" />
                     </div>
                     <div className="min-w-0">
@@ -934,7 +941,7 @@ export function EnterpriseAiCommand() {
                     {filteredDepartments.map((d) => (
                       <TableRow key={d.id} className="hover:bg-muted/30">
                         <TableCell>
-                          <span className="font-mono text-xs font-semibold text-[#0B5ED7]">{d.deptCode}</span>
+                          <span className="font-mono text-xs font-semibold text-[#2563EB]">{d.deptCode}</span>
                         </TableCell>
                         <TableCell>
                           <div className="font-medium text-foreground">{d.name}</div>
@@ -992,14 +999,14 @@ export function EnterpriseAiCommand() {
           </SectionCard>
 
           {/* DCC explanation */}
-          <Card className="rounded-2xl border-2 border-[#0B5ED7]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+          <Card className="rounded-2xl border-2 border-[#2563EB]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
                   <Icon name="BadgeCheck" className="size-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-bold text-[#0B5ED7]">
+                  <h3 className="text-base font-bold text-[#2563EB]">
                     Department Capability Certification (DCC)
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
@@ -1010,7 +1017,7 @@ export function EnterpriseAiCommand() {
                     {DCC_CRITERIA.map((c) => (
                       <div key={c.key} className="flex items-center justify-between rounded-lg border border-border/60 bg-white px-3 py-1.5">
                         <span className="text-xs font-medium text-foreground">{c.label}</span>
-                        <span className="font-mono text-xs font-semibold text-[#0B5ED7]">{c.threshold}</span>
+                        <span className="font-mono text-xs font-semibold text-[#2563EB]">{c.threshold}</span>
                       </div>
                     ))}
                   </div>
@@ -1055,7 +1062,7 @@ export function EnterpriseAiCommand() {
                       <CardContent className="pt-5">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7]">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
                               <Icon name={meta.icon} className="size-5" />
                             </div>
                             <div className="min-w-0">
@@ -1147,7 +1154,7 @@ export function EnterpriseAiCommand() {
                       value={(count / summary.totalRules) * 100}
                       className="h-2"
                       indicatorColor={
-                        type === "BLOCK" ? "#f43f5e" : type === "WARN" ? "#f59e0b" : type === "LOG" ? "#0B5ED7" : "#F97316"
+                        type === "BLOCK" ? "#f43f5e" : type === "WARN" ? "#f59e0b" : type === "LOG" ? "#2563EB" : "#F97316"
                       }
                     />
                   </div>
@@ -1203,7 +1210,7 @@ export function EnterpriseAiCommand() {
                   {SAMPLE_RULES.map((r) => (
                     <TableRow key={r.ruleCode} className="hover:bg-muted/30">
                       <TableCell>
-                        <span className="font-mono text-xs font-semibold text-[#0B5ED7]">{r.ruleCode}</span>
+                        <span className="font-mono text-xs font-semibold text-[#2563EB]">{r.ruleCode}</span>
                       </TableCell>
                       <TableCell className="font-medium text-foreground">{r.title}</TableCell>
                       <TableCell>
@@ -1274,7 +1281,7 @@ export function EnterpriseAiCommand() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <Icon name={cap.icon} className="size-3.5 text-[#0B5ED7]" />
+                      <Icon name={cap.icon} className="size-3.5 text-[#2563EB]" />
                       <p className="truncate text-sm font-semibold text-foreground">{cap.title}</p>
                     </div>
                     <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-700">{cap.engine}</p>
@@ -1285,14 +1292,14 @@ export function EnterpriseAiCommand() {
             </div>
           </SectionCard>
 
-          <Card className="rounded-2xl border-2 border-[#0B5ED7]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+          <Card className="rounded-2xl border-2 border-[#2563EB]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
                   <Icon name="Sparkles" className="size-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#0B5ED7]">Why this stack matters</h3>
+                  <h3 className="text-base font-bold text-[#2563EB]">Why this stack matters</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     The Enterprise AI Command Center is not a chatbot. It is a complete autonomous AI organisation — 100
                     departments, 2,000 AI employees, 20 enterprise engines, 500+ constitutional rules, and a Department
@@ -1312,11 +1319,11 @@ export function EnterpriseAiCommand() {
       <Dialog open={dccOpen} onOpenChange={(o) => { setDccOpen(o); if (!o) { setDccResult(null); setDccTarget(null); } }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
+            <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
               <Icon name="BadgeCheck" className="size-5" />
               DCC Certification Check
               {dccTarget && (
-                <span className="ml-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-xs font-semibold text-[#0B5ED7]">
+                <span className="ml-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-xs font-semibold text-[#2563EB]">
                   {dccTarget.deptCode}
                 </span>
               )}

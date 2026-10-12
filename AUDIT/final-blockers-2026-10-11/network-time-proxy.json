@@ -1,0 +1,167 @@
+{
+  "clockUTC": "2026-10-11T10:15:14.033405+00:00",
+  "networkRestriction": "Known sandbox outbound allowlist excludes binaries.prisma.sh. No policy bypass attempted.",
+  "dns": {
+    "binaries.prisma.sh": [
+      "104.20.43.103",
+      "172.66.156.100",
+      "2606:4700:10::6814:2b67",
+      "2606:4700:10::ac42:9c64"
+    ],
+    "registry.npmjs.org": [
+      "104.16.0.34",
+      "104.16.1.34",
+      "104.16.10.34",
+      "104.16.11.34",
+      "104.16.2.34",
+      "104.16.3.34",
+      "104.16.4.34",
+      "104.16.5.34",
+      "104.16.6.34",
+      "104.16.7.34",
+      "104.16.8.34",
+      "104.16.9.34",
+      "2606:4700::6810:122",
+      "2606:4700::6810:22",
+      "2606:4700::6810:222",
+      "2606:4700::6810:322",
+      "2606:4700::6810:422",
+      "2606:4700::6810:522",
+      "2606:4700::6810:622",
+      "2606:4700::6810:722",
+      "2606:4700::6810:822",
+      "2606:4700::6810:922",
+      "2606:4700::6810:a22",
+      "2606:4700::6810:b22"
+    ],
+    "api.github.com": [
+      "20.29.134.17"
+    ]
+  },
+  "https": [
+    {
+      "name": "checksum",
+      "command": [
+        "curl",
+        "--head",
+        "--silent",
+        "--show-error",
+        "--connect-timeout",
+        "10",
+        "--max-time",
+        "20",
+        "--write-out",
+        "\nhttp_code=%{http_code} ssl_verify_result=%{ssl_verify_result} remote_ip=%{remote_ip}\n",
+        "https://binaries.prisma.sh/all_commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/schema-engine.gz.sha256"
+      ],
+      "exitCode": 35,
+      "selectedResponse": [
+        "http_code=000 ssl_verify_result=1 remote_ip=104.20.43.103"
+      ],
+      "stderr": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to binaries.prisma.sh:443",
+      "localStartUTC": "2026-10-11T10:15:14.104688+00:00",
+      "localEndUTC": "2026-10-11T10:15:14.327694+00:00"
+    },
+    {
+      "name": "archive",
+      "command": [
+        "curl",
+        "--head",
+        "--silent",
+        "--show-error",
+        "--connect-timeout",
+        "10",
+        "--max-time",
+        "20",
+        "--write-out",
+        "\nhttp_code=%{http_code} ssl_verify_result=%{ssl_verify_result} remote_ip=%{remote_ip}\n",
+        "https://binaries.prisma.sh/all_commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/schema-engine.gz"
+      ],
+      "exitCode": 35,
+      "selectedResponse": [
+        "http_code=000 ssl_verify_result=1 remote_ip=104.20.43.103"
+      ],
+      "stderr": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to binaries.prisma.sh:443",
+      "localStartUTC": "2026-10-11T10:15:14.327763+00:00",
+      "localEndUTC": "2026-10-11T10:15:14.427485+00:00"
+    },
+    {
+      "name": "npm_control",
+      "command": [
+        "curl",
+        "--head",
+        "--silent",
+        "--show-error",
+        "--connect-timeout",
+        "10",
+        "--max-time",
+        "20",
+        "--write-out",
+        "\nhttp_code=%{http_code} ssl_verify_result=%{ssl_verify_result} remote_ip=%{remote_ip}\n",
+        "https://registry.npmjs.org/@prisma%2fengines/6.19.3"
+      ],
+      "exitCode": 0,
+      "selectedResponse": [
+        "HTTP/2 200 ",
+        "date: Sun, 11 Oct 2026 10:15:14 GMT",
+        "content-type: application/json",
+        "server: cloudflare",
+        "http_code=200 ssl_verify_result=0 remote_ip=104.16.8.34"
+      ],
+      "stderr": "",
+      "localStartUTC": "2026-10-11T10:15:14.427521+00:00",
+      "localEndUTC": "2026-10-11T10:15:14.588395+00:00",
+      "serverDateMinusLocalMidpointSeconds": -0.507958
+    },
+    {
+      "name": "github_control",
+      "command": [
+        "curl",
+        "--head",
+        "--silent",
+        "--show-error",
+        "--connect-timeout",
+        "10",
+        "--max-time",
+        "20",
+        "--write-out",
+        "\nhttp_code=%{http_code} ssl_verify_result=%{ssl_verify_result} remote_ip=%{remote_ip}\n",
+        "https://api.github.com/repos/prisma/prisma-engines/commits/c2990dca591cba766e3b7ef5d9e8a84796e47ab7"
+      ],
+      "exitCode": 0,
+      "selectedResponse": [
+        "HTTP/2 200 ",
+        "content-type: application/json; charset=utf-8",
+        "date: Sun, 11 Oct 2026 10:15:15 GMT",
+        "server: github.com",
+        "http_code=200 ssl_verify_result=0 remote_ip=20.29.134.17"
+      ],
+      "stderr": "",
+      "localStartUTC": "2026-10-11T10:15:14.597420+00:00",
+      "localEndUTC": "2026-10-11T10:15:15.076900+00:00",
+      "serverDateMinusLocalMidpointSeconds": 0.16284
+    }
+  ],
+  "proxyConfiguration": {
+    "proxy": {
+      "exitCode": 0,
+      "configured": false,
+      "strictSSL": null
+    },
+    "https-proxy": {
+      "exitCode": 0,
+      "configured": false,
+      "strictSSL": null
+    },
+    "cafile": {
+      "exitCode": 0,
+      "configured": false,
+      "strictSSL": null
+    },
+    "strict-ssl": {
+      "exitCode": 0,
+      "configured": true,
+      "strictSSL": "true"
+    }
+  }
+}

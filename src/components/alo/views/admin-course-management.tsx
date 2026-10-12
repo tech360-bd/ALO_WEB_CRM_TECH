@@ -658,7 +658,7 @@ export function AdminCourseManagement() {
             <Button
               onClick={navigateToCsv}
               variant="outline"
-              className="h-12 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+              className="h-12 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
             >
               <Icon name="FileSpreadsheet" className="size-4" />
               Import CSV
@@ -775,7 +775,7 @@ export function AdminCourseManagement() {
                     setStatusFilter("__all__");
                   }}
                   variant="outline"
-                  className="border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                  className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
                 >
                   <Icon name="RotateCcw" className="size-4" />
                   Clear filters
@@ -789,7 +789,7 @@ export function AdminCourseManagement() {
           <ScrollArea className="max-h-[70vh]">
             <Table>
               <TableHeader className="sticky top-0 z-10 bg-white">
-                <TableRow className="border-b border-[#0B5ED7]/15">
+                <TableRow className="border-b border-[#2563EB]/15">
                   <TableHead className="min-w-[260px]">
                     <SortButton
                       label="Course"
@@ -825,7 +825,7 @@ export function AdminCourseManagement() {
               </TableHeader>
               <TableBody>
                 {sortedCourses.map((course) => (
-                  <TableRow key={course.id} className="border-b border-[#0B5ED7]/8 hover:bg-[#f7f9fc]">
+                  <TableRow key={course.id} className="border-b border-[#2563EB]/8 hover:bg-[#f7f9fc]">
                     <TableCell className="align-top">
                       <p className="font-semibold text-foreground">{course.name}</p>
                       <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
@@ -843,15 +843,15 @@ export function AdminCourseManagement() {
                     </TableCell>
                     <TableCell className="align-top">
                       <div className="flex flex-wrap gap-1">
-                        <Badge className="bg-[#e8f0fb] text-[#0B5ED7] hover:bg-[#e8f0fb]">
+                        <Badge className="bg-[#e8f0fb] text-[#2563EB] hover:bg-[#e8f0fb]">
                           {course.level}
                         </Badge>
-                        <Badge variant="outline" className="border-[#0B5ED7]/30 text-[#0B5ED7]">
+                        <Badge variant="outline" className="border-[#2563EB]/30 text-[#2563EB]">
                           {course.subject}
                         </Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="align-top text-sm font-semibold text-[#0B5ED7]">
+                    <TableCell className="align-top text-sm font-semibold text-[#2563EB]">
                       {course.tuition || "—"}
                     </TableCell>
                     <TableCell className="align-top text-xs text-muted-foreground">
@@ -886,7 +886,7 @@ export function AdminCourseManagement() {
                           onClick={() => openEditDialog(course)}
                           variant="outline"
                           size="sm"
-                          className="h-8 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                          className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
                         >
                           <Icon name="Pencil" className="size-3.5" />
                           Edit
@@ -941,9 +941,9 @@ export function AdminCourseManagement() {
       )}
 
       {/* Audit note */}
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/15 bg-[#e8f0fb]/40">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40">
         <CardContent className="flex items-start gap-3 p-4">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0B5ED7]">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
             <Icon name="ShieldCheck" className="size-4" />
           </div>
           <div className="text-sm">
@@ -961,8 +961,8 @@ export function AdminCourseManagement() {
       {/* Add/Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-h-[92vh] max-w-4xl overflow-hidden p-0">
-          <DialogHeader className="border-b border-[#0B5ED7]/10 px-5 py-4">
-            <DialogTitle className="flex items-center gap-2 text-[#0B5ED7]">
+          <DialogHeader className="border-b border-[#2563EB]/10 px-5 py-4">
+            <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
               <Icon name={isEditMode ? "Pencil" : "PlusCircle"} className="size-5" />
               {isEditMode ? "Edit Course" : "Add New Course"}
             </DialogTitle>
@@ -975,7 +975,7 @@ export function AdminCourseManagement() {
 
           <div className="flex flex-col overflow-hidden">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-hidden">
-              <div className="border-b border-[#0B5ED7]/10 bg-[#f7f9fc] px-3">
+              <div className="border-b border-[#2563EB]/10 bg-[#f7f9fc] px-3">
                 <ScrollArea className="w-full">
                   <TabsList className="h-auto justify-start bg-transparent p-2">
                     <TabsTrigger value="basic" className="data-[state=active]:bg-white">
@@ -1260,10 +1260,10 @@ export function AdminCourseManagement() {
                         ]}
                       />
                     </div>
-                    <Card className="rounded-xl border border-[#0B5ED7]/15 bg-[#e8f0fb]/40">
+                    <Card className="rounded-xl border border-[#2563EB]/15 bg-[#e8f0fb]/40">
                       <CardContent className="p-3">
                         <p className="flex items-start gap-2 text-xs text-muted-foreground">
-                          <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[#0B5ED7]" />
+                          <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
                           <span>
                             On save, <span className="font-mono">lastVerifiedAt</span> is
                             re-stamped automatically. Approval changes are audit-logged with actor
@@ -1278,7 +1278,7 @@ export function AdminCourseManagement() {
             </Tabs>
           </div>
 
-          <DialogFooter className="border-t border-[#0B5ED7]/10 bg-[#f7f9fc] px-5 py-3">
+          <DialogFooter className="border-t border-[#2563EB]/10 bg-[#f7f9fc] px-5 py-3">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs text-muted-foreground">
                 {isEditMode ? "Editing" : "Creating"}:{" "}
@@ -1399,9 +1399,9 @@ function SortButton({
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center gap-1 text-xs font-bold uppercase tracking-wide transition-colors hover:text-[#0B5ED7]",
+        "flex items-center gap-1 text-xs font-bold uppercase tracking-wide transition-colors hover:text-[#2563EB]",
         align === "right" ? "ml-auto" : "",
-        active ? "text-[#0B5ED7]" : "text-muted-foreground",
+        active ? "text-[#2563EB]" : "text-muted-foreground",
       )}
     >
       {label}

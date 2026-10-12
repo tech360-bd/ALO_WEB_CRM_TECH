@@ -89,7 +89,7 @@ export async function runWorkflow(params: RunWorkflowParams): Promise<WorkflowRu
   if (!steps.length) throw new Error(`AWF_WORKFLOW_EMPTY: ${params.workflowSlug}`);
 
   const ledgerKey = params.idempotencyKey
-    ? `${workflow.slug}:${params.idempotencyKey}`
+    ? `${workflow.slug}:${stableHash({ key: params.idempotencyKey, actor: params.actor.userId, mode: params.mode })}`
     : `${workflow.slug}:${stableHash({ input: params.input, correlationId })}`;
 
   // Workflow-level idempotency: a replayed trigger returns the first result.
@@ -99,7 +99,7 @@ export async function runWorkflow(params: RunWorkflowParams): Promise<WorkflowRu
       return {
         workflowSlug: workflow.slug,
         correlationId,
-        status: existing.outcome === 'AGENT_COMPLETED' ? 'COMPLETED' : existing.outcome === 'HUMAN_APPROVED' ? 'AWAITING_APPROVAL' : 'FAILED',
+        status: existing.outcome === 'AGENT_COMPLETED' ? 'COMPLETED' : ['PENDING', 'HUMAN_APPROVED'].includes(existing.outcome) ? 'AWAITING_APPROVAL' : 'FAILED',
         steps: [],
         output: {},
         runCodes: [],
@@ -118,7 +118,6 @@ export async function runWorkflow(params: RunWorkflowParams): Promise<WorkflowRu
   const runIds: string[] = [];
   let failed = false;
   let awaitingApproval = false;
-  let humanTouches = 0;
 
   for (const step of steps) {
     if (!conditionMet(step.when, scope)) {
@@ -144,7 +143,7 @@ export async function runWorkflow(params: RunWorkflowParams): Promise<WorkflowRu
           triggerType: params.triggerType || workflow.triggerType,
           approvals: params.approvals,
           recordLedger: false,
-          idempotencyKey: params.idempotencyKey ? stableHash({ key: params.idempotencyKey, step: step.key, attempt: 1 }) : undefined,
+          idempotencyKey: params.idempotencyKey ? stableHash({ key: ledgerKey, step: step.key, attempt: 1 }) : undefined,
         });
         if (result.status !== 'FAILED') break;
         lastError = result.error || 'agent run failed';
@@ -160,7 +159,6 @@ export async function runWorkflow(params: RunWorkflowParams): Promise<WorkflowRu
       (scope.steps as Record<string, unknown>)[step.key] = result.output;
       if (result.humanReviewRequired) {
         awaitingApproval = true;
-        humanTouches += 1;
       }
       stepResults.push({ key: step.key, agent: step.agent, status: result.status, runCode: result.runCode, error: result.error });
       if (result.status === 'FAILED' && !step.optional) {
@@ -189,7 +187,7 @@ export async function runWorkflow(params: RunWorkflowParams): Promise<WorkflowRu
     : (scope.steps as Record<string, unknown>);
 
   const durationMs = Date.now() - started;
-  const outcome = status === 'COMPLETED' ? 'AGENT_COMPLETED' : status === 'AWAITING_APPROVAL' ? 'HUMAN_APPROVED' : status === 'PARTIAL' ? 'AGENT_ASSISTED' : 'FAILED';
+  const outcome = status === 'COMPLETED' ? 'AGENT_COMPLETED' : status === 'AWAITING_APPROVAL' ? 'PENDING' : status === 'PARTIAL' ? 'AGENT_ASSISTED' : 'FAILED';
 
   if (params.mode === 'PRODUCTION') {
     await recordTaskLedger({
@@ -201,7 +199,7 @@ export async function runWorkflow(params: RunWorkflowParams): Promise<WorkflowRu
       eligible: definition.automation?.eligible !== false && workflow.eligible,
       outcome,
       runId: runIds[0] || '',
-      humanTouches,
+      humanTouches: 0,
       durationMs,
       substantive: status !== 'FAILED',
     });

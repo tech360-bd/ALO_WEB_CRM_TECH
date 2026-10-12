@@ -26,7 +26,7 @@ export default function TasksPage() {
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
       <div className="flex items-center justify-between"><div><h1 className="text-xl font-bold text-[#0F172A]">Tasks — Real DB</h1><p className="text-sm text-gray-500">Application tasks with audit, assignedTo, priority, dueDate</p></div><Button variant="outline" className="border-[#E2E8F0]" onClick={fetchTasks}><Clock className="w-4 h-4 mr-1" />Refresh</Button></div>
-      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0B5ED7]" /></div> : (
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#2563EB]" /></div> : (
         <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Pending Tasks ({tasks.length})</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-2">

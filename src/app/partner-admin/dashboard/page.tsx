@@ -4,7 +4,7 @@ import DashboardCommunicationWidget from '@/components/communication/DashboardCo
 export default function PartnerAdminDashboardPage() {
   return (
     <div className="space-y-4 p-4">
-      <DashboardCommunicationWidget role="B2B_SUPER_ADMIN" unreadCount={5} slaOverdueCount={2} />
+      <DashboardCommunicationWidget role="B2B_SUPER_ADMIN" unreadCount={null} slaOverdueCount={null} />
       <MasterPartnerAdminView currentPath="/partner-admin/dashboard" />
     </div>
   );

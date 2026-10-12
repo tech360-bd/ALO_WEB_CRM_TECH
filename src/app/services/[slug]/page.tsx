@@ -1,11 +1,9 @@
 import React, { Suspense } from 'react';
 import { Metadata } from 'next';
 import ServiceDetailHub from '@/components/website/ServiceDetailHub';
-import { SPEC_SERVICES, getSpecService } from '@/lib/website/spec-services';
-
-export async function generateStaticParams() {
-  return SPEC_SERVICES.map((s) => ({ slug: s.slug }));
-}
+import { getPublishedService } from '@/lib/website/public-content';
+import { notFound } from 'next/navigation';
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -13,11 +11,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const spec = getSpecService(slug);
+  const spec = await getPublishedService(slug);
+  if (!spec) notFound();
 
-  // DB-backed services get their metadata from generated page content; the
-  // spec catalog guarantees correct, honest metadata for the 14 services.
-  const title = spec ? `${spec.title} — ${spec.category} Service | ALO Education` : 'Our Services | ALO Education';
+  // Metadata and page visibility follow the published database record.
+  const title = spec ? `${spec.title} | ALO Education` : 'Our Services | ALO Education';
   const description = spec
     ? spec.shortDescription
     : 'Comprehensive study abroad services for international students.';
@@ -43,7 +41,8 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const spec = getSpecService(slug);
+  const spec = await getPublishedService(slug);
+  if (!spec) notFound();
 
   // §49 structured data: Service + FAQPage shell + BreadcrumbList
   const jsonLd = spec ? [
@@ -52,7 +51,7 @@ export default async function ServiceDetailPage({
       '@type': 'Service',
       name: spec.title,
       provider: { '@type': 'Organization', name: 'ALO Education', url: 'https://aloeducation.com' },
-      serviceType: spec.category,
+      serviceType: spec.title,
       description: spec.shortDescription,
       url: `https://aloeducation.com/services/${spec.slug}`,
       areaServed: 'Bangladesh',
@@ -71,7 +70,7 @@ export default async function ServiceDetailPage({
   return (
     <div className="min-h-screen bg-white">
       {jsonLd.map((ld, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />
       ))}
       <main className="flex-1 pt-20 pb-20">
         <Suspense fallback={<div className="p-12 text-center text-gray-500">Loading service details…</div>}>

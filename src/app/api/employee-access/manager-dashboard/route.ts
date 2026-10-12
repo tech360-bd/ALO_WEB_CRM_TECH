@@ -14,26 +14,24 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const scope = searchParams.get('scope') || 'team'; // team, branch, office, country, global
 
-    // For demo, get team employees via same branch/department
-    const currentProfile = await db.employeeProfile.findUnique({ where: { userId: auth.userId } }).catch(() => null);
-    const branch = (currentProfile as any)?.branch || '';
-    const department = (currentProfile as any)?.department || '';
-
-    const teamEmployees = await db.portalUser.findMany({
-      where: { userType: 'EMPLOYEE', status: 'active' },
-      include: { employeeProfile: true },
-      take: 50,
-    }).catch(() => []);
-
-    const filtered = teamEmployees.filter((u: any) => {
-      if (scope === 'branch' && branch) return u.employeeProfile?.branch === branch;
-      if (scope === 'department' && department) return u.employeeProfile?.department === department;
-      return true;
+    const currentProfile = await db.employeeProfile.findUnique({ where: { userId: auth.userId } });
+    const master = auth.roles.some(role => role.toUpperCase() === 'SUPER_ADMIN') || auth.userType === 'SUPER_ADMIN';
+    const branch = currentProfile?.branch || '';
+    const department = currentProfile?.department || '';
+    if (!master && (!['branch', 'department'].includes(scope) || (scope === 'branch' ? !branch : !department))) {
+      return NextResponse.json({ success: false, error: 'An assigned branch or department scope is required' }, { status: 403 });
+    }
+    const filtered = await db.portalUser.findMany({
+      where: { userType: 'EMPLOYEE', status: 'active', ...(!master ? { employeeProfile: { is: scope === 'branch' ? { branch } : { department } } } : {}) },
+      select: { id: true, name: true, email: true, employeeProfile: { select: { designation: true, department: true, branch: true } } }, take: 100,
     });
-
-    const teamAttendance = await (db as any).employeeAttendance.findMany({ where: { date: new Date().toISOString().split('T')[0] }, take: 50 }).catch(() => []);
-    const teamLeave = await (db as any).employeeLeave.findMany({ where: { status: 'pending' }, take: 20 }).catch(() => []);
-    const pendingApprovals = await (db as any).employeePermissionRequest.findMany({ where: { status: 'requested' }, take: 20 }).catch(() => []);
+    const ids = filtered.map(u => u.id);
+    const employees = await db.employee.findMany({ where: { userId: { in: ids } }, select: { id: true } });
+    const scopedIds = [...ids, ...employees.map(e => e.id)];
+    const teamAttendance = await db.employeeAttendance.findMany({ where: { employeeId: { in: scopedIds }, date: new Date().toISOString().split('T')[0] }, take: 100 });
+    const teamLeave = await db.employeeLeave.findMany({ where: { employeeId: { in: scopedIds }, status: 'pending' }, take: 100,
+      select: { id: true, employeeId: true, leaveType: true, startDate: true, endDate: true, status: true } });
+    const pendingApprovals = await db.employeePermissionRequest.findMany({ where: { employeeId: { in: scopedIds }, status: 'requested' }, take: 100 });
 
     return NextResponse.json({
       success: true,
@@ -42,8 +40,7 @@ export async function GET(req: NextRequest) {
         teamEmployees: filtered.map((u: any) => ({ id: u.id, name: u.name, email: u.email, designation: u.employeeProfile?.designation, department: u.employeeProfile?.department, branch: u.employeeProfile?.branch })),
         teamAttendance,
         teamLeave,
-        teamTasks: 'From CounselorTask where employeeId in team',
-        teamPerformance: 'From EmployeePerformance grouped by employee',
+
         pendingApprovals,
       },
       restriction: 'Manager sees only permitted team information — Team Employees/Attendance/Leave/Tasks/Performance/Pending Approvals — No private salary/HR fields unless explicitly permitted — enforceFieldLevelSecurity',

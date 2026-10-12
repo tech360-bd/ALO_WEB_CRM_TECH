@@ -35,42 +35,4 @@ export async function GET() {
   }
 }
 
-// POST /api/resources/categories — create category (admin)
-async function createCategory(req: Request, auth: AuthContext) {
-  try {
-    const body = await req.json();
-    const { slug, name, description, icon, sortOrder = 0, status = "ACTIVE" } = body as any;
-
-    if (!slug || !name) {
-      return NextResponse.json({ error: "slug and name are required" }, { status: 400 });
-    }
-
-    const existing = await db.resourceCategory.findUnique({ where: { slug } });
-    if (existing) return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
-
-    const category = await db.resourceCategory.create({
-      data: { slug, name, description: description || null, icon: icon || null, sortOrder, status },
-    });
-
-    const userId = auth.userId;
-    await contentAuditLog.create({
-      data: {
-        userId,
-        action: "RESOURCE_CATEGORY_CREATE",
-        resource: "ResourceCategory",
-        resourceId: category.id,
-        details: JSON.stringify({ slug, name }),
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ category }, { status: 201 });
-  } catch (err: any) {
-    console.error("[resources.categories.create] error:", err);
-    return NextResponse.json({ error: "Failed to create category" }, { status: 500 });
-  }
-}
-
-
-export const POST = withAuth(createCategory, {
-  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
-});
+export { POST } from "../../admin/resource-categories/route";

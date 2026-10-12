@@ -24,8 +24,9 @@ model User {
   marketingCreatedLeads      MarketingLead[]       @relation("LeadCreator")
   marketingReviewedApprovals MarketingApproval[]   @relation("ApprovalReviewer")
   phone                      String?
-  passwordHash               String                @default("")
-  status                     String                @default("ACTIVE")
+  passwordHash   String                @default("")
+  emailVerified  Boolean               @default(false)
+  status         String                @default("ACTIVE")
   mustChangePwd              Boolean               @default(false)
   lastLoginAt                DateTime?
   partnerId                  String?
@@ -711,6 +712,10 @@ model StudentDocument {
   category          String
   fileName          String    @default("")
   fileUrl           String    @default("")
+  storagePath       String?
+  mimeType          String?
+  fileHash          String?
+  fileSize          Int       @default(0)
   status            String    @default("not_uploaded")
   version           Int       @default(1)
   previousVersionId String    @default("")
@@ -760,7 +765,7 @@ model Appointment {
   studentId   String
   title       String
   type        String   @default("counseling")
-  status      String   @default("scheduled")
+  status      String   @default("REQUESTED")
   scheduledAt DateTime
   meetLink    String   @default("")
   notes       String   @default("")
@@ -2896,6 +2901,9 @@ model LoginAttempt {
   createdAt     DateTime @default(now())
 
   user PortalUser? @relation(fields: [userId], references: [id])
+
+  @@index([ipAddress, success, createdAt])
+  @@index([email, success, createdAt])
 }
 
 model OtpCode {
@@ -2903,6 +2911,7 @@ model OtpCode {
   userId     String?
   phone      String    @default("")
   email      String    @default("")
+  ipAddress  String    @default("")
   code       String    @default("")
   codeHash   String    @default("")
   used       Boolean   @default(false)
@@ -2917,6 +2926,8 @@ model OtpCode {
   @@index([email])
   @@index([phone])
   @@index([code])
+  @@index([ipAddress, createdAt])
+  @@index([email, purpose, createdAt])
 }
 
 model PasswordResetToken {
@@ -3169,6 +3180,9 @@ model PortalStudentDocument {
   name             String
   category         String   @default("other")
   fileName         String   @default("")
+  storagePath      String?
+  mimeType         String?
+  fileHash         String?
   fileSize         Int      @default(0)
   status           String   @default("pending")
   rejectionReason  String   @default("")
@@ -5736,20 +5750,26 @@ model ApplicationFinance {
 }
 
 model AuditLog {
-  id          String   @id @default(cuid())
-  userId      String   @default("")
-  action      String
-  resource    String   @default("")
-  resourceId  String   @default("")
-  details     String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
-  ipAddress   String   @default("")
-  userAgent   String   @default("")
-  actorRole   String   @default("")
-  studentId   String   @default("")
-  beforeValue String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
-  afterValue  String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
-  createdAt   DateTime @default(now())
-  user        User?    @relation(fields: [userId], references: [id])
+  id           String   @id @default(cuid())
+  // Nullable: system/automation events (e.g. public lead intake) have no
+  // acting user. The previous `String @default("")` violated the FK to User
+  // on every system-generated audit row, turning successful lead submissions
+  // into HTTP 500s (found live, 2026-09-28).
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  action       String
+  resource     String   @default("")
+  resourceId   String   @default("")
+  details      String   @default("{}") @db.Text
+  ipAddress    String   @default("")
+  userAgent    String   @default("")
+  actorRole    String   @default("")
+  studentId    String   @default("")
+  beforeValue  String   @default("{}") @db.Text
+  afterValue   String   @default("{}") @db.Text
+  createdAt    DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([action])
@@ -7580,6 +7600,8 @@ model ThreeCxIntegration {
 }
 
 model SmsLog {
+  provider       String?
+  providerMessageId String?
   id             String    @id @default(cuid())
   direction      String    @default("OUTBOUND")
   fromNumber     String
@@ -7598,6 +7620,7 @@ model SmsLog {
   @@index([studentId])
   @@index([leadId])
   @@index([toNumber])
+  @@unique([provider, providerMessageId])
 }
 
 model CallOutcome {
@@ -8134,7 +8157,7 @@ model DataConflict {
   countrySlug       String?
   fieldName         String // the disputed field
   // Conflicting values from different official sources
-  conflictingValues String    @default("[]") // JSON array of {sourceUrl, sourceName, value, detectedAt}
+  conflictingValues String    @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText // JSON array of {sourceUrl, sourceName, value, detectedAt}
   status            String    @default("PENDING") // PENDING | RESOLVED | ESCALATED
   resolution        String? // SUPERSEDED | MERGED | MANUAL_OVERRIDE
   resolvedBy        String?
@@ -8183,6 +8206,8 @@ model Document {
   fileSize        Int?
   // Security: no public URL. Stored path only, accessed via private download route with permission check.
   storagePath     String?
+  mimeType        String?
+  fileHash        String?
   status          String    @default("PENDING") // PENDING, UPLOADED, UNDER_REVIEW, APPROVED, REJECTED
   rejectionReason String?
   reviewedById    String?
@@ -8898,11 +8923,11 @@ model UniversityHistory {
   id             String   @id @default(cuid())
   universitySlug String
   fieldName      String
-  oldValue       String? // value before the approved change (NULL = field did not exist)
-  newValue       String? // value written to production
+  oldValue       String?  @db.Text // value before the approved change (NULL = field did not exist)
+  newValue       String?  @db.Text // value written to production
   changeId       String // DataChange.id that produced this version
   changeType     String
-  sourceUrl      String // official evidence URL
+  sourceUrl      String   @db.Text // official evidence URL
   detectedAt     DateTime
   approvedBy     String // User.id of the approving Super Admin
   approvedAt     DateTime @default(now())
@@ -8921,11 +8946,11 @@ model CourseHistory {
   courseSlug     String
   universitySlug String?
   fieldName      String
-  oldValue       String?
-  newValue       String?
+  oldValue       String?  @db.Text
+  newValue       String?  @db.Text
   changeId       String
   changeType     String
-  sourceUrl      String
+  sourceUrl      String   @db.Text
   detectedAt     DateTime
   approvedBy     String
   approvedAt     DateTime @default(now())
@@ -8945,11 +8970,11 @@ model ScholarshipHistory {
   scholarshipSlug String
   universitySlug  String?
   fieldName       String
-  oldValue        String?
-  newValue        String?
+  oldValue        String?  @db.Text
+  newValue        String?  @db.Text
   changeId        String
   changeType      String
-  sourceUrl       String
+  sourceUrl       String   @db.Text
   detectedAt      DateTime
   approvedBy      String
   approvedAt      DateTime @default(now())
@@ -8967,7 +8992,7 @@ model MonitoringJob {
   id                 String    @id @default(cuid())
   jobId              String    @unique // stable identifier e.g. "university-monitor-7d"
   name               String // "ALO University & Official Data Monitoring Agent"
-  description        String?
+  description        String?   @db.Text
   schedule           String    @default("0 3 * * 1") // cron: every Monday 03:00
   enabled            Boolean   @default(true)
   // Locking (prevents duplicate concurrent execution)
@@ -11585,4 +11610,98 @@ model AwfTaskLedger {
   @@index([workflowSlug])
   @@index([outcome])
   @@index([eligible])
+}
+
+// ─── Email marketing core (SMTP outbox) ─────────────────────────────────────
+// Every marketing send is an EmailOutboxItem claimed by the cron worker
+// (/api/cron/email-outbox). An item is marked SENT only after SMTP accepts it.
+// Design notes: docs/email-marketing/README.md
+
+model EmailCampaign {
+  id                String    @id @default(cuid())
+  name              String    @db.VarChar(160)
+  subject           String    @db.VarChar(255)
+  html              String    @db.LongText
+  text              String?   @db.LongText
+  // draft | queued | sending | paused | sent | cancelled
+  status            String    @default("draft") @db.VarChar(20)
+  testMode          Boolean   @default(false)
+  broadcastId       String?   @unique @db.VarChar(64)
+  consentAttestedBy String?   @db.VarChar(64)
+  consentAttestedAt DateTime?
+  // Operator's short description of how the list was collected (manual lists only)
+  consentBasis      String?   @db.VarChar(200)
+  recipientCount    Int       @default(0)
+  queuedAt          DateTime?
+  completedAt       DateTime?
+  lastErrorCode     String?   @db.VarChar(64)
+  createdById       String?   @db.VarChar(64)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  outbox            EmailOutboxItem[]
+  events            EmailEvent[]
+
+  @@index([status, createdAt])
+}
+
+model EmailOutboxItem {
+  id            String        @id @default(cuid())
+  campaignId    String
+  campaign      EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  email         String        @db.VarChar(254)
+  // JSON object of plain strings: first_name, last_name, company
+  recipientVars String?       @db.Text
+  // draft | queued | sending | sent | failed | suppressed | skipped
+  status        String        @default("draft") @db.VarChar(20)
+  attempts      Int           @default(0)
+  nextAttemptAt DateTime      @default(now())
+  lockedAt      DateTime?
+  lockToken     String?       @db.VarChar(64)
+  lastErrorCode String?       @db.VarChar(64)
+  smtpMessageId String?       @db.VarChar(255)
+  sentAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([campaignId, email])
+  @@index([status, nextAttemptAt])
+  @@index([campaignId, status])
+  @@index([email])
+}
+
+model EmailSuppression {
+  id        String   @id @default(cuid())
+  email     String   @unique @db.VarChar(254)
+  // unsubscribed | hard_bounce | complaint | manual
+  reason    String   @db.VarChar(32)
+  source    String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+}
+
+model EmailEvent {
+  id         String         @id @default(cuid())
+  campaignId String?
+  campaign   EmailCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  email      String         @db.VarChar(254)
+  // sent | soft_failure | hard_failure | failed | suppressed | unsubscribed | auth_failure | cap_reached
+  type       String         @db.VarChar(32)
+  code       String?        @db.VarChar(64)
+  createdAt  DateTime       @default(now())
+
+  @@index([campaignId, type, createdAt])
+  @@index([type, createdAt])
+}
+
+// Concurrency-safe sequence for canonical identifiers (AE-YYYYNNNNN, AEP-, EMP-).
+// Rows are advanced inside the allocating transaction (see src/lib/identity/student-id.ts).
+// Numbers are never reused: a rolled-back transaction also rolls back its increment,
+// and a committed number is never handed out again.
+model StudentIdSequence {
+  id        String   @id
+  scope     String   @db.VarChar(16)
+  year      Int
+  lastValue Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([scope, year])
 }

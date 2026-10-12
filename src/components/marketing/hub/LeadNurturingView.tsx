@@ -33,7 +33,7 @@ export default function LeadNurturingView() {
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Calendar className="w-4 h-4 text-[#0B5ED7]" />Nurturing Journeys</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Calendar className="w-4 h-4 text-[#2563EB]" />Nurturing Journeys</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid md:grid-cols-2 gap-3">
                 <div><label className="text-xs font-semibold">Journey</label><Select value={journey} onValueChange={setJourney}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="whatsapp_7day">WhatsApp 7-Day Drip</SelectItem><SelectItem value="email_5mail">Email 5-Mail Journey</SelectItem><SelectItem value="sms_reminder">SMS Deadline Reminder</SelectItem><SelectItem value="mixed">Mixed (WhatsApp+Email+SMS)</SelectItem></SelectContent></Select></div>
@@ -51,7 +51,7 @@ export default function LeadNurturingView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0B5ED7]" />Status Sync & Attribution</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#2563EB]" />Status Sync & Attribution</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Lead Status Sync</p><p className="text-gray-600 mt-1">new → contacted → qualified → assigned → converted / lost — syncs to CRM via lead status.</p></div>
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Conversion & Enrollment Attribution</p><p className="text-gray-600 mt-1">Campaign → Lead → Application → Enrollment where reliable data exists (MarketingLead.campaignId + Acr).</p></div>

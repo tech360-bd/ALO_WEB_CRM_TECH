@@ -1,191 +1,177 @@
-import { NextRequest, NextResponse } from 'next/server';
+// POST /api/admin/data-import
+//
+// Catalogue CSV import with the same-data rule (see
+// src/lib/course-finder/catalogue-import-service.ts):
+//   mode=preview (default) — parse + classify only; no database writes.
+//   mode=queue_changes     — records an import batch, queues every material
+//                             change to an existing record as a field-level
+//                             proposal in UniversityUpdateRequest (status
+//                             pending_approval) and logs blocked/invalid rows.
+//                             Live catalogue values are never changed here.
+// New records are returned to the caller, which may stage them as draft,
+// unverified rows through /api/crm/course-import/confirm. Nothing is published.
+//
+// The previous implementation reported rows as "staged" without storing them,
+// parsed XLSX bytes as text and split CSV on raw commas; it has been replaced.
+
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import {
+  ImportParseError,
+  classifyCatalogueRows,
+  parseCatalogueCsv,
+  summarize,
+  toUpdateRequests,
+  rowsForDraftStaging,
+  type CatalogueLookup,
+} from '@/lib/course-finder/catalogue-import-service';
 
-// Maximum file size: 20 MB
-const MAX_FILE_SIZE = 20 * 1024 * 1024;
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-// Formula injection protection: strip leading =, +, -, @
-function sanitizeCellValue(val: string): string {
-  if (typeof val !== 'string') return val;
-  const trimmed = val.trim();
-  if (/^[=+\-@]/.test(trimmed)) {
-    return `'${trimmed}`;
-  }
-  return trimmed;
-}
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-// Automatic header mapping dictionary
-const HEADER_MAPPING_DICT: Record<string, string> = {
-  // University
-  university: 'officialName',
-  'university name': 'officialName',
-  institution: 'officialName',
-  'institution name': 'officialName',
-  country: 'country',
-  city: 'city',
-  website: 'officialWebsite',
-  'official url': 'officialWebsite',
-  'official website': 'officialWebsite',
-
-  // Course
-  course: 'officialCourseTitle',
-  'course name': 'officialCourseTitle',
-  program: 'officialCourseTitle',
-  programme: 'officialCourseTitle',
-  'program name': 'officialCourseTitle',
-  'programme title': 'officialCourseTitle',
-  award: 'award',
-  qualification: 'qualification',
-  'study level': 'studyLevel',
-
-  // Fees
-  'tuition fee': 'tuitionFee',
-  'international fee': 'tuitionFee',
-  'annual tuition': 'tuitionFee',
-  'fee amount': 'tuitionFee',
-  currency: 'feeCurrency',
-  'fee year': 'feeYear',
-
-  // Intakes
-  intake: 'intakeMonth',
-  'start date': 'intakeMonth',
-  'start month': 'intakeMonth',
-  'intake month': 'intakeMonth',
-  'intake year': 'intakeYear',
-  'application deadline': 'deadline',
-
-  // Requirements
-  'entry requirement': 'academicRequirements',
-  'academic requirement': 'academicRequirements',
-  gpa: 'minimumGradeOrGpa',
-  ielts: 'ieltsOverall',
-  'ielts overall': 'ieltsOverall',
-  'ielts components': 'ieltsComponentMin',
-  pte: 'pteScore',
-  toefl: 'toeflScore',
-  duolingo: 'duolingoScore',
-  'work experience': 'workExperienceRequired',
-  'study gap': 'studyGapAllowed',
-
-  // Sources
-  'official course url': 'sourceUrl',
-  'course url': 'sourceUrl',
-  'source url': 'sourceUrl',
-  'fee source': 'feeSourceUrl',
+const lookup: CatalogueLookup = {
+  universities: (ids) => db.crmUniversity.findMany({ where: { universityId: { in: ids } } }) as never,
+  courses: (ids) => db.crmCourse.findMany({ where: { courseId: { in: ids } } }) as never,
+  intakeFees: (ids) => db.crmCourseIntakeFee.findMany({ where: { courseId: { in: ids } } }) as never,
+  requirements: (ids) => db.crmCourseRequirement.findMany({ where: { courseId: { in: ids } }, orderBy: { updatedAt: 'desc' } }) as never,
+  universityPool: async () =>
+    (await db.crmUniversity.findMany({ select: { universityId: true, name: true, country: true, website: true, officialUrl: true }, take: 20000 }))
+      .map((u) => ({ id: u.universityId, name: u.name, country: u.country, website: u.website || u.officialUrl })),
 };
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  if (!['ADMIN', 'SUPER_ADMIN'].includes(auth.userType.toUpperCase()) || !['user', 'portal'].includes(auth.identityDomain || '')) {
+    return NextResponse.json({ error: 'Catalogue administrator required' }, { status: 403 });
+  }
+  if (!mutationOriginAllowed(req, auth)) {
+    return NextResponse.json({ error: 'Same-origin request required' }, { status: 403 });
+  }
+
+  let form: FormData;
   try {
-    // 1. Auth & RBAC Check
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) {
-      return authResult; // Returns 401 response
+    form = await req.formData();
+  } catch {
+    return NextResponse.json({ error: 'Expected multipart form data with a CSV file' }, { status: 400 });
+  }
+  const file = form.get('file');
+  const mode = form.get('mode') === 'queue_changes' ? 'queue_changes' : 'preview';
+  if (!(file instanceof File)) return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+  if (file.size === 0) return NextResponse.json({ error: 'Uploaded file is empty' }, { status: 400 });
+  if (file.size > MAX_FILE_SIZE) return NextResponse.json({ error: 'File exceeds the 5 MB limit' }, { status: 413 });
+  const name = file.name.slice(0, 191);
+  if (/\.xlsx?$/i.test(name)) {
+    return NextResponse.json({ error: 'XLSX upload is not supported yet. Save the sheet as CSV (UTF-8) and upload that file.' }, { status: 415 });
+  }
+  if (!/\.csv$/i.test(name)) return NextResponse.json({ error: 'Only .csv files are accepted' }, { status: 415 });
+
+  let rows;
+  try {
+    rows = parseCatalogueCsv(await file.text());
+  } catch (error) {
+    if (error instanceof ImportParseError) return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ error: 'Could not read the file' }, { status: 400 });
+  }
+
+  try {
+    const classified = await classifyCatalogueRows(rows, lookup);
+    const counts = summarize(classified);
+    const proposals = toUpdateRequests(classified);
+    const newRows = rowsForDraftStaging(classified).map((r) => r.row);
+    const report = classified.map((r) => ({
+      rowNumber: r.rowNumber,
+      universityId: r.universityId,
+      courseId: r.courseId,
+      action: r.action,
+      issues: r.issues,
+      reasons: r.entities.map((e) => ({ entity: e.entity, action: e.result.action, reason: e.result.reason, duplicateOf: e.result.duplicateOf ?? null })),
+      changes: r.entities.flatMap((e) => e.result.changes.map((c) => ({ entity: e.entity, ...c }))),
+    }));
+
+    if (mode === 'preview') {
+      return NextResponse.json({ mode, fileName: name, rowsReceived: rows.length, counts, proposals: proposals.length, rows: report, newRows, published: false, verified: false });
     }
 
-    const authContext = authResult as AuthContext;
-    const isSuperAdmin = authContext.roles?.includes('SUPER_ADMIN') || authContext.roles?.includes('ADMIN') || authContext.userType === 'admin';
-
-    if (!isSuperAdmin) {
-      return NextResponse.json({ error: 'Forbidden. Super Admin authorization required for data import.' }, { status: 403 });
-    }
-
-    // 2. Parse Form Data / File Upload
-    const formData = await req.formData();
-    const file = formData.get('file') as File | null;
-    const batchName = (formData.get('batchName') as string) || `Batch-${Date.now()}`;
-
-    if (!file) {
-      return NextResponse.json({ error: 'No file uploaded.' }, { status: 400 });
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: 'File size exceeds 20MB limit.' }, { status: 400 });
-    }
-
-    const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.csv') && !fileName.endsWith('.xlsx')) {
-      return NextResponse.json({ error: 'Invalid file format. Only CSV and XLSX files are supported.' }, { status: 400 });
-    }
-
-    // 3. Read File Content & Parse CSV
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const fileText = buffer.toString('utf8');
-    const lines = fileText.split(/\r?\n/).filter((l) => l.trim().length > 0);
-
-    if (lines.length === 0) {
-      return NextResponse.json({ error: 'Uploaded file is empty.' }, { status: 400 });
-    }
-
-    const rawHeaders = lines[0].split(',').map((h) => h.replace(/^["']|["']$/g, '').trim());
-    const mappedHeaders: string[] = rawHeaders.map((h) => {
-      const lower = h.toLowerCase();
-      return HEADER_MAPPING_DICT[lower] || h;
-    });
-
-    const parsedRows: Array<Record<string, string>> = [];
-    const rowErrors: Array<{ rowNumber: number; error: string }> = [];
-
-    for (let i = 1; i < lines.length; i++) {
-      const cells = lines[i].split(',').map((c) => sanitizeCellValue(c.replace(/^["']|["']$/g, '').trim()));
-      const rowObj: Record<string, string> = {};
-      
-      mappedHeaders.forEach((header, idx) => {
-        rowObj[header] = cells[idx] || '';
-      });
-
-      if (!rowObj.officialCourseTitle && !rowObj.officialName) {
-        rowErrors.push({ rowNumber: i + 1, error: 'Row missing required university or course title' });
-      } else {
-        parsedRows.push(rowObj);
-      }
-    }
-
-    // 4. Create Transaction Batch & Staging
-    const resultBatch = await db.$transaction(async (tx) => {
+    const actor = `${auth.identityDomain}:${auth.actorUserId || auth.userId}`;
+    const result = await db.$transaction(async (tx) => {
       const batch = await tx.crmImportBatch.create({
         data: {
-          importType: fileName.endsWith('.xlsx') ? 'xlsx_master' : 'csv_master',
-          fileName: file.name,
-          uploadedBy: authContext.email || authContext.userId,
-          rowsReceived: parsedRows.length + rowErrors.length,
-          rowsImported: parsedRows.length,
-          rowsFailed: rowErrors.length,
-          status: 'STAGED',
-          rollbackAvailable: true,
+          importType: 'catalogue_csv_same_data_rule',
+          fileName: name,
+          uploadedBy: actor.slice(0, 191),
+          rowsReceived: rows.length,
+          rowsImported: 0,
+          rowsFailed: counts.INVALID,
+          rowsDuplicate: counts.BLOCK_DUPLICATE,
+          rowsWarning: counts.PENDING_CHANGE,
+          rowsBlocked: counts.BLOCK_DUPLICATE + counts.INVALID,
+          rollbackAvailable: false,
+          status: proposals.length ? 'changes_queued_for_approval' : 'reviewed_no_changes',
         },
       });
 
-      if (rowErrors.length > 0) {
+      let queued = 0;
+      let alreadyQueued = 0;
+      for (const p of proposals) {
+        const existing = await tx.universityUpdateRequest.findFirst({
+          where: { universityId: p.universityId, courseId: p.courseId, fieldName: p.fieldName, newValue: p.newValue, status: { in: ['pending_approval', 'pending', 'reviewed_unverified'] } },
+          select: { id: true },
+        });
+        if (existing) { alreadyQueued++; continue; }
+        await tx.universityUpdateRequest.create({ data: p });
+        queued++;
+      }
+
+      const problemRows = classified.filter((r) => r.action === 'INVALID' || r.action === 'BLOCK_DUPLICATE');
+      if (problemRows.length) {
         await tx.crmImportError.createMany({
-          data: rowErrors.map((e) => ({
+          data: problemRows.map((r) => ({
             batchId: batch.id,
-            rowNumber: e.rowNumber,
-            field: 'validation',
-            errorMessage: e.error,
-            rowData: '{}',
+            rowNumber: r.rowNumber,
+            universityId: r.universityId.slice(0, 191),
+            courseId: r.courseId.slice(0, 191),
+            field: r.action === 'BLOCK_DUPLICATE' ? 'duplicate' : (r.issues[0]?.column ?? 'row').slice(0, 191),
+            errorMessage: (r.action === 'BLOCK_DUPLICATE'
+              ? r.entities.find((e) => e.result.action === 'BLOCK_DUPLICATE')?.result.reason ?? 'Probable duplicate'
+              : r.issues.map((x) => x.message).join('; ')).slice(0, 191),
+            severity: 'error',
+            // CrmImportError columns are VARCHAR(191): keep identifiers only.
+            rowData: JSON.stringify({ university_id: r.row.university_id, course_id: r.row.course_id, intake_year: r.row.intake_year, intake_month: r.row.intake_month }).slice(0, 191),
           })),
         });
       }
 
-      return batch;
+      await tx.portalAuditLog.create({
+        data: {
+          actorUserId: auth.actorUserId || auth.userId,
+          action: 'CATALOG_IMPORT_CHANGES_QUEUED',
+          entityType: 'CrmImportBatch',
+          entityId: batch.id,
+          metadata: JSON.stringify({ fileName: name, counts, queued, alreadyQueued, identityDomain: auth.identityDomain }),
+        },
+      });
+      return { batchId: batch.id, queued, alreadyQueued };
     });
 
     return NextResponse.json({
-      success: true,
-      batchId: resultBatch.id,
-      fileName: file.name,
-      mappedHeaders,
-      stagedRows: parsedRows.length,
-      errorsEncountered: rowErrors.length,
-      status: 'STAGED_FOR_APPROVAL',
-      message: 'File parsed and staged into transactional import batch. Super Admin approval required before public commit.',
+      mode,
+      fileName: name,
+      rowsReceived: rows.length,
+      counts,
+      ...result,
+      rows: report,
+      newRows,
+      published: false,
+      verified: false,
+      message: 'Material changes were queued for Super Admin review; live values are unchanged. New rows can be staged as draft, unverified records.',
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown import error';
-    return NextResponse.json(
-      { error: 'Import processing failed', details: message },
-      { status: 500 }
-    );
+    console.error('[admin/data-import] failed', error instanceof Error ? error.name : 'unknown');
+    return NextResponse.json({ error: 'Import could not be processed; no changes were committed' }, { status: 503 });
   }
 }

@@ -3,6 +3,22 @@ import { db } from '@/lib/db';
 import { logAuditAction } from '@/lib/auth-middleware';
 import { requirePartnerContext, requirePartnerSuperAdmin } from '@/lib/partner-tenant-guard';
 import { getQuota } from '@/lib/access-check-engine';
+import { createHash, randomBytes } from 'node:crypto';
+import { sendEmail } from '@/lib/email-service';
+
+/** Partner-side roles a Partner Super Admin is allowed to grant (§6). */
+const ASSIGNABLE_PARTNER_ROLES = [
+  'PARTNER_COUNSELOR',
+  'PARTNER_APPLICATION_ASSISTANT',
+  'PARTNER_MARKETING_ASSISTANT',
+  'PARTNER_DOCUMENT_ASSISTANT',
+  'PARTNER_VIEWER',
+];
+
+function sameOrigin(request: Request) {
+  const origin = request.headers.get('origin');
+  return !origin || new URL(origin).origin === new URL(request.url).origin;
+}
 
 /** Partner-side roles a Partner Super Admin is allowed to grant (§6). */
 const ASSIGNABLE_PARTNER_ROLES = [
@@ -37,16 +53,18 @@ export async function GET(req: NextRequest) {
     });
 
     const seatLimit = await getQuota('PARTNER', partnerId, 'user_seats');
+    const currentCount = users.filter((user) => ['active', 'pending_activation'].includes(user.status.toLowerCase())).length;
 
     return NextResponse.json({
       success: true,
       partnerId,
+      callerRole: ctx.partnerRole,
       seatLimit,
-      currentCount: users.length,
+      currentCount,
       users,
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to fetch partner users', details: error.message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch partner users' }, { status: 503 });
   }
 }
 

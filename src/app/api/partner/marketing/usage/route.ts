@@ -1,99 +1,44 @@
-// ============================================================
-// GET /api/partner/marketing/usage - Current month's marketing usage
-// ============================================================
-
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
-import { checkQuotaBeforeAction } from '@/lib/access-check-engine';
+import { requirePartnerContext } from '@/lib/partner-tenant-guard';
+import { checkQuotaBeforeAction, currentPeriod } from '@/lib/access-check-engine';
 
-function isPartnerRole(auth: AuthContext): boolean {
-  return (
-    auth.roles.includes('PARTNER_SUPER_ADMIN') ||
-    auth.roles.includes('PARTNER_EMPLOYEE')
-  );
-}
-
-async function getPartnerId(userId: string): Promise<string | null> {
-  const profile = await db.partnerProfile.findUnique({
-    where: { userId },
-    select: { partnerId: true },
-  });
-  return profile?.partnerId ?? null;
-}
-
+/** GET /api/partner/marketing/usage — UTC calendar-month partner usage. */
 export async function GET(request: Request) {
-  const authResult = await authenticateRequest(request);
-  if (authResult instanceof NextResponse) return authResult;
-  const auth = authResult as AuthContext;
-
-  if (!isPartnerRole(auth)) {
-    return NextResponse.json(
-      { success: false, message: 'Access denied. Partner role required.', status: 403 },
-      { status: 403 },
-    );
-  }
-
-  const partnerId = await getPartnerId(auth.userId);
-  if (!partnerId) {
-    return NextResponse.json(
-      { success: false, message: 'Partner profile not found.', status: 404 },
-      { status: 404 },
-    );
-  }
+  const context = await requirePartnerContext(request);
+  if (context instanceof NextResponse) return context;
 
   try {
-    const imageQuota = await checkQuotaBeforeAction('partner', partnerId, 'marketing_images');
-    const videoQuota = await checkQuotaBeforeAction('partner', partnerId, 'marketing_videos');
-
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-    const [ideasSubmitted, postsScheduled, postsPublished] = await Promise.all([
-      db.partnerMarketingRequest.count({
-        where: {
-          partnerId,
-          createdAt: { gte: monthStart },
-        },
-      }),
-      db.partnerMarketingRequest.count({
-        where: {
-          partnerId,
-          status: 'scheduled',
-          createdAt: { gte: monthStart },
-        },
-      }),
-      db.partnerMarketingRequest.count({
-        where: {
-          partnerId,
-          status: 'published',
-          createdAt: { gte: monthStart },
-        },
-      }),
+    const monthYear = currentPeriod();
+    const monthStart = new Date(`${monthYear}-01T00:00:00.000Z`);
+    const [imageQuota, videoQuota, usage, ideasSubmitted, legacyScheduled, legacyPublished] = await Promise.all([
+      checkQuotaBeforeAction('partner', context.partnerId, 'monthly_images'),
+      checkQuotaBeforeAction('partner', context.partnerId, 'monthly_videos'),
+      db.partnerMarketingUsage.findUnique({ where: { partnerId_monthYear: { partnerId: context.partnerId, monthYear } } }),
+      db.partnerMarketingRequest.count({ where: { partnerId: context.partnerId, createdAt: { gte: monthStart } } }),
+      db.partnerMarketingRequest.count({ where: { partnerId: context.partnerId, status: 'scheduled', createdAt: { gte: monthStart } } }),
+      db.partnerMarketingRequest.count({ where: { partnerId: context.partnerId, status: 'published', createdAt: { gte: monthStart } } }),
     ]);
 
     return NextResponse.json({
       success: true,
-      status: 200,
-      message: 'Usage stats loaded.',
       data: {
-        imagesUsed: imageQuota.currentUsage,
+        imagesUsed: usage?.imagesUsed ?? imageQuota.currentUsage,
         imagesLimit: imageQuota.limit,
-        imagesRemaining: Math.max(0, imageQuota.limit - imageQuota.currentUsage),
-        videosUsed: videoQuota.currentUsage,
+        imagesRemaining: Math.max(0, imageQuota.limit - (usage?.imagesUsed ?? imageQuota.currentUsage)),
+        videosUsed: usage?.videosUsed ?? videoQuota.currentUsage,
         videosLimit: videoQuota.limit,
-        videosRemaining: Math.max(0, videoQuota.limit - videoQuota.currentUsage),
-        ideasSubmitted,
-        postsScheduled,
-        postsPublished,
-        monthYear: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`,
+        videosRemaining: Math.max(0, videoQuota.limit - (usage?.videosUsed ?? videoQuota.currentUsage)),
+        ideasSubmitted: usage?.ideasSubmitted ?? ideasSubmitted,
+        // Retained rows may be legacy state only; no live publisher consumes them.
+        legacyScheduledRecords: legacyScheduled,
+        legacyPublishedRecords: legacyPublished,
+        publishingEnabled: false,
+        monthYear,
       },
     });
   } catch (error) {
-    console.error('Partner marketing usage error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to load usage stats.', status: 500 },
-      { status: 500 },
-    );
+    console.error('[PARTNER MARKETING USAGE] GET error:', error);
+    return NextResponse.json({ success: false, error: 'Failed to load marketing usage.' }, { status: 500 });
   }
 }

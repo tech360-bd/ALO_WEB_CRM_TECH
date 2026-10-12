@@ -247,7 +247,7 @@ export function SuperAdminWebsiteCmsHub() {
             <div><label className="text-xs font-medium">Country Code</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.countryCode||""} onChange={e=>setFormData({...formData, countryCode: e.target.value})} placeholder="UK, USA..." /></div>
             <div className="md:col-span-2"><label className="text-xs font-medium">Subtitle</label><textarea className="w-full border rounded-lg px-3 py-2 text-sm" rows={2} value={formData.subtitle||""} onChange={e=>setFormData({...formData, subtitle: e.target.value})} /></div>
             <div><label className="text-xs font-medium">Image URL</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.imageUrl||""} onChange={e=>setFormData({...formData, imageUrl: e.target.value})} /></div>
-            <div><label className="text-xs font-medium">Accent Color</label><input className="w-full border rounded-lg px-3 py-2 text-sm" type="color" value={formData.accentColor||"#0B5ED7"} onChange={e=>setFormData({...formData, accentColor: e.target.value})} /></div>
+            <div><label className="text-xs font-medium">Accent Color</label><input className="w-full border rounded-lg px-3 py-2 text-sm" type="color" value={formData.accentColor||"#2563EB"} onChange={e=>setFormData({...formData, accentColor: e.target.value})} /></div>
             <div><label className="text-xs font-medium">Popular City</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.popularCity||""} onChange={e=>setFormData({...formData, popularCity: e.target.value})} /></div>
             <div><label className="text-xs font-medium">Popular Intake</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.popularIntake||""} onChange={e=>setFormData({...formData, popularIntake: e.target.value})} /></div>
             <div><label className="text-xs font-medium">CTA Primary Label</label><input className="w-full border rounded-lg px-3 py-2 text-sm" value={formData.ctaPrimaryLabel||""} onChange={e=>setFormData({...formData, ctaPrimaryLabel: e.target.value})} /></div>
@@ -351,8 +351,8 @@ export function SuperAdminWebsiteCmsHub() {
     <div className="space-y-6">
       {/* Virtual Editor view switch (§15: website content vs site-wide & CRM content) */}
       <div className="flex gap-2 border-b border-slate-200 pb-3">
-        <button onClick={() => setView("website")} className={`px-3 py-2 rounded-xl text-sm font-medium transition ${view === "website" ? "bg-[#0B5ED7] text-white" : "bg-white border border-slate-200 hover:bg-slate-50"}`}>Website Content</button>
-        <button onClick={() => setView("managed")} className={`px-3 py-2 rounded-xl text-sm font-medium transition ${view === "managed" ? "bg-[#0B5ED7] text-white" : "bg-white border border-slate-200 hover:bg-slate-50"}`}>Site-Wide &amp; CRM (Nav / Footer / SEO / CRM)</button>
+        <button onClick={() => setView("website")} className={`px-3 py-2 rounded-xl text-sm font-medium transition ${view === "website" ? "bg-[#2563EB] text-white" : "bg-white border border-slate-200 hover:bg-slate-50"}`}>Website Content</button>
+        <button onClick={() => setView("managed")} className={`px-3 py-2 rounded-xl text-sm font-medium transition ${view === "managed" ? "bg-[#2563EB] text-white" : "bg-white border border-slate-200 hover:bg-slate-50"}`}>Site-Wide &amp; CRM (Nav / Footer / SEO / CRM)</button>
       </div>
       {view === "managed" && <ManagedContentManager />}
       {view === "website" && (
@@ -366,14 +366,14 @@ export function SuperAdminWebsiteCmsHub() {
         <div className="flex gap-2">
           <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchItems()} className="border rounded-lg px-3 py-2 text-sm w-48" />
           <button onClick={fetchItems} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium">🔍 Search</button>
-          <button onClick={handleCreate} className="px-4 py-2 bg-[#0B5ED7] hover:bg-[#004494] text-white rounded-lg text-sm font-semibold">+ New</button>
+          <button onClick={handleCreate} className="px-4 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg text-sm font-semibold">+ New</button>
         </div>
       </div>
 
       {/* Type tabs */}
       <div className="flex flex-wrap gap-2">
         {WEBSITE_TYPES.map(t => (
-          <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${activeType===t.key ? "bg-[#0B5ED7] text-white border-[#0B5ED7] shadow" : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"}`}>
+          <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${activeType===t.key ? "bg-[#2563EB] text-white border-[#2563EB] shadow" : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"}`}>
             <span className="mr-1">{t.icon}</span> {t.label}
           </button>
         ))}
@@ -447,7 +447,7 @@ export function SuperAdminWebsiteCmsHub() {
             <div className="p-4 border-t bg-slate-50 flex justify-end gap-2">
               <button onClick={()=>setShowForm(false)} className="px-4 py-2 bg-white border rounded-xl text-sm">Cancel</button>
               <button onClick={handleSaveDraft} disabled={revisionBusy} className="px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save as Draft</button>
-              <button onClick={handleSave} className="px-5 py-2 bg-[#0B5ED7] hover:bg-[#004494] text-white rounded-xl text-sm font-semibold">Save — Real DB</button>
+              <button onClick={handleSave} className="px-5 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-sm font-semibold">Save — Real DB</button>
             </div>
           </div>
         </div>

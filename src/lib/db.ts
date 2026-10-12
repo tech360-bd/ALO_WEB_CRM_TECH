@@ -4,9 +4,10 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
+// Query logging can expose authentication material in bound parameters.
 const prismaLogLevel = process.env.NODE_ENV === 'production'
   ? (['error'] as const)
-  : (['query', 'error', 'warn'] as const);
+  : (['error', 'warn'] as const);
 
 /**
  * Production always uses the MySQL datasource configured in prisma/schema.prisma.

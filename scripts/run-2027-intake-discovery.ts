@@ -2,6 +2,13 @@ import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
+import { requireSyntheticOutputDir, syntheticOutputPath } from './lib/synthetic-output-guard.mjs';
+
+// SYNTHETIC / UNVERIFIED GENERATOR (2026-10-12 safety remediation): every file this script writes goes
+// under ALO_SYNTHETIC_OUTPUT_DIR (fixtures/synthetic-catalogue/** or staging/synthetic/**). It refuses
+// to run otherwise and never writes the repository root, docs/import-templates/, data/ or public/.
+const SYNTH_OUT = requireSyntheticOutputDir('run-2027-intake-discovery');
+const synthOut = (rel: string) => syntheticOutputPath(SYNTH_OUT, rel);
 
 const db = new PrismaClient();
 
@@ -21,7 +28,7 @@ async function main() {
   console.log('========================================\n');
 
   try {
-    const pkgDir = path.join(__dirname, '../docs/import-templates/package-real');
+    const pkgDir = synthOut('docs/import-templates/package-real');
 
     // 1. Fetch universities and active courses
     console.log('Fetching active courses and universities from database...');
@@ -123,13 +130,13 @@ async function main() {
 
     // 3. Update active master files in package and root
     console.log('Writing ALO_2027_INTAKE_COVERAGE.csv and ALO_JANUARY_2027_INTAKE_REPORT.csv...');
-    fs.writeFileSync(path.join(__dirname, '../ALO_2027_INTAKE_COVERAGE.csv'), coverageCsv);
-    fs.writeFileSync(path.join(__dirname, '../ALO_JANUARY_2027_INTAKE_REPORT.csv'), januaryReportCsv);
+    fs.writeFileSync(synthOut('ALO_2027_INTAKE_COVERAGE.csv'), coverageCsv);
+    fs.writeFileSync(synthOut('ALO_JANUARY_2027_INTAKE_REPORT.csv'), januaryReportCsv);
 
     // Repackage zip file to ensure everything matches
     console.log('Repackaging ALO_UNIVERSITY_COURSE_DATA_PACKAGE_REAL.zip...');
     const zipCmd = `zip -j ALO_UNIVERSITY_COURSE_DATA_PACKAGE_REAL.zip docs/import-templates/package-real/*`;
-    execSync(zipCmd, { cwd: path.join(__dirname, '..') });
+    execSync(zipCmd, { cwd: SYNTH_OUT });
     console.log('  ✓ Updated and packaged ALO_UNIVERSITY_COURSE_DATA_PACKAGE_REAL.zip');
 
     console.log('\n========================================');

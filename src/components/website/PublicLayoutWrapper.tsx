@@ -2,9 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import PublicNavbar from './PublicNavbar';
 import PublicFooter from './PublicFooter';
+import { isPublicChromeRoute } from './public-chrome-policy';
 
 // ─── CMS-managed announcements & banners (Virtual Editor) ─────
 // Super Admins publish announcements (dismissible info bar) and
@@ -36,7 +38,7 @@ function CmsAnnouncements() {
   const top = visible[0];
   const level = top.data?.level === 'urgent' ? 'error' : top.data?.level === 'warning' ? 'warning' : 'info';
   const styles: Record<string, string> = {
-    info: 'bg-[#0B5ED7] text-white',
+    info: 'bg-[#2563EB] text-white',
     warning: 'bg-amber-500 text-white',
     error: 'bg-red-600 text-white',
   };
@@ -98,16 +100,18 @@ export default function PublicLayoutWrapper({
   children: React.ReactNode;
 }) {
   const isAuthenticated = usePortalStore((s) => s.isAuthenticated);
-  const currentView = usePortalStore((s) => s.currentView);
-  // HomepagePart4 already includes its own FooterSection to avoid duplicate footer on the homepage.
-  const isHomepage = currentView === 'website';
+  const pathname = usePathname();
+  // One navbar and one footer for every public page. Login, registration,
+  // reset and every authenticated portal route render standalone: the public
+  // chrome is suppressed by route (see public-chrome-policy.ts) and by session.
+  const showPublicChrome = !isAuthenticated && isPublicChromeRoute(pathname);
   return (
     <>
-      {!isAuthenticated && <CmsAnnouncements />}
-      {!isAuthenticated && <PublicNavbar />}
+      {showPublicChrome && <CmsAnnouncements />}
+      {showPublicChrome && <PublicNavbar />}
       {children}
-      {!isAuthenticated && !isHomepage && <PublicFooter />}
-      {!isAuthenticated && <CmsBanner />}
+      {showPublicChrome && <PublicFooter />}
+      {showPublicChrome && <CmsBanner />}
     </>
   );
 }

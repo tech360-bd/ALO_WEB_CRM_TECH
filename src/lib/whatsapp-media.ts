@@ -14,6 +14,27 @@ export interface SendWhatsAppMediaParams {
   caption?: string;             // short caption shown with document/image/video
 }
 
+export interface SendWhatsAppUploadedMediaParams {
+  mediaType: 'document' | 'image';
+  mediaId: string;
+  fileName?: string;
+  caption?: string;
+}
+
+/** Pure payload builder for media uploaded to Meta using the official Cloud API. */
+export function buildWhatsAppUploadedMediaPayload(toNormalized: string, p: SendWhatsAppUploadedMediaParams): Record<string, unknown> {
+  const media: Record<string, unknown> = { id: p.mediaId };
+  if (p.mediaType === 'document' && p.fileName) media.filename = p.fileName;
+  if (p.caption) media.caption = p.caption;
+  return {
+    messaging_product: 'whatsapp',
+    recipient_type: 'individual',
+    to: toNormalized,
+    type: p.mediaType,
+    [p.mediaType]: media,
+  };
+}
+
 /** Pure payload builder — media-by-link per the official Cloud API contract. */
 export function buildWhatsAppMediaPayload(toNormalized: string, p: SendWhatsAppMediaParams): Record<string, unknown> {
   const media: Record<string, unknown> = { link: p.link };

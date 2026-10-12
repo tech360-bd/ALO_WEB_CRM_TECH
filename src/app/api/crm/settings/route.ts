@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
           totalPartners: partnerCount,
         },
         brandColors: {
-          primary: '#0B5ED7',
+          primary: '#2563EB',
           cta: '#F97316',
         },
         features: {

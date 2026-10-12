@@ -8,6 +8,11 @@ import { withAuth } from "@/lib/auth-middleware";
 
 export async function GET(request: Request) {
   return withAuth(async (request, auth) => {
+    // Legacy metrics span Portal and canonical tables without a proven
+    // counselor mapping. Never expose global records as a counselor dashboard.
+    if (auth.identityDomain !== 'user' || !['ADMIN','SUPER_ADMIN'].includes(auth.userType.toUpperCase())) {
+      return NextResponse.json({success:false, code:'COUNSELOR_DASHBOARD_SCOPE_PENDING', error:'Scoped counselor dashboard unavailable until identity mappings are verified. Use assigned enquiries and students.'},{status:403, headers:{'Cache-Control':'private, no-store'}});
+    }
     try {
       // Get the employee profile for this user
       const employee = await db.employeeProfile.findFirst({
@@ -184,7 +189,7 @@ export async function GET(request: Request) {
         })),
       };
 
-      return NextResponse.json({ success: true, data });
+      return NextResponse.json({ success: true, data, scope:'legacy_admin_global_not_counselor' }, {headers:{'Cache-Control':'private, no-store'}});
     } catch (error) {
       console.error('Counselor dashboard error:', error);
       return NextResponse.json(

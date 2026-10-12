@@ -4,6 +4,11 @@ ALO Education Combined Course Upload CSV Generator
 Takes existing project data + web search data and produces the 50-column CSV.
 """
 import csv
+import sys as _alo_sys, pathlib as _alo_pathlib
+_alo_sys.path.insert(0, str(_alo_pathlib.Path(__file__).resolve().parent / "lib"))
+from synthetic_output_guard import require_synthetic_output_dir
+# SYNTHETIC GENERATOR: output goes only under ALO_SYNTHETIC_OUTPUT_DIR (fixtures/staging).
+_ALO_OUT = require_synthetic_output_dir("generate_csv")
 import re
 import json
 from datetime import date
@@ -230,7 +235,7 @@ else:
     print("VALID - No errors found")
 
 # ─── Write CSV ───
-outpath = '/home/z/my-project/download/combined_course_upload.csv'
+outpath = str(_ALO_OUT / 'combined_course_upload.csv')  # was /home/z/my-project/download/ (production-like path)
 with open(outpath, 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
     writer.writerow(HEADER)

@@ -51,7 +51,7 @@ export default function SMSMarketingView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#0B5ED7]" />Consent & Suppression</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#2563EB]" />Consent & Suppression</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Consent Summary</p><p className="text-gray-600 mt-1">Source: MarketingConsent (leadId, channel=sms, consent, optOut). {consentInfo ? `Loaded ${consentInfo.count||0} records` : 'Loading...'}</p></div>
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Delivery & Cost Tracking</p><p className="text-gray-600 mt-1">Delivery: /api/integrations/3cx/sms/journal • Cost: provider reports • Rate limit: provider limit enforced.</p></div>

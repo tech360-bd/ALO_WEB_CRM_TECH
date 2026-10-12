@@ -1,7 +1,9 @@
+import { ingestWhatsAppMedia } from "@/lib/whatsapp-media-ingestion";
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
 import { deriveCountryCode } from '@/lib/access-control/object-scope';
+import { persistWhatsAppStatus } from '@/lib/whatsapp-cloud-api';
 import {
   normalizePhoneE164 as normalizePhone,
   classifyIntent,
@@ -31,6 +33,52 @@ export async function GET(request: Request) {
     return new NextResponse(challenge, { status: 200 });
   }
   return new NextResponse('Forbidden', { status: 403 });
+}
+
+async function reconcileUccMessageStatus(providerMessageId: string, rawStatus: string, timestamp?: string, errors?: unknown) {
+  const normalizedStatus = rawStatus.toLowerCase();
+  if (!['sent', 'delivered', 'read', 'failed'].includes(normalizedStatus)) return;
+  try {
+    const candidates = await db.uccMessage.findMany({
+      where: { direction: 'outbound', channel: 'whatsapp', metadata: { contains: providerMessageId } },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+      select: { id: true, metadata: true },
+    });
+    const matching = candidates.find((message) => {
+      try { return JSON.parse(message.metadata || '{}')?.providerMessageId === providerMessageId; }
+      catch { return false; }
+    });
+    if (!matching) return;
+
+    let metadata: Record<string, unknown> = {};
+    try {
+      const parsed = JSON.parse(matching.metadata || '{}');
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) metadata = parsed;
+    } catch { /* status metadata will be replaced with a safe object */ }
+    const eventTime = timestamp && Number.isFinite(Number(timestamp))
+      ? new Date(Number(timestamp) * 1000)
+      : new Date();
+    const priorTime = typeof metadata.providerStatusAt === 'string' ? new Date(metadata.providerStatusAt) : null;
+    if (priorTime && !Number.isNaN(priorTime.getTime()) && eventTime < priorTime) return;
+    const errorText = Array.isArray(errors)
+      ? String((errors[0] as any)?.title || (errors[0] as any)?.message || '').slice(0, 500)
+      : '';
+    await db.uccMessage.update({
+      where: { id: matching.id },
+      data: {
+        status: normalizedStatus,
+        metadata: JSON.stringify({
+          ...metadata,
+          deliveryStatus: normalizedStatus,
+          providerStatusAt: eventTime.toISOString(),
+          ...(errorText ? { providerError: errorText } : {}),
+        }),
+      },
+    });
+  } catch (error) {
+    console.error('[WhatsApp Webhook] Failed to reconcile UCC delivery status:', error);
+  }
 }
 
 // POST: Handle incoming WhatsApp events
@@ -65,10 +113,21 @@ export async function POST(request: Request) {
 
         // Handle message status updates (SENT → DELIVERED → READ → FAILED)
         for (const status of value.statuses || []) {
+          if (!status?.id) continue;
           await db.communicationMessage.updateMany({
             where: { content: { contains: status.id } },
             data: { deliveryStatus: status.status },
           }).catch(() => null);
+          await reconcileUccMessageStatus(status.id, status.status, status.timestamp, status.errors);
+          const recipientPhone = typeof status.recipient_id === 'string' ? normalizePhone(status.recipient_id) : '';
+          if (recipientPhone) {
+            const providerError = Array.isArray(status.errors) ? String(status.errors[0]?.title || status.errors[0]?.message || '').slice(0, 500) : '';
+            await persistWhatsAppStatus(status.id, status.status, recipientPhone, {
+              providerTimestamp: status.timestamp,
+              providerError,
+              providerStatus: status.status,
+            });
+          }
         }
 
         // Handle incoming messages
@@ -83,7 +142,14 @@ export async function POST(request: Request) {
           const existingMsg = await db.communicationMessage.findFirst({
             where: { content: providerMsgId },
           }).catch(() => null);
-          if (existingMsg) continue; // Already processed
+          if (existingMsg) {
+            if (isFile && message[messageType]?.id) await ingestWhatsAppMedia({
+              providerMessageId: providerMsgId, mediaId: message[messageType].id, senderPhone: message.from,
+              senderName: value.contacts?.[0]?.profile?.name, fileName: message[messageType].filename,
+              phoneNumberId: value.metadata?.phone_number_id,
+            });
+            continue;
+          }
 
           // 3. PHONE DEDUPLICATION & CONTACT MATCHING
           let matchedStudentId = '';
@@ -263,19 +329,22 @@ export async function POST(request: Request) {
           // maps the file to a requirement slot (match review / doc upload).
           if (isFile) {
             const mediaObj = message[messageType] || {};
+            const ingested = await ingestWhatsAppMedia({ providerMessageId: providerMsgId, mediaId: mediaObj.id,
+              senderPhone: message.from, senderName: value.contacts?.[0]?.profile?.name, fileName: mediaObj.filename,
+              phoneNumberId: value.metadata?.phone_number_id });
             await db.communicationAttachment.create({
               data: {
                 messageId: savedMsg.id,
                 threadId: thread.id,
                 studentId: matchedStudentId,
                 applicationId: '',
-                documentId: '',
+                documentId: ingested.documentId || '',
                 channel: 'whatsapp',
                 direction: 'inbound',
                 providerFileId: mediaObj.id || '',
                 fileName: mediaObj.filename || `${messageType}_${Date.now()}`,
                 fileType: messageType,
-                fileSizeBytes: mediaObj.file_size || 0,
+                fileSizeBytes: ingested.fileSize || 0,
                 senderContact: senderPhone,
                 recipientContact: value.metadata?.display_phone_number || value.metadata?.phone_number_id || '',
                 deliveryStatus: 'delivered',

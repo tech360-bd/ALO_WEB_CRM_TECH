@@ -3,7 +3,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ResourceDetailHub from '@/components/website/ResourceDetailHub';
 import { RESOURCE_CATEGORIES } from '@/lib/website/resource-categories';
-import { db } from '@/lib/db';
+import { getPublishedResource } from '@/lib/website/public-content';
+export const dynamic = 'force-dynamic';
 
 // Canonical article route (spec): /resources/{category}/{article-slug}
 // Server-side metadata + Article/Breadcrumb JSON-LD; content renders through
@@ -12,7 +13,7 @@ import { db } from '@/lib/db';
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; article: string }> }): Promise<Metadata> {
   const { slug: category, article } = await params;
   try {
-    const resource = await db.resource.findUnique({ where: { slug: article }, select: { title: true, seoTitle: true, seoDescription: true, summary: true, featuredImage: true, publishedAt: true } }).catch(() => null);
+    const resource = await getPublishedResource(article, category);
     if (resource) {
       return {
         title: resource.seoTitle || `${resource.title} | ALO Education`,
@@ -36,13 +37,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ResourceArticlePage({ params }: { params: Promise<{ slug: string; article: string }> }) {
   const { slug: category, article } = await params;
-  const cat = RESOURCE_CATEGORIES.find((c) => c.slug === category);
-  if (!cat) notFound(); // /resources/{whatever}/{x} with an unknown category is a real 404
+  const published = await getPublishedResource(article, category);
+  if (!published) notFound();
+  const categoryName = RESOURCE_CATEGORIES.find((item) => item.slug === category)?.name ?? category;
 
   // Article/Breadcrumb structured data (spec §49) — populated from DB at request time
   let jsonLd: object[] = [];
   try {
-    const r = await db.resource.findUnique({ where: { slug: article }, select: { title: true, summary: true, seoTitle: true, seoDescription: true, featuredImage: true, publishedAt: true, readingTime: true } }).catch(() => null);
+    const r = await getPublishedResource(article, category);
     if (r) {
       jsonLd = [
         {
@@ -62,7 +64,7 @@ export default async function ResourceArticlePage({ params }: { params: Promise<
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aloeducation.com' },
             { '@type': 'ListItem', position: 2, name: 'Resources', item: 'https://aloeducation.com/resources' },
-            { '@type': 'ListItem', position: 3, name: cat.name, item: `https://aloeducation.com/resources/${category}` },
+            { '@type': 'ListItem', position: 3, name: r.category?.name || categoryName, item: `https://aloeducation.com/resources/${category}` },
             { '@type': 'ListItem', position: 4, name: r.title, item: `https://aloeducation.com/resources/${category}/${article}` },
           ],
         },
@@ -73,7 +75,7 @@ export default async function ResourceArticlePage({ params }: { params: Promise<
   return (
     <div className="min-h-screen flex flex-col bg-white pt-20">
       {jsonLd.map((ld, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />
       ))}
       <main className="flex-1">
         <Suspense fallback={<div className="p-12 text-center text-gray-500">Loading guide…</div>}>

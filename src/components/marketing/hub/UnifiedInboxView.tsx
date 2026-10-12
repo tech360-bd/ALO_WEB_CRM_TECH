@@ -4,10 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { MessageSquare, RefreshCw, Send, User, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { inboxReplyRequest } from '@/lib/inbox/reply-request';
 import { Badge } from '@/components/ui/badge';
 
 type Conversation = {
   key: string;
+  id?: string;
+  source?: string;
   channel: string;
   studentId?: string | null;
   studentName?: string | null;
@@ -58,26 +61,16 @@ export default function UnifiedInboxView() {
     if (!selected || !message.trim()) return;
     setSending(true);
     try {
-      const last = selected.messages[selected.messages.length - 1];
-      const response = await fetch('/api/inbox/unified', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          channel: selected.channel,
-          toPhone: selected.fromPhone,
-          toEmail: selected.fromEmail,
-          body: message.trim(),
-          studentId: selected.studentId,
-          counselorId: undefined,
-          aiAssisted: false,
-          humanApproved: true,
-          replyToMessageId: last?.id,
-        }),
+      const request = inboxReplyRequest(selected, message);
+      const response = await fetch(request.url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request.body),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Unable to send message');
       setMessage('');
       await load();
+      if (data.persistenceWarning) setError('Provider accepted the reply, but history could not be saved. Do not resend; ask staff to reconcile it.');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to send message');
     } finally {
@@ -96,8 +89,8 @@ export default function UnifiedInboxView() {
           <Button variant="outline" size="icon" onClick={() => void load()} aria-label="Refresh inbox"><RefreshCw className="h-4 w-4" /></Button>
         </div>
       </header>
-      <div className="flex gap-2 border-b pb-3">
-        {['ALL', 'WHATSAPP', 'SMS', 'EMAIL', 'SOCIAL', 'PORTAL'].map((item) => <Button key={item} size="sm" variant={channel === item ? 'default' : 'outline'} onClick={() => setChannel(item)}>{item}</Button>)}
+      <div className="flex flex-wrap gap-2 border-b pb-3">
+        {['ALL', 'WHATSAPP', 'SMS', 'EMAIL', 'FACEBOOK', 'INSTAGRAM', 'MESSENGER', 'PORTAL'].map((item) => <Button key={item} size="sm" variant={channel === item ? 'default' : 'outline'} onClick={() => setChannel(item)}>{item}</Button>)}
       </div>
       {error && <div className="flex items-center gap-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"><AlertCircle className="h-4 w-4" />{error}</div>}
       {loading ? <div className="p-8 text-center text-muted-foreground">Loading conversations…</div> : (

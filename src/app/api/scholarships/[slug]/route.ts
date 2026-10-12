@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { PUBLIC_SCHOLARSHIP_STATUSES } from "@/lib/website/public-content";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,14 +13,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     const scholarship = await db.scholarship.findUnique({
       where: { slug },
       include: {
-        faqs: { orderBy: { sortOrder: "asc" } },
+        faqs: { where: { status: "active" }, orderBy: { sortOrder: "asc" } },
       },
     });
 
     if (!scholarship) {
       return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
     }
-    if (scholarship.status === "DRAFT") {
+    if (!PUBLIC_SCHOLARSHIP_STATUSES.includes(scholarship.status)) {
       return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
     }
 
@@ -72,7 +73,7 @@ async function hydrateRelationships(rels: any[]): Promise<any[]> {
           target = await db.service.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, icon: true, shortDescription: true } });
           break;
         case "SCHOLARSHIP":
-          target = await db.scholarship.findUnique({ where: { id: r.targetId, status: { not: "DRAFT" } }, select: { slug: true, name: true, fundingType: true, amount: true, currency: true } });
+          target = await db.scholarship.findUnique({ where: { id: r.targetId, status: { in: PUBLIC_SCHOLARSHIP_STATUSES } }, select: { slug: true, name: true, fundingType: true, amount: true, currency: true } });
           break;
         case "RESOURCE":
           target = await db.resource.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, excerpt: true, featuredImage: true } });

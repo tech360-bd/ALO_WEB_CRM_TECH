@@ -11,6 +11,7 @@ import { Megaphone, Send, CheckCircle2, Clock, AlertTriangle } from 'lucide-reac
 export default function BroadcastsPage() {
   const [list, setList] = useState<any[]>([]);
   const [form, setForm] = useState({ title: '', channel: 'whatsapp', audienceType: 'all_leads', messageBody: '' });
+  const [notice, setNotice] = useState<string | null>(null);
 
   const load = async () => {
     const res = await fetch('/api/crm/communications/broadcasts');
@@ -27,17 +28,27 @@ export default function BroadcastsPage() {
     load();
   };
   const act = async (id: string, action: string) => {
-    await fetch('/api/crm/communications/broadcasts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, broadcastId: id }) });
+    const res = await fetch('/api/crm/communications/broadcasts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, broadcastId: id }) });
+    const j = await res.json().catch(() => ({} as any));
+    if (action === 'send') {
+      if (!res.ok || j.success === false) setNotice(`Not sent: ${j.error || 'request failed'}`);
+      else if (j.channel === 'email') {
+        setNotice(j.status === 'already_queued'
+          ? `Already queued earlier (${j.queued} recipient(s)). Nothing new was added.`
+          : `Queued ${j.queued} email(s). They are NOT delivered yet. The outbox worker sends them under the configured caps.${j.sendingEnabled ? '' : ' Sending is OFF (EMAIL_SENDING_ENABLED is not "true"), so nothing will be delivered yet.'}`);
+      } else setNotice(`Recorded ${j.sent ?? 0} portal recipient(s).`);
+    }
     load();
   };
 
   return (
     <div className="p-4 lg:p-6 bg-[#F8FAFC] min-h-screen space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Megaphone className="w-5 h-5 text-[#0B5ED7]" /> Broadcast System</h1>
+        <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Megaphone className="w-5 h-5 text-[#2563EB]" /> Broadcast System</h1>
         <p className="text-xs text-gray-500">WhatsApp/SMS/Email/Portal announcement — Student/Partner/Marketing campaign — Requires approval by Marketing Manager or Super Admin — Mass {'>'}100 requires Super Admin — Opt-out respected — No SMTP password visible</p>
       </div>
 
+      {notice && <p className="text-xs bg-white border rounded-lg p-3 text-gray-800">{notice}</p>}
       <Card className="border border-gray-200"><CardHeader className="pb-2"><CardTitle className="text-sm">Create Broadcast</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <Input placeholder="Title (e.g., UK Jan Intake — Last Call)" value={form.title} onChange={e => setForm(s => ({ ...s, title: e.target.value }))} />

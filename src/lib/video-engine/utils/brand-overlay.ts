@@ -116,7 +116,7 @@ export const BRAND_GUIDELINES = {
   },
   colors: {
     primary: "#F97316",
-    secondary: "#0B5ED7",
+    secondary: "#2563EB",
     white: "#FFFFFF",
     black: "#000000",
   },

@@ -6,7 +6,11 @@
  * These assertions guard the pure decision functions that every runtime,
  * tool call and memory access depends on.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// This adversarial suite tests pure permission and input-screening functions;
+// data-backed memory tools are not invoked here.
+vi.mock('@/lib/db', () => ({ db: {} }));
 import { detectInjection, redactDeep, redactSecrets, screenFileInput, screenForInjection, screenToolArguments } from '@/lib/ai-workforce/security';
 import { AWF_CAPABILITIES, SUPER_ADMIN_ONLY, can, capabilitiesFor, normalizeRole, canInvokeAgent } from '@/lib/ai-workforce/rbac';
 import { DEFAULT_MEMORY_POLICY, evaluateMemoryAccess, parseMemoryPolicy } from '@/lib/ai-workforce/memory';
@@ -104,6 +108,12 @@ describe('malicious file screening', () => {
 });
 
 describe('RBAC', () => {
+  it('lets staff with all-run visibility enter the run-history endpoint', () => {
+    for (const role of ['ADMIN', 'MANAGER'] as const) {
+      expect(can(role, 'awf.run.read.all')).toBe(true);
+      expect(can(role, 'awf.run.read.own')).toBe(true);
+    }
+  });
   it('gives Super Admin every capability', () => {
     expect(capabilitiesFor('SUPER_ADMIN')).toHaveLength(AWF_CAPABILITIES.length);
   });

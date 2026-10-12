@@ -132,7 +132,7 @@ export function getVideoEngineConfig(): VideoEngineConfig {
     brand: {
       logoUrl: process.env.BRAND_LOGO_URL || "/brand/alo-logo.png",
       primaryColor: process.env.BRAND_PRIMARY_COLOR || "#F97316",
-      secondaryColor: process.env.BRAND_SECONDARY_COLOR || "#0B5ED7",
+      secondaryColor: process.env.BRAND_SECONDARY_COLOR || "#2563EB",
       watermarkEnabled: process.env.BRAND_WATERMARK_ENABLED !== "false",
       watermarkPosition: (process.env.BRAND_WATERMARK_POSITION as any) || "bottom-right",
     },

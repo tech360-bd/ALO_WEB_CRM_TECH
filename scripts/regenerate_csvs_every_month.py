@@ -20,7 +20,11 @@ Also validates counts.
 import pathlib, csv, re, os, random
 from datetime import date, timedelta
 
-ROOT = pathlib.Path("/home/user/alo_education_z....ai")
+import sys as _alo_sys, pathlib as _alo_pathlib
+_alo_sys.path.insert(0, str(_alo_pathlib.Path(__file__).resolve().parent / "lib"))
+from synthetic_output_guard import require_synthetic_output_dir
+# SYNTHETIC GENERATOR: reads and writes only under ALO_SYNTHETIC_OUTPUT_DIR (fixtures/staging); never the repo root.
+ROOT = require_synthetic_output_dir("regenerate_csvs_every_month")
 os.chdir(ROOT)
 
 # Import university data from TS files via parsing (since we can't import TS directly, parse)

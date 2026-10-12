@@ -1,447 +1,590 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import {
-  Bot, Activity, CheckCircle, XCircle, Clock, Zap,
-  RefreshCw, Play, Pause, Settings, AlertTriangle,
-  TrendingUp, BarChart3, Terminal, ArrowUpRight,
-  MoreVertical, Search, Filter, Download, ChevronDown,
-  Shield, Brain, FileCheck, Mail, GraduationCap,
-  Award, Cpu, Database, ZapOff, Eye, ChevronRight,
+  Tabs, TabsList, TabsTrigger, TabsContent,
+} from '@/components/ui/tabs';
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table';
+import {
+  Bot, Activity, RefreshCw, AlertTriangle, ScrollText, Info,
+  Pause, Shield, Users,
 } from 'lucide-react';
 
-type AgentStatus = 'Active' | 'Idle' | 'Error';
-type LogStatus = 'Success' | 'Failed' | 'Running';
+// ============================================================
+// Types — mirror the real contracts
+// ============================================================
 
-interface AgentCard {
+// GET /api/ai-command/agents → AiEmployee + lineage
+interface AiAgent {
   id: string;
+  employeeCode: string;
   name: string;
-  type: string;
-  description: string;
-  status: AgentStatus;
-  lastRun: string;
-  successRate: number;
-  tasksCompleted: number;
-  tasksPerDay: number;
-  enabled: boolean;
-  icon: React.ElementType;
-  color: string;
+  departmentId: string;
+  role: string;
+  status: string;
+  generation: number;
+  isTwoLoopModel: boolean;
+  hasActiveCycle: boolean;
+  cyclesCompleted: number;
+  lineage: unknown;
 }
 
-interface ActivityLogEntry {
+// GET /api/ai-command/actions → AiCommandAction
+interface AiAction {
   id: string;
-  timestamp: string;
-  agent: string;
-  action: string;
-  input: string;
-  output: string;
-  status: LogStatus;
-  duration: string;
+  actionType: string;
+  targetType: string;
+  targetId?: string | null;
+  requestedBy: string;
+  actor?: string | null;
+  trigger?: string | null;
+  result?: string | null;
+  lastError?: string | null;
+  retryCount: number;
+  status: string;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  executedAt?: string | null;
+  rollbackReason?: string | null;
+  riskLevel: string;
+  createdAt: string;
 }
 
-const statusDotColors: Record<AgentStatus, string> = {
-  Active: 'bg-green-500',
-  Idle: 'bg-yellow-500',
-  Error: 'bg-red-500',
+// GET /api/ai-command/stats
+interface AiStats {
+  total: number;
+  since?: string;
+  byStatus: Array<{ status: string; count: number }>;
+  byRiskLevel: Array<{ riskLevel: string; count: number }>;
+  summary?: {
+    pending?: number;
+    executed?: number;
+    failed?: number;
+    rolledBack?: number;
+  };
+  recentFailures?: Array<{
+    id: string;
+    actionType: string;
+    targetType: string;
+    targetId?: string | null;
+    lastError?: string | null;
+    retryCount: number;
+    createdAt: string;
+  }>;
+  recentExecuted?: number;
+  totalRetries?: number;
+  globalAiPaused?: boolean;
+}
+
+interface LoadState {
+  loading: boolean;
+  error: string | null;
+}
+
+const STATUS_CLS: Record<string, string> = {
+  EXECUTED: 'bg-green-100 text-green-700 border-green-200',
+  APPROVED: 'bg-sky-100 text-sky-700 border-sky-200',
+  PENDING: 'bg-amber-100 text-amber-700 border-amber-200',
+  FAILED: 'bg-red-100 text-red-700 border-red-200',
+  ROLLED_BACK: 'bg-gray-100 text-gray-600 border-gray-200',
+  ACTIVE: 'bg-green-100 text-green-700 border-green-200',
 };
 
-const statusBadgeColors: Record<AgentStatus, string> = {
-  Active: 'bg-green-100 text-green-700',
-  Idle: 'bg-yellow-100 text-yellow-700',
-  Error: 'bg-red-100 text-red-700',
+const RISK_CLS: Record<string, string> = {
+  HIGH: 'bg-red-100 text-red-700 border-red-200',
+  MEDIUM: 'bg-amber-100 text-amber-700 border-amber-200',
+  LOW: 'bg-gray-100 text-gray-600 border-gray-200',
 };
 
-const logStatusColors: Record<LogStatus, string> = {
-  Success: 'bg-green-100 text-green-700',
-  Failed: 'bg-red-100 text-red-700',
-  Running: 'bg-blue-100 text-blue-700',
-};
+function statusBadge(status: string) {
+  return (
+    <Badge variant="outline" className={`text-[10px] ${STATUS_CLS[status] || 'bg-gray-100 text-gray-600'}`}>
+      {status || 'UNKNOWN'}
+    </Badge>
+  );
+}
 
-const logStatusIcons: Record<LogStatus, React.ElementType> = {
-  Success: CheckCircle,
-  Failed: XCircle,
-  Running: RefreshCw,
-};
+function riskBadge(riskLevel: string) {
+  return (
+    <Badge variant="outline" className={`text-[10px] ${RISK_CLS[riskLevel] || 'bg-gray-100 text-gray-600'}`}>
+      {riskLevel || 'UNRATED'}
+    </Badge>
+  );
+}
 
-const defaultAgents: AgentCard[] = [
-  {
-    id: 'AGT-001', name: 'Lead Qualifier', type: 'Lead Management',
-    description: 'Automatically qualifies incoming leads based on criteria such as GPA, IELTS score, budget, and destination preference.',
-    status: 'Active', lastRun: '2 min ago', successRate: 97.2, tasksCompleted: 14520,
-    tasksPerDay: 156, enabled: true, icon: Filter, color: 'text-blue-600 bg-blue-100',
-  },
-  {
-    id: 'AGT-002', name: 'Document Validator', type: 'Document Processing',
-    description: 'Validates uploaded student documents against university requirements. Checks completeness, format, and authenticity.',
-    status: 'Active', lastRun: '5 min ago', successRate: 94.8, tasksCompleted: 8734,
-    tasksPerDay: 89, enabled: true, icon: FileCheck, color: 'text-emerald-600 bg-emerald-100',
-  },
-  {
-    id: 'AGT-003', name: 'Email Responder', type: 'Communication',
-    description: 'Generates and sends personalized email responses for common student inquiries about applications, visas, and documents.',
-    status: 'Idle', lastRun: '18 min ago', successRate: 91.5, tasksCompleted: 23450,
-    tasksPerDay: 312, enabled: true, icon: Mail, color: 'text-purple-600 bg-purple-100',
-  },
-  {
-    id: 'AGT-004', name: 'Visa Checker', type: 'Visa Compliance',
-    description: 'Monitors visa processing status and alerts when actions are needed. Tracks application deadlines and document expiry.',
-    status: 'Active', lastRun: '1 min ago', successRate: 99.1, tasksCompleted: 5678,
-    tasksPerDay: 45, enabled: true, icon: Shield, color: 'text-red-600 bg-red-100',
-  },
-  {
-    id: 'AGT-005', name: 'Course Matcher', type: 'Academic Matching',
-    description: 'Matches students with suitable courses based on their academic profile, interests, and career goals using NLP analysis.',
-    status: 'Active', lastRun: '8 min ago', successRate: 96.3, tasksCompleted: 18920,
-    tasksPerDay: 198, enabled: true, icon: GraduationCap, color: 'text-orange-600 bg-orange-100',
-  },
-  {
-    id: 'AGT-006', name: 'Scholarship Finder', type: 'Financial Aid',
-    description: 'Searches and matches available scholarships based on student nationality, program, GPA, and other eligibility criteria.',
-    status: 'Error', lastRun: '45 min ago', successRate: 88.7, tasksCompleted: 7650,
-    tasksPerDay: 67, enabled: false, icon: Award, color: 'text-amber-600 bg-amber-100',
-  },
-];
+function formatTimestamp(value?: string | null): string {
+  if (!value) return 'Not recorded';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
 
-const defaultActivityLog: ActivityLogEntry[] = [
-  { id: 'LOG-001', timestamp: '2025-06-28T10:45:00', agent: 'Lead Qualifier', action: 'Qualified Lead', input: 'New lead: Arif Rahman, BUET, CGPA 3.7', output: 'Score: 92/100 - High Priority Lead', status: 'Success', duration: '0.8s' },
-  { id: 'LOG-002', timestamp: '2025-06-28T10:44:00', agent: 'Document Validator', action: 'Validated Documents', input: 'Passport + Transcript upload for Sakib H.', output: 'Pass: All documents valid and complete', status: 'Success', duration: '1.2s' },
-  { id: 'LOG-003', timestamp: '2025-06-28T10:43:00', agent: 'Email Responder', action: 'Generated Response', input: 'Student inquiry: Visa processing time', output: 'Sent personalized visa guidance email', status: 'Success', duration: '2.1s' },
-  { id: 'LOG-004', timestamp: '2025-06-28T10:42:00', agent: 'Visa Checker', action: 'Status Check', input: 'UK Visa App: VAF-2025-08923', output: 'Application in processing stage. ETA: 3 weeks', status: 'Success', duration: '3.4s' },
-  { id: 'LOG-005', timestamp: '2025-06-28T10:40:00', agent: 'Course Matcher', action: 'Matched Courses', input: 'Profile: BSc CS, BUET, CGPA 3.7', output: 'Top 5: UCL, Imperial, Manchester, Edinburgh, Warwick', status: 'Success', duration: '1.5s' },
-  { id: 'LOG-006', timestamp: '2025-06-28T10:38:00', agent: 'Scholarship Finder', action: 'Search Scholarships', input: 'UK, MSc CS, CGPA 3.7, Bangladesh', output: 'Error: External API timeout after 30s', status: 'Failed', duration: '30.0s' },
-  { id: 'LOG-007', timestamp: '2025-06-28T10:35:00', agent: 'Lead Qualifier', action: 'Qualified Lead', input: 'New lead: Fatima B., IELTS 6.5, UK interest', output: 'Score: 78/100 - Medium Priority Lead', status: 'Success', duration: '0.9s' },
-  { id: 'LOG-008', timestamp: '2025-06-28T10:33:00', agent: 'Document Validator', action: 'Validated Documents', input: 'IELTS certificate scan for Nusrat J.', output: 'Fail: IELTS certificate expired (issued 2019)', status: 'Failed', duration: '1.1s' },
-  { id: 'LOG-009', timestamp: '2025-06-28T10:30:00', agent: 'Email Responder', action: 'Generated Response', input: 'Student inquiry: Scholarship deadline', output: 'Sent scholarship application checklist email', status: 'Success', duration: '1.8s' },
-  { id: 'LOG-010', timestamp: '2025-06-28T10:28:00', agent: 'Course Matcher', action: 'Matched Courses', input: 'Profile: BBA, NSU, CGPA 3.85', output: 'Top 5: Leeds, Birmingham, Sheffield, Nottingham, Aston', status: 'Success', duration: '1.3s' },
-  { id: 'LOG-011', timestamp: '2025-06-28T10:25:00', agent: 'Visa Checker', action: 'Deadline Alert', input: 'Monitoring 12 active visa applications', output: 'Alert: 2 applications nearing decision deadline', status: 'Success', duration: '4.2s' },
-  { id: 'LOG-012', timestamp: '2025-06-28T10:22:00', agent: 'Document Validator', action: 'Validated Documents', input: 'Financial docs for Tanvir A.', output: 'Warning: Bank statement needs re-verification', status: 'Success', duration: '1.6s' },
-];
+function countOf(list: Array<{ status: string; count: number }>, status: string): number {
+  return list.find((entry) => entry.status === status)?.count || 0;
+}
 
 export default function CrmAgentOperationsPage() {
-  const [agents, setAgents] = useState<AgentCard[]>(defaultAgents);
-  const [activityLog] = useState<ActivityLogEntry[]>(defaultActivityLog);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<AgentStatus | 'all'>('all');
+  const [agents, setAgents] = useState<AiAgent[]>([]);
+  const [agentState, setAgentState] = useState<LoadState>({ loading: true, error: null });
+  const [agentCount, setAgentCount] = useState(0);
+  const [twoLoopModels, setTwoLoopModels] = useState(0);
 
-  const filteredAgents = agents.filter(agent => {
-    if (filterStatus !== 'all' && agent.status !== filterStatus) return false;
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      return agent.name.toLowerCase().includes(q) || agent.type.toLowerCase().includes(q);
+  const [actions, setActions] = useState<AiAction[]>([]);
+  const [actionState, setActionState] = useState<LoadState>({ loading: true, error: null });
+  const [actionStats, setActionStats] = useState<Record<string, number>>({});
+
+  const [stats, setStats] = useState<AiStats | null>(null);
+  const [statsState, setStatsState] = useState<LoadState>({ loading: true, error: null });
+
+  const loadAgents = useCallback(async () => {
+    setAgentState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/ai-command/agents?limit=200');
+      if (!response.ok) throw new Error(`Could not load AI agents (HTTP ${response.status})`);
+      const payload = await response.json();
+      setAgents(Array.isArray(payload?.agents) ? payload.agents : []);
+      setAgentCount(Number(payload?.count) || 0);
+      setTwoLoopModels(Number(payload?.twoLoopModels) || 0);
+      setAgentState({ loading: false, error: null });
+    } catch (error) {
+      setAgents([]);
+      setAgentState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load AI agents',
+      });
     }
-    return true;
-  });
+  }, []);
 
-  const filteredLog = activityLog.filter(entry => {
-    if (selectedAgent && entry.agent !== selectedAgent) return false;
-    return true;
-  });
+  const loadActions = useCallback(async () => {
+    setActionState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/ai-command/actions?status=ALL&limit=100');
+      if (!response.ok) throw new Error(`Could not load AI actions (HTTP ${response.status})`);
+      const payload = await response.json();
+      setActions(Array.isArray(payload?.actions) ? payload.actions : []);
+      setActionStats(payload?.stats || {});
+      setActionState({ loading: false, error: null });
+    } catch (error) {
+      setActions([]);
+      setActionState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load AI actions',
+      });
+    }
+  }, []);
 
-  const activeCount = agents.filter(a => a.status === 'Active').length;
-  const idleCount = agents.filter(a => a.status === 'Idle').length;
-  const errorCount = agents.filter(a => a.status === 'Error').length;
-  const totalTasks = agents.reduce((acc, a) => acc + a.tasksCompleted, 0);
-  const avgSuccess = (agents.reduce((acc, a) => acc + a.successRate, 0) / agents.length).toFixed(1);
+  const loadStats = useCallback(async () => {
+    setStatsState({ loading: true, error: null });
+    try {
+      const response = await fetch('/api/ai-command/stats');
+      if (!response.ok) throw new Error(`Could not load AI statistics (HTTP ${response.status})`);
+      setStats(await response.json());
+      setStatsState({ loading: false, error: null });
+    } catch (error) {
+      setStats(null);
+      setStatsState({
+        loading: false,
+        error: error instanceof Error ? error.message : 'Could not load AI statistics',
+      });
+    }
+  }, []);
 
-  const handleToggleAgent = (agentId: string) => {
-    setAgents(agents.map(a => {
-      if (a.id === agentId) {
-        const newEnabled = !a.enabled;
-        return {
-          ...a,
-          enabled: newEnabled,
-          status: newEnabled ? 'Active' : 'Idle',
-        };
-      }
-      return a;
-    }));
+  useEffect(() => {
+    void loadAgents();
+    void loadActions();
+    void loadStats();
+  }, [loadAgents, loadActions, loadStats]);
+
+  const refreshAll = async () => {
+    await Promise.all([loadAgents(), loadActions(), loadStats()]);
   };
 
-  const handleRestartAgent = (agentId: string) => {
-    setAgents(agents.map(a => a.id === agentId ? { ...a, status: 'Active', lastRun: 'Just now' } : a));
-  };
-
-  const formatTimestamp = (ts: string) => {
-    const date = new Date(ts);
-    return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
-  };
+  const failedCount = useMemo(
+    () => stats?.summary?.failed ?? countOf(stats?.byStatus || [], 'FAILED'),
+    [stats],
+  );
+  const executedCount = useMemo(
+    () => stats?.summary?.executed ?? countOf(stats?.byStatus || [], 'EXECUTED'),
+    [stats],
+  );
 
   return (
-    <div className="flex flex-col h-full gap-4">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-violet-600 rounded-lg">
-            <Bot className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">AI Agent Operations</h1>
-            <p className="text-sm text-gray-500">Monitor and manage your AI agents</p>
-          </div>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+            <Bot className="h-6 w-6 text-primary" />
+            AI Agent Operations
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Registered AI agents, the actions they have requested, and execution outcomes.
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
-            <Activity className="h-4 w-4 mr-1" />
-            Health Check
-          </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-1" />
-            Configure
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" onClick={() => void refreshAll()}>
+          <RefreshCw
+            className={`mr-1 h-4 w-4 ${agentState.loading || actionState.loading || statsState.loading ? 'animate-spin' : ''}`}
+          />
+          Refresh
+        </Button>
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="p-2 bg-green-100 rounded-lg"><Zap className="h-4 w-4 text-green-600" /></div>
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            </div>
-            <p className="text-2xl font-bold text-gray-900 mt-3">{activeCount}</p>
-            <p className="text-xs text-gray-500">Active Agents</p>
+      {stats?.globalAiPaused && (
+        <Card className="border-amber-200 bg-amber-50">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-amber-800">
+            <Pause className="mt-0.5 h-4 w-4 shrink-0" />
+            <p className="font-medium">
+              Global AI execution is paused. Requested actions will queue but not run.
+            </p>
           </CardContent>
         </Card>
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="p-2 bg-yellow-100 rounded-lg"><Clock className="h-4 w-4 text-yellow-600" /></div>
+      )}
+
+      <div className="grid gap-3 sm:grid-cols-4">
+        <Card>
+          <CardContent className="flex items-center justify-between pt-6">
+            <div>
+              <p className="text-muted-foreground text-xs">Agents</p>
+              <p className="text-2xl font-bold">{agentCount}</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900 mt-3">{idleCount}</p>
-            <p className="text-xs text-gray-500">Idle Agents</p>
+            <Users className="text-muted-foreground h-5 w-5" />
           </CardContent>
         </Card>
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="p-2 bg-red-100 rounded-lg"><AlertTriangle className="h-4 w-4 text-red-600" /></div>
+        <Card>
+          <CardContent className="flex items-center justify-between pt-6">
+            <div>
+              <p className="text-muted-foreground text-xs">Actions recorded</p>
+              <p className="text-2xl font-bold">{stats?.total ?? actionStats.total ?? 0}</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900 mt-3">{errorCount}</p>
-            <p className="text-xs text-gray-500">Error State</p>
+            <Activity className="text-muted-foreground h-5 w-5" />
           </CardContent>
         </Card>
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="p-2 bg-blue-100 rounded-lg"><BarChart3 className="h-4 w-4 text-blue-600" /></div>
+        <Card>
+          <CardContent className="flex items-center justify-between pt-6">
+            <div>
+              <p className="text-muted-foreground text-xs">Executed</p>
+              <p className="text-2xl font-bold">{executedCount}</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900 mt-3">{totalTasks.toLocaleString()}</p>
-            <p className="text-xs text-gray-500">Tasks Completed</p>
+            <Shield className="text-muted-foreground h-5 w-5" />
           </CardContent>
         </Card>
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="p-2 bg-orange-100 rounded-lg"><TrendingUp className="h-4 w-4 text-orange-600" /></div>
-              <span className="text-xs text-green-600 font-medium bg-green-50 px-1.5 py-0.5 rounded">+0.3%</span>
+        <Card>
+          <CardContent className="flex items-center justify-between pt-6">
+            <div>
+              <p className="text-muted-foreground text-xs">Failed</p>
+              <p className="text-2xl font-bold">{failedCount}</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900 mt-3">{avgSuccess}%</p>
-            <p className="text-xs text-gray-500">Avg Success Rate</p>
+            <AlertTriangle className={`h-5 w-5 ${failedCount > 0 ? 'text-red-600' : 'text-muted-foreground'}`} />
           </CardContent>
         </Card>
       </div>
 
-      {/* Agent Cards Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-700">Agent Registry</h2>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search agents..." className="pl-9 h-8 text-xs w-48" />
+      {statsState.error && (
+        <Card>
+          <CardContent className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-sm">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+              <p className="font-medium">{statsState.error}</p>
+              <button
+                type="button"
+                className="mt-1 underline underline-offset-2"
+                onClick={() => void loadStats()}
+              >
+                Try again
+              </button>
             </div>
-            <div className="flex items-center border rounded-lg overflow-hidden">
-              {(['all', 'Active', 'Idle', 'Error'] as const).map(s => (
-                <button
-                  key={s}
-                  onClick={() => setFilterStatus(s)}
-                  className={`px-2.5 py-1 text-xs font-medium transition-colors ${filterStatus === s ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
-                >
-                  {s === 'all' ? 'All' : s}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filteredAgents.map(agent => {
-            const AgentIcon = agent.icon;
-            return (
-              <Card key={agent.id} className="shadow-sm hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${agent.color}`}>
-                        <AgentIcon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-gray-900">{agent.name}</p>
-                          <span className={`w-2 h-2 rounded-full ${statusDotColors[agent.status]} ${agent.status === 'Active' ? 'animate-pulse' : ''}`} />
-                        </div>
-                        <p className="text-xs text-gray-500">{agent.type}</p>
-                      </div>
-                    </div>
-                    <Badge className={`text-[10px] ${statusBadgeColors[agent.status]}`}>{agent.status}</Badge>
-                  </div>
-                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{agent.description}</p>
-                  <Separator className="mb-3" />
-                  <div className="grid grid-cols-3 gap-2 mb-3">
-                    <div className="text-center">
-                      <p className="text-lg font-bold text-gray-900">{agent.successRate}%</p>
-                      <p className="text-[10px] text-gray-400">Success Rate</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-lg font-bold text-gray-900">{agent.tasksPerDay}</p>
-                      <p className="text-[10px] text-gray-400">Tasks/Day</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-lg font-bold text-gray-900">{(agent.tasksCompleted / 1000).toFixed(1)}K</p>
-                      <p className="text-[10px] text-gray-400">Total Tasks</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p className="text-[10px] text-gray-400">Last run: {agent.lastRun}</p>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={`h-7 text-[10px] px-2 ${agent.enabled ? 'text-green-600 border-green-300 hover:bg-green-50' : 'text-gray-500 hover:bg-gray-50'}`}
-                        onClick={() => handleToggleAgent(agent.id)}
-                      >
-                        {agent.enabled ? <Play className="h-3 w-3 mr-0.5" /> : <Pause className="h-3 w-3 mr-0.5" />}
-                        {agent.enabled ? 'Enabled' : 'Disabled'}
-                      </Button>
-                      {agent.status === 'Error' && (
-                        <Button variant="outline" size="sm" className="h-7 text-[10px] px-2 text-red-600 border-red-300 hover:bg-red-50" onClick={() => handleRestartAgent(agent.id)}>
-                          <RefreshCw className="h-3 w-3 mr-0.5" />
-                          Restart
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Activity Log */}
-      <Card className="shadow-sm">
-        <CardHeader className="pb-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Terminal className="h-4 w-4 text-blue-600" />
-              <CardTitle className="text-sm font-semibold">Activity Log</CardTitle>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center border rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setSelectedAgent(null)}
-                  className={`px-2.5 py-1 text-xs font-medium transition-colors ${selectedAgent === null ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
-                >
-                  All Agents
-                </button>
-                {agents.map(agent => (
+      <Tabs defaultValue="agents">
+        <TabsList className="h-9">
+          <TabsTrigger value="agents" className="h-8 px-3 text-xs font-medium">
+            Agents ({agents.length})
+          </TabsTrigger>
+          <TabsTrigger value="actions" className="h-8 px-3 text-xs font-medium">
+            Actions ({actions.length})
+          </TabsTrigger>
+          <TabsTrigger value="breakdown" className="h-8 px-3 text-xs font-medium">
+            Status breakdown
+          </TabsTrigger>
+        </TabsList>
+
+        {/* ── AGENTS ── */}
+        <TabsContent value="agents" className="mt-4 space-y-4">
+          {agentState.error && (
+            <Card>
+              <CardContent className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-sm">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">{agentState.error}</p>
                   <button
-                    key={agent.id}
-                    onClick={() => setSelectedAgent(agent.name)}
-                    className={`px-2.5 py-1 text-xs font-medium transition-colors ${selectedAgent === agent.name ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+                    type="button"
+                    className="mt-1 underline underline-offset-2"
+                    onClick={() => void loadAgents()}
                   >
-                    {agent.name}
+                    Try again
                   </button>
-                ))}
-              </div>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 text-xs">
-                <Download className="h-3 w-3 mr-1" />
-                Export
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto max-h-96 overflow-y-auto">
-            <table className="w-full">
-              <thead className="sticky top-0 bg-white">
-                <tr className="border-b">
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">Timestamp</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">Agent</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">Action</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">Input</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-gray-500">Output</th>
-                  <th className="text-center px-4 py-2.5 text-xs font-medium text-gray-500">Status</th>
-                  <th className="text-center px-4 py-2.5 text-xs font-medium text-gray-500">Duration</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredLog.map(entry => {
-                  const LogIcon = logStatusIcons[entry.status];
-                  return (
-                    <tr key={entry.id} className="border-b hover:bg-gray-50/50 transition-colors">
-                      <td className="px-4 py-2.5 text-xs text-gray-500 whitespace-nowrap">{formatTimestamp(entry.timestamp)}</td>
-                      <td className="px-4 py-2.5">
-                        <Badge variant="outline" className="text-[10px]">{entry.agent}</Badge>
-                      </td>
-                      <td className="px-4 py-2.5 text-xs font-medium text-gray-800">{entry.action}</td>
-                      <td className="px-4 py-2.5 text-xs text-gray-500 max-w-[200px] truncate">{entry.input}</td>
-                      <td className="px-4 py-2.5 text-xs text-gray-600 max-w-[200px] truncate">{entry.output}</td>
-                      <td className="px-4 py-2.5 text-center">
-                        <Badge className={`text-[10px] ${logStatusColors[entry.status]}`}>
-                          <LogIcon className="h-3 w-3 mr-0.5" />
-                          {entry.status}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-2.5 text-center text-xs text-gray-500">{entry.duration}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-      {/* Health Indicators */}
-      <Card className="shadow-sm">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-green-600" />
-            <CardTitle className="text-sm font-semibold">System Health</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {agents.map(agent => (
-              <div key={agent.id} className="border rounded-lg p-3 flex flex-col items-center gap-2">
-                <div className="relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${agent.enabled ? 'bg-green-100' : 'bg-gray-100'}`}>
-                    <agent.icon className={`h-5 w-5 ${agent.enabled ? 'text-green-600' : 'text-gray-400'}`} />
-                  </div>
-                  <span className={`absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${statusDotColors[agent.status]} ${agent.status === 'Active' ? 'animate-pulse' : ''}`} />
+          {agentState.loading ? (
+            <Card>
+              <CardContent className="text-muted-foreground py-12 text-center text-sm">
+                Loading agents…
+              </CardContent>
+            </Card>
+          ) : agents.length === 0 && !agentState.error ? (
+            <Card>
+              <CardContent className="text-muted-foreground flex flex-col items-center gap-2 py-14 text-center">
+                <Bot className="h-8 w-8 opacity-30" />
+                <p className="text-sm">No active AI agent has been registered yet.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">
+                  Active agents ({agents.length})
+                  {twoLoopModels > 0 ? ` · ${twoLoopModels} two-loop` : ''}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Agent</TableHead>
+                        <TableHead className="w-[170px]">Role</TableHead>
+                        <TableHead className="w-[150px]">Department</TableHead>
+                        <TableHead className="w-[110px]">Status</TableHead>
+                        <TableHead className="w-[130px]">Generation</TableHead>
+                        <TableHead className="w-[130px]">Cycles</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {agents.map((agent) => (
+                        <TableRow key={agent.id}>
+                          <TableCell>
+                            <p className="font-medium">{agent.name}</p>
+                            <p className="text-muted-foreground text-xs">{agent.employeeCode}</p>
+                          </TableCell>
+                          <TableCell className="text-xs">{agent.role || 'Unspecified'}</TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {agent.departmentId || 'Unassigned'}
+                          </TableCell>
+                          <TableCell>{statusBadge(agent.status)}</TableCell>
+                          <TableCell className="text-xs">
+                            {agent.generation}
+                            {agent.isTwoLoopModel ? (
+                              <Badge variant="outline" className="ml-1 text-[10px]">Two-loop</Badge>
+                            ) : null}
+                          </TableCell>
+                          <TableCell className="text-xs">
+                            {agent.cyclesCompleted} completed
+                            {agent.hasActiveCycle ? (
+                              <Badge variant="outline" className="ml-1 bg-sky-100 text-sky-700 text-[10px]">
+                                Active
+                              </Badge>
+                            ) : null}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
-                <p className="text-xs font-medium text-gray-700 text-center">{agent.name}</p>
-                <div className="flex items-center gap-1">
-                  <div className={`w-24 h-1.5 rounded-full bg-gray-200 overflow-hidden`}>
-                    <div
-                      className={`h-full rounded-full transition-all ${agent.successRate >= 95 ? 'bg-green-500' : agent.successRate >= 90 ? 'bg-yellow-500' : 'bg-red-500'}`}
-                      style={{ width: `${agent.successRate}%` }}
-                    />
-                  </div>
-                  <span className="text-[10px] text-gray-400">{agent.successRate}%</span>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* ── ACTIONS ── */}
+        <TabsContent value="actions" className="mt-4 space-y-4">
+          {actionState.error && (
+            <Card>
+              <CardContent className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-sm">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">{actionState.error}</p>
+                  <button
+                    type="button"
+                    className="mt-1 underline underline-offset-2"
+                    onClick={() => void loadActions()}
+                  >
+                    Try again
+                  </button>
                 </div>
-                <p className="text-[10px] text-gray-400">{agent.lastRun}</p>
-              </div>
-            ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {actionState.loading ? (
+            <Card>
+              <CardContent className="text-muted-foreground py-12 text-center text-sm">
+                Loading actions…
+              </CardContent>
+            </Card>
+          ) : actions.length === 0 && !actionState.error ? (
+            <Card>
+              <CardContent className="text-muted-foreground flex flex-col items-center gap-2 py-14 text-center">
+                <ScrollText className="h-8 w-8 opacity-30" />
+                <p className="text-sm">No AI action has been recorded yet.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Action</TableHead>
+                        <TableHead className="w-[120px]">Risk</TableHead>
+                        <TableHead className="w-[130px]">Status</TableHead>
+                        <TableHead className="w-[160px]">Requested by</TableHead>
+                        <TableHead className="w-[90px]">Retries</TableHead>
+                        <TableHead className="w-[170px]">Recorded</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {actions.map((action) => (
+                        <TableRow key={action.id}>
+                          <TableCell>
+                            <p className="font-medium">
+                              {(action.actionType || '').replace(/_/g, ' ')}
+                            </p>
+                            <p className="text-muted-foreground text-xs">
+                              {action.targetType || 'unspecified target'}
+                              {action.targetId ? ` · ${action.targetId}` : ''}
+                            </p>
+                            {action.lastError ? (
+                              <p className="mt-1 text-[10px] text-red-600">{action.lastError}</p>
+                            ) : null}
+                          </TableCell>
+                          <TableCell>{riskBadge(action.riskLevel)}</TableCell>
+                          <TableCell>{statusBadge(action.status)}</TableCell>
+                          <TableCell className="text-xs">
+                            {action.actor || action.requestedBy || 'Not attributed'}
+                            {action.trigger ? (
+                              <span className="text-muted-foreground block">
+                                via {action.trigger}
+                              </span>
+                            ) : null}
+                          </TableCell>
+                          <TableCell className="text-xs">{action.retryCount || 0}</TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {formatTimestamp(action.createdAt)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* ── BREAKDOWN ── */}
+        <TabsContent value="breakdown" className="mt-4 space-y-4">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">By status</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {!stats || stats.byStatus.length === 0 ? (
+                  <p className="text-muted-foreground py-6 text-center text-sm">
+                    {statsState.loading ? 'Loading…' : 'No status data is available.'}
+                  </p>
+                ) : (
+                  stats.byStatus.map((entry) => (
+                    <div key={entry.status} className="flex items-center justify-between gap-2">
+                      {statusBadge(entry.status)}
+                      <span className="text-sm font-medium">{entry.count}</span>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">By risk level</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {!stats || stats.byRiskLevel.length === 0 ? (
+                  <p className="text-muted-foreground py-6 text-center text-sm">
+                    {statsState.loading ? 'Loading…' : 'No risk data is available.'}
+                  </p>
+                ) : (
+                  stats.byRiskLevel.map((entry) => (
+                    <div key={entry.riskLevel} className="flex items-center justify-between gap-2">
+                      {riskBadge(entry.riskLevel)}
+                      <span className="text-sm font-medium">{entry.count}</span>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
           </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Recent failures</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {!stats?.recentFailures || stats.recentFailures.length === 0 ? (
+                <p className="text-muted-foreground py-6 text-center text-sm">
+                  No recent failure has been recorded.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {stats.recentFailures.map((failure) => (
+                    <li
+                      key={failure.id}
+                      className="border-alo-border flex flex-wrap items-center justify-between gap-2 border-b pb-2 last:border-0"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium">
+                          {(failure.actionType || '').replace(/_/g, ' ')}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          {failure.targetType}
+                          {failure.targetId ? ` · ${failure.targetId}` : ''}
+                          {failure.retryCount ? ` · ${failure.retryCount} retries` : ''}
+                        </p>
+                        {failure.lastError ? (
+                          <p className="mt-0.5 text-[10px] text-red-600">{failure.lastError}</p>
+                        ) : null}
+                      </div>
+                      <span className="text-muted-foreground text-xs">
+                        {formatTimestamp(failure.createdAt)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <Card>
+        <CardContent className="text-muted-foreground flex items-start gap-2 pt-6 text-xs">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Counts come from the AI command action table. Success rates and tasks-per-day figures
+            are not shown: the agent record carries a default success-rate value that is not a
+            measurement, so reporting it would misrepresent agent performance. Statistics are
+            restricted to administrator roles by the API.
+          </span>
         </CardContent>
       </Card>
     </div>

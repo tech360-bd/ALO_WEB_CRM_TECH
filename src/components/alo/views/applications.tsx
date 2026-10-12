@@ -210,7 +210,7 @@ export function ApplicationsView() {
                 onClick={() => setStageFilter(stageFilter === stage ? "ALL" : stage)}
                 className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
                   stageFilter === stage
-                    ? "border-[#0B5ED7] ring-2 ring-[#0B5ED7]/20"
+                    ? "border-[#2563EB] ring-2 ring-[#2563EB]/20"
                     : "border-transparent"
                 } ${active ? colorCls : "bg-slate-50 text-slate-400"}`}
                 title={STAGE_LABELS[stage]}
@@ -238,7 +238,7 @@ export function ApplicationsView() {
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-muted-foreground">Stage</label>
             <Select value={stageFilter} onValueChange={setStageFilter}>
-              <SelectTrigger className="h-10 w-full border-[#0B5ED7]/20">
+              <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -254,7 +254,7 @@ export function ApplicationsView() {
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-muted-foreground">Country</label>
             <Select value={countryFilter} onValueChange={setCountryFilter}>
-              <SelectTrigger className="h-10 w-full border-[#0B5ED7]/20">
+              <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -304,14 +304,14 @@ export function ApplicationsView() {
               return (
                 <Card
                   key={app.id}
-                  className="rounded-2xl border-2 border-[#0B5ED7]/15 transition-colors hover:border-[#0B5ED7]/40"
+                  className="rounded-2xl border-2 border-[#2563EB]/15 transition-colors hover:border-[#2563EB]/40"
                 >
                   <CardContent className="space-y-3 pt-5">
                     {/* Top row */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-semibold text-[#0B5ED7]">
+                          <span className="font-mono text-xs font-semibold text-[#2563EB]">
                             {app.applicationId}
                           </span>
                           <span
@@ -335,9 +335,9 @@ export function ApplicationsView() {
                     </div>
 
                     {/* Course details */}
-                    <div className="rounded-xl border border-[#0B5ED7]/10 bg-[#f7f9fc] p-3">
+                    <div className="rounded-xl border border-[#2563EB]/10 bg-[#f7f9fc] p-3">
                       <div className="flex items-start gap-2">
-                        <Icon name="Building2" className="mt-0.5 size-4 shrink-0 text-[#0B5ED7]" />
+                        <Icon name="Building2" className="mt-0.5 size-4 shrink-0 text-[#2563EB]" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-semibold text-foreground">
                             {app.university}
@@ -346,7 +346,7 @@ export function ApplicationsView() {
                         </div>
                         {flag && (
                           <span
-                            className="shrink-0 rounded border border-[#0B5ED7]/15 bg-white px-1.5 py-0.5 text-[10px] font-bold text-[#0B5ED7]"
+                            className="shrink-0 rounded border border-[#2563EB]/15 bg-white px-1.5 py-0.5 text-[10px] font-bold text-[#2563EB]"
                             title={app.country}
                           >
                             {flag} {app.country}
@@ -369,7 +369,7 @@ export function ApplicationsView() {
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-medium text-muted-foreground">Pipeline progress</span>
-                        <span className="font-semibold text-[#0B5ED7]">
+                        <span className="font-semibold text-[#2563EB]">
                           Stage {stageIdx + 1} / {APP_STAGES.length} · {pct}%
                         </span>
                       </div>
@@ -411,7 +411,7 @@ export function ApplicationsView() {
                             className={`ml-1 px-1.5 py-0 text-[10px] ${
                               deadlineNear
                                 ? "border-amber-300 text-amber-700"
-                                : "border-[#0B5ED7]/20 text-[#0B5ED7]"
+                                : "border-[#2563EB]/20 text-[#2563EB]"
                             }`}
                           >
                             {daysToDeadline}d left
@@ -426,7 +426,7 @@ export function ApplicationsView() {
                       <Button
                         size="sm"
                         onClick={() => openUpdate(app)}
-                        className="h-8 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+                        className="h-8 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
                       >
                         <Icon name="GitCommitHorizontal" className="size-3.5" />
                         Update Stage
@@ -444,26 +444,26 @@ export function ApplicationsView() {
       <Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#0B5ED7]">Update application stage</DialogTitle>
+            <DialogTitle className="text-[#2563EB]">Update application stage</DialogTitle>
             <DialogDescription>
               {updateTarget?.university} — <span className="font-mono">{updateTarget?.applicationId}</span>
             </DialogDescription>
           </DialogHeader>
           {updateTarget && (
             <div className="space-y-4">
-              <div className="rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 p-3 text-xs">
+              <div className="rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 p-3 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[#0B5ED7]">Student</span>
+                  <span className="font-semibold text-[#2563EB]">Student</span>
                   <span>
                     {updateTarget.student?.fullName} ({updateTarget.student?.studentId})
                   </span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between">
-                  <span className="font-semibold text-[#0B5ED7]">Course</span>
+                  <span className="font-semibold text-[#2563EB]">Course</span>
                   <span className="text-right">{updateTarget.course}</span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between">
-                  <span className="font-semibold text-[#0B5ED7]">Current</span>
+                  <span className="font-semibold text-[#2563EB]">Current</span>
                   <span className="font-semibold text-foreground">
                     {STAGE_LABELS[updateTarget.stage] || updateTarget.stage}
                   </span>
@@ -471,9 +471,9 @@ export function ApplicationsView() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-[#0B5ED7]">New stage</label>
+                <label className="text-sm font-semibold text-[#2563EB]">New stage</label>
                 <Select value={newStage} onValueChange={setNewStage}>
-                  <SelectTrigger className="h-10 w-full border-[#0B5ED7]/20">
+                  <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="max-h-72">
@@ -507,7 +507,7 @@ export function ApplicationsView() {
             <Button
               onClick={submitUpdate}
               disabled={saving || (updateTarget?.stage === newStage)}
-              className="h-10 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+              className="h-10 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
             >
               {saving ? (
                 <>

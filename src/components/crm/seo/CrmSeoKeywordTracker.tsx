@@ -1,4 +1,5 @@
 'use client';
+import SeoEvidencePanel from './SeoEvidencePanel';
 
 import { useState } from 'react';
 import {
@@ -273,7 +274,10 @@ function SeverityBadge({ severity }: { severity: 'High' | 'Medium' | 'Low' }) {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function CrmSeoKeywordTracker() {
+export default function CrmSeoKeywordTracker() { return <SeoEvidencePanel mode="keywords"/>; }
+
+/** Historical design fixture, deliberately not rendered as operational evidence. */
+function LegacyUnverifiedCrmSeoKeywordTracker() {
   const [search, setSearch] = useState('');
   const [intentFilter, setIntentFilter] = useState<string>('all');
   const [destFilter, setDestFilter] = useState<string>('all');

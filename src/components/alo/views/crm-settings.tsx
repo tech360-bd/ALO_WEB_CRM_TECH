@@ -86,7 +86,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
+              className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("SLA")}
             >
               Save
@@ -132,7 +132,7 @@ export function CrmSettings() {
                 />
               </div>
             </div>
-            <div className="rounded-lg bg-[#EAF3FF] p-3 text-xs text-[#0B5ED7]">
+            <div className="rounded-lg bg-[#EAF3FF] p-3 text-xs text-[#2563EB]">
               <Icon name="Info" className="mr-1 inline size-3.5" />
               Escalations notify the counselor's manager and senior leadership.
             </div>
@@ -147,7 +147,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
+              className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("Office Hours")}
             >
               Save
@@ -218,7 +218,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
+              className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("Scoring")}
             >
               Save
@@ -283,7 +283,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
+              className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("Assignment")}
             >
               Save
@@ -376,7 +376,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0B5ED7] text-white hover:bg-[#0052a3]"
+              className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
               onClick={() => handleSave("Auto-reply")}
             >
               Save

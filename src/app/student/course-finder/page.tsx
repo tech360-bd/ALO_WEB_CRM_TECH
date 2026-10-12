@@ -42,7 +42,7 @@ export default function StudentCourseFinderPage() {
     <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 shadow-sm">
-          <Badge className="bg-[#0B5ED7]/10 text-[#0B5ED7] border-[#0B5ED7]/20 text-xs mb-3">Student Course Finder — Same DB + Personalized Logic</Badge>
+          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-3">Student Course Finder — Same DB + Personalized Logic</Badge>
           <h1 className="text-3xl font-bold text-[#0F172A] mb-2">Find Courses — Personalized for You</h1>
           <p className="text-sm text-gray-600 max-w-3xl">Same database as public finder. Add personalized logic based on your profile: Nationality, Education country, Highest qualification, GPA/CGPA, English test/score, Study gap, Work experience, Backlogs, Budget, Preferred country/subject/intake. Calculates Eligibility Score + AI Match Score. Labels: Eligible, Likely Eligible, Need Review, Not Eligible, Missing Information. Never guarantee admission or visa.</p>
           <div className="grid md:grid-cols-4 gap-3 mt-6">
@@ -59,7 +59,7 @@ export default function StudentCourseFinderPage() {
         </div>
 
         <Card className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-          <div className="flex gap-3"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search courses — same DB..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" /></div><Button onClick={() => fetchCourses()} className="bg-[#0B5ED7] text-white h-11">Search — Personalized</Button></div>
+          <div className="flex gap-3"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search courses — same DB..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" /></div><Button onClick={() => fetchCourses()} className="bg-[#2563EB] text-white h-11">Search — Personalized</Button></div>
         </Card>
 
         {loading ? <div className="grid sm:grid-cols-2 gap-4">{[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-white border border-[#E2E8F0] rounded-2xl animate-pulse" />)}</div> : courses.length === 0 ? (
@@ -69,7 +69,7 @@ export default function StudentCourseFinderPage() {
             <p className="text-sm text-gray-500">{courses.length} courses — with Eligibility Score + AI Match Score</p>
             <div className="grid sm:grid-cols-2 gap-4">
               {courses.map((c: any) => (
-                <Card key={c.courseId} className="p-5 bg-white border-[#E2E8F0] hover:border-[#0B5ED7] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                <Card key={c.courseId} className="p-5 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <Badge className={`${c.eligibility.label === 'Eligible' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : c.eligibility.label === 'Likely Eligible' ? 'bg-blue-50 text-blue-700 border-blue-100' : c.eligibility.label === 'Need Review' ? 'bg-amber-50 text-amber-700 border-amber-200' : c.eligibility.label === 'Not Eligible' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-gray-50 text-gray-600 border-gray-200'} text-[10px]`}>{c.eligibility.label} — {c.eligibility.score}%</Badge>
@@ -84,7 +84,7 @@ export default function StudentCourseFinderPage() {
                     </div>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <Link href={`/student/course/${c.courseId}`} className="block"><Button className="w-full bg-[#0B5ED7] text-white h-11 text-xs font-bold">View Course + Eligibility</Button></Link>
+                    <Link href={`/student/course/${c.courseId}`} className="block"><Button className="w-full bg-[#2563EB] text-white h-11 text-xs font-bold">View Course + Eligibility</Button></Link>
                     <div className="grid grid-cols-3 gap-2">
                       <Button variant="outline" size="sm" className="h-9 text-[11px] border-[#E2E8F0]"><BookmarkPlus className="w-3 h-3 mr-1" />Save</Button>
                       <Link href="/student/compare"><Button variant="outline" size="sm" className="h-9 text-[11px] border-[#E2E8F0]"><GitCompare className="w-3 h-3 mr-1" />Compare</Button></Link>

@@ -1,0 +1,2475 @@
+--- a/src/app/api/admin/countries/route.ts
++++ b/src/app/api/admin/countries/route.ts
+@@ -85,7 +85,8 @@
+         workRights: workRights || '',
+         seoTitle: seoTitle || '',
+         seoDescription: seoDescription || '',
+-        lastVerifiedAt: new Date(),
++        // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
++        // the public country page shows it as "Last verified".
+       },
+       create: {
+         name,
+@@ -105,7 +106,8 @@
+         workRights: workRights || '',
+         seoTitle: seoTitle || '',
+         seoDescription: seoDescription || '',
+-        lastVerifiedAt: new Date(),
++        // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
++        // the public country page shows it as "Last verified".
+       },
+     });
+ 
+--- a/src/app/api/admin/courses/[id]/route.ts
++++ b/src/app/api/admin/courses/[id]/route.ts
+@@ -1,6 +1,7 @@
+ import { NextRequest, NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+ import { withAuth } from '@/lib/auth-middleware';
++import { changedFields, invalidUrlField, presentControlFields, verificationAfterEdit } from '@/lib/course-finder/crm-edit-verification';
+ 
+ export async function GET(
+   request: NextRequest,
+@@ -45,6 +46,17 @@
+ 
+       const { id } = await params;
+       const body = await req.json();
++      if (!body || typeof body !== 'object' || Array.isArray(body)) {
++        return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
++      }
++      // Phase 1 review (P1-D): an edit is not verification or publication.
++      const control = presentControlFields(body);
++      if (control.length) {
++        return NextResponse.json({ success: false, error: `Control fields cannot be set by editing: ${control.join(', ')}` }, { status: 400 });
++      }
++      if (body.tuitionFee !== undefined && !(typeof body.currency === 'string' && /^[A-Za-z]{3}$/.test(body.currency))) {
++        return NextResponse.json({ success: false, error: 'A three-letter currency code is required when changing tuition (no default currency is assumed).' }, { status: 400 });
++      }
+ 
+       const existing = await db.crmCourse.findFirst({
+         where: { OR: [{ id }, { courseId: id }] },
+@@ -53,25 +65,33 @@
+       if (!existing) {
+         return NextResponse.json({ success: false, error: 'Course not found' }, { status: 404 });
+       }
++      const badUrl = invalidUrlField(body, ['sourceUrl'], existing as any);
++      if (badUrl) return NextResponse.json({ success: false, error: `${badUrl} must be an https official source URL` }, { status: 400 });
++
++      const data: Record<string, unknown> = {
++        courseTitle: body.courseTitle !== undefined ? body.courseTitle : existing.courseTitle,
++        studyLevel: body.studyLevel !== undefined ? body.studyLevel : existing.studyLevel,
++        subjectArea: body.subjectArea !== undefined ? body.subjectArea : existing.subjectArea,
++        disciplineArea: body.disciplineArea !== undefined ? body.disciplineArea : existing.disciplineArea,
++        durationMonths: body.durationMonths !== undefined ? body.durationMonths : existing.durationMonths,
++        qualification: body.qualification !== undefined ? body.qualification : existing.qualification,
++        deliveryMode: body.deliveryMode !== undefined ? body.deliveryMode : existing.deliveryMode,
++        campus: body.campus !== undefined ? body.campus : existing.campus,
++        placementOption: body.placementOption !== undefined ? body.placementOption : existing.placementOption,
++        onlineOption: body.onlineOption !== undefined ? body.onlineOption : existing.onlineOption,
++        sourceUrl: body.sourceUrl !== undefined ? body.sourceUrl : existing.sourceUrl,
++        status: body.status !== undefined ? body.status : existing.status,
++      };
++      const factFields = Object.keys(data).filter((f) => f !== 'status');
++      const changed = changedFields(data, existing as any, factFields);
++      const feeOrRequirementChanged = body.tuitionFee !== undefined || body.depositAmount !== undefined
++        || body.ieltsOverall !== undefined || body.academicReq !== undefined;
++      // Never upgraded, never re-dated here.
++      data.verificationStatus = verificationAfterEdit(existing.verificationStatus, changed.length > 0 || feeOrRequirementChanged);
+ 
+       const updated = await db.crmCourse.update({
+         where: { id: existing.id },
+-        data: {
+-          courseTitle: body.courseTitle !== undefined ? body.courseTitle : existing.courseTitle,
+-          studyLevel: body.studyLevel !== undefined ? body.studyLevel : existing.studyLevel,
+-          subjectArea: body.subjectArea !== undefined ? body.subjectArea : existing.subjectArea,
+-          disciplineArea: body.disciplineArea !== undefined ? body.disciplineArea : existing.disciplineArea,
+-          durationMonths: body.durationMonths !== undefined ? body.durationMonths : existing.durationMonths,
+-          qualification: body.qualification !== undefined ? body.qualification : existing.qualification,
+-          deliveryMode: body.deliveryMode !== undefined ? body.deliveryMode : existing.deliveryMode,
+-          campus: body.campus !== undefined ? body.campus : existing.campus,
+-          placementOption: body.placementOption !== undefined ? body.placementOption : existing.placementOption,
+-          onlineOption: body.onlineOption !== undefined ? body.onlineOption : existing.onlineOption,
+-          sourceUrl: body.sourceUrl !== undefined ? body.sourceUrl : existing.sourceUrl,
+-          status: body.status !== undefined ? body.status : existing.status,
+-          verificationStatus: body.sourceUrl ? 'VERIFIED' : existing.verificationStatus,
+-          lastVerifiedAt: new Date().toISOString(),
+-        },
++        data: data as any,
+       });
+ 
+       if (body.tuitionFee !== undefined) {
+@@ -80,7 +100,9 @@
+           data: {
+             yearlyTuition: body.tuitionFee,
+             depositAmount: body.depositAmount || 0,
+-            tuitionCurrency: body.currency || 'GBP',
++            tuitionCurrency: String(body.currency).toUpperCase(),
++            // Changed fee facts need review again.
++            verificationStatus: 'NEEDS_REVIEW',
+           },
+         });
+       }
+@@ -93,6 +115,7 @@
+             ieltsOverall: body.ieltsOverall,
+             ieltsMinBand: body.ieltsMinBand,
+             pteOverall: body.pteOverall,
++            verificationStatus: 'NEEDS_REVIEW',
+           },
+         });
+       }
+@@ -104,8 +127,8 @@
+           action: 'UPDATE_COURSE',
+           targetCollection: 'CrmCourse',
+           targetId: existing.id,
+-          beforeData: JSON.stringify({ title: existing.courseTitle, status: existing.status }),
+-          afterData: JSON.stringify({ title: updated.courseTitle, status: updated.status }),
++          beforeData: JSON.stringify({ title: existing.courseTitle, status: existing.status, verificationStatus: existing.verificationStatus }),
++          afterData: JSON.stringify({ title: updated.courseTitle, status: updated.status, verificationStatus: updated.verificationStatus, changedFields: changed }),
+         },
+       }).catch(() => null);
+ 
+@@ -113,7 +136,7 @@
+     } catch (error: any) {
+       return NextResponse.json({ success: false, error: error?.message || 'Failed to update course' }, { status: 500 });
+     }
+-  })(request);
++  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
+ }
+ 
+ export async function DELETE(
+--- a/src/app/api/admin/courses/create/route.ts
++++ b/src/app/api/admin/courses/create/route.ts
+@@ -1,6 +1,7 @@
+ import { NextRequest, NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+ import { withAuth } from '@/lib/auth-middleware';
++import { buildManualCourseRecords } from '@/lib/course-finder/manual-course-create';
+ 
+ // POST /api/admin/courses/create — Complete course form per spec section 27 with 16 tabs
+ export async function POST(request: NextRequest) {
+@@ -9,9 +10,10 @@
+     if (!isAuthorized) return NextResponse.json({ success: false, error: 'Admin required' }, { status: 403 });
+ 
+     const body = await req.json();
+-    const { courseTitle, universityId, studyLevel, subjectArea, disciplineArea, durationMonths, qualification, deliveryMode, campus, city, country, tuitionFee, currency, depositAmount, appFeeAmount, intakes, academicReq, ieltsOverall, ieltsMinBand, pteOverall, toeflOverall, detOverall, moiAccepted, publicTags, placementOption, onlineOption, officialUrl, officialApplicationUrl, sourceUrl, seoTitle, seoDescription, publicationStatus = 'draft', status = 'verified', forceCreate } = body;
++    if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
++    const { courseTitle, universityId, forceCreate } = body;
+ 
+-    if (!courseTitle || !universityId) return NextResponse.json({ success: false, error: 'Course title and University ID required' }, { status: 400 });
++    if (typeof courseTitle !== 'string' || !courseTitle.trim() || typeof universityId !== 'string' || !universityId) return NextResponse.json({ success: false, error: 'Course title and University ID required' }, { status: 400 });
+ 
+     const uni = await db.crmUniversity.findFirst({ where: { OR: [{ universityId }, { id: universityId }] } });
+     if (!uni) return NextResponse.json({ success: false, error: `University ${universityId} not found` }, { status: 404 });
+@@ -22,78 +24,15 @@
+     }
+ 
+     const genCourseCode = `CRS-${uni.universityId.replace('UNI-', '')}-${Date.now().toString(36).toUpperCase()}`;
+-    const slug = body.slug || `${courseTitle}-${uni.name}`.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
++    const slug = (typeof body.slug === 'string' && body.slug) || `${courseTitle}-${uni.name}`.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+ 
+-    const newCourse = await db.crmCourse.create({
+-      data: {
+-        courseId: genCourseCode,
+-        universityId: uni.universityId,
+-        courseTitle,
+-        slug,
+-        studyLevel: studyLevel || 'Postgraduate',
+-        subjectArea: subjectArea || 'General',
+-        disciplineArea: disciplineArea || '',
+-        durationMonths: durationMonths || 12,
+-        qualification: qualification || 'MSc',
+-        deliveryMode: deliveryMode || 'Full-time On Campus',
+-        campus: campus || uni.campusName || 'Main Campus',
+-        city: city || uni.city,
+-        country: country || uni.country,
+-        publicTags: Array.isArray(publicTags) ? publicTags.join(', ') : (publicTags || ''),
+-        placementOption: placementOption || false,
+-        onlineOption: onlineOption || false,
+-        officialUrl: officialUrl || '',
+-        officialApplicationUrl: officialApplicationUrl || '',
+-        sourceUrl: sourceUrl || '',
+-        verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
+-        publicationStatus,
+-        lastVerifiedAt: new Date().toISOString(),
+-        status: status || 'verified',
+-      },
+-    });
+-
+-    // Tab 4-5: Tuition & Fees & Intakes
+-    if (tuitionFee !== undefined || (intakes && intakes.length > 0)) {
+-      const defaultIntake = intakes?.[0] || { intakeMonth: 'September', intakeYear: 2026 };
+-      await db.crmCourseIntakeFee.create({
+-        data: {
+-          universityId: uni.universityId,
+-          courseId: newCourse.courseId,
+-          intakeYear: defaultIntake.intakeYear || 2026,
+-          intakeMonth: defaultIntake.intakeMonth || 'September',
+-          intakeName: defaultIntake.intakeName || `${defaultIntake.intakeMonth || 'September'} ${defaultIntake.intakeYear || 2026}`,
+-          applicationDeadline: defaultIntake.deadline || 'Rolling',
+-          tuitionCurrency: currency || 'GBP',
+-          yearlyTuition: tuitionFee || 0,
+-          totalTuition: defaultIntake.totalTuition || 0,
+-          depositCurrency: currency || 'GBP',
+-          depositAmount: depositAmount || 0,
+-          appFeeCurrency: currency || 'GBP',
+-          appFeeAmount: appFeeAmount || 0,
+-          feeSourceUrl: sourceUrl || '',
+-          verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
+-        },
+-      });
+-    }
+-
+-    // Tab 7-8: Academic & English Requirements
+-    if (academicReq || ieltsOverall) {
+-      await db.crmCourseRequirement.create({
+-        data: {
+-          universityId: uni.universityId,
+-          courseId: newCourse.courseId,
+-          academicReq: academicReq || 'Recognized Bachelor degree with minimum 60% or GPA 3.0',
+-          ieltsOverall: ieltsOverall || 6.5,
+-          ieltsMinBand: ieltsMinBand || 6.0,
+-          pteOverall: pteOverall || 58,
+-          toeflOverall: toeflOverall || 80,
+-          detOverall: detOverall || 115,
+-          moiAccepted: moiAccepted || false,
+-          officialRequirementUrl: sourceUrl || '',
+-          verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
+-        },
+-      });
+-    }
++    // Phase 1 review (P0-A): creation is never verification or publication and
++    // missing facts are never invented. See manual-course-create.ts.
++    const built = buildManualCourseRecords(body, uni, genCourseCode, slug);
++    if (!built.ok) return NextResponse.json({ success: false, error: built.error }, { status: built.status });
++    const newCourse = await db.crmCourse.create({ data: built.course as any });
++    if (built.intake) await db.crmCourseIntakeFee.create({ data: built.intake as any });
++    if (built.requirement) await db.crmCourseRequirement.create({ data: built.requirement as any });
+ 
+     await db.crmAuditLog.create({
+       data: {
+@@ -106,8 +45,8 @@
+       },
+     }).catch(() => {});
+ 
+-    return NextResponse.json({ success: true, data: newCourse, course: newCourse, message: 'Course created with 16 tabs per spec — commission data blocked at public/student APIs' });
+-  })(request);
++    return NextResponse.json({ success: true, data: newCourse, course: newCourse, warnings: built.warnings, message: 'Course created as an unpublished draft that needs review. It is not verified and not public.' });
++  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
+ }
+ 
+ export async function GET(request: NextRequest) {
+--- a/src/app/api/admin/courses/route.ts
++++ b/src/app/api/admin/courses/route.ts
+@@ -1,6 +1,7 @@
+ import { NextRequest, NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+ import { withAuth } from '@/lib/auth-middleware';
++import { buildManualCourseRecords } from '@/lib/course-finder/manual-course-create';
+ 
+ export async function GET(request: NextRequest) {
+   return withAuth(async (req, auth) => {
+@@ -74,39 +75,12 @@
+       }
+ 
+       const body = await req.json();
+-      const {
+-        courseTitle,
+-        universityId,
+-        studyLevel,
+-        subjectArea,
+-        disciplineArea,
+-        durationMonths,
+-        qualification,
+-        deliveryMode,
+-        campus,
+-        city,
+-        country,
+-        tuitionFee,
+-        currency,
+-        depositAmount,
+-        appFeeAmount,
+-        intakes,
+-        academicReq,
+-        ieltsOverall,
+-        ieltsMinBand,
+-        pteOverall,
+-        toeflOverall,
+-        detOverall,
+-        moiAccepted,
+-        publicTags,
+-        placementOption,
+-        onlineOption,
+-        officialUrl,
+-        sourceUrl,
+-        forceCreate,
+-      } = body;
++      if (!body || typeof body !== 'object' || Array.isArray(body)) {
++        return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
++      }
++      const { courseTitle, universityId, studyLevel, forceCreate } = body;
+ 
+-      if (!courseTitle || !universityId) {
++      if (typeof courseTitle !== 'string' || !courseTitle.trim() || typeof universityId !== 'string' || !universityId) {
+         return NextResponse.json({ success: false, error: 'Course title and University ID are required' }, { status: 400 });
+       }
+ 
+@@ -143,69 +117,13 @@
+       const genCourseCode = `CRS-${uni.universityId.replace('UNI-', '')}-${Date.now().toString(36).toUpperCase()}`;
+       const slug = `${courseTitle}-${uni.name}`.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+ 
+-      const newCourse = await db.crmCourse.create({
+-        data: {
+-          courseId: genCourseCode,
+-          universityId: uni.universityId,
+-          courseTitle,
+-          slug,
+-          studyLevel: studyLevel || 'Postgraduate',
+-          subjectArea: subjectArea || 'General',
+-          disciplineArea: disciplineArea || '',
+-          durationMonths: durationMonths || 12,
+-          qualification: qualification || 'MSc',
+-          deliveryMode: deliveryMode || 'Full-time On Campus',
+-          campus: campus || uni.campusName || 'Main Campus',
+-          city: city || uni.city,
+-          country: country || uni.country,
+-          publicTags: Array.isArray(publicTags) ? publicTags.join(', ') : (publicTags || ''),
+-          placementOption: placementOption || false,
+-          onlineOption: onlineOption || false,
+-          officialUrl: officialUrl || '',
+-          sourceUrl: sourceUrl || '',
+-          status: 'verified',
+-          verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
+-          lastVerifiedAt: new Date().toISOString(),
+-        },
+-      });
+-
+-      if (tuitionFee !== undefined || (intakes && intakes.length > 0)) {
+-        const defaultIntake = intakes?.[0] || { intakeMonth: 'September', intakeYear: 2026 };
+-        await db.crmCourseIntakeFee.create({
+-          data: {
+-            universityId: uni.universityId,
+-            courseId: newCourse.courseId,
+-            intakeYear: defaultIntake.intakeYear || 2026,
+-            intakeMonth: defaultIntake.intakeMonth || 'September',
+-            applicationDeadline: defaultIntake.deadline || 'Rolling',
+-            tuitionCurrency: currency || 'GBP',
+-            yearlyTuition: tuitionFee || 0,
+-            depositCurrency: currency || 'GBP',
+-            depositAmount: depositAmount || 0,
+-            appFeeAmount: appFeeAmount || 0,
+-            feeSourceUrl: sourceUrl || '',
+-            verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
+-          },
+-        });
+-      }
+-
+-      if (academicReq || ieltsOverall) {
+-        await db.crmCourseRequirement.create({
+-          data: {
+-            universityId: uni.universityId,
+-            courseId: newCourse.courseId,
+-            academicReq: academicReq || 'Recognized Bachelor degree with minimum 60% or GPA 3.0',
+-            ieltsOverall: ieltsOverall || 6.5,
+-            ieltsMinBand: ieltsMinBand || 6.0,
+-            pteOverall: pteOverall || 58,
+-            toeflOverall: toeflOverall || 80,
+-            detOverall: detOverall || 115,
+-            moiAccepted: moiAccepted || false,
+-            officialRequirementUrl: sourceUrl || '',
+-            verificationStatus: sourceUrl ? 'VERIFIED' : 'NEEDS_REVIEW',
+-          },
+-        });
+-      }
++      // Phase 1 review (P0-A): creation is never verification or publication
++      // and missing facts are never invented. See manual-course-create.ts.
++      const built = buildManualCourseRecords(body, uni, genCourseCode, slug);
++      if (!built.ok) return NextResponse.json({ success: false, error: built.error }, { status: built.status });
++      const newCourse = await db.crmCourse.create({ data: built.course as any });
++      if (built.intake) await db.crmCourseIntakeFee.create({ data: built.intake as any });
++      if (built.requirement) await db.crmCourseRequirement.create({ data: built.requirement as any });
+ 
+       await db.crmAuditLog.create({
+         data: {
+@@ -218,9 +136,9 @@
+         },
+       }).catch(() => null);
+ 
+-      return NextResponse.json({ success: true, data: newCourse });
++      return NextResponse.json({ success: true, data: newCourse, warnings: built.warnings, message: 'Course created as an unpublished draft that needs review.' });
+     } catch (error: any) {
+       return NextResponse.json({ success: false, error: error?.message || 'Failed to create course' }, { status: 500 });
+     }
+-  })(request);
++  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
+ }
+--- a/src/app/api/admin/import/scholarships/route.ts
++++ b/src/app/api/admin/import/scholarships/route.ts
+@@ -26,17 +26,20 @@
+             country: (r.country || r.country_code || '').trim(),
+             university: (r.university || '').trim(),
+             universityId: (r.university_code || r.university_id || '').trim(),
+-            fundingAmount: r.amount ? `${r.currency||''} ${r.amount}` : 'Check eligibility',
++            // Phase 1 review (P1-D): no invented values (previously 'Check eligibility' and a GBP default).
++            fundingAmount: r.amount ? `${r.currency||''} ${r.amount}`.trim() : '',
+             amount,
+-            currency: (r.currency || 'GBP').trim(),
++            currency: (r.currency || '').trim(),
+             fundingType: (r.amount_type || 'tuition_waiver').trim(),
+             eligibility: (r.eligibility || '').trim(),
+             deadline: (r.deadline || '').trim(),
+             overview: (r.description || '').trim(),
+             officialSourceUrl: (r.source_url || '').trim(),
+             status: 'active',
+-            verificationStatus: r.source_url ? 'verified' : 'pending',
+-            lastVerifiedAt: r.source_url ? new Date() : null,
++            // An import is not verification: every imported row starts pending
++            // with no verification date, whether or not a source URL was given.
++            verificationStatus: 'pending',
++            lastVerifiedAt: null,
+           });
+         }
+       }
+--- a/src/app/api/admin/universities/[id]/route.ts
++++ b/src/app/api/admin/universities/[id]/route.ts
+@@ -1,6 +1,7 @@
+ import { NextRequest, NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+ import { withAuth } from '@/lib/auth-middleware';
++import { changedFields, invalidUrlField, presentControlFields, verificationAfterEdit } from '@/lib/course-finder/crm-edit-verification';
+ 
+ export async function GET(
+   request: NextRequest,
+@@ -50,6 +51,14 @@
+ 
+       const { id } = await params;
+       const body = await req.json();
++      if (!body || typeof body !== 'object' || Array.isArray(body)) {
++        return NextResponse.json({ success: false, error: 'A JSON object body is required' }, { status: 400 });
++      }
++      // Phase 1 review (P1-D): an edit is not verification or publication.
++      const control = presentControlFields(body);
++      if (control.length) {
++        return NextResponse.json({ success: false, error: `Control fields cannot be set by editing: ${control.join(', ')}` }, { status: 400 });
++      }
+ 
+       const existing = await db.crmUniversity.findFirst({
+         where: { OR: [{ id }, { universityId: id }] },
+@@ -58,10 +67,10 @@
+       if (!existing) {
+         return NextResponse.json({ success: false, error: 'University not found' }, { status: 404 });
+       }
++      const badUrl = invalidUrlField(body, ['sourceUrl', 'officialUrl', 'website'], existing as any);
++      if (badUrl) return NextResponse.json({ success: false, error: `${badUrl} must be an https URL` }, { status: 400 });
+ 
+-      const updated = await db.crmUniversity.update({
+-        where: { id: existing.id },
+-        data: {
++      const data: Record<string, unknown> = {
+           name: body.name !== undefined ? body.name : existing.name,
+           country: body.country !== undefined ? body.country : existing.country,
+           city: body.city !== undefined ? body.city : existing.city,
+@@ -77,9 +86,13 @@
+           scholarships: body.scholarships !== undefined ? body.scholarships : existing.scholarships,
+           description: body.description !== undefined ? body.description : existing.description,
+           status: body.status !== undefined ? body.status : existing.status,
+-          verificationStatus: body.sourceUrl ? 'VERIFIED' : existing.verificationStatus,
+-          lastVerifiedAt: new Date().toISOString(),
+-        },
++      };
++      const changed = changedFields(data, existing as any, Object.keys(data).filter((f) => f !== 'status'));
++      // Never upgraded, never re-dated here.
++      data.verificationStatus = verificationAfterEdit(existing.verificationStatus, changed.length > 0);
++      const updated = await db.crmUniversity.update({
++        where: { id: existing.id },
++        data: data as any,
+       });
+ 
+       await db.crmAuditLog.create({
+@@ -89,8 +102,8 @@
+           action: 'UPDATE_UNIVERSITY',
+           targetCollection: 'CrmUniversity',
+           targetId: existing.id,
+-          beforeData: JSON.stringify({ name: existing.name, status: existing.status }),
+-          afterData: JSON.stringify({ name: updated.name, status: updated.status }),
++          beforeData: JSON.stringify({ name: existing.name, status: existing.status, verificationStatus: existing.verificationStatus }),
++          afterData: JSON.stringify({ name: updated.name, status: updated.status, verificationStatus: updated.verificationStatus, changedFields: changed }),
+         },
+       }).catch(() => null);
+ 
+@@ -98,7 +111,7 @@
+     } catch (error: any) {
+       return NextResponse.json({ success: false, error: error?.message || 'Failed to update university' }, { status: 500 });
+     }
+-  })(request);
++  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN'] })(request);
+ }
+ 
+ export async function DELETE(
+--- a/src/app/api/admin/website/cms/route.ts
++++ b/src/app/api/admin/website/cms/route.ts
+@@ -526,7 +526,8 @@
+             status: body.status || 'active',
+             sortOrder: body.sortOrder ?? 0,
+             accentColor: body.accentColor || '#2563EB',
+-            lastVerifiedAt: new Date(),
++            // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
++            // the public country page shows it as "Last verified".
+           },
+           create: {
+             name: body.name,
+@@ -555,7 +556,8 @@
+             status: body.status || 'active',
+             sortOrder: body.sortOrder ?? 0,
+             accentColor: body.accentColor || '#2563EB',
+-            lastVerifiedAt: new Date(),
++            // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
++            // the public country page shows it as "Last verified".
+           }
+         });
+         break;
+@@ -751,7 +753,13 @@
+         updated = await db.websiteEnglishTest.update({ where: { id }, data: body });
+         break;
+       case 'countries':
+-        updated = await db.country.update({ where: { id }, data: { ...body, lastVerifiedAt: new Date() } });
++        {
++          // Phase 1 review (P1-D): an ordinary edit no longer stamps (or lets the
++          // client set) lastVerifiedAt, which the public country page shows as
++          // "Last verified". The rest of the body is passed through as before.
++          const { lastVerifiedAt: _ignoredLastVerifiedAt, ...countryData } = body as Record<string, unknown>;
++          updated = await db.country.update({ where: { id }, data: countryData as any });
++        }
+         break;
+       case 'country-quick-facts':
+         updated = await db.countryQuickFact.update({ where: { id }, data: body });
+--- a/src/app/api/ai-command/execute/route.ts
++++ b/src/app/api/ai-command/execute/route.ts
+@@ -2,6 +2,7 @@
+ import { getServerSession } from "next-auth";
+ import { authOptions } from "@/lib/auth";
+ import { db } from "@/lib/db";
++import { deployContentFallback } from "@/lib/course-finder/ai-content-fallback";
+ 
+ export const runtime = "nodejs";
+ export const dynamic = "force-dynamic";
+@@ -180,6 +181,15 @@
+ // GET /api/ai-command/execute — list actions (optionally filter by status)
+ export async function GET(req: NextRequest) {
+   try {
++    // Phase 1 review: action payloads can contain CRM data, so listing them
++    // requires the same ADMIN/SUPER_ADMIN check as POST/PATCH (previously the
++    // handler relied on the proxy alone).
++    const session = await getServerSession(authOptions);
++    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
++    const role = (session.user as { role?: string }).role;
++    if (role !== "SUPER_ADMIN" && role !== "ADMIN") {
++      return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
++    }
+     const status = req.nextUrl.searchParams.get("status") || "PENDING";
+     const limit = Math.min(
+       parseInt(req.nextUrl.searchParams.get("limit") || "50"),
+@@ -413,35 +423,10 @@
+       };
+     }
+     case "DEPLOY_CONTENT": {
+-      if (targetType === "CoursePage") {
+-        if (targetId) {
+-          const updated = await db.coursePage.update({
+-            where: { id: targetId },
+-            data: payload?.data || {},
+-          });
+-          return { id: updated.id, summary: `Course page ${updated.name} updated` };
+-        }
+-        const created = await db.coursePage.create({
+-          data: {
+-            name: payload?.name || "New Course",
+-            slug: payload?.slug || `course-${Date.now()}`,
+-            universitySlug: payload?.universitySlug || "aalborg-university",
+-            countrySlug: payload?.countrySlug || "denmark",
+-            city: payload?.city || "Unknown",
+-            level: payload?.level || "Bachelors",
+-            subject: payload?.subject || "General",
+-            duration: payload?.duration || "3 years",
+-            intake: payload?.intake || "September",
+-            tuition: payload?.tuition || "Contact for details",
+-            englishRequirement: payload?.englishRequirement || "IELTS 6.0",
+-            academicRequirement: payload?.academicRequirement || "SSC/HSC equivalent",
+-            overview: payload?.overview || "Course overview pending.",
+-            approvalStatus: "DRAFT",
+-          },
+-        });
+-        return { id: created.id, summary: `Course page ${created.name} created (draft)` };
+-      }
+-      return { summary: `Content deployed to ${targetType}` };
++      // Phase 1 review (P0-B): never invent facts, never inherit the
++      // VERIFIED/PUBLISHED schema defaults, never mass-assign payload.data and
++      // never report success for an unsupported target.
++      return deployContentFallback(targetType, targetId, payload);
+     }
+     case "MODIFY_CRM": {
+       return { summary: `CRM modification logged for ${targetType}` };
+--- a/src/app/api/course-finder/admin/route.ts
++++ b/src/app/api/course-finder/admin/route.ts
+@@ -9,6 +9,8 @@
+   changesFacts,
+   isAcceptableSourceUrl,
+   sanitizeCoursePageFields,
++  auditActor,
++  withoutUnchanged,
+ } from "@/lib/course-finder/content-page-guards";
+ 
+ // Super Admin / Staff course management — CRUD
+@@ -99,7 +101,8 @@
+       resource: "CoursePage",
+       resourceId: course.id,
+       actorRole: auth.userType || "",
+-      details: JSON.stringify({ name: data.name, slug: data.slug, verificationStatus: UNVERIFIED, approvalStatus }),
++      userId: auditActor(auth).userId,
++      details: JSON.stringify({ name: data.name, slug: data.slug, verificationStatus: UNVERIFIED, approvalStatus, actor: auditActor(auth).actor }),
+     },
+   });
+   return NextResponse.json({ course, message: "Course created as an unverified draft." });
+@@ -134,7 +137,9 @@
+   const sanitized = sanitizeCoursePageFields(changedFields);
+   if (!sanitized.ok) return NextResponse.json({ error: sanitized.error }, { status: 400 });
+ 
+-  const data: Record<string, unknown> = { ...sanitized.data };
++  // Normalisation (e.g. "" -> null, JSON re-serialisation) can turn a resent
++  // value into the stored value; such fields are not changes either.
++  const data: Record<string, unknown> = { ...withoutUnchanged(sanitized.data, existing as any) };
+   const factsChanged = changesFacts(data, existing as any);
+   let verificationStatus: string = existing.verificationStatus;
+   let approvalStatus: string = existing.approvalStatus;
+@@ -198,7 +203,8 @@
+       resource: "CoursePage",
+       resourceId: id,
+       actorRole: auth.userType || "",
+-      details: JSON.stringify({ fields: Object.keys(data), factsChanged }),
++      userId: auditActor(auth).userId,
++      details: JSON.stringify({ fields: Object.keys(data), factsChanged, actor: auditActor(auth).actor }),
+       beforeValue: JSON.stringify({ verificationStatus: existing.verificationStatus, approvalStatus: existing.approvalStatus }),
+       afterValue: JSON.stringify({ verificationStatus, approvalStatus }),
+     },
+@@ -218,9 +224,20 @@
+   if (typeof id !== "string" || !id || id.length > 191) {
+     return NextResponse.json({ error: "id is required" }, { status: 400 });
+   }
++  const existing = await db.coursePage.findUnique({ where: { id } });
++  if (!existing) return NextResponse.json({ error: "Course not found" }, { status: 404 });
+   await db.coursePage.delete({ where: { id } });
++  const { userId, actor } = auditActor(auth);
+   await db.auditLog.create({
+-    data: { action: "DATA_IMPORT", resource: "CoursePage", resourceId: id, actorRole: auth.userType || "", details: JSON.stringify({ deleted: true }) },
++    data: {
++      action: "DATA_IMPORT",
++      resource: "CoursePage",
++      resourceId: id,
++      userId,
++      actorRole: auth.userType || "",
++      details: JSON.stringify({ deleted: true, actor }),
++      beforeValue: JSON.stringify({ slug: existing.slug, name: existing.name, verificationStatus: existing.verificationStatus, approvalStatus: existing.approvalStatus, sourceUrl: existing.sourceUrl }),
++    },
+   });
+   return NextResponse.json({ message: "Course deleted successfully." });
+ }
+--- a/src/app/api/course-finder/eligible/route.ts
++++ b/src/app/api/course-finder/eligible/route.ts
+@@ -1,6 +1,11 @@
+ import { NextRequest, NextResponse } from "next/server";
+ import { db } from "@/lib/db";
+ import { requireStudentResource } from "@/lib/student-resource-auth";
++import {
++  loadOpenConflicts,
++  passesPublicCoursePagePolicy,
++  publicCoursePageWhere,
++} from "@/lib/course-finder/public-content-page-policy";
+ 
+ /**
+  * Score published courses against the student's persisted education, English
+@@ -46,10 +51,15 @@
+   const latestEnglish = (englishTests as any[])[0];
+   const latestEducation = (educationHistory as any[])[0];
+ 
+-  const courses = await (db as any).coursePage.findMany({
+-    where: { approvalStatus: "PUBLISHED" },
+-    include: { university: { select: { name: true, slug: true } } },
++  // Phase 1 review (P0-C): only course pages that pass the shared public
++  // catalogue policy are scored (published + VERIFIED + https source + no open
++  // conflict + public university).
++  const conflicts = await loadOpenConflicts();
++  const loadedCourses = await (db as any).coursePage.findMany({
++    where: publicCoursePageWhere(conflicts),
++    include: { university: { select: { name: true, slug: true, sourceUrl: true } } },
+   });
++  const courses = (loadedCourses as any[]).filter((course) => passesPublicCoursePagePolicy(course, conflicts));
+ 
+   const results = (courses as any[]).map((course: any) => {
+     let score = 0;
+--- a/src/app/api/course-finder/saved/route.ts
++++ b/src/app/api/course-finder/saved/route.ts
+@@ -1,6 +1,7 @@
+ import { NextRequest, NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+ import { requireStudentResource } from '@/lib/student-resource-auth';
++import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
+ export async function GET(req: NextRequest) {
+   try {
+     const access = await requireStudentResource(req, req.nextUrl.searchParams.get('studentId'));
+@@ -9,7 +10,8 @@
+     const shortlist = await db.courseShortlist.findMany({ where: { studentId: userId }, take: 50 }).catch(()=>[]);
+     if (shortlist.length > 0) {
+       const courseIds = shortlist.map((s:any)=> s.courseId);
+-      const courses = await db.crmCourse.findMany({ where: { courseId: { in: courseIds } }, include: { university: { select: { name: true, country: true } }, intakeFees: { take:1 } } }).catch(()=>[]);
++      // Phase 1 review (P0-C): a shortlisted course is shown only while it passes the public gate; its intake row must be verified too.
++      const courses = await db.crmCourse.findMany({ where: { AND: [{ courseId: { in: courseIds } }, publicCourseWhere()] }, include: { university: { select: { name: true, country: true } }, intakeFees: { where: publicIntakeWhere(), take:1 } } }).catch(()=>[]);
+       return NextResponse.json({ success: true, courses, total: courses.length });
+     }
+     const saved = await db.savedCourse.findMany({ where: { studentId: userId }, take: 50 }).catch(()=>[]);
+--- a/src/app/api/crm/scholarships/route.ts
++++ b/src/app/api/crm/scholarships/route.ts
+@@ -1,6 +1,7 @@
+ import { NextRequest, NextResponse } from 'next/server';
+ import { db } from '@/lib/db';
+ import { withAuth, logAuditAction } from '@/lib/auth-middleware';
++import { isVerifiedStatus, presentControlFields, verificationAfterEdit } from '@/lib/course-finder/crm-edit-verification';
+ 
+ export async function GET(request: NextRequest) {
+   return withAuth(async (req, auth) => {
+@@ -66,14 +67,32 @@
+   return withAuth(async (req, auth) => {
+     try {
+       const body = await req.json();
+-      const { universityId, courseId, scholarshipName, scholarshipAmount, scholarshipCurrency = 'GBP' } = body;
++      // Phase 1 review (P0-A/P1-D): the currency used to default to GBP, so an
++      // amount typed without a currency was stored as a GBP fact. A currency is
++      // now required whenever an amount is supplied; nothing is assumed. The
++      // record keeps the schema default verificationStatus (NEEDS_REVIEW), so
++      // it stays out of public listings (publicScholarshipWhere requires
++      // VERIFIED). Clients cannot set verification or publication here.
++      const control = presentControlFields(body);
++      if (control.length || Object.prototype.hasOwnProperty.call(body, 'status')) {
++        return NextResponse.json({ success: false, error: `Field(s) not accepted on create: ${[...control, ...(Object.prototype.hasOwnProperty.call(body, 'status') ? ['status'] : [])].join(', ')}` }, { status: 400 });
++      }
++      const { universityId, courseId, scholarshipName, scholarshipAmount } = body;
++      const scholarshipCurrency = typeof body.scholarshipCurrency === 'string' ? body.scholarshipCurrency.trim().toUpperCase() : '';
++      const amount = scholarshipAmount === undefined || scholarshipAmount === null || scholarshipAmount === '' ? 0 : parseFloat(String(scholarshipAmount));
+ 
+       if (!universityId || !scholarshipName) {
+         return NextResponse.json({ success: false, error: 'University ID and scholarship name are required' }, { status: 400 });
+       }
++      if (!Number.isFinite(amount) || amount < 0) {
++        return NextResponse.json({ success: false, error: 'scholarshipAmount must be a non-negative number' }, { status: 400 });
++      }
++      if (amount > 0 && !/^[A-Z]{3}$/.test(scholarshipCurrency)) {
++        return NextResponse.json({ success: false, error: 'scholarshipCurrency (ISO 4217, e.g. NZD) is required when an amount is given' }, { status: 400 });
++      }
+ 
+       const scholarship = await db.crmScholarship.create({
+-        data: { universityId, courseId: courseId || '', scholarshipName, scholarshipAmount: parseFloat(String(scholarshipAmount)) || 0, scholarshipCurrency },
++        data: { universityId, courseId: courseId || '', scholarshipName, scholarshipAmount: amount, scholarshipCurrency },
+       });
+ 
+       await logAuditAction(auth, 'create_scholarship', 'CrmScholarship', scholarship.id, { universityId, scholarshipName });
+@@ -92,15 +111,42 @@
+       const body = await req.json();
+       const { id, scholarshipName, scholarshipAmount, scholarshipCurrency, status } = body;
+ 
+-      if (!id) {
++      if (!id || typeof id !== 'string') {
+         return NextResponse.json({ success: false, error: 'Scholarship ID is required' }, { status: 400 });
+       }
++      const control = presentControlFields(body);
++      if (control.length) {
++        return NextResponse.json({ success: false, error: `Field(s) not accepted on edit: ${control.join(', ')}` }, { status: 400 });
++      }
++      const existing = await db.crmScholarship.findUnique({ where: { id } });
++      if (!existing) {
++        return NextResponse.json({ success: false, error: 'Scholarship not found' }, { status: 404 });
++      }
+ 
+       const updateData: Record<string, unknown> = {};
+       if (scholarshipName !== undefined) updateData.scholarshipName = scholarshipName;
+-      if (scholarshipAmount !== undefined) updateData.scholarshipAmount = parseFloat(String(scholarshipAmount));
+-      if (scholarshipCurrency !== undefined) updateData.scholarshipCurrency = scholarshipCurrency;
++      if (scholarshipAmount !== undefined) {
++        const amount = parseFloat(String(scholarshipAmount));
++        if (!Number.isFinite(amount) || amount < 0) {
++          return NextResponse.json({ success: false, error: 'scholarshipAmount must be a non-negative number' }, { status: 400 });
++        }
++        updateData.scholarshipAmount = amount;
++      }
++      if (scholarshipCurrency !== undefined) updateData.scholarshipCurrency = String(scholarshipCurrency).trim().toUpperCase();
+       if (status !== undefined) updateData.status = status;
++      const finalAmount = (updateData.scholarshipAmount ?? existing.scholarshipAmount) as number;
++      const finalCurrency = (updateData.scholarshipCurrency ?? existing.scholarshipCurrency) as string;
++      if ((updateData.scholarshipAmount !== undefined || updateData.scholarshipCurrency !== undefined) && finalAmount > 0 && !/^[A-Z]{3}$/.test(finalCurrency)) {
++        return NextResponse.json({ success: false, error: 'scholarshipCurrency (ISO 4217) is required when an amount is set' }, { status: 400 });
++      }
++      // Phase 1 review (P1-D): editing a fact of a VERIFIED scholarship sends
++      // it back to review (and out of public listings) instead of keeping a
++      // verification that no longer describes the stored values.
++      const factsChanged = (['scholarshipName', 'scholarshipAmount', 'scholarshipCurrency'] as const)
++        .some((f) => updateData[f] !== undefined && updateData[f] !== (existing as Record<string, unknown>)[f]);
++      if (factsChanged && isVerifiedStatus(existing.verificationStatus)) {
++        updateData.verificationStatus = verificationAfterEdit(existing.verificationStatus, true);
++      }
+ 
+       const scholarship = await db.crmScholarship.update({
+         where: { id },
+--- a/src/app/api/homepage/route.ts
++++ b/src/app/api/homepage/route.ts
+@@ -1,8 +1,18 @@
+ import { NextRequest, NextResponse } from "next/server";
+ import { db } from "@/lib/db";
++import {
++  loadOpenConflicts,
++  passesPublicCoursePagePolicy,
++  passesPublicPagePolicy,
++  publicCoursePageWhere,
++  publicUniversityPageWhere,
++} from "@/lib/course-finder/public-content-page-policy";
+ 
+ // GET — all homepage content in one call
+ export async function GET() {
++  // Phase 1 review (P0-C): catalogue pages use the shared public policy
++  // (published + VERIFIED + https source + no open conflict + public university).
++  const conflicts = await loadOpenConflicts();
+   const [heroSlides, services, stories, team, faqs, countries, courses, universities, scholarships, exams] = await Promise.all([
+     db.homeHeroSlide.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
+     db.service.findMany({ where: { status: "PUBLISHED" }, orderBy: { createdAt: "desc" } }),
+@@ -10,8 +20,8 @@
+     db.teamMember.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
+     db.homepageFaq.findMany({ where: { status: "ACTIVE" }, orderBy: { createdAt: "desc" } }),
+     db.countryPage.findMany({ where: { approvalStatus: "PUBLISHED" }, select: { slug: true, name: true, shortName: true, flag: true, capital: true, quickFacts: true, lastVerifiedAt: true, sourceUrl: true } }),
+-    db.coursePage.findMany({ where: { approvalStatus: "PUBLISHED" }, take: 12, orderBy: { name: "asc" }, include: { university: { select: { name: true, slug: true, city: true } } } }),
+-    db.universityPage.findMany({ where: { approvalStatus: "PUBLISHED" }, take: 8, orderBy: { name: "asc" }, select: { slug: true, name: true, city: true, countrySlug: true, quickFacts: true, overview: true, sourceUrl: true, lastVerifiedAt: true } }),
++    db.coursePage.findMany({ where: publicCoursePageWhere(conflicts), take: 12, orderBy: { name: "asc" }, include: { university: { select: { name: true, slug: true, city: true, sourceUrl: true } } } }),
++    db.universityPage.findMany({ where: publicUniversityPageWhere(conflicts), take: 8, orderBy: { name: "asc" }, select: { slug: true, name: true, city: true, countrySlug: true, quickFacts: true, overview: true, sourceUrl: true, lastVerifiedAt: true } }),
+     db.countryPage.findMany({ where: { approvalStatus: "PUBLISHED" }, select: { slug: true, name: true, flag: true, scholarships: true } }),
+     db.examPage.findMany({ where: { approvalStatus: "PUBLISHED" }, select: { slug: true, name: true, fullName: true, intro: true } }),
+   ]);
+@@ -42,14 +52,18 @@
+     team,
+     faqs,
+     countries,
+-    courses: courses.map((c) => ({ ...c, country: countryMap[c.countrySlug] || null })),
+-    universities: universities.map((u) => ({ ...u, country: countryMap[u.countrySlug] || null })),
++    courses: courses
++      .filter((c) => passesPublicCoursePagePolicy(c, conflicts))
++      .map((c) => ({ ...c, country: countryMap[c.countrySlug] || null })),
++    universities: universities
++      .filter((u) => passesPublicPagePolicy(u, conflicts.universitySlugs))
++      .map((u) => ({ ...u, country: countryMap[u.countrySlug] || null })),
+     scholarships: allScholarships.slice(0, 8),
+     exams,
+     stats: {
+       totalCountries: countries.length,
+-      totalUniversities: await db.universityPage.count({ where: { approvalStatus: "PUBLISHED" } }),
+-      totalCourses: await db.coursePage.count({ where: { approvalStatus: "PUBLISHED" } }),
++      totalUniversities: await db.universityPage.count({ where: publicUniversityPageWhere(conflicts) }),
++      totalCourses: await db.coursePage.count({ where: publicCoursePageWhere(conflicts) }),
+       totalExams: exams.length,
+     },
+   });
+--- a/src/app/api/import-center/route.ts
++++ b/src/app/api/import-center/route.ts
+@@ -1,7 +1,7 @@
+ import { NextRequest, NextResponse } from "next/server";
+ import { db } from "@/lib/db";
+ import { requireCatalogAdmin } from "@/lib/course-finder/catalog-admin-auth";
+-import { isAcceptableSourceUrl } from "@/lib/course-finder/content-page-guards";
++import { auditActor, isAcceptableSourceUrl } from "@/lib/course-finder/content-page-guards";
+ 
+ // Import Center — for importing courses/universities/scholarships from external sources
+ // Also handles the public content approval workflow (SUPER_ADMIN/ADMIN only).
+@@ -118,7 +118,8 @@
+   const updated = await model.findUnique({ where: { slug } });
+ 
+   // Attribution comes from the authenticated session, never the request body.
+-  const userId = auth.userId || auth.email || "system";
++  // AuditLog.userId is a User foreign key: portal identities go in details.
++  const { userId, actor } = auditActor(auth);
+   await db.auditLog.create({
+     data: {
+       userId,
+@@ -126,7 +127,7 @@
+       resource: type,
+       resourceId: slug,
+       actorRole: auth.userType || "",
+-      details: JSON.stringify({ action, ...data }),
++      details: JSON.stringify({ action, ...data, actor }),
+       beforeValue: JSON.stringify({ approvalStatus: existing.approvalStatus, verificationStatus: existing.verificationStatus }),
+       afterValue: JSON.stringify({ approvalStatus: updated?.approvalStatus, verificationStatus: updated?.verificationStatus }),
+     },
+--- a/src/app/api/search/route.ts
++++ b/src/app/api/search/route.ts
+@@ -1,5 +1,12 @@
+ import { NextRequest, NextResponse } from "next/server";
+ import { db } from "@/lib/db";
++import {
++  loadOpenConflicts,
++  passesPublicCoursePagePolicy,
++  passesPublicPagePolicy,
++  publicCoursePageWhere,
++  publicUniversityPageWhere,
++} from "@/lib/course-finder/public-content-page-policy";
+ 
+ // GET /api/search?q=... — searches universities, courses, blog posts, news, events, countries, scholarships
+ export async function GET(req: NextRequest) {
+@@ -17,9 +24,11 @@
+     });
+   }
+ 
++  // Phase 1 review (P0-C): catalogue pages use the shared public policy.
++  const conflicts = await loadOpenConflicts();
+   const [
+-    universities,
+-    courses,
++    universitiesRaw,
++    coursesRaw,
+     blogPosts,
+     newsArticles,
+     events,
+@@ -31,16 +40,16 @@
+     faqs,
+   ] = await Promise.all([
+     db.universityPage.findMany({
+-      where: {
+-        approvalStatus: "PUBLISHED",
++      where: publicUniversityPageWhere(conflicts, [{
+         OR: [
+           { name: { contains: q } },
+           { city: { contains: q } },
+           { overview: { contains: q } },
+         ],
+-      },
++      }]),
+       take: 8,
+       select: {
++        sourceUrl: true,
+         slug: true,
+         name: true,
+         city: true,
+@@ -50,16 +59,16 @@
+       },
+     }),
+     db.coursePage.findMany({
+-      where: {
+-        approvalStatus: "PUBLISHED",
++      where: publicCoursePageWhere(conflicts, [{
+         OR: [
+           { name: { contains: q } },
+           { subject: { contains: q } },
+           { overview: { contains: q } },
+         ],
+-      },
++      }]),
+       take: 8,
+       select: {
++        sourceUrl: true,
+         slug: true,
+         name: true,
+         level: true,
+@@ -206,6 +215,8 @@
+       select: { question: true, answer: true, category: true, targetType: true, targetSlug: true },
+     }),
+   ]);
++  const universities = universitiesRaw.filter((u) => passesPublicPagePolicy(u, conflicts.universitySlugs));
++  const courses = coursesRaw.filter((c) => passesPublicCoursePagePolicy(c, conflicts));
+ 
+   const total =
+     universities.length +
+--- a/src/app/api/student-portal/course-finder/route.ts
++++ b/src/app/api/student-portal/course-finder/route.ts
+@@ -1,6 +1,7 @@
+ import { db } from '@/lib/db';
+ import { NextResponse } from 'next/server';
+ import { withAuth } from '@/lib/auth-middleware';
++import { publicCourseWhere } from '@/lib/public-catalog';
+ 
+ // ============================================================
+ // GET /api/student-portal/course-finder
+@@ -22,7 +23,10 @@
+       const sortBy = searchParams.get('sortBy') || 'createdAt';
+       const sortOrder = searchParams.get('sortOrder') || 'desc';
+ 
+-      const where: Record<string, unknown> = { status: 'active' };
++      // Phase 1 review (P0-C): students only see courses that pass the shared
++      // public catalogue gate (active + VERIFIED + published + source link +
++      // public university), not every active CRM row.
++      const where: Record<string, unknown> = { AND: [publicCourseWhere()] };
+ 
+       if (search) {
+         where.courseTitle = { contains: search };
+--- a/src/app/api/student-portal/scholarships/route.ts
++++ b/src/app/api/student-portal/scholarships/route.ts
+@@ -1,6 +1,7 @@
+ import { db } from '@/lib/db';
+ import { NextResponse } from 'next/server';
+ import { withAuth } from '@/lib/auth-middleware';
++import { publicCourseWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
+ 
+ // ============================================================
+ // GET /api/student-portal/scholarships
+@@ -20,7 +21,9 @@
+       const sortBy = searchParams.get('sortBy') || 'createdAt';
+       const sortOrder = searchParams.get('sortOrder') || 'desc';
+ 
+-      const where: Record<string, unknown> = { status: 'active' };
++      // Phase 1 review (P0-C): only source-verified active scholarships of a
++      // public university are listed to students.
++      const where: Record<string, unknown> = { AND: [publicScholarshipWhere(), { university: { is: publicUniversityWhere() } }] };
+ 
+       if (search) {
+         where.scholarshipName = { contains: search };
+@@ -78,7 +81,7 @@
+           : [],
+         courseIds.length > 0
+           ? db.crmCourse.findMany({
+-              where: { courseId: { in: courseIds } },
++              where: { AND: [{ courseId: { in: courseIds } }, publicCourseWhere()] },
+               select: { courseId: true, courseTitle: true, studyLevel: true, subjectArea: true },
+             })
+           : [],
+--- a/src/app/api/university-monitoring/changes/[id]/route.ts
++++ b/src/app/api/university-monitoring/changes/[id]/route.ts
+@@ -240,11 +240,13 @@
+ // Phase 1 (2026-10-12): approving ONE field change must not mark the WHOLE
+ // record VERIFIED. The record's verificationStatus is left as it was; the
+ // approved field value, its source URL and the approver are kept in the
+-// University/Course history written by recordHistory(). lastVerifiedAt is
+-// still refreshed because the changed field was checked against a source.
++// University/Course history written by recordHistory().
++// Phase 1 review (P1-D): lastVerifiedAt is a RECORD-level claim, so a
++// single-field approval no longer refreshes it either; the field-level check
++// date lives in the history row. An unmapped field writes nothing.
+ async function applyChangeToProduction(tx: any, change: any) {
+   if (change.entityType === "UNIVERSITY" && change.universitySlug) {
+-    const data: any = { lastVerifiedAt: new Date() };
++    const data: any = {};
+     // Map fieldName to the UniversityPage column
+     if (change.fieldName === "overview") data.overview = change.newValue || "";
+     else if (change.fieldName === "city") data.city = change.newValue || "";
+@@ -256,9 +258,9 @@
+     else if (change.fieldName === "applicationSteps") data.applicationSteps = change.newValue || "[]";
+     else if (change.fieldName === "documents") data.documents = change.newValue || "[]";
+     else if (change.fieldName === "faqs") data.faqs = change.newValue || "[]";
+-    await tx.universityPage.update({ where: { slug: change.universitySlug }, data });
++    if (Object.keys(data).length) await tx.universityPage.update({ where: { slug: change.universitySlug }, data });
+   } else if (change.entityType === "COURSE" && change.courseSlug) {
+-    const data: any = { lastVerifiedAt: new Date() };
++    const data: any = {};
+     if (change.fieldName === "tuition") data.tuition = change.newValue || "";
+     else if (change.fieldName === "intake") data.intake = change.newValue || "";
+     else if (change.fieldName === "deadline") data.deadline = change.newValue;
+@@ -272,6 +274,6 @@
+     else if (change.fieldName === "name") data.name = change.newValue || "";
+     else if (change.fieldName === "level") data.level = change.newValue || "";
+     else if (change.fieldName === "subject") data.subject = change.newValue || "";
+-    await tx.coursePage.update({ where: { slug: change.courseSlug }, data });
++    if (Object.keys(data).length) await tx.coursePage.update({ where: { slug: change.courseSlug }, data });
+   }
+ }
+--- a/src/app/course/[slug]/page.tsx
++++ b/src/app/course/[slug]/page.tsx
+@@ -3,6 +3,7 @@
+ import { notFound, redirect } from 'next/navigation';
+ import CourseDetailHub from '@/components/website/CourseDetailHub';
+ import { db } from '@/lib/db';
++import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from '@/lib/course-finder/public-content-page-policy';
+ import { publicCourseIdentifierWhere } from '@/lib/public-catalog';
+ 
+ export const dynamic = 'force-dynamic';
+@@ -51,11 +52,13 @@
+   const record = await findPublicCourse(slug);
+   if (!record) {
+     // Legacy course-page records keep working via a permanent redirect path.
++    // Phase 1 review (P0-C): only redirect to a page that passes the public policy.
++    const conflicts = await loadOpenConflicts();
+     const pageRecord = await db.coursePage.findFirst({
+-      where: { slug, approvalStatus: 'PUBLISHED', sourceUrl: { not: '' } },
+-      select: { slug: true },
++      where: publicCoursePageWhere(conflicts, [{ slug }]),
++      select: { slug: true, sourceUrl: true },
+     });
+-    if (pageRecord) redirect(`/courses/${encodeURIComponent(pageRecord.slug)}`);
++    if (pageRecord && passesPublicCoursePagePolicy(pageRecord, conflicts)) redirect(`/courses/${encodeURIComponent(pageRecord.slug)}`);
+     notFound();
+   }
+ 
+--- a/src/app/courses/[slug]/page.tsx
++++ b/src/app/courses/[slug]/page.tsx
+@@ -3,6 +3,7 @@
+ import { notFound, redirect } from 'next/navigation';
+ import { BookOpen, CalendarDays, ExternalLink, FileSearch, MapPin, ShieldCheck } from 'lucide-react';
+ import { db } from '@/lib/db';
++import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from '@/lib/course-finder/public-content-page-policy';
+ import { getCountryDestination } from '@/lib/country-destinations-data';
+ 
+ export const dynamic = 'force-dynamic';
+@@ -39,7 +40,9 @@
+       where: { OR: [{ slug }, { courseId: slug }], status: 'active', verificationStatus: 'VERIFIED', publicationStatus: { in: ['published', 'PUBLISHED'] }, AND: [{ OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] } ] },
+       select: { slug: true, courseId: true, courseTitle: true, sourceUrl: true, officialUrl: true },
+     }),
+-    db.coursePage.findFirst({ where: { slug, approvalStatus: 'PUBLISHED' }, select: { slug: true, name: true, overview: true } }),
++    // Phase 1 review (P0-C): metadata uses the same public policy as the page.
++    loadOpenConflicts().then((conflicts) => db.coursePage.findFirst({ where: publicCoursePageWhere(conflicts, [{ slug }]), select: { slug: true, name: true, overview: true, sourceUrl: true } })
++      .then((row) => (passesPublicCoursePagePolicy(row, conflicts) ? row : null))),
+   ]);
+   if (crmCourse) {
+     const canonicalSlug = crmCourse.slug || crmCourse.courseId;
+@@ -68,8 +71,12 @@
+   });
+   if (crmCourse) redirect(`/course/${encodeURIComponent(crmCourse.slug || crmCourse.courseId)}`);
+ 
+-  const course = await db.coursePage.findFirst({
+-    where: { slug, approvalStatus: 'PUBLISHED', sourceUrl: { not: '' } },
++  // Phase 1 review (P0-C): a direct URL is subject to the same public policy
++  // as listings (published + VERIFIED + https source + no open conflict +
++  // public university); anything else is a 404.
++  const conflicts = await loadOpenConflicts();
++  const loadedCourse = await db.coursePage.findFirst({
++    where: publicCoursePageWhere(conflicts, [{ slug }]),
+     include: {
+       university: {
+         select: {
+@@ -80,6 +87,7 @@
+       },
+     },
+   });
++  const course = passesPublicCoursePagePolicy(loadedCourse, conflicts) ? loadedCourse : null;
+   const sourceUrl = safeHttpUrl(course?.sourceUrl);
+   if (!course || !sourceUrl) notFound();
+ 
+--- a/src/app/sitemap.ts
++++ b/src/app/sitemap.ts
+@@ -21,15 +21,20 @@
+ async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
+   const { db } = await import('@/lib/db');
+   try {
+-    const [blogs, courses, crmCourseRows, scholarships, universities, crmUniversityRows, guideRows] = await Promise.all([
++    // Phase 1 review (P0-C): catalogue pages follow the shared public policy.
++    const { loadOpenConflicts, passesPublicPagePolicy, publicCoursePageWhere, publicUniversityPageWhere } = await import('@/lib/course-finder/public-content-page-policy');
++    const conflicts = await loadOpenConflicts();
++    const [blogs, coursesRaw, crmCourseRows, scholarships, universitiesRaw, crmUniversityRows, guideRows] = await Promise.all([
+       db.blogPost.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 5000 }),
+-      db.coursePage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: { not: '' } }, take: 5000 }),
++      db.coursePage.findMany({ select: { slug: true, updatedAt: true, sourceUrl: true }, where: publicCoursePageWhere(conflicts), take: 5000 }),
+       db.crmCourse.findMany({ select: { slug: true, courseId: true, updatedAt: true }, where: { status: 'active', verificationStatus: 'VERIFIED', publicationStatus: { in: ['published', 'PUBLISHED'] }, OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] }, take: 5000 }),
+       db.scholarship.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 2000 }),
+-      db.universityPage.findMany({ select: { slug: true, updatedAt: true }, where: { approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: { not: '' } }, take: 5000 }),
++      db.universityPage.findMany({ select: { slug: true, updatedAt: true, sourceUrl: true }, where: publicUniversityPageWhere(conflicts), take: 5000 }),
+       db.crmUniversity.findMany({ select: { slug: true, universityId: true, updatedAt: true }, where: { status: 'active', verificationStatus: 'VERIFIED', publicationStatus: { in: ['published', 'PUBLISHED'] }, OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] }, take: 5000 }),
+       db.contentAsset.findMany({ select: { slug: true, updatedAt: true, body: true, tags: true }, where: { contentType: 'ALO_PAGE', status: 'PUBLISHED', tags: { contains: 'alo-short-form-builder' } }, take: 5000 }),
+     ]);
++    const courses = coursesRaw.filter((row) => passesPublicPagePolicy(row, conflicts.courseSlugs));
++    const universities = universitiesRaw.filter((row) => passesPublicPagePolicy(row, conflicts.universitySlugs));
+     const guides = guideRows.flatMap((row) => {
+       let tags: unknown[] = [];
+       try {
+--- a/src/app/universities/[slug]/page.tsx
++++ b/src/app/universities/[slug]/page.tsx
+@@ -4,6 +4,7 @@
+ import UniversityHub from '@/components/website/UniversityHub';
+ import UniversityPageRecord from '@/components/website/UniversityPageRecord';
+ import { db } from '@/lib/db';
++import { loadOpenConflicts, passesPublicPagePolicy, publicUniversityPageWhere } from '@/lib/course-finder/public-content-page-policy';
+ 
+ export const dynamic = 'force-dynamic';
+ export const runtime = 'nodejs';
+@@ -17,7 +18,9 @@
+       where: { OR: [{ slug }, { universityId: slug }], status: 'active', verificationStatus: 'VERIFIED', publicationStatus: { in: ['published', 'PUBLISHED'] }, AND: [{ OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] } ] },
+       select: { name: true, slug: true, universityId: true, description: true },
+     }),
+-    db.universityPage.findFirst({ where: { slug, approvalStatus: 'PUBLISHED', sourceUrl: { not: '' } }, select: { name: true, slug: true, overview: true } }),
++    // Phase 1 review (P0-C): metadata uses the same public policy as the page.
++    loadOpenConflicts().then((conflicts) => db.universityPage.findFirst({ where: publicUniversityPageWhere(conflicts, [{ slug }]), select: { name: true, slug: true, overview: true, sourceUrl: true } })
++      .then((row) => (passesPublicPagePolicy(row, conflicts.universitySlugs) ? row : null))),
+   ]);
+   // Metadata comes only from published database records (no static fallback data).
+   const profile = crmUniversity || publishedPage;
+@@ -41,8 +44,12 @@
+     return <div className="min-h-screen bg-white"><main className="pb-16 pt-20"><Suspense fallback={<div className="p-12 text-center text-gray-500 font-medium">Loading source-linked university records…</div>}><UniversityHub slug={slug} /></Suspense></main></div>;
+   }
+ 
++  // Phase 1 review (P0-C): direct URLs follow the shared public policy
++  // (published + VERIFIED + https source + no open conflict); the embedded
++  // course list uses the course policy too.
++  const conflicts = await loadOpenConflicts();
+   const universityPage = await db.universityPage.findFirst({
+-    where: { slug, approvalStatus: 'PUBLISHED', sourceUrl: { not: '' } },
++    where: publicUniversityPageWhere(conflicts, [{ slug }]),
+     select: {
+       id: true, slug: true, name: true, countrySlug: true, city: true, overview: true,
+       strengths: true, quickFacts: true, entryRequirements: true, tuition: true,
+@@ -50,7 +57,7 @@
+       lastVerifiedAt: true, verificationStatus: true, approvalStatus: true, updatedAt: true,
+       country: { select: { slug: true, name: true, sourceUrl: true, verificationStatus: true, approvalStatus: true } },
+       courses: {
+-        where: { approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: { not: '' } },
++        where: { AND: [{ approvalStatus: 'PUBLISHED' }, { verificationStatus: 'VERIFIED' }, { sourceUrl: { startsWith: 'https://' } }, ...(conflicts.courseSlugs.length ? [{ slug: { notIn: conflicts.courseSlugs } }] : [])] },
+         orderBy: { name: 'asc' }, take: 50,
+         select: {
+           id: true, slug: true, name: true, level: true, subject: true, duration: true,
+@@ -61,7 +68,8 @@
+       },
+     },
+   });
+-  if (!universityPage || !/^https?:\/\//i.test(universityPage.sourceUrl || '')) notFound();
++  if (!universityPage || !passesPublicPagePolicy(universityPage, conflicts.universitySlugs)) notFound();
++  const publicCourses = universityPage.courses.filter((course) => passesPublicPagePolicy(course, conflicts.courseSlugs));
+ 
+-  return <UniversityPageRecord university={universityPage} />;
++  return <UniversityPageRecord university={{ ...universityPage, courses: publicCourses }} />;
+ }
+--- a/src/lib/course-finder/content-page-guards.ts
++++ b/src/lib/course-finder/content-page-guards.ts
+@@ -143,3 +143,31 @@
+     (field) => COURSE_PAGE_FACT_FIELDS.has(field) && (patch[field] ?? null) !== (existing[field] ?? null),
+   );
+ }
++
++/**
++ * Audit attribution from the authenticated session (never the request body).
++ * AuditLog.userId is a foreign key to User, so only canonical `user`-domain
++ * identities are written there; portal identities are recorded in the details
++ * payload instead of risking a foreign-key failure after the data write.
++ */
++export function auditActor(auth: { userId?: string; identityDomain?: string; userType?: string; actorUserId?: string | null }) {
++  const userId = auth.identityDomain === 'user' && auth.userId ? auth.userId : null;
++  return {
++    userId,
++    actor: {
++      userId: auth.userId || null,
++      identityDomain: auth.identityDomain || null,
++      actorUserId: auth.actorUserId ?? null,
++      role: auth.userType || null,
++    },
++  };
++}
++
++/** Drop sanitized fields whose value equals the stored value (no-op writes). */
++export function withoutUnchanged(patch: Record<string, string | null>, existing: Record<string, unknown>) {
++  const out: Record<string, string | null> = {};
++  for (const [field, value] of Object.entries(patch)) {
++    if ((value ?? null) !== ((existing[field] as string | null | undefined) ?? null)) out[field] = value;
++  }
++  return out;
++}
+--- a/src/lib/study-guide.ts
++++ b/src/lib/study-guide.ts
+@@ -11,6 +11,7 @@
+  */
+ 
+ import { db } from "@/lib/db";
++import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from './course-finder/public-content-page-policy';
+ 
+ export interface StudyGuide {
+   courseSlug: string;
+@@ -77,10 +78,15 @@
+ }
+ 
+ export async function generateStudyGuide(courseSlug: string): Promise<StudyGuide | null> {
+-  const course = await db.coursePage.findUnique({
+-    where: { slug: courseSlug },
++  // Phase 1 review (P0-C): the public guide endpoint previously returned any
++  // CoursePage by slug, including drafts and unverified records. It now uses
++  // the shared public catalogue policy.
++  const conflicts = await loadOpenConflicts();
++  const loaded = await db.coursePage.findFirst({
++    where: publicCoursePageWhere(conflicts, [{ slug: courseSlug }]),
+     include: { university: true },
+   });
++  const course = passesPublicCoursePagePolicy(loaded, conflicts) ? loaded : null;
+ 
+   if (!course) return null;
+ 
+--- a/src/proxy.ts
++++ b/src/proxy.ts
+@@ -476,6 +476,10 @@
+ const NON_STATIC_PREFIXES = Array.from(new Set(Object.values(ROLE_ROUTES).flat()))
+   .filter((prefix) => prefix !== "/" && !isPublicPageRequest(prefix));
+ 
++// Top-level directories that contain only static files (Next internals and
++// the folders shipped in /public). No page routes live under these.
++const STATIC_ROOT_SEGMENTS = new Set(["_next", "static", "public", "docs", "icons", "images"]);
++
+ function decodePathForPolicy(pathname: string): string | null {
+   let decoded = pathname;
+   for (let attempt = 0; attempt < 5; attempt++) {
+@@ -492,22 +496,17 @@
+   if (normalized === null) return false;
+   if (normalized === "/api" || normalized.startsWith("/api/")) return false;
+   if (NON_STATIC_PREFIXES.some((prefix) => matchesPath(normalized, prefix.toLowerCase()))) return false;
+-  return (
+-    // These were previously excluded by the matcher. Preserve their existing
+-    // behavior only AFTER the private-upload check, not before it.
+-    pathname.includes('.') ||
+-    pathname.startsWith('/public') ||
+-    pathname.startsWith("/_next/") ||
+-    pathname.startsWith("/static/") ||
+-    pathname.endsWith(".js") ||
+-    pathname.endsWith(".css") ||
+-    pathname.endsWith(".ico") ||
+-    pathname.endsWith(".svg") ||
+-    pathname.endsWith(".png") ||
+-    pathname.endsWith(".jpg") ||
+-    pathname.endsWith(".woff") ||
+-    pathname.endsWith(".woff2")
+-  );
++  // Phase 1 review: the bypass is an allow-list of real static locations,
++  // not "any path containing a dot". Previously `/guides/x.pdf` (a gated page
++  // outside every ROLE_ROUTES prefix) skipped the proxy entirely. Anything not
++  // listed here still goes through the normal public-page / auth logic, so a
++  // public page with a dot in its slug keeps working and an unlisted gated
++  // page fails closed.
++  const firstSegment = normalized.split("/")[1] || "";
++  if (STATIC_ROOT_SEGMENTS.has(firstSegment) && normalized.length > firstSegment.length + 1) return true;
++  // Single root-level files: /robots.txt, /sitemap.xml, /sw.js, /logo.svg,
++  // /manifest.json, /favicon.ico.
++  return /^\/[^/]+\.[a-z0-9]{1,8}$/.test(normalized);
+ }
+ 
+ export default async function proxy(request: NextRequest) {
+--- a/tests/unit/catalogue-phase1-security.test.ts
++++ b/tests/unit/catalogue-phase1-security.test.ts
+@@ -205,6 +205,9 @@
+     const pageUpdate = txCalls.find((c) => c.op === 'coursePage.update');
+     expect(pageUpdate?.args.data.tuition).toBe('GBP 21000');
+     expect(pageUpdate?.args.data).not.toHaveProperty('verificationStatus');
++    // Phase 1 review (P1-D): a single-field approval no longer refreshes the
++    // record-level verification date either.
++    expect(pageUpdate?.args.data).not.toHaveProperty('lastVerifiedAt');
+     expect(txCalls.some((c) => c.op === 'courseHistory.create')).toBe(true);
+   });
+ });
+--- a/tests/unit/sitemap-db-runtime.test.ts
++++ b/tests/unit/sitemap-db-runtime.test.ts
+@@ -8,6 +8,7 @@
+   crmCourses: vi.fn(),
+   crmUniversities: vi.fn(),
+   guides: vi.fn(),
++  conflicts: vi.fn(),
+ }));
+ vi.mock('@/lib/db', () => ({
+   db: {
+@@ -18,6 +19,9 @@
+     crmCourse: { findMany: mocks.crmCourses },
+     crmUniversity: { findMany: mocks.crmUniversities },
+     contentAsset: { findMany: mocks.guides },
++    // Phase 1 review: the sitemap now applies the shared public catalogue
++    // policy, which excludes slugs named by open DataConflict rows.
++    dataConflict: { findMany: mocks.conflicts },
+   },
+ }));
+ 
+@@ -33,6 +37,7 @@
+     mocks.crmCourses.mockResolvedValue([]);
+     mocks.crmUniversities.mockResolvedValue([]);
+     mocks.guides.mockResolvedValue([]);
++    mocks.conflicts.mockResolvedValue([]);
+   });
+ 
+   it('is intentionally rendered at request time', () => {
+@@ -54,9 +59,10 @@
+   it('includes published database routes and removes duplicate URLs', async () => {
+     const updatedAt = new Date('2026-10-08T00:00:00Z');
+     mocks.blogs.mockResolvedValue([{ slug: 'visa-guide', updatedAt }, { slug: 'visa-guide', updatedAt }]);
+-    mocks.courses.mockResolvedValue([{ slug: 'data-science', updatedAt }]);
++    // Phase 1 review: catalogue pages need an https source URL to be listed.
++    mocks.courses.mockResolvedValue([{ slug: 'data-science', updatedAt, sourceUrl: 'https://www.auckland.ac.nz/en/study.html' }]);
+     mocks.scholarships.mockResolvedValue([{ slug: 'merit-award', updatedAt }]);
+-    mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt }]);
++    mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt, sourceUrl: 'https://www.auckland.ac.nz/en.html' }]);
+ 
+     const entries = await sitemap();
+     expect(entries.filter((entry) => entry.url.endsWith('/blog/visa-guide'))).toHaveLength(1);
+--- /dev/null
++++ b/src/lib/course-finder/manual-course-create.ts
+@@ -0,0 +1,169 @@
++/**
++ * Shared record builder for the manual CrmCourse create endpoints
++ * (POST /api/admin/courses and POST /api/admin/courses/create).
++ *
++ * Phase 1 review (2026-10-12), P0-A. Before this, both endpoints:
++ *  - marked the course, intake/fee row and requirement row VERIFIED whenever
++ *    any sourceUrl string was supplied, and stamped lastVerifiedAt = now;
++ *  - accepted publicationStatus / status from the request body;
++ *  - filled missing facts with invented values (IELTS 6.5, PTE 58, TOEFL 80,
++ *    DET 115, "Recognized Bachelor degree with minimum 60% or GPA 3.0",
++ *    September 2026 intake, "Rolling" deadline, GBP, MSc, 12 months,
++ *    "Postgraduate", "Main Campus", ...).
++ * Together that let an admin request create a public, "verified" course with
++ * fabricated requirements in one call.
++ *
++ * Now: creation is never verification and never publication. Every row is
++ * NEEDS_REVIEW / draft, no verification date is written, and a fact that was
++ * not supplied is left empty (schema "not set" value) instead of invented.
++ * Verification and publication stay with the reviewed Course Finder admin
++ * workflow.
++ */
++import { isAcceptableSourceUrl } from './content-page-guards';
++
++export const MANUAL_CREATE_VERIFICATION = 'NEEDS_REVIEW';
++export const MANUAL_CREATE_PUBLICATION = 'draft';
++export const MANUAL_CREATE_STATUS = 'draft';
++
++type Uni = { universityId: string; city?: string | null; country?: string | null; campusName?: string | null };
++
++export type ManualCourseBuild =
++  | { ok: false; status: number; error: string }
++  | {
++      ok: true;
++      course: Record<string, unknown>;
++      intake: Record<string, unknown> | null;
++      requirement: Record<string, unknown> | null;
++      warnings: string[];
++    };
++
++const str = (v: unknown, max = 191) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
++const num = (v: unknown): number | null => {
++  if (v === undefined || v === null || v === '') return null;
++  const n = typeof v === 'number' ? v : Number(v);
++  return Number.isFinite(n) && n >= 0 ? n : NaN;
++};
++
++export function buildManualCourseRecords(
++  body: Record<string, unknown>,
++  uni: Uni,
++  courseId: string,
++  slug: string,
++): ManualCourseBuild {
++  // Control fields: only the safe initial values are accepted.
++  if (body.publicationStatus !== undefined && body.publicationStatus !== MANUAL_CREATE_PUBLICATION) {
++    return { ok: false, status: 422, error: 'New courses are created as drafts. Publish through the review workflow after verification.' };
++  }
++  if (body.verificationStatus !== undefined && body.verificationStatus !== MANUAL_CREATE_VERIFICATION) {
++    return { ok: false, status: 422, error: 'Creating a course cannot verify it. Use the evidence-backed verification workflow.' };
++  }
++  if (body.status !== undefined && body.status !== MANUAL_CREATE_STATUS) {
++    return { ok: false, status: 422, error: 'New courses are created with status draft.' };
++  }
++  if (body.lastVerifiedAt !== undefined) {
++    return { ok: false, status: 400, error: 'lastVerifiedAt cannot be set from a request body.' };
++  }
++
++  const sourceUrl = str(body.sourceUrl, 2048);
++  if (sourceUrl && !isAcceptableSourceUrl(sourceUrl)) {
++    return { ok: false, status: 400, error: 'sourceUrl must be an https official source URL.' };
++  }
++  for (const key of ['officialUrl', 'officialApplicationUrl'] as const) {
++    const value = str(body[key], 2048);
++    if (value && !isAcceptableSourceUrl(value)) return { ok: false, status: 400, error: `${key} must be an https URL.` };
++  }
++
++  const duration = num(body.durationMonths);
++  if (Number.isNaN(duration)) return { ok: false, status: 400, error: 'durationMonths must be a non-negative number.' };
++
++  const warnings: string[] = [];
++  const course: Record<string, unknown> = {
++    courseId,
++    universityId: uni.universityId,
++    courseTitle: str(body.courseTitle, 500),
++    slug,
++    studyLevel: str(body.studyLevel),
++    subjectArea: str(body.subjectArea),
++    disciplineArea: str(body.disciplineArea),
++    durationMonths: duration === null ? 0 : Math.round(duration as number),
++    qualification: str(body.qualification),
++    deliveryMode: str(body.deliveryMode),
++    // Location may be inherited from the university record (not invented).
++    campus: str(body.campus) || str(uni.campusName),
++    city: str(body.city) || str(uni.city),
++    country: str(body.country) || str(uni.country),
++    publicTags: Array.isArray(body.publicTags) ? body.publicTags.filter((t) => typeof t === 'string').join(', ') : str(body.publicTags, 1000),
++    placementOption: body.placementOption === true,
++    onlineOption: body.onlineOption === true,
++    officialUrl: str(body.officialUrl, 2048),
++    officialApplicationUrl: str(body.officialApplicationUrl, 2048),
++    sourceUrl,
++    status: MANUAL_CREATE_STATUS,
++    verificationStatus: MANUAL_CREATE_VERIFICATION,
++    publicationStatus: MANUAL_CREATE_PUBLICATION,
++    lastVerifiedAt: '',
++  };
++
++  // Intake / fee row: only when an intake year and month were supplied.
++  const tuition = num(body.tuitionFee);
++  const deposit = num(body.depositAmount);
++  const appFee = num(body.appFeeAmount);
++  if ([tuition, deposit, appFee].some((v) => Number.isNaN(v))) {
++    return { ok: false, status: 400, error: 'Fee amounts must be non-negative numbers.' };
++  }
++  const currency = str(body.currency, 3).toUpperCase();
++  const hasMoney = [tuition, deposit, appFee].some((v) => typeof v === 'number' && v > 0);
++  if (hasMoney && !/^[A-Z]{3}$/.test(currency)) {
++    return { ok: false, status: 400, error: 'A three-letter currency code is required with any fee amount (no default currency is assumed).' };
++  }
++  const firstIntake = Array.isArray(body.intakes) && body.intakes[0] && typeof body.intakes[0] === 'object'
++    ? (body.intakes[0] as Record<string, unknown>)
++    : null;
++  const intakeYear = firstIntake ? Number(firstIntake.intakeYear) : NaN;
++  const intakeMonth = firstIntake ? str(firstIntake.intakeMonth, 20) : '';
++  let intake: Record<string, unknown> | null = null;
++  if (Number.isInteger(intakeYear) && intakeYear >= 2000 && intakeYear <= 2100 && intakeMonth) {
++    intake = {
++      universityId: uni.universityId,
++      courseId,
++      intakeYear,
++      intakeMonth,
++      intakeName: str(firstIntake?.intakeName) || `${intakeMonth} ${intakeYear}`,
++      applicationDeadline: str(firstIntake?.deadline),
++      tuitionCurrency: tuition ? currency : '',
++      yearlyTuition: tuition ?? 0,
++      totalTuition: (() => { const t = num(firstIntake?.totalTuition); return typeof t === 'number' && !Number.isNaN(t) ? t : 0; })(),
++      depositCurrency: deposit ? currency : '',
++      depositAmount: deposit ?? 0,
++      appFeeCurrency: appFee ? currency : '',
++      appFeeAmount: appFee ?? 0,
++      feeSourceUrl: sourceUrl,
++      verificationStatus: MANUAL_CREATE_VERIFICATION,
++    };
++  } else if (hasMoney || firstIntake) {
++    warnings.push('Fees/intake were not saved: an intake year and month are required, and none are assumed.');
++  }
++
++  // Requirement row: only the values actually supplied; 0 / "" mean "not set".
++  const scores: Record<string, number> = {};
++  for (const key of ['ieltsOverall', 'ieltsMinBand', 'pteOverall', 'toeflOverall', 'detOverall'] as const) {
++    const v = num(body[key]);
++    if (Number.isNaN(v)) return { ok: false, status: 400, error: `${key} must be a non-negative number.` };
++    if (typeof v === 'number') scores[key] = v;
++  }
++  const academicReq = str(body.academicReq, 5000);
++  let requirement: Record<string, unknown> | null = null;
++  if (academicReq || Object.keys(scores).length) {
++    requirement = {
++      universityId: uni.universityId,
++      courseId,
++      academicReq,
++      ...scores,
++      moiAccepted: body.moiAccepted === true,
++      officialRequirementUrl: sourceUrl,
++      verificationStatus: MANUAL_CREATE_VERIFICATION,
++    };
++  }
++
++  return { ok: true, course, intake, requirement, warnings };
++}
+--- /dev/null
++++ b/src/lib/course-finder/ai-content-fallback.ts
+@@ -0,0 +1,90 @@
++/**
++ * Safe DEPLOY_CONTENT handling for the inline fallback in
++ * /api/ai-command/execute (used when ai-action-executor throws).
++ *
++ * Phase 1 review (2026-10-12), P0-B. The previous fallback:
++ *  - created CoursePage rows with invented facts ("aalborg-university",
++ *    "denmark", "IELTS 6.0", "SSC/HSC equivalent", "3 years", "September",
++ *    "Contact for details", ...) and did not set verificationStatus, so the
++ *    row inherited the schema default VERIFIED;
++ *  - updated CoursePage rows with `data: payload.data` verbatim, so an AI
++ *    payload could set approvalStatus=PUBLISHED / verificationStatus=VERIFIED;
++ *  - reported "Content deployed to <type>" for every other target type
++ *    without writing anything.
++ *
++ * Now: AI output is never verification and never publication.
++ *  - create: name, slug, universitySlug and countrySlug must be supplied; no
++ *    value is invented. Other text fields left empty. Always UNVERIFIED +
++ *    DRAFT with no verification date.
++ *  - update: allow-listed content fields only; control fields are rejected;
++ *    any real change downgrades VERIFIED -> NEEDS_REVIEW and takes a
++ *    PUBLISHED page back to PENDING_REVIEW for human review.
++ *  - unsupported targets throw, so the action is recorded as FAILED instead
++ *    of a fake success.
++ */
++import { db } from '@/lib/db';
++import {
++  COURSE_PAGE_CONTROL_FIELDS,
++  NEEDS_REVIEW,
++  UNVERIFIED,
++  sanitizeCoursePageFields,
++  withoutUnchanged,
++} from './content-page-guards';
++
++const REQUIRED_FOR_CREATE = ['name', 'slug', 'universitySlug', 'countrySlug'] as const;
++const EMPTY_TEXT_FIELDS = ['city', 'level', 'subject', 'duration', 'intake', 'tuition', 'englishRequirement', 'academicRequirement', 'overview'];
++
++function rejectControl(source: Record<string, unknown>) {
++  const present = Object.keys(source).filter((k) => COURSE_PAGE_CONTROL_FIELDS.has(k) || k === 'lastVerifiedBy');
++  if (present.length) throw new Error(`AI content cannot set control fields: ${present.join(', ')}`);
++}
++
++function asObject(value: unknown): Record<string, unknown> {
++  return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
++}
++
++export async function deployContentFallback(targetType: string, targetId: string | undefined, payload: unknown) {
++  if (targetType !== 'CoursePage') {
++    throw new Error(`DEPLOY_CONTENT fallback does not support target ${String(targetType).slice(0, 60)}; nothing was deployed`);
++  }
++  const body = asObject(payload);
++
++  if (targetId) {
++    const patch = asObject(body.data);
++    rejectControl(patch);
++    const sanitized = sanitizeCoursePageFields(patch);
++    if (!sanitized.ok) throw new Error(sanitized.error);
++    const existing = await db.coursePage.findUnique({ where: { id: targetId } });
++    if (!existing) throw new Error('Course page not found');
++    const data: Record<string, unknown> = withoutUnchanged(sanitized.data, existing as any);
++    if (Object.keys(data).length === 0) return { id: existing.id, summary: `Course page ${existing.name}: no changes` };
++    if (existing.verificationStatus === 'VERIFIED') data.verificationStatus = NEEDS_REVIEW;
++    if (existing.approvalStatus === 'PUBLISHED') data.approvalStatus = 'PENDING_REVIEW';
++    const result = await db.coursePage.updateMany({ where: { id: targetId, updatedAt: existing.updatedAt }, data: data as any });
++    if (result.count !== 1) throw new Error('Course page changed concurrently; nothing was updated');
++    return {
++      id: existing.id,
++      summary: `Course page ${existing.name} updated by AI action; needs human review`,
++      verificationStatus: (data.verificationStatus as string) || existing.verificationStatus,
++      approvalStatus: (data.approvalStatus as string) || existing.approvalStatus,
++    };
++  }
++
++  rejectControl(body);
++  const sanitized = sanitizeCoursePageFields(body);
++  if (!sanitized.ok) throw new Error(sanitized.error);
++  const missing = REQUIRED_FOR_CREATE.filter((f) => !sanitized.data[f]);
++  if (missing.length) throw new Error(`DEPLOY_CONTENT create requires ${missing.join(', ')}; no values are assumed`);
++  const empty: Record<string, string> = {};
++  for (const f of EMPTY_TEXT_FIELDS) empty[f] = '';
++  const created = await db.coursePage.create({
++    data: {
++      ...empty,
++      ...sanitized.data,
++      lastVerifiedAt: null,
++      verificationStatus: UNVERIFIED,
++      approvalStatus: 'DRAFT',
++    } as any,
++  });
++  return { id: created.id, summary: `Course page ${created.name} created as an unverified draft`, verificationStatus: UNVERIFIED, approvalStatus: 'DRAFT' };
++}
+--- /dev/null
++++ b/src/lib/course-finder/public-content-page-policy.ts
+@@ -0,0 +1,109 @@
++/**
++ * Public visibility policy for the legacy catalogue content pages
++ * (UniversityPage and CoursePage).
++ *
++ * Phase 1 review (2026-10-12), P0-C. Several public surfaces (homepage,
++ * /api/search, /api/course-finder/eligible, /courses/[slug],
++ * /universities/[slug] and the study-guide generator) filtered these
++ * models on approvalStatus=PUBLISHED alone (some also required a non-empty
++ * source URL). Because the schema defaults are VERIFIED/PUBLISHED and older
++ * code wrote VERIFIED on approval/rejection, that exposed unverified and
++ * source-less factual records.
++ *
++ * Policy (catalogue scope only: UniversityPage and CoursePage). A record is
++ * public only if ALL of the following hold:
++ *   1. approvalStatus = PUBLISHED
++ *   2. verificationStatus = VERIFIED (so NEEDS_REVIEW, UNVERIFIED, STALE,
++ *      CONFLICTING_SOURCES, ... are hidden)
++ *   3. sourceUrl is an absolute https URL to a non-synthetic host
++ *      (SQL: startsWith "https://"; JS post-filter: isAcceptableSourceUrl)
++ *   4. no open DataConflict (status PENDING or ESCALATED) names its slug
++ *   5. for a CoursePage, its UniversityPage also satisfies 1-4.
++ * These models have no "active" flag; inactive/withdrawn pages are expected
++ * to be moved out of PUBLISHED.
++ *
++ * Out of scope (unchanged, documented): CountryPage and ExamPage guide
++ * content; the Crm* structured catalogue, which already uses
++ * src/lib/public-catalog.ts (publicCourseWhere / publicUniversityWhere).
++ */
++import { db } from '@/lib/db';
++import { isAcceptableSourceUrl } from './content-page-guards';
++
++export const OPEN_CONFLICT_STATUSES = ['PENDING', 'ESCALATED'] as const;
++
++export type OpenConflicts = { universitySlugs: string[]; courseSlugs: string[] };
++export const NO_CONFLICTS: OpenConflicts = { universitySlugs: [], courseSlugs: [] };
++
++/** Slugs named by open data conflicts. Errors propagate (fail closed). */
++export async function loadOpenConflicts(): Promise<OpenConflicts> {
++  const rows = await db.dataConflict.findMany({
++    where: { status: { in: [...OPEN_CONFLICT_STATUSES] } },
++    select: { universitySlug: true, courseSlug: true },
++    take: 5000,
++  });
++  const universitySlugs = new Set<string>();
++  const courseSlugs = new Set<string>();
++  for (const row of rows) {
++    if (row.universitySlug) universitySlugs.add(row.universitySlug);
++    if (row.courseSlug) courseSlugs.add(row.courseSlug);
++  }
++  return { universitySlugs: [...universitySlugs], courseSlugs: [...courseSlugs] };
++}
++
++function baseConditions(blockedSlugs: string[]) {
++  const and: Record<string, unknown>[] = [
++    { approvalStatus: 'PUBLISHED' },
++    { verificationStatus: 'VERIFIED' },
++    { sourceUrl: { startsWith: 'https://' } },
++  ];
++  if (blockedSlugs.length) and.push({ slug: { notIn: blockedSlugs } });
++  return and;
++}
++
++export function publicUniversityPageWhere(conflicts: OpenConflicts = NO_CONFLICTS, extra: Record<string, unknown>[] = []) {
++  return { AND: [...baseConditions(conflicts.universitySlugs), ...extra] };
++}
++
++export function publicCoursePageWhere(conflicts: OpenConflicts = NO_CONFLICTS, extra: Record<string, unknown>[] = []) {
++  return {
++    AND: [
++      ...baseConditions(conflicts.courseSlugs),
++      { university: { is: publicUniversityPageWhere(conflicts) } },
++      ...extra,
++    ],
++  };
++}
++
++type PageLike = {
++  slug?: string | null;
++  approvalStatus?: string | null;
++  verificationStatus?: string | null;
++  sourceUrl?: string | null;
++};
++
++/**
++ * JS re-check of a record already loaded with the where-clauses above.
++ * Only checks fields that are present on the record (selects may omit
++ * status fields that the where-clause already enforced), except sourceUrl,
++ * which is mandatory so synthetic/credentialed hosts are dropped.
++ */
++export function passesPublicPagePolicy(record: PageLike | null | undefined, blockedSlugs: string[] = []): boolean {
++  if (!record) return false;
++  if (record.approvalStatus !== undefined && record.approvalStatus !== 'PUBLISHED') return false;
++  if (record.verificationStatus !== undefined && record.verificationStatus !== 'VERIFIED') return false;
++  if (!isAcceptableSourceUrl(record.sourceUrl)) return false;
++  if (record.slug && blockedSlugs.includes(record.slug)) return false;
++  return true;
++}
++
++export function passesPublicCoursePagePolicy(
++  record: (PageLike & { university?: PageLike | null }) | null | undefined,
++  conflicts: OpenConflicts = NO_CONFLICTS,
++): boolean {
++  if (!passesPublicPagePolicy(record, conflicts.courseSlugs)) return false;
++  // When the university relation was loaded, re-check it as well.
++  if (record && record.university && record.university.sourceUrl !== undefined) {
++    return passesPublicPagePolicy(record.university, conflicts.universitySlugs);
++  }
++  return true;
++}
+--- /dev/null
++++ b/src/lib/course-finder/crm-edit-verification.ts
+@@ -0,0 +1,47 @@
++/**
++ * Verification state after an ordinary admin edit of a CrmCourse or
++ * CrmUniversity (PUT /api/admin/courses/[id], PUT /api/admin/universities/[id]).
++ *
++ * Phase 1 review (2026-10-12), P1-D. Both endpoints previously set
++ * verificationStatus = VERIFIED whenever the body contained a sourceUrl and
++ * stamped lastVerifiedAt = now on EVERY edit, so an ordinary edit certified
++ * the whole record. Now an edit never upgrades verification and never writes
++ * a verification date; changing a factual field of a VERIFIED record sends it
++ * back to NEEDS_REVIEW (which also removes it from public listings, because
++ * the public gate requires VERIFIED).
++ */
++import { isAcceptableSourceUrl } from './content-page-guards';
++
++export function isVerifiedStatus(value: unknown): boolean {
++  return typeof value === 'string' && value.toUpperCase() === 'VERIFIED';
++}
++
++export function changedFields(data: Record<string, unknown>, existing: Record<string, unknown>, fields: readonly string[]): string[] {
++  return fields.filter((f) => Object.prototype.hasOwnProperty.call(data, f) && (data[f] ?? null) !== (existing[f] ?? null));
++}
++
++export function verificationAfterEdit(existingStatus: string, factsChanged: boolean): string {
++  return factsChanged && isVerifiedStatus(existingStatus) ? 'NEEDS_REVIEW' : existingStatus;
++}
++
++/**
++ * '' clears a URL; any other NEW value must be an acceptable https URL.
++ * A value identical to the stored one is not re-validated, so legacy values
++ * do not block unrelated edits.
++ */
++export function invalidUrlField(body: Record<string, unknown>, fields: readonly string[], existing: Record<string, unknown> = {}): string | null {
++  for (const f of fields) {
++    const v = body[f];
++    if (v === undefined || v === '' || v === null) continue;
++    if (v === existing[f]) continue;
++    if (!isAcceptableSourceUrl(v)) return f;
++  }
++  return null;
++}
++
++/** Body keys that an edit endpoint must never accept. */
++export const EDIT_CONTROL_FIELDS = ['verificationStatus', 'lastVerifiedAt', 'publicationStatus'] as const;
++
++export function presentControlFields(body: Record<string, unknown>): string[] {
++  return EDIT_CONTROL_FIELDS.filter((f) => Object.prototype.hasOwnProperty.call(body, f));
++}
+--- /dev/null
++++ b/tests/unit/catalogue-phase1-review-publication.test.ts
+@@ -0,0 +1,272 @@
++/**
++ * Catalogue Phase 1 review (2026-10-12): P0-C public visibility + K4 proxy.
++ *
++ * `@/lib/db` is an in-memory fake whose findMany/findFirst/count evaluate the
++ * Prisma-style `where` objects the routes build (AND/OR/NOT, equality,
++ * startsWith, contains, in, notIn, not, relation `is`). This proves which
++ * records each public surface WOULD request under the policy; it is not
++ * MySQL proof (collation, NULL handling and Prisma's own validation are not
++ * exercised).
++ */
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++type Rec = Record<string, any>;
++const h = vi.hoisted(() => ({ data: { universityPage: [] as any[], coursePage: [] as any[], dataConflict: [] as any[], crmCourse: [] as any[], crmScholarship: [] as any[] }, db: {} as any, auth: { current: null as any } }));
++
++function matches(rec: Rec | null | undefined, where: any): boolean {
++  if (!where) return true;
++  if (!rec) return false;
++  return Object.entries(where).every(([k, v]: [string, any]) => {
++    if (k === 'AND') return (v as any[]).every((w) => matches(rec, w));
++    if (k === 'OR') return (v as any[]).some((w) => matches(rec, w));
++    if (k === 'NOT') return Array.isArray(v) ? !v.some((w) => matches(rec, w)) : !matches(rec, v);
++    const val = rec[k];
++    if (v && typeof v === 'object' && !(v instanceof Date) && !Array.isArray(v)) {
++      if ('is' in v) return matches(val, v.is);
++      if ('some' in v) return Array.isArray(val) && val.some((x: Rec) => matches(x, v.some));
++      return Object.entries(v).every(([op, arg]: [string, any]) => {
++        if (op === 'startsWith') return typeof val === 'string' && val.startsWith(arg);
++        if (op === 'contains') return typeof val === 'string' && val.includes(arg);
++        if (op === 'in') return arg.includes(val);
++        if (op === 'notIn') return !arg.includes(val);
++        if (op === 'not') return val !== arg;
++        if (op === 'mode') return true;
++        throw new Error(`unsupported operator ${op}`);
++      });
++    }
++    return val === v;
++  });
++}
++
++vi.mock('@/lib/db', () => {
++  const withUniversity = (c: Rec) => ({ ...c, university: h.data.universityPage.find((u) => u.slug === c.universitySlug) || null });
++  const model = (name: keyof typeof h.data) => ({
++    findMany: vi.fn(async (args: any = {}) => {
++      let rows = (h.data[name] as Rec[]).map((r) => (name === 'coursePage' ? withUniversity(r) : { ...r }));
++      rows = rows.filter((r) => matches(r, args.where));
++      if (name === 'universityPage' && args.select?.courses) {
++        rows = rows.map((u) => ({ ...u, courses: h.data.coursePage.filter((c) => c.universitySlug === u.slug && matches(c, args.select.courses.where)) }));
++      }
++      return typeof args.take === 'number' ? rows.slice(0, args.take) : rows;
++    }),
++    findFirst: vi.fn(async (args: any = {}) => {
++      const rows = await (h.db[name].findMany as any)({ ...args, take: undefined });
++      return rows[0] ?? null;
++    }),
++    count: vi.fn(async (args: any = {}) => (await (h.db[name].findMany as any)({ where: args.where })).length),
++  });
++  const known: Rec = {
++    universityPage: model('universityPage'),
++    coursePage: model('coursePage'),
++    dataConflict: model('dataConflict'),
++    crmCourse: model('crmCourse'),
++    crmScholarship: model('crmScholarship'),
++    student: { findUnique: vi.fn(async () => ({ id: 'stu-1', name: 'Synthetic Student', profileComplete: true, currentCountry: '' })) },
++  };
++  const empty = { findMany: vi.fn(async () => []), findFirst: vi.fn(async () => null), findUnique: vi.fn(async () => null), count: vi.fn(async () => 0) };
++  h.db = new Proxy(known, { get: (t, p: string) => (p in t ? t[p] : empty) });
++  return { db: h.db };
++});
++vi.mock('@/lib/student-resource-auth', () => ({ requireStudentResource: vi.fn(async () => ({ studentId: 'stu-1' })) }));
++vi.mock('@/lib/auth-middleware', () => ({
++  withAuth: (handler: any, opts?: { requireUserTypes?: string[] }) => async (req: Request) => {
++    const auth = h.auth.current;
++    if (!auth) return new Response('{}', { status: 401 });
++    if (opts?.requireUserTypes?.length && !opts.requireUserTypes.includes(auth.userType)) return new Response('{}', { status: 403 });
++    return handler(req, auth);
++  },
++}));
++vi.mock('next/navigation', () => ({
++  notFound: () => { throw new Error('NEXT_NOT_FOUND'); },
++  redirect: (url: string) => { throw new Error(`NEXT_REDIRECT:${url}`); },
++}));
++vi.mock('@/components/website/UniversityHub', () => ({ default: () => null }));
++vi.mock('@/components/website/UniversityPageRecord', () => ({ default: () => null }));
++
++import { NextRequest } from 'next/server';
++import { GET as homepageGET } from '@/app/api/homepage/route';
++import { GET as searchGET } from '@/app/api/search/route';
++import { GET as eligibleGET } from '@/app/api/course-finder/eligible/route';
++import { GET as studentCourseFinderGET } from '@/app/api/student-portal/course-finder/route';
++import { GET as studentScholarshipsGET } from '@/app/api/student-portal/scholarships/route';
++import { generateStudyGuide } from '@/lib/study-guide';
++import CoursePageRoute from '@/app/courses/[slug]/page';
++import UniversityPageRoute from '@/app/universities/[slug]/page';
++import LegacyCourseRoute from '@/app/course/[slug]/page';
++import sitemap from '@/app/sitemap';
++import {
++  passesPublicCoursePagePolicy,
++  publicCoursePageWhere,
++  publicUniversityPageWhere,
++} from '@/lib/course-finder/public-content-page-policy';
++import { publicCourseWhere } from '@/lib/public-catalog';
++import { isStaticAssetBypass } from '@/proxy';
++
++const OK_SRC = 'https://www.auckland.ac.nz/en/study/x.html';
++const uni = (slug: string, over: Rec = {}) => ({ id: slug, slug, name: slug, city: 'Auckland', countrySlug: 'new-zealand', overview: `${slug} overview`, quickFacts: '{}', strengths: '[]', entryRequirements: '{}', tuition: '{}', applicationSteps: '[]', documents: '[]', faqs: '[]', approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: OK_SRC, lastVerifiedAt: null, updatedAt: new Date(), ...over });
++const course = (slug: string, over: Rec = {}) => ({ id: slug, slug, name: `Course ${slug}`, universitySlug: 'uni-ok', countrySlug: 'new-zealand', city: 'Auckland', level: 'Masters', subject: 'Data', duration: '', intake: '', tuition: '', scholarship: null, englishRequirement: '', academicRequirement: '', overview: `${slug} overview`, modules: '[]', careerOutcomes: '[]', documents: '[]', faqs: '[]', deadline: null, approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: OK_SRC, lastVerifiedAt: null, updatedAt: new Date(), ...over });
++
++const PUBLIC_COURSE = 'c-ok';
++const HIDDEN_COURSES: Record<string, Rec> = {
++  'c-unverified': { verificationStatus: 'UNVERIFIED' },
++  'c-needs-review': { verificationStatus: 'NEEDS_REVIEW' },
++  'c-conflicting-status': { verificationStatus: 'CONFLICTING_SOURCES' },
++  'c-draft': { approvalStatus: 'DRAFT' },
++  'c-pending': { approvalStatus: 'PENDING_REVIEW' },
++  'c-no-source': { sourceUrl: null },
++  'c-empty-source': { sourceUrl: '' },
++  'c-http-source': { sourceUrl: 'http://www.auckland.ac.nz/x' },
++  'c-synthetic-source': { sourceUrl: 'https://catalogue.example.com/x' },
++  'c-open-conflict': {},
++  'c-hidden-university': { universitySlug: 'uni-unverified' },
++};
++
++beforeEach(() => {
++  h.auth.current = { userId: 'stu-1', userType: 'STUDENT', roles: [] };
++  h.data.universityPage = [
++    uni('uni-ok'),
++    uni('uni-unverified', { verificationStatus: 'UNVERIFIED' }),
++    uni('uni-draft', { approvalStatus: 'DRAFT' }),
++    uni('uni-no-source', { sourceUrl: null }),
++    uni('uni-conflict'),
++  ];
++  h.data.coursePage = [course(PUBLIC_COURSE), ...Object.entries(HIDDEN_COURSES).map(([slug, over]) => course(slug, over))];
++  h.data.dataConflict = [
++    { id: 'd1', status: 'PENDING', courseSlug: 'c-open-conflict', universitySlug: null },
++    { id: 'd2', status: 'ESCALATED', courseSlug: null, universitySlug: 'uni-conflict' },
++    { id: 'd3', status: 'RESOLVED', courseSlug: PUBLIC_COURSE, universitySlug: 'uni-ok' },
++  ];
++});
++
++const slugs = (rows: Rec[]) => rows.map((r) => r.slug).sort();
++
++describe('P0-C shared policy for UniversityPage / CoursePage', () => {
++  it('only the verified, published, https-sourced, conflict-free course of a public university passes', async () => {
++    const conflicts = { courseSlugs: ['c-open-conflict'], universitySlugs: ['uni-conflict'] };
++    const visible = (await h.db.coursePage.findMany({ where: publicCoursePageWhere(conflicts) })).filter((c: Rec) => passesPublicCoursePagePolicy(c, conflicts));
++    expect(slugs(visible)).toEqual([PUBLIC_COURSE]);
++    const unis = await h.db.universityPage.findMany({ where: publicUniversityPageWhere(conflicts) });
++    expect(slugs(unis)).toEqual(['uni-ok']);
++  });
++
++  it('the JS re-check rejects synthetic hosts that pass the SQL startsWith filter', () => {
++    expect(passesPublicCoursePagePolicy(course('x', { sourceUrl: 'https://catalogue.example.com/x' }))).toBe(false);
++    expect(passesPublicCoursePagePolicy(course('x'))).toBe(true);
++  });
++});
++
++describe('P0-C public surfaces apply the policy', () => {
++  it('homepage lists and counts only public catalogue pages', async () => {
++    const body = await (await homepageGET()).json();
++    expect(slugs(body.courses)).toEqual([PUBLIC_COURSE]);
++    expect(slugs(body.universities)).toEqual(['uni-ok']);
++    expect(body.stats.totalCourses).toBe(2); // SQL count: c-ok + c-synthetic-source (startsWith https); listing drops the synthetic one
++    expect(body.stats.totalUniversities).toBe(1);
++  });
++
++  it('search cannot surface hidden records even when the query matches them', async () => {
++    const body = await (await searchGET(new NextRequest('https://alo.test/api/search?q=overview'))).json();
++    expect(slugs(body.courses)).toEqual([PUBLIC_COURSE]);
++    expect(slugs(body.universities)).toEqual(['uni-ok']);
++  });
++
++  it('student eligibility scoring only uses public course pages', async () => {
++    const body = await (await eligibleGET(new NextRequest('https://alo.test/api/course-finder/eligible?studentId=stu-1'))).json();
++    expect(body.error).toBeUndefined();
++    const listed = JSON.stringify(body);
++    expect(listed).toContain(PUBLIC_COURSE);
++    for (const hidden of Object.keys(HIDDEN_COURSES)) expect(listed, hidden).not.toContain(`"${hidden}"`);
++  });
++
++  it('the public study-guide endpoint no longer returns drafts or unverified pages by slug', async () => {
++    expect(await generateStudyGuide(PUBLIC_COURSE)).not.toBeNull();
++    for (const hidden of Object.keys(HIDDEN_COURSES)) expect(await generateStudyGuide(hidden), hidden).toBeNull();
++  });
++
++  it('direct /courses/[slug] URLs 404 for every hidden case', async () => {
++    await expect(CoursePageRoute({ params: Promise.resolve({ slug: PUBLIC_COURSE }) })).resolves.toBeTruthy();
++    for (const hidden of Object.keys(HIDDEN_COURSES)) {
++      await expect(CoursePageRoute({ params: Promise.resolve({ slug: hidden }) }), hidden).rejects.toThrow('NEXT_NOT_FOUND');
++    }
++  });
++
++  it('legacy /course/[slug] only redirects to a public course page', async () => {
++    await expect(LegacyCourseRoute({ params: Promise.resolve({ slug: PUBLIC_COURSE }) })).rejects.toThrow(`NEXT_REDIRECT:/courses/${PUBLIC_COURSE}`);
++    for (const hidden of ['c-draft', 'c-unverified', 'c-http-source', 'c-open-conflict']) {
++      await expect(LegacyCourseRoute({ params: Promise.resolve({ slug: hidden }) }), hidden).rejects.toThrow('NEXT_NOT_FOUND');
++    }
++  });
++
++  it('direct /universities/[slug] URLs 404 unless public, and embed only public courses', async () => {
++    const el: any = await UniversityPageRoute({ params: Promise.resolve({ slug: 'uni-ok' }) });
++    const embedded = slugs(el.props.university.courses);
++    expect(embedded).toEqual([PUBLIC_COURSE]);
++    for (const hidden of ['uni-unverified', 'uni-draft', 'uni-no-source', 'uni-conflict']) {
++      await expect(UniversityPageRoute({ params: Promise.resolve({ slug: hidden }) }), hidden).rejects.toThrow('NEXT_NOT_FOUND');
++    }
++  });
++
++  it('sitemap omits pages named by an open conflict', async () => {
++    const urls = (await sitemap()).map((e) => e.url);
++    expect(urls.some((u) => u.endsWith(`/courses/${PUBLIC_COURSE}`))).toBe(true);
++    expect(urls.some((u) => u.endsWith('/courses/c-open-conflict'))).toBe(false);
++    expect(urls.some((u) => u.endsWith('/universities/uni-conflict'))).toBe(false);
++  });
++
++  it('fails closed (no catalogue rows) when the conflict lookup errors', async () => {
++    (h.db.dataConflict.findMany as any).mockRejectedValueOnce(new Error('db down'));
++    await expect(homepageGET()).rejects.toThrow('db down');
++  });
++});
++
++describe('P0-C Crm* student surfaces use the canonical public gate', () => {
++  const crmUni = { universityId: 'U1', status: 'active', verificationStatus: 'VERIFIED', publicationStatus: 'published', sourceUrl: OK_SRC, officialUrl: '' };
++  const crm = (courseId: string, over: Rec = {}) => ({ courseId, universityId: 'U1', courseTitle: courseId, status: 'active', verificationStatus: 'VERIFIED', publicationStatus: 'published', sourceUrl: OK_SRC, officialUrl: '', internationalEligibility: 'eligible', createdAt: new Date(), university: crmUni, ...over });
++
++  it('student-portal course finder excludes inactive, unverified, draft, source-less and conflicting rows', async () => {
++    h.data.crmCourse = [
++      crm('ok'), crm('inactive', { status: 'inactive' }), crm('unverified', { verificationStatus: 'NEEDS_REVIEW' }),
++      crm('conflicting', { verificationStatus: 'CONFLICTING_SOURCES' }), crm('draft', { publicationStatus: 'draft' }),
++      crm('nosource', { sourceUrl: '', officialUrl: '' }), crm('hidden-uni', { university: { ...crmUni, verificationStatus: 'NEEDS_REVIEW' } }),
++    ];
++    const res = await studentCourseFinderGET(new Request('https://alo.test/api/student-portal/course-finder'));
++    const body = await res.json();
++    expect(body.data.map((c: Rec) => c.courseId)).toEqual(['ok']);
++    expect(body.total).toBe(1);
++  });
++
++  it('student-portal scholarships require a source-verified scholarship of a public university', async () => {
++    h.data.crmScholarship = [
++      { id: 's1', universityId: 'U1', courseId: '', status: 'active', verificationStatus: 'VERIFIED', university: crmUni },
++      { id: 's2', universityId: 'U1', courseId: '', status: 'active', verificationStatus: 'NEEDS_REVIEW', university: crmUni },
++      { id: 's3', universityId: 'U1', courseId: '', status: 'active', verificationStatus: 'VERIFIED', university: { ...crmUni, publicationStatus: 'draft' } },
++    ];
++    const body = await (await studentScholarshipsGET(new Request('https://alo.test/api/student-portal/scholarships'))).json();
++    expect(body.data.map((s: Rec) => s.id)).toEqual(['s1']);
++  });
++
++  it('publicCourseWhere itself rejects every non-public Crm case', () => {
++    expect(matches(crm('ok'), publicCourseWhere())).toBe(true);
++    for (const over of [{ status: 'inactive' }, { verificationStatus: 'CONFLICTING_SOURCES' }, { publicationStatus: 'draft' }, { sourceUrl: '', officialUrl: '' }]) {
++      expect(matches(crm('x', over), publicCourseWhere()), JSON.stringify(over)).toBe(false);
++    }
++  });
++});
++
++describe('K4 review: static bypass is an allow-list', () => {
++  it('a dotted path under a gated page outside ROLE_ROUTES no longer skips the proxy', () => {
++    for (const p of ['/guides/x.pdf', '/guides/a.b', '/dashboard/x.json', '/some/deep/file.js', '/GUIDES/x.PNG', '/guides%2fx.pdf']) {
++      expect(isStaticAssetBypass(p), p).toBe(false);
++    }
++  });
++  it('real static locations still bypass', () => {
++    for (const p of ['/_next/static/chunks/a.js', '/_next/image', '/images/hero.png', '/icons/i.svg', '/docs/guide.pdf', '/robots.txt', '/sitemap.xml', '/sw.js', '/manifest.json', '/logo.svg', '/favicon.ico', '/public/x.png']) {
++      expect(isStaticAssetBypass(p), p).toBe(true);
++    }
++  });
++  it('API and role-gated prefixes never bypass, whatever the encoding', () => {
++    for (const p of ['/api/import-center.json', '/api%2Fcourse-finder/admin.css', '/admin/x.png', '/ADMIN/a.js', '/api/x.png']) {
++      expect(isStaticAssetBypass(p), p).toBe(false);
++    }
++  });
++});
+--- /dev/null
++++ b/tests/unit/catalogue-phase1-review-writes.test.ts
+@@ -0,0 +1,384 @@
++/**
++ * Catalogue Phase 1 review (2026-10-12): P0-A creation defaults, P0-B AI
++ * fallback, P1-D verification timestamps, audit attribution.
++ *
++ * Mocked: `@/lib/db` (recording fakes), `@/lib/auth-middleware` (withAuth
++ * reproduces the real requireUserTypes check), next-auth session and the
++ * ai-action-executor (forced to throw so the inline fallback runs). These are
++ * handler-logic tests, not MySQL or end-to-end proof.
++ */
++import { readFileSync, readdirSync, statSync } from 'fs';
++import { join } from 'path';
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++const m = vi.hoisted(() => {
++  const calls: Array<{ op: string; args: any }> = [];
++  const rec = (op: string, impl?: (args: any) => any) => vi.fn(async (args: any) => {
++    calls.push({ op, args });
++    return impl ? impl(args) : null;
++  });
++  return { calls, rec, auth: vi.fn(), session: vi.fn(), executor: vi.fn(), db: {} as any };
++});
++
++vi.mock('@/lib/auth-middleware', () => ({
++  authenticateRequest: (...a: unknown[]) => m.auth(...a),
++  logAuditAction: vi.fn(async () => undefined),
++  withAuth: (handler: any, opts?: { requireUserTypes?: string[] }) => async (req: Request) => {
++    const auth = await m.auth(req);
++    if (!auth) return new Response('{}', { status: 401 });
++    if (opts?.requireUserTypes?.length && !opts.requireUserTypes.includes(auth.userType)) return new Response('{}', { status: 403 });
++    return handler(req, auth);
++  },
++}));
++vi.mock('@/lib/db', () => ({ db: m.db }));
++vi.mock('next-auth', () => ({ getServerSession: (...a: unknown[]) => m.session(...a) }));
++vi.mock('@/lib/auth', () => ({ authOptions: {} }));
++vi.mock('@/lib/ai-action-executor', () => ({ executeAiAction: (...a: unknown[]) => m.executor(...a) }));
++vi.mock('@/lib/university-monitoring-sync', () => ({ syncApprovedChange: vi.fn(async () => ({ ok: true })) }));
++
++import { NextRequest } from 'next/server';
++import { POST as createCoursePOST } from '@/app/api/admin/courses/create/route';
++import { POST as coursesPOST } from '@/app/api/admin/courses/route';
++import { PUT as coursePUT } from '@/app/api/admin/courses/[id]/route';
++import { PUT as universityPUT } from '@/app/api/admin/universities/[id]/route';
++import { POST as scholarshipImportPOST } from '@/app/api/admin/import/scholarships/route';
++import { GET as aiGET, PATCH as aiPATCH } from '@/app/api/ai-command/execute/route';
++import { PATCH as cfaPATCH } from '@/app/api/course-finder/admin/route';
++import { PATCH as importCenterPATCH } from '@/app/api/import-center/route';
++import { POST as crmScholarshipPOST, PUT as crmScholarshipPUT } from '@/app/api/crm/scholarships/route';
++import { POST as countriesPOST } from '@/app/api/admin/countries/route';
++import { auditActor } from '@/lib/course-finder/content-page-guards';
++import { passesPublicCoursePagePolicy } from '@/lib/course-finder/public-content-page-policy';
++
++const ORIGIN = 'https://alo.test';
++const admin = { userId: 'u-admin', actorUserId: 'u-admin', userType: 'ADMIN', identityDomain: 'user', authenticationMethod: 'cookie', roles: ['ADMIN'], email: 'a@alo.test' };
++const counselorWithAdminClaim = { ...admin, userId: 'u-c', userType: 'COUNSELOR', roles: ['admin'] };
++const SRC = 'https://www.auckland.ac.nz/en/study/x.html';
++const UNI = { id: 'uid', universityId: 'UNI-1', name: 'Uni One', city: 'Auckland', country: 'New Zealand', campusName: 'City' };
++
++const writes = () => m.calls.filter((c) => /\.(create|createMany|update|updateMany|upsert|delete)$/.test(c.op));
++const json = (url: string, method: string, body: unknown) =>
++  new NextRequest(`${ORIGIN}${url}`, { method, headers: { 'content-type': 'application/json', origin: ORIGIN }, body: JSON.stringify(body) });
++
++let existingCourse: any;
++let existingUni: any;
++let coursePage: any;
++
++function resetDb() {
++  m.calls.length = 0;
++  existingCourse = { id: 'c1', courseId: 'CRS-1', courseTitle: 'MSc Data', studyLevel: 'Masters', subjectArea: 'Data', disciplineArea: '', durationMonths: 12, qualification: 'MSc', deliveryMode: '', campus: '', placementOption: false, onlineOption: false, sourceUrl: SRC, status: 'active', verificationStatus: 'VERIFIED', lastVerifiedAt: '2026-09-01' };
++  existingUni = { id: 'u1', universityId: 'UNI-1', name: 'Uni One', country: 'New Zealand', city: 'Auckland', campusName: '', website: 'http://legacy.example-uni.ac.nz', officialUrl: '', sourceUrl: SRC, ranking: 0, worldRanking: 0, type: '', ieltsMin: 0, tuitionRange: '', scholarships: '', description: '', status: 'active', verificationStatus: 'VERIFIED', lastVerifiedAt: '2026-09-01' };
++  coursePage = { id: 'cp1', slug: 'msc-data', name: 'MSc Data', universitySlug: 'uni-a', countrySlug: 'nz', city: '', level: '', subject: '', duration: '', intake: '', tuition: 'NZD 40000', scholarship: null, englishRequirement: '', academicRequirement: '', overview: '', modules: '[]', careerOutcomes: '[]', documents: '[]', faqs: '[]', deadline: null, sourceUrl: SRC, verificationStatus: 'VERIFIED', approvalStatus: 'PUBLISHED', updatedAt: new Date('2026-10-01') };
++  Object.assign(m.db, {
++    crmUniversity: { findFirst: m.rec('crmUniversity.findFirst', (a) => (a.where?.OR ? (a.where.OR.some((w: any) => w.id === 'u1' || w.universityId === 'UNI-1') ? existingUni : UNI) : UNI)), update: m.rec('crmUniversity.update', (a) => ({ ...existingUni, ...a.data })) },
++    crmCourse: { findFirst: m.rec('crmCourse.findFirst', (a) => (a.where?.OR ? existingCourse : null)), create: m.rec('crmCourse.create', (a) => ({ id: 'new', ...a.data })), update: m.rec('crmCourse.update', (a) => ({ ...existingCourse, ...a.data })) },
++    crmCourseIntakeFee: { create: m.rec('crmCourseIntakeFee.create', (a) => a.data), updateMany: m.rec('crmCourseIntakeFee.updateMany', () => ({ count: 1 })) },
++    crmCourseRequirement: { create: m.rec('crmCourseRequirement.create', (a) => a.data), updateMany: m.rec('crmCourseRequirement.updateMany', () => ({ count: 1 })) },
++    crmAuditLog: { create: m.rec('crmAuditLog.create', () => ({})) },
++    auditLog: { create: m.rec('auditLog.create', () => ({})) },
++    scholarship: { findFirst: m.rec('scholarship.findFirst', () => null), create: m.rec('scholarship.create', (a) => a.data) },
++    coursePage: {
++      findUnique: m.rec('coursePage.findUnique', () => ({ ...coursePage })),
++      create: m.rec('coursePage.create', (a) => ({ id: 'new-cp', ...a.data })),
++      update: m.rec('coursePage.update', (a) => ({ ...coursePage, ...a.data })),
++      updateMany: m.rec('coursePage.updateMany', () => ({ count: 1 })),
++    },
++    aiCommandAction: { findUnique: vi.fn(), findMany: m.rec('aiCommandAction.findMany', () => []), update: m.rec('aiCommandAction.update', (a) => a.data) },
++  });
++}
++
++beforeEach(() => {
++  vi.stubEnv('NEXTAUTH_URL', ORIGIN);
++  m.auth.mockReset();
++  m.auth.mockResolvedValue(admin);
++  m.session.mockReset();
++  m.session.mockResolvedValue({ user: { id: 'u-admin', role: 'ADMIN' } });
++  m.executor.mockReset();
++  m.executor.mockRejectedValue(new Error('primary executor failed'));
++  resetDb();
++});
++
++// ------------------------------------------------------------------ P0-A
++describe('P0-A manual CrmCourse creation is never verification, publication or invention', () => {
++  const routes = [['/api/admin/courses/create', createCoursePOST], ['/api/admin/courses', coursesPOST]] as const;
++
++  it.each(routes)('%s: a sourceUrl no longer marks anything VERIFIED and no facts are invented', async (url, handler) => {
++    const res = await handler(json(url, 'POST', { courseTitle: 'MSc Data', universityId: 'UNI-1', sourceUrl: SRC, ieltsOverall: 6 }));
++    expect(res.status).toBe(200);
++    const course = m.calls.find((c) => c.op === 'crmCourse.create')!.args.data;
++    expect(course).toMatchObject({ verificationStatus: 'NEEDS_REVIEW', publicationStatus: 'draft', status: 'draft', lastVerifiedAt: '' });
++    // Previously defaulted to Postgraduate / General / MSc / 12 / Full-time On Campus.
++    expect(course).toMatchObject({ studyLevel: '', subjectArea: '', qualification: '', durationMonths: 0, deliveryMode: '' });
++    expect(course.city).toBe('Auckland'); // inherited from the university record, not invented
++    const reqRow = m.calls.find((c) => c.op === 'crmCourseRequirement.create')!.args.data;
++    expect(reqRow).toMatchObject({ ieltsOverall: 6, academicReq: '', verificationStatus: 'NEEDS_REVIEW' });
++    for (const invented of ['pteOverall', 'toeflOverall', 'detOverall', 'ieltsMinBand']) expect(reqRow, invented).not.toHaveProperty(invented);
++    // No intake was supplied, so no intake/fee row (previously "September 2026", "Rolling", GBP).
++    expect(m.calls.some((c) => c.op === 'crmCourseIntakeFee.create')).toBe(false);
++    expect(JSON.stringify(writes())).not.toMatch(/"VERIFIED"|Rolling|Recognized Bachelor|"GBP"/);
++  });
++
++  it.each(routes)('%s: control fields requesting publication or verification are refused with no write', async (url, handler) => {
++    for (const extra of [{ publicationStatus: 'published' }, { verificationStatus: 'VERIFIED' }, { status: 'active' }, { lastVerifiedAt: '2026-10-12' }]) {
++      resetDb();
++      const res = await handler(json(url, 'POST', { courseTitle: 'MSc Data', universityId: 'UNI-1', sourceUrl: SRC, ...extra }));
++      expect(res.status, JSON.stringify(extra)).toBeGreaterThanOrEqual(400);
++      expect(writes(), JSON.stringify(extra)).toHaveLength(0);
++    }
++  });
++
++  it.each(routes)('%s: fees need an explicit currency and intake; nothing is assumed', async (url, handler) => {
++    let res = await handler(json(url, 'POST', { courseTitle: 'MSc Data', universityId: 'UNI-1', tuitionFee: 30000, intakes: [{ intakeYear: 2027, intakeMonth: 'February' }] }));
++    expect(res.status).toBe(400);
++    expect(writes()).toHaveLength(0);
++    resetDb();
++    res = await handler(json(url, 'POST', { courseTitle: 'MSc Data', universityId: 'UNI-1', tuitionFee: 30000, currency: 'nzd', intakes: [{ intakeYear: 2027, intakeMonth: 'February' }] }));
++    expect(res.status).toBe(200);
++    const fee = m.calls.find((c) => c.op === 'crmCourseIntakeFee.create')!.args.data;
++    expect(fee).toMatchObject({ intakeYear: 2027, intakeMonth: 'February', applicationDeadline: '', tuitionCurrency: 'NZD', yearlyTuition: 30000, verificationStatus: 'NEEDS_REVIEW' });
++    resetDb();
++    res = await handler(json(url, 'POST', { courseTitle: 'MSc Data', universityId: 'UNI-1', tuitionFee: 30000, currency: 'NZD' }));
++    expect((await res.json()).warnings?.[0]).toMatch(/not saved/);
++    expect(m.calls.some((c) => c.op === 'crmCourseIntakeFee.create')).toBe(false);
++  });
++
++  it.each(routes)('%s: a lowercase admin role claim on a non-admin user type is refused', async (url, handler) => {
++    m.auth.mockResolvedValue(counselorWithAdminClaim);
++    const res = await handler(json(url, 'POST', { courseTitle: 'MSc Data', universityId: 'UNI-1' }));
++    expect(res.status).toBe(403);
++    expect(writes()).toHaveLength(0);
++  });
++
++  it('every CoursePage/UniversityPage/CountryPage/ExamPage create in src/ is a reviewed path that sets both status fields', () => {
++    const files: string[] = [];
++    const walk = (dir: string) => {
++      for (const name of readdirSync(dir)) {
++        const p = join(dir, name);
++        if (statSync(p).isDirectory()) walk(p);
++        else if (/\.(ts|tsx)$/.test(name)) files.push(p);
++      }
++    };
++    walk(join(process.cwd(), 'src'));
++    const creators = files.filter((f) => /\b(coursePage|universityPage|countryPage|examPage)\.(create|createMany|upsert)\s*\(/.test(readFileSync(f, 'utf8'))).map((f) => f.replace(`${process.cwd()}/`, '')).sort();
++    // A new creation path must be reviewed against the VERIFIED/PUBLISHED schema defaults before it is added here.
++    expect(creators).toEqual(['src/app/api/course-finder/admin/route.ts', 'src/lib/course-finder/ai-content-fallback.ts']);
++    for (const f of creators) {
++      const src = readFileSync(join(process.cwd(), f), 'utf8');
++      expect(src, f).toMatch(/verificationStatus:\s*UNVERIFIED/);
++      expect(src, f).toMatch(/approvalStatus:\s*(approvalStatus as string|'DRAFT')/);
++    }
++  });
++});
++
++// ------------------------------------------------------------------ P0-B
++describe('P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails', () => {
++  const approve = (payload: unknown, targetId: string | null = null, targetType = 'CoursePage') => {
++    (m.db.aiCommandAction.findUnique as any).mockResolvedValue({ id: 'act1', actionType: 'DEPLOY_CONTENT', targetType, targetId, payload: JSON.stringify(payload), status: 'PENDING' });
++    return aiPATCH(json('/api/ai-command/execute', 'PATCH', { id: 'act1', decision: 'APPROVED', approvedBy: 'u-admin' }));
++  };
++  const actionStatus = () => m.calls.filter((c) => c.op === 'aiCommandAction.update').map((c) => c.args.data.status).filter(Boolean);
++
++  it('creates an UNVERIFIED DRAFT with only supplied values, and it is not publicly visible', async () => {
++    const res = await approve({ name: 'MSc Data', slug: 'msc-data-ai', universitySlug: 'uni-a', countrySlug: 'nz', tuition: 'NZD 40000' });
++    expect(m.executor).toHaveBeenCalled();
++    expect(res.status).toBe(200);
++    const created = m.calls.find((c) => c.op === 'coursePage.create')!.args.data;
++    expect(created).toMatchObject({ verificationStatus: 'UNVERIFIED', approvalStatus: 'DRAFT', lastVerifiedAt: null, tuition: 'NZD 40000' });
++    expect(created).toMatchObject({ city: '', level: '', duration: '', intake: '', englishRequirement: '', academicRequirement: '', overview: '' });
++    expect(JSON.stringify(created)).not.toMatch(/aalborg|denmark|IELTS 6\.0|SSC\/HSC|Contact for details|Unknown|pending\./i);
++    expect(passesPublicCoursePagePolicy({ ...created, sourceUrl: SRC })).toBe(false);
++    expect(actionStatus()).toContain('EXECUTED');
++  });
++
++  it('refuses to create without the identifying fields instead of inventing them', async () => {
++    const res = await approve({ name: 'MSc Data' });
++    expect(res.status).toBe(500);
++    expect(m.calls.some((c) => c.op === 'coursePage.create')).toBe(false);
++    expect(actionStatus()).toContain('FAILED');
++  });
++
++  it('rejects AI payloads that try to set verification or publication', async () => {
++    for (const payload of [
++      { name: 'X', slug: 'x', universitySlug: 'u', countrySlug: 'nz', verificationStatus: 'VERIFIED' },
++      { name: 'X', slug: 'x', universitySlug: 'u', countrySlug: 'nz', approvalStatus: 'PUBLISHED' },
++    ]) {
++      resetDb();
++      await approve(payload);
++      expect(m.calls.some((c) => c.op === 'coursePage.create'), JSON.stringify(payload)).toBe(false);
++    }
++    resetDb();
++    await approve({ data: { tuition: 'x', approvalStatus: 'PUBLISHED' } }, 'cp1');
++    expect(m.calls.some((c) => /coursePage\.update/.test(c.op))).toBe(false);
++  });
++
++  it('an AI update to a VERIFIED published page downgrades it and takes it out of publication', async () => {
++    const res = await approve({ data: { tuition: 'NZD 41000' } }, 'cp1');
++    expect(res.status).toBe(200);
++    const upd = m.calls.find((c) => c.op === 'coursePage.updateMany')!.args;
++    expect(upd.where).toMatchObject({ id: 'cp1', updatedAt: coursePage.updatedAt });
++    expect(upd.data).toEqual({ tuition: 'NZD 41000', verificationStatus: 'NEEDS_REVIEW', approvalStatus: 'PENDING_REVIEW' });
++  });
++
++  it('an unsupported target fails instead of reporting a fake deployment', async () => {
++    const res = await approve({ title: 'x' }, null, 'UniversityPage');
++    expect(res.status).toBe(500);
++    expect(actionStatus()).toContain('FAILED');
++    expect(writes().filter((w) => !w.op.startsWith('aiCommandAction'))).toHaveLength(0);
++  });
++
++  it('GET (lists payloads) now requires an ADMIN/SUPER_ADMIN session', async () => {
++    m.session.mockResolvedValueOnce(null);
++    expect((await aiGET(new NextRequest(`${ORIGIN}/api/ai-command/execute`))).status).toBe(401);
++    m.session.mockResolvedValueOnce({ user: { id: 's', role: 'STUDENT' } });
++    expect((await aiGET(new NextRequest(`${ORIGIN}/api/ai-command/execute`))).status).toBe(403);
++    expect((await aiGET(new NextRequest(`${ORIGIN}/api/ai-command/execute`))).status).toBe(200);
++  });
++});
++
++// ------------------------------------------------------------------ P1-D
++describe('P1-D ordinary edits never certify a record or advance its verification date', () => {
++  const put = (handler: any, url: string, id: string, body: unknown) => handler(json(url, 'PUT', body), { params: Promise.resolve({ id }) });
++
++  it('CrmCourse: a sourceUrl in the body no longer upgrades NEEDS_REVIEW to VERIFIED', async () => {
++    existingCourse.verificationStatus = 'NEEDS_REVIEW';
++    const res = await put(coursePUT, '/api/admin/courses/c1', 'c1', { sourceUrl: 'https://www.auckland.ac.nz/new' });
++    expect(res.status).toBe(200);
++    const data = m.calls.find((c) => c.op === 'crmCourse.update')!.args.data;
++    expect(data.verificationStatus).toBe('NEEDS_REVIEW');
++    expect(data).not.toHaveProperty('lastVerifiedAt');
++  });
++
++  it('CrmCourse: a fact edit of a VERIFIED course sends it to NEEDS_REVIEW; a status-only edit keeps VERIFIED; neither re-dates it', async () => {
++    await put(coursePUT, '/api/admin/courses/c1', 'c1', { durationMonths: 18 });
++    let data = m.calls.find((c) => c.op === 'crmCourse.update')!.args.data;
++    expect(data).toMatchObject({ durationMonths: 18, verificationStatus: 'NEEDS_REVIEW' });
++    expect(data).not.toHaveProperty('lastVerifiedAt');
++    resetDb();
++    await put(coursePUT, '/api/admin/courses/c1', 'c1', { status: 'inactive' });
++    data = m.calls.find((c) => c.op === 'crmCourse.update')!.args.data;
++    expect(data).toMatchObject({ status: 'inactive', verificationStatus: 'VERIFIED' });
++    expect(data).not.toHaveProperty('lastVerifiedAt');
++  });
++
++  it('CrmCourse: fee changes need a currency (no GBP default) and mark fee rows NEEDS_REVIEW', async () => {
++    expect((await put(coursePUT, '/api/admin/courses/c1', 'c1', { tuitionFee: 1 })).status).toBe(400);
++    expect(writes()).toHaveLength(0);
++    await put(coursePUT, '/api/admin/courses/c1', 'c1', { tuitionFee: 41000, currency: 'nzd' });
++    expect(m.calls.find((c) => c.op === 'crmCourseIntakeFee.updateMany')!.args.data).toMatchObject({ tuitionCurrency: 'NZD', verificationStatus: 'NEEDS_REVIEW' });
++    expect(m.calls.find((c) => c.op === 'crmCourse.update')!.args.data.verificationStatus).toBe('NEEDS_REVIEW');
++  });
++
++  it('CrmCourse/CrmUniversity: control fields are refused', async () => {
++    for (const body of [{ verificationStatus: 'VERIFIED' }, { lastVerifiedAt: 'now' }, { publicationStatus: 'published' }]) {
++      resetDb();
++      expect((await put(coursePUT, '/api/admin/courses/c1', 'c1', body)).status).toBe(400);
++      expect((await put(universityPUT, '/api/admin/universities/u1', 'u1', body)).status).toBe(400);
++      expect(writes()).toHaveLength(0);
++    }
++  });
++
++  it('CrmUniversity: same rules; an unchanged legacy http website does not block the edit', async () => {
++    const { verificationStatus: _v, lastVerifiedAt: _l, ...resent } = existingUni; // a client re-sending the editable fields
++    const res = await put(universityPUT, '/api/admin/universities/u1', 'u1', { ...resent, description: 'New overview' });
++    expect(res.status).toBe(200);
++    const data = m.calls.find((c) => c.op === 'crmUniversity.update')!.args.data;
++    expect(data).toMatchObject({ description: 'New overview', verificationStatus: 'NEEDS_REVIEW' });
++    expect(data).not.toHaveProperty('lastVerifiedAt');
++    resetDb();
++    expect((await put(universityPUT, '/api/admin/universities/u1', 'u1', { website: 'http://new.example-uni.ac.nz' })).status).toBe(400);
++  });
++
++  it('scholarship import never marks rows verified or dated, and invents no currency or amount text', async () => {
++    const res = await scholarshipImportPOST(json('/api/admin/import/scholarships', 'POST', { rows: [{ name: 'Merit Award', source_url: SRC }] }));
++    expect(res.status).toBe(200);
++    const row = m.calls.find((c) => c.op === 'scholarship.create')!.args.data;
++    expect(row).toMatchObject({ verificationStatus: 'pending', lastVerifiedAt: null, currency: '', fundingAmount: '' });
++  });
++
++  it('course-finder admin: re-sending normalised values (\"\" for null) is not a change and does not unpublish', async () => {
++    coursePage.verificationStatus = 'UNVERIFIED'; // legacy published-but-unverified page
++    const res = await cfaPATCH(json('/api/course-finder/admin', 'PATCH', { id: 'cp1', scholarship: '', modules: '[ ]' }));
++    expect((await res.json()).message).toBe('No changes.');
++    expect(writes()).toHaveLength(0);
++  });
++});
++
++// ------------------------------------------------------------------ audit attribution
++describe('audit attribution from the session', () => {
++  it('portal identities are not written to the User foreign key', () => {
++    expect(auditActor({ userId: 'p1', identityDomain: 'portal', userType: 'ADMIN' }).userId).toBeNull();
++    expect(auditActor({ userId: 'u1', identityDomain: 'user', userType: 'ADMIN' }).userId).toBe('u1');
++  });
++
++  it('import-center records the session actor, never a fallback email or "system" id', async () => {
++    m.db.coursePage.findUnique = m.rec('coursePage.findUnique', () => ({ ...coursePage, approvalStatus: 'DRAFT', verificationStatus: 'UNVERIFIED' }));
++    const res = await importCenterPATCH(json('/api/import-center', 'PATCH', { type: 'course', slug: 'msc-data', action: 'approve' }));
++    expect(res.status).toBe(200);
++    const log = m.calls.find((c) => c.op === 'auditLog.create')!.args.data;
++    expect(log.userId).toBe('u-admin');
++    expect(JSON.parse(log.details).actor).toMatchObject({ userId: 'u-admin', identityDomain: 'user' });
++  });
++});
++
++// ------------------------------------------------------------------ P0-A / P1-D remaining writers
++describe('remaining catalogue writers (crm/scholarships, country destination saves)', () => {
++  let existingSch: any;
++  beforeEach(() => {
++    existingSch = { id: 's1', universityId: 'UNI-1', scholarshipName: 'Merit', scholarshipAmount: 5000, scholarshipCurrency: 'NZD', verificationStatus: 'VERIFIED', status: 'active' };
++    Object.assign(m.db, {
++      crmScholarship: {
++        create: m.rec('crmScholarship.create', (a) => ({ id: 'new-s', ...a.data })),
++        findUnique: m.rec('crmScholarship.findUnique', (a) => (a.where.id === 's1' ? { ...existingSch } : null)),
++        update: m.rec('crmScholarship.update', (a) => ({ ...existingSch, ...a.data })),
++      },
++      country: { upsert: m.rec('country.upsert', (a) => ({ id: 'cty', ...a.create })) },
++    });
++  });
++
++  it('crm/scholarships POST: no GBP default, a currency is required with an amount, control fields are refused', async () => {
++    let res = await crmScholarshipPOST(json('/api/crm/scholarships', 'POST', { universityId: 'UNI-1', scholarshipName: 'Merit', scholarshipAmount: 5000 }));
++    expect(res.status).toBe(400);
++    for (const extra of [{ verificationStatus: 'VERIFIED' }, { status: 'active' }, { lastVerifiedAt: '2026-10-12' }]) {
++      res = await crmScholarshipPOST(json('/api/crm/scholarships', 'POST', { universityId: 'UNI-1', scholarshipName: 'Merit', ...extra }));
++      expect(res.status, JSON.stringify(extra)).toBe(400);
++    }
++    expect(writes()).toHaveLength(0);
++    res = await crmScholarshipPOST(json('/api/crm/scholarships', 'POST', { universityId: 'UNI-1', scholarshipName: 'Merit', scholarshipAmount: 5000, scholarshipCurrency: 'nzd' }));
++    expect(res.status).toBe(201);
++    const data = m.calls.find((c) => c.op === 'crmScholarship.create')!.args.data;
++    expect(data).toEqual({ universityId: 'UNI-1', courseId: '', scholarshipName: 'Merit', scholarshipAmount: 5000, scholarshipCurrency: 'NZD' });
++    // No verificationStatus written: the schema default (NEEDS_REVIEW) applies, which publicScholarshipWhere excludes.
++    resetDb();
++  });
++
++  it('crm/scholarships PUT: a fact edit of a VERIFIED scholarship returns it to NEEDS_REVIEW; a status edit does not', async () => {
++    let res = await crmScholarshipPUT(json('/api/crm/scholarships', 'PUT', { id: 's1', scholarshipAmount: 6000 }));
++    expect(res.status).toBe(200);
++    expect(m.calls.find((c) => c.op === 'crmScholarship.update')!.args.data).toEqual({ scholarshipAmount: 6000, verificationStatus: 'NEEDS_REVIEW' });
++    m.calls.length = 0;
++    res = await crmScholarshipPUT(json('/api/crm/scholarships', 'PUT', { id: 's1', status: 'inactive' }));
++    expect(m.calls.find((c) => c.op === 'crmScholarship.update')!.args.data).toEqual({ status: 'inactive' });
++    m.calls.length = 0;
++    expect((await crmScholarshipPUT(json('/api/crm/scholarships', 'PUT', { id: 's1', verificationStatus: 'VERIFIED' }))).status).toBe(400);
++    expect((await crmScholarshipPUT(json('/api/crm/scholarships', 'PUT', { id: 'missing', scholarshipName: 'X' }))).status).toBe(404);
++    existingSch.scholarshipCurrency = '';
++    existingSch.verificationStatus = 'NEEDS_REVIEW';
++    expect((await crmScholarshipPUT(json('/api/crm/scholarships', 'PUT', { id: 's1', scholarshipAmount: 100 }))).status).toBe(400);
++    expect(writes()).toHaveLength(0);
++    resetDb();
++  });
++
++  it('admin/countries POST: an ordinary save no longer stamps lastVerifiedAt (shown publicly as "Last verified")', async () => {
++    const res = await countriesPOST(json('/api/admin/countries', 'POST', { name: 'New Zealand', slug: 'new-zealand', overview: 'x' }));
++    expect(res.status).toBe(200);
++    const args = m.calls.find((c) => c.op === 'country.upsert')!.args;
++    expect(args.update).not.toHaveProperty('lastVerifiedAt');
++    expect(args.create).not.toHaveProperty('lastVerifiedAt');
++    resetDb();
++  });
++
++  it('admin/website/cms country upsert: static check that no lastVerifiedAt is written on save', () => {
++    const src = readFileSync('src/app/api/admin/website/cms/route.ts', 'utf8');
++    expect(src).not.toMatch(/lastVerifiedAt:\s*new Date\(\)/);
++  });
++});

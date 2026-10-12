@@ -11,6 +11,7 @@ function clearPageSessionCookie(response: NextResponse) {
     maxAge: 0,
     expires: new Date(0),
   });
+  response.cookies.set('alo_page_session', '', {httpOnly:true,secure,sameSite:'lax',path:'/',maxAge:0});
   response.cookies.set(secure ? '__Secure-next-auth.session-token' : 'next-auth.session-token', '', {
     httpOnly: true,
     secure,

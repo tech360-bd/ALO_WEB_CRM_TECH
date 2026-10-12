@@ -1,14 +1,28 @@
 # Complete supplied-link audit and implementation matrix — 2026-09-27
 
-This is the authoritative follow-up matrix for the full link list in the latest request. It preserves repeated links, entries labelled **Fetched** and **Read**, YouTube redirect wrappers, and non-GitHub URLs. A link is not treated as permission to copy code or to install a native product into this Next.js application.
+This is the occurrence-preserving matrix for the supplied link list. It retains repeated links, entries labelled **Fetched** and **Read**, YouTube redirect wrappers, and non-GitHub URLs. A link is not treated as permission to copy code or install a native product into this Next.js application.
 
-## Coverage totals
+### Fresh follow-up — 2026-10-10
 
-- **161 supplied link occurrences represented below**.
-- **92 distinct GitHub repositories checked** using GitHub repository metadata, README content, and recursive source-tree metadata.
-- **89 GitHub repositories returned HTTP 200; 3 returned HTTP 404**.
-- **28 YouTube redirect occurrences resolved** to their GitHub `q` targets; the target repositories were checked independently.
-- **9 non-GitHub URLs fetched** where the page fetcher permitted it. Meta Developer AI returned HTTP 403 and is explicitly marked NOT VERIFIED.
+- The latest user message added `ToolJet/ToolJet` and `huggingface/education-toolkit`; both were checked through GitHub REST metadata, default-branch README, README headings/feature evidence, and top-level contents. They are recorded as rows 163–164 below. ToolJet is an AGPL-3.0 internal-tool/app builder (reference only; no wholesale import). The Hugging Face toolkit is an Apache-2.0 ML education curriculum for Hub/Gradio/Transformers/Diffusers (not study-abroad admissions material; no code or course content imported).
+- Fresh README + top-level-tree review was made for all **95 distinct GitHub targets** represented by rows 1–164: **92 returned HTTP 200 and supplied a README and root listing; 3 remain HTTP 403, `Resource not accessible by integration`** (`engralaminn-collab/alo-education-uk-final`, `engralaminn-collab/ukvi-ai-markting_n8n`, `engralaminn-collab/Ai-Markting-crm`). Their contents remain NOT VERIFIED.
+- The per-repository report records metadata, default branch, SPDX license, README headings/selected feature evidence, and top-level entries: `AUDIT/repository-readme-review-2026-10-10.md` and `.json`. No repositories were cloned, executed, installed, or copied. This is a README/structure scope review, not a full code/security audit of upstream projects.
+- Previous 2026-10-09 follow-up follows.
+
+### Fresh follow-up — 2026-10-09
+
+- Added the final supplemental GitHub link, `morluto/rea`, as row 162 after checking its repository metadata, README, and recursive tree.
+- Rechecked current repository metadata for all **93 distinct GitHub targets** represented by the original matrix plus the added link: **90 returned HTTP 200; 3 returned HTTP 403** (`Resource not accessible by integration`). The three organization repositories previously shown as 404 are now explicitly treated as **NOT VERIFIED**, not as confirmed deleted or public.
+- The prior non-GitHub fetch outcomes and redirect-resolution evidence are preserved from the 2026-09-27 audit; they were not re-fetched in this follow-up.
+- The marketing-kit UI, full-library export, human-review guardrails, accurate counts, accessible tab interaction, and repeated-diagram caption IDs were completed and covered by unit tests in this follow-up. Details are recorded in `AUDIT/supplied-link-followup-2026-10-09.md`.
+
+## Latest coverage totals
+
+- **164 supplied link occurrences represented below**, including duplicates and the two links added on 2026-10-10.
+- **95 distinct GitHub repositories checked**; 92 currently return HTTP 200 with metadata, README, and top-level-tree evidence; 3 are access-denied with HTTP 403.
+- The earlier 2026-09-27 check recorded 89 HTTP 200 and 3 HTTP 404; the three 404 responses cannot be treated as the current result because the follow-up API requests were blocked with 403.
+- **28 YouTube redirect occurrences were previously resolved** to their GitHub `q` targets; all distinct GitHub targets were included in the fresh metadata check.
+- **9 non-GitHub URLs were fetched in the prior audit** where the page fetcher permitted it. Meta Developer AI returned HTTP 403 and remains NOT VERIFIED.
 - Duplicate links are retained as separate rows and labelled with their source occurrence; no duplicate was silently dropped.
 
 ## Implementation policy
@@ -39,7 +53,7 @@ This is the authoritative follow-up matrix for the full link list in the latest 
 | 12 | Initial list | `heygen-com/hyperframes` | 200 | PARTIAL — ALO video registry/adapter layer exists; rendering provider and credentials remain NOT VERIFIED. |
 | 13 | Initial list | `every-app/open-seo` | 200 | IMPLEMENTED/PARTIAL — SEO engine, keyword routes, schema helpers, metadata/sitemap, and CRM SEO workflow exist; live SEO verification remains pending. |
 | 14 | Initial list | `ruvnet/ruflo` | 200 | PARTIAL — bounded AgentOS/orchestrator patterns exist; no untrusted swarm runtime is installed. |
-| 15 | Initial list | `coreyhaines31/marketingskills` | 200 | IMPLEMENTED — `MarketingKitPanel`, SEO/marketing workflows, approval checklist and draft-only controls. |
+| 15 | Initial list | `coreyhaines31/marketingskills` | 200 | IMPLEMENTED/PARTIAL — `MarketingKitPanel` has dynamic library counts, full-library Markdown export, local human-review checklist (not an approval record), accessible tabs, and draft-only controls; Partner Marketing Studio has grounded copy, tenant-scoped review, monthly media quota, and explicit false social/scheduling/publishing capabilities. Live OAuth/publisher integrations remain unconfigured and are not claimed. |
 | 16 | Initial list | `mksglu/context-mode` | 200 | IMPLEMENTED/PARTIAL — durable audit/session context exists; external MCP routing is not enabled by default. |
 | 17 | Initial list | `fmtlib/fmt` | 200 | NOT APPLICABLE — C++ formatting library, unrelated to this TypeScript web runtime. |
 | 18 | Initial list | `affaan-m/ECC` | 200 | IMPLEMENTED/PARTIAL — repository audit, security tests, session evidence and agent workflow gates are present. |
@@ -83,7 +97,7 @@ This is the authoritative follow-up matrix for the full link list in the latest 
 | 56 | CRM block 1 | `domovinatv/sms.domovina.ai` | 200 | PARTIAL — SMS gateway pattern considered; provider credentials, phone/device ownership and consent remain NOT VERIFIED. |
 | 57 | CRM block 1 | `NdoleStudio/httpsms` | 200 | PARTIAL — SMS adapter boundary exists by provider design; not enabled without authorized phone/provider configuration. |
 | 58 | CRM block 1 | `NdoleStudio/httpsms-node` | 200 | PARTIAL — Node client is an integration reference; no secret or external dependency was silently installed. |
-| 59 | CRM block 1 duplicate | `engralaminn-collab/Ai-Markting-crm` | 404 | Duplicate retained; same inaccessible status as row 55. |
+| 59 | CRM block 1 duplicate | `engralaminn-collab/Ai-Markting-crm` | 403 now; 404 on 2026-09-27 | Duplicate retained; same access-denied, not-verified status as row 55. |
 | 60 | CRM block 1 | `HM-RunningHub/ComfyUI_RH_APICall` | 200 | PARTIAL — video/ComfyUI provider registry exists; remote workflow and credentials require explicit setup. |
 | 61 | CRM block 1 | `BelledonneCommunications/linphone-iphone` | 200 | PARTIAL — `src/lib/voip/linphone.ts` defines provider boundary; iOS softphone build/deployment is separate. |
 | 62 | CRM block 1 | `0perationPrivacy/VoIP` | 200 | PARTIAL — SIP/Telnyx/Twilio concepts reflected in UCC/VoIP adapters; provider credentials and legal recording controls remain NOT VERIFIED. |
@@ -186,12 +200,15 @@ This is the authoritative follow-up matrix for the full link list in the latest 
 | 159 | Non-GitHub | `https://developer.meta.com/ai` | HTTP 403 | NOT VERIFIED — page denied automated fetch; no Meta AI dependency or claim was made. |
 | 160 | GitHub direct | `cline/cline` | 200 | PARTIAL — agent safety concepts (plan/act, approvals, skills, bounded tools) are implemented without installing a desktop agent. |
 | 161 | GitHub direct | `meta-models/meta-model-cookbook` | 200 | PARTIAL — multi-agent/tool orchestration patterns are reflected in the bounded agent loop and AgentOS; no cookbook code is copied wholesale. |
+| 162 | Final supplemental link | `morluto/rea` | 200 (2026-10-09) | REFERENCE-ONLY — MIT TypeScript MCP/CLI for reverse-engineering binaries, applications, and runtime behavior; useful as development tooling, not an ALO education-CRM feature. README and recursive tree inspected; no code, dependency, or agent plugin was installed. |
+| 163 | Additional links in 2026-10-10 message (first) | `ToolJet/ToolJet` | 200; metadata, default README, headings/features and root contents checked | REFERENCE-ONLY — internal app/dashboard/workflow builder; AGPL-3.0. ALO already has its own ERP, data layer, RBAC, forms, and dashboards; no wholesale replacement/import. See `AUDIT/repository-readme-review-2026-10-10.md`. |
+| 164 | Additional links in 2026-10-10 message (second) | `huggingface/education-toolkit` | 200; metadata, default README, headings/features and root contents checked | REFERENCE-ONLY / NOT APPLICABLE — Apache-2.0 developer/ML tutorials (Hub, Gradio, Transformers, Diffusers, teaching guide, NLP/Gradio/RL resources); not study-abroad/admissions content. No code/course content/dependency imported. See `AUDIT/repository-readme-review-2026-10-10.md`. |
 
 ## Implemented applicable elements
 
 1. **Diagram design:** `EditorialFlowDiagram` implements an accessible static-first process diagram with semantic labels, responsive connectors and reduced-motion-safe behavior. Archify was used as a design reference, not copied as a runtime.
 2. **Buttons and design system:** the existing shared `Button` component has brand, CTA, outline, ghost, danger, success, link, icon and responsive size variants, visible focus rings, disabled state, and keyboard-safe semantics. Astryx's themes/components were reviewed; its external React/StyleX package was not mixed into the Tailwind/shadcn system.
-3. **Marketing kits:** `MarketingKitPanel` implements consultation launch, IELTS sprint, and visa-readiness kits with channel/objective/audience metadata, draft-only labels, copy/hook actions, download, clipboard handling, and approval checklist.
+3. **Marketing kits:** `MarketingKitPanel` implements consultation launch, IELTS sprint, and visa-readiness kits with channel/objective/audience metadata, dynamic library counts, complete Markdown export, accessible tabs, copy/download feedback, draft-only labels, and a local human-review checklist. Checklist completion is not an approval record and does not schedule, send, or publish content.
 4. **Marketing/CRM workflow:** marketing calendar, approvals, social inbox, campaign APIs, consent, lead scoring, WhatsApp/UCC and audit boundaries are already present; Buffer/Chatwoot/WACRM/Twenty were references, not second systems.
 5. **Research/source intelligence:** Molx/Firecrawl fallback, SSRF blocking, rate limit, retries, source evidence, structured extraction, market-intelligence radar, enrichment boundaries and approval/audit routes are present.
 6. **Agent memory and context:** AgentMemory schema, AI memory route, AgentOS registry, skills/tools, bounded orchestrator, audit logs and durable evidence reports are present. External skills/plugins are never executed automatically.

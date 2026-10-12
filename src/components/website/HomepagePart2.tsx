@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 
 const C = {
-  blue: '#0B5ED7',
+  blue: '#2563EB',
   orange: '#F97316',
   text: '#0F172A',
   textSoft: '#64748B',
@@ -293,7 +293,7 @@ const FALLBACK_SERVICES: HomeService[] = [
   { id: '9', title: 'Financial Planning', slug: 'financial-planning', icon: 'DollarSign', description: 'Tuition, living costs, education loans and budgeting guidance.', ctaLabel: 'Explore', ctaUrl: '/services/financial-planning', sortOrder: 9 },
   { id: '10', title: 'Career Counseling', slug: 'career-counseling', icon: 'Briefcase', description: 'Career path mapping and post-study work opportunities advice.', ctaLabel: 'Explore', ctaUrl: '/services/career-counseling', sortOrder: 10 },
   { id: '11', title: 'Eligibility Check', slug: 'eligibility-check', icon: 'ClipboardCheck', description: 'Free profile assessment to check your admission chances.', ctaLabel: 'Check Now', ctaUrl: '/eligibility-check', sortOrder: 11 },
-  { id: '12', title: 'Course Matching', slug: 'course-matching', icon: 'Search', description: 'AI-powered course matching across thousands of programmes.', ctaLabel: 'Find Courses', ctaUrl: '/course-finder', sortOrder: 12 },
+  { id: '12', title: 'Course Matching', slug: 'course-matching', icon: 'Search', description: 'Course matching based on your academic profile, budget and goals.', ctaLabel: 'Find Courses', ctaUrl: '/course-finder', sortOrder: 12 },
   { id: '13', title: 'Document Verification', slug: 'document-verification', icon: 'FileCheck', description: 'Thorough verification of transcripts, certificates and more.', ctaLabel: 'Explore', ctaUrl: '/services/document-verification', sortOrder: 13 },
   { id: '14', title: 'Interview Preparation', slug: 'interview-preparation', icon: 'MessageSquare', description: 'Mock interviews for university and visa success.', ctaLabel: 'Explore', ctaUrl: '/services/interview-preparation', sortOrder: 14 },
   { id: '15', title: 'Post-Arrival Support', slug: 'post-arrival', icon: 'Heart', description: 'Ongoing support after you land — enrollment to settlement.', ctaLabel: 'Explore', ctaUrl: '/services/post-arrival', sortOrder: 15 },
@@ -552,11 +552,9 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
                           View Details
                         </Button>
                       </Link>
-                        <Link href="/book-consultation">
-                        <Button className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}>
+                        <Button asChild className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}><Link href="/book-consultation">
                           Apply
-                        </Button>
-                      </Link>
+                        </Link></Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -565,12 +563,10 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
             </motion.div>
           )}
           <div className="text-center mt-10">
-            <Link href="/course-finder">
-            <Button className="h-12 px-8 rounded-full text-white font-medium" style={{ background: C.blue }}>
+            <Button asChild className="h-12 px-8 rounded-full text-white font-medium" style={{ background: C.blue }}><Link href="/course-finder">
               Explore Full Course Finder
               <ArrowRight size={16} className="ml-2" />
-            </Button>
-            </Link>
+            </Link></Button>
           </div>
         </motion.div>
       </div>
@@ -611,7 +607,7 @@ function TrustedUniversitiesSection({ universities }: { universities: UniItem[] 
               return (
                 <motion.div key={uni.universityId} variants={staggerItemScale}>
                   <Link href={`/universities/${uni.universityId || uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
-                    <Card className="h-24 flex items-center justify-center border hover:shadow-md hover:border-[#0B5ED7] transition-all duration-300 cursor-pointer" style={{ borderColor: C.border }}>
+                    <Card className="h-24 flex items-center justify-center border hover:shadow-md hover:border-[#2563EB] transition-all duration-300 cursor-pointer" style={{ borderColor: C.border }}>
                       <CardContent className="p-3 flex flex-col items-center justify-center gap-1.5 w-full h-full">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background: C.blue }}>
                           {initials}
@@ -626,12 +622,10 @@ function TrustedUniversitiesSection({ universities }: { universities: UniItem[] 
           </motion.div>
         )}
         <div className="text-center mt-10">
-          <Link href="/course-finder">
-          <Button variant="outline" className="h-12 px-8 rounded-full font-medium" style={{ borderColor: C.blue, color: C.blue }}>
+          <Button asChild variant="outline" className="h-12 px-8 rounded-full font-medium" style={{ borderColor: C.blue, color: C.blue }}><Link href="/course-finder">
             View University Directory
             <ArrowRight size={16} className="ml-2" />
-          </Button>
-          </Link>
+          </Link></Button>
         </div>
       </div>
     </section>

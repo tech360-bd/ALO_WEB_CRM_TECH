@@ -13,7 +13,7 @@ export default function MarketingSettingsView() {
   const [settings, setSettings] = useState({
     timezone:'Asia/Dhaka',
     brandOrange:'#F97316',
-    brandBlue:'#0B5ED7',
+    brandBlue:'#2563EB',
     brandAccent:'#FFB347',
     autoPublish:false,
     requireApprovalFor:'medium',
@@ -46,7 +46,7 @@ export default function MarketingSettingsView() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#0B5ED7]" />Automation & Approval Policies</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#2563EB]" />Automation & Approval Policies</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-xs">Allow auto-execution for low-risk (research, drafts)</Label>
@@ -70,7 +70,7 @@ export default function MarketingSettingsView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-[#0B5ED7]" />Timezone & Scheduling</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-[#2563EB]" />Timezone & Scheduling</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div><label className="text-xs font-semibold">Primary Timezone</label><Select value={settings.timezone} onValueChange={v=>setSettings({...settings, timezone:v})}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Asia/Dhaka">Asia/Dhaka (ALO local)</SelectItem><SelectItem value="UTC">UTC</SelectItem></SelectContent></Select></div>
               <p className="text-[11px] text-gray-500">All MarketingCalendar.scheduledAt + cron scheduler are timezone-aware. Jobs have persistent records, idempotency, locks, retries, audit trails — no browser timers.</p>

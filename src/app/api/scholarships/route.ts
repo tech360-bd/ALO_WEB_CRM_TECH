@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { PUBLIC_SCHOLARSHIP_STATUSES } from '@/lib/website/public-content';
 import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
 // GET /api/scholarships — unified scholarship system DB-driven per spec section 10
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
     const applicationOpen = searchParams.get('applicationOpen') === 'true';
 
     // Build where for new Scholarship model
-    const where: any = { status: 'active' };
+    const where: any = { status: { in: PUBLIC_SCHOLARSHIP_STATUSES } };
     if (country) where.country = { contains: country };
     if (universityId) where.universityId = universityId;
     if (fundingType) where.fundingType = fundingType;
@@ -121,52 +122,9 @@ export async function GET(req: Request) {
     });
   } catch (error: any) {
     console.error('[scholarships.list] error', error);
-    return NextResponse.json({ success: false, error: error?.message || 'Failed to fetch scholarships' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to fetch scholarships' }, { status: 500 });
   }
 }
 
-// POST /api/scholarships — create scholarship (admin)
-async function createScholarship(req: Request, auth: AuthContext) {
-  try {
-    const roles = [...auth.roles, auth.userType].map((role) => role.toUpperCase());
-    if (!roles.some((role) => ['SUPER_ADMIN', 'ADMIN'].includes(role))) {
-      return NextResponse.json({ success: false, error: 'Admin required' }, { status: 403 });
-    }
-
-    const body = await req.json();
-    const { slug, name, country = '', university = '', universityId = '', fundingAmount = '', fundingType = '', eligibility = '', overview = '', officialSourceUrl = '', status = 'active', isFeatured = false } = body;
-
-    if (!slug || !name) return NextResponse.json({ success: false, error: 'slug and name required' }, { status: 400 });
-
-    const existing = await db.scholarship.findUnique({ where: { slug } }).catch(() => null);
-    if (existing) return NextResponse.json({ success: false, error: 'Slug already exists' }, { status: 409 });
-
-    const scholarship = await db.scholarship.create({
-      data: {
-        slug,
-        name,
-        country,
-        university,
-        universityId,
-        fundingAmount,
-        fundingType: fundingType || 'tuition_waiver',
-        eligibility,
-        overview,
-        officialSourceUrl,
-        status,
-        isFeatured,
-        verificationStatus: officialSourceUrl ? 'verified' : 'pending',
-        lastVerifiedAt: officialSourceUrl ? new Date() : null,
-      },
-    });
-
-    return NextResponse.json({ success: true, scholarship }, { status: 201 });
-  } catch (err: any) {
-    console.error('[scholarships.create] error', err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
-  }
-}
-
-export const POST = withAuth(createScholarship, {
-  requireUserTypes: ["ADMIN", "SUPER_ADMIN"],
-});
+// Keep legacy creation URLs on the same authenticated, audited implementation.
+export { POST } from "../admin/scholarships/route";

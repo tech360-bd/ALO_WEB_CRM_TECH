@@ -24,7 +24,7 @@ export default function CallLogModal({ open, onOpenChange, leadId, studentId }: 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md bg-white">
-        <DialogHeader><DialogTitle className="text-sm flex items-center gap-2"><Phone className="w-4 h-4 text-[#0B5ED7]" /> Log Phone Call — inbound/outbound/missed</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle className="text-sm flex items-center gap-2"><Phone className="w-4 h-4 text-[#2563EB]" /> Log Phone Call — inbound/outbound/missed</DialogTitle></DialogHeader>
         <div className="space-y-3">
           <Input placeholder="Phone" value={form.phone} onChange={e=>setForm(s=>({...s, phone:e.target.value}))} />
           <div className="grid grid-cols-2 gap-2">
@@ -35,7 +35,7 @@ export default function CallLogModal({ open, onOpenChange, leadId, studentId }: 
           </div>
           <Input type="number" placeholder="Duration seconds" value={form.durationSeconds} onChange={e=>setForm(s=>({...s, durationSeconds: parseInt(e.target.value)||0}))} />
           <Textarea placeholder="Note — outcome, next follow-up" value={form.note} onChange={e=>setForm(s=>({...s, note:e.target.value}))} />
-          <Button size="sm" className="w-full bg-[#0B5ED7]" onClick={submit} disabled={loading}>{loading?'Saving...':'Save Call Log — Missed creates callback queue'}</Button>
+          <Button size="sm" className="w-full bg-[#2563EB]" onClick={submit} disabled={loading}>{loading?'Saving...':'Save Call Log — Missed creates callback queue'}</Button>
           <p className="text-[11px] text-gray-500">Front Desk can: Create lead from phone call, Log walk-in enquiry, Schedule consultation, Assign counselor, Send appointment confirmation, Add call note — recording link placeholder</p>
         </div>
       </DialogContent>

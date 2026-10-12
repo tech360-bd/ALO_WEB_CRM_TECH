@@ -4,7 +4,8 @@
 # Purpose: CI only. Hostinger owns production deployment outside Actions.
 # No production credentials, hosting transport, or restart commands are used.
 #
-# Triggers: main/development/arena pushes, PRs, manual dispatch, reusable CI.
+# Triggers: main/development pushes, PRs, manual dispatch, reusable CI.
+# Feature branches validate through PRs, avoiding duplicate push + PR jobs.
 # Never deploys. Uses NO repository secrets, so pull requests from forks are
 # safe (fork PRs get a read-only GITHUB_TOKEN and no secrets by design).
 #
@@ -21,7 +22,6 @@ on:
     branches:
       - main
       - development
-      - 'arena/**'
   pull_request:
   workflow_dispatch:
   workflow_call:
@@ -177,7 +177,8 @@ jobs:
       - name: Tests (blocking; DB-integration files skip-with-reason when no test DATABASE_URL)
         run: npm test
 
-      - name: Integration tests (isolated DB required for persistence tests)
+      - name: Optional integration tests (requires an explicitly configured disposable TEST_DATABASE_URL)
+        if: ${{ env.TEST_DATABASE_URL != '' }}
         run: npm run test:integration
 
       - name: Production build (no database connection at build time)
@@ -288,26 +289,9 @@ jobs:
             --to-schema-datamodel prisma/schema.prisma \
             --shadow-database-url mysql://root:root@127.0.0.1:3306/alo_shadow_ci \
             --script > /tmp/drift.sql
-          # MySQL 8.4 requires expression defaults for TEXT/LONGTEXT/JSON/GEOMETRY
-          # columns, while Prisma canonicalizes those defaults as literal values.
-          perl -0pi -e "s/DEFAULT \\(_utf8mb4'((?:''|[^'])*)'\\)/DEFAULT '\\1'/g; s/(?:^|,\\s*)MODIFY `[^`]+` (?:TINYTEXT|TEXT|MEDIUMTEXT|LONGTEXT|JSON|GEOMETRY) NOT NULL DEFAULT '(?:''|[^'])*'//g; s/ALTER TABLE `[^`]+`\\s*;\\s*//g" /tmp/drift.sql
-          # The generated file contains a comment header only when empty.
-          if grep -qvE '^\s*(--.*)?$' /tmp/drift.sql; then
-            echo "::error::Migration chain does NOT reproduce schema.prisma. Drift: $(head -8 /tmp/drift.sql | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
-            exit 1
-          fi
-          echo "✓ Migrations reproduce schema.prisma exactly (empty diff)"
-          # Drift is fatal. The ONE accepted normalization is the known MySQL
-          # round-trip representation of legal BLOB/TEXT/JSON *expression*
-          # defaults (`DEFAULT (_utf8mb4'')`), which Prisma re-asserts as a
-          # no-op MODIFY. The filter suppresses such a statement only after
-          # proving schema.prisma already declares the identical default, type
-          # and nullability for that exact column. Everything else — including
-          # any ADD/DROP/CHANGE, index change, type change or nullability
-          # change — still fails this job. This gate is NOT optional, NOT a
-          # warning, and never ignores tables/columns/MODIFYs/indexes.
-          # Contract: scripts/ci/filter-lob-default-drift.mjs +
-          # tests/unit/lob-default-drift-filter.test.ts.
+          # Keep the Prisma diff unmodified. The narrow filter suppresses only
+          # proven no-op LOB default re-assertions matching schema.prisma; any
+          # actual table, column, type, nullability, index or default drift fails.
           node scripts/ci/filter-lob-default-drift.mjs /tmp/drift.sql prisma/schema.prisma
           echo "✓ Migrations reproduce schema.prisma (no real drift)"
 
@@ -321,7 +305,7 @@ jobs:
             echo "::error::test-db migrate deploy failed — $(grep -iE 'error|fail|P30[0-9][0-9]' /tmp/deploy2.log | head -6 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
-          if ! TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log; then
+          if ! ALLOW_DISPOSABLE_DATABASE_TESTS=1 TEST_DATABASE_URL="mysql://root:root@127.0.0.1:3306/alo_test_ci" npm run test:integration 2>&1 | tee /tmp/integration.log; then
             echo "::error::integration tests failed — $(grep -aE '✖|FAIL|Error|AssertionError' /tmp/integration.log | head -8 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ')"
             exit 1
           fi
@@ -337,7 +321,14 @@ jobs:
           NEXTAUTH_URL: "https://aloeducation.com"
           NEXT_PUBLIC_APP_URL: "https://aloeducation.com"
           FILE_SIGN_SECRET: "dummy-file-sign-secret-must-be-32-chars-long-at-least"
-        run: npm run build
+        run: |
+          set -uo pipefail
+          # Emit useful failure details as a check annotation because Actions
+          # log archives may be unreachable from restricted agent environments.
+          if ! npm run build 2>&1 | tee /tmp/mysql-build.log; then
+            echo "::error::MySQL-job production build failed — $(grep -aiE 'error|failed to compile|type error|cannot find|module not found|killed|out of memory|heap|SIGKILL' /tmp/mysql-build.log | head -12 | sed 's/%/%25/g; s/\r//g' | tr '\n' ' ' | cut -c1-900)"
+            exit 1
+          fi
 
       - name: Boot standalone server + runtime smoke (real DB over HTTP)
         env:

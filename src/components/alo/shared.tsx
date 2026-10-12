@@ -76,7 +76,7 @@ export function SemanticBadge({ type, children }: { type: "success" | "warning" 
     success: "badge-success",
     warning: "badge-warning",
     danger: "badge-danger",
-    info: "bg-[#EFF6FF] text-[#0B5ED7] border border-[#2563EB]",
+    info: "bg-[#EFF6FF] text-[#2563EB] border border-[#2563EB]",
   };
   return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 badge-text", cls[type])}>{children}</span>;
 }

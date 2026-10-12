@@ -218,7 +218,6 @@ export class AstonAdapter implements UniversityAdapter {
       this.fetchSourceCheck('https://www.aston.ac.uk/international', 'INTERNATIONAL_ADMISSIONS'),
       this.fetchSourceCheck('https://www.aston.ac.uk/courses-atoz', 'COURSE_DIRECTORY'),
     ]);
-    const verifiedChecks = sourceChecks.filter((check) => check.ok && !check.soft404 && check.entityMatchStatus !== 'MISMATCHED');
 
     return {
       officialName: 'Aston University',
@@ -232,8 +231,8 @@ export class AstonAdapter implements UniversityAdapter {
       institutionType: 'NEEDS_REVIEW',
       availableStudyLevels: ['Undergraduate', 'Postgraduate', 'Research', 'Apprenticeship', 'Foundation'],
       rankingRecords: [],
-      lastVerifiedAt: new Date().toISOString(),
-      verificationStatus: verifiedChecks.length === sourceChecks.length ? 'VERIFIED' : 'NEEDS_REVIEW',
+      lastVerifiedAt: '',
+      verificationStatus: 'NEEDS_REVIEW',
       officialSourceChecks: sourceChecks,
     };
   }
@@ -331,7 +330,7 @@ export class AstonAdapter implements UniversityAdapter {
     const requirements = this.parseRequirements(html);
     const modules = this.parseModules(html);
     const now = new Date().toISOString();
-    const parseWarnings: string[] = [];
+    const parseWarnings: string[] = ['Heuristic extraction requires field-level review before verification.'];
     if (!fees.internationalTuitionFee) parseWarnings.push('International fee not found on course page.');
     if (intakes.length === 0) parseWarnings.push('Structured intake not found on course page.');
     if (requirements.academicRequirements === 'NOT_PUBLISHED') parseWarnings.push('Academic requirement section not found on course page.');
@@ -374,8 +373,8 @@ export class AstonAdapter implements UniversityAdapter {
       sourceUrl: normalizeUrl(url),
       pageTitle: pageTitleFromHtml(html),
       extractedTimestamp: now,
-      lastVerifiedTimestamp: now,
-      verificationStatus: sourceCheck?.ok && !sourceCheck.soft404 && parseWarnings.length === 0 ? 'VERIFIED' : 'NEEDS_REVIEW',
+      lastVerifiedTimestamp: '',
+      verificationStatus: 'NEEDS_REVIEW',
       parserVersion: PARSER_VERSION,
       contentChecksum: sha256(html),
       evidenceSnippet: this.collectEvidence(url, html, 'course_page'),

@@ -1,0 +1,62 @@
+{
+  "phase": "Final blocker resolution plan / prerequisites and TLS reproduction",
+  "timestampUTC": "2026-10-11T10:18:58.922420+00:00",
+  "branch": "arena/8b727e17-alo-education-z-ai",
+  "head": "c5bfcbbaef4e612eddb55f5f8516e5b1526e68cc",
+  "historicalResults": {
+    "initialFullSuite": {
+      "passed": 1594,
+      "skipped": 63
+    },
+    "previousFullSuite": {
+      "passed": 1625,
+      "skipped": 63
+    },
+    "previousFullLint": "PASS",
+    "previousFocusedTypechecks": "PASS",
+    "previousSyntheticBrowserContracts": "PASS"
+  },
+  "newResults": {
+    "selectedLocalSafetyTests": {
+      "passed": 121,
+      "failed": 0,
+      "files": 13,
+      "exitCode": 0
+    },
+    "deploymentContractTests": {
+      "passed": 16,
+      "exitCode": 0
+    },
+    "generatedClientVerifier": {
+      "models": 532,
+      "exitCode": 0
+    },
+    "prismaGenerate": {
+      "exitCode": 1,
+      "status": "BLOCKED_TLS"
+    },
+    "officialEngineInstall": {
+      "exitCode": 0,
+      "verifiedEngineAvailability": false
+    },
+    "prismaGenerateAfterInstall": {
+      "exitCode": 1,
+      "status": "BLOCKED_TLS"
+    },
+    "schemaValidation": "NOT_RERUN_THIS_PHASE: generation prerequisite still blocked; previous exit1 retained",
+    "productionBuild": "NOT_RERUN_THIS_PHASE: generation prerequisite still blocked; previous exit1 retained",
+    "databaseTests": {
+      "passed": 0,
+      "failed": 0,
+      "blockedNotExecuted": 63,
+      "inventoryMethod": "Static AST declarations, no DB run"
+    },
+    "migrations": "NOT_EXECUTED",
+    "independentRoleStaging": "BLOCKED_NO_APPROVED_ENVIRONMENT",
+    "hostingerPlan": "BLOCKED_NO_ACCOUNT_ACCESS",
+    "backupsRestoreSmokeRollback": "NOT_EXECUTED",
+    "sixPrivateRepositories": "403_NOT_RESTORED",
+    "release": "HOLD"
+  },
+  "scope": "No application code, DB data, dependencies, schema or migrations changed this phase; documents/evidence only. No commit/push/merge/deploy or real provider sends."
+}

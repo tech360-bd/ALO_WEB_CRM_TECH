@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-11T08:45:15.993Z",
+  "mode": "isolated browser component harness; synthetic fixtures; no Next.js authentication/database/provider verification",
+  "browser": "153.0.8010.0",
+  "checks": [
+    "four SVG formats downloaded with draft watermark",
+    "real canvas PNG downloaded",
+    "unsafe destination disables export",
+    "stage selector persistence callback success",
+    "failed stage persistence preserves previous stage",
+    "pointer drag into an empty registered column invokes persistence callback",
+    "mobile/tablet/desktop document has no horizontal overflow",
+    "all rendered IDs unique",
+    "zero uncaught browser page errors"
+  ],
+  "screenshots": [
+    "ui-1440.png",
+    "ui-768.png",
+    "ui-390.png"
+  ],
+  "artifactLocation": "_reference_repos/ui-verification/results"
+}

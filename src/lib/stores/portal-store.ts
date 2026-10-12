@@ -114,6 +114,7 @@ export interface PortalUserData {
   crmRole?: CrmRole;
   department?: string;
   branch?: string;
+  partnerRole?: string;
   roles?: PortalRole[];
 }
 
@@ -144,9 +145,9 @@ interface PortalState {
   setSidebarOpen: (open: boolean) => void;
   clearLoginError: () => void;
   clearAuthMessage: () => void;
+  setNotifications: (notifications: Array<{ id: string; title: string; message: string; type: string; isRead: boolean; createdAt: string }>) => void;
   hasPermission: (module: string, action: string) => boolean;
   hasRole: (roleName: string) => boolean;
-  demoLogin: (role: CrmRole | 'student' | 'partner' | 'employee') => Promise<void>;
 }
 
 export const usePortalStore = create<PortalState>((set, get) => ({
@@ -196,7 +197,9 @@ export const usePortalStore = create<PortalState>((set, get) => ({
         user,
         userType: user.userType,
         token: null,
-        currentView: viewMap[user.userType] || 'portals',
+        currentView: user.userType === 'PARTNER' && user.partnerRole?.toUpperCase() === 'PARTNER_SUPER_ADMIN'
+          ? 'partner-admin-dashboard'
+          : viewMap[user.userType] || 'portals',
       });
     } catch {
       localStorage.removeItem('portal_token');
@@ -231,7 +234,9 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           userType: ut,
           token: null,
           loginLoading: false,
-          currentView: viewMap[ut] || 'portals',
+          currentView: ut === 'PARTNER' && data.user.partnerRole?.toUpperCase() === 'PARTNER_SUPER_ADMIN'
+            ? 'partner-admin-dashboard'
+            : viewMap[ut] || 'portals',
         });
         if (typeof window !== 'undefined') {
           localStorage.removeItem('portal_token');
@@ -262,14 +267,19 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   register: async (regData) => {
     set({ loginLoading: true, loginError: null });
     try {
-      const res = await fetch('/api/portal-auth/register', {
+      const canonicalStudent = regData.portalType === 'student';
+      const res = await fetch(canonicalStudent ? '/api/auth/register' : '/api/portal-auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(regData),
+        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT' } : regData),
       });
       const data = await res.json();
       if (data.success) {
-        if (data.requireVerification) {
+        if (data.requireVerification || canonicalStudent) {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('portal_otp_email', String(regData.email).trim().toLowerCase());
+            localStorage.setItem('portal_otp_type', canonicalStudent ? 'canonical-student' : String(regData.portalType));
+          }
           set({ loginLoading: false, currentView: 'verify-otp', authMessage: data.message });
           return true;
         }
@@ -294,6 +304,11 @@ export const usePortalStore = create<PortalState>((set, get) => ({
           localStorage.setItem('portal_user', JSON.stringify(data.user));
         }
         return true;
+      }
+      if (data.accountCreated && typeof window !== 'undefined') {
+        localStorage.setItem('portal_otp_email', String(regData.email).trim().toLowerCase());
+        localStorage.setItem('portal_otp_type', canonicalStudent ? 'canonical-student' : String(regData.portalType));
+        set({ currentView: 'verify-otp' });
       }
       set({ loginLoading: false, loginError: data.error || 'Registration failed' });
       return false;
@@ -338,6 +353,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   clearLoginError: () => set({ loginError: null }),
   clearAuthMessage: () => set({ authMessage: null }),
+  setNotifications: (notifications) => set({ notifications }),
   hasPermission: (module: string, action: string) => {
     const state = get();
     if (!state.user) return false;
@@ -364,96 +380,4 @@ export const usePortalStore = create<PortalState>((set, get) => ({
     return (state.user.roles || []).some((r) => r.name === roleName);
   },
 
-  // Demo login — uses real login API with bcrypt verification
-  demoLogin: async (role: CrmRole | 'student' | 'partner' | 'employee') => {
-    if (process.env.NODE_ENV === 'production') {
-      set({ loginLoading: false, loginError: 'Demo login is disabled in production.' });
-      return;
-    }
-
-    const demoPassword = process.env.NEXT_PUBLIC_DEVELOPMENT_DEMO_PASSWORD;
-    if (!demoPassword) {
-      set({ loginLoading: false, loginError: 'Development demo password is not configured.' });
-      return;
-    }
-
-    const emailMap: Record<string, { email: string; portal: string }> = {
-      student: { email: 'rahim@example.com', portal: 'student' },
-      partner: { email: 'partner@alo.edu.bd', portal: 'partner' },
-      employee: { email: 'counselor@alo.edu.bd', portal: 'employee' },
-      super_admin: { email: 'admin@alo.edu.bd', portal: 'admin' },
-      ceo: { email: 'ceo@alo.edu.bd', portal: 'admin' },
-      branch_manager: { email: 'bm@alo.edu.bd', portal: 'admin' },
-      counselor: { email: 'counselor@alo.edu.bd', portal: 'admin' },
-      visa_officer: { email: 'visa@alo.edu.bd', portal: 'admin' },
-      finance: { email: 'finance@alo.edu.bd', portal: 'admin' },
-      marketing_manager: { email: 'marketing@alo.edu.bd', portal: 'admin' },
-      hr: { email: 'hr@alo.edu.bd', portal: 'admin' },
-      application_team: { email: 'app@alo.edu.bd', portal: 'admin' },
-      front_desk: { email: 'frontdesk@alo.edu.bd', portal: 'admin' },
-      partner_manager: { email: 'partner@alo.edu.bd', portal: 'admin' },
-      document_officer: { email: 'doc@alo.edu.bd', portal: 'admin' },
-      data_manager: { email: 'data@alo.edu.bd', portal: 'admin' },
-      support_agent: { email: 'support@alo.edu.bd', portal: 'admin' },
-      ai_manager: { email: 'ai@alo.edu.bd', portal: 'admin' },
-    };
-
-    const config = emailMap[role];
-    if (!config) return;
-
-    set({ loginLoading: true, loginError: null });
-
-    try {
-      const res = await fetch('/api/portal-auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: config.email, password: demoPassword, portalType: config.portal }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        const ut = data.user.userType as PortalUserType;
-        const viewMap: Record<string, PortalView> = {
-          STUDENT: 'student-dashboard',
-          PARTNER: 'partner-dashboard',
-          EMPLOYEE: 'employee-dashboard',
-          MARKETING: 'marketing-dashboard',
-          MARKETING_MANAGER: 'marketing-dashboard',
-          ADMIN: 'crm-dashboard',
-          SUPER_ADMIN: 'crm-dashboard',
-        };
-        set({
-          isAuthenticated: true,
-          user: data.user,
-          userType: ut,
-          token: null,
-          loginLoading: false,
-          currentView: viewMap[ut] || 'portals',
-        });
-      } else {
-        // Fallback to client-side demo if API fails (e.g. user not seeded)
-        const utMap: Record<string, PortalUserType> = {
-          student: 'STUDENT', partner: 'PARTNER', employee: 'EMPLOYEE',
-          super_admin: 'SUPER_ADMIN',
-        };
-        const viewMap: Record<string, PortalView> = {
-          STUDENT: 'student-dashboard', PARTNER: 'partner-dashboard',
-          EMPLOYEE: 'employee-dashboard', MARKETING: 'marketing-dashboard', MARKETING_MANAGER: 'marketing-dashboard',
-          ADMIN: 'crm-dashboard', SUPER_ADMIN: 'crm-dashboard',
-        };
-        const ut = utMap[role] || 'ADMIN';
-        set({
-          isAuthenticated: true,
-          user: { id: `demo-${role}`, email: config.email, phone: '', name: role.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), avatar: '', userType: ut, status: 'active', firstLoginRequired: false, crmRole: role as CrmRole },
-          userType: ut,
-          token: 'demo-session',
-          loginLoading: false,
-          currentView: viewMap[ut] || 'crm-dashboard',
-          selectedPortal: role === 'student' ? 'student' : role === 'partner' ? 'partner' : role === 'employee' ? 'employee' : 'admin',
-        });
-      }
-    } catch {
-      // Network error fallback to client-side demo
-      set({ loginLoading: false, loginError: null });
-    }
-  },
 }));

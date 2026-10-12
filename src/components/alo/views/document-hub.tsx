@@ -63,6 +63,7 @@ interface DocRow {
   reviewedAt: string | null;
   uploadedAt: string | null;
   reviewedById: string | null;
+  downloadUrl?: string;
   student?: { studentId: string; fullName: string } | null;
 }
 
@@ -129,9 +130,9 @@ export function DocumentHub() {
     studentId: "",
     category: "",
     name: "",
-    fileName: "",
     required: true,
   });
+  const [uploadFile, setUploadFile] = React.useState<File | null>(null);
   const [uploadSaving, setUploadSaving] = React.useState(false);
 
   const fetchDocs = React.useCallback(async () => {
@@ -242,45 +243,32 @@ export function DocumentHub() {
   };
 
   const submitUpload = async () => {
-    if (!uploadForm.studentId || !uploadForm.category) {
-      toast({
-        title: "Missing fields",
-        description: "Please select a student and a document category.",
-      });
+    if (!uploadForm.studentId || !uploadForm.category || !uploadFile) {
+      toast({ title: "Missing fields", description: "Select a student, category, and actual file to upload." });
       return;
     }
     setUploadSaving(true);
     try {
       const categoryLabel = CATEGORY_LABELS[uploadForm.category] || uploadForm.category;
-      const fileName = uploadForm.fileName.trim() || `${uploadForm.category.toLowerCase()}.pdf`;
-      const res = await fetch("/api/documents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId: uploadForm.studentId,
-          category: uploadForm.category,
-          name: uploadForm.name.trim() || categoryLabel,
-          fileName,
-          fileType: "application/pdf",
-          fileSize: 480000,
-          required: uploadForm.required,
-        }),
-      });
-      if (!res.ok) throw new Error("upload failed");
-      const data = await res.json();
-      if (data.document) {
-        setDocs((prev) => [data.document, ...prev]);
-      }
-      toast({
-        title: "Document uploaded",
-        description: data.message || `${categoryLabel} uploaded and queued for review.`,
-      });
+      const form = new FormData();
+      form.append("studentId", uploadForm.studentId);
+      form.append("category", uploadForm.category);
+      form.append("name", uploadForm.name.trim() || categoryLabel);
+      form.append("file", uploadFile);
+      form.append("required", String(uploadForm.required));
+      const res = await fetch("/api/documents", { method: "POST", body: form });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.document) throw new Error(data?.error || "The document was not saved.");
+      await fetchDocs();
+      toast({ title: "Document uploaded", description: data.message || `${categoryLabel} was stored privately and queued for review.` });
       setUploadOpen(false);
-      setUploadForm({ studentId: "", category: "", name: "", fileName: "", required: true });
-    } catch {
+      setUploadForm({ studentId: "", category: "", name: "", required: true });
+      setUploadFile(null);
+    } catch (error) {
       toast({
         title: "Upload failed",
-        description: "Could not upload the document. Try again.",
+        description: error instanceof Error ? error.message : "Could not upload the document. No success was recorded.",
+        variant: "destructive",
       });
     } finally {
       setUploadSaving(false);
@@ -317,19 +305,19 @@ export function DocumentHub() {
       )}
 
       {/* Security notice */}
-      <Card className="rounded-2xl border-2 border-[#0B5ED7]/20 bg-[#e8f0fb]/40">
+      <Card className="rounded-2xl border-2 border-[#2563EB]/20 bg-[#e8f0fb]/40">
         <CardContent className="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:gap-4">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0B5ED7] text-white">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
             <Icon name="ShieldCheck" className="size-5" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-[#0B5ED7]">Private &amp; audit-logged storage</p>
+            <p className="text-sm font-semibold text-[#2563EB]">Private &amp; audit-logged storage</p>
             <p className="text-xs text-muted-foreground">
               Documents are stored privately. Downloads require permission checks. All uploads
               &amp; approvals are audit-logged for compliance.
             </p>
           </div>
-          <Badge className="border-[#0B5ED7]/20 bg-white text-[#0B5ED7]">RBAC Protected</Badge>
+          <Badge className="border-[#2563EB]/20 bg-white text-[#2563EB]">RBAC Protected</Badge>
         </CardContent>
       </Card>
 
@@ -343,7 +331,7 @@ export function DocumentHub() {
           <div className="space-y-1.5">
             <Label className="text-xs font-semibold text-muted-foreground">Status</Label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="h-10 w-full border-[#0B5ED7]/20">
+              <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -358,7 +346,7 @@ export function DocumentHub() {
           <div className="space-y-1.5">
             <Label className="text-xs font-semibold text-muted-foreground">Category</Label>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-10 w-full border-[#0B5ED7]/20">
+              <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -379,7 +367,7 @@ export function DocumentHub() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Student, doc name, file..."
-                className="h-10 pl-9 border-[#0B5ED7]/20"
+                className="h-10 pl-9 border-[#2563EB]/20"
               />
             </div>
           </div>
@@ -417,7 +405,7 @@ export function DocumentHub() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-[#0B5ED7]/15">
+                <TableRow className="border-[#2563EB]/15">
                   <TableHead className="min-w-[180px]">Student</TableHead>
                   <TableHead className="min-w-[220px]">Document</TableHead>
                   <TableHead className="text-center">Required</TableHead>
@@ -428,7 +416,7 @@ export function DocumentHub() {
               </TableHeader>
               <TableBody>
                 {filtered.map((d) => (
-                  <TableRow key={d.id} className="border-[#0B5ED7]/10 align-top">
+                  <TableRow key={d.id} className="border-[#2563EB]/10 align-top">
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="text-sm font-semibold text-foreground">
@@ -440,11 +428,11 @@ export function DocumentHub() {
                     <TableCell>
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
-                          <Icon name="FileText" className="size-4 shrink-0 text-[#0B5ED7]" />
+                          <Icon name="FileText" className="size-4 shrink-0 text-[#2563EB]" />
                           <span className="text-sm font-medium text-foreground">{d.name}</span>
                         </div>
                         <div className="flex items-center gap-2 pl-6">
-                          <Badge variant="outline" className="border-[#0B5ED7]/20 px-2 py-0 text-[10px] font-semibold text-[#0B5ED7]">
+                          <Badge variant="outline" className="border-[#2563EB]/20 px-2 py-0 text-[10px] font-semibold text-[#2563EB]">
                             {CATEGORY_LABELS[d.category] || d.category}
                           </Badge>
                           {d.fileName && (
@@ -491,7 +479,7 @@ export function DocumentHub() {
                           size="sm"
                           variant="outline"
                           onClick={() => openReview(d)}
-                          className="h-8 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                          className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
                         >
                           <Icon name="CheckSquare" className="size-3.5" />
                           Review
@@ -503,16 +491,17 @@ export function DocumentHub() {
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  disabled
+                                  disabled={!d.downloadUrl}
+                                  onClick={() => d.downloadUrl && window.location.assign(d.downloadUrl)}
                                   className="size-8 text-muted-foreground"
-                                  aria-label="Download (disabled)"
+                                  aria-label="Download document"
                                 >
                                   <Icon name="Download" className="size-4" />
                                 </Button>
                               </span>
                             </TooltipTrigger>
                             <TooltipContent side="top">
-                              <span className="text-xs">Private route — permission required</span>
+                              <span className="text-xs">Download from private storage with access checks</span>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -530,7 +519,7 @@ export function DocumentHub() {
       <Dialog open={reviewOpen} onOpenChange={setReviewOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#0B5ED7]">Review document</DialogTitle>
+            <DialogTitle className="text-[#2563EB]">Review document</DialogTitle>
             <DialogDescription>
               {reviewTarget?.name} —{" "}
               <span className="font-mono">{reviewTarget?.studentId}</span>
@@ -538,25 +527,25 @@ export function DocumentHub() {
           </DialogHeader>
           {reviewTarget && (
             <div className="space-y-4">
-              <div className="rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 p-3 text-xs">
+              <div className="rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 p-3 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[#0B5ED7]">Student</span>
+                  <span className="font-semibold text-[#2563EB]">Student</span>
                   <span>{reviewTarget.student?.fullName || "—"}</span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between">
-                  <span className="font-semibold text-[#0B5ED7]">File</span>
+                  <span className="font-semibold text-[#2563EB]">File</span>
                   <span className="font-mono">{reviewTarget.fileName || "—"}</span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between">
-                  <span className="font-semibold text-[#0B5ED7]">Uploaded</span>
+                  <span className="font-semibold text-[#2563EB]">Uploaded</span>
                   <span>{fmtDate(reviewTarget.uploadedAt)}</span>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-sm font-semibold text-[#0B5ED7]">Decision</Label>
+                <Label className="text-sm font-semibold text-[#2563EB]">Decision</Label>
                 <Select value={reviewStatus} onValueChange={setReviewStatus}>
-                  <SelectTrigger className="h-10 w-full border-[#0B5ED7]/20">
+                  <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -577,7 +566,7 @@ export function DocumentHub() {
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
                     placeholder="Explain what needs to be corrected or resubmitted..."
-                    className="min-h-[90px] border-[#0B5ED7]/20"
+                    className="min-h-[90px] border-[#2563EB]/20"
                   />
                 </div>
               )}
@@ -600,7 +589,7 @@ export function DocumentHub() {
             <Button
               onClick={submitReview}
               disabled={reviewSaving}
-              className="h-10 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+              className="h-10 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
             >
               {reviewSaving ? (
                 <>
@@ -622,19 +611,19 @@ export function DocumentHub() {
       <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#0B5ED7]">Upload document</DialogTitle>
+            <DialogTitle className="text-[#2563EB]">Upload document</DialogTitle>
             <DialogDescription>
               Files are stored privately. A timeline event and audit log entry will be created.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label className="text-sm font-semibold text-[#0B5ED7]">Student</Label>
+              <Label className="text-sm font-semibold text-[#2563EB]">Student</Label>
               <Select
                 value={uploadForm.studentId}
                 onValueChange={(v) => setUploadForm((f) => ({ ...f, studentId: v }))}
               >
-                <SelectTrigger className="h-10 w-full border-[#0B5ED7]/20">
+                <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
                   <SelectValue placeholder="Select a student" />
                 </SelectTrigger>
                 <SelectContent>
@@ -654,12 +643,12 @@ export function DocumentHub() {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-sm font-semibold text-[#0B5ED7]">Category</Label>
+              <Label className="text-sm font-semibold text-[#2563EB]">Category</Label>
               <Select
                 value={uploadForm.category}
                 onValueChange={(v) => setUploadForm((f) => ({ ...f, category: v }))}
               >
-                <SelectTrigger className="h-10 w-full border-[#0B5ED7]/20">
+                <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -673,7 +662,7 @@ export function DocumentHub() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="doc-name" className="text-sm font-semibold text-[#0B5ED7]">
+              <Label htmlFor="doc-name" className="text-sm font-semibold text-[#2563EB]">
                 Document name
               </Label>
               <Input
@@ -681,41 +670,35 @@ export function DocumentHub() {
                 value={uploadForm.name}
                 onChange={(e) => setUploadForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="e.g. Passport — Tanvir Ahmed"
-                className="h-10 border-[#0B5ED7]/20"
+                className="h-10 border-[#2563EB]/20"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="doc-file" className="text-sm font-semibold text-[#0B5ED7]">
-                File name (simulated)
+              <Label htmlFor="doc-file" className="text-sm font-semibold text-[#2563EB]">
+                Document file
               </Label>
-              <div className="relative">
-                <Icon
-                  name="Paperclip"
-                  className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                  id="doc-file"
-                  value={uploadForm.fileName}
-                  onChange={(e) => setUploadForm((f) => ({ ...f, fileName: e.target.value }))}
-                  placeholder="passport.pdf"
-                  className="h-10 pl-9 border-[#0B5ED7]/20"
-                />
-              </div>
+              <Input
+                id="doc-file"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                className="border-[#2563EB]/20"
+              />
               <p className="text-[11px] text-muted-foreground">
-                In production this is replaced by an encrypted upload to private storage.
+                {uploadFile ? `${uploadFile.name} · ${(uploadFile.size / 1024).toFixed(0)} KB` : "PDF or image, maximum 20 MB. File bytes are uploaded to private storage."}
               </p>
             </div>
 
             <label
               htmlFor="doc-required"
-              className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[#0B5ED7]/15 bg-[#e8f0fb]/40 px-3 py-2.5"
+              className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-3 py-2.5"
             >
               <Checkbox
                 id="doc-required"
                 checked={uploadForm.required}
                 onCheckedChange={(v) => setUploadForm((f) => ({ ...f, required: v === true }))}
-                className="border-[#0B5ED7]/40 data-[state=checked]:bg-[#0B5ED7] data-[state=checked]:border-[#0B5ED7]"
+                className="border-[#2563EB]/40 data-[state=checked]:bg-[#2563EB] data-[state=checked]:border-[#2563EB]"
               />
               <span className="text-sm text-foreground">
                 <span className="font-semibold">Required document</span>

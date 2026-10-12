@@ -88,7 +88,7 @@ interface PayrollSummary {
 
 // ---------- Maps ----------
 const PAYMENT_TYPE_META: Record<string, { label: string; color: string; icon: string }> = {
-  APPLICATION_FEE: { label: "Application Fee", color: "#0B5ED7", icon: "FileText" },
+  APPLICATION_FEE: { label: "Application Fee", color: "#2563EB", icon: "FileText" },
   DEPOSIT: { label: "Tuition Deposit", color: "#F97316", icon: "Wallet" },
   TUITION: { label: "Tuition", color: "#10b981", icon: "GraduationCap" },
   SERVICE_CHARGE: { label: "Service Charge", color: "#8b5cf6", icon: "Briefcase" },
@@ -145,7 +145,7 @@ function PrivateAmount({
       <span className={cn("inline-flex items-center gap-1.5 tabular-nums", className)}>
         <span className={compact ? "text-sm font-semibold" : "text-sm font-semibold"}>{display}</span>
         {privacyOn && revealed && (
-          <button onClick={rehide} className="text-muted-foreground hover:text-[#0B5ED7]" title="Hide again">
+          <button onClick={rehide} className="text-muted-foreground hover:text-[#2563EB]" title="Hide again">
             <Icon name="EyeOff" className="size-3" />
           </button>
         )}
@@ -159,7 +159,7 @@ function PrivateAmount({
         <span className="select-none font-mono text-sm font-semibold blur-sm">{display}</span>
         <button
           onClick={() => setShowPin(true)}
-          className="inline-flex items-center gap-0.5 rounded border border-[#0B5ED7]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#0B5ED7] hover:bg-[#e8f0fb]"
+          className="inline-flex items-center gap-0.5 rounded border border-[#2563EB]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#2563EB] hover:bg-[#e8f0fb]"
           title="Click to reveal (requires PIN)"
         >
           <Icon name="Lock" className="size-2.5" />
@@ -175,15 +175,15 @@ function PrivateAmount({
           }}
         >
           <div
-            className="w-full max-w-xs rounded-2xl border-2 border-[#0B5ED7]/20 bg-white p-5 shadow-xl"
+            className="w-full max-w-xs rounded-2xl border-2 border-[#2563EB]/20 bg-white p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
                 <Icon name="ShieldCheck" className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#0B5ED7]">Reveal amount</p>
+                <p className="text-sm font-bold text-[#2563EB]">Reveal amount</p>
                 <p className="text-xs text-muted-foreground">Enter your PIN to view this amount</p>
               </div>
             </div>
@@ -217,7 +217,7 @@ function PrivateAmount({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-9 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+                className="flex-1 h-9 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
                 disabled={pin.length < 4}
                 onClick={() => {
                   reveal(id);
@@ -405,7 +405,7 @@ export function FinanceDashboard() {
             {Object.entries(revenueByType)
               .sort((a, b) => b[1] - a[1])
               .map(([type, amount]) => {
-                const meta = PAYMENT_TYPE_META[type] || { label: type, color: "#0B5ED7", icon: "Circle" };
+                const meta = PAYMENT_TYPE_META[type] || { label: type, color: "#2563EB", icon: "Circle" };
                 const pct = maxRevenue > 0 ? Math.round((amount / maxRevenue) * 100) : 0;
                 const sharePct = revenueTotal > 0 ? Math.round((amount / revenueTotal) * 100) : 0;
                 return (
@@ -419,7 +419,7 @@ export function FinanceDashboard() {
                           <Icon name={meta.icon} className="size-3.5" />
                         </div>
                         <span className="text-sm font-medium text-foreground">{meta.label}</span>
-                        <Badge variant="outline" className="border-[#0B5ED7]/20 px-1.5 py-0 text-[10px] text-muted-foreground">
+                        <Badge variant="outline" className="border-[#2563EB]/20 px-1.5 py-0 text-[10px] text-muted-foreground">
                           {sharePct}% share
                         </Badge>
                       </div>
@@ -487,11 +487,11 @@ export function FinanceDashboard() {
                   </TableHeader>
                   <TableBody>
                     {recentPayments.map((p) => {
-                      const meta = PAYMENT_TYPE_META[p.type] || { label: p.type, color: "#0B5ED7", icon: "Circle" };
+                      const meta = PAYMENT_TYPE_META[p.type] || { label: p.type, color: "#2563EB", icon: "Circle" };
                       return (
                         <TableRow key={p.id} className="hover:bg-[#e8f0fb]/40">
                           <TableCell>
-                            <span className="font-mono text-xs font-semibold text-[#0B5ED7]">
+                            <span className="font-mono text-xs font-semibold text-[#2563EB]">
                               {p.paymentId}
                             </span>
                           </TableCell>
@@ -528,7 +528,7 @@ export function FinanceDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleViewPayment(p)}
-                              className="h-8 border-[#0B5ED7]/30 text-[#0B5ED7] hover:bg-[#e8f0fb]"
+                              className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
                             >
                               <Icon name="Eye" className="size-3.5" />
                               <span className="hidden md:inline">View</span>
@@ -579,7 +579,7 @@ export function FinanceDashboard() {
                     {partnerCommissions.map((p) => (
                       <TableRow key={p.id} className="hover:bg-[#e8f0fb]/40">
                         <TableCell>
-                          <span className="font-mono text-xs font-semibold text-[#0B5ED7]">
+                          <span className="font-mono text-xs font-semibold text-[#2563EB]">
                             {p.paymentId}
                           </span>
                         </TableCell>
@@ -603,7 +603,7 @@ export function FinanceDashboard() {
                             size="sm"
                             onClick={() => handleApproveCommission(p)}
                             disabled={p.commissionStatus === "PAID"}
-                            className="h-8 bg-[#0B5ED7] text-white hover:bg-[#0B5ED7]/90"
+                            className="h-8 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
                           >
                             <Icon name="CheckCheck" className="size-3.5" />
                             <span className="hidden md:inline">Approve</span>
@@ -645,7 +645,7 @@ export function FinanceDashboard() {
                       <TableRow key={c.id} className="hover:bg-[#e8f0fb]/40">
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
                               <Icon name="User" className="size-3.5" />
                             </div>
                             <span className="font-mono text-xs font-medium text-foreground">{c.userId}</span>
@@ -706,13 +706,13 @@ export function FinanceDashboard() {
               />
             ) : (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+                <Card className="rounded-2xl border-2 border-[#2563EB]/15">
                   <CardContent className="space-y-1 pt-5">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+                      <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
                         <Icon name="Wallet" className="size-4" />
                       </div>
-                      <p className="text-sm font-bold text-[#0B5ED7]">Monthly payroll overview</p>
+                      <p className="text-sm font-bold text-[#2563EB]">Monthly payroll overview</p>
                     </div>
                     <div className="mt-2">
                       <SensitiveField
@@ -734,7 +734,7 @@ export function FinanceDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-2xl border-2 border-[#0B5ED7]/15">
+                <Card className="rounded-2xl border-2 border-[#2563EB]/15">
                   <CardContent className="space-y-3 pt-5">
                     <div className="flex items-center gap-2">
                       <div className="flex size-9 items-center justify-center rounded-lg bg-[#fdece4] text-[#F97316]">
@@ -745,7 +745,7 @@ export function FinanceDashboard() {
                     <div className="space-y-2">
                       {[
                         { band: "Junior (৳0 – ৳30k)", pct: 45, color: "#10b981" },
-                        { band: "Mid (৳30k – ৳60k)", pct: 35, color: "#0B5ED7" },
+                        { band: "Mid (৳30k – ৳60k)", pct: 35, color: "#2563EB" },
                         { band: "Senior (৳60k – ৳100k)", pct: 15, color: "#F97316" },
                         { band: "Leadership (৳100k+)", pct: 5, color: "#8b5cf6" },
                       ].map((row) => (
@@ -773,8 +773,8 @@ export function FinanceDashboard() {
         description="How commission approvals are handled in ALO Finance."
       >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0B5ED7]">
+          <div className="rounded-xl border border-[#2563EB]/15 bg-[#f7f9fc] p-4">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
               <Icon name="FileCheck" className="size-4" />
             </div>
             <p className="mt-2 text-sm font-bold text-foreground">1. Submit</p>
@@ -782,7 +782,7 @@ export function FinanceDashboard() {
               Commission entries are accrued against each closed application automatically.
             </p>
           </div>
-          <div className="rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-4">
+          <div className="rounded-xl border border-[#2563EB]/15 bg-[#f7f9fc] p-4">
             <div className="flex size-8 items-center justify-center rounded-lg bg-[#fdece4] text-[#F97316]">
               <Icon name="CheckCheck" className="size-4" />
             </div>
@@ -791,7 +791,7 @@ export function FinanceDashboard() {
               Finance can approve commission payments. All commission approvals are audit-logged.
             </p>
           </div>
-          <div className="rounded-xl border border-[#0B5ED7]/15 bg-[#f7f9fc] p-4">
+          <div className="rounded-xl border border-[#2563EB]/15 bg-[#f7f9fc] p-4">
             <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
               <Icon name="BadgeCheck" className="size-4" />
             </div>

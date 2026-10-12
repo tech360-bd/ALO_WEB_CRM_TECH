@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar, Clock, User, Mail, Phone, Globe, CheckCircle2, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import PublicNavbar from '@/components/website/PublicNavbar';
 import { usePortalStore } from '@/lib/stores/portal-store';
 
 const SERVICE_OPTIONS = [
@@ -99,7 +98,6 @@ export default function PublicConsultationPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavbar />
       <main className="pt-8 pb-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -133,12 +131,12 @@ export default function PublicConsultationPage() {
               </p>
               <div className="bg-slate-50 rounded-xl p-4 mb-6 inline-block">
                 <p className="text-sm text-slate-500">Your booking reference</p>
-                <p className="text-lg font-mono font-bold text-[#0B5ED7]">
+                <p className="text-lg font-mono font-bold text-[#2563EB]">
                   ALO-{Date.now().toString().slice(-6)}
                 </p>
               </div>
               <div className="flex gap-3 justify-center">
-                <Button onClick={() => setView('website')} className="bg-[#0B5ED7] text-white">
+                <Button onClick={() => setView('website')} className="bg-[#2563EB] text-white">
                   Back to Home
                 </Button>
                 <Button variant="outline" onClick={() => setSubmitted(false)}>
@@ -158,7 +156,7 @@ export default function PublicConsultationPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <User className="inline h-4 w-4 mr-1 text-[#0B5ED7]" /> Full Name *
+                        <User className="inline h-4 w-4 mr-1 text-[#2563EB]" /> Full Name *
                       </Label>
                       <Input
                         required
@@ -170,7 +168,7 @@ export default function PublicConsultationPage() {
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Phone className="inline h-4 w-4 mr-1 text-[#0B5ED7]" /> Phone *
+                        <Phone className="inline h-4 w-4 mr-1 text-[#2563EB]" /> Phone *
                       </Label>
                       <Input
                         required
@@ -185,7 +183,7 @@ export default function PublicConsultationPage() {
 
                   <div>
                     <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                      <Mail className="inline h-4 w-4 mr-1 text-[#0B5ED7]" /> Email *
+                      <Mail className="inline h-4 w-4 mr-1 text-[#2563EB]" /> Email *
                     </Label>
                     <Input
                       required
@@ -200,7 +198,7 @@ export default function PublicConsultationPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Globe className="inline h-4 w-4 mr-1 text-[#0B5ED7]" /> Preferred Destination *
+                        <Globe className="inline h-4 w-4 mr-1 text-[#2563EB]" /> Preferred Destination *
                       </Label>
                       <Select value={form.destination} onValueChange={(v) => setForm({ ...form, destination: v })}>
                         <SelectTrigger className="h-11">
@@ -233,7 +231,7 @@ export default function PublicConsultationPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Calendar className="inline h-4 w-4 mr-1 text-[#0B5ED7]" /> Preferred Date *
+                        <Calendar className="inline h-4 w-4 mr-1 text-[#2563EB]" /> Preferred Date *
                       </Label>
                       <Input
                         required
@@ -246,7 +244,7 @@ export default function PublicConsultationPage() {
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Clock className="inline h-4 w-4 mr-1 text-[#0B5ED7]" /> Preferred Time *
+                        <Clock className="inline h-4 w-4 mr-1 text-[#2563EB]" /> Preferred Time *
                       </Label>
                       <Select value={form.preferredTime} onValueChange={(v) => setForm({ ...form, preferredTime: v })}>
                         <SelectTrigger className="h-11">
@@ -293,7 +291,7 @@ export default function PublicConsultationPage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="space-y-4"
               >
-                <div className="bg-gradient-to-br from-[#0B5ED7] to-[#003d80] rounded-2xl p-6 text-white">
+                <div className="bg-gradient-to-br from-[#2563EB] to-[#003d80] rounded-2xl p-6 text-white">
                   <h3 className="text-lg font-bold mb-4">Contact Directly</h3>
                   <div className="space-y-3 text-sm">
                     <div>
@@ -322,15 +320,15 @@ export default function PublicConsultationPage() {
                 <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
                   <h3 className="text-base font-bold text-green-900 mb-2">WhatsApp Us</h3>
                   <p className="text-sm text-green-800 mb-3">Quick response on WhatsApp</p>
-                  <a
-                    href="https://wa.me/8801805020101?text=I%20want%20to%20book%20a%20consultation"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full bg-[#25D366] text-white hover:brightness-110">
+                  <Button asChild className="w-full bg-[#25D366] text-white hover:brightness-110">
+                    <a
+                      href="https://wa.me/8801805020101?text=I%20want%20to%20book%20a%20consultation"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       Chat on WhatsApp
-                    </Button>
-                  </a>
+                    </a>
+                  </Button>
                 </div>
 
                 <div className="bg-orange-50 border border-orange-200 rounded-2xl p-6">

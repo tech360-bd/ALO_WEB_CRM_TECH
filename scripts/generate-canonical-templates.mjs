@@ -1,7 +1,10 @@
 import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
+import { requireSyntheticOutputDir, syntheticOutputPath } from './lib/synthetic-output-guard.mjs';
 
-const docsDir = 'docs/import-templates';
+// EXAMPLE GENERATOR: the rows below are illustrative examples, not verified facts. It used to overwrite
+// docs/import-templates/; it now writes only under ALO_SYNTHETIC_OUTPUT_DIR (fixtures/staging).
+const docsDir = syntheticOutputPath(requireSyntheticOutputDir('generate-canonical-templates'), 'docs/import-templates');
 mkdirSync(docsDir, { recursive: true });
 
 console.log('===== GENERATING CANONICAL CSV & DOCUMENTATION TEMPLATES =====');

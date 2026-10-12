@@ -104,7 +104,7 @@ export default function DocumentVersionTimeline({
       {/* Document Slot Header */}
       <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl">
         <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-[#0B5ED7]" />
+          <FileText className="w-4 h-4 text-[#2563EB]" />
           <div>
             <p className="font-bold text-sm text-slate-900">{slot.slotName}</p>
             <p className="text-[11px] text-slate-500">{slot.requirement}</p>

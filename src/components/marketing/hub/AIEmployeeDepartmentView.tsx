@@ -40,10 +40,10 @@ export default function AIEmployeeDepartmentView() {
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {EMPLOYEES.map(e=>(
-          <Card key={e.id} className="border-[#0B5ED7]/10 hover:shadow-md transition-shadow">
+          <Card key={e.id} className="border-[#2563EB]/10 hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm flex items-center gap-2"><Cpu className="w-4 h-4 text-[#0B5ED7]" />{e.name}</CardTitle>
+                <CardTitle className="text-sm flex items-center gap-2"><Cpu className="w-4 h-4 text-[#2563EB]" />{e.name}</CardTitle>
                 <Badge className="bg-[#F97316]/10 text-[#F97316] border-[#F97316]/20 text-[10px]">{e.dept}</Badge>
               </div>
               <p className="text-xs text-gray-500">{e.role} — {e.id}</p>

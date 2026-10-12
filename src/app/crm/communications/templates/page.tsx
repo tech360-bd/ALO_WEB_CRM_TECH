@@ -39,7 +39,7 @@ export default function TemplatesPage() {
           <h1 className="text-xl font-bold text-[#0F172A]">Communication Templates — Manager</h1>
           <p className="text-xs text-gray-500">template_id • template_name • channel • category • language • body • variables • visibility • requires_approval • status • created_by • approved_by</p>
         </div>
-        <Button size="sm" className="bg-[#0B5ED7]" onClick={() => setShowCreate(!showCreate)}><Plus className="w-4 h-4 mr-1" /> Create Template</Button>
+        <Button size="sm" className="bg-[#2563EB]" onClick={() => setShowCreate(!showCreate)}><Plus className="w-4 h-4 mr-1" /> Create Template</Button>
       </div>
 
       {showCreate && (
@@ -57,7 +57,7 @@ export default function TemplatesPage() {
       )}
 
       <Card className="border border-gray-200">
-        <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4 text-[#0B5ED7]" /> {templates.length} Templates — Channels: WhatsApp, SMS, Email, Portal, Social DM — Categories: {TEMPLATE_CATEGORIES.slice(0,6).join(', ')}… ({TEMPLATE_CATEGORIES.length} total)</CardTitle></CardHeader>
+        <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><FileText className="w-4 h-4 text-[#2563EB]" /> {templates.length} Templates — Channels: WhatsApp, SMS, Email, Portal, Social DM — Categories: {TEMPLATE_CATEGORIES.slice(0,6).join(', ')}… ({TEMPLATE_CATEGORIES.length} total)</CardTitle></CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">

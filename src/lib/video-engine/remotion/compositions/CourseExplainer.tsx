@@ -6,7 +6,7 @@ export const CourseExplainer: React.FC<any> = ({ courseName = "MSc Data Science"
   const { fps } = useVideoConfig();
   const opacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: "clamp" });
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0B5ED7", justifyContent: "center", alignItems: "center", color: "white", fontFamily: "Inter" }}>
+    <AbsoluteFill style={{ backgroundColor: "#2563EB", justifyContent: "center", alignItems: "center", color: "white", fontFamily: "Inter" }}>
       <div style={{ opacity, textAlign: "center", padding: 60 }}>
         <h1 style={{ fontSize: 64, fontWeight: 900 }}>{courseName}</h1>
         <p style={{ fontSize: 28 }}>{universityName} • {duration} • {fees}</p>

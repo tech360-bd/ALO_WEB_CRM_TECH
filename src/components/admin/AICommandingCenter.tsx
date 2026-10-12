@@ -58,7 +58,7 @@ export default function AICommandingCenter() {
   const [currentPlan, setCurrentPlan] = useState<ChangePlan | null>(null);
   const [terminalLogs, setTerminalLogs] = useState<string>('ALO System Terminal Online.\nWaiting for commands...');
   
-  const [trustedMode, setTrustedMode] = useState(false);
+  const [, setTrustedMode] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   
   const [healthStats, setHealthStats] = useState<any>({
@@ -201,7 +201,7 @@ export default function AICommandingCenter() {
         setMessages((prev) => [...prev, {
           id: `ai-${Date.now()}`,
           sender: 'ai',
-          text: `Generated change plan: **${plan.title}**. Affected files: \`${plan.affectedFiles.join(', ')}\`. Please review the diff in the Center Panel and approve to apply.`,
+          text: `Generated change plan: **${plan.title}**. Affected files: \`${plan.affectedFiles.join(', ')}\`. This is a preview only; applying plans from here is disabled.`,
           timestamp: new Date().toLocaleTimeString(),
           status: 'WAITING_FOR_APPROVAL',
           reasoning: [
@@ -213,11 +213,6 @@ export default function AICommandingCenter() {
           diff: plan.diff
         }]);
 
-        // Auto approve if trusted dev mode is enabled
-        if (trustedMode) {
-          toast.info('Trusted Development Mode active. Auto-approving plan...');
-          await handleApprovePlan(plan.planId);
-        }
       } else {
         setMessages((prev) => [...prev, {
           id: `ai-${Date.now()}`,
@@ -240,49 +235,12 @@ export default function AICommandingCenter() {
     }
   };
 
-  // Approve and Execute Change Plan
-  const handleApprovePlan = async (planId: string) => {
-    if (!currentPlan) return;
-    setIsExecuting(true);
-    setTerminalLogs((prev) => `${prev}\n\n$ approving plan: "${planId}"...`);
-    try {
-      const res = await fetch('/api/admin/ai-command-center', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ action: 'approve-plan', planId })
-      });
-      const data = await res.json();
-      setTerminalLogs((prev) => `${prev}\n${data.logs}`);
-      
-      if (res.ok && data.success) {
-        setMessages((prev) => [...prev, {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: `Success! Checked out checkpoint, applied schema changes, generated client code, passed all Vitest / compiler gates, and deployed successfully.`,
-          timestamp: new Date().toLocaleTimeString(),
-          status: 'SUCCESS'
-        }]);
-        toast.success('Change Plan applied successfully!');
-      } else {
-        setMessages((prev) => [...prev, {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: `Quality gates failed during execution. Reverted changes automatically to protect production code. Detailed error: ${data.error || 'Review terminal logs'}`,
-          timestamp: new Date().toLocaleTimeString(),
-          status: 'FAILED'
-        }]);
-        toast.error('Quality gates failed. Changes reverted.');
-      }
-    } catch (err: any) {
-      setTerminalLogs((prev) => `${prev}\nError during plan execution: ${err.message}`);
-      toast.error('Execution error occurred.');
-    } finally {
-      setCurrentPlan(null);
-      setIsExecuting(false);
-    }
+  // Applying change plans is disabled server-side (503 SCHEMA_MUTATION_DISABLED).
+  // The UI never calls the disabled action; it explains the approved route instead.
+  const SCHEMA_APPLY_DISABLED_MSG = 'Applying plans is disabled. Schema and code changes must go through a reviewed Prisma migration or pull request, with backup and release approval.';
+  const handleApprovePlan = (_planId: string) => {
+    setTerminalLogs((prev) => `${prev}\n\n$ apply plan: DISABLED. No files, schema or database were changed.`);
+    toast.info(SCHEMA_APPLY_DISABLED_MSG);
   };
 
   // Reject Change Plan
@@ -298,38 +256,9 @@ export default function AICommandingCenter() {
     toast.info('Plan rejected.');
   };
 
-  // Execute Rollback Checkpoint
-  const handleRollback = async () => {
-    setIsExecuting(true);
-    setTerminalLogs((prev) => `${prev}\n\n$ executing database rollback to last safe checkpoint...`);
-    try {
-      const res = await fetch('/api/admin/ai-command-center', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ action: 'rollback' })
-      });
-      const data = await res.json();
-      setTerminalLogs((prev) => `${prev}\n${data.logs}`);
-      if (res.ok && data.success) {
-        setMessages((prev) => [...prev, {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: 'Rollback completed successfully. Reverted database models and regenerated types.',
-          timestamp: new Date().toLocaleTimeString(),
-          status: 'SUCCESS'
-        }]);
-        toast.success('Database rolled back!');
-      } else {
-        toast.error('Rollback failed.');
-      }
-    } catch (err: any) {
-      setTerminalLogs((prev) => `${prev}\nError during rollback: ${err.message}`);
-    } finally {
-      setIsExecuting(false);
-    }
+  // Schema rollback over HTTP is disabled server-side; restore from a verified backup instead.
+  const handleRollback = () => {
+    toast.info('Database rollback is not available here. Restore from a verified backup following the runbook.');
   };
 
   return (
@@ -351,8 +280,8 @@ export default function AICommandingCenter() {
           <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white" onClick={fetchHealth}>
             <RefreshCw className="w-3.5 h-3.5 mr-1" /> Reload Core
           </Button>
-          <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-red-400 hover:bg-slate-700 hover:text-red-300 border-slate-700 font-semibold" onClick={handleRollback}>
-            <Undo className="w-3.5 h-3.5 mr-1" /> Revert Database
+          <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-slate-500 border-slate-700 font-semibold" disabled title="Disabled: restore from a verified backup following the runbook" onClick={handleRollback}>
+            <Undo className="w-3.5 h-3.5 mr-1" /> Revert Database (disabled)
           </Button>
         </div>
       </div>
@@ -562,8 +491,9 @@ export default function AICommandingCenter() {
                   </div>
 
                   <div className="space-y-2 pt-4 border-t border-slate-100">
-                    <Button onClick={() => handleApprovePlan(currentPlan.planId)} disabled={isExecuting} className="w-full h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold">
-                      <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Approve &amp; Run Gates
+                    <p className="text-[10px] text-slate-500">{SCHEMA_APPLY_DISABLED_MSG}</p>
+                    <Button onClick={() => handleApprovePlan(currentPlan.planId)} disabled className="w-full h-8 text-xs bg-slate-300 text-slate-600 font-bold" title={SCHEMA_APPLY_DISABLED_MSG}>
+                      <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Apply disabled (preview only)
                     </Button>
                     <Button onClick={handleRejectPlan} disabled={isExecuting} variant="outline" className="w-full h-8 text-xs border-slate-200 text-slate-600">
                       <XCircle className="w-3.5 h-3.5 mr-1" /> Discard Plan
@@ -592,9 +522,9 @@ export default function AICommandingCenter() {
               <div className="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                 <div>
                   <div className="text-[11px] font-bold text-slate-700">Trusted Dev Mode</div>
-                  <div className="text-[9px] text-slate-400">Skip plan approvals</div>
+                  <div className="text-[9px] text-slate-400">Unavailable: plans cannot be applied from here</div>
                 </div>
-                <Switch checked={trustedMode} onCheckedChange={setTrustedMode} disabled={isExecuting} />
+                <Switch checked={false} onCheckedChange={setTrustedMode} disabled />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <Button variant="outline" size="sm" className="h-8 text-[10px] bg-white border-slate-200 hover:bg-slate-50" onClick={() => runTerminalTool('run-lint')}>

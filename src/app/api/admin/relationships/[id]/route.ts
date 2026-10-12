@@ -1,8 +1,7 @@
 import { contentAuditLog } from "@/lib/content-audit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getContentAdminSession } from "@/lib/content-admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +11,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
+  const session = await getContentAdminSession(req);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -29,7 +28,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Relationship not found" }, { status: 404 });
     }
 
-    await db.contentRelationship.delete({ where: { id } });
+    await db.$transaction(async tx => {
+    await tx.contentRelationship.update({ where: { id }, data: { status: "INACTIVE" } });
 
     await contentAuditLog.create({
       data: {
@@ -45,7 +45,8 @@ export async function DELETE(
           relationshipType: existing.relationshipType,
         }),
       },
-    }).catch(() => {});
+    }, tx);
+    });
 
     return NextResponse.json({ success: true, id });
   } catch (err: any) {

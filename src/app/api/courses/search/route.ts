@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere } from '@/lib/public-catalog';
 import { getOptionalAuth } from '@/lib/auth-middleware';
 
 export async function GET(request: NextRequest) {
@@ -29,9 +30,9 @@ export async function GET(request: NextRequest) {
     const isPrivileged = roles.some((r) =>
       ['SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'STAFF', 'APPLICATION_OFFICER', 'super_admin', 'admin', 'counselor'].includes(r)
     );
-    const isPartner = roles.some((r) => ['PARTNER', 'partner', 'AGENT', 'agent'].includes(r));
 
-    const where: any = {};
+    // Public visibility: non-staff only see published, VERIFIED, source-linked courses.
+    const where: any = isPrivileged ? {} : { ...publicCourseWhere() };
 
     if (q) {
       where.OR = [
@@ -131,6 +132,7 @@ export async function GET(request: NextRequest) {
             },
           },
           intakeFees: {
+            ...(isPrivileged ? {} : { where: publicIntakeWhere() }),
             take: 4,
             orderBy: { intakeYear: 'asc' },
             select: {
@@ -144,6 +146,7 @@ export async function GET(request: NextRequest) {
             },
           },
           requirements: {
+            ...(isPrivileged ? {} : { where: publicRequirementWhere() }),
             take: 2,
             select: {
               academicReq: true,
@@ -157,6 +160,7 @@ export async function GET(request: NextRequest) {
             },
           },
           scholarshipRecords: {
+            ...(isPrivileged ? {} : { where: publicScholarshipWhere() }),
             take: 3,
             select: {
               scholarshipName: true,
@@ -165,7 +169,9 @@ export async function GET(request: NextRequest) {
               deadline: true,
             },
           },
-          commissions: isPrivileged || isPartner
+          // Commission rows are internal. Partners are not given rows because
+          // CrmCommission has no partner-ownership column to prove attribution.
+          commissions: isPrivileged
             ? {
                 take: 1,
                 select: {
@@ -197,7 +203,7 @@ export async function GET(request: NextRequest) {
         id: c.id,
         courseId: c.courseId,
         courseTitle: c.courseTitle,
-        slug: c.slug || c.courseId.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        slug: c.slug || c.courseId,
         studyLevel: c.studyLevel || 'Postgraduate',
         programLevel: c.programLevel,
         subjectArea: c.subjectArea || 'General',
@@ -231,10 +237,6 @@ export async function GET(request: NextRequest) {
         output.publicationStatus = c.publicationStatus;
         output.dataQualityScore = qualityScore;
         output.commissions = c.commissions || [];
-      } else if (isPartner) {
-        output.commissions = (c.commissions || []).map((comm: any) => ({
-          partnerCommission: comm.partnerCommission,
-        }));
       }
 
       return output;
@@ -251,8 +253,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error: any) {
+    console.error('[api/courses/search] error', error);
     return NextResponse.json(
-      { success: false, error: error?.message || 'Failed to search courses' },
+      { success: false, error: 'Failed to search courses' },
       { status: 500 }
     );
   }

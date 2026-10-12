@@ -5,7 +5,7 @@ exit 1
 # ALO Education — Portable Delivery Package Builder (4 VPS structure)
 # Replaces hardcoded /Users/alaminn/Downloads paths with relative, works on VPS/Linux/Mac
 # Generates 4 zips + SHA256SUMS.txt in ./delivery/
-# Verified dataset: 560 universities, 11200 courses, 145600 intakes, GCU London 6 real courses verified 2026-09-15
+# No catalogue dataset is packaged; the legacy CSV sets are generated/unverified (see AUDIT/course-finder-2026-10-12/).
 set -Eeuo pipefail
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
@@ -18,7 +18,7 @@ echo "=== ALO Education Portable Packaging ==="
 echo "Root: $ROOT_DIR"
 echo "Delivery: $DELIVERY_DIR"
 echo "Timestamp: $TIMESTAMP"
-echo "Dataset: 560 universities / 11200 courses / 145600 intakes (13 per course Jan2027-Jan2028)"
+echo "Dataset: none packaged (legacy catalogue CSVs are unverified; use the reviewed CSV import)"
 
 # Clean old zips
 rm -f "$DELIVERY_DIR"/ALO_EDUCATION_*.zip "$DELIVERY_DIR"/SHA256SUMS.txt
@@ -54,8 +54,11 @@ cp -R "$ROOT_DIR/scripts" "$TMP2/alo-web-crm/" 2>/dev/null || true
 cp -R "$ROOT_DIR/public" "$TMP2/alo-web-crm/" 2>/dev/null || true
 cp "$ROOT_DIR/package.json" "$ROOT_DIR/package-lock.json" "$ROOT_DIR/next.config.ts" "$ROOT_DIR/tsconfig.json" "$ROOT_DIR/tailwind.config.ts" "$TMP2/alo-web-crm/" 2>/dev/null || true
 cp "$ROOT_DIR/.env.example" "$TMP2/alo-web-crm/" 2>/dev/null || true
-# Add dataset CSVs to private (for seeding)
-cp "$ROOT_DIR/universities.csv" "$ROOT_DIR/courses.csv" "$ROOT_DIR/course_intakes.csv" "$ROOT_DIR/tuition_fees.csv" "$ROOT_DIR/course_requirements.csv" "$ROOT_DIR/english_requirements.csv" "$TMP2/alo-web-crm/" 2>/dev/null || true
+# Catalogue CSVs are NOT packaged: the legacy CSV sets are generated/unverified
+# (see AUDIT/course-finder-2026-10-12/SYNTHETIC-CATALOGUE-ARCHIVE.md). University
+# data must arrive through the reviewed CSV import (/admin/data-import).
+# Never ship the synthetic fixtures that live in fixtures/synthetic-catalogue/.
+rm -rf "$TMP2/alo-web-crm/fixtures" 2>/dev/null || true
 ( cd "$TMP2" && zip -q -r "$DELIVERY_DIR/ALO_EDUCATION_VPS_PRIVATE_APP.zip" alo-web-crm -x "*.DS_Store" )
 rm -rf "$TMP2"
 echo "  -> $DELIVERY_DIR/ALO_EDUCATION_VPS_PRIVATE_APP.zip ($(du -h "$DELIVERY_DIR/ALO_EDUCATION_VPS_PRIVATE_APP.zip" | cut -f1))"
@@ -97,19 +100,12 @@ echo "📦 [4/4] Building ALO_EDUCATION_VPS_DATABASE.zip (database + manifests) 
 TMP4="$(mktemp -d)"
 mkdir -p "$TMP4/database"
 mkdir -p "$TMP4/manifests"
-cp "$ROOT_DIR/universities.csv" "$TMP4/database/" 2>/dev/null || true
-cp "$ROOT_DIR/courses.csv" "$TMP4/database/" 2>/dev/null || true
-cp "$ROOT_DIR/course_intakes.csv" "$TMP4/database/" 2>/dev/null || true
-cp "$ROOT_DIR/tuition_fees.csv" "$TMP4/database/" 2>/dev/null || true
-cp "$ROOT_DIR/course_requirements.csv" "$TMP4/database/" 2>/dev/null || true
-cp "$ROOT_DIR/english_requirements.csv" "$TMP4/database/" 2>/dev/null || true
-cp "$ROOT_DIR/02_ALO_COURSE_MASTER.csv" "$TMP4/database/" 2>/dev/null || true
-cp "$ROOT_DIR/04_ALO_UNIVERSITY_COURSE_MASTER.csv" "$TMP4/database/" 2>/dev/null || true
+# No catalogue CSVs: the legacy sets are generated/unverified and must not be shipped.
 cp "$ROOT_DIR/prisma/schema.prisma" "$TMP4/database/" 2>/dev/null || true
 # Generate schema.sql if prisma available
 if [ -f "$ROOT_DIR/prisma/schema.prisma" ]; then
   echo "-- ALO Education schema.sql generated $TIMESTAMP --" > "$TMP4/database/schema.sql"
-  echo "-- 560 universities, 11200 courses, 145600 intakes, GCU London verified 2026-09-15 --" >> "$TMP4/database/schema.sql"
+  echo "-- Schema only. No university/course catalogue data is included or verified. --" >> "$TMP4/database/schema.sql"
   # Try to generate via prisma if available
   ( cd "$ROOT_DIR" && npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script 2>/dev/null > "$TMP4/database/schema.prisma.sql" || true )
 fi
@@ -118,18 +114,14 @@ cp "$ROOT_DIR/FILE_MANIFEST.csv" "$TMP4/manifests/" 2>/dev/null || true
 cp "$ROOT_DIR/API_INVENTORY.csv" "$TMP4/manifests/" 2>/dev/null || true
 cp "$ROOT_DIR/DATABASE_MODEL_INVENTORY.csv" "$TMP4/manifests/" 2>/dev/null || true
 # Create counts manifest
-cat > "$TMP4/manifests/DATASET_COUNTS_20260915.txt" <<EOF
-ALO Education Dataset Verification 2026-09-15
-============================================
-Universities: $(wc -l < "$ROOT_DIR/universities.csv" 2>/dev/null || echo 560) (560 verified, 19 destinations, UK 140, Australia 40)
-Courses: $(wc -l < "$ROOT_DIR/courses.csv" 2>/dev/null || echo 11200) (11200 = 20 per uni x 560)
-Intakes: $(wc -l < "$ROOT_DIR/course_intakes.csv" 2>/dev/null || echo 145600) (145600 = 13 per course Jan2027-Jan2028)
-GCU London (UNI-UN-0090): 20 courses including 6 real London PG verified https://www.gcu.ac.uk/london/study/london-courses
-  - MSc International Management and Business Development: https://www.gcu.ac.uk/study/courses/msc-international-management-and-business-development-london
-  - MSc Advanced Computer Science, MSc Computer Science, MSc Environmental Management, MSc International Marketing, MPH
-Fees: 145600 tuition_fees (GBP 16200-17200 for GCU London)
-Last Verified: 2026-09-15
-SHA256: see ../SHA256SUMS.txt
+cat > "$TMP4/manifests/DATASET_STATUS.txt" <<EOF
+ALO Education catalogue dataset status
+======================================
+No university, course, intake, fee or requirement data is included in this package.
+The repository's legacy catalogue CSV/JSON sets are generated/templated and contain
+zero verifiable records (AUDIT/course-finder-2026-10-12/UNIVERSITY-COURSE-DATA-QUALITY-REPORT.md).
+Load real data only through the reviewed CSV import (/admin/data-import) followed by
+approval, Super Admin apply and separate verification.
 EOF
 ( cd "$TMP4" && zip -q -r "$DELIVERY_DIR/ALO_EDUCATION_VPS_DATABASE.zip" database manifests -x "*.DS_Store" )
 rm -rf "$TMP4"

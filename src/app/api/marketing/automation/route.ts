@@ -38,9 +38,7 @@ function providerStatusLabel(input: {
   if (tokenExpired) return 'TOKEN_EXPIRED';
   if (!status || ['disconnected', 'disabled'].includes(status)) return 'NOT_CONFIGURED';
   if (['error', 'connection_error'].includes(status)) return 'CONNECTION_ERROR';
-  if (status === 'connected' && webhookStatus !== 'active') return 'PENDING_WEBHOOK_VERIFICATION';
-  if (status === 'connected' && !input.lastSyncAt) return 'LIVE_TEST_PENDING';
-  if (status === 'connected') return 'CONNECTED';
+  if (status === 'connected') return 'LEGACY_CONNECTED_NOT_VERIFIED';
 
   return status.toUpperCase();
 }
@@ -153,7 +151,7 @@ export async function GET(req: NextRequest) {
       brandConfig: {
         primaryColor: '#F97316',
         backgroundColor: '#FFFFFF',
-        accentColor: '#0B5ED7',
+        accentColor: '#2563EB',
         logoConfigured: brandAssets.some((a) => a.type.toLowerCase() === 'logo' || a.name.toLowerCase().includes('logo')),
       },
     });

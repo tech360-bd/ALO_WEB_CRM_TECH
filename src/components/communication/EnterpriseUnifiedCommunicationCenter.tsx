@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   MessageSquare,
   Facebook,
@@ -31,7 +31,12 @@ export default function EnterpriseUnifiedCommunicationCenter() {
   const [activeChannel, setActiveChannel] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [messageInput, setMessageInput] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedApplicationId, setSelectedApplicationId] = useState('');
+  const [sendError, setSendError] = useState('');
+  const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // AI Assistant States
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
@@ -70,8 +75,24 @@ export default function EnterpriseUnifiedCommunicationCenter() {
       if (formData.prefilledData) setPrefilledForm(formData.prefilledData);
     } catch (err) {
       console.error('AI assistant trigger failed:', err);
-    } fontFinally: {
+    } finally {
       setIsAiLoading(false);
+    }
+  }
+
+  async function fetchConversationDetails(convId: string) {
+    try {
+      const response = await fetch(`/api/crm/ucc/conversations?id=${encodeURIComponent(convId)}`);
+      const data = await response.json();
+      if (!response.ok || !data.success) return;
+      setSelectedApplicationId((current) => data.applications?.some((application: any) => application.id === current)
+        ? current
+        : data.applications?.[0]?.id || '');
+      setSelectedConv((current: any) => current?.id === convId
+        ? { ...current, ...data.conversation, applications: data.applications || [], messages: data.messages || [] }
+        : current);
+    } catch (err) {
+      console.error('Failed to fetch conversation details:', err);
     }
   }
 
@@ -84,8 +105,10 @@ export default function EnterpriseUnifiedCommunicationCenter() {
       if (data.success && data.conversations) {
         setConversations(data.conversations);
         if (!selectedConv && data.conversations.length > 0) {
-          setSelectedConv(data.conversations[0]);
-          triggerAiAssistant(data.conversations[0].id);
+          const firstConversation = data.conversations[0];
+          setSelectedConv(firstConversation);
+          fetchConversationDetails(firstConversation.id);
+          triggerAiAssistant(firstConversation.id);
         }
       }
     } catch (err) {
@@ -101,42 +124,59 @@ export default function EnterpriseUnifiedCommunicationCenter() {
 
 
 
-  const handleSendMessage = async (customContent?: string, attachmentUrl?: string, attachmentName?: string) => {
-    const textToSend = customContent || messageInput;
-    if (!selectedConv || (!textToSend && !attachmentUrl)) return;
-
+  const handleSendMessage = async (customContent?: string) => {
+    const textToSend = customContent ?? messageInput;
+    if (!selectedConv || (!textToSend.trim() && !selectedFile) || sending) return;
+    setSendError('');
+    setSending(true);
     try {
-      const res = await fetch('/api/crm/ucc/conversations', {
+      let attachmentId: string | undefined;
+      if (selectedFile) {
+        if (selectedConv.channel !== 'whatsapp') {
+          throw new Error('Private document sending is currently available only on WhatsApp.');
+        }
+        const form = new FormData();
+        form.append('file', selectedFile);
+        form.append('conversationId', selectedConv.id);
+        if (selectedConv.studentId) form.append('studentId', selectedConv.studentId);
+        if (selectedApplicationId) form.append('applicationId', selectedApplicationId);
+        const uploadResponse = await fetch('/api/crm/ucc/documents/upload', { method: 'POST', body: form });
+        const uploadData = await uploadResponse.json().catch(() => ({}));
+        if (!uploadResponse.ok || !uploadData.success || !uploadData.attachment?.id) {
+          throw new Error(uploadData.error || 'Private document upload failed.');
+        }
+        attachmentId = uploadData.attachment.id;
+      }
+
+      const res = await fetch(`/api/crm/ucc/conversations/${selectedConv.id}/reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          conversationId: selectedConv.id,
-          content: textToSend || `[File Uploaded: ${attachmentName || 'document.pdf'}]`,
-          channel: selectedConv.channel,
-          attachmentUrl,
-          attachmentName,
+          content: textToSend,
+          messageType: 'text',
+          ...(attachmentId ? { attachment: { attachmentId, caption: textToSend } } : {}),
         }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) throw new Error(data.error || 'The reply could not be sent.');
 
-      const data = await res.json();
-      if (data.success) {
-        setMessageInput('');
-        fetchConversations();
-        if (selectedConv) {
-          setSelectedConv((prev: any) => ({
-            ...prev,
-            messages: [...(prev?.messages || []), data.message],
-            lastMessageText: textToSend,
-          }));
-        }
-      }
-    } catch (err) {
+      setMessageInput('');
+      setSelectedFile(null);
+      await Promise.all([fetchConversations(), fetchConversationDetails(selectedConv.id)]);
+    } catch (err: any) {
+      setSendError(err?.message || 'Send message failed.');
       console.error('Send message failed:', err);
+    } finally {
+      setSending(false);
     }
   };
 
   const handleSelectConv = (conv: any) => {
     setSelectedConv(conv);
+    setSelectedFile(null);
+    setSelectedApplicationId('');
+    setSendError('');
+    fetchConversationDetails(conv.id);
     triggerAiAssistant(conv.id);
   };
 
@@ -160,8 +200,8 @@ export default function EnterpriseUnifiedCommunicationCenter() {
       {/* UCC Top Bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-[#0B5ED7]/10 rounded-lg">
-            <MessageSquare className="w-6 h-6 text-[#0B5ED7]" />
+          <div className="p-2 bg-[#2563EB]/10 rounded-lg">
+            <MessageSquare className="w-6 h-6 text-[#2563EB]" />
           </div>
           <div>
             <h1 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -184,7 +224,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
               onClick={() => setActiveChannel(ch)}
               className={`px-3 py-1.5 rounded-md font-medium capitalize transition ${
                 activeChannel === ch
-                  ? 'bg-white dark:bg-slate-700 text-[#0B5ED7] dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-slate-700 text-[#2563EB] dark:text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -206,7 +246,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                 placeholder="Search conversations, phone, email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
+                className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
               />
             </div>
           </div>
@@ -224,7 +264,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                     key={conv.id}
                     onClick={() => handleSelectConv(conv)}
                     className={`p-3.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition ${
-                      isSelected ? 'bg-blue-50/70 dark:bg-slate-800 border-l-4 border-[#0B5ED7]' : ''
+                      isSelected ? 'bg-blue-50/70 dark:bg-slate-800 border-l-4 border-[#2563EB]' : ''
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -275,7 +315,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleSendMessage('Thank you for your message. A counselor is reviewing your case and will reply with the verified details shortly.')}
-                    className="px-3 py-1 bg-blue-50 text-[#0B5ED7] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-100"
+                    className="px-3 py-1 bg-blue-50 text-[#2563EB] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-100"
                   >
                     + Acknowledge
                   </button>
@@ -300,7 +340,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                       <div
                         className={`max-w-lg p-3.5 rounded-2xl text-xs space-y-1.5 ${
                           isOutbound
-                            ? 'bg-[#0B5ED7] text-white rounded-br-none shadow-sm'
+                            ? 'bg-[#2563EB] text-white rounded-br-none shadow-sm'
                             : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-none border border-slate-200 dark:border-slate-700 shadow-sm'
                         }`}
                       >
@@ -312,18 +352,19 @@ export default function EnterpriseUnifiedCommunicationCenter() {
 
                         {/* Attachments */}
                         {msg.attachments?.map((att: any) => (
-                          <div
+                          <a
                             key={att.id}
-                            className="mt-2 p-2 bg-black/10 rounded-lg flex items-center justify-between text-[11px]"
+                            href={`/api/crm/ucc/documents/${encodeURIComponent(att.id)}/download`}
+                            className="mt-2 p-2 bg-black/10 rounded-lg flex items-center justify-between gap-2 text-[11px] hover:bg-black/20"
                           >
-                            <div className="flex items-center gap-2">
-                              <FileText className="w-4 h-4" />
+                            <span className="flex items-center gap-2 min-w-0">
+                              <FileText className="w-4 h-4 shrink-0" />
                               <span className="font-medium truncate max-w-[180px]">{att.fileName}</span>
-                            </div>
-                            <span className="text-[9px] uppercase bg-emerald-500 text-white px-1.5 py-0.5 rounded font-bold">
-                              Auto-Classified: {att.detectedDocType}
                             </span>
-                          </div>
+                            <span className="text-[9px] uppercase bg-emerald-500 text-white px-1.5 py-0.5 rounded font-bold">
+                              {att.detectedDocType || 'Private file'}
+                            </span>
+                          </a>
                         ))}
                       </div>
                     </div>
@@ -333,22 +374,66 @@ export default function EnterpriseUnifiedCommunicationCenter() {
 
               {/* Chat Input Bar */}
               <div className="bg-white dark:bg-slate-900 p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                  className="hidden"
+                  onChange={(event) => {
+                    setSelectedFile(event.currentTarget.files?.[0] || null);
+                    event.currentTarget.value = '';
+                  }}
+                />
+                {selectedConv.studentId && selectedConv.applications?.length > 0 && (
+                  <select
+                    aria-label="Link the document to an application"
+                    value={selectedApplicationId}
+                    onChange={(event) => setSelectedApplicationId(event.target.value)}
+                    className="max-w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                  >
+                    <option value="">Choose related application</option>
+                    {selectedConv.applications.map((application: any) => (
+                      <option key={application.id} value={application.id}>
+                        {application.isB2bConfidential ? '[B2B confidential] ' : ''}{application.applicationCode || application.id} · {application.universityName} · {application.courseName}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {selectedFile && (
+                  <div className="flex items-center justify-between gap-2 text-xs text-slate-600 dark:text-slate-300">
+                    <span className="truncate">Private attachment: {selectedFile.name}</span>
+                    <button type="button" onClick={() => setSelectedFile(null)} className="text-rose-600 hover:underline">Remove</button>
+                  </div>
+                )}
+                {sendError && <p role="alert" className="text-xs text-rose-600">{sendError}</p>}
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    aria-label="Attach private PDF or image"
+                    title={selectedConv.channel === 'whatsapp' ? 'Upload a private PDF/JPEG/PNG and send it via WhatsApp' : 'Document sending is currently available only on WhatsApp'}
+                    disabled={selectedConv.channel !== 'whatsapp' || sending}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+                  >
+                    <Paperclip className="w-4 h-4" />
+                  </button>
                   <input
                     type="text"
                     placeholder="Type reply or pick an AI suggested response below..."
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0B5ED7]"
+                    className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                   />
                   <button
+                    disabled={sending || (!messageInput.trim() && !selectedFile)}
                     onClick={() => handleSendMessage()}
-                    className="px-5 py-2.5 bg-[#0B5ED7] hover:bg-blue-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition"
+                    className="px-5 py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition disabled:opacity-50"
                   >
-                    <Send className="w-3.5 h-3.5" /> Send
+                    <Send className="w-3.5 h-3.5" /> {sending ? 'Sending…' : 'Send'}
                   </button>
                 </div>
+                <p className="text-[10px] text-slate-400">Private files are uploaded to protected storage. WhatsApp provider credentials are required to send externally.</p>
               </div>
             </>
           ) : (
@@ -362,7 +447,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
         <div className="w-80 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex flex-col space-y-4 overflow-y-auto">
           {/* AI Smart Copilot Panel */}
           <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/80 rounded-xl border border-blue-200 dark:border-slate-700 space-y-3">
-            <div className="flex items-center gap-2 font-bold text-xs text-[#0B5ED7] dark:text-blue-300">
+            <div className="flex items-center gap-2 font-bold text-xs text-[#2563EB] dark:text-blue-300">
               <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" /> ALO AI Smart Suggestions
             </div>
 
@@ -407,7 +492,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
               </div>
               <button
                 onClick={() => alert('Form fields pre-filled in CRM Student Profile.')}
-                className="w-full mt-2 py-1.5 bg-[#0B5ED7] hover:bg-blue-700 text-white font-medium text-xs rounded-lg transition"
+                className="w-full mt-2 py-1.5 bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-xs rounded-lg transition"
               >
                 Apply to CRM Profile
               </button>

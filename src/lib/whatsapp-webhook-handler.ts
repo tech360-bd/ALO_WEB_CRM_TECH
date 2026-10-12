@@ -4,6 +4,7 @@
 // Preserves ALL required functionality from both originals — lossless consolidation 2026-09-14
 // See docs/PHP-AUDIT-2026-09-14.md and integration report for inventory.
 
+import { allocateIdentifierCommitted } from '@/lib/identity/student-id';
 import crypto from 'crypto';
 import { normalizeBdPhone } from '@/lib/whatsapp-number-pool';
 
@@ -121,22 +122,9 @@ export function detectPriority(intent: string, text: string): string {
 }
 
 // ── Student ID generation (main webhook) ──
-export async function generateStudentId(db: any): Promise<string> {
-  const year = new Date().getFullYear();
-  const prefix = `AE-${year}`;
-  try {
-    const last = await db.student.findFirst?.({ where: { studentId: { startsWith: prefix } }, orderBy: { studentId: 'desc' } }).catch(() => null)
-      || await db.portalStudentProfile.findFirst?.({ where: { studentId: { startsWith: prefix } }, orderBy: { studentId: 'desc' } }).catch(() => null);
-    if (last?.studentId) {
-      const num = parseInt(last.studentId.slice(prefix.length)) || 0;
-      return `${prefix}${String(num + 1).padStart(4, '0')}`;
-    }
-  } catch {}
-  // Fallback: count based
-  try {
-    const count = await db.student.count?.({ where: { studentId: { startsWith: prefix } } }).catch(() => 0) || 0;
-    return `${prefix}${String(count + 1).padStart(4, '0')}`;
-  } catch { return `${prefix}0001`; }
+// Sequence-allocated AE-YYYYNNNNN identifier (committed, never reused).
+export async function generateStudentId(_db?: unknown): Promise<string> {
+  return allocateIdentifierCommitted('AE');
 }
 
 // ── Helpers re-exported for convenience (so callers can import from single handler) ──

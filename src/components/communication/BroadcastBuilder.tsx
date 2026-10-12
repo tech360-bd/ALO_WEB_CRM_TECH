@@ -18,7 +18,7 @@ export default function BroadcastBuilder({ onCreated }: { onCreated?: ()=>void }
   };
   return (
     <Card className="border border-gray-200">
-      <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Megaphone className="w-4 h-4 text-[#0B5ED7]" /> Broadcast Builder</CardTitle></CardHeader>
+      <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Megaphone className="w-4 h-4 text-[#2563EB]" /> Broadcast Builder</CardTitle></CardHeader>
       <CardContent className="space-y-3">
         <Input placeholder="Title" value={form.title} onChange={e=>setForm(s=>({...s, title:e.target.value}))} />
         <div className="grid grid-cols-2 gap-2">

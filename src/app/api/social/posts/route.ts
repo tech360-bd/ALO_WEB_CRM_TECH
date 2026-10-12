@@ -133,16 +133,14 @@ export async function POST(request: NextRequest) {
             }
           });
         } catch (e2) {
-          console.warn('Failed to save post:', e2);
-          // Return success with mock ID if DB fails (for demo)
-          saved = {
-            id: `mock_${Date.now()}`,
-            platform,
-            content,
-            status: status || 'scheduled',
-            scheduledAt: scheduledAt || new Date().toISOString(),
-            mock: true
-          };
+          // Previously this returned success:true with a fabricated `mock_<ts>`
+          // id so the UI showed a saved post that was never persisted. Report
+          // the failure instead.
+          console.error('[social/posts POST] both stores failed:', e2);
+          return NextResponse.json(
+            { success: false, error: 'The post could not be saved. No content store accepted the record.' },
+            { status: 503 }
+          );
         }
       }
 
@@ -193,8 +191,18 @@ export async function PUT(request: NextRequest) {
             }
           }).catch(() => null);
         });
-      } catch {
-        updated = { id, status, mock: true };
+      } catch (error) {
+        console.error('[social/posts PUT] update failed:', error);
+      }
+
+      // Previously this fell back to `{ id, status, mock: true }` and still
+      // returned success:true, so the caller believed a status change was
+      // persisted when nothing was written. Report the real outcome.
+      if (!updated) {
+        return NextResponse.json(
+          { success: false, error: 'Post status could not be updated. The record was not found or the update failed.' },
+          { status: 404 }
+        );
       }
 
       return NextResponse.json({ success: true, data: updated });
