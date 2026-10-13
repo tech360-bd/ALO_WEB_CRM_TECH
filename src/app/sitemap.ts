@@ -79,6 +79,8 @@ const STATIC_PATHS: Array<[string, MetadataRoute.Sitemap[number]['changeFrequenc
   ['/privacy-policy', 'monthly', 0.3], ['/terms', 'monthly', 0.3], ['/cookies', 'monthly', 0.3],
   ['/communication-policy', 'monthly', 0.3], ['/lead-data-usage-policy', 'monthly', 0.3],
   ['/user-guide', 'monthly', 0.3], ['/accessibility', 'monthly', 0.3],
+  ['/code-of-conduct', 'monthly', 0.3], ['/student-complaint-policy', 'monthly', 0.3],
+  ['/aqf-compliance', 'monthly', 0.3],
 ];
 
 const DESTINATION_SLUGS = [

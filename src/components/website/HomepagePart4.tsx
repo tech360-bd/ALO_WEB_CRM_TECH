@@ -10,6 +10,7 @@ import {
   sectionTitle, sectionSubtitle, viewportOnce, gradients,
 } from './animations';
 import { Card, CardContent } from '@/components/ui/card';
+import { ALO_CONTACT } from '@/lib/alo-site-info';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -788,8 +789,10 @@ function FinalCtaSection() {
                   <Phone className="h-4.5 w-4.5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs opacity-70">Call Us</p>
-                  <p className="text-sm font-semibold">+880 1805-020101</p>
+                  <p className="text-xs opacity-70">Call / WhatsApp</p>
+                  <a href={ALO_CONTACT.mobileHref} className="text-sm font-semibold hover:underline">
+                    {ALO_CONTACT.mobileDisplay}
+                  </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -798,7 +801,9 @@ function FinalCtaSection() {
                 </div>
                 <div>
                   <p className="text-xs opacity-70">Email Us</p>
-                  <p className="text-sm font-semibold">info@aloeducation.com</p>
+                  <a href={ALO_CONTACT.emailHref} className="text-sm font-semibold hover:underline">
+                    {ALO_CONTACT.email}
+                  </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -807,7 +812,14 @@ function FinalCtaSection() {
                 </div>
                 <div>
                   <p className="text-xs opacity-70">Visit Us</p>
-                  <p className="text-sm font-semibold">Suite 12B, Green Tower, Gulshan-2, Dhaka 1212</p>
+                  <a
+                    href={ALO_CONTACT.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-semibold hover:underline"
+                  >
+                    {ALO_CONTACT.address}
+                  </a>
                 </div>
               </div>
             </div>

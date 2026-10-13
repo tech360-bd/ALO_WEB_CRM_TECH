@@ -19,6 +19,12 @@ const PUBLIC_ROUTES = [
   "/lead-data-usage-policy",
   "/user-guide",
   "/accessibility",
+  // Footer company column. Published policy/conduct pages — static content,
+  // no database reads, no personal data: they must render for anonymous
+  // visitors (and crawlers) without hitting the auth gate.
+  "/code-of-conduct",
+  "/student-complaint-policy",
+  "/aqf-compliance",
   "/destinations",
   "/universities",
   "/courses",

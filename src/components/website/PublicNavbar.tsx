@@ -50,12 +50,13 @@ import {
 } from '@/components/ui/accordion';
 import LanguageToggle from '@/components/website/LanguageToggle';
 import { useI18n } from '@/i18n';
+import { ALO_CONTACT, ALO_TAGLINE } from '@/lib/alo-site-info';
 
 /* ------------------------------------------------------------------ */
 /*  CONTENT (defaults — Destinations is overridden by live data)       */
 /* ------------------------------------------------------------------ */
 
-const TAGLINE = 'Your Dream – Our Commitment';
+const TAGLINE = ALO_TAGLINE;
 
 const DEFAULT_DESTINATIONS = [
   { label: 'United Kingdom', href: '/destinations/uk' },
@@ -453,9 +454,9 @@ export default function PublicNavbar() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-[11px] font-medium">
             <MapPin className="h-3.5 w-3.5 text-alo-cta-accent" aria-hidden="true" />
-            <span className="hidden lg:inline">Barek Mansion-02, Panthapath, Dhaka</span>
+            <span className="hidden lg:inline">{ALO_CONTACT.addressShort}</span>
             <a
-              href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8"
+              href={ALO_CONTACT.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold underline underline-offset-2 hover:text-alo-cta-accent"
@@ -464,11 +465,11 @@ export default function PublicNavbar() {
             </a>
             <span className="opacity-40" aria-hidden="true">|</span>
             <a
-              href="tel:+8801805020101"
+              href={ALO_CONTACT.mobileHref}
               className="flex items-center gap-1.5 font-semibold hover:text-alo-cta-accent"
             >
               <Phone className="h-3.5 w-3.5" aria-hidden="true" />
-              Senior Counselor Al Aminn: 01805020101
+              Senior Counselor Al Aminn: {ALO_CONTACT.whatsappDisplay}
             </a>
           </div>
           <LanguageToggle compact onDark />
@@ -615,9 +616,9 @@ export default function PublicNavbar() {
                       </Button>
                       {/* Contact details as text — chat / WhatsApp live in the corner widget. */}
                       <p className="text-xs leading-snug text-alo-text-muted">
-                        Office: Barek Mansion-02, Panthapath •{' '}
+                        Office: {ALO_CONTACT.addressShort} •{' '}
                         <a
-                          href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8"
+                          href={ALO_CONTACT.mapsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-alo-brand underline"
@@ -625,8 +626,8 @@ export default function PublicNavbar() {
                           Maps
                         </a>{' '}
                         •{' '}
-                        <a href="tel:+8801805020101" className="text-alo-brand underline">
-                          Al Aminn 01805020101
+                        <a href={ALO_CONTACT.mobileHref} className="text-alo-brand underline">
+                          Al Aminn {ALO_CONTACT.whatsappDisplay}
                         </a>
                       </p>
                     </div>

@@ -1,120 +1,163 @@
 'use client';
 
-import Link from 'next/link';
-import { Facebook, Instagram, Linkedin, Youtube, GraduationCap, MapPin, Phone, Mail, Clock } from 'lucide-react';
-import React from 'react';
-import { EnglishExamButton } from '@/components/website/EnglishExamCta';
+/**
+ * ALO Education — site-wide footer, rendered on EVERY public page (and never
+ * inside an authenticated portal) by PublicLayoutWrapper from the root layout.
+ *
+ * Brand specification implemented here:
+ *   • Logo (ALO Education) + "Your Dream – Our Commitment" tagline
+ *   • Social icons in this exact order: Facebook → Instagram → LinkedIn → YouTube
+ *     (official ALO Education accounts only — see src/lib/alo-site-info.ts)
+ *   • Destinations: UK | Australia | Canada | Ireland | New Zealand | USA | Dubai
+ *   • Quick Links: Course Finder | Services | Language Prep | Scholarships
+ *   • Company: About Us | Contact Us | Code of Conduct | Student Complaint
+ *     Policy | AQF Compliance
+ *   • Contact block: Google location link, WhatsApp, Mobile, Email, Address
+ *   • Decorative graduation-cap strip with three ALO brand colours, always moving
+ *   • Bottom bar in ALO Orange: "© ALO Education. All rights reserved."
+ *
+ * No B2B / partner-recruitment content is published in the footer.
+ */
 
+import Link from 'next/link';
+import {
+  Building2,
+  Facebook,
+  GraduationCap,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Youtube,
+} from 'lucide-react';
+import React from 'react';
+import {
+  ALO_CONTACT,
+  ALO_POLICY_LINKS,
+  ALO_SOCIALS,
+  ALO_TAGLINE,
+} from '@/lib/alo-site-info';
+
+/* ------------------------------------------------------------------ */
+/*  COLUMN CONTENT (defaults — Destinations/Quick Links/Company are    */
+/*  overridable by the Super Admin Virtual Editor, see useCmsFooter)   */
+/* ------------------------------------------------------------------ */
+
+// Exact order required by the brand brief.
 const destinations = [
-  { label: 'United Kingdom', href: '/destinations/uk' },
-  { label: 'USA', href: '/destinations/usa' },
-  { label: 'Canada', href: '/destinations/canada' },
+  { label: 'UK', href: '/destinations/uk' },
   { label: 'Australia', href: '/destinations/australia' },
+  { label: 'Canada', href: '/destinations/canada' },
   { label: 'Ireland', href: '/destinations/ireland' },
   { label: 'New Zealand', href: '/destinations/new-zealand' },
-  { label: 'Dubai / UAE', href: '/destinations/dubai' },
-  { label: 'Germany', href: '/destinations/germany' },
-  { label: 'Malaysia', href: '/destinations/malaysia' },
-  { label: 'Netherlands', href: '/destinations/netherlands' },
-  { label: 'Cyprus', href: '/destinations/cyprus' },
-  { label: 'Sweden', href: '/destinations/sweden' },
-  { label: 'South Korea', href: '/destinations/south-korea' },
-  { label: 'Malta', href: '/destinations/malta' },
-  { label: 'Brazil', href: '/destinations/brazil' },
-  { label: 'Russia', href: '/destinations/russia' },
-  { label: 'India', href: '/destinations/india' },
-  { label: 'China', href: '/destinations/china' },
-  { label: 'South Africa', href: '/destinations/south-africa' },
+  { label: 'USA', href: '/destinations/usa' },
+  { label: 'Dubai', href: '/destinations/dubai' },
 ];
 
 const quickLinks = [
   { label: 'Course Finder', href: '/course-finder' },
-  { label: 'Our Services', href: '/services' },
-  { label: 'English Test Prep', href: '/english-test-prep' },
+  { label: 'Services', href: '/services' },
+  { label: 'Language Prep', href: '/language-prep' },
   { label: 'Scholarships', href: '/scholarships' },
-  { label: 'Application Process', href: '/application-process' },
-  { label: 'Visa Support', href: '/visa' },
-  { label: 'Admission Requirements', href: '/admission-requirements' },
-];
-
-// Planning tools and guides. Rendered outside the CMS-overridable list so they
-// always appear even when CMS footer content is published.
-const planningLinks = [
-  { label: 'English Test Hub', href: '/english-tests' },
-  { label: 'Compare Countries', href: '/compare/countries' },
-  { label: 'Course Match', href: '/ai/course-match' },
-  { label: 'Scholarship Match', href: '/ai/scholarship-match' },
-  { label: 'Visa Coach', href: '/ai/visa-coach' },
 ];
 
 const companyLinks = [
   { label: 'About Us', href: '/about' },
-  { label: 'Success Stories', href: '/success-stories' },
-  { label: 'Events & Webinars', href: '/events' },
-  { label: 'Blog & Articles', href: '/resources' },
-  { label: 'News', href: '/news' },
-  { label: 'FAQ', href: '/faqs' },
   { label: 'Contact Us', href: '/contact' },
+  { label: 'Code of Conduct', href: ALO_POLICY_LINKS.codeOfConduct },
+  { label: 'Student Complaint Policy', href: ALO_POLICY_LINKS.studentComplaintPolicy },
+  { label: 'AQF Compliance', href: ALO_POLICY_LINKS.aqfCompliance },
 ];
 
-const GraduationCapStrip = () => {
+const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  facebook: Facebook,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  youtube: Youtube,
+};
+
+/* ------------------------------------------------------------------ */
+/*  DECORATIVE CAP-ICON STRIP                                          */
+/*  Three brand colours (Education Blue · ALO Orange · Accent) drifting in   */
+/*  opposite directions — always live, paused for prefers-reduced-motion.    */
+/* ------------------------------------------------------------------ */
+
+const CAP_COLORS = ['#0066CC', '#F37021', '#FFB347'] as const;
+
+function GraduationCapStrip() {
   return (
-    <div className="relative w-full h-16 overflow-hidden bg-white border-y border-[#E2E8F0]">
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes float-caps {
-          0% { transform: translateX(-100%) translateY(0) rotate(0deg); }
-          50% { transform: translateX(50vw) translateY(-5px) rotate(10deg); }
-          100% { transform: translateX(200vw) translateY(0) rotate(-10deg); }
+    <div
+      aria-hidden="true"
+      className="relative h-16 w-full overflow-hidden border-y border-alo-border bg-alo-brand-light/60"
+    >
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        @keyframes alo-cap-drift-a {
+          0%   { transform: translateX(-15%) translateY(0) rotate(0deg); }
+          50%  { transform: translateX(15vw) translateY(-5px) rotate(10deg); }
+          100% { transform: translateX(115%) translateY(0) rotate(-10deg); }
         }
-        .cap-layer-1 {
-          animation: float-caps 25s linear infinite;
+        @keyframes alo-cap-drift-b {
+          0%   { transform: translateX(115%) translateY(0) rotate(0deg); }
+          50%  { transform: translateX(60vw) translateY(6px) rotate(-8deg); }
+          100% { transform: translateX(-20%) translateY(0) rotate(8deg); }
         }
-        .cap-layer-2 {
-          animation: float-caps 20s linear infinite;
-          animation-delay: -5s;
+        .alo-cap-row { position: absolute; inset: 0; display: flex; align-items: center; will-change: transform; }
+        .alo-cap-row-a { animation: alo-cap-drift-a 30s linear infinite; }
+        .alo-cap-row-b { animation: alo-cap-drift-b 38s linear infinite; }
+        .alo-cap-row-c { animation: alo-cap-drift-a 22s linear infinite; animation-delay: -8s; }
+        @media (prefers-reduced-motion: reduce) {
+          .alo-cap-row-a, .alo-cap-row-b, .alo-cap-row-c { animation: none; }
         }
-        .cap-layer-3 {
-          animation: float-caps 15s linear infinite;
-          animation-delay: -10s;
-        }
-      `}} />
-      
-      {/* Layer 1 - Slow - Gray */}
-      <div className="absolute inset-0 flex items-center cap-layer-1 opacity-40 text-gray-400">
-        <GraduationCap className="w-8 h-8 mx-12" />
-        <GraduationCap className="w-10 h-10 mx-32" />
-        <GraduationCap className="w-6 h-6 mx-24" />
+      `,
+        }}
+      />
+
+      {/* Education Blue — slowest, quietest */}
+      <div className="alo-cap-row alo-cap-row-a opacity-30" style={{ color: CAP_COLORS[0] }}>
+        <GraduationCap className="mx-10 h-8 w-8 sm:mx-16" />
+        <GraduationCap className="mx-24 h-11 w-11 sm:mx-40" />
+        <GraduationCap className="mx-14 h-6 w-6 sm:mx-24" />
+        <GraduationCap className="mx-28 h-9 w-9 sm:mx-52" />
       </div>
 
-      {/* Layer 2 - Medium - Blue */}
-      <div className="absolute inset-0 flex items-center cap-layer-2 opacity-70 text-[#2563EB]">
-        <GraduationCap className="w-10 h-10 mx-20" />
-        <GraduationCap className="w-8 h-8 mx-40" />
-        <GraduationCap className="w-12 h-12 mx-16" />
+      {/* ALO Orange — mid layer */}
+      <div className="alo-cap-row alo-cap-row-b opacity-60" style={{ color: CAP_COLORS[1] }}>
+        <GraduationCap className="mx-16 h-10 w-10 sm:mx-32" />
+        <GraduationCap className="mx-28 h-7 w-7 sm:mx-48" />
+        <GraduationCap className="mx-20 h-12 w-12 sm:mx-36" />
       </div>
 
-      {/* Layer 3 - Fast - Orange */}
-      <div className="absolute inset-0 flex items-center cap-layer-3 opacity-100 text-[#F97316]">
-        <GraduationCap className="w-8 h-8 mx-32" />
-        <GraduationCap className="w-10 h-10 mx-20" />
-        <GraduationCap className="w-8 h-8 mx-48" />
+      {/* Accent — fastest, full strength */}
+      <div className="alo-cap-row alo-cap-row-c opacity-100" style={{ color: CAP_COLORS[2] }}>
+        <GraduationCap className="mx-12 h-8 w-8 sm:mx-20" />
+        <GraduationCap className="mx-32 h-10 w-10 sm:mx-60" />
+        <GraduationCap className="mx-24 h-6 w-6 sm:mx-28" />
+        <GraduationCap className="mx-40 h-9 w-9 sm:mx-44" />
       </div>
     </div>
   );
-};
+}
 
-// ─── CMS-managed footer content (Virtual Editor) ──────────────
-// Footer link columns are editable by Super Admins via
-// /admin/website-cms ("Site-Wide & CRM" tab, type 'footer').
-// The constants above are the compiled-in fallback used until
-// items are published, so the footer never renders empty.
+/* ------------------------------------------------------------------ */
+/*  CMS-managed column content (Virtual Editor)                        */
+/*  /admin/website-cms → footer items override the constants above.    */
+/*  Nothing renders until an item is published, so the compiled         */
+/*  defaults in this file always describe the published footer.        */
+/* ------------------------------------------------------------------ */
+
 interface FooterLink { label: string; href: string }
+
 function useCmsFooterLinks() {
   const [links, setLinks] = React.useState<{
     destinations: FooterLink[];
     quickLinks: FooterLink[];
     companyLinks: FooterLink[];
   }>({ destinations, quickLinks, companyLinks });
+
   React.useEffect(() => {
     let cancelled = false;
     fetch('/api/website/cms-content?type=footer')
@@ -136,163 +179,218 @@ function useCmsFooterLinks() {
           companyLinks: bySection.companyLinks?.length ? bySection.companyLinks : prev.companyLinks,
         }));
       })
-      .catch(() => {/* keep fallback */ });
-    return () => { cancelled = true; };
+      .catch(() => {
+        /* keep the compiled-in defaults */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
   return links;
 }
 
-export default function PublicFooter() {
-  const cmsLinks = useCmsFooterLinks();
-  const { destinations: destLinks, quickLinks: quickL, companyLinks: companyL } = cmsLinks;
+/* ------------------------------------------------------------------ */
+/*  COLUMN RENDERER                                                    */
+/* ------------------------------------------------------------------ */
+
+function FooterColumn({
+  title,
+  links,
+  className = '',
+}: {
+  title: string;
+  links: FooterLink[];
+  className?: string;
+}) {
   return (
-    <footer className="w-full bg-white pt-8 mt-auto border-t border-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-6">
-          
-          {/* Column 1: Brand, Contact & Socials */}
-          <div className="flex flex-col gap-6 lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 group">
-              <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-10 w-auto" />
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-[#2563EB] leading-tight">ALO Education</span>
-              </div>
+    <nav aria-label={title} className={className}>
+      <h2 className="font-heading text-[13px] font-extrabold uppercase tracking-[0.12em] text-alo-brand">
+        {title}
+      </h2>
+      <span className="mt-2 block h-[3px] w-8 rounded-full bg-alo-cta-accent" aria-hidden="true" />
+      <ul className="mt-4 flex flex-col gap-2.5">
+        {links.map((link) => (
+          <li key={`${link.href}-${link.label}`}>
+            <Link
+              href={link.href}
+              className="text-[13px] font-medium text-alo-text-secondary transition-colors hover:text-alo-cta focus-visible:text-alo-cta focus-visible:outline-none"
+            >
+              {link.label}
             </Link>
-            <p className="text-[#64748B] text-sm leading-relaxed max-w-xs">
-              Bangladesh&apos;s trusted study abroad consultancy. Honest guidance from application to arrival — no hidden fees, no false promises.
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  FOOTER                                                             */
+/* ------------------------------------------------------------------ */
+
+export default function PublicFooter() {
+  const { destinations: destLinks, quickLinks: quickL, companyLinks: companyL } = useCmsFooterLinks();
+  const year = new Date().getFullYear();
+
+  return (
+    <footer id="alo-public-footer" className="mt-auto w-full bg-white">
+      {/* ALO Orange brand accent across the top of the footer */}
+      <div className="h-1 w-full bg-alo-cta" aria-hidden="true" />
+
+      <div className="mx-auto max-w-7xl px-4 pb-12 pt-10 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+          {/* ── Brand, contact details, official social accounts ──────── */}
+          <div className="flex flex-col gap-5 lg:col-span-5">
+            <Link href="/" className="flex items-start gap-3" aria-label={`ALO Education — ${ALO_TAGLINE}`}>
+              <img
+                src="/images/landing/Copy of logo.webp"
+                alt=""
+                className="h-11 w-auto"
+                width={44}
+                height={44}
+              />
+              <span className="flex flex-col leading-none">
+                <span className="font-heading text-xl font-extrabold tracking-tight text-alo-brand">
+                  ALO Education
+                </span>
+                <span className="mt-1 text-[12px] font-semibold italic text-alo-cta">
+                  {ALO_TAGLINE}
+                </span>
+              </span>
+            </Link>
+
+            <p className="max-w-sm text-[13px] leading-relaxed text-alo-text-secondary">
+              Bangladesh&apos;s trusted study abroad consultancy. Honest guidance from course match to
+              visa decision — no hidden fees, no false promises.
             </p>
 
-            {/* Contact Info */}
-            <div className="flex flex-col gap-2.5 text-xs text-slate-600">
-              <div className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#F97316] mt-0.5 shrink-0" />
-                <span>House 08, Road 17/A, Sector 11, Uttara, Dhaka-1230, Bangladesh</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
-                <a href="tel:+8801805020101" className="hover:text-[#2563EB] transition-colors font-medium">+880 1805 020101</a>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
-                <a href="mailto:info@aloeducation.com" className="hover:text-[#2563EB] transition-colors font-medium">info@aloeducation.com</a>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-[#F97316] shrink-0" />
-                <span>Sat–Thu: 9:00 AM – 7:00 PM</span>
-              </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="flex items-center gap-4 text-[#2563EB]">
-              <a href="https://facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[#F97316] transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="https://instagram.com/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[#F97316] transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="https://linkedin.com/company/aloeducation" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-[#F97316] transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="https://youtube.com/@aloeducation" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-[#F97316] transition-colors">
-                <Youtube className="w-5 h-5" />
-              </a>
-            </div>
-          </div>
-
-          {/* Column 2: Destinations */}
-          <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#2563EB] text-sm uppercase tracking-wider">Destinations</h3>
-            <ul className="flex flex-col gap-2">
-              {destLinks.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 3: Quick Links */}
-          <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#2563EB] text-sm uppercase tracking-wider">Study Abroad</h3>
-            <ul className="flex flex-col gap-2">
-              {quickL.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-              {/* Planning tools are rendered outside the CMS-overridable list so they always appear. */}
-              {planningLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-              {/* Real-exam entry point is rendered outside the CMS-overridable list so it always appears. */}
-              <li>
-                <EnglishExamButton
-                  location="footer"
-                  className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-emerald-700 transition-colors hover:text-[#F97316]"
-                >
-                  Take the English Test
-                  <span aria-hidden="true">→</span>
-                </EnglishExamButton>
+            {/* Contact block — exact fields required by the brand brief */}
+            <ul className="flex flex-col gap-1 text-[13px]">
+              <li className="flex items-start gap-2.5">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                <span className="text-alo-text-secondary">
+                  <span className="font-semibold text-alo-text">Location (Google): </span>
+                  <a
+                    href={ALO_CONTACT.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-alo-brand underline underline-offset-2 hover:text-alo-cta"
+                  >
+                    Open in Google Maps
+                  </a>
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                <span className="text-alo-text-secondary">
+                  <span className="font-semibold text-alo-text">WhatsApp: </span>
+                  <a
+                    href={ALO_CONTACT.whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-alo-brand hover:text-alo-cta"
+                  >
+                    {ALO_CONTACT.whatsappDisplay}
+                  </a>
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                <span className="text-alo-text-secondary">
+                  <span className="font-semibold text-alo-text">Mobile: </span>
+                  <a href={ALO_CONTACT.mobileHref} className="font-medium text-alo-brand hover:text-alo-cta">
+                    {ALO_CONTACT.mobileDisplay}
+                  </a>
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                <span className="text-alo-text-secondary">
+                  <span className="font-semibold text-alo-text">Email: </span>
+                  <a href={ALO_CONTACT.emailHref} className="font-medium text-alo-brand hover:text-alo-cta">
+                    {ALO_CONTACT.email}
+                  </a>
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                <span className="text-alo-text-secondary">
+                  <span className="font-semibold text-alo-text">Address: </span>
+                  {ALO_CONTACT.address}
+                </span>
               </li>
             </ul>
-          </div>
 
-          {/* Column 4: Company */}
-          <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-[#2563EB] text-sm uppercase tracking-wider">Company</h3>
-            <ul className="flex flex-col gap-2">
-              {companyL.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-slate-600 hover:text-[#F97316] transition-colors text-sm font-medium">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+            {/* Official social accounts — order is fixed: FB → IG → LinkedIn → YouTube */}
+            <ul className="flex items-center gap-2.5" aria-label="ALO Education official social media">
+              {ALO_SOCIALS.map((social) => {
+                const Icon = SOCIAL_ICONS[social.id];
+                return (
+                  <li key={social.id}>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.ariaLabel}
+                      title={social.label}
+                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-alo-brand-border bg-alo-brand-light text-alo-brand transition-colors hover:border-alo-cta hover:bg-alo-cta hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-cta-accent focus-visible:ring-offset-2"
+                    >
+                      <Icon className="h-5 w-5" />
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
-            
-            {/* Book CTA */}
-            <div className="mt-4">
-              <Link
-                href="/book-consultation"
-                className="inline-flex items-center gap-2 bg-[#F97316] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-[#EA580C] transition-colors"
-              >
-                Book Free Consultation →
-              </Link>
-            </div>
+
+            <Link
+              href="/book-consultation"
+              className="inline-flex w-fit items-center gap-2 rounded-button bg-alo-cta px-5 py-3 font-heading text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-alo-cta-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-cta-accent focus-visible:ring-offset-2"
+            >
+              Book Free Counseling
+            </Link>
           </div>
 
+          <FooterColumn
+            title="Destinations"
+            links={destLinks}
+            className="lg:col-span-2"
+          />
+          <FooterColumn
+            title="Quick Links"
+            links={quickL}
+            className="lg:col-span-2"
+          />
+          <FooterColumn
+            title="Company"
+            links={companyL}
+            className="md:col-span-1 lg:col-span-3"
+          />
         </div>
       </div>
 
-      {/* Graduation Cap Animation Strip */}
+      {/* Decorative moving cap-icon strip — three ALO brand colours */}
       <GraduationCapStrip />
 
-      {/* Bottom Bar */}
-      <div className="bg-[#f5f5f5] py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#666666]">
-          <p>© {new Date().getFullYear()} ALO Education Bangladesh. All Rights Reserved.</p>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 justify-center sm:justify-end">
-            <Link href="/privacy-policy" className="hover:text-[#F97316] transition-colors">Privacy</Link>
-            <span>·</span>
-            <Link href="/terms" className="hover:text-[#F97316] transition-colors">Terms</Link>
-            <span>·</span>
-            <Link href="/cookies" className="hover:text-[#F97316] transition-colors">Cookies</Link>
-            <span>·</span>
-            <Link href="/communication-policy" className="hover:text-[#F97316] transition-colors">Communication</Link>
-            <span>·</span>
-            <Link href="/lead-data-usage-policy" className="hover:text-[#F97316] transition-colors">Lead Data</Link>
-            <span>·</span>
-            <Link href="/user-guide" className="hover:text-[#F97316] transition-colors">User Guide</Link>
-            <span>·</span>
-            <Link href="/accessibility" className="hover:text-[#F97316] transition-colors">Accessibility</Link>
+      {/* Bottom bar — ALO Orange #F37021.
+          Text is near-black rather than white on purpose: white on #F37021 is
+          2.94:1, which fails WCAG AA for both body and large text, while black
+          on #F37021 is ~7:1. Same brand colour, readable for everyone. */}
+      <div className="bg-alo-cta py-4 text-black">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-xs font-medium sm:flex-row sm:px-6 lg:px-8">
+          <p className="font-heading font-bold tracking-wide">© {year} ALO Education. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 sm:justify-end">
+            <Link href="/privacy-policy" className="transition-colors hover:text-black/60">Privacy</Link>
+            <span aria-hidden="true">·</span>
+            <Link href="/terms" className="transition-colors hover:text-black/60">Terms</Link>
+            <span aria-hidden="true">·</span>
+            <Link href="/cookies" className="transition-colors hover:text-black/60">Cookies</Link>
+            <span aria-hidden="true">·</span>
+            <Link href="/accessibility" className="transition-colors hover:text-black/60">Accessibility</Link>
+            <span aria-hidden="true">·</span>
+            <Link href="/communication-policy" className="transition-colors hover:text-black/60">Communication</Link>
+            <span aria-hidden="true">·</span>
+            <Link href="/lead-data-usage-policy" className="transition-colors hover:text-black/60">Lead Data</Link>
           </div>
         </div>
       </div>
