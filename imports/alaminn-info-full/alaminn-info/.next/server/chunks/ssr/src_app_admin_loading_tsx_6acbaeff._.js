@@ -1,3 +1,0 @@
-module.exports=[19225,a=>{"use strict";var b=a.i(7997);function c(){return(0,b.jsx)("div",{className:"flex min-h-[60vh] items-center justify-center bg-background p-6",role:"status","aria-live":"polite","aria-label":"Loading admin section",children:(0,b.jsxs)("div",{className:"flex flex-col items-center gap-3",children:[(0,b.jsx)("div",{className:"h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"}),(0,b.jsx)("p",{className:"text-xs font-medium text-muted-foreground",children:"Loading admin…"})]})})}a.s(["default",()=>c])}];
-
-//# sourceMappingURL=src_app_admin_loading_tsx_6acbaeff._.js.map

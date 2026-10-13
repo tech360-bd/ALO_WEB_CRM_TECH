@@ -1,8 +1,0 @@
-User-Agent: *
-Allow: /
-Disallow: /api/
-Disallow: /admin
-Disallow: /admin/*
-
-Host: https://alaminn.info
-Sitemap: https://alaminn.info/sitemap.xml

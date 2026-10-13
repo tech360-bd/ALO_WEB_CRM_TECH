@@ -1,5 +1,0 @@
-# SHA256 Checksums — Alaminn.info Production Deliverables
-# Generated: 2026-07-21
-# Verify with: sha256sum -c SHA256SUMS.txt
-
-982b1f90fd1d3fbc3cf89caf49df3ed020ec89002b522d94169baa59f128d749  ALAMINN-INFO-PRODUCTION.zip
