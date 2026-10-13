@@ -1,0 +1,63 @@
+[Unit]
+Description=Alaminn.info — Next.js 16 production app (Bun + Nginx)
+Documentation=https://alaminn.info
+After=network.target mariadb.service mysql.service
+Wants=network.target
+
+[Service]
+Type=simple
+User=aloedu
+Group=aloedu
+
+# ── Application location ──────────────────────────────────────────
+# Standalone build is self-contained: bundles the Bun/Node server,
+# Next.js runtime, and required node_modules. Public assets and
+# .next/static are copied alongside via the build script.
+WorkingDirectory=/var/www/alaminn-info
+
+# Load secrets from .env (never committed). EnvironmentFile injects
+# every KEY=value line into the process environment.
+EnvironmentFile=/var/www/alaminn-info/.env
+
+# Bun production runtime on the standalone server.js
+Environment=NODE_ENV=production
+Environment=PORT=3000
+# Cap memory so the app does not crowd MariaDB / Nginx on a small VPS
+Environment=BUN_JSC_maxOldSpaceSize=512
+
+# Bun binary path (installed via https://bun.sh/install)
+ExecStart=/home/aloedu/.bun/bin/bun run /var/www/alaminn-info/.next/standalone/server.js
+
+# ── Restart policy ────────────────────────────────────────────────
+Restart=on-failure
+RestartSec=5
+StartLimitInterval=60
+StartLimitBurst=5
+
+# ── Resource limits (safety net on a shared host) ─────────────────
+MemoryMax=768M
+CPUQuota=150%
+
+# ── Logging → journald (view: journalctl -u alaminn-info -f) ─────
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=alaminn-info
+
+# ── Hardening ─────────────────────────────────────────────────────
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+# App must write to: .next/standalone runtime, uploads, logs
+ReadWritePaths=/var/www/alaminn-info
+
+[Install]
+WantedBy=multi-user.target

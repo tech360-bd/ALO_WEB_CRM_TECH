@@ -1,0 +1,4 @@
+# Block ALL web access to the db directory.
+# This directory contains: SQLite dev database, backups, migration artifacts.
+Require all denied
+Options -Indexes

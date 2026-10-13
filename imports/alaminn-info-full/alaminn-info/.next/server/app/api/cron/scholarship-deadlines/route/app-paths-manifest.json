@@ -1,0 +1,3 @@
+{
+  "/api/cron/scholarship-deadlines/route": "app/api/cron/scholarship-deadlines/route.js"
+}

@@ -1,0 +1,78 @@
+# Alaminn.info — Production deployment workflow
+# Auto-deploys to VPS on push to main (after CI passes).
+# Requires GitHub Actions secrets:
+#   SSH_PRIVATE_KEY     — SSH private key for VPS
+#   SSH_HOST            — VPS hostname or IP
+#   SSH_USER            — SSH username
+#   DEPLOY_PATH         — deployment directory on VPS (e.g. /var/www/alaminn.info)
+#   AUTH_SECRET         — production AUTH_SECRET (openssl rand -hex 32)
+#   DATABASE_URL        — production MariaDB URL
+#   NEXTAUTH_URL        — https://alaminn.info
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to production VPS
+    runs-on: ubuntu-latest
+    needs: ci
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Install + Build
+        run: |
+          bun install --frozen-lockfile
+          bun run db:generate
+          bun run build
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy-pkg
+          cp -r .next/standalone deploy-pkg/
+          cp -r .next/static deploy-pkg/.next/
+          cp -r public deploy-pkg/
+          cp -r prisma deploy-pkg/
+          cp package.json deploy-pkg/
+      - name: Upload to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "deploy-pkg/*"
+          target: ${{ secrets.DEPLOY_PATH }}
+      - name: Restart application + migrate + seed
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            # Write production env (secrets injected via GitHub Actions)
+            cat > .env <<EOF
+            NODE_ENV=production
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            EMAIL_FROM=noreply@alaminn.info
+            EOF
+            # Install production deps + migrate + restart
+            bun install --production
+            bun run db:migrate:deploy
+            bun run db:seed
+            pm2 restart alaminn-info || pm2 start "node .next/standalone/server.js" --name alaminn-info
+      - name: Health check
+        run: |
+          sleep 10
+          curl --fail --max-time 30 https://alaminn.info/api/health
