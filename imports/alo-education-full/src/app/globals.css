@@ -1,0 +1,531 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================
+   ALO EDUCATION — ZERO-BASE DESIGN SYSTEM
+   Brand: ALO Orange #F37021 | Education Blue #0066CC
+   Visual Balance: White 65% | Blue 20% | Orange 10% | Sunshine 5%
+   ============================================ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* ALO Brand Colors */
+  --color-alo-orange: #F37021;
+  --color-alo-orange-light: #FFF0E6;
+  --color-alo-orange-dark: #D45A10;
+  --color-alo-blue: #0066CC;
+  --color-alo-blue-light: #E8F2FF;
+  --color-alo-blue-dark: #004C99;
+  --color-alo-sunshine: #FFB347;
+  --color-alo-sunshine-light: #FFF6E8;
+  --color-alo-black: #0A0A0A;
+  --color-alo-gray: #555555;
+  --color-alo-gray-light: #F7F7F7;
+  --color-alo-gray-medium: #E5E5E5;
+  --color-alo-white: #FFFFFF;
+
+  /* Semantic Colors */
+  --color-trust: #0066CC;
+  --color-action: #F37021;
+  --color-highlight: #FFB347;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+
+  /* shadcn/ui tokens (mapped to ALO brand) */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+}
+
+:root {
+  --radius: 0.625rem;
+
+  /* Core palette */
+  --background: #FFFFFF;
+  --foreground: #0A0A0A;
+  --card: #FFFFFF;
+  --card-foreground: #0A0A0A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0A0A0A;
+
+  /* Primary = Education Blue (Trust) */
+  --primary: #0066CC;
+  --primary-foreground: #FFFFFF;
+
+  /* Secondary = ALO Orange (Action) */
+  --secondary: #F37021;
+  --secondary-foreground: #FFFFFF;
+
+  /* Muted */
+  --muted: #F7F7F7;
+  --muted-foreground: #555555;
+
+  /* Accent = Sunshine */
+  --accent: #FFF0E6;
+  --accent-foreground: #D45A10;
+
+  /* Destructive */
+  --destructive: #EF4444;
+
+  /* Borders & Inputs */
+  --border: #E5E5E5;
+  --input: #E5E5E5;
+  --ring: #0066CC;
+
+  /* Sidebar (reserved for future) */
+  --sidebar-ring: #0066CC;
+  --sidebar-border: #E5E5E5;
+  --sidebar-accent: #F7F7F7;
+  --sidebar-accent-foreground: #0A0A0A;
+  --sidebar-primary: #0066CC;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-foreground: #0A0A0A;
+  --sidebar: #FFFFFF;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* ============================================
+   ALO CUSTOM UTILITIES
+   ============================================ */
+
+/* Scrollbar styling */
+.alo-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #E5E5E5 transparent;
+}
+.alo-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.alo-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.alo-scrollbar::-webkit-scrollbar-thumb {
+  background: #E5E5E5;
+  border-radius: 3px;
+}
+.alo-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #CCCCCC;
+}
+
+/* Premium card lift on hover */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.12);
+}
+
+/* Image zoom on card hover */
+.img-zoom {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .img-zoom {
+  transform: scale(1.04);
+}
+
+/* Gradient overlays */
+.gradient-overlay {
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.6) 100%);
+}
+.gradient-overlay-light {
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 100%);
+}
+.gradient-blue {
+  background: linear-gradient(135deg, #0066CC 0%, #004C99 100%);
+}
+.gradient-orange {
+  background: linear-gradient(135deg, #F37021 0%, #D45A10 100%);
+}
+
+/* Shimmer skeleton */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #F7F7F7 25%, #E5E5E5 50%, #F7F7F7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Counter animation helper */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Infinite scroll for logos */
+@keyframes scroll-x {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.scroll-x-animation {
+  animation: scroll-x 30s linear infinite;
+}
+
+/* Focus ring for accessibility */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-blue focus-visible:ring-offset-2;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Drawer overlay */
+.drawer-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+/* Match score ring */
+.match-ring {
+ background: conic-gradient(
+    #0066CC var(--match-percent, 0%),
+    #E5E5E5 var(--match-percent, 0%)
+  );
+}
+
+/* Premium text gradient */
+.text-gradient-blue {
+  background: linear-gradient(135deg, #0066CC 0%, #004C99 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-orange {
+  background: linear-gradient(135deg, #F37021 0%, #D45A10 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Country card flag badge positioning */
+.flag-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+/* Sticky footer support */
+.min-h-screen-flex {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.footer-push {
+  margin-top: auto;
+}
+
+/* Glass morphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.glass-dark {
+  background: rgba(10, 22, 40, 0.75);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Gradient text for sunshine */
+.text-gradient-sunshine {
+  background: linear-gradient(135deg, #FFB347 0%, #F37021 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pulse dot for live indicators */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Subtle float animation */
+@keyframes subtle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.subtle-float {
+  animation: subtle-float 4s ease-in-out infinite;
+}
+
+/* Animated gradient border */
+@keyframes gradient-border {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gradient-border {
+  background: linear-gradient(270deg, #0066CC, #F37021, #FFB347, #0066CC);
+  background-size: 300% 300%;
+  animation: gradient-border 4s ease infinite;
+}
+
+/* Noise texture overlay for premium feel */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.015;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Section separator with subtle gradient */
+.section-sep {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #E5E5E5 20%, #E5E5E5 80%, transparent 100%);
+}
+
+/* Dot grid background pattern */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.dot-grid-blue {
+  background-image: radial-gradient(circle, rgba(0,102,204,0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 6 — Additional polish utilities
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Card hover lift with shadow transition */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.12), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
+}
+
+/* Image zoom on container hover */
+.img-zoom {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Skeleton shimmer animation */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+/* Blue gradient background for CTA sections */
+.gradient-blue {
+  background: linear-gradient(135deg, #004C99 0%, #0066CC 50%, #005AB5 100%);
+}
+
+/* Country card explore badge animation */
+@keyframes badge-appear {
+  0% { opacity: 0; transform: translateY(-4px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.country-explore-badge {
+  animation: badge-appear 0.3s ease-out forwards;
+}
+
+/* Smooth scrollbar for overflow containers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #E5E5E5;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #CCCCCC;
+}
+
+/* Text shadow for overlay text readability */
+.text-shadow-overlay {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtle border glow on focus */
+.border-glow-blue:focus-within {
+  border-color: rgba(0, 102, 204, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+.border-glow-orange:focus-within {
+  border-color: rgba(243, 112, 33, 0.5);
+  box-shadow: 0 0 0 3px rgba(243, 112, 33, 0.1);
+}
+
+/* Staggered animation delays via nth-child */
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 320ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 400ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 480ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 560ms; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 7 — Micro-interactions & enhanced polish
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Smooth press/active feedback */
+.press-scale {
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.press-scale:active {
+  transform: scale(0.97);
+}
+
+/* Underline slide-in animation on hover */
+@keyframes underline-slide {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.underline-hover {
+  position: relative;
+}
+.underline-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #F37021;
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.underline-hover:hover::after {
+  transform: scaleX(1);
+}
+
+/* Glow pulse for badges and indicators */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(243, 112, 33, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(243, 112, 33, 0.5), 0 0 24px rgba(243, 112, 33, 0.2); }
+}
+.glow-pulse {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* Subtle shine/shimmer sweep effect on cards */
+@keyframes shine-sweep {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+.shine-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: none;
+  pointer-events: none;
+}
+.shine-effect:hover::after {
+  animation: shine-sweep 0.6s ease-in-out;
+}
+
+/* Smooth border transition for scroll spy active state */
+.nav-active-indicator {
+  position: relative;
+}
+.nav-active-indicator::before {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 16px;
+  height: 2px;
+  background: #F37021;
+  border-radius: 1px;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-active-indicator[aria-current='true']::before {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* Text selection color branding */
+::selection {
+  background: rgba(0, 102, 204, 0.15);
+  color: #0A0A0A;
+}
+
+/* Reading progress bar gradient */
+.reading-progress {
+  background: linear-gradient(90deg, #0066CC 0%, #F37021 100%);
+  height: 3px;
+  border-radius: 0 0 2px 2px;
+  transition: width 0.1s linear;
+}
+

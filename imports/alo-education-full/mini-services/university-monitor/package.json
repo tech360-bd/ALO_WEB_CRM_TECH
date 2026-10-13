@@ -1,0 +1,13 @@
+{
+  "name": "alo-university-monitor",
+  "version": "1.0.0",
+  "description": "ALO University & Official Data Monitoring Agent — 7-day scheduler mini-service",
+  "scripts": {
+    "dev": "bun --hot index.ts",
+    "start": "bun index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.11.1",
+    "z-ai-web-dev-sdk": "^0.0.18"
+  }
+}
