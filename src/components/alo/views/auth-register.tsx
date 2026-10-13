@@ -92,6 +92,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
           password,
           role,
           phone: phone.trim() || undefined,
+          termsAccepted: agreeTerms,
         }),
       });
       const data = await res.json();

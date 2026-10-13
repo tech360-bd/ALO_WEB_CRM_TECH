@@ -15,12 +15,46 @@ export async function POST(req: NextRequest) {
     const password = typeof body?.password === 'string' ? body.password : '';
     const phone = typeof body?.phone === 'string' ? body.phone.trim() : undefined;
     const role = typeof body?.role === 'string' ? body.role.toUpperCase() : 'STUDENT';
+    // Spec 1.1 Registration: "accept terms" is a required, server-enforced step,
+    // not just a disabled button in the browser. Legacy callers that never sent
+    // the flag are accepted only while REGISTRATION_REQUIRE_TERMS is not 'true',
+    // so existing integrations keep working and the switch is explicit.
+    const termsAccepted = body?.termsAccepted === true || body?.acceptTerms === true;
+    const termsRequired = (process.env.REGISTRATION_REQUIRE_TERMS || 'true') !== 'false';
 
     if (!name || name.length > 191 || !email || email.length > 191 || (phone?.length || 0) > 40 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8 || password.length > 200) {
       return NextResponse.json({ error: 'Valid name, email, and password (8–200 characters) are required' }, { status: 400 });
     }
     if (!['STUDENT', 'PARTNER'].includes(role)) {
       return NextResponse.json({ error: 'This role cannot self-register. Contact ALO Education.' }, { status: 403 });
+    }
+    if (termsRequired && !termsAccepted) {
+      return NextResponse.json(
+        { error: 'Please accept the Terms of Service and Privacy Policy to create an account.', code: 'TERMS_NOT_ACCEPTED' },
+        { status: 400 },
+      );
+    }
+    // Spec 1.1: the phone number must be unique as well as the email. Phone is
+    // stored in several historical formats, so compare the digits-only form to
+    // catch the same number written with spaces, dashes or a country prefix.
+    if (phone) {
+      const digits = phone.replace(/\D/g, '');
+      const phoneVariants = [phone];
+      if (digits) {
+        phoneVariants.push(digits);
+        if (digits.length > 10) phoneVariants.push(digits.slice(-10));
+        phoneVariants.push(`+${digits}`);
+      }
+      const phoneOwner = await db.student.findFirst({
+        where: { phone: { in: [...new Set(phoneVariants)] } },
+        select: { id: true, userId: true },
+      });
+      if (phoneOwner && phoneOwner.userId) {
+        return NextResponse.json(
+          { error: 'This phone number is already registered. Sign in instead, or use a different number.', code: 'PHONE_EXISTS' },
+          { status: 409 },
+        );
+      }
     }
 
     if (await db.portalUser.findUnique({ where: { email }, select: { id: true } })) {
@@ -68,7 +102,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      user: { id: userId, email, name, role, status: 'PENDING' },
+      user: { id: userId, email, name, role, status: 'PENDING', termsAccepted: termsRequired ? termsAccepted : undefined },
       ...(studentId ? { studentId } : {}),
       message: role === 'PARTNER'
         ? 'Verification email sent. Verify your address; partner access still requires staff approval.'

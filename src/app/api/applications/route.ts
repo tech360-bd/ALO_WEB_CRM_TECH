@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { getFormBReadiness } from '@/lib/application-readiness';
 import { authenticateUnified } from '@/lib/unified-auth';
 import { logAuditAction } from '@/lib/auth-middleware';
 import { logStudentEvent } from '@/lib/student-auth';
@@ -153,6 +154,33 @@ export async function POST(req: Request) {
   }
 
   const applicationSource = body.applicationSource || (authRes.type === 'student' ? 'STUDENT_SELF_APPLICATION' : 'DIRECT_ALO_APPLICATION');
+
+  // ── FORM B GATE ───────────────────────────────────────────────────────────
+  // A student self-application (Form A on the public site, or the portal Apply
+  // button) may only be created once Form B — the portal profile — is complete.
+  // This is enforced here, on the server, so the UI cannot be bypassed by
+  // calling the API directly. Staff/partner-created applications are unaffected:
+  // they run counselor pre-apply workflows instead.
+  if (authRes.type === 'student' && applicationSource === 'STUDENT_SELF_APPLICATION') {
+    const readiness = await getFormBReadiness(authRes.data.studentId);
+    if (!readiness.complete) {
+      return NextResponse.json(
+        {
+          success: false,
+          code: 'FORM_B_INCOMPLETE',
+          error:
+            'Your application profile is not complete yet. Finish the sections below and submit again — we will not create an application with incomplete information.',
+          completeness: readiness.percent,
+          missingSections: readiness.missing.map((section) => ({
+            key: section.key,
+            label: section.label,
+            href: section.href,
+          })),
+        },
+        { status: 422 },
+      );
+    }
+  }
   if (!APPLICATION_SOURCES.includes(applicationSource as any)) {
     return NextResponse.json({ success: false, error: 'Invalid applicationSource' }, { status: 400 });
   }

@@ -40,6 +40,11 @@ const PUBLIC_ROUTES = [
   // boundary-aware, so neither prefix subsumes the other.
   "/course",
   "/course-finder",
+  // Form A — public Apply Now (/apply/[course-slug]). Anonymous visitors must
+  // reach it so they can register/login and continue; the page renders course
+  // facts only and the API still refuses to create anything until the student
+  // is signed in AND their Form B profile is complete.
+  "/apply",
   "/services",
   "/scholarships",
   "/resources",

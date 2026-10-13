@@ -28,6 +28,10 @@ export async function POST(request: Request) {
       englishTest, englishScore, message, source, sourceSection,
       // Consultation booking fields
       destination, service, preferredDate, preferredTime, leadType, status,
+      // Form C (counselling booking) additions per spec 3.1: intended intake and
+      // course level are already first-class lead fields; the WhatsApp opt-in is
+      // recorded with the lead so the counselor contacts the right channel.
+      contactChannel, whatsappOptIn,
     } = body;
 
     // Step 2: Validate input
@@ -57,6 +61,7 @@ export async function POST(request: Request) {
     }
 
     const finalCountry = preferredCountry || destination || "";
+    const wantsWhatsApp = whatsappOptIn === true || contactChannel === "whatsapp";
     const finalMessage = message
       ? (service ? `[Service: ${service}] ${message}` : message)
       : (service ? `Service requested: ${service}` : "");
@@ -117,7 +122,7 @@ export async function POST(request: Request) {
             englishScore: englishScore ? String(englishScore) : "",
             message: finalMessage,
             source: source || "homepage",
-            sourceSection: sourceSection || (leadType || "consultation"),
+            sourceSection: `${sourceSection || leadType || "consultation"}${wantsWhatsApp ? " · whatsapp" : ""}`,
             status: status || "new",
           },
         }),
@@ -223,6 +228,48 @@ export async function POST(request: Request) {
       } catch (notifError) {
         console.error("[lead/route.ts] Notification failed:", notifError);
       }
+    }
+
+    // Step 8b (spec 3.1): automatic email confirmation to the student and a
+    // notification email to the counseling inbox. Delivery failures are logged
+    // and never roll the lead back — the lead row and its CRM assignment are the
+    // source of truth, and SMTP may be intentionally unconfigured.
+    try {
+      const { sendEmail } = await import("@/lib/email-service");
+      const intakeLine = intake || "Not specified";
+      const levelLine = preferredLevel || "Not specified";
+      const whatsappLine = wantsWhatsApp
+        ? `<p style="margin:0 0 8px">You asked us to reach you on WhatsApp. Our team will message ${phone}.</p>`
+        : "";
+      const studentHtml = `
+        <h2 style="font-family:sans-serif">Thank you, ${name}</h2>
+        <p style="font-family:sans-serif">We have your ${leadType === "consultation" ? "consultation booking" : "enquiry"} and an ALO Education counselor${assignedCounselorName ? ` (${assignedCounselorName})` : ""} will contact you within 24 hours.</p>
+        <ul style="font-family:sans-serif">
+          <li>Preferred destination: ${finalCountry || "Not specified"}</li>
+          <li>Intended intake: ${intakeLine}</li>
+          <li>Course level: ${levelLine}</li>
+          ${preferredDate ? `<li>Requested date: ${preferredDate} ${preferredTime || ""}</li>` : ""}
+        </ul>
+        ${whatsappLine}
+        <p style="font-family:sans-serif">ALO Education — Barek Mansion-02 (5th Floor), 58/9 Box Culvert Road, Panthapath, Dhaka-1205, Bangladesh. WhatsApp +8801805020101.</p>`;
+      const adminTo = process.env.COUNSELING_INBOX || process.env.LEADS_INBOX || process.env.SMTP_USER;
+      const adminHtml = `
+        <h3 style="font-family:sans-serif">New ${leadType || "website"} lead${isDuplicate ? " (repeat)" : ""}</h3>
+        <ul style="font-family:sans-serif">
+          <li>Name: ${name}</li><li>Email: ${email}</li><li>Phone: ${phone}${wantsWhatsApp ? " (WhatsApp)" : ""}</li>
+          <li>Destination: ${finalCountry || "Not specified"}</li><li>Intake: ${intakeLine}</li><li>Course level: ${levelLine}</li>
+          <li>Source: ${source || "homepage"} / ${sourceSection || leadType || "consultation"}</li>
+          <li>Assigned: ${assignedCounselorName || "unassigned queue"}</li>
+        </ul>
+        <p style="font-family:sans-serif">Lead ID: ${leadId}</p>`;
+      const [studentMail, adminMail] = await Promise.all([
+        email ? sendEmail({ to: email, subject: "We received your request — ALO Education", html: studentHtml, text: `Thank you, ${name}. An ALO Education counselor will contact you within 24 hours.` }) : Promise.resolve({ success: false, error: "NO_EMAIL" }),
+        adminTo ? sendEmail({ to: adminTo, subject: `New lead: ${name}${finalCountry ? ` — ${finalCountry}` : ""}`, html: adminHtml, text: `New lead ${name} ${email} ${phone}` }) : Promise.resolve({ success: false, error: "NO_INBOX" }),
+      ]);
+      if (!studentMail.success) console.warn("[lead/route.ts] Student confirmation email not sent:", studentMail.error);
+      if (!adminMail.success) console.warn("[lead/route.ts] Admin notification email not sent:", adminMail.error);
+    } catch (mailError) {
+      console.error("[lead/route.ts] Confirmation email failed:", mailError);
     }
 
     // Step 9: Create audit log

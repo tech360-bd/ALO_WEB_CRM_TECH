@@ -214,6 +214,11 @@ export interface CourseFinderFilters {
   university: string;
   intakeMonth?: number;
   intakeYear?: number;
+  /**
+   * Multi-month intake selection, e.g. every month of 2027. Takes precedence
+   * over the single `intakeMonth` when present. Month numbers 1-12.
+   */
+  intakeMonths?: number[];
   tuitionMin?: number;
   tuitionMax?: number;
   scholarship: boolean;
@@ -399,9 +404,13 @@ export function buildCourseFinderWhere(f: CourseFinderFilters): Record<string, u
   if (f.lowDeposit) and.push({ lowDeposit: true });
 
   const intakeFee: Record<string, unknown> = { ...publicIntakeWhere() };
-  if (f.intakeMonth) intakeFee.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+  if (f.intakeMonths?.length) {
+    intakeFee.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month)) };
+  } else if (f.intakeMonth) {
+    intakeFee.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+  }
   if (f.intakeYear) intakeFee.intakeYear = f.intakeYear;
-  if (f.intakeMonth || f.intakeYear) and.push({ intakeFees: { some: intakeFee } });
+  if (f.intakeMonths?.length || f.intakeMonth || f.intakeYear) and.push({ intakeFees: { some: intakeFee } });
 
   if (f.tuitionMin !== undefined || f.tuitionMax !== undefined) {
     const range: Record<string, number> = { gt: 0 };
@@ -449,12 +458,18 @@ export function buildCourseFinderOrderBy(sort: CourseFinderFilters['sort']): Rec
 /** Include clause for public intakes; the intake filter is repeated so the shown intake matches the search. */
 export function buildPublicIntakeInclude(f: CourseFinderFilters) {
   const where: Record<string, unknown> = { ...publicIntakeWhere() };
-  if (f.intakeMonth) where.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+  if (f.intakeMonths?.length) {
+    where.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month)) };
+  } else if (f.intakeMonth) {
+    where.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+  }
   if (f.intakeYear) where.intakeYear = f.intakeYear;
   return {
     where,
+    // Ordered earliest-first so intakeFees[0] stays the primary intake, with
+    // room for the two further intakes the results table displays.
     orderBy: [{ intakeYear: 'asc' as const }, { id: 'asc' as const }],
-    take: 1,
+    take: 3,
   };
 }
 

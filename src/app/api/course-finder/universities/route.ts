@@ -84,6 +84,19 @@ export async function GET(req: Request) {
       andConditions.push({ universityId: { in: matchingCourses.map(course => course.universityId) } });
     }
 
+    // "I'm looking for <subject>" — keep only universities that currently
+    // publish at least one verified course in that subject. Same visibility
+    // rule as the course search, so the count we show is the count we have.
+    const subjectArea = searchParams.get('subjectArea')?.trim() || '';
+    if (subjectArea) {
+      const universitiesWithSubject = await db.crmCourse.findMany({
+        where: { ...publicCourseWhere(), subjectArea: { contains: subjectArea } },
+        select: { universityId: true },
+        distinct: ['universityId'],
+      });
+      andConditions.push({ universityId: { in: universitiesWithSubject.map(course => course.universityId) } });
+    }
+
     const where = {
       status: 'active',
       verificationStatus: 'VERIFIED',

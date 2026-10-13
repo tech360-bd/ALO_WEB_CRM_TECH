@@ -27,9 +27,19 @@ const DESTINATIONS = ['United Kingdom', 'United States', 'Canada', 'Australia', 
 
 const TIME_SLOTS = ['10:00 AM', '11:00 AM', '12:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'];
 
+// Form C — Intended intake (next three academic years, Jan/Apr/May/Sep/Nov) and
+// course level, so the counselor can route the lead without a follow-up call.
+const COURSE_LEVELS = ['Foundation', 'Undergraduate', 'Postgraduate', 'MRes', 'PhD'];
+const INTAKES = (() => {
+  const start = new Date().getFullYear() + (new Date().getMonth() >= 6 ? 1 : 0);
+  const months = ['Jan', 'Apr', 'May', 'Sep', 'Nov'];
+  return [start, start + 1, start + 2].flatMap((year) => months.map((month) => `${month} ${year}`));
+})();
+
 export default function PublicConsultationPage() {
   const setView = usePortalStore((s) => s.setView);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   // Centralized verified metrics (Part 13) — claims are data-driven, never
   // hardcoded. Falls back to neutral wording when the metrics service is
@@ -71,11 +81,21 @@ export default function PublicConsultationPage() {
     service: 'General Consultation',
     preferredDate: '',
     preferredTime: '10:00 AM',
+    // Spec 3.1 counselling form: intended intake + course level are required
+    // fields, and the phone number is captured with a WhatsApp opt-in.
+    intake: '',
+    courseLevel: '',
+    whatsappOptIn: true,
     message: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.intake || !form.courseLevel) {
+      setSubmitError('Please choose your intended intake and course level so we can assign the right counselor.');
+      return;
+    }
+    setSubmitError(null);
     setSubmitting(true);
     try {
       await fetch('/api/website/lead', {
@@ -83,7 +103,11 @@ export default function PublicConsultationPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          preferredLevel: form.courseLevel,
+          destination: form.destination,
+          contactChannel: form.whatsappOptIn ? 'whatsapp' : 'phone',
           source: 'consultation_booking',
+          sourceSection: 'book-consultation — Form C',
           leadType: 'consultation',
           status: 'new',
         }),
@@ -127,7 +151,8 @@ export default function PublicConsultationPage() {
               <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-[#0F172A] mb-2">Booking Received!</h2>
               <p className="text-slate-600 mb-6">
-                Thank you, {form.name}. Our team will contact you within 24 hours to confirm your appointment.
+                Thank you, {form.name}. A confirmation email is on its way to {form.email || 'your inbox'} and our team
+                will contact you within 24 hours{form.whatsappOptIn ? ' — first on WhatsApp' : ''} to confirm your appointment.
               </p>
               <div className="bg-slate-50 rounded-xl p-4 mb-6 inline-block">
                 <p className="text-sm text-slate-500">Your booking reference</p>
@@ -231,6 +256,50 @@ export default function PublicConsultationPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
+                        <Calendar className="inline h-4 w-4 mr-1 text-[#2563EB]" /> Intended Intake *
+                      </Label>
+                      <Select value={form.intake} onValueChange={(v) => setForm({ ...form, intake: v })}>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder="Select intake" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {INTAKES.map((i) => (
+                            <SelectItem key={i} value={i}>{i}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">Course Level *</Label>
+                      <Select value={form.courseLevel} onValueChange={(v) => setForm({ ...form, courseLevel: v })}>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder="Select course level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COURSE_LEVELS.map((l) => (
+                            <SelectItem key={l} value={l}>{l}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <label className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 text-sm text-emerald-900">
+                    <input
+                      type="checkbox"
+                      checked={form.whatsappOptIn}
+                      onChange={(e) => setForm({ ...form, whatsappOptIn: e.target.checked })}
+                      className="mt-0.5 h-4 w-4"
+                    />
+                    <span>
+                      <span className="font-semibold">Contact me on WhatsApp</span> — we message the number above first,
+                      so you do not miss the counselor&apos;s call.
+                    </span>
+                  </label>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
                         <Calendar className="inline h-4 w-4 mr-1 text-[#2563EB]" /> Preferred Date *
                       </Label>
                       <Input
@@ -270,6 +339,10 @@ export default function PublicConsultationPage() {
                       rows={4}
                     />
                   </div>
+
+                  {submitError && (
+                    <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{submitError}</p>
+                  )}
 
                   <Button
                     type="submit"

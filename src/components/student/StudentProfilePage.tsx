@@ -40,9 +40,11 @@ import {
   AlertCircle,
   Clock,
   Bell,
+  FileText,
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import FormBDocumentsSection from '@/components/student/FormBDocumentsSection';
 
 // ============================================================
 // TYPES
@@ -121,7 +123,8 @@ type SectionKey =
   | 'work'
   | 'reference'
   | 'background'
-  | 'admission';
+  | 'admission'
+  | 'documents';
 
 const SECTION_KEYS: SectionKey[] = [
   'lead',
@@ -135,6 +138,7 @@ const SECTION_KEYS: SectionKey[] = [
   'reference',
   'background',
   'admission',
+  'documents',
 ];
 
 const SECTION_LABELS: Record<SectionKey, string> = {
@@ -149,6 +153,7 @@ const SECTION_LABELS: Record<SectionKey, string> = {
   reference: 'Reference',
   background: 'Background & Visa',
   admission: 'Admission Preference',
+  documents: 'Documents & Verification',
 };
 
 const SECTION_ICONS: Record<SectionKey, React.ReactNode> = {
@@ -163,6 +168,7 @@ const SECTION_ICONS: Record<SectionKey, React.ReactNode> = {
   reference: <UserCheck className="size-4" />,
   background: <ShieldAlert className="size-4" />,
   admission: <Target className="size-4" />,
+  documents: <FileText className="size-4" />,
 };
 
 const DESTINATIONS = [
@@ -2164,6 +2170,8 @@ export default function StudentProfilePage() {
   const [profileLoading, setProfileLoading] = useState(true);
 
   const [profileCompletion, setProfileCompletion] = useState(45);
+  // Reported by FormBDocumentsSection: { loaded, complete, pending, missing, rejected }
+  const [documentsState, setDocumentsState] = useState({ loaded: false, complete: false, pending: 0, missing: 0, rejected: 0 });
   const [form, setForm] = useState<Record<string, unknown>>({
     // Lead
     givenName: 'Rahim',
@@ -2381,9 +2389,13 @@ export default function StudentProfilePage() {
       reference: (form.hasReferral as string) === 'no' || !!(form.refName && form.refEmail),
       background: (form.hasVisa as string) === 'no' && (form.hasVisaRefusal as string) === 'no' && (form.hasImmigration as string) === 'no' && (form.hasMedical as string) === 'no' && (form.hasCriminal as string) === 'no',
       admission: !!(form.studyDestination && form.studyLevel && form.instituteName),
+      // Form B section E) — required documents uploaded AND no rejected file
+      // waiting on the student. The list itself is loaded by
+      // FormBDocumentsSection; until it has loaded we do not claim completion.
+      documents: documentsState.loaded && documentsState.complete,
     };
     return checks;
-  }, [form]);
+  }, [form, documentsState]);
 
   const completedCount = Object.values(sectionComplete).filter(Boolean).length;
 
@@ -2591,6 +2603,7 @@ export default function StudentProfilePage() {
                 {activeTab === 'reference' && <ReferenceSection form={form} setForm={setForm} />}
                 {activeTab === 'background' && <BackgroundSection form={form} setForm={setForm} />}
                 {activeTab === 'admission' && <AdmissionSection form={form} setForm={setForm} />}
+                {activeTab === 'documents' && <FormBDocumentsSection token={token} onSummaryChange={setDocumentsState} />}
               </TabsContent>
             </Card>
           </div>
