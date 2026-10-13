@@ -289,6 +289,117 @@ export async function POST(req: Request) {
       await logStudentEvent(authRes.data.studentId, 'CREATED_APPLICATION', { applicationId: newApp.id });
     }
 
+    // ── FORM A: notifications ────────────────────────────────────────────────
+    // Spec: "Email + team notification" when an application draft is created.
+    // Everything here is best-effort and isolated: the draft and its status log
+    // are already persisted, so a missing SMTP configuration or a failed
+    // notification must never turn a successful creation into an error.
+    try {
+      const studentId = newApp.studentId;
+      const student = studentId
+        ? await db.student.findUnique({
+            where: { id: studentId },
+            select: { name: true, email: true, counselorId: true, counselorName: true, studentId: true },
+          })
+        : null;
+
+      const counselorId = newApp.counselorId || student?.counselorId || '';
+      const counselorName = newApp.counselorName || student?.counselorName || '';
+      const courseLine = `${newApp.courseName}${newApp.universityName ? ` at ${newApp.universityName}` : ''}`;
+      const intakeLine = newApp.intake ? ` — intake ${newApp.intake}` : '';
+
+      // 1. Team notification inside the CRM (assigned counselor, else the queue).
+      if (counselorId) {
+        await db.portalNotification.create({
+          data: {
+            userId: counselorId,
+            title: 'New application draft to review',
+            message: `${student?.name || 'A student'} started an application: ${courseLine}${intakeLine}.`,
+            type: 'application_created',
+            isRead: false,
+            actionUrl: `/crm/applications/${newApp.id}`,
+          },
+        }).catch(() => {});
+      } else {
+        // No counselor on the row: notify every active counselor so the lead cannot
+        // sit invisible in the queue.
+        const counselors = await db.portalUserRole.findMany({
+          where: { role: { name: { in: ['counselor', 'branch_manager'] } } },
+          select: { userId: true },
+          distinct: ['userId'],
+        }).catch(() => []);
+        await Promise.all(
+          counselors.map((row) =>
+            db.portalNotification.create({
+              data: {
+                userId: row.userId,
+                title: 'Unassigned application draft',
+                message: `${student?.name || 'A student'} started an application: ${courseLine}${intakeLine}.`,
+                type: 'application_created',
+                isRead: false,
+                actionUrl: `/crm/applications/${newApp.id}`,
+              },
+            }).catch(() => {})
+          )
+        );
+      }
+
+      // 2. Timeline + student event so the portal shows the draft immediately.
+      if (studentId) {
+        await db.timelineEvent.create({
+          data: {
+            studentId,
+            stage: 'application_draft_created',
+            title: `Application draft: ${courseLine}`,
+            description: `Created from ${applicationSource}${intakeLine}. Reference ${applicationCode}.`,
+            actor: authRes.type === 'portal' ? authRes.data.userId : studentId,
+          },
+        }).catch(() => {});
+        await db.studentEvent.create({
+          data: {
+            studentId,
+            eventType: 'APPLICATION_DRAFT_CREATED',
+            payload: JSON.stringify({ applicationId: newApp.id, applicationCode, courseName: newApp.courseName, intake: newApp.intake }),
+          },
+        }).catch(() => {});
+      }
+
+      // 3. Email: student confirmation + team inbox notification.
+      const { sendEmail } = await import('@/lib/email-service');
+      const teamInbox = process.env.APPLICATIONS_INBOX || process.env.COUNSELING_INBOX || process.env.LEADS_INBOX || process.env.SMTP_USER;
+      const studentHtml = `
+        <h2 style="font-family:sans-serif">Your application draft is open, ${student?.name || ''}</h2>
+        <p style="font-family:sans-serif">We created a draft application and assigned it to ${counselorName || 'our application team'}.</p>
+        <ul style="font-family:sans-serif">
+          <li>Course: ${newApp.courseName}</li>
+          <li>University: ${newApp.universityName || 'Not specified'}</li>
+          <li>Intake: ${newApp.intake || 'Not specified'}</li>
+          <li>Reference: ${applicationCode}</li>
+        </ul>
+        <p style="font-family:sans-serif">Next step: finish or review your profile (Form B) and upload your documents in the student portal. Nothing is sent to the university until your counselor confirms it.</p>`;
+      const teamHtml = `
+        <h3 style="font-family:sans-serif">New application draft (${applicationSource})</h3>
+        <ul style="font-family:sans-serif">
+          <li>Student: ${student?.name || 'Unknown'} (${student?.email || 'no email'})</li>
+          <li>Student ID: ${student?.studentId || studentId || '—'}</li>
+          <li>Course: ${courseLine}${intakeLine}</li>
+          <li>Counselor: ${counselorName || 'unassigned — please assign'}</li>
+          <li>Reference: ${applicationCode}</li>
+        </ul>`;
+      const [studentMail, teamMail] = await Promise.all([
+        student?.email
+          ? sendEmail({ to: student.email, subject: `Application draft created — ${newApp.courseName}`, html: studentHtml, text: `Your application draft for ${courseLine} is open. Reference ${applicationCode}.` })
+          : Promise.resolve({ success: false, error: 'NO_STUDENT_EMAIL' }),
+        teamInbox
+          ? sendEmail({ to: teamInbox, subject: `New application draft: ${student?.name || 'student'} — ${newApp.courseName}`, html: teamHtml, text: `New application draft ${applicationCode} for ${courseLine}` })
+          : Promise.resolve({ success: false, error: 'NO_TEAM_INBOX' }),
+      ]);
+      if (!studentMail.success) console.warn('[applications] student confirmation not sent:', studentMail.error);
+      if (!teamMail.success) console.warn('[applications] team notification not sent:', teamMail.error);
+    } catch (notifyError) {
+      console.error('[applications] Form A notification failed:', notifyError);
+    }
+
     return NextResponse.json({ success: true, data: newApp, application: newApp });
   } catch (e: any) {
     console.error('POST /api/applications error', e);

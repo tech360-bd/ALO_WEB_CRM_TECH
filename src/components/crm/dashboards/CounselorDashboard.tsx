@@ -105,7 +105,11 @@ export default function CounselorDashboard() {
         </div>
         <div className="flex items-center gap-2">
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm"><Calendar className="w-4 h-4" /> My Calendar</Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm"><Users className="w-4 h-4" /> Add Lead</Button>
+          {/* Form C — manual lead add. Opens the shared Form B section set so a
+              counseling session can be captured completely at the desk. */}
+          <Button asChild variant="brand" size="sm">
+            <a href="/crm/leads/new"><Users className="w-4 h-4" /> Add Lead</a>
+          </Button>
         </div>
       </div>
 

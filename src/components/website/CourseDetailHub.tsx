@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Globe, GraduationCap, Award, Clock, FileText, Shield, BookOpen, DollarSign, Calendar, CheckCircle2, AlertTriangle, ArrowRight, Briefcase, Users } from 'lucide-react';
 import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
+import EnquiryForm from './EnquiryForm';
 import FaqAccordion from './FaqAccordion';
 import TestPreparationMiniCard from './TestPreparationMiniCard';
 
@@ -184,6 +185,18 @@ export default function CourseDetailHub({ slug }: Props) {
             <RelatedContentEngine sourceType="course" sourceId={course.courseId || course.id} sourceSlug={course.slug || slug} country={course.country || uni.country} universityId={course.universityId || uni.universityId} subjectArea={course.subjectArea} studyLevel={course.studyLevel} title={`Similar Courses & Other Courses at ${uni.name || 'University'}`} />
             <RelatedContentEngine sourceType="course" sourceId={course.courseId || course.id} sourceSlug={course.slug || slug} country={course.country} universityId={course.universityId} title="Related Scholarships, English Tests, Resources, FAQs, Services" />
             <FaqAccordion targetType="course" targetSlug={course.slug || slug} title={`FAQs about ${course.courseTitle}`} limit={12} />
+
+            {/* Course enquiry (spec 3.2) — the same fixed form structure used on
+                university and scholarship pages, pre-filled with this course. */}
+            <EnquiryForm
+              context={{
+                type: 'course',
+                subject: course.courseTitle,
+                institution: uni.name || course.universityName,
+                country: course.country || uni.country,
+                reference: course.slug || course.courseId,
+              }}
+            />
 
             <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Apply for {course.courseTitle}</h3>

@@ -147,6 +147,31 @@ and admission preferences.
 * The section's completion feeds both the in-page progress counter and the same
   readiness model used by the Apply gate (no missing required document and nothing rejected).
 
+## 6b. Form A — notifications on application create (new)
+
+`POST /api/applications` now completes the Form A requirement "Email + team
+notification" after the draft is written, all best-effort and isolated so a
+missing SMTP configuration can never fail a creation:
+
+* portal notification to the assigned counselor — or, when nobody is assigned,
+  to every active counselor so the draft cannot sit invisible;
+* `TimelineEvent` + `StudentEvent` so the draft appears in the student's history;
+* confirmation email to the student (course, university, intake, reference, and
+  the reminder that nothing is sent to the university until the counselor signs off);
+* notification email to the team inbox (`APPLICATIONS_INBOX` → `COUNSELING_INBOX`
+  → `LEADS_INBOX` → `SMTP_USER`).
+
+## 6c. Form B — additions against the restated brief (new)
+
+* **Highest Qualification** selector in Education History: choosing a level opens
+  every level below it as an empty, editable row (SSC → HSC → Diploma → Bachelor →
+  Master). Existing rows are never overwritten and "Add Education" stays unlimited.
+* **Visa refusal evidence**: each refusal row now takes an upload (Country, Visa
+  Type, Rejection Date, Reason + Evidence), stored through the same private
+  document API as section E under category `REFUSAL_LETTER`.
+* **Immigration history** is an always-visible free-text field, as specified,
+  independent of the yes/no answer rows.
+
 ## 7. Form C — counselling booking (`/book-consultation`)
 
 `src/components/website/public-pages/PublicConsultationPage.tsx` → `POST /api/website/lead`.
@@ -162,19 +187,48 @@ and admission preferences.
   the counselling inbox (`COUNSELING_INBOX` → `LEADS_INBOX` → `SMTP_USER`). Delivery
   failures are logged and never roll the lead back; SMTP may be intentionally unconfigured.
 
-## 8. Open items (not yet done)
+## 8. Enquiry forms (spec 3.2) — course, university, scholarship
 
-1. **Manual lead add from the CRM using the Form B section set** (brief: Form C must be
-   usable by a counselor to complete counselling manually). The CRM counselor dashboard has
-   an add-lead surface; it has not been re-pointed at the shared Form B structure.
-2. **Dedicated enquiry forms for course / university / scholarship** — enquiries today
-   funnel through the shared `/api/website/lead` (course and university pages post there);
-   no separate scholarship enquiry form exists yet.
-3. **Form B field-level parity with the pasted numbered list (1.1–11)** — most fields exist;
-   "Immigration history", "Send welcome email?" and "Notify student via email?" are present
-   as form state but need an end-to-end pass (welcome e-mail send + n8n notification).
-4. **"Data for Student Profile_CRM" mapping document** — field-by-field mapping from Form B
-   to the CRM student profile is not written down yet.
-5. Verification limits in this environment: no MySQL and no headless browser in the sandbox,
-   so the flows are verified by lint + typecheck + route/HTML probes; database-backed
-   assertions must run in CI or a seeded environment.
+`src/components/website/EnquiryForm.tsx` is **one** form used in three contexts, as the
+brief requires ("Type of Form with stitcher fixed for every where"):
+
+| Context | Mounted on | `leadType` |
+| --- | --- | --- |
+| Course enquiry | `/course/[slug]` (`CourseDetailHub`) | `course_enquiry` |
+| University enquiry | `/universities/[slug]` (`UniversityHub`) | `university_enquiry` |
+| Scholarship enquiry | `/scholarships/[slug]` (`ScholarshipDetailHub`) | `scholarship_enquiry` |
+
+Same fields, same validation, same submit path in all three (`POST /api/website/lead`), which
+de-duplicates the contact, round-robins the lead to a counselor, notifies the CRM, and sends
+the student confirmation + inbox notification. The only thing that changes between contexts is
+the subject line ("Course: …", "University: …", "Scholarship: …").
+
+## 9. The form stitcher + Form C manual lead add (new)
+
+* `src/lib/forms/application-form-schema.ts` defines every Form B section and field with the
+  input type, required flag, conditional visibility (`showWhen`) and its **CRM destination**
+  ("Data for Student Profile_CRM - …"). This is the single stitcher: the portal and the CRM
+  both read it, so a field cannot exist in one and be missing in the other.
+* `docs/FORM-B-CRM-FIELD-MAPPING.md` is generated from that schema (12 sections, 106 fields)
+  and is the written answer to the "Data for Student Profile_CRM" notes.
+* **Manual lead add** — `/crm/leads/new` renders the same section set for a counselor, and
+  `POST /api/crm/leads/counselling` (staff auth) creates the lead in the CRM lead table
+  (re-using an existing record for the same email/phone), creates or attaches the `Student`
+  row, writes each captured section to `StudentProfileSection` with status `complete`, assigns
+  the counselor, notifies them, writes the timeline/audit trail and — when
+  "Send welcome email to student?" is ticked — sends the welcome email. Because the sections
+  are stored as real Form B sections, the Apply Now gate recognises them.
+  The previously disabled "Add Lead" button on the counselor dashboard now opens this page.
+
+## 10. Still open
+
+1. **End-to-end pass in a seeded environment** — the flows are verified here by lint, scoped
+   typecheck and route/HTML probes. This sandbox has no reachable MySQL and no Prisma query
+   engine binary, and no headless browser, so database-backed assertions and the click-through
+   must run in CI or on a seeded staging box.
+2. **Phone verification (SMS OTP)** — intentionally deferred per the brief ("later").
+3. **Document → Application checklist linkage** — documents are reviewed per Form B section;
+   the per-application checklist rows are not yet derived from them.
+4. **Repeatable rows in the CRM manual form** — the counselor can capture several rows per
+   session ("Save row & add another") and they are stored alongside the section payload; a
+   fully structured multi-row editor (one typed array per section) is the next refinement.
