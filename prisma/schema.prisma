@@ -5760,16 +5760,14 @@ model AuditLog {
   action       String
   resource     String   @default("")
   resourceId   String   @default("")
-  details      String   @default("{}") @db.Text
+  details      String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   ipAddress    String   @default("")
   userAgent    String   @default("")
   actorRole    String   @default("")
   studentId    String   @default("")
-  beforeValue  String   @default("{}") @db.Text
-  afterValue   String   @default("{}") @db.Text
+  beforeValue  String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  afterValue   String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   createdAt    DateTime @default(now())
-
-  user User? @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([action])

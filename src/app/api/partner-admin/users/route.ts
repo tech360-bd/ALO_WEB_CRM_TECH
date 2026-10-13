@@ -6,15 +6,6 @@ import { getQuota } from '@/lib/access-check-engine';
 import { createHash, randomBytes } from 'node:crypto';
 import { sendEmail } from '@/lib/email-service';
 
-/** Partner-side roles a Partner Super Admin is allowed to grant (§6). */
-const ASSIGNABLE_PARTNER_ROLES = [
-  'PARTNER_COUNSELOR',
-  'PARTNER_APPLICATION_ASSISTANT',
-  'PARTNER_MARKETING_ASSISTANT',
-  'PARTNER_DOCUMENT_ASSISTANT',
-  'PARTNER_VIEWER',
-];
-
 function sameOrigin(request: Request) {
   const origin = request.headers.get('origin');
   return !origin || new URL(origin).origin === new URL(request.url).origin;

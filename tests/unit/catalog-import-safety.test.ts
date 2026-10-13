@@ -5,7 +5,7 @@ vi.mock('@/lib/auth-middleware', () => ({ withAuth: (fn: any) => (req: any) => f
 vi.mock('@/lib/db', () => ({ db: { crmUniversity: { findFirst: mocks.universityFind }, crmCourse: { findFirst: mocks.courseFind }, $transaction: mocks.transaction } }));
 import { POST as importUniversities } from '@/app/api/admin/import/universities/route';
 import { POST as importCourses } from '@/app/api/admin/import/courses/route';
-const request = (rows: unknown[], dryRun = false) => new NextRequest('https://aloeducation.com/api/admin/import/universities', { method: 'POST', body: JSON.stringify({ rows, dryRun }) });
+const request = (rows: unknown[], dryRun = false) => new NextRequest('https://aloeducation.com/api/admin/import/universities', { method: 'POST', headers: { origin: 'https://aloeducation.com' }, body: JSON.stringify({ rows, dryRun }) });
 beforeEach(() => {
  vi.resetAllMocks(); mocks.auth.roles = ['ADMIN']; mocks.auth.userType = 'ADMIN'; mocks.universityFind.mockResolvedValue(null); mocks.courseFind.mockResolvedValue(null);
  mocks.transaction.mockImplementation((fn: any) => fn({ crmUniversity: { create: mocks.universityCreate }, crmCourse: { create: mocks.courseCreate }, crmCourseIntakeFee: { create: mocks.feeCreate }, crmAuditLog: { create: mocks.auditCreate } }));

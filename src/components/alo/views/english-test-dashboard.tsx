@@ -30,6 +30,12 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 
 // ---------------------------------------------------------------------------
+// Design reference — English Test Dashboard Card System
+// Background: WHITE | Border: ALO BLUE | Title: ALO ORANGE | Button: ALO ORANGE
+// Every section uses clear image/video quality as specified in content guidelines.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 

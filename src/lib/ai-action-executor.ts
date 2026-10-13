@@ -87,7 +87,7 @@ export function assessRisk(
     "DATA_EXPORT", "COMMISSION_APPROVE", "SALARY_ACCESS",
   ]);
 
-  let level: RiskLevel = "LOW";
+  let level: RiskLevel = "HIGH";
   if (CRITICAL_ACTIONS.has(actionType)) level = "CRITICAL";
   else if (HIGH_ACTIONS.has(actionType)) level = "HIGH";
   else if (MEDIUM_ACTIONS.has(actionType)) level = "MEDIUM";

@@ -23,7 +23,7 @@ async function seedDirectMySQL() {
   }
 
   if (!adminPassword || adminPassword.length < 12) {
-    adminPassword = 'AloAdminSecure2026!Pass';
+    throw new Error('FATAL: SEED_SUPER_ADMIN_PASSWORD is missing or too short (< 12 characters). Aborting production seed to prevent creation of administrator account with known or weak credential. No default or fallback password is permitted.');
   }
 
   const parsedUrl = new URL(dbUrl);

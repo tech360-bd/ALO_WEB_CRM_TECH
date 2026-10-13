@@ -29,6 +29,7 @@ import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
 import { mutationOriginAllowed } from '@/lib/request-origin';
 import { generateStructured } from '@/lib/ai-gateway';
 import { generateImage, generateVideo } from '@/lib/ai';
+import { releaseQuota, reserveQuota } from '@/lib/access-check-engine';
 
 // ------------------------------------------------------------
 // Constants
@@ -53,14 +54,13 @@ const SUPPORTED_PLATFORMS = ['FACEBOOK', 'INSTAGRAM', 'LINKEDIN'] as const;
  * spec ("no guaranteed visa/admission/scholarship claims").
  */
 const GUARANTEE_PATTERN =
-  /\b(guarantee[d|s]?|assured|100%\s*(free|guaranteed|admission|visa|success)|sure\s*visa|sure\s*admission|always\s*approved|never\s*rejected|free\s*counseling|free\s*consultation\s*guaranteed)\b/i;
+  /\b(guarantee(?:d|s|ing)?|assured|100%\s*(free|guaranteed|admission|visa|success)|sure\s*visa|sure\s*admission|always\s*approved|never\s*rejected)\b/i;
+const UNVERIFIED_FREE_CLAIM_PATTERN = /\bfree\b/i;
 
-/**
- * Any concrete money figure or percentage scholarship claim is fabricated
- * unless the partner supplied it. We strip rather than invent.
- */
+/** Reject concrete amounts, discounts, and scholarship values absent a verified source. */
 const MONEY_PATTERN =
-  /(£|€|\$|৳|USD|GBP|EUR|BDT)\s?\d[\d,]*(\.\d+)?\s?(k|thousand|lakh)?|\d+(\.\d+)?%\s?(scholarship|off|waiver|discount)/i;
+  /(?:£|€|\$|৳|(?:USD|GBP|EUR|BDT)\s?)\s?\d[\d,]*(?:\.\d+)?(?:\s?(?:k|thousand|lakh|million))?|\b\d[\d,]*(?:\.\d+)?\s?(?:USD|GBP|EUR|BDT|taka|pounds?)\b|\b\d[\d,]*(?:\.\d+)?\s?(?:k|thousand|lakh|million)\s?(?:scholarship|grant|off|waiver|discount)\b|\b(?:scholarship|grant|discount|waiver|tuition)\b.{0,12}\b(?:amount|worth|of)\s*(?:£|€|\$|৳|USD\s?|GBP\s?|EUR\s?|BDT\s?)?\d[\d,]*(?:\.\d+)?\b|\b(?:scholarship|grant|discount|waiver|tuition)\b.{0,8}[:=]\s*(?:£|€|\$|৳|USD\s?|GBP\s?|EUR\s?|BDT\s?)?\d[\d,]{2,}(?:\.\d+)?\b/i;
+const UNVERIFIED_STATISTIC_PATTERN = /\b\d+(?:\.\d+)?\s?%|\b(?:success|acceptance|admission|visa approval)\s+(?:rate|success rate)\b|\brank(?:ed|ing)?\s*(?:number\s*)?#?\s*\d+\b/i;
 
 // ------------------------------------------------------------
 // Validation
@@ -71,7 +71,7 @@ const generateBodySchema = z.object({
   country: z.string().trim().min(2).max(80).optional().default(''),
   university: z.string().trim().max(160).optional().default(''),
   course: z.string().trim().max(160).optional().default(''),
-  intake: z.string().trim().max(60).optional().default(''),
+  intake: z.enum(SUPPORTED_INTAKES).optional().default(SUPPORTED_INTAKES[0]),
   targetAudience: z.string().trim().max(200).optional().default(''),
   language: z.string().trim().max(40).optional().default('English'),
   cta: z.string().trim().max(80).optional().default(''),
@@ -89,6 +89,7 @@ const patchBodySchema = z.object({
     'reject',
     'schedule',
     'publish',
+    'archive',
   ]),
   scheduledAt: z.string().datetime({ offset: true }).optional(),
   rejectionReason: z.string().trim().max(1000).optional(),
@@ -106,6 +107,28 @@ function currentMonthYear(now: Date = new Date()): string {
 function isAloStaff(auth: AuthContext): boolean {
   const roles = [auth.userType, ...auth.roles].map((r) => String(r || '').toUpperCase());
   return roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
+}
+
+function hasPartnerRole(auth: AuthContext, expected: string): boolean {
+  return [auth.partnerRole, ...auth.roles].some((role) => String(role || '').toUpperCase() === expected);
+}
+
+function canCreateMarketing(auth: AuthContext): boolean {
+  return isAloStaff(auth) || hasPartnerRole(auth, 'PARTNER_SUPER_ADMIN') || hasPartnerRole(auth, 'PARTNER_MARKETING_ASSISTANT');
+}
+
+function canReviewMarketing(auth: AuthContext): boolean {
+  return isAloStaff(auth) || hasPartnerRole(auth, 'PARTNER_SUPER_ADMIN');
+}
+
+function sameOrigin(request: Request): boolean {
+  const origin = request.headers.get('origin');
+  if (!origin) return true;
+  try {
+    return new URL(origin).origin === new URL(request.url).origin;
+  } catch {
+    return false;
+  }
 }
 
 function normalizePlatform(value: string): string {
@@ -136,7 +159,10 @@ async function resolvePartnerId(
 /** True when copy contains a fabricated or guaranteeing claim. */
 function hasProhibitedClaim(text: string): boolean {
   if (!text) return false;
-  return GUARANTEE_PATTERN.test(text) || MONEY_PATTERN.test(text);
+  return GUARANTEE_PATTERN.test(text)
+    || MONEY_PATTERN.test(text)
+    || UNVERIFIED_STATISTIC_PATTERN.test(text)
+    || UNVERIFIED_FREE_CLAIM_PATTERN.test(text);
 }
 
 async function audit(
@@ -217,6 +243,7 @@ function toMarketingRequest(row: {
   status: string;
   approvalStatus: string;
   publishedUrl: string;
+  rejectionReason: string;
   scheduledAt: Date | null;
   createdAt: Date;
 }) {
@@ -516,9 +543,9 @@ export async function GET(req: NextRequest) {
         : ['No partner marketing quota row is configured yet — platform defaults (15 images / 10 videos per month) are in effect.'],
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[PARTNER MARKETING] GET failed:', error instanceof Error ? error.name : 'unknown error');
     return NextResponse.json(
-      { success: false, error: 'Failed to load Marketing Studio data.', details: message },
+      { success: false, error: 'Failed to load Marketing Studio data.' },
       { status: 500 },
     );
   }
@@ -537,6 +564,8 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ success: false, error: 'Authentication failed.' }, { status: 401 });
   }
+  if (!sameOrigin(req)) return NextResponse.json({ success: false, error: 'Cross-origin marketing mutation denied.' }, { status: 403 });
+  if (!canCreateMarketing(auth)) return NextResponse.json({ success: false, error: 'Partner Super Admin or Marketing Assistant access is required.' }, { status: 403 });
 
   // Refuse cross-origin mutations before any parsing, provider or database work.
   if (!mutationOriginAllowed(req, auth)) {
@@ -556,6 +585,15 @@ export async function POST(req: NextRequest) {
     );
   }
   const input = parsed.data;
+  const unsupportedInputClaims = Object.entries(input)
+    .filter(([, value]) => typeof value === 'string' && hasProhibitedClaim(value))
+    .map(([field]) => field);
+  if (unsupportedInputClaims.length) {
+    return NextResponse.json(
+      { success: false, error: 'Remove unverified guarantees, free-service claims, or specific financial claims before generating a draft.', fields: unsupportedInputClaims },
+      { status: 400 },
+    );
+  }
 
   // Claim-heavy user input is refused before any provider call, quota
   // mutation or persistence, so guarantees and money offers never enter the
@@ -575,9 +613,7 @@ export async function POST(req: NextRequest) {
   }
 
   const platform = normalizePlatform(input.platform);
-  const intake = input.intake?.trim()
-    ? input.intake.trim()
-    : (SUPPORTED_INTAKES[0] as string);
+  const intake = input.intake || SUPPORTED_INTAKES[0];
 
   try {
     const monthYear = currentMonthYear();
@@ -607,7 +643,8 @@ export async function POST(req: NextRequest) {
         generationMode = 'ai';
       }
     } catch (error) {
-      aiError = error instanceof Error ? error.message : 'AI gateway unavailable';
+      console.error('[PARTNER MARKETING] copy provider failed:', error instanceof Error ? error.name : 'unknown error');
+      aiError = 'AI gateway unavailable; grounded template used.';
       copy = groundedTemplateCopy({ ...input, intake, platform });
     }
 
@@ -678,9 +715,9 @@ export async function POST(req: NextRequest) {
           : 'AI gateway unavailable — this draft was generated from a grounded template using only your supplied facts.',
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[PARTNER MARKETING] POST failed:', error instanceof Error ? error.name : 'unknown error');
     return NextResponse.json(
-      { success: false, error: 'Failed to generate marketing content.', details: message },
+      { success: false, error: 'Failed to generate marketing content.' },
       { status: 500 },
     );
   }
@@ -699,6 +736,7 @@ export async function PATCH(req: NextRequest) {
   } catch {
     return NextResponse.json({ success: false, error: 'Authentication failed.' }, { status: 401 });
   }
+  if (!sameOrigin(req)) return NextResponse.json({ success: false, error: 'Cross-origin marketing mutation denied.' }, { status: 403 });
 
   // Refuse cross-origin mutations before any parsing, provider or database work.
   if (!mutationOriginAllowed(req, auth)) {
@@ -747,23 +785,18 @@ export async function PATCH(req: NextRequest) {
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: existing.partnerId } });
     const requiresAloApproval = quota?.requiresAloApproval ?? true;
 
-    const usage = await db.partnerMarketingUsage.upsert({
-      where: { partnerId_monthYear: { partnerId: existing.partnerId, monthYear } },
-      create: { partnerId: existing.partnerId, monthYear },
-      update: {},
-    });
-
     // ---------- generate_image ----------
     if (action === 'generate_image') {
-      const imageLimit = quota?.monthlyImageLimit ?? DEFAULT_IMAGE_LIMIT;
-      if (usage.imagesUsed >= imageLimit) {
-        return NextResponse.json(
-          { success: false, error: 'Monthly image quota finished. Request extra quota from ALO Education.' },
-          { status: 403 },
-        );
+      const approvalStatus = normalizeApprovalStatus(existing.approvalStatus);
+      if (!['DRAFT', 'REJECTED'].includes(approvalStatus)) {
+        return NextResponse.json({ success: false, error: 'Assets can only be generated or replaced while a campaign is a draft or has been rejected.' }, { status: 409 });
       }
       if (!existing.imagePrompt) {
         return NextResponse.json({ success: false, error: 'Generate a draft first — there is no image prompt yet.' }, { status: 409 });
+      }
+      const reservation = await reserveQuota('partner', existing.partnerId, 'monthly_images');
+      if (!reservation.allowed) {
+        return NextResponse.json({ success: false, error: reservation.message }, { status: 403 });
       }
 
       let url = '';
@@ -771,60 +804,63 @@ export async function PATCH(req: NextRequest) {
         const result = await generateImage({ prompt: existing.imagePrompt, size: '1024x1024' });
         url = result.url || '';
       } catch (error) {
+        await releaseQuota('partner', existing.partnerId, 'monthly_images');
         const message = error instanceof Error ? error.message : 'Image provider error';
         await audit(auth, 'PARTNER_MARKETING_IMAGE_FAILED', id, { action }, 'failure', message);
-        // No fabricated asset URL. Report honestly.
         return NextResponse.json(
-          { success: false, error: 'Image generation is not available right now.', details: message },
+          { success: false, error: 'Image generation is not available right now.' },
           { status: 503 },
         );
       }
       if (!url) {
+        await releaseQuota('partner', existing.partnerId, 'monthly_images');
         return NextResponse.json(
           { success: false, error: 'The image provider returned no asset. No quota was consumed.' },
           { status: 502 },
         );
       }
 
-      const updated = await db.partnerMarketingRequest.update({
-        where: { id },
-        data: {
+      let updated;
+      try {
+        updated = await updateMarketingRequestIfUnchanged(existing, {
           generatedImageUrl: url,
           status: 'image_generated',
-          // Only moves to pending approval once there is a real asset to review.
-          approvalStatus: requiresAloApproval ? 'pending' : existing.approvalStatus,
-        },
-      });
-      await db.partnerMarketingUsage.update({
-        where: { id: usage.id },
-        data: { imagesUsed: { increment: 1 } },
-      });
+        });
+        if (!updated) {
+          await releaseQuota('partner', existing.partnerId, 'monthly_images');
+          return NextResponse.json({ success: false, error: 'The campaign changed during image generation. No asset was saved; refresh and try again.' }, { status: 409 });
+        }
+      } catch (error) {
+        await releaseQuota('partner', existing.partnerId, 'monthly_images');
+        throw error;
+      }
       await audit(auth, 'PARTNER_MARKETING_IMAGE_GENERATED', id, {
-        imagesUsed: usage.imagesUsed + 1,
-        imageLimit,
+        imagesUsed: reservation.used,
+        imageLimit: reservation.limit,
         monthYear,
       });
 
       return NextResponse.json({
         success: true,
         request: toMarketingRequest(updated),
-        quotaUsed: `${usage.imagesUsed + 1}/${imageLimit} Images`,
-        message: 'Image generated and stored. Campaign is pending review.',
+        quotaUsed: `${reservation.used}/${reservation.limit} Images`,
+        message: 'Image generated and stored. Submit the asset for review when ready.',
       });
     }
 
     // ---------- generate_video ----------
     if (action === 'generate_video') {
-      const videoLimit = quota?.monthlyVideoLimit ?? DEFAULT_VIDEO_LIMIT;
-      if (usage.videosUsed >= videoLimit) {
-        return NextResponse.json(
-          { success: false, error: 'Monthly video quota finished. Request extra quota from ALO Education.' },
-          { status: 403 },
-        );
+      const approvalStatus = normalizeApprovalStatus(existing.approvalStatus);
+      if (!['DRAFT', 'REJECTED'].includes(approvalStatus)) {
+        return NextResponse.json({ success: false, error: 'Assets can only be generated or replaced while a campaign is a draft or has been rejected.' }, { status: 409 });
       }
       const prompt = existing.videoPrompt || existing.videoScript;
       if (!prompt) {
         return NextResponse.json({ success: false, error: 'Generate a draft first — there is no video prompt yet.' }, { status: 409 });
+      }
+      const reservation = await reserveQuota('partner', existing.partnerId, 'monthly_videos');
+      if (!reservation.allowed) {
+        return NextResponse.json({ success: false, error: reservation.message }, { status: 403 });
       }
 
       let url = '';
@@ -832,42 +868,47 @@ export async function PATCH(req: NextRequest) {
         const result = await generateVideo({ prompt });
         url = result.url || '';
       } catch (error) {
+        await releaseQuota('partner', existing.partnerId, 'monthly_videos');
         const message = error instanceof Error ? error.message : 'Video provider error';
         await audit(auth, 'PARTNER_MARKETING_VIDEO_FAILED', id, { action }, 'failure', message);
         return NextResponse.json(
-          { success: false, error: 'Video generation is not available right now.', details: message },
+          { success: false, error: 'Video generation is not available right now.' },
           { status: 503 },
         );
       }
       if (!url) {
+        await releaseQuota('partner', existing.partnerId, 'monthly_videos');
         return NextResponse.json(
           { success: false, error: 'The video provider returned no asset. No quota was consumed.' },
           { status: 502 },
         );
       }
 
-      const updated = await db.partnerMarketingRequest.update({
-        where: { id },
-        data: {
+      let updated;
+      try {
+        updated = await updateMarketingRequestIfUnchanged(existing, {
           generatedVideoUrl: url,
           videoDuration: quota?.videoDurationLimitSeconds ?? DEFAULT_VIDEO_SECONDS,
           status: 'video_generated',
-        },
-      });
-      await db.partnerMarketingUsage.update({
-        where: { id: usage.id },
-        data: { videosUsed: { increment: 1 } },
-      });
+        });
+        if (!updated) {
+          await releaseQuota('partner', existing.partnerId, 'monthly_videos');
+          return NextResponse.json({ success: false, error: 'The campaign changed during video generation. No asset was saved; refresh and try again.' }, { status: 409 });
+        }
+      } catch (error) {
+        await releaseQuota('partner', existing.partnerId, 'monthly_videos');
+        throw error;
+      }
       await audit(auth, 'PARTNER_MARKETING_VIDEO_GENERATED', id, {
-        videosUsed: usage.videosUsed + 1,
-        videoLimit,
+        videosUsed: reservation.used,
+        videoLimit: reservation.limit,
         monthYear,
       });
 
       return NextResponse.json({
         success: true,
         request: toMarketingRequest(updated),
-        quotaUsed: `${usage.videosUsed + 1}/${videoLimit} Videos`,
+        quotaUsed: `${reservation.used}/${reservation.limit} Videos`,
         message: 'Video generated and stored.',
       });
     }
@@ -880,16 +921,21 @@ export async function PATCH(req: NextRequest) {
           { status: 409 },
         );
       }
-      if (existing.approvalStatus === 'approved' || existing.approvalStatus === 'published') {
+      const currentApprovalStatus = String(existing.approvalStatus || '').toLowerCase();
+      if (['approved', 'published', 'scheduled', 'archived'].includes(currentApprovalStatus)) {
         return NextResponse.json(
-          { success: false, error: `This campaign is already ${existing.approvalStatus}.` },
+          { success: false, error: `This campaign is already ${currentApprovalStatus}.` },
           { status: 409 },
         );
       }
-      const updated = await db.partnerMarketingRequest.update({
-        where: { id },
-        data: { approvalStatus: 'pending', status: 'pending_approval' },
-      });
+      if (currentApprovalStatus === 'pending' || currentApprovalStatus === 'pending_approval') {
+        return NextResponse.json({ success: false, error: 'This campaign is already awaiting review.' }, { status: 409 });
+      }
+      if (!['DRAFT', 'REJECTED'].includes(normalizeApprovalStatus(existing.approvalStatus))) {
+        return NextResponse.json({ success: false, error: 'Only a draft or rejected campaign can be submitted for review.' }, { status: 409 });
+      }
+      const updated = await updateMarketingRequestIfUnchanged(existing, { approvalStatus: 'pending', status: 'pending_approval' });
+      if (!updated) return NextResponse.json({ success: false, error: 'The campaign changed before submission. Refresh and try again.' }, { status: 409 });
       await audit(auth, 'PARTNER_MARKETING_SUBMITTED', id, { requiresAloApproval });
       return NextResponse.json({
         success: true,
@@ -909,8 +955,8 @@ export async function PATCH(req: NextRequest) {
           { status: 403 },
         );
       }
-      if (existing.approvalStatus === 'approved') {
-        return NextResponse.json({ success: false, error: 'Already approved.' }, { status: 409 });
+      if (!['pending', 'pending_approval'].includes(String(existing.approvalStatus || '').toLowerCase())) {
+        return NextResponse.json({ success: false, error: 'Only a submitted campaign can be approved.' }, { status: 409 });
       }
       // Optimistic concurrency: transition only the exact row that was
       // reviewed. A concurrent edit rejects the transition instead of being
@@ -957,10 +1003,15 @@ export async function PATCH(req: NextRequest) {
           { status: 403 },
         );
       }
-      const updated = await db.partnerMarketingRequest.update({
-        where: { id },
-        data: { approvalStatus: 'rejected', status: 'rejected', rejectionReason: reason },
+      if (!['pending', 'pending_approval'].includes(String(existing.approvalStatus || '').toLowerCase())) {
+        return NextResponse.json({ success: false, error: 'Only a submitted campaign can be rejected.' }, { status: 409 });
+      }
+      const updated = await updateMarketingRequestIfUnchanged(existing, {
+        approvalStatus: 'rejected',
+        status: 'rejected',
+        rejectionReason: reason,
       });
+      if (!updated) return NextResponse.json({ success: false, error: 'The campaign review status changed. Refresh before taking another action.' }, { status: 409 });
       await audit(auth, 'PARTNER_MARKETING_REJECTED', id, { reason });
       return NextResponse.json({ success: true, request: toMarketingRequest(updated), message: 'Campaign rejected.' });
     }
@@ -985,18 +1036,31 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'No connected social account is available for this partner, so nothing was published.',
-          details: 'Connect and get ALO approval for a partner social account first. No publish URL was recorded.',
+          error: 'No connected partner social account or publishing integration is configured. Nothing was published.',
+          details: autoPublishAllowed
+            ? 'The package flag allows auto-publishing, but no account connection or publisher is active.'
+            : 'No publish URL or success status was recorded.',
         },
         { status: 409 },
       );
     }
 
+    // ---------- archive ----------
+    if (action === 'archive') {
+      if (String(existing.approvalStatus || '').toLowerCase() === 'published' || existing.publishedUrl) {
+        return NextResponse.json({ success: false, error: 'Published campaigns cannot be archived from this workspace.' }, { status: 409 });
+      }
+      const updated = await updateMarketingRequestIfUnchanged(existing, { status: 'archived', approvalStatus: 'archived', scheduledAt: null });
+      if (!updated) return NextResponse.json({ success: false, error: 'The campaign changed before it could be archived. Refresh and try again.' }, { status: 409 });
+      await audit(auth, 'PARTNER_MARKETING_ARCHIVED', id, { previousStatus: existing.approvalStatus });
+      return NextResponse.json({ success: true, request: toMarketingRequest(updated), message: 'Campaign archived.' });
+    }
+
     return NextResponse.json({ success: false, error: `Unsupported action: ${action}` }, { status: 400 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[PARTNER MARKETING] PATCH failed:', error instanceof Error ? error.name : 'unknown error');
     return NextResponse.json(
-      { success: false, error: 'Failed to process the marketing action.', details: message },
+      { success: false, error: 'Failed to process the marketing action.' },
       { status: 500 },
     );
   }
