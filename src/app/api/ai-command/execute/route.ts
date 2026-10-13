@@ -374,17 +374,31 @@ async function executeActionInline(
     }
     case "UPDATE_STUDENT": {
       if (!targetId) throw new Error("targetId required for UPDATE_STUDENT");
+      const ALLOWED_STUDENT_FIELDS = ["name", "email", "phone", "notes", "status", "stage", "priority", "assignedTo", "tags", "lastContactAt", "nextFollowUp"];
+      const safeStudentData: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(payload?.data || {})) {
+        if (ALLOWED_STUDENT_FIELDS.includes(key)) {
+          safeStudentData[key] = value;
+        }
+      }
       const student = await db.student.update({
         where: { id: targetId },
-        data: payload?.data || {},
+        data: safeStudentData,
       });
       return { id: student.id, summary: `Student ${student.studentId} updated` };
     }
     case "MODIFY_APPLICATION": {
       if (!targetId) throw new Error("targetId required for MODIFY_APPLICATION");
+      const ALLOWED_APPLICATION_FIELDS = ["status", "stage", "notes", "priority", "assignedCounselorId", "lastUpdatedBy", "nextReviewDate", "tags", "internalNotes"];
+      const safeAppData: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(payload?.data || {})) {
+        if (ALLOWED_APPLICATION_FIELDS.includes(key)) {
+          safeAppData[key] = value;
+        }
+      }
       const app = await db.application.update({
         where: { id: targetId },
-        data: payload?.data || {},
+        data: safeAppData,
       });
       return { id: app.id, summary: `Application ${app.applicationId} updated` };
     }
@@ -429,7 +443,8 @@ async function executeActionInline(
       return deployContentFallback(targetType, targetId, payload);
     }
     case "MODIFY_CRM": {
-      return { summary: `CRM modification logged for ${targetType}` };
+      const ALLOWED_CRM_FIELDS = ["status", "notes", "priority", "tags", "assignedTo"];
+      return { summary: `CRM modification logged for ${targetType}`, allowedFields: ALLOWED_CRM_FIELDS, payloadFiltered: Object.keys(payload?.data || {}).filter(k => ALLOWED_CRM_FIELDS.includes(k)) };
     }
     default:
       throw new Error(`Unknown action type: ${actionType}`);

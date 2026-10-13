@@ -68,66 +68,11 @@ export async function POST(req: NextRequest) {
       console.warn("[ai-command.retry] executor unavailable:", err?.message);
     }
 
-    // Inline fallback: attempt execution by replaying the action's payload via existing patterns
-    try {
-      const payload = JSON.parse(action.payload || "{}");
-
-      let result: any = null;
-      if (action.actionType === "CREATE_LEAD") {
-        const lead = await db.lead.create({
-          data: {
-            leadId: `ALO-AI-${Date.now().toString().slice(-6)}`,
-            fullName: payload?.name || "AI-created Lead",
-            email: payload?.email || null,
-            phone: payload?.phone || "N/A",
-            source: payload?.source || "AI_COMMAND",
-            sourceDetail: "Retried from AI Command Center",
-            notes: payload?.notes || "Auto-created",
-            status: "NEW",
-          },
-        });
-        result = { id: lead.id, summary: `Lead ${lead.leadId} created` };
-      } else if (action.actionType === "UPDATE_STUDENT" && action.targetId) {
-        const student = await db.student.update({
-          where: { id: action.targetId },
-          data: payload?.data || {},
-        });
-        result = { id: student.id, summary: `Student ${student.studentId} updated` };
-      } else if (action.actionType === "MODIFY_APPLICATION" && action.targetId) {
-        const app = await db.application.update({
-          where: { id: action.targetId },
-          data: payload?.data || {},
-        });
-        result = { id: app.id, summary: `Application ${app.applicationId} updated` };
-      } else {
-        result = { summary: `Retried action ${action.actionType} (no executor bound)` };
-      }
-
-      await db.aiCommandAction.update({
-        where: { id: actionId },
-        data: {
-          status: "EXECUTED",
-          result: JSON.stringify(result),
-          executedAt: new Date(),
-          lastError: null,
-        },
-      });
-
-      return NextResponse.json({ success: true, actionId, result });
-    } catch (err: any) {
-      await db.aiCommandAction.update({
-        where: { id: actionId },
-        data: {
-          status: "FAILED",
-          lastError: err.message,
-          result: JSON.stringify({ error: err.message }),
-        },
-      });
-      return NextResponse.json(
-        { error: err.message, actionId },
-        { status: 500 }
-      );
-    }
+    // The centralized ai-action-executor must handle retries. No unprotected inline fallback is permitted.
+    return NextResponse.json(
+      { error: "Retry blocked: centralized ai-action-executor unavailable. Unprotected fallback execution is not permitted for security and authorization compliance.", actionId },
+      { status: 423 }
+    );
   } catch (err: any) {
     console.error("[ai-command.retry] error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
